@@ -5,7 +5,7 @@ import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
-import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
+// import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
 import { genActionID, genWhitelistID } from './idGenerator.js';
 // import PlayerlistGenerator from './playerlistGenerator.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -52,6 +52,7 @@ const validActions = ['ban', 'warn', 'whitelist'];
  *      - author (the admin name)
  *      - reason
  *      - timestamp
+ *      - expiration
  *      - revocation: {
  *          timestamp: null,
  *          author: null,
@@ -64,6 +65,7 @@ const validActions = ['ban', 'warn', 'whitelist'];
  */
 export default class PlayerController {
     constructor(config) {
+        return;
         this.config = config;
         this.activePlayers = [];
         // this.db = new Database(config.wipePendingWLOnStart);

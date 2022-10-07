@@ -17,7 +17,7 @@ import FxRunner from '@core/components/FxRunner';
 import Logger from '@core/components/Logger';
 import HealthMonitor from '@core/components/HealthMonitor';
 import Scheduler from '@core/components/Scheduler';
-import PlayerController from '@core/components/PlayerController';
+// import PlayerController from '@core/components/PlayerController';
 import StatsCollector from '@core/components/StatsCollector';
 import Translator from '@core/components/Translator';
 import WebServer from '@core/components/WebServer';

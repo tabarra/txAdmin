@@ -43,6 +43,9 @@ export const post = async (ctx) => {
 
     if (scope === 'event') {
         try {
+            if(!globals.fxRunner.currentMutex){
+                return ctx.send({ error: 'server not ready' });
+            }
             globals.playerlistManager.handleServerEvents(ctx.request.body, globals.fxRunner.currentMutex);
             return ctx.send({ success: true });
         } catch (error) {

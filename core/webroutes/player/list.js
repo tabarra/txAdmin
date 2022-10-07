@@ -5,6 +5,7 @@ import xssInstancer from '@core/extras/xss.js';
 import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
+import cleanPlayerName from '@core/../shared/cleanPlayerName';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -74,7 +75,7 @@ async function handleSearch(ctx, dbo) {
 
         //IF searching for identifiers
         if (idsArray.length) {
-            const actions = await dbo.get('actions')
+            const actions = await dbo.chain.get('actions')
                 .filter((a) => idsArray.some((fi) => a.identifiers.includes(fi)))
                 .take(512)
                 .cloneDeep()
@@ -92,7 +93,7 @@ async function handleSearch(ctx, dbo) {
             });
             //TODO: adapt this for when we start saving all IDs for the players
             // const licensesArr = idsArray.filter(id => id.substring(0, 8) == "license:").map(id => id.substring(8));
-            const players = await dbo.get('players')
+            const players = await dbo.chain.get('players')
                 .filter((p) => licensesArr.includes(p.license))
                 .take(512)
                 .cloneDeep()
@@ -101,9 +102,9 @@ async function handleSearch(ctx, dbo) {
             outData.message = `Searching by identifiers found ${players.length} player${addPlural(players.length)} and ${actions.length} action${addPlural(actions.length)}.`;
 
 
-        //IF searching for an acition ID
+        //IF searching for an action ID
         } else if (consts.regexActionID.test(searchString.toUpperCase())) {
-            const action = await dbo.get('actions')
+            const action = await dbo.chain.get('actions')
                 .find({id: searchString.toUpperCase()})
                 .cloneDeep()
                 .value();
@@ -115,7 +116,7 @@ async function handleSearch(ctx, dbo) {
                 //TODO: adapt this for when we start saving all IDs for the players
                 const licensesArr = action.identifiers.filter((x) => x.substring(0, 8) == 'license:').map((x) => x.substring(8));
                 if (licensesArr.length) {
-                    const players = await dbo.get('players')
+                    const players = await dbo.chain.get('players')
                         .filter((p) => licensesArr.includes(p.license))
                         .take(512)
                         .cloneDeep()
@@ -128,9 +129,11 @@ async function handleSearch(ctx, dbo) {
 
         //Likely searching for an partial name
         } else {
-            const players = await dbo.get('players')
+            //FIXME: use fuse.js
+            const { pureName } = cleanPlayerName(searchString);
+            const players = await dbo.chain.get('players')
                 .filter((p) => {
-                    return p.name && p.name.toLowerCase().includes(searchString.toLowerCase());
+                    return p.pureName && p.pureName.includes(pureName);
                 })
                 .take(512)
                 .cloneDeep()
@@ -197,7 +200,7 @@ async function handleDefault(ctx, dbo) {
  */
 async function getStats(dbo) {
     try {
-        const actionStats = await dbo.get('actions')
+        const actionStats = await dbo.chain.get('actions')
             .reduce((acc, a, ind) => {
                 if (a.type == 'ban') {
                     acc.bans++;
@@ -210,7 +213,7 @@ async function getStats(dbo) {
             }, {bans:0, warns:0, whitelists:0})
             .value();
 
-        const playerStats = await dbo.get('players')
+        const playerStats = await dbo.chain.get('players')
             .reduce((acc, p, ind) => {
                 acc.players++;
                 acc.playTime += p.playTime;
@@ -268,7 +271,7 @@ async function getStats(dbo) {
  */
 async function getPendingWL(dbo, limit) {
     try {
-        let pendingWL = await dbo.get('pendingWL')
+        let pendingWL = await dbo.chain.get('pendingWL')
             .orderBy('tsLastAttempt', 'desc')
             .take(limit)
             .cloneDeep()
@@ -312,7 +315,7 @@ async function getPendingWL(dbo, limit) {
  */
 async function getLastActions(dbo, limit) {
     try {
-        const lastActions = await dbo.get('actions')
+        const lastActions = await dbo.chain.get('actions')
             .takeRight(limit)
             .reverse()
             .cloneDeep()
@@ -335,7 +338,7 @@ async function getLastActions(dbo, limit) {
  */
 async function getLastPlayers(dbo, limit) {
     try {
-        const lastPlayers = await dbo.get('players')
+        const lastPlayers = await dbo.chain.get('players')
             .takeRight(limit)
             .reverse()
             .cloneDeep()
@@ -419,7 +422,7 @@ async function processPlayerList(list) {
         .filter(l => l);
     return list.map((p) => {
         return {
-            name: p.name,
+            name: p.displayName,
             license: p.license,
             joined: (new Date(p.tsJoined * 1000)).toLocaleString(),
             color: (activeLicenses.includes(p.license)) ? 'success' : 'dark',

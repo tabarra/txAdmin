@@ -3,6 +3,7 @@ import path from 'path';
 import fse from 'fs-extra';
 import ejs from 'ejs';
 import chalk from 'chalk';
+import xssInstancer from '@core/extras/xss.js';
 import * as helpers from '@core/extras/helpers.js';
 import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
@@ -10,6 +11,7 @@ import { convars, txEnv, verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
+const xss = xssInstancer();
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
@@ -20,7 +22,7 @@ const getRenderErrorText = (view, error, data) => {
     out += `Message: ${error.message}\n`;
     out += 'The data provided was:\n';
     out += '================\n';
-    out += JSON.stringify(data, null, 2);
+    out += xss(JSON.stringify(data, null, 2));
     out += '</pre>\n';
     return out;
 };
@@ -300,8 +302,8 @@ export default async function WebCtxUtils(ctx, next) {
     ctx.utils.hasPermission = (perm) => {
         return hasPermission(ctx, perm);
     };
-    ctx.utils.testPermission = (perm, fromCtx, printWarn) => {
-        return testPermission(ctx, perm, fromCtx, printWarn);
+    ctx.utils.testPermission = (perm, fromCtx) => {
+        return testPermission(ctx, perm, fromCtx);
     };
 
     return next();
