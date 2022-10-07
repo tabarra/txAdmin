@@ -106,6 +106,13 @@ option:disabled {
     border-radius: 0.2rem;
     vertical-align: text-bottom;
 }
+.btn-inline-sm {
+    padding: 0.1rem 0.2rem;
+    font-size: .75rem;
+    line-height: 1;
+    border-radius: 0.2rem;
+    vertical-align: text-bottom;
+}
 
 
 /* Theme dependant */

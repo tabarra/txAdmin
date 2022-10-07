@@ -5,6 +5,7 @@ import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { verbose } from '@core/globalData.js';
 import { DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
+import { cloneDeep } from 'lodash-es';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -45,7 +46,12 @@ export class BasePlayer {
      * Returns all actions related to all available ids
      */
     getHistory() {
-        //if any identifier
+        if (!this.ids.length) return [];
+        let searchIds = [...this.ids];
+        if (this.dbData && this.dbData.ids) {
+            searchIds = searchIds.concat(this.dbData.ids.filter(id => !searchIds.includes(id)))
+        }
+        return this.dbInstance.getRegisteredActions(searchIds);
     }
 
     ban() {
@@ -69,6 +75,7 @@ export class ServerPlayer extends BasePlayer {
     readonly tsConnected = now();
     readonly isRegistered: boolean;
     readonly #minuteCronInterval?: ReturnType<typeof setInterval>;
+    #offlineDbDataCacheTimeout?: ReturnType<typeof setTimeout>;
 
     constructor(netid: number, playerData: PlayerDataType, dbInstance: PlayerDatabase) {
         super(dbInstance);
@@ -112,7 +119,7 @@ export class ServerPlayer extends BasePlayer {
             this.#setupDatabaseData();
             this.isRegistered = !!this.dbData;
             this.#minuteCronInterval = setInterval(this.#minuteCron.bind(this), 60_000);
-        }else{
+        } else {
             this.isRegistered = false;
         }
     }
@@ -120,6 +127,7 @@ export class ServerPlayer extends BasePlayer {
 
     /**
      * 
+     * NOTE: if player has license, we are guaranteeing license will be added to the database ids array
      */
     #setupDatabaseData() {
         if (!this.license || !this.isConnected) return;
@@ -165,9 +173,32 @@ export class ServerPlayer extends BasePlayer {
         }
     }
 
+    /**
+     * Returns a clone of this.dbData.
+     * If the data is not available, it means the player was disconnected and dbData wiped to save memory,
+     * so start an 120s interval to wipe it from memory again. This period can be considered a "cache"
+     */
+    getDbData() {
+        if (this.dbData) {
+            return cloneDeep(this.dbData);
+        } else if (this.license && this.isRegistered) {
+            const dbPlayer = this.dbInstance.getPlayerData(this.license);
+            if (! dbPlayer) return false;
+
+            this.dbData = dbPlayer;
+                clearTimeout(this.#offlineDbDataCacheTimeout); //maybe not needed?
+                this.#offlineDbDataCacheTimeout = setTimeout(() => {
+                    this.dbData = false;
+                }, 120_000);
+                return cloneDeep(this.dbData);
+        } else {
+            return false;
+        }
+    }
+
 
     /**
-     * 
+     *  
      */
     #minuteCron() {
         if (!this.dbData || !this.isConnected) return;
@@ -222,6 +253,13 @@ export class DatabasePlayer extends BasePlayer {
         this.license = license;
         this.ids = dbPlayer.ids;
         this.displayName = dbPlayer.displayName;
-        this.pureName = dbPlayer.pureName; 
+        this.pureName = dbPlayer.pureName;
+    }
+
+    /**
+     * Returns a clone of this.dbData
+     */
+    getDbData() {
+        return cloneDeep(this.dbData);
     }
 }

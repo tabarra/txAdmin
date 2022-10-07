@@ -19,7 +19,7 @@ export type DatabaseActionType = {
     playerName: string | false;
     type: 'ban' | 'warn' | 'whitelist';
     author: string;
-    reason: string | null; //whitelists are saving it as null
+    reason: string;
     timestamp: number;
     expiration: number | false;
     revocation: {

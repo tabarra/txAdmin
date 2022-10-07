@@ -28,6 +28,8 @@
     - there will be 2 player.dbData, states that can be overwritten.
     - potential solution is to always prioritize ServerPlayer on player resolver
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
+- [ ] FIXME: settings > player manager > save is erroring out
+- [ ] the diagnostics reporting button thing
 
 Maybe after v5:
 - [ ] server logger add events/min average

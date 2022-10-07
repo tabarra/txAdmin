@@ -4,8 +4,11 @@ import PlayerlistManager from "@core/components/PlayerlistManager/index.js";
 import { DatabasePlayer, ServerPlayer } from "./playerClasses.js"
 
 /**
- * Resolves a ServerPlayer or ServerPlayer based on mutex, netid and license.
+ * Resolves a ServerPlayer or DatabasePlayer based on mutex, netid and license.
  * When mutex#netid is present, it takes precedence over license.
+ * If the mutex is not from the current server, search for the license in playerlistManager.licenseCache[]
+ * and then search for the license in the database.
+ * 
  * FIXME: pass serverInstance when multiserver
  */
 export default (mutex: any, netid: any, license: any) => {
@@ -22,9 +25,11 @@ export default (mutex: any, netid: any, license: any) => {
         if (mutex === fxRunner?.currentMutex) {
             //If the mutex is from the server currently online
             const player = playerlistManager.playerlist[netid];
-            return (player instanceof ServerPlayer)
-                ? { player }
-                : { error: 'player not found in current server playerlist' };
+            if (player instanceof ServerPlayer) {
+                return player;
+            } else {
+                throw new Error(`player not found in current server playerlist`);
+            }
         } else {
             // If mutex is from previous server, overwrite any given license
             const searchRef = `${mutex}#${netid}`;
@@ -35,12 +40,8 @@ export default (mutex: any, netid: any, license: any) => {
 
     //If license provided or resolved through licenseCache, search in the database
     if (typeof searchLicense === 'string' && searchLicense.length) {
-        try {
-            return { player: new DatabasePlayer(searchLicense, playerDatabase) };
-        } catch (error) {
-            return { error: (error as Error).message }
-        }
+        return new DatabasePlayer(searchLicense, playerDatabase)
     } else {
-        return { error: 'this player is not connected to the server and has no license identifier' }
+        throw new Error(`this player is not connected to the server and has no license identifier`);
     }
 } 

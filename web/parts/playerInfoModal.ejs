@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modPlayerTitle">Loading...</h5>
+                <h4 class="modal-title" id="modPlayerTitle">Loading...</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -32,11 +32,29 @@
                         <div class="tab-content">
 
                             <!-- Tab modPlayerMain -->
-                            <div class="tab-pane fade show active" id="modPlayerMain" role="tabpanel" aria-labelledby="modPlayerMain-tab">
-                                <h5>Player Info:</h5>
+                            <div class="tab-pane fade show active" id="modPlayerMain" role="tabpanel" aria-labelledby="modPlayerMain-tab" style="font-size: medium;">
                                 <strong>Session time:</strong> <span id="modPlayerMain-sessionTime">--</span> <br>
                                 <strong>Play time:</strong> <span id="modPlayerMain-playTime">--</span> <br>
                                 <strong>Join date:</strong> <span id="modPlayerMain-joinDate">--</span> <br>
+
+                                <strong>Whitelisted:</strong>
+                                <span id="modPlayerMain-whitelisted">not yet</span>
+                                <button class="btn btn-inline-sm btn-success" type="button" id="modPlayerMain-whitelistAddBtn">
+                                    ADD WL
+                                </button>
+                                <button class="btn btn-inline-sm btn-dark" type="button" id="modPlayerMain-whitelistRemoveBtn">
+                                    REMOVE WL
+                                </button>
+                                <br>
+
+                                <strong>Log:</strong>
+                                <span id="modPlayerMain-logCountBans" class="text-danger">1 ban</span>,
+                                <span id="modPlayerMain-logCountWarns" class="text-warning">2 warns</span>
+                                <button class="btn btn-inline-sm btn-dark" type="button" id="modPlayerMain-logDetailsBtn">
+                                    DETAILS
+                                </button>
+                                <br>
+
                                 <div class="form-group row m-0 mt-2">
                                     <label for="modPlayerFormNotes">
                                         <strong>Notes:</strong>
@@ -52,9 +70,26 @@
                             <!-- Tab modPlayerIDs -->
                             <div class="tab-pane fade" id="modPlayerIDs" role="tabpanel" aria-labelledby="modPlayerIDs-tab">
                                 <h5>Player Identifiers:</h5>
-                                <code id="modPlayerIDs-list">
+                                <style>
+                                    /* NOTE: this really shouldn't be here, but it's very temporary */
+                                    .idsBox {
+                                        overflow: auto;
+                                        height: 100%;
+                                    }
+                                    .idsText {
+                                        border-radius: 4px;
+                                        padding: 6px 8px;
+                                        margin-bottom: 7px;
+                                        display: flex;
+                                        align-items: center;
+                                        font-family: monospace;
+                                        font-size: medium;
+                                        letter-spacing: 0.05rem;
+                                    }
+                                </style>
+                                <div class="idsBox" id="modPlayerIDs-list">
                                     Loading...
-                                </code>
+                                </div>
                             </div>
 
                             <!-- Tab modPlayerHistory -->

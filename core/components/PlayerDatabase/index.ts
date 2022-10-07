@@ -108,13 +108,11 @@ export default class PlayerDatabase {
     /**
      * Searches for any registered action in the database by a list of identifiers and optional filters
      * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revocation.timestamp: null})
-     * @param idArray identifiers array
-     * @param filter lodash-compatible filter object/function
      */
     getRegisteredActions(
         idArray: string[],
         filter: Exclude<object, null> | Function = {}
-    ): Promise<DatabaseActionType> {
+    ): DatabaseActionType[] {
         if(!this.#db.obj) throw new Error(`database not ready yet`);
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
