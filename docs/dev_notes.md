@@ -12,7 +12,8 @@
         - create array for old identifiers
         - whitelist becomes a player prop, removes from actions
         - remove empty notes
-- [ ] get player modal (log, playerlist, db players page)
+- [x] get player modal (log, playerlist, db players page)
+- [ ] replace playerList.ejs dbActionsToHtmlListOld with the players.js one
 - [ ] fix player modal in nui menu
 - [ ] player db actions
 - [ ] join check + whitelist

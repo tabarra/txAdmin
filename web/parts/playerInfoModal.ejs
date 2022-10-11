@@ -1,6 +1,6 @@
 <!-- Player info modal -->
 <div class="modal fade" id="modPlayer" tabindex="-1" role="dialog" aria-labelledby="modPlayerTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 680px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="modPlayerTitle">Loading...</h4>
@@ -9,7 +9,7 @@
                 </button>
             </div>
 
-            <div class="modal-body" style="min-height: 240px;">
+            <div class="modal-body" style="min-height: 280px;">
                 <div class="text-center p-3" style="height: 100px; font-size: larger;" id="modPlayerMessage">
                     <div class="txSpinner">Loading...</div>
                 </div>
@@ -69,7 +69,7 @@
 
                             <!-- Tab modPlayerIDs -->
                             <div class="tab-pane fade" id="modPlayerIDs" role="tabpanel" aria-labelledby="modPlayerIDs-tab">
-                                <h5>Player Identifiers:</h5>
+                                <h5>Current Identifiers:</h5>
                                 <style>
                                     /* NOTE: this really shouldn't be here, but it's very temporary */
                                     .idsBox {
@@ -102,7 +102,6 @@
 
                             <!-- Tab modPlayerBan -->
                             <div class="tab-pane fade" id="modPlayerBan" role="tabpanel" aria-labelledby="modPlayerBan-tab">
-                                <h5>Ban Player:</h5>
                                 <div class="form-group row">
                                     <label for="modPlayerBan-reason" class="col-sm-3 col-form-label">
                                         Reason

@@ -11,42 +11,10 @@
     .pInfoCallout small{
         letter-spacing: .04em;
     }
-    .txInlineBtn{
-        border-radius: .25rem;
-        line-height: 1;
-        text-align: center;
-        white-space: nowrap;
-        letter-spacing: 0.1rem;
-    }
-    .txActionsBtn{
-        font-size: 85%;
-        font-weight: 700;
-        padding: .25rem !important;
-        vertical-align: top;
-    }
     .txWhitelistBtn{
         font-size: 65%;
         padding: .2rem !important;
         vertical-align: text-top;
-    }
-
-    .logEntry{
-        color: #768192;
-        padding: .15rem 0.55rem;
-        margin-bottom: 4px !important;
-    }
-    .logEntry:hover{
-        background-color: #ebedef;
-    }
-    .logEntry:hover button{
-        color: #fff;
-        background-color: #636f83;
-    }
-    .logEntry small{
-        margin-top: .25em;
-    }
-    .logEntryClickable{
-        cursor: pointer;
     }
 
     .searchTab{
@@ -382,36 +350,6 @@
     const permsDisableWhitelist = ('<%= permsDisable.whitelist %>' === 'true');
 
 
-
-    //============================================== Action revocation
-    //TODO: make an confirmation modal
-    function revokeAction(action_id){
-        if(!action_id){
-            return $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
-        }
-
-        const notify = $.notify({ message: '<p class="text-center">Revoking...</p>' }, {});
-        txAdminAPI({
-            type: "POST",
-            url: '/player/revoke_action',
-            timeout: REQ_TIMEOUT_LONG,
-            data: {action_id},
-            dataType: 'json',
-            success: function (data) {
-                if (checkApiLogoutRefresh(data)) return;
-                notify.update('progress', 0);
-                notify.update('type', data.type);
-                notify.update('message', data.message);
-            },
-            error: function (xmlhttprequest, textstatus, message) {
-                notify.update('progress', 0);
-                notify.update('type', 'danger');
-                notify.update('message', message);
-            }
-        });
-    }
-
-
     //============================================== Whitelist an ID via prompt or button click
     async function whitelistID(reference){
         if(!reference){
@@ -543,8 +481,8 @@
                     return;
                 }
                 searchMessage.innerText = data.message;
-                dbPlayersSearchTab.innerHTML = dbPlayersToHtml(data.resPlayers);
-                dbActionsSearchTab.innerHTML = dbActionsToHtml(data.resActions);
+                dbPlayersSearchTab.innerHTML = dbPlayersToHtmlList(data.resPlayers);
+                dbActionsSearchTab.innerHTML = dbActionsToHtmlListOld(data.resActions, permsDisableWarn, permsDisableBan);
                 if(data.resPlayers.length && !data.resActions.length){
                     dbActionsTab.classList.remove('active');
                     dbActionsContent.classList.remove('show', 'active');
@@ -565,7 +503,7 @@
     }
 
     //Converts players array to html
-    function dbPlayersToHtml(players){
+    function dbPlayersToHtmlList(players){
         if(!players.length){
             return `<div class="text-center">
                 <h3 class="mx-auto pt-3 text-secondary">no players found</h3>
@@ -588,7 +526,8 @@
     }
 
     //Converts actions array to html
-    function dbActionsToHtml(actions){
+    //FIXME: delete!
+    function dbActionsToHtmlListOld(actions, _permsDisableWarn, _permsDisableBan){
         if(!actions.length){
             return `<div class="text-center">
                 <h3 class="mx-auto pt-3 text-secondary">no actions found</h3>

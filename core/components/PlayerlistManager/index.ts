@@ -75,7 +75,6 @@ export default class PlayerlistManager {
 
     /**
      * Handler for all txAdminPlayerlistEvent structured trace events
-     * @param {*} payload
      */
     async handleServerEvents(payload: any, mutex: string) {
         if (payload.event === 'playerJoining') {

@@ -122,6 +122,58 @@ function processPlayers(players, mutex) {
 
 
 //================================================================
+//============================================ Player Actions HTML
+//================================================================
+function dbActionToHtml(action, permsDisableWarn, permsDisableBan, serverTime){
+    let revokeButton = '';
+    if(!permsDisableBan){
+        if(
+            action.revokedBy ||
+            (action.type == 'warn' && permsDisableWarn) ||
+            (action.type == 'ban' && permsDisableBan)
+        ){
+            revokeButton = `&nbsp;<span class="badge badge-outline-light btn-inline-sm txActionsBtn">REVOKE</span>`; 
+        }else{
+            revokeButton = `&nbsp;<button onclick="revokeAction('${xss(action.id)}')" 
+                    class="btn btn-secondary btn-inline-sm txActionsBtn">REVOKE</button>`; 
+        }
+    }
+    const reason = (action.reason)? xss(action.reason) : '';
+    const actionDate = (new Date(action.ts * 1000)).toLocaleString()
+
+    let footerNote, actionColor, actionMessage;
+    if (action.type == 'ban') {
+        actionColor = 'danger';
+        actionMessage = `BANNED by ${xss(action.author)}`;
+    } else if (action.type == 'warn') {
+        actionColor = 'warning';
+        actionMessage = `WARNED by ${xss(action.author)}`;
+    }
+    if (action.revokedBy) {
+        actionColor = 'dark';
+        footerNote = `Revoked by ${action.revokedBy}.`;
+    }
+    if (typeof action.exp == 'number') {
+        const expirationDate = (new Date(action.exp * 1000)).toLocaleString();
+        footerNote = (action.exp < serverTime) ? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
+    }
+    const footerNoteHtml = (footerNote)? `<small class="d-block">${footerNote}</small>` : '';
+
+    return `<div class="list-group-item list-group-item-accent-${xss(actionColor)} logEntry">
+        <div class="d-flex w-100 justify-content-between">
+            <strong>${actionMessage}</strong>
+            <small class="text-right">
+                <span class="text-monospace font-weight-bold">(${xss(action.id)})</span>
+                ${xss(actionDate)}
+                ${revokeButton}
+            </small>
+        </div>
+        <span>${reason}</span>
+        ${footerNoteHtml}
+    </div>`;
+}
+
+//================================================================
 //============================================== Player Info Modal
 //================================================================
 //Preparing variables
@@ -324,13 +376,13 @@ function showPlayer(playerRef) {
                 let logElements = [];
                 for (const action of player.actionHistory) {
                     counts[action.type]++;
-                    logElements.push(`<div class="list-group-item
-                        list-group-item-accent-${xss(action.color)} player-history-entry">
-                            [${xss(action.date)}]<strong>[${xss(action.type)}]</strong>
-                            ${xss(action.reason)} (${xss(action.author)})
-                        </div>`);
+                    logElements.push(dbActionToHtml(action, !meta.tmpPerms.warn, !meta.tmpPerms.ban, meta.serverTime));
                 }
-                modPlayer.History.list.innerHTML = logElements.join('\n');
+                modPlayer.History.list.innerHTML = [
+                    `<div class="list-group list-group-accent thin-scroll" style="overflow-y: scroll; max-height: 55vh;">`,
+                    ...logElements,
+                    `</div>`
+                ].join('\n');
 
                 modPlayer.Main.logCountBans.innerText = (counts.bans === 1) ? '1 ban' : `${counts.ban} bans`;
                 if(counts.ban) modPlayer.Main.logCountBans.classList.add('text-danger');

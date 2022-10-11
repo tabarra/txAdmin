@@ -44,6 +44,8 @@ export class BasePlayer {
 
     /**
      * Returns all actions related to all available ids
+     * NOTE: theoretically ServerPlayer.setupDatabaseData() guarantees that DatabasePlayer.dbData.ids array
+     *  will contain the license but may be better to also explicitly add it to the array here?
      */
     getHistory() {
         if (!this.ids.length) return [];

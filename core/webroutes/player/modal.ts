@@ -107,8 +107,8 @@ export default async function PlayerModal(ctx: Context) {
         }
     }
 
-    ogConsole.dir(metaFields);
-    ogConsole.dir(playerData);
+    // ogConsole.dir(metaFields);
+    // ogConsole.dir(playerData);
     return sendTypedResp({
         meta: metaFields,
         player: playerData

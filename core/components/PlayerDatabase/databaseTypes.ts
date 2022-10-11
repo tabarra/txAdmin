@@ -17,7 +17,7 @@ export type DatabaseActionType = {
     id: string;
     identifiers: string[];
     playerName: string | false;
-    type: 'ban' | 'warn' | 'whitelist';
+    type: 'ban' | 'warn';
     author: string;
     reason: string;
     timestamp: number;
