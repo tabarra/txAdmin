@@ -81,6 +81,7 @@ export default class PlayerlistManager {
             try {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
                 if (typeof this.playerlist[payload.id] !== 'undefined') throw new Error(`duplicated player id`);
+                //TODO: pass serverInstance instead of playerDatabase
                 this.playerlist[payload.id] = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
                 this.#txAdmin.logger.server.write([{
                     type: 'playerJoining',

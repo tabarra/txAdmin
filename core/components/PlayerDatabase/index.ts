@@ -9,6 +9,7 @@ import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database }
 import { genActionID, genWhitelistID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionType, DatabasePlayerType } from './databaseTypes';
+import { cloneDeep } from 'lodash-es';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -92,14 +93,16 @@ export default class PlayerDatabase {
 
 
     /**
-     * Updates a player setting assigning srcData props to the database player
+     * Updates a player setting assigning srcData props to the database player.
+     * The source data object is deep cloned to prevent weird side effects.
      */
     updatePlayer(license: string, srcData: Exclude<object, null>): DatabasePlayerType {
         if(!this.#db.obj) throw new Error(`database not ready yet`);
+        const playerDbObj = this.#db.obj.chain.get('players').find({ license });
+        if(!playerDbObj.value()) throw new Error('Player not found in database');
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
-        return this.#db.obj.chain.get('players')
-            .find({ license })
-            .assign(srcData)
+        return playerDbObj
+            .assign(cloneDeep(srcData))
             .cloneDeep()
             .value();
     }

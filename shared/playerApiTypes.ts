@@ -1,3 +1,7 @@
+export type PlayerApiError = {
+    error: string;
+}
+
 //Already compliant with new db specs
 export type PlayerHistoryItem = {
     id: string;
@@ -47,7 +51,9 @@ export type PlayerModalSuccess = {
     meta: PlayerModalMeta
     player: PlayerModalPlayerData,
 }
-export type PlayerModalError = {
-    error: string;
+export type PlayerModalResp = PlayerModalSuccess | PlayerApiError;
+
+export type PlayerActionOk = {
+    success: true;
 }
-export type PlayerModalResp = PlayerModalSuccess | PlayerModalError;
+export type PlayerActionResp = PlayerActionOk | PlayerApiError;

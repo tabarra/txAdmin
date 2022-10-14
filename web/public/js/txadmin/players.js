@@ -124,22 +124,22 @@ function processPlayers(players, mutex) {
 //================================================================
 //============================================ Player Actions HTML
 //================================================================
-function dbActionToHtml(action, permsDisableWarn, permsDisableBan, serverTime){
+function dbActionToHtml(action, permsDisableWarn, permsDisableBan, serverTime) {
     let revokeButton = '';
-    if(!permsDisableBan){
-        if(
+    if (!permsDisableBan) {
+        if (
             action.revokedBy ||
             (action.type == 'warn' && permsDisableWarn) ||
             (action.type == 'ban' && permsDisableBan)
-        ){
-            revokeButton = `&nbsp;<span class="badge badge-outline-light btn-inline-sm txActionsBtn">REVOKE</span>`; 
-        }else{
+        ) {
+            revokeButton = `&nbsp;<span class="badge badge-outline-light btn-inline-sm txActionsBtn">REVOKE</span>`;
+        } else {
             revokeButton = `&nbsp;<button onclick="revokeAction('${xss(action.id)}')" 
-                    class="btn btn-secondary btn-inline-sm txActionsBtn">REVOKE</button>`; 
+                    class="btn btn-secondary btn-inline-sm txActionsBtn">REVOKE</button>`;
         }
     }
-    const reason = (action.reason)? xss(action.reason) : '';
-    const actionDate = (new Date(action.ts * 1000)).toLocaleString()
+    const reason = (action.reason) ? xss(action.reason) : '';
+    const actionDate = (new Date(action.ts * 1000)).toLocaleString();
 
     let footerNote, actionColor, actionMessage;
     if (action.type == 'ban') {
@@ -157,7 +157,7 @@ function dbActionToHtml(action, permsDisableWarn, permsDisableBan, serverTime){
         const expirationDate = (new Date(action.exp * 1000)).toLocaleString();
         footerNote = (action.exp < serverTime) ? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
     }
-    const footerNoteHtml = (footerNote)? `<small class="d-block">${footerNote}</small>` : '';
+    const footerNoteHtml = (footerNote) ? `<small class="d-block">${footerNote}</small>` : '';
 
     return `<div class="list-group-item list-group-item-accent-${xss(actionColor)} logEntry">
         <div class="d-flex w-100 justify-content-between">
@@ -385,9 +385,9 @@ function showPlayer(playerRef) {
                 ].join('\n');
 
                 modPlayer.Main.logCountBans.innerText = (counts.bans === 1) ? '1 ban' : `${counts.ban} bans`;
-                if(counts.ban) modPlayer.Main.logCountBans.classList.add('text-danger');
+                if (counts.ban) modPlayer.Main.logCountBans.classList.add('text-danger');
                 modPlayer.Main.logCountWarns.innerText = (counts.warns === 1) ? '1 warn' : `${counts.warn} warns`;
-                if(counts.warn) modPlayer.Main.logCountWarns.classList.add('text-warning');
+                if (counts.warn) modPlayer.Main.logCountWarns.classList.add('text-warning');
             }
 
             //Show modal body
@@ -417,38 +417,62 @@ modPlayer.Main.notes.addEventListener('keydown', (event) => {
     if (event.keyCode == 13 && !event.shiftKey) {
         event.preventDefault();
         setNoteMessage('Saving...', 'warning');
-        const data = {
-            note: modPlayer.Main.notes.value,
-        };
         txAdminAPI({
             type: 'POST',
-            url: '/player/save_note', //FIXME: modPlayer.currPlayerRefString
+            url: `/player/save_note?${modPlayer.currPlayerRefString}`,
             timeout: REQ_TIMEOUT_LONG,
-            data: data,
+            data: { note: modPlayer.Main.notes.value },
             dataType: 'json',
             success: function (data) {
-                if (typeof data.message == 'string' && typeof data.type == 'string') {
-                    setNoteMessage(data.message, data.type);
+                if (data.success === true) {
+                    setNoteMessage('Note saved.', 'success');
                 } else {
-                    setNoteMessage('Failed to save with error: wrong return format', 'danger');
+                    setNoteMessage(data.error || 'unknown error', 'danger');
                 }
             },
             error: function (xmlhttprequest, textstatus, message) {
-                setNoteMessage(`Failed to save with error: ${message}`, 'danger');
+                setNoteMessage(`Failed to save: ${message}`, 'danger');
             },
         });
     }
 });
 
-
+//Whitelist
+function setPlayerWhitelistStatus(status) {
+    const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+    txAdminAPI({
+        type: "POST",
+        url: `/player/whitelist?${modPlayer.currPlayerRefString}`,
+        timeout: REQ_TIMEOUT_LONG,
+        data: { status },
+        dataType: 'json',
+        success: function (data) {
+            if (data.success === true) {
+                notify.update('type', 'success');
+                notify.update('message', 'Whitelist status changed.');
+            } else {
+                notify.update('type', 'danger');
+                notify.update('message', data.error || 'unknown error');
+            }
+            showPlayer(modPlayer.currPlayerRef);
+            notify.update('progress', 0);
+            
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        }
+    });
+}
 modPlayer.Main.whitelistAddBtn.addEventListener('click', (event) => {
-    alert('whitelistAddBtn');
+    setPlayerWhitelistStatus(true);
 });
 modPlayer.Main.whitelistRemoveBtn.addEventListener('click', (event) => {
-    alert('whitelistRemoveBtn');
+    setPlayerWhitelistStatus(false);
 });
 modPlayer.Main.logDetailsBtn.addEventListener('click', (event) => {
-    alert('logDetailsBtn');
+    modPlayer.History.tab.click();
 });
 
 
@@ -464,6 +488,33 @@ function searchPlayer() {
     } else {
         window.location = TX_BASE_PATH + '/player/list#' + encodeURI(idsString);
     }
+}
+
+//============================================== Action revocation
+function revokeAction(action_id) {
+    if (!action_id) {
+        return $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
+    }
+
+    const notify = $.notify({ message: '<p class="text-center">Revoking...</p>' }, {});
+    txAdminAPI({
+        type: "POST",
+        url: '/player/revoke_action',
+        timeout: REQ_TIMEOUT_LONG,
+        data: { action_id },
+        dataType: 'json',
+        success: function (data) {
+            if (checkApiLogoutRefresh(data)) return;
+            notify.update('progress', 0);
+            notify.update('type', data.type);
+            notify.update('message', data.message);
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        }
+    });
 }
 
 

@@ -13,24 +13,39 @@
         - whitelist becomes a player prop, removes from actions
         - remove empty notes
 - [x] get player modal (log, playerlist, db players page)
-- [ ] replace playerList.ejs dbActionsToHtmlListOld with the players.js one
-- [ ] fix player modal in nui menu
-- [ ] player db actions
+- [ ] modal buttons:
+    - [x] action details
+    - [x] set note
+    - [x] add/remove wl
+    - [ ] warn
+    - [ ] revoke action
+    - [ ] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`)
+    - [ ] dm/kick (outside player object)
+- [ ] db revoke_action/ban_ids routes + buttons on players page
+- [ ] whitelist page + actions
 - [ ] join check + whitelist
+- [ ] create new whitelist events
+- [ ] clean PlayerDatabase file (mainly methods)
+- [ ] add last connection date to offline player modal (issue #689)
+- [ ] fix player modal in nui menu
 - [ ] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
 - [ ] remove minSessionTime from everywhere
-- [ ] adaptar kick/dm - mas deixar fora do objeto player
-- [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
 - [ ] tidy up the files, specially comments missing everywhere
-- [ ] checar o que acontece quando tiver mais de um player com mesma license online
-- [ ] update master action > database cleanup (specially case for removing older whitelists) 
+- [ ] migrate warn action id prefix from A to W
+
+- [ ] FIXME: double check what happens when there is more than one player with the same license online
 - [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
     - consider scenario where the player is on the server, and you search for it on the playerlist
     - there will be 2 player.dbData, states that can be overwritten.
     - potential solution is to always prioritize ServerPlayer on player resolver
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
 - [ ] FIXME: settings > player manager > save is erroring out
+
+- [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
+- [ ] update master action > database cleanup (specially case for removing older whitelists) 
+- [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
 - [ ] the diagnostics reporting button thing
+- [ ] apply stashes
 
 Maybe after v5:
 - [ ] server logger add events/min average
@@ -67,86 +82,99 @@ Maybe after v5:
 
 
 
-```ts
-//Required for the migration typescript code
-//FIXME: do I even need this?
-export type DatabaseV1Type = {
-    version: number,
-    players: {
-        license: string;
-        name: string;
-        tsLastConnection: number;
-        playTime: number;
-        tsJoined: number;
-        notes: {
-            text: string;
-            lastAdmin: string | null;
-            tsLastEdit: number | null;
-        };
-    }[],
-    actions: {
-        id: string;
-        identifiers: string[];
-        playerName: string | false; //false when it was based on identifiers only
-        type: 'ban' | 'warn' | 'whitelist';
-        author: string;
-        reason: string | null; //whitelists are saving it as null
-        timestamp: number;
-        expiration: number | false;
-        revocation: {
-            timestamp: number | null;
-            author: string | null;
-        };
-    }[],
-    pendingWL: {
-        id: string;
-        license: string;
-        name: string;
-        tsLastAttempt: number;
-    }[],
-};
+## Cenário com tabelas separadas
+- /db/whitelist:
+    - if license:
+        - find player by license
+        - if player
+            - player.tsWhitelisted = now()/undefined
+            - return
+    - else
+        - register whitelistPreApprovals
 
-```
+- /player/whitelist:
+    - find player by license
+    - if player
+        - player.tsWhitelisted = now()/undefined
+    - else
+        - return error
 
-## BasePlayer
-    - get history
-    - set note
-    - ban
+- checkPlayerJoin:
+    - check active bans on matching identifiers
+    - TODO: when we have discord whitelisting
+        - check here, without interacting with the code below
+    - if no license available:
+        - return deny join: "this server has whitelist enabled, but you do not have a license identifiers"
+    - find player by license
+    - if player
+        - if whitelisted
+            - return allow join
+    - find license or discord id on whitelistPreApprovals
+        - if found
+            - register player
+            - remove entry from whitelistPreApprovals
+            - return allow join
+    - register player in whitelistRequests
+    - return deny join: "blabla <id>"
 
-## ServerPlayer
-- constructor(netid, initialData)
-    - cadastrar no banco
-    - setar timer de update
-- ações do BasePlayer
-- warn action
-
-## DatabasePlayer
-- constructor(dbData)
-    - seta name, ids
-- ações do BasePlayer
+This way:
+- will have both whitelistPreApprovals and whitelistRequests table
+- if pre approved, checkPlayerJoin will register the database player
+- player will still get their request id
+- we can pre-approve by license or discord id
+- daily cron to remove whitelistPreApprovals/whitelistRequests older than 7 days - no settings option unless people ask for it!
 
 
 
+## Routes planning
+User Class:
+- handleSaveNote
+- handleWarning
+- handleBan
+- handleWhitelist
 
-```json
+Server actions -> fxserver_commands:
+- handleMessage
+- handleKick
 
-{
-    "ts": 1663809240000,
-    "type": "playerJoining",
-    "src": {
-        "id": "4FmDe#1",
-        "name": "Tabarra"
-    },
-    "msg": "joined with identifiers [license:9b9fc300cc65d22ad3b536175a4d15c0e4933753; discord:272800190639898628; fivem:271816]"
-}
+Database:
+- handleRevokeAction -> db/revoke_action
+- ban identifiers -> db/ban_ids
+
+Whitelist:
+- get returns
+    - whitelistRequests[]
+    - whitelistPreApprovals[]
+- whitelistPreApprovals (add/remove)
+- whitelistRequests (approve/deny)
 
 
-{"ts":1663809240000,"type":"playerJoining","src":{"id":"4FmDe#1","name":"Tabarra"},"msg":"joined with identifiers [license:9b9fc300cc65d22ad3b536175a4d15c0e4933753; discord:272800190639898628; fivem:271816]"}
+
+## New pages:
+Overview:
+- ???
+
+Players:
+- list of players in a table
+- name + identifiers input
+- auto search with debouncer
+
+History:
+- list of warns/bans in a table
+- search by id OR identifier (single) with select box
+- filter by action type
+
+Whitelist Page/routes:
+- show pre approvals and requests in two tables
+- Routes:
+    - get returns
+        - whitelistRequests[]
+        - whitelistPreApprovals[]
+    - whitelistPreApprovals (add/remove)
+    - whitelistRequests (approve/deny)
 
 
-{"ts":1663756211000,"type":"ChatMessage","src":{"id":false,"name":"txAdmin"},"msg":"((Broadcast) txAdmin): said \"This server is scheduled to restart in 30 minutes.\""}
 
-```
 
 
 
@@ -200,7 +228,7 @@ Optional:
 - [ ] playerlist remove rtl characters
 - [ ] set nui/vite.config.ts > target > chrome103
 
-The Big Things before ts+react rewrite:
+## The Big Things before ts+react rewrite:
 - in-core playerlist state tracking
 - new proxy console util
 - global socket.io connection for playerlist + async responses
@@ -209,12 +237,13 @@ The Big Things before ts+react rewrite:
 - multiserver tx instance (backend only)
 
 
-### Console Rewrite
+## Console Rewrite
 - [ ] Rewrite console logger module to be proxied to node:console
 - [ ] Move verbose to be part of the console (after the functional-ish change)
 - [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
 - [ ] Upgrade chalk, drop the chalk.keyword thing
 - [ ] Search for `node:console`, as i'm using it everywhere to test stuff
+- [ ] Migrate logger function to use the new logger component
 
 ```js
 console.log('aaa', {àa:true});
@@ -239,6 +268,40 @@ process.exit();
 ```
 
 
+## New config
+- do research, but i think we don't need any lib
+- break up cfg files into `txData/<profile>/global.txcfg` and `txData/<profile>/server.txcfg`
+- cfg file format is
+    - trim every line
+    - ignore empty lines or lines starting with // or # (may help people testing stuff, depends on file ext?)
+    - `param_name=<json object>` (usually strings, but we could encode more complex data types if needed)
+    - ignore with warning lines with invalid json objects
+- parameters format suggestion: `playercontroller_onJoinCheckWhitelist` (?)
+- REQUIRING stuff to ve on the config from the setup process is kinda bad (setupProfile.js), but might be good to check if the file is in there
+- at boot, for every default config:
+    - check if the cfg file overwrites it
+    - check if an environment env overwrites it (case insensitive) then print warning (maybe not all vars, due to unauthorized GSPs)
+- warn of any settings in the file that is not being used
+- cfg vault has the defaults in the Zod format (for type safety) or simply
+```js
+const defaults = {
+    playercontroller_onjoincheckwhitelist: {
+        default: false,
+        "accepted types or values??": "??"
+    };
+}
+```
+- maybe get rid of txAdmin.ts passing down specific cfgs, and pass txAdmin instance instead
+- the modules can go `this.config.onJoinCheckWhitelist = txAdmin.cfgVault.configs.playercontroller_onJoinCheckWhitelist`
+- careful because some will passs by value, some may pass as object reference therefore be live updated inside the module
+- modules can do `txAdmin.cfgVault.subscribe(this.refreshConfig.bind(this), [...deps])`
+- settings_get page reads from `txAdmin.cfgVault.configs`, so if a value was overwritten by proc.env, it will not cause confusion
+- settings_save does `txAdmin.cfgVault.save([...])`
+- use zod for validation https://www.npmjs.com/package/zod
+- maybe even use zod's `.default()`?
+
+
+
 
 NOTE: https://github.com/sindresorhus/typescript-definition-style-guide
 
@@ -257,8 +320,6 @@ Up next-ish:
 - [ ] add ram usage to perf chart?
 - [ ] dm via snackbar
 - [ ] wav for announcements
-- [ ] replace `txaDropIdentifiers` with `txAdmin:events:playerBanned` hook
-- [ ] Migrate console log to new logger
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
 - [ ] replace all fxRunner.srvCmd* and only expose:
@@ -626,56 +687,6 @@ TODO: Bot commands (in dev order):
 /info <mention> - shows someone else's info
 /addwl <mention>
 /removewl <mention>
-
-=======================================
-
-## Video tutorials
-Requirements:
-    - 2 non-rp recipes
-    - Separate master actions page
-### [OFFICIAL] How to make a FiveM Server tutorial 2021 for beginners!
-Target: absolute beginners, barely have a vps
-- Requirements:
-    - Needs to be a VPS (show suggestion list)
-    - OS: windows server 2016 or 2019 recommended
-    - Hardware specs recommendation
-    - Download Visual C++
-    - You need a forum account (show page, don't go trough)
-    - Create server key
-    - Download xamp (explain most servers require, show heidisql page)
-- Open firewall ports (show windows + OVH)
-- Download artifact (show difference between latest and latest recommended)
-- Set folder structure
-- Run txAdmin (should open chrome, if it doesn't, then open manually)
-- Open page outside VPS to show the ip:port thing
-- Create master account
-- Setup:
-    - Present options
-    - Run PlumeESX recipe
-    - Master Actions -> Reset FXServer Settings
-    - Setup local folder (show endpoint + server.cfg.txt errors)
-- Show how to create admins
-- Callout for advanced tutorial
-### [OFFICIAL] How to update your FiveM Server tutorial 2021
-Target: server owners that followed the stupid Jeva tutorial
-- Why windows only
-- Show current stupid folder structure
-- Download artifact (show difference between latest and latest recommended)
-- Set new folder structure
-- Run txAdmin (should open chrome, if it doesn't, then open manually)
-- Create master account
-- Setup (show endpoint + server.cfg.txt errors)
-- Show how to create admins
-- Open firewall port 40120 (show windows + OVH)
-- Callout for advanced tutorial
-### [OFFICIAL] txAdmin v3 advanced guide 2021
-Target: average txAdmin users
-- creating admins
-- multiple servers
-- discord bot
-- discord login
-- database pruning 
-- scheduled restarter
 
 =======================================
 

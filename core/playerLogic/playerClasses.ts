@@ -33,13 +33,12 @@ export class BasePlayer {
 
     constructor(protected readonly dbInstance: PlayerDatabase) { }
 
+    /**
+     * Mutates the database data based on a source object to be applied
+     */
     protected mutateDadabase(srcData: Exclude<object, null>) {
-        if (!this.license) throw new Error(`cannot mutate database for a player that hasn o license`);
+        if (!this.license) throw new Error(`cannot mutate database for a player that has no license`);
         this.dbData = this.dbInstance.updatePlayer(this.license, srcData);
-    }
-
-    setNote() {
-        //if dbData?
     }
 
     /**
@@ -54,6 +53,32 @@ export class BasePlayer {
             searchIds = searchIds.concat(this.dbData.ids.filter(id => !searchIds.includes(id)))
         }
         return this.dbInstance.getRegisteredActions(searchIds);
+    }
+
+    /**
+     * Saves notes for this player.
+     * NOTE: Techinically, we should be checking this.isRegistered, but not available in BasePlayer
+     */
+    setNote(text: string, author: string) {
+        if (!this.license) throw new Error(`cannot save notes for a player that has no license`);
+        this.mutateDadabase({
+            notes: {
+                text,
+                lastAdmin: author,
+                tsLastEdit: now(),
+            }
+        });
+    }
+
+    /**
+     * Saves the whitelist status for this player
+     * NOTE: Techinically, we should be checking this.isRegistered, but not available in BasePlayer
+     */
+    setWhitelist(enabled: boolean) {
+        if (!this.license) throw new Error(`cannot set whitelist status for a player that has no license`);
+        this.mutateDadabase({
+            tsWhitelisted: enabled ? now() : undefined,
+        });
     }
 
     ban() {
@@ -185,14 +210,14 @@ export class ServerPlayer extends BasePlayer {
             return cloneDeep(this.dbData);
         } else if (this.license && this.isRegistered) {
             const dbPlayer = this.dbInstance.getPlayerData(this.license);
-            if (! dbPlayer) return false;
+            if (!dbPlayer) return false;
 
             this.dbData = dbPlayer;
-                clearTimeout(this.#offlineDbDataCacheTimeout); //maybe not needed?
-                this.#offlineDbDataCacheTimeout = setTimeout(() => {
-                    this.dbData = false;
-                }, 120_000);
-                return cloneDeep(this.dbData);
+            clearTimeout(this.#offlineDbDataCacheTimeout); //maybe not needed?
+            this.#offlineDbDataCacheTimeout = setTimeout(() => {
+                this.dbData = false;
+            }, 120_000);
+            return cloneDeep(this.dbData);
         } else {
             return false;
         }
