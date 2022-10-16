@@ -1,3 +1,7 @@
+# FIXME: breaking changes
+- didn't note anything before commit d2cfc42e5e0001afce6bafa17df4c7a9a6bbf42d
+- playerBanned event lost the `target` prop
+
 # TODO:
 - [x] player join/leave
 - [x] increment player time
@@ -17,9 +21,9 @@
     - [x] action details
     - [x] set note
     - [x] add/remove wl
-    - [ ] warn
+    - [x] warn
+    - [x] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`) (FIXME: close #625)
     - [ ] revoke action
-    - [ ] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`)
     - [ ] dm/kick (outside player object)
 - [ ] db revoke_action/ban_ids routes + buttons on players page
 - [ ] whitelist page + actions
@@ -41,6 +45,7 @@
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
 - [ ] FIXME: settings > player manager > save is erroring out
 
+- [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
@@ -57,7 +62,12 @@ Maybe after v5:
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 - [ ] create events for dynamic scheduled restarts
 
-
+```ts
+//TODO: remove when removing globals
+const fxRunner = (globals.fxRunner as FXRunner);
+const playerlistManager = (globals.playerlistManager as PlayerlistManager);
+const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+```
 
 
 # REFACTOR DEV:

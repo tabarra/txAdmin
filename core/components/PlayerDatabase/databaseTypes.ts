@@ -15,11 +15,11 @@ export type DatabasePlayerType = {
 };
 export type DatabaseActionType = {
     id: string;
+    type: 'ban' | 'warn';
     identifiers: string[];
     playerName: string | false;
-    type: 'ban' | 'warn';
-    author: string;
     reason: string;
+    author: string;
     timestamp: number;
     expiration: number | false;
     revocation: {
@@ -34,7 +34,7 @@ export type DatabasePendingWLType = {
     tsLastAttempt: number;
 };
 
-export type DatabaseType = {
+export type DatabaseDataType = {
     version: number,
     players: DatabasePlayerType[],
     actions: DatabaseActionType[],

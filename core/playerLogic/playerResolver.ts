@@ -40,7 +40,7 @@ export default (mutex: any, netid: any, license: any) => {
 
     //If license provided or resolved through licenseCache, search in the database
     if (typeof searchLicense === 'string' && searchLicense.length) {
-        return new DatabasePlayer(searchLicense, playerDatabase)
+        return new DatabasePlayer(searchLicense, playerDatabase);
     } else {
         throw new Error(`this player is not connected to the server and has no license identifier`);
     }

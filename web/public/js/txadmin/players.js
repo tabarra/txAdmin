@@ -404,7 +404,9 @@ function showPlayer(playerRef) {
 }
 
 
-// Save Note
+/**
+ * Player note functions
+ */
 function setNoteMessage(msg, type) {
     if (typeof type == 'string') {
         modPlayer.Main.notesLog.innerHTML = `<span class="text-${type}">${msg}</span>`;
@@ -437,7 +439,10 @@ modPlayer.Main.notes.addEventListener('keydown', (event) => {
     }
 });
 
-//Whitelist
+
+/**
+ * Player whitelist function
+ */
 function setPlayerWhitelistStatus(status) {
     const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
     txAdminAPI({
@@ -471,27 +476,111 @@ modPlayer.Main.whitelistAddBtn.addEventListener('click', (event) => {
 modPlayer.Main.whitelistRemoveBtn.addEventListener('click', (event) => {
     setPlayerWhitelistStatus(false);
 });
-modPlayer.Main.logDetailsBtn.addEventListener('click', (event) => {
-    modPlayer.History.tab.click();
-});
 
 
-// Redirect to player search page
-function searchPlayer() {
-    modPlayer.Modal.hide();
+/**
+ * Warn Player
+ */
+async function warnPlayer() {
     if (!modPlayer.currPlayerRefString) return;
-    //FIXME: usar modPlayer.currPlayerRefString
-    const idsString = modPlayer.curr.ids.join(';');
-    if (window.location.pathname == TX_BASE_PATH + '/player/list') {
-        searchInput.value = idsString;
-        performSearch();
-    } else {
-        window.location = TX_BASE_PATH + '/player/list#' + encodeURI(idsString);
+    modPlayer.Modal.hide(); //otherwise we cannot type
+    const reason = await txAdminPrompt({
+        modalColor: 'orange',
+        confirmBtnClass: 'btn-orange',
+        title: 'Warn Player',
+        description: 'Type the warn reason.',
+    });
+    if (reason === false) return;
+
+    if (!reason.length) {
+        return $.notify({ message: '<p class="text-center">The warn reason is required.</p>' }, { type: 'danger' });
     }
+    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+
+    txAdminAPI({
+        type: 'POST',
+        url: `/player/warn?${modPlayer.currPlayerRefString}`,
+        timeout: REQ_TIMEOUT_LONG,
+        data: {reason: reason},
+        dataType: 'json',
+        success: function (data) {
+            if (data.success === true) {
+                notify.update('type', 'success');
+                notify.update('message', 'Player warned.');
+            } else {
+                notify.update('type', 'danger');
+                notify.update('message', data.error || 'unknown error');
+            }
+            notify.update('progress', 0);
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        },
+    });
 }
 
-//============================================== Action revocation
-function revokeAction(action_id) {
+
+/**
+ * Ban Player functions
+ */
+ modPlayer.Ban.durationSelect.onchange = () => {
+    const isDefault = (modPlayer.Ban.durationSelect.value !== 'custom');
+    modPlayer.Ban.durationMultiplier.disabled = isDefault;
+    modPlayer.Ban.durationUnit.disabled = isDefault;
+};
+
+function banPlayer() {
+    if (!modPlayer.currPlayerRefString) return;
+    const reason = modPlayer.Ban.reason.value.trim();
+    if (!reason.length) {
+        $.notify({ message: '<p class="text-center">The ban reason is required.</p>' }, { type: 'danger' });
+        return;
+    }
+    const duration = modPlayer.Ban.durationSelect.value === 'custom'
+        ? `${modPlayer.Ban.durationMultiplier.value} ${modPlayer.Ban.durationUnit.value}`
+        : modPlayer.Ban.durationSelect.value;
+
+    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+    const data = {
+        reason,
+        duration,
+    };
+    txAdminAPI({
+        type: 'POST',
+        url: `/player/ban?${modPlayer.currPlayerRefString}`,
+        timeout: REQ_TIMEOUT_LONG,
+        data: data,
+        dataType: 'json',
+        success: function (data) {
+            if (data.success === true) {
+                notify.update('type', 'success');
+                notify.update('message', 'Player banned.');
+            } else {
+                notify.update('type', 'danger');
+                notify.update('message', data.error || 'unknown error');
+            }
+            notify.update('progress', 0);
+            modPlayer.Modal.hide();
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        },
+    });
+}
+
+
+
+/**
+ * Revoke action
+ * NOTE: also used in the players page
+ */
+ function revokeAction(action_id) {
+    // return alert('not ready yet'); //FIXME: fix this
+    //FIXME: só funcionando pra página de players mas não aqui
     if (!action_id) {
         return $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
     }
@@ -518,8 +607,12 @@ function revokeAction(action_id) {
 }
 
 
-// Message player
-async function messagePlayer() {
+
+/**
+ * Message/DM Player
+ */
+ async function messagePlayer() {
+    return alert('not ready yet'); //FIXME: fix this
     if (!modPlayer.currPlayerRefString) return;
     modPlayer.Modal.hide();
     const message = await txAdminPrompt({
@@ -552,8 +645,12 @@ async function messagePlayer() {
     });
 }
 
-// Kick Player
-async function kickPlayer() {
+
+/**
+ * Kick player
+ */
+ async function kickPlayer() {
+    return alert('not ready yet'); //FIXME: fix this
     //FIXME: o que fazer no caso de kick? pegar var do modPlayer.currPlayerRef ao invés de usar ref string?
     if (modPlayer.curr.netid == false) return;
     modPlayer.Modal.hide();
@@ -592,88 +689,25 @@ async function kickPlayer() {
     });
 }
 
-//Warn Player
-async function warnPlayer() {
-    //FIXME: checar se está online
-    if (!modPlayer.currPlayerRefString) return;
+
+
+/**
+ * Redirect to player search page
+ * FIXME: deprecate!?
+ */
+ function searchPlayer() {
+    return alert('not ready yet'); //FIXME: fix this
     modPlayer.Modal.hide();
-    const reason = await txAdminPrompt({
-        modalColor: 'orange',
-        confirmBtnClass: 'btn-orange',
-        title: 'Warn Player',
-        description: 'Type the warn reason.',
-    });
-    if (reason === false) return;
-
-    if (!reason.length) {
-        return $.notify({ message: '<p class="text-center">The warn reason is required.</p>' }, { type: 'danger' });
-    }
-    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-
-    let data = {
-        reason: reason,
-    };
-    txAdminAPI({
-        type: 'POST',
-        url: '/player/warn', //FIXME: usar modPlayer.currPlayerRefString
-        timeout: REQ_TIMEOUT_LONG,
-        data: data,
-        dataType: 'json',
-        success: function (data) {
-            notify.update('progress', 0);
-            notify.update('type', data.type);
-            notify.update('message', data.message);
-            if (data.type !== 'danger') modPlayer.Modal.hide();
-        },
-        error: function (xmlhttprequest, textstatus, message) {
-            notify.update('progress', 0);
-            notify.update('type', 'danger');
-            notify.update('message', message);
-        },
-    });
-}
-
-// Ban Player
-modPlayer.Ban.durationSelect.onchange = () => {
-    const isDefault = (modPlayer.Ban.durationSelect.value !== 'custom');
-    modPlayer.Ban.durationMultiplier.disabled = isDefault;
-    modPlayer.Ban.durationUnit.disabled = isDefault;
-};
-
-function banPlayer() {
-    const reason = modPlayer.Ban.reason.value.trim();
-    if (!reason.length) {
-        $.notify({ message: '<p class="text-center">The ban reason is required.</p>' }, { type: 'danger' });
-        return;
-    }
-    const duration = modPlayer.Ban.durationSelect.value === 'custom'
-        ? `${modPlayer.Ban.durationMultiplier.value} ${modPlayer.Ban.durationUnit.value}`
-        : modPlayer.Ban.durationSelect.value;
-
-    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-    const data = {
-        reason,
-        duration,
-        reference: (modPlayer.curr.netid !== false) ? modPlayer.curr.netid : modPlayer.curr.ids,
-        // reference: modPlayer.curr.ids,
-    };
+    if (!modPlayer.currPlayerRefString) return;
     //FIXME: usar modPlayer.currPlayerRefString
-    txAdminAPI({
-        type: 'POST',
-        url: '/player/ban',
-        timeout: REQ_TIMEOUT_LONG,
-        data: data,
-        dataType: 'json',
-        success: function (data) {
-            notify.update('progress', 0);
-            notify.update('type', data.type);
-            notify.update('message', data.message);
-            if (data.type !== 'danger') modPlayer.Modal.hide();
-        },
-        error: function (xmlhttprequest, textstatus, message) {
-            notify.update('progress', 0);
-            notify.update('type', 'danger');
-            notify.update('message', message);
-        },
-    });
+    const idsString = modPlayer.curr.ids.join(';');
+    if (window.location.pathname == TX_BASE_PATH + '/player/list') {
+        searchInput.value = idsString;
+        performSearch();
+    } else {
+        window.location = TX_BASE_PATH + '/player/list#' + encodeURI(idsString);
+    }
 }
+modPlayer.Main.logDetailsBtn.addEventListener('click', (event) => {
+    modPlayer.History.tab.click();
+});

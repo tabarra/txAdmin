@@ -47,12 +47,18 @@ Event Data:
 
 ## txAdmin:events:playerBanned (v3.7)
 Called when a player is banned using txAdmin.  
+On update v5.0.0 the field `target` was replaced by `targetNetId` and `targetIds`.
 Event Data:
-- `target`: The id of the player that was banned.
 - `author`: The name of the admin.
 - `reason`: The reason of the ban.
 - `actionId`: The ID of this action.
 - `expiration`: The timestamp for this ban expiration, for `false` if permanent. Added in txAdmin v4.9.
+- `durationInput`: xxx. Added in v5.0.
+- `durationTranslated`: xxx or `null`. Added in v5.0.
+- `targetNetId`: The netid of the player that was banned, or `null` if a ban was applied to identifiers only. Added in v5.0.
+- `targetIds`: The identifiers that were banned. Added in v5.0.
+- `targetName`: The clean name of the banned player, or `identifiers` if ban was applied to ids only (legacy ban). Added in v5.0.
+- `kickMessage`: The message to show the player as a kick reason. Added in v5.0.
 
 
 ## txAdmin:events:playerWhitelisted (v3.7)

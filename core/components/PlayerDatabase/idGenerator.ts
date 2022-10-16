@@ -7,9 +7,11 @@ import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
+import { DatabaseObjectType } from './database';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Consts
+type IdStorageTypes = DatabaseObjectType | Set<string>;
 const maxAttempts = 10;
 const noIdErrorMessage = 'Unnable to generate new Random ID possibly due to the decreased available entropy. Please send a screenshot of the detailed information in the terminal for the txAdmin devs.';
 
@@ -28,7 +30,7 @@ const printDiagnostics = async () => {
         uptime = humanizeDuration(process.uptime() * 1000, humanizeOptions);
         entropy = (await fsp.readFile('/proc/sys/kernel/random/entropy_avail', 'utf8')).trim();
     } catch (error) {
-        entropy = error.message;
+        entropy = (error as Error).message;
     }
 
     const secureStorage = new Set();
@@ -61,7 +63,7 @@ const printDiagnostics = async () => {
  * @param {String} lowdbTable
  * @returns {Boolean} if is unique
  */
-const checkUniqueness = (storage, id, lowdbTable) => {
+const checkUniqueness = (storage: IdStorageTypes, id: string, lowdbTable: string) => {
     if (storage instanceof Set) {
         return !storage.has(id);
     } else {
@@ -74,29 +76,27 @@ const checkUniqueness = (storage, id, lowdbTable) => {
  * @param {Set|Object} storage set or lowdb instance
  * @returns {String} id
  */
-export const genWhitelistID = (storage) => {
-    let attempts = 0;
-    while (attempts < maxAttempts) {
-        attempts++;
-        if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
-        const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
-        const id = 'R' + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
-        if (checkUniqueness(storage, id, 'pendingWL')) {
-            return id;
-        }
-    }
+// export const genWhitelistID = (storage) => {
+//     //FIXME: edit
+//     let attempts = 0;
+//     while (attempts < maxAttempts) {
+//         attempts++;
+//         if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
+//         const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
+//         const id = 'R' + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
+//         if (checkUniqueness(storage, id, 'pendingWL')) {
+//             return id;
+//         }
+//     }
 
-    printDiagnostics().catch();
-    throw new Error(noIdErrorMessage);
-};
+//     printDiagnostics().catch();
+//     throw new Error(noIdErrorMessage);
+// };
 
 /**
  * Generates an unique action ID, or throws an error
- * @param {Set|Object} storage set or lowdb instance
- * @param {String} actionType [warn, ban, whitelist]
- * @returns {String} id
  */
-export const genActionID = (storage, actionType) => {
+export const genActionID = (storage: IdStorageTypes, actionType: string) => {
     const actionPrefix = ((actionType == 'warn') ? 'a' : actionType[0]).toUpperCase();
     let attempts = 0;
     while (attempts < maxAttempts) {

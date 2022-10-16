@@ -1,13 +1,12 @@
 const modulename = 'WebServer:PlayerActions';
 import humanizeDuration from 'humanize-duration';
-import xssInstancer from '@core/extras/xss.js';
 import logger from '@core/extras/console.js';
 import { Context } from 'koa';
 import playerResolver from '@core/playerLogic/playerResolver';
 import { PlayerActionResp } from '@shared/playerApiTypes';
 import { DatabasePlayer, ServerPlayer } from '@core/playerLogic/playerClasses';
+import { calcExpirationFromDuration } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const xss = xssInstancer();
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -88,41 +87,47 @@ async function handleWarning(ctx: Context, sess: any, player: ServerPlayer | Dat
     //Checking request
     if (anyUndefined(
         ctx.request.body,
-        ctx.request.body.id,
         ctx.request.body.reason,
     )) {
         return { error: 'Invalid request.' };
     }
-    const id = parseInt(ctx.request.body.id);
-    if (Number.isNaN(id)) return ctx.send({ type: 'danger', message: 'Invalid ID.' });
-    const reason = ctx.request.body.reason.trim();
+    const reason = (ctx.request.body.reason as string).trim() || 'no reason provided';
 
     //Check permissions
     if (!ctx.utils.testPermission('players.warn', modulename)) {
         return { error: 'You don\'t have permission to execute this action.' }
     }
 
-    //Register action (and checks if player is online)
+    //Validating player
+    if (!(player instanceof ServerPlayer) || !player.isConnected) {
+        return { error: 'This player is not connected to the server.' }
+    }
+    if (!player.ids.length) {
+        return { error: 'Cannot warn a player with no identifiers.' }
+    }
+
+    //Register action
     let actionId;
     try {
-        actionId = await globals.playerController.registerAction(id, 'warn', sess.auth.username, reason);
+        actionId = globals.playerDatabase.registerAction(player.ids, 'warn', sess.auth.username, reason);
     } catch (error) {
-        return ctx.send({ type: 'danger', message: `<b>Error:</b> ${error.message}` });
+        return { error: `Failed to warn player: ${(error as Error).message}` };
     }
-    ctx.utils.logAction(`Warned #${id}: ${reason}`);
+    ctx.utils.logAction(`Warned player [${player.netid}] ${player.displayName}: ${reason}`);
 
     // Dispatch `txAdmin:events:playerWarned`
     const cmdOk = globals.fxRunner.sendEvent('playerWarned', {
-        target: id,
+        target: player.netid,
         author: sess.auth.username,
         reason,
         actionId,
     });
 
-    return ctx.send({
-        type: cmdOk ? 'success' : 'danger',
-        message: `Command sent!`,
-    });
+    if(cmdOk){
+        return { success: true };
+    }else{
+        return { error: `Failed to warn player (stdin error).` };
+    }
 }
 
 
@@ -136,70 +141,47 @@ async function handleBan(ctx: Context, sess: any, player: ServerPlayer | Databas
         anyUndefined(
             ctx.request.body,
             ctx.request.body.duration,
-            ctx.request.body.reference,
             ctx.request.body.reason,
         )
     ) {
         return { error: 'Invalid request.' };
     }
-    let reference = ctx.request.body.reference;
-    const inputDuration = ctx.request.body.duration.trim();
-    const reason = ctx.request.body.reason.trim();
+    const durationInput = ctx.request.body.duration.trim();
+    const reason = (ctx.request.body.reason as string).trim() || 'no reason provided';
 
-    //Converting ID to int
-    if (typeof reference === 'string') {
-        const intID = parseInt(reference);
-        if (isNaN(intID)) {
-            return ctx.send({ type: 'danger', message: 'You must send at least one identifier.' });
-        } else {
-            reference = intID;
-        }
+    //Calculating expiration/duration
+    let calcResults;
+    try {
+        calcResults = calcExpirationFromDuration(durationInput);
+    } catch (error) {
+        return { error: (error as Error).message };
     }
-
-    //Calculating expiration
-    let expiration;
-    let duration;
-    if (inputDuration === 'permanent') {
-        expiration = false;
-    } else {
-        const [multiplierInput, unit] = inputDuration.split(/\s+/);
-        const multiplier = parseInt(multiplierInput);
-        if (isNaN(multiplier) || multiplier < 1) {
-            return ctx.send({ type: 'danger', message: 'The duration multiplier must be a number above 1.' });
-        }
-
-        if (unit.startsWith('hour')) {
-            duration = multiplier * 3600;
-        } else if (unit.startsWith('day')) {
-            duration = multiplier * 86400;
-        } else if (unit.startsWith('week')) {
-            duration = multiplier * 604800;
-        } else if (unit.startsWith('month')) {
-            duration = multiplier * 2592000; //30 days
-        } else {
-            return ctx.send({ type: 'danger', message: 'Invalid ban duration. Supported units: hours, days, weeks, months' });
-        }
-        expiration = now() + duration;
-    }
+    const { expiration, duration } = calcResults;
 
     //Check permissions
     if (!ctx.utils.testPermission('players.ban', modulename)) {
         return { error: 'You don\'t have permission to execute this action.' }
     }
 
-    //Register action (and checks if player is online)
-    let actionId;
-    try {
-        actionId = await globals.playerController.registerAction(reference, 'ban', sess.auth.username, reason, expiration);
-    } catch (error) {
-        return ctx.send({ type: 'danger', message: `<b>Error:</b> ${error.message}` });
+    //Validating player
+    if (!player.ids.length) {
+        return { error: 'Cannot warn a player with no identifiers.' }
     }
 
+    //Register action
+    let actionId;
+    try {
+        actionId = globals.playerDatabase.registerAction(player.ids, 'ban', sess.auth.username, reason, expiration);
+    } catch (error) {
+        return { error: `Failed to ban player: ${(error as Error).message}` };
+    }
+    ctx.utils.logAction(`Banned player ${player.displayName}: ${reason}`);
+
     //Prepare and send command
-    let msg;
+    let kickMessage, durationTranslated;
     const tOptions = {
-        author: xss(sess.auth.username),
-        reason: xss(reason),
+        author: sess.auth.username,
+        reason: reason,
     };
     if (expiration !== false) {
         const humanizeOptions = {
@@ -207,39 +189,33 @@ async function handleBan(ctx: Context, sess: any, player: ServerPlayer | Databas
             round: true,
             units: ['d', 'h'],
         };
-        tOptions.expiration = humanizeDuration((duration) * 1000, humanizeOptions);
-        msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_temporary', tOptions);
+        durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
+        tOptions.expiration = durationTranslated;
+        kickMessage = '[txAdmin] ' + globals.translator.t('ban_messages.kick_temporary', tOptions);
     } else {
-        msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_permanent', tOptions);
-    }
-
-    let cmd, referenceType;
-    if (Array.isArray(reference)) {
-        referenceType = 'Identifiers';
-        cmd = formatCommand('txaDropIdentifiers', reference.join(';'), msg);
-        ctx.utils.logAction(`Banned <${reference.join(';')}>: ${reason}`);
-    } else if (Number.isInteger(reference)) {
-        referenceType = 'Player';
-        cmd = formatCommand('txaKickID', reference, msg);
-        ctx.utils.logAction(`Banned #${reference}: ${reason}`);
-    } else {
-        return ctx.send({ type: 'danger', message: '<b>Error:</b> unknown reference type' });
+        durationTranslated = null;
+        kickMessage = '[txAdmin] ' + globals.translator.t('ban_messages.kick_permanent', tOptions);
     }
 
     // Dispatch `txAdmin:events:playerBanned`
-    globals.fxRunner.sendEvent('playerBanned', {
+    const cmdOk = globals.fxRunner.sendEvent('playerBanned', {
         author: sess.auth.username,
         reason,
         actionId,
-        target: reference,
-        expiration
+        expiration,
+        durationInput,
+        durationTranslated,
+        targetNetId: (player instanceof ServerPlayer) ? player.netid : null,
+        targetIds: player.ids,
+        kickMessage,
+        targetName: player.displayName,
     });
 
-    const writeResult = await globals.fxRunner.srvCmd(cmd);
-    ctx.send({
-        type: 'success',
-        message: `${referenceType} banned.`,
-    });
+    if(cmdOk){
+        return { success: true };
+    }else{
+        return { error: `Failed to ban player (stdin error).` };
+    }
 }
 
 

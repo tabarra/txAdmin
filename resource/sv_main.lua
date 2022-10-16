@@ -60,7 +60,6 @@ CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
-    RegisterCommand("txaDropIdentifiers", txaDropIdentifiers, true)
     RegisterCommand("txaEvent", txaEvent, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
@@ -150,49 +149,6 @@ function txaKickID(source, args)
     CancelEvent()
 end
 
--- Kick any player with matching identifiers
-function txaDropIdentifiers(_, args)
-    if #args ~= 2 then
-        return logError("Invalid arguments for txaDropIdentifiers")
-    end
-    local rawIdentifiers, quotedReason = table.unpack(args)
-
-    local dropMessage = 'no reason provided'
-    if quotedReason ~= nil then dropMessage = unDeQuote(quotedReason) end
-
-    local searchIdentifiers = {}
-    for id in string.gmatch(rawIdentifiers, '([^,;%s]+)') do
-        table.insert(searchIdentifiers, id)
-    end
-
-    -- find players to kick
-    local kickCount = 0
-    for _, playerID in pairs(GetPlayers()) do
-        local identifiers = GetPlayerIdentifiers(playerID)
-        if identifiers ~= nil then
-            local found = false
-            for _, searchIdentifier in pairs(searchIdentifiers) do
-                if found then break end
-
-                for _, playerIdentifier in pairs(identifiers) do
-                    if searchIdentifier == playerIdentifier then
-                        log("Kicking #"..playerID.." with message: "..dropMessage)
-                        kickCount = kickCount + 1
-                        DropPlayer(playerID, dropMessage)
-                        found = true
-                        break
-                    end
-                end
-            end
-
-        end
-    end
-
-    if kickCount == 0 then
-        log("No players found to kick")
-    end
-    CancelEvent()
-end
 
 -- Broadcast admin message to all players
 -- This function is triggered by txaEvent
@@ -209,8 +165,39 @@ local function handleWarnEvent(eventData)
         TriggerClientEvent('txAdminClient:warn', eventData.target, eventData.author, eventData.reason)
         log("Warning "..pName.." with reason: "..eventData.reason)
     else
-        logError('txaWarnID: player not found')
+        logError('handleWarnEvent: player not found')
     end
+end
+
+-- Ban player(s) via netid or identifiers
+-- This function is triggered by txaEvent
+local function handleBanEvent(eventData)
+    local kickCount = 0
+    for _, playerID in pairs(GetPlayers()) do
+        local identifiers = GetPlayerIdentifiers(playerID)
+        if identifiers ~= nil then
+            local found = false
+            for _, searchIdentifier in pairs(eventData.targetIds) do
+                if found then break end
+
+                for _, playerIdentifier in pairs(identifiers) do
+                    if searchIdentifier == playerIdentifier then
+                        log("handleBanEvent: Kicking #"..playerID..": "..eventData.reason)
+                        kickCount = kickCount + 1
+                        DropPlayer(playerID, eventData.kickMessage)
+                        found = true
+                        break
+                    end
+                end
+            end
+
+        end
+    end
+
+    if kickCount == 0 then
+        log("handleBanEvent: No players found to kick")
+    end
+    CancelEvent()
 end
 
 -- Kicks all players and lock joins in preparation for server shutdown
@@ -238,10 +225,12 @@ function txaEvent(source, args)
     local eventData = json.decode(unDeQuote(args[2]))
     TriggerEvent("txAdmin:events:" .. eventName, eventData)
 
-    if eventName == 'playerWarned' then 
-        return handleWarnEvent(eventData)
-    elseif eventName == 'announcement' then 
+    if eventName == 'announcement' then 
         return handleAnnouncementEvent(eventData)
+    elseif eventName == 'playerWarned' then 
+        return handleWarnEvent(eventData)
+    elseif eventName == 'playerBanned' then 
+        return handleBanEvent(eventData)
     elseif eventName == 'serverShuttingDown' then 
         return handleShutdownEvent(eventData)
     end

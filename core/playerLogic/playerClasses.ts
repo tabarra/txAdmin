@@ -19,8 +19,11 @@ const ogConsole = new Console({
     colorMode: true,
 });
 
+
 /**
- * 
+ * Base class for ServerPlayer and DatabasePlayer.
+ * NOTE: player classes are responsible to every and only business logic regarding the player object in the database.
+ * In the future, when actions become part of the player object, algo ass them to these classes.
  */
 export class BasePlayer {
     displayName: string = 'unknown';
@@ -80,10 +83,6 @@ export class BasePlayer {
             tsWhitelisted: enabled ? now() : undefined,
         });
     }
-
-    ban() {
-        //
-    }
 }
 
 
@@ -95,7 +94,7 @@ type PlayerDataType = {
 }
 
 /**
- * 
+ * Class to represent a player that is or was connected to the currently running server process.
  */
 export class ServerPlayer extends BasePlayer {
     readonly netid: number;
@@ -239,26 +238,18 @@ export class ServerPlayer extends BasePlayer {
 
 
     /**
-     * 
+     * Marks this player as disconnected, clears dbData (mem optimization) and clears minute cron
      */
     disconnect() {
         this.isConnected = false;
         this.dbData = false;
         clearInterval(this.#minuteCronInterval);
     }
-
-
-    /**
-     * 
-     */
-    warn() {
-        //
-    }
 }
 
 
 /**
- * 
+ * Class to represent players stored in the database.
  */
 export class DatabasePlayer extends BasePlayer {
     readonly isRegistered = true; //no need to check because otherwise constructor throws

@@ -5,7 +5,7 @@ import lodash from 'lodash-es';
 import { Low, Adapter, TextFile } from 'lowdb';
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
-import { DatabaseType } from './databaseTypes.js';
+import { DatabaseDataType } from './databaseTypes.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 import migrations from './migrations.js';
@@ -61,6 +61,7 @@ class JSONFile<T> implements Adapter<T> {
 class LowWithLodash<T> extends Low<T> {
     chain: ExpChain<this['data']> = lodash.chain(this).get('data')
 }
+export type DatabaseObjectType = LowWithLodash<DatabaseDataType>;
 
 
 //DEBUG
@@ -75,7 +76,7 @@ const ogConsole = new Console({
 export class Database {
     readonly dbPath: string;
     readonly backupPath: string;
-    obj: LowWithLodash<DatabaseType> | undefined = undefined;
+    obj: DatabaseObjectType | undefined = undefined;
     #writePending: 0 | 1 | 2 | 3 = SAVE_STANDBY; //FIXME: enum
     lastWrite: number = 0;
     isReady: boolean = false;
@@ -105,14 +106,14 @@ export class Database {
         //Tries to load the database
         let dbo;
         try {
-            const adapterAsync = new JSONFile<DatabaseType>(this.dbPath);
+            const adapterAsync = new JSONFile<DatabaseDataType>(this.dbPath);
             dbo = new LowWithLodash(adapterAsync);
             await dbo.read();
         } catch (errorMain) {
             logError('Your txAdmin player/actions database could not be loaded.');
             try {
                 await fsp.copyFile(this.backupPath, this.dbPath);
-                const adapterAsync = new JSONFile<DatabaseType>(this.dbPath);
+                const adapterAsync = new JSONFile<DatabaseDataType>(this.dbPath);
                 dbo = new LowWithLodash(adapterAsync);
                 await dbo.read();
                 logWarn('The database file was restored with the automatic backup file.');

@@ -6,7 +6,7 @@ import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
-import { genActionID, genWhitelistID } from './idGenerator';
+import { genActionID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionType, DatabasePlayerType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
@@ -17,7 +17,7 @@ const xss = xssInstancer();
 const now = () => { return Math.round(Date.now() / 1000); };
 
 //Consts
-const validActions = ['ban', 'warn', 'whitelist'];
+const validActions = ['ban', 'warn'];
 
 //DEBUG
 const { Console } = require('node:console');
@@ -46,7 +46,7 @@ export default class PlayerDatabase {
         this.#db = new Database(config.wipePendingWLOnStart);
     }
 
-    get isReady(){
+    get isReady() {
         return this.#db.isReady;
     }
 
@@ -54,7 +54,7 @@ export default class PlayerDatabase {
      * Returns the entire lowdb object. Please be careful with it :)
      */
     getDb() {
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         // throw new Error(`dev note: not validated yet`);
         //TODO: perhaps add a .cloneDeep()? Might cause some performance issues tho
         //NOTE: for now used only in core\webroutes\player\list.js and advanced debug actions
@@ -66,7 +66,7 @@ export default class PlayerDatabase {
      * Searches for a player in the database by the license, returns null if not found or false in case of error
      */
     getPlayerData(license: string): DatabasePlayerType | null {
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (!/[0-9A-Fa-f]{40}/.test(license)) {
             throw new Error('Invalid reference type');
         }
@@ -84,7 +84,7 @@ export default class PlayerDatabase {
      * Register a player to the database
      */
     registerPlayer(player: DatabasePlayerType) {
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
         this.#db.obj.chain.get('players')
             .push(player)
@@ -97,9 +97,9 @@ export default class PlayerDatabase {
      * The source data object is deep cloned to prevent weird side effects.
      */
     updatePlayer(license: string, srcData: Exclude<object, null>): DatabasePlayerType {
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         const playerDbObj = this.#db.obj.chain.get('players').find({ license });
-        if(!playerDbObj.value()) throw new Error('Player not found in database');
+        if (!playerDbObj.value()) throw new Error('Player not found in database');
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
         return playerDbObj
             .assign(cloneDeep(srcData))
@@ -116,10 +116,11 @@ export default class PlayerDatabase {
         idArray: string[],
         filter: Exclude<object, null> | Function = {}
     ): DatabaseActionType[] {
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
             return this.#db.obj.chain.get('actions')
+                //@ts-ignore: complicated type
                 .filter(filter)
                 .filter((a) => idArray.some((fi) => a.identifiers.includes(fi)))
                 .cloneDeep()
@@ -127,6 +128,58 @@ export default class PlayerDatabase {
         } catch (error) {
             const msg = `Failed to search for a registered action database with error: ${(error as Error).message}`;
             if (verbose) logError(msg);
+            throw new Error(msg);
+        }
+    }
+
+
+    /**
+     * Registers an action (ban, warn) and returns action id
+     */
+     registerAction(
+        identifiers: string[],
+        type: 'ban' | 'warn',
+        author: string,
+        reason: string,
+        expiration: number | false = false,
+        playerName: string | false = false
+    ): string {
+        //Sanity check
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!Array.isArray(identifiers) || !identifiers.length) throw new Error('Invalid identifiers array.');
+        if (!validActions.includes(type)) throw new Error('Invalid action type.');
+        if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
+        if (typeof reason !== 'string' || !reason.length) throw new Error('Invalid reason.');
+        if (expiration !== false && (typeof expiration !== 'number')) throw new Error('Invalid expiration.');
+        if (playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
+
+        //Saves it to the database
+        const timestamp = now();
+        try {
+            const actionID = genActionID(this.#db.obj, type);
+            const toDB: DatabaseActionType = {
+                id: actionID,
+                type,
+                identifiers,
+                playerName,
+                reason,
+                author,
+                timestamp,
+                expiration,
+                revocation: {
+                    timestamp: null,
+                    author: null,
+                },
+            };
+            this.#db.obj.chain.get('actions')
+                .push(toDB)
+                .value();
+            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            return actionID;
+        } catch (error) {
+            let msg = `Failed to register event to database with message: ${(error as Error).message}`;
+            logError(msg);
+            if (verbose) dir(error);
             throw new Error(msg);
         }
     }
@@ -145,7 +198,7 @@ export default class PlayerDatabase {
      */
     async checkPlayerJoin(idArray, playerName) {
         throw new Error(`not ready`);
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         //Check if required
         if (!this.config.onJoinCheckBan && !this.config.onJoinCheckWhitelist) {
             return { allow: true, reason: 'checks disabled' };
@@ -256,81 +309,6 @@ export default class PlayerDatabase {
 
 
     /**
-     * Registers an action (ban, warn, whitelist)
-     * @param {array|number} reference identifiers array or server id
-     * @param {string} type [ban|warn|whitelist]
-     * @param {string} author admin name
-     * @param {string} reason reason
-     * @param {number|false} expiration reason
-     * @param {string|false} playerName the name of the player (for UX purposes only)
-     * @returns {string} action ID, or throws if on error or ID not found
-     */
-    async registerAction(reference, type, author, reason = null, expiration = false, playerName = false) {
-        throw new Error(`not ready`);
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
-        //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
-        //Sanity check
-        const timestamp = now();
-        if (!validActions.includes(type)) throw new Error('Invalid action type.');
-        if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
-        if (reason !== null && (typeof reason !== 'string' || !reason.length)) throw new Error('Invalid reason.');
-        if (expiration !== false && (typeof expiration !== 'number')) throw new Error('Invalid expiration.');
-        if (playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
-
-        //Processes target reference
-        let identifiers;
-        if (Array.isArray(reference)) {
-            if (!reference.length) throw new Error('You must send at least one identifier');
-            const invalids = reference.filter((id) => {
-                return (typeof id !== 'string') || !Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
-            });
-            if (invalids.length) {
-                throw new Error('Invalid identifiers: ' + invalids.join(', '));
-            } else {
-                identifiers = reference;
-            }
-        } else if (typeof reference == 'number') {
-            const player = this.activePlayers.find((p) => p.id === reference);
-            if (!player) throw new Error('Player disconnected.');
-            if (!player.identifiers.length) throw new Error('Player has no identifiers.'); //sanity check
-            identifiers = player.identifiers;
-            playerName = player.name;
-        } else {
-            throw new Error(`Reference expected to be an array of strings or ID int. Received '${typeof target}'.`);
-        }
-
-        //Saves it to the database
-        try {
-            const actionID = genActionID(this.#db.obj, type);
-            const toDB = {
-                id: actionID,
-                type,
-                author,
-                reason,
-                expiration,
-                timestamp,
-                playerName,
-                identifiers,
-                revocation: {
-                    timestamp: null,
-                    author: null,
-                },
-            };
-            await this.#db.obj.chain.get('actions')
-                .push(toDB)
-                .value();
-            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
-            return actionID;
-        } catch (error) {
-            let msg = `Failed to register event to database with message: ${error.message}`;
-            logError(msg);
-            if (verbose) dir(error);
-            throw new Error(msg);
-        }
-    }
-
-
-    /**
      * Revoke an action (ban, warn, whitelist)
      * @param {string} action_id action id
      * @param {string} author admin name
@@ -339,7 +317,7 @@ export default class PlayerDatabase {
      */
     async revokeAction(action_id, author, allowedTypes = true) {
         throw new Error(`not ready`);
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         if (typeof action_id !== 'string' || !action_id.length) throw new Error('Invalid action_id.');
         if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
@@ -382,7 +360,7 @@ export default class PlayerDatabase {
      */
     async approveWhitelist(reference, author) {
         throw new Error(`not ready`);
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         //Sanity check & validation
         if (typeof reference !== 'string' || typeof author !== 'string') {
@@ -421,50 +399,6 @@ export default class PlayerDatabase {
         return actionID;
     }
 
-
-    /**
-     * Saves a player notes and returns true/false
-     * Usage example: setPlayerNote('xxx', 'super awesome player', 'tabarra')
-     *
-     * NOTE: Setting writePending here won't do anything. Don't try it...
-     *
-     * @param {string} license
-     * @param {string} note
-     * @param {string} author
-     * @returns {boolean}
-     */
-    async setPlayerNote(license, note, author) {
-        throw new Error(`not ready`);
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
-        //HACK isso agora vai dar commit imediatamente, target direto o banco
-        //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
-        try {
-            //Search player
-            let target;
-            let ap = this.activePlayers.find((p) => p.license === license);
-            if (ap) {
-                target = ap;
-            } else {
-                let dbp = await this.#db.obj.chain.get('players').find({ license: license }).value();
-                if (!dbp) return false;
-                target = dbp;
-            }
-
-            //Add note and set pending flag
-            target.notes = {
-                text: note,
-                lastAdmin: author,
-                tsLastEdit: now(),
-            };
-
-            return true;
-        } catch (error) {
-            if (verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
-            return false;
-        }
-    }
-
-
     /**
      * Cleans the database by removing every entry that matches the provided filter function.
      *
@@ -473,7 +407,8 @@ export default class PlayerDatabase {
      * @returns {number|error} number of removed items
      */
     async cleanDatabase(tableName, filterFunc) {
-        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        throw new Error(`not ready`);
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (tableName !== 'players' && tableName !== 'actions') throw new Error('Unknown tableName.');
         if (typeof filterFunc !== 'function') throw new Error('filterFunc must be a function.');
 

@@ -1,7 +1,7 @@
 /**
  * txAdmin in ASCII
  */
-let __ascii;
+let __ascii: string;
 export const txAdminASCII = () => {
     //NOTE: precalculating the ascii art for efficiency
     // import figlet from 'figlet';
@@ -16,16 +16,13 @@ export const txAdminASCII = () => {
         __ascii = Buffer.from(preCalculated, 'base64').toString('ascii');
     }
     return __ascii;
-}
+};
 
 
 /**
  * Extracts hours and minutes from an string containing times
- * @param {Array} scheduleTimes
- * @param {Boolean} filter default true
- * @return {Object} {valid, invalid}
  */
-export const parseSchedule = (scheduleTimes) => {
+export const parseSchedule = (scheduleTimes: string[]) => {
     const valid = [];
     const invalid = [];
     for (const timeInput of scheduleTimes) {
@@ -45,18 +42,56 @@ export const parseSchedule = (scheduleTimes) => {
             });
         }
     }
-    return {valid, invalid};
-}
+    return { valid, invalid };
+};
 
 
 /**
  * Redacts sv_licenseKey, steam_webApiKey and sv_tebexSecret from a string
- * @param {string} src
  */
-export const redactApiKeys = (src) => {
+export const redactApiKeys = (src: string) => {
     if (typeof src !== 'string' || !src.length) return src;
     return src
         .replace(/licenseKey\s+["']?(cfxk_\w{1,60}_\w{1,20}|\w{32})["']?/gi, 'licenseKey [redacted cfx token]')
         .replace(/steam_webApiKey\s+["']?\w{32}["']?/gi, 'steam_webApiKey [redacted steam token]')
         .replace(/sv_tebexSecret\s+["']?\w{40}["']?/gi, 'sv_tebexSecret [redacted tebex token]');
-}
+};
+
+
+/**
+ * Returns the unix timestamp in seconds.
+ */
+export const now = () => { return Math.round(Date.now() / 1000); };
+
+
+/**
+ * Calculates expiration and duration from a ban duration string like "1 day"
+ */
+export const calcExpirationFromDuration = (inputDuration: string) => {
+    let expiration;
+    let duration;
+    if (inputDuration === 'permanent') {
+        expiration = false;
+    } else {
+        const [multiplierInput, unit] = inputDuration.split(/\s+/);
+        const multiplier = parseInt(multiplierInput);
+        if (isNaN(multiplier) || multiplier < 1) {
+            throw new Error(`The duration multiplier must be a number above 1.`);
+        }
+
+        if (unit.startsWith('hour')) {
+            duration = multiplier * 3600;
+        } else if (unit.startsWith('day')) {
+            duration = multiplier * 86400;
+        } else if (unit.startsWith('week')) {
+            duration = multiplier * 604800;
+        } else if (unit.startsWith('month')) {
+            duration = multiplier * 2592000; //30 days
+        } else {
+            throw new Error(`Invalid ban duration. Supported units: hours, days, weeks, months`);
+        }
+        expiration = now() + duration;
+    }
+
+    return { expiration, duration };
+};
