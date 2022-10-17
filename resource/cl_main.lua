@@ -91,7 +91,6 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txadmin') --too spammy
     TriggerEvent('chat:removeSuggestion', '/txaPing')
     TriggerEvent('chat:removeSuggestion', '/txaKickAll')
-    TriggerEvent('chat:removeSuggestion', '/txaKickID')
     TriggerEvent('chat:removeSuggestion', '/txaEvent')
     TriggerEvent('chat:removeSuggestion', '/txaReportResources')
 

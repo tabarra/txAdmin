@@ -639,7 +639,6 @@ async function messagePlayer() {
                 notify.update('message', data.error || 'unknown error');
             }
             notify.update('progress', 0);
-            modPlayer.Modal.hide();
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -654,9 +653,7 @@ async function messagePlayer() {
  * Kick player
  */
 async function kickPlayer() {
-    return alert('not ready yet'); //FIXME: fix this
-    //FIXME: o que fazer no caso de kick? pegar var do modPlayer.currPlayerRef ao invés de usar ref string?
-    if (modPlayer.curr.netid == false) return;
+    if (!modPlayer.currPlayerRefString) return;
     modPlayer.Modal.hide();
     const reason = await txAdminPrompt({
         modalColor: 'red',
@@ -669,21 +666,21 @@ async function kickPlayer() {
 
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
 
-    let data = {
-        id: modPlayer.curr.netid,
-        reason: reason,
-    };
     txAdminAPI({
         type: 'POST',
-        url: '/player/kick',
+        url: `/player/kick?${modPlayer.currPlayerRefString}`,
         timeout: REQ_TIMEOUT_LONG,
-        data: data,
+        data: { reason: reason.trim() },
         dataType: 'json',
         success: function (data) {
+            if (data.success === true) {
+                notify.update('type', 'success');
+                notify.update('message', 'Player kicked.');
+            } else {
+                notify.update('type', 'danger');
+                notify.update('message', data.error || 'unknown error');
+            }
             notify.update('progress', 0);
-            notify.update('type', data.type);
-            notify.update('message', data.message);
-            if (data.type !== 'danger') modPlayer.Modal.hide();
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);

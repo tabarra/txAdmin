@@ -125,9 +125,9 @@ async function handleWarning(ctx: Context, sess: any, player: ServerPlayer | Dat
         actionId,
     });
 
-    if(cmdOk){
+    if (cmdOk) {
         return { success: true };
-    }else{
+    } else {
         return { error: `Failed to warn player (stdin error).` };
     }
 }
@@ -192,10 +192,10 @@ async function handleBan(ctx: Context, sess: any, player: ServerPlayer | Databas
         };
         durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
         tOptions.expiration = durationTranslated;
-        kickMessage = '[txAdmin] ' + globals.translator.t('ban_messages.kick_temporary', tOptions);
+        kickMessage = globals.translator.t('ban_messages.kick_temporary', tOptions);
     } else {
         durationTranslated = null;
-        kickMessage = '[txAdmin] ' + globals.translator.t('ban_messages.kick_permanent', tOptions);
+        kickMessage = globals.translator.t('ban_messages.kick_permanent', tOptions);
     }
 
     // Dispatch `txAdmin:events:playerBanned`
@@ -212,9 +212,9 @@ async function handleBan(ctx: Context, sess: any, player: ServerPlayer | Databas
         targetName: player.displayName,
     });
 
-    if(cmdOk){
+    if (cmdOk) {
         return { success: true };
-    }else{
+    } else {
         return { error: `Failed to ban player (stdin error).` };
     }
 }
@@ -240,9 +240,9 @@ async function handleSetWhitelist(ctx: Context, sess: any, player: ServerPlayer 
 
     try {
         player.setWhitelist(status);
-        if(status){
+        if (status) {
             ctx.utils.logAction(`Added ${player.license} to the whitelist.`);
-        }else{
+        } else {
             ctx.utils.logAction(`Removed ${player.license} from the whitelist.`);
         }
 
@@ -262,7 +262,7 @@ async function handleSetWhitelist(ctx: Context, sess: any, player: ServerPlayer 
 
 
 /**
- * Handle DM/Message Action
+ * Handle Direct Message Action
  */
 async function handleMessage(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
     //Checking request
@@ -299,6 +299,46 @@ async function handleMessage(ctx: Context, sess: any, player: ServerPlayer | Dat
 
         return { success: true };
     } catch (error) {
-        return { error: `Failed to save whitelist status: ${(error as Error).message}` };
+        return { error: `Failed to save dm player: ${(error as Error).message}` };
+    }
+}
+
+
+/**
+ * Handle Kick Action
+ */
+async function handleKick(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
+    //Checking request
+    if (anyUndefined(
+        ctx.request.body,
+        ctx.request.body.reason,
+    )) {
+        return { error: 'Invalid request.' };
+    }
+    const reason = ctx.request.body.reason.trim() || 'no reason provided';
+
+    //Check permissions
+    if (!ctx.utils.testPermission('players.kick', modulename)) {
+        return { error: 'You don\'t have permission to execute this action.' };
+    }
+
+    //Validating player
+    if (!(player instanceof ServerPlayer) || !player.isConnected) {
+        return { error: 'This player is not connected to the server.' };
+    }
+
+    try {
+        ctx.utils.logAction(`Kicked #${player.displayName}: ${reason}`);
+
+        // Dispatch `txAdmin:events:playerKicked`
+        globals.fxRunner.sendEvent('playerKicked', {
+            target: player.netid,
+            author: sess.auth.username,
+            reason,
+        });
+
+        return { success: true };
+    } catch (error) {
+        return { error: `Failed to save kick player: ${(error as Error).message}` };
     }
 }

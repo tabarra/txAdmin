@@ -16,10 +16,10 @@ const processHistoryLog = (hist: DatabaseActionType[]) => {
             return {
                 id: log.id,
                 type: log.type,
+                reason: log.reason,
                 author: log.author,
                 ts: log.timestamp,
                 exp: log.expiration ? log.expiration : undefined,
-                reason: log.reason,
                 revokedBy: log.revocation.author ? log.revocation.author : undefined,
             };
         });

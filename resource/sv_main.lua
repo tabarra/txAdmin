@@ -52,14 +52,15 @@ CreateThread(function()
 end)
 
 
--- Setup threads and commands
+-- =============================================
+-- Setup threads and commands & main stuff
+-- =============================================
 local rejectAllConnections = false
 local hbReturnData = 'no-data'
 log("Version "..TX_VERSION.." starting...")
 CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
-    RegisterCommand("txaKickID", txaKickID, true)
     RegisterCommand("txaEvent", txaEvent, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
     CreateThread(function()
@@ -113,9 +114,12 @@ function handleHttp(req, res)
     end
 end
 
--- Ping!
+
+-- =============================================
+-- stdin commands
+-- =============================================
 function txaPing(source, args)
-    log("Pong!")
+    log("Pong! (txAdmin resource is running)")
     CancelEvent()
 end
 
@@ -133,38 +137,28 @@ function txaKickAll(source, args)
     CancelEvent()
 end
 
--- Kick specific player via server ID
-function txaKickID(source, args)
-    if #args ~= 2 then
-        return logError("Invalid arguments for txaKickID")
-    end
-    local playerID, quotedMessage = table.unpack(args)
 
-    local dropMessage = 'Kicked with no reason provided.'
-    if quotedMessage ~= nil then dropMessage = unDeQuote(quotedMessage) end
-
-    log("Kicking #"..playerID.." with reason: "..dropMessage)
-    DropPlayer(playerID, "\n"..dropMessage)
-    CancelEvent()
-end
-
-
+-- =============================================
+--  Events handling
+-- =============================================
 -- Broadcast admin message to all players
--- This function is triggered by txaEvent
 local function handleAnnouncementEvent(eventData)
     TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
 end
 
 -- Sends a direct message from an admin to a player
--- This function is triggered by txaEvent
 local function handleDirectMessageEvent(eventData)
     TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(DM) "..eventData.author, eventData.message)
 end
 
+-- Kicks a player
+local function handleKickEvent(eventData)
+    DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
+end
+
 -- Warn specific player via server ID
--- This function is triggered by txaEvent
 local function handleWarnEvent(eventData)
     local pName = GetPlayerName(eventData.target)
     if pName ~= nil then
@@ -176,7 +170,6 @@ local function handleWarnEvent(eventData)
 end
 
 -- Ban player(s) via netid or identifiers
--- This function is triggered by txaEvent
 local function handleBanEvent(eventData)
     local kickCount = 0
     for _, playerID in pairs(GetPlayers()) do
@@ -190,7 +183,7 @@ local function handleBanEvent(eventData)
                     if searchIdentifier == playerIdentifier then
                         log("handleBanEvent: Kicking #"..playerID..": "..eventData.reason)
                         kickCount = kickCount + 1
-                        DropPlayer(playerID, eventData.kickMessage)
+                        DropPlayer(playerID, '[txAdmin] ' .. eventData.kickMessage)
                         found = true
                         break
                     end
@@ -203,11 +196,9 @@ local function handleBanEvent(eventData)
     if kickCount == 0 then
         log("handleBanEvent: No players found to kick")
     end
-    CancelEvent()
 end
 
 -- Kicks all players and lock joins in preparation for server shutdown
--- This function is triggered by txaEvent
 local function handleShutdownEvent(eventData)
     print('Server shutdown imminent. Kicking all players.')
     rejectAllConnections = true
@@ -217,7 +208,7 @@ local function handleShutdownEvent(eventData)
     end
 end
 
--- Fire server event
+-- Handler for all incoming tx cmd events 
 function txaEvent(source, args)
     -- sanity check
     if type(args[1]) ~= 'string' or type(args[2]) ~= 'string' then
@@ -235,6 +226,8 @@ function txaEvent(source, args)
         return handleAnnouncementEvent(eventData)
     elseif eventName == 'playerDirectMessage' then 
         return handleDirectMessageEvent(eventData)
+    elseif eventName == 'playerKicked' then 
+        return handleKickEvent(eventData)
     elseif eventName == 'playerWarned' then 
         return handleWarnEvent(eventData)
     elseif eventName == 'playerBanned' then 
@@ -246,7 +239,9 @@ function txaEvent(source, args)
 end
 
 
+-- =============================================
 -- Get all resources/statuses and report back to txAdmin
+-- =============================================
 function txaReportResources(source, args)
     --Prepare resources list
     local resources = {}
@@ -286,7 +281,10 @@ function txaReportResources(source, args)
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
 end
 
+
+-- =============================================
 -- Player connecting handler
+-- =============================================
 function handleConnections(name, setKickReason, d)
     -- if server is shutting down
     if rejectAllConnections then

@@ -24,7 +24,7 @@
     - [x] warn
     - [x] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`) (FIXME: close #625)
     - [x] dm (replace `txaSendDM` with event+snackbar)
-    - [ ] kick
+    - [x] kick
     - [ ] revoke action
 - [ ] db revoke_action/ban_ids routes + buttons on players page
 - [ ] whitelist page + actions
