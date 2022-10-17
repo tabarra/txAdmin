@@ -352,6 +352,7 @@
 
     //============================================== Whitelist an ID via prompt or button click
     async function whitelistID(reference){
+        return alert('not implemented')
         if(!reference){
             reference = await txAdminPrompt({
                 modalColor: 'green',
@@ -526,7 +527,6 @@
     }
 
     //Converts actions array to html
-    //FIXME: delete!
     function dbActionsToHtmlListOld(actions, _permsDisableWarn, _permsDisableBan){
         if(!actions.length){
             return `<div class="text-center">
@@ -615,23 +615,27 @@
             const notify = $.notify({ message: 'The reason must be at least 3 characters.' }, { type: 'warning' });
             return;
         }
-        data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);
+        data.identifiers = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);
         const notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
-
-        banCard.identifiers.value = '';
-        banCard.reason.value = '';
 
         txAdminAPI({
             type: "POST",
-            url: '/player/ban',
+            url: '/database/ban_ids',
             timeout: REQ_TIMEOUT_LONG,
             data,
             dataType: 'json',
             success: function (data) {
                 if (checkApiLogoutRefresh(data)) return;
                 notify.update('progress', 0);
-                notify.update('type', data.type);
-                notify.update('message', data.message);
+                if (data.success === true) {
+                    notify.update('type', 'success');
+                    notify.update('message', 'Player banned.');
+                    banCard.identifiers.value = '';
+                    banCard.reason.value = '';
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -640,5 +644,4 @@
             }
         });
     }
-    
 </script>

@@ -17,7 +17,7 @@
         - whitelist becomes a player prop, removes from actions
         - remove empty notes
 - [x] get player modal (log, playerlist, db players page)
-- [ ] modal buttons:
+- [x] modal buttons:
     - [x] action details
     - [x] set note
     - [x] add/remove wl
@@ -25,8 +25,8 @@
     - [x] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`) (FIXME: close #625)
     - [x] dm (replace `txaSendDM` with event+snackbar)
     - [x] kick
-    - [ ] revoke action (+ actionRevoked event - PR #612)
-- [ ] db revoke_action/ban_ids routes + buttons on players page
+    - [x] revoke action (+ actionRevoked event - PR #612)
+- [x] db revoke_action/ban_ids routes + buttons on players page
 - [ ] whitelist page + actions
 - [ ] join check + whitelist
 - [ ] create new whitelist events
@@ -354,7 +354,6 @@ Up next-ish:
 
 
 ### Randoms:
-Change pls the expired ban color to red or something else, because the must people dont know if the ban now expired or be revoked
 - BUG: nui menu triggered announcements are not sent to the discord
 
 -- Why both have the same debug data? https://i.imgur.com/WGawiyr.png

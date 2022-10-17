@@ -1,5 +1,5 @@
 const modulename = 'WebServer:PlayerActions';
-import humanizeDuration from 'humanize-duration';
+import humanizeDuration, { Unit } from 'humanize-duration';
 import logger from '@core/extras/console.js';
 import { Context } from 'koa';
 import playerResolver from '@core/playerLogic/playerResolver';
@@ -109,7 +109,14 @@ async function handleWarning(ctx: Context, sess: any, player: PlayerClass): Prom
     //Register action
     let actionId;
     try {
-        actionId = globals.playerDatabase.registerAction(player.ids, 'warn', sess.auth.username, reason);
+        actionId = globals.playerDatabase.registerAction(
+            player.ids,
+            'warn',
+            sess.auth.username,
+            reason,
+            false,
+            player.displayName
+        );
     } catch (error) {
         return { error: `Failed to warn player: ${(error as Error).message}` };
     }
@@ -164,13 +171,20 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
 
     //Validating player
     if (!player.ids.length) {
-        return { error: 'Cannot warn a player with no identifiers.' }
+        return { error: 'Cannot ban a player with no identifiers.' }
     }
 
     //Register action
     let actionId;
     try {
-        actionId = globals.playerDatabase.registerAction(player.ids, 'ban', sess.auth.username, reason, expiration);
+        actionId = globals.playerDatabase.registerAction(
+            player.ids,
+            'ban',
+            sess.auth.username,
+            reason,
+            expiration,
+            player.displayName
+        );
     } catch (error) {
         return { error: `Failed to ban player: ${(error as Error).message}` };
     }
@@ -183,15 +197,15 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
 
     //Prepare and send command
     let kickMessage, durationTranslated;
-    const tOptions = {
+    const tOptions: any = {
         author: sess.auth.username,
         reason: reason,
     };
-    if (expiration !== false) {
+    if (expiration !== false && duration) {
         const humanizeOptions = {
             language: globals.translator.t('$meta.humanizer_language'),
             round: true,
-            units: ['d', 'h'],
+            units: ['d', 'h'] as Unit[],
         };
         durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
         tOptions.expiration = durationTranslated;
@@ -211,8 +225,8 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
         durationTranslated,
         targetNetId: (player instanceof ServerPlayer) ? player.netid : null,
         targetIds: player.ids,
-        kickMessage,
         targetName: player.displayName,
+        kickMessage,
     });
 
     if (cmdOk) {
