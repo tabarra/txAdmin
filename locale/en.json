@@ -43,6 +43,7 @@
             "unknown_error": "An unknown error occurred.",
             "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
             "announcement_title": "Server Announcement by %{author}:",
+            "directmessage_title": "DM from admin %{author}:",
             "dialog_empty_input": "You cannot have an empty input."
         },
         "frozen": {

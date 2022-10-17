@@ -61,7 +61,6 @@ CreateThread(function()
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
     RegisterCommand("txaEvent", txaEvent, true)
-    RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
     CreateThread(function()
         while true do
@@ -157,6 +156,13 @@ local function handleAnnouncementEvent(eventData)
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
 end
 
+-- Sends a direct message from an admin to a player
+-- This function is triggered by txaEvent
+local function handleDirectMessageEvent(eventData)
+    TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
+    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(DM) "..eventData.author, eventData.message)
+end
+
 -- Warn specific player via server ID
 -- This function is triggered by txaEvent
 local function handleWarnEvent(eventData)
@@ -227,6 +233,8 @@ function txaEvent(source, args)
 
     if eventName == 'announcement' then 
         return handleAnnouncementEvent(eventData)
+    elseif eventName == 'playerDirectMessage' then 
+        return handleDirectMessageEvent(eventData)
     elseif eventName == 'playerWarned' then 
         return handleWarnEvent(eventData)
     elseif eventName == 'playerBanned' then 
@@ -237,31 +245,6 @@ function txaEvent(source, args)
     CancelEvent()
 end
 
-
--- Send admin direct message to specific player
-function txaSendDM(source, args)
-    if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil then
-        args[2] = unDeQuote(args[2])
-        args[3] = unDeQuote(args[3])
-        local pName = GetPlayerName(args[1])
-        if pName ~= nil then
-            log("Admin DM to "..pName.." from "..args[2]..": "..args[3])
-            TriggerClientEvent("chat:addMessage", args[1], {
-                args = {
-                    "(DM) "..args[2],
-                    args[3],
-                },
-                color = {255, 0, 0}
-            })
-            TriggerEvent('txaLogger:internalChatMessage', -1, "(DM) "..args[2], args[3])
-        else
-            logError('txaSendDM: player not found')
-        end
-    else
-        logError('Invalid arguments for txaSendDM')
-    end
-    CancelEvent()
-end
 
 -- Get all resources/statuses and report back to txAdmin
 function txaReportResources(source, args)

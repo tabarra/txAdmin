@@ -49,13 +49,16 @@ export default async function PlayerActions(ctx: Context) {
         return sendTypedResp(await handleBan(ctx, sess, player));
     } else if (action === 'whitelist') {
         return sendTypedResp(await handleSetWhitelist(ctx, sess, player));
+    } else if (action === 'message') {
+        return sendTypedResp(await handleMessage(ctx, sess, player));
+    } else if (action === 'kick') {
+        return sendTypedResp(await handleKick(ctx, sess, player));
     } else {
         return sendTypedResp({ error: 'unknown action' });
     }
 };
 
 
-//================================================================
 /**
  * Handle Save Note (open to all admins)
  */
@@ -67,7 +70,7 @@ async function handleSaveNote(ctx: Context, sess: any, player: ServerPlayer | Da
     )) {
         return { error: 'Invalid request.' };
     }
-    const note = (ctx.request.body.note as string).trim();
+    const note = ctx.request.body.note.trim();
 
     try {
         player.setNote(note, sess.auth.username);
@@ -79,7 +82,6 @@ async function handleSaveNote(ctx: Context, sess: any, player: ServerPlayer | Da
 }
 
 
-//================================================================
 /**
  * Handle Send Warning
  */
@@ -91,19 +93,19 @@ async function handleWarning(ctx: Context, sess: any, player: ServerPlayer | Dat
     )) {
         return { error: 'Invalid request.' };
     }
-    const reason = (ctx.request.body.reason as string).trim() || 'no reason provided';
+    const reason = ctx.request.body.reason.trim() || 'no reason provided';
 
     //Check permissions
     if (!ctx.utils.testPermission('players.warn', modulename)) {
-        return { error: 'You don\'t have permission to execute this action.' }
+        return { error: 'You don\'t have permission to execute this action.' };
     }
 
     //Validating player
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
-        return { error: 'This player is not connected to the server.' }
+        return { error: 'This player is not connected to the server.' };
     }
     if (!player.ids.length) {
-        return { error: 'Cannot warn a player with no identifiers.' }
+        return { error: 'Cannot warn a player with no identifiers.' };
     }
 
     //Register action
@@ -131,7 +133,6 @@ async function handleWarning(ctx: Context, sess: any, player: ServerPlayer | Dat
 }
 
 
-//================================================================
 /**
  * Handle Banning command
  */
@@ -219,7 +220,6 @@ async function handleBan(ctx: Context, sess: any, player: ServerPlayer | Databas
 }
 
 
-//================================================================
 /**
  * Handle Whitelist Action
  */
@@ -246,13 +246,56 @@ async function handleSetWhitelist(ctx: Context, sess: any, player: ServerPlayer 
             ctx.utils.logAction(`Removed ${player.license} from the whitelist.`);
         }
 
-        // Dispatch `txAdmin:events:playerWhitelisted`
         //FIXME:
+        // Dispatch `txAdmin:events:playerWhitelisted`
         // globals.fxRunner.sendEvent('playerWhitelisted', {
         //     license: player.license,
         //     author: sess.auth.username,
         //     status,
         // });
+
+        return { success: true };
+    } catch (error) {
+        return { error: `Failed to save whitelist status: ${(error as Error).message}` };
+    }
+}
+
+
+/**
+ * Handle DM/Message Action
+ */
+async function handleMessage(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
+    //Checking request
+    if (anyUndefined(
+        ctx.request.body,
+        ctx.request.body.message,
+    )) {
+        return { error: 'Invalid request.' };
+    }
+    const message = ctx.request.body.message.trim();
+    if (!message.length) {
+        return { error: 'Cannot send a DM with empty message.' };
+    }
+
+    //Check permissions
+    if (!ctx.utils.testPermission('players.message', modulename)) {
+        return { error: 'You don\'t have permission to execute this action.' };
+    }
+
+    //Validating player
+    if (!(player instanceof ServerPlayer) || !player.isConnected) {
+        return { error: 'This player is not connected to the server.' };
+    }
+
+    try {
+        ctx.utils.logAction(`DM to #${player.displayName}: ${message}`);
+
+        // Dispatch `txAdmin:events:playerDirectMessage`
+        globals.fxRunner.sendEvent('playerDirectMessage', {
+            target: player.netid,
+            author: sess.auth.username,
+            message,
+        });
 
         return { success: true };
     } catch (error) {

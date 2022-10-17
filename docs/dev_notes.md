@@ -23,8 +23,9 @@
     - [x] add/remove wl
     - [x] warn
     - [x] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`) (FIXME: close #625)
+    - [x] dm (replace `txaSendDM` with event+snackbar)
+    - [ ] kick
     - [ ] revoke action
-    - [ ] dm/kick (outside player object)
 - [ ] db revoke_action/ban_ids routes + buttons on players page
 - [ ] whitelist page + actions
 - [ ] join check + whitelist
@@ -51,6 +52,9 @@
 - [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
 - [ ] the diagnostics reporting button thing
 - [ ] apply stashes
+- [ ] merge all translations
+- [ ] apply `nui_menu.misc.directmessage_title` to all translations
+- [ ] add car boost function
 
 Maybe after v5:
 - [ ] server logger add events/min average
@@ -137,15 +141,13 @@ This way:
 
 
 ## Routes planning
-User Class:
+Player:
 - handleSaveNote
 - handleWarning
 - handleBan
 - handleWhitelist
-
-Server actions -> fxserver_commands:
-- handleMessage
-- handleKick
+- handleMessage (no user class interaction)
+- handleKick (no user class interaction)
 
 Database:
 - handleRevokeAction -> db/revoke_action
@@ -235,16 +237,15 @@ Optional:
 - [ ] add actionRevoked event (rewrite PR #612)
 - [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
 - [ ] stats: jwe
-- [ ] playerlist remove rtl characters
 - [ ] set nui/vite.config.ts > target > chrome103
 
 ## The Big Things before ts+react rewrite:
-- in-core playerlist state tracking
-- new proxy console util
-- global socket.io connection for playerlist + async responses
-- in-core resource state tracking
-- new config (prepared for multiserver)
-- multiserver tx instance (backend only)
+- [ ] in-core playerlist state tracking
+- [ ] new proxy console util
+- [ ] global socket.io connection for playerlist + async responses
+- [ ] in-core resource state tracking
+- [ ] new config (prepared for multiserver)
+- [ ] multiserver tx instance (backend only)
 
 
 ## Console Rewrite
@@ -311,6 +312,14 @@ const defaults = {
 - maybe even use zod's `.default()`?
 
 
+### old settings refactor note:
+- save only what changed
+- make big settings a class (like TFR)
+- settings.getConfig(); - returns the full config tree with unset props as null
+- settings.get('object.dot.notation');
+- settings.set('object.dot.notation');
+- npm search for "object dot"
+
 
 
 NOTE: https://github.com/sindresorhus/typescript-definition-style-guide
@@ -328,7 +337,6 @@ Up next-ish:
     - [ ] Update `development.md`
 - [ ] checar se outros resources conseguem chamar 'txaLogger:menuEvent'?
 - [ ] add ram usage to perf chart?
-- [ ] dm via snackbar
 - [ ] wav for announcements
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
@@ -356,6 +364,7 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 - FreezeEntityPosition need to get the veh
     - já foi feito? tem issue aberto, e já teve um pr feito
 - começar a ler o ui_label dos manifests e usar na página de resources
+    - será que o bubble já adicionou isso no fxserver? não faz parte das docs ainda (oct/2022)
 
 
 ### Server Insights page ideas:
@@ -429,7 +438,6 @@ If patch, show update notification immediately (specially important to quick-fix
 If minor, randomize a delay between 0~24h.
 If patch, randomize a delay 0~72h.
 
-
 Update event idea (not yet greenlit):
 - A box similar to the fxserver update one;
 - The major/minor updates will have a discord stage event, patches won't;
@@ -452,13 +460,6 @@ CreateThread(function()
 end)
 
 
-### refactor settings:
-- save only what changed
-- make big settings a class (like TFR)
-- settings.getConfig(); - returns the full config tree with unset props as null
-- settings.get('object.dot.notation');
-- settings.set('object.dot.notation');
-- npm search for "object dot"
 
 
 ### TP:

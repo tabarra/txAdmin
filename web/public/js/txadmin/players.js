@@ -461,7 +461,7 @@ function setPlayerWhitelistStatus(status) {
             }
             showPlayer(modPlayer.currPlayerRef);
             notify.update('progress', 0);
-            
+
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -491,7 +491,6 @@ async function warnPlayer() {
         description: 'Type the warn reason.',
     });
     if (reason === false) return;
-
     if (!reason.length) {
         return $.notify({ message: '<p class="text-center">The warn reason is required.</p>' }, { type: 'danger' });
     }
@@ -501,7 +500,7 @@ async function warnPlayer() {
         type: 'POST',
         url: `/player/warn?${modPlayer.currPlayerRefString}`,
         timeout: REQ_TIMEOUT_LONG,
-        data: {reason: reason},
+        data: { reason: reason },
         dataType: 'json',
         success: function (data) {
             if (data.success === true) {
@@ -525,7 +524,7 @@ async function warnPlayer() {
 /**
  * Ban Player functions
  */
- modPlayer.Ban.durationSelect.onchange = () => {
+modPlayer.Ban.durationSelect.onchange = () => {
     const isDefault = (modPlayer.Ban.durationSelect.value !== 'custom');
     modPlayer.Ban.durationMultiplier.disabled = isDefault;
     modPlayer.Ban.durationUnit.disabled = isDefault;
@@ -578,7 +577,7 @@ function banPlayer() {
  * Revoke action
  * NOTE: also used in the players page
  */
- function revokeAction(action_id) {
+function revokeAction(action_id) {
     // return alert('not ready yet'); //FIXME: fix this
     //FIXME: só funcionando pra página de players mas não aqui
     if (!action_id) {
@@ -611,31 +610,36 @@ function banPlayer() {
 /**
  * Message/DM Player
  */
- async function messagePlayer() {
-    return alert('not ready yet'); //FIXME: fix this
+async function messagePlayer() {
     if (!modPlayer.currPlayerRefString) return;
     modPlayer.Modal.hide();
     const message = await txAdminPrompt({
         title: 'Direct Message',
         description: 'Type direct message below:',
     });
-    if (!message || message.length === 0) return;
+    if (message === false) return;
+    if (!message.length) {
+        return $.notify({ message: '<p class="text-center">The DM message is required.</p>' }, { type: 'danger' });
+    }
 
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
 
-    let data = {
-        message: message.trim(),
-    };
     txAdminAPI({
         type: 'POST',
-        url: '/player/message', //FIXME: usar modPlayer.currPlayerRefString
+        url: `/player/message?${modPlayer.currPlayerRefString}`,
         timeout: REQ_TIMEOUT_LONG,
-        data: data,
+        data: { message: message.trim() },
         dataType: 'json',
         success: function (data) {
+            if (data.success === true) {
+                notify.update('type', 'success');
+                notify.update('message', 'Direct message sent.');
+            } else {
+                notify.update('type', 'danger');
+                notify.update('message', data.error || 'unknown error');
+            }
             notify.update('progress', 0);
-            notify.update('type', data.type);
-            notify.update('message', data.message);
+            modPlayer.Modal.hide();
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -649,7 +653,7 @@ function banPlayer() {
 /**
  * Kick player
  */
- async function kickPlayer() {
+async function kickPlayer() {
     return alert('not ready yet'); //FIXME: fix this
     //FIXME: o que fazer no caso de kick? pegar var do modPlayer.currPlayerRef ao invés de usar ref string?
     if (modPlayer.curr.netid == false) return;
@@ -695,7 +699,7 @@ function banPlayer() {
  * Redirect to player search page
  * FIXME: deprecate!?
  */
- function searchPlayer() {
+function searchPlayer() {
     return alert('not ready yet'); //FIXME: fix this
     modPlayer.Modal.hide();
     if (!modPlayer.currPlayerRefString) return;

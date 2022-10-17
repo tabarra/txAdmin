@@ -92,3 +92,10 @@ Event Data:
 - `delay`: How many milliseconds txAdmin will wait before killing the server process.
 - `author`: The name of the admin or `txAdmin`.
 - `message`: The message of the broadcast.
+
+## txAdmin:events:playerDirectMessage (v5.0)
+Called when an admin DMs a player.
+Event Data:
+- `target`: The id of the player to receive the DM.
+- `author`: The name of the admin.
+- `message`: The message content.
