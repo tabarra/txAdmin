@@ -99,6 +99,7 @@ export default (config) => {
     router.get('/serverLog/partial', requestAuth('api'), webRoutes.serverLogPartial);
     router.get('/status/:scope?', requestAuth('api'), webRoutes.status); //FIXME: param fix due to missing search
     router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData); //FIXME: param fix due to missing search
+    router.post('/database/:action', requestAuth('api'), webRoutes.databaseActions);
 
     /*
         FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download

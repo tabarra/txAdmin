@@ -83,7 +83,7 @@ export default class PlayerDatabase {
     /**
      * Register a player to the database
      */
-    registerPlayer(player: DatabasePlayerType) {
+    registerPlayer(player: DatabasePlayerType): void {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
         this.#db.obj.chain.get('players')
@@ -136,7 +136,7 @@ export default class PlayerDatabase {
     /**
      * Registers an action (ban, warn) and returns action id
      */
-     registerAction(
+    registerAction(
         identifiers: string[],
         type: 'ban' | 'warn',
         author: string,
@@ -180,7 +180,46 @@ export default class PlayerDatabase {
             let msg = `Failed to register event to database with message: ${(error as Error).message}`;
             logError(msg);
             if (verbose) dir(error);
-            throw new Error(msg);
+            throw error;
+        }
+    }
+
+
+    /**
+     * Revoke an action (ban, warn)
+     */
+    revokeAction(
+        actionId: string,
+        author: string,
+        allowedTypes: string[] | true = true
+    ): DatabaseActionType {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (typeof actionId !== 'string' || !actionId.length) throw new Error('Invalid actionId.');
+        if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
+        if (allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
+
+        try {
+            const action = this.#db.obj.chain.get('actions')
+                .find({ id: actionId })
+                .value();
+            
+            if (!action) throw new Error(`action not found`);
+            if (allowedTypes !== true && !allowedTypes.includes(action.type)) {
+                throw new Error(`you do not have permission to revoke this action`);
+            }
+
+            action.revocation = {
+                timestamp: now(),
+                author,
+            };
+            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            return cloneDeep(action);
+
+        } catch (error) {
+            const msg = `Failed to revoke action with message: ${(error as Error).message}`;
+            logError(msg);
+            if (verbose) dir(error);
+            throw error;
         }
     }
 
@@ -309,46 +348,6 @@ export default class PlayerDatabase {
 
 
     /**
-     * Revoke an action (ban, warn, whitelist)
-     * @param {string} action_id action id
-     * @param {string} author admin name
-     * @param {array} allowedTypes array containing the types of actions this admin can revoke
-     * @returns {string} null, error message string, or throws if something goes wrong
-     */
-    async revokeAction(action_id, author, allowedTypes = true) {
-        throw new Error(`not ready`);
-        if (!this.#db.obj) throw new Error(`database not ready yet`);
-        //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
-        if (typeof action_id !== 'string' || !action_id.length) throw new Error('Invalid action_id.');
-        if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
-        if (allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
-        try {
-            const action = await this.#db.obj.chain.get('actions')
-                .find({ id: action_id })
-                .value();
-            if (action) {
-                if (allowedTypes !== true && !allowedTypes.includes(action.type)) {
-                    return 'you do not have permission to revoke this action';
-                }
-                action.revocation = {
-                    timestamp: now(),
-                    author,
-                };
-                this.#db.writeFlag(SAVE_PRIORITY_HIGH);
-                return null;
-            } else {
-                return 'action not found';
-            }
-        } catch (error) {
-            const msg = `Failed to revoke action with message: ${error.message}`;
-            logError(msg);
-            if (verbose) dir(error);
-            throw new Error(msg);
-        }
-    }
-
-
-    /**
      * Whitelists a player from it's license or wl pending id
      *
      * NOTE: I'm only getting the first matched pending, but removing all matching
@@ -398,6 +397,7 @@ export default class PlayerDatabase {
 
         return actionID;
     }
+
 
     /**
      * Cleans the database by removing every entry that matches the provided filter function.

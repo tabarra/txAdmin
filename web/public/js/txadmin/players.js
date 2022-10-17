@@ -134,7 +134,7 @@ function dbActionToHtml(action, permsDisableWarn, permsDisableBan, serverTime) {
         ) {
             revokeButton = `&nbsp;<span class="badge badge-outline-light btn-inline-sm txActionsBtn">REVOKE</span>`;
         } else {
-            revokeButton = `&nbsp;<button onclick="revokeAction('${xss(action.id)}')" 
+            revokeButton = `&nbsp;<button onclick="revokeAction('${xss(action.id)}', true)" 
                     class="btn btn-secondary btn-inline-sm txActionsBtn">REVOKE</button>`;
         }
     }
@@ -234,7 +234,7 @@ function showPlayerByMutexNetid(mutexNetid) {
 function showPlayerByLicense(license) {
     return showPlayer({ license });
 }
-function showPlayer(playerRef) {
+function showPlayer(playerRef, keepTabSelection = false) {
     //Reset active player
     modPlayer.currPlayerRef = playerRef;
     modPlayer.currPlayerRefString = new URLSearchParams(modPlayer.currPlayerRef).toString();
@@ -245,8 +245,17 @@ function showPlayer(playerRef) {
     modPlayer.Content.classList.add('d-none');
     modPlayer.Title.innerText = 'loading...';
 
-    modPlayer.Main.tab.classList.add('active');
-    modPlayer.Main.body.classList.add('show', 'active');
+    //Reset tab selection
+    if (!keepTabSelection) {
+        modPlayer.Main.tab.classList.add('active');
+        modPlayer.Main.body.classList.add('show', 'active');
+        modPlayer.IDs.tab.classList.remove('active');
+        modPlayer.IDs.body.classList.remove('show', 'active');
+        modPlayer.History.tab.classList.remove('active');
+        modPlayer.History.body.classList.remove('show', 'active');
+        modPlayer.Ban.tab.classList.remove('nav-link-red', 'active');
+        modPlayer.Ban.body.classList.remove('show', 'active');
+    }
     modPlayer.Main.joinDate.innerText = '--';
     modPlayer.Main.playTime.innerText = '--';
     modPlayer.Main.sessionTime.innerText = '--';
@@ -263,18 +272,10 @@ function showPlayer(playerRef) {
     modPlayer.Main.notes.value = 'cannot set notes for players that are not registered';
     modPlayer.Main.notes.disabled = true;
 
-    modPlayer.IDs.tab.classList.remove('active');
-    modPlayer.IDs.body.classList.remove('show', 'active');
     modPlayer.IDs.list.innerText = 'loading...';
-
-    modPlayer.History.tab.classList.remove('active');
-    modPlayer.History.body.classList.remove('show', 'active');
     modPlayer.History.list.innerText = 'loading...';
 
-    modPlayer.Ban.tab.classList.remove('nav-link-red', 'active');
-    modPlayer.Ban.body.classList.remove('show', 'active');
     modPlayer.Ban.tab.classList.add('nav-link-disabled', 'disabled');
-
     modPlayer.Ban.reason.value = '';
     modPlayer.Ban.durationSelect.value = '2 days';
     modPlayer.Ban.durationMultiplier.value = '';
@@ -452,16 +453,15 @@ function setPlayerWhitelistStatus(status) {
         data: { status },
         dataType: 'json',
         success: function (data) {
+            notify.update('progress', 0);
             if (data.success === true) {
                 notify.update('type', 'success');
                 notify.update('message', 'Whitelist status changed.');
+                showPlayer(modPlayer.currPlayerRef);
             } else {
                 notify.update('type', 'danger');
                 notify.update('message', data.error || 'unknown error');
             }
-            showPlayer(modPlayer.currPlayerRef);
-            notify.update('progress', 0);
-
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -503,14 +503,15 @@ async function warnPlayer() {
         data: { reason: reason },
         dataType: 'json',
         success: function (data) {
+            notify.update('progress', 0);
             if (data.success === true) {
                 notify.update('type', 'success');
                 notify.update('message', 'Player warned.');
+                modPlayer.Modal.hide();
             } else {
                 notify.update('type', 'danger');
                 notify.update('message', data.error || 'unknown error');
             }
-            notify.update('progress', 0);
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -553,15 +554,15 @@ function banPlayer() {
         data: data,
         dataType: 'json',
         success: function (data) {
+            notify.update('progress', 0);
             if (data.success === true) {
                 notify.update('type', 'success');
                 notify.update('message', 'Player banned.');
+                modPlayer.Modal.hide();
             } else {
                 notify.update('type', 'danger');
                 notify.update('message', data.error || 'unknown error');
             }
-            notify.update('progress', 0);
-            modPlayer.Modal.hide();
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -577,9 +578,7 @@ function banPlayer() {
  * Revoke action
  * NOTE: also used in the players page
  */
-function revokeAction(action_id) {
-    // return alert('not ready yet'); //FIXME: fix this
-    //FIXME: só funcionando pra página de players mas não aqui
+function revokeAction(action_id, isModal = false) {
     if (!action_id) {
         return $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
     }
@@ -587,15 +586,24 @@ function revokeAction(action_id) {
     const notify = $.notify({ message: '<p class="text-center">Revoking...</p>' }, {});
     txAdminAPI({
         type: "POST",
-        url: '/player/revoke_action',
+        url: '/database/revoke_action',
         timeout: REQ_TIMEOUT_LONG,
         data: { action_id },
         dataType: 'json',
         success: function (data) {
-            if (checkApiLogoutRefresh(data)) return;
             notify.update('progress', 0);
-            notify.update('type', data.type);
-            notify.update('message', data.message);
+            if (data.success === true) {
+                notify.update('type', 'success');
+                notify.update('message', 'Action revoked.');
+                if (isModal) {
+                    showPlayer(modPlayer.currPlayerRef, true);
+                } else {
+                    window.location.reload(true);
+                }
+            } else {
+                notify.update('type', 'danger');
+                notify.update('message', data.error || 'unknown error');
+            }
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -691,24 +699,9 @@ async function kickPlayer() {
 }
 
 
-
 /**
- * Redirect to player search page
- * FIXME: deprecate!?
+ * Other stuff
  */
-function searchPlayer() {
-    return alert('not ready yet'); //FIXME: fix this
-    modPlayer.Modal.hide();
-    if (!modPlayer.currPlayerRefString) return;
-    //FIXME: usar modPlayer.currPlayerRefString
-    const idsString = modPlayer.curr.ids.join(';');
-    if (window.location.pathname == TX_BASE_PATH + '/player/list') {
-        searchInput.value = idsString;
-        performSearch();
-    } else {
-        window.location = TX_BASE_PATH + '/player/list#' + encodeURI(idsString);
-    }
-}
 modPlayer.Main.logDetailsBtn.addEventListener('click', (event) => {
     modPlayer.History.tab.click();
 });

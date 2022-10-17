@@ -281,3 +281,6 @@ export class DatabasePlayer extends BasePlayer {
         return cloneDeep(this.dbData);
     }
 }
+
+
+export type PlayerClass = ServerPlayer | DatabasePlayer;

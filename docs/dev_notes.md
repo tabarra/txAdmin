@@ -25,7 +25,7 @@
     - [x] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`) (FIXME: close #625)
     - [x] dm (replace `txaSendDM` with event+snackbar)
     - [x] kick
-    - [ ] revoke action
+    - [ ] revoke action (+ actionRevoked event - PR #612)
 - [ ] db revoke_action/ban_ids routes + buttons on players page
 - [ ] whitelist page + actions
 - [ ] join check + whitelist
@@ -36,6 +36,7 @@
 - [ ] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
 - [ ] remove minSessionTime from everywhere
 - [ ] tidy up the files, specially comments missing everywhere
+- [ ] review all references to the old playerController
 - [ ] migrate warn action id prefix from A to W
 
 - [ ] FIXME: double check what happens when there is more than one player with the same license online
@@ -44,24 +45,30 @@
     - there will be 2 player.dbData, states that can be overwritten.
     - potential solution is to always prioritize ServerPlayer on player resolver
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
+    - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
 - [ ] FIXME: settings > player manager > save is erroring out
-
-- [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
+- [ ] create daily cron to optimize database:
+    - [ ] TODO: some rule about players that have less than X playtime and have not joined in the last Y days
+    - [ ] maybe have a select box with 3 profiles + disabled?
+    - [ ] daily cron to remove whitelistPreApprovals/whitelistRequests older than 7 days (no settings)
+
+Unrelated to feat/core-playerlist:
+- [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
+- [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
+- [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
 - [ ] the diagnostics reporting button thing
 - [ ] apply stashes
 - [ ] merge all translations
 - [ ] apply `nui_menu.misc.directmessage_title` to all translations
 - [ ] add car boost function
+- [ ] bot status "watching xx/yy players"
 
 Maybe after v5:
 - [ ] server logger add events/min average
-- [ ] bot status "watching xx/yy players"
 - [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
-- [ ] create daily cron to optimize database, maybe have a select box with 3 profiles + disabled?
-- [ ] txadmin log -> system log
 - [ ] At the schedule restart input prompt, add a note saying what is the current server time
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 - [ ] create events for dynamic scheduled restarts
@@ -150,8 +157,8 @@ Player:
 - handleKick (no user class interaction)
 
 Database:
-- handleRevokeAction -> db/revoke_action
 - ban identifiers -> db/ban_ids
+- handleRevokeAction -> db/revoke_action
 
 Whitelist:
 - get returns
@@ -234,7 +241,6 @@ https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
 
 Optional:
 - [ ] fix cfx.re login match by admin id
-- [ ] add actionRevoked event (rewrite PR #612)
 - [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
 - [ ] stats: jwe
 - [ ] set nui/vite.config.ts > target > chrome103
