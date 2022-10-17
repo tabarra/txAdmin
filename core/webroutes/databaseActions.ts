@@ -2,6 +2,7 @@ const modulename = 'WebServer:DatabaseActions';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import logger from '@core/extras/console.js';
 import { Context } from 'koa';
+import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -77,15 +78,28 @@ async function handleRevokeAction(ctx: Context, sess: any): Promise<GenericApiRe
     if (ctx.utils.hasPermission('players.ban')) perms.push('ban');
     if (ctx.utils.hasPermission('players.warn')) perms.push('warn');
 
+    let action;
     try {
-        const action = globals.playerDatabase.revokeAction(action_id, sess.auth.username, perms);
+        action = globals.playerDatabase.revokeAction(action_id, sess.auth.username, perms) as DatabaseActionType;
         ctx.utils.logAction(`Revoked ${action.type} id ${action_id} from ${action.playerName ?? 'identifiers'}`);
-
-        dir(action)
-        //FIXME: send actionRevoked event
-        
-        return { success: true };
     } catch (error) {
         return { error: `Failed to revoke action: ${(error as Error).message}` };
     }
+
+    try {
+        if (globals.fxRunner.fxChild !== null) {
+            // Dispatch `txAdmin:events:actionRevoked`
+            globals.fxRunner.sendEvent('actionRevoked', {
+                actionId: action.id,
+                actionType: action.type,
+                actionReason: action.reason,
+                actionAuthor: action.author,
+                playerName: action.playerName,
+                playerIds: action.identifiers,
+                revokedBy: sess.auth.username,
+            });
+        }
+    } catch (error) { }
+    
+    return { success: true };
 }

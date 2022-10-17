@@ -100,3 +100,14 @@ Event Data:
 - `target`: The id of the player to receive the DM.
 - `author`: The name of the admin.
 - `message`: The message content.
+
+## txAdmin:events:actionRevoked (v5.0)
+Called when an admin revokes a database action (ex. ban, warn).
+Event Data:
+- `actionId`: The id of the player to receive the DM.
+- `actionType`: The type of the action that was revoked.
+- `actionReason`: The action reason.
+- `actionAuthor`: The name of the admin that issued the action.
+- `playerName`: name of the player that received the action, or `false` if doesn't apply.
+- `playerIds`: Array containing all identifiers (ex. license, discord, etc.) this action applied to.
+- `revokedBy`: The name of the admin that revoked the action.
