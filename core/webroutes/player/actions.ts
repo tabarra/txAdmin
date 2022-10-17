@@ -3,18 +3,13 @@ import humanizeDuration from 'humanize-duration';
 import logger from '@core/extras/console.js';
 import { Context } from 'koa';
 import playerResolver from '@core/playerLogic/playerResolver';
-import { PlayerActionResp } from '@shared/playerApiTypes';
-import { DatabasePlayer, ServerPlayer } from '@core/playerLogic/playerClasses';
+import { GenericApiResp } from '@shared/genericApiTypes';
+import { PlayerClass, ServerPlayer } from '@core/playerLogic/playerClasses';
 import { calcExpirationFromDuration } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
-const now = () => { return Math.round(Date.now() / 1000); };
 const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };
-const escape = (x: string) => { return x.replace(/"/g, '\uff02'); };
-const formatCommand = (cmd: string, ...params: any) => {
-    return `${cmd} "` + [...params].map((c) => c.toString()).map(escape).join('" "') + '"';
-};
 
 
 
@@ -29,7 +24,7 @@ export default async function PlayerActions(ctx: Context) {
     const action = ctx.params.action;
     const sess = ctx.nuiSession ?? ctx.session;
     const { mutex, netid, license } = ctx.query;
-    const sendTypedResp = (data: PlayerActionResp) => ctx.send(data);
+    const sendTypedResp = (data: GenericApiResp) => ctx.send(data);
 
     //Finding the player
     let player;
@@ -62,7 +57,7 @@ export default async function PlayerActions(ctx: Context) {
 /**
  * Handle Save Note (open to all admins)
  */
-async function handleSaveNote(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
+async function handleSaveNote(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -85,7 +80,7 @@ async function handleSaveNote(ctx: Context, sess: any, player: ServerPlayer | Da
 /**
  * Handle Send Warning
  */
-async function handleWarning(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
+async function handleWarning(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -100,7 +95,10 @@ async function handleWarning(ctx: Context, sess: any, player: ServerPlayer | Dat
         return { error: 'You don\'t have permission to execute this action.' };
     }
 
-    //Validating player
+    //Validating server & player
+    if (globals.fxRunner.fxChild === null) {
+        return { error: 'The server is not online.' };
+    }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
     }
@@ -136,7 +134,7 @@ async function handleWarning(ctx: Context, sess: any, player: ServerPlayer | Dat
 /**
  * Handle Banning command
  */
-async function handleBan(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
+async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request & identifiers
     if (
         anyUndefined(
@@ -177,6 +175,11 @@ async function handleBan(ctx: Context, sess: any, player: ServerPlayer | Databas
         return { error: `Failed to ban player: ${(error as Error).message}` };
     }
     ctx.utils.logAction(`Banned player ${player.displayName}: ${reason}`);
+
+    //No need to dispatch events if server is not online
+    if (globals.fxRunner.fxChild === null) {
+        return { success: true };
+    }
 
     //Prepare and send command
     let kickMessage, durationTranslated;
@@ -223,7 +226,7 @@ async function handleBan(ctx: Context, sess: any, player: ServerPlayer | Databas
 /**
  * Handle Whitelist Action
  */
-async function handleSetWhitelist(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
+async function handleSetWhitelist(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -246,6 +249,12 @@ async function handleSetWhitelist(ctx: Context, sess: any, player: ServerPlayer 
             ctx.utils.logAction(`Removed ${player.license} from the whitelist.`);
         }
 
+        //No need to dispatch events if server is not online
+        if (globals.fxRunner.fxChild === null) {
+            return { success: true };
+        }
+
+        //FIXME: make this code look like the one from the other functions, separating setWhitelist in trycatch and here doing a cmdOk check
         //FIXME:
         // Dispatch `txAdmin:events:playerWhitelisted`
         // globals.fxRunner.sendEvent('playerWhitelisted', {
@@ -264,7 +273,7 @@ async function handleSetWhitelist(ctx: Context, sess: any, player: ServerPlayer 
 /**
  * Handle Direct Message Action
  */
-async function handleMessage(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
+async function handleMessage(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -282,7 +291,10 @@ async function handleMessage(ctx: Context, sess: any, player: ServerPlayer | Dat
         return { error: 'You don\'t have permission to execute this action.' };
     }
 
-    //Validating player
+    //Validating server & player
+    if (globals.fxRunner.fxChild === null) {
+        return { error: 'The server is not online.' };
+    }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
     }
@@ -307,7 +319,7 @@ async function handleMessage(ctx: Context, sess: any, player: ServerPlayer | Dat
 /**
  * Handle Kick Action
  */
-async function handleKick(ctx: Context, sess: any, player: ServerPlayer | DatabasePlayer): Promise<PlayerActionResp> {
+async function handleKick(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -322,7 +334,10 @@ async function handleKick(ctx: Context, sess: any, player: ServerPlayer | Databa
         return { error: 'You don\'t have permission to execute this action.' };
     }
 
-    //Validating player
+    //Validating server & player
+    if (globals.fxRunner.fxChild === null) {
+        return { error: 'The server is not online.' };
+    }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
     }
