@@ -16,7 +16,8 @@ export const defaultDatabase = {
     version: DATABASE_VERSION,
     players: [],
     actions: [],
-    pendingWL: [],
+    whitelistApprovals: [],
+    whitelistRequests: [],
 };
 
 export const SAVE_PRIORITY_LOW = 1;
@@ -81,13 +82,13 @@ export class Database {
     lastWrite: number = 0;
     isReady: boolean = false;
 
-    constructor(wipePendingWLOnStart: boolean) {
+    constructor() {
         this.dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         this.backupPath = `${globals.info.serverProfilePath}/data/playersDB.backup.json`;
         this.#writePending = SAVE_STANDBY;
 
         //Start database instance
-        this.setupDatabase(wipePendingWLOnStart);
+        this.setupDatabase();
 
         //Cron functions
         setInterval(() => {
@@ -102,7 +103,7 @@ export class Database {
     /**
      * Start lowdb instance and set defaults
      */
-    async setupDatabase(wipePendingWLOnStart: boolean) {
+    async setupDatabase() {
         //Tries to load the database
         let dbo;
         try {
@@ -143,12 +144,6 @@ export class Database {
                 this.obj = await migrations(dbo);
             } else {
                 this.obj = dbo;
-            }
-
-            //If wiping pending whitelist requests on boot
-            if (wipePendingWLOnStart) {
-                dbo.data.pendingWL = [];
-                await dbo.write();
             }
 
             this.lastWrite = Date.now();

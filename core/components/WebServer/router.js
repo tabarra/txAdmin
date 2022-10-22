@@ -113,6 +113,9 @@ export default (config) => {
     router.get('/player', requestAuth('api'), webRoutes.player_modal);
     router.get('/player/list', requestAuth('web'), webRoutes.player_list);
     router.post('/player/:action', requestAuth('api'), webRoutes.player_actions);
+    router.get('/whitelist', requestAuth('web'), webRoutes.whitelist_page);
+    router.get('/whitelist/:store', requestAuth('api'), webRoutes.whitelist_list);
+    router.post('/whitelist/:store/:action', requestAuth('api'), webRoutes.whitelist_actions);
 
     //Index & generic
     router.get('/resources', requestAuth('web'), webRoutes.resources);

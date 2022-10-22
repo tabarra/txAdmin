@@ -98,6 +98,10 @@ body.theme--dark .text-danger {
   color: #ff148f !important;
 }
 
+body.theme--dark .text-danger:hover {
+  color: #c70068 !important;
+}
+
 body.theme--dark .text-muted {
   color: #969696 !important;
 }

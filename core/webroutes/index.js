@@ -45,6 +45,11 @@ export { default as player_list } from './player/list';
 export { default as player_modal } from './player/modal';
 export { default as player_actions } from './player/actions';
 
+export { default as whitelist_page } from './whitelist/page';
+export { default as whitelist_list } from './whitelist/list';
+export { default as whitelist_actions } from './whitelist/actions';
+
+
 export { default as advanced_get } from './advanced/get';
 export { default as advanced_actions } from './advanced/actions';
 

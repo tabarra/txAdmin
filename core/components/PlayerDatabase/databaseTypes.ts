@@ -27,16 +27,26 @@ export type DatabaseActionType = {
         author: string | null;
     };
 };
-export type DatabasePendingWLType = {
-    id: string; //R####
-    license: string;
-    name: string;
-    tsLastAttempt: number;
+export type DatabaseWhitelistApprovalsType = {
+    identifier: string;
+    playerName: string; //always filled, even with `unknown` or license `xxxxxx...xxxxxx` 
+    playerAvatar: string | null,
+    tsApproved: number,
+    approvedBy: string
+};
+export type DatabaseWhitelistRequestsType = {
+    id: string, //R####
+    license: string,
+    playerName: string,
+    discordTag?: string,
+    discordAvatar?: string, //first try to get from GuildMember, then client.users.fetch()
+    tsLastAttempt: number,
 };
 
 export type DatabaseDataType = {
     version: number,
     players: DatabasePlayerType[],
     actions: DatabaseActionType[],
-    pendingWL: DatabasePendingWLType[],
+    whitelistApprovals: DatabaseWhitelistApprovalsType[],
+    whitelistRequests: DatabaseWhitelistRequestsType[],
 };

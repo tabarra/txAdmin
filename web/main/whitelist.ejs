@@ -1,0 +1,321 @@
+<%- await include('parts/header.ejs', locals) %>
+
+<style>
+    .header-elements {
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+    .name-truncate {
+        max-width: 8rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .discord-avatar {
+        width: 1.25rem;
+        height: 1.25rem;
+        vertical-align: text-bottom;
+    }
+    .discord-tag {
+        margin-left: 2px;
+    }
+    .action-buttons {
+        text-decoration: none;
+        font-size: 1.25em;
+        margin-left: 4px;
+    }
+    .action-buttons:hover {
+        text-decoration: none;
+    }
+    .action-buttons:hover > i {
+        font-weight: 600;
+    }
+</style>
+
+<!-- <div class="text-center mb-4">
+    <h2>Whitelist</h2>
+</div> -->
+
+
+<div class="row justify-content-md-center">
+    <!-- Requests card -->
+    <div class="col-md-6 mw-col8">
+        <div class="card card-accent-success">
+            <div class="card-header" style="display: flex; justify-content: space-between;">
+                <div>
+                    <span style="font-size: large">Whitelist Requests:</span> <br>
+                    <small>Players that tried to join the server but were not whitelisted.</small>
+                </div>
+                <div class="header-elements">
+                    <div class="form-group mb-0">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control" id="dbSearch-input" type="text"
+                                placeholder="player name, R1234">
+                            <span class="input-group-append">
+                                <button class="btn btn-sm btn-secondary" type="button" id="dbSearch-button">
+                                    Search
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="requestsSpinner" style="min-height: 125px;">
+                    <div class="txSpinner">Loading...</div>
+                </div>
+                <div class="text-center">
+                    <h3 class="mx-auto pt-3 text-muted d-none" id="requestsMessage">no players here yet</h3>
+                </div>
+                <div class="table-responsive text-center d-nonex" id="requestsContent">
+                    <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                        <thead>
+                            <tr class="text-left">
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Discord</th>
+                                <th>Join Time</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approved card -->
+    <div class="col-md-6 mw-col8">
+        <div class="card card-accent-success">
+            <div class="card-header" style="display: flex; justify-content: space-between;">
+                <div>
+                    <span style="font-size: large">Approved Whitelists:</span> <br>
+                    <small>Players that are already approved, but haven't joined the server yet.</small>
+                </div>
+                <div class="header-elements">
+                    <button class="btn btn-sm btn-success" type="button" onclick="whitelistID(null)">
+                        <i class="icon-plus"></i> Add Approval
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="approvedSpinner" style="min-height: 125px;">
+                    <div class="txSpinner">Loading...</div>
+                </div>
+                <div class="text-center">
+                    <h3 class="mx-auto pt-3 text-muted d-none" id="approvedMessage">no players here yet</h3>
+                </div>
+                <div class="table-responsive text-center d-nonex" id="approvedContent">
+                    <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                        <thead>
+                            <tr class="text-left">
+                                <!-- <th>Identifier</th> -->
+                                <th>Player</th>
+                                <th>Approved By</th>
+                                <th>Approval Date</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approvedTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Template for Whitelists Requests entry lines -->
+<template id="requestsEntryTemplate">
+    <td></td>
+    <td class="name-truncate"></td>
+    <td class="name-truncate">
+        <div class="c-avatar discord-avatar">
+            <img class="c-avatar-img" src="">
+        </div>
+        <span class="discord-tag"></span>
+    </td>
+    <td></td>
+    <td class="tableActions">
+        <a href="#" class="action-buttons text-success" title="Approve">
+            <i class="icon-check"></i>
+        </a>
+        <a href="#" class="action-buttons text-danger" title="Deny">
+            <i class="icon-close"></i>
+        </a>
+    </td>
+</template>
+
+<!-- Template for Approved Whitelists entry lines -->
+<template id="approvedEntryTemplate">
+    <td class="name-truncate">
+        <div class="c-avatar discord-avatar">
+            <img class="c-avatar-img" src="">
+        </div>
+        <span class="discord-tag"></span>
+    </td>
+    <td></td>
+    <td></td>
+    <td class="tableActions">
+        <a href="#" class="action-buttons text-danger" title="Deny">
+            <i class="icon-close"></i>
+        </a>
+    </td>
+</template>
+
+
+<%- await include('parts/footer.ejs', locals) %>
+
+
+<script>
+    const hasWhitelistPermission = ('<%= hasWhitelistPermission %>' === 'true');
+
+    /**
+     * WHITELIST REQUESTS
+     */
+    const reqElements = {
+        spinner: document.getElementById('requestsSpinner'),
+        message: document.getElementById('requestsMessage'),
+        content: document.getElementById('requestsContent'),
+        tableBody: document.getElementById('requestsTableBody'),
+        entryTemplate: document.getElementById('requestsEntryTemplate'),
+    };
+    const fillRequestsTableRows = (reqsArray) => {
+        for (const req of reqsArray) {
+            const newNode = document.createElement("tr");
+            newNode.innerHTML = reqElements.entryTemplate.innerHTML;
+            newNode.querySelector('td:nth-child(1)').textContent = req.id;
+            newNode.querySelector('td:nth-child(2)').textContent = req.playerName;
+            newNode.querySelector('td:nth-child(3) div img').src = req.discordAvatar
+                ? req.discordAvatar
+                : 'img/default_avatar.png';
+            newNode.querySelector('td:nth-child(3) span').textContent = req.discordTag
+                ? req.discordTag
+                : 'not available';
+
+            const tsLastAttempt = new Date(req.tsLastAttempt * 1000)
+            newNode.querySelector('td:nth-child(4)').title = tsLastAttempt.toLocaleString(
+                navigator.language,
+                { dateStyle: 'long', timeStyle: 'long' }
+            );
+            newNode.querySelector('td:nth-child(4)').textContent = tsLastAttempt.toLocaleString(
+                navigator.language,
+                { dateStyle: 'short', timeStyle: 'short' }
+            );
+
+            newNode.querySelector('td:nth-child(5) a:nth-child(1)').addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('btn approve');
+            });
+            newNode.querySelector('td:nth-child(5) a:nth-child(2)').addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('btn deny');
+            });
+
+            reqElements.tableBody.appendChild(newNode);
+        }
+    }
+
+    txAdminAPI({
+        type: "GET",
+        url: '/whitelist/requests',
+        timeout: REQ_TIMEOUT_LONG,
+        dataType: 'json',
+        success: function (data) {
+            reqElements.spinner.classList.add('d-none');
+            if(data.error){
+                // FIXME:
+            }else if(!Array.isArray(data)){
+                // FIXME:
+            }else if(!data.length){
+                reqElements.content.classList.add('d-none');
+                reqElements.message.classList.remove('d-none');
+            }else{
+                reqElements.message.classList.add('d-none');
+                reqElements.content.classList.remove('d-none');
+                fillRequestsTableRows(data);
+            }
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            // FIXME:
+        }
+    }); 
+    
+    
+    /**
+     * APPROVED WHITELISTS
+     */
+    const approvedElements = {
+        spinner: document.getElementById('approvedSpinner'),
+        message: document.getElementById('approvedMessage'),
+        content: document.getElementById('approvedContent'),
+        tableBody: document.getElementById('approvedTableBody'),
+        entryTemplate: document.getElementById('approvedEntryTemplate'),
+    };
+    const fillApprovedTableRows = (approvalsArray) => {
+        for (const approval of approvalsArray) {
+            const newNode = document.createElement("tr");
+            newNode.innerHTML = approvedElements.entryTemplate.innerHTML;
+            newNode.querySelector('td:nth-child(1) div img').src = approval.playerAvatar
+                ? approval.playerAvatar
+                : 'img/default_avatar.png';
+            newNode.querySelector('td:nth-child(1) span').textContent = approval.playerName;
+            newNode.querySelector('td:nth-child(2)').textContent = approval.approvedBy;
+
+            const tsApproved = new Date(approval.tsApproved * 1000)
+            newNode.querySelector('td:nth-child(3)').title = tsApproved.toLocaleString(
+                navigator.language,
+                { dateStyle: 'long', timeStyle: 'long' }
+            );
+            newNode.querySelector('td:nth-child(3)').textContent = tsApproved.toLocaleString(
+                navigator.language,
+                { dateStyle: 'short', timeStyle: 'short' }
+            );
+
+            newNode.querySelector('td:nth-child(4) a:nth-child(1)').addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('btn remove');
+            });
+
+            approvedElements.tableBody.appendChild(newNode);
+        }
+    }
+
+    txAdminAPI({
+        type: "GET",
+        url: '/whitelist/approvals',
+        timeout: REQ_TIMEOUT_LONG,
+        dataType: 'json',
+        success: function (data) {
+            approvedElements.spinner.classList.add('d-none');
+            if(data.error){
+                // FIXME:
+            }else if(!Array.isArray(data)){
+                // FIXME:
+            }else if(!data.length){
+                approvedElements.content.classList.add('d-none');
+                approvedElements.message.classList.remove('d-none');
+            }else{
+                approvedElements.message.classList.add('d-none');
+                approvedElements.content.classList.remove('d-none');
+                fillApprovedTableRows(data);
+            }
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            // FIXME:
+        }
+    }); 
+
+</script>

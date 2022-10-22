@@ -126,6 +126,9 @@ body.theme--dark {
   .text-danger {
     color: $txadmin-danger !important;
   }
+  .text-danger:hover {
+    color: darken($txadmin-danger, 15%) !important;
+  }
 
   .text-muted {
     color: #969696 !important;

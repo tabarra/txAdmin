@@ -32,7 +32,6 @@ type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     onJoinCheckWhitelist: boolean;
     whitelistRejectionMessage: string;
-    wipePendingWLOnStart: boolean;
 }
 /**
  * Provide a central database for players, as well as assist with access control.
@@ -43,7 +42,7 @@ export default class PlayerDatabase {
 
     constructor(txAdmin: typeof TxAdmin, public config: PlayerDbConfigType) {
         this.#txAdmin = txAdmin;
-        this.#db = new Database(config.wipePendingWLOnStart);
+        this.#db = new Database();
     }
 
     get isReady() {

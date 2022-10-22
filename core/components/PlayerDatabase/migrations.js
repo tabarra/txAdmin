@@ -65,6 +65,7 @@ export default async (dbo) => {
         logWarn('\t- allow txAdmin to save old player identifiers');
         logWarn('\t- remove the whitelist action in favor of player property');
         logWarn('\t- remove empty notes');
+        logWarn('\t- improve whitelist handling');
 
         //Removing all whitelist actions
         const ts = now();
@@ -100,6 +101,9 @@ export default async (dbo) => {
             if (!player.notes.text) player.notes = undefined;
         }
 
+        dbo.data.pendingWL = undefined;
+        dbo.data.whitelistApprovals = [];
+        dbo.data.whitelistRequests = [];
         dbo.data.version = 3;
         await dbo.write();
     }
@@ -110,6 +114,6 @@ export default async (dbo) => {
         logError('Please make sure your txAdmin is on the most updated version!');
         process.exit(1);
     }
-    logOk('Database migrated successfully')
+    logOk('Database migrated successfully');
     return dbo;
 };

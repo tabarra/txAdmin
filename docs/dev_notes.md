@@ -35,9 +35,11 @@
 - [ ] fix player modal in nui menu
 - [ ] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
 - [ ] remove minSessionTime from everywhere
+- [ ] remove wipePendingWLOnStart from everywhere
 - [ ] tidy up the files, specially comments missing everywhere
 - [ ] review all references to the old playerController
 - [ ] migrate warn action id prefix from A to W
+- [ ] no duplicated id type in bans? preparing for the new db migration
 
 - [ ] FIXME: double check what happens when there is more than one player with the same license online
 - [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
@@ -47,12 +49,13 @@
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
     - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
 - [ ] FIXME: settings > player manager > save is erroring out
+- [ ] FIXME: diagnostics erroring out
 - [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] create daily cron to optimize database:
     - [ ] TODO: some rule about players that have less than X playtime and have not joined in the last Y days
     - [ ] maybe have a select box with 3 profiles + disabled?
-    - [ ] daily cron to remove whitelistPreApprovals/whitelistRequests older than 7 days (no settings)
+    - [ ] daily cron to remove whitelistApprovals/whitelistRequests older than 7 days (no settings)
 
 Unrelated to feat/core-playerlist:
 - [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
@@ -65,6 +68,8 @@ Unrelated to feat/core-playerlist:
 - [ ] apply `nui_menu.misc.directmessage_title` to all translations
 - [ ] add car boost function
 - [ ] bot status "watching xx/yy players"
+- [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
+- [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
 
 Maybe after v5:
 - [ ] server logger add events/min average
@@ -72,6 +77,7 @@ Maybe after v5:
 - [ ] At the schedule restart input prompt, add a note saying what is the current server time
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 - [ ] create events for dynamic scheduled restarts
+- [ ] add discordTag/discordAvatar to whitelist
 
 ```ts
 //TODO: remove when removing globals
@@ -82,43 +88,54 @@ const playerDatabase = (globals.playerDatabase as PlayerDatabase);
 
 
 # REFACTOR DEV:
-- `ServerPlayer.dbData`:
-    - The instantiated object requires a copy of the dbData, this is important now and will be even more when the database is out-of-process;
-    - for memory optimization:
-        - when player disconnects, remove dbData?
-        - when required we can do like a `serverPlayer.retrieveDbData()`, and start a 120s timeout to wipe `this.dbData`;
-- talvez as funções getHistory e setNote tentem buscar no banco... talvez uma flag de "isRegistered"?
+
+## Schema
+whitelistApprovals:
+- identifier (license:xxxx / discord:xxxxxxx)
+- playerName always filled, even with 'unknown'
+- playerAvatar str/null
+- tsApproved
+- author
+
+NOTE: What name to show in which scenario:
+- webpage wl license: unknown
+- webpage wl discord: discord tag - need to resolve when saving
+- approve request with license+name but no discord: whitelistRequests.playerName
+- approve request with license+name and discord: whitelistRequests.discordTag
+- discord approve request: 2 scenarios above
+- discord approve license: unknown
+- discord approve mention: mentioned member tag
 
 
-- New modal for both ServerPlayer and DatabasePlayers:
-    - In the player info tab:
-        - "xx bans and yy warns [view]"
-        - [ADD WL] / [REMOVE WL]
-    - History tab:
-        - all actions from all ids (curr or previous)
-        - must have the revoke button
-    - ban tab
-- This is a compromise, where you can still easily see if the player was banned on the first page, and still be able to revoke it without closing the modal. 
-- For that, we need to migrate whitelist actions to being a prop of the player, this is directly possible since whitelists are saved with the license identifier only.
+whitelistRequests:
+- id
+- license
+- playerName
+- discordTag?
+- discordAvatar? first try to get from GuildMember, then client.users.fetch()
+- tsLastAttempt
 
-
-
-## Cenário com tabelas separadas
-- /db/whitelist:
-    - if license:
-        - find player by license
-        - if player
-            - player.tsWhitelisted = now()/undefined
-            - return
-    - else
-        - register whitelistPreApprovals
-
-- /player/whitelist:
+## Routes
+- /player/whitelist: DONE
     - find player by license
     - if player
         - player.tsWhitelisted = now()/undefined
     - else
         - return error
+
+- /database/whitelist/whitelistApprovals/add:
+    - check if not duplicated
+    - add to whitelistApprovals
+
+- /database/whitelist/whitelistApprovals/remove:
+    - search & remove from whitelistApprovals
+
+- /database/whitelist/whitelistRequests/approve:
+    - register whitelistApprovals
+    - remove record from whitelistRequests
+
+- /database/whitelist/whitelistRequests/deny:
+    - remove record from whitelistRequests
 
 - checkPlayerJoin:
     - check active bans on matching identifiers
@@ -130,20 +147,26 @@ const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     - if player
         - if whitelisted
             - return allow join
-    - find license or discord id on whitelistPreApprovals
+    - find license or discord id on whitelistApprovals
         - if found
             - register player
-            - remove entry from whitelistPreApprovals
+            - remove entry from whitelistApprovals
+            - remove related entries from whitelistRequests
             - return allow join
-    - register player in whitelistRequests
+    - find player on whitelistRequests
+        - if found
+            - update tsLastAttempt
+        - else
+            - register player in whitelistRequests
     - return deny join: "blabla <id>"
 
 This way:
-- will have both whitelistPreApprovals and whitelistRequests table
-- if pre approved, checkPlayerJoin will register the database player
+- will have both whitelistApprovals and whitelistRequests table
+- if id approved, checkPlayerJoin will register the database player
+- approving a wl request will just "promote it" to an approval, but will not register a player
 - player will still get their request id
 - we can pre-approve by license or discord id
-- daily cron to remove whitelistPreApprovals/whitelistRequests older than 7 days - no settings option unless people ask for it!
+- daily cron to remove whitelistApprovals/whitelistRequests older than 7 days - no settings option unless people ask for it!
 
 
 
@@ -163,8 +186,8 @@ Database:
 Whitelist:
 - get returns
     - whitelistRequests[]
-    - whitelistPreApprovals[]
-- whitelistPreApprovals (add/remove)
+    - whitelistApprovals[]
+- whitelistApprovals (add/remove)
 - whitelistRequests (approve/deny)
 
 
@@ -188,8 +211,8 @@ Whitelist Page/routes:
 - Routes:
     - get returns
         - whitelistRequests[]
-        - whitelistPreApprovals[]
-    - whitelistPreApprovals (add/remove)
+        - whitelistApprovals[]
+    - whitelistApprovals (add/remove)
     - whitelistRequests (approve/deny)
 
 
