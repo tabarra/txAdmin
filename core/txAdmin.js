@@ -17,7 +17,6 @@ import FxRunner from '@core/components/FxRunner';
 import Logger from '@core/components/Logger';
 import HealthMonitor from '@core/components/HealthMonitor';
 import Scheduler from '@core/components/Scheduler';
-// import PlayerController from '@core/components/PlayerController';
 import StatsCollector from '@core/components/StatsCollector';
 import Translator from '@core/components/Translator';
 import WebServer from '@core/components/WebServer';
@@ -45,7 +44,6 @@ global.globals = {
     statsCollector: null,
     translator: null,
     webServer: null,
-    playerController: null,
     resourcesManager: null,
     playerlistManager: null,
     playerDatabase: null,
@@ -121,7 +119,6 @@ export default class TxAdmin {
     scheduler;
     statsCollector;
     webServer;
-    playerController;
     resourcesManager;
     playerlistManager;
     playerDatabase;
@@ -191,9 +188,6 @@ export default class TxAdmin {
 
             this.webServer = new WebServer(profileConfig.webServer);
             globals.webServer = this.webServer;
-
-            // this.playerController = new PlayerController(profileConfig.playerController);
-            // globals.playerController = this.playerController;
 
             this.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
             globals.resourcesManager = this.resourcesManager;

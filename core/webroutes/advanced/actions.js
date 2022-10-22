@@ -72,10 +72,6 @@ export default async function AdvancedActions(ctx) {
         const dbo = globals.playerController.getDb();
         dir(dbo);
         return ctx.send({type: 'success', message: JSON.stringify(dbo, null, 2)});
-    } else if (action == 'wipe_db') {
-        const dbo = globals.playerController.getDb();
-        await dbo.set('players', []).set('actions', []).set('pendingWL', []).write();
-        return ctx.send({type: 'success', message: 'wiiiiiiiiped'});
     } else if (action == 'show_log') {
         return ctx.send({type: 'success', message: JSON.stringify(globals.logger.server.getRecentBuffer(), null, 2)});
     } else if (action == 'memory') {

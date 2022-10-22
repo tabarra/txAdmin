@@ -558,10 +558,10 @@ export default class AdminVault {
             }, []);
 
             //Finding online admins
-            const playerList = globals.playerController.getPlayerList();
+            const playerList = globals.playerlistManager.getPlayerList();
             const onlineIDs = playerList.filter((p) => {
-                return p.identifiers.some((i) => adminIDs.includes(i));
-            }).map((p) => p.id);
+                return p.ids.some((i) => adminIDs.includes(i));
+            }).map((p) => p.netid);
 
             return globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
         } catch (error) {
