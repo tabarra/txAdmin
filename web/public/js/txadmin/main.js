@@ -128,15 +128,17 @@ function refreshData() {
             } else {
                 out = `Request error: ${textstatus}\n${message}`;
             }
-            setBadgeColor(statusCard.discord, 'light');
-            statusCard.discord.textContent = '--';
-            setBadgeColor(statusCard.server, 'light');
-            statusCard.server.textContent = '--';
-            statusCard.serverProcess.textContent = '--';
-            setNextRestartTimeClass('text-muted');
-            statusCard.nextRestartTime.textContent = '--';
-            statusCard.nextRestartBtnCancel.classList.add('d-none');
-            statusCard.nextRestartBtnEnable.classList.add('d-none');
+            if (statusCard.self) {
+                setBadgeColor(statusCard.discord, 'light');
+                statusCard.discord.textContent = '--';
+                setBadgeColor(statusCard.server, 'light');
+                statusCard.server.textContent = '--';
+                statusCard.serverProcess.textContent = '--';
+                setNextRestartTimeClass('text-muted');
+                statusCard.nextRestartTime.textContent = '--';
+                statusCard.nextRestartBtnCancel.classList.add('d-none');
+                statusCard.nextRestartBtnEnable.classList.add('d-none');
+            }
             if (isWebInterface) {
                 $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
                 $('#hostusage-cpu-text').html('error');
@@ -236,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 //=================================== Globally Available API Funcs
 //================================================================
 async function txApiFxserverControl(action) {
-    const confirmOptions = { content: `Are you sure you would like to <b>${action}</b> the server?` };
+    const confirmOptions = { content: `Are you sure you would like to <b>${action.toUpperCase()}</b> the server?` };
     if (action !== 'start' && !await txAdminConfirm(confirmOptions)) {
         return;
     }

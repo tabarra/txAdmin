@@ -26,7 +26,7 @@ export default async function PlayerList(ctx) {
     const dbo = globals.playerDatabase.getDb();
 
     //Delegate to the specific action handler
-    if (ctx.request.query && ctx.request.query.search) {
+    if (ctx.request.query?.search) {
         return await handleSearch(ctx, dbo);
     } else {
         return await handleDefault(ctx, dbo);
@@ -127,7 +127,7 @@ async function handleSearch(ctx, dbo) {
             }
 
 
-        //Likely searching for an partial name
+        //Likely searching for a partial name
         } else {
             //FIXME: use fuse.js
             const { pureName } = cleanPlayerName(searchString);
