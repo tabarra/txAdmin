@@ -8,7 +8,7 @@ import { convars, verbose } from '@core/globalData';
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
 import { genActionID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
-import { DatabaseActionType, DatabasePlayerType } from './databaseTypes';
+import { DatabaseActionType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
@@ -55,8 +55,6 @@ export default class PlayerDatabase {
     getDb() {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         // throw new Error(`dev note: not validated yet`);
-        //TODO: perhaps add a .cloneDeep()? Might cause some performance issues tho
-        //NOTE: for now used only in core\webroutes\player\list.js and advanced debug actions
         return this.#db.obj;
     }
 
@@ -119,8 +117,7 @@ export default class PlayerDatabase {
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
             return this.#db.obj.chain.get('actions')
-                //@ts-ignore: complicated type
-                .filter(filter)
+                .filter(filter as any)
                 .filter((a) => idArray.some((fi) => a.identifiers.includes(fi)))
                 .cloneDeep()
                 .value();
@@ -201,7 +198,7 @@ export default class PlayerDatabase {
             const action = this.#db.obj.chain.get('actions')
                 .find({ id: actionId })
                 .value();
-            
+
             if (!action) throw new Error(`action not found`);
             if (allowedTypes !== true && !allowedTypes.includes(action.type)) {
                 throw new Error(`you do not have permission to revoke this action`);
@@ -220,6 +217,62 @@ export default class PlayerDatabase {
             if (verbose) dir(error);
             throw error;
         }
+    }
+
+
+    /**
+     * Returns all whitelist approvals, which can be optionally filtered
+     */
+    getWhitelistApprovals(
+        filter?: Exclude<object, null> | Function
+    ): DatabaseWhitelistApprovalsType[] {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        return this.#db.obj.chain.get('whitelistApprovals')
+            .filter(filter as any)
+            .cloneDeep()
+            .value();
+    }
+
+
+    /**
+     * Removes whitelist approvals based on a filter.
+     */
+    removeWhitelistApprovals(
+        filter: Exclude<object, null> | Function
+    ): DatabaseWhitelistApprovalsType[] {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        this.#db.writeFlag(SAVE_PRIORITY_MEDIUM);
+        return this.#db.obj.chain.get('whitelistApprovals')
+            .remove(filter as any)
+            .value();
+    }
+
+
+    /**
+     * Returns all whitelist approvals, which can be optionally filtered
+     */
+    getWhitelistRequests(
+        filter?: Exclude<object, null> | Function
+    ): DatabaseWhitelistRequestsType[] {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        return this.#db.obj.chain.get('whitelistRequests')
+            .filter(filter as any)
+            .cloneDeep()
+            .value();
+    }
+
+    
+    /**
+     * Removes whitelist requests based on a filter.
+     */
+     removeWhitelistRequests(
+        filter: Exclude<object, null> | Function
+    ): DatabaseWhitelistRequestsType[] {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        this.#db.writeFlag(SAVE_PRIORITY_MEDIUM);
+        return this.#db.obj.chain.get('whitelistRequests')
+            .remove(filter as any)
+            .value();
     }
 
 

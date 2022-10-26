@@ -29,6 +29,7 @@
 - [x] db revoke_action/ban_ids routes + buttons on players page
 - [ ] whitelist page + actions
 - [ ] join check + whitelist
+- [ ] add new custom connect reject messages for whitelist/bans
 - [ ] create new whitelist events
 - [ ] clean PlayerDatabase file (mainly methods)
 - [ ] add last connection date to offline player modal (issue #689)
@@ -44,6 +45,7 @@
 - [ ] FIXME: double check what happens when there is more than one player with the same license online
 - [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
     - consider scenario where the player is on the server, and you search for it on the playerlist
+    - (also valid for player join check)
     - there will be 2 player.dbData, states that can be overwritten.
     - potential solution is to always prioritize ServerPlayer on player resolver
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
@@ -121,6 +123,7 @@ whitelistRequests:
 
 - /whitelist/approvals/add:
     - check if not duplicated
+    - no need to check if player exists, checkJoin will save tsWhitelisted when player joins
     - add to whitelistApprovals
 
 - /whitelist/approvals/remove:

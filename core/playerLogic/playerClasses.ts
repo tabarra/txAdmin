@@ -31,6 +31,7 @@ export class BasePlayer {
 
     /**
      * Mutates the database data based on a source object to be applied
+     * FIXME: if this is called for a disconnected ServerPlayer, it will not clean after 120s
      */
     protected mutateDadabase(srcData: Exclude<object, null>) {
         if (!this.license) throw new Error(`cannot mutate database for a player that has no license`);
@@ -112,9 +113,9 @@ export class ServerPlayer extends BasePlayer {
 
         //Processing identifiers
         //NOTE: ignoring IP completely
-        const { license, validIds } = parsePlayerIds(playerData.ids);
-        this.license = license;
-        this.ids = validIds;
+        const { validIdsArray, validIdsObject } = parsePlayerIds(playerData.ids);
+        this.license = validIdsObject.license;
+        this.ids = validIdsArray;
 
         //TODO: re-enable it when migrating to new database
         // this.hwids = playerData.hwids.filter(x => {

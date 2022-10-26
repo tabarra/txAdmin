@@ -109,22 +109,40 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
  * Get valid, invalid and license identifier from array of ids
  */
 export const parsePlayerIds = (ids: string[]) => {
-    let license: string | null = null;
-    let validIds: string[] = [];
-    let invalidIds: string[] = [];
+    let invalidIdsArray: string[] = [];
+    let validIdsArray: string[] = [];
+    const validIdsObject: PlayerIdsObjectType = {
+        discord: null,
+        fivem: null,
+        license: null,
+        license2: null,
+        live: null,
+        steam: null,
+        xbl: null,
+    }
 
     for (const idString of ids) {
         const [idType, idValue] = idString.split(':', 2);
         const validator = consts.validIdentifiers[idType as keyof typeof consts.validIdentifiers];
         if (validator && validator.test(idString)) {
-            validIds.push(idString);
-            if (idType === 'license') {
-                license = idValue;
-            }
+            validIdsArray.push(idString);
+            validIdsObject[idType as keyof PlayerIdsObjectType] = idValue;
         } else {
-            invalidIds.push(idString);
+            invalidIdsArray.push(idString);
         }
     }
 
-    return { license, validIds, invalidIds };
+    return { invalidIdsArray, validIdsArray, validIdsObject };
 }
+
+
+//Maybe extract to some shared folder
+export type PlayerIdsObjectType = {
+    discord: string | null;
+    fivem: string | null;
+    license: string | null;
+    license2: string | null;
+    live: string | null;
+    steam: string | null;
+    xbl: string | null;
+};

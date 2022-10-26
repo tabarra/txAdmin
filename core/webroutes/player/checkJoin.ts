@@ -1,12 +1,14 @@
 const modulename = 'WebServer:PlayerCheckJoin';
-import { GenericApiError } from '@core/../shared/genericApiTypes';
+import cleanPlayerName from '@shared/cleanPlayerName';
+import { GenericApiError } from '@shared/genericApiTypes';
 import PlayerDatabase from '@core/components/PlayerDatabase';
-import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
+import { DatabaseActionType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
 import Translator from '@core/components/Translator';
 import logger, { ogConsole } from '@core/extras/console.js';
-import { anyUndefined, now, parsePlayerIds } from '@core/extras/helpers';
+import { anyUndefined, now, parsePlayerIds, PlayerIdsObjectType } from '@core/extras/helpers';
 import xssInstancer from '@core/extras/xss';
 import { verbose } from '@core/globalData';
+import playerResolver from '@core/playerLogic/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import { Context } from 'koa';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -71,15 +73,14 @@ export default async function PlayerCheckJoin(ctx: Context) {
     //Validating body data
     if (typeof playerName !== 'string') return sendTypedResp({ error: 'playerName should be an string.' });
     if (!Array.isArray(playerIds)) return sendTypedResp({ error: 'Identifiers should be an array.' });
-    const { license, validIds, invalidIds } = parsePlayerIds(playerIds);
-    if (validIds.length < 1) return sendTypedResp({ error: 'Identifiers array must contain at least 1 valid identifier.' });
-
+    const { validIdsArray, validIdsObject } = parsePlayerIds(playerIds);
+    if (validIdsArray.length < 1) return sendTypedResp({ error: 'Identifiers array must contain at least 1 valid identifier.' });
 
 
     try {
         // If ban checking enabled
         if (playerDatabase.config.onJoinCheckBan) {
-            const result = checkBan(validIds);
+            const result = checkBan(validIdsArray);
             if (!result.allow) return sendTypedResp(result);
         }
 
@@ -89,9 +90,12 @@ export default async function PlayerCheckJoin(ctx: Context) {
 
         // If whitelist checking enabled
         if (playerDatabase.config.onJoinCheckWhitelist) {
-            const result = checkWhitelist(validIds, license, playerName);
+            const result = await checkWhitelist(validIdsArray, validIdsObject, playerName);
             if (!result.allow) return sendTypedResp(result);
         }
+
+        //If not blocked by ban/wl, allow join
+        return sendTypedResp({ allow: true });
     } catch (error) {
         const msg = `Failed to check ban/whitelist status: ${(error as Error).message}`;
         logError(msg);
@@ -104,7 +108,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
 /**
  * Checks if the player is banned
  */
-function checkBan(playerIds: string[]): AllowRespType | DenyRespType {
+function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const translator = (globals.translator as Translator);
 
@@ -117,7 +121,7 @@ function checkBan(playerIds: string[]): AllowRespType | DenyRespType {
             && (!action.revocation.timestamp)
         );
     };
-    const activeBans = playerDatabase.getRegisteredActions(playerIds, filter);
+    const activeBans = playerDatabase.getRegisteredActions(validIdsArray, filter);
     if (activeBans.length) {
         const ban = activeBans[0];
 
@@ -148,7 +152,8 @@ function checkBan(playerIds: string[]): AllowRespType | DenyRespType {
         const note = (activeBans.length > 1) ? `<br>${textKeys.note_multiple_bans}` : '';
 
         //FIXME: add settings for this message
-        const customMessage = '<br>' + `To appeal this ban, join https://discord.gg/xxxxxxx` + '<br>'
+        // const customMessage = '<br>' + `To appeal this ban, join https://discord.gg/xxxxxxx` + '<br>';
+        const customMessage = '';
 
         const reason = rejectMessageTemplate(title, `${expLine}
         <strong>${textKeys.label_id}:</strong> <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${ban.id}</code> <br>
@@ -167,25 +172,77 @@ function checkBan(playerIds: string[]): AllowRespType | DenyRespType {
 /**
  * Checks if the player is whitelisted
  */
-function checkWhitelist(playerIds: string[], license: string | null, playerName: string,): AllowRespType | DenyRespType {
+async function checkWhitelist(
+    validIdsArray: string[],
+    validIdsObject: PlayerIdsObjectType,
+    playerName: string
+): Promise<AllowRespType | DenyRespType> {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
 
-    // - if no license available:
-    //     - return deny join: "this server has whitelist enabled, but you do not have a license identifiers"
-    // - find player by license
-    // - if player
-    //     - if whitelisted
-    //         - return allow join
-    // - find license or discord id on whitelistApprovals
-    //     - if found
-    //         - register player
-    //         - remove entry from whitelistApprovals
-    //         - remove related entries from whitelistRequests
-    //         - return allow join
+    //Check if license is available
+    if (!validIdsObject.license) {
+        return {
+            allow: false,
+            reason: rejectMessageTemplate(
+                'This server has whitelist enabled and requires all players to have the license identifier.',
+                'If you are the server owner, remove <code>sv_lan</code> from your server config file.'
+            ),
+        }
+    }
+
+    //Finding the player and checking if already whitelisted
+    let player;
+    try {
+        player = playerResolver(null, null, validIdsObject.license);
+        const dbData = player.getDbData();
+        if (dbData && dbData.tsWhitelisted) {
+            return { allow: true };
+        }
+    } catch (error) { }
+
+    //Common vars
+    const { displayName, pureName } = cleanPlayerName(playerName);
+    const ts = now();
+
+    //Searching for the license/discord on whitelistApprovals
+    const allIdsFilter = (x: DatabaseWhitelistApprovalsType) => {
+        return validIdsArray.includes(x.identifier);
+    }
+    const approvals = playerDatabase.getWhitelistApprovals(allIdsFilter);
+    if (approvals.length) {
+        //update or register player
+        if (typeof player !== 'undefined' && player.license) {
+            player.setWhitelist(true);
+        } else {
+            playerDatabase.registerPlayer({
+                license: validIdsObject.license,
+                ids: validIdsArray,
+                displayName,
+                pureName,
+                playTime: 0,
+                tsLastConnection: ts,
+                tsJoined: ts,
+            });
+        }
+
+        //Remove entries from whitelistApprovals & whitelistRequests
+        playerDatabase.removeWhitelistApprovals(allIdsFilter);
+        playerDatabase.removeWhitelistRequests(allIdsFilter);
+
+        //return allow join
+        return { allow: true };
+    }
+    
+
+    //Player is not whitelisted
+    //Resolve player discord/name 
+
+
     // - find player on whitelistRequests
     //     - if found
-    //         - update tsLastAttempt
+    //         - update name, discord, tsLastAttempt
     //     - else
     //         - register player in whitelistRequests
     // - return deny join: "blabla <id>"
+    return { allow: false, reason: 'blabla <id>' }
 }

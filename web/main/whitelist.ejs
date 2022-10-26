@@ -198,6 +198,7 @@
             newNode.innerHTML = reqElements.entryTemplate.innerHTML;
             newNode.querySelector('td:nth-child(1)').textContent = req.id;
             newNode.querySelector('td:nth-child(2)').textContent = req.playerName;
+            newNode.querySelector('td:nth-child(2)').title = `license:${req.license}`;
             newNode.querySelector('td:nth-child(3) div img').src = req.discordAvatar
                 ? req.discordAvatar
                 : 'img/default_avatar.png';
@@ -272,6 +273,7 @@
                 ? approval.playerAvatar
                 : 'img/default_avatar.png';
             newNode.querySelector('td:nth-child(1) span').textContent = approval.playerName;
+            newNode.querySelector('td:nth-child(1) span').title = approval.identifier;
             newNode.querySelector('td:nth-child(2)').textContent = approval.approvedBy;
 
             const tsApproved = new Date(approval.tsApproved * 1000)
