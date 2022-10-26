@@ -29,14 +29,6 @@ const processHistoryLog = (hist: DatabaseActionType[]) => {
     }
 };
 
-//DEBUG
-const { Console } = require('node:console');
-const ogConsole = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-    colorMode: true,
-});
-
 
 /**
  * Returns the data for the player's modal

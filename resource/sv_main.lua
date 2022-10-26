@@ -299,18 +299,19 @@ function handleConnections(name, setKickReason, d)
         Wait(0)
 
         --Preparing vars and making sure we do have indentifiers
-        local url = "http://"..TX_LUACOMHOST.."/intercom/checkPlayerJoin"
+        local url = "http://"..TX_LUACOMHOST.."/player/checkJoin"
         local exData = {
             txAdminToken = TX_LUACOMTOKEN,
-            identifiers = GetPlayerIdentifiers(player),
-            name = name
+            playerIds = GetPlayerIdentifiers(player),
+            playerName = name
         }
-        if #exData.identifiers <= 1 then
+        if #exData.playerIds <= 1 then
             d.done("[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg")
             return
         end
 
         --Attempt to validate the user
+        d.update("[txAdmin] Checking banlist/whitelist... (0/10)")
         CreateThread(function()
             local attempts = 0
             local isDone = false;
@@ -318,18 +319,26 @@ function handleConnections(name, setKickReason, d)
             while isDone == false and attempts < 10 do
                 attempts = attempts + 1
                 d.update("[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
-                PerformHttpRequest(url, function(httpCode, data, resultHeaders)
-                    local resp = tostring(data)
+                PerformHttpRequest(url, function(httpCode, rawData, resultHeaders)
+                    -- Validating response
+                    local respStr = tostring(rawData)
                     if httpCode ~= 200 then
-                        logError("[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..resp)
-                    elseif data == 'allow' then
+                        logError("[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
+                    end
+                    local respObj = json.decode(respStr)
+                    if not respObj or type(respObj.allow) ~= "boolean" then
+                        logError("[txAdmin] Checking banlist/whitelist failed with invalid response: "..respStr)
+                    end
+                    
+                    if respObj.allow == true then
                         if not isDone then
                             d.done()
                             isDone = true
                         end
-                    else
+                    else 
                         if not isDone then
-                            d.done("\n"..data)
+                            local reason = respObj.reason or "[txAdmin] no reason provided"
+                            d.done("\n"..reason)
                             isDone = true
                         end
                     end

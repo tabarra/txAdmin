@@ -66,25 +66,21 @@ Unrelated to feat/core-playerlist:
 - [ ] apply stashes
 - [ ] merge all translations
 - [ ] apply `nui_menu.misc.directmessage_title` to all translations
+- [ ] apply `ban_messages.reject.*` to all translations (try to convert manually)
 - [ ] add car boost function
 - [ ] bot status "watching xx/yy players"
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 - [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
+- [ ] make !cfxurl chungus command
 
 Maybe after v5:
+- [ ] mock out insights page (assets + http reqs)
 - [ ] server logger add events/min average
 - [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
 - [ ] At the schedule restart input prompt, add a note saying what is the current server time
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 - [ ] create events for dynamic scheduled restarts
 - [ ] add discordTag/discordAvatar to whitelist
-
-```ts
-//TODO: remove when removing globals
-const fxRunner = (globals.fxRunner as FXRunner);
-const playerlistManager = (globals.playerlistManager as PlayerlistManager);
-const playerDatabase = (globals.playerDatabase as PlayerDatabase);
-```
 
 
 # REFACTOR DEV:
@@ -95,7 +91,7 @@ whitelistApprovals:
 - playerName always filled, even with 'unknown'
 - playerAvatar str/null
 - tsApproved
-- author
+- approvedBy
 
 NOTE: What name to show in which scenario:
 - webpage wl license: unknown
@@ -123,18 +119,18 @@ whitelistRequests:
     - else
         - return error
 
-- /database/whitelist/whitelistApprovals/add:
+- /whitelist/approvals/add:
     - check if not duplicated
     - add to whitelistApprovals
 
-- /database/whitelist/whitelistApprovals/remove:
+- /whitelist/approvals/remove:
     - search & remove from whitelistApprovals
 
-- /database/whitelist/whitelistRequests/approve:
+- /whitelist/requests/approve:
     - register whitelistApprovals
     - remove record from whitelistRequests
 
-- /database/whitelist/whitelistRequests/deny:
+- /whitelist/requests/deny:
     - remove record from whitelistRequests
 
 - checkPlayerJoin:
@@ -279,6 +275,7 @@ Optional:
 
 ## Console Rewrite
 - [ ] Rewrite console logger module to be proxied to node:console
+- [ ] Add `[OUTDATED]` as a clog header prefix 
 - [ ] Move verbose to be part of the console (after the functional-ish change)
 - [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
 - [ ] Upgrade chalk, drop the chalk.keyword thing

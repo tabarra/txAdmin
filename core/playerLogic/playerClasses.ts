@@ -6,18 +6,11 @@ import cleanPlayerName from '@shared/cleanPlayerName';
 import { verbose } from '@core/globalData.js';
 import { DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
 import { cloneDeep } from 'lodash-es';
+import { parsePlayerIds } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
-
-//DEBUG
-const { Console } = require('node:console');
-const ogConsole = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-    colorMode: true,
-});
 
 
 /**
@@ -30,7 +23,7 @@ export class BasePlayer {
     pureName: string = 'unknown';
     ids: string[] = [];
     hwids: string[] = [];
-    license: false | string = false; //extracted for convenience
+    license: null | string = null; //extracted for convenience
     dbData: false | DatabasePlayerType = false;
     isConnected: boolean = false;
 
@@ -53,7 +46,7 @@ export class BasePlayer {
         if (!this.ids.length) return [];
         let searchIds = [...this.ids];
         if (this.dbData && this.dbData.ids) {
-            searchIds = searchIds.concat(this.dbData.ids.filter(id => !searchIds.includes(id)))
+            searchIds = searchIds.concat(this.dbData.ids.filter(id => !searchIds.includes(id)));
         }
         return this.dbInstance.getRegisteredActions(searchIds);
     }
@@ -119,16 +112,10 @@ export class ServerPlayer extends BasePlayer {
 
         //Processing identifiers
         //NOTE: ignoring IP completely
-        for (const idString of playerData.ids) {
-            const [idType, idValue] = idString.split(':', 2);
-            const validator = consts.validIdentifiers[idType as keyof typeof consts.validIdentifiers];
-            if (validator && validator.test(idString)) {
-                this.ids.push(idString);
-                if (idType === 'license') {
-                    this.license = idValue;
-                }
-            }
-        }
+        const { license, validIds } = parsePlayerIds(playerData.ids);
+        this.license = license;
+        this.ids = validIds;
+
         //TODO: re-enable it when migrating to new database
         // this.hwids = playerData.hwids.filter(x => {
         //     return typeof x === 'string' && consts.regexValidHwidToken.test(x);

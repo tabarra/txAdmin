@@ -13,9 +13,12 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  * For the future, its probably a good idea to upgrade to i18next
  */
 export default class Translator {
+    readonly language: string;
+    readonly customLocalePath: string;
+    #polyglot: Polyglot | null = null;
+
     constructor() {
         this.language = globals.config.language;
-        this.polyglot = null;
         this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');
 
         //Load language
@@ -32,15 +35,15 @@ export default class Translator {
             const phrases = this.getLanguagePhrases(this.language);
             const polyglotOptions = {
                 allowMissing: false,
-                onMissingKey: (key) => {
+                onMissingKey: (key: string) => {
                     logError(`Missing key '${key}' from translation file.`, 'Translator');
                     return key;
                 },
                 phrases,
             };
-            this.polyglot = new Polyglot(polyglotOptions);
+            this.#polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
-            logError(error.message);
+            logError((error as Error).message);
             if (isFirstTime) process.exit();
         }
     }
@@ -69,7 +72,7 @@ export default class Translator {
      * Loads a language file or throws Error.
      * @param {string} lang
      */
-    getLanguagePhrases(lang) {
+    getLanguagePhrases(lang: string) {
         if (typeof localeMap[lang] === 'object') {
             //If its a known language
             return localeMap[lang];
@@ -82,7 +85,7 @@ export default class Translator {
                     'utf8',
                 ));
             } catch (error) {
-                throw new Error(`Failed to load '${this.customLocalePath}'. (${error.message})`);
+                throw new Error(`Failed to load '${this.customLocalePath}'. (${(error as Error).message})`);
             }
 
         } else {
@@ -95,13 +98,12 @@ export default class Translator {
     //================================================================
     /**
      * Perform a translation (polyglot.t)
-     * @param {string} key
-     * @param {object} options
      */
-    t(key, options) {
-        if (typeof options === 'undefined') options = {};
+    t(key: string, options = {}) {
+        if(!this.#polyglot) throw new Error(`polyglot not yet loaded`);
+
         try {
-            return this.polyglot.t(key, options);
+            return this.#polyglot.t(key, options);
         } catch (error) {
             logError(`Error performing a translation with key '${key}'`);
             return key;

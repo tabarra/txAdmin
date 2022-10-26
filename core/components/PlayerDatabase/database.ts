@@ -65,15 +65,6 @@ class LowWithLodash<T> extends Low<T> {
 export type DatabaseObjectType = LowWithLodash<DatabaseDataType>;
 
 
-//DEBUG
-const { Console } = require('node:console');
-const ogConsole = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-    colorMode: true,
-});
-
-
 export class Database {
     readonly dbPath: string;
     readonly backupPath: string;

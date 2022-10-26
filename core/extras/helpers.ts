@@ -1,3 +1,5 @@
+import consts from "./consts";
+
 /**
  * txAdmin in ASCII
  */
@@ -65,6 +67,12 @@ export const now = () => { return Math.round(Date.now() / 1000); };
 
 
 /**
+ * Returns false if any argument is undefined
+ */
+export const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };
+
+
+/**
  * Calculates expiration and duration from a ban duration string like "1 day"
  */
 export const calcExpirationFromDuration = (inputDuration: string) => {
@@ -95,3 +103,28 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
 
     return { expiration, duration };
 };
+
+
+/**
+ * Get valid, invalid and license identifier from array of ids
+ */
+export const parsePlayerIds = (ids: string[]) => {
+    let license: string | null = null;
+    let validIds: string[] = [];
+    let invalidIds: string[] = [];
+
+    for (const idString of ids) {
+        const [idType, idValue] = idString.split(':', 2);
+        const validator = consts.validIdentifiers[idType as keyof typeof consts.validIdentifiers];
+        if (validator && validator.test(idString)) {
+            validIds.push(idString);
+            if (idType === 'license') {
+                license = idValue;
+            }
+        } else {
+            invalidIds.push(idString);
+        }
+    }
+
+    return { license, validIds, invalidIds };
+}

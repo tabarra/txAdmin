@@ -26,8 +26,8 @@ const formatCommand = (cmd, ...params) => {
 };
 const getMutableConvars = (isCmdLine = false) => {
     const p = isCmdLine ? '+' : '';
-    const controllerConfigs = globals.playerController.config;
-    const checkPlayerJoin = (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist);
+    const playerDbConfigs = globals.playerDatabase.config;
+    const checkPlayerJoin = (playerDbConfigs.onJoinCheckBan || playerDbConfigs.onJoinCheckWhitelist);
 
     return [
         //type, name, value

@@ -16,8 +16,15 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
         "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_id": "Ban ID",
+            "label_reason": "Ban Reason",
+            "label_author": "Banned by",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Server restarting (%{reason}).",

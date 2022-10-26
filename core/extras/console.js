@@ -182,5 +182,13 @@ export default (ctx) => {
         cleanTerminal,
         setTTYTitle,
         getLog,
+        ogConsole,
     };
 };
+
+const { Console } = require('node:console');
+export const ogConsole = new Console({
+    stdout: process.stdout,
+    stderr: process.stderr,
+    colorMode: true,
+});

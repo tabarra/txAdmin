@@ -58,23 +58,6 @@ export default async function Intercom(ctx) {
             timestamp: new Date(),
             data: postData.resources,
         };
-    } else if (scope == 'checkPlayerJoin') {
-        if (!Array.isArray(postData.identifiers) || typeof postData.name !== 'string') {
-            return ctx.utils.error(400, 'Invalid Request');
-        }
-        try {
-            const resp = await globals.playerController.checkPlayerJoin(postData.identifiers, postData.name);
-            if (resp.allow) {
-                return ctx.send('allow');
-            } else {
-                const msg = resp.reason || 'Access Denied for unknown reason';
-                return ctx.send(`[txAdmin] ${msg}`);
-            }
-        } catch (error) {
-            const msg = `[txAdmin] [JoinCheck] Failed with error: ${error.message}`;
-            logError(msg);
-            return ctx.send(msg);
-        }
     } else {
         return ctx.send({
             type: 'danger',

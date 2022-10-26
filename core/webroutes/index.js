@@ -44,6 +44,7 @@ export { default as fxserver_schedule } from './fxserver/schedule';
 export { default as player_list } from './player/list';
 export { default as player_modal } from './player/modal';
 export { default as player_actions } from './player/actions';
+export { default as player_checkJoin } from './player/checkJoin';
 
 export { default as whitelist_page } from './whitelist/page';
 export { default as whitelist_list } from './whitelist/list';
