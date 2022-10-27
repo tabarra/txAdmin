@@ -76,22 +76,21 @@ const checkUniqueness = (storage: IdStorageTypes, id: string, lowdbTable: string
  * @param {Set|Object} storage set or lowdb instance
  * @returns {String} id
  */
-// export const genWhitelistID = (storage) => {
-//     //FIXME: edit
-//     let attempts = 0;
-//     while (attempts < maxAttempts) {
-//         attempts++;
-//         if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
-//         const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
-//         const id = 'R' + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
-//         if (checkUniqueness(storage, id, 'pendingWL')) {
-//             return id;
-//         }
-//     }
+export const genWhitelistRequestID = (storage: IdStorageTypes) => {
+    let attempts = 0;
+    while (attempts < maxAttempts) {
+        attempts++;
+        if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
+        const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
+        const id = 'R' + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
+        if (checkUniqueness(storage, id, 'whitelistRequests')) {
+            return id;
+        }
+    }
 
-//     printDiagnostics().catch();
-//     throw new Error(noIdErrorMessage);
-// };
+    printDiagnostics().catch();
+    throw new Error(noIdErrorMessage);
+};
 
 /**
  * Generates an unique action ID, or throws an error

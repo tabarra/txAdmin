@@ -37,7 +37,8 @@ export type DatabaseWhitelistApprovalsType = {
 export type DatabaseWhitelistRequestsType = {
     id: string, //R####
     license: string,
-    playerName: string,
+    playerDisplayName: string,
+    playerPureName: string,
     discordTag?: string,
     discordAvatar?: string, //first try to get from GuildMember, then client.users.fetch()
     tsLastAttempt: number,

@@ -11,16 +11,18 @@ import { verbose } from '@core/globalData';
 import playerResolver from '@core/playerLogic/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import { Context } from 'koa';
+import DiscordBot from '@core/components/DiscordBot';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
 //Helper
 const rejectMessageTemplate = (title: string, content: string) => {
     return `
-    <div style="background-color: rgba(30, 30, 30, 0.5); padding: 5px 15px;">
+    <div style="background-color: rgba(30, 30, 30, 0.5); padding: 20px; border: solid 2px var(--color-modal-border);
+ border-radius: var(--border-radius-normal); margin-top: 25px;">
         <h2>[txAdmin] ${title}</h2>
         <br>
-        <p style="font-size: 1.25rem;">
+        <p style="font-size: 1.25rem; padding: 0px">
             ${content}
         </p>
     </div>`.replaceAll(/[\r\n]/g, '');
@@ -87,6 +89,8 @@ export default async function PlayerCheckJoin(ctx: Context) {
         // If discord whitelist enabled
         //TODO: add here discord whitelisting, don't interact with the code below
 
+        // If admin-only mode enabled
+        //TODO: easy to do, just need to figure out the UI
 
         // If whitelist checking enabled
         if (playerDatabase.config.onJoinCheckWhitelist) {
@@ -95,6 +99,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
         }
 
         //If not blocked by ban/wl, allow join
+        // return sendTypedResp({ allow: false, reason: 'APPROVED, BUT TEMP BLOCKED (DEBUG)' });
         return sendTypedResp({ allow: true });
     } catch (error) {
         const msg = `Failed to check ban/whitelist status: ${(error as Error).message}`;
@@ -155,12 +160,15 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
         // const customMessage = '<br>' + `To appeal this ban, join https://discord.gg/xxxxxxx` + '<br>';
         const customMessage = '';
 
-        const reason = rejectMessageTemplate(title, `${expLine}
-        <strong>${textKeys.label_id}:</strong> <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${ban.id}</code> <br>
-        <strong>${textKeys.label_reason}:</strong> ${xss(ban.reason)} <br>
-        <strong>${textKeys.label_author}:</strong> ${xss(ban.author)} <br>
-        ${customMessage}
-        <span style="font-style: italic;">${note}</span>`)
+        const reason = rejectMessageTemplate(
+            title,
+            `${expLine}
+            <strong>${textKeys.label_id}:</strong> <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${ban.id}</code> <br>
+            <strong>${textKeys.label_reason}:</strong> ${xss(ban.reason)} <br>
+            <strong>${textKeys.label_author}:</strong> ${xss(ban.author)} <br>
+            ${customMessage}
+            <span style="font-style: italic;">${note}</span>`
+        );
 
         return { allow: false, reason };
     } else {
@@ -178,6 +186,7 @@ async function checkWhitelist(
     playerName: string
 ): Promise<AllowRespType | DenyRespType> {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+    const discordBot = (globals.discordBot as DiscordBot);
 
     //Check if license is available
     if (!validIdsObject.license) {
@@ -227,22 +236,60 @@ async function checkWhitelist(
 
         //Remove entries from whitelistApprovals & whitelistRequests
         playerDatabase.removeWhitelistApprovals(allIdsFilter);
-        playerDatabase.removeWhitelistRequests(allIdsFilter);
+        playerDatabase.removeWhitelistRequests({ license: validIdsObject.license });
 
         //return allow join
         return { allow: true };
     }
-    
+
 
     //Player is not whitelisted
-    //Resolve player discord/name 
+    //Resolve player discord
+    let discordTag, discordAvatar;
+    if (validIdsObject.discord && discordBot.client) {
+        try {
+            const { tag, avatar } = await discordBot.resolveMember(validIdsObject.discord);
+            discordTag = tag;
+            discordAvatar = avatar;
+            // ogConsole.dir({ tag, avatar }); //DEBUG
+        } catch (error) { }
+    }
 
+    //Check if this player has an active wl request
+    //NOTE: it could return multiple, but we are not dealing with it
+    let wlRequestId: string;
+    const requests = playerDatabase.getWhitelistRequests({ license: validIdsObject.license });
+    if (requests.length) {
+        wlRequestId = requests[0].id; //just getting the first
+        playerDatabase.updateWhitelistRequests(validIdsObject.license, {
+            playerDisplayName: displayName,
+            playerPureName: pureName,
+            discordTag,
+            discordAvatar,
+            tsLastAttempt: ts,
+        });
+    } else {
+        wlRequestId = playerDatabase.registerWhitelistRequests({
+            license: validIdsObject.license,
+            playerDisplayName: displayName,
+            playerPureName: pureName,
+            discordTag,
+            discordAvatar,
+            tsLastAttempt: ts,
+        });
+    }
 
-    // - find player on whitelistRequests
-    //     - if found
-    //         - update name, discord, tsLastAttempt
-    //     - else
-    //         - register player in whitelistRequests
-    // - return deny join: "blabla <id>"
-    return { allow: false, reason: 'blabla <id>' }
+    //Clean rejection message
+    //FIXME: add settings for this message
+    // const customMessage = '<br>' + `To get whitelisted, join https://discord.gg/xxxxxxx`;
+    const customMessage = '';
+
+    const label_req_id = `Request ID`;
+    const reason = rejectMessageTemplate(
+        'You are not whitelisted to join this server.',
+        `<strong>${label_req_id}:</strong>
+        <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${wlRequestId}</code>
+        ${customMessage}`
+    );
+    return { allow: false, reason }
 }

@@ -30,7 +30,7 @@ export default async function WhitelistList(ctx: Context) {
  async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
     const sendTypedResp = (data: DatabaseWhitelistRequestsType[]) => ctx.send(data);
 
-    const requests = playerDatabase.getWhitelistRequests();
+    const requests = playerDatabase.getWhitelistRequests().reverse();
     return sendTypedResp(requests);
 
     //TODO: implement search and pagination
@@ -51,6 +51,6 @@ export default async function WhitelistList(ctx: Context) {
 async function handleApprovals(ctx: Context, playerDatabase: PlayerDatabase) {
     const sendTypedResp = (data: DatabaseWhitelistApprovalsType[]) => ctx.send(data);
 
-    const approvals = playerDatabase.getWhitelistApprovals();
+    const approvals = playerDatabase.getWhitelistApprovals().reverse();
     return sendTypedResp(approvals);
 }

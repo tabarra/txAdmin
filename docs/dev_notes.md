@@ -27,8 +27,9 @@
     - [x] kick
     - [x] revoke action (+ actionRevoked event - PR #612)
 - [x] db revoke_action/ban_ids routes + buttons on players page
-- [ ] whitelist page + actions
-- [ ] join check + whitelist
+- [x] whitelist page
+- [x] join check + whitelist
+- [ ] whitelist page actions
 - [ ] add new custom connect reject messages for whitelist/bans
 - [ ] create new whitelist events
 - [ ] clean PlayerDatabase file (mainly methods)
@@ -76,6 +77,8 @@ Unrelated to feat/core-playerlist:
 - [ ] make !cfxurl chungus command
 
 Maybe after v5:
+- [ ] admin-only mode for the server
+- [ ] add lru-cache to `DiscordBot.resolveMember()`
 - [ ] mock out insights page (assets + http reqs)
 - [ ] server logger add events/min average
 - [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
@@ -784,6 +787,7 @@ npx depcheck
 npm-upgrade
 con_miniconChannels script:monitor*
 +setr txAdmin-menuDebug true
+nui_devtoold mpMenu
 
 # hang fxserver (runcode)
 console.log('hanging the thread for 60s');

@@ -6,7 +6,7 @@ import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
-import { genActionID } from './idGenerator';
+import { genActionID, genWhitelistRequestID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
@@ -261,21 +261,59 @@ export default class PlayerDatabase {
             .value();
     }
 
-    
+
     /**
      * Removes whitelist requests based on a filter.
      */
-     removeWhitelistRequests(
+    removeWhitelistRequests(
         filter: Exclude<object, null> | Function
     ): DatabaseWhitelistRequestsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
-        this.#db.writeFlag(SAVE_PRIORITY_MEDIUM);
+        this.#db.writeFlag(SAVE_PRIORITY_LOW);
         return this.#db.obj.chain.get('whitelistRequests')
             .remove(filter as any)
             .value();
     }
 
 
+    /**
+     * Updates a whitelist request setting assigning srcData props to the database object.
+     * The source data object is deep cloned to prevent weird side effects.
+     */
+    updateWhitelistRequests(license: string, srcData: Exclude<object, null>): DatabaseWhitelistRequestsType {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (typeof (srcData as any).id !== 'undefined' || typeof (srcData as any).license !== 'undefined') {
+            throw new Error(`cannot update id or license fields`);
+        }
+
+        const requestDbObj = this.#db.obj.chain.get('whitelistRequests').find({ license });
+        if (!requestDbObj.value()) throw new Error('Request not found in database');
+        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        return requestDbObj
+            .assign(cloneDeep(srcData))
+            .cloneDeep()
+            .value();
+    }
+
+
+    /**
+     * Register a whitelist request to the database
+     */
+    registerWhitelistRequests(request: Omit<DatabaseWhitelistRequestsType, "id">): string {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        const id = genWhitelistRequestID(this.#db.obj);
+        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.obj.chain.get('whitelistRequests')
+            .push({ id, ...request })
+            .value();
+        return id;
+    }
+
+
+
+
+
+    //HACK old stuff below
     /**
      * Processes an playerConnecting validation request
      *
