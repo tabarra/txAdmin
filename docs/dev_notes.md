@@ -30,6 +30,12 @@
 - [x] whitelist page
 - [x] join check + whitelist
 - [ ] whitelist page actions
+    - [x] remove wl approval
+    - [x] add wl approval
+    - [ ] approve wl request
+    - [ ] remove wl request
+    - [ ] search wl request
+    - [ ] wl request pagination
 - [ ] add new custom connect reject messages for whitelist/bans
 - [ ] create new whitelist events
 - [ ] clean PlayerDatabase file (mainly methods)

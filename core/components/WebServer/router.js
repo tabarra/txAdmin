@@ -115,8 +115,8 @@ export default (config) => {
     router.post('/player/checkJoin', requestAuth('intercom'), webRoutes.player_checkJoin);
     router.post('/player/:action', requestAuth('api'), webRoutes.player_actions);
     router.get('/whitelist', requestAuth('web'), webRoutes.whitelist_page);
-    router.get('/whitelist/:store', requestAuth('api'), webRoutes.whitelist_list);
-    router.post('/whitelist/:store/:action', requestAuth('api'), webRoutes.whitelist_actions);
+    router.get('/whitelist/:table', requestAuth('api'), webRoutes.whitelist_list);
+    router.post('/whitelist/:table/:action', requestAuth('api'), webRoutes.whitelist_actions);
 
     //Index & generic
     router.get('/resources', requestAuth('web'), webRoutes.resources);

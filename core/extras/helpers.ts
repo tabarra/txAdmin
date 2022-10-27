@@ -106,6 +106,25 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
 
 
 /**
+ * Validates a single identifier and return its parts lowercased
+ */
+export const parsePlayerId = (idString: string) => {
+    if (typeof idString !== 'string') {
+        return { isIdValid: false, idType: null, idValue: null, idlowerCased: null };
+    }
+
+    const idlowerCased = idString.toLocaleLowerCase();
+    const [idType, idValue] = idlowerCased.split(':', 2);
+    const validator = consts.validIdentifiers[idType as keyof typeof consts.validIdentifiers];
+    if (validator && validator.test(idString)) {
+        return { isIdValid: true, idType, idValue, idlowerCased };
+    } else {
+        return { isIdValid: false, idType, idValue, idlowerCased };
+    }
+}
+
+
+/**
  * Get valid, invalid and license identifier from array of ids
  */
 export const parsePlayerIds = (ids: string[]) => {
@@ -122,9 +141,9 @@ export const parsePlayerIds = (ids: string[]) => {
     }
 
     for (const idString of ids) {
-        const [idType, idValue] = idString.split(':', 2);
-        const validator = consts.validIdentifiers[idType as keyof typeof consts.validIdentifiers];
-        if (validator && validator.test(idString)) {
+        if (typeof idString !== 'string') continue;
+        const { isIdValid, idType, idValue } = parsePlayerId(idString);
+        if (isIdValid) {
             validIdsArray.push(idString);
             validIdsObject[idType as keyof PlayerIdsObjectType] = idValue;
         } else {

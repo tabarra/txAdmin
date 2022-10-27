@@ -11,15 +11,15 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function WhitelistList(ctx: Context) {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
-    const store = ctx.params.store;
+    const table = ctx.params.table;
 
     //Delegate to the specific handler
-    if(store === 'requests'){
+    if(table === 'requests'){
         return await handleRequests(ctx, playerDatabase);
-    }else if(store === 'approvals'){
+    }else if(table === 'approvals'){
         return await handleApprovals(ctx, playerDatabase);
     }else{
-        return ctx.send({ error: 'unknown store' });
+        return ctx.send({ error: 'unknown table' });
     }
 };
 

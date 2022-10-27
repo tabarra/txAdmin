@@ -104,7 +104,7 @@
                     <small>Players that are already approved, but haven't joined the server yet.</small>
                 </div>
                 <div class="header-elements">
-                    <button class="btn btn-sm btn-success" type="button" onclick="whitelistID(null)">
+                    <button class="btn btn-sm btn-success" type="button" onclick="addApproval()">
                         <i class="icon-plus"></i> Add Approval
                     </button>
                 </div>
@@ -288,7 +288,7 @@
 
             newNode.querySelector('td:nth-child(4) a:nth-child(1)').addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('btn remove');
+                removeApproval(approval.identifier)
             });
 
             approvedElements.tableBody.appendChild(newNode);
@@ -318,6 +318,81 @@
         error: function (xmlhttprequest, textstatus, message) {
             // FIXME:
         }
-    }); 
+    });
+
+    async function addApproval(){
+        //TODO: when migrating to react, get this from the shared folder
+        const acceptedIdTypes = ['discord', 'fivem', 'license', 'license2', 'live', 'steam', 'xbl'];
+        let identifier = await txAdminPrompt({
+            modalColor: 'green',
+            confirmBtnClass: 'btn-green',
+            title: 'Whitelist player',
+            description: `Type in the Player Identifier you want to whitelist. <br>
+                This can be any of the following: <code>${acceptedIdTypes.join(', ')}</code>`, 
+            placeholder: 'discord:272800190639898628'
+        });
+        if(typeof identifier !== 'string') return;
+        
+        //Check input validity
+        identifier = identifier.trim();
+        if(!identifier.length || !acceptedIdTypes.includes(identifier.split(':', 1)[0])){
+            return $.notify({ message: 'Error: the provided identifier does not seem to be valid.' }, { type: 'danger' });
+        }
+
+        const notify = $.notify({ message: '<p class="text-center">Removing...</p>' }, {});
+        txAdminAPI({
+            type: 'POST',
+            url: '/whitelist/approvals/add',
+            data: {identifier},
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                if (data.success === true) {
+                    // notify.update('type', 'success');
+                    // notify.update('message', 'xxxxxxx.');
+                    window.location.reload(true);
+                    return true;
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+
+    function removeApproval(identifier){
+        const notify = $.notify({ message: '<p class="text-center">Removing...</p>' }, {});
+
+        txAdminAPI({
+            type: 'POST',
+            url: '/whitelist/approvals/remove',
+            data: {identifier},
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                if (data.success === true) {
+                    // notify.update('type', 'success');
+                    // notify.update('message', 'xxxxxxx.');
+                    window.location.reload(true);
+                    return true;
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
 
 </script>

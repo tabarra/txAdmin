@@ -249,6 +249,26 @@ export default class PlayerDatabase {
 
 
     /**
+     * Register a whitelist request to the database
+     */
+    registerWhitelistApprovals(approval: DatabaseWhitelistApprovalsType): void {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+
+        //Check for duplicated license
+        const found = this.#db.obj.chain.get('whitelistApprovals')
+            .filter({ identifier: approval.identifier })
+            .value();
+        if (found.length) throw new Error(`this identifier is already whitelisted`);
+
+        //Register new
+        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.obj.chain.get('whitelistApprovals')
+            .push(cloneDeep(approval))
+            .value();
+    }
+
+
+    /**
      * Returns all whitelist approvals, which can be optionally filtered
      */
     getWhitelistRequests(

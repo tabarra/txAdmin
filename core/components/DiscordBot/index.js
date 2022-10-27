@@ -182,10 +182,7 @@ export default class DiscordBot {
      */
     async resolveMember(uid) {
         if (!this.client || this.client.status) throw new Error(`discord bot not ready yet`);
-        const avatarOptions = {
-            dynamic: true,
-            size: 64,
-        };
+        const avatarOptions = {size: 64};
 
         //Check if in guild member
         if (this.announceChannel?.guild) {
