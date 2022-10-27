@@ -166,7 +166,6 @@ async function handleDefault(ctx, dbo) {
     let timeStart = new Date();
     const controllerConfigs = globals.playerDatabase.config;
     const queryLimits = {
-        whitelist: 15,
         actions: 20,
         players: 30,
     };
@@ -174,15 +173,12 @@ async function handleDefault(ctx, dbo) {
         headerTitle: 'Players',
         stats: await getStats(dbo),
         queryLimits,
-        lastWhitelistBlocks: await getPendingWL(dbo, queryLimits.whitelist),
         lastActions: await getLastActions(dbo, queryLimits.actions),
         lastPlayers: await getLastPlayers(dbo, queryLimits.players),
         disableBans: !controllerConfigs.onJoinCheckBan,
-        disableWhitelist: !controllerConfigs.onJoinCheckWhitelist,
         permsDisable: {
             ban: !ctx.utils.hasPermission('players.ban'),
             warn: !ctx.utils.hasPermission('players.warn'),
-            whitelist: !ctx.utils.hasPermission('players.whitelist'),
         },
     };
 
@@ -194,9 +190,9 @@ async function handleDefault(ctx, dbo) {
 
 
 /**
- * Get the last entries of the pending whitelist table, sorted by timestamp.
+ * Get stats on actions and players
  * @param {object} dbo
- * @returns {object} array of actions, or, throws on error
+ * @returns {object} array of actions
  */
 async function getStats(dbo) {
     try {
@@ -206,19 +202,18 @@ async function getStats(dbo) {
                     acc.bans++;
                 } else if (a.type == 'warn') {
                     acc.warns++;
-                } else if (a.type == 'whitelist') {
-                    acc.whitelists++;
                 }
                 return acc;
-            }, {bans:0, warns:0, whitelists:0})
+            }, {bans:0, warns:0})
             .value();
 
         const playerStats = await dbo.chain.get('players')
             .reduce((acc, p, ind) => {
                 acc.players++;
                 acc.playTime += p.playTime;
+                if(p.tsWhitelisted) acc.whitelists++;
                 return acc;
-            }, {players:0, playTime:0})
+            }, {players:0, playTime:0, whitelists:0})
             .value();
         const playTimeSeconds = playerStats.playTime * 60 * 1000;
         let humanizeOptions = {
@@ -245,7 +240,7 @@ async function getStats(dbo) {
             playTime: playerStats.playTime,
             bans: actionStats.bans,
             warns: actionStats.warns,
-            whitelists: actionStats.whitelists,
+            whitelists: playerStats.whitelists,
         };
 
         return {
@@ -253,53 +248,10 @@ async function getStats(dbo) {
             playTime: playTime,
             bans: actionStats.bans.toLocaleString(),
             warns: actionStats.warns.toLocaleString(),
-            whitelists: actionStats.whitelists.toLocaleString(),
+            whitelists: playerStats.whitelists.toLocaleString(),
         };
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;
-        if (verbose) logError(msg);
-        return [];
-    }
-}
-
-
-/**
- * Get the last entries of the pending whitelist table, sorted by timestamp.
- * @param {object} dbo
- * @param {number} limit
- * @returns {array} array of actions, or [] on error
- */
-async function getPendingWL(dbo, limit) {
-    try {
-        let pendingWL = await dbo.chain.get('pendingWL')
-            .orderBy('tsLastAttempt', 'desc')
-            .take(limit)
-            .cloneDeep()
-            .value();
-
-        //DEBUG: remove this
-        // pendingWL = []
-        // for (let i = 0; i < 15; i++) {
-        //     pendingWL.push({
-        //         id: "RNV000",
-        //         name: `lorem ipsum ${i}`,
-        //         license: "9b9fc300cc6aaaaad3b5df4dcccce4933753",
-        //         tsLastAttempt: 1590282667
-        //     });
-        // }
-
-        const maxNameSize = 36;
-        let lastWhitelistBlocks = pendingWL.map((x) => {
-            x.time = dateFormat(new Date(x.tsLastAttempt * 1000), 'isoTime');
-            if (x.name.length > maxNameSize) {
-                x.name = x.name.substring(0, maxNameSize - 3) + '...';
-            }
-            return x;
-        });
-
-        return lastWhitelistBlocks;
-    } catch (error) {
-        const msg = `getPendingWL failed with error: ${error.message}`;
         if (verbose) logError(msg);
         return [];
     }
@@ -386,10 +338,6 @@ async function processActionList(list) {
         } else if (log.type == 'warn') {
             out.color = 'warning';
             out.message = `${xss(log.author)} WARNED ${actReference}`;
-        } else if (log.type == 'whitelist') {
-            out.color = 'success';
-            out.message = `${xss(log.author)} WHITELISTED ${actReference}`;
-            out.reason = '';
         } else {
             out.color = 'secondary';
             out.message = `${xss(log.author)} ${log.type.toUpperCase()} ${actReference}`;
