@@ -332,7 +332,7 @@ function showPlayer(playerRef, keepTabSelection = false) {
                 if (!meta.onJoinCheckWhitelist) {
                     modPlayer.Main.whitelisted.innerText = 'feature disabled';
                 } else if (player.tsWhitelisted) {
-                    modPlayer.Main.whitelisted.innerText = new Date(player.tsJoined * 1000)
+                    modPlayer.Main.whitelisted.innerText = new Date(player.tsWhitelisted * 1000)
                         .toLocaleDateString(
                             navigator.language,
                             { dateStyle: 'long' }

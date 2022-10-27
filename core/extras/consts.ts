@@ -1,4 +1,4 @@
-const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ'; //i,o removed
 export default {
     validIdentifiers: {
         discord: /^discord:\d{7,20}$/,

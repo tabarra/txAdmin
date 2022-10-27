@@ -115,6 +115,13 @@ option:disabled {
     vertical-align: text-bottom;
 }
 
+.table td, .table th {
+    vertical-align: unset; /* it was top */
+}
+.table-sm td, .table-sm th {
+    padding: 0.3rem 0.6rem; /* it was 0.3rem all sides */
+}
+
 
 /* Theme dependant */
 .show-dark-mode {
