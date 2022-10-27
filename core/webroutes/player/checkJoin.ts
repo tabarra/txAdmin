@@ -18,13 +18,25 @@ const xss = xssInstancer();
 //Helper
 const rejectMessageTemplate = (title: string, content: string) => {
     return `
-    <div style="background-color: rgba(30, 30, 30, 0.5); padding: 20px; border: solid 2px var(--color-modal-border);
- border-radius: var(--border-radius-normal); margin-top: 25px;">
-        <h2>[txAdmin] ${title}</h2>
+    <div style="
+        background-color: rgba(30, 30, 30, 0.5);
+        padding: 20px;
+        border: solid 2px var(--color-modal-border);
+        border-radius: var(--border-radius-normal);
+        margin-top: 25px;
+        position: relative;
+    ">
+        <h2>${title}</h2>
         <br>
         <p style="font-size: 1.25rem; padding: 0px">
             ${content}
         </p>
+        <img src="https://i.imgur.com/5bFhvBv.png" style="
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            opacity: 65%;
+        ">
     </div>`.replaceAll(/[\r\n]/g, '');
 }
 
