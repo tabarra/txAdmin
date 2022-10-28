@@ -43,16 +43,16 @@
         <div class="card card-accent-success">
             <div class="card-header" style="display: flex; justify-content: space-between;">
                 <div>
-                    <span style="font-size: large">Whitelist Requests:</span> <br>
+                    <span style="font-size: large">Whitelist Requests: <span id="reqs-counter"></span></span> <br>
                     <small>Players that tried to join the server but were not whitelisted.</small>
                 </div>
                 <div class="header-elements">
                     <div class="form-group mb-0">
                         <div class="input-group input-group-sm">
-                            <input class="form-control" id="dbSearch-input" type="text"
+                            <input class="form-control" id="reqs-searchInput" type="text"
                                 placeholder="player name, R1234">
                             <span class="input-group-append">
-                                <button class="btn btn-sm btn-secondary" type="button" id="dbSearch-button">
+                                <button class="btn btn-sm btn-secondary" type="button" id="reqs-searchButton">
                                     Search
                                 </button>
                             </span>
@@ -61,13 +61,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <div id="requestsSpinner" style="min-height: 125px;">
+                <div id="reqs-spinner" style="min-height: 125px;">
                     <div class="txSpinner">Loading...</div>
                 </div>
                 <div class="text-center">
-                    <h3 class="mx-auto pt-3 text-muted d-none" id="requestsMessage">no players here yet</h3>
+                    <h3 class="mx-auto pt-3 text-muted d-none" id="reqs-message">no players here yet</h3>
                 </div>
-                <div class="table-responsive text-center d-nonex" id="requestsContent">
+                <div class="table-responsive text-center d-nonex" id="reqs-content">
                     <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
                         <thead>
                             <tr class="text-left">
@@ -78,7 +78,7 @@
                                 <th class="text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="requestsTableBody"></tbody>
+                        <tbody id="reqs-tableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -100,7 +100,7 @@
         <div class="card card-accent-success">
             <div class="card-header" style="display: flex; justify-content: space-between;">
                 <div>
-                    <span style="font-size: large">Approved Whitelists:</span> <br>
+                    <span style="font-size: large">Approved Whitelists: <span id="approved-counter"></span></span> <br>
                     <small>Players that are already approved, but haven't joined the server yet.</small>
                 </div>
                 <div class="header-elements">
@@ -110,13 +110,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <div id="approvedSpinner" style="min-height: 125px;">
+                <div id="approved-spinner" style="min-height: 125px;">
                     <div class="txSpinner">Loading...</div>
                 </div>
                 <div class="text-center">
-                    <h3 class="mx-auto pt-3 text-muted d-none" id="approvedMessage">no players here yet</h3>
+                    <h3 class="mx-auto pt-3 text-muted d-none" id="approved-message">no players here yet</h3>
                 </div>
-                <div class="table-responsive text-center d-nonex" id="approvedContent">
+                <div class="table-responsive text-center d-nonex" id="approved-content">
                     <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
                         <thead>
                             <tr class="text-left">
@@ -127,7 +127,7 @@
                                 <th class="text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="approvedTableBody"></tbody>
+                        <tbody id="approved-tableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -138,7 +138,7 @@
 
 
 <!-- Template for Whitelists Requests entry lines -->
-<template id="requestsEntryTemplate">
+<template id="reqs-entryTemplate">
     <td></td>
     <td class="name-truncate"></td>
     <td class="name-truncate">
@@ -159,7 +159,7 @@
 </template>
 
 <!-- Template for Approved Whitelists entry lines -->
-<template id="approvedEntryTemplate">
+<template id="approved-entryTemplate">
     <td class="name-truncate">
         <div class="c-avatar discord-avatar">
             <img class="c-avatar-img" src="">
@@ -186,19 +186,84 @@
      * WHITELIST REQUESTS
      */
     const reqElements = {
-        spinner: document.getElementById('requestsSpinner'),
-        message: document.getElementById('requestsMessage'),
-        content: document.getElementById('requestsContent'),
-        tableBody: document.getElementById('requestsTableBody'),
-        entryTemplate: document.getElementById('requestsEntryTemplate'),
+        spinner: document.getElementById('reqs-spinner'),
+        message: document.getElementById('reqs-message'),
+        content: document.getElementById('reqs-content'),
+        counter: document.getElementById('reqs-counter'),
+        tableBody: document.getElementById('reqs-tableBody'),
+        entryTemplate: document.getElementById('reqs-entryTemplate'),
+        searchInput: document.getElementById('reqs-searchInput'),
+        searchButton: document.getElementById('reqs-searchButton'),
     };
+    
+    const getSVG = (icon) => {
+        return `<svg class="c-icon">
+            <use href="img/coreui_icons.svg#cil-${icon}"></use>
+        </svg>`;
+    };
+
+    reqElements.searchButton.addEventListener('click', (e) => {
+        console.log('searchButton click');
+        if(reqElements.searchButton.textContent.includes('Search')){
+            performSearch();
+        }else{
+            clearSearch();
+        }
+    });
+    reqElements.searchInput.addEventListener('keyup', (e) => {
+        if(e.keyCode !== 13){
+            if(!reqElements.searchButton.innerHTML.includes('magnifying-glass')){
+                reqElements.searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
+            }
+        }else{
+            if(reqElements.searchInput.value.length){
+                performSearch();
+            }else{
+                clearSearch();
+            }
+        }
+    });
+
+    //Clear search
+    function clearSearch(){
+        location.hash = '';
+        reqElements.searchInput.value = '';
+        reqElements.spinner.classList.remove('d-none');
+        reqElements.content.classList.add('d-none');
+        reqElements.message.classList.add('d-none');
+        reqElements.searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
+        queryRequests();
+    }
+
+    //Perform search
+    function performSearch(){
+        const searchString = reqElements.searchInput.value.trim();
+        location.hash = encodeURI(searchString);
+        if(!searchString.length) return clearSearch();
+        // dbPlayersSearchTab.innerHTML = SPINNER_HTML;
+        reqElements.spinner.classList.remove('d-none');
+        reqElements.content.classList.add('d-none');
+        reqElements.message.classList.add('d-none');
+        reqElements.searchButton.innerHTML = getSVG('x') + ` Clear`;
+        queryRequests(searchString);
+    }
+
+    //Performs auto-search
+    const urlHash = decodeURI(location.hash.substr(1).trim());
+    if(urlHash.length){
+        reqElements.searchInput.value = urlHash;
+        performSearch();
+    }
+
     const fillRequestsTableRows = (reqsArray) => {
+        reqElements.tableBody.innerHTML = '';
+
         for (const req of reqsArray) {
             const newNode = document.createElement("tr");
             newNode.innerHTML = reqElements.entryTemplate.innerHTML;
             newNode.querySelector('td:nth-child(1)').textContent = req.id;
             newNode.querySelector('td:nth-child(2)').textContent = req.playerDisplayName;
-            newNode.querySelector('td:nth-child(2)').title = `license:${req.license}`;
+            newNode.querySelector('td:nth-child(2)').title = `${req.playerDisplayName}\nlicense:${req.license}`;
             newNode.querySelector('td:nth-child(3) div img').src = req.discordAvatar
                 ? req.discordAvatar
                 : 'img/default_avatar.png';
@@ -229,30 +294,38 @@
         }
     }
 
-    txAdminAPI({
-        type: "GET",
-        url: '/whitelist/requests',
-        timeout: REQ_TIMEOUT_LONG,
-        dataType: 'json',
-        success: function (data) {
-            reqElements.spinner.classList.add('d-none');
-            if(data.error){
+    function queryRequests(searchName){
+        const urlSearch = new URLSearchParams();
+        if(searchName) urlSearch.append('searchName', searchName);
+
+        txAdminAPI({
+            type: "GET",
+            url: `/whitelist/requests?${urlSearch.toString()}`,
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                reqElements.spinner.classList.add('d-none');
+                if(data.error){
+                    // FIXME:
+                }else if(!Array.isArray(data.requests)){
+                    // FIXME:
+                }else if(!data.requests.length){
+                    reqElements.counter.innerText = 0;
+                    reqElements.content.classList.add('d-none');
+                    reqElements.message.classList.remove('d-none');
+                }else{
+                    reqElements.counter.innerText = data.total;
+                    reqElements.message.classList.add('d-none');
+                    reqElements.content.classList.remove('d-none');
+                    fillRequestsTableRows(data.requests);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
                 // FIXME:
-            }else if(!Array.isArray(data)){
-                // FIXME:
-            }else if(!data.length){
-                reqElements.content.classList.add('d-none');
-                reqElements.message.classList.remove('d-none');
-            }else{
-                reqElements.message.classList.add('d-none');
-                reqElements.content.classList.remove('d-none');
-                fillRequestsTableRows(data);
             }
-        },
-        error: function (xmlhttprequest, textstatus, message) {
-            // FIXME:
-        }
-    });
+        });
+    }
+    
 
     function approveDenyRequest(reqId, action){
         const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
@@ -286,11 +359,12 @@
      * APPROVED WHITELISTS
      */
     const approvedElements = {
-        spinner: document.getElementById('approvedSpinner'),
-        message: document.getElementById('approvedMessage'),
-        content: document.getElementById('approvedContent'),
-        tableBody: document.getElementById('approvedTableBody'),
-        entryTemplate: document.getElementById('approvedEntryTemplate'),
+        spinner: document.getElementById('approved-spinner'),
+        message: document.getElementById('approved-message'),
+        content: document.getElementById('approved-content'),
+        counter: document.getElementById('approved-counter'),
+        tableBody: document.getElementById('approved-tableBody'),
+        entryTemplate: document.getElementById('approved-entryTemplate'),
     };
     const fillApprovedTableRows = (approvalsArray) => {
         for (const approval of approvalsArray) {
@@ -300,7 +374,7 @@
                 ? approval.playerAvatar
                 : 'img/default_avatar.png';
             newNode.querySelector('td:nth-child(1) span').textContent = approval.playerName;
-            newNode.querySelector('td:nth-child(1) span').title = approval.identifier;
+            newNode.querySelector('td:nth-child(1) span').title = `${approval.playerName}\n${approval.identifier}`;
             newNode.querySelector('td:nth-child(2)').textContent = approval.approvedBy;
 
             const tsApproved = new Date(approval.tsApproved * 1000)
@@ -334,9 +408,11 @@
             }else if(!Array.isArray(data)){
                 // FIXME:
             }else if(!data.length){
+                approvedElements.counter.innerText = 0;
                 approvedElements.content.classList.add('d-none');
                 approvedElements.message.classList.remove('d-none');
             }else{
+                approvedElements.counter.innerText = data.length;
                 approvedElements.message.classList.add('d-none');
                 approvedElements.content.classList.remove('d-none');
                 fillApprovedTableRows(data);
