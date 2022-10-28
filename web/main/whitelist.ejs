@@ -252,8 +252,8 @@
     const urlHash = decodeURI(location.hash.substr(1).trim());
     if(urlHash.length){
         reqElements.searchInput.value = urlHash;
-        performSearch();
     }
+    performSearch();
 
     const fillRequestsTableRows = (reqsArray) => {
         reqElements.tableBody.innerHTML = '';
@@ -264,6 +264,7 @@
             newNode.querySelector('td:nth-child(1)').textContent = req.id;
             newNode.querySelector('td:nth-child(2)').textContent = req.playerDisplayName;
             newNode.querySelector('td:nth-child(2)').title = `${req.playerDisplayName}\nlicense:${req.license}`;
+            newNode.querySelector('td:nth-child(3)').title = req.discordTag;
             newNode.querySelector('td:nth-child(3) div img').src = req.discordAvatar
                 ? req.discordAvatar
                 : 'img/default_avatar.png';

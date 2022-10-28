@@ -48,7 +48,6 @@ async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
         });
         const { pureName } = cleanPlayerName(searchName);
         filtered = fuse.search(pureName).map(x => x.item);
-        // ogConsole.dir(filtered)
     }
 
     const toDisplay = filtered ?? requests;
