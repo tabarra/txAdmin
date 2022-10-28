@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useDeferredValue, useEffect, useState } from "react";
 import {
   Box,
   InputAdornment,
@@ -14,7 +14,6 @@ import {
   usePlayersFilter,
   useSetPlayersFilterIsTemp,
 } from "../../state/players.state";
-import { useDebounce } from "../../hooks/useDebouce";
 import { useServerCtxValue } from "../../state/server.state";
 import { useTranslate } from "react-polyglot";
 import { TextField } from "../misc/TextField";
@@ -45,7 +44,7 @@ export const PlayerPageHeader: React.FC = () => {
   const serverCtx = useServerCtxValue();
   const t = useTranslate();
 
-  const debouncedInput = useDebounce(searchVal, 500);
+  const deferredInputVal = useDeferredValue(searchVal);
 
   // We might need to debounce this in the future
   const handleSortData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,8 +57,8 @@ export const PlayerPageHeader: React.FC = () => {
   };
 
   useEffect(() => {
-    setPlayerFilter(debouncedInput as string);
-  }, [debouncedInput, setPlayerFilter]);
+    setPlayerFilter(deferredInputVal);
+  }, [deferredInputVal]);
 
   // Synchronize filter from player state, used for optional args in /tx
   useEffect(() => {
