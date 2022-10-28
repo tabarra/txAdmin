@@ -1,8 +1,8 @@
 const modulename = 'WebServer:WhitelistActions';
-import logger from '@core/extras/console.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import { Context } from 'koa';
 import { GenericApiResp } from '@shared/genericApiTypes';
-import PlayerDatabase from '@core/components/PlayerDatabase';
+import PlayerDatabase, { DuplicateKeyError } from '@core/components/PlayerDatabase';
 import { now, parsePlayerId } from '@core/extras/helpers';
 import DiscordBot from '@core/components/DiscordBot';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -26,8 +26,8 @@ export default async function WhitelistActions(ctx: Context) {
     //Delegate to the specific table handler
     if (table === 'approvals') {
         return sendTypedResp(await handleApprovals(ctx, action));
-    } else if (table === 'yyyyyy') {
-        return sendTypedResp(await handleXXXXX(ctx, action));
+    } else if (table === 'requests') {
+        return sendTypedResp(await handleRequests(ctx, action));
     } else {
         return sendTypedResp({ error: 'unknown table' });
     }
@@ -53,6 +53,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
     }
 
     if (action === 'add') {
+        //Preparing player name/avatar
         let playerAvatar = null;
         let playerName = (idValue.length > 8)
             ? `${idType}...${idValue.slice(-8)}`
@@ -65,6 +66,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
             } catch (error) { }
         }
 
+        //Registering approval
         try {
             playerDatabase.registerWhitelistApprovals({
                 identifier,
@@ -73,18 +75,76 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
                 tsApproved: now(),
                 approvedBy: ctx.session.auth.username,
             });
-            return { success: true };
         } catch (error) {
             return { error: `Failed to save wl approval: ${(error as Error).message}` };
         }
+        return { success: true };
 
     } else if (action === 'remove') {
         try {
             playerDatabase.removeWhitelistApprovals({ identifier: idlowerCased });
-            return { success: true };
         } catch (error) {
             return { error: `Failed to remove wl approval: ${(error as Error).message}` };
         }
+        return { success: true };
+
+    } else {
+        return { error: 'unknown action' };
+    }
+}
+
+
+/**
+ * Handle actions regarding the whitelist requests table
+ */
+async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp> {
+    //Typescript stuff
+    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+
+    //Input validation
+    const reqId = ctx.request.body?.reqId;
+    if (typeof reqId !== 'string' || !reqId.length) {
+        return { error: 'reqId not specified' };
+    }
+
+    if (action === 'approve') {
+        //Find request
+        const requests = playerDatabase.getWhitelistRequests({ id: reqId });
+        if (!requests.length) {
+            return { error: `Whitelist request ID ${reqId} not found.` };
+        }
+        const req = requests[0]; //just getting the first
+
+        //Register whitelistApprovals
+        try {
+            playerDatabase.registerWhitelistApprovals({
+                identifier: `license:${req.license}`,
+                playerName: req.discordTag ?? req.playerDisplayName,
+                playerAvatar: (req.discordAvatar) ? req.discordAvatar : null,
+                tsApproved: now(),
+                approvedBy: ctx.session.auth.username,
+            });
+        } catch (error) {
+            if(!(error instanceof DuplicateKeyError)){
+                return { error: `Failed to save wl approval: ${(error as Error).message}` };
+            }
+        }
+
+        //Remove record from whitelistRequests
+        try {
+            playerDatabase.removeWhitelistRequests({ id: reqId });
+        } catch (error) {
+            return { error: `Failed to remove wl request: ${(error as Error).message}` };
+        }
+        return { success: true };
+
+    } else if (action === 'deny') {
+        try {
+            playerDatabase.removeWhitelistRequests({ id: reqId });
+        } catch (error) {
+            return { error: `Failed to remove wl request: ${(error as Error).message}` };
+        }
+        return { success: true };
 
     } else {
         return { error: 'unknown action' };

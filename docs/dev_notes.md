@@ -32,8 +32,8 @@
 - [ ] whitelist page actions
     - [x] remove wl approval
     - [x] add wl approval
-    - [ ] approve wl request
-    - [ ] remove wl request
+    - [x] approve wl request
+    - [x] remove wl request
     - [ ] search wl request
     - [ ] wl request pagination
 - [ ] add new custom connect reject messages for whitelist/bans
@@ -96,31 +96,15 @@ Maybe after v5:
 
 # REFACTOR DEV:
 
-## Schema
-whitelistApprovals:
-- identifier (license:xxxx / discord:xxxxxxx)
-- playerName always filled, even with 'unknown'
-- playerAvatar str/null
-- tsApproved
-- approvedBy
-
-NOTE: What name to show in which scenario:
-- webpage wl license: unknown
-- webpage wl discord: discord tag - need to resolve when saving
-- approve request with license+name but no discord: whitelistRequests.playerName
-- approve request with license+name and discord: whitelistRequests.discordTag
+## What name to show in which scenario:
+- webpage wl identifier: id or abbreviation DONE
+- webpage wl discord: discord tag DONE
+- approve request with license+name but no discord: whitelistRequests.playerName DONE
+- approve request with license+name and discord: whitelistRequests.discordTag DONE
 - discord approve request: 2 scenarios above
 - discord approve license: unknown
 - discord approve mention: mentioned member tag
 
-
-whitelistRequests:
-- id
-- license
-- playerName
-- discordTag?
-- discordAvatar? first try to get from GuildMember, then client.users.fetch()
-- tsLastAttempt
 
 ## Routes
 - /player/whitelist: DONE
@@ -130,22 +114,22 @@ whitelistRequests:
     - else
         - return error
 
-- /whitelist/approvals/add:
+- /whitelist/approvals/add: DONE
     - check if not duplicated
     - no need to check if player exists, checkJoin will save tsWhitelisted when player joins
     - add to whitelistApprovals
 
-- /whitelist/approvals/remove:
+- /whitelist/approvals/remove: DONE
     - search & remove from whitelistApprovals
 
-- /whitelist/requests/approve:
+- /whitelist/requests/approve: DONE
     - register whitelistApprovals
     - remove record from whitelistRequests
 
-- /whitelist/requests/deny:
+- /whitelist/requests/deny: DONE
     - remove record from whitelistRequests
 
-- checkPlayerJoin:
+- checkPlayerJoin: DONE
     - check active bans on matching identifiers
     - TODO: when we have discord whitelisting
         - check here, without interacting with the code below

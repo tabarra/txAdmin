@@ -18,6 +18,12 @@ const now = () => { return Math.round(Date.now() / 1000); };
 
 //Consts
 const validActions = ['ban', 'warn'];
+export class DuplicateKeyError extends Error {
+    readonly code = 'DUPLICATE_KEY';
+    constructor(message: string) {
+        super(message);
+    }
+}
 
 //DEBUG
 const { Console } = require('node:console');
@@ -258,7 +264,7 @@ export default class PlayerDatabase {
         const found = this.#db.obj.chain.get('whitelistApprovals')
             .filter({ identifier: approval.identifier })
             .value();
-        if (found.length) throw new Error(`this identifier is already whitelisted`);
+        if (found.length) throw new DuplicateKeyError(`this identifier is already whitelisted`);
 
         //Register new
         this.#db.writeFlag(SAVE_PRIORITY_LOW);

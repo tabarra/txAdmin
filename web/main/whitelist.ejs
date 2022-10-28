@@ -218,11 +218,11 @@
 
             newNode.querySelector('td:nth-child(5) a:nth-child(1)').addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('btn approve');
+                approveDenyRequest(req.id, 'approve');
             });
             newNode.querySelector('td:nth-child(5) a:nth-child(2)').addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('btn deny');
+                approveDenyRequest(req.id, 'deny');
             });
 
             reqElements.tableBody.appendChild(newNode);
@@ -252,7 +252,34 @@
         error: function (xmlhttprequest, textstatus, message) {
             // FIXME:
         }
-    }); 
+    });
+
+    function approveDenyRequest(reqId, action){
+        const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
+
+        txAdminAPI({
+            type: 'POST',
+            url: `/whitelist/requests/${action}`,
+            data: {reqId},
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                if (data.success === true) {
+                    window.location.reload(true);
+                    return true;
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
     
     
     /**
@@ -339,7 +366,7 @@
             return $.notify({ message: 'Error: the provided identifier does not seem to be valid.' }, { type: 'danger' });
         }
 
-        const notify = $.notify({ message: '<p class="text-center">Removing...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
         txAdminAPI({
             type: 'POST',
             url: '/whitelist/approvals/add',
@@ -367,7 +394,7 @@
     }
 
     function removeApproval(identifier){
-        const notify = $.notify({ message: '<p class="text-center">Removing...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
 
         txAdminAPI({
             type: 'POST',
