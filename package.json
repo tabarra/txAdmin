@@ -9,7 +9,7 @@
     "build:menu": "vite build nui/ --mode production",
     "build:main": "node scripts/main-builder.js publish",
     "prepare": "husky install",
-    "dev:menu:browser": "vite dev nui/",
+    "dev:menu:browser": "vite dev nui/ --mode devNuiBrowser",
     "dev:menu:game": "vite build nui/ --watch --mode development",
     "dev:main": "node scripts/main-builder.js dev",
     "typecheck": "npm run typecheck:menu && npm run typecheck:main",

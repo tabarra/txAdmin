@@ -37,6 +37,11 @@ const baseConfig = {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
+    if (mode === 'devNuiBrowser') {
+        console.log('Launching NUI in browser mode')
+        return baseConfig
+    }
+
     if (mode === 'development') {
         let devDeplyPath;
         try {
