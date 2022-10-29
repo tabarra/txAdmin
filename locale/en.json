@@ -20,9 +20,10 @@
             "title_permanent": "You have been permanently banned from this server.",
             "title_temporary": "You have been temporarily banned from this server.",
             "label_expiration": "Your ban will expire in",
-            "label_id": "Ban ID",
-            "label_reason": "Ban Reason",
+            "label_date": "Ban Date",
             "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
             "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
         }
     },

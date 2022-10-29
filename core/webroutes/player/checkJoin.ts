@@ -146,16 +146,18 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
             title_permanent: translator.t('ban_messages.reject.title_permanent'),
             title_temporary: translator.t('ban_messages.reject.title_temporary'),
             label_expiration: translator.t('ban_messages.reject.label_expiration'),
-            label_id: translator.t('ban_messages.reject.label_id'),
-            label_reason: translator.t('ban_messages.reject.label_reason'),
+            label_date: translator.t('ban_messages.reject.label_date'),
             label_author: translator.t('ban_messages.reject.label_author'),
+            label_reason: translator.t('ban_messages.reject.label_reason'),
+            label_id: translator.t('ban_messages.reject.label_id'),
             note_multiple_bans: translator.t('ban_messages.reject.note_multiple_bans'),
         };
+        const language = translator.t('$meta.humanizer_language');
 
         let title, expLine;
         if (ban.expiration) {
             const humanizeOptions = {
-                language: translator.t('$meta.humanizer_language'),
+                language,
                 round: true,
                 units: ['d', 'h'] as Unit[],
             };
@@ -165,7 +167,7 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
         } else {
             title = textKeys.title_permanent;
         }
-
+        const banDate = new Date(ban.timestamp * 1000).toLocaleString(language, { dateStyle: 'medium', timeStyle: 'medium' })
         const note = (activeBans.length > 1) ? `<br>${textKeys.note_multiple_bans}` : '';
 
         //FIXME: add settings for this message
@@ -175,9 +177,10 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
         const reason = rejectMessageTemplate(
             title,
             `${expLine}
-            <strong>${textKeys.label_id}:</strong> <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${ban.id}</code> <br>
-            <strong>${textKeys.label_reason}:</strong> ${xss(ban.reason)} <br>
+            <strong>${textKeys.label_date}:</strong> ${banDate} <br>
             <strong>${textKeys.label_author}:</strong> ${xss(ban.author)} <br>
+            <strong>${textKeys.label_reason}:</strong> ${xss(ban.reason)} <br>
+            <strong>${textKeys.label_id}:</strong> <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${ban.id}</code> <br>
             ${customMessage}
             <span style="font-style: italic;">${note}</span>`
         );
