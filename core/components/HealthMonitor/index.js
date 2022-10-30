@@ -20,7 +20,7 @@ export default class HealthMonitor {
         //Hardcoded Configs
         //NOTE: done mainly because the timeout/limit was never useful, and makes things more complicated
         this.hardConfigs = {
-            timeout: 1500,
+            timeout: 3000,
             defaultWarningTimes: [30, 15, 10, 5, 4, 3, 2, 1],
 
             //HTTP GET /dynamic.json from txAdmin to sv_main.lua
@@ -46,7 +46,7 @@ export default class HealthMonitor {
         setInterval(() => {
             this.sendHealthCheck();
             this.refreshServerStatus();
-        }, 1000);
+        }, 3000);
         setInterval(async () => {
             this.hostStats = await getHostStats();
         }, 5000);
