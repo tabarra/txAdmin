@@ -27,7 +27,11 @@
     .action-buttons:hover {
         text-decoration: none;
     }
-    .action-buttons:hover > i {
+    .action-buttons[disabled] {
+        cursor: not-allowed;
+        /* pointer-events: none; */
+    }
+    .action-buttons:hover:not([disabled]) > i {
         font-weight: 600;
     }
 </style>
@@ -181,6 +185,15 @@
 
 <script>
     const hasWhitelistPermission = ('<%= hasWhitelistPermission %>' === 'true');
+    const disableActionButton = (e) => {
+        e.title = 'You do not have this permission.';
+        e.setAttribute('disabled', '');
+        e.classList.remove('text-success', 'text-danger');
+        e.classList.add('text-muted');
+        e.addEventListener('click', (e) => {
+            e.preventDefault();
+        });
+    }
 
     /**
      * WHITELIST REQUESTS
@@ -284,10 +297,12 @@
 
             newNode.querySelector('td:nth-child(5) a:nth-child(1)').addEventListener('click', (e) => {
                 e.preventDefault();
+                if(!hasWhitelistPermission) return;
                 approveDenyRequest(req.id, 'approve');
             });
             newNode.querySelector('td:nth-child(5) a:nth-child(2)').addEventListener('click', (e) => {
                 e.preventDefault();
+                if(!hasWhitelistPermission) return;
                 approveDenyRequest(req.id, 'deny');
             });
 
@@ -367,6 +382,12 @@
         tableBody: document.getElementById('approved-tableBody'),
         entryTemplate: document.getElementById('approved-entryTemplate'),
     };
+
+    //If no perms, edit template
+    if(!hasWhitelistPermission){
+        approvedElements.entryTemplate.content.querySelectorAll('.action-buttons').forEach(disableActionButton);
+    }
+
     const fillApprovedTableRows = (approvalsArray) => {
         for (const approval of approvalsArray) {
             const newNode = document.createElement("tr");
@@ -390,6 +411,7 @@
 
             newNode.querySelector('td:nth-child(4) a:nth-child(1)').addEventListener('click', (e) => {
                 e.preventDefault();
+                if(!hasWhitelistPermission) return;
                 removeApproval(approval.identifier)
             });
 

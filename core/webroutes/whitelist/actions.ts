@@ -23,6 +23,11 @@ export default async function WhitelistActions(ctx: Context) {
     const { table, action } = ctx.params;
     const sendTypedResp = (data: GenericApiResp) => ctx.send(data);
 
+    //Check permissions
+    if (!ctx.utils.testPermission('players.whitelist')) {
+        return sendTypedResp({ error: 'You don\'t have permission to execute this action.' });
+    }
+
     //Delegate to the specific table handler
     if (table === 'approvals') {
         return sendTypedResp(await handleApprovals(ctx, action));
