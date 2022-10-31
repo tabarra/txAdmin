@@ -5,6 +5,7 @@ import { DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from '@
 import logger, { ogConsole } from '@core/extras/console.js';
 import { Context } from 'koa';
 import cleanPlayerName from "@shared/cleanPlayerName";
+import { GenericApiError } from "@core/../shared/genericApiTypes";
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -31,17 +32,21 @@ export default async function WhitelistList(ctx: Context) {
  */
 async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
     type resp = {
-        total: number;
+        cntTotal: number;
+        cntFiltered: number;
         newest: number; //for the ignore all button not remove any that hasn't been seeing by the admin
+        totalPages: number;
+        currPage: number;
         requests: DatabaseWhitelistRequestsType[];
-    }
+    } | GenericApiError
     const sendTypedResp = (data: resp) => ctx.send(data);
 
     const requests = playerDatabase.getWhitelistRequests().reverse();
 
-    let filtered;
+    //Filter by player name, discord tag and req id
+    let filtered = requests;
     const searchString = ctx.request.query?.searchString;
-    if (typeof searchString === 'string') {
+    if (typeof searchString === 'string' && searchString.length) {
         const fuse = new Fuse(requests, {
             keys: ['id', 'playerPureName', 'discordTag'],
             threshold: 0.3
@@ -50,16 +55,35 @@ async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
         filtered = fuse.search(pureName).map(x => x.item);
     }
 
-    const toDisplay = filtered ?? requests;
+    //Pagination
+    //NOTE: i think we can totally just send the whole list to the front end do pagination
+    const pageSize = 15;
+    const pageinput = ctx.request.query?.page;
+    let currPage = 1;
+    if (typeof pageinput === 'string') {
+        if (/^\d+$/.test(pageinput)) {
+            currPage = parseInt(pageinput);
+            if (currPage < 1) {
+                return sendTypedResp({error: 'page should be >= 1'});
+            }
+        } else {
+            return sendTypedResp({error: 'page should be a number'});
+        }
+    }
+    const skip = (currPage - 1) * pageSize;
+    ogConsole.log('currPage', currPage)
+    ogConsole.log('skip', skip)
+    ogConsole.log('filtered.length', filtered.length)
+    const paginated = filtered.slice(skip, skip+pageSize);
+    
     return sendTypedResp({
-        total: requests.length,
+        cntTotal: requests.length,
+        cntFiltered: filtered.length,
         newest: (requests.length) ? requests[0].tsLastAttempt : 0,
-        requests: toDisplay,
+        totalPages: Math.ceil(filtered.length/pageSize),
+        currPage,
+        requests: paginated,
     });
-
-    //fazer só com newer e older?
-    //TODO: implement search and pagination
-
 }
 
 

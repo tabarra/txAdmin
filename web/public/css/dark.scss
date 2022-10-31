@@ -377,6 +377,21 @@ body.theme--dark {
     }
   }
 
+  // ----- Pagination
+  .pagination {
+    & .page-link {
+      border-color: $txadmin-border-color !important;
+      background-color: $txadmin-dark-900;
+      &:hover {
+        background-color: $txadmin-dark-700;
+      }
+    }
+
+    & > .page-item.disabled > a{
+      color: $txadmin-dark-600 !important;
+    }
+  }
+
 
   /***********************
    * TXADMIN ELEMENTS

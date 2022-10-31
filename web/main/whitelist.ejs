@@ -89,11 +89,15 @@
 
             <div class="card-footer">
                 <ul class="pagination justify-content-center mb-0">
-                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    <li class="page-item disabled" id="reqs-paginator-prev">
+                        <a class="page-link" href="#" onclick="event.preventDefault(); reqsPrevPage()">Previous</a>
+                    </li>
+                    <li class="page-item disabled" id="reqs-paginator-mid">
+                        <a class="page-link" href="#">?</a>
+                    </li>
+                    <li class="page-item disabled" id="reqs-paginator-next">
+                        <a class="page-link" href="#" onclick="event.preventDefault(); reqsNextPage()">Next</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -208,6 +212,13 @@
         searchInput: document.getElementById('reqs-searchInput'),
         searchButton: document.getElementById('reqs-searchButton'),
     };
+    const paginator = {
+        prev: document.getElementById('reqs-paginator-prev'),
+        mid: document.getElementById('reqs-paginator-mid'),
+        next: document.getElementById('reqs-paginator-next'),
+    }
+    let currentPage = 1;
+    let activeSearchString = '';
 
     //If no perms, edit template
     if(!hasWhitelistPermission){
@@ -215,7 +226,6 @@
     }
 
     reqElements.searchButton.addEventListener('click', (e) => {
-        console.log('searchButton click');
         if(reqElements.searchButton.innerText === 'Search'){
             performSearch();
         }else{
@@ -238,26 +248,24 @@
 
     //Clear search
     function clearSearch(){
-        location.hash = '';
         reqElements.searchInput.value = '';
         reqElements.spinner.classList.remove('d-none');
         reqElements.content.classList.add('d-none');
         reqElements.message.classList.add('d-none');
         reqElements.searchButton.innerText = 'Search';
+        activeSearchString = '';
         queryRequests();
     }
 
     //Perform search
     function performSearch(){
-        const searchString = reqElements.searchInput.value.trim();
-        location.hash = encodeURI(searchString);
-        if(!searchString.length) return clearSearch();
-        // dbPlayersSearchTab.innerHTML = SPINNER_HTML;
+        activeSearchString = reqElements.searchInput.value.trim();
+        if(!activeSearchString.length) return clearSearch();
         reqElements.spinner.classList.remove('d-none');
         reqElements.content.classList.add('d-none');
         reqElements.message.classList.add('d-none');
         reqElements.searchButton.innerText = 'Clear';
-        queryRequests(searchString);
+        queryRequests();
     }
 
     //Performs auto-search
@@ -309,9 +317,33 @@
         }
     }
 
-    function queryRequests(searchString){
+    function setPaginator(currPage, totalPages){
+        currentPage = currPage;
+        paginator.mid.querySelector('a').textContent = currPage;
+        if(currPage > 1){
+            paginator.prev.classList.remove('disabled');
+        }else{
+            paginator.prev.classList.add('disabled');
+        }
+        if(totalPages > currPage){
+            paginator.next.classList.remove('disabled');
+        }else{
+            paginator.next.classList.add('disabled');
+        }
+    }
+
+    function reqsPrevPage(){
+        queryRequests(currentPage > 1 ? currentPage - 1 : 1);
+    }
+    function reqsNextPage(){
+        queryRequests(currentPage + 1);
+    }
+
+    function queryRequests(page){
+        location.hash = encodeURI(activeSearchString);
         const urlSearch = new URLSearchParams();
-        if(searchString) urlSearch.append('searchString', searchString);
+        if(activeSearchString) urlSearch.append('searchString', activeSearchString);
+        if(page) urlSearch.append('page', page);
 
         txAdminAPI({
             type: "GET",
@@ -325,11 +357,17 @@
                 }else if(!Array.isArray(data.requests)){
                     // FIXME:
                 }else if(!data.requests.length){
+                    setPaginator(1, 1);
                     reqElements.counter.innerText = 0;
                     reqElements.content.classList.add('d-none');
                     reqElements.message.classList.remove('d-none');
                 }else{
-                    reqElements.counter.innerText = data.total;
+                    setPaginator(data.currPage, data.totalPages);
+                    if(data.cntTotal === data.cntFiltered){
+                        reqElements.counter.innerText = data.total;
+                    }else{
+                        reqElements.counter.innerText = `${data.cntFiltered} of ${data.cntTotal}`;
+                    }
                     reqElements.message.classList.add('d-none');
                     reqElements.content.classList.remove('d-none');
                     fillRequestsTableRows(data.requests);
