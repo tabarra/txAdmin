@@ -71,9 +71,6 @@ async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
         }
     }
     const skip = (currPage - 1) * pageSize;
-    ogConsole.log('currPage', currPage)
-    ogConsole.log('skip', skip)
-    ogConsole.log('filtered.length', filtered.length)
     const paginated = filtered.slice(skip, skip+pageSize);
     
     return sendTypedResp({

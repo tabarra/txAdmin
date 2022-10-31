@@ -83,6 +83,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
         } catch (error) {
             return { error: `Failed to save wl approval: ${(error as Error).message}` };
         }
+        ctx.utils.logAction(`Added whitelist approval for ${playerName}.`);
         return { success: true };
 
     } else if (action === 'remove') {
@@ -91,6 +92,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
         } catch (error) {
             return { error: `Failed to remove wl approval: ${(error as Error).message}` };
         }
+        ctx.utils.logAction(`Removed whitelist approval from ${idlowerCased}.`);
         return { success: true };
 
     } else {
@@ -105,6 +107,17 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
 async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp> {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+
+    //Checkinf for the deny all action, the others need reqId
+    if (action === 'deny_all') {
+        try {
+            playerDatabase.removeWhitelistRequests({});
+        } catch (error) {
+            return { error: `Failed to remove all wl request: ${(error as Error).message}` };
+        }
+        ctx.utils.logAction('Denied all whitelist requests.');
+        return { success: true };
+    }
 
     //Input validation
     const reqId = ctx.request.body?.reqId;
@@ -121,10 +134,11 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
         const req = requests[0]; //just getting the first
 
         //Register whitelistApprovals
+        const playerName = req.discordTag ?? req.playerDisplayName
         try {
             playerDatabase.registerWhitelistApprovals({
                 identifier: `license:${req.license}`,
-                playerName: req.discordTag ?? req.playerDisplayName,
+                playerName,
                 playerAvatar: (req.discordAvatar) ? req.discordAvatar : null,
                 tsApproved: now(),
                 approvedBy: ctx.session.auth.username,
@@ -134,6 +148,7 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
                 return { error: `Failed to save wl approval: ${(error as Error).message}` };
             }
         }
+        ctx.utils.logAction(`Approved whitelist request from ${playerName}.`);
 
         //Remove record from whitelistRequests
         try {
@@ -149,6 +164,7 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
         } catch (error) {
             return { error: `Failed to remove wl request: ${(error as Error).message}` };
         }
+        ctx.utils.logAction(`Denied whitelist request ${reqId}.`);
         return { success: true };
 
     } else {

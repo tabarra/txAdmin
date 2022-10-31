@@ -29,14 +29,14 @@
 - [x] db revoke_action/ban_ids routes + buttons on players page
 - [x] whitelist page
 - [x] join check + whitelist
-- [ ] whitelist page actions
+- [x] whitelist page actions
     - [x] remove wl approval
     - [x] add wl approval
     - [x] approve wl request
     - [x] remove wl request
     - [x] search wl request
-    - [ ] wl request pagination
-    - [ ] wl request ignore all button
+    - [x] wl request pagination
+    - [x] wl request ignore all button
 - [ ] add new custom connect reject messages for whitelist/bans
 - [ ] create new whitelist events
 - [ ] clean PlayerDatabase file (mainly methods)

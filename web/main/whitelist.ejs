@@ -87,7 +87,10 @@
                 </div>
             </div>
 
-            <div class="card-footer">
+            <div class="card-footer d-flex" style="flex-direction: row; justify-content: space-between;">
+                <button class="btn btn-sm btn-outline-danger" type="button" onclick="denyAllRequests()">
+                    <i class="icon-close"></i> Deny All
+                </button>
                 <ul class="pagination justify-content-center mb-0">
                     <li class="page-item disabled" id="reqs-paginator-prev">
                         <a class="page-link" href="#" onclick="event.preventDefault(); reqsPrevPage()">Previous</a>
@@ -353,9 +356,13 @@
             success: function (data) {
                 reqElements.spinner.classList.add('d-none');
                 if(data.error){
-                    // FIXME:
+                    reqElements.message.classList.remove('d-none', 'text-muted');
+                    reqElements.message.classList.add('text-danger');
+                    reqElements.message.textContent = `Error: ${data.error}`;
                 }else if(!Array.isArray(data.requests)){
-                    // FIXME:
+                    reqElements.message.classList.remove('d-none', 'text-muted');
+                    reqElements.message.classList.add('text-danger');
+                    reqElements.message.textContent = 'Error reading API response';
                 }else if(!data.requests.length){
                     setPaginator(1, 1);
                     reqElements.counter.innerText = 0;
@@ -364,7 +371,7 @@
                 }else{
                     setPaginator(data.currPage, data.totalPages);
                     if(data.cntTotal === data.cntFiltered){
-                        reqElements.counter.innerText = data.total;
+                        reqElements.counter.innerText = data.cntTotal;
                     }else{
                         reqElements.counter.innerText = `${data.cntFiltered} of ${data.cntTotal}`;
                     }
@@ -374,7 +381,10 @@
                 }
             },
             error: function (xmlhttprequest, textstatus, message) {
-                // FIXME:
+                reqElements.spinner.classList.add('d-none');
+                reqElements.message.classList.remove('d-none', 'text-muted');
+                reqElements.message.classList.add('text-danger');
+                reqElements.message.textContent = 'Error reading API response';
             }
         });
     }
@@ -406,6 +416,40 @@
             }
         });
     }
+
+    async function denyAllRequests(reqId, action){
+        const confirmOptions = {
+            title: 'Deny all whitelist requests?',
+            content: `Players will still be able to try to join again, and will receive a new request ID.`,
+        };
+        if (!await txAdminConfirm(confirmOptions)) return;
+
+        const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
+
+        txAdminAPI({
+            type: 'POST',
+            url: `/whitelist/requests/deny_all`,
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                if (data.success === true) {
+                    window.location.reload(true);
+                    return true;
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+
+
     
     
     /**
@@ -464,9 +508,13 @@
         success: function (data) {
             approvedElements.spinner.classList.add('d-none');
             if(data.error){
-                // FIXME:
+                approvedElements.message.classList.remove('d-none', 'text-muted');
+                approvedElements.message.classList.add('text-danger');
+                approvedElements.message.textContent = `Error: ${data.error}`;
             }else if(!Array.isArray(data)){
-                // FIXME:
+                approvedElements.message.classList.remove('d-none', 'text-muted');
+                approvedElements.message.classList.add('text-danger');
+                approvedElements.message.textContent = 'Error reading API response';
             }else if(!data.length){
                 approvedElements.counter.innerText = 0;
                 approvedElements.content.classList.add('d-none');
@@ -479,7 +527,10 @@
             }
         },
         error: function (xmlhttprequest, textstatus, message) {
-            // FIXME:
+            approvedElements.spinner.classList.add('d-none');
+            approvedElements.message.classList.remove('d-none', 'text-muted');
+            approvedElements.message.classList.add('text-danger');
+            approvedElements.message.textContent = 'Error reading API response';
         }
     });
 
