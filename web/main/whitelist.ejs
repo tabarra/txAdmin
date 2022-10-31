@@ -208,16 +208,15 @@
         searchInput: document.getElementById('reqs-searchInput'),
         searchButton: document.getElementById('reqs-searchButton'),
     };
-    
-    const getSVG = (icon) => {
-        return `<svg class="c-icon">
-            <use href="img/coreui_icons.svg#cil-${icon}"></use>
-        </svg>`;
-    };
+
+    //If no perms, edit template
+    if(!hasWhitelistPermission){
+        reqElements.entryTemplate.content.querySelectorAll('.action-buttons').forEach(disableActionButton);
+    }
 
     reqElements.searchButton.addEventListener('click', (e) => {
         console.log('searchButton click');
-        if(reqElements.searchButton.textContent.includes('Search')){
+        if(reqElements.searchButton.innerText === 'Search'){
             performSearch();
         }else{
             clearSearch();
@@ -225,8 +224,8 @@
     });
     reqElements.searchInput.addEventListener('keyup', (e) => {
         if(e.keyCode !== 13){
-            if(!reqElements.searchButton.innerHTML.includes('magnifying-glass')){
-                reqElements.searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
+            if(reqElements.searchButton.innerText !== 'Search'){
+                reqElements.searchButton.innerText = 'Search';
             }
         }else{
             if(reqElements.searchInput.value.length){
@@ -244,7 +243,7 @@
         reqElements.spinner.classList.remove('d-none');
         reqElements.content.classList.add('d-none');
         reqElements.message.classList.add('d-none');
-        reqElements.searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
+        reqElements.searchButton.innerText = 'Search';
         queryRequests();
     }
 
@@ -257,7 +256,7 @@
         reqElements.spinner.classList.remove('d-none');
         reqElements.content.classList.add('d-none');
         reqElements.message.classList.add('d-none');
-        reqElements.searchButton.innerHTML = getSVG('x') + ` Clear`;
+        reqElements.searchButton.innerText = 'Clear';
         queryRequests(searchString);
     }
 
@@ -310,9 +309,9 @@
         }
     }
 
-    function queryRequests(searchName){
+    function queryRequests(searchString){
         const urlSearch = new URLSearchParams();
-        if(searchName) urlSearch.append('searchName', searchName);
+        if(searchString) urlSearch.append('searchString', searchString);
 
         txAdminAPI({
             type: "GET",

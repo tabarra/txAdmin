@@ -40,13 +40,13 @@ async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
     const requests = playerDatabase.getWhitelistRequests().reverse();
 
     let filtered;
-    const searchName = ctx.request.query?.searchName;
-    if (typeof searchName === 'string') {
+    const searchString = ctx.request.query?.searchString;
+    if (typeof searchString === 'string') {
         const fuse = new Fuse(requests, {
-            keys: ['playerPureName', 'discordTag'],
+            keys: ['id', 'playerPureName', 'discordTag'],
             threshold: 0.3
         });
-        const { pureName } = cleanPlayerName(searchName);
+        const { pureName } = cleanPlayerName(searchString);
         filtered = fuse.search(pureName).map(x => x.item);
     }
 

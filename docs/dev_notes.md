@@ -34,8 +34,9 @@
     - [x] add wl approval
     - [x] approve wl request
     - [x] remove wl request
-    - [ ] search wl request
+    - [x] search wl request
     - [ ] wl request pagination
+    - [ ] wl request ignore all button
 - [ ] add new custom connect reject messages for whitelist/bans
 - [ ] create new whitelist events
 - [ ] clean PlayerDatabase file (mainly methods)
@@ -47,7 +48,6 @@
 - [ ] tidy up the files, specially comments missing everywhere
 - [ ] review all references to the old playerController
 - [ ] migrate warn action id prefix from A to W
-- [ ] no duplicated id type in bans? preparing for the new db migration
 
 - [ ] FIXME: double check what happens when there is more than one player with the same license online
 - [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
@@ -59,6 +59,7 @@
     - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
 - [ ] FIXME: settings > player manager > save is erroring out
 - [ ] FIXME: diagnostics erroring out
+
 - [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] create daily cron to optimize database:
@@ -67,6 +68,7 @@
     - [ ] daily cron to remove whitelistApprovals/whitelistRequests older than 7 days (no settings)
 
 Unrelated to feat/core-playerlist:
+- [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
 - [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
 - [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
