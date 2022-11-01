@@ -7,10 +7,9 @@ import { genActionID, genWhitelistRequestID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
+import { now } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
-//Helpers
-const now = () => { return Math.round(Date.now() / 1000); };
 
 //Consts
 const validActions = ['ban', 'warn'];
@@ -89,6 +88,14 @@ export default class PlayerDatabase {
      */
     registerPlayer(player: DatabasePlayerType): void {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
+        //TODO: validate player data vs DatabasePlayerType props
+
+        //Check for duplicated license
+        const found = this.#db.obj.chain.get('players')
+            .filter({ license: player.license })
+            .value();
+        if (found.length) throw new DuplicateKeyError(`this license is already registered`);
+
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
         this.#db.obj.chain.get('players')
             .push(player)
@@ -102,6 +109,10 @@ export default class PlayerDatabase {
      */
     updatePlayer(license: string, srcData: Exclude<object, null>): DatabasePlayerType {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (typeof (srcData as any).license !== 'undefined') {
+            throw new Error(`cannot license field`);
+        }
+
         const playerDbObj = this.#db.obj.chain.get('players').find({ license });
         if (!playerDbObj.value()) throw new Error('Player not found in database');
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
@@ -260,6 +271,7 @@ export default class PlayerDatabase {
      */
     registerWhitelistApprovals(approval: DatabaseWhitelistApprovalsType): void {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
+        //TODO: validate player data vs DatabaseWhitelistApprovalsType props
 
         //Check for duplicated license
         const found = this.#db.obj.chain.get('whitelistApprovals')
@@ -328,6 +340,11 @@ export default class PlayerDatabase {
      */
     registerWhitelistRequests(request: Omit<DatabaseWhitelistRequestsType, "id">): string {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
+        //TODO: validate player data vs DatabaseWhitelistRequestsType props
+        if (typeof (request as any).id !== 'undefined') {
+            throw new Error(`cannot manually set the id field`);
+        }
+
         const id = genWhitelistRequestID(this.#db.obj);
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
         this.#db.obj.chain.get('whitelistRequests')

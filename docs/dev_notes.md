@@ -50,7 +50,7 @@
     - [x] clean PlayerDatabase file (mainly methods)
     - [x] tidy up the files, specially comments missing everywhere
 - [x] migrate warn action id prefix from A to W
-- [ ] add database schema basic safeguards to player database
+- [x] add database schema basic safeguards to player database
 - [ ] fix `adminVault.refreshOnlineAdmins()` 
 
 - [ ] FIXME: double check what happens when there is more than one player with the same license online

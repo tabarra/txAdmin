@@ -3,7 +3,7 @@ import logger from '@core/extras/console.js';
 import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { verbose } from '@core/globalData.js';
-import { DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
+import { DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
 import { cloneDeep } from 'lodash-es';
 import { parsePlayerIds, now } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -72,6 +72,13 @@ export class BasePlayer {
         this.mutateDadabase({
             tsWhitelisted: enabled ? now() : undefined,
         });
+
+        //Remove entries from whitelistApprovals & whitelistRequests
+        const allIdsFilter = (x: DatabaseWhitelistApprovalsType) => {
+            return this.ids.includes(x.identifier);
+        }
+        this.dbInstance.removeWhitelistApprovals(allIdsFilter);
+        this.dbInstance.removeWhitelistRequests({ license: this.license });
     }
 }
 
