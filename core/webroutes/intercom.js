@@ -37,8 +37,8 @@ export default async function Intercom(ctx) {
                 txAdminUptime: Math.round(process.uptime()),
                 fxServerUptime: globals.fxRunner.getUptime(),
                 discordBotStats: (globals.discordBot.config.enabled) ? globals.discordBot.usageStats : false,
-                banlistEnabled: globals.playerController.config.onJoinCheckBan,
-                whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
+                banlistEnabled: globals.playerDatabase.config.onJoinCheckBan,
+                whitelistEnabled: globals.playerDatabase.config.onJoinCheckWhitelist,
                 admins: (globals.adminVault.admins) ? globals.adminVault.admins.length : 1,
                 tmpLooksLikeRecipe: (globals.fxRunner.config.serverDataPath || '').includes('.base'),
             };

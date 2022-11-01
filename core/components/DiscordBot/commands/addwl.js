@@ -28,7 +28,7 @@ export default {
         }
 
         //Check if whitelist is enabled
-        if (!globals.playerController.config.onJoinCheckWhitelist) {
+        if (!globals.playerDatabase.config.onJoinCheckWhitelist) {
             return await message.reply('**txAdmin** whitelist is disabled :man_facepalming:\nGo to the settings and enable it first.');
         }
 
@@ -64,7 +64,7 @@ export default {
 
         //Whitelist reference
         try {
-            await globals.playerController.approveWhitelist(reference, admin.name);
+            await globals.playerDatabase.approveWhitelist(reference, admin.name);
         } catch (error) {
             return await message.reply(`**Error:** ${error.message}`);
         }

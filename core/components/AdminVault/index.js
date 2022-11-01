@@ -548,7 +548,7 @@ export default class AdminVault {
      * Notify game server about admin changes
      */
     async refreshOnlineAdmins() {
-        if (globals.playerController === null) return;
+        if (globals.playerlistManager === null) return;
 
         try {
             //Getting all admin identifiers

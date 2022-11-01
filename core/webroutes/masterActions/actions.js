@@ -152,7 +152,7 @@ async function handleImportBansFile(ctx, dbType) {
                 }
             }
 
-            await globals.playerController.registerAction(identifiers, 'ban', author, reason, expiration);
+            await globals.playerDatabase.registerAction(identifiers, 'ban', author, reason, expiration);
             imported++;
         }// end for()
     } catch (error) {
@@ -221,7 +221,7 @@ async function handleImportBansDBMS(ctx, dbType) {
                     const expirationInt = parseInt(ban.expiration);
                     expiration = (Number.isNaN(expirationInt)) ? false : expirationInt;
                 }
-                await globals.playerController.registerAction(identifiers, 'ban', author, reason, expiration);
+                await globals.playerDatabase.registerAction(identifiers, 'ban', author, reason, expiration);
                 imported++;
             }
         } else if (dbType == 'vrp') {
@@ -238,7 +238,7 @@ async function handleImportBansDBMS(ctx, dbType) {
                     invalid++;
                     continue;
                 }
-                await globals.playerController.registerAction(identifiers, 'ban', 'unknown', 'imported from vRP', false);
+                await globals.playerDatabase.registerAction(identifiers, 'ban', 'unknown', 'imported from vRP', false);
                 imported++;
             }
         } else if (dbType == 'el_bwh') {
@@ -277,7 +277,7 @@ async function handleImportBansDBMS(ctx, dbType) {
                         expiration = Math.round(expirationDate.getTime() / 1000);
                     }
                 }
-                await globals.playerController.registerAction(identifiers, 'ban', 'unknown', reason, expiration);
+                await globals.playerDatabase.registerAction(identifiers, 'ban', 'unknown', reason, expiration);
                 imported++;
             }
         }
@@ -378,14 +378,14 @@ async function handleCleanDatabase(ctx) {
     const tsStart = new Date();
     let playersRemoved = 0;
     try {
-        playersRemoved = await globals.playerController.cleanDatabase('players', playersFilter);
+        playersRemoved = await globals.playerDatabase.cleanDatabase('players', playersFilter);
     } catch (error) {
         return ctx.utils.render('main/message', {message: `<b>Failed to clean players with error:</b><br>${error.message}`});
     }
 
     let actionsRemoved = 0;
     try {
-        actionsRemoved = await globals.playerController.cleanDatabase('actions', actionsFilter);
+        actionsRemoved = await globals.playerDatabase.cleanDatabase('actions', actionsFilter);
     } catch (error) {
         return ctx.utils.render('main/message', {message: `<b>Failed to clean actions with error:</b><br>${error.message}`});
     }

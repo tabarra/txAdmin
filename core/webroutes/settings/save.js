@@ -36,8 +36,8 @@ export default async function SettingsSave(ctx) {
         return await handleGlobal(ctx);
     } else if (scope == 'fxserver') {
         return await handleFXServer(ctx);
-    } else if (scope == 'playerController') {
-        return await handlePlayerController(ctx);
+    } else if (scope == 'playerDatabase') {
+        return await handlePlayerDatabase(ctx);
     } else if (scope == 'monitor') {
         return await handleMonitor(ctx);
     } else if (scope == 'discord') {
@@ -176,10 +176,10 @@ async function handleFXServer(ctx) {
 
 //================================================================
 /**
- * Handle Player Controller settings
+ * Handle Player Database settings
  * @param {object} ctx
  */
-async function handlePlayerController(ctx) {
+async function handlePlayerDatabase(ctx) {
     //Sanity check
     if (anyUndefined(
         ctx.request.body,
@@ -208,16 +208,16 @@ async function handlePlayerController(ctx) {
     }
 
     //Preparing & saving config
-    let newConfig = globals.configVault.getScopedStructure('playerController');
+    let newConfig = globals.configVault.getScopedStructure('playerDatabase');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
     newConfig.onJoinCheckWhitelist = cfg.onJoinCheckWhitelist;
     newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
     newConfig.banRejectionMessage = cfg.banRejectionMessage;
-    let saveStatus = globals.configVault.saveProfile('playerController', newConfig);
+    let saveStatus = globals.configVault.saveProfile('playerDatabase', newConfig);
 
     //Sending output
     if (saveStatus) {
-        globals.playerController.refreshConfig();
+        globals.playerDatabase.refreshConfig();
         ctx.utils.logAction('Changing Player Controller settings.');
         return ctx.send({type: 'success', message: '<strong>Player Controller configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
     } else {

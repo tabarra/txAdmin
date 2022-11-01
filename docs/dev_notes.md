@@ -37,15 +37,17 @@
     - [x] search wl request
     - [x] wl request pagination
     - [x] wl request ignore all button
-- [ ] settings stuff
+- [x] settings stuff
     - [x] add new custom connect reject messages for whitelist/bans
     - [x] remove minSessionTime from everywhere
     - [x] remove wipePendingWLOnStart from everywhere
-    - [ ] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
+    - [x] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
+    - [x] FIXME: settings > player manager > save is erroring out
+    - [x] FIXME: diagnostics erroring out
 - [ ] cleanup
+    - [x] remove all references to the old playerController
     - [ ] clean PlayerDatabase file (mainly methods)
     - [ ] tidy up the files, specially comments missing everywhere
-    - [ ] review all references to the old playerController
 - [ ] migrate warn action id prefix from A to W
 - [ ] add last connection date to offline player modal (issue #689)
 
@@ -57,8 +59,7 @@
     - potential solution is to always prioritize ServerPlayer on player resolver
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
     - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
-- [ ] FIXME: settings > player manager > save is erroring out
-- [ ] FIXME: diagnostics erroring out
+
 
 - [ ] fix player modal in nui menu
 - [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
@@ -255,6 +256,9 @@ const defaults = {
 - settings_save does `txAdmin.cfgVault.save([...])`
 - use zod for validation https://www.npmjs.com/package/zod
 - maybe even use zod's `.default()`?
+- maybe components don't even need to hold a `this.config`? couldn't we just access it directly from the vault?
+- need to keep in mind that many configs are used in the webroutes, so maybe just `txAdmin.config.xxx` and `ServerInstance.config.xxx`?
+- 'convict' was the name of that one lib
 
 
 ### old settings refactor note:

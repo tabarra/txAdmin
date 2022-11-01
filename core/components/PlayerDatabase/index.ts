@@ -42,18 +42,26 @@ type PlayerDbConfigType = {
 }
 /**
  * Provide a central database for players, as well as assist with access control.
+ * TODO: maybe after finishing the parts, move them to xxx.controller.ts dividing it by the tables?
  */
 export default class PlayerDatabase {
     readonly #db: Database;
-    readonly #txAdmin: typeof TxAdmin;
+    readonly #txAdmin: TxAdmin;
 
-    constructor(txAdmin: typeof TxAdmin, public config: PlayerDbConfigType) {
+    constructor(txAdmin: TxAdmin, public config: PlayerDbConfigType) {
         this.#txAdmin = txAdmin;
         this.#db = new Database();
     }
 
     get isReady() {
         return this.#db.isReady;
+    }
+
+    /**
+     * Refresh configurations
+     */
+     refreshConfig() {
+        this.config = this.#txAdmin.configVault.getScoped('playerDatabase');
     }
 
     /**

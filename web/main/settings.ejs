@@ -251,7 +251,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
-                                        <%= playerController.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                        <%= playerDatabase.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -268,7 +268,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckWhitelist"
-                                        <%= playerController.onJoinCheckWhitelist || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                        <%= playerDatabase.onJoinCheckWhitelist || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -284,7 +284,7 @@
                                 Rejection Message
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerController.banRejectionMessage || '' %></textarea>
+                                <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.banRejectionMessage || '' %></textarea>
                                 <span class="form-text text-muted">
                                     Optional message to display to a player on the rejection message that shows when they try to connect while bein banned. <br>
                                     If you have a ban appeal process, you can use this field to inform the players.
@@ -298,7 +298,7 @@
                                 Rejection Message
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="Please join http://discord.gg/example and request to be whitelisted." <%= readOnly ? 'disabled' : '' %>><%= playerController.whitelistRejectionMessage || '' %></textarea>
+                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="Please join http://discord.gg/example and request to be whitelisted." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.whitelistRejectionMessage || '' %></textarea>
                                 <span class="form-text text-muted">
                                     Optional message to display to a player on the rejection message that shows when they try to connect while not being whitelisted. <br>
                                     If you have a Discord whitelisting process, you can put here links to your guild.
@@ -586,7 +586,7 @@
 
         txAdminAPI({
             type: "POST",
-            url: '/settings/save/playerController',
+            url: '/settings/save/playerDatabase',
             data: data,
             dataType: 'json',
             success: function (data) {

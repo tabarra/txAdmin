@@ -98,9 +98,6 @@ export default class HealthMonitor {
         this.lastSuccessfulHTTPHeartBeat = null;
         //to collect statistics
         this.hasServerStartedYet = false;
-
-        //to reset active player list (if module is already loaded)
-        if (globals.playerController) globals.playerController.processHeartBeat([]);
     }
 
 

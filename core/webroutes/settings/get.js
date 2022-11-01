@@ -27,7 +27,7 @@ export default async function SettingsGet(ctx) {
         locales,
         global: cleanRenderData(globals.configVault.getScopedStructure('global')),
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
-        playerController: cleanRenderData(globals.configVault.getScopedStructure('playerController')),
+        playerDatabase: cleanRenderData(globals.configVault.getScopedStructure('playerDatabase')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
         readOnly: !ctx.utils.hasPermission('settings.write'),

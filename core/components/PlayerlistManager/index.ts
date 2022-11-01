@@ -7,12 +7,6 @@ import { ServerPlayer } from '@core/playerLogic/playerClasses.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
-type PlayerDatabaseConfigType = {
-    onJoinCheckBan: boolean;
-    onJoinCheckWhitelist: boolean;
-    banRejectionMessage: string;
-    whitelistRejectionMessage: string;
-}
 /**
  * The PlayerlistManager will store a ServerPlayer instance for all players that connected to the server.
  * This class will also keep an array of ['mutex#id', license], to be used for searches from server log clicks.
@@ -26,10 +20,7 @@ export default class PlayerlistManager {
     licenseCache: [mutexid: string, license: string][] = [];
     licenseCacheLimit = 50_000; //mutex+id+license * 50_000 = ~4mb
 
-    constructor(
-        txAdmin: TxAdmin,
-        public config: PlayerDatabaseConfigType
-    ) {
+    constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
     }
 

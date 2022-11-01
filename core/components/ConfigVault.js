@@ -98,7 +98,7 @@ export default class ConfigVault {
             global: null,
             logger: null,
             monitor: null,
-            playerController: null,
+            playerDatabase: null,
             webServer: null,
             discordBot: null,
             fxRunner: null,
@@ -107,7 +107,7 @@ export default class ConfigVault {
         //NOTE: this shit is ugly, but I wont bother fixing it.
         //      this entire config vault is stupid.
         //      use convict, lodash defaults or something like that
-        if (isUndefined(cfg.playerController)) cfg.playerController = {};
+        cfg.playerDatabase = cfg.playerDatabase ?? cfg.playerController ?? {};
 
         try {
             out.global = {
@@ -124,15 +124,15 @@ export default class ConfigVault {
                 resourceStartingTolerance: toDefault(cfg.monitor.resourceStartingTolerance, 120), //not in template
                 disableChatWarnings: toDefault(cfg.monitor.disableChatWarnings, null), //not in template
             };
-            out.playerController = {
-                onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
-                onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
+            out.playerDatabase = {
+                onJoinCheckBan: toDefault(cfg.playerDatabase.onJoinCheckBan, true),
+                onJoinCheckWhitelist: toDefault(cfg.playerDatabase.onJoinCheckWhitelist, false),
                 whitelistRejectionMessage: toDefault(
-                    cfg.playerController.whitelistRejectionMessage,
+                    cfg.playerDatabase.whitelistRejectionMessage,
                     'Please join http://discord.gg/example and request to be whitelisted.',
                 ),
                 banRejectionMessage: toDefault(
-                    cfg.playerController.banRejectionMessage,
+                    cfg.playerDatabase.banRejectionMessage,
                     'You can join http://discord.gg/example to appeal this ban.',
                 ),
             };
@@ -210,14 +210,14 @@ export default class ConfigVault {
             cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
 
             //Player Controller
-            cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null)
+            cfg.playerDatabase.onJoinCheckBan = (cfg.playerDatabase.onJoinCheckBan === null)
                 ? true
-                : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
-            cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null)
+                : (cfg.playerDatabase.onJoinCheckBan === 'true' || cfg.playerDatabase.onJoinCheckBan === true);
+            cfg.playerDatabase.onJoinCheckWhitelist = (cfg.playerDatabase.onJoinCheckWhitelist === null)
                 ? false
-                : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
-            cfg.playerController.whitelistRejectionMessage = cfg.playerController.whitelistRejectionMessage || '';
-            cfg.playerController.banRejectionMessage = cfg.playerController.banRejectionMessage || '';
+                : (cfg.playerDatabase.onJoinCheckWhitelist === 'true' || cfg.playerDatabase.onJoinCheckWhitelist === true);
+            cfg.playerDatabase.whitelistRejectionMessage = cfg.playerDatabase.whitelistRejectionMessage || '';
+            cfg.playerDatabase.banRejectionMessage = cfg.playerDatabase.banRejectionMessage || '';
 
             //WebServer
             cfg.webServer.disableNuiSourceCheck = (cfg.webServer.disableNuiSourceCheck === 'true' || cfg.webServer.disableNuiSourceCheck === true);
@@ -293,7 +293,7 @@ export default class ConfigVault {
             global: cfg.global,
             logger: cfg.logger,
             monitor: cfg.monitor,
-            playerController: cfg.playerController,
+            playerDatabase: cfg.playerDatabase,
             webServer: cfg.webServer,
             discordBot: cfg.discordBot,
             fxRunner: cfg.fxRunner,

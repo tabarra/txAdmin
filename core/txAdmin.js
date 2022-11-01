@@ -109,6 +109,7 @@ global.globals = {
  * Main APP
  */
 export default class TxAdmin {
+    configVault;
     adminVault;
     discordBot;
     logger;
@@ -142,7 +143,8 @@ export default class TxAdmin {
         //Load Config Vault
         let profileConfig;
         try {
-            globals.configVault = new ConfigVault(profilePath, serverProfile);
+            this.configVault = new ConfigVault(profilePath, serverProfile);
+            globals.configVault = this.configVault;
             profileConfig = globals.configVault.getAll();
             globals.config = profileConfig.global;
         } catch (error) {
@@ -192,10 +194,10 @@ export default class TxAdmin {
             this.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
             globals.resourcesManager = this.resourcesManager;
 
-            this.playerlistManager = new PlayerlistManager(this, profileConfig.playerController);
+            this.playerlistManager = new PlayerlistManager(this);
             globals.playerlistManager = this.playerlistManager;
 
-            this.playerDatabase = new PlayerDatabase(this, profileConfig.playerController);
+            this.playerDatabase = new PlayerDatabase(this, profileConfig.playerDatabase);
             globals.playerDatabase = this.playerDatabase;
         } catch (error) {
             logError(`Error starting main components: ${error.message}`);
