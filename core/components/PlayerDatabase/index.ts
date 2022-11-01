@@ -1,9 +1,6 @@
 const modulename = 'PlayerDatabase';
-import humanizeDuration from 'humanize-duration'; //FIXME: remove, this controller is not the right place for interface stuff
-import xssInstancer from '@core/extras/xss.js'; //FIXME: same as above
-import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData';
+import { verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
 import { genActionID, genWhitelistRequestID } from './idGenerator';
@@ -11,7 +8,6 @@ import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const xss = xssInstancer();
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -24,22 +20,14 @@ export class DuplicateKeyError extends Error {
         super(message);
     }
 }
-
-//DEBUG
-const { Console } = require('node:console');
-const ogConsole = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-    colorMode: true,
-});
-
-
 type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     onJoinCheckWhitelist: boolean;
     banRejectionMessage: string;
     whitelistRejectionMessage: string;
 }
+
+
 /**
  * Provide a central database for players, as well as assist with access control.
  * TODO: maybe after finishing the parts, move them to xxx.controller.ts dividing it by the tables?
@@ -53,6 +41,10 @@ export default class PlayerDatabase {
         this.#db = new Database();
     }
 
+
+    /**
+     * Returns if the lowdb instance is ready
+     */
     get isReady() {
         return this.#db.isReady;
     }

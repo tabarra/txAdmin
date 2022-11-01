@@ -3,6 +3,7 @@ import PlayerDatabase from "@core/components/PlayerDatabase/index.js";
 import PlayerlistManager from "@core/components/PlayerlistManager/index.js";
 import { DatabasePlayer, ServerPlayer } from "./playerClasses.js"
 
+
 /**
  * Resolves a ServerPlayer or DatabasePlayer based on mutex, netid and license.
  * When mutex#netid is present, it takes precedence over license.

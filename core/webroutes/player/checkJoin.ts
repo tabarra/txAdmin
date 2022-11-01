@@ -267,7 +267,6 @@ async function checkWhitelist(
             const { tag, avatar } = await discordBot.resolveMember(validIdsObject.discord);
             discordTag = tag;
             discordAvatar = avatar;
-            // ogConsole.dir({ tag, avatar }); //DEBUG
         } catch (error) { }
     }
 

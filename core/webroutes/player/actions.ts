@@ -12,9 +12,8 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };
 
 
-
 /**
- * Returns the output page containing the bans experiment
+ * Actions route for the player modal
  */
 export default async function PlayerActions(ctx: Context) {
     //Sanity check
@@ -238,7 +237,7 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
 
 
 /**
- * Handle Whitelist Action
+ * Handle Player Whitelist Action
  */
 async function handleSetWhitelist(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request

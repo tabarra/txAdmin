@@ -44,10 +44,10 @@
     - [x] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
     - [x] FIXME: settings > player manager > save is erroring out
     - [x] FIXME: diagnostics erroring out
-- [ ] cleanup
+- [x] cleanup
     - [x] remove all references to the old playerController
-    - [ ] clean PlayerDatabase file (mainly methods)
-    - [ ] tidy up the files, specially comments missing everywhere
+    - [x] clean PlayerDatabase file (mainly methods)
+    - [x] tidy up the files, specially comments missing everywhere
 - [ ] migrate warn action id prefix from A to W
 - [ ] add last connection date to offline player modal (issue #689)
 
@@ -59,7 +59,6 @@
     - potential solution is to always prioritize ServerPlayer on player resolver
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
     - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
-
 
 - [ ] fix player modal in nui menu
 - [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`

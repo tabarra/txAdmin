@@ -13,7 +13,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  * For the future, its probably a good idea to upgrade to i18next
  */
 export default class Translator {
-    readonly language: string;
+    language: string;
     readonly customLocalePath: string;
     #polyglot: Polyglot | null = null;
 
@@ -26,7 +26,6 @@ export default class Translator {
     }
 
 
-    //================================================================
     /**
      * Setup polyglot instance
      */
@@ -49,7 +48,6 @@ export default class Translator {
     }
 
 
-    //================================================================
     /**
      * Refresh translator configurations
      */
@@ -67,7 +65,6 @@ export default class Translator {
     }
 
 
-    //================================================================
     /**
      * Loads a language file or throws Error.
      * @param {string} lang
@@ -95,7 +92,6 @@ export default class Translator {
     }
 
 
-    //================================================================
     /**
      * Perform a translation (polyglot.t)
      */

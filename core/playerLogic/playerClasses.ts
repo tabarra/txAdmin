@@ -1,16 +1,12 @@
 const modulename = 'Player';
 import logger from '@core/extras/console.js';
-import consts from '@core/extras/consts';
 import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { verbose } from '@core/globalData.js';
 import { DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
 import { cloneDeep } from 'lodash-es';
-import { parsePlayerIds } from '@core/extras/helpers';
+import { parsePlayerIds, now } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-
-//Helpers
-const now = () => { return Math.round(Date.now() / 1000); };
 
 
 /**
@@ -140,7 +136,7 @@ export class ServerPlayer extends BasePlayer {
 
 
     /**
-     * 
+     * Registers or retrieves the player data from the database.
      * NOTE: if player has license, we are guaranteeing license will be added to the database ids array
      */
     #setupDatabaseData() {
@@ -212,7 +208,7 @@ export class ServerPlayer extends BasePlayer {
 
 
     /**
-     *  
+     *  Updates dbData play time every minute
      */
     #minuteCron() {
         if (!this.dbData || !this.isConnected) return;
