@@ -31,7 +31,12 @@ RegisterNetEvent('txAdmin:menu:sendAnnouncement', function(message)
   TriggerEvent("txaLogger:menuEvent", src, "announcement", allow, message)
   if allow then
     local author = TX_ADMINS[tostring(src)].tag
-    TriggerClientEvent("txAdmin:receiveAnnounce", -1, message, author)
+
+    TriggerEvent("txAdmin:events:announcement", { author = author, message = message })
+    
+    if not isSuppressedEvent('announcement') then
+      TriggerClientEvent("txAdmin:receiveAnnounce", -1, message, author)
+    end
   end
 end)
 

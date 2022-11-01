@@ -259,16 +259,18 @@ function txaEvent(source, args)
     local eventData = json.decode(unDeQuote(args[2]))
     TriggerEvent("txAdmin:events:" .. eventName, eventData)
 
-    if eventName == 'playerWarned' then 
-        return handleWarnEvent(eventData)
-    elseif eventName == 'announcement' then 
-        return handleAnnouncementEvent(eventData)
-    elseif eventName == 'serverShuttingDown' then 
-        return handleShutdownEvent(eventData)
+    if not isSuppressedEvent(eventName) then
+        if eventName == 'playerWarned' then 
+            return handleWarnEvent(eventData)
+        elseif eventName == 'announcement' then 
+            return handleAnnouncementEvent(eventData)
+        elseif eventName == 'serverShuttingDown' then 
+            return handleShutdownEvent(eventData)
+        end
     end
+
     CancelEvent()
 end
-
 
 -- Send admin direct message to specific player
 function txaSendDM(source, args)

@@ -26,6 +26,20 @@ function txPrint(...)
   print(msg)
 end
 
+local supressedEvents = GetConvar('txAdmin-supressEvents', '')
+
+-- Used to check if a specific event should be suppressed
+function isSuppressedEvent(eventName)
+  for eventToBypass in string.gmatch(supressedEvents, '[^,%s]+') do
+      if string.lower(eventName) == string.lower(eventToBypass) then
+          return true
+      end
+  end
+
+  return false
+end
+
+
 CreateThread(function()
   debugModeEnabled = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
 end)
