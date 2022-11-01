@@ -278,52 +278,30 @@
                             </div>
                         </div>
 
-
                         <div class="form-group row">
-                            <label for="frmPlayerManager-minSessionTime" class="col-sm-3 col-form-label">
-                                Minimum <br>
-                                Session Time
-                                <span class="text-danger">*</span>
+                            <label for="frmPlayerManager-banRejectionMessage" class="col-sm-3 col-form-label">
+                                Ban Custom <br>
+                                Rejection Message
                             </label>
                             <div class="col-sm-9">
-                                <input type="number" class="form-control" id="frmPlayerManager-minSessionTime"
-                                    value="<%= playerController.minSessionTime || '' %>" placeholder="15" min="1" max="60" <%= readOnly ? 'disabled' : '' %>>
+                                <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerController.banRejectionMessage || '' %></textarea>
                                 <span class="form-text text-muted">
-                                    The minimum amount of minutes a player needs to be in the server before it gets saved to the database. <br>
-                                    This is done to prevent the database from getting too big. <br>
-                                    This number must be between <code>1</code> and <code>60</code> minutes.
+                                    Optional message to display to a player on the rejection message that shows when they try to connect while bein banned. <br>
+                                    If you have a ban appeal process, you can use this field to inform the players.
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="frmPlayerManager-whitelistRejectionMessage" class="col-sm-3 col-form-label">
-                                Whitelist <br>Rejection Message
-                                <span class="text-danger">*</span>
+                                Whitelist Custom <br>
+                                Rejection Message
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You are not yet whitelisted in this server.&#10;Please join http://discord.gg/example.&#10;Your Request ID: <id>" <%= readOnly ? 'disabled' : '' %>><%= playerController.whitelistRejectionMessage || '' %></textarea>
+                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="Please join http://discord.gg/example and request to be whitelisted." <%= readOnly ? 'disabled' : '' %>><%= playerController.whitelistRejectionMessage || '' %></textarea>
                                 <span class="form-text text-muted">
-                                    The message that will be returned to the player if he is not whitelisted. <br>
-                                    Use <code>&lt;id&gt;&#10;</code> as a placeholder for the whitelist request ID.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Wipe Pending Whitelist <br>
-                                On txAdmin Start
-                            </label>
-                            <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-wipePendingWLOnStart"
-                                        <%= playerController.wipePendingWLOnStart || '' %> <%= readOnly ? 'disabled' : '' %>>
-                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    When enabled, the pending whitelist will be wiped every time txAdmin starts <br>
-                                    This is done to prevent the database from getting too big.
+                                    Optional message to display to a player on the rejection message that shows when they try to connect while not being whitelisted. <br>
+                                    If you have a Discord whitelisting process, you can put here links to your guild.
                                 </span>
                             </div>
                         </div>
@@ -601,12 +579,8 @@
         let data = {
             onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
             onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
-            minSessionTime: $('#frmPlayerManager-minSessionTime').val().trim(),
             whitelistRejectionMessage: $('#frmPlayerManager-whitelistRejectionMessage').val().trim(),
-            wipePendingWLOnStart: $('#frmPlayerManager-wipePendingWLOnStart').is(':checked'),
-        }
-        if (!data.minSessionTime.length || !data.whitelistRejectionMessage.length) {
-            return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+            banRejectionMessage: $('#frmPlayerManager-banRejectionMessage').val().trim(),
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 

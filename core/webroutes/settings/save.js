@@ -185,9 +185,8 @@ async function handlePlayerController(ctx) {
         ctx.request.body,
         ctx.request.body.onJoinCheckBan,
         ctx.request.body.onJoinCheckWhitelist,
-        ctx.request.body.minSessionTime,
         ctx.request.body.whitelistRejectionMessage,
-        ctx.request.body.wipePendingWLOnStart,
+        ctx.request.body.banRejectionMessage,
     )) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -196,28 +195,24 @@ async function handlePlayerController(ctx) {
     let cfg = {
         onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
         onJoinCheckWhitelist: (ctx.request.body.onJoinCheckWhitelist === 'true'),
-        minSessionTime: parseInt(ctx.request.body.minSessionTime.trim()),
         whitelistRejectionMessage: ctx.request.body.whitelistRejectionMessage.trim(),
-        wipePendingWLOnStart: (ctx.request.body.wipePendingWLOnStart === 'true'),
+        banRejectionMessage: ctx.request.body.banRejectionMessage.trim(),
     };
 
-    //Validating wl message
-    if (cfg.whitelistRejectionMessage.length > 256) {
-        return ctx.send({type: 'danger', message: 'The whitelist rejection message must be less than 256 characters.'});
+    //Validating custom rejection messages
+    if (cfg.whitelistRejectionMessage.length > 512) {
+        return ctx.send({type: 'danger', message: 'The whitelist rejection message must be less than 512 characters.'});
     }
-
-    //Validating min session time
-    if (cfg.minSessionTime < 1 || cfg.minSessionTime > 60) {
-        return ctx.send({type: 'danger', message: 'Minimum Session Time must be between 1 and 60 minutes.'});
+    if (cfg.banRejectionMessage.length > 512) {
+        return ctx.send({type: 'danger', message: 'The ban rejection message must be less than 512 characters.'});
     }
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('playerController');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
     newConfig.onJoinCheckWhitelist = cfg.onJoinCheckWhitelist;
-    newConfig.minSessionTime = cfg.minSessionTime;
     newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
-    newConfig.wipePendingWLOnStart = cfg.wipePendingWLOnStart;
+    newConfig.banRejectionMessage = cfg.banRejectionMessage;
     let saveStatus = globals.configVault.saveProfile('playerController', newConfig);
 
     //Sending output

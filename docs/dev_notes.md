@@ -37,17 +37,17 @@
     - [x] search wl request
     - [x] wl request pagination
     - [x] wl request ignore all button
-- [ ] add new custom connect reject messages for whitelist/bans
-- [ ] create new whitelist events
-- [ ] clean PlayerDatabase file (mainly methods)
-- [ ] add last connection date to offline player modal (issue #689)
-- [ ] fix player modal in nui menu
-- [ ] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
-- [ ] remove minSessionTime from everywhere
-- [ ] remove wipePendingWLOnStart from everywhere
-- [ ] tidy up the files, specially comments missing everywhere
-- [ ] review all references to the old playerController
+- [ ] settings stuff
+    - [x] add new custom connect reject messages for whitelist/bans
+    - [x] remove minSessionTime from everywhere
+    - [x] remove wipePendingWLOnStart from everywhere
+    - [ ] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
+- [ ] cleanup
+    - [ ] clean PlayerDatabase file (mainly methods)
+    - [ ] tidy up the files, specially comments missing everywhere
+    - [ ] review all references to the old playerController
 - [ ] migrate warn action id prefix from A to W
+- [ ] add last connection date to offline player modal (issue #689)
 
 - [ ] FIXME: double check what happens when there is more than one player with the same license online
 - [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
@@ -60,6 +60,7 @@
 - [ ] FIXME: settings > player manager > save is erroring out
 - [ ] FIXME: diagnostics erroring out
 
+- [ ] fix player modal in nui menu
 - [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] create daily cron to optimize database:
@@ -85,6 +86,7 @@ Unrelated to feat/core-playerlist:
 - [ ] make !cfxurl chungus command
 
 Maybe after v5:
+- [ ] create new whitelist events
 - [ ] admin-only mode for the server
 - [ ] add lru-cache to `DiscordBot.resolveMember()`
 - [ ] mock out insights page (assets + http reqs)
@@ -106,83 +108,6 @@ Maybe after v5:
 - discord approve request: 2 scenarios above
 - discord approve license: unknown
 - discord approve mention: mentioned member tag
-
-
-## Routes
-- /player/whitelist: DONE
-    - find player by license
-    - if player
-        - player.tsWhitelisted = now()/undefined
-    - else
-        - return error
-
-- /whitelist/approvals/add: DONE
-    - check if not duplicated
-    - no need to check if player exists, checkJoin will save tsWhitelisted when player joins
-    - add to whitelistApprovals
-
-- /whitelist/approvals/remove: DONE
-    - search & remove from whitelistApprovals
-
-- /whitelist/requests/approve: DONE
-    - register whitelistApprovals
-    - remove record from whitelistRequests
-
-- /whitelist/requests/deny: DONE
-    - remove record from whitelistRequests
-
-- checkPlayerJoin: DONE
-    - check active bans on matching identifiers
-    - TODO: when we have discord whitelisting
-        - check here, without interacting with the code below
-    - if no license available:
-        - return deny join: "this server has whitelist enabled, but you do not have a license identifiers"
-    - find player by license
-    - if player
-        - if whitelisted
-            - return allow join
-    - find license or discord id on whitelistApprovals
-        - if found
-            - register player
-            - remove entry from whitelistApprovals
-            - remove related entries from whitelistRequests
-            - return allow join
-    - find player on whitelistRequests
-        - if found
-            - update tsLastAttempt
-        - else
-            - register player in whitelistRequests
-    - return deny join: "blabla <id>"
-
-This way:
-- will have both whitelistApprovals and whitelistRequests table
-- if id approved, checkPlayerJoin will register the database player
-- approving a wl request will just "promote it" to an approval, but will not register a player
-- player will still get their request id
-- we can pre-approve by license or discord id
-- daily cron to remove whitelistApprovals/whitelistRequests older than 7 days - no settings option unless people ask for it!
-
-
-
-## Routes planning
-Player:
-- handleSaveNote
-- handleWarning
-- handleBan
-- handleWhitelist
-- handleMessage (no user class interaction)
-- handleKick (no user class interaction)
-
-Database:
-- ban identifiers -> db/ban_ids
-- handleRevokeAction -> db/revoke_action
-
-Whitelist:
-- get returns
-    - whitelistRequests[]
-    - whitelistApprovals[]
-- whitelistApprovals (add/remove)
-- whitelistRequests (approve/deny)
 
 
 
@@ -217,10 +142,6 @@ Whitelist Page/routes:
 
 
 ----------------------------------------------------
-
-
-
-https://bobbyhadz.com/blog/typescript-declare-global-variable
 
 
 

@@ -127,12 +127,14 @@ export default class ConfigVault {
             out.playerController = {
                 onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
                 onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
-                minSessionTime: toDefault(cfg.playerController.minSessionTime, 15),
                 whitelistRejectionMessage: toDefault(
                     cfg.playerController.whitelistRejectionMessage,
-                    'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>',
+                    'Please join http://discord.gg/example and request to be whitelisted.',
                 ),
-                wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
+                banRejectionMessage: toDefault(
+                    cfg.playerController.banRejectionMessage,
+                    'You can join http://discord.gg/example to appeal this ban.',
+                ),
             };
             out.webServer = {
                 disableNuiSourceCheck: toDefault(cfg.webServer.disableNuiSourceCheck, false), //not in template
@@ -208,11 +210,14 @@ export default class ConfigVault {
             cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
 
             //Player Controller
-            cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null) ? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
-            cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null) ? false : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
-            cfg.playerController.minSessionTime = parseInt(cfg.playerController.minSessionTime) || 15;
-            cfg.playerController.whitelistRejectionMessage = cfg.playerController.whitelistRejectionMessage || 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>';
-            cfg.playerController.wipePendingWLOnStart = (cfg.playerController.wipePendingWLOnStart === null) ? true : (cfg.playerController.wipePendingWLOnStart === 'true' || cfg.playerController.wipePendingWLOnStart === true);
+            cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null)
+                ? true
+                : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
+            cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null)
+                ? false
+                : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
+            cfg.playerController.whitelistRejectionMessage = cfg.playerController.whitelistRejectionMessage || '';
+            cfg.playerController.banRejectionMessage = cfg.playerController.banRejectionMessage || '';
 
             //WebServer
             cfg.webServer.disableNuiSourceCheck = (cfg.webServer.disableNuiSourceCheck === 'true' || cfg.webServer.disableNuiSourceCheck === true);

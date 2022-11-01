@@ -170,9 +170,10 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
         const banDate = new Date(ban.timestamp * 1000).toLocaleString(language, { dateStyle: 'medium', timeStyle: 'medium' })
         const note = (activeBans.length > 1) ? `<br>${textKeys.note_multiple_bans}` : '';
 
-        //FIXME: add settings for this message
-        // const customMessage = '<br>' + `To appeal this ban, join https://discord.gg/xxxxxxx` + '<br>';
-        const customMessage = '';
+        let customMessage = '';
+        if(playerDatabase.config.banRejectionMessage){
+            customMessage = `<br>${playerDatabase.config.banRejectionMessage.trim()}`;
+        }
 
         const reason = rejectMessageTemplate(
             title,
@@ -294,16 +295,17 @@ async function checkWhitelist(
         });
     }
 
-    //Clean rejection message
-    //FIXME: add settings for this message
-    // const customMessage = '<br>' + `To get whitelisted, join https://discord.gg/xxxxxxx`;
-    const customMessage = '';
+    //Prepare rejection message
+    let customMessage = '';
+    if(playerDatabase.config.whitelistRejectionMessage){
+        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
+    }
 
     const label_req_id = `Request ID`;
     const reason = rejectMessageTemplate(
         'You are not whitelisted to join this server.',
         `<strong>${label_req_id}:</strong>
-        <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${wlRequestId}</code>
+        <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${wlRequestId}</code> <br>
         ${customMessage}`
     );
     return { allow: false, reason }

@@ -10,8 +10,8 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 type PlayerDatabaseConfigType = {
     onJoinCheckBan: boolean;
     onJoinCheckWhitelist: boolean;
+    banRejectionMessage: string;
     whitelistRejectionMessage: string;
-    wipePendingWLOnStart: boolean;
 }
 /**
  * The PlayerlistManager will store a ServerPlayer instance for all players that connected to the server.

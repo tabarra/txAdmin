@@ -37,6 +37,7 @@ const ogConsole = new Console({
 type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     onJoinCheckWhitelist: boolean;
+    banRejectionMessage: string;
     whitelistRejectionMessage: string;
 }
 /**
