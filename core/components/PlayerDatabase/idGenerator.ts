@@ -96,13 +96,12 @@ export const genWhitelistRequestID = (storage: IdStorageTypes) => {
  * Generates an unique action ID, or throws an error
  */
 export const genActionID = (storage: IdStorageTypes, actionType: string) => {
-    const actionPrefix = ((actionType == 'warn') ? 'a' : actionType[0]).toUpperCase();
     let attempts = 0;
     while (attempts < maxAttempts) {
         attempts++;
         if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
         const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
-        const id = actionPrefix
+        const id = actionType[0].toUpperCase()
             + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 3)()
             + '-'
             + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();

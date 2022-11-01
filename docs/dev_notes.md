@@ -1,6 +1,7 @@
 # FIXME: breaking changes
 - didn't note anything before commit d2cfc42e5e0001afce6bafa17df4c7a9a6bbf42d
 - playerBanned event lost the `target` prop
+- changed warn ids prefix from A to W
 
 # TODO:
 - [x] player join/leave
@@ -48,8 +49,9 @@
     - [x] remove all references to the old playerController
     - [x] clean PlayerDatabase file (mainly methods)
     - [x] tidy up the files, specially comments missing everywhere
-- [ ] migrate warn action id prefix from A to W
-- [ ] add last connection date to offline player modal (issue #689)
+- [x] migrate warn action id prefix from A to W
+- [ ] add database schema basic safeguards to player database
+- [ ] fix `adminVault.refreshOnlineAdmins()` 
 
 - [ ] FIXME: double check what happens when there is more than one player with the same license online
 - [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
@@ -63,29 +65,28 @@
 - [ ] fix player modal in nui menu
 - [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
+- [ ] update master action > importing bans
 - [ ] create daily cron to optimize database:
     - [ ] TODO: some rule about players that have less than X playtime and have not joined in the last Y days
     - [ ] maybe have a select box with 3 profiles + disabled?
     - [ ] daily cron to remove whitelistApprovals/whitelistRequests older than 7 days (no settings)
 
-Unrelated to feat/core-playerlist:
-- [ ] no duplicated id type in bans? preparing for the new db migration
-- [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
-- [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
-- [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
+After merging feat/core-playerlist, but still in v5.0.0:
 - [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
-- [ ] the diagnostics reporting button thing
+- [ ] make !cfxurl chungus command
 - [ ] apply stashes
 - [ ] merge all translations
 - [ ] apply `nui_menu.misc.directmessage_title` to all translations
 - [ ] apply `ban_messages.reject.*` to all translations (try to convert manually)
 - [ ] add car boost function
-- [ ] bot status "watching xx/yy players"
-- [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
-- [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
-- [ ] make !cfxurl chungus command
+- [ ] the diagnostics reporting button thing
 
-Maybe after v5:
+After v5.0.0 release:
+- [ ] add last connection date to offline player modal (issue #689)
+- [ ] no duplicated id type in bans? preparing for the new db migration
+- [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
+- [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
+- [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] create new whitelist events
 - [ ] admin-only mode for the server
 - [ ] add lru-cache to `DiscordBot.resolveMember()`
@@ -95,7 +96,9 @@ Maybe after v5:
 - [ ] At the schedule restart input prompt, add a note saying what is the current server time
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 - [ ] create events for dynamic scheduled restarts
-- [ ] add discordTag/discordAvatar to whitelist
+- [ ] bot status "watching xx/yy players"
+- [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
+- [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
 
 
 # REFACTOR DEV:

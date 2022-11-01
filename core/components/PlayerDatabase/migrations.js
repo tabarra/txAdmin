@@ -1,12 +1,10 @@
 const modulename = 'DBMigration';
 import { genActionID } from './idGenerator.js';
-import cleanPlayerName from '@core/../shared/cleanPlayerName.js';
-import logger from '@core/extras/console.js';
+import cleanPlayerName from '@shared/cleanPlayerName.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import { DATABASE_VERSION, defaultDatabase } from './database.js';
+import { now } from '@core/extras/helpers.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-
-//Helper
-const now = () => { return Math.round(Date.now() / 1000); };
 
 
 /**
@@ -66,6 +64,7 @@ export default async (dbo) => {
         logWarn('\t- remove the whitelist action in favor of player property');
         logWarn('\t- remove empty notes');
         logWarn('\t- improve whitelist handling');
+        logWarn('\t- changing warn action prefix from A to W');
 
         //Removing all whitelist actions
         const ts = now();
@@ -85,6 +84,13 @@ export default async (dbo) => {
             return false;
         });
 
+        //Changing Warn actions id prefix to W
+        dbo.data.actions.forEach((action) => {
+            if (action.type === 'warn'){
+                action.id = `W${action.id.substring(1)}`;
+            }
+        });
+
         //Migrating players
         for (const player of dbo.data.players) {
             const { displayName, pureName } = cleanPlayerName(player.name);
@@ -101,9 +107,12 @@ export default async (dbo) => {
             if (!player.notes.text) player.notes = undefined;
         }
 
+        //Setting new whitelist schema
         dbo.data.pendingWL = undefined;
         dbo.data.whitelistApprovals = [];
         dbo.data.whitelistRequests = [];
+
+        //Saving db
         dbo.data.version = 3;
         await dbo.write();
     }
