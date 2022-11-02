@@ -151,7 +151,7 @@ export default class ServerLogger extends LoggerBase {
             srcString = 'CONSOLE';
 
         } else if (typeof eventData.src === 'number' && eventData.src > 0) {
-            const player = globals.playerlistManager.playerlist[eventData.src];
+            const player = globals.playerlistManager.getPlayerById(eventData.src)
             if (player) {
                 const playerID = `${mutex}#${eventData.src}`;
                 srcObject = { id: playerID, name: player.displayName };
@@ -190,7 +190,7 @@ export default class ServerLogger extends LoggerBase {
         } else if (eventData.type === 'DeathNotice') {
             const cause = eventData.data.cause || 'unknown';
             if (typeof eventData.data.killer === 'number' && eventData.data.killer > 0) {
-                const killer = globals.playerlistManager.playerlist[eventData.data.killer];
+                const killer = globals.playerlistManager.getPlayerById(eventData.data.killer);
                 if (killer) {
                     eventMessage = `died from ${cause} by ${killer.displayName}`;
                 } else {

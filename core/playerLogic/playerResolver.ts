@@ -25,7 +25,7 @@ export default (mutex: any, netid: any, license: any) => {
     if (typeof mutex === 'string' && typeof netid === 'number' && !isNaN(parsedNetid)) {
         if (mutex === fxRunner?.currentMutex) {
             //If the mutex is from the server currently online
-            const player = playerlistManager.playerlist[netid];
+            const player = playerlistManager.getPlayerById(netid);
             if (player instanceof ServerPlayer) {
                 return player;
             } else {

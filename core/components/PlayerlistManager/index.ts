@@ -16,7 +16,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default class PlayerlistManager {
     readonly #txAdmin: TxAdmin;
-    playerlist: (ServerPlayer | undefined)[] = [];
+    #playerlist: (ServerPlayer | undefined)[] = [];
     licenseCache: [mutexid: string, license: string][] = [];
     licenseCacheLimit = 50_000; //mutex+id+license * 50_000 = ~4mb
 
@@ -32,7 +32,7 @@ export default class PlayerlistManager {
      */
     handleServerStop(oldMutex: string) {
         this.licenseCache = [];
-        for (const player of this.playerlist) {
+        for (const player of this.#playerlist) {
             if (player) {
                 player.disconnect();
                 if (player.license) {
@@ -41,16 +41,16 @@ export default class PlayerlistManager {
             }
         }
         this.licenseCache = this.licenseCache.slice(-this.licenseCacheLimit);
-        this.playerlist = [];
+        this.#playerlist = [];
     }
 
 
     /**
-     * Returns a playerlist array with ServerPlayer data.
+     * Returns a playerlist array with ServerPlayer data of all connected players.
      * The data is cloned to prevent pollution.
      */
     getPlayerList() {
-        return this.playerlist
+        return this.#playerlist
             .filter(p => p?.isConnected)
             .map((p) => {
                 return cloneDeep({
@@ -63,6 +63,14 @@ export default class PlayerlistManager {
             });
     }
 
+    /**
+     * Returns a specifc ServerPlayer or undefined.
+     * NOTE: this returns the actual object and not a deep clone!
+     */
+    getPlayerById(netid: number) {
+        return this.#playerlist[netid];
+    }
+
 
     /**
      * Handler for all txAdminPlayerlistEvent structured trace events
@@ -71,14 +79,14 @@ export default class PlayerlistManager {
         if (payload.event === 'playerJoining') {
             try {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
-                if (typeof this.playerlist[payload.id] !== 'undefined') throw new Error(`duplicated player id`);
+                if (typeof this.#playerlist[payload.id] !== 'undefined') throw new Error(`duplicated player id`);
                 //TODO: pass serverInstance instead of playerDatabase
-                this.playerlist[payload.id] = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
+                this.#playerlist[payload.id] = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
                 this.#txAdmin.logger.server.write([{
                     type: 'playerJoining',
                     src: payload.id,
                     ts: Date.now(),
-                    data: { ids: this.playerlist[payload.id]!.ids }
+                    data: { ids: this.#playerlist[payload.id]!.ids }
                 }], mutex);
             } catch (error) {
                 if (verbose) logWarn(`playerJoining event error: ${(error as Error).message}`);
@@ -87,8 +95,8 @@ export default class PlayerlistManager {
         } else if (payload.event === 'playerDropped') {
             try {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
-                if (!(this.playerlist[payload.id] instanceof ServerPlayer)) throw new Error(`player id not found`);
-                this.playerlist[payload.id]!.disconnect();
+                if (!(this.#playerlist[payload.id] instanceof ServerPlayer)) throw new Error(`player id not found`);
+                this.#playerlist[payload.id]!.disconnect();
                 this.#txAdmin.logger.server.write([{
                     type: 'playerDropped',
                     src: payload.id,

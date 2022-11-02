@@ -185,7 +185,6 @@ const modPlayer = {
     Message: document.getElementById('modPlayerMessage'),
     Content: document.getElementById('modPlayerContent'),
     Buttons: {
-        search: document.getElementById('modPlayerButtons-search'),
         message: document.getElementById('modPlayerButtons-message'),
         kick: document.getElementById('modPlayerButtons-kick'),
         warn: document.getElementById('modPlayerButtons-warn'),
@@ -282,7 +281,6 @@ function showPlayer(playerRef, keepTabSelection = false) {
     modPlayer.Ban.durationUnit.value = 'days';
     modPlayer.Ban.durationMultiplier.disabled = true;
     modPlayer.Ban.durationUnit.disabled = true;
-    modPlayer.Buttons.search.disabled = true;
     modPlayer.Buttons.message.disabled = true;
     modPlayer.Buttons.kick.disabled = true;
     modPlayer.Buttons.warn.disabled = true;
@@ -365,9 +363,6 @@ function showPlayer(playerRef, keepTabSelection = false) {
                 modPlayer.Ban.tab.classList.add('nav-link-red');
                 modPlayer.Ban.tab.classList.remove('nav-link-disabled', 'disabled');
             }
-
-            //FIXME: remover?
-            // modPlayer.Buttons.search.disabled = false;
 
             if (!Array.isArray(player.actionHistory) || !player.actionHistory.length) {
                 modPlayer.History.list.innerHTML = '<h4 class="pt-3 text-secondary">No bans/warns found.</h4>';

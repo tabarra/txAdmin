@@ -51,8 +51,10 @@
     - [x] tidy up the files, specially comments missing everywhere
 - [x] migrate warn action id prefix from A to W
 - [x] add database schema basic safeguards to player database
-- [ ] fix `adminVault.refreshOnlineAdmins()` 
+- [x] add fuse.js to players page search
+- [x] test `adminVault.refreshOnlineAdmins()` 
 
+- [x] FIXME: references to `playerlistManager.playerlist` or `playerlistManager.getPlayerList()` might want just the list of active players
 - [ ] FIXME: double check what happens when there is more than one player with the same license online
 - [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
     - consider scenario where the player is on the server, and you search for it on the playerlist

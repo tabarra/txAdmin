@@ -30,7 +30,7 @@ export type PlayerModalPlayerData = {
     isRegistered: boolean;
     isConnected: boolean;
     ids: string[]; //can be empty //DONE
-    license: string | false;
+    license: string | null;
     actionHistory: PlayerHistoryItem[]; //can be empty
 
     //only if server player

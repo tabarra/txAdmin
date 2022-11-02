@@ -15,9 +15,7 @@ export default {
         if (globals.healthMonitor.currentStatus == 'ONLINE' || globals.healthMonitor.currentStatus == 'PARTIAL') {
             cardColor = 0x74EE15;
             cardTitle = globals.translator.t('discord.status_online', {servername: globals.config.serverName});
-            replaces.players = (Array.isArray(globals.playerDatabase.activePlayers))
-                ? globals.playerDatabase.activePlayers.length
-                : '--';
+            replaces.players = globals.playerlistManager.getPlayerList().length;
             if (globals.fxRunner.fxServerHost) {
                 const hostParts = globals.fxRunner.fxServerHost.split(':');
                 if (hostParts.length >= 2) {

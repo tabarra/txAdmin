@@ -42,7 +42,7 @@ export default async function AdvancedActions(ctx) {
         globals.fxRunner.resetConvars();
         return ctx.send({ refresh: true });
     } else if (action == 'perform_magic') {
-        const message = JSON.stringify(globals.playerlistManager.playerlist, null, 2);
+        const message = JSON.stringify(globals.playerlistManager.getPlayerList(), null, 2);
         return ctx.send({ type: 'success', message });
     } else if (action == 'show_db') {
         const dbo = globals.playerDatabase.getDb();

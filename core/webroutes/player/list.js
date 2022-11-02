@@ -1,11 +1,12 @@
 const modulename = 'WebServer:PlayerList';
-import dateFormat from 'dateformat';
+import Fuse from "fuse.js";
 import humanizeDuration from 'humanize-duration';
 import xssInstancer from '@core/extras/xss.js';
 import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
 import cleanPlayerName from '@core/../shared/cleanPlayerName';
+import { cloneDeep } from 'lodash-es';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -129,18 +130,17 @@ async function handleSearch(ctx, dbo) {
 
         //Likely searching for a partial name
         } else {
-            //FIXME: use fuse.js
             const { pureName } = cleanPlayerName(searchString);
-            const players = await dbo.chain.get('players')
-                .filter((p) => {
-                    return p.pureName && p.pureName.includes(pureName);
-                })
-                .take(512)
-                .cloneDeep()
-                .value();
-            outData.resPlayers = await processPlayerList(players);
+            const players = dbo.chain.get('players').value();
+            const fuse = new Fuse(players, {
+                keys: ['pureName'],
+                threshold: 0.3
+            });
+            const filtered = cloneDeep(fuse.search(pureName, {limit: 128}).map(x => x.item));
+
+            outData.resPlayers = await processPlayerList(filtered);
             //TODO: if player found, search for all actions from them
-            outData.message = `Searching by name found ${players.length} player${addPlural(players.length)}.`;
+            outData.message = `Searching by name found ${filtered.length} player${addPlural(filtered.length)}.`;
         }
 
 
@@ -365,7 +365,7 @@ async function processActionList(list) {
 async function processPlayerList(list) {
     if (!list) return [];
 
-    const activeLicenses = globals.playerlistManager.playerlist
+    const activeLicenses = globals.playerlistManager.getPlayerList()
         .map((p) => p.license)
         .filter(l => l);
     return list.map((p) => {

@@ -63,11 +63,7 @@ Event Data:
 
 
 ## txAdmin:events:playerWhitelisted (v3.7)
-Called when a player is whitelisted using txAdmin.  
-Event Data:
-- `author`: The name of the admin.
-- `actionId`: The ID of this action.
-- `target`: The reference of this whitelist. Can be "license:" prefixed license or a whitelist request ID.
+This event was deprecated on v5.0.0.
 
 ## txAdmin:event:configChanged (v4.0)
 Called when the txAdmin settings change in a way that could be relevant for the server.   
