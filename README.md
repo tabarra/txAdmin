@@ -83,6 +83,7 @@ txAdmin requires to be launched from *inside* FXServer in monitor mode, to do th
 - **txAdminInterface:** The interface to use as HTTP Server. The default is `0.0.0.0`.
 - **txDataPath:** The path of the data folder. The default on Windows is `<citizen_root>/../txData` and on Linux `<citizen_root>/../../../txData`.
 - **txAdminVerbose:** Set to `true` to print on the console more detailed information about errors and events. The default is `false`.
+- **txAdmin-suppressEvents:** Comma separated list of [events](docs/events.md#suppressing-events) to suppress. The default is `''`.
   
 ConVar usage **example** for different port and profile:  
 ```bash

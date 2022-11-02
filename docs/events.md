@@ -3,6 +3,18 @@
 Starting in v3.2, **txAdmin** now has the ability to trigger server events.  
 The event name will be `txAdmin:events:<name>` and the first (and only) parameter will be a table that may contain relevant data.
 
+## Suppressing Events
+
+To suppress events, use the `txAdmin-suppressEvents` convar.  
+By suppressing events, you prevent tx from performing the default action for that event.
+
+Currently, you can suppress the following events:
+- `announcement`: announcements will no longer be displayed in the game and you will have to implement your own system.
+- `playerWarned`: Players will no longer receive an in-game warning and you will need to implement your own system.
+- `serverShuttingDown`: By suppressing this event you prevent tx from rejecting new connections and kicking players out just before the server restarts. This is not recommended and you should only do it if you have a good reason.
+
+If you want to suppress announcements and player warnings to implement your own system, you can set the convar in the following way:  
+`set txAdmin-suppressEvents "announcement,playerWarned"`.
 
 ## txAdmin:events:scheduledRestart (v3.2)
 Called automatically `[30, 15, 10, 5, 4, 3, 2, 1]` minutes before a scheduled restart, as well as the times configured in the settings page.  
