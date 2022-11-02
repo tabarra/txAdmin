@@ -15,6 +15,19 @@ function unDeQuote(x)
     return new
 end
 
+local supressedEvents = {}
+
+-- check if an event is supressed via convar
+function isSuppressedEvent(eventName)
+    return supressedEvents[eventName] == true
+end
+
+-- parse the supressedEvents convar
+for suppressedEvent in string.gmatch(GetConvar('txAdmin-suppressEvents', ''), '[^,%s]+') do
+    supressedEvents[suppressedEvent] = true
+end
+
+
 if GetCurrentResourceName() ~= "monitor" then
     logError('This resource should not be installed separately, it already comes with fxserver.')
     return
