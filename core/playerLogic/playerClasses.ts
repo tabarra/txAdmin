@@ -1,5 +1,5 @@
 const modulename = 'Player';
-import logger from '@core/extras/console.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { verbose } from '@core/globalData.js';
@@ -23,15 +23,15 @@ export class BasePlayer {
     dbData: false | DatabasePlayerType = false;
     isConnected: boolean = false;
 
-    constructor(protected readonly dbInstance: PlayerDatabase) { }
+    constructor(protected readonly dbInstance: PlayerDatabase, readonly uniqueId: Symbol) { }
 
     /**
      * Mutates the database data based on a source object to be applied
      * FIXME: if this is called for a disconnected ServerPlayer, it will not clean after 120s
      */
-    protected mutateDadabase(srcData: Exclude<object, null>) {
+    protected mutateDbData(srcData: Exclude<object, null>) {
         if (!this.license) throw new Error(`cannot mutate database for a player that has no license`);
-        this.dbData = this.dbInstance.updatePlayer(this.license, srcData);
+        this.dbData = this.dbInstance.updatePlayer(this.license, srcData, this.uniqueId);
     }
 
     /**
@@ -54,7 +54,7 @@ export class BasePlayer {
      */
     setNote(text: string, author: string) {
         if (!this.license) throw new Error(`cannot save notes for a player that has no license`);
-        this.mutateDadabase({
+        this.mutateDbData({
             notes: {
                 text,
                 lastAdmin: author,
@@ -69,7 +69,7 @@ export class BasePlayer {
      */
     setWhitelist(enabled: boolean) {
         if (!this.license) throw new Error(`cannot set whitelist status for a player that has no license`);
-        this.mutateDadabase({
+        this.mutateDbData({
             tsWhitelisted: enabled ? now() : undefined,
         });
 
@@ -81,7 +81,6 @@ export class BasePlayer {
         this.dbInstance.removeWhitelistRequests({ license: this.license });
     }
 }
-
 
 
 type PlayerDataType = {
@@ -101,7 +100,7 @@ export class ServerPlayer extends BasePlayer {
     #offlineDbDataCacheTimeout?: ReturnType<typeof setTimeout>;
 
     constructor(netid: number, playerData: PlayerDataType, dbInstance: PlayerDatabase) {
-        super(dbInstance);
+        super(dbInstance, Symbol(`netid${netid}`));
         this.netid = netid;
         this.isConnected = true;
         if (
@@ -129,7 +128,6 @@ export class ServerPlayer extends BasePlayer {
         const { displayName, pureName } = cleanPlayerName(playerData.name);
         this.displayName = displayName;
         this.pureName = pureName;
-
 
         //If this player is eligible to be on the database
         if (this.license) {
@@ -161,7 +159,7 @@ export class ServerPlayer extends BasePlayer {
             if (dbPlayer) {
                 //Updates database data
                 this.dbData = dbPlayer;
-                this.mutateDadabase({
+                this.mutateDbData({
                     displayName: this.displayName,
                     pureName: this.pureName,
                     tsLastConnection: this.tsConnected,
@@ -188,6 +186,16 @@ export class ServerPlayer extends BasePlayer {
         } catch (error) {
             logError(`Failed to load/register player ${this.displayName} from/to the database with error: ${(error as Error).message}`);
         }
+    }
+
+    /**
+     * Sets the dbData.
+     * Used when some other player instance mutates the database and we need to sync all players 
+     * with the same license.
+     */
+    syncUpstreamDbData(srcData: DatabasePlayerType) {
+        if (!this.dbData) return;
+        this.dbData = cloneDeep(srcData)
     }
 
     /**
@@ -220,7 +228,7 @@ export class ServerPlayer extends BasePlayer {
     #minuteCron() {
         if (!this.dbData || !this.isConnected) return;
         try {
-            this.mutateDadabase({ playTime: this.dbData.playTime + 1 });
+            this.mutateDbData({ playTime: this.dbData.playTime + 1 });
             logOk(`Updating '${this.displayName}' databse playTime.`);
         } catch (error) {
             logWarn(`Failed to update playtime for player ${this.displayName}: ${(error as Error).message}`);
@@ -246,7 +254,7 @@ export class DatabasePlayer extends BasePlayer {
     readonly isRegistered = true; //no need to check because otherwise constructor throws
 
     constructor(license: string, dbInstance: PlayerDatabase) {
-        super(dbInstance);
+        super(dbInstance, Symbol(`db${license}`));
         if (typeof license !== 'string') {
             throw new Error(`invalid player license`);
         }

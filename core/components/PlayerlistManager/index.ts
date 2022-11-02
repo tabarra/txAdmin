@@ -4,6 +4,7 @@ import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
 import TxAdmin from '@core/txAdmin.js';
 import { ServerPlayer } from '@core/playerLogic/playerClasses.js';
+import { DatabasePlayerType } from '../PlayerDatabase/databaseTypes';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -42,6 +43,20 @@ export default class PlayerlistManager {
         }
         this.licenseCache = this.licenseCache.slice(-this.licenseCacheLimit);
         this.#playerlist = [];
+    }
+
+
+    /**
+     * To guarantee multiple instances of the same player license have their dbData synchronized,
+     * this function (called by playerDatabase.updatePlayer) goes through every matching player 
+     * (except the source itself) to update their dbData.
+     */
+    handleDbDataSync(dbData: DatabasePlayerType, srcUniqueId: Symbol) {
+        for (const player of this.#playerlist) {
+            if (player instanceof ServerPlayer && player.uniqueId !== srcUniqueId) {
+                player.syncUpstreamDbData(dbData);
+            }
+        }
     }
 
 

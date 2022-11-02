@@ -56,7 +56,8 @@
 
 - [x] FIXME: references to `playerlistManager.playerlist` or `playerlistManager.getPlayerList()` might want just the list of active players
 - [ ] FIXME: double check what happens when there is more than one player with the same license online
-- [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
+    - the scenario below also applies to two connected players with same license, the dbData will be out of sync, but i think it only applies to visible stuff in player modal like the notes, which may cause an overwrite
+- [x] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
     - consider scenario where the player is on the server, and you search for it on the playerlist
     - (also valid for player join check)
     - there will be 2 player.dbData, states that can be overwritten.
@@ -64,8 +65,8 @@
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
     - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
 
+- [ ] modal should also retunr old ids in a separate prop only available for registered players 
 - [ ] fix player modal in nui menu
-- [ ] whitelist bot action is broken, fix and make possible to `/addwl @mention`
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] update master action > importing bans
 - [ ] create daily cron to optimize database:
@@ -75,7 +76,6 @@
 
 After merging feat/core-playerlist, but still in v5.0.0:
 - [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
-- [ ] make !cfxurl chungus command
 - [ ] apply stashes
 - [ ] merge all translations
 - [ ] apply `nui_menu.misc.directmessage_title` to all translations
@@ -84,6 +84,7 @@ After merging feat/core-playerlist, but still in v5.0.0:
 - [ ] the diagnostics reporting button thing
 
 After v5.0.0 release:
+- [ ] migrate `!addwl` make possible to `/addwl @mention`
 - [ ] add last connection date to offline player modal (issue #689)
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
@@ -105,14 +106,11 @@ After v5.0.0 release:
 
 # REFACTOR DEV:
 
-## What name to show in which scenario:
-- webpage wl identifier: id or abbreviation DONE
-- webpage wl discord: discord tag DONE
-- approve request with license+name but no discord: whitelistRequests.playerName DONE
-- approve request with license+name and discord: whitelistRequests.discordTag DONE
-- discord approve request: 2 scenarios above
-- discord approve license: unknown
-- discord approve mention: mentioned member tag
+## Approve whitelist discord command set names:
+- approve request with license+name but no discord: whitelistRequests.playerName
+- approve request with license+name and discord: whitelistRequests.discordTag
+- approve license: unknown
+- approve mention: mentioned member tag
 
 
 
@@ -501,6 +499,8 @@ On server start, or admins permission change:
 - We should be able to get rid of our menu state management, mainly the part that sends to lua what are the admin ids when something changes
 To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 > Don't use, but I'll leave it saved here: https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
+- need to find a way to protect against scripts, cfg/console changing these aces
+- would be cool to have a `SetProtectedMonitorAces(table)` native dedicated to txadmin to set every admin/resource ace perms
 
 
 ### txPointing (old txBanana)

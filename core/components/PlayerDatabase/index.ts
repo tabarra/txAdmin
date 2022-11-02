@@ -107,7 +107,7 @@ export default class PlayerDatabase {
      * Updates a player setting assigning srcData props to the database player.
      * The source data object is deep cloned to prevent weird side effects.
      */
-    updatePlayer(license: string, srcData: Exclude<object, null>): DatabasePlayerType {
+    updatePlayer(license: string, srcData: Exclude<object, null>, srcUniqueId: Symbol): DatabasePlayerType {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (typeof (srcData as any).license !== 'undefined') {
             throw new Error(`cannot license field`);
@@ -116,10 +116,12 @@ export default class PlayerDatabase {
         const playerDbObj = this.#db.obj.chain.get('players').find({ license });
         if (!playerDbObj.value()) throw new Error('Player not found in database');
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
-        return playerDbObj
+        const newData = playerDbObj
             .assign(cloneDeep(srcData))
             .cloneDeep()
             .value();
+        this.#txAdmin.playerlistManager.handleDbDataSync(newData, srcUniqueId);
+        return newData;
     }
 
 
