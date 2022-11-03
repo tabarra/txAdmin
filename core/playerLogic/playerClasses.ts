@@ -35,17 +35,25 @@ export class BasePlayer {
     }
 
     /**
+     * Returns all available identifiers (current+db)
+     */
+    getAllIdentifiers() {
+        if (!this.ids.length) return [];
+        let allIds = [...this.ids];
+        if (this.dbData && this.dbData.ids) {
+            allIds = allIds.concat(this.dbData.ids.filter(id => !allIds.includes(id)));
+        }
+        return allIds;
+    }
+
+    /**
      * Returns all actions related to all available ids
      * NOTE: theoretically ServerPlayer.setupDatabaseData() guarantees that DatabasePlayer.dbData.ids array
      *  will contain the license but may be better to also explicitly add it to the array here?
      */
     getHistory() {
         if (!this.ids.length) return [];
-        let searchIds = [...this.ids];
-        if (this.dbData && this.dbData.ids) {
-            searchIds = searchIds.concat(this.dbData.ids.filter(id => !searchIds.includes(id)));
-        }
-        return this.dbInstance.getRegisteredActions(searchIds);
+        return this.dbInstance.getRegisteredActions(this.getAllIdentifiers());
     }
 
     /**
@@ -97,7 +105,7 @@ export class ServerPlayer extends BasePlayer {
     readonly tsConnected = now();
     readonly isRegistered: boolean;
     readonly #minuteCronInterval?: ReturnType<typeof setInterval>;
-    #offlineDbDataCacheTimeout?: ReturnType<typeof setTimeout>;
+    // #offlineDbDataCacheTimeout?: ReturnType<typeof setTimeout>;
 
     constructor(netid: number, playerData: PlayerDataType, dbInstance: PlayerDatabase) {
         super(dbInstance, Symbol(`netid${netid}`));
@@ -194,7 +202,6 @@ export class ServerPlayer extends BasePlayer {
      * with the same license.
      */
     syncUpstreamDbData(srcData: DatabasePlayerType) {
-        if (!this.dbData) return;
         this.dbData = cloneDeep(srcData)
     }
 
@@ -202,6 +209,7 @@ export class ServerPlayer extends BasePlayer {
      * Returns a clone of this.dbData.
      * If the data is not available, it means the player was disconnected and dbData wiped to save memory,
      * so start an 120s interval to wipe it from memory again. This period can be considered a "cache"
+     * FIXME: review dbData optimization, 50k players would be up to 50mb
      */
     getDbData() {
         if (this.dbData) {
@@ -211,10 +219,10 @@ export class ServerPlayer extends BasePlayer {
             if (!dbPlayer) return false;
 
             this.dbData = dbPlayer;
-            clearTimeout(this.#offlineDbDataCacheTimeout); //maybe not needed?
-            this.#offlineDbDataCacheTimeout = setTimeout(() => {
-                this.dbData = false;
-            }, 120_000);
+            // clearTimeout(this.#offlineDbDataCacheTimeout); //maybe not needed?
+            // this.#offlineDbDataCacheTimeout = setTimeout(() => {
+            //     this.dbData = false;
+            // }, 120_000);
             return cloneDeep(this.dbData);
         } else {
             return false;
@@ -241,7 +249,7 @@ export class ServerPlayer extends BasePlayer {
      */
     disconnect() {
         this.isConnected = false;
-        this.dbData = false;
+        // this.dbData = false;
         clearInterval(this.#minuteCronInterval);
     }
 }

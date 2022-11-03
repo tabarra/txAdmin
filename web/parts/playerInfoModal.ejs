@@ -69,12 +69,12 @@
 
                             <!-- Tab modPlayerIDs -->
                             <div class="tab-pane fade" id="modPlayerIDs" role="tabpanel" aria-labelledby="modPlayerIDs-tab">
-                                <h5>Current Identifiers:</h5>
                                 <style>
                                     /* NOTE: this really shouldn't be here, but it's very temporary */
-                                    .idsBox {
-                                        overflow: auto;
-                                        height: 100%;
+                                    .scrollBox {
+                                        max-height: 55vh;
+                                        overflow-y: scroll;
+                                        padding-right: 10px;
                                     }
                                     .idsText {
                                         border-radius: 4px;
@@ -87,8 +87,20 @@
                                         letter-spacing: 0.05rem;
                                     }
                                 </style>
-                                <div class="idsBox" id="modPlayerIDs-list">
-                                    Loading...
+                                
+                                <div class="thin-scroll scrollBox">
+                                    <div class="mb-3">
+                                        <h5>Current Identifiers:</h5>
+                                        <div id="modPlayerIDs-currList" >
+                                            Loading...
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h5>Previously Used Identifiers:</h5>
+                                        <div id="modPlayerIDs-oldList">
+                                            Loading...
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

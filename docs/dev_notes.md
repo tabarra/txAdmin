@@ -55,7 +55,7 @@
 - [x] test `adminVault.refreshOnlineAdmins()` 
 
 - [x] FIXME: references to `playerlistManager.playerlist` or `playerlistManager.getPlayerList()` might want just the list of active players
-- [ ] FIXME: double check what happens when there is more than one player with the same license online
+- [x] FIXME: double check what happens when there is more than one player with the same license online
     - the scenario below also applies to two connected players with same license, the dbData will be out of sync, but i think it only applies to visible stuff in player modal like the notes, which may cause an overwrite
 - [x] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
     - consider scenario where the player is on the server, and you search for it on the playerlist
@@ -65,8 +65,11 @@
     - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
     - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
 
-- [ ] modal should also retunr old ids in a separate prop only available for registered players 
+- [x] modal should also return old ids in a separate prop only available for registered players
+- [ ] ban/warn all available identifiers
+- [ ] add last connection date to offline player modal (issue #689)
 - [ ] fix player modal in nui menu
+
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] update master action > importing bans
 - [ ] create daily cron to optimize database:
@@ -85,7 +88,6 @@ After merging feat/core-playerlist, but still in v5.0.0:
 
 After v5.0.0 release:
 - [ ] migrate `!addwl` make possible to `/addwl @mention`
-- [ ] add last connection date to offline player modal (issue #689)
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
 - [ ] rename txAdmin Logs to System Logs (check chungus commands as well)

@@ -101,7 +101,8 @@ async function handleWarning(ctx: Context, sess: any, player: PlayerClass): Prom
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
     }
-    if (!player.ids.length) {
+    const allIds = player.getAllIdentifiers();
+    if (!allIds.length) {
         return { error: 'Cannot warn a player with no identifiers.' };
     }
 
@@ -109,7 +110,7 @@ async function handleWarning(ctx: Context, sess: any, player: PlayerClass): Prom
     let actionId;
     try {
         actionId = globals.playerDatabase.registerAction(
-            player.ids,
+            allIds,
             'warn',
             sess.auth.username,
             reason,
@@ -169,7 +170,8 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
     }
 
     //Validating player
-    if (!player.ids.length) {
+    const allIds = player.getAllIdentifiers();
+    if (!allIds.length) {
         return { error: 'Cannot ban a player with no identifiers.' }
     }
 
@@ -177,7 +179,7 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
     let actionId;
     try {
         actionId = globals.playerDatabase.registerAction(
-            player.ids,
+            allIds,
             'ban',
             sess.auth.username,
             reason,

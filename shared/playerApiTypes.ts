@@ -26,10 +26,10 @@ export type PlayerModalMeta = {
 
 export type PlayerModalPlayerData = {
     //common
-    displayName: string; //DONE
+    displayName: string;
     isRegistered: boolean;
     isConnected: boolean;
-    ids: string[]; //can be empty //DONE
+    ids: string[]; //can be empty
     license: string | null;
     actionHistory: PlayerHistoryItem[]; //can be empty
 
@@ -43,6 +43,7 @@ export type PlayerModalPlayerData = {
     playTime?: number;
     notesLog?: string;
     notes?: string;
+    oldIds?: string[]; //will also include the current ones
 }
 
 export type PlayerModalSuccess = {

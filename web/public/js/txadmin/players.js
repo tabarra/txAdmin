@@ -207,7 +207,8 @@ const modPlayer = {
     IDs: {
         body: document.getElementById('modPlayerIDs'),
         tab: document.getElementById('modPlayerIDs-tab'),
-        list: document.getElementById('modPlayerIDs-list'),
+        currList: document.getElementById('modPlayerIDs-currList'),
+        oldList: document.getElementById('modPlayerIDs-oldList'),
     },
     History: {
         body: document.getElementById('modPlayerHistory'),
@@ -271,7 +272,8 @@ function showPlayer(playerRef, keepTabSelection = false) {
     modPlayer.Main.notes.value = 'cannot set notes for players that are not registered';
     modPlayer.Main.notes.disabled = true;
 
-    modPlayer.IDs.list.innerText = 'loading...';
+    modPlayer.IDs.currList.innerText = 'loading...';
+    modPlayer.IDs.oldList.innerText = 'loading...';
     modPlayer.History.list.innerText = 'loading...';
 
     modPlayer.Ban.tab.classList.add('nav-link-disabled', 'disabled');
@@ -303,11 +305,11 @@ function showPlayer(playerRef, keepTabSelection = false) {
             //Setting modal fields
             modPlayer.Title.innerText = `[${player.netid || 'OFFLINE'}] ${player.displayName}`;
             if (Array.isArray(player.ids) && player.ids.length) {
-                modPlayer.IDs.list.innerHTML = player.ids
+                modPlayer.IDs.currList.innerHTML = player.ids
                     .map(id => `<div class="idsText border-dark">${xss(id)}</div>`)
                     .join('\n');
             } else {
-                modPlayer.IDs.list.innerHTML = '<h4 class="pt-3 text-secondary">This player has no identifiers.</h4>';
+                modPlayer.IDs.currList.innerHTML = '<em class="text-secondary">This player has no identifiers.</em>';
             }
             if (player.isConnected) {
                 modPlayer.Main.sessionTime.innerText = msToDuration(
@@ -325,6 +327,19 @@ function showPlayer(playerRef, keepTabSelection = false) {
                     player.playTime * 60_000,
                     { units: ['d', 'h', 'm'] }
                 );
+
+                //Old identifiers
+                if (Array.isArray(player.oldIds)) {
+                    const filteredIds = player.oldIds
+                        .filter(id => !player.ids.includes(id))
+                        .map(id => `<div class="idsText border-dark text-muted">${xss(id)}</div>`)
+                        .join('\n');
+                    modPlayer.IDs.oldList.innerHTML = (filteredIds.length)
+                        ? filteredIds
+                        : '<em class="text-secondary">No previous ID to show.</em>';
+                } else {
+                    modPlayer.IDs.oldList.innerHTML = '<em class="text-secondary">No previous ID to show.</em>';
+                }
 
                 //Whitelist
                 if (!meta.onJoinCheckWhitelist) {
@@ -375,7 +390,7 @@ function showPlayer(playerRef, keepTabSelection = false) {
                     logElements.push(dbActionToHtml(action, !meta.tmpPerms.warn, !meta.tmpPerms.ban, meta.serverTime));
                 }
                 modPlayer.History.list.innerHTML = [
-                    `<div class="list-group list-group-accent thin-scroll" style="overflow-y: scroll; max-height: 55vh;">`,
+                    `<div class="list-group list-group-accent thin-scroll scrollBox">`,
                     ...logElements,
                     `</div>`
                 ].join('\n');
