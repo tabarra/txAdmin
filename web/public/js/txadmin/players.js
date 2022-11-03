@@ -194,7 +194,10 @@ const modPlayer = {
         tab: document.getElementById('modPlayerMain-tab'),
         joinDate: document.getElementById('modPlayerMain-joinDate'),
         playTime: document.getElementById('modPlayerMain-playTime'),
-        sessionTime: document.getElementById('modPlayerMain-sessionTime'),
+        sessionTimeDiv: document.getElementById('modPlayerMain-sessionTimeDiv'),
+        sessionTimeText: document.getElementById('modPlayerMain-sessionTimeText'),
+        lastConnectionDiv: document.getElementById('modPlayerMain-lastConnectionDiv'),
+        lastConnectionText: document.getElementById('modPlayerMain-lastConnectionText'),
         whitelisted: document.getElementById('modPlayerMain-whitelisted'),
         whitelistAddBtn: document.getElementById('modPlayerMain-whitelistAddBtn'),
         whitelistRemoveBtn: document.getElementById('modPlayerMain-whitelistRemoveBtn'),
@@ -225,6 +228,13 @@ const modPlayer = {
     },
 };
 
+function tsToLocaleDate(ts) {
+    return new Date(ts * 1000)
+        .toLocaleDateString(
+            navigator.language,
+            { dateStyle: 'long' }
+        );
+}
 
 // Open Modal
 function showPlayerByMutexNetid(mutexNetid) {
@@ -258,8 +268,10 @@ function showPlayer(playerRef, keepTabSelection = false) {
     }
     modPlayer.Main.joinDate.innerText = '--';
     modPlayer.Main.playTime.innerText = '--';
-    modPlayer.Main.sessionTime.innerText = '--';
-
+    modPlayer.Main.sessionTimeText.innerText = '--';
+    modPlayer.Main.sessionTimeDiv.classList.add('d-none');
+    modPlayer.Main.lastConnectionText.innerText = '--';
+    modPlayer.Main.lastConnectionDiv.classList.add('d-none');
     modPlayer.Main.whitelisted.innerText = '--';
     modPlayer.Main.whitelistAddBtn.classList.add('d-none');
     modPlayer.Main.whitelistRemoveBtn.classList.add('d-none');
@@ -312,21 +324,22 @@ function showPlayer(playerRef, keepTabSelection = false) {
                 modPlayer.IDs.currList.innerHTML = '<em class="text-secondary">This player has no identifiers.</em>';
             }
             if (player.isConnected) {
-                modPlayer.Main.sessionTime.innerText = msToDuration(
+                modPlayer.Main.sessionTimeText.innerText = msToDuration(
                     player.sessionTime * 60_000,
                     { units: ['h', 'm'] }
                 );
+                modPlayer.Main.sessionTimeDiv.classList.remove('d-none');
             }
             if (player.isRegistered) {
-                modPlayer.Main.joinDate.innerText = new Date(player.tsJoined * 1000)
-                    .toLocaleDateString(
-                        navigator.language,
-                        { dateStyle: 'long' }
-                    );
+                modPlayer.Main.joinDate.innerText = tsToLocaleDate(player.tsJoined);
                 modPlayer.Main.playTime.innerText = msToDuration(
                     player.playTime * 60_000,
                     { units: ['d', 'h', 'm'] }
                 );
+                if (!player.isConnected) {
+                    modPlayer.Main.lastConnectionText.innerText = tsToLocaleDate(player.tsLastConnection);;
+                    modPlayer.Main.lastConnectionDiv.classList.remove('d-none');
+                }
 
                 //Old identifiers
                 if (Array.isArray(player.oldIds)) {
@@ -345,11 +358,7 @@ function showPlayer(playerRef, keepTabSelection = false) {
                 if (!meta.onJoinCheckWhitelist) {
                     modPlayer.Main.whitelisted.innerText = 'feature disabled';
                 } else if (player.tsWhitelisted) {
-                    modPlayer.Main.whitelisted.innerText = new Date(player.tsWhitelisted * 1000)
-                        .toLocaleDateString(
-                            navigator.language,
-                            { dateStyle: 'long' }
-                        );
+                    modPlayer.Main.whitelisted.innerText = tsToLocaleDate(player.tsWhitelisted);
                     if (meta.tmpPerms.whitelist) {
                         modPlayer.Main.whitelistRemoveBtn.classList.remove('d-none');
                     }

@@ -66,8 +66,8 @@
     - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
 
 - [x] modal should also return old ids in a separate prop only available for registered players
-- [ ] ban/warn all available identifiers
-- [ ] add last connection date to offline player modal (issue #689)
+- [x] ban/warn all available identifiers
+- [x] add last connection date to offline player modal (issue #689)
 - [ ] fix player modal in nui menu
 
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 

@@ -91,6 +91,7 @@ export default async function PlayerModal(ctx: Context) {
         playerData.playTime = playerDbData.playTime;
         playerData.tsWhitelisted = playerDbData.tsWhitelisted ? playerDbData.tsWhitelisted : undefined;
         playerData.oldIds = playerDbData.ids;
+        playerData.tsLastConnection = playerDbData.tsLastConnection;
 
         if (playerDbData.notes?.lastAdmin && playerDbData.notes?.tsLastEdit) {
             playerData.notes = playerDbData.notes.text;

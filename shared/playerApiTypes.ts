@@ -44,6 +44,7 @@ export type PlayerModalPlayerData = {
     notesLog?: string;
     notes?: string;
     oldIds?: string[]; //will also include the current ones
+    tsLastConnection?: number; //only show if offline
 }
 
 export type PlayerModalSuccess = {
