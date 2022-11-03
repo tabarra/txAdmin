@@ -27,6 +27,10 @@ export default {
             return await message.reply('you do not have whitelist permissions :face_with_raised_eyebrow:');
         }
 
+        //FIXME: migrate this command
+        return await message.reply('This command is temporarily disabled, please use the txAdmin web interface to whitelist players.');
+        
+
         //Check if whitelist is enabled
         if (!globals.playerDatabase.config.onJoinCheckWhitelist) {
             return await message.reply('**txAdmin** whitelist is disabled :man_facepalming:\nGo to the settings and enable it first.');

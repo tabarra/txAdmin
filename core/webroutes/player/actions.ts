@@ -5,11 +5,8 @@ import { Context } from 'koa';
 import playerResolver from '@core/playerLogic/playerResolver';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { PlayerClass, ServerPlayer } from '@core/playerLogic/playerClasses';
-import { calcExpirationFromDuration } from '@core/extras/helpers';
+import { anyUndefined, calcExpirationFromDuration } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-
-//Helper functions
-const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };
 
 
 /**

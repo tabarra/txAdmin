@@ -21,8 +21,12 @@ export default (mutex: any, netid: any, license: any) => {
     const parsedNetid = parseInt(netid);
     let searchLicense = license;
 
+    //For error clarification only
+    let hasMutex = false; 
+
     //If mutex+netid provided
     if (typeof mutex === 'string' && typeof netid === 'number' && !isNaN(parsedNetid)) {
+        hasMutex = true;
         if (mutex === fxRunner?.currentMutex) {
             //If the mutex is from the server currently online
             const player = playerlistManager.getPlayerById(netid);
@@ -42,7 +46,13 @@ export default (mutex: any, netid: any, license: any) => {
     //If license provided or resolved through licenseCache, search in the database
     if (typeof searchLicense === 'string' && searchLicense.length) {
         return new DatabasePlayer(searchLicense, playerDatabase);
-    } else {
-        throw new Error(`this player is not connected to the server and has no license identifier`);
+    }
+
+    //Player not found
+    //If not found in the db, the search above already threw error
+    if(hasMutex){
+        throw new Error(`could not resolve player by its net id which likely means it has disconnected long ago`);
+    }else{
+        throw new Error(`could not resolve this player`);
     }
 } 
