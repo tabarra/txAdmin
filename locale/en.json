@@ -272,14 +272,13 @@
             },
             "history": {
                 "title": "Related history",
-                "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Ban player",

@@ -69,6 +69,12 @@
 - [x] ban/warn all available identifiers
 - [x] add last connection date to offline player modal (issue #689)
 - [ ] fix player modal in nui menu
+    - [x] upper-level error handling
+    - [x] actions tab
+    - [x] ids tab
+    - [x] history tab
+    - [ ] info tab
+    - [ ] ban tab
 
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] update master action > importing bans
@@ -77,14 +83,18 @@
     - [ ] maybe have a select box with 3 profiles + disabled?
     - [ ] daily cron to remove whitelistApprovals/whitelistRequests older than 7 days (no settings)
 
-After merging feat/core-playerlist, but still in v5.0.0:
+After merging feat/core-playerlist, but still in v5.0.0  (1d?):
 - [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
 - [ ] apply stashes
 - [ ] merge all translations
 - [ ] apply `nui_menu.misc.directmessage_title` to all translations
 - [ ] apply `ban_messages.reject.*` to all translations (try to convert manually)
+- [ ] apply `player_modal.history.*` to all translations 
 - [ ] add car boost function
-- [ ] the diagnostics reporting button thing
+
+The diagnostics reporting button thing (2d?):
+- [ ] do frontend button + modals
+- [ ] 
 
 After v5.0.0 release:
 - [ ] migrate `!addwl` make possible to `/addwl @mention`
@@ -104,6 +114,28 @@ After v5.0.0 release:
 - [ ] bot status "watching xx/yy players"
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 - [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
+
+Experiment: other than the color, on the perf chart we could draw likes for q50, q90, q99 tick times, maybe it's easier to understand
+
+```json
+[
+    0.6303839732888147,
+    0.1353923205342237,
+    0.14006677796327213,
+    0.09365609348914858,
+    0.000333889816360601,
+    0.0001669449081803005,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+]
+```
 
 
 # REFACTOR DEV:

@@ -27,7 +27,6 @@ import { PlayerModalErrorBoundary } from "./ErrorHandling/PlayerModalErrorBounda
 import { usePermissionsValue } from "../../state/permissions.state";
 import { userHasPerm } from "../../utils/miscUtils";
 import React from "react";
-import { DialogLoadError } from "./Tabs/DialogLoadError";
 
 
 const classes = {
@@ -96,7 +95,7 @@ const PlayerModal: React.FC = () => {
         style: {
           backgroundColor: theme.palette.background.default,
           minHeight: 450,
-          maxHeight: 450,
+          maxHeight: 650,
           borderRadius: 15,
         },
         id: "player-modal-container",
