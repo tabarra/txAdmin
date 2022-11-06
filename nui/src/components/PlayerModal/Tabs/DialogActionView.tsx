@@ -10,11 +10,12 @@ import { fetchNui } from "../../../utils/fetchNui";
 import { useDialogContext } from "../../../provider/DialogProvider";
 import { useSnackbar } from "notistack";
 import { useIFrameCtx } from "../../../provider/IFrameProvider";
-import slug from "slug";
 import { usePlayerModalContext } from "../../../provider/PlayerModalProvider";
 import { translateAlertType, userHasPerm } from "../../../utils/miscUtils";
 import { useTranslate } from "react-polyglot";
 import { usePermissionsValue } from "../../../state/permissions.state";
+import { DialogLoadError } from "./DialogLoadError";
+import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
 
 const PREFIX = 'DialogActionView';
 
@@ -47,7 +48,6 @@ export interface TxAdminAPIResp {
 }
 
 const DialogActionView: React.FC = () => {
-
   const { openDialog } = useDialogContext();
   const playerDetails = usePlayerDetailsValue();
   const assocPlayer = useAssociatedPlayerValue();
@@ -56,6 +56,22 @@ const DialogActionView: React.FC = () => {
   const { goToFramePage } = useIFrameCtx();
   const playerPerms = usePermissionsValue();
   const { setModalOpen, closeMenu, showNoPerms } = usePlayerModalContext();
+  if ('error' in playerDetails) return (<DialogLoadError />);
+
+  //Helper
+  const handleGenericApiResponse = (result: GenericApiResp, successMessageKey: string) => {
+    if('success' in result && result.success === true){
+      enqueueSnackbar(
+        t(`nui_menu.player_modal.actions.${successMessageKey}`),
+        { variant: 'success' }
+      );
+    }else{
+      enqueueSnackbar(
+        (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+        { variant: 'error' }
+      );
+    }
+  }
 
   //Moderation
   const handleDM = () => {
@@ -72,27 +88,16 @@ const DialogActionView: React.FC = () => {
       placeholder: t(
         "nui_menu.player_modal.actions.moderation.dm_dialog.placeholder"
       ),
-      onSubmit: (reason: string) => {
-        fetchWebPipe<TxAdminAPIResp>("/player/message", {
-          method: "POST",
-          data: {
-            id: assocPlayer.id,
-            message: reason,
-          },
-        })
-          .then((resp) => {
-            enqueueSnackbar(
-              t("nui_menu.player_modal.actions.moderation.dm_dialog.success"),
-              { variant: translateAlertType(resp.type) }
-            );
-          })
-          .catch((e) => {
-            enqueueSnackbar(
-              t("nui_menu.misc.unknown_error"),
-              { variant: "error" }
-            );
-            console.error(e);
+      onSubmit: async (message: string) => {
+        try {
+          const result = await fetchWebPipe<GenericApiResp>(`/player/message?mutex=current&netid=${assocPlayer.id}`, {
+            method: "POST",
+            data: { message: message.trim() },
           });
+          handleGenericApiResponse(result, 'moderation.dm_dialog.success');
+        } catch (error) {
+          enqueueSnackbar((error as Error).message, { variant: 'error' });
+        }
       },
     });
   };
@@ -110,35 +115,16 @@ const DialogActionView: React.FC = () => {
       placeholder: t(
         "nui_menu.player_modal.actions.moderation.warn_dialog.placeholder"
       ),
-      onSubmit: (reason: string) => {
-        fetchWebPipe<TxAdminAPIResp>("/player/warn", {
-          method: "POST",
-          data: {
-            id: assocPlayer.id,
-            reason: reason,
-          },
-        })
-          .then((resp) => {
-            if (resp.type === "danger") {
-              return enqueueSnackbar(
-                t("nui_menu.misc.unknown_error"),
-                { variant: "error" }
-              );
-            }
-            enqueueSnackbar(
-              t(
-                "nui_menu.player_modal.actions.moderation.warn_dialog.success"
-              ),
-              { variant: translateAlertType(resp.type) }
-            );
-          })
-          .catch((e) => {
-            enqueueSnackbar(
-              t("nui_menu.misc.unknown_error"),
-              { variant: "error" }
-            );
-            console.error(e);
+      onSubmit: async (reason: string) => {
+        try {
+          const result = await fetchWebPipe<GenericApiResp>(`/player/warn?mutex=current&netid=${assocPlayer.id}`, {
+            method: "POST",
+            data: { reason: reason.trim() },
           });
+          handleGenericApiResponse(result, 'moderation.warn_dialog.success');
+        } catch (error) {
+          enqueueSnackbar((error as Error).message, { variant: 'error' });
+        }
       },
     });
   };
@@ -156,62 +142,41 @@ const DialogActionView: React.FC = () => {
       placeholder: t(
         "nui_menu.player_modal.actions.moderation.kick_dialog.placeholder"
       ),
-      onSubmit: (reason: string) => {
-        fetchWebPipe<TxAdminAPIResp>("/player/kick", {
-          method: "POST",
-          data: {
-            id: assocPlayer.id,
-            reason: reason,
-          },
-        })
-          .then((resp) => {
-            if (resp.type === "danger") {
-              return enqueueSnackbar(
-                t("nui_menu.misc.unknown_error"),
-                { variant: "error" }
-              );
-            }
-            enqueueSnackbar(
-              t(
-                "nui_menu.player_modal.actions.moderation.kick_dialog.success"
-              ),
-              { variant: translateAlertType(resp.type) }
-            );
-          })
-          .catch((e) => {
-            enqueueSnackbar(
-              t("nui_menu.misc.unknown_error"),
-              { variant: "error" }
-            );
-            console.error(e);
+      onSubmit: async (reason: string) => {
+        try {
+          const result = await fetchWebPipe<GenericApiResp>(`/player/kick?mutex=current&netid=${assocPlayer.id}`, {
+            method: "POST",
+            data: { reason: reason.trim() },
           });
+          handleGenericApiResponse(result, 'moderation.kick_dialog.success');
+        } catch (error) {
+          enqueueSnackbar((error as Error).message, { variant: 'error' });
+        }
       },
     });
   };
 
   const handleSetAdmin = () => {
-    if (!userHasPerm("manage.admins", playerPerms))
+    if (!userHasPerm("manage.admins", playerPerms)) {
       return showNoPerms("Manage Admins");
+    }
+    //If the playerDetails is available
+    const params = new URLSearchParams();
+    if (typeof playerDetails.player.netid === 'number') {
+      params.set('autofill', 'true');
+      params.set('name', playerDetails.player.pureName);
 
-    //FIXME: use bubble's .normalize('NFKD') instead of slug()
-    const sluggedName = slug(assocPlayer.name, "_");
-    let adminManagerPath = `?autofill&name=${sluggedName}`;
-
-    //If the playerDetails is available 
-    if(typeof playerDetails === 'object'){
-      const discordIdent = playerDetails.identifiers.find((ident) =>
-        ident.includes("discord:")
-      );
-      const fivemIdent = playerDetails.identifiers.find((ident) =>
-        ident.includes("fivem:")
-      );
-
-      if (discordIdent) adminManagerPath += `&discord=${discordIdent}`;
-      if (fivemIdent) adminManagerPath += `&fivem=${fivemIdent}`;
+      for (const id of playerDetails.player.ids) {
+        if (id.startsWith('discord:')) {
+          params.set('discord', id);
+        } else if (id.startsWith('fivem:')) {
+          params.set('citizenfx', id);
+        }
+      }
     }
 
     // TODO: Change iFrame Src through Provider?
-    goToFramePage(`/nui/start/adminManager${adminManagerPath}`);
+    goToFramePage(`/nui/start/adminManager?${params}`);
     setModalOpen(false);
   };
 

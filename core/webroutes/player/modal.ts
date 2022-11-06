@@ -73,6 +73,7 @@ export default async function PlayerModal(ctx: Context) {
     //Prepping player data
     const playerData: PlayerModalPlayerData = {
         displayName: player.displayName,
+        pureName: player.pureName,
         isRegistered: player.isRegistered,
         isConnected: player.isConnected,
         license: player.license,

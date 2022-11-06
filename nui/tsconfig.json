@@ -18,8 +18,8 @@
     
     /* mod resolution. */
     "paths": {
-      "@nui/*": ["./*"],
-      "@shared/*": ["../shared/*"]
+      "@shared/*": ["../shared/*"],
+      "@nui/*": ["./*"]
     },
   },
   "include": ["src"],

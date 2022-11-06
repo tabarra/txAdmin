@@ -40,6 +40,7 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
   useEffect(() => {
     setDisableTabNav(modalOpen);
     setListenForExit(!modalOpen);
+    if(!modalOpen) setTab(1);
   }, [modalOpen]);
 
   // In case the modal is open when menu visibility is toggled

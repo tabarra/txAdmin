@@ -27,6 +27,7 @@ export type PlayerModalMeta = {
 export type PlayerModalPlayerData = {
     //common
     displayName: string;
+    pureName: string;
     isRegistered: boolean;
     isConnected: boolean;
     ids: string[]; //can be empty
