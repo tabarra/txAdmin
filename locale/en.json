@@ -283,7 +283,9 @@
             "ban": {
                 "title": "Ban player",
                 "reason_placeholder": "Reason",
+                "reason_required": "The Reason field is required.",
                 "duration_placeholder": "Duration",
+                "success": "Player banned!",
                 "hours": "hours",
                 "days": "days",
                 "weeks": "weeks",

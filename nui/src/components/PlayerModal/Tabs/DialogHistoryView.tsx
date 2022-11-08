@@ -23,15 +23,17 @@ const colors = {
   dark: "gray",
 }
 
-const getActionCard = (
+type ActionCardProps = {
   action: PlayerHistoryItem,
   permsDisableWarn: boolean,
   permsDisableBan: boolean,
   serverTime: number,
-  theme: Theme,
-  t: Function,
   btnAction: Function,
-) => {
+}
+const ActionCard: React.FC<ActionCardProps> = ({ action, permsDisableWarn, permsDisableBan, serverTime, btnAction }) => {
+  const theme = useTheme();
+  const t = useTranslate();
+
   const revokeButonDisabled = (
     action.revokedBy !== undefined ||
     (action.type == 'warn' && permsDisableWarn) ||
@@ -66,7 +68,6 @@ const getActionCard = (
       marginBottom: '6px',
       borderLeft: `solid 4px ${actionColor}`,
     }}
-    key={action.id}
   >
     <Box style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
       <strong>
@@ -95,7 +96,6 @@ const DialogHistoryView: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const playerDetails = usePlayerDetailsValue();
   const forceRefresh = useForcePlayerRefresh();
-  const theme = useTheme();
   const t = useTranslate();
   if ('error' in playerDetails) return (<DialogLoadError />);
 
@@ -135,7 +135,14 @@ const DialogHistoryView: React.FC = () => {
         {!playerActionHistory?.length ? (
           <NoHistoryBox />
         ) : (
-          playerActionHistory.map((action) => getActionCard(action, !meta.tmpPerms.warn, !meta.tmpPerms.ban, meta.serverTime, theme, t, () => { handleRevoke(action.id) }))
+          playerActionHistory.map((action) => <ActionCard
+            key={action.id}
+            action={action}
+            permsDisableWarn={!meta.tmpPerms.warn}
+            permsDisableBan={!meta.tmpPerms.ban}
+            serverTime={meta.serverTime}
+            btnAction={() => { handleRevoke(action.id) }}
+          />)
         )}
       </Box>
     </Box>
