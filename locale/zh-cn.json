@@ -160,7 +160,7 @@
             },
             "player_ids": {
                 "title": "显示玩家ID",
-                "label": "在附件的玩家头上显示ID和其他信息",
+                "label": "在附近玩家的头上显示ID和其他信息",
                 "alert_show": "显示玩家ID 开启",
                 "alert_hide": "显示玩家ID 关闭"
             }
