@@ -25,11 +25,7 @@ const playerDetails = {
         `/player?mutex=current&netid=${assocPlayerId}`,
         { mockData: MockedPlayerDetails }
       );
-
       debugLog("FetchWebPipe", res, "PlayerFetch");
-
-      //DEBUG
-      // return { error: 'could not resolve player by its net id which likely means it has disconnected long ago' };
 
       if (res.error) {
         return { error: (res as GenericApiError).error };
@@ -60,10 +56,6 @@ export const usePlayerDetailsValue = () =>
 
 export const useForcePlayerRefresh = () =>
   useSetRecoilState(playerDetails.forcePlayerRefresh);
-
-//no component uses it
-// export const usePlayerDetails = () =>
-//   useRecoilState<PlayerModalResp>(playerDetails.selectedPlayerData);
 
 export const useAssociatedPlayerValue = () =>
   useRecoilValue<PlayerData>(playerDetails.associatedPlayer);
