@@ -11,7 +11,7 @@ import { useDialogContext } from "../../../provider/DialogProvider";
 import { useSnackbar } from "notistack";
 import { useIFrameCtx } from "../../../provider/IFrameProvider";
 import { usePlayerModalContext } from "../../../provider/PlayerModalProvider";
-import { translateAlertType, userHasPerm } from "../../../utils/miscUtils";
+import { userHasPerm } from "../../../utils/miscUtils";
 import { useTranslate } from "react-polyglot";
 import { usePermissionsValue } from "../../../state/permissions.state";
 import { DialogLoadError } from "./DialogLoadError";

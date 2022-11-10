@@ -68,14 +68,15 @@
 - [x] modal should also return old ids in a separate prop only available for registered players
 - [x] ban/warn all available identifiers
 - [x] add last connection date to offline player modal (issue #689)
-- [ ] fix player modal in nui menu
+- [x] fix player modal in nui menu
     - [x] upper-level error handling
     - [x] actions tab
     - [x] ids tab
     - [x] history tab
-    - [ ] info tab
+    - [x] info tab
     - [x] ban tab
 
+- [ ] players page search by identifiers must also search for the new player.ids field
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] update master action > importing bans
 - [ ] create daily cron to optimize database:
@@ -93,6 +94,7 @@ After merging feat/core-playerlist, but still in v5.0.0  (1d?):
     - [ ] `player_modal.history.*` 
     - [ ] `player_modal.ban.success / reason_required` 
     - [ ] `player_modal.ids.*`
+    - [ ] `player_modal.info.*`
 - [ ] add car boost function
 
 The diagnostics reporting button thing (2d?):

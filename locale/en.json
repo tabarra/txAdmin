@@ -268,7 +268,18 @@
                 "session_time": "Session Time",
                 "play_time": "Play time",
                 "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_placeholder": "Notes about this player...",
+                "notes_changed": "Player note changed."
             },
             "ids": {
                 "current_ids": "Current Identifiers",

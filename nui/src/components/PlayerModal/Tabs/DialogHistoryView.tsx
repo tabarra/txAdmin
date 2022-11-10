@@ -7,6 +7,8 @@ import { PlayerHistoryItem } from "@shared/playerApiTypes";
 import { useSnackbar } from "notistack";
 import { fetchWebPipe } from "@nui/src/utils/fetchWebPipe";
 import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import { ButtonXS } from "../../misc/ButtonXS";
+import { tsToLocaleDate, tsToLocaleDateTime } from "@nui/src/utils/miscUtils";
 
 // TODO: Make the styling on this nicer
 const NoHistoryBox = () => (
@@ -40,8 +42,6 @@ const ActionCard: React.FC<ActionCardProps> = ({ action, permsDisableWarn, perms
     (action.type == 'ban' && permsDisableBan)
   )
 
-  const actionDate = (new Date(action.ts * 1000)).toLocaleString();
-
   let footerNote, actionColor, actionMessage;
   if (action.type == 'ban') {
     actionColor = colors.danger;
@@ -55,7 +55,7 @@ const ActionCard: React.FC<ActionCardProps> = ({ action, permsDisableWarn, perms
     footerNote = t("nui_menu.player_modal.history.revoked_by", { author: action.revokedBy });
   }
   if (typeof action.exp == 'number') {
-    const expirationDate = (new Date(action.exp * 1000)).toLocaleString();
+    const expirationDate = tsToLocaleDateTime(action.exp, 'medium');
     footerNote = (action.exp < serverTime)
       ? t("nui_menu.player_modal.history.expired_at", { date: expirationDate })
       : t("nui_menu.player_modal.history.expires_at", { date: expirationDate });
@@ -73,19 +73,27 @@ const ActionCard: React.FC<ActionCardProps> = ({ action, permsDisableWarn, perms
       <strong>
         {actionMessage}
       </strong>
-      <small style={{ color: theme.palette.text.secondary, fontFamily: 'monospace', fontWeight: 'bold' }}>
-        <span>({action.id})</span>
-        {" "}{actionDate}{" "}
-        <Button
-          size="small"
+      <Typography
+        variant="caption"
+        sx={{
+          fontFamily: 'monospace',
+          fontWeight: 'bold',
+          color: theme.palette.text.secondary,
+        }}
+      >
+        ({action.id})
+        &nbsp;
+        {tsToLocaleDateTime(action.ts, 'medium')}
+        &nbsp;
+        <ButtonXS
           color="secondary"
-          style={{ padding: '2px 6px' }}
+          variant="outlined"
           onClick={btnAction as any}
           disabled={revokeButonDisabled}
         >
           {t("nui_menu.player_modal.history.btn_revoke")}
-        </Button>
-      </small>
+        </ButtonXS>
+      </Typography>
     </Box>
     <span style={{ color: theme.palette.text.secondary }}>{action.reason}</span>
     {footerNote && <small style={{ display: 'block', paddingTop: '0.35em' }}>{footerNote}</small>}

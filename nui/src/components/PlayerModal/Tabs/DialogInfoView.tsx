@@ -14,44 +14,99 @@ import {
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
-import { TxAdminAPIResp } from "./DialogActionView";
-import { translateAlertType } from "../../../utils/miscUtils";
 import { DialogLoadError } from "./DialogLoadError";
+import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import humanizeDuration, { Unit } from "humanize-duration";
+import { ButtonXS } from "../../misc/ButtonXS";
+import { tsToLocaleDate } from "@nui/src/utils/miscUtils";
+import { usePlayerModalContext } from "@nui/src/provider/PlayerModalProvider";
+
+
 
 const DialogInfoView: React.FC = () => {
   const [note, setNote] = useState("");
-  const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
   const playerDetails = usePlayerDetailsValue();
   const forceRefresh = useForcePlayerRefresh();
+  const { setTab } = usePlayerModalContext();
   const t = useTranslate();
   const theme = useTheme();
+  if ('error' in playerDetails) return (<DialogLoadError />);
 
-  if(typeof playerDetails !== 'object'){
-    return <DialogLoadError />;
+  const meta = playerDetails.meta;
+  const player = playerDetails.player;
+
+  //Prepare vars
+  const language = t('$meta.humanizer_language');
+  function minsToDuration(seconds: number) {
+    return humanizeDuration(seconds * 60_000, {
+      language,
+      round: true,
+      units: ['d', 'h', 'm'] as Unit[],
+    });
   }
+
 
   const handleSaveNote: FormEventHandler = async (e) => {
     e.preventDefault();
     try {
-      const resp = await fetchWebPipe<TxAdminAPIResp>("/player/save_note", {
+      const result = await fetchWebPipe<GenericApiResp>(`/player/save_note?mutex=current&netid=${player.netid}`, {
         method: "POST",
-        data: {
-          license: playerDetails.license,
-          note: note,
-        },
+        data: { note: note.trim() },
       });
-      forceRefresh((val) => val + 1);
-      enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) });
+      if ('success' in result && result.success === true) {
+        forceRefresh((val) => val + 1);
+        enqueueSnackbar(
+          t(`nui_menu.player_modal.info.notes_changed`),
+          { variant: 'success' }
+        );
+      } else {
+        enqueueSnackbar(
+          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+          { variant: 'error' }
+        );
+      }
     } catch (e) {
       enqueueSnackbar(t("nui_menu.misc.unknown_error"), { variant: "error" });
-      console.error(e);
     }
   };
 
   useEffect(() => {
-    setNote(playerDetails.notes || "");
+    setNote(player.notes ?? '');
   }, [playerDetails]);
+
+  //Whitelist button
+  const btnChangeWhitelistStatus = async () => {
+    try {
+      const result = await fetchWebPipe<GenericApiResp>(`/player/whitelist?mutex=current&netid=${player.netid}`, {
+        method: "POST",
+        data: { status: !player.tsWhitelisted },
+      });
+      if ('success' in result && result.success === true) {
+        forceRefresh((val) => val + 1);
+        enqueueSnackbar(
+          t(`nui_menu.player_modal.info.btn_wl_success`),
+          { variant: 'success' }
+        );
+      } else {
+        enqueueSnackbar(
+          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+          { variant: 'error' }
+        );
+      }
+    } catch (error) {
+      enqueueSnackbar((error as Error).message, { variant: 'error' });
+    }
+  }
+
+  //Log stuff
+  const counts = { ban: 0, warn: 0 };
+  for (const action of player.actionHistory) {
+    counts[action.type]++;
+  }
+  const btnLogDetails = async () => {
+    setTab(4);
+  }
 
   return (
     <DialogContent>
@@ -61,20 +116,55 @@ const DialogInfoView: React.FC = () => {
       <Typography>
         {t("nui_menu.player_modal.info.session_time")}:{" "}
         <span style={{ color: theme.palette.text.secondary }}>
-          {playerDetails.sessionTime}
+          {player.sessionTime ? minsToDuration(player.sessionTime) : '--'}
         </span>
       </Typography>
       <Typography>
-        {t("nui_menu.player_modal.info.play_time")}:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>
-          {playerDetails.playTime}
+        {t("nui_menu.player_modal.info.play_time")}: {" "}
+        < span style={{ color: theme.palette.text.secondary }}>
+          {player.playTime ? minsToDuration(player.playTime) : '--'}
         </span>
-      </Typography>
+      </Typography >
       <Typography>
         {t("nui_menu.player_modal.info.joined")}:{" "}
         <span style={{ color: theme.palette.text.secondary }}>
-          {player.joinDate}
+          {player.tsJoined ? tsToLocaleDate(player.tsJoined) : '--'}
         </span>
+      </Typography>
+      <Typography>
+        {t("nui_menu.player_modal.info.whitelisted_label")}:{" "}
+        <span style={{ color: theme.palette.text.secondary }}>
+          {player.tsWhitelisted ? tsToLocaleDate(player.tsWhitelisted) : t("nui_menu.player_modal.info.whitelisted_notyet")}
+        </span>{" "}
+        <ButtonXS
+          color={player.tsWhitelisted ? 'error' : 'primary'}
+          variant="outlined"
+          onClick={btnChangeWhitelistStatus as any}
+          disabled={!meta.tmpPerms.whitelist || !player.license}
+        >
+          {player.tsWhitelisted ? t("nui_menu.player_modal.info.btn_wl_remove") : t("nui_menu.player_modal.info.btn_wl_add")}
+        </ButtonXS>
+      </Typography>
+      <Typography>
+        {t("nui_menu.player_modal.info.log_label")}:{" "}
+        <span style={{ color: theme.palette.text.secondary }}>
+          {!counts.ban && !counts.warn ? t("nui_menu.player_modal.info.log_empty") : <>
+            <span style={{ color: theme.palette.error.main }}>
+              {t("nui_menu.player_modal.info.log_ban_count", { smart_count: counts.ban })}
+            </span>
+            ,&nbsp;
+            <span style={{ color: theme.palette.warning.main }}>
+              {t("nui_menu.player_modal.info.log_warn_count", { smart_count: counts.warn })}
+            </span>
+          </>}
+        </span>{" "}
+        <ButtonXS
+          color="secondary"
+          variant="outlined"
+          onClick={btnLogDetails as any}
+        >
+          {t("nui_menu.player_modal.info.log_btn")}
+        </ButtonXS>
       </Typography>
       <form onSubmit={handleSaveNote}>
         <Box pt={1}>
@@ -102,7 +192,9 @@ const DialogInfoView: React.FC = () => {
           </Button>
         </Box>
       </form>
-    </DialogContent>
+
+
+    </DialogContent >
   );
 };
 

@@ -246,7 +246,7 @@ async function handleSetWhitelist(ctx: Context, sess: any, player: PlayerClass):
     )) {
         return { error: 'Invalid request.' };
     }
-    const status = (ctx.request.body.status === 'true');
+    const status = (ctx.request.body.status === 'true' || ctx.request.body.status === true);
 
     //Check permissions
     if (!ctx.utils.testPermission('players.whitelist', modulename)) {
