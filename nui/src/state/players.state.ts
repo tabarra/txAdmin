@@ -235,7 +235,7 @@ debugData<PlayerData[]>(
       ],
     },
   ],
-  3000
+  750
 );
 
 function mockData() {

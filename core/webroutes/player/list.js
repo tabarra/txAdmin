@@ -83,25 +83,13 @@ async function handleSearch(ctx, dbo) {
                 .value();
             outData.resActions = await processActionList(actions);
 
-            //NOTE: disabled due to the unexpected behavior of it finding players that do not have any of the identifiers being searched for
-            let licensesArr = [];
-            actions.forEach((a) => {
-                a.identifiers.forEach((id) => {
-                    if (id.substring(0, 8) == 'license:') {
-                        licensesArr.push(id.substring(8));
-                    }
-                });
-            });
-            //TODO: adapt this for when we start saving all IDs for the players
-            // const licensesArr = idsArray.filter(id => id.substring(0, 8) == "license:").map(id => id.substring(8));
             const players = await dbo.chain.get('players')
-                .filter((p) => licensesArr.includes(p.license))
+                .filter((p) => idsArray.some((fi) => p.ids.includes(fi)))
                 .take(512)
                 .cloneDeep()
                 .value();
             outData.resPlayers = await processPlayerList(players);
             outData.message = `Searching by identifiers found ${players.length} player${addPlural(players.length)} and ${actions.length} action${addPlural(actions.length)}.`;
-
 
         //IF searching for an action ID
         } else if (consts.regexActionID.test(searchString.toUpperCase())) {
@@ -114,19 +102,14 @@ async function handleSearch(ctx, dbo) {
             } else {
                 outData.resActions = await processActionList([action]);
 
-                //TODO: adapt this for when we start saving all IDs for the players
-                const licensesArr = action.identifiers.filter((x) => x.substring(0, 8) == 'license:').map((x) => x.substring(8));
-                if (licensesArr.length) {
-                    const players = await dbo.chain.get('players')
-                        .filter((p) => licensesArr.includes(p.license))
-                        .take(512)
-                        .cloneDeep()
-                        .value();
-                    outData.resPlayers = await processPlayerList(players);
-                }
+                const players = await dbo.chain.get('players')
+                    .filter((p) => action.identifiers.some((fi) => p.ids.includes(fi)))
+                    .take(512)
+                    .cloneDeep()
+                    .value();
+                outData.resPlayers = await processPlayerList(players);
                 outData.message = `Searching by Action ID found ${outData.resPlayers.length} related player${addPlural(outData.resPlayers.length)}.`;
             }
-
 
         //Likely searching for a partial name
         } else {
@@ -142,7 +125,6 @@ async function handleSearch(ctx, dbo) {
             //TODO: if player found, search for all actions from them
             outData.message = `Searching by name found ${filtered.length} player${addPlural(filtered.length)}.`;
         }
-
 
         //Give output
         return ctx.send(outData);

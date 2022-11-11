@@ -76,7 +76,8 @@
     - [x] info tab
     - [x] ban tab
 
-- [ ] players page search by identifiers must also search for the new player.ids field
+- [x] players page search by identifiers must also search for the new player.ids field
+- [x] web: enable settign whitelist even with wl disabled + add warning to ban (nui only, i'll do web after)
 - [ ] update master action > database cleanup (specially case for removing older whitelists) 
 - [ ] update master action > importing bans
 - [ ] create daily cron to optimize database:

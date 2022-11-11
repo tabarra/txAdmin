@@ -316,19 +316,22 @@ function showPlayer(playerRef, keepTabSelection = false) {
 
             //Setting modal fields
             modPlayer.Title.innerText = `[${player.netid || 'OFFLINE'}] ${player.displayName}`;
-            if (Array.isArray(player.ids) && player.ids.length) {
-                modPlayer.IDs.currList.innerHTML = player.ids
-                    .map(id => `<div class="idsText border-dark">${xss(id)}</div>`)
-                    .join('\n');
-            } else {
-                modPlayer.IDs.currList.innerHTML = '<em class="text-secondary">This player has no identifiers.</em>';
-            }
             if (player.isConnected) {
+                if (Array.isArray(player.ids) && player.ids.length) {
+                    modPlayer.IDs.currList.innerHTML = player.ids
+                        .map(id => `<div class="idsText border-dark">${xss(id)}</div>`)
+                        .join('\n');
+                } else {
+                    modPlayer.IDs.currList.innerHTML = '<em class="text-secondary">This player has no identifiers.</em>';
+                }
+
                 modPlayer.Main.sessionTimeText.innerText = msToDuration(
                     player.sessionTime * 60_000,
                     { units: ['h', 'm'] }
                 );
                 modPlayer.Main.sessionTimeDiv.classList.remove('d-none');
+            }else{
+                modPlayer.IDs.currList.innerHTML = '<em class="text-secondary">Player offline.</em>';
             }
             if (player.isRegistered) {
                 modPlayer.Main.joinDate.innerText = tsToLocaleDate(player.tsJoined);
@@ -344,7 +347,7 @@ function showPlayer(playerRef, keepTabSelection = false) {
                 //Old identifiers
                 if (Array.isArray(player.oldIds)) {
                     const filteredIds = player.oldIds
-                        .filter(id => !player.ids.includes(id))
+                        .filter(id => !player.isConnected || !player.ids.includes(id)) //don't filter when offline
                         .map(id => `<div class="idsText border-dark text-muted">${xss(id)}</div>`)
                         .join('\n');
                     modPlayer.IDs.oldList.innerHTML = (filteredIds.length)
@@ -355,9 +358,7 @@ function showPlayer(playerRef, keepTabSelection = false) {
                 }
 
                 //Whitelist
-                if (!meta.onJoinCheckWhitelist) {
-                    modPlayer.Main.whitelisted.innerText = 'feature disabled';
-                } else if (player.tsWhitelisted) {
+                if (player.tsWhitelisted) {
                     modPlayer.Main.whitelisted.innerText = tsToLocaleDate(player.tsWhitelisted);
                     if (meta.tmpPerms.whitelist) {
                         modPlayer.Main.whitelistRemoveBtn.classList.remove('d-none');

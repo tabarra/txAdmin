@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Box,
   Button,
   DialogContent,
@@ -7,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useAssociatedPlayerValue } from "../../../state/playerDetails.state";
+import { useAssociatedPlayerValue, usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
@@ -19,6 +20,7 @@ import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
 
 const DialogBanView: React.FC = () => {
   const assocPlayer = useAssociatedPlayerValue();
+  const playerDetails = usePlayerDetailsValue();
   const [reason, setReason] = useState("");
   const [duration, setDuration] = useState("2 hours");
   const [customDuration, setCustomDuration] = useState("hours");
@@ -32,12 +34,14 @@ const DialogBanView: React.FC = () => {
     return <DialogLoadError />;
   }
 
+  const onJoinCheckBan = ('meta' in playerDetails && playerDetails.meta.onJoinCheckBan);
+
   const handleBan = async (e) => {
     e.preventDefault();
     if (!userHasPerm("players.ban", playerPerms)) return showNoPerms("Ban");
 
     const trimmedReason = reason.trim();
-    if(!trimmedReason.length){
+    if (!trimmedReason.length) {
       return enqueueSnackbar(
         t("nui_menu.player_modal.ban.reason_required"),
         { variant: 'error' }
@@ -129,6 +133,10 @@ const DialogBanView: React.FC = () => {
   return (
     <DialogContent>
       <Typography variant="h6" sx={{ mb: 2 }}>{t("nui_menu.player_modal.ban.title")}</Typography>
+      {!onJoinCheckBan && <Alert severity="warning" variant="outlined" sx={{ mb: 2 }}>
+        <strong>Ban checking is disabled.</strong> <br />
+        You need to enable it (<code>txAdmin &gt; Settings</code>) for the ban to take effect.
+      </Alert>}
       <form onSubmit={handleBan}>
         <TextField
           autoFocus
@@ -193,7 +201,7 @@ const DialogBanView: React.FC = () => {
         <Button
           variant="contained"
           type="submit"
-          color="primary"
+          color="error"
           sx={{ mt: 2 }}
           onClick={handleBan}
         >
