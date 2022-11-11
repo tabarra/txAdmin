@@ -29,7 +29,7 @@ export { default as deployer_actions } from './deployer/actions';
 export { default as settings_get } from './settings/get';
 export { default as settings_save } from './settings/save';
 
-export { default as masterActions_get } from './masterActions/get';
+export { default as masterActions_page } from './masterActions/page';
 export { default as masterActions_getBackup } from './masterActions/getBackup';
 export { default as masterActions_actions } from './masterActions/actions';
 

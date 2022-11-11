@@ -2,6 +2,7 @@
 - didn't note anything before commit d2cfc42e5e0001afce6bafa17df4c7a9a6bbf42d
 - playerBanned event lost the `target` prop
 - changed warn ids prefix from A to W
+- removed the option to import bans from other resources
 
 # TODO:
 - [x] player join/leave
@@ -78,8 +79,8 @@
 
 - [x] players page search by identifiers must also search for the new player.ids field
 - [x] web: enable settign whitelist even with wl disabled + add warning to ban (nui only, i'll do web after)
-- [ ] update master action > database cleanup (specially case for removing older whitelists) 
-- [ ] update master action > importing bans
+- [x] migrate master action > database cleanup (specially case for removing older whitelists) 
+- [x] remove master action > importing bans
 - [ ] create daily cron to optimize database:
     - [ ] TODO: some rule about players that have less than X playtime and have not joined in the last Y days
     - [ ] maybe have a select box with 3 profiles + disabled?

@@ -5,7 +5,7 @@ import { verbose } from '@core/globalData';
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
 import { genActionID, genWhitelistRequestID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
-import { DatabaseActionType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
+import { DatabaseActionType, DatabaseDataType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
 import { now } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -122,6 +122,29 @@ export default class PlayerDatabase {
             .value();
         this.#txAdmin.playerlistManager.handleDbDataSync(newData, srcUniqueId);
         return newData;
+    }
+
+
+    /**
+     * Revokes whitelist status of all players that match a filter function
+     * @returns the number of revoked whitelists
+     */
+    bulkRevokePlayerWhitelist(filterFunc: Function): number {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (typeof filterFunc !== 'function') throw new Error('filterFunc must be a function.');
+
+        let cntChanged = 0;
+        const srcSymbol = Symbol('bulkRevokePlayerWhitelist');
+        this.#db.obj.data!.players.forEach((player) => {
+            if(player.tsWhitelisted && filterFunc(player)){
+                cntChanged++;
+                player.tsWhitelisted = undefined;
+                this.#txAdmin.playerlistManager.handleDbDataSync(cloneDeep(player), srcSymbol);
+            }
+        });
+
+        this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+        return cntChanged;
     }
 
 
@@ -356,27 +379,26 @@ export default class PlayerDatabase {
     }
 
 
-
     /**
      * Cleans the database by removing every entry that matches the provided filter function.
-     *
-     * @param {String} table identifiers array
-     * @param {function} filter lodash-compatible filter function
-     * @returns {number|error} number of removed items
+     * @returns {number} number of removed items
      */
-    async cleanDatabase(tableName, filterFunc) {
-        throw new Error(`not ready`);
-        if (!this.#db.obj) throw new Error(`database not ready yet`);
-        if (tableName !== 'players' && tableName !== 'actions') throw new Error('Unknown tableName.');
+    cleanDatabase(
+        tableName: 'players' | 'actions' | 'whitelistApprovals' | 'whitelistRequests',
+        filterFunc: Function
+    ): number {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+        if (!Array.isArray(this.#db.obj.data[tableName])) throw new Error('Table selected isn\'t an array.');
         if (typeof filterFunc !== 'function') throw new Error('filterFunc must be a function.');
 
         try {
-            const removed = await this.#db.obj.chain.get(tableName)
-                .remove(filterFunc)
+            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            const removed = this.#db.obj.chain.get(tableName)
+                .remove(filterFunc as any)
                 .value();
             return removed.length;
         } catch (error) {
-            const msg = `Failed to clean database with error: ${error.message}`;
+            const msg = `Failed to clean database with error: ${(error as Error).message}`;
             if (verbose) logError(msg);
             throw new Error(msg);
         }

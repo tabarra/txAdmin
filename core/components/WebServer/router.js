@@ -70,7 +70,7 @@ export default (config) => {
     router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings_save);
 
     //Master Actions
-    router.get('/masterActions', requestAuth('web'), webRoutes.masterActions_get);
+    router.get('/masterActions', requestAuth('web'), webRoutes.masterActions_page);
     router.get('/masterActions/backupDatabase', requestAuth('web'), webRoutes.masterActions_getBackup);
     router.post('/masterActions/:action', requestAuth('web'), webRoutes.masterActions_actions);
 
