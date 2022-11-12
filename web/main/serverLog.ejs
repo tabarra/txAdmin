@@ -458,10 +458,15 @@
 
                 //Source
                 const sourceNode = document.createElement('strong');
-                sourceNode.textContent = event.src.name;
                 sourceNode.classList.add('e-src');
-                if(event.src.id) sourceNode.classList.add('e-src-player');
-                sourceNode.addEventListener('click', ()=>{ showPlayerByMutexNetid(event.src.id.replace(/#/, '_')) });
+                if(event.src.id){
+                    const [mutex, netid] = event.src.id.split('#', 2);
+                    sourceNode.classList.add('e-src-player');
+                    sourceNode.addEventListener('click', ()=>{ showPlayerByMutexNetid(`${mutex}_${netid}`) });
+                    sourceNode.textContent = `[${netid}] ${event.src.name}`;
+                }else{
+                    sourceNode.textContent = event.src.name;
+                }
                 lineElement.appendChild(sourceNode);
 
                 //Message
