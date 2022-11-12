@@ -5,6 +5,7 @@ import { GenericApiResp } from '@shared/genericApiTypes';
 import PlayerDatabase, { DuplicateKeyError } from '@core/components/PlayerDatabase';
 import { now, parsePlayerId } from '@core/extras/helpers';
 import DiscordBot from '@core/components/DiscordBot';
+import { DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -110,8 +111,15 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
 
     //Checkinf for the deny all action, the others need reqId
     if (action === 'deny_all') {
+        const cutoff = parseInt(ctx.request.body?.newestVisible);
+        if (isNaN(cutoff)) {
+            return { error: 'newestVisible not specified' };
+        }
+        
+
         try {
-            playerDatabase.removeWhitelistRequests({});
+            const filter = (req: DatabaseWhitelistRequestsType) => req.tsLastAttempt <= cutoff;
+            playerDatabase.removeWhitelistRequests(filter);
         } catch (error) {
             return { error: `Failed to remove all wl request: ${(error as Error).message}` };
         }
@@ -144,7 +152,7 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
                 approvedBy: ctx.session.auth.username,
             });
         } catch (error) {
-            if(!(error instanceof DuplicateKeyError)){
+            if (!(error instanceof DuplicateKeyError)) {
                 return { error: `Failed to save wl approval: ${(error as Error).message}` };
             }
         }

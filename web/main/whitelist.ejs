@@ -88,7 +88,7 @@
             </div>
 
             <div class="card-footer d-flex" style="flex-direction: row; justify-content: space-between;">
-                <button class="btn btn-sm btn-outline-danger" type="button" onclick="denyAllRequests()">
+                <button class="btn btn-sm btn-outline-danger" type="button" id="reqs-denyAllBtton" onclick="denyAllRequests()">
                     <i class="icon-close"></i> Deny All
                 </button>
                 <ul class="pagination justify-content-center mb-0">
@@ -214,6 +214,7 @@
         entryTemplate: document.getElementById('reqs-entryTemplate'),
         searchInput: document.getElementById('reqs-searchInput'),
         searchButton: document.getElementById('reqs-searchButton'),
+        denyAllBtton: document.getElementById('reqs-denyAllBtton'),
     };
     const paginator = {
         prev: document.getElementById('reqs-paginator-prev'),
@@ -222,6 +223,7 @@
     }
     let currentPage = 1;
     let activeSearchString = '';
+    let newestRequest = 0;
 
     //If no perms, edit template
     if(!hasWhitelistPermission){
@@ -355,6 +357,7 @@
             dataType: 'json',
             success: function (data) {
                 reqElements.spinner.classList.add('d-none');
+                reqElements.denyAllBtton.disabled = true;
                 if(data.error){
                     reqElements.message.classList.remove('d-none', 'text-muted');
                     reqElements.message.classList.add('text-danger');
@@ -365,13 +368,16 @@
                     reqElements.message.textContent = 'Error reading API response';
                 }else if(!data.requests.length){
                     setPaginator(1, 1);
+                    newestRequest = data.newest;
                     reqElements.counter.innerText = 0;
                     reqElements.content.classList.add('d-none');
                     reqElements.message.classList.remove('d-none');
                 }else{
+                    newestRequest = data.newest;
                     setPaginator(data.currPage, data.totalPages);
                     if(data.cntTotal === data.cntFiltered){
                         reqElements.counter.innerText = data.cntTotal;
+                        reqElements.denyAllBtton.disabled = false;
                     }else{
                         reqElements.counter.innerText = `${data.cntFiltered} of ${data.cntTotal}`;
                     }
@@ -429,6 +435,7 @@
         txAdminAPI({
             type: 'POST',
             url: `/whitelist/requests/deny_all`,
+            data: {newestVisible: newestRequest},
             timeout: REQ_TIMEOUT_LONG,
             dataType: 'json',
             success: function (data) {
