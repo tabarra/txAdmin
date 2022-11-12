@@ -215,7 +215,6 @@ async function gettxAdminData() {
     return {
         //Stats
         uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
-        // cfxUrl: (globals.webServer.cfxUrl) ? `https://${globals.webServer.cfxUrl}/` : '--',
         banlistEnabled: playerDbConfigs.onJoinCheckBan.toString(),
         whitelistEnabled: playerDbConfigs.onJoinCheckWhitelist.toString(),
         httpCounterLog: httpCounter.log.join(', ') || '--',

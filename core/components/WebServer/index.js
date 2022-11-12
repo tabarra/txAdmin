@@ -35,7 +35,6 @@ export default class WebServer {
         this.luaComToken = nanoid();
         this.webSocket = null;
         this.isListening = false;
-        this.cfxUrl = null;
 
         //Generate cookie key
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
@@ -240,20 +239,6 @@ export default class WebServer {
     setupServerCallbacks() {
         //Just in case i want to re-execute this function
         this.isListening = false;
-
-        //FIXME: in update v4.18.0 we hid the cfx.re proxy url, if nobody complains deprecate the proxy entirely
-        //Print cfx.re url... when available
-        const validUrlRegex = /\.users\.cfx\.re$/i;
-        const getUrlInterval = setInterval(() => {
-            try {
-                const urlConvar = GetConvar('web_baseUrl', 'false');
-                if (validUrlRegex.test(urlConvar)) {
-                    // logOk(`Cfx.re URL: https://${urlConvar}/`);
-                    this.cfxUrl = urlConvar;
-                    clearInterval(getUrlInterval);
-                }
-            } catch (error) { }
-        }, 500);
 
         //CitizenFX Callback
         try {

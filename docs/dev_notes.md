@@ -6,6 +6,7 @@
 - The optimizer will remove:
     - players that havent connected in 9 days and have less than two hours of playtime
     - wl requests and approvals older than a week
+- cfx.re finally deprecated
 
 # TODO:
 - [x] player join/leave
