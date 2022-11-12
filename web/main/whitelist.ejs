@@ -1,0 +1,619 @@
+<%- await include('parts/header.ejs', locals) %>
+
+<style>
+    .header-elements {
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+    .name-truncate {
+        max-width: 8rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .discord-avatar {
+        width: 1.25rem;
+        height: 1.25rem;
+        vertical-align: text-bottom;
+    }
+    .discord-tag {
+        margin-left: 2px;
+    }
+    .action-buttons {
+        text-decoration: none;
+        font-size: 1.25em;
+        margin-left: 4px;
+    }
+    .action-buttons:hover {
+        text-decoration: none;
+    }
+    .action-buttons[disabled] {
+        cursor: not-allowed;
+        /* pointer-events: none; */
+    }
+    .action-buttons:hover:not([disabled]) > i {
+        font-weight: 600;
+    }
+</style>
+
+<!-- <div class="text-center mb-4">
+    <h2>Whitelist</h2>
+</div> -->
+
+
+<div class="row justify-content-md-center">
+    <!-- Requests card -->
+    <div class="col-md-6 mw-col8">
+        <div class="card card-accent-success">
+            <div class="card-header" style="display: flex; justify-content: space-between;">
+                <div>
+                    <span style="font-size: large">Whitelist Requests: <span id="reqs-counter"></span></span> <br>
+                    <small>Players that tried to join the server but were not whitelisted.</small>
+                </div>
+                <div class="header-elements">
+                    <div class="form-group mb-0">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control" id="reqs-searchInput" type="text"
+                                placeholder="player name, R1234">
+                            <span class="input-group-append">
+                                <button class="btn btn-sm btn-secondary" type="button" id="reqs-searchButton">
+                                    Search
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="reqs-spinner" style="min-height: 125px;">
+                    <div class="txSpinner">Loading...</div>
+                </div>
+                <div class="text-center">
+                    <h3 class="mx-auto pt-3 text-muted d-none" id="reqs-message">no players here yet</h3>
+                </div>
+                <div class="table-responsive text-center d-nonex" id="reqs-content">
+                    <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                        <thead>
+                            <tr class="text-left">
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Discord</th>
+                                <th>Join Time</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reqs-tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex" style="flex-direction: row; justify-content: space-between;">
+                <button class="btn btn-sm btn-outline-danger" type="button" id="reqs-denyAllBtton" onclick="denyAllRequests()">
+                    <i class="icon-close"></i> Deny All
+                </button>
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item disabled" id="reqs-paginator-prev">
+                        <a class="page-link" href="#" onclick="event.preventDefault(); reqsPrevPage()">Previous</a>
+                    </li>
+                    <li class="page-item disabled" id="reqs-paginator-mid">
+                        <a class="page-link" href="#">?</a>
+                    </li>
+                    <li class="page-item disabled" id="reqs-paginator-next">
+                        <a class="page-link" href="#" onclick="event.preventDefault(); reqsNextPage()">Next</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approved card -->
+    <div class="col-md-6 mw-col8">
+        <div class="card card-accent-success">
+            <div class="card-header" style="display: flex; justify-content: space-between;">
+                <div>
+                    <span style="font-size: large">Approved Whitelists: <span id="approved-counter"></span></span> <br>
+                    <small>Players that are already approved, but haven't joined the server yet.</small>
+                </div>
+                <div class="header-elements">
+                    <button class="btn btn-sm btn-success" type="button" onclick="addApproval()">
+                        <i class="icon-plus"></i> Add Approval
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="approved-spinner" style="min-height: 125px;">
+                    <div class="txSpinner">Loading...</div>
+                </div>
+                <div class="text-center">
+                    <h3 class="mx-auto pt-3 text-muted d-none" id="approved-message">no players here yet</h3>
+                </div>
+                <div class="table-responsive text-center d-nonex" id="approved-content">
+                    <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                        <thead>
+                            <tr class="text-left">
+                                <!-- <th>Identifier</th> -->
+                                <th>Player</th>
+                                <th>Approved By</th>
+                                <th>Approval Date</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approved-tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Template for Whitelists Requests entry lines -->
+<template id="reqs-entryTemplate">
+    <td></td>
+    <td class="name-truncate"></td>
+    <td class="name-truncate">
+        <div class="c-avatar discord-avatar">
+            <img class="c-avatar-img" src="">
+        </div>
+        <span class="discord-tag"></span>
+    </td>
+    <td></td>
+    <td class="tableActions">
+        <a href="#" class="action-buttons text-success" title="Approve">
+            <i class="icon-check"></i>
+        </a>
+        <a href="#" class="action-buttons text-danger" title="Deny">
+            <i class="icon-close"></i>
+        </a>
+    </td>
+</template>
+
+<!-- Template for Approved Whitelists entry lines -->
+<template id="approved-entryTemplate">
+    <td class="name-truncate">
+        <div class="c-avatar discord-avatar">
+            <img class="c-avatar-img" src="">
+        </div>
+        <span class="discord-tag"></span>
+    </td>
+    <td></td>
+    <td></td>
+    <td class="tableActions">
+        <a href="#" class="action-buttons text-danger" title="Deny">
+            <i class="icon-close"></i>
+        </a>
+    </td>
+</template>
+
+
+<%- await include('parts/footer.ejs', locals) %>
+
+
+<script>
+    const hasWhitelistPermission = ('<%= hasWhitelistPermission %>' === 'true');
+    const disableActionButton = (e) => {
+        e.title = 'You do not have this permission.';
+        e.setAttribute('disabled', '');
+        e.classList.remove('text-success', 'text-danger');
+        e.classList.add('text-muted');
+        e.addEventListener('click', (e) => {
+            e.preventDefault();
+        });
+    }
+
+    /**
+     * WHITELIST REQUESTS
+     */
+    const reqElements = {
+        spinner: document.getElementById('reqs-spinner'),
+        message: document.getElementById('reqs-message'),
+        content: document.getElementById('reqs-content'),
+        counter: document.getElementById('reqs-counter'),
+        tableBody: document.getElementById('reqs-tableBody'),
+        entryTemplate: document.getElementById('reqs-entryTemplate'),
+        searchInput: document.getElementById('reqs-searchInput'),
+        searchButton: document.getElementById('reqs-searchButton'),
+        denyAllBtton: document.getElementById('reqs-denyAllBtton'),
+    };
+    const paginator = {
+        prev: document.getElementById('reqs-paginator-prev'),
+        mid: document.getElementById('reqs-paginator-mid'),
+        next: document.getElementById('reqs-paginator-next'),
+    }
+    let currentPage = 1;
+    let activeSearchString = '';
+    let newestRequest = 0;
+
+    //If no perms, edit template
+    if(!hasWhitelistPermission){
+        reqElements.entryTemplate.content.querySelectorAll('.action-buttons').forEach(disableActionButton);
+    }
+
+    reqElements.searchButton.addEventListener('click', (e) => {
+        if(reqElements.searchButton.innerText === 'Search'){
+            performSearch();
+        }else{
+            clearSearch();
+        }
+    });
+    reqElements.searchInput.addEventListener('keyup', (e) => {
+        if(e.keyCode !== 13){
+            if(reqElements.searchButton.innerText !== 'Search'){
+                reqElements.searchButton.innerText = 'Search';
+            }
+        }else{
+            if(reqElements.searchInput.value.length){
+                performSearch();
+            }else{
+                clearSearch();
+            }
+        }
+    });
+
+    //Clear search
+    function clearSearch(){
+        reqElements.searchInput.value = '';
+        reqElements.spinner.classList.remove('d-none');
+        reqElements.content.classList.add('d-none');
+        reqElements.message.classList.add('d-none');
+        reqElements.searchButton.innerText = 'Search';
+        activeSearchString = '';
+        queryRequests();
+    }
+
+    //Perform search
+    function performSearch(){
+        activeSearchString = reqElements.searchInput.value.trim();
+        if(!activeSearchString.length) return clearSearch();
+        reqElements.spinner.classList.remove('d-none');
+        reqElements.content.classList.add('d-none');
+        reqElements.message.classList.add('d-none');
+        reqElements.searchButton.innerText = 'Clear';
+        queryRequests();
+    }
+
+    //Performs auto-search
+    const urlHash = decodeURI(location.hash.substr(1).trim());
+    if(urlHash.length){
+        reqElements.searchInput.value = urlHash;
+    }
+    performSearch();
+
+    const fillRequestsTableRows = (reqsArray) => {
+        reqElements.tableBody.innerHTML = '';
+
+        for (const req of reqsArray) {
+            const newNode = document.createElement("tr");
+            newNode.innerHTML = reqElements.entryTemplate.innerHTML;
+            newNode.querySelector('td:nth-child(1)').textContent = req.id;
+            newNode.querySelector('td:nth-child(2)').textContent = req.playerDisplayName;
+            newNode.querySelector('td:nth-child(2)').title = `${req.playerDisplayName}\nlicense:${req.license}`;
+            newNode.querySelector('td:nth-child(3)').title = req.discordTag;
+            newNode.querySelector('td:nth-child(3) div img').src = req.discordAvatar
+                ? req.discordAvatar
+                : 'img/default_avatar.png';
+            newNode.querySelector('td:nth-child(3) span').textContent = req.discordTag
+                ? req.discordTag
+                : 'not available';
+
+            const tsLastAttempt = new Date(req.tsLastAttempt * 1000)
+            newNode.querySelector('td:nth-child(4)').title = tsLastAttempt.toLocaleString(
+                navigator.language,
+                { dateStyle: 'long', timeStyle: 'long' }
+            );
+            newNode.querySelector('td:nth-child(4)').textContent = tsLastAttempt.toLocaleString(
+                navigator.language,
+                { dateStyle: 'short', timeStyle: 'short' }
+            );
+
+            newNode.querySelector('td:nth-child(5) a:nth-child(1)').addEventListener('click', (e) => {
+                e.preventDefault();
+                if(!hasWhitelistPermission) return;
+                approveDenyRequest(req.id, 'approve');
+            });
+            newNode.querySelector('td:nth-child(5) a:nth-child(2)').addEventListener('click', (e) => {
+                e.preventDefault();
+                if(!hasWhitelistPermission) return;
+                approveDenyRequest(req.id, 'deny');
+            });
+
+            reqElements.tableBody.appendChild(newNode);
+        }
+    }
+
+    function setPaginator(currPage, totalPages){
+        currentPage = currPage;
+        paginator.mid.querySelector('a').textContent = currPage;
+        if(currPage > 1){
+            paginator.prev.classList.remove('disabled');
+        }else{
+            paginator.prev.classList.add('disabled');
+        }
+        if(totalPages > currPage){
+            paginator.next.classList.remove('disabled');
+        }else{
+            paginator.next.classList.add('disabled');
+        }
+    }
+
+    function reqsPrevPage(){
+        queryRequests(currentPage > 1 ? currentPage - 1 : 1);
+    }
+    function reqsNextPage(){
+        queryRequests(currentPage + 1);
+    }
+
+    function queryRequests(page){
+        location.hash = encodeURI(activeSearchString);
+        const urlSearch = new URLSearchParams();
+        if(activeSearchString) urlSearch.append('searchString', activeSearchString);
+        if(page) urlSearch.append('page', page);
+
+        txAdminAPI({
+            type: "GET",
+            url: `/whitelist/requests?${urlSearch.toString()}`,
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                reqElements.spinner.classList.add('d-none');
+                reqElements.denyAllBtton.disabled = true;
+                if(data.error){
+                    reqElements.message.classList.remove('d-none', 'text-muted');
+                    reqElements.message.classList.add('text-danger');
+                    reqElements.message.textContent = `Error: ${data.error}`;
+                }else if(!Array.isArray(data.requests)){
+                    reqElements.message.classList.remove('d-none', 'text-muted');
+                    reqElements.message.classList.add('text-danger');
+                    reqElements.message.textContent = 'Error reading API response';
+                }else if(!data.requests.length){
+                    setPaginator(1, 1);
+                    newestRequest = data.newest;
+                    reqElements.counter.innerText = 0;
+                    reqElements.content.classList.add('d-none');
+                    reqElements.message.classList.remove('d-none');
+                }else{
+                    newestRequest = data.newest;
+                    setPaginator(data.currPage, data.totalPages);
+                    if(data.cntTotal === data.cntFiltered){
+                        reqElements.counter.innerText = data.cntTotal;
+                        reqElements.denyAllBtton.disabled = false;
+                    }else{
+                        reqElements.counter.innerText = `${data.cntFiltered} of ${data.cntTotal}`;
+                    }
+                    reqElements.message.classList.add('d-none');
+                    reqElements.content.classList.remove('d-none');
+                    fillRequestsTableRows(data.requests);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                reqElements.spinner.classList.add('d-none');
+                reqElements.message.classList.remove('d-none', 'text-muted');
+                reqElements.message.classList.add('text-danger');
+                reqElements.message.textContent = 'Error reading API response';
+            }
+        });
+    }
+    
+
+    function approveDenyRequest(reqId, action){
+        const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
+
+        txAdminAPI({
+            type: 'POST',
+            url: `/whitelist/requests/${action}`,
+            data: {reqId},
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                if (data.success === true) {
+                    window.location.reload(true);
+                    return true;
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+
+    async function denyAllRequests(reqId, action){
+        const confirmOptions = {
+            title: 'Deny all whitelist requests?',
+            content: `Players will still be able to try to join again, and will receive a new request ID.`,
+        };
+        if (!await txAdminConfirm(confirmOptions)) return;
+
+        const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
+
+        txAdminAPI({
+            type: 'POST',
+            url: `/whitelist/requests/deny_all`,
+            data: {newestVisible: newestRequest},
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                if (data.success === true) {
+                    window.location.reload(true);
+                    return true;
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+
+
+    
+    
+    /**
+     * APPROVED WHITELISTS
+     */
+    const approvedElements = {
+        spinner: document.getElementById('approved-spinner'),
+        message: document.getElementById('approved-message'),
+        content: document.getElementById('approved-content'),
+        counter: document.getElementById('approved-counter'),
+        tableBody: document.getElementById('approved-tableBody'),
+        entryTemplate: document.getElementById('approved-entryTemplate'),
+    };
+
+    //If no perms, edit template
+    if(!hasWhitelistPermission){
+        approvedElements.entryTemplate.content.querySelectorAll('.action-buttons').forEach(disableActionButton);
+    }
+
+    const fillApprovedTableRows = (approvalsArray) => {
+        for (const approval of approvalsArray) {
+            const newNode = document.createElement("tr");
+            newNode.innerHTML = approvedElements.entryTemplate.innerHTML;
+            newNode.querySelector('td:nth-child(1) div img').src = approval.playerAvatar
+                ? approval.playerAvatar
+                : 'img/default_avatar.png';
+            newNode.querySelector('td:nth-child(1) span').textContent = approval.playerName;
+            newNode.querySelector('td:nth-child(1) span').title = `${approval.playerName}\n${approval.identifier}`;
+            newNode.querySelector('td:nth-child(2)').textContent = approval.approvedBy;
+
+            const tsApproved = new Date(approval.tsApproved * 1000)
+            newNode.querySelector('td:nth-child(3)').title = tsApproved.toLocaleString(
+                navigator.language,
+                { dateStyle: 'long', timeStyle: 'long' }
+            );
+            newNode.querySelector('td:nth-child(3)').textContent = tsApproved.toLocaleString(
+                navigator.language,
+                { dateStyle: 'short', timeStyle: 'short' }
+            );
+
+            newNode.querySelector('td:nth-child(4) a:nth-child(1)').addEventListener('click', (e) => {
+                e.preventDefault();
+                if(!hasWhitelistPermission) return;
+                removeApproval(approval.identifier)
+            });
+
+            approvedElements.tableBody.appendChild(newNode);
+        }
+    }
+
+    txAdminAPI({
+        type: "GET",
+        url: '/whitelist/approvals',
+        timeout: REQ_TIMEOUT_LONG,
+        dataType: 'json',
+        success: function (data) {
+            approvedElements.spinner.classList.add('d-none');
+            if(data.error){
+                approvedElements.message.classList.remove('d-none', 'text-muted');
+                approvedElements.message.classList.add('text-danger');
+                approvedElements.message.textContent = `Error: ${data.error}`;
+            }else if(!Array.isArray(data)){
+                approvedElements.message.classList.remove('d-none', 'text-muted');
+                approvedElements.message.classList.add('text-danger');
+                approvedElements.message.textContent = 'Error reading API response';
+            }else if(!data.length){
+                approvedElements.counter.innerText = 0;
+                approvedElements.content.classList.add('d-none');
+                approvedElements.message.classList.remove('d-none');
+            }else{
+                approvedElements.counter.innerText = data.length;
+                approvedElements.message.classList.add('d-none');
+                approvedElements.content.classList.remove('d-none');
+                fillApprovedTableRows(data);
+            }
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            approvedElements.spinner.classList.add('d-none');
+            approvedElements.message.classList.remove('d-none', 'text-muted');
+            approvedElements.message.classList.add('text-danger');
+            approvedElements.message.textContent = 'Error reading API response';
+        }
+    });
+
+    async function addApproval(){
+        //TODO: when migrating to react, get this from the shared folder
+        const acceptedIdTypes = ['discord', 'fivem', 'license', 'license2', 'live', 'steam', 'xbl'];
+        let identifier = await txAdminPrompt({
+            modalColor: 'green',
+            confirmBtnClass: 'btn-green',
+            title: 'Whitelist player',
+            description: `Type in the Player Identifier you want to whitelist. <br>
+                This can be any of the following: <code>${acceptedIdTypes.join(', ')}</code>`, 
+            placeholder: 'discord:272800190639898628'
+        });
+        if(typeof identifier !== 'string') return;
+        
+        //Check input validity
+        identifier = identifier.trim();
+        if(!identifier.length || !acceptedIdTypes.includes(identifier.split(':', 1)[0])){
+            return $.notify({ message: 'Error: the provided identifier does not seem to be valid.' }, { type: 'danger' });
+        }
+
+        const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
+        txAdminAPI({
+            type: 'POST',
+            url: '/whitelist/approvals/add',
+            data: {identifier},
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                if (data.success === true) {
+                    // notify.update('type', 'success');
+                    // notify.update('message', 'xxxxxxx.');
+                    window.location.reload(true);
+                    return true;
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+
+    function removeApproval(identifier){
+        const notify = $.notify({ message: '<p class="text-center">Processing...</p>' }, {});
+
+        txAdminAPI({
+            type: 'POST',
+            url: '/whitelist/approvals/remove',
+            data: {identifier},
+            timeout: REQ_TIMEOUT_LONG,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                if (data.success === true) {
+                    // notify.update('type', 'success');
+                    // notify.update('message', 'xxxxxxx.');
+                    window.location.reload(true);
+                    return true;
+                } else {
+                    notify.update('type', 'danger');
+                    notify.update('message', data.error || 'unknown error');
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+
+</script>

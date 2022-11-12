@@ -41,7 +41,7 @@ NOTE Resource load scenarios knowledge base:
     - `onServerResourceStart` sourceRes
 */
 
-export default class DynamicAds {
+export default class ResourcesManager {
     constructor() {
         this.activeStartingTime = null;
         this.activeStartingResource = null;
@@ -51,9 +51,10 @@ export default class DynamicAds {
 
     /**
      * Handler for all txAdminResourceStatus structured trace events
-     * @param {*} payload
+     * @param {object} payload
+     * @param {string} mutex
      */
-    handleServerEvents(payload) {
+    handleServerEvents(payload, mutex) {
         // log(`${payload.event}: ${payload.resource}`);
         if (payload.event === 'onResourceStarting') {
             this.activeStartingResource = payload.resource;

@@ -21,7 +21,7 @@ export default async function FXServerSchedule(ctx) {
     const {action, parameter} = ctx.request.body;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('control.server', modulename)) {
+    if (!ctx.utils.testPermission('control.server', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',

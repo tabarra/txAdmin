@@ -23,6 +23,7 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
 end)
 
 RegisterNetEvent('txAdmin:menu:sendAnnouncement', function(message)
+  --FIXME: this is not being relayed to discord
   local src = source
   if type(message) ~= 'string' then
     return

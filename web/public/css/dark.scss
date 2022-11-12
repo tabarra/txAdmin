@@ -126,6 +126,9 @@ body.theme--dark {
   .text-danger {
     color: $txadmin-danger !important;
   }
+  .text-danger:hover {
+    color: darken($txadmin-danger, 15%) !important;
+  }
 
   .text-muted {
     color: #969696 !important;
@@ -371,6 +374,21 @@ body.theme--dark {
         border-radius: 0;
         border: 0 solid transparent;
       }
+    }
+  }
+
+  // ----- Pagination
+  .pagination {
+    & .page-link {
+      border-color: $txadmin-border-color !important;
+      background-color: $txadmin-dark-900;
+      &:hover {
+        background-color: $txadmin-dark-700;
+      }
+    }
+
+    & > .page-item.disabled > a{
+      color: $txadmin-dark-600 !important;
     }
   }
 

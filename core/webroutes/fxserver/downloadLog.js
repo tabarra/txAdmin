@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function FXServerDownloadLog(ctx) {
     //Check permissions
-    if (!ctx.utils.checkPermission('console.view', modulename)) {
+    if (!ctx.utils.testPermission('console.view', modulename)) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to download this log.'});
     }
 

@@ -9,7 +9,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function DeployerStatus(ctx) {
     //Check permissions
-    if (!ctx.utils.checkPermission('all_permissions', modulename)) {
+    if (!ctx.utils.hasPermission('all_permissions')) {
         return ctx.send({success: false, refresh: true});
     }
 

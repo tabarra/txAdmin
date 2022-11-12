@@ -1,7 +1,7 @@
 const modulename = 'TimeSeries';
 import fse from 'fs-extra';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers

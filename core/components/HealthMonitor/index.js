@@ -1,7 +1,7 @@
 const modulename = 'HealthMonitor';
 import got from 'got'; //we want internal requests to have 127.0.0.1 src
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.js';
+import { convars, verbose } from '@core/globalData';
 import getHostStats from './getHostStats';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -98,9 +98,6 @@ export default class HealthMonitor {
         this.lastSuccessfulHTTPHeartBeat = null;
         //to collect statistics
         this.hasServerStartedYet = false;
-
-        //to reset active player list (if module is already loaded)
-        if (globals.playerController) globals.playerController.processHeartBeat([]);
     }
 
 
@@ -333,7 +330,6 @@ export default class HealthMonitor {
     handleHeartBeat(source, postData) {
         const tsNow = now();
         if (source === 'fd3') {
-            //Processing stats
             if (
                 this.lastSuccessfulHTTPHeartBeat
                 && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
@@ -343,20 +339,6 @@ export default class HealthMonitor {
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
         } else if (source === 'http') {
-            //Sanity Check
-            if (!Array.isArray(postData.players)) {
-                if (verbose) logWarn('Received an invalid HeartBeat.');
-                return;
-            }
-
-            //Processing playerlist
-            const playerList = postData.players.map((player) => {
-                player.id = parseInt(player.id);
-                return player;
-            });
-            globals.playerController.processHeartBeat(playerList);
-
-            //Processing stats
             if (
                 this.lastSuccessfulFD3HeartBeat
                 && tsNow - this.lastSuccessfulFD3HeartBeat > 15

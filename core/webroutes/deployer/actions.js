@@ -3,9 +3,9 @@ import path from 'path';
 import { cloneDeep }  from 'lodash-es';
 import slash from 'slash';
 import mysql from 'mysql2/promise'
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
-import { txEnv, convars } from '@core/globalData.js';
+import { txEnv, convars } from '@core/globalData';
 import { validateModifyServerConfig } from '../../extras/fxsConfigHelper';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -25,7 +25,7 @@ export default async function DeployerActions(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('master', modulename)) {
+    if (!ctx.utils.testPermission('master', modulename)) {
         return ctx.send({ success: false, refresh: true });
     }
 

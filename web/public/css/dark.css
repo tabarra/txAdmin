@@ -98,6 +98,10 @@ body.theme--dark .text-danger {
   color: #ff148f !important;
 }
 
+body.theme--dark .text-danger:hover {
+  color: #c70068 !important;
+}
+
 body.theme--dark .text-muted {
   color: #969696 !important;
 }
@@ -334,6 +338,19 @@ body.theme--dark .card .card-header > h5, body.theme--dark .card .card-header .c
   font-size: 1.05rem;
   border-radius: 0;
   border: 0 solid transparent;
+}
+
+body.theme--dark .pagination .page-link {
+  border-color: #515153 !important;
+  background-color: #29292A;
+}
+
+body.theme--dark .pagination .page-link:hover {
+  background-color: #515153;
+}
+
+body.theme--dark .pagination > .page-item.disabled > a {
+  color: #656568 !important;
 }
 
 body.theme--dark #modPlayerMain-notes {

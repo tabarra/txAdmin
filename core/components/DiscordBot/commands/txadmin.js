@@ -1,7 +1,7 @@
 const modulename = 'DiscordBot:cmd:txadmin';
 import { MessageEmbed } from '@citizenfx/discord.js';
 import logger from '@core/extras/console.js';
-import { txEnv } from '@core/globalData.js';
+import { txEnv } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 export default {

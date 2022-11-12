@@ -14,8 +14,17 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    
+    /* mod resolution. */
+    "paths": {
+      "@shared/*": ["../shared/*"],
+      "@nui/*": ["./*"]
+    },
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "../shared" }
+  ]
 }

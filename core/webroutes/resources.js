@@ -81,7 +81,7 @@ export default async function Resources(ctx) {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),
                     resGroups,
-                    disableActions: (ctx.utils.checkPermission('commands.resources')) ? '' : 'disabled',
+                    disableActions: (ctx.utils.hasPermission('commands.resources')) ? '' : 'disabled',
                 };
                 resolve(['main/resources', renderData]);
             }

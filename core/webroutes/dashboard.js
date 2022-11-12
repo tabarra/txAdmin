@@ -17,7 +17,7 @@ export default async function Dashboard(ctx) {
 
     //Shortcut function
     const getPermDisable = (perm) => {
-        return (ctx.utils.checkPermission(perm, modulename, false)) ? '' : 'disabled';
+        return (ctx.utils.hasPermission(perm)) ? '' : 'disabled';
     };
 
     //Preparing render data
@@ -39,7 +39,7 @@ export default async function Dashboard(ctx) {
             commandKick: getPermDisable('players.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),
-            controlsClass: (ctx.utils.checkPermission('control.server', modulename, false)) ? 'danger' : 'secondary',
+            controlsClass: (ctx.utils.hasPermission('control.server')) ? 'danger' : 'secondary',
         },
     };
 

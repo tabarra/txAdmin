@@ -52,17 +52,16 @@ CreateThread(function()
 end)
 
 
--- Setup threads and commands
+-- =============================================
+-- Setup threads and commands & main stuff
+-- =============================================
 local rejectAllConnections = false
 local hbReturnData = 'no-data'
 log("Version "..TX_VERSION.." starting...")
 CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
-    RegisterCommand("txaKickID", txaKickID, true)
-    RegisterCommand("txaDropIdentifiers", txaDropIdentifiers, true)
     RegisterCommand("txaEvent", txaEvent, true)
-    RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
     CreateThread(function()
         while true do
@@ -84,24 +83,9 @@ end)
 
 -- HeartBeat functions
 function HTTPHeartBeat()
-    local curPlyData = {}
-    local players = GetPlayers()
-    for i = 1, #players do
-        local player = players[i]
-        local ids = GetPlayerIdentifiers(player)
-        -- using manual insertion instead of table.insert is faster
-        curPlyData[i] = {
-            id = player,
-            identifiers = ids,
-            name = GetPlayerName(player),
-            ping = GetPlayerPing(player)
-        }
-    end
-
     local url = "http://"..TX_LUACOMHOST.."/intercom/monitor"
     local exData = {
-        txAdminToken = TX_LUACOMTOKEN,
-        players = curPlyData
+        txAdminToken = TX_LUACOMTOKEN
     }
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
@@ -125,20 +109,17 @@ function handleHttp(req, res)
 
     if req.path == '/stats.json' then
         return res.send(hbReturnData)
-    elseif req.path == '/players.json' then
-        if txHttpPlayerlistHandler ~= nil then
-            return txHttpPlayerlistHandler(req, res)
-        else
-            return res.send(json.encode({error = 'handler not found'}))
-        end
     else
         return res.send(json.encode({error = 'route not found'}))
     end
 end
 
--- Ping!
+
+-- =============================================
+-- stdin commands
+-- =============================================
 function txaPing(source, args)
-    log("Pong!")
+    log("Pong! (txAdmin resource is running)")
     CancelEvent()
 end
 
@@ -156,50 +137,53 @@ function txaKickAll(source, args)
     CancelEvent()
 end
 
--- Kick specific player via server ID
-function txaKickID(source, args)
-    if #args ~= 2 then
-        return logError("Invalid arguments for txaKickID")
-    end
-    local playerID, quotedMessage = table.unpack(args)
 
-    local dropMessage = 'Kicked with no reason provided.'
-    if quotedMessage ~= nil then dropMessage = unDeQuote(quotedMessage) end
-
-    log("Kicking #"..playerID.." with reason: "..dropMessage)
-    DropPlayer(playerID, "\n"..dropMessage)
-    CancelEvent()
+-- =============================================
+--  Events handling
+-- =============================================
+-- Broadcast admin message to all players
+local function handleAnnouncementEvent(eventData)
+    TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
+    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
 end
 
--- Kick any player with matching identifiers
-function txaDropIdentifiers(_, args)
-    if #args ~= 2 then
-        return logError("Invalid arguments for txaDropIdentifiers")
+-- Sends a direct message from an admin to a player
+local function handleDirectMessageEvent(eventData)
+    TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
+    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(DM) "..eventData.author, eventData.message)
+end
+
+-- Kicks a player
+local function handleKickEvent(eventData)
+    DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
+end
+
+-- Warn specific player via server ID
+local function handleWarnEvent(eventData)
+    local pName = GetPlayerName(eventData.target)
+    if pName ~= nil then
+        TriggerClientEvent('txAdminClient:warn', eventData.target, eventData.author, eventData.reason)
+        log("Warning "..pName.." with reason: "..eventData.reason)
+    else
+        logError('handleWarnEvent: player not found')
     end
-    local rawIdentifiers, quotedReason = table.unpack(args)
+end
 
-    local dropMessage = 'no reason provided'
-    if quotedReason ~= nil then dropMessage = unDeQuote(quotedReason) end
-
-    local searchIdentifiers = {}
-    for id in string.gmatch(rawIdentifiers, '([^,;%s]+)') do
-        table.insert(searchIdentifiers, id)
-    end
-
-    -- find players to kick
+-- Ban player(s) via netid or identifiers
+local function handleBanEvent(eventData)
     local kickCount = 0
     for _, playerID in pairs(GetPlayers()) do
         local identifiers = GetPlayerIdentifiers(playerID)
         if identifiers ~= nil then
             local found = false
-            for _, searchIdentifier in pairs(searchIdentifiers) do
+            for _, searchIdentifier in pairs(eventData.targetIds) do
                 if found then break end
 
                 for _, playerIdentifier in pairs(identifiers) do
                     if searchIdentifier == playerIdentifier then
-                        log("Kicking #"..playerID.." with message: "..dropMessage)
+                        log("handleBanEvent: Kicking #"..playerID..": "..eventData.reason)
                         kickCount = kickCount + 1
-                        DropPlayer(playerID, dropMessage)
+                        DropPlayer(playerID, '[txAdmin] ' .. eventData.kickMessage)
                         found = true
                         break
                     end
@@ -210,32 +194,11 @@ function txaDropIdentifiers(_, args)
     end
 
     if kickCount == 0 then
-        log("No players found to kick")
-    end
-    CancelEvent()
-end
-
--- Broadcast admin message to all players
--- This function is triggered by txaEvent
-local function handleAnnouncementEvent(eventData)
-    TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
-    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
-end
-
--- Warn specific player via server ID
--- This function is triggered by txaEvent
-local function handleWarnEvent(eventData)
-    local pName = GetPlayerName(eventData.target)
-    if pName ~= nil then
-        TriggerClientEvent('txAdminClient:warn', eventData.target, eventData.author, eventData.reason)
-        log("Warning "..pName.." with reason: "..eventData.reason)
-    else
-        logError('txaWarnID: player not found')
+        log("handleBanEvent: No players found to kick")
     end
 end
 
 -- Kicks all players and lock joins in preparation for server shutdown
--- This function is triggered by txaEvent
 local function handleShutdownEvent(eventData)
     print('Server shutdown imminent. Kicking all players.')
     rejectAllConnections = true
@@ -245,7 +208,7 @@ local function handleShutdownEvent(eventData)
     end
 end
 
--- Fire server event
+-- Handler for all incoming tx cmd events 
 function txaEvent(source, args)
     -- sanity check
     if type(args[1]) ~= 'string' or type(args[2]) ~= 'string' then
@@ -259,10 +222,16 @@ function txaEvent(source, args)
     local eventData = json.decode(unDeQuote(args[2]))
     TriggerEvent("txAdmin:events:" .. eventName, eventData)
 
-    if eventName == 'playerWarned' then 
-        return handleWarnEvent(eventData)
-    elseif eventName == 'announcement' then 
+    if eventName == 'announcement' then 
         return handleAnnouncementEvent(eventData)
+    elseif eventName == 'playerDirectMessage' then 
+        return handleDirectMessageEvent(eventData)
+    elseif eventName == 'playerKicked' then 
+        return handleKickEvent(eventData)
+    elseif eventName == 'playerWarned' then 
+        return handleWarnEvent(eventData)
+    elseif eventName == 'playerBanned' then 
+        return handleBanEvent(eventData)
     elseif eventName == 'serverShuttingDown' then 
         return handleShutdownEvent(eventData)
     end
@@ -270,32 +239,9 @@ function txaEvent(source, args)
 end
 
 
--- Send admin direct message to specific player
-function txaSendDM(source, args)
-    if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil then
-        args[2] = unDeQuote(args[2])
-        args[3] = unDeQuote(args[3])
-        local pName = GetPlayerName(args[1])
-        if pName ~= nil then
-            log("Admin DM to "..pName.." from "..args[2]..": "..args[3])
-            TriggerClientEvent("chat:addMessage", args[1], {
-                args = {
-                    "(DM) "..args[2],
-                    args[3],
-                },
-                color = {255, 0, 0}
-            })
-            TriggerEvent('txaLogger:internalChatMessage', -1, "(DM) "..args[2], args[3])
-        else
-            logError('txaSendDM: player not found')
-        end
-    else
-        logError('Invalid arguments for txaSendDM')
-    end
-    CancelEvent()
-end
-
+-- =============================================
 -- Get all resources/statuses and report back to txAdmin
+-- =============================================
 function txaReportResources(source, args)
     --Prepare resources list
     local resources = {}
@@ -335,7 +281,10 @@ function txaReportResources(source, args)
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
 end
 
+
+-- =============================================
 -- Player connecting handler
+-- =============================================
 function handleConnections(name, setKickReason, d)
     -- if server is shutting down
     if rejectAllConnections then
@@ -350,18 +299,19 @@ function handleConnections(name, setKickReason, d)
         Wait(0)
 
         --Preparing vars and making sure we do have indentifiers
-        local url = "http://"..TX_LUACOMHOST.."/intercom/checkPlayerJoin"
+        local url = "http://"..TX_LUACOMHOST.."/player/checkJoin"
         local exData = {
             txAdminToken = TX_LUACOMTOKEN,
-            identifiers = GetPlayerIdentifiers(player),
-            name = name
+            playerIds = GetPlayerIdentifiers(player),
+            playerName = name
         }
-        if #exData.identifiers <= 1 then
+        if #exData.playerIds <= 1 then
             d.done("[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg")
             return
         end
 
         --Attempt to validate the user
+        d.update("[txAdmin] Checking banlist/whitelist... (0/10)")
         CreateThread(function()
             local attempts = 0
             local isDone = false;
@@ -369,18 +319,26 @@ function handleConnections(name, setKickReason, d)
             while isDone == false and attempts < 10 do
                 attempts = attempts + 1
                 d.update("[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
-                PerformHttpRequest(url, function(httpCode, data, resultHeaders)
-                    local resp = tostring(data)
+                PerformHttpRequest(url, function(httpCode, rawData, resultHeaders)
+                    -- Validating response
+                    local respStr = tostring(rawData)
                     if httpCode ~= 200 then
-                        logError("[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..resp)
-                    elseif data == 'allow' then
+                        logError("[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
+                    end
+                    local respObj = json.decode(respStr)
+                    if not respObj or type(respObj.allow) ~= "boolean" then
+                        logError("[txAdmin] Checking banlist/whitelist failed with invalid response: "..respStr)
+                    end
+                    
+                    if respObj.allow == true then
                         if not isDone then
                             d.done()
                             isDone = true
                         end
-                    else
+                    else 
                         if not isDone then
-                            d.done("\n"..data)
+                            local reason = respObj.reason or "[txAdmin] no reason provided"
+                            d.done("\n"..reason)
                             isDone = true
                         end
                     end

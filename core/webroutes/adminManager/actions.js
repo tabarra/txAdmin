@@ -2,7 +2,7 @@ const modulename = 'WebServer:AdminManagerActions';
 import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes'
 import got from '@core/extras/got.js';
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -28,7 +28,7 @@ export default async function AdminManagerActions(ctx) {
     let action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('manage.admins', modulename)) {
+    if (!ctx.utils.testPermission('manage.admins', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',

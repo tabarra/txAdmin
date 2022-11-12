@@ -6,7 +6,7 @@ import { Deployer, validateTargetPath, parseValidateRecipe } from '@core/extras/
 import { validateFixServerConfig, findLikelyCFGPath } from '@core/extras/fxsConfigHelper';
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -53,7 +53,7 @@ export default async function SetupPost(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('all_permissions', modulename)) {
+    if (!ctx.utils.testPermission('all_permissions', modulename)) {
         return ctx.send({
             success: false,
             message: 'You need to be the admin master to use the setup page.',

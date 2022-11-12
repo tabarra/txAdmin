@@ -10,24 +10,25 @@ const { dir, log, logOk, logWarn, logError } = logger();
 /**
  * Helpers
  */
-const cleanPath = (x) => { return slash(path.normalize(x)); };
-const logDie = (x) => {
+const cleanPath = (x: string) => { return slash(path.normalize(x)); };
+const logDie = (x: string) => {
     logError(x);
     process.exit(1);
 };
-const getBuild = (ver) => {
+const getBuild = (ver: any) => {
     try {
         const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
+        // @ts-ignore: let it throw
         return parseInt(res[1]);
     } catch (error) {
         return 9999;
     }
 };
-const getConvarBool = (convarName) => {
+const getConvarBool = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim().toLowerCase();
     return ['true', '1', 'on'].includes(cvar);
 };
-const getConvarString = (convarName) => {
+const getConvarString = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim();
     return (cvar === 'false') ? false : cvar;
 };
@@ -69,7 +70,7 @@ if (fxServerVersion === 9999) {
 }
 
 //Getting txAdmin version
-const txAdminVersion = GetResourceMetadata(resourceName, 'version');
+const txAdminVersion = GetResourceMetadata(resourceName, 'version', 0);
 if (typeof txAdminVersion !== 'string' || txAdminVersion == 'null') {
     logDie('txAdmin version not set or in the wrong format');
 }
@@ -102,7 +103,7 @@ if (!txDataPathConvar) {
 try {
     if (!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
 } catch (error) {
-    logDie(`Failed to check or create '${dataPath}' with error: ${error.message}`);
+    logDie(`Failed to check or create '${dataPath}' with error: ${(error as Error).message}`);
 }
 
 //Check paths for non-ASCII characters
@@ -140,7 +141,7 @@ const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 if (fs.existsSync(zapCfgFile)) {
     log('Loading ZAP-Hosting configuration file.');
     try {
-        zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile));
+        zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile, 'utf8'));
         isZapHosting = true;
         forceInterface = zapCfgData.interface;
         forceFXServerPort = zapCfgData.fxServerPort;
@@ -171,7 +172,7 @@ if (fs.existsSync(zapCfgFile)) {
 
         if (!isDevMode) fs.unlinkSync(zapCfgFile);
     } catch (error) {
-        logDie(`Failed to load with ZAP-Hosting configuration error: ${error.message}`);
+        logDie(`Failed to load with ZAP-Hosting configuration error: ${(error as Error).message}`);
     }
 } else {
     isZapHosting = false;
@@ -227,6 +228,6 @@ export const convars = Object.freeze({
 //Verbosity can change during execution
 //FIXME: move this to console.js
 export let verbose = verboseConvar;
-export const setVerbose = (state) => {
+export const setVerbose = (state: boolean) => {
     verbose = !!state;
 }

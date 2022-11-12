@@ -4,7 +4,7 @@ export default {
     preReleaseExpirationDays: 21,
     txAdminArgs: [
         '+set', 'txAdminDevMode', 'true',
-        // '+set', 'txAdminVerbose', 'true',
+        '+set', 'txAdminVerbose', 'true',
 
         //FIXME: broken
         // '+set', 'txDebugPlayerlistGenerator', 'true',

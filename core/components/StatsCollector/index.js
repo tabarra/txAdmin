@@ -1,7 +1,7 @@
 const modulename = 'StatsCollector';
 import fse from 'fs-extra';
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.js';
+import { convars, verbose } from '@core/globalData';
 import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './statsUtils.js'
 import got from '@core/extras/got.js';
 // import TimeSeries from './timeSeries.js'; //NOTE: may still use for the player counter
@@ -100,7 +100,7 @@ export default class StatsCollector {
 
         //     })
         // }
-        // const playerlist = globals.playerController.getPlayerList();
+        // const playerlist = globals.playerlistManager.getPlayerList();
         // this.playersTimeSeries.add(playerlist.length);
         // dir(playerlist.length)
     }
@@ -126,6 +126,7 @@ export default class StatsCollector {
         //Check pre-condition
         if (this.perfSeries === null) return;
         if (globals.fxRunner.fxChild === null) return;
+        if (globals.playerlistManager === null) return;
 
         //Commom vars
         const now = Date.now();
@@ -174,7 +175,7 @@ export default class StatsCollector {
             ts: now,
             skipped: !islinear,
             mainTickCounter: currPerfData.svMain.count,
-            clients: globals.playerController.getPlayerList().length,
+            clients: globals.playerlistManager.getPlayerList().length,
             perfSrc: currPerfData,
             perf: currPerfDiff,
         };

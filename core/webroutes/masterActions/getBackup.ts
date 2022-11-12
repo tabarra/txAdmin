@@ -2,6 +2,7 @@ const modulename = 'WebServer:MasterActions:GetBackup';
 import fsp from 'node:fs/promises';
 import dateFormat from 'dateformat';
 import logger from '@core/extras/console.js';
+import { Context } from 'koa';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -9,9 +10,9 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  * Handles the rendering or delivery of master action resources
  * @param {object} ctx
  */
-export default async function MasterActionsGet(ctx) {
+export default async function MasterActionsGet(ctx: Context) {
     //Check permissions
-    if (!ctx.utils.checkPermission('master', modulename)) {
+    if (!ctx.utils.testPermission('master', modulename)) {
         return ctx.utils.render('main/message', {message: 'Only the master account has permission to view/use this page.'});
     }
     if (!ctx.txVars.isWebInterface) {
@@ -24,7 +25,7 @@ export default async function MasterActionsGet(ctx) {
         readFile = await fsp.readFile(dbPath);
     } catch (error) {
         logError(`Could not read database file ${dbPath}.`);
-        return ctx.utils.render('main/message', {message: `Failed to generate backup file with error: ${error.message}`});
+        return ctx.utils.render('main/message', {message: `Failed to generate backup file with error: ${(error as Error).message}`});
     }
     const now = dateFormat(new Date(), 'yyyy-mm-dd_HH-MM-ss');
     ctx.attachment(`playersDB_${now}.json`);

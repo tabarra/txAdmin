@@ -1,10 +1,12 @@
 const modulename = 'WebServer:PlayerList';
-import dateFormat from 'dateformat';
+import Fuse from "fuse.js";
 import humanizeDuration from 'humanize-duration';
 import xssInstancer from '@core/extras/xss.js';
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
+import cleanPlayerName from '@core/../shared/cleanPlayerName';
+import { cloneDeep } from 'lodash-es';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -22,10 +24,10 @@ const now = () => { return Math.round(Date.now() / 1000); };
  */
 export default async function PlayerList(ctx) {
     //Prepare dbo
-    const dbo = globals.playerController.getDB();
+    const dbo = globals.playerDatabase.getDb();
 
     //Delegate to the specific action handler
-    if (ctx.request.query && ctx.request.query.search) {
+    if (ctx.request.query?.search) {
         return await handleSearch(ctx, dbo);
     } else {
         return await handleDefault(ctx, dbo);
@@ -74,36 +76,24 @@ async function handleSearch(ctx, dbo) {
 
         //IF searching for identifiers
         if (idsArray.length) {
-            const actions = await dbo.get('actions')
+            const actions = await dbo.chain.get('actions')
                 .filter((a) => idsArray.some((fi) => a.identifiers.includes(fi)))
                 .take(512)
                 .cloneDeep()
                 .value();
             outData.resActions = await processActionList(actions);
 
-            //NOTE: disabled due to the unexpected behavior of it finding players that do not have any of the identifiers being searched for
-            let licensesArr = [];
-            actions.forEach((a) => {
-                a.identifiers.forEach((id) => {
-                    if (id.substring(0, 8) == 'license:') {
-                        licensesArr.push(id.substring(8));
-                    }
-                });
-            });
-            //TODO: adapt this for when we start saving all IDs for the players
-            // const licensesArr = idsArray.filter(id => id.substring(0, 8) == "license:").map(id => id.substring(8));
-            const players = await dbo.get('players')
-                .filter((p) => licensesArr.includes(p.license))
+            const players = await dbo.chain.get('players')
+                .filter((p) => idsArray.some((fi) => p.ids.includes(fi)))
                 .take(512)
                 .cloneDeep()
                 .value();
             outData.resPlayers = await processPlayerList(players);
             outData.message = `Searching by identifiers found ${players.length} player${addPlural(players.length)} and ${actions.length} action${addPlural(actions.length)}.`;
 
-
-        //IF searching for an acition ID
+        //IF searching for an action ID
         } else if (consts.regexActionID.test(searchString.toUpperCase())) {
-            const action = await dbo.get('actions')
+            const action = await dbo.chain.get('actions')
                 .find({id: searchString.toUpperCase()})
                 .cloneDeep()
                 .value();
@@ -112,34 +102,29 @@ async function handleSearch(ctx, dbo) {
             } else {
                 outData.resActions = await processActionList([action]);
 
-                //TODO: adapt this for when we start saving all IDs for the players
-                const licensesArr = action.identifiers.filter((x) => x.substring(0, 8) == 'license:').map((x) => x.substring(8));
-                if (licensesArr.length) {
-                    const players = await dbo.get('players')
-                        .filter((p) => licensesArr.includes(p.license))
-                        .take(512)
-                        .cloneDeep()
-                        .value();
-                    outData.resPlayers = await processPlayerList(players);
-                }
+                const players = await dbo.chain.get('players')
+                    .filter((p) => action.identifiers.some((fi) => p.ids.includes(fi)))
+                    .take(512)
+                    .cloneDeep()
+                    .value();
+                outData.resPlayers = await processPlayerList(players);
                 outData.message = `Searching by Action ID found ${outData.resPlayers.length} related player${addPlural(outData.resPlayers.length)}.`;
             }
 
-
-        //Likely searching for an partial name
+        //Likely searching for a partial name
         } else {
-            const players = await dbo.get('players')
-                .filter((p) => {
-                    return p.name && p.name.toLowerCase().includes(searchString.toLowerCase());
-                })
-                .take(512)
-                .cloneDeep()
-                .value();
-            outData.resPlayers = await processPlayerList(players);
-            //TODO: if player found, search for all actions from them
-            outData.message = `Searching by name found ${players.length} player${addPlural(players.length)}.`;
-        }
+            const { pureName } = cleanPlayerName(searchString);
+            const players = dbo.chain.get('players').value();
+            const fuse = new Fuse(players, {
+                keys: ['pureName'],
+                threshold: 0.3
+            });
+            const filtered = cloneDeep(fuse.search(pureName, {limit: 128}).map(x => x.item));
 
+            outData.resPlayers = await processPlayerList(filtered);
+            //TODO: if player found, search for all actions from them
+            outData.message = `Searching by name found ${filtered.length} player${addPlural(filtered.length)}.`;
+        }
 
         //Give output
         return ctx.send(outData);
@@ -161,9 +146,8 @@ async function handleSearch(ctx, dbo) {
  */
 async function handleDefault(ctx, dbo) {
     let timeStart = new Date();
-    const controllerConfigs = globals.playerController.config;
+    const controllerConfigs = globals.playerDatabase.config;
     const queryLimits = {
-        whitelist: 15,
         actions: 20,
         players: 30,
     };
@@ -171,15 +155,12 @@ async function handleDefault(ctx, dbo) {
         headerTitle: 'Players',
         stats: await getStats(dbo),
         queryLimits,
-        lastWhitelistBlocks: await getPendingWL(dbo, queryLimits.whitelist),
         lastActions: await getLastActions(dbo, queryLimits.actions),
         lastPlayers: await getLastPlayers(dbo, queryLimits.players),
         disableBans: !controllerConfigs.onJoinCheckBan,
-        disableWhitelist: !controllerConfigs.onJoinCheckWhitelist,
         permsDisable: {
-            ban: !ctx.utils.checkPermission('players.ban', modulename, false),
-            warn: !ctx.utils.checkPermission('players.warn', modulename, false),
-            whitelist: !ctx.utils.checkPermission('players.whitelist', modulename, false),
+            ban: !ctx.utils.hasPermission('players.ban'),
+            warn: !ctx.utils.hasPermission('players.warn'),
         },
     };
 
@@ -191,31 +172,30 @@ async function handleDefault(ctx, dbo) {
 
 
 /**
- * Get the last entries of the pending whitelist table, sorted by timestamp.
+ * Get stats on actions and players
  * @param {object} dbo
- * @returns {object} array of actions, or, throws on error
+ * @returns {object} array of actions
  */
 async function getStats(dbo) {
     try {
-        const actionStats = await dbo.get('actions')
+        const actionStats = await dbo.chain.get('actions')
             .reduce((acc, a, ind) => {
                 if (a.type == 'ban') {
                     acc.bans++;
                 } else if (a.type == 'warn') {
                     acc.warns++;
-                } else if (a.type == 'whitelist') {
-                    acc.whitelists++;
                 }
                 return acc;
-            }, {bans:0, warns:0, whitelists:0})
+            }, {bans:0, warns:0})
             .value();
 
-        const playerStats = await dbo.get('players')
+        const playerStats = await dbo.chain.get('players')
             .reduce((acc, p, ind) => {
                 acc.players++;
                 acc.playTime += p.playTime;
+                if(p.tsWhitelisted) acc.whitelists++;
                 return acc;
-            }, {players:0, playTime:0})
+            }, {players:0, playTime:0, whitelists:0})
             .value();
         const playTimeSeconds = playerStats.playTime * 60 * 1000;
         let humanizeOptions = {
@@ -242,7 +222,7 @@ async function getStats(dbo) {
             playTime: playerStats.playTime,
             bans: actionStats.bans,
             warns: actionStats.warns,
-            whitelists: actionStats.whitelists,
+            whitelists: playerStats.whitelists,
         };
 
         return {
@@ -250,53 +230,10 @@ async function getStats(dbo) {
             playTime: playTime,
             bans: actionStats.bans.toLocaleString(),
             warns: actionStats.warns.toLocaleString(),
-            whitelists: actionStats.whitelists.toLocaleString(),
+            whitelists: playerStats.whitelists.toLocaleString(),
         };
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;
-        if (verbose) logError(msg);
-        return [];
-    }
-}
-
-
-/**
- * Get the last entries of the pending whitelist table, sorted by timestamp.
- * @param {object} dbo
- * @param {number} limit
- * @returns {array} array of actions, or [] on error
- */
-async function getPendingWL(dbo, limit) {
-    try {
-        let pendingWL = await dbo.get('pendingWL')
-            .orderBy('tsLastAttempt', 'desc')
-            .take(limit)
-            .cloneDeep()
-            .value();
-
-        //DEBUG: remove this
-        // pendingWL = []
-        // for (let i = 0; i < 15; i++) {
-        //     pendingWL.push({
-        //         id: "RNV000",
-        //         name: `lorem ipsum ${i}`,
-        //         license: "9b9fc300cc6aaaaad3b5df4dcccce4933753",
-        //         tsLastAttempt: 1590282667
-        //     });
-        // }
-
-        const maxNameSize = 36;
-        let lastWhitelistBlocks = pendingWL.map((x) => {
-            x.time = dateFormat(new Date(x.tsLastAttempt * 1000), 'isoTime');
-            if (x.name.length > maxNameSize) {
-                x.name = x.name.substring(0, maxNameSize - 3) + '...';
-            }
-            return x;
-        });
-
-        return lastWhitelistBlocks;
-    } catch (error) {
-        const msg = `getPendingWL failed with error: ${error.message}`;
         if (verbose) logError(msg);
         return [];
     }
@@ -312,7 +249,7 @@ async function getPendingWL(dbo, limit) {
  */
 async function getLastActions(dbo, limit) {
     try {
-        const lastActions = await dbo.get('actions')
+        const lastActions = await dbo.chain.get('actions')
             .takeRight(limit)
             .reverse()
             .cloneDeep()
@@ -335,7 +272,7 @@ async function getLastActions(dbo, limit) {
  */
 async function getLastPlayers(dbo, limit) {
     try {
-        const lastPlayers = await dbo.get('players')
+        const lastPlayers = await dbo.chain.get('players')
             .takeRight(limit)
             .reverse()
             .cloneDeep()
@@ -383,10 +320,6 @@ async function processActionList(list) {
         } else if (log.type == 'warn') {
             out.color = 'warning';
             out.message = `${xss(log.author)} WARNED ${actReference}`;
-        } else if (log.type == 'whitelist') {
-            out.color = 'success';
-            out.message = `${xss(log.author)} WHITELISTED ${actReference}`;
-            out.reason = '';
         } else {
             out.color = 'secondary';
             out.message = `${xss(log.author)} ${log.type.toUpperCase()} ${actReference}`;
@@ -414,10 +347,12 @@ async function processActionList(list) {
 async function processPlayerList(list) {
     if (!list) return [];
 
-    const activeLicenses = globals.playerController.activePlayers.map((p) => p.license);
+    const activeLicenses = globals.playerlistManager.getPlayerList()
+        .map((p) => p.license)
+        .filter(l => l);
     return list.map((p) => {
         return {
-            name: p.name,
+            name: p.displayName,
             license: p.license,
             joined: (new Date(p.tsJoined * 1000)).toLocaleString(),
             color: (activeLicenses.includes(p.license)) ? 'success' : 'dark',

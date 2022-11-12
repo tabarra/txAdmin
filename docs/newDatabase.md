@@ -1,13 +1,18 @@
 NOTE: mesmo arquivo da pasta ~/Desktop/PROGRAMMING/txAdmin-newDatabase
+
+## FIXME: i just found out two players in the same server can have the same license, and doesn't seem to be just cl2, please investigate and check the logic below.
+
 ## New database schema:
 ```js
 //Every player that have been on the server over specific threshold (15m default) gets added to the database
+//FIXME: minSessionTime doesn't exist anymore
+//FIXME: i think we can safely save the last 10 player names, but don't even need to use it for searches
 players: [{ 
     license: 'xxxxxxxxx',
     name: 'yyyyy',
     totalPlayTime: 205,
     joined: TS,
-    whitelisted?: TS, //ts instead of bool so we can have a feature to automatically remove WL after xxx days
+    whitelisted: TS, //ts instead of bool so we can have a feature to automatically remove WL after xxx days 
     notes?: {
         text: '',
         lastAdmin: 'null',
@@ -65,14 +70,14 @@ legacyBans: [{
 - If your identifier matches any account that is banned, the ban apllies to you
     - make sure the ban message makes clear which identifier matched and that it is from another account (maybe even say the name)
     - would be cool if we could give the player an adaptive card, as it is a lot of information to show
-- whitelist will be cease to be an action and become a prop in the player object containing only a timestamp of when it was issued
+- (DONE) whitelist will be cease to be an action and become a prop in the player object containing only a timestamp of when it was issued
 - JSON db migration of bans/warns:
     - FIXME: can i migrate Axxx-xxxx to Wxxx-xxxx?
     - if license is present, matches with a user, no multiple ids of the same type (ex more than one discord)
         - then it is added to the player history
     - else
         - added to a "legacy bans" table
-- Warns now can be revoked, as they are quite often used as "negative points" on player log instead of actual Warns 
+- (DONE) Warns now can be revoked, as they are quite often used as "negative points" on player log instead of actual Warns 
 - When we query (and find) a player on playerConnecting, cache the player object in a lru-cache so we don't have to requery on playerJoining
 - FIXME: should I change how the whitelist currently works?
 

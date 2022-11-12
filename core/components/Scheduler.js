@@ -1,7 +1,7 @@
 const modulename = 'Scheduler';
 import logger from '@core/extras/console.js';
 import { parseSchedule } from '@core/extras/helpers';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers

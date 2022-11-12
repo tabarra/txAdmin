@@ -1,7 +1,7 @@
 const modulename = 'DynamicAds';
 import xss from 'xss';
 import defaultAds from '../../dynamicAds.json';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 import logger from '@core/extras/console.js';
 import got from '@core/extras/got.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);

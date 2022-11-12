@@ -1,5 +1,5 @@
 const modulename = 'DiscordBot:cmd:addwl';
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -27,8 +27,12 @@ export default {
             return await message.reply('you do not have whitelist permissions :face_with_raised_eyebrow:');
         }
 
+        //FIXME: migrate this command
+        return await message.reply('This command is temporarily disabled, please use the txAdmin web interface to whitelist players.');
+        
+
         //Check if whitelist is enabled
-        if (!globals.playerController.config.onJoinCheckWhitelist) {
+        if (!globals.playerDatabase.config.onJoinCheckWhitelist) {
             return await message.reply('**txAdmin** whitelist is disabled :man_facepalming:\nGo to the settings and enable it first.');
         }
 
@@ -64,7 +68,7 @@ export default {
 
         //Whitelist reference
         try {
-            await globals.playerController.approveWhitelist(reference, admin.name);
+            await globals.playerDatabase.approveWhitelist(reference, admin.name);
         } catch (error) {
             return await message.reply(`**Error:** ${error.message}`);
         }

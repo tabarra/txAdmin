@@ -1,7 +1,8 @@
 import { isBrowserEnv } from "./miscUtils";
 import { debugData } from "./debugData";
 import { VehicleStatus } from "../hooks/usePlayerListListener";
-import { CustomLocaleData, ServerCtx } from "../state/server.state";
+import { LocaleType } from "@shared/localeMap";
+import { ServerCtx } from "../state/server.state";
 import { SetWarnOpenData } from "../components/WarnPage/WarnPage";
 import { AddAnnounceData } from "../hooks/useHudListenersService";
 
@@ -44,7 +45,7 @@ const MenuObject = {
       },
     ]);
   },
-  setCustomLocale: (localeObj: CustomLocaleData) => {
+  setCustomLocale: (localeObj: LocaleType) => {
     debugData<ServerCtx>([
       {
         action: "setServerCtx",

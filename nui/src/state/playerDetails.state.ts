@@ -9,65 +9,36 @@ import { fetchWebPipe } from "../utils/fetchWebPipe";
 import { debugLog } from "../utils/debugLog";
 import { MockedPlayerDetails } from "../utils/constants";
 import { PlayerData } from "../hooks/usePlayerListListener";
-
-enum HistoryActionType {
-  Warn = "WARN",
-  WarnRevoked = "WARN-REVOKED",
-  Ban = "BAN",
-  BanRevoked = "BAN-REVOKED",
-  Whitelist = "WHITELIST",
-  WhitelistRevoked = "WHITELIST-REVOKED",
-}
-
-interface PlayerHistoryItem {
-  id: string;
-  action: HistoryActionType;
-  date: string;
-  reason: string;
-  author: string;
-  color?: string;
-}
-
-interface TxAdminPlayerAPIResp {
-  funcDisabled: {
-    message: string;
-    kick: string;
-    warn: string;
-    ban: boolean;
-  };
-  id: number | boolean;
-  license: string;
-  identifiers: string[];
-  isTmp: boolean;
-  name: string;
-  actionHistory: PlayerHistoryItem[];
-  joinDate: string;
-  sessionTime: string;
-  playTime: string;
-  notesLog: string;
-  notes: string;
-  type?: string;
-  message?: string;
-}
+import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
+import { GenericApiError } from "@shared/genericApiTypes";
 
 const playerDetails = {
-  selectedPlayerData: selector<TxAdminPlayerAPIResp>({
+  selectedPlayerData: selector<PlayerModalResp | undefined>({
     key: "selectedPlayerDetails",
     get: async ({ get }) => {
       get(playerDetails.forcePlayerRefresh);
       const assocPlayer = get(playerDetails.associatedPlayer);
+      if (!assocPlayer) return;
       const assocPlayerId = assocPlayer.id;
 
-      const res = await fetchWebPipe<TxAdminPlayerAPIResp>(
-        `/player/${assocPlayerId}`,
+      const res: any = await fetchWebPipe<PlayerModalResp>(
+        `/player?mutex=current&netid=${assocPlayerId}`,
         { mockData: MockedPlayerDetails }
       );
-
       debugLog("FetchWebPipe", res, "PlayerFetch");
 
-      if (res.type === "offline") new Error(res.message);
-
-      return res.logout !== true ? res : false;
+      if (res.error) {
+        return { error: (res as GenericApiError).error };
+      } else if (res.player) {
+        const player = (res as PlayerModalSuccess).player;
+        if (player.isConnected) {
+          return res;
+        } else {
+          return { error: 'This player is no longer connected to the server.' };
+        }
+      }else{
+        return { error: 'Unknown error :(' };
+      }
     },
   }),
   forcePlayerRefresh: atom({
@@ -81,13 +52,10 @@ const playerDetails = {
 };
 
 export const usePlayerDetailsValue = () =>
-  useRecoilValue<TxAdminPlayerAPIResp>(playerDetails.selectedPlayerData);
+  useRecoilValue<PlayerModalResp>(playerDetails.selectedPlayerData);
 
 export const useForcePlayerRefresh = () =>
   useSetRecoilState(playerDetails.forcePlayerRefresh);
-
-export const usePlayerDetails = () =>
-  useRecoilState<TxAdminPlayerAPIResp>(playerDetails.selectedPlayerData);
 
 export const useAssociatedPlayerValue = () =>
   useRecoilValue<PlayerData>(playerDetails.associatedPlayer);

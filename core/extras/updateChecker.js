@@ -2,7 +2,7 @@ const modulename = 'WebServer:updateChecker';
 import semver from 'semver';
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
-import { txEnv, verbose } from '@core/globalData.js';
+import { txEnv, verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers

@@ -2,7 +2,7 @@ const modulename = 'DiscordBot:cmd:status';
 import humanizeDuration from 'humanize-duration';
 import { MessageEmbed } from '@citizenfx/discord.js';
 import logger from '@core/extras/console.js';
-import { txEnv } from '@core/globalData.js';
+import { txEnv } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 export default {
@@ -15,9 +15,7 @@ export default {
         if (globals.healthMonitor.currentStatus == 'ONLINE' || globals.healthMonitor.currentStatus == 'PARTIAL') {
             cardColor = 0x74EE15;
             cardTitle = globals.translator.t('discord.status_online', {servername: globals.config.serverName});
-            replaces.players = (Array.isArray(globals.playerController.activePlayers))
-                ? globals.playerController.activePlayers.length
-                : '--';
+            replaces.players = globals.playerlistManager.getPlayerList().length;
             if (globals.fxRunner.fxServerHost) {
                 const hostParts = globals.fxRunner.fxServerHost.split(':');
                 if (hostParts.length >= 2) {

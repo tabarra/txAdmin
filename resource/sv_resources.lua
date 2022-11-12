@@ -10,7 +10,7 @@ end
 local function reportResourceEvent(event, resource)
     -- print(string.format("\27[107m\27[30m %s: %s \27[0m", event, resource))
     PrintStructuredTrace(json.encode({
-        type = 'txAdminResourceStatus',
+        type = 'txAdminResourceEvent',
         event = event,
         resource = resource
     }))

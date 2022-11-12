@@ -1,15 +1,15 @@
 <!-- Player info modal -->
 <div class="modal fade" id="modPlayer" tabindex="-1" role="dialog" aria-labelledby="modPlayerTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 680px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modPlayerTitle">Loading...</h5>
+                <h4 class="modal-title" id="modPlayerTitle">Loading...</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
-            <div class="modal-body" style="min-height: 240px;">
+            <div class="modal-body" style="min-height: 280px;">
                 <div class="text-center p-3" style="height: 100px; font-size: larger;" id="modPlayerMessage">
                     <div class="txSpinner">Loading...</div>
                 </div>
@@ -32,11 +32,34 @@
                         <div class="tab-content">
 
                             <!-- Tab modPlayerMain -->
-                            <div class="tab-pane fade show active" id="modPlayerMain" role="tabpanel" aria-labelledby="modPlayerMain-tab">
-                                <h5>Player Info:</h5>
-                                <strong>Session time:</strong> <span id="modPlayerMain-sessionTime">--</span> <br>
+                            <div class="tab-pane fade show active" id="modPlayerMain" role="tabpanel" aria-labelledby="modPlayerMain-tab" style="font-size: medium;">
+                                <div id="modPlayerMain-sessionTimeDiv">
+                                    <strong>Session time:</strong> <span id="modPlayerMain-sessionTimeText">--</span> <br>
+                                </div>
                                 <strong>Play time:</strong> <span id="modPlayerMain-playTime">--</span> <br>
                                 <strong>Join date:</strong> <span id="modPlayerMain-joinDate">--</span> <br>
+                                <div id="modPlayerMain-lastConnectionDiv">
+                                    <strong>Last connection:</strong> <span id="modPlayerMain-lastConnectionText">--</span> <br>
+                                </div>
+
+                                <strong>Whitelisted:</strong>
+                                <span id="modPlayerMain-whitelisted">not yet</span>
+                                <button class="btn btn-inline-sm btn-success" type="button" id="modPlayerMain-whitelistAddBtn">
+                                    ADD WL
+                                </button>
+                                <button class="btn btn-inline-sm btn-dark" type="button" id="modPlayerMain-whitelistRemoveBtn">
+                                    REMOVE WL
+                                </button>
+                                <br>
+
+                                <strong>Log:</strong>
+                                <span id="modPlayerMain-logCountBans" class="text-danger">1 ban</span>,
+                                <span id="modPlayerMain-logCountWarns" class="text-warning">2 warns</span>
+                                <button class="btn btn-inline-sm btn-dark" type="button" id="modPlayerMain-logDetailsBtn">
+                                    DETAILS
+                                </button>
+                                <br>
+
                                 <div class="form-group row m-0 mt-2">
                                     <label for="modPlayerFormNotes">
                                         <strong>Notes:</strong>
@@ -51,10 +74,39 @@
 
                             <!-- Tab modPlayerIDs -->
                             <div class="tab-pane fade" id="modPlayerIDs" role="tabpanel" aria-labelledby="modPlayerIDs-tab">
-                                <h5>Player Identifiers:</h5>
-                                <code id="modPlayerIDs-list">
-                                    Loading...
-                                </code>
+                                <style>
+                                    /* NOTE: this really shouldn't be here, but it's very temporary */
+                                    .scrollBox {
+                                        max-height: 55vh;
+                                        overflow-y: scroll;
+                                        padding-right: 10px;
+                                    }
+                                    .idsText {
+                                        border-radius: 4px;
+                                        padding: 6px 8px;
+                                        margin-bottom: 7px;
+                                        display: flex;
+                                        align-items: center;
+                                        font-family: monospace;
+                                        font-size: medium;
+                                        letter-spacing: 0.05rem;
+                                    }
+                                </style>
+                                
+                                <div class="thin-scroll scrollBox">
+                                    <div class="mb-3">
+                                        <h5>Current Identifiers:</h5>
+                                        <div id="modPlayerIDs-currList" >
+                                            Loading...
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h5>Previously Used Identifiers:</h5>
+                                        <div id="modPlayerIDs-oldList">
+                                            Loading...
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Tab modPlayerHistory -->
@@ -67,7 +119,6 @@
 
                             <!-- Tab modPlayerBan -->
                             <div class="tab-pane fade" id="modPlayerBan" role="tabpanel" aria-labelledby="modPlayerBan-tab">
-                                <h5>Ban Player:</h5>
                                 <div class="form-group row">
                                     <label for="modPlayerBan-reason" class="col-sm-3 col-form-label">
                                         Reason
@@ -129,10 +180,6 @@
                 </div> <!-- End Row -->
             </div> <!-- End Modal Body -->
             <div class="modal-footer align-items-end <%= (!isWebInterface ? 'd-none' : 'd-flex') %>">
-                <button type="button" class="btn btn-outline-info mr-auto"
-                    id="modPlayerButtons-search" onclick="searchPlayer()">
-                    <i class="icon-info"></i> Search
-                </button>
                 <button type="button" class="btn btn-outline-dark"
                     id="modPlayerButtons-message" onclick="messagePlayer()">
                     <i class="icon-speech"></i> DM

@@ -1,6 +1,6 @@
 const modulename = 'OutputHandler';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -79,9 +79,11 @@ export default class OutputHandler {
                 if (data.payload.type === 'txAdminHeartBeat') {
                     globals.healthMonitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
-                    globals.logger.server.write(mutex, data.payload.logs);
-                } else if (data.payload.type === 'txAdminResourceStatus') {
-                    globals.resourcesManager.handleServerEvents(data.payload);
+                    globals.logger.server.write(data.payload.logs, mutex);
+                } else if (data.payload.type === 'txAdminResourceEvent') {
+                    globals.resourcesManager.handleServerEvents(data.payload, mutex);
+                } else if (data.payload.type === 'txAdminPlayerlistEvent') {
+                    globals.playerlistManager.handleServerEvents(data.payload, mutex);
                 }
             }
         } catch (error) {
