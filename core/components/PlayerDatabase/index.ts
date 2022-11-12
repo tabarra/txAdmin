@@ -1,5 +1,5 @@
 const modulename = 'PlayerDatabase';
-import logger from '@core/extras/console.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
@@ -38,6 +38,14 @@ export default class PlayerDatabase {
     constructor(txAdmin: TxAdmin, public config: PlayerDbConfigType) {
         this.#txAdmin = txAdmin;
         this.#db = new Database();
+
+        //Database optimization cron function
+        setTimeout(() => {
+            this.runDailyOptimizer();
+        }, 30_000);
+        setInterval(() => {
+            this.runDailyOptimizer();
+        }, 24 * 60 * 60_000);
     }
 
 
@@ -51,7 +59,7 @@ export default class PlayerDatabase {
     /**
      * Refresh configurations
      */
-     refreshConfig() {
+    refreshConfig() {
         this.config = this.#txAdmin.configVault.getScoped('playerDatabase');
     }
 
@@ -136,7 +144,7 @@ export default class PlayerDatabase {
         let cntChanged = 0;
         const srcSymbol = Symbol('bulkRevokePlayerWhitelist');
         this.#db.obj.data!.players.forEach((player) => {
-            if(player.tsWhitelisted && filterFunc(player)){
+            if (player.tsWhitelisted && filterFunc(player)) {
                 cntChanged++;
                 player.tsWhitelisted = undefined;
                 this.#txAdmin.playerlistManager.handleDbDataSync(cloneDeep(player), srcSymbol);
@@ -402,5 +410,53 @@ export default class PlayerDatabase {
             if (verbose) logError(msg);
             throw new Error(msg);
         }
+    }
+
+
+    /**
+     * Cron func to optimize the database removing players and whitelist reqs/approvals
+     */
+    runDailyOptimizer() {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+        const oneDay = 24 * 60 * 60;
+
+        //Optimize players
+        //Players that have not joined the last 9 days, and have less than 2 hours of playtime
+        let playerRemoved;
+        try {
+            const nineDaysAgo = now() - (9 * oneDay);
+            const filter = (p: DatabasePlayerType) => {
+                return (p.tsLastConnection < nineDaysAgo && p.playTime < 120);
+            }
+            playerRemoved = this.cleanDatabase('players', filter);
+        } catch (error) {
+            const msg = `Failed to optimize players database with error: ${(error as Error).message}`;
+            logError(msg);
+        }
+
+        //Optimize whitelistRequests + whitelistApprovals
+        //Removing the ones older than 7 days
+        let wlRequestsRemoved, wlApprovalsRemoved;
+        const sevenDaysAgo = now() - (7 * oneDay);
+        try {
+            const wlRequestsFilter = (req: DatabaseWhitelistRequestsType) => {
+                return (req.tsLastAttempt < sevenDaysAgo);
+            }
+            wlRequestsRemoved = this.removeWhitelistRequests(wlRequestsFilter).length;
+
+            const wlApprovalsFilter = (req: DatabaseWhitelistApprovalsType) => {
+                return (req.tsApproved < sevenDaysAgo);
+            }
+            wlApprovalsRemoved = this.removeWhitelistApprovals(wlApprovalsFilter).length;
+        } catch (error) {
+            const msg = `Failed to optimize players database with error: ${(error as Error).message}`;
+            logError(msg);
+        }
+
+        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        logOk(`Database optimized, removed:`);
+        logOk(`- ${playerRemoved} players that haven't connected in the past 9 days and had less than 2 hours of playtime.`);
+        logOk(`- ${wlRequestsRemoved} whitelist requests older than a week.`);
+        logOk(`- ${wlApprovalsRemoved} whitelist approvals older than a week.`);
     }
 };

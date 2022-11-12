@@ -3,6 +3,9 @@
 - playerBanned event lost the `target` prop
 - changed warn ids prefix from A to W
 - removed the option to import bans from other resources
+- The optimizer will remove:
+    - players that havent connected in 9 days and have less than two hours of playtime
+    - wl requests and approvals older than a week
 
 # TODO:
 - [x] player join/leave
@@ -81,10 +84,10 @@
 - [x] web: enable settign whitelist even with wl disabled + add warning to ban (nui only, i'll do web after)
 - [x] migrate master action > database cleanup (specially case for removing older whitelists) 
 - [x] remove master action > importing bans
-- [ ] create daily cron to optimize database:
-    - [ ] TODO: some rule about players that have less than X playtime and have not joined in the last Y days
-    - [ ] maybe have a select box with 3 profiles + disabled?
-    - [ ] daily cron to remove whitelistApprovals/whitelistRequests older than 7 days (no settings)
+- [x] create daily cron to optimize database:
+    - [x] player rule: haven't connected in the past 9 days and had less than 2 hours of playtime.
+    - [x] whitelistApprovals/whitelistRequests rule: older than 7 days
+
 
 After merging feat/core-playerlist, but still in v5.0.0  (1d?):
 - [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
@@ -101,7 +104,8 @@ After merging feat/core-playerlist, but still in v5.0.0  (1d?):
 
 The diagnostics reporting button thing (2d?):
 - [ ] do frontend button + modals
-- [ ] 
+- [ ] FIXME: define steps
+
 
 After v5.0.0 release:
 - [ ] migrate `!addwl` make possible to `/addwl @mention`
