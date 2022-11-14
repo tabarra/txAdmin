@@ -167,11 +167,14 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
         } else {
             title = textKeys.title_permanent;
         }
-        const banDate = new Date(ban.timestamp * 1000).toLocaleString(language, { dateStyle: 'medium', timeStyle: 'medium' })
+        const banDate = new Date(ban.timestamp * 1000).toLocaleString(
+            translator.canonical,
+            { dateStyle: 'medium', timeStyle: 'medium' }
+        )
         const note = (activeBans.length > 1) ? `<br>${textKeys.note_multiple_bans}` : '';
 
         let customMessage = '';
-        if(playerDatabase.config.banRejectionMessage){
+        if (playerDatabase.config.banRejectionMessage) {
             customMessage = `<br>${playerDatabase.config.banRejectionMessage.trim()}`;
         }
 
@@ -296,7 +299,7 @@ async function checkWhitelist(
 
     //Prepare rejection message
     let customMessage = '';
-    if(playerDatabase.config.whitelistRejectionMessage){
+    if (playerDatabase.config.whitelistRejectionMessage) {
         customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
     }
 

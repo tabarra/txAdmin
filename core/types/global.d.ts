@@ -20,3 +20,7 @@ declare function GetResourceMetadata(resourceName: string, metadataKey: string, 
 declare function GetResourcePath(resourceName: string): string;
 declare function IsDuplicityVersion(): boolean;
 declare function VerifyPasswordHash(password: string, hash: string): boolean;
+
+declare namespace Intl {
+    function getCanonicalLocales(locales: string | string[]): string[];
+}
