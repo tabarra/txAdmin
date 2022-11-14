@@ -113,7 +113,7 @@
                     "label": "Copy the current world coordinates to your clipboard"
                 }
             },
-            "vehicle":{
+            "vehicle": {
                 "title": "Vehicle",
                 "onesync_error": "This option requires that OneSync be on for server entity handling",
                 "not_in_veh_error": "You are not currently in a vehicle!",

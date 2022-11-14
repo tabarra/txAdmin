@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "您因 \"%{reason}\" 而被封禁。您可在 %{expiration} 后再次登录服务器。操作人：%{author}",
         "kick_permanent": "您因 \"%{reason}\" 而被永久封禁。操作人：%{author}",
-        "reject_temporary": "您因 %{reason} 而被封禁，\n您可在 %{expiration} 后再次登录服务器。\n封禁ID：%{id}\n操作人: %{author}",
-        "reject_permanent": "您因 %{reason} 而被永久封禁。\n封禁ID：%{id}\n操作人: %{author}"
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "服务器正在重启 (%{reason})。",
@@ -43,7 +51,8 @@
             "unknown_error": "出现未知错误。",
             "not_enabled": "txAdmin 菜单未启用！您可以在 txAdmin 设置页面中启用它。",
             "announcement_title": "公告%{author}：",
-            "dialog_empty_input": "提交内客不能为空，请重新输入。"
+            "dialog_empty_input": "提交内客不能为空，请重新输入。",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "你冻结了玩家！",
@@ -259,18 +268,28 @@
                 "session_time": "游玩时长",
                 "play_time": "游玩总时常",
                 "joined": "加入时间",
-                "notes_placeholder": "备注"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "历史信息",
-                "action_types": {
-                    "warn": "警告",
-                    "warn_revoked": "撤销警告",
-                    "ban": "封禁",
-                    "ban_revoked": "撤销封禁",
-                    "whitelist": "白名单",
-                    "whitelist_revoked": "撤销白名单"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "封禁 玩家",
@@ -283,7 +302,13 @@
                 "permanent": "永久",
                 "custom": "自定义",
                 "helper_text": "请选择封禁时间",
-                "submit": "提交"
+                "submit": "提交",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

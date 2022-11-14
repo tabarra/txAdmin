@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) \"%{reason}\" sebebi ile bu sunucudan uzaklaştırıldın! Cezanın bitmesine kalan süre: %{expiration}.",
         "kick_permanent": "(%{author}) \"%{reason}\". sebebi ile bu sunucudan süresiz olarak uzaklaştırıldın!",
-        "reject_temporary": "Bu sunucudan  %{expiration} süre ile uzaklaştırıldın!.\nBan ID: %{id}.\nBan Sebebi: %{reason}.\nBanlayan: %{author}.",
-        "reject_permanent": "Bu sunucudan süresiz olarak uzaklaştırıldın!.\nBan ID: %{id}.\nBan Sebebi: %{reason}.\nBanlayan: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Sunucu yeniden başlatılıyor.(%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Bilinmeyen bir hata oluştu.",
             "not_enabled": "txAdmin Menüsü etkin değil! Bunu txAdmin ayarları sayfasından etkinleştirebilirsiniz.",
             "announcement_title": "%{author} tarafından Sunucu Duyurusu:",
-            "dialog_empty_input": "Boş bir girdiniz olamaz."
+            "dialog_empty_input": "Boş bir girdiniz olamaz.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "Oyuncuyu dondurdunuz!",
@@ -259,18 +268,28 @@
                 "session_time": "Oturum süresi",
                 "play_time": "Oynama süresi",
                 "joined": "Katıldı",
-                "notes_placeholder": "Bu oyuncu hakkında notlar"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "İlgili geçmiş",
-                "action_types": {
-                    "warn": "UYARILDI",
-                    "warn_revoked": "UYARI İPTAL EDİLDİ",
-                    "ban": "YASAKLANDI",
-                    "ban_revoked": "YASAK İPTAL EDİLDİ",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "WHITELIST İPTAL EDİLDİ"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Oyuncuyu yasakla",
@@ -283,7 +302,13 @@
                 "permanent": "Kalıcı",
                 "custom": "Özel",
                 "helper_text": "Lütfen bir süre seçin",
-                "submit": "Yasağı uygula"
+                "submit": "Yasağı uygula",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

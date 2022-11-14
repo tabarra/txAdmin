@@ -94,14 +94,14 @@ After merging feat/core-playerlist, but still in v5.0.0  (1d?):
 - [x] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
 - [x] apply stashes
 - [x] feat: add commonjs package.json to builds
-- [ ] fix translations:
-    - [ ] merge all translations
-    - [ ] `ban_messages.reject.*` to all translations (try to convert manually)
-    - [ ] `nui_menu.misc.directmessage_title`
-    - [ ] `player_modal.history.*` 
-    - [ ] `player_modal.ban.success / reason_required` 
-    - [ ] `player_modal.ids.*`
-    - [ ] `player_modal.info.*`
+- [x] fix translations:
+    - [x] merge all translations
+    - [x] `ban_messages.reject.*` to all translations (try to convert manually)
+    - [x] `nui_menu.misc.directmessage_title`
+    - [x] `player_modal.history.*` 
+    - [x] `player_modal.ban.success / reason_required` 
+    - [x] `player_modal.ids.*`
+    - [x] `player_modal.info.*`
 - [ ] add car boost function
 
 The diagnostics reporting button thing (2d?):

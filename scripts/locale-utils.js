@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import chalk from 'chalk';
-import { defaults, defaultsDeep, xor }  from 'lodash-es';
+import { defaults, defaultsDeep, xor } from 'lodash-es';
 
 //Prepping
 const defaultLang = JSON.parse(fs.readFileSync('./locale/en.json', 'utf8'));
@@ -16,6 +16,11 @@ const langs = langFiles.map((fName) => {
         data: JSON.parse(fs.readFileSync(fPath, 'utf8')),
     };
 });
+
+//Clean en.json
+// fs.writeFileSync('./locale/en.json', JSON.stringify(defaultLang, null, 4) + '\n');
+// console.log('clean en.json');
+// process.exit();
 
 // const customLocale = 'E://FiveM//BUILDS//txData//locale.json';
 // langs.push({
@@ -32,7 +37,17 @@ const rebaseCommand = () => {
     console.log('Rebasing language files on \'en.json\' for missing keys');
     langs.forEach(({ name, path, data }) => {
         const synced = defaultsDeep(data, defaultLang);
-        // synced.nui_menu = undefined;
+        try {
+            // synced.ban_messages.reject_temporary = undefined;
+            // synced.ban_messages.reject_permanent = undefined;
+            // synced.nui_menu.player_modal.info.notes_placeholder = "Notes about this player...";
+            // synced.nui_menu.player_modal.history.action_types = undefined;
+        } catch (error) {
+            console.log(name);
+            console.dir(error);
+            process.exit();
+        }
+
         // synced.nui_menu = defaultLang.nui_menu;
         const out = JSON.stringify(synced, null, 4) + '\n';
         fs.writeFileSync(path, out);
@@ -84,7 +99,9 @@ const diffCommand = () => {
         //Testing keys
         const diffKeys = xor(Object.keys(defaultLangParsed), Object.keys(parsed));
         if (diffKeys.length) {
-            console.log(`${chalk.yellow(name)}\tKeys validation failed on: ${diffKeys.join(', ')}`);
+            console.log(chalk.yellow(`[${name}] Keys validation failed on:`));
+            console.log(diffKeys.map(x => `- ${x}`).join('\n'));
+            console.log('');
             errors += diffKeys.length;
         }
 
@@ -93,7 +110,9 @@ const diffCommand = () => {
             return xor(defaultLangParsed[k], parsed[k]).length;
         });
         if (diffSpecials.length) {
-            console.log(`${chalk.yellow(name)}\tString specials validation failed on: ${diffSpecials.join(', ')}`);
+            console.log(chalk.yellow(`[${name}] String specials validation failed on:`));
+            console.log(diffSpecials.map(x => `- ${x}`).join('\n'));
+            console.log('');
             errors += diffSpecials.length;
         }
     });
