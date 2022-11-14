@@ -145,6 +145,7 @@ const runDevTask = () => {
     watcher.on('add', () => { debouncedCopier(monitorPath, 'add'); });
     watcher.on('change', () => { debouncedCopier(monitorPath, 'change'); });
     watcher.on('unlink', () => { debouncedCopier(monitorPath, 'unlink'); });
+    fs.writeFileSync(path.join(monitorPath, 'package.json'), '{"type":"commonjs"}');
 
     //Create txAdmin process runner
     const txInstance = new txAdminRunner(fxServerRootPath, fxsBinPath);
@@ -192,6 +193,7 @@ const runPublishTask = () => {
     //Copy static files
     console.log('Starting txAdmin Prod Builder.');
     copyStaticFiles('./dist/', 'publish');
+    fs.writeFileSync('./dist/package.json', '{"type":"commonjs"}');
 
     //Transpile & bundle core
     try {

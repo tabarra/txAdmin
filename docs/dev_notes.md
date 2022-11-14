@@ -91,8 +91,9 @@
 
 
 After merging feat/core-playerlist, but still in v5.0.0  (1d?):
-- [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
-- [ ] apply stashes
+- [x] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
+- [x] apply stashes
+- [x] feat: add commonjs package.json to builds
 - [ ] fix translations:
     - [ ] merge all translations
     - [ ] `ban_messages.reject.*` to all translations (try to convert manually)
