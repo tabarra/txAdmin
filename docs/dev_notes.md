@@ -102,7 +102,7 @@ After merging feat/core-playerlist, but still in v5.0.0  (1d?):
     - [x] `player_modal.ban.success / reason_required` 
     - [x] `player_modal.ids.*`
     - [x] `player_modal.info.*`
-- [ ] add car boost function
+- [x] add car boost function
 
 The diagnostics reporting button thing (2d?):
 - [ ] do frontend button + modals

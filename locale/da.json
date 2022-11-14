@@ -135,6 +135,11 @@
                     "title": "Slet",
                     "label": "Slet det aktuelle køretøj",
                     "success": "Køretøj slettet!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

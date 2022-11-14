@@ -135,6 +135,11 @@
                     "title": "Borrar",
                     "label": "Borra el vehículo actual",
                     "success": "¡Vehículo borrado!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

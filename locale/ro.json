@@ -135,6 +135,11 @@
                     "title": "Șterge",
                     "label": "Șterge vehiculul curent",
                     "success": "Vechiulul a fost șters!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

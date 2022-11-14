@@ -135,6 +135,11 @@
                     "title": "删除",
                     "label": "删除当前载具",
                     "success": "载具已删除！"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

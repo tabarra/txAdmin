@@ -45,6 +45,15 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
   end
 end)
 
+RegisterNetEvent('txAdmin:menu:boostVehicle', function()
+  local src = source
+  local allow = PlayerHasTxPermission(src, 'menu.vehicle')
+  TriggerEvent("txaLogger:menuEvent", src, "vehicleBoost", allow)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:boostVehicle', src)
+  end
+end)
+
 RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.clear_area')

@@ -135,6 +135,11 @@
                     "title": "Ta bort",
                     "label": "Ta bort nuvarande fordon",
                     "success": "Fordon bortaget!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

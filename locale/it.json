@@ -135,6 +135,11 @@
                     "title": "Elimina",
                     "label": "Elimina il veicolo",
                     "success": "Veicolo eliminato!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

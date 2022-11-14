@@ -135,6 +135,11 @@
                     "title": "Изтрий",
                     "label": "Изтриване на автомобила в които се намираш.",
                     "success": "Автомобила е изтрит!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

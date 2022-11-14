@@ -135,6 +135,11 @@
                     "title": "Törlés",
                     "label": "Jelenlegi jármű törlése",
                     "success": "Jármű törölve!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

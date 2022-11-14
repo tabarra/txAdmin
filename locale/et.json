@@ -135,6 +135,11 @@
                     "title": "Kustuta",
                     "label": "Kustutab sõiduki, milles mängija parasjagu viibib",
                     "success": "Sõiduk kustutatud!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

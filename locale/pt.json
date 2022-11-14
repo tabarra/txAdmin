@@ -135,6 +135,11 @@
                     "title": "Deletar",
                     "label": "Deletar veículo atual",
                     "success": "Veículo deletado!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Aumenta as stats do carro para atingir máxima diversão (e talvez velocidade)",
+                    "success": "Vehicle boosted!"
                 }
             },
             "heal": {

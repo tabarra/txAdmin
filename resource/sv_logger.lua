@@ -124,6 +124,9 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     elseif event == 'vehicleRepair' then
         message = "repaired their vehicle"
 
+    elseif event == 'vehicleBoost' then
+        message = "boosted their vehicle"
+
     elseif event == 'healSelf' then
         message = "healed themself"
 
