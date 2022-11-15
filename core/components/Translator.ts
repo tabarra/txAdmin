@@ -14,7 +14,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default class Translator {
     language: string;
-    canonical: string;
+    canonical: string = 'en-GB';
     readonly customLocalePath: string;
     #polyglot: Polyglot | null = null;
 
@@ -34,7 +34,7 @@ export default class Translator {
         try {
             this.canonical = Intl.getCanonicalLocales(this.language.replace(/_/g, '-'))[0];
         } catch (error) {
-            this.canonical = 'en-US';
+            this.canonical = 'en-GB';
         }
 
         try {
