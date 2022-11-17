@@ -8,6 +8,7 @@ import React, {
 import { useFilteredSortedPlayers } from "../../state/players.state";
 import PlayerCard from "./PlayerCard";
 import { Box, CircularProgress, styled } from "@mui/material";
+import { useIsMenuVisibleValue } from "@nui/src/state/visibility.state";
 
 const MAX_PER_BUCKET = 60;
 const FAKE_LOAD_TIME = 250;
@@ -30,6 +31,7 @@ export const PlayersListGrid: React.FC = () => {
   const [bucket, setBucket] = useState(1);
   const [fakeLoading, setFakeLoading] = useState(false);
   const containerRef = useRef(null);
+  const isMenuVisible = useIsMenuVisibleValue();
 
   useEffect(() => {
     // we want to ideally keep the same bucket as previous update cycle, if possible. preventing
@@ -54,6 +56,9 @@ export const PlayersListGrid: React.FC = () => {
   const handleObserver = useCallback(
     (entities: IntersectionObserverEntry[]) => {
       const lastEntry = entities[0];
+
+      if (!isMenuVisible) return setBucket(1)
+
       if (
         lastEntry.isIntersecting &&
         filteredPlayers.length > slicedPlayers.length &&
@@ -66,7 +71,7 @@ export const PlayersListGrid: React.FC = () => {
         }, FAKE_LOAD_TIME);
       }
     },
-    [filteredPlayers, slicedPlayers, fakeLoading]
+    [filteredPlayers, slicedPlayers, fakeLoading, isMenuVisible]
   );
 
   useEffect(() => {
