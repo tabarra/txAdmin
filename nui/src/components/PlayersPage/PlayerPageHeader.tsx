@@ -14,10 +14,10 @@ import {
   usePlayersFilter,
   useSetPlayersFilterIsTemp,
 } from "../../state/players.state";
-import { useDebounce } from "../../hooks/useDebouce";
 import { useServerCtxValue } from "../../state/server.state";
 import { useTranslate } from "react-polyglot";
 import { TextField } from "../misc/TextField";
+import {useDebounce} from "@nui/src/hooks/useDebouce";
 
 const TypographyTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 600,
@@ -45,7 +45,7 @@ export const PlayerPageHeader: React.FC = () => {
   const serverCtx = useServerCtxValue();
   const t = useTranslate();
 
-  const debouncedInput = useDebounce(searchVal, 500);
+  const debouncedInput = useDebounce<string>(searchVal, 500);
 
   // We might need to debounce this in the future
   const handleSortData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,8 +58,8 @@ export const PlayerPageHeader: React.FC = () => {
   };
 
   useEffect(() => {
-    setPlayerFilter(debouncedInput as string);
-  }, [debouncedInput, setPlayerFilter]);
+    setPlayerFilter(debouncedInput);
+  }, [debouncedInput]);
 
   // Synchronize filter from player state, used for optional args in /tx
   useEffect(() => {
