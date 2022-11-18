@@ -139,7 +139,9 @@
                 "boost": {
                     "title": "Boost",
                     "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!"
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
