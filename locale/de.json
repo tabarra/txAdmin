@@ -1,4 +1,3 @@
-
 {
     "$meta": {
         "label": "German",
@@ -140,7 +139,9 @@
                 "boost": {
                     "title": "Boost",
                     "label": "Booste das Fahrzeug",
-                    "success": "Fahrzeug geboosted!"
+                    "success": "Fahrzeug geboosted!",
+                    "already_boosted": "Dieses Fahrzeug wurde schon geboosted!",
+                    "unsupported_class": "Diese Fahrzeugart wird nicht unterstützt."
                 }
             },
             "heal": {

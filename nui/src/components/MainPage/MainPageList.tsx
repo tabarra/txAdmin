@@ -294,9 +294,6 @@ export const MainPageList: React.FC = () => {
           }
         );
       }
-      enqueueSnackbar(t("nui_menu.page_main.vehicle.boost.success"), {
-        variant: "info",
-      });
     });
   };
 

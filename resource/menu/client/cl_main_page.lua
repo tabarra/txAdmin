@@ -149,7 +149,7 @@ end)
 --[[ EVENT HANDLERS ]]
 
 local function setVehicleHandlingValue(veh, field, newValue)
-    local currValue = GetVehicleHandlingFloat(veh, 'CHandlingData', field)
+    -- local currValue = GetVehicleHandlingFloat(veh, 'CHandlingData', field)
     SetVehicleHandlingField(veh, 'CHandlingData', field, newValue * 1.0)
 end
 local function setVehicleHandlingModifier(veh, field, multiplier)
@@ -158,41 +158,87 @@ local function setVehicleHandlingModifier(veh, field, multiplier)
     SetVehicleHandlingField(veh, 'CHandlingData', field, newValue)
 end
 
+local boostableVehicleClasses = {
+    [0]='Compacts',
+    [1]='Sedans',
+    [2]='SUVs',
+    [3]='Coupes',
+    [4]='Muscle',
+    [5]='Sports Classics',
+    [6]='Sports',
+    [7]='Super',
+    -- [8]='Motorcycles',
+    [9]='Off-road',
+    -- [10]='Industrial',
+    [11]='Utility',
+    [12]='Vans',
+    -- [13]='Cycles',
+    -- [14]='Boats',
+    -- [15]='Helicopters',
+    -- [16]='Planes',
+    [17]='Service',
+    [18]='Emergency',
+    [19]='Military',
+    [20]='Commercial',
+    -- [21]='Trains',
+    [22]='Open Wheel'
+}
+
 RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
-    if veh and veh > 0 then
-        setVehicleHandlingValue(veh, 'fHandBrakeForce', 10.0);
-        setVehicleHandlingValue(veh, 'fBrakeForce', 20.0);
-        setVehicleHandlingValue(veh, 'fInitialDriveMaxFlatVel', 300.0);
-        setVehicleHandlingModifier(veh, 'fTractionCurveMin', 2.1);
-        setVehicleHandlingModifier(veh, 'fTractionCurveMax', 2.5);
-        setVehicleHandlingModifier(veh, 'fInitialDriveForce', 2.0); --accelerates real fast, almost no side effects
-        setVehicleHandlingModifier(veh, 'fDriveInertia', 1.25);
-        setVehicleHandlingValue(veh, 'fInitialDragCoeff', 10.0);
-        
-        SetVehicleHandlingVector(veh, 'CHandlingData', 'vecInertiaMultiplier', vector3(0.1, 0.1, 0.1))
-        setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001); --testar, o certo é 0~1
-        setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001); --testar, o certo é >1
-        setVehicleHandlingValue(veh, 'fRollCentreHeightFront', 0.5); --testar, o certo é 0~1
-        setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5); --testar, o certo é 0~1
 
-        PlaySoundFrontend(-1, 'CONFIRM_BEEP', 'HUD_MINI_GAME_SOUNDSET', 1)
-        SetVehicleNumberPlateText(veh, "txAdmin")
-        SetVehicleCanBreak(veh, false) -- If this is set to false, the vehicle simply can't break
-        SetVehicleEngineCanDegrade(veh, false) -- Engine strong
-        SetVehicleMod(veh, 15, 3, false) -- Max Suspension
-        SetVehicleMod(veh, 11, 3, false) -- Max Engine
-        SetVehicleMod(veh, 16, 4, false) -- Max Armor
-        SetVehicleMod(veh, 12, 2, false) -- Max Brakes
-        SetVehicleMod(veh, 13, 2, false) -- Max Transmission
-        ToggleVehicleMod(veh, 18, true) -- modTurbo
-        SetVehicleMod(veh, 18, 0, false) -- Turbo
-        SetVehicleNitroEnabled(veh, true) -- Gives the vehicle a nitro boost
-        SetVehicleTurboPressure(veh, 100.0) -- Pressure of the turbo is 100%
-        EnableVehicleExhaustPops(veh, true) -- This forces the exhaust to always "pop"
-        SetVehicleCheatPowerIncrease(veh, 1.8) -- Torque multiplier
+    --Check if in vehicle
+    if not veh or veh <= 0 then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.not_in_veh_error', true)
     end
+
+    --Check if vehicle already boosted
+    --NOTE: state bags were too complicated, and checking for specific float didn't work due to precision
+    local boostedFlag = GetVehicleHandlingFloat(veh, 'CHandlingData', 'fInitialDriveMaxFlatVel')
+    if boostedFlag > 300.0 then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.already_boosted', true)
+    end
+
+    --Check if vehicle is in fact a car
+    local vehClass = GetVehicleClass(veh)
+    if not boostableVehicleClasses[vehClass] then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.unsupported_class', true)
+    end
+    
+    --Modify car
+    setVehicleHandlingValue(veh, 'fInitialDriveMaxFlatVel', 300.40120); --the signature, don't change
+    setVehicleHandlingValue(veh, 'fHandBrakeForce', 10.0);
+    setVehicleHandlingValue(veh, 'fBrakeForce', 20.0);
+    setVehicleHandlingModifier(veh, 'fTractionCurveMin', 2.1);
+    setVehicleHandlingModifier(veh, 'fTractionCurveMax', 2.5);
+    setVehicleHandlingModifier(veh, 'fInitialDriveForce', 2.0); --accelerates real fast, almost no side effects
+    setVehicleHandlingModifier(veh, 'fDriveInertia', 1.25);
+    setVehicleHandlingValue(veh, 'fInitialDragCoeff', 10.0);
+    
+    SetVehicleHandlingVector(veh, 'CHandlingData', 'vecInertiaMultiplier', vector3(0.1, 0.1, 0.1))
+    setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001); --testar, o certo é 0~1
+    setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001); --testar, o certo é >1
+    setVehicleHandlingValue(veh, 'fRollCentreHeightFront', 0.5); --testar, o certo é 0~1
+    setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5); --testar, o certo é 0~1
+
+    PlaySoundFrontend(-1, 'CONFIRM_BEEP', 'HUD_MINI_GAME_SOUNDSET', 1)
+    SetVehicleNumberPlateText(veh, "TX B00ST")
+    SetVehicleCanBreak(veh, false) -- If this is set to false, the vehicle simply can't break
+    SetVehicleEngineCanDegrade(veh, false) -- Engine strong
+    SetVehicleMod(veh, 15, 3, false) -- Max Suspension
+    SetVehicleMod(veh, 11, 3, false) -- Max Engine
+    SetVehicleMod(veh, 16, 4, false) -- Max Armor
+    SetVehicleMod(veh, 12, 2, false) -- Max Brakes
+    SetVehicleMod(veh, 13, 2, false) -- Max Transmission
+    ToggleVehicleMod(veh, 18, true) -- modTurbo
+    SetVehicleMod(veh, 18, 0, false) -- Turbo
+    SetVehicleNitroEnabled(veh, true) -- Gives the vehicle a nitro boost
+    SetVehicleTurboPressure(veh, 100.0) -- Pressure of the turbo is 100%
+    EnableVehicleExhaustPops(veh, true) -- This forces the exhaust to always "pop"
+    SetVehicleCheatPowerIncrease(veh, 1.8) -- Torque multiplier
+
+    sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
 end)
 
 RegisterNetEvent('txAdmin:menu:fixVehicle', function()

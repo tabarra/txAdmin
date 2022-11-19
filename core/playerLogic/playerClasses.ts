@@ -237,7 +237,6 @@ export class ServerPlayer extends BasePlayer {
         if (!this.dbData || !this.isConnected) return;
         try {
             this.mutateDbData({ playTime: this.dbData.playTime + 1 });
-            logOk(`Updating '${this.displayName}' databse playTime.`);
         } catch (error) {
             logWarn(`Failed to update playtime for player ${this.displayName}: ${(error as Error).message}`);
         }
