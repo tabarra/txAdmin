@@ -133,7 +133,7 @@ const updateMarkdownNotification = (data, notify) => {
 //NOTE: to send json:
 //  data: JSON.stringify(data)
 //  contentType: 'application/json'
-const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
+const txAdminAPI = ({type, url, data, timeout, success, error}) => {
     if (anyUndefined(type, url)) return false;
 
     url = TX_BASE_PATH + url;
@@ -142,7 +142,7 @@ const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
     error = error || (() => {});
     const headers = {'X-TxAdmin-CsrfToken': (csrfToken) ? csrfToken : 'not_set'}
     // console.log(`txAdminAPI Req to: ${url}`);
-    return $.ajax({type, url, timeout, data, dataType, success, error, headers});
+    return $.ajax({type, url, timeout, data, dataType: 'json', success, error, headers});
 };
 
 const txAdminAlert = ({content, modalColor, title}) => {

@@ -196,7 +196,6 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
         type: 'POST',
         url: '/changePassword',
         data: form,
-        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             notify.update('type', data.type);

@@ -355,7 +355,6 @@
             type: "GET",
             url: '/player/search?query=' + encodeURI(searchString),
             timeout: REQ_TIMEOUT_LONG,
-            dataType: 'json',
             success: function (data) {
                 if(data.error){
                     dbPlayersSearchTab.innerText = error;
@@ -503,7 +502,6 @@
             url: '/database/ban_ids',
             timeout: REQ_TIMEOUT_LONG,
             data,
-            dataType: 'json',
             success: function (data) {
                 if (checkApiLogoutRefresh(data)) return;
                 notify.update('progress', 0);

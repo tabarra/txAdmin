@@ -215,7 +215,6 @@
                 type: "POST",
                 url: `/masterActions/reset_fxserver`,
                 data: {},
-                dataType: 'json',
                 timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
                     if(data.success == true){
@@ -276,7 +275,6 @@
                     bans: frmBans.value,
                     warns: frmWarns.value,
                 },
-                dataType: 'json',
                 timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
                     if(data.error){
@@ -329,7 +327,6 @@
                 data: {
                     filter: frmFilter.value,
                 },
-                dataType: 'json',
                 timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
                     if(data.error){

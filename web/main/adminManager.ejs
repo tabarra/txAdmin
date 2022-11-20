@@ -258,7 +258,6 @@
             type: "POST",
             url: `/adminManager/${action}`, 
             data: formData,
-            dataType: 'json',
             success: function (data) {
                 if (checkApiLogoutRefresh(data)) return;
                 if(data.type == 'showPassword'){

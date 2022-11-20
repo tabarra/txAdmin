@@ -304,7 +304,6 @@ function showPlayer(playerRef, keepTabSelection = false) {
     txAdminAPI({
         type: 'GET',
         url: `/player?${modPlayer.currPlayerRefString}`,
-        dataType: 'json',
         success: function (data) {
             if (checkApiLogoutRefresh(data)) return;
             const { meta, player, error } = data;
@@ -445,7 +444,6 @@ modPlayer.Main.notes.addEventListener('keydown', (event) => {
             url: `/player/save_note?${modPlayer.currPlayerRefString}`,
             timeout: REQ_TIMEOUT_LONG,
             data: { note: modPlayer.Main.notes.value },
-            dataType: 'json',
             success: function (data) {
                 if (data.success === true) {
                     setNoteMessage('Note saved.', 'success');
@@ -471,7 +469,6 @@ function setPlayerWhitelistStatus(status) {
         url: `/player/whitelist?${modPlayer.currPlayerRefString}`,
         timeout: REQ_TIMEOUT_LONG,
         data: { status },
-        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             if (data.success === true) {
@@ -521,7 +518,6 @@ async function warnPlayer() {
         url: `/player/warn?${modPlayer.currPlayerRefString}`,
         timeout: REQ_TIMEOUT_LONG,
         data: { reason: reason },
-        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             if (data.success === true) {
@@ -572,7 +568,6 @@ function banPlayer() {
         url: `/player/ban?${modPlayer.currPlayerRefString}`,
         timeout: REQ_TIMEOUT_LONG,
         data: data,
-        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             if (data.success === true) {
@@ -609,7 +604,6 @@ function revokeAction(action_id, isModal = false) {
         url: '/database/revoke_action',
         timeout: REQ_TIMEOUT_LONG,
         data: { action_id },
-        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             if (data.success === true) {
@@ -657,7 +651,6 @@ async function messagePlayer() {
         url: `/player/message?${modPlayer.currPlayerRefString}`,
         timeout: REQ_TIMEOUT_LONG,
         data: { message: message.trim() },
-        dataType: 'json',
         success: function (data) {
             if (data.success === true) {
                 notify.update('type', 'success');
@@ -699,7 +692,6 @@ async function kickPlayer() {
         url: `/player/kick?${modPlayer.currPlayerRefString}`,
         timeout: REQ_TIMEOUT_LONG,
         data: { reason: reason.trim() },
-        dataType: 'json',
         success: function (data) {
             if (data.success === true) {
                 notify.update('type', 'success');

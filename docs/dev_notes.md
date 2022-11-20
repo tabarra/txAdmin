@@ -139,6 +139,7 @@ TODO for beta2:
 - [x] merge taso PR
 - [x] fix car boost func (double + veh type check)
 - [x] fix csrf
+- [x] force `txAdminAPI` to have `dataType: 'json'` for all calls
 - [ ] write changelog + announcement
 - [ ] announce to top servers
 

@@ -354,7 +354,6 @@
             type: "GET",
             url: `/whitelist/requests?${urlSearch.toString()}`,
             timeout: REQ_TIMEOUT_LONG,
-            dataType: 'json',
             success: function (data) {
                 reqElements.spinner.classList.add('d-none');
                 reqElements.denyAllBtton.disabled = true;
@@ -404,7 +403,6 @@
             url: `/whitelist/requests/${action}`,
             data: {reqId},
             timeout: REQ_TIMEOUT_LONG,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 if (data.success === true) {
@@ -437,7 +435,6 @@
             url: `/whitelist/requests/deny_all`,
             data: {newestVisible: newestRequest},
             timeout: REQ_TIMEOUT_LONG,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 if (data.success === true) {
@@ -511,7 +508,6 @@
         type: "GET",
         url: '/whitelist/approvals',
         timeout: REQ_TIMEOUT_LONG,
-        dataType: 'json',
         success: function (data) {
             approvedElements.spinner.classList.add('d-none');
             if(data.error){
@@ -566,7 +562,6 @@
             url: '/whitelist/approvals/add',
             data: {identifier},
             timeout: REQ_TIMEOUT_LONG,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 if (data.success === true) {
@@ -595,7 +590,6 @@
             url: '/whitelist/approvals/remove',
             data: {identifier},
             timeout: REQ_TIMEOUT_LONG,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 if (data.success === true) {
