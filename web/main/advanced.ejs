@@ -130,15 +130,14 @@
 
     //============================================== Profiler
     function doProfileMonitor() {
-        let data = {
-            action: 'profile_monitor',
-            parameter: false
-        }
         const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         txAdminAPI({
             type: "POST",
             url: '/fxserver/commands',
-            data: data,
+            data: {
+                action: 'profile_monitor',
+                parameter: false
+            },
             success: function (data) {
                 notify.update('progress', 0);
                 notify.update('type', data.type);

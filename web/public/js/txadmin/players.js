@@ -302,8 +302,8 @@ function showPlayer(playerRef, keepTabSelection = false) {
 
     //Perform request
     txAdminAPI({
-        url: `/player?${modPlayer.currPlayerRefString}`,
         type: 'GET',
+        url: `/player?${modPlayer.currPlayerRefString}`,
         dataType: 'json',
         success: function (data) {
             if (checkApiLogoutRefresh(data)) return;

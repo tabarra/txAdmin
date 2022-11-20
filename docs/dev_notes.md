@@ -138,7 +138,7 @@ After merging feat/core-playerlist, but still in v5.0.0  (1d?):
 TODO for beta2:
 - [x] merge taso PR
 - [x] fix car boost func (double + veh type check)
-- [ ] fix csrf
+- [x] fix csrf
 - [ ] write changelog + announcement
 - [ ] announce to top servers
 

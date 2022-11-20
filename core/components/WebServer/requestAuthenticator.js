@@ -1,5 +1,5 @@
 const modulename = 'WebServer:RequestAuthenticator';
-import logger from '@core/extras/console.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -25,6 +25,28 @@ export const requestAuth = (epType) => {
     const defaultAuth = async (ctx, next) => {
         const { isValidAuth } = authLogic(ctx.session, true, epType);
 
+        //This is kinda messy and in the wrong place, but it's fine for now
+        if (epType === 'api') {
+            const sessToken = ctx.session?.auth?.csrfToken;
+            const headerToken = ctx.headers['x-txadmin-csrftoken'];
+            if(sessToken && (sessToken !== headerToken)){
+                //DEBUG
+                // ogConsole.dir({
+                //     route: `${ctx.method} ${ctx.path}`,
+                //     sessToken,
+                //     headerToken
+                // });
+                if (verbose) logWarn(`Invalid CSRF token: ${ctx.path}`, epType);
+                const msg = 'Invalid CSRF token, please report this issue to the txAdmin developers.';
+                //to maintain compatibility with all routes
+                return ctx.send({
+                    type: 'danger',
+                    message: msg,
+                    error: msg
+                });
+            }
+        }
+
         if (!isValidAuth) {
             if (verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
             ctx.session.auth = {};
@@ -47,6 +69,7 @@ export const requestAuth = (epType) => {
                         permissions: admin.permissions,
                         expires_at: false,
                         isWebInterface: false,
+                        csrfToken: globals.adminVault.genCsrfToken(),
                         //Note: we actually need permissions/master because the first request doesn't
                         // go through authLogic() which sets them up
                     };

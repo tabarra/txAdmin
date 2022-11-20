@@ -42,10 +42,6 @@ export default async function AdminManagerActions(ctx) {
         return await handleEdit(ctx);
     } else if (action == 'delete') {
         return await handleDelete(ctx);
-    } else if (action == 'getAddModal') {
-        return await handleGetModal(ctx, true);
-    } else if (action == 'getEditModal') {
-        return await handleGetModal(ctx, false);
     } else {
         return ctx.send({
             type: 'danger',
@@ -55,7 +51,6 @@ export default async function AdminManagerActions(ctx) {
 };
 
 
-//================================================================
 /**
  * Handle Add
  * @param {object} ctx
@@ -149,7 +144,6 @@ async function handleAdd(ctx) {
 }
 
 
-//================================================================
 /**
  * Handle Edit
  * @param {object} ctx
@@ -254,7 +248,6 @@ async function handleEdit(ctx) {
 }
 
 
-//================================================================
 /**
  * Handle Delete
  * @param {object} ctx
@@ -291,78 +284,4 @@ async function handleDelete(ctx) {
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }
-}
-
-
-//================================================================
-/**
- * Handle Get Modal
- * @param {object} ctx
- */
-async function handleGetModal(ctx, isNewAdmin) {
-    const allPermissions = Object.entries(globals.adminVault.getPermissionsList());
-
-    //Helper function
-    const getPerms = (checkPerms) => {
-        let permsGeneral = [];
-        let permsMenu = [];
-        allPermissions.forEach(([id, desc]) => {
-            const bucket = (id.startsWith('players.') || id.startsWith('menu.')) ? permsGeneral : permsMenu;
-            bucket.push({
-                id,
-                desc,
-                checked: (checkPerms.includes(id)) ? 'checked' : '',
-                dangerous: dangerousPerms.includes(id),
-            });
-        });
-        return [permsGeneral, permsMenu];
-    };
-
-    //If it's a modal for new admin, all fields will be empty
-    if (isNewAdmin) {
-        const [permsGeneral, permsMenu] = getPerms([]);
-        const renderData = {
-            isNewAdmin: true,
-            editingSelf: false,
-            username: '',
-            citizenfx_id: '',
-            discord_id: '',
-            permsGeneral,
-            permsMenu,
-        };
-        return ctx.utils.render('parts/adminModal', renderData);
-    }
-
-
-    //Sanity check
-    if (typeof ctx.request.body.name !== 'string') {
-        return ctx.utils.error(400, 'Invalid Request - missing parameters');
-    }
-    const name = ctx.request.body.name.trim();
-
-    //Get admin data
-    const admin = globals.adminVault.getAdminByName(name);
-    if (!admin) return ctx.send('Admin not found');
-
-    //Check if editing an master admin
-    if (!ctx.session.auth.master && admin.master) {
-        return ctx.send('You cannot edit an admin master.');
-    }
-
-    //Prepare permissions
-    const [permsGeneral, permsMenu] = getPerms(admin.permissions);
-
-    //Set render data
-    const renderData = {
-        isNewAdmin: false,
-        username: admin.name,
-        citizenfx_id: (admin.providers.citizenfx) ? admin.providers.citizenfx.id : '',
-        discord_id: (admin.providers.discord) ? admin.providers.discord.id : '',
-        editingSelf: (ctx.session.auth.username.toLowerCase() === name.toLowerCase()),
-        permsGeneral,
-        permsMenu,
-    };
-
-    //Give output
-    return ctx.utils.render('parts/adminModal', renderData);
 }

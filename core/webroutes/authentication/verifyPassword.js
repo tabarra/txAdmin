@@ -22,7 +22,7 @@ export default async function AuthVerify(ctx) {
 
     try {
         //Checking admin
-        let admin = globals.adminVault.getAdminByName(ctx.request.body.username);
+        const admin = globals.adminVault.getAdminByName(ctx.request.body.username);
         if (!admin) {
             logWarn(`Wrong username for from: ${ctx.ip}`);
             renderData.message = 'Wrong Username!';
@@ -41,6 +41,7 @@ export default async function AuthVerify(ctx) {
             picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
             password_hash: admin.password_hash,
             expires_at: false,
+            csrfToken: globals.adminVault.genCsrfToken(),
         };
 
         ctx.utils.logAction(`logged in from ${ctx.ip} via password`);

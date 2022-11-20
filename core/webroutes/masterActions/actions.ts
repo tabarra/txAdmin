@@ -6,6 +6,7 @@ import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseActionType, DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
 import logger, { ogConsole } from '@core/extras/console.js';
 import { now } from '@core/extras/helpers';
+import { GenericApiError } from '@shared/genericApiTypes';
 import { Context } from 'koa';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -17,16 +18,16 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 export default async function MasterActionsAction(ctx: Context) {
     //Sanity check
     if (typeof ctx.params.action !== 'string') {
-        return ctx.utils.error(400, 'Invalid Request');
+        return ctx.send({error: 'Invalid Request'});
     }
     const action = ctx.params.action;
 
     //Check permissions
     if (!ctx.utils.testPermission('master', modulename)) {
-        return ctx.utils.render('main/message', { message: 'Only the master account has permission to view/use this page.' });
+        return ctx.send({error: 'Only the master account has permission to view/use this page.'});
     }
     if (!ctx.txVars.isWebInterface) {
-        return ctx.utils.render('main/message', { message: 'This functionality cannot be used by the in-game menu, please use the web version of txAdmin.' });
+        return ctx.send({error: 'This functionality cannot be used by the in-game menu, please use the web version of txAdmin.'});
     }
 
     //Delegate to the specific action functions
@@ -37,10 +38,7 @@ export default async function MasterActionsAction(ctx: Context) {
     } else if (action == 'revokeWhitelists') {
         return handleRevokeWhitelists(ctx);
     } else {
-        return ctx.send({
-            type: 'danger',
-            message: 'Unknown settings action.',
-        });
+        return ctx.send({error: 'Unknown settings action.'});
     }
 };
 
@@ -87,6 +85,12 @@ async function handleResetFXServer(ctx: Context) {
 async function handleCleanDatabase(ctx: Context) {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+    type successResp = {
+        msElapsed: number;
+        playersRemoved: number;
+        actionsRemoved: number;
+    }
+    const sendTypedResp = (data: successResp | GenericApiError) => ctx.send(data);
 
     //Sanity check
     if (
@@ -94,6 +98,7 @@ async function handleCleanDatabase(ctx: Context) {
         || typeof ctx.request.body.bans !== 'string'
         || typeof ctx.request.body.warns !== 'string'
     ) {
+        return sendTypedResp({error: 'xxxx'});
         return ctx.utils.error(400, 'Invalid Request');
     }
     const { players, bans, warns } = ctx.request.body;
@@ -111,7 +116,7 @@ async function handleCleanDatabase(ctx: Context) {
     } else if (players === '15d') {
         playersFilter = (x: DatabasePlayerType) => x.tsLastConnection < (currTs - 15 * daySecs) && !x.notes;
     } else {
-        return ctx.utils.error(400, 'Invalid players filter type.');
+        return sendTypedResp({error: 'Invalid players filter type.'});
     }
 
     let bansFilter: Function;
@@ -124,7 +129,7 @@ async function handleCleanDatabase(ctx: Context) {
     } else if (bans === 'all') {
         bansFilter = (x: DatabaseActionType) => x.type === 'ban';
     } else {
-        return ctx.utils.error(400, 'Invalid bans filter type.');
+        return sendTypedResp({error: 'Invalid bans filter type.'});
     }
 
     let warnsFilter: Function;
@@ -141,7 +146,7 @@ async function handleCleanDatabase(ctx: Context) {
     } else if (warns === 'all') {
         warnsFilter = (x: DatabaseActionType) => x.type === 'warn';
     } else {
-        return ctx.utils.error(400, 'Invalid warns filter type.');
+        return sendTypedResp({error: 'Invalid warns filter type.'});
     }
 
     const actionsFilter = (x: DatabaseActionType) => {
@@ -154,22 +159,19 @@ async function handleCleanDatabase(ctx: Context) {
     try {
         playersRemoved = await playerDatabase.cleanDatabase('players', playersFilter);
     } catch (error) {
-        return ctx.utils.render('main/message', { message: `<b>Failed to clean players with error:</b><br>${(error as Error).message}` });
+        return sendTypedResp({error: `<b>Failed to clean players with error:</b><br>${(error as Error).message}`});
     }
 
     let actionsRemoved = 0;
     try {
         actionsRemoved = await playerDatabase.cleanDatabase('actions', actionsFilter);
     } catch (error) {
-        return ctx.utils.render('main/message', { message: `<b>Failed to clean actions with error:</b><br>${(error as Error).message}` });
+        return sendTypedResp({error: `<b>Failed to clean actions with error:</b><br>${(error as Error).message}`});
     }
 
     //Return results
-    const tsElapsed = Date.now() - tsStart;
-    const outMessage = `<b>Process finished in ${tsElapsed}ms.</b> <br>
-        Players deleted: ${playersRemoved} <br>
-        Actions deleted: ${actionsRemoved}  <br>`;
-    return ctx.utils.render('main/message', { message: outMessage });
+    const msElapsed = Date.now() - tsStart;
+    return sendTypedResp({msElapsed, playersRemoved, actionsRemoved});
 }
 
 
@@ -180,10 +182,15 @@ async function handleCleanDatabase(ctx: Context) {
 async function handleRevokeWhitelists(ctx: Context) {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+    type successResp = {
+        msElapsed: number;
+        cntRemoved: number;
+    }
+    const sendTypedResp = (data: successResp | GenericApiError) => ctx.send(data);
 
     //Sanity check
     if (typeof ctx.request.body.filter !== 'string') {
-        return ctx.utils.error(400, 'Invalid Request');
+        return sendTypedResp({error: 'Invalid Request'});
     }
     const filterInput = ctx.request.body.filter;
     const daySecs = 86400;
@@ -199,14 +206,15 @@ async function handleRevokeWhitelists(ctx: Context) {
     } else if (filterInput === '7d') {
         filterFunc = (p: DatabasePlayerType) => p.tsLastConnection < (currTs - 7 * daySecs);
     } else {
-        return ctx.utils.error(400, 'Invalid whitelists filter type.');
+        return sendTypedResp({error: 'Invalid whitelists filter type.'});
     }
 
     try {
+        const tsStart = Date.now();
         const cntRemoved = playerDatabase.bulkRevokePlayerWhitelist(filterFunc);
-        const outMessage = `<b>Whitelists Revoked:</b> ${cntRemoved}`;
-        return ctx.utils.render('main/message', { message: outMessage });
+        const msElapsed = Date.now() - tsStart;
+        return sendTypedResp({msElapsed, cntRemoved});
     } catch (error) {
-        return ctx.utils.render('main/message', { message: `<b>Failed to clean players with error:</b><br>${(error as Error).message}` });
+        return sendTypedResp({error: `<b>Failed to clean players with error:</b><br>${(error as Error).message}`});
     }
 }

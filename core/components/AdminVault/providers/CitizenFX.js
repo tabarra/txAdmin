@@ -131,6 +131,7 @@ export default class CitizenFXProvider {
             // expires_at: tokenSet.expires_at,
             expires_at: Math.round(Date.now() / 1000) + 86400,
             picture: userInfo.picture,
+            csrfToken: globals.adminVault.genCsrfToken(),
         };
     }
 };

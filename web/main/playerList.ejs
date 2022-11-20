@@ -353,7 +353,7 @@
 
         txAdminAPI({
             type: "GET",
-            url: '/player/list?search=' + encodeURI(searchString),
+            url: '/player/search?query=' + encodeURI(searchString),
             timeout: REQ_TIMEOUT_LONG,
             dataType: 'json',
             success: function (data) {
