@@ -187,6 +187,7 @@ local boostableVehicleClasses = {
 RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
+    local vehClass = GetVehicleClass(veh)
 
     --Check if in vehicle
     if not veh or veh <= 0 then
@@ -196,12 +197,11 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     --Check if vehicle already boosted
     --NOTE: state bags were too complicated, and checking for specific float didn't work due to precision
     local boostedFlag = GetVehicleHandlingFloat(veh, 'CHandlingData', 'fInitialDriveMaxFlatVel')
-    if boostedFlag > 300.0 then
+    if boostedFlag > 300.0 and boostableVehicleClasses[vehClass] then
         return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.already_boosted', true)
     end
 
     --Check if vehicle is in fact a car
-    local vehClass = GetVehicleClass(veh)
     if not boostableVehicleClasses[vehClass] then
         return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.unsupported_class', true)
     end
