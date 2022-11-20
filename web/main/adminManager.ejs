@@ -215,6 +215,7 @@
             type: "POST",
             url: `adminManager/getModal/${modalType}`,
             data,
+            dataType: 'html',
             success: function (data) {
                 $('#modAdmin-body').html(data);
                 if(!name && autofill){
