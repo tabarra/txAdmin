@@ -64,6 +64,21 @@ positions, `top-center`, `top-left`, `top-right`, `bottom-center`, `bottom-left`
 - Default: `top-center`
 - Usage: `+set txAdmin-menuAnnounceNotiPos top-right`
 
+**txAdmin-customAnnouncement**
+- Description: Suppresses the txAdmin announcements and instead allows you to implement your own announcement via the event *txAdmin:events:announcement*.
+- Default: `false`
+- Usage: `+set txAdmin-customAnnouncement true`
+
+**txAdmin-customDirectMessage**
+- Description: Suppresses that txAdmin displays the direct message and instead allows you to implement your own direct message via the event *txAdmin:events:playerDirectMessage*.
+- Default: `false`
+- Usage: `+set txAdmin-customDirectMessage true`
+
+**txAdmin-customWarning**
+- Description: Suppresses that txAdmin displays the warning and instead allows you to implement your own warning via the event *txAdmin:events:playerWarned*.
+- Default: `false`
+- Usage: `+set txAdmin-customWarning true`
+
 ## Commands
 **tx | txadmin**
 - Description: Will toggle the in-game menu. This command has an optional argument of a player id that will quickly open up the target player's info modal.
