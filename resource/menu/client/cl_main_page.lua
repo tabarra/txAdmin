@@ -196,7 +196,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     --Check if vehicle already boosted
     --NOTE: state bags were too complicated, and checking for specific float didn't work due to precision
     local boostedFlag = GetVehicleHandlingFloat(veh, 'CHandlingData', 'fInitialDriveMaxFlatVel')
-    if boostedFlag > 300.0 then
+    if boostedFlag == 300.401214599609375 then
         return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.already_boosted', true)
     end
 
