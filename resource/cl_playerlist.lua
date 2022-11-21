@@ -56,7 +56,7 @@ RegisterNetEvent('txcl:setInitialPlayerlist', function(payload)
     for _, playerData in pairs(payload) do
         local pids = tostring(playerData[1])
         LOCAL_PLAYERLIST[pids] = {
-            name = playerData[2],
+            name = playerData[2] or "unknown",
             health = 0,
             dist = -1,
             vType = "unknown",
@@ -84,9 +84,9 @@ RegisterNetEvent('txcl:setDetailedPlayerlist', function(players, admins)
     for _, playerData in pairs(players) do
         local pid = playerData[1]
         local pids = tostring(playerData[1])
-        local admin = LOCAL_PLAYERLIST[pids]
+        local localPlayer = LOCAL_PLAYERLIST[pids]
         -- Set inbound data
-        if admin == nil then
+        if localPlayer == nil then
             debugPrint("Playerlist: received detailed info for player "..pids.." not present in local playerlist")
             LOCAL_PLAYERLIST[pids] = {
                 name = "unknown",
@@ -139,7 +139,7 @@ RegisterNetEvent('txcl:updatePlayer', function(id, data)
     else
         debugPrint("^2txcl:updatePlayer: ^3"..id.."^2 connected")
         LOCAL_PLAYERLIST[pids] = {
-            name = data,
+            name = data or "unknown",
             health = 0,
             dist = -1,
             vType = "unknown",
