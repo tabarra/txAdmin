@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Bạn đã bị cấm tham gia máy chủ vì lý do: \"%{reason}\". Thời hạn cấm sẽ hết hạn sau: %{expiration}.",
         "kick_permanent": "(%{author}) Bạn đã bị cấm tham gia máy chủ vì lý do: \"%{reason}\".",
-        "reject_temporary": "Bạn đã bị cấm tham gia máy chủ.\nThời hạn cấm sẽ hết hạn sau: %{expiration}.\nBan ID: %{id}.\nLý do: %{reason}.\nBanned bởi: %{author}.",
-        "reject_permanent": "Bạn đã bị cấm tham gia máy chủ.\nBan ID: %{id}.\nLý do: %{reason}.\nBanned bởi: %{author}."
+        "reject": {
+            "title_permanent": "Bạn đã bị cấm vĩnh viễn tham gia máy chủ này.",
+            "title_temporary": "Bạn đã tạm thời bị cấm tham gia máy chủ này.",
+            "label_expiration": "Lệnh cấm sẽ hết hạn sau",
+            "label_date": "Ngày cấm",
+            "label_author": "Cấm bởi",
+            "label_reason": "Lý do cấm",
+            "label_id": "ID cấm",
+            "note_multiple_bans": "Lưu ý: bạn có nhiều hơn một lệnh cấm hoạt động đối với tài khoản của mình."
+        }
     },
     "server_actions": {
         "restarting": "Máy chủ khởi động lại (%{reason}).",
@@ -106,17 +114,17 @@
                 }
             },
             "vehicle":{
-                "title": "Phương Tiện",
+                "title": "xe",
                 "onesync_error": "Yêu cầu Onesync",
                 "not_in_veh_error": "Bạn đang ở trong xe!",
                 "spawn": {
-                    "title": "Spawn",
-                    "label": "Spawn Phương Tiện",
-                    "dialog_title": "Spawn Phương Tiện",
-                    "dialog_desc": "Nhập tên phương tiện bạn muốn spawn.",
-                    "dialog_success": "Phương tiện đã spawn!",
-                    "dialog_error": "Phương tiện với tên '%{modelName}' không tồn tại!",
-                    "dialog_info": "Đang spawn phương tiện %{modelName}."
+                    "title": "Tạo ra",
+                    "label": "Tạo ra xe",
+                    "dialog_title": "Tạo ra xe",
+                    "dialog_desc": "Nhập tên xe bạn muốn tạo ra.",
+                    "dialog_success": "xe đã được tạo ra!",
+                    "dialog_error": "xe với tên '%{modelName}' không tồn tại!",
+                    "dialog_info": "Đang tạo ra xe %{modelName}."
                 },
                 "fix": {
                     "title": "Sửa",
@@ -127,10 +135,17 @@
                     "title": "Xóa",
                     "label": "Xóa xe hiện tại",
                     "success": "Xe đã bị xóa!"
+                },
+                "boost": {
+                    "title": "Boost xe",
+                    "label": "Tăng tốc cho chiếc xe để đạt được niềm vui tối đa (Độ xe)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "Xe này đã được độ.",
+                    "unsupported_class": "Loại xe này không được hỗ trợ."
                 }
             },
             "heal": {
-                "title": "Heal",
+                "title": "Máu",
                 "myself": {
                     "title": "Bản thân",
                     "label": "Hồi máu cho bản thân",
@@ -147,25 +162,28 @@
             },
             "announcement": {
                 "title": "Gửi thông báo",
+                "label": "Send an announcement to all online players.",
                 "dialog_desc": "Gửi thông báo tới tất cả người chơi.",
                 "dialog_placeholder": "Nhập thông báo...",
                 "dialog_success": "Đang gửi thông báo."
             },
             "clear_area": {
                 "title": "Dọn Dẹp Khu Vực",
-                "dialog_description": "Vui lòng nhập radius mà bạn muốn dọn dẹp (0-300), các object spawn từ script sẽ không bị xóa.",
+                "label": "Đặt lại một khu vực cụ thể về trạng thái mặc định",
+                "dialog_description": "Vui lòng nhập radius mà bạn muốn dọn dẹp (0-300), các vật thể tạo ra từ script sẽ không bị xóa.",
                 "dialog_success": "Đang dọn dẹp khu vực bán kính %{radius}m",
-                "dialog_error": "Bán kính radius không hợp lệ."
+                "dialog_error": "Bán kính không hợp lệ."
             },
             "player_ids": {
                 "title": "Hiện Tên & IDs",
+                "label": "Chuyển đổi hiển thị ID người chơi (và thông tin khác) phía trên đầu của tất cả người chơi gần đó",
                 "alert_show": "Đang hiển thị tên và ID người chơi gần đây.",
                 "alert_hide": "Đang ẩn tên và ID người chơi gần đây."
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Người chơi trực tuyến",
+                "online_players": "Người chơi đang online",
                 "players": "Người chơi",
                 "search": "Tìm",
                 "zero_players": "Không tìm thấy"
@@ -254,33 +272,50 @@
             },
             "info": {
                 "title": "Thông tin người chơi",
-                "session_time": "Thời gian chơi",
-                "play_time": "Tổng thời gian",
-                "joined": "Tham gia",
-                "notes_placeholder": "Lưu ý cho người chơi"
+                "session_time": "Thời gian phiên",
+                "play_time": "Thời gian chơi",
+                "joined": "Đã tham gia",
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "chưa",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "XÓA WL",
+                "btn_wl_success": "Đã cập nhật whitelist.",
+                "log_label": "Nhật ký",
+                "log_empty": "Không tìm thấy lệnh cấm/cảnh cáo nào.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "CHI TIẾT",
+                "notes_placeholder": "Ghi chú về người chơi này...",
+                "notes_changed": "Đã cập nhật ghi chú của người chơi."
+            },
+            "ids": {
+                "current_ids": "Định danh hiện tại",
+                "previous_ids": "Định danh được sử dụng trước đây"
             },
             "history": {
-                "title": "Lịch sử",
-                "action_types": {
-                    "warn": "Cảnh Cáo",
-                    "warn_revoked": "Đã gỡ bỏ cảnh cáo cho",
-                    "ban": "Bị Cấm",
-                    "ban_revoked": "Đã gỡ bỏ lệnh cấm cho",
-                    "whitelist": "Được Duyệt",
-                    "whitelist_revoked": "Đã gỡ Whitelist cho"
-                }
+                "title": "Lịch sử liên quan",
+                "btn_revoke": "GỠ BỎ",
+                "revoked_success": "Hành động bị thu hồi!",
+                "banned_by": "Bị cấm bởi %{author}",
+                "warned_by": "Cảnh cáo bởi %{author}",
+                "revoked_by": "Gỡ bỏ bởi %{author}.",
+                "expired_at": "Hết hạn lúc %{date}.",
+                "expires_at": "Hết hạn lúc %{date}."
             },
             "ban": {
-                "title": "Cấm Người Chơi",
-                "reason_placeholder": "Lý Do",
-                "duration_placeholder": "Thời Hạn",
+                "title": "Cấm người chơi",
+                "reason_placeholder": "Lý do...",
+                "reason_required": "Lý do cấm là bắt buộc.",
+                "duration_placeholder": "Thời gian.",
+                "success": "Người chơi đã bị cấm.",
                 "hours": "giờ",
                 "days": "ngày",
                 "weeks": "tuần",
                 "months": "tháng",
-                "permanent": "Vĩnh Viễn",
+                "permanent": "Vĩnh viễn",
                 "custom": "Tùy chỉnh",
-                "helper_text": "Vui lòng chọn thời hạn"
+                "helper_text": "Vui lòng nhập thời gian cấm người chơi.",
+                "submit": "Xác nhận"
             }
         }
     }
