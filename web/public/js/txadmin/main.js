@@ -109,8 +109,8 @@ const updateHostStats = (hostData) => {
 function refreshData() {
     const scope = (isWebInterface) ? 'web' : 'iframe';
     txAdminAPI({
-        url: `status/${scope}`,
         type: 'GET',
+        url: `status/${scope}`,
         timeout: REQ_TIMEOUT_SHORT,
         success: function (data) {
             if (checkApiLogoutRefresh(data)) return;
@@ -196,7 +196,6 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
         type: 'POST',
         url: '/changePassword',
         data: form,
-        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             notify.update('type', data.type);
@@ -245,8 +244,7 @@ async function txApiFxserverControl(action) {
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
     txAdminAPI({
         url: '/fxserver/controls/' + action,
-        type: 'GET',
-        dataType: 'json',
+        type: 'POST',
         timeout: REQ_TIMEOUT_LONG,
         success: function (data) {
             updateMarkdownNotification(data, notify);

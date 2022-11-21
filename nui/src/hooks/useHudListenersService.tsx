@@ -139,7 +139,7 @@ export const useHudListenersService = () => {
       );
     } else {
       const foundPlayers = onlinePlayers.filter((playerData) =>
-        playerData.name.toLowerCase().includes(target.toLowerCase())
+        playerData.name?.toLowerCase().includes(target.toLowerCase())
       );
 
       if (foundPlayers.length === 1) targetPlayer = foundPlayers[0];

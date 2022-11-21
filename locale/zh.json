@@ -139,7 +139,9 @@
                 "boost": {
                     "title": "满改",
                     "label": "将载具改装升级到最大（可能会更快）",
-                    "success": "载具已满改！"
+                    "success": "载具已满改！",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {

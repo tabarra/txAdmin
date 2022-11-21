@@ -302,8 +302,8 @@
 
             //Get log from API
             txAdminAPI({
-                url: `/serverLog/partial?dir=${direction}&ref=${ref}`,
                 type: 'GET',
+                url: `/serverLog/partial?dir=${direction}&ref=${ref}`,
                 timeout: REQ_TIMEOUT_MEDIUM,
                 success: function (data) {
                     logContainer.innerHTML = '';

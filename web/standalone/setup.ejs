@@ -669,7 +669,6 @@
                 url: '/setup/validateRecipeURL',
                 timeout: REQ_TIMEOUT_LONG,
                 data: {recipeURL: s4RemoteTemplateInput.value.trim()},
-                dataType: 'json',
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
@@ -718,7 +717,6 @@
                 url: '/setup/validateLocalDeployPath',
                 timeout: REQ_TIMEOUT_LONG,
                 data: {deployPath: s5DeployerTargetInput.value.trim()},
-                dataType: 'json',
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
@@ -759,7 +757,6 @@
                 url: '/setup/validateLocalDataFolder',
                 timeout: REQ_TIMEOUT_LONG,
                 data: {dataFolder: s4LocalDataPathInput.value.trim()},
-                dataType: 'json',
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
@@ -808,7 +805,6 @@
                 url: '/setup/validateCFGFile',
                 timeout: REQ_TIMEOUT_LONG,
                 data: outData,
-                dataType: 'json',
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
@@ -870,7 +866,6 @@
                 url: '/setup/save',
                 timeout: REQ_TIMEOUT_LONG,
                 data: outData,
-                dataType: 'json',
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){

@@ -54,11 +54,12 @@ export default (config) => {
     router.get('/auth/:provider/redirect', authLimiter, webRoutes.auth_providerRedirect);
     router.get('/auth/:provider/callback', authLimiter, webRoutes.auth_providerCallback);
     router.post('/auth/password', authLimiter, webRoutes.auth_verifyPassword);
-    router.post('/changePassword', requestAuth('web'), webRoutes.auth_changePassword);
+    router.post('/changePassword', requestAuth('api'), webRoutes.auth_changePassword);
 
     //Admin Manager
     router.get('/adminManager', requestAuth('web'), webRoutes.adminManager_get);
-    router.post('/adminManager/:action', requestAuth('web'), webRoutes.adminManager_actions);
+    router.post('/adminManager/getModal/:modalType', requestAuth('web'), webRoutes.adminManager_getModal);
+    router.post('/adminManager/:action', requestAuth('api'), webRoutes.adminManager_actions);
 
     //Settings
     router.get('/setup', requestAuth('web'), webRoutes.setup_get);
@@ -67,18 +68,18 @@ export default (config) => {
     router.get('/deployer/status', requestAuth('api'), webRoutes.deployer_status);
     router.post('/deployer/recipe/:action', requestAuth('api'), webRoutes.deployer_actions);
     router.get('/settings', requestAuth('web'), webRoutes.settings_get);
-    router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings_save);
+    router.post('/settings/save/:scope', requestAuth('api'), webRoutes.settings_save);
 
     //Master Actions
     router.get('/masterActions', requestAuth('web'), webRoutes.masterActions_page);
     router.get('/masterActions/backupDatabase', requestAuth('web'), webRoutes.masterActions_getBackup);
-    router.post('/masterActions/:action', requestAuth('web'), webRoutes.masterActions_actions);
+    router.post('/masterActions/:action', requestAuth('api'), webRoutes.masterActions_actions);
 
     //FXServer
-    router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver_controls); //FIXME: transform into post
-    router.post('/fxserver/commands', requestAuth('web'), webRoutes.fxserver_commands);
+    router.post('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver_controls);
+    router.post('/fxserver/commands', requestAuth('api'), webRoutes.fxserver_commands);
     router.get('/fxserver/downloadLog', requestAuth('web'), webRoutes.fxserver_downloadLog);
-    router.post('/fxserver/schedule', requestAuth('web'), webRoutes.fxserver_schedule);
+    router.post('/fxserver/schedule', requestAuth('api'), webRoutes.fxserver_schedule);
 
     //CFG Editor
     router.get('/cfgEditor', requestAuth('web'), webRoutes.cfgEditor_get);
@@ -112,6 +113,7 @@ export default (config) => {
     //Player routes
     router.get('/player', requestAuth('api'), webRoutes.player_modal);
     router.get('/player/list', requestAuth('web'), webRoutes.player_list);
+    router.get('/player/search', requestAuth('api'), webRoutes.player_search);
     router.post('/player/checkJoin', requestAuth('intercom'), webRoutes.player_checkJoin);
     router.post('/player/:action', requestAuth('api'), webRoutes.player_actions);
     router.get('/whitelist', requestAuth('web'), webRoutes.whitelist_page);

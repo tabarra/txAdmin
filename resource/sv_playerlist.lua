@@ -201,6 +201,11 @@ function sendInitialPlayerlist(adminID)
     for playerID, playerData in pairs(TX_PLAYERLIST) do
         payload[#payload + 1] = {tonumber(playerID), playerData.name}
     end
+    --DEBUG
+    -- debugPrint("====================================")
+    -- print(json.encode(payload, {indent = true}))
+    -- debugPrint("====================================")
+
     debugPrint('Sending initial playerlist to ' .. adminID)
     TriggerClientEvent('txcl:setInitialPlayerlist', adminID, payload)
 end

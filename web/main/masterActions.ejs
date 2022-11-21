@@ -92,97 +92,92 @@
                         <div class="alert alert-warning text-center" role="alert">
                             <strong>Warning:</strong> this action is irreversible and we strongly suggest that you save a database backup first.
                         </div>
-                        <form action="/masterActions/cleanDatabase" method="post" id="cleandb-main">
-                            <div class="form-group row">
-                                <label for="cleandb-players" class="col-sm-3 col-form-label">
-                                    Players
-                                </label>
-                                <div class="col-sm-9">
-                                    <select id="cleandb-players" name="players" class="form-control" required>
-                                        <option value="none">none</option>
-                                        <option value="60d" selected>inactive over 60 days</option>
-                                        <option value="30d">inactive over 30 days</option>
-                                        <option value="15d">inactive over 15 days</option>
-                                    </select>
-                                    <span class="form-text text-muted">
-                                        Remove from the database players based on how much time since they last connected to the server.
-                                        This will not remove players with saved notes, neither will erase bans/warns/whtelist logs.
-                                    </span>
-                                </div>
+                        <div class="form-group row">
+                            <label for="cleandb-players" class="col-sm-3 col-form-label">
+                                Players
+                            </label>
+                            <div class="col-sm-9">
+                                <select id="cleandb-players" name="players" class="form-control" required>
+                                    <option value="none">none</option>
+                                    <option value="60d" selected>inactive over 60 days</option>
+                                    <option value="30d">inactive over 30 days</option>
+                                    <option value="15d">inactive over 15 days</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    Remove from the database players based on how much time since they last connected to the server.
+                                    This will not remove players with saved notes, neither will erase bans/warns/whtelist logs.
+                                </span>
                             </div>
+                        </div>
 
-                            <div class="form-group row">
-                                <label for="cleandb-bans" class="col-sm-3 col-form-label">
-                                    Bans
-                                </label>
-                                <div class="col-sm-9">
-                                    <select id="cleandb-bans" name="bans" class="form-control" required>
-                                        <option value="none">none</option>
-                                        <option value="revoked" selected>revoked</option>
-                                        <option value="revokedExpired">revoked or expired</option>
-                                        <option value="all" class="font-weight-bold text-danger">REMOVE ALL BANS</option>
-                                    </select>
-                                    <span class="form-text text-muted">
-                                        Remove expired or revoked bans from the database.
-                                    </span>
-                                </div>
+                        <div class="form-group row">
+                            <label for="cleandb-bans" class="col-sm-3 col-form-label">
+                                Bans
+                            </label>
+                            <div class="col-sm-9">
+                                <select id="cleandb-bans" name="bans" class="form-control" required>
+                                    <option value="none">none</option>
+                                    <option value="revoked" selected>revoked</option>
+                                    <option value="revokedExpired">revoked or expired</option>
+                                    <option value="all" class="font-weight-bold text-danger">REMOVE ALL BANS</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    Remove expired or revoked bans from the database.
+                                </span>
                             </div>
+                        </div>
 
-                            <div class="form-group row">
-                                <label for="cleandb-warns" class="col-sm-3 col-form-label">
-                                    Warns
-                                </label>
-                                <div class="col-sm-9">
-                                    <select id="cleandb-warns" name="warns" class="form-control" required>
-                                        <option value="none" >none</option>
-                                        <option value="revoked">revoked</option>
-                                        <option value="30d" selected>older than 30 days</option>
-                                        <option value="15d">older than 15 days</option>
-                                        <option value="7d">older than 7 days</option>
-                                        <option value="all" class="font-weight-bold text-danger">REMOVE ALL WARNS</option>
-                                    </select>
-                                    <span class="form-text text-muted">
-                                        Remove old or revoked warns from the database.
-                                    </span>
-                                </div>
+                        <div class="form-group row">
+                            <label for="cleandb-warns" class="col-sm-3 col-form-label">
+                                Warns
+                            </label>
+                            <div class="col-sm-9">
+                                <select id="cleandb-warns" name="warns" class="form-control" required>
+                                    <option value="none" >none</option>
+                                    <option value="revoked">revoked</option>
+                                    <option value="30d" selected>older than 30 days</option>
+                                    <option value="15d">older than 15 days</option>
+                                    <option value="7d">older than 7 days</option>
+                                    <option value="all" class="font-weight-bold text-danger">REMOVE ALL WARNS</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    Remove old or revoked warns from the database.
+                                </span>
                             </div>
+                        </div>
 
-                            <div class="text-center mt-4">
-                                <button class="btn btn-sm btn-outline-danger" type="submit" id="cleandb-submitButton" <%= disableActions %>>
-                                    <i class="icon-check"></i> Clean Database
-                                </button>
-                            </div>
-                        </form>
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-outline-danger" id="cleandb-submitButton" <%= disableActions %>>
+                                <i class="icon-check"></i> Clean Database
+                            </button>
+                        </div>
                     </div>
 
 
                     <!-- /Revoke Whitelists Tab -->
                     <div class="tab-pane fade" id="nav-revokewl" role="tabpanel" aria-labelledby="nav-revokewl-tab">
-                        <form action="/masterActions/revokeWhitelists" method="post" id="revokewl-main">
-                            <div class="form-group row">
-                                <label for="revokewl-filter" class="col-sm-3 col-form-label">
-                                    Filter
-                                </label>
-                                <div class="col-sm-9">
-                                    <select id="revokewl-filter" name="filter" class="form-control" required>
-                                        <option value="30d" selected>player that haven't joined in the last 30 days</option>
-                                        <option value="15d">player that haven't joined in the last 15 days</option>
-                                        <option value="7d">player that haven't joined in the last 7 days</option>
-                                        <option value="all" class="font-weight-bold text-danger">REVOKE ALL WHITELISTS</option>
-                                    </select>
-                                    <span class="form-text text-muted">
-                                        Revoke whitelist from players that have not joined the server the last X days.
-                                    </span>
-                                </div>
+                        <div class="form-group row">
+                            <label for="revokewl-filter" class="col-sm-3 col-form-label">
+                                Filter
+                            </label>
+                            <div class="col-sm-9">
+                                <select id="revokewl-filter" name="filter" class="form-control" required>
+                                    <option value="30d" selected>player that haven't joined in the last 30 days</option>
+                                    <option value="15d">player that haven't joined in the last 15 days</option>
+                                    <option value="7d">player that haven't joined in the last 7 days</option>
+                                    <option value="all" class="font-weight-bold text-danger">REVOKE ALL WHITELISTS</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    Revoke whitelist from players that have not joined the server the last X days.
+                                </span>
                             </div>
-        
-                            
-                            <div class="text-center mt-4">
-                                <button class="btn btn-sm btn-outline-danger" type="submit" id="revokewl-submitButton" <%= disableActions %>>
-                                    <i class="icon-check"></i> Revoke Whitelists
-                                </button>
-                            </div>
-                        </form>
+                        </div>
+    
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-outline-danger" id="revokewl-submitButton" <%= disableActions %>>
+                                <i class="icon-check"></i> Revoke Whitelists
+                            </button>
+                        </div>
                     </div>
                     <!-- /Revoke Whitelists Tab -->
 
@@ -220,7 +215,6 @@
                 type: "POST",
                 url: `/masterActions/reset_fxserver`,
                 data: {},
-                dataType: 'json',
                 timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
                     if(data.success == true){
@@ -248,11 +242,9 @@
         const frmBans = document.getElementById('cleandb-bans');
         const frmWarns = document.getElementById('cleandb-warns');
         const cleandbSubmitBtn = document.getElementById('cleandb-submitButton');
-        const cleandbForm = document.getElementById('cleandb-main');
 
         cleandbSubmitBtn.onclick = async (event) => {
-            event.preventDefault();
-
+            //Validate options
             const changes = [];
             if(frmPlayers.value !== 'none'){
                 changes.push(`Remove players ${frmPlayers.options[frmPlayers.selectedIndex].text}.`);
@@ -263,19 +255,51 @@
             if(frmWarns.value !== 'none'){
                 changes.push(`Remove warns ${frmWarns.options[frmWarns.selectedIndex].text}.`);
             }
-
             if(!changes.length){
                 return $.notify({ message: 'You need to select at least one option.' }, {type: 'danger'});
             }
 
+            //Confirm action
             const confirmOptions = {
                 title: 'Are you sure wou want to:',
                 content: '<ul>' + changes.map(x => `<li>${x}</li>`).join('\n') + '</ul>'
             }
-            if(!await txAdminConfirm(confirmOptions)){
-                return;
-            }
-            cleandbForm.submit();
+            if(!await txAdminConfirm(confirmOptions)) return;
+            
+            //Send API request
+            txAdminAPI({
+                type: "POST",
+                url: `/masterActions/cleanDatabase`,
+                data: {
+                    players: frmPlayers.value,
+                    bans: frmBans.value,
+                    warns: frmWarns.value,
+                },
+                timeout: REQ_TIMEOUT_LONG,
+                success: function (data) {
+                    if(data.error){
+                        return txAdminAlert({
+                            title: 'Error:',
+                            modalColor: 'red',
+                            content: data.error
+                        });
+                    }else{
+                        return txAdminAlert({
+                            title: 'Result:',
+                            content: `<b>Players deleted: ${data.playersRemoved}</b> <br>
+                                <b>Actions deleted: ${data.actionsRemoved}</b> <br>
+                                Process finished in ${data.msElapsed}ms.`
+                        });
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    return txAdminAlert({
+                        title: 'Error:',
+                        modalColor: 'red',
+                        content: message
+                    });
+                }
+            });
         }
     })();
 
@@ -284,11 +308,9 @@
     (()=>{
         const frmFilter = document.getElementById('revokewl-filter');
         const revokewlSubmitBtn = document.getElementById('revokewl-submitButton');
-        const revokewlForm = document.getElementById('revokewl-main');
 
         revokewlSubmitBtn.onclick = async (event) => {
-            event.preventDefault();
-
+            //Confirm action
             const actionText = (frmFilter.value === 'all')
                 ? `Revoke ALL Whitelists.`
                 : `Revoke Whitelist from all players that have not joined in the past ${frmFilter.value}.`;
@@ -297,7 +319,38 @@
                 content: actionText
             }
             if(!await txAdminConfirm(confirmOptions)) return;
-            revokewlForm.submit();
+            
+            //Send API request
+            txAdminAPI({
+                type: "POST",
+                url: `/masterActions/revokeWhitelists`,
+                data: {
+                    filter: frmFilter.value,
+                },
+                timeout: REQ_TIMEOUT_LONG,
+                success: function (data) {
+                    if(data.error){
+                        return txAdminAlert({
+                            title: 'Error:',
+                            modalColor: 'red',
+                            content: data.error
+                        });
+                    }else{
+                        return txAdminAlert({
+                            title: 'Result:',
+                            content: `<b>Whitelists revoked: ${data.cntRemoved}</b> <br>
+                                Process finished in ${data.msElapsed}ms.`
+                        });
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    return txAdminAlert({
+                        title: 'Error:',
+                        modalColor: 'red',
+                        content: message
+                    });
+                }
+            });
         }
     })();
     

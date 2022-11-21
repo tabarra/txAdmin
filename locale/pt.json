@@ -137,9 +137,11 @@
                     "success": "Veículo deletado!"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Aumenta as stats do carro para atingir máxima diversão (e talvez velocidade)",
-                    "success": "Vehicle boosted!"
+                    "title": "Nitro",
+                    "label": "Aumenta as caracterísiticas do veículo para atingir máxima diversão (e talvez velocidade)",
+                    "success": "Nitro adicionado!",
+                    "already_boosted": "Esse carro já tem nitro.",
+                    "unsupported_class": "Esta classe de veículo não é suportada."
                 }
             },
             "heal": {

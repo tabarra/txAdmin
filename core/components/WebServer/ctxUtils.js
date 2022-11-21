@@ -270,6 +270,7 @@ export default async function WebCtxUtils(ctx, next) {
             txaOutdated: globals.databus.updateChecker?.txadmin,
             fxsOutdated: globals.databus.updateChecker?.fxserver,
             jsInjection: getJavascriptConsts({
+                csrfToken: (ctx.session?.auth?.csrfToken) ? ctx.session.auth.csrfToken : 'not_set',
                 isWebInterface: isWebInterface,
                 TX_BASE_PATH: (isWebInterface) ? '' : WEBPIPE_PATH,
                 PAGE_TITLE: data?.headerTitle ?? 'txAdmin',

@@ -2,7 +2,7 @@ const modulename = 'AdminVault';
 import fse from 'fs-extra';
 import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
-
+import { nanoid } from 'nanoid';
 import logger from '@core/extras/console.js';
 import { convars, txEnv, verbose } from '@core/globalData';
 import CitizenFXProvider from './providers/CitizenFX.js';
@@ -570,5 +570,13 @@ export default class AdminVault {
                 dir(error);
             }
         }
+    }
+
+
+    /**
+     * Returns a random token to be used as CSRF Token
+     */
+    genCsrfToken() {
+        return nanoid();
     }
 };

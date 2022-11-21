@@ -404,7 +404,6 @@
                 url: '/deployer/recipe/confirmRecipe',
                 timeout: REQ_TIMEOUT_LONG,
                 data: {recipe},
-                dataType: 'json',
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
@@ -479,7 +478,6 @@
                 url: '/deployer/recipe/setVariables',
                 timeout: REQ_TIMEOUT_LONG,
                 data: postData,
-                dataType: 'json',
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
@@ -569,7 +567,6 @@
                 url: '/deployer/recipe/commit',
                 timeout: REQ_TIMEOUT_LONG,
                 data: {serverCFG},
-                dataType: 'json',
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){

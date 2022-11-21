@@ -8,6 +8,37 @@
     - wl requests and approvals older than a week
 - cfx.re finally deprecated
 
+
+# Coisas pra falar no trailer:
+- playerlist mostra nomes limpos, e da match em caracteres (sem fuse.js ainda)
+- players page mostra limpo, busca com fuse.js (not perfect)
+- now we are saving old player identifiers
+
+- whitelist in a separate page
+- !addwl temporarily disabled
+- explain the new flow
+- show the buttons on the page, and search with fuse
+- show settings page rejection messages config
+
+- changed the way ban messages look + mostrar na tela
+
+- new player modal
+- you can now easily see if player is whitelisted, also the bans/warns
+- you can now also revoke bans/warns directly into the modal
+
+- new events for playerDirectMessage and actionRevoked
+- updated lowdb to increase performance
+- fixed memory leak for big servers
+- dm via snackbar instead of chat
+
+- removed the option to import bans from other resources
+- The optimizer will remove:
+    - players that havent connected in 9 days and have less than two hours of playtime
+    - wl requests and approvals older than a week
+- car boost option
+
+
+
 # TODO:
 - [x] player join/leave
 - [x] increment player time
@@ -104,6 +135,14 @@ After merging feat/core-playerlist, but still in v5.0.0  (1d?):
     - [x] `player_modal.info.*`
 - [x] add car boost function
 
+TODO for beta2:
+- [x] merge taso PR
+- [x] fix car boost func (double + veh type check)
+- [x] fix csrf
+- [x] force `txAdminAPI` to have `dataType: 'json'` for all calls
+- [ ] write changelog + announcement
+- [ ] announce to top servers
+
 The diagnostics reporting button thing (2d?):
 - [ ] do frontend button + modals
 - [ ] FIXME: define steps
@@ -116,6 +155,19 @@ After v5.0.0 release:
 - [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
 - [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] create new whitelist events
+    - [ ] whitelistPlayer:
+        - license: xxxxx
+        - author: admin name
+        - status: true/false
+    - [ ] whitelistPreApproval:
+        - action: added/removed
+        - identifier: `discord:xxxxxx` / `license:xxxxx`
+        - author: admin name
+    - [ ] whitelistRequest:
+        - action: requested/approved/denied
+        - author: either player name, or admin name
+        - requestId: Rxxxx
+        - license: xxxxxx
 - [ ] admin-only mode for the server
 - [ ] add lru-cache to `DiscordBot.resolveMember()`
 - [ ] mock out insights page (assets + http reqs)
@@ -174,6 +226,7 @@ History:
 - list of warns/bans in a table
 - search by id OR identifier (single) with select box
 - filter by action type
+- filter by admin, and hotlink it from the admins page
 
 Whitelist Page/routes:
 - show pre approvals and requests in two tables
