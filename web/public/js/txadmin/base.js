@@ -76,7 +76,7 @@ for (let pfp of pfpList) {
 
 
 //================================================================
-//================================================= Helper functions
+//================================================= Helper funcs
 //================================================================
 const checkApiLogoutRefresh = (data) => {
     if (data.logout === true) {
@@ -138,10 +138,26 @@ const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
 
     url = TX_BASE_PATH + url;
     timeout = timeout || REQ_TIMEOUT_MEDIUM;
+    dataType = dataType || 'json';
     success = success || (() => {});
     error = error || (() => {});
+    const headers = {'X-TxAdmin-CsrfToken': (csrfToken) ? csrfToken : 'not_set'}
     // console.log(`txAdminAPI Req to: ${url}`);
-    return $.ajax({type, url, timeout, data, dataType, success, error});
+    return $.ajax({type, url, timeout, data, dataType, success, error, headers});
+};
+
+const txAdminAlert = ({content, modalColor, title}) => {
+    $.confirm({
+        title,
+        content: content,
+        type: modalColor || 'green',
+        buttons: {
+            close: {
+                text: 'Close',
+                keys: ['enter'],
+            }
+        },
+    });
 };
 
 const txAdminConfirm = ({content, confirmBtnClass, modalColor, title}) => {

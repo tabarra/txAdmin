@@ -36,6 +36,7 @@ interface AnnounceMessageProps {
 export interface AddAnnounceData {
   message: string;
   author: string;
+  isDirectMessage: boolean;
 }
 
 const AnnounceMessage: React.FC<AnnounceMessageProps> = ({
@@ -138,7 +139,7 @@ export const useHudListenersService = () => {
       );
     } else {
       const foundPlayers = onlinePlayers.filter((playerData) =>
-        playerData.name.toLowerCase().includes(target.toLowerCase())
+        playerData.name?.toLowerCase().includes(target.toLowerCase())
       );
 
       if (foundPlayers.length === 1) targetPlayer = foundPlayers[0];
@@ -170,6 +171,23 @@ export const useHudListenersService = () => {
       {
         variant: "warning",
         autoHideDuration: getNotiDuration(message) * 1000,
+        anchorOrigin: {
+          horizontal: notiPos.horizontal,
+          vertical: notiPos.vertical,
+        },
+      }
+    );
+  });
+
+  useNuiEvent<AddAnnounceData>("addDirectMessage", ({ message, author }) => {
+    enqueueSnackbar(
+      <AnnounceMessage
+        message={message}
+        title={t("nui_menu.misc.directmessage_title", { author })}
+      />,
+      {
+        variant: "info",
+        autoHideDuration: getNotiDuration(message) * 1000 * 2, //*2 to slow things down
         anchorOrigin: {
           horizontal: notiPos.horizontal,
           vertical: notiPos.vertical,

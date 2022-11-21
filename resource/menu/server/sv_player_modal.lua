@@ -17,13 +17,11 @@ RegisterNetEvent('txAdmin:menu:tpToPlayer', function(tgtId)
   end
 
   local allow = PlayerHasTxPermission(src, 'players.teleport')
-  local data = { x = nil, y = nil, z = nil, target = id }
+  local data = { x = nil, y = nil, z = nil, target = tgtId }
 
-  data.playerName = "unknown"
-    -- More OneSync dependent code
+  -- More OneSync dependent code
   if allow then
     -- Check for routing bucket diff
-
     local tgtBucket = GetPlayerRoutingBucket(tgtId)
     local srcBucket = GetPlayerRoutingBucket(src)
 
@@ -36,7 +34,6 @@ RegisterNetEvent('txAdmin:menu:tpToPlayer', function(tgtId)
     -- ensure the player ped exists
     local ped = GetPlayerPed(tgtId)
     if ped then
-      data.playerName = GetPlayerName(tgtId)
       local coords = GetEntityCoords(ped)
       data.x = coords[1]
       data.y = coords[2]

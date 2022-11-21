@@ -4,6 +4,7 @@ export enum VehicleMode {
   SPAWN = "spawn",
   FIX = "fix",
   DELETE = "delete",
+  BOOST = "boost",
 }
 
 const vehicleMode = atom({

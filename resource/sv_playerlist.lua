@@ -5,6 +5,9 @@
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
     return
 end
+function logError(x)
+    print("^5[txAdminClient]^1 " .. x .. "^0")
+end
 local oneSyncConvar = GetConvar('onesync', 'off')
 local onesyncEnabled = oneSyncConvar == 'on' or oneSyncConvar == 'legacy'
 
@@ -108,13 +111,46 @@ end)
 
 
 --[[ Handle player Join or Leave ]]
-AddEventHandler('playerJoining', function()
-    local playerName = sub(GetPlayerName(source) or "unknown", 1, 75)
+AddEventHandler('playerJoining', function(srcString, _oldID)
+    -- sanity checking source
+    if source <= 0 then 
+        logError('playerJoining event with source '..json.encode(source))
+        return
+    end
+
+    local playerData = {
+        name = sub(GetPlayerName(source) or "unknown", 1, 75),
+        ids = GetPlayerIdentifiers(source),
+        hwids = GetPlayerTokens(source),
+    }
+    PrintStructuredTrace(json.encode({
+        type = 'txAdminPlayerlistEvent',
+        event = 'playerJoining',
+        id = source,
+        player = playerData
+    }))
+
+    -- relaying this info to all admins
     for adminID, _ in pairs(TX_ADMINS) do
-        TriggerClientEvent('txcl:updatePlayer', adminID, source, playerName)
+        TriggerClientEvent('txcl:updatePlayer', adminID, source, playerData.playerName)
     end
 end)
-AddEventHandler('playerDropped', function()
+
+AddEventHandler('playerDropped', function(reason)
+    -- sanity checking source
+    if source <= 0 then 
+        logError('playerDropped event with source '..json.encode(source))
+        return
+    end
+
+    PrintStructuredTrace(json.encode({
+        type = 'txAdminPlayerlistEvent',
+        event = 'playerDropped',
+        id = source,
+        reason = reason
+    }))
+
+    -- relaying this info to all admins
     for adminID, _ in pairs(TX_ADMINS) do
         TriggerClientEvent('txcl:updatePlayer', adminID, source, false)
     end
@@ -123,6 +159,20 @@ end)
 
 -- Handle getDetailedPlayerlist
 -- This event is only called when the menu "players" tab is opened, and every 5s while the tab is open
+-- DEBUG playerlist scroll test stuff
+-- math.randomseed(os.time())
+-- local fake_playerlist = {}
+-- local fake_admins = {1, 10, 21, 61, 91, 141, 281}
+-- local function getFakePlayer()
+--     return {
+--         name = 'fake'..tostring(math.random(999999)),
+--         health = 0,
+--         vType = math.random(8),
+--     }
+-- end
+-- for serverID=1, 500 do
+--     fake_playerlist[serverID] = getFakePlayer()
+-- end
 RegisterNetEvent('txsv:getDetailedPlayerlist', function()
     if TX_ADMINS[tostring(source)] == nil then
         debugPrint('Ignoring unauthenticated getDetailedPlayerlist() by ' .. source)
@@ -130,6 +180,7 @@ RegisterNetEvent('txsv:getDetailedPlayerlist', function()
     end
 
     local players = {}
+    --DEBUG replace TX_PLAYERLIST with fake_playerlist and playerData.health with math.random(150)
     for playerID, playerData in pairs(TX_PLAYERLIST) do
         players[#players + 1] = {tonumber(playerID), playerData.health, playerData.vType}
     end
@@ -137,6 +188,7 @@ RegisterNetEvent('txsv:getDetailedPlayerlist', function()
     for adminID, _ in pairs(TX_ADMINS) do
         admins[#admins + 1] = tonumber(adminID)
     end
+    --DEBUG replace admins with fake_admins
     TriggerClientEvent('txcl:setDetailedPlayerlist', source, players, admins)
 end)
 
@@ -145,9 +197,15 @@ end)
 -- Triggered by the server after admin auth
 function sendInitialPlayerlist(adminID)
     local payload = {}
+    --DEBUG replace TX_PLAYERLIST with fake_playerlist
     for playerID, playerData in pairs(TX_PLAYERLIST) do
         payload[#payload + 1] = {tonumber(playerID), playerData.name}
     end
+    --DEBUG
+    -- debugPrint("====================================")
+    -- print(json.encode(payload, {indent = true}))
+    -- debugPrint("====================================")
+
     debugPrint('Sending initial playerlist to ' .. adminID)
     TriggerClientEvent('txcl:setInitialPlayerlist', adminID, payload)
 end

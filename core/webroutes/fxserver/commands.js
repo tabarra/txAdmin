@@ -22,8 +22,8 @@ export default async function FXServerCommands(ctx) {
     ) {
         return sendAlertOutput(ctx, 'Invalid request!');
     }
-    let action = ctx.request.body.action;
-    let parameter = ctx.request.body.parameter;
+    const action = ctx.request.body.action;
+    const parameter = ctx.request.body.parameter;
 
     //Ignore commands when the server is offline
     if (globals.fxRunner.fxChild === null) {
@@ -34,7 +34,7 @@ export default async function FXServerCommands(ctx) {
     }
 
     //Block starting/restarting the 'runcode' resource
-    let unsafeActions = ['restart_res', 'start_res', 'ensure_res'];
+    const unsafeActions = ['restart_res', 'start_res', 'ensure_res'];
     if (unsafeActions.includes(action) && parameter.includes('runcode')) {
         return ctx.send({
             type: 'danger',
@@ -193,7 +193,7 @@ async function sendAlertOutput(ctx, toResp) {
  * @param {string} perm
  */
 function ensurePermission(ctx, perm) {
-    if (ctx.utils.checkPermission(perm, modulename)) {
+    if (ctx.utils.testPermission(perm, modulename)) {
         return true;
     } else {
         ctx.send({

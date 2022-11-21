@@ -2,7 +2,7 @@ const modulename = 'Logger:FXServer';
 import bytes from 'bytes';
 import chalk from 'chalk';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 import { LoggerBase, separator } from '../loggerUtils.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

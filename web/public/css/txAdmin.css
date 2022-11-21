@@ -106,6 +106,21 @@ option:disabled {
     border-radius: 0.2rem;
     vertical-align: text-bottom;
 }
+.btn-inline-sm {
+    padding: 0.1rem 0.2rem;
+    font-size: .85rem;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 0.2rem;
+    vertical-align: text-bottom;
+}
+
+.table td, .table th {
+    vertical-align: unset; /* it was top */
+}
+.table-sm td, .table-sm th {
+    padding: 0.3rem 0.6rem; /* it was 0.3rem all sides */
+}
 
 
 /* Theme dependant */
@@ -249,6 +264,40 @@ mark {background-color: #ffeaa7;}
 .player-history-entry{
     padding: .15rem .25rem;
     margin-bottom: 2px !important;
+}
+
+/* Player DB actions (players page + modal) */
+/* NOTE: this should not be here, but we will refactor the Web UI soon anyways */
+.logEntry{
+    color: #768192;
+    padding: .15rem 0.55rem;
+    margin-bottom: 4px !important;
+}
+.logEntry:hover{
+    background-color: #ebedef;
+}
+.logEntry:hover button{
+    color: #fff;
+    background-color: #636f83;
+}
+.logEntry small{
+    margin-top: .25em;
+}
+.logEntryClickable{
+    cursor: pointer;
+}
+.txInlineBtn{
+    border-radius: .25rem;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 0.1rem;
+}
+.txActionsBtn{
+    font-size: 85%;
+    font-weight: 700;
+    padding: .25rem !important;
+    vertical-align: top;
 }
 
 

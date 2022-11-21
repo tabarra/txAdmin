@@ -1,7 +1,7 @@
 const modulename = 'WebSocket';
 import xssInstancer from '@core/extras/xss.js';
 import { authLogic } from './requestAuthenticator';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer({ mark: ['class'] });

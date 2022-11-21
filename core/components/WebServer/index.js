@@ -8,6 +8,7 @@ import KoaBodyParser from 'koa-bodyparser';
 import KoaServe from 'koa-static';
 import KoaSession from 'koa-session';
 import KoaSessionMemoryStoreClass from 'koa-session-memory';
+import KoaCors from '@koa/cors';
 
 import { Server as SocketIO } from 'socket.io';
 
@@ -18,7 +19,7 @@ import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes';
 
 import { setHttpCallback } from '@citizenfx/http-wrapper';
-import { convars, txEnv, verbose } from '@core/globalData.js';
+import { convars, txEnv, verbose } from '@core/globalData';
 import { requestAuth } from './requestAuthenticator.js';
 import WebCtxUtils from './ctxUtils.js';
 import router from './router';
@@ -34,7 +35,6 @@ export default class WebServer {
         this.luaComToken = nanoid();
         this.webSocket = null;
         this.isListening = false;
-        this.cfxUrl = null;
 
         //Generate cookie key
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
@@ -100,6 +100,11 @@ export default class WebServer {
                 dir(error);
             }
         });
+
+        //Disable CORS on dev mode
+        if(convars.isDevMode){
+            this.app.use(KoaCors());
+        }
 
         //Setting up timeout/error/no-output/413:
         const timeoutLimit = 15 * 1000;
@@ -234,20 +239,6 @@ export default class WebServer {
     setupServerCallbacks() {
         //Just in case i want to re-execute this function
         this.isListening = false;
-
-        //FIXME: in update v4.18.0 we hid the cfx.re proxy url, if nobody complains deprecate the proxy entirely
-        //Print cfx.re url... when available
-        const validUrlRegex = /\.users\.cfx\.re$/i;
-        const getUrlInterval = setInterval(() => {
-            try {
-                const urlConvar = GetConvar('web_baseUrl', 'false');
-                if (validUrlRegex.test(urlConvar)) {
-                    // logOk(`Cfx.re URL: https://${urlConvar}/`);
-                    this.cfxUrl = urlConvar;
-                    clearInterval(getUrlInterval);
-                }
-            } catch (error) { }
-        }, 500);
 
         //CitizenFX Callback
         try {

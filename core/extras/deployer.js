@@ -7,7 +7,7 @@ import open from 'open';
 import YAML from 'js-yaml';
 import logger from '@core/extras/console.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
-import { txEnv, verbose } from '@core/globalData.js';
+import { txEnv, verbose } from '@core/globalData';
 import recipeEngine from './recipeEngine.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

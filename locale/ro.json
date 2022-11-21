@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Ai fost interzis de pe acest server pentru \"%{reason}\". Interzicerea ta va expira în: %{expiration}.",
         "kick_permanent": "(%{author}) Ai fost banat permanent de pe acest server pentru \"%{reason}\".",
-        "reject_temporary": "Accesul tău este interzis.\nInterzicerea expiră în: %{expiration}.\nBan ID: %{id}.\nMotiv: %{reason}.\nBanat de: %{author}.",
-        "reject_permanent": "Accesul tău pe server este interzis permanent.\nBan ID: %{id}.\nMotiv: %{reason}.\nBanat de: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Serverul se restarteaza: (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "A apărut o eroare necunoscută.",
             "not_enabled": "Meniul txAdmin nu este activat! Puteți să o activați din pagina de setări txAdmin.",
             "announcement_title": "Anunț de la %{author}:",
-            "dialog_empty_input": "Nu poți avea un input gol."
+            "dialog_empty_input": "Nu poți avea un input gol.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "Ai înghețat jucătorul!",
@@ -126,6 +135,13 @@
                     "title": "Șterge",
                     "label": "Șterge vehiculul curent",
                     "success": "Vechiulul a fost șters!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Timp sesiune",
                 "play_time": "Timp jucat",
                 "joined": "Alăturat",
-                "notes_placeholder": "Notițe despre acest jucător"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "Istoric",
-                "action_types": {
-                    "warn": "AVERTIZAT",
-                    "warn_revoked": "A REVOCAT WARN-ul pentru",
-                    "ban": "INTERZIS",
-                    "ban_revoked": "A REVOCAT BAN-ul pentru",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "A REVOCAT WHITELIST-ul pentru"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Banează jucător",
@@ -283,7 +309,13 @@
                 "permanent": "Permanent",
                 "custom": "Personalizat",
                 "helper_text": "Vă rugăm să selectați o durată",
-                "submit": "Aplică ban-ul"
+                "submit": "Aplică ban-ul",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

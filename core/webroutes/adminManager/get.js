@@ -32,7 +32,7 @@ export default async function AdminManagerGet(ctx) {
     });
 
     //Check permission
-    if (!ctx.utils.checkPermission('manage.admins', modulename)) {
+    if (!ctx.utils.hasPermission('manage.admins')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 

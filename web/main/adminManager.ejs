@@ -201,20 +201,21 @@
     
     //============================================== Show Admin Modal
     function getAdminModal(name){
-        let urlAction, data;
+        let modalType, data;
         if(name){
             $('#modAdminTitle').html('Edit Admin');
-            urlAction = 'getEditModal';
+            modalType = 'edit';
             data = {name}
         }else{
             $('#modAdminTitle').html('New Admin');
-            urlAction = 'getAddModal';
+            modalType = 'add';
             data = {autofill: true}
         }
         txAdminAPI({
             type: "POST",
-            url: `adminManager/${urlAction}`,
-            data: data,
+            url: `adminManager/getModal/${modalType}`,
+            data,
+            dataType: 'html',
             success: function (data) {
                 $('#modAdmin-body').html(data);
                 if(!name && autofill){
@@ -258,7 +259,6 @@
             type: "POST",
             url: `/adminManager/${action}`, 
             data: formData,
-            dataType: 'json',
             success: function (data) {
                 if (checkApiLogoutRefresh(data)) return;
                 if(data.type == 'showPassword'){

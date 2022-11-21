@@ -3,7 +3,7 @@ import crypto from 'node:crypto'
 import { Issuer, custom } from 'openid-client';
 
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -131,6 +131,7 @@ export default class CitizenFXProvider {
             // expires_at: tokenSet.expires_at,
             expires_at: Math.round(Date.now() / 1000) + 86400,
             picture: userInfo.picture,
+            csrfToken: globals.adminVault.genCsrfToken(),
         };
     }
 };

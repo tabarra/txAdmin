@@ -6,6 +6,7 @@ export { default as resources } from './resources.js';
 export { default as status } from './status.js';
 export { default as chartData } from './chartData.js';
 export { default as txAdminLog } from './txAdminLog.js';
+export { default as databaseActions } from './databaseActions';
 
 export { default as auth_get } from './authentication/get';
 export { default as auth_addMaster } from './authentication/addMaster';
@@ -16,6 +17,7 @@ export { default as auth_changePassword } from './authentication/changePassword'
 export { default as auth_nui } from './authentication/nui';
 
 export { default as adminManager_get } from './adminManager/get';
+export { default as adminManager_getModal } from './adminManager/getModal';
 export { default as adminManager_actions } from './adminManager/actions';
 
 export { default as cfgEditor_get } from './cfgEditor/get';
@@ -28,7 +30,7 @@ export { default as deployer_actions } from './deployer/actions';
 export { default as settings_get } from './settings/get';
 export { default as settings_save } from './settings/save';
 
-export { default as masterActions_get } from './masterActions/get';
+export { default as masterActions_page } from './masterActions/page';
 export { default as masterActions_getBackup } from './masterActions/getBackup';
 export { default as masterActions_actions } from './masterActions/actions';
 
@@ -41,8 +43,15 @@ export { default as fxserver_downloadLog } from './fxserver/downloadLog';
 export { default as fxserver_schedule } from './fxserver/schedule';
 
 export { default as player_list } from './player/list';
+export { default as player_search } from './player/search';
 export { default as player_modal } from './player/modal';
 export { default as player_actions } from './player/actions';
+export { default as player_checkJoin } from './player/checkJoin';
+
+export { default as whitelist_page } from './whitelist/page';
+export { default as whitelist_list } from './whitelist/list';
+export { default as whitelist_actions } from './whitelist/actions';
+
 
 export { default as advanced_get } from './advanced/get';
 export { default as advanced_actions } from './advanced/actions';
@@ -50,3 +59,8 @@ export { default as advanced_actions } from './advanced/actions';
 //FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
 export { default as serverLog } from './serverLog.js';
 export { default as serverLogPartial } from './serverLogPartial.js';
+
+export {
+    get as dev_get,
+    post as dev_post
+} from './devDebug.js';

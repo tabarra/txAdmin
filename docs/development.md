@@ -52,9 +52,10 @@ npm run dev:menu:browser
 
 To run Vite on game dev mode:
 ```sh
-npm run dev:menu:browser
+npm run dev:menu:game
 ```
-Keep in mind that for every change you will need to restart the `monitor` resource, and unless you started the server with `+setr txAdmin-menuDebug true` txAdmin will detect that as a crash and restart your server.
+Keep in mind that for every change you will need to restart the `monitor` resource, and unless you started the server with `+setr txAdmin-menuDebug true` txAdmin will detect that as a crash and restart your server.  
+Also, when running in game mode, it takes between 10 and 30 seconds for the vite builder to finish for you to be able to restart the `monitor` resource ingame.
 
 
 ### Building/Publishing

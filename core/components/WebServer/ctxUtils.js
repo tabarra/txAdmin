@@ -3,13 +3,15 @@ import path from 'path';
 import fse from 'fs-extra';
 import ejs from 'ejs';
 import chalk from 'chalk';
-import * as helpers from '@core/extras/helpers.js';
-import consts from '@core/extras/consts.js';
+import xssInstancer from '@core/extras/xss.js';
+import * as helpers from '@core/extras/helpers';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
-import { convars, txEnv, verbose } from '@core/globalData.js';
+import { convars, txEnv, verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
+const xss = xssInstancer();
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
@@ -20,7 +22,7 @@ const getRenderErrorText = (view, error, data) => {
     out += `Message: ${error.message}\n`;
     out += 'The data provided was:\n';
     out += '================\n';
-    out += JSON.stringify(data, null, 2);
+    out += xss(JSON.stringify(data, null, 2));
     out += '</pre>\n';
     return out;
 };
@@ -42,8 +44,8 @@ const THEME_DARK = 'theme--dark';
 const DEFAULT_AVATAR = 'img/default_avatar.png';
 
 function getEjsOptions(filePath) {
-    const webTemplateRoot = path.resolve(txEnv.txAdminResourcePath, 'web')
-    const webCacheDir = path.resolve(txEnv.txAdminResourcePath, 'web-cache', filePath)
+    const webTemplateRoot = path.resolve(txEnv.txAdminResourcePath, 'web');
+    const webCacheDir = path.resolve(txEnv.txAdminResourcePath, 'web-cache', filePath);
     return {
         cache: true,
         filename: webCacheDir,
@@ -51,7 +53,7 @@ function getEjsOptions(filePath) {
         views: [webTemplateRoot],
         rmWhitespace: true,
         async: true,
-    }
+    };
 }
 
 //================================================================
@@ -70,9 +72,9 @@ async function loadWebTemplate(name) {
         } catch (e) {
             if (e.code == 'ENOENT') {
                 e = new Error(`The '${name}' template was not found:\n` +
-                    `You probably deleted the 'citizen/system_resources/monitor/web/${name}.ejs' file, or the folders above it.`, undefined, e)
+                    `You probably deleted the 'citizen/system_resources/monitor/web/${name}.ejs' file, or the folders above it.`, undefined, e);
             }
-            logError(e)
+            logError(e);
         }
     }
 
@@ -98,7 +100,7 @@ async function renderView(view, reqSess, data, txVars) {
 
     let out;
     try {
-        out = await loadWebTemplate(view).then(template => template(data))
+        out = await loadWebTemplate(view).then(template => template(data));
     } catch (error) {
         out = getRenderErrorText(view, error, data);
     }
@@ -124,9 +126,9 @@ async function renderLoginView(data, txVars) {
 
     let out;
     try {
-        out = await loadWebTemplate('standalone/login').then(template => template(data))
+        out = await loadWebTemplate('standalone/login').then(template => template(data));
     } catch (error) {
-        logError(error)
+        logError(error);
         out = getRenderErrorText('Login', error, data);
     }
 
@@ -161,32 +163,39 @@ function logAction(ctx, data) {
 
 //================================================================
 /**
- * Check for a permission
+ * Returns if admin has permission or not - no message is printed
  * @param {object} ctx
  * @param {string} perm
- * @param {string} fromCtx
- * @param {boolean} printWarn
  */
-function checkPermission(ctx, perm, fromCtx, printWarn = true) {
+function hasPermission(ctx, perm) {
     try {
         const sess = ctx.nuiSession ?? ctx.session;
-
-        //For master permission
-        if (perm === 'master' && sess.auth.master !== true) {
-            if (verbose && printWarn) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
-            return false;
-        }
-
-        //For all other permissions
-        if (
+        return (
             sess.auth.master === true
             || sess.auth.permissions.includes('all_permissions')
             || sess.auth.permissions.includes(perm)
-        ) {
-            return true;
-        } else {
-            if (verbose && printWarn) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
+        );
+    } catch (error) {
+        if (verbose) logWarn(`Error validating permission '${perm}' denied.`);
+        return false;
+    }
+}
+
+//================================================================
+/**
+ * Test for a permission and prints warn if test fails and verbose
+ * @param {object} ctx
+ * @param {string} perm
+ * @param {string} fromCtx
+ */
+function testPermission(ctx, perm, fromCtx) {
+    try {
+        const sess = ctx.nuiSession ?? ctx.session;
+        if (!hasPermission(ctx, perm)) {
+            if (verbose) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
+        } else {
+            return true;
         }
     } catch (error) {
         if (verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
@@ -261,6 +270,7 @@ export default async function WebCtxUtils(ctx, next) {
             txaOutdated: globals.databus.updateChecker?.txadmin,
             fxsOutdated: globals.databus.updateChecker?.fxserver,
             jsInjection: getJavascriptConsts({
+                csrfToken: (ctx.session?.auth?.csrfToken) ? ctx.session.auth.csrfToken : 'not_set',
                 isWebInterface: isWebInterface,
                 TX_BASE_PATH: (isWebInterface) ? '' : WEBPIPE_PATH,
                 PAGE_TITLE: data?.headerTitle ?? 'txAdmin',
@@ -290,8 +300,11 @@ export default async function WebCtxUtils(ctx, next) {
     ctx.utils.logCommand = async (data) => {
         return logCommand(ctx, data);
     };
-    ctx.utils.checkPermission = (perm, fromCtx, printWarn) => {
-        return checkPermission(ctx, perm, fromCtx, printWarn);
+    ctx.utils.hasPermission = (perm) => {
+        return hasPermission(ctx, perm);
+    };
+    ctx.utils.testPermission = (perm, fromCtx) => {
+        return testPermission(ctx, perm, fromCtx);
     };
 
     return next();

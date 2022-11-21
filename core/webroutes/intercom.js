@@ -1,7 +1,7 @@
 const modulename = 'WebServer:Intercom';
 import { cloneDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
-import { convars, txEnv } from '@core/globalData.js';
+import { convars, txEnv } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -37,8 +37,8 @@ export default async function Intercom(ctx) {
                 txAdminUptime: Math.round(process.uptime()),
                 fxServerUptime: globals.fxRunner.getUptime(),
                 discordBotStats: (globals.discordBot.config.enabled) ? globals.discordBot.usageStats : false,
-                banlistEnabled: globals.playerController.config.onJoinCheckBan,
-                whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
+                banlistEnabled: globals.playerDatabase.config.onJoinCheckBan,
+                whitelistEnabled: globals.playerDatabase.config.onJoinCheckWhitelist,
                 admins: (globals.adminVault.admins) ? globals.adminVault.admins.length : 1,
                 tmpLooksLikeRecipe: (globals.fxRunner.config.serverDataPath || '').includes('.base'),
             };
@@ -58,23 +58,6 @@ export default async function Intercom(ctx) {
             timestamp: new Date(),
             data: postData.resources,
         };
-    } else if (scope == 'checkPlayerJoin') {
-        if (!Array.isArray(postData.identifiers) || typeof postData.name !== 'string') {
-            return ctx.utils.error(400, 'Invalid Request');
-        }
-        try {
-            const resp = await globals.playerController.checkPlayerJoin(postData.identifiers, postData.name);
-            if (resp.allow) {
-                return ctx.send('allow');
-            } else {
-                const msg = resp.reason || 'Access Denied for unknown reason';
-                return ctx.send(`[txAdmin] ${msg}`);
-            }
-        } catch (error) {
-            const msg = `[txAdmin] [JoinCheck] Failed with error: ${error.message}`;
-            logError(msg);
-            return ctx.send(msg);
-        }
     } else {
         return ctx.send({
             type: 'danger',

@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Ki lettél tiltva a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
         "kick_permanent": "(%{author}) Véglegesen ki lettél tiltva a szerverről. Indok: \"%{reason}\".",
-        "reject_temporary": "Ki lettél tiltva a szerverről.\nLejár: %{expiration}.\nBan ID: %{id}.\nIndok: %{reason}.\nKitiltó admin: %{author}.",
-        "reject_permanent": "Véglegesen ki lettél tiltva a szerverről..\nBan ID: %{id}.\nIndok: %{reason}.\nKitiltó admin: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Szerver újraindítása: (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Ismeretlen hiba lépett fel.",
             "not_enabled": "A txAdmin menü nincs engedélyezve! Engedélyezheted a txAdmin beállítások fülön.",
             "announcement_title": "Szerver felhívás %{author}:",
-            "dialog_empty_input": "Nem lehet üresen hagyni."
+            "dialog_empty_input": "Nem lehet üresen hagyni.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "Lefagyasztottad a játékost!",
@@ -126,6 +135,13 @@
                     "title": "Törlés",
                     "label": "Jelenlegi jármű törlése",
                     "success": "Jármű törölve!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Szerveren töltött idő",
                 "play_time": "Játékidő",
                 "joined": "Csatlakozva",
-                "notes_placeholder": "Megjegyzések a játékossal kapcsolatban"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "Kapcsolódó előzmények",
-                "action_types": {
-                    "warn": "FIGYELMEZTETVE",
-                    "warn_revoked": "Figyelmeztetés visszavonva",
-                    "ban": "KITILTVA",
-                    "ban_revoked": "Kitiltás visszavonva",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "Whitelist visszavonva"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Játékos kitiltása",
@@ -283,7 +309,13 @@
                 "permanent": "Végleges",
                 "custom": "Egyedi",
                 "helper_text": "Kérlek válassz időtartamot",
-                "submit": "Apply ban"
+                "submit": "Apply ban",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

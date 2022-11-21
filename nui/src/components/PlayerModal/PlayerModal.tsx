@@ -20,7 +20,7 @@ import {
   FlashOn,
 } from "@mui/icons-material";
 import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
-import { useAssociatedPlayerValue } from "../../state/playerDetails.state";
+import { useAssociatedPlayerValue, usePlayerDetailsValue } from "../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
 import { DialogBaseView } from "./Tabs/DialogBaseView";
 import { PlayerModalErrorBoundary } from "./ErrorHandling/PlayerModalErrorBoundary";
@@ -73,6 +73,7 @@ const StyledCloseButton = styled(IconButton)(({ theme }) => ({
 
 const PlayerModal: React.FC = () => {
   const { setModalOpen, isModalOpen } = usePlayerModalContext();
+  const playerDetails = usePlayerDetailsValue();
   const assocPlayer = useAssociatedPlayerValue();
   const theme = useTheme();
 
@@ -81,6 +82,8 @@ const PlayerModal: React.FC = () => {
   };
 
   if (!assocPlayer) return null;
+
+  const error = (playerDetails as any).error;
 
   return (
     <Dialog
@@ -92,30 +95,43 @@ const PlayerModal: React.FC = () => {
         style: {
           backgroundColor: theme.palette.background.default,
           minHeight: 450,
-          maxHeight: 450,
+          maxHeight: 650,
           borderRadius: 15,
         },
         id: "player-modal-container",
       }}
     >
       <DialogTitle style={{ borderBottom: "1px solid rgba(221,221,221,0.54)" }}>
-        [{assocPlayer.id}] {assocPlayer.name}
+        [{assocPlayer.id}] {playerDetails?.player?.displayName ?? assocPlayer.name}
         <StyledCloseButton onClick={handleClose} size="large">
           <Close />
         </StyledCloseButton>
       </DialogTitle>
       <Box display="flex" px={2} pb={2} pt={2} flexGrow={1} overflow="hidden">
         <PlayerModalErrorBoundary>
-          <Box
-            minWidth={200}
-            pr={2}
-            borderRight="1px solid rgba(221,221,221,0.54)"
-          >
-            <DialogList />
-          </Box>
-          <React.Suspense fallback={<LoadingModal />}>
-            <DialogBaseView />
-          </React.Suspense>
+          {error ? <>
+            <h2 style={{
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              textAlign: 'center',
+              fontWeight: '500',
+              maxWidth: '70%',
+              paddingTop: '2em'
+            }}>{error}</h2>
+          </> :
+            <>
+              <Box
+                minWidth={200}
+                pr={2}
+                borderRight="1px solid rgba(221,221,221,0.54)"
+              >
+                <DialogList />
+              </Box>
+              <React.Suspense fallback={<LoadingModal />}>
+                <DialogBaseView />
+              </React.Suspense>
+            </>
+          }
         </PlayerModalErrorBoundary>
       </Box>
     </Dialog>

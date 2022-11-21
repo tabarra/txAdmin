@@ -1,7 +1,7 @@
 /* eslint-disable padded-blocks */
 const modulename = 'Logger:Server';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 import { LoggerBase, separator } from '../loggerUtils.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -68,10 +68,6 @@ export default class ServerLogger extends LoggerBase {
 
         this.recentBuffer = [];
         this.recentBufferMaxSize = 32e3;
-
-        //TODO: maybe move to playerController in the future
-        //FIXME: memory leak
-        this.cachedPlayers = new Map();
     }
 
 
@@ -80,7 +76,7 @@ export default class ServerLogger extends LoggerBase {
      * TODO: calculate events per minute moving average 10 && peak
      */
     getUsageStats() {
-        return `Buffer: ${this.recentBuffer.length}, cachedPlayers: ${this.cachedPlayers.size},  lrErrors: ${this.lrErrors}`;
+        return `Buffer: ${this.recentBuffer.length},  lrErrors: ${this.lrErrors}`;
     }
 
 
@@ -97,10 +93,10 @@ export default class ServerLogger extends LoggerBase {
 
     /**
      * Processes the FD3 log array
-     * @param {String} mutex
      * @param {Array} data
+     * @param {String} mutex
      */
-    write(mutex, data) {
+    write(data, mutex) {
         if (!Array.isArray(data)) {
             if (verbose) logWarn(`write() expected array, got ${typeof data}`);
             return false;
@@ -108,10 +104,8 @@ export default class ServerLogger extends LoggerBase {
 
         //Processing events
         for (let i = 0; i < data.length; i++) {
-            // logError(`loop ${i}:`); dir(data[i]); //DEBUG
             try {
-                const {eventObject, eventString} = this.processEvent(mutex, data[i]);
-                // dir({eventObject, eventString});
+                const { eventObject, eventString } = this.processEvent(data[i], mutex);
                 if (!eventObject || !eventString) {
                     if (verbose) {
                         logWarn('Failed to parse event:');
@@ -138,65 +132,52 @@ export default class ServerLogger extends LoggerBase {
         }
     }
 
+
     /**
      * Processes an event and returns both the string for log file, and object for the web ui
-     * @param {String} mutex
      * @param {Object} eventData
+     * @param {String} mutex
      */
-    processEvent(mutex, eventData) {
+    processEvent(eventData, mutex) {
         //Get source + handle playerJoining
-        let srcObject, srcString, eventMessage;
+        let srcObject; //to be sent to the UI
+        let srcString; //to ve saved to the log file
         if (eventData.src === 'tx') {
-            srcObject = {id: false, name: 'txAdmin'};
+            srcObject = { id: false, name: 'txAdmin' };
             srcString = 'txAdmin';
 
         } else if (typeof eventData.src === 0) {
-            srcObject = {id: false, name: 'CONSOLE'};
+            srcObject = { id: false, name: 'CONSOLE' };
             srcString = 'CONSOLE';
 
         } else if (typeof eventData.src === 'number' && eventData.src > 0) {
-            const playerID = `${mutex}#${eventData.src}`;
-            let playerData = this.cachedPlayers.get(playerID);
-            if (playerData) {
-                srcObject = {id: playerID, name: playerData.name};
-                srcString = `[${playerID}] ${playerData.name}`;
+            const player = globals.playerlistManager.getPlayerById(eventData.src)
+            if (player) {
+                const playerID = `${mutex}#${eventData.src}`;
+                srcObject = { id: playerID, name: player.displayName };
+                srcString = `[${playerID}] ${player.displayName}`;
             } else {
-                if (eventData.type === 'playerJoining') {
-                    if (eventData.data.name && Array.isArray(eventData.data.ids)) {
-                        playerData = eventData.data;
-                        playerData.ids = playerData.ids.filter((id) => !id.startsWith('ip:'));
-                        this.cachedPlayers.set(playerID, playerData);
-                        srcObject = {id: playerID, name: playerData.name};
-                        srcString = `[${playerID}] ${playerData.name}`;
-                        eventMessage = `joined with identifiers [${playerData.ids.join('; ')}]`;
-                    } else {
-                        srcObject = {id: false, name: 'UNKNOWN PLAYER'};
-                        srcString = 'UNKNOWN PLAYER';
-                        eventMessage = 'joined with unknown identifiers.';
-                        if (verbose) {
-                            logWarn('playerJoining: Unknown numeric event source from object:');
-                            dir(eventData);
-                        }
-                    }
-                } else {
-                    srcObject = {id: false, name: 'UNKNOWN PLAYER'};
-                    srcString = 'UNKNOWN PLAYER';
-                    if (verbose) {
-                        logWarn('Unknown numeric event source from object:');
-                        dir(eventData);
-                    }
+                srcObject = { id: false, name: 'UNKNOWN PLAYER' };
+                srcString = 'UNKNOWN PLAYER';
+                if (verbose) {
+                    logWarn('Unknown numeric event source from object:');
+                    dir(eventData);
                 }
             }
-
         } else {
-            srcObject = {id: false, name: 'UNKNOWN'};
+            srcObject = { id: false, name: 'UNKNOWN' };
             srcString = 'UNKNOWN';
         }
 
 
         //Process event types (except playerJoining)
         //TODO: normalize/padronize actions
-        if (eventData.type === 'playerDropped') {
+        let eventMessage; //to be sent to the UI + saved to the log
+        if (eventData.type === 'playerJoining') {
+            const idsString = eventData?.data?.ids.join('; ') ?? '';
+            eventMessage = `joined with identifiers [${idsString}]`;
+
+        } else if (eventData.type === 'playerDropped') {
             const reason = eventData.data.reason || 'UNKNOWN REASON';
             eventMessage = `disconnected (${reason})`;
 
@@ -209,9 +190,9 @@ export default class ServerLogger extends LoggerBase {
         } else if (eventData.type === 'DeathNotice') {
             const cause = eventData.data.cause || 'unknown';
             if (typeof eventData.data.killer === 'number' && eventData.data.killer > 0) {
-                const killer = this.cachedPlayers.get(`${mutex}#${eventData.data.killer}`);
+                const killer = globals.playerlistManager.getPlayerById(eventData.data.killer);
                 if (killer) {
-                    eventMessage = `died from ${cause} by ${killer.name}`;
+                    eventMessage = `died from ${cause} by ${killer.displayName}`;
                 } else {
                     eventMessage = `died from ${cause} by unknown killer`;
                 }
@@ -283,11 +264,11 @@ export default class ServerLogger extends LoggerBase {
     readPartialOlder(timestamp, sliceLength) {
         const limitIndex = this.recentBuffer.findIndex((x) => x.ts >= timestamp);
 
-        //everything is older, return last few
         if (limitIndex === -1) {
+            //everything is older, return last few
             return this.recentBuffer.slice(-sliceLength);
-        //not everything is older
         } else {
+            //not everything is older
             return this.recentBuffer.slice(Math.max(0, limitIndex - sliceLength), limitIndex);
         }
     }

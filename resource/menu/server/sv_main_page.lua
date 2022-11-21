@@ -23,6 +23,7 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
 end)
 
 RegisterNetEvent('txAdmin:menu:sendAnnouncement', function(message)
+  --FIXME: this is not being relayed to discord
   local src = source
   if type(message) ~= 'string' then
     return
@@ -41,6 +42,15 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
   TriggerEvent("txaLogger:menuEvent", src, "vehicleRepair", allow)
   if allow then
     TriggerClientEvent('txAdmin:menu:fixVehicle', src)
+  end
+end)
+
+RegisterNetEvent('txAdmin:menu:boostVehicle', function()
+  local src = source
+  local allow = PlayerHasTxPermission(src, 'menu.vehicle')
+  TriggerEvent("txaLogger:menuEvent", src, "vehicleBoost", allow)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:boostVehicle', src)
   end
 end)
 

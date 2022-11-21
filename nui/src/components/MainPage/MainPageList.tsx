@@ -18,6 +18,7 @@ import {
   Restore,
   Security,
   DeleteForever,
+  RocketLaunch,
   // Stream //Spawn Weapon action
 } from "@mui/icons-material";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
@@ -283,6 +284,19 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleBoostVehicle = () => {
+    fetchNui("boostVehicle").then(({ e }) => {
+      if (e) {
+        return enqueueSnackbar(
+          t("nui_menu.page_main.vehicle.not_in_veh_error"),
+          {
+            variant: "error",
+          }
+        );
+      }
+    });
+  };
+
   //=============================================
   const handleHealMyself = () => {
     fetchNui("healMyself");
@@ -486,6 +500,16 @@ export const MainPageList: React.FC = () => {
             onSelect: () => {
               setVehicleMode(VehicleMode.DELETE);
               handleDeleteVehicle();
+            },
+          },
+          {
+            name: t("nui_menu.page_main.vehicle.boost.title"),
+            label: t("nui_menu.page_main.vehicle.boost.label"),
+            value: VehicleMode.BOOST,
+            icon: <RocketLaunch />,
+            onSelect: () => {
+              setVehicleMode(VehicleMode.BOOST);
+              handleBoostVehicle();
             },
           },
         ],

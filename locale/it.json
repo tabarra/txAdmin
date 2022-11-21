@@ -4,9 +4,9 @@
         "humanizer_language": "it"
     },
     "restarter": {
-        "start_timeout": "Avviato fallito nel tempo previsto",
-        "crash_detected": "rilevato crash",
-        "hang_detected": "blocco rilevato",
+        "start_timeout": "Avvio fallito nel tempo previsto",
+        "crash_detected": "Crash rilevato",
+        "hang_detected": "Blocco rilevato",
         "partial_hang_warn": "A causa di un blocco parziale, questo server verrà riavviato tra 1 minuto. Si prega di disconnettersi ora.",
         "partial_hang_warn_discord": "A causa di un blocco parziale, **%{servername}** si riavvierà tra 1 minuto.",
         "schedule_reason": "Riavvio programmato alle %{time}",
@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Sei stato bannato da questo server per \"%{reason}\". Il tuo ban scadrà in: %{expiration}.",
         "kick_permanent": "(%{author}) Sei stato bannato permanentemente da questo server per \"%{reason}\".",
-        "reject_temporary": "Sei stato bannato da questo server..\nIl tuo ban scadrà in: %{expiration}.\nBan ID: %{id}.\nBan Motivazione: %{reason}.\nBannato da: %{author}.",
-        "reject_permanent": "Sei stato bannato da questo server.\nBan ID: %{id}.\nBan Motivazione: %{reason}.\nBanned da: %{author}."
+        "reject": {
+            "title_permanent": "Sei stato bannato permanentemente da questo server.",
+            "title_temporary": "Sei stato bannato temporaneamente da questo server.",
+            "label_expiration": "Il tuo ban scadrà tra",
+            "label_date": "Data Ban",
+            "label_author": "Bannato da",
+            "label_reason": "Motivo Ban",
+            "label_id": "ID Ban",
+            "note_multiple_bans": "Nota: hai piu di un ban sui tuoi identificativi."
+        }
     },
     "server_actions": {
         "restarting": "Riavvio del server (%{reason}).",
@@ -38,12 +46,13 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menu attivato, scrivi /tx per aprirlo.\nPuoi bindare un tasto in [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "I tuoi identifiers non corrispondono ad un admin registrato nel txAdmin.\nSe sei registrato al txAdmin, vai nella sezione Admin Manager e controlla che siano presenti i tuoi identifiers.",
+            "menu_not_allowed": "I tuoi identificativi non corrispondono ad un admin registrato nel txAdmin.\nSe sei registrato al txAdmin, vai nella sezione Admin Manager e controlla che siano presenti i tuoi identificativi.",
             "no_perms": "Non hai questo permesso.",
             "unknown_error": "Si è verificato un errore sconosciuto.",
             "not_enabled": "Il menu txAdmin non è attivo! Puoi attivarlo dalle impostazioni del txAdmin.",
             "announcement_title": "Annuncio da %{author}:",
-            "dialog_empty_input": "Non puoi dare un input vuoto."
+            "dialog_empty_input": "Non puoi dare un input vuoto.",
+            "directmessage_title": "DM dall'admin %{author}:"
         },
         "frozen": {
             "froze_player": "Hai freezato il player!",
@@ -53,12 +62,12 @@
         "common": {
             "cancel": "Cancella",
             "submit": "Conferma",
-            "error": "Si è verificato un'errore",
+            "error": "Si è verificato un'errore.",
             "copied": "Copiato negli appunti."
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Usa %{key} per cambiare pagina e le freccette per navigare nel menu",
+                "tooltip_1": "Usa %{key} per cambiare pagina e usa le freccette per navigare nel menu",
                 "tooltip_2": "Alcune voci del menu hanno opzioni secondarie che possono essere selezionate utilizzando i tasti freccia sinistra e destra"
             },
             "player_mode": {
@@ -91,7 +100,7 @@
                     "title": "Coordinate",
                     "label": "Vai alle coordinate specificate",
                     "dialog_title": "Teletrasporto",
-                    "dialog_desc": "Fornisci delle coordinate in un formato x, y, z per attraversare il wormhole.",
+                    "dialog_desc": "Inserisci delle coordinate nel formato x, y, z per attraversare il wormhole.",
                     "dialog_error": "Coordinate errate. Devono essere nel formato: 111, 222, 33"
                 },
                 "back": {
@@ -107,7 +116,7 @@
             "vehicle": {
                 "title": "Veicolo",
                 "onesync_error": "Questa opzione richiede che OneSync sia attivo",
-                "not_in_veh_error": "Non sei in un veicolo!",
+                "not_in_veh_error": "Non sei su un veicolo!",
                 "spawn": {
                     "title": "Spawna",
                     "label": "Spawna un veicolo dal nmome",
@@ -126,6 +135,13 @@
                     "title": "Elimina",
                     "label": "Elimina il veicolo",
                     "success": "Veicolo eliminato!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boosta l'auto per un maggiore divertimento (e forse velocità)",
+                    "success": "Veicolo boostato!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -134,33 +150,33 @@
                     "title": "Te Stesso",
                     "label": "Cura te stesso",
                     "success_0": "Tutti curati!",
-                    "success_1": "Dovresti stare bene ora!",
+                    "success_1": "Dovresti stare meglio ora!",
                     "success_2": "Curato al massimo!",
-                    "success_3": "Ouchies risolto!"
+                    "success_3": "Dolore risolto!"
                 },
                 "everyone": {
                     "title": "Tutti",
-                    "label": "Curerà e Rianimerà tutti i player",
-                    "success": "Curati e rianimati tutti i player."
+                    "label": "Cura e Rianima tutti i giocatori",
+                    "success": "Curati e rianimati tutti i giocatori."
                 }
             },
             "announcement": {
                 "title": "Manda Annuncio",
-                "label": "Manda un annuncio a tutti i player online.",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "label": "Manda un annuncio a tutti i giocatori online.",
+                "dialog_desc": "Inserisci il messaggio da mandare a tutti i giocatori.",
                 "dialog_placeholder": "Il tuo annuncio...",
                 "dialog_success": "Inviando l'annuncio."
             },
             "clear_area": {
                 "title": "Resetta l'area",
-                "label": "Reset a specified world area to its default state",
-                "dialog_desc": "Inserisci il raggio in cui desideri reimpostare le entità (0-300). Questo non cancellerà le entità generate sul lato server",
-                "dialog_success": "Pulendo l'area in un raggio di %{radius}m",
+                "label": "Resetta una specifica area rendendola default",
+                "dialog_desc": "Inserisci il raggio in cui desideri reimpostare le entità (0-300). Questo non cancellerà le entità generate sul lato server.",
+                "dialog_success": "Pulendo l'area in un raggio di %{radius}.",
                 "dialog_error": "Inserimento raggio non valido. Riprova."
             },
             "player_ids": {
                 "title": "Toggle ID dei Player",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "Toggle mostra ID dei giocatori (e altre informazioni) sopra la testa dei giocatori vicini",
                 "alert_show": "Mostra gli ID dei player vicini.",
                 "alert_hide": "Nascondi gli ID dei player vicini."
             }
@@ -170,7 +186,7 @@
                 "online_players": "Giocatori Online",
                 "players": "Giocatori",
                 "search": "Cerca",
-                "zero_players": "Nessun giocatore trovato"
+                "zero_players": "Nessun giocatore trovato."
             },
             "sort": {
                 "label": "Ordina per",
@@ -248,7 +264,7 @@
                 "troll": {
                     "title": "Troll",
                     "options": {
-                        "drunk": "Diventa Ubriaco",
+                        "drunk": "Fai Ubriacare",
                         "fire": "Dai Fuoco",
                         "wild_attack": "Attacco di Scimmie"
                     }
@@ -259,31 +275,47 @@
                 "session_time": "Tempo della Sesione",
                 "play_time": "Tempo di Gioco",
                 "joined": "Entrato",
-                "notes_placeholder": "Note riguardo al Giocatore"
+                "whitelisted_label": "Whitelistato",
+                "whitelisted_notyet": "non ancora",
+                "btn_wl_add": "Aggiungi WL",
+                "btn_wl_remove": "Rimuovi WL",
+                "btn_wl_success": "Stato della whitelist cambiato.",
+                "log_label": "Log",
+                "log_empty": "No ban/warn trovati.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETTAGLI",
+                "notes_changed": "Note del giocatore cambiate.",
+                "notes_placeholder": "Note riguardo il giocatore..."
             },
             "history": {
                 "title": "Cronologia",
-                "action_types": {
-                    "warn": "WARNATO",
-                    "warn_revoked": "REVOCATO il WARN per",
-                    "ban": "BANNATO",
-                    "ban_revoked": "REVOCATO il BAN per",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOCATA la WHITELIS per"
-                }
+                "btn_revoke": "REVOCA",
+                "revoked_success": "Azione revocata!",
+                "banned_by": "BANNATO da %{author}",
+                "warned_by": "WARNATO da %{author}",
+                "revoked_by": "Revocato da %{author}.",
+                "expired_at": "Scaduto il %{date}.",
+                "expires_at": "Scade il %{date}."
             },
             "ban": {
-                "title": "Banna il Player",
+                "title": "Banna il Giocatore",
                 "reason_placeholder": "Motivo",
                 "duration_placeholder": "Durata",
-                "hours": "ore",
-                "days": "giorni",
-                "weeks": "settimane",
-                "months": "mesi",
-                "permanent": "Permanentemente",
+                "hours": "Ore",
+                "days": "Giorni",
+                "weeks": "Settimane",
+                "months": "Mesi",
+                "permanent": "Permanente",
                 "custom": "Personalizzato",
                 "helper_text": "Seleziona una durata",
-                "submit": "Apply ban"
+                "submit": "Banna",
+                "reason_required": "La motivazione è richiesta.",
+                "success": "Giocatore bannato!"
+            },
+            "ids": {
+                "current_ids": "Identificativi correnti",
+                "previous_ids": "Identificativi usati precedentemente"
             }
         }
     }

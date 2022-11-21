@@ -1,7 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useFilteredSortedPlayers } from "../../state/players.state";
 import PlayerCard from "./PlayerCard";
 import { Box, CircularProgress, styled } from "@mui/material";
+import { useIsMenuVisibleValue } from "@nui/src/state/visibility.state";
 
 const MAX_PER_BUCKET = 60;
 const FAKE_LOAD_TIME = 250;
@@ -24,20 +31,38 @@ export const PlayersListGrid: React.FC = () => {
   const [bucket, setBucket] = useState(1);
   const [fakeLoading, setFakeLoading] = useState(false);
   const containerRef = useRef(null);
+  const isMenuVisible = useIsMenuVisibleValue();
 
-  // We want to reset the bucket amount when filtered list changes
   useEffect(() => {
-    setBucket((prevState) => (prevState > 1 ? 1 : prevState));
+    // we want to ideally keep the same bucket as previous update cycle, if possible. preventing
+    // scroll reset. if the new number of players does not reach the current bucket size, set bucket
+    // to highest possible value, to limit scroll jump.
+    setBucket((prevBucketState) => {
+      const highestPotentialBucket = Math.ceil(
+        filteredPlayers.length / MAX_PER_BUCKET
+      );
+      // if our greatest possible bucket point in the new updated list,
+      if (highestPotentialBucket < prevBucketState)
+        return highestPotentialBucket;
+      else return prevBucketState;
+    });
   }, [filteredPlayers]);
 
-  const slicedPlayers = filteredPlayers.slice(0, MAX_PER_BUCKET * bucket);
+  const slicedPlayers = useMemo(
+    () => filteredPlayers.slice(0, MAX_PER_BUCKET * bucket),
+    [filteredPlayers, bucket]
+  );
 
   const handleObserver = useCallback(
-    (entities) => {
+    (entities: IntersectionObserverEntry[]) => {
       const lastEntry = entities[0];
+
+      if (!isMenuVisible) return setBucket(1)
+
       if (
         lastEntry.isIntersecting &&
-        filteredPlayers.length > slicedPlayers.length
+        filteredPlayers.length > slicedPlayers.length &&
+        !fakeLoading
       ) {
         setFakeLoading(true);
         setTimeout(() => {
@@ -46,7 +71,7 @@ export const PlayersListGrid: React.FC = () => {
         }, FAKE_LOAD_TIME);
       }
     },
-    [filteredPlayers, slicedPlayers]
+    [filteredPlayers, slicedPlayers, fakeLoading, isMenuVisible]
   );
 
   useEffect(() => {

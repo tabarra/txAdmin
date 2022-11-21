@@ -3,7 +3,7 @@ import path from 'node:path';
 import slash from 'slash';
 
 import logger from '@core/extras/console';
-import { txEnv } from '@core/globalData.js';
+import { txEnv } from '@core/globalData';
 
 import { printBanner } from '@core/extras/banner';
 import setupProfile from '@core/extras/setupProfile';
@@ -17,11 +17,12 @@ import FxRunner from '@core/components/FxRunner';
 import Logger from '@core/components/Logger';
 import HealthMonitor from '@core/components/HealthMonitor';
 import Scheduler from '@core/components/Scheduler';
-import PlayerController from '@core/components/PlayerController';
-import ResourcesManager from '@core/components/ResourcesManager';
 import StatsCollector from '@core/components/StatsCollector';
 import Translator from '@core/components/Translator';
 import WebServer from '@core/components/WebServer';
+import ResourcesManager from '@core/components/ResourcesManager';
+import PlayerlistManager from '@core/components/PlayerlistManager';
+import PlayerDatabase from '@core/components/PlayerDatabase';
 
 const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
 
@@ -43,8 +44,9 @@ global.globals = {
     statsCollector: null,
     translator: null,
     webServer: null,
-    playerController: null,
     resourcesManager: null,
+    playerlistManager: null,
+    playerDatabase: null,
     config: null,
     deployer: null,
     info: {},
@@ -107,6 +109,21 @@ global.globals = {
  * Main APP
  */
 export default class TxAdmin {
+    configVault;
+    adminVault;
+    discordBot;
+    logger;
+    translator;
+    fxRunner;
+    dynamicAds;
+    healthMonitor;
+    scheduler;
+    statsCollector;
+    webServer;
+    resourcesManager;
+    playerlistManager;
+    playerDatabase;
+
     constructor(serverProfile) {
         log(`Profile '${serverProfile}' starting...`);
         globals.info.serverProfile = serverProfile;
@@ -126,35 +143,66 @@ export default class TxAdmin {
         //Load Config Vault
         let profileConfig;
         try {
-            globals.configVault = new ConfigVault(profilePath, serverProfile);
+            this.configVault = new ConfigVault(profilePath, serverProfile);
+            globals.configVault = this.configVault;
             profileConfig = globals.configVault.getAll();
             globals.config = profileConfig.global;
-        } catch (err) {
-            HandleFatalError(err, 'ConfigVault');
+        } catch (error) {
+            logError(`Error starting ConfigVault: ${error.message}`);
+            dir(error);
+            process.exit(1);
         }
 
         //Start all modules
         //NOTE: dependency order
-        //  - translator before monitor
+        //  - translator before fxrunner (for the locale string)
+        //  - translator before scheduler (in case it tries to send translated msg immediately)
         //  - adminVault before webserver
         //  - logger before fxrunner
-        //  - translator before fxrunner (for the locale string)
-        //  - adminVault before webserver
+        //FIXME: After the migration, delete the globals.
         try {
-            globals.adminVault = new AdminVault();
-            globals.discordBot = new DiscordBot(profileConfig.discordBot);
-            globals.logger = new Logger(profileConfig.logger);
-            globals.translator = new Translator();
-            globals.fxRunner = new FxRunner(profileConfig.fxRunner);
-            globals.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
-            globals.healthMonitor = new HealthMonitor(profileConfig.monitor);
-            globals.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
-            globals.statsCollector = new StatsCollector(profileConfig.statsCollector);
-            globals.webServer = new WebServer(profileConfig.webServer);
-            globals.playerController = new PlayerController(profileConfig.playerController);
-            globals.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
-        } catch (err) {
-            HandleFatalError(err, 'Main Components');
+            this.adminVault = new AdminVault();
+            globals.adminVault = this.adminVault;
+
+            this.discordBot = new DiscordBot(profileConfig.discordBot);
+            globals.discordBot = this.discordBot;
+
+            this.logger = new Logger(profileConfig.logger);
+            globals.logger = this.logger;
+
+            this.translator = new Translator();
+            globals.translator = this.translator;
+
+            this.fxRunner = new FxRunner(profileConfig.fxRunner);
+            globals.fxRunner = this.fxRunner;
+
+            this.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
+            globals.dynamicAds = this.dynamicAds;
+
+            this.healthMonitor = new HealthMonitor(profileConfig.monitor);
+            globals.healthMonitor = this.healthMonitor;
+
+            this.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
+            globals.scheduler = this.scheduler;
+
+            this.statsCollector = new StatsCollector(profileConfig.statsCollector);
+            globals.statsCollector = this.statsCollector;
+
+            this.webServer = new WebServer(profileConfig.webServer);
+            globals.webServer = this.webServer;
+
+            this.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
+            globals.resourcesManager = this.resourcesManager;
+
+            this.playerlistManager = new PlayerlistManager(this);
+            globals.playerlistManager = this.playerlistManager;
+
+            this.playerDatabase = new PlayerDatabase(this, profileConfig.playerDatabase);
+            globals.playerDatabase = this.playerDatabase;
+        } catch (error) {
+            logError(`Error starting main components: ${error.message}`);
+            dir(error);
+            process.exit(1);
         }
 
         //Once they all finish loading, the function below will print the banner
@@ -165,11 +213,3 @@ export default class TxAdmin {
         setInterval(updateChecker, 15 * 60 * 1000);
     }
 };
-
-
-//==============================================================
-function HandleFatalError(error, componentName) {
-    logError(`Error starting component '${componentName}': ${error.message}`);
-    dir(error);
-    process.exit(1);
-}

@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Bil si odstranjen iz strežnika zaradi \"%{reason}\". Tvoj BAN se izteče čez: %{expiration}.",
         "kick_permanent": "(%{author}) Bil si odstranjen iz strežnika za vedno  \"%{reason}\".",
-        "reject_temporary": "Bil si odstranjen iz strežnika.\nIzteče se: %{expiration}.\nBan ID: %{id}.\nRazlog odstranitve: %{reason}.\nOdstranjen s strani: %{author}.",
-        "reject_permanent": "Bil si odstranjen iz strežnika za vedno.\nBan ID: %{id}.\nRazlog odstranitve: %{reason}.\nOdstranjen s strani: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Ponovni zagon strežnika (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Prišlo je do neznane težave.",
             "not_enabled": "txAdmin Meni ni omogočen! Lahko ga omogočiš v txAdmin nastavitvah.",
             "announcement_title": "Obvestilo od %{author}:",
-            "dialog_empty_input": "Ne moreš imeti praznega vnosa."
+            "dialog_empty_input": "Ne moreš imeti praznega vnosa.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "Zamrznil si igralca!",
@@ -104,7 +113,7 @@
                     "label": "Kopiraj trenutne koordinate v odložišče"
                 }
             },
-            "vehicle":{
+            "vehicle": {
                 "title": "Vozila",
                 "onesync_error": "Ta možnost zahteva, da je OneSync vklopljen za ravnanje s »entity handling«",
                 "not_in_veh_error": "Trenutno nisi v vozilu!",
@@ -126,6 +135,13 @@
                     "title": "Izbriši",
                     "label": "Izbriše vozilo, v katerem se trenutno nahajaš",
                     "success": "Vozilo izbrisano!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Čas seje",
                 "play_time": "Čas igranja",
                 "joined": "Vstopil",
-                "notes_placeholder": "Opombe o tem igralcu"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "Povezana zgodovina",
-                "action_types": {
-                    "warn": "OPOZORJEN",
-                    "warn_revoked": "PREKLICANO opozorilo za",
-                    "ban": "BANNAN",
-                    "ban_revoked": "PREKLICAN ban za",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "PREKLICAN whitelist za"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Odstrani igralca",
@@ -283,7 +309,13 @@
                 "permanent": "Za vedno",
                 "custom": "Po meri",
                 "helper_text": "Prosim, izberite trajanje",
-                "submit": "Potrdi odstranitev"
+                "submit": "Potrdi odstranitev",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

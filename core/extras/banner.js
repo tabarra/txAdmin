@@ -5,7 +5,7 @@ import open from 'open';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import logger from '@core/extras/console.js';
-import { convars, txEnv } from '@core/globalData.js';
+import { convars, txEnv } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger();
 
 
@@ -17,7 +17,7 @@ const printMultiline = (lines, color) => {
 };
 
 const getIPs = async () => {
-    const reqOptions = {timeout: 2500};
+    const reqOptions = { timeout: 2500 };
     const allOps = await Promise.allSettled([
         // op.value.ip
         got('https://ip.seeip.org/json', reqOptions).json(),
@@ -51,8 +51,8 @@ const getOSMessage = async () => {
 
     const distro = await getOsDistro();
     return (distro && distro.includes('Linux') || distro.includes('Server'))
-     ? serverMessage
-     : winWorkstationMessage;
+        ? serverMessage
+        : winWorkstationMessage;
 };
 
 const awaitHttp = new Promise((resolve, reject) => {
@@ -94,13 +94,33 @@ const awaitMasterPin = new Promise((resolve, reject) => {
     interval = setInterval(check, 150);
 });
 
+const awaitDatabase = new Promise((resolve, reject) => {
+    const tickLimit = 100; //if over 15 seconds
+    let counter = 0;
+    let interval;
+    const check = () => {
+        counter++;
+        if (globals.playerDatabase && globals.playerDatabase.isReady) {
+            clearInterval(interval);
+            resolve(true);
+        } else if (counter == tickLimit) {
+            clearInterval(interval);
+            interval = setInterval(check, 2500);
+        } else if (counter > tickLimit) {
+            logWarn('The PlayerDatabase is taking too long to start.');
+        }
+    };
+    interval = setInterval(check, 150);
+});
+
 
 export const printBanner = async () => {
-    const [ ipRes, msgRes, adminPinRes ] = await Promise.allSettled([
+    const [ipRes, msgRes, adminPinRes] = await Promise.allSettled([
         getIPs(),
         getOSMessage(),
         awaitMasterPin,
         awaitHttp,
+        awaitDatabase,
     ]);
 
     //Addresses

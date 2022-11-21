@@ -1,7 +1,7 @@
 const modulename = 'WebServer:ProviderCallback';
 import crypto from 'node:crypto';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions

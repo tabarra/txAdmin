@@ -36,7 +36,7 @@ const playersState = {
       const playerStates: PlayerData[] = filteredValueInput
         ? unfilteredPlayerStates.filter(
             (player) =>
-              player.name.toLowerCase().includes(formattedInput) ||
+              player.name?.toLowerCase().includes(formattedInput) ||
               player.id.toString().includes(formattedInput)
           )
         : unfilteredPlayerStates;
@@ -235,52 +235,5 @@ debugData<PlayerData[]>(
       ],
     },
   ],
-  3000
+  750
 );
-
-function mockData() {
-  const randomUsernames = [
-    "hamy",
-    "taso",
-    "tabarra",
-    "hype",
-    "chip",
-    "goat",
-    "siege",
-    "wowjesus",
-    "noodles",
-    "plok",
-    "kiwi",
-    "monke",
-  ];
-
-  const MAX_PLAYERS = 500;
-  const playerData: PlayerData[] = [];
-  const statuses: VehicleStatus[] = [
-    VehicleStatus.Biking,
-    VehicleStatus.Boat,
-    VehicleStatus.Unknown,
-    VehicleStatus.Unknown,
-    VehicleStatus.Walking,
-  ];
-
-  for (let i = 0; i < MAX_PLAYERS; i++) {
-    const randomDist = Math.random() * 5000;
-    const randomUsername =
-      randomUsernames[Math.floor(Math.random() * randomUsernames.length)];
-    const randomStatusIdx = Math.floor(Math.random() * 5);
-    const randomStatus = statuses[randomStatusIdx];
-
-    playerData.push({
-      id: i + 1,
-      dist: randomDist,
-      health: 100,
-      name: randomUsername,
-      vType: randomStatus,
-    });
-  }
-
-  console.log(playerData);
-
-  return playerData;
-}

@@ -1,3 +1,4 @@
+import { convars } from '@core/globalData';
 import Router from '@koa/router';
 import KoaRateLimit from 'koa-ratelimit';
 
@@ -42,7 +43,7 @@ export default (config) => {
         db: new Map(),
         max: 10,
         duration: 30 * 1000,
-        errorMessage: JSON.stringify({failReason: 'rate_limiter'}),
+        errorMessage: JSON.stringify({ failReason: 'rate_limiter' }),
         disableHeader: true,
         id: (ctx) => ctx.txVars.realIP,
     });
@@ -53,11 +54,12 @@ export default (config) => {
     router.get('/auth/:provider/redirect', authLimiter, webRoutes.auth_providerRedirect);
     router.get('/auth/:provider/callback', authLimiter, webRoutes.auth_providerCallback);
     router.post('/auth/password', authLimiter, webRoutes.auth_verifyPassword);
-    router.post('/changePassword', requestAuth('web'), webRoutes.auth_changePassword);
+    router.post('/changePassword', requestAuth('api'), webRoutes.auth_changePassword);
 
     //Admin Manager
     router.get('/adminManager', requestAuth('web'), webRoutes.adminManager_get);
-    router.post('/adminManager/:action', requestAuth('web'), webRoutes.adminManager_actions);
+    router.post('/adminManager/getModal/:modalType', requestAuth('web'), webRoutes.adminManager_getModal);
+    router.post('/adminManager/:action', requestAuth('api'), webRoutes.adminManager_actions);
 
     //Settings
     router.get('/setup', requestAuth('web'), webRoutes.setup_get);
@@ -66,18 +68,18 @@ export default (config) => {
     router.get('/deployer/status', requestAuth('api'), webRoutes.deployer_status);
     router.post('/deployer/recipe/:action', requestAuth('api'), webRoutes.deployer_actions);
     router.get('/settings', requestAuth('web'), webRoutes.settings_get);
-    router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings_save);
+    router.post('/settings/save/:scope', requestAuth('api'), webRoutes.settings_save);
 
     //Master Actions
-    router.get('/masterActions', requestAuth('web'), webRoutes.masterActions_get);
+    router.get('/masterActions', requestAuth('web'), webRoutes.masterActions_page);
     router.get('/masterActions/backupDatabase', requestAuth('web'), webRoutes.masterActions_getBackup);
-    router.post('/masterActions/:action', requestAuth('web'), webRoutes.masterActions_actions);
+    router.post('/masterActions/:action', requestAuth('api'), webRoutes.masterActions_actions);
 
     //FXServer
-    router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver_controls); //FIXME: transform into post
-    router.post('/fxserver/commands', requestAuth('web'), webRoutes.fxserver_commands);
+    router.post('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver_controls);
+    router.post('/fxserver/commands', requestAuth('api'), webRoutes.fxserver_commands);
     router.get('/fxserver/downloadLog', requestAuth('web'), webRoutes.fxserver_downloadLog);
-    router.post('/fxserver/schedule', requestAuth('web'), webRoutes.fxserver_schedule);
+    router.post('/fxserver/schedule', requestAuth('api'), webRoutes.fxserver_schedule);
 
     //CFG Editor
     router.get('/cfgEditor', requestAuth('web'), webRoutes.cfgEditor_get);
@@ -98,6 +100,7 @@ export default (config) => {
     router.get('/serverLog/partial', requestAuth('api'), webRoutes.serverLogPartial);
     router.get('/status/:scope?', requestAuth('api'), webRoutes.status); //FIXME: param fix due to missing search
     router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData); //FIXME: param fix due to missing search
+    router.post('/database/:action', requestAuth('api'), webRoutes.databaseActions);
 
     /*
         FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
@@ -108,9 +111,14 @@ export default (config) => {
     */
 
     //Player routes
+    router.get('/player', requestAuth('api'), webRoutes.player_modal);
     router.get('/player/list', requestAuth('web'), webRoutes.player_list);
-    router.get('/player/:reference', requestAuth('api'), webRoutes.player_modal);
+    router.get('/player/search', requestAuth('api'), webRoutes.player_search);
+    router.post('/player/checkJoin', requestAuth('intercom'), webRoutes.player_checkJoin);
     router.post('/player/:action', requestAuth('api'), webRoutes.player_actions);
+    router.get('/whitelist', requestAuth('web'), webRoutes.whitelist_page);
+    router.get('/whitelist/:table', requestAuth('api'), webRoutes.whitelist_list);
+    router.post('/whitelist/:table/:action', requestAuth('api'), webRoutes.whitelist_actions);
 
     //Index & generic
     router.get('/resources', requestAuth('web'), webRoutes.resources);
@@ -118,8 +126,9 @@ export default (config) => {
 
     //NUI specific routes
     router.get('/nui/auth', requestAuth('nui'), webRoutes.auth_nui);
-    router.get('/nui/player/:reference', requestAuth('nui'), webRoutes.player_modal);
+    router.get('/nui/player', requestAuth('nui'), webRoutes.player_modal);
     router.post('/nui/player/:action', requestAuth('nui'), webRoutes.player_actions);
+    router.post('/nui/database/:action', requestAuth('nui'), webRoutes.databaseActions);
     router.get('/nui/start/:route?', requestAuth('nuiStart'), async (ctx, next) => {
         if (ctx.params.route === 'adminManager') {
             return await webRoutes.adminManager_get(ctx, next);
@@ -127,6 +136,12 @@ export default (config) => {
             return await webRoutes.serverLog(ctx, next);
         }
     });
+
+    //DevDebug routes - no auth
+    if (convars.isDevMode) {
+        router.get('/dev/:scope', webRoutes.dev_get);
+        router.post('/dev/:scope', webRoutes.dev_post);
+    };
 
     //Return router
     return router;

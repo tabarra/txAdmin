@@ -1,7 +1,8 @@
 # Custom Events
 
 Starting in v3.2, **txAdmin** now has the ability to trigger server events.  
-The event name will be `txAdmin:events:<name>` and the first (and only) parameter will be a table that may contain relevant data.
+The event name will be `txAdmin:events:<name>` and the first (and only) parameter will be a table that may contain relevant data.  
+> **Important:** do not fully rely on events where consistency is key since they may be executted while the server is not online therefore your resource would not be notified about it. For instance, while the server us stopped one could whitelist or ban player identifiers.
 
 
 ## txAdmin:events:scheduledRestart (v3.2)
@@ -47,20 +48,22 @@ Event Data:
 
 ## txAdmin:events:playerBanned (v3.7)
 Called when a player is banned using txAdmin.  
+On update v5.0.0 the field `target` was replaced by `targetNetId` and `targetIds`.
 Event Data:
-- `target`: The id of the player that was banned.
 - `author`: The name of the admin.
 - `reason`: The reason of the ban.
 - `actionId`: The ID of this action.
 - `expiration`: The timestamp for this ban expiration, for `false` if permanent. Added in txAdmin v4.9.
+- `durationInput`: xxx. Added in v5.0.
+- `durationTranslated`: xxx or `null`. Added in v5.0.
+- `targetNetId`: The netid of the player that was banned, or `null` if a ban was applied to identifiers only. Added in v5.0.
+- `targetIds`: The identifiers that were banned. Added in v5.0.
+- `targetName`: The clean name of the banned player, or `identifiers` if ban was applied to ids only (legacy ban). Added in v5.0.
+- `kickMessage`: The message to show the player as a kick reason. Added in v5.0.
 
 
 ## txAdmin:events:playerWhitelisted (v3.7)
-Called when a player is whitelisted using txAdmin.  
-Event Data:
-- `author`: The name of the admin.
-- `actionId`: The ID of this action.
-- `target`: The reference of this whitelist. Can be "license:" prefixed license or a whitelist request ID.
+This event was deprecated on v5.0.0.
 
 ## txAdmin:event:configChanged (v4.0)
 Called when the txAdmin settings change in a way that could be relevant for the server.   
@@ -86,3 +89,21 @@ Event Data:
 - `delay`: How many milliseconds txAdmin will wait before killing the server process.
 - `author`: The name of the admin or `txAdmin`.
 - `message`: The message of the broadcast.
+
+## txAdmin:events:playerDirectMessage (v5.0)
+Called when an admin DMs a player.
+Event Data:
+- `target`: The id of the player to receive the DM.
+- `author`: The name of the admin.
+- `message`: The message content.
+
+## txAdmin:events:actionRevoked (v5.0)
+Called when an admin revokes a database action (ex. ban, warn).
+Event Data:
+- `actionId`: The id of the player to receive the DM.
+- `actionType`: The type of the action that was revoked.
+- `actionReason`: The action reason.
+- `actionAuthor`: The name of the admin that issued the action.
+- `playerName`: name of the player that received the action, or `false` if doesn't apply.
+- `playerIds`: Array containing all identifiers (ex. license, discord, etc.) this action applied to.
+- `revokedBy`: The name of the admin that revoked the action.

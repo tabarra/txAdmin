@@ -1,9 +1,13 @@
 import { isBrowserEnv } from "./miscUtils";
 import { debugData } from "./debugData";
-import { VehicleStatus } from "../hooks/usePlayerListListener";
-import { CustomLocaleData, ServerCtx } from "../state/server.state";
+import { PlayerData } from "../hooks/usePlayerListListener";
+import { LocaleType } from "@shared/localeMap";
+import { ServerCtx } from "../state/server.state";
 import { SetWarnOpenData } from "../components/WarnPage/WarnPage";
 import { AddAnnounceData } from "../hooks/useHudListenersService";
+import { mockPlayerData } from "./generateMockPlayerData";
+
+let playerUpdateInterval: ReturnType<typeof setTimeout> | null = null;
 
 const MenuObject = {
   warnSelf: (reason: string) => {
@@ -16,6 +20,34 @@ const MenuObject = {
         },
       },
     ]);
+  },
+  startPlayerUpdateLoop: (ms = 30000) => {
+    if (playerUpdateInterval) {
+      clearTimeout(playerUpdateInterval);
+      playerUpdateInterval = null;
+    }
+
+    console.log("Started player update loop");
+
+    playerUpdateInterval = setInterval(() => {
+      const mockPlayers = mockPlayerData(200);
+
+      debugData<PlayerData[]>(
+        [
+          {
+            action: "setPlayerList",
+            data: mockPlayers,
+          },
+        ],
+        3000
+      );
+    }, ms);
+  },
+  clearPlayerUpdateLoop: () => {
+    if (!playerUpdateInterval) return console.error("No interval to clear");
+
+    clearTimeout(playerUpdateInterval);
+    playerUpdateInterval = null;
   },
   warnPulse: () => {
     debugData([
@@ -44,11 +76,12 @@ const MenuObject = {
       },
     ]);
   },
-  setCustomLocale: (localeObj: CustomLocaleData) => {
+  setCustomLocale: (localeObj: LocaleType) => {
     debugData<ServerCtx>([
       {
         action: "setServerCtx",
         data: {
+          announceNotiPos: "top-right",
           projectName: "",
           locale: "custom",
           localeData: localeObj,
@@ -79,136 +112,7 @@ const MenuObject = {
     debugData([
       {
         action: "setPlayerList",
-        data: [
-          {
-            vType: VehicleStatus.Walking,
-            name: "Chip",
-            id: 1,
-            dist: 0,
-            health: 80,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Driving,
-            name: "Taso",
-            id: 2,
-            dist: 100,
-            health: 50,
-            admin: true,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Tabarra",
-            id: 3,
-            dist: 60,
-            health: 10,
-            admin: true,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 4,
-            dist: 30,
-            health: 100,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Unknown,
-            name: "Death",
-            id: 5,
-            dist: 500,
-            health: 70,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Walking,
-            name: "Death",
-            id: 6,
-            dist: 500,
-            health: 100,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Biking,
-            name: "Death",
-            id: 7,
-            dist: -1,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 8,
-            dist: 2000,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 9,
-            dist: 500,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 10,
-            dist: 500,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 11,
-            dist: -1,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 12,
-            dist: 500,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 13,
-            dist: 500,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 14,
-            dist: 11,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 15,
-            dist: 500,
-            health: 40,
-            admin: false,
-          },
-          {
-            vType: VehicleStatus.Boat,
-            name: "Death",
-            id: 16,
-            dist: 500,
-            health: 40,
-            admin: false,
-          },
-        ],
+        data: mockPlayerData(400),
       },
     ]);
   },

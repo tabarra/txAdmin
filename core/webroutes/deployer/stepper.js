@@ -1,7 +1,7 @@
 const modulename = 'WebServer:DeployerStepper';
 import fse from 'fs-extra';
 import logger from '@core/extras/console.js';
-import { convars } from '@core/globalData.js';
+import { convars } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -11,7 +11,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function DeployerStepper(ctx) {
     //Check permissions
-    if (!ctx.utils.checkPermission('master', modulename)) {
+    if (!ctx.utils.hasPermission('master')) {
         return ctx.utils.render('main/message', { message: 'You need to be the admin master to use the deployer.' });
     }
 

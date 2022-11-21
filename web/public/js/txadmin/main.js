@@ -1,5 +1,17 @@
 /* eslint-disable no-unused-vars */
 //================================================================
+//================================================= Helper funcs
+//================================================================
+const msToDuration = humanizeDuration.humanizer({
+    round: true,
+});
+const msToShortDuration = humanizeDuration.humanizer({
+    round: true,
+    spacer: '',
+    language: 'shortEn',
+});
+
+//================================================================
 //============================================== Dynamic Stats
 //================================================================
 const faviconEl = document.getElementById('favicon');
@@ -27,16 +39,6 @@ const setNextRestartTimeClass = (cssClass) => {
         el.classList.add(cssClass);
     }
 };
-const msToTimeString = (ms) => {
-    const hours = Math.floor(ms / 1000 / 60 / 60);
-    const minutes = Math.floor((ms / 1000 / 60 / 60 - hours) * 60);
-
-    let hStr, mStr;
-    if (hours) hStr = (hours === 1) ? `1 hour` : `${hours} hours`;
-    if (minutes) mStr = (minutes === 1) ? `1 minute` : `${minutes} minutes`;
-
-    return [hStr, mStr].filter(x => x).join(', ');
-};
 
 const updateStatusCard = (discordData, serverData) => {
     if(!statusCard.self) return;
@@ -52,7 +54,7 @@ const updateStatusCard = (discordData, serverData) => {
         statusCard.nextRestartTime.textContent = 'not scheduled';
     } else {
         const tempFlag = (serverData.scheduler.nextIsTemp)? '(tmp)' : '';
-        const relativeTime = msToTimeString(serverData.scheduler.nextRelativeMs);
+        const relativeTime = msToDuration(serverData.scheduler.nextRelativeMs, {units: ['h', 'm']});
         const isLessThanMinute = serverData.scheduler.nextRelativeMs < 60_000;
         if(isLessThanMinute){
             statusCard.nextRestartTime.textContent = `right now ${tempFlag}`;
@@ -107,8 +109,8 @@ const updateHostStats = (hostData) => {
 function refreshData() {
     const scope = (isWebInterface) ? 'web' : 'iframe';
     txAdminAPI({
-        url: `status/${scope}`,
         type: 'GET',
+        url: `status/${scope}`,
         timeout: REQ_TIMEOUT_SHORT,
         success: function (data) {
             if (checkApiLogoutRefresh(data)) return;
@@ -116,7 +118,7 @@ function refreshData() {
             if (isWebInterface) {
                 updatePageTitle(data.server.statusClass, data.server.name, data.players.length);
                 updateHostStats(data.host);
-                processPlayers(data.players);
+                processPlayers(data.players, data.server.mutex);
             }
         },
         error: function (xmlhttprequest, textstatus, message) {
@@ -126,15 +128,17 @@ function refreshData() {
             } else {
                 out = `Request error: ${textstatus}\n${message}`;
             }
-            setBadgeColor(statusCard.discord, 'light');
-            statusCard.discord.textContent = '--';
-            setBadgeColor(statusCard.server, 'light');
-            statusCard.server.textContent = '--';
-            statusCard.serverProcess.textContent = '--';
-            setNextRestartTimeClass('text-muted');
-            statusCard.nextRestartTime.textContent = '--';
-            statusCard.nextRestartBtnCancel.classList.add('d-none');
-            statusCard.nextRestartBtnEnable.classList.add('d-none');
+            if (statusCard.self) {
+                setBadgeColor(statusCard.discord, 'light');
+                statusCard.discord.textContent = '--';
+                setBadgeColor(statusCard.server, 'light');
+                statusCard.server.textContent = '--';
+                statusCard.serverProcess.textContent = '--';
+                setNextRestartTimeClass('text-muted');
+                statusCard.nextRestartTime.textContent = '--';
+                statusCard.nextRestartBtnCancel.classList.add('d-none');
+                statusCard.nextRestartBtnEnable.classList.add('d-none');
+            }
             if (isWebInterface) {
                 $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
                 $('#hostusage-cpu-text').html('error');
@@ -192,7 +196,6 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
         type: 'POST',
         url: '/changePassword',
         data: form,
-        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             notify.update('type', data.type);
@@ -234,15 +237,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
 //=================================== Globally Available API Funcs
 //================================================================
 async function txApiFxserverControl(action) {
-    const confirmOptions = { content: `Are you sure you would like to <b>${action}</b> the server?` };
+    const confirmOptions = { content: `Are you sure you would like to <b>${action.toUpperCase()}</b> the server?` };
     if (action !== 'start' && !await txAdminConfirm(confirmOptions)) {
         return;
     }
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
     txAdminAPI({
         url: '/fxserver/controls/' + action,
-        type: 'GET',
-        dataType: 'json',
+        type: 'POST',
         timeout: REQ_TIMEOUT_LONG,
         success: function (data) {
             updateMarkdownNotification(data, notify);

@@ -26,12 +26,21 @@ end)
 
 
 -- =============================================
---  Warn & Announcement handling
+--  Announcement, DirectMessage and Warn handling
 -- =============================================
 -- Dispatch Announcements
 RegisterNetEvent('txAdmin:receiveAnnounce', function(message, author)
     sendMenuMessage(
         'addAnnounceMessage',
+        {
+            message = message,
+            author = author
+        }
+    )
+end)
+RegisterNetEvent('txAdmin:receiveDirectMessage', function(message, author)
+    sendMenuMessage(
+        'addDirectMessage',
         {
             message = message,
             author = author
@@ -82,10 +91,7 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txadmin') --too spammy
     TriggerEvent('chat:removeSuggestion', '/txaPing')
     TriggerEvent('chat:removeSuggestion', '/txaKickAll')
-    TriggerEvent('chat:removeSuggestion', '/txaKickID')
-    TriggerEvent('chat:removeSuggestion', '/txaDropIdentifiers')
     TriggerEvent('chat:removeSuggestion', '/txaEvent')
-    TriggerEvent('chat:removeSuggestion', '/txaSendDM')
     TriggerEvent('chat:removeSuggestion', '/txaReportResources')
 
     --Keybinds

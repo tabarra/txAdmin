@@ -37,3 +37,33 @@ export const translateAlertType = (
  * Returns whether we are in browser or in NUI
  **/
 export const isBrowserEnv = (): boolean => !(window as any).invokeNative
+
+
+/**
+ * Translates a timestamp into a localized date string
+ */
+export const tsToLocaleDate = (
+  ts: number,
+  dateStyle: any = 'long',
+) => {
+  return new Date(ts * 1000)
+    .toLocaleDateString(
+      (window as any).nuiSystemLanguages,
+      { dateStyle }
+    );
+}
+
+/**
+ * Translates a timestamp into a localized date time string
+ */
+export const tsToLocaleDateTime = (
+  ts: number,
+  dateStyle: any = 'long',
+  timeStyle: any = 'medium',
+) => {
+  return new Date(ts * 1000)
+    .toLocaleString(
+      (window as any).nuiSystemLanguages,
+      { dateStyle, timeStyle }
+    );
+}

@@ -2,9 +2,9 @@ const modulename = 'AdminVault';
 import fse from 'fs-extra';
 import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
-
+import { nanoid } from 'nanoid';
 import logger from '@core/extras/console.js';
-import { convars, txEnv, verbose } from '@core/globalData.js';
+import { convars, txEnv, verbose } from '@core/globalData';
 import CitizenFXProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -548,7 +548,7 @@ export default class AdminVault {
      * Notify game server about admin changes
      */
     async refreshOnlineAdmins() {
-        if (globals.playerController === null) return;
+        if (globals.playerlistManager === null) return;
 
         try {
             //Getting all admin identifiers
@@ -558,10 +558,10 @@ export default class AdminVault {
             }, []);
 
             //Finding online admins
-            const playerList = globals.playerController.getPlayerList();
+            const playerList = globals.playerlistManager.getPlayerList();
             const onlineIDs = playerList.filter((p) => {
-                return p.identifiers.some((i) => adminIDs.includes(i));
-            }).map((p) => p.id);
+                return p.ids.some((i) => adminIDs.includes(i));
+            }).map((p) => p.netid);
 
             return globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
         } catch (error) {
@@ -570,5 +570,13 @@ export default class AdminVault {
                 dir(error);
             }
         }
+    }
+
+
+    /**
+     * Returns a random token to be used as CSRF Token
+     */
+    genCsrfToken() {
+        return nanoid();
     }
 };

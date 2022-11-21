@@ -5,19 +5,27 @@
     },
     "restarter": {
         "start_timeout": "未能及时启动",
-        "crash_detected": "检测到服务器已奔溃",
+        "crash_detected": "检测到服务器已崩溃",
         "hang_detected": "检测到服务器挂起",
         "partial_hang_warn": "由于部分挂起，此服务器将在 1 分钟后重新启动。请立即断开连接。",
         "partial_hang_warn_discord": "由于部分挂起, **%{servername}** 将在1分钟后重启",
-        "schedule_reason": "预计 %{time}重启",
+        "schedule_reason": "预计 %{time}后重启",
         "schedule_warn": "此服务器计划 %{smart_count} 分钟后重新启动， 请立即断开连接。 |||| 服务器计划 %{smart_count} 分钟后重新启动。",
         "schedule_warn_discord": "**%{servername}** 预计 %{smart_count} 分钟后重新启动。 |||| **%{servername}** 预计 %{smart_count} 分钟后重新启动。"
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) 你已被服务器禁止访问，理由： \"%{reason}\". 您的禁令将于: %{expiration} 过期.",
-        "kick_permanent": "(%{author})您已被永久禁止访问此服务器，理由： \"%{reason}\".",
-        "reject_temporary": "你已被服务器禁止访问.\n您的禁令将于: %{expiration}过期.\n禁令ID： %{id}.\n禁止理由: %{reason}.\n操作人: %{author}.",
-        "reject_permanent": "您已被永久禁止访问此服务器.\n禁令ID: %{id}.\n禁止理由: %{reason}.\n操作人: %{author}."
+        "kick_temporary": "您因 \"%{reason}\" 而被封禁。您可在 %{expiration} 后再次登录服务器。操作人：%{author}",
+        "kick_permanent": "您因 \"%{reason}\" 而被永久封禁。操作人：%{author}",
+        "reject": {
+            "title_permanent": "您已被此服务器永久封禁。",
+            "title_temporary": "您已被此服务器暂时封禁。",
+            "label_expiration": "封禁解除时间：",
+            "label_date": "封禁日期",
+            "label_author": "操作人",
+            "label_reason": "封禁原因",
+            "label_id": "封禁ID",
+            "note_multiple_bans": "提示：您还有其他激活的封禁。"
+        }
     },
     "server_actions": {
         "restarting": "服务器正在重启 (%{reason})。",
@@ -32,258 +40,282 @@
     },
     "nui_warning": {
         "title": "警告",
-        "warned_by": "警告者:",
-        "instruction": "按住 [空格] 10秒来关闭这个讯息."
+        "warned_by": "操作人:",
+        "instruction": "按住 [空格] 10秒来关闭这个消息。"
     },
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin 菜单已启用，键入 /tx 以打开它。\n您也可以在 [游戏设置 > 按键绑定 > FiveM > 菜单：打开主页] 配置按键绑定。",
             "menu_not_allowed": "您的标识符与在 txAdmin 上注册的任何管理员都不匹配。\n如果您在 txAdmin 上注册，请转到管理员管理器并确保您的标识符已保存",
-            "no_perms": "你没有权限",
-            "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "dialog_empty_input": "You cannot have an empty input."
+            "no_perms": "您没有权限",
+            "unknown_error": "出现未知错误。",
+            "not_enabled": "txAdmin 菜单未启用！您可以在 txAdmin 设置页面中启用它。",
+            "announcement_title": "公告%{author}：",
+            "dialog_empty_input": "提交内客不能为空，请重新输入。",
+            "directmessage_title": "来自管理员 %{author} 的消息:"
         },
         "frozen": {
-            "froze_player": "You have frozen the player!",
-            "unfroze_player": "You have unfrozen the player!",
-            "was_frozen": "You have been frozen by a server admin!"
+            "froze_player": "你冻结了玩家！",
+            "unfroze_player": "您已将玩家解冻！",
+            "was_frozen": "您已被管理员冻结！"
         },
         "common": {
-            "cancel": "Cancel",
-            "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "cancel": "取消",
+            "submit": "提交",
+            "error": "出现了一个错误",
+            "copied": "复制到剪贴板"
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
-                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+                "tooltip_1": "按 %{key} 切换页面 & 使用 方向上键/方向下键 切换选项",
+                "tooltip_2": "一些选项包含子选项，可用 方向左键/方向右键 选择"
             },
             "player_mode": {
-                "title": "Player Mode",
+                "title": "玩家模式",
                 "noclip": {
-                    "title": "NoClip",
-                    "label": "Fly around",
-                    "success": "NoClip enabled"
+                    "title": "穿墙模式",
+                    "label": "自由视角",
+                    "success": "穿墙模式 启用"
                 },
                 "godmode": {
-                    "title": "God",
-                    "label": "Invincible",
-                    "success": "God Mode enabled"
+                    "title": "上帝模式",
+                    "label": "无敌",
+                    "success": "上帝模式 启用"
                 },
                 "normal": {
-                    "title": "Normal",
-                    "label": "Default mode",
-                    "success": "Returned to default player mode."
+                    "title": "正常",
+                    "label": "默认模式",
+                    "success": "返回玩家默认模式"
                 }
             },
             "teleport": {
-                "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "title": "传送选项",
+                "generic_success": "传送成功！",
                 "waypoint": {
-                    "title": "Waypoint",
-                    "label": "Go to waypoint set",
-                    "error": "You have no waypoint set."
+                    "title": "传送到导航点",
+                    "label": "传送到地图上的导航点",
+                    "error": "您没有设置导航点"
                 },
                 "coords": {
-                    "title": "Coords",
-                    "label": "Go to specified coords",
-                    "dialog_title": "Teleport",
-                    "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
-                    "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                    "title": "传送到坐标",
+                    "label": "传送到您输入的xyz坐标",
+                    "dialog_title": "输入坐标",
+                    "dialog_desc": "输入 x, y, z 格式的坐标",
+                    "dialog_error": "您输入的格式有误，正确格式 111, 222, 33"
                 },
                 "back": {
-                    "title": "Back",
-                    "label": "Go back to last location",
-                    "error": "You don't have a last location to go back to!"
+                    "title": "返回上一个位置",
+                    "label": "传送到上一次使用传送的位置",
+                    "error": "您没有可以返回的地方！"
                 },
                 "copy": {
-                    "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "title": "复制坐标代码",
+                    "label": "将当前位置的xyz坐标复制到剪贴板"
                 }
             },
             "vehicle": {
-                "title": "Vehicle",
-                "onesync_error": "This option requires that OneSync be on for server entity handling",
-                "not_in_veh_error": "You are not currently in a vehicle!",
+                "title": "载具选项",
+                "onesync_error": "此选项要求服务器启用OneSync",
+                "not_in_veh_error": "您不在载具内！",
                 "spawn": {
-                    "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
-                    "dialog_title": "Spawn vehicle",
-                    "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
-                    "dialog_success": "Vehicle spawned!",
-                    "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                    "dialog_info": "Trying to spawn %{modelName}."
+                    "title": "生成",
+                    "label": "输入模型名称来生成载具",
+                    "dialog_title": "输入载具的模型名称",
+                    "dialog_desc": "输入您想要生成载具的模型名称",
+                    "dialog_success": "载具已生成！",
+                    "dialog_error": "未找到模型名称为 '%{modelName}' 的载具！",
+                    "dialog_info": "正在尝试生成 %{modelName}."
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "修理",
+                    "label": "修理当前载具",
+                    "success": "载具已修理！"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "删除",
+                    "label": "删除当前载具",
+                    "success": "载具已删除！"
+                },
+                "boost": {
+                    "title": "满改",
+                    "label": "将载具改装升级到最大（可能会更快）",
+                    "success": "载具已满改！",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
-                "title": "Heal",
+                "title": "恢复状态",
                 "myself": {
-                    "title": "Myself",
-                    "label": "Restores your health",
-                    "success_0": "All healed up!",
-                    "success_1": "You should be feeling good now!",
-                    "success_2": "Restored to full!",
-                    "success_3": "Ouchies fixed!"
+                    "title": "自己",
+                    "label": "恢复自己的状态",
+                    "success_0": "状态已恢复！",
+                    "success_1": "想飞上天和太阳肩并肩~",
+                    "success_2": "I do believe!",
+                    "success_3": "我要飞的更高~飞的更高~"
                 },
                 "everyone": {
-                    "title": "Everyone",
-                    "label": "Will heal & revive all players",
-                    "success": "Healed and revived all players."
+                    "title": "所有人",
+                    "label": "复活所有玩家并恢复他们的状态",
+                    "success": "已复活所有玩家并恢复他们的状态"
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "label": "Send an announcement to all online players.",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "输入公告内容",
+                "label": "向所有在线玩家发送公告。",
+                "dialog_desc": "向所有在线玩家发送公告。",
+                "dialog_placeholder": "公告内容...",
+                "dialog_success": "公告已发送！"
             },
             "clear_area": {
-                "title": "Reset World Area",
-                "label": "Reset a specified world area to its default state",
-                "dialog_desc": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side.",
-                "dialog_success": "Clearing area with radius of %{radius}m",
-                "dialog_error": "Invalid radius input. Try again."
+                "title": "重置世界状态",
+                "label": "将指定的世界区域重置为默认状态",
+                "dialog_desc": "请输入要清除的半径（0-300）。这不会清除服务器端生成的实体。",
+                "dialog_success": "已重置半径 %{radius}m 内的世界",
+                "dialog_error": "您输入的半径无效，请重新输入。"
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "显示玩家ID",
+                "label": "在附近玩家的头上显示ID和其他信息",
+                "alert_show": "显示玩家ID 开启",
+                "alert_hide": "显示玩家ID 关闭"
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online Players",
-                "players": "Players",
-                "search": "Search",
-                "zero_players": "No players found"
+                "online_players": "在线玩家",
+                "players": "玩家",
+                "search": "搜索",
+                "zero_players": "未找到玩家"
             },
             "sort": {
-                "label": "Sort by",
-                "distance": "Distance",
+                "label": "排序方式",
+                "distance": "距离",
                 "id": "ID",
-                "joined_first": "Joined First",
-                "joined_last": "Joined Last",
-                "closest": "Closest",
-                "farthest": "Farthest"
+                "joined_first": "最先加入",
+                "joined_last": "最后加入",
+                "closest": "最近的",
+                "farthest": "最远的"
             },
             "card": {
-                "health": "%{percentHealth}% health"
+                "health": "%{percentHealth}% 健康"
             }
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "error": "获取此用户的详细信息时出错。错误信息:",
+                "target_not_found": "找不到ID为或用户名为 %{target} 的在线玩家"
             },
             "tabs": {
-                "actions": "Actions",
-                "info": "Info",
-                "ids": "IDs",
-                "history": "History",
-                "ban": "Ban"
+                "actions": "操作",
+                "info": "信息",
+                "ids": "ID",
+                "history": "历史",
+                "ban": "封禁"
             },
             "actions": {
-                "title": "Player Actions",
-                "command_sent": "Command sent!",
+                "title": "玩家选项",
+                "command_sent": "命令已发送！",
                 "moderation": {
-                    "title": "Moderation",
+                    "title": "管理选项",
                     "options": {
-                        "dm": "DM",
-                        "warn": "Warn",
-                        "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "dm": "私聊",
+                        "warn": "警告",
+                        "kick": "踢出游戏",
+                        "set_admin": "给管理员"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
-                        "description": "What is the reason for direct messaging this player?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "title": "私信",
+                        "description": "请输入输入要发送的私信内容",
+                        "placeholder": "私信内容...",
+                        "success": "私信已发送！"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
-                        "description": "What is the reason for direct warning this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was warned!"
+                        "title": "警告",
+                        "description": "请输入警告此玩家的原因",
+                        "placeholder": "原因...",
+                        "success": "警告已发送！"
                     },
                     "kick_dialog": {
-                        "title": "Kick",
-                        "description": "What is the reason for kicking this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was kicked!"
+                        "title": "踢出玩家",
+                        "description": "请输入踢出此玩家的原因",
+                        "placeholder": "原因...",
+                        "success": "玩家已被踢出！"
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "互动选项",
                     "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
-                        "spectate": "Spectate",
-                        "toggle_freeze": "Toggle Freeze"
+                        "heal": "恢复状态",
+                        "go_to": "传送过去",
+                        "bring": "召唤过来",
+                        "spectate": "观看",
+                        "toggle_freeze": "冻结"
                     },
                     "notifications": {
-                        "heal_player": "Healing player",
-                        "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                        "spectate_yourself": "You cannot spectate yourself.",
-                        "freeze_yourself": "You cannot freeze yourself."
+                        "heal_player": "恢复玩家的状态",
+                        "tp_player": "将你传送到玩家",
+                        "bring_player": "将玩家召唤过来",
+                        "spectate_failed": "无法解析目标！正在退出观看，",
+                        "spectate_yourself": "您不能观看您自己",
+                        "freeze_yourself": "您不能冻结您自己"
                     }
                 },
                 "troll": {
-                    "title": "Troll",
+                    "title": "恶搞选项",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
-                        "wild_attack": "Wild attack"
+                        "drunk": "醉酒",
+                        "fire": "着火",
+                        "wild_attack": "动物攻击"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
-                "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "title": "玩家信息",
+                "session_time": "游玩时长",
+                "play_time": "游玩总时常",
+                "joined": "加入时间",
+                "whitelisted_label": "白名单状态",
+                "whitelisted_notyet": "未通过",
+                "btn_wl_add": "通过白名单",
+                "btn_wl_remove": "撤销白名单",
+                "btn_wl_success": "白名单状态已更改。",
+                "log_label": "记录",
+                "log_empty": "未找到封禁/警告。",
+                "log_ban_count": "%{smart_count} 封禁 |||| %{smart_count} 封禁",
+                "log_warn_count": "%{smart_count} 警告 |||| %{smart_count} 警告",
+                "log_btn": "详细信息",
+                "notes_changed": "玩家备注已更改。",
+                "notes_placeholder": "关于此玩家的备注..."
             },
             "history": {
-                "title": "Related history",
-                "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
-                }
+                "title": "历史信息",
+                "btn_revoke": "撤销",
+                "revoked_success": "操作已撤销！",
+                "banned_by": "被 %{author} 封禁",
+                "warned_by": "被 %{author} 警告",
+                "revoked_by": "被 %{author} 撤销",
+                "expired_at": "将于 %{date} 过期。",
+                "expires_at": "将于 %{date} 过期。"
             },
             "ban": {
-                "title": "Ban player",
-                "reason_placeholder": "Reason",
-                "duration_placeholder": "Duration",
-                "hours": "hours",
-                "days": "days",
-                "weeks": "weeks",
-                "months": "months",
-                "permanent": "Permanent",
-                "custom": "Custom",
-                "helper_text": "Please select a duration",
-                "submit": "Apply ban"
+                "title": "封禁玩家",
+                "reason_placeholder": "原因",
+                "duration_placeholder": "时间",
+                "hours": "小时",
+                "days": "天",
+                "weeks": "星期",
+                "months": "月",
+                "permanent": "永久",
+                "custom": "自定义",
+                "helper_text": "请选择封禁时间",
+                "submit": "提交",
+                "reason_required": "您必须输入封禁原因！",
+                "success": "已封禁该玩家！"
+            },
+            "ids": {
+                "current_ids": "当前标识符",
+                "previous_ids": "曾使用过的标识符"
             }
         }
     }

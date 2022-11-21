@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Has sido baneado del servidor por \"%{reason}\". Tu baneo expirará en: %{expiration}.",
         "kick_permanent": "(%{author}) Has sido baneado permanentemente del servidor por \"%{reason}\".",
-        "reject_temporary": "Has sido baneado del servidor.\nTu baneo expirará en: %{expiration}.\nID del baneo: %{id}.\nRazón del baneo: %{reason}.\nBaneado por: %{author}.",
-        "reject_permanent": "Has sido baneado permanentemente del servidor.\nID del baneo: %{id}.\nRazón del baneo: %{reason}.\nBaneado por: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Reiniciando Servidor (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Ha ocurrido un error.",
             "not_enabled": "¡Menú txAdmin no está activado! Puedes activarlo en la página de ajustes de txAdmin.",
             "announcement_title": "Anuncio del servidor de %{author}:",
-            "dialog_empty_input": "La entrada no puede estar vacía."
+            "dialog_empty_input": "La entrada no puede estar vacía.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "¡Has congelado al jugador!",
@@ -126,6 +135,13 @@
                     "title": "Borrar",
                     "label": "Borra el vehículo actual",
                     "success": "¡Vehículo borrado!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Tiempo de sesión",
                 "play_time": "Tiempo de juege",
                 "joined": "Se unió",
-                "notes_placeholder": "Notas sobre este jugador"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "Historial relacionado",
-                "action_types": {
-                    "warn": "ADVERTIDO",
-                    "warn_revoked": "REVOCADA LA ADVERTENCIA POR",
-                    "ban": "BANEADO",
-                    "ban_revoked": "REVOCADO EL BANEO POR",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOCADA LA WHITELIST POR"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Banear jugador",
@@ -283,7 +309,13 @@
                 "permanent": "Permanente",
                 "custom": "Personalizado",
                 "helper_text": "Por favor, elige una duración",
-                "submit": "Aplicar baneo"
+                "submit": "Aplicar baneo",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

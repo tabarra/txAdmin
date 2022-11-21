@@ -55,36 +55,6 @@ end)
 logger('tx', 'LoggerStarted')
 
 
--- Player joining/leaving handlers
--- TODO: support hwid tokens Soon™
-AddEventHandler('playerJoining', function()
-    local outData
-    if source <= 0 then 
-        outData = {
-            id = source,
-            name = 'unknown',
-            identifiers = {}
-        }
-    else
-        outData = {
-            name = sub(GetPlayerName(source) or "unknown", 1, 75),
-            ids = GetPlayerIdentifiers(source),
-            -- hwids = {}
-        }
-        -- local maxTokens = GetNumPlayerTokens(source)
-        -- for i = 0, maxTokens do
-        --     outData.hwids[i+1] = GetPlayerToken(source, i)
-        -- end
-    end
-
-    logger(source, 'playerJoining', outData)
-end)
-
-AddEventHandler('playerDropped', function(reason)
-    logger(source, 'playerDropped', {reason = reason})
-end)
-
-
 -- Explosion handler
 local function isInvalid(property, invalidType)
     return (property == nil or property == invalidType)
@@ -153,6 +123,9 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
 
     elseif event == 'vehicleRepair' then
         message = "repaired their vehicle"
+
+    elseif event == 'vehicleBoost' then
+        message = "boosted their vehicle"
 
     elseif event == 'healSelf' then
         message = "healed themself"

@@ -1,6 +1,6 @@
 {
     "$meta": {
-        "label": "English",
+        "label": "English (default)",
         "humanizer_language": "en"
     },
     "restarter": {
@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
         "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Server restarting (%{reason}).",
@@ -43,6 +51,7 @@
             "unknown_error": "An unknown error occurred.",
             "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
             "announcement_title": "Server Announcement by %{author}:",
+            "directmessage_title": "DM from admin %{author}:",
             "dialog_empty_input": "You cannot have an empty input."
         },
         "frozen": {
@@ -104,7 +113,7 @@
                     "label": "Copy the current world coordinates to your clipboard"
                 }
             },
-            "vehicle":{
+            "vehicle": {
                 "title": "Vehicle",
                 "onesync_error": "This option requires that OneSync be on for server entity handling",
                 "not_in_veh_error": "You are not currently in a vehicle!",
@@ -126,6 +135,13 @@
                     "title": "Delete",
                     "label": "Deletes the vehicle the player is currently in",
                     "success": "Vehicle deleted!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,23 +275,39 @@
                 "session_time": "Session Time",
                 "play_time": "Play time",
                 "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_placeholder": "Notes about this player...",
+                "notes_changed": "Player note changed."
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             },
             "history": {
                 "title": "Related history",
-                "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Ban player",
                 "reason_placeholder": "Reason",
+                "reason_required": "The Reason field is required.",
                 "duration_placeholder": "Duration",
+                "success": "Player banned!",
                 "hours": "hours",
                 "days": "days",
                 "weeks": "weeks",

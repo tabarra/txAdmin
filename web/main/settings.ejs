@@ -65,37 +65,9 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmGlobal-language" <%= readOnly ? 'disabled' : '' %>>
-                                    <option value="en" <%= global.language === 'en' ? 'selected' : '' %>>English (default)</option>
-
-                                    <option value="ar" <%= global.language === 'ar' ? 'selected' : '' %>>Arabic</option>
-                                    <option value="bg" <%= global.language === 'bg' ? 'selected' : '' %>>Bulgarian</option>
-                                    <option value="bs" <%= global.language === 'bs' ? 'selected' : '' %>>Bosnian</option>
-                                    <option value="cs" <%= global.language === 'cs' ? 'selected' : '' %>>Czech</option>
-                                    <option value="da" <%= global.language === 'da' ? 'selected' : '' %>>Danish</option>
-                                    <option value="de" <%= global.language === 'de' ? 'selected' : '' %>>German</option>
-                                    <option value="el" <%= global.language === 'el' ? 'selected' : '' %>>Greek</option>
-                                    <option value="es" <%= global.language === 'es' ? 'selected' : '' %>>Spanish</option>
-                                    <option value="et" <%= global.language === 'et' ? 'selected' : '' %>>Estonian</option>
-                                    <option value="fa" <%= global.language === 'fa' ? 'selected' : '' %>>Farsi - Persian</option>
-                                    <option value="fi" <%= global.language === 'fi' ? 'selected' : '' %>>Finnish</option>
-                                    <option value="fr" <%= global.language === 'fr' ? 'selected' : '' %>>French</option>
-                                    <option value="hu" <%= global.language === 'hu' ? 'selected' : '' %>>Hungarian</option>
-                                    <option value="it" <%= global.language === 'it' ? 'selected' : '' %>>Italian</option>
-                                    <option value="lt" <%= global.language === 'lt' ? 'selected' : '' %>>Lithuanian</option>
-                                    <option value="lv" <%= global.language === 'lv' ? 'selected' : '' %>>Latvian</option>
-                                    <option value="nl" <%= global.language === 'nl' ? 'selected' : '' %>>Dutch</option>
-                                    <option value="no" <%= global.language === 'no' ? 'selected' : '' %>>Norwegian</option>
-                                    <option value="pl" <%= global.language === 'pl' ? 'selected' : '' %>>Polish</option>
-                                    <option value="pt" <%= global.language === 'pt' ? 'selected' : '' %>>Portuguese</option>
-                                    <option value="ro" <%= global.language === 'ro' ? 'selected' : '' %>>Romanian</option>
-                                    <option value="ru" <%= global.language === 'ru' ? 'selected' : '' %>>Russian</option>
-                                    <option value="sl" <%= global.language === 'sl' ? 'selected' : '' %>>Slovenian</option>
-                                    <option value="sv" <%= global.language === 'sv' ? 'selected' : '' %>>Swedish</option>
-                                    <option value="th" <%= global.language === 'th' ? 'selected' : '' %>>Thai</option>
-                                    <option value="tr" <%= global.language === 'tr' ? 'selected' : '' %>>Turkish</option>
-                                    <option value="zh" <%= global.language === 'zh' ? 'selected' : '' %>>Chinese</option>
-
-                                    <option value="custom" <%= global.language === 'custom' ? 'selected' : '' %>>Custom (txData/locale.json)</option>
+                                    <% for (const locale of locales) { %>
+                                        <option value="<%= locale.code %>" <%= global.language === locale.code ? 'selected' : '' %>><%= locale.label %></option>
+                                    <% } %>
                                 </select>
                                 <span class="form-text text-muted">
                                     The language to use on Chat/Discord messages. <br>
@@ -279,7 +251,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
-                                        <%= playerController.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                        <%= playerDatabase.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -296,7 +268,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckWhitelist"
-                                        <%= playerController.onJoinCheckWhitelist || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                        <%= playerDatabase.onJoinCheckWhitelist || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -306,52 +278,30 @@
                             </div>
                         </div>
 
-
                         <div class="form-group row">
-                            <label for="frmPlayerManager-minSessionTime" class="col-sm-3 col-form-label">
-                                Minimum <br>
-                                Session Time
-                                <span class="text-danger">*</span>
+                            <label for="frmPlayerManager-banRejectionMessage" class="col-sm-3 col-form-label">
+                                Ban Custom <br>
+                                Rejection Message
                             </label>
                             <div class="col-sm-9">
-                                <input type="number" class="form-control" id="frmPlayerManager-minSessionTime"
-                                    value="<%= playerController.minSessionTime || '' %>" placeholder="15" min="1" max="60" <%= readOnly ? 'disabled' : '' %>>
+                                <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.banRejectionMessage || '' %></textarea>
                                 <span class="form-text text-muted">
-                                    The minimum amount of minutes a player needs to be in the server before it gets saved to the database. <br>
-                                    This is done to prevent the database from getting too big. <br>
-                                    This number must be between <code>1</code> and <code>60</code> minutes.
+                                    Optional message to display to a player on the rejection message that shows when they try to connect while bein banned. <br>
+                                    If you have a ban appeal process, you can use this field to inform the players.
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="frmPlayerManager-whitelistRejectionMessage" class="col-sm-3 col-form-label">
-                                Whitelist <br>Rejection Message
-                                <span class="text-danger">*</span>
+                                Whitelist Custom <br>
+                                Rejection Message
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You are not yet whitelisted in this server.&#10;Please join http://discord.gg/example.&#10;Your Request ID: <id>" <%= readOnly ? 'disabled' : '' %>><%= playerController.whitelistRejectionMessage || '' %></textarea>
+                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="Please join http://discord.gg/example and request to be whitelisted." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.whitelistRejectionMessage || '' %></textarea>
                                 <span class="form-text text-muted">
-                                    The message that will be returned to the player if he is not whitelisted. <br>
-                                    Use <code>&lt;id&gt;&#10;</code> as a placeholder for the whitelist request ID.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Wipe Pending Whitelist <br>
-                                On txAdmin Start
-                            </label>
-                            <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-wipePendingWLOnStart"
-                                        <%= playerController.wipePendingWLOnStart || '' %> <%= readOnly ? 'disabled' : '' %>>
-                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    When enabled, the pending whitelist will be wiped every time txAdmin starts <br>
-                                    This is done to prevent the database from getting too big.
+                                    Optional message to display to a player on the rejection message that shows when they try to connect while not being whitelisted. <br>
+                                    If you have a Discord whitelisting process, you can put here links to your guild.
                                 </span>
                             </div>
                         </div>
@@ -570,7 +520,6 @@
             type: "POST",
             url: '/settings/save/global',
             data: data,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 notify.update('type', data.type);
@@ -609,7 +558,6 @@
             type: "POST",
             url: '/settings/save/fxserver',
             data: data,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 notify.update('type', data.type);
@@ -629,20 +577,15 @@
         let data = {
             onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
             onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
-            minSessionTime: $('#frmPlayerManager-minSessionTime').val().trim(),
             whitelistRejectionMessage: $('#frmPlayerManager-whitelistRejectionMessage').val().trim(),
-            wipePendingWLOnStart: $('#frmPlayerManager-wipePendingWLOnStart').is(':checked'),
-        }
-        if (!data.minSessionTime.length || !data.whitelistRejectionMessage.length) {
-            return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+            banRejectionMessage: $('#frmPlayerManager-banRejectionMessage').val().trim(),
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         txAdminAPI({
             type: "POST",
-            url: '/settings/save/playerController',
+            url: '/settings/save/playerDatabase',
             data: data,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 notify.update('type', data.type);
@@ -670,7 +613,6 @@
             type: "POST",
             url: '/settings/save/monitor',
             data: data,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 notify.update('type', data.type);
@@ -703,7 +645,6 @@
             type: "POST",
             url: '/settings/save/discord',
             data: data,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 notify.update('type', data.type);
@@ -742,7 +683,6 @@
             type: "POST",
             url: '/settings/save/menu',
             data: data,
-            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
                 notify.update('type', data.type);

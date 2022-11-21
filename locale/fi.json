@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Olet saanut porttikiellon palvelimelle. Porttikiellon syy: \"%{reason}\". Porttikielto päättyy: %{expiration}.",
         "kick_permanent": "(%{author}) Olet saanut pysyvän porttikiellon palvelimelle. Porttikiellon syy: \"%{reason}\".",
-        "reject_temporary": "Olet saanut porttikiellon palvelimelle.\nPorttikielto päättyy: %{expiration}.\nPorttikiellon ID: %{id}.\nPorttikiellon syy: %{reason}.\nPorttikiellon antoi: %{author}.",
-        "reject_permanent": "Olet saanut pysyvän porttikiellon palvelimelle.\nPorttikiellon ID: %{id}.\nPorttikiellon syy: %{reason}.\nPorttikiellon antoi: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Palvelin käynnistyy uudelleen (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Tuntematon virhe",
             "not_enabled": "txAdmin Menu ei ole käytössä! Voit ottaa sen käyttöön txAdminin asetuksista.",
             "announcement_title": "Palvelinilmoitus henkilöltä %{author}:",
-            "dialog_empty_input": "Tekstikenttä ei voi olla tyhjä."
+            "dialog_empty_input": "Tekstikenttä ei voi olla tyhjä.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "Pelaaja jäädytety!",
@@ -126,6 +135,13 @@
                     "title": "Poista",
                     "label": "Poista tämänhetkinen ajoneuvo",
                     "success": "Ajoneuvo poistettu!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Session pituus",
                 "play_time": "Peliaika",
                 "joined": "Liittynyt",
-                "notes_placeholder": "Muistiinpanot"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "Historia",
-                "action_types": {
-                    "warn": "VAROITTI pelaajaa",
-                    "warn_revoked": "KUMOSI VAROITUKSEN pelaajalta",
-                    "ban": "ANTOI PORTTIKIELLON pelaajalle",
-                    "ban_revoked": "KUMOSI PORTTIKIELLON pelaajalta",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "KUMOSI PÄÄSYN PALVELIMELLE pelaajalta"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Aseta pelaaja porttikieltoon",
@@ -283,7 +309,13 @@
                 "permanent": "Ikuinen",
                 "custom": "Custom",
                 "helper_text": "Aseta porttikiellon kesto",
-                "submit": "Aseta porttikielto"
+                "submit": "Aseta porttikielto",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

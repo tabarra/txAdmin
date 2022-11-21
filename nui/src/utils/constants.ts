@@ -1,228 +1,304 @@
-export const MockedPlayerDetails = {
-  funcDisabled: {
-    message: "disabled",
-    kick: "disabled",
-    warn: "disabled",
-    ban: false,
-  },
-  id: false,
-  license: "9b9fc300cc65d22ad3b536175a4d15c0e4933753",
-  identifiers: [
-    "license:9b9fc300cc65d22ad3b536175a4d15c0e4933753",
-    "license2:9b9fc300cc65d22ad3b536175a4d15c0e4933753",
-    "steam:765611981462241080",
-    "xbl:2535431930771985",
-    "live:914798250090349",
-    "discord:188181246600282113",
-    "fivem:226041",
-  ],
-  isTmp: false,
-  name: "Soneca",
-  actionHistory: [
-    {
-      id: "ADX9-C61Y",
-      action: "BAN-REVOKED",
-      date: "30/05",
-      reason: "sdfsdfsdf",
-      author: "tabarra",
-      color: "dark",
+import { PlayerModalSuccess } from "@shared/playerApiTypes";
+
+// export const MockedPlayerDetails: PlayerModalSuccess = {"meta":{"tmpPerms":{"message":true,"whitelist":true,"warn":true,"kick":true,"ban":true},"onJoinCheckBan":true,"onJoinCheckWhitelist":true,"serverTime":1668030674},"player":{"displayName":"nobody","pureName":"nobody","isRegistered":false,"isConnected":true,"license":null,"ids":[],"actionHistory":[],"netid":101,"sessionTime":1}};
+
+export const MockedPlayerDetails: PlayerModalSuccess = {
+    "meta": {
+        "tmpPerms": {
+            "message": true,
+            "whitelist": true,
+            "warn": true,
+            "kick": true,
+            "ban": true
+        },
+        "onJoinCheckBan": true,
+        "onJoinCheckWhitelist": true,
+        "serverTime": 1667712061
     },
-    {
-      id: "BPGZ-HL53",
-      action: "WHITELIST-REVOKED",
-      date: "30/05",
-      reason: null,
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "W283-2H5W",
-      action: "BAN-REVOKED",
-      date: "30/05",
-      reason: "efrdgdfdf",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "A4Q6-JF45",
-      action: "WARN",
-      date: "31/05",
-      reason: "warningggggggggggg",
-      author: "tabarra",
-      color: "warning",
-    },
-    {
-      id: "AJH8-SYDZ",
-      action: "BAN-REVOKED",
-      date: "31/05",
-      reason: "ban test",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "A3NS-NJQK",
-      action: "BAN-REVOKED",
-      date: "31/05",
-      reason: "aaaaaaaaaaaaaaaaaa",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "AXE6-FU64",
-      action: "WHITELIST-REVOKED",
-      date: "14/06",
-      reason: null,
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "WRFY-N3G6",
-      action: "WARN",
-      date: "14/06",
-      reason: "🆃🆇🅰🅳🅼🅸🅽",
-      author: "tabarra",
-      color: "warning",
-    },
-    {
-      id: "BU6G-38ZF",
-      action: "WHITELIST-REVOKED",
-      date: "30/06",
-      reason: null,
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "WQH8-283J",
-      action: "WHITELIST-REVOKED",
-      date: "30/06",
-      reason: null,
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "A1VA-GPWH",
-      action: "WHITELIST-REVOKED",
-      date: "30/06",
-      reason: null,
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "CTR-GNKD",
-      action: "WARN",
-      date: "30/06",
-      reason: "zxc",
-      author: "tabarra",
-      color: "warning",
-    },
-    {
-      id: "B94D-F6H5",
-      action: "BAN-REVOKED",
-      date: "30/06",
-      reason: "dsfdfs",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "W6S2-YAXW",
-      action: "BAN-REVOKED",
-      date: "30/06",
-      reason: "sadf sadf asdf asd",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "BRS4-B8WH",
-      action: "BAN-REVOKED",
-      date: "30/06",
-      reason: "msgmsgmsgmsg msg",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "WKRY-18W1",
-      action: "BAN-REVOKED",
-      date: "30/06",
-      reason: "sdf sdf dsf ds",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "AV45-F3T3",
-      action: "WHITELIST",
-      date: "30/06",
-      reason: null,
-      author: "tabarra",
-      color: "success",
-    },
-    {
-      id: "WE3S-8L7F",
-      action: "BAN-REVOKED",
-      date: "30/06",
-      reason: "asdasd",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "WCKP-B3FZ",
-      action: "BAN-REVOKED",
-      date: "30/06",
-      reason: "sadf",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "BS18-56L9",
-      action: "BAN-REVOKED",
-      date: "30/06",
-      reason: "zdfgdfg dfg dfg dfdfg",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "WQTN-QBPF",
-      action: "WARN",
-      date: "07/07",
-      reason: "dfsg",
-      author: "tabarra",
-      color: "warning",
-    },
-    {
-      id: "BM1N-UZYT",
-      action: "WARN",
-      date: "07/07",
-      reason: "fds",
-      author: "tabarra",
-      color: "warning",
-    },
-    {
-      id: "W37E-C7A4",
-      action: "WARN-REVOKED",
-      date: "07/07",
-      reason: "sdf",
-      author: "tabarra",
-      color: "dark",
-    },
-    {
-      id: "W9PM-8QFL",
-      action: "WARN",
-      date: "07/07",
-      reason: "yuiyiu",
-      author: "tabarra",
-      color: "warning",
-    },
-    {
-      id: "A5UN-9DDS",
-      action: "BAN",
-      date: "25/05",
-      reason: "ssss",
-      author: "tabarra",
-      color: "danger",
-    },
-  ],
-  joinDate: "May 30, 2020 - 01:27:49",
-  sessionTime: "0 minutes",
-  playTime: "1 hour, 57 minutes",
-  notesLog: "",
-  notes: "",
+    "player": {
+        "displayName": "tabby",
+        "pureName": "tabby",
+        "isRegistered": true,
+        "isConnected": true,
+        "license": "9b9fc300cc65d22ad3b536175a4d15c0e4933753",
+        "ids": [
+            "license:9b9fc300cc65d22ad3b536175a4d15c0e4933753"
+        ],
+        "actionHistory": [
+            {
+                "id": "BKA3-ZDA9",
+                "type": "ban",
+                "reason": "sdfsdfsdf",
+                "author": "tabarra",
+                "ts": 1590812890,
+                "exp": 1590985690,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BBGC-ZQDW",
+                "type": "ban",
+                "reason": "efrdgdfdf",
+                "author": "tabarra",
+                "ts": 1590817677,
+                "exp": 1590990477,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "WU9K-EQAK",
+                "type": "warn",
+                "reason": "warningggggggggggg",
+                "author": "tabarra",
+                "ts": 1590915097
+            },
+            {
+                "id": "B6YB-36WP",
+                "type": "ban",
+                "reason": "ban test",
+                "author": "tabarra",
+                "ts": 1590915223,
+                "exp": 1591088023,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BUMF-RF4K",
+                "type": "ban",
+                "reason": "aaaaaaaaaaaaaaaaaa",
+                "author": "tabarra",
+                "ts": 1590915327,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BZWX-7T92",
+                "type": "ban",
+                "reason": "ban ids",
+                "author": "tabarra",
+                "ts": 1590916449,
+                "exp": 123456
+            },
+            {
+                "id": "WD8A-TF29",
+                "type": "warn",
+                "reason": "🆃🆇🅰🅳🅼🅸🅽",
+                "author": "tabarra",
+                "ts": 1592112016
+            },
+            {
+                "id": "WFBP-RPKA",
+                "type": "warn",
+                "reason": "zxc",
+                "author": "tabarra",
+                "ts": 1593506835
+            },
+            {
+                "id": "B28W-5Z9Z",
+                "type": "ban",
+                "reason": "dsfdfs",
+                "author": "tabarra",
+                "ts": 1593507597,
+                "exp": 1593680397,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BE1V-WM8R",
+                "type": "ban",
+                "reason": "sadf sadf asdf asd",
+                "author": "tabarra",
+                "ts": 1593507790,
+                "exp": 1593680590,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BNLA-1WRQ",
+                "type": "ban",
+                "reason": "msgmsgmsgmsg msg",
+                "author": "tabarra",
+                "ts": 1593507940,
+                "exp": 1593680740,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "B58M-ZG5T",
+                "type": "ban",
+                "reason": "sdf sdf dsf ds",
+                "author": "tabarra",
+                "ts": 1593508091,
+                "exp": 1593680891,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BDLY-YVUH",
+                "type": "ban",
+                "reason": "asdasd",
+                "author": "tabarra",
+                "ts": 1593508612,
+                "exp": 1593681412,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BT6X-HE7M",
+                "type": "ban",
+                "reason": "sadf",
+                "author": "tabarra",
+                "ts": 1593508757,
+                "exp": 1593681557,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "B6KL-YHHQ",
+                "type": "ban",
+                "reason": "zdfgdfg dfg dfg dfdfg",
+                "author": "tabarra",
+                "ts": 1593508806,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "WBR1-H1RJ",
+                "type": "warn",
+                "reason": "dfsg",
+                "author": "tabarra",
+                "ts": 1594133299
+            },
+            {
+                "id": "W57D-4GAE",
+                "type": "warn",
+                "reason": "fds",
+                "author": "tabarra",
+                "ts": 1594133352
+            },
+            {
+                "id": "W2XM-6Q32",
+                "type": "warn",
+                "reason": "sdf",
+                "author": "tabarra",
+                "ts": 1594133385
+            },
+            {
+                "id": "WJG5-65BJ",
+                "type": "warn",
+                "reason": "yuiyiu",
+                "author": "tabarra",
+                "ts": 1594133717,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BQHS-2ZS1",
+                "type": "ban",
+                "reason": "sdfsdffsd",
+                "author": "tabarra",
+                "ts": 1624492869,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "WBYN-8U51",
+                "type": "warn",
+                "reason": "sdf",
+                "author": "tabarra",
+                "ts": 1632547265
+            },
+            {
+                "id": "BMNG-DPFF",
+                "type": "ban",
+                "reason": "test ban reason",
+                "author": "tabarra",
+                "ts": 1666739975,
+                "exp": 1666912775,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BZYG-TPN7",
+                "type": "ban",
+                "reason": "whatever new ban",
+                "author": "tabarra",
+                "ts": 1666740120,
+                "exp": 1666912920,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "B2PY-NFJ2",
+                "type": "ban",
+                "reason": "test ban whoop whoop",
+                "author": "tabarra",
+                "ts": 1666830531,
+                "exp": 1667003331,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BFR2-KCX7",
+                "type": "ban",
+                "reason": "test ban reason",
+                "author": "tabarra",
+                "ts": 1667268168,
+                "exp": 1667440968,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "BFAH-96ZV",
+                "type": "ban",
+                "reason": "222222",
+                "author": "tabarra",
+                "ts": 1667268176,
+                "exp": 1667440976,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "B3NN-13WE",
+                "type": "ban",
+                "reason": "test ban reason",
+                "author": "tabarra",
+                "ts": 1667268617,
+                "exp": 1667441417,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "WFTC-ZRMG",
+                "type": "warn",
+                "reason": "yabadabadu",
+                "author": "tabarra",
+                "ts": 1667312038,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "WVM2-VBND",
+                "type": "warn",
+                "reason": "whatevs",
+                "author": "tabarra",
+                "ts": 1667694161,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "WZL4-PMW1",
+                "type": "warn",
+                "reason": "lipsum",
+                "author": "tabarra",
+                "ts": 1667695747,
+                "revokedBy": "tabarra"
+            },
+            {
+                "id": "W82M-6B2B",
+                "type": "warn",
+                "reason": "bbbbbbbbbb",
+                "author": "tabarra",
+                "ts": 1667695778
+            },
+            {
+                "id": "BDJA-L9KB",
+                "type": "ban",
+                "reason": "test ban reason",
+                "author": "tabarra",
+                "ts": 1667710213,
+                "exp": 1667883013
+            }
+        ],
+        "netid": 53,
+        "sessionTime": 53,
+        "tsJoined": 1590812869,
+        "playTime": 4706,
+        "tsWhitelisted": 1667314521,
+        "oldIds": [
+            "license:9b9fc300cc65d22ad3b536175a4d15c0e4933753",
+            "fivem:271816",
+            "discord:272800190639898628"
+        ],
+        "tsLastConnection": 1667708940
+    }
 };

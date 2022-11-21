@@ -65,7 +65,7 @@
     "module": "commonjs",
 
     /* Specify the root folder within your source files. */
-    "rootDir": "./",
+    "rootDir": "../",
 
     /* Specify how TypeScript looks up a file from a given module specifier. */
     "moduleResolution": "node",
@@ -75,8 +75,8 @@
 
     /* Specify a set of entries that re-map imports to additional lookup locations. */
     "paths": {
-      "@core/*": ["./*"],
-      "@locale/*": ["../locale/*"]
+      "@shared/*": ["../shared/*"],
+      "@core/*": ["./*"]
     },      
                                 
     /* Allow multiple folders to be treated as one when resolving modules. */
@@ -265,5 +265,8 @@
 
     /* Skip type checking all .d.ts files. */
     "skipLibCheck": true
-  }
+  },
+  "references": [
+    { "path": "../shared" }
+  ]
 }

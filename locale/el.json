@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Έχει απαγορευτεί η είσοδος σου στον διακομιστή για: \"%{reason}\". Η απαγορευσή σου θα λήξει σε: %{expiration}.",
         "kick_permanent": "(%{author}) Έχει απαγορευτεί η είσοδος σου στον διακομιστή για: \"%{reason}\".",
-        "reject_temporary": "Έχει απαγορευτεί η είσοδος σου στον διακομιστή.\nΗ απαγορευσή σου θα λήξει σε: %{expiration}.\nΑναγνωριστικό απαγόρευσης: %{id}.\nΑιτία απαγόρευσης: %{reason}.\nΥπεύθυνος απαγόρευσης: %{author}.",
-        "reject_permanent": " Έχει απαγορευτεί η είσοδος σου στον διακομιστή.\nΑναγνωριστικό απαγόρευσης: %{id}.\nΑιτία απαγόρευσης: %{reason}.\nΥπεύθυνος απαγόρευσης: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Επανεκκίνηση διακομιστή με λόγο: (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Προκλήθηκε ένα άγνωστο σφάλμα.",
             "not_enabled": "Tο txAdmin Menu δεν είναι ενεργοποιημένο ! Μπορείς να το ενεργοποιήσεις στήν σελίδα ρυθμίσεων του txAdmin.",
             "announcement_title": "Ανακοίνωση από τον %{author}:",
-            "dialog_empty_input": "Δεν μπορείς να μην εισάγεις τίποτα."
+            "dialog_empty_input": "Δεν μπορείς να μην εισάγεις τίποτα.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "Έχεις παγώσει έναν παίκτη!",
@@ -126,6 +135,13 @@
                     "title": "Delete",
                     "label": "Διέγραψε το όχημα",
                     "success": "Το όχημα διαγράφτηκε!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Τωρινός Online χρόνος",
                 "play_time": "Συνολικός Online χρόνος",
                 "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "Related history",
-                "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Ban player",
@@ -283,7 +309,13 @@
                 "permanent": "Μόνιμα",
                 "custom": "Custom",
                 "helper_text": "Παρακαλώ διαλέξτε διάρκεια",
-                "submit": "Apply ban"
+                "submit": "Apply ban",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

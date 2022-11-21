@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Você foi banido deste servidor por \"%{reason}\". Seu ban vai expirar em: %{expiration}.",
         "kick_permanent": "(%{author}) Você foi permanentemente banido deste servidor por \"%{reason}\".",
-        "reject_temporary": "Você foi banido deste servidor.\nSeu ban vai expirar em: %{expiration}.\nID: %{id}.\nMotivo: %{reason}.\nAutor: %{author}.",
-        "reject_permanent": "Você foi permanentemente banido deste servidor.\nID: %{id}.\nMotivo: %{reason}.\nAutor: %{author}."
+        "reject": {
+            "title_permanent": "Você foi permanentemente banido deste servidor.",
+            "title_temporary": "Você foi temporariamente banido deste servidor.",
+            "label_expiration": "Seu ban vai expirar em",
+            "label_date": "Data do ban",
+            "label_author": "Autor",
+            "label_reason": "Motivo",
+            "label_id": "ID do ban",
+            "note_multiple_bans": "Nota: você tem mais de um ban ativo em seus ids."
+        }
     },
     "server_actions": {
         "restarting": "Servidor reiniciando (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Ocorreu um erro inesperado.",
             "not_enabled": "O menu do txAdmin não está habilitado! Você pode habilita-lo na página de configurações do txAdmin web.",
             "announcement_title": "Aviso ao servidor por %{author}:",
-            "dialog_empty_input": "Você precisa digitar alguma coisa."
+            "dialog_empty_input": "Você precisa digitar alguma coisa.",
+            "directmessage_title": "DM do admin %{author}:"
         },
         "frozen": {
             "froze_player": "Jogador congelado!",
@@ -126,6 +135,13 @@
                     "title": "Deletar",
                     "label": "Deletar veículo atual",
                     "success": "Veículo deletado!"
+                },
+                "boost": {
+                    "title": "Nitro",
+                    "label": "Aumenta as caracterísiticas do veículo para atingir máxima diversão (e talvez velocidade)",
+                    "success": "Nitro adicionado!",
+                    "already_boosted": "Esse carro já tem nitro.",
+                    "unsupported_class": "Esta classe de veículo não é suportada."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Tempo de sessão",
                 "play_time": "Tempo no servidor",
                 "joined": "Primeira conexão",
-                "notes_placeholder": "Notas sobre este jogador"
+                "whitelisted_label": "Whitelist adicionado",
+                "whitelisted_notyet": "ainda não",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVER WL",
+                "btn_wl_success": "Status do whitelist alterado.",
+                "log_label": "Log",
+                "log_empty": "Nenhum ban ou aviso encontrado.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} aviso |||| %{smart_count} avisos",
+                "log_btn": "DETALHES",
+                "notes_changed": "Notas do jogador alteradas.",
+                "notes_placeholder": "Notas sobre este jogador..."
             },
             "history": {
                 "title": "Histórico Relacionado",
-                "action_types": {
-                    "warn": "ADVERTIU",
-                    "warn_revoked": "REVOGOU a ADVERTÊNCIA do",
-                    "ban": "BANIU",
-                    "ban_revoked": "REVOGOU o BAN do",
-                    "whitelist": "APROVOU WHITELIST do",
-                    "whitelist_revoked": "REVOGOU o WHITELIST do"
-                }
+                "btn_revoke": "REVOGAR",
+                "revoked_success": "Ação revogada!",
+                "banned_by": "BANIDO por %{author}",
+                "warned_by": "ADVERTIDO por %{author}",
+                "revoked_by": "Revogado por %{author}.",
+                "expired_at": "Expirado em %{date}.",
+                "expires_at": "Expira em %{date}."
             },
             "ban": {
                 "title": "Banir Jogador",
@@ -283,7 +309,13 @@
                 "permanent": "Permanente",
                 "custom": "Customizado",
                 "helper_text": "Por favor selecione a duração",
-                "submit": "Aplicar ban"
+                "submit": "Aplicar ban",
+                "reason_required": "O campo motivo é obrigatório.",
+                "success": "Jogador banido!"
+            },
+            "ids": {
+                "current_ids": "IDs atuais",
+                "previous_ids": "IDs usados anteriormente"
             }
         }
     }

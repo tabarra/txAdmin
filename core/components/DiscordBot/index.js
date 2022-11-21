@@ -1,7 +1,7 @@
 const modulename = 'DiscordBot';
-import Discord, { Intents } from '@citizenfx/discord.js'
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import Discord, { Intents } from '@citizenfx/discord.js';
+import logger, { ogConsole } from '@core/extras/console.js';
+import { verbose } from '@core/globalData';
 import commands from './commands';
 const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
@@ -175,12 +175,35 @@ export default class DiscordBot {
 
     //================================================================
     /**
-     * DEBUG: fetch user data
+     * Resolves a user by its discord identifier.
+     * NOTE: using announceChannel to find out the guild
+     * FIXME: add lru-cache
      * @param {string} uid
      */
-    // async testFetchUser(uid){
-    //     let testUser = await this.client.fetchUser('272800190639898628');
-    //     dir(testUser)
-    //     dir(testUser.avatarURL)
-    // }
+    async resolveMember(uid) {
+        if (!this.client || this.client.status) throw new Error(`discord bot not ready yet`);
+        const avatarOptions = {size: 64};
+
+        //Check if in guild member
+        if (this.announceChannel?.guild) {
+            try {
+                const member = await this.announceChannel.guild.members.fetch(uid);
+                return {
+                    tag: `${member.nickname ?? member.user.username}#${member.user.discriminator}`,
+                    avatar: (member ?? member.user).displayAvatarURL(avatarOptions),
+                };
+            } catch (error) { }
+        }
+
+        //Checking if user resolvable
+        const user = await this.client.users.fetch(uid);
+        if (user) {
+            return {
+                tag: `${user.username}#${user.discriminator}`,
+                avatar: user.displayAvatarURL(avatarOptions),
+            };
+        } else {
+            throw new Error(`could not resolve discord user`);
+        }
+    }
 };

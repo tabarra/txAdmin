@@ -302,8 +302,8 @@
 
             //Get log from API
             txAdminAPI({
-                url: `/serverLog/partial?dir=${direction}&ref=${ref}`,
                 type: 'GET',
+                url: `/serverLog/partial?dir=${direction}&ref=${ref}`,
                 timeout: REQ_TIMEOUT_MEDIUM,
                 success: function (data) {
                     logContainer.innerHTML = '';
@@ -458,10 +458,15 @@
 
                 //Source
                 const sourceNode = document.createElement('strong');
-                sourceNode.textContent = event.src.name;
                 sourceNode.classList.add('e-src');
-                if(event.src.id) sourceNode.classList.add('e-src-player');
-                sourceNode.addEventListener('click', ()=>{ showPlayer(event.src.id.replace(/#/, '_')) });
+                if(event.src.id){
+                    const [mutex, netid] = event.src.id.split('#', 2);
+                    sourceNode.classList.add('e-src-player');
+                    sourceNode.addEventListener('click', ()=>{ showPlayerByMutexNetid(`${mutex}_${netid}`) });
+                    sourceNode.textContent = `[${netid}] ${event.src.name}`;
+                }else{
+                    sourceNode.textContent = event.src.name;
+                }
                 lineElement.appendChild(sourceNode);
 
                 //Message

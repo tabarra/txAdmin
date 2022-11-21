@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Teid on sellest serverist keelustatud \"%{reason}\". Teie keelustamine aegub: %{expiration}.",
         "kick_permanent": " (%{author}) Teid on sellest serverist jäädavalt keelustatud \"%{reason}\" tõttu.",
-        "reject_temporary": "Teid on sellest serverist keelustatud.\nTeie keeld aegub: %{expiration}.\nBänni ID: %{id}.\nKeelustamise põhjus: %{reason}.\nKeelustaja: %{author}.",
-        "reject_permanent": "Teid on sellest serverist jäädavalt keelustatud.\nBänni ID: %{id}.\nKeelustuse põhjus: %{reason}.\nKeelustaja: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Serveri taaskäivitamine (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Ilmnes tundmatu viga.",
             "not_enabled": "Menüü txAdmin pole lubatud! Saate selle lubada txAdmini seadete lehel.",
             "announcement_title": "Serveri teadaanne %{author}:",
-            "dialog_empty_input": "Sul ei saa olla tühi sisend."
+            "dialog_empty_input": "Sul ei saa olla tühi sisend.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "Olete mängija külmutanud!",
@@ -104,7 +113,7 @@
                     "label": "Kopeerige praegused maailma koordinaadid"
                 }
             },
-            "vehicle":{
+            "vehicle": {
                 "title": "Masinad",
                 "onesync_error": "See suvand nõuab, et OneSync oleks serveri olemi haldamiseks sisse lülitatud",
                 "not_in_veh_error": "Te ei ole praegu sõidukis!",
@@ -126,6 +135,13 @@
                     "title": "Kustuta",
                     "label": "Kustutab sõiduki, milles mängija parasjagu viibib",
                     "success": "Sõiduk kustutatud!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Seansi aeg",
                 "play_time": "Mängimise aeg",
                 "joined": "Ühines",
-                "notes_placeholder": "Märkused selle mängija kohta"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "Seotud ajalugu",
-                "action_types": {
-                    "warn": "HOIATATUD",
-                    "warn_revoked": "TÜHISTADES HOIATUS",
-                    "ban": "KEELUSTATUD",
-                    "ban_revoked": "KEELU TÜHISTAMINE",
-                    "whitelist": "ALLOWLIST",
-                    "whitelist_revoked": "ALLOWLISTIST EEMALDAMINE"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Keelusta mängija",
@@ -283,7 +309,13 @@
                 "permanent": "Igavesti",
                 "custom": "Custom",
                 "helper_text": "Valige kestus",
-                "submit": "Rakenda keeld"
+                "submit": "Rakenda keeld",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

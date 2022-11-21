@@ -16,8 +16,16 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Ти беше забранен: \"%{reason}\". Твоята забрана ще изтече на: %{expiration}.",
         "kick_permanent": "(%{author}) Ти беше перманентно забранен от този сървър с причина: \"%{reason}\".",
-        "reject_temporary": "Ти беше забранен от сървърът.\nЗабраната ще изтече в: %{expiration}.\nBan ID: %{id}.\nПричина за забраната: %{reason}.\nЗабранен от: %{author}.",
-        "reject_permanent": "Ти беше перманенотно забранен от този сървър.\nBan ID: %{id}.\nПричина: %{reason}.\nЗабранен от: %{author}."
+        "reject": {
+            "title_permanent": "You have been permanently banned from this server.",
+            "title_temporary": "You have been temporarily banned from this server.",
+            "label_expiration": "Your ban will expire in",
+            "label_date": "Ban Date",
+            "label_author": "Banned by",
+            "label_reason": "Ban Reason",
+            "label_id": "Ban ID",
+            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+        }
     },
     "server_actions": {
         "restarting": "Сървърът се рестартира, (%{reason}).",
@@ -43,7 +51,8 @@
             "unknown_error": "Възникна неизвестна грешка..",
             "not_enabled": "txAdmin менюто не е включено! Може да го включиш чрез настройките на txAdmin.",
             "announcement_title": "Сървърно съобщение от %{author}:",
-            "dialog_empty_input": "Полето е празно."
+            "dialog_empty_input": "Полето е празно.",
+            "directmessage_title": "DM from admin %{author}:"
         },
         "frozen": {
             "froze_player": "Ти замрази играч!",
@@ -104,7 +113,7 @@
                     "label": "Копирай текущите координати."
                 }
             },
-            "vehicle":{
+            "vehicle": {
                 "title": "Автомобил",
                 "onesync_error": "Тази опция изисква 'OneSync' да е включен.",
                 "not_in_veh_error": "Не си в автомобил!",
@@ -126,6 +135,13 @@
                     "title": "Изтрий",
                     "label": "Изтриване на автомобила в които се намираш.",
                     "success": "Автомобила е изтрит!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "success": "Vehicle boosted!",
+                    "already_boosted": "This vehicle was already boosted.",
+                    "unsupported_class": "This vehicle class is not supported."
                 }
             },
             "heal": {
@@ -259,18 +275,28 @@
                 "session_time": "Игрално време",
                 "play_time": "Цяло игрално Време",
                 "joined": "Влязъл",
-                "notes_placeholder": "Бележки относно играчът"
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "not yet",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status changed.",
+                "log_label": "Log",
+                "log_empty": "No bans/warns found.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "DETAILS",
+                "notes_changed": "Player note changed.",
+                "notes_placeholder": "Notes about this player..."
             },
             "history": {
                 "title": "История за Забрани...",
-                "action_types": {
-                    "warn": "ПРЕДУПРЕДИЛ",
-                    "warn_revoked": "Махна предупреждението на",
-                    "ban": "ЗАБРАНИЛ",
-                    "ban_revoked": "Махна забраната на",
-                    "whitelist": "БЯЛ СПИСЪК",
-                    "whitelist_revoked": "Премахна белия списък на"
-                }
+                "btn_revoke": "REVOKE",
+                "revoked_success": "Action revoked!",
+                "banned_by": "BANNED by %{author}",
+                "warned_by": "WARNED by %{author}",
+                "revoked_by": "Revoked by %{author}.",
+                "expired_at": "Expired at %{date}.",
+                "expires_at": "Expires at %{date}."
             },
             "ban": {
                 "title": "Забрани играч",
@@ -283,7 +309,13 @@
                 "permanent": "Перманентно",
                 "custom": "Персонализирано",
                 "helper_text": "Моля избери продължителност",
-                "submit": "Приложи забрана"
+                "submit": "Приложи забрана",
+                "reason_required": "The Reason field is required.",
+                "success": "Player banned!"
+            },
+            "ids": {
+                "current_ids": "Current Identifiers",
+                "previous_ids": "Previously Used Identifiers"
             }
         }
     }

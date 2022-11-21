@@ -24,7 +24,7 @@ export default async function SettingsSave(ctx) {
     let scope = ctx.params.scope;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('settings.write', modulename)) {
+    if (!ctx.utils.testPermission('settings.write', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',
@@ -36,8 +36,8 @@ export default async function SettingsSave(ctx) {
         return await handleGlobal(ctx);
     } else if (scope == 'fxserver') {
         return await handleFXServer(ctx);
-    } else if (scope == 'playerController') {
-        return await handlePlayerController(ctx);
+    } else if (scope == 'playerDatabase') {
+        return await handlePlayerDatabase(ctx);
     } else if (scope == 'monitor') {
         return await handleMonitor(ctx);
     } else if (scope == 'discord') {
@@ -176,18 +176,17 @@ async function handleFXServer(ctx) {
 
 //================================================================
 /**
- * Handle Player Controller settings
+ * Handle Player Database settings
  * @param {object} ctx
  */
-async function handlePlayerController(ctx) {
+async function handlePlayerDatabase(ctx) {
     //Sanity check
     if (anyUndefined(
         ctx.request.body,
         ctx.request.body.onJoinCheckBan,
         ctx.request.body.onJoinCheckWhitelist,
-        ctx.request.body.minSessionTime,
         ctx.request.body.whitelistRejectionMessage,
-        ctx.request.body.wipePendingWLOnStart,
+        ctx.request.body.banRejectionMessage,
     )) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -196,33 +195,29 @@ async function handlePlayerController(ctx) {
     let cfg = {
         onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
         onJoinCheckWhitelist: (ctx.request.body.onJoinCheckWhitelist === 'true'),
-        minSessionTime: parseInt(ctx.request.body.minSessionTime.trim()),
         whitelistRejectionMessage: ctx.request.body.whitelistRejectionMessage.trim(),
-        wipePendingWLOnStart: (ctx.request.body.wipePendingWLOnStart === 'true'),
+        banRejectionMessage: ctx.request.body.banRejectionMessage.trim(),
     };
 
-    //Validating wl message
-    if (cfg.whitelistRejectionMessage.length > 256) {
-        return ctx.send({type: 'danger', message: 'The whitelist rejection message must be less than 256 characters.'});
+    //Validating custom rejection messages
+    if (cfg.whitelistRejectionMessage.length > 512) {
+        return ctx.send({type: 'danger', message: 'The whitelist rejection message must be less than 512 characters.'});
     }
-
-    //Validating min session time
-    if (cfg.minSessionTime < 1 || cfg.minSessionTime > 60) {
-        return ctx.send({type: 'danger', message: 'Minimum Session Time must be between 1 and 60 minutes.'});
+    if (cfg.banRejectionMessage.length > 512) {
+        return ctx.send({type: 'danger', message: 'The ban rejection message must be less than 512 characters.'});
     }
 
     //Preparing & saving config
-    let newConfig = globals.configVault.getScopedStructure('playerController');
+    let newConfig = globals.configVault.getScopedStructure('playerDatabase');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
     newConfig.onJoinCheckWhitelist = cfg.onJoinCheckWhitelist;
-    newConfig.minSessionTime = cfg.minSessionTime;
     newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
-    newConfig.wipePendingWLOnStart = cfg.wipePendingWLOnStart;
-    let saveStatus = globals.configVault.saveProfile('playerController', newConfig);
+    newConfig.banRejectionMessage = cfg.banRejectionMessage;
+    let saveStatus = globals.configVault.saveProfile('playerDatabase', newConfig);
 
     //Sending output
     if (saveStatus) {
-        globals.playerController.refreshConfig();
+        globals.playerDatabase.refreshConfig();
         ctx.utils.logAction('Changing Player Controller settings.');
         return ctx.send({type: 'success', message: '<strong>Player Controller configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
     } else {

@@ -8,7 +8,7 @@ import Cache from '../extras/dataCache';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import pidUsageTree from '@core/extras/pidUsageTree.js';
-import { verbose, txEnv } from '@core/globalData.js';
+import { verbose, txEnv } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 const cache = new Cache(5);
@@ -210,14 +210,13 @@ async function gettxAdminData() {
         units: ['d', 'h', 'm'],
     };
 
-    const controllerConfigs = globals.playerController.config;
+    const playerDbConfigs = globals.playerDatabase.config;
     const httpCounter = globals.databus.txStatsData.httpCounter;
     return {
         //Stats
         uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
-        // cfxUrl: (globals.webServer.cfxUrl) ? `https://${globals.webServer.cfxUrl}/` : '--',
-        banlistEnabled: controllerConfigs.onJoinCheckBan.toString(),
-        whitelistEnabled: controllerConfigs.onJoinCheckWhitelist.toString(),
+        banlistEnabled: playerDbConfigs.onJoinCheckBan.toString(),
+        whitelistEnabled: playerDbConfigs.onJoinCheckWhitelist.toString(),
         httpCounterLog: httpCounter.log.join(', ') || '--',
         httpCounterMax: httpCounter.max || '--',
         monitorRestarts: {

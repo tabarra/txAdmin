@@ -6,7 +6,7 @@ import dateFormat from 'dateformat';
 import rfs from 'rotating-file-stream';
 import { cloneDeep, defaultsDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
