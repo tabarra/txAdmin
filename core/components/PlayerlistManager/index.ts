@@ -53,7 +53,12 @@ export default class PlayerlistManager {
      */
     handleDbDataSync(dbData: DatabasePlayerType, srcUniqueId: Symbol) {
         for (const player of this.#playerlist) {
-            if (player instanceof ServerPlayer && player.uniqueId !== srcUniqueId) {
+            if (
+                player instanceof ServerPlayer
+                && player.isRegistered
+                && player.license === dbData.license
+                && player.uniqueId !== srcUniqueId
+            ) {
                 player.syncUpstreamDbData(dbData);
             }
         }
