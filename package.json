@@ -84,7 +84,7 @@
     "node-stream-zip": "^1.15.0",
     "notistack": "^2.0.5",
     "open": "7.1.0",
-    "openid-client": "^5.1.9",
+    "openid-client": "^5.3.0",
     "pidtree": "^0.6.0",
     "pidusage": "github:tabarra/pidusage",
     "react-polyglot": "^0.7.2",

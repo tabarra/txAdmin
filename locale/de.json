@@ -17,14 +17,14 @@
         "kick_temporary": "(%{author}) Du wurdest von diesem Server für %{expiration} gebannt. Grund: \"%{reason}\".",
         "kick_permanent": "(%{author}) Du wurdest permanent von diesem Server gebannt. Grund: \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+            "title_permanent": "Du wurdest permanent von diesem Server gebannt.",
+            "title_temporary": "Du wurdest temporär von diesem Server gebannt.",
+            "label_expiration": "Dein Bann läuft aus in",
+            "label_date": "Bann-Datum",
+            "label_author": "Gebannt von",
+            "label_reason": "Banngrund",
+            "label_id": "Bann-ID",
+            "note_multiple_bans": "Es gibt mehr als einen aktiven Bann für diesen Identifier"
         }
     },
     "server_actions": {
@@ -52,7 +52,7 @@
             "not_enabled": "Das txAdmin Menü ist nicht aktiviert! Du kannst es in den txAdmin Einstellungen aktivieren.",
             "announcement_title": "Serverweite Ankündigung von %{author}:",
             "dialog_empty_input": "Du kannst keine leere Eingabe haben.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM vom Admin %{author}:"
         },
         "frozen": {
             "froze_player": "Du hast den Spieler eingefroren!",
@@ -138,10 +138,10 @@
                 },
                 "boost": {
                     "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported."
+                    "label": "Booste das Fahrzeug",
+                    "success": "Fahrzeug geboosted!",
+                    "already_boosted": "Dieses Fahrzeug wurde schon geboosted!",
+                    "unsupported_class": "Diese Fahrzeugart wird nicht unterstützt."
                 }
             },
             "heal": {
@@ -276,27 +276,27 @@
                 "play_time": "Spielzeit",
                 "joined": "Beigetreten",
                 "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
+                "whitelisted_notyet": "noch nicht",
+                "btn_wl_add": "WL HINZUFÜGEN",
+                "btn_wl_remove": "WL ENTFERNEN",
+                "btn_wl_success": "Whitelist-Status geändert",
                 "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_empty": "Keine Banns/Verwarnungen gefunden.",
+                "log_ban_count": "%{smart_count} Bann |||| %{smart_count} Banns",
+                "log_warn_count": "%{smart_count} Verwarnung |||| %{smart_count} Verwarnungen",
                 "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "notes_changed": "Notizen geändert",
+                "notes_placeholder": "Notizen über diesen Spieler..."
             },
             "history": {
                 "title": "Vergangenheit",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "RÜCKGÄNGIG",
+                "revoked_success": "Aktion rückgängig gemacht!",
+                "banned_by": "GEBANNT von %{author}",
+                "warned_by": "VERWARNT von %{author}",
+                "revoked_by": "RÜCKGÄNGIG GEMACHT von %{author}.",
+                "expired_at": "Ausgelaufen am %{date}.",
+                "expires_at": "Läuft aus am %{date}."
             },
             "ban": {
                 "title": "Spieler Bannen",
@@ -309,13 +309,13 @@
                 "permanent": "Permanent",
                 "custom": "Benutzerdefiniert",
                 "helper_text": "Bitte eine Dauer angeben",
-                "submit": "Ban ausführen",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "submit": "Bann ausführen",
+                "reason_required": "Ein Grund muss angegeben werden!",
+                "success": "Spieler gebannt!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "current_ids": "Aktuelle Identifier",
+                "previous_ids": "Zuvor benutzte Identifier"
             }
         }
     }
