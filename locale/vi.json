@@ -1,6 +1,6 @@
 {
     "$meta": {
-        "label": "Tiếng Việt",
+        "label": "Vietnamese",
         "humanizer_language": "vn"
     },
     "restarter": {
@@ -47,12 +47,12 @@
         "misc": {
             "help_message": "txAdmin đang bật, dùng /tx để mở.\nBạn có thể cài đặt phím tắt bằng cách vào cài đặt game [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Thông tin tài khoản của bạn không có quyền thao tác.\nNếu bạn đã có tài khoản txAdmin, hãy chắc chắn rằng bạn có đủ các quyền.",
-            "action_unauthorized": "Bạn không có quyền này.",
+            "no_perms": "Bạn không có quyền!",
             "unknown_error": "Có lỗi xảy ra.",
-            "not_enabled": "txAdmin không được bật.",
+            "not_enabled": "txAdmin Menu chưa được bật, bạn có thể bật tại mục cài đặt.",
             "announcement_title": "Thông báo máy chủ bởi %{author}:",
-            "general_no_perms": "Bạn không có quyền!",
-            "dialog_empty_input": "Bạn không thể bỏ trống nội dung."
+            "directmessage_title": "Tin nhắn từ Admin %{author}:",
+            "dialog_empty_input": "Bạn không thể để trống mục này."
         },
         "frozen": {
             "froze_player": "Bạn đã đóng băng người chơi!",
@@ -170,7 +170,7 @@
             "clear_area": {
                 "title": "Dọn Dẹp Khu Vực",
                 "label": "Đặt lại một khu vực cụ thể về trạng thái mặc định",
-                "dialog_description": "Vui lòng nhập radius mà bạn muốn dọn dẹp (0-300), các vật thể tạo ra từ script sẽ không bị xóa.",
+                "dialog_desc": "Vui lòng nhập radius mà bạn muốn dọn dẹp (0-300), các vật thể tạo ra từ script sẽ không bị xóa.",
                 "dialog_success": "Đang dọn dẹp khu vực bán kính %{radius}m",
                 "dialog_error": "Bán kính không hợp lệ."
             },
@@ -225,10 +225,10 @@
                         "set_admin": "Cấp Quyền Admin"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
+                        "title": "Tin nhắn trực tiếp",
                         "description": "Lý do cho việc gửi tin nhắn riêng trực tiếp?",
                         "placeholder": "Lý do...",
-                        "success": "Your DM has been sent!"
+                        "success": "Tin nhắn đã được gửi!"
                     },
                     "warn_dialog": {
                         "title": "Cảnh Cáo",
