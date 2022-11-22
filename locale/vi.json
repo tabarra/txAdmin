@@ -137,9 +137,9 @@
                     "success": "Xe đã bị xóa!"
                 },
                 "boost": {
-                    "title": "Boost xe",
-                    "label": "Tăng tốc cho chiếc xe để đạt được niềm vui tối đa (Độ xe)",
-                    "success": "Vehicle boosted!",
+                    "title": "Nâng cấp xe",
+                    "label": "Nâng cấp xe để kiểm tra tốc độ tối đa.",
+                    "success": "Xe đã được nâng cấp",
                     "already_boosted": "Xe này đã được độ.",
                     "unsupported_class": "Loại xe này không được hỗ trợ."
                 }
@@ -237,7 +237,7 @@
                         "success": "Người chơi đã bị cảnh cáo!"
                     },
                     "kick_dialog": {
-                        "title": "Đá",
+                        "title": "Kick",
                         "description": "Vui lòng nhập lý do kick người chơi?",
                         "placeholder": "Lý do...",
                         "success": "Người chơi đã bị đá khỏi máy chủ!"
