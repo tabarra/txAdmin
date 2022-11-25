@@ -132,7 +132,7 @@ AddEventHandler('playerJoining', function(srcString, _oldID)
 
     -- relaying this info to all admins
     for adminID, _ in pairs(TX_ADMINS) do
-        TriggerClientEvent('txcl:updatePlayer', adminID, source, playerData.playerName)
+        TriggerClientEvent('txcl:updatePlayer', adminID, source, playerData.name)
     end
 end)
 

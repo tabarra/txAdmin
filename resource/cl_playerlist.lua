@@ -32,7 +32,7 @@ function sendReactPlayerlist()
     for pids, playerData in pairs(LOCAL_PLAYERLIST) do
         upload[#upload + 1] = {
             id = tonumber(pids),
-            name = playerData.name,
+            name = playerData.name or "unknown",
             health = playerData.health,
             dist = playerData.dist,
             vType = playerData.vType,
@@ -56,7 +56,7 @@ RegisterNetEvent('txcl:setInitialPlayerlist', function(payload)
     for _, playerData in pairs(payload) do
         local pids = tostring(playerData[1])
         LOCAL_PLAYERLIST[pids] = {
-            name = playerData[2] or "unknown",
+            name = playerData[2],
             health = 0,
             dist = -1,
             vType = "unknown",
@@ -139,7 +139,7 @@ RegisterNetEvent('txcl:updatePlayer', function(id, data)
     else
         debugPrint("^2txcl:updatePlayer: ^3"..id.."^2 connected")
         LOCAL_PLAYERLIST[pids] = {
-            name = data or "unknown",
+            name = data,
             health = 0,
             dist = -1,
             vType = "unknown",
