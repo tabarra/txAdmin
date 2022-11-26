@@ -154,7 +154,8 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
         };
         const language = translator.t('$meta.humanizer_language');
 
-        let title, expLine;
+        let title;
+        let expLine = '';
         if (ban.expiration) {
             const humanizeOptions = {
                 language,
