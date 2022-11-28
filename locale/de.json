@@ -22,7 +22,7 @@
             "label_expiration": "Dein Bann läuft aus in",
             "label_date": "Bann-Datum",
             "label_author": "Gebannt von",
-            "label_reason": "Banngrund",
+            "label_reason": "Grund",
             "label_id": "Bann-ID",
             "note_multiple_bans": "Es gibt mehr als einen aktiven Bann für diesen Identifier"
         }
@@ -47,16 +47,16 @@
         "misc": {
             "help_message": "txAdmin Menü aktiviert, tippe /tx ein, um es zu öffnen.\nDu kannst zusätzlich in den Einstellungen eine Taste zuweisen [Einstellungen > Steuerung > FiveM > txAdmin].",
             "menu_not_allowed": "Deine IDs stimmen mit keiner bei txAdmin registrierten überein.\n Wenn du bei txAdmin registriert bist, stelle sicher, dass die richtigen IDs gespeichert sind.",
-            "no_perms": "Du hast diese Berechtigung nicht.",
+            "no_perms": "Dafür hast du keine Berechtigung.",
             "unknown_error": "Ein unbekannter Fehler ist aufgetreten.",
-            "not_enabled": "Das txAdmin Menü ist nicht aktiviert! Du kannst es in den txAdmin Einstellungen aktivieren.",
+            "not_enabled": "Das txAdmin Menü ist nicht aktiviert. Du kannst es in den txAdmin Einstellungen aktivieren.",
             "announcement_title": "Serverweite Ankündigung von %{author}:",
-            "dialog_empty_input": "Du kannst keine leere Eingabe haben.",
-            "directmessage_title": "DM vom Admin %{author}:"
+            "dialog_empty_input": "Du kannst keine leere Eingabe senden.",
+            "directmessage_title": "DM von Admin %{author}:"
         },
         "frozen": {
-            "froze_player": "Du hast den Spieler eingefroren!",
-            "unfroze_player": "Du hast den Spieler entfroren!",
+            "froze_player": "Du hast den Spieler eingefroren.",
+            "unfroze_player": "Du hast den Spieler aufgetaut.",
             "was_frozen": "Du wurdest von einem Teammitglied eingefroren!"
         },
         "common": {
@@ -67,7 +67,7 @@
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Drücke %{key} um die Seiten zu wechseln & die Pfeiltasten um im Menü zu navigieren",
+                "tooltip_1": "Drücke %{key} um die Seiten zu wechseln & verwende die Pfeiltasten um im Menü zu navigieren",
                 "tooltip_2": "Bestimmte Menüpunkte haben Unteroptionen, die mit den linken und rechten Pfeiltasten ausgewählt werden können"
             },
             "player_mode": {
@@ -110,7 +110,7 @@
                 },
                 "copy": {
                     "title": "Koordinaten Kopieren",
-                    "label": "Kopiere in die Zwischenablage"
+                    "label": "Kopiere deine Koordinaten (x,y,z) in die Zwischenablage"
                 }
             },
             "vehicle": {
@@ -128,18 +128,18 @@
                 },
                 "fix": {
                     "title": "Reparieren",
-                    "label": "Repariere dein Fahrzeug",
-                    "success": "Fahrzeug repariert!"
+                    "label": "Repariere das Fahrzeug, auf dessen Fahrersitz du dich befindest",
+                    "success": "Fahrzeug repariert."
                 },
                 "delete": {
                     "title": "Entfernen",
                     "label": "Entferne das Fahrzeug",
-                    "success": "Fahrzeug entfernt!"
+                    "success": "Fahrzeug entfernt."
                 },
                 "boost": {
                     "title": "Boost",
                     "label": "Booste das Fahrzeug",
-                    "success": "Fahrzeug geboosted!",
+                    "success": "Fahrzeug geboosted.",
                     "already_boosted": "Dieses Fahrzeug wurde schon geboosted!",
                     "unsupported_class": "Diese Fahrzeugart wird nicht unterstützt."
                 }
@@ -149,10 +149,10 @@
                 "myself": {
                     "title": "Selbst",
                     "label": "Heilen und wiederbeleben",
-                    "success_0": "Alles geheilt!",
+                    "success_0": "Alles genäht und geheilt!",
                     "success_1": "Jetzt solltest du dich besser fühlen!",
-                    "success_2": "Wieder voll gemacht!",
-                    "success_3": "Wunden geheilt!"
+                    "success_2": "Ein kleines Pflaster und du bist wieder gesund!",
+                    "success_3": "Tat doch gar nicht weh! Du bist wieder gesund."
                 },
                 "everyone": {
                     "title": "Alle Spieler",
@@ -163,14 +163,14 @@
             "announcement": {
                 "title": "Ankündigung schicken",
                 "label": "Ankündigung an alle Spieler schicken.",
-                "dialog_desc": "Gebe die Nachricht ein, welche an alle Spieler gesendet werden soll.",
+                "dialog_desc": "Gebe die Nachricht ein, die an alle Spieler gesendet werden soll.",
                 "dialog_placeholder": "Deine Ankündigung ...",
-                "dialog_success": "Versenden der Ankündigung!"
+                "dialog_success": "Ankündigung an alle Spieler geschickt"
             },
             "clear_area": {
                 "title": "Weltbereich zurücksetzen",
-                "label": "Setze einen definierten Bereich in den Ursprungszustand zurück.",
-                "dialog_desc": "Bitte gib einen Radius (0-300) ein, in dem du alle Objekte zurücksetzen möchtest. Dadurch werden nicht serverseitig erzeugte Objekte gelöscht",
+                "label": "Setze einen Bereich in seinen Ursprungszustand zurück.",
+                "dialog_desc": "Bitte gib einen Radius (0-300) ein, in dem du alle Objekte zurücksetzen möchtest. Dadurch werden nicht serverseitig erzeugte Objekte gelöscht.",
                 "dialog_success": "Zurücksetzen im Radius von %{radius}m",
                 "dialog_error": "Ungültiger Radius! Gib einen Radius zwischen 0 und 300 ein."
             },
@@ -228,7 +228,7 @@
                         "title": "Direktnachricht",
                         "description": "Was ist der Grund, diesem Spieler eine Direktnachricht zu senden?",
                         "placeholder": "Grund...",
-                        "success": "Deine DM wurde gesendet!"
+                        "success": "Die Nachricht wurde gesendet."
                     },
                     "warn_dialog": {
                         "title": "Verwarnen",
@@ -256,7 +256,7 @@
                         "heal_player": "Spieler heilen",
                         "tp_player": "Zu Spieler teleportieren",
                         "bring_player": "Spieler teleportiert",
-                        "spectate_failed": "Der Spieler konnte nicht beobachtet werden! Beobachtung verlassen.",
+                        "spectate_failed": "Der Spieler konnte nicht beobachtet werden! Beobachtung abgebrochen.",
                         "spectate_yourself": "Du kannst dich nicht selbst beobachten",
                         "freeze_yourself": "Du kannst dich nicht selbst einfrieren"
                     }
@@ -266,7 +266,7 @@
                     "options": {
                         "drunk": "Betrunken machen",
                         "fire": "Anzünden",
-                        "wild_attack": "Wild Angriff"
+                        "wild_attack": "Wildtier Angriff"
                     }
                 }
             },
@@ -299,7 +299,7 @@
                 "expires_at": "Läuft aus am %{date}."
             },
             "ban": {
-                "title": "Spieler Bannen",
+                "title": "Spieler bannen",
                 "reason_placeholder": "Grund",
                 "duration_placeholder": "Dauer",
                 "hours": "Stunden",
