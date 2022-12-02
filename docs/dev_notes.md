@@ -140,8 +140,8 @@ TODO for beta2:
 - [x] fix car boost func (double + veh type check)
 - [x] fix csrf
 - [x] force `txAdminAPI` to have `dataType: 'json'` for all calls
-- [ ] write changelog + announcement
-- [ ] announce to top servers
+- [x] write changelog + announcement
+- [x] announce to top servers
 
 The diagnostics reporting button thing (2d?):
 - [ ] do frontend button + modals
