@@ -1,0 +1,322 @@
+{
+    "$meta": {
+        "label": "Vietnamese",
+        "humanizer_language": "vi"
+    },
+    "restarter": {
+        "start_timeout": "Có lỗi trong quá trình khởi động máy chủ",
+        "crash_detected": "phát hiện sự cố",
+        "hang_detected": "phát hiện bị treo",
+        "partial_hang_warn": "Máy chủ gặp sự cố và sẽ khởi động lại sau 1 phút, vui lòng ngắt kết nối.",
+        "partial_hang_warn_discord": "Có sự cố, **%{servername}** sẽ khởi động lại sau 1 phút.",
+        "schedule_reason": "khởi động lại định kỳ vào lúc %{time}",
+        "schedule_warn": "Máy chủ sẽ khởi động lại sau %{smart_count} phút. Vui lòng ngắt kết nối. |||| Máy chủ sẽ khởi động lại sau %{smart_count} phút.",
+        "schedule_warn_discord": "**%{servername}** sẽ khởi động lại sau %{smart_count} phút. |||| **%{servername}** đã được lên lịch khởi động lại sau %{smart_count} phút."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Bạn đã bị cấm tham gia máy chủ vì lý do: \"%{reason}\". Thời hạn cấm sẽ hết hạn sau: %{expiration}.",
+        "kick_permanent": "(%{author}) Bạn đã bị cấm tham gia máy chủ vì lý do: \"%{reason}\".",
+        "reject": {
+            "title_permanent": "Bạn đã bị cấm vĩnh viễn tham gia máy chủ này.",
+            "title_temporary": "Bạn đã tạm thời bị cấm tham gia máy chủ này.",
+            "label_expiration": "Lệnh cấm sẽ hết hạn sau",
+            "label_date": "Ngày cấm",
+            "label_author": "Cấm bởi",
+            "label_reason": "Lý do cấm",
+            "label_id": "ID cấm",
+            "note_multiple_bans": "Lưu ý: bạn có nhiều hơn một lệnh cấm hoạt động đối với tài khoản của mình."
+        }
+    },
+    "server_actions": {
+        "restarting": "Máy chủ khởi động lại (%{reason}).",
+        "restarting_discord": "**%{servername}** đang khởi động lại (%{reason}).",
+        "stopping": "Máy chủ ngừng hoạt động (%{reason}).",
+        "stopping_discord": "**%{servername}** đã tạm ngừng hoạt động (%{reason}).",
+        "spawning_discord": "**%{servername}** đang khởi động."
+    },
+    "discord": {
+        "status_online": "**%{servername}** hiện đang **Trực Tuyến**!",
+        "status_offline": "**%{servername}** hiện đang **Ngoại Tuyến**!"
+    },
+    "nui_warning": {
+        "title": "CẢNH BÁO",
+        "warned_by": "Cảnh cáo bởi:",
+        "instruction": "Giữ [SPACE] trong 10 giây để đóng cửa sổ này."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin đang bật, dùng /tx để mở.\nBạn có thể cài đặt phím tắt bằng cách vào cài đặt game [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
+            "menu_not_allowed": "Thông tin tài khoản của bạn không có quyền thao tác.\nNếu bạn đã có tài khoản txAdmin, hãy chắc chắn rằng bạn có đủ các quyền.",
+            "no_perms": "Bạn không có quyền!",
+            "unknown_error": "Có lỗi xảy ra.",
+            "not_enabled": "txAdmin Menu chưa được bật, bạn có thể bật tại mục cài đặt.",
+            "announcement_title": "Thông báo máy chủ bởi %{author}:",
+            "directmessage_title": "Tin nhắn từ Admin %{author}:",
+            "dialog_empty_input": "Bạn không thể để trống mục này."
+        },
+        "frozen": {
+            "froze_player": "Bạn đã đóng băng người chơi!",
+            "unfroze_player": "Bạn đã bỏ đóng băng người chơi!",
+            "was_frozen": "Bạn đang bị khống chế bởi Admin!"
+        },
+        "common": {
+            "cancel": "Hủy",
+            "submit": "Xác nhận",
+            "error": "Có lỗi xảy ra",
+            "copied": "Sao chép vào bộ nhớ tạm."
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Sử dụng phím %{key} để chuyển tab, nút lên xuống để di chuyển menu",
+                "tooltip_2": "Các mục menu nhất định có các tùy chọn phụ có thể được chọn bằng các phím mũi tên trái và phải"
+            },
+            "player_mode": {
+                "title": "Admin Actions",
+                "noclip": {
+                    "title": "NoClip",
+                    "label": "Bay lượn",
+                    "success": "Đã bật noclip"
+                },
+                "godmode": {
+                    "title": "God",
+                    "label": "Bất khả chiến bại",
+                    "success": "Đã bật God Mode"
+                },
+                "normal": {
+                    "title": "Normal",
+                    "label": "Chế độ mặc định",
+                    "success": "Trở lại chế độ người chơi bình thường."
+                }
+            },
+            "teleport": {
+                "title": "Dịch Chuyển",
+                "generic_success": "Dịch chuyển tức thời!",
+                "waypoint": {
+                    "title": "Waypoint",
+                    "label": "Đi đến vị trí đã chọn trên bản đồ",
+                    "error": "Bạn chưa chọn vị trí."
+                },
+                "coords": {
+                    "title": "Tọa Độ",
+                    "label": "Đi đến tọa độ nào đó",
+                    "dialog_title": "Dịch Chuyển",
+                    "dialog_desc": "Hãy nhập tọa độ x, y, z để đi tới.",
+                    "dialog_error": "Tọa động không hợp lệ, ví dụ: 123, 234, 11"
+                },
+                "back": {
+                    "title": "Trở lại",
+                    "label": "Trở lại vị trí trước đó",
+                    "error": "Bạn không có lịch sử vị trí!"
+                },
+                "copy": {
+                    "title": "Sao Chép Vị Trí",
+                    "label": "Sao chép vị trí vào clipboard."
+                }
+            },
+            "vehicle":{
+                "title": "xe",
+                "onesync_error": "Yêu cầu Onesync",
+                "not_in_veh_error": "Bạn đang ở trong xe!",
+                "spawn": {
+                    "title": "Tạo ra",
+                    "label": "Tạo ra xe",
+                    "dialog_title": "Tạo ra xe",
+                    "dialog_desc": "Nhập tên xe bạn muốn tạo ra.",
+                    "dialog_success": "xe đã được tạo ra!",
+                    "dialog_error": "xe với tên '%{modelName}' không tồn tại!",
+                    "dialog_info": "Đang tạo ra xe %{modelName}."
+                },
+                "fix": {
+                    "title": "Sửa",
+                    "label": "Sửa xe",
+                    "success": "Xe được sửa chữa!"
+                },
+                "delete": {
+                    "title": "Xóa",
+                    "label": "Xóa xe hiện tại",
+                    "success": "Xe đã bị xóa!"
+                },
+                "boost": {
+                    "title": "Nâng cấp xe",
+                    "label": "Nâng cấp xe để kiểm tra tốc độ tối đa.",
+                    "success": "Xe đã được nâng cấp",
+                    "already_boosted": "Xe này đã được độ.",
+                    "unsupported_class": "Loại xe này không được hỗ trợ."
+                }
+            },
+            "heal": {
+                "title": "Máu",
+                "myself": {
+                    "title": "Bản thân",
+                    "label": "Hồi máu cho bản thân",
+                    "success_0": "Đã hồi máu!",
+                    "success_1": "Bạn đã được hồi máu!",
+                    "success_2": "Đã đầy máu!",
+                    "success_3": "Đã chữa các thương tật!"
+                },
+                "everyone": {
+                    "title": "Tất cả mọi người",
+                    "label": "Hồi máu và hồi sinh tất cả người chơi",
+                    "success": "Đã hồi máu và hồi sinh tất cả người chơi."
+                }
+            },
+            "announcement": {
+                "title": "Gửi thông báo",
+                "label": "Send an announcement to all online players.",
+                "dialog_desc": "Gửi thông báo tới tất cả người chơi.",
+                "dialog_placeholder": "Nhập thông báo...",
+                "dialog_success": "Đang gửi thông báo."
+            },
+            "clear_area": {
+                "title": "Dọn Dẹp Khu Vực",
+                "label": "Đặt lại một khu vực cụ thể về trạng thái mặc định",
+                "dialog_desc": "Vui lòng nhập radius mà bạn muốn dọn dẹp (0-300), các vật thể tạo ra từ script sẽ không bị xóa.",
+                "dialog_success": "Đang dọn dẹp khu vực bán kính %{radius}m",
+                "dialog_error": "Bán kính không hợp lệ."
+            },
+            "player_ids": {
+                "title": "Hiện Tên & IDs",
+                "label": "Chuyển đổi hiển thị ID người chơi (và thông tin khác) phía trên đầu của tất cả người chơi gần đó",
+                "alert_show": "Đang hiển thị tên và ID người chơi gần đây.",
+                "alert_hide": "Đang ẩn tên và ID người chơi gần đây."
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Người chơi đang online",
+                "players": "Người chơi",
+                "search": "Tìm",
+                "zero_players": "Không tìm thấy"
+            },
+            "sort": {
+                "label": "Sắp xếp theo",
+                "distance": "Khoảng Cách",
+                "id": "ID",
+                "joined_first": "Tham Gia Trước",
+                "joined_last": "Tham Gia Sau",
+                "closest": "Gần Nhất",
+                "farthest": "Xa Nhất"
+            },
+            "card": {
+                "health": "%{percentHealth}% máu"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Có lỗi xảy ra, thông tin chi tiết bên dưới:",
+                "target_not_found": "Không tìm thấy người chơi đang online với ID hoặc tên %{target}"
+            },
+            "tabs": {
+                "actions": "Thao Tác",
+                "info": "Thông Tin",
+                "ids": "IDs",
+                "history": "Lịch Sử",
+                "ban": "Cấm"
+            },
+            "actions": {
+                "title": "Hành Động Tới Người Chơi",
+                "command_sent": "Đã thực hiện!",
+                "moderation": {
+                    "title": "Quản Trị",
+                    "options": {
+                        "dm": "Nhắn Tin Riêng",
+                        "warn": "Cảnh Cáo",
+                        "kick": "Đá Ra",
+                        "set_admin": "Cấp Quyền Admin"
+                    },
+                    "dm_dialog": {
+                        "title": "Tin nhắn trực tiếp",
+                        "description": "Lý do cho việc gửi tin nhắn riêng trực tiếp?",
+                        "placeholder": "Lý do...",
+                        "success": "Tin nhắn đã được gửi!"
+                    },
+                    "warn_dialog": {
+                        "title": "Cảnh Cáo",
+                        "description": "Lý do cho việc cảnh cáo người chơi?",
+                        "placeholder": "Lý do...",
+                        "success": "Người chơi đã bị cảnh cáo!"
+                    },
+                    "kick_dialog": {
+                        "title": "Kick",
+                        "description": "Vui lòng nhập lý do kick người chơi?",
+                        "placeholder": "Lý do...",
+                        "success": "Người chơi đã bị đá khỏi máy chủ!"
+                    }
+                },
+                "interaction": {
+                    "title": "Tương Tác",
+                    "options": {
+                        "heal": "Hồi Máu",
+                        "go_to": "Đi Tới",
+                        "bring": "Mang Tới",
+                        "spectate": "Theo Dõi",
+                        "toggle_freeze": "Đóng Băng"
+                    },
+                    "notifications": {
+                        "heal_player": "Hồi máu người chơi",
+                        "tp_player": "Dịch chuyển tới người chơi",
+                        "bring_player": "Đưa người chơi tới chỗ bạn",
+                        "spectate_failed": "Có lỗi khi thực hiện theo dõi, đang thoát chế độ theo dõi.",
+                        "spectate_yourself": "Bạn không thể tự theo dõi chính mình.",
+                        "freeze_yourself": "Bạn không thể tự đóng băng bản thân!"
+                    }
+                },
+                "troll": {
+                    "title": "Troll",
+                    "options": {
+                        "drunk": "Làm say xỉn",
+                        "fire": "Làm bốc cháy",
+                        "wild_attack": "Động vật tấn công"
+                    }
+                }
+            },
+            "info": {
+                "title": "Thông tin người chơi",
+                "session_time": "Thời gian phiên",
+                "play_time": "Thời gian chơi",
+                "joined": "Đã tham gia",
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "chưa",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "XÓA WL",
+                "btn_wl_success": "Đã cập nhật whitelist.",
+                "log_label": "Nhật ký",
+                "log_empty": "Không tìm thấy lệnh cấm/cảnh cáo nào.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_btn": "CHI TIẾT",
+                "notes_placeholder": "Ghi chú về người chơi này...",
+                "notes_changed": "Đã cập nhật ghi chú của người chơi."
+            },
+            "ids": {
+                "current_ids": "Định danh hiện tại",
+                "previous_ids": "Định danh được sử dụng trước đây"
+            },
+            "history": {
+                "title": "Lịch sử liên quan",
+                "btn_revoke": "GỠ BỎ",
+                "revoked_success": "Hành động bị thu hồi!",
+                "banned_by": "Bị cấm bởi %{author}",
+                "warned_by": "Cảnh cáo bởi %{author}",
+                "revoked_by": "Gỡ bỏ bởi %{author}.",
+                "expired_at": "Hết hạn lúc %{date}.",
+                "expires_at": "Hết hạn lúc %{date}."
+            },
+            "ban": {
+                "title": "Cấm người chơi",
+                "reason_placeholder": "Lý do...",
+                "reason_required": "Lý do cấm là bắt buộc.",
+                "duration_placeholder": "Thời gian.",
+                "success": "Người chơi đã bị cấm.",
+                "hours": "giờ",
+                "days": "ngày",
+                "weeks": "tuần",
+                "months": "tháng",
+                "permanent": "Vĩnh viễn",
+                "custom": "Tùy chỉnh",
+                "helper_text": "Vui lòng nhập thời gian cấm người chơi.",
+                "submit": "Xác nhận"
+            }
+        }
+    }
+}
