@@ -149,6 +149,7 @@ The diagnostics reporting button thing (2d?):
 
 
 After v5.0.0 release:
+- [ ] add stats for HWID: `count, q50, q75, q99`. Result will only be valid for servers with netid over 1k but that's fine
 - [ ] migrate `!addwl` make possible to `/addwl @mention`
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
