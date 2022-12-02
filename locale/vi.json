@@ -1,7 +1,7 @@
 {
     "$meta": {
         "label": "Vietnamese",
-        "humanizer_language": "vn"
+        "humanizer_language": "vi"
     },
     "restarter": {
         "start_timeout": "Có lỗi trong quá trình khởi động máy chủ",
