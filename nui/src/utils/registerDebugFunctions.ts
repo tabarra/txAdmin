@@ -21,6 +21,14 @@ const MenuObject = {
       },
     ]);
   },
+  setPlayerModalTarget: (target: string) => {
+    debugData<string>([
+      {
+        action: "openPlayerModal",
+        data: target
+      }
+    ])
+  },
   startPlayerUpdateLoop: (ms = 30000) => {
     if (playerUpdateInterval) {
       clearTimeout(playerUpdateInterval);

@@ -11,10 +11,10 @@ import {
   useSetPlayerFilter,
   useSetPlayersFilterIsTemp,
 } from "../state/players.state";
-import { usePlayerModalContext } from "../provider/PlayerModalProvider";
 import { useSetAssociatedPlayer } from "../state/playerDetails.state";
 import { txAdminMenuPage, useSetPage } from "../state/page.state";
 import { useAnnounceNotiPosValue } from "../state/server.state";
+import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -66,13 +66,13 @@ export const useHudListenersService = () => {
   const t = useTranslate();
   const onlinePlayers = usePlayersState();
   const setAssocPlayer = useSetAssociatedPlayer();
-  const { setModalOpen } = usePlayerModalContext();
+  const setModalOpen = useSetPlayerModalVisibility();
   const setPlayerFilter = useSetPlayerFilter();
   const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
   const setPage = useSetPage();
   const notiPos = useAnnounceNotiPosValue();
 
-  const snackFormat = (m) => (
+  const snackFormat = (m: string) => (
     <span style={{ whiteSpace: "pre-wrap" }}>{m}</span>
   );
 

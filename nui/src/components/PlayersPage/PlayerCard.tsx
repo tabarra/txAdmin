@@ -1,12 +1,6 @@
 import React, { memo } from "react";
-import { styled } from '@mui/material/styles';
-import {
-  Box,
-  Paper,
-  Theme,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Box, Paper, Theme, Tooltip, Typography } from "@mui/material";
 import {
   DirectionsBoat,
   DirectionsWalk,
@@ -15,20 +9,20 @@ import {
   TwoWheeler,
   Flight,
 } from "@mui/icons-material";
-import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
 import { useSetAssociatedPlayer } from "../../state/playerDetails.state";
 import { formatDistance } from "../../utils/miscUtils";
 import { useTranslate } from "react-polyglot";
 import { PlayerData, VehicleStatus } from "../../hooks/usePlayerListListener";
+import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 
-const PREFIX = 'PlayerCard';
+const PREFIX = "PlayerCard";
 
 const classes = {
   paper: `${PREFIX}-paper`,
   barBackground: `${PREFIX}-barBackground`,
   barInner: `${PREFIX}-barInner`,
   icon: `${PREFIX}-icon`,
-  tooltipOverride: `${PREFIX}-tooltipOverride`
+  tooltipOverride: `${PREFIX}-tooltipOverride`,
 };
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -60,7 +54,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
   [`& .${classes.tooltipOverride}`]: {
     fontSize: 12,
-  }
+  },
 }));
 
 const determineHealthBGColor = (val: number) => {
@@ -94,8 +88,7 @@ const HealthBar = styled(Box, {
 }));
 
 const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
-
-  const { setModalOpen } = usePlayerModalContext();
+  const setModalOpen = useSetPlayerModalVisibility();
   const setAssociatedPlayer = useSetAssociatedPlayer();
   const t = useTranslate();
 
@@ -109,8 +102,8 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
   };
 
   const handlePlayerClick = () => {
-    setModalOpen(true);
     setAssociatedPlayer(playerData);
+    setModalOpen(true);
   };
 
   const upperCaseStatus =
