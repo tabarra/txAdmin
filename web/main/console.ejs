@@ -149,6 +149,7 @@
         let commandHistory = [];
         let commandCache = [];
         let autoScroll = true;
+        let arrowHistIndex;
     
 
         //Helper Functions
@@ -241,6 +242,7 @@
             const command = input.value.trim();
             input.value = '';
             if(!command.length) return;
+            arrowHistIndex = -1;
 
             commandCache.unshift(command);
             socket.emit('consoleCommand', command);
@@ -263,28 +265,27 @@
 
 
         //Up / Down history
-        let currentIndex;
         input.addEventListener("keydown", function (event) {
             let changed = false;
 
             if (event.key === "ArrowUp") {
                 changed = true;
-                if (typeof currentIndex === 'undefined' && commandCache.length > 0) {
-                    currentIndex = 0;
-                } else if ((currentIndex + 1) < commandCache.length) {
-                    currentIndex += 1;
+                if (typeof arrowHistIndex === 'undefined' && commandCache.length > 0) {
+                    arrowHistIndex = 0;
+                } else if ((arrowHistIndex + 1) < commandCache.length) {
+                    arrowHistIndex += 1;
                 }
 
             } else if (event.key === "ArrowDown") {
                 changed = true;
-                if (currentIndex > 0) {
-                    currentIndex -= 1;
-                } else if (currentIndex === 0) {
-                    currentIndex = undefined;
+                if (arrowHistIndex > 0) {
+                    arrowHistIndex -= 1;
+                } else if (arrowHistIndex === 0) {
+                    arrowHistIndex = undefined;
                 }
             }
 
-            if (changed) input.value = commandCache[currentIndex] || "";
+            if (changed) input.value = commandCache[arrowHistIndex] || "";
         });
 
         //Buttons
