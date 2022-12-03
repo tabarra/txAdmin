@@ -76,7 +76,7 @@ export default (config) => {
     router.post('/masterActions/:action', requestAuth('api'), webRoutes.masterActions_actions);
 
     //FXServer
-    router.post('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver_controls);
+    router.post('/fxserver/controls', requestAuth('api'), webRoutes.fxserver_controls);
     router.post('/fxserver/commands', requestAuth('api'), webRoutes.fxserver_commands);
     router.get('/fxserver/downloadLog', requestAuth('web'), webRoutes.fxserver_downloadLog);
     router.post('/fxserver/schedule', requestAuth('api'), webRoutes.fxserver_schedule);

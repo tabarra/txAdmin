@@ -9,10 +9,10 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function FXServerControls(ctx) {
     //Sanity check
-    if (typeof ctx.params.action === 'undefined') {
+    if (typeof ctx.request.body?.action !== 'string') {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const action = ctx.params.action;
+    const { action } = ctx.request.body;
 
     //Check permissions
     if (!ctx.utils.testPermission('control.server', modulename)) {
@@ -28,32 +28,32 @@ export default async function FXServerControls(ctx) {
         // as it messages with the sync notification on the UI
         if (globals.fxRunner.restartDelayOverride || globals.fxRunner.restartDelayOverride <= 4000) {
             globals.fxRunner.restartServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username);
-            return ctx.send({type: 'success', message: `Restarting the fxserver with delay override ${globals.fxRunner.restartDelayOverride}.`});
+            return ctx.send({ type: 'success', message: `Restarting the fxserver with delay override ${globals.fxRunner.restartDelayOverride}.` });
         } else {
             const restartMsg = await globals.fxRunner.restartServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username);
             if (restartMsg !== null) {
-                return ctx.send({type: 'danger', markdown: true, message: restartMsg});
+                return ctx.send({ type: 'danger', markdown: true, message: restartMsg });
             } else {
-                return ctx.send({type: 'success', message: 'Restarting server...'});
+                return ctx.send({ type: 'success', message: 'Restarting server...' });
             }
         }
     } else if (action == 'stop') {
         if (globals.fxRunner.fxChild === null) {
-            return ctx.send({type: 'danger', message: 'The server is already stopped.'});
+            return ctx.send({ type: 'danger', message: 'The server is already stopped.' });
         }
         ctx.utils.logCommand('STOP SERVER');
         await globals.fxRunner.killServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username, false);
-        return ctx.send({type: 'warning', message: 'Server stopped.'});
+        return ctx.send({ type: 'warning', message: 'Server stopped.' });
     } else if (action == 'start') {
         if (globals.fxRunner.fxChild !== null) {
-            return ctx.send({type: 'danger', message: 'The server is already running. If it\'s not working, press RESTART.'});
+            return ctx.send({ type: 'danger', message: 'The server is already running. If it\'s not working, press RESTART.' });
         }
         ctx.utils.logCommand('START SERVER');
         const spawnMsg = await globals.fxRunner.spawnServer(true);
         if (spawnMsg !== null) {
-            return ctx.send({type: 'danger', markdown: true, message: spawnMsg});
+            return ctx.send({ type: 'danger', markdown: true, message: spawnMsg });
         } else {
-            return ctx.send({type: 'success', message: 'Starting server...'});
+            return ctx.send({ type: 'success', message: 'Starting server...' });
         }
     } else {
         logWarn(`Unknown control action '${action}'.`);

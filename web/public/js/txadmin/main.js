@@ -243,8 +243,9 @@ async function txApiFxserverControl(action) {
     }
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
     txAdminAPI({
-        url: '/fxserver/controls/' + action,
+        url: '/fxserver/controls',
         type: 'POST',
+        data: {action},
         timeout: REQ_TIMEOUT_LONG,
         success: function (data) {
             updateMarkdownNotification(data, notify);
