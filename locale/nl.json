@@ -283,7 +283,7 @@
                 "log_label": "Log",
                 "log_empty": "Geen verbanningen/waarschuwingen gevonden.",
                 "log_ban_count": "%{smart_count} verbanning |||| %{smart_count} verbanningen",
-                "log_warn_count": "%{smart_count} waarschuwing |||| %{smart_count} waarschuwen",
+                "log_warn_count": "%{smart_count} waarschuwing |||| %{smart_count} waarschuwingen",
                 "log_btn": "DETAILS",
                 "notes_changed": "Speler Notities veranderd.",
                 "notes_placeholder": "Notities van deze speler..."
