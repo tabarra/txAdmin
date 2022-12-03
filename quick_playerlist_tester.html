@@ -26,6 +26,13 @@
         padding: 1em;
     }
 
+    .playerlistCard {
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(250, 210, 250);
+        padding: 1em;
+    }
+
     .playerData {
         width: 475px;
         height: 200px;
@@ -63,6 +70,16 @@
             </div>
         </div>
 
+        
+    </div>
+
+    <div class="playersRow">
+        <div class="playerlistCard">
+            <textarea class="playerData" id="playerlistInput"></textarea>
+            <div class="playerButtons">
+                <button onclick="copyPlayerlist()">Apply Playerlist</button>
+            </div>
+        </div>
     </div>
 </body>
 <script>
@@ -70,7 +87,7 @@
     const initialData1 = {
         "name": "Tabarra",
         "ids": [
-            "license:9b9fc300cc65d22ad3b536175a4d15c0e4933700",
+            "license:9b9fc300cc65d22ad3b536175a4d15c0e4933753",
             "fivem:271816",
             "ip:0.0.0.1"
         ],
@@ -144,5 +161,29 @@
         } catch (error) {
             console.log(error);
         }
+    }
+
+    async function copyPlayerlist(){
+        const playerlist = JSON.parse(el('playerlistInput').value);
+        for (const player of playerlist) {
+            const eventData = {
+                type: "txAdminPlayerlistEvent",
+                event: 'playerJoining',
+                id: player.id,
+                player: {
+                    name: player.name,
+                    ids: [...player.identifiers, `ip:${player.endpoint}`],
+                    hwids: [],
+                },
+            }
+            try {
+                const resp = await sendPost('event', eventData);
+                console.log(resp);
+            } catch (error) {
+                console.log(eventData);
+                console.log(error);
+            }
+        }
+        console.log(playerlist.length);
     }
 </script>

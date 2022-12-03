@@ -1,33 +1,38 @@
 import {
   Box,
-  Dialog,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemText,
-  useTheme,
-  IconButton,
-  ListItemIcon,
   CircularProgress,
+  DialogTitle,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import {
-  Close,
-  Person,
   Block,
+  Close,
+  FlashOn,
   FormatListBulleted,
   MenuBook,
-  FlashOn,
+  Person,
 } from "@mui/icons-material";
-import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
-import { useAssociatedPlayerValue, usePlayerDetailsValue } from "../../state/playerDetails.state";
+import {
+  useAssociatedPlayerValue,
+  usePlayerDetailsValue,
+} from "../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
 import { DialogBaseView } from "./Tabs/DialogBaseView";
 import { PlayerModalErrorBoundary } from "./ErrorHandling/PlayerModalErrorBoundary";
 import { usePermissionsValue } from "../../state/permissions.state";
 import { userHasPerm } from "../../utils/miscUtils";
 import React from "react";
-
+import {
+  PlayerModalTabs,
+  usePlayerModalTabValue,
+  useSetPlayerModalTab,
+  useSetPlayerModalVisibility,
+} from "@nui/src/state/playerModal.state";
 
 const classes = {
   listItem: `PlayerModal-listItem`,
@@ -37,17 +42,17 @@ const classes = {
 const StyledList = styled(List)(({ theme }) => ({
   [`& .${classes.listItem}`]: {
     borderRadius: 8,
-    '&.Mui-selected:hover': {
+    "&.Mui-selected:hover": {
       backgroundColor: "rgba(255, 255, 255, 0.08)",
     },
   },
 
   [`& .${classes.listItemBan}`]: {
     borderRadius: 8,
-    '&:hover, &.Mui-selected': {
+    "&:hover, &.Mui-selected": {
       background: theme.palette.error.main,
     },
-    '&.Mui-selected:hover': {
+    "&.Mui-selected:hover": {
       backgroundColor: "rgba(194,13,37, 0.8)",
     },
   },
@@ -72,10 +77,9 @@ const StyledCloseButton = styled(IconButton)(({ theme }) => ({
 }));
 
 const PlayerModal: React.FC = () => {
-  const { setModalOpen, isModalOpen } = usePlayerModalContext();
+  const setModalOpen = useSetPlayerModalVisibility();
   const playerDetails = usePlayerDetailsValue();
   const assocPlayer = useAssociatedPlayerValue();
-  const theme = useTheme();
 
   const handleClose = () => {
     setModalOpen(false);
@@ -86,39 +90,32 @@ const PlayerModal: React.FC = () => {
   const error = (playerDetails as any).error;
 
   return (
-    <Dialog
-      open={isModalOpen}
-      fullWidth
-      onClose={handleClose}
-      maxWidth="md"
-      PaperProps={{
-        style: {
-          backgroundColor: theme.palette.background.default,
-          minHeight: 450,
-          maxHeight: 650,
-          borderRadius: 15,
-        },
-        id: "player-modal-container",
-      }}
-    >
+    <>
       <DialogTitle style={{ borderBottom: "1px solid rgba(221,221,221,0.54)" }}>
-        [{assocPlayer.id}] {playerDetails?.player?.displayName ?? assocPlayer.name}
+        [{assocPlayer.id}]{" "}
+        {playerDetails?.player?.displayName ?? assocPlayer.name}
         <StyledCloseButton onClick={handleClose} size="large">
           <Close />
         </StyledCloseButton>
       </DialogTitle>
       <Box display="flex" px={2} pb={2} pt={2} flexGrow={1} overflow="hidden">
         <PlayerModalErrorBoundary>
-          {error ? <>
-            <h2 style={{
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              textAlign: 'center',
-              fontWeight: '500',
-              maxWidth: '70%',
-              paddingTop: '2em'
-            }}>{error}</h2>
-          </> :
+          {error ? (
+            <>
+              <h2
+                style={{
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  textAlign: "center",
+                  fontWeight: "500",
+                  maxWidth: "70%",
+                  paddingTop: "2em",
+                }}
+              >
+                {error}
+              </h2>
+            </>
+          ) : (
             <>
               <Box
                 minWidth={200}
@@ -131,76 +128,86 @@ const PlayerModal: React.FC = () => {
                 <DialogBaseView />
               </React.Suspense>
             </>
-          }
+          )}
         </PlayerModalErrorBoundary>
       </Box>
-    </Dialog>
+    </>
+  );
+};
+
+interface DialogTabProps {
+  title: string;
+  tab: PlayerModalTabs;
+  curTab: PlayerModalTabs;
+  icon: JSX.Element;
+  isDisabled?: boolean;
+}
+
+const DialogTab: React.FC<DialogTabProps> = ({
+  isDisabled,
+  curTab,
+  tab,
+  icon,
+  title,
+}) => {
+  const setTab = useSetPlayerModalTab();
+
+  const stylingClass =
+    tab === PlayerModalTabs.BAN ? classes.listItemBan : classes.listItem;
+
+  const isSelected = curTab === tab;
+
+  return (
+    <ListItemButton
+      className={stylingClass}
+      selected={isSelected}
+      onClick={() => setTab(tab)}
+      disabled={isDisabled}
+    >
+      <ListItemIcon>{icon}</ListItemIcon>
+      <ListItemText primary={title} />
+    </ListItemButton>
   );
 };
 
 const DialogList: React.FC = () => {
-  const { tab, setTab } = usePlayerModalContext();
+  const curTab = usePlayerModalTabValue();
   const t = useTranslate();
   const playerPerms = usePermissionsValue();
 
   return (
     <StyledList>
-      <ListItem
-        className={classes.listItem}
-        button
-        onClick={() => setTab(1)}
-        selected={tab === 1}
-      >
-        <ListItemIcon>
-          <FlashOn />
-        </ListItemIcon>
-        <ListItemText primary={t("nui_menu.player_modal.tabs.actions")} />
-      </ListItem>
-      <ListItem
-        className={classes.listItem}
-        button
-        onClick={() => setTab(2)}
-        selected={tab === 2}
-      >
-        <ListItemIcon>
-          <Person />
-        </ListItemIcon>
-        <ListItemText primary={t("nui_menu.player_modal.tabs.info")} />
-      </ListItem>
-      <ListItem
-        className={classes.listItem}
-        button
-        onClick={() => setTab(3)}
-        selected={tab === 3}
-      >
-        <ListItemIcon>
-          <FormatListBulleted />
-        </ListItemIcon>
-        <ListItemText primary={t("nui_menu.player_modal.tabs.ids")} />
-      </ListItem>
-      <ListItem
-        className={classes.listItem}
-        button
-        onClick={() => setTab(4)}
-        selected={tab === 4}
-      >
-        <ListItemIcon>
-          <MenuBook />
-        </ListItemIcon>
-        <ListItemText primary={t("nui_menu.player_modal.tabs.history")} />
-      </ListItem>
-      <ListItem
-        className={classes.listItemBan}
-        button
-        disabled={!userHasPerm("players.ban", playerPerms)}
-        onClick={() => setTab(5)}
-        selected={tab === 5}
-      >
-        <ListItemIcon>
-          <Block />
-        </ListItemIcon>
-        <ListItemText primary={t("nui_menu.player_modal.tabs.ban")} />
-      </ListItem>
+      <DialogTab
+        title={t("nui_menu.player_modal.tabs.actions")}
+        tab={PlayerModalTabs.ACTIONS}
+        curTab={curTab}
+        icon={<FlashOn />}
+      />
+      <DialogTab
+        title={t("nui_menu.player_modal.tabs.info")}
+        tab={PlayerModalTabs.INFO}
+        curTab={curTab}
+        icon={<Person />}
+      />
+      <DialogTab
+        title={t("nui_menu.player_modal.tabs.ids")}
+        tab={PlayerModalTabs.IDENTIFIERS}
+        curTab={curTab}
+        icon={<FormatListBulleted />}
+      />
+      <DialogTab
+        title={t("nui_menu.player_modal.tabs.history")}
+        tab={PlayerModalTabs.HISTORY}
+        curTab={curTab}
+        icon={<MenuBook />}
+      />
+      <DialogTab
+        title={t("nui_menu.player_modal.tabs.ban")}
+        tab={PlayerModalTabs.BAN}
+        curTab={curTab}
+        icon={<Block />}
+        isDisabled={!userHasPerm("players.ban", playerPerms)}
+      />
     </StyledList>
   );
 };

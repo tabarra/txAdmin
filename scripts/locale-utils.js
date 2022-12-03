@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import chalk from 'chalk';
 import { defaults, defaultsDeep, xor } from 'lodash-es';
+import humanizeDuration from 'humanize-duration';
 
 //Prepping
 const defaultLang = JSON.parse(fs.readFileSync('./locale/en.json', 'utf8'));
@@ -10,10 +11,18 @@ const langFiles = fs.readdirSync('./locale/', { withFileTypes: true })
     .map((dirent) => dirent.name);
 const langs = langFiles.map((fName) => {
     const fPath = path.join('./locale/', fName);
+    let data;
+    try {
+        data = JSON.parse(fs.readFileSync(fPath, 'utf8'))
+    } catch (error) {
+        console.log(chalk.red(`Failed to load ${fName}:`));
+        console.log(error.message);
+        process.exit(1);
+    }
     return {
         name: fName,
         path: fPath,
-        data: JSON.parse(fs.readFileSync(fPath, 'utf8')),
+        data,
     };
 });
 
@@ -91,10 +100,18 @@ function parseLocale(input, prefix = '') {
 const diffCommand = () => {
     console.log('Diffing language files on \'en.json\' for missing/excess keys, or different special values');
     const defaultLangParsed = parseLocale(defaultLang);
+    const humanizerLocales = humanizeDuration.getSupportedLanguages();
+    
 
     let errors = 0;
     langs.forEach(({ name, data }) => {
         const parsed = parseLocale(data);
+
+        //Testing humanizer-duration key
+        if(!humanizerLocales.includes(data.$meta.humanizer_language)){
+            errors++;
+            console.log(chalk.yellow(`[${name}] $meta.humanizer_language not supported.`));
+        } 
 
         //Testing keys
         const diffKeys = xor(Object.keys(defaultLangParsed), Object.keys(parsed));
@@ -120,6 +137,7 @@ const diffCommand = () => {
     //Print result
     if (errors) {
         console.log(chalk.red(`Errors found: ${errors}`));
+        process.exit(1);
     } else {
         console.log(chalk.green('No errors found!'));
     }

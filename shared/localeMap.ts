@@ -26,6 +26,7 @@ import lang_sl from "@locale/sl.json";
 import lang_sv from "@locale/sv.json";
 import lang_th from "@locale/th.json";
 import lang_tr from "@locale/tr.json";
+import lang_vi from "@locale/vi.json";
 import lang_zh from "@locale/zh.json";
 
 export type LocaleType = typeof lang_en;
@@ -61,6 +62,7 @@ const localeMap: LocaleMapType = {
     sv: lang_sv,
     th: lang_th,
     tr: lang_tr,
+    vi: lang_vi,
     zh: lang_zh,
 };
 

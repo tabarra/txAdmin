@@ -101,7 +101,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
         // If discord whitelist enabled
         //TODO: add here discord whitelisting, don't interact with the code below
 
-        // If admin-only mode enabled
+        // If admin-only mode enabled (#516)
         //TODO: easy to do, just need to figure out the UI
 
         // If whitelist checking enabled
@@ -154,7 +154,8 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
         };
         const language = translator.t('$meta.humanizer_language');
 
-        let title, expLine;
+        let title;
+        let expLine = '';
         if (ban.expiration) {
             const humanizeOptions = {
                 language,

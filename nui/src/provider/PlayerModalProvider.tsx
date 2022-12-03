@@ -1,7 +1,6 @@
 import React, {
   useContext,
   createContext,
-  useState,
   useCallback,
   useEffect,
   ReactNode,
@@ -11,14 +10,15 @@ import { useSetDisableTab, useSetListenForExit } from "../state/keys.state";
 import { useIsMenuVisible } from "../state/visibility.state";
 import { fetchNui } from "../utils/fetchNui";
 import { useSnackbar } from "notistack";
+import { Box, CircularProgress, Dialog, useTheme } from "@mui/material";
+import {
+  usePlayerModalVisibility,
+  useSetPlayerModalTab,
+} from "@nui/src/state/playerModal.state";
 
-const PlayerContext = createContext(null);
+const PlayerContext = createContext<PlayerProviderCtx>({} as PlayerProviderCtx);
 
 interface PlayerProviderCtx {
-  tab: number;
-  isModalOpen: boolean;
-  setModalOpen: (bool: boolean) => void;
-  setTab: (tab: number) => void;
   closeMenu: () => void;
   showNoPerms: (opt: string) => void;
 }
@@ -27,21 +27,34 @@ interface PlayerModalProviderProps {
   children: ReactNode;
 }
 
+const LoadingModal: React.FC = () => (
+  <Box
+    display="flex"
+    flexGrow={1}
+    width="100%"
+    justifyContent="center"
+    alignItems="center"
+  >
+    <CircularProgress />
+  </Box>
+);
+
 export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
   children,
 }) => {
-  const [tab, setTab] = useState(1);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = usePlayerModalVisibility();
   const setDisableTabNav = useSetDisableTab();
   const setListenForExit = useSetListenForExit();
   const { enqueueSnackbar } = useSnackbar();
   const [menuVisible, setMenuVisible] = useIsMenuVisible();
+  const setTab = useSetPlayerModalTab();
+  const theme = useTheme();
 
   useEffect(() => {
     setDisableTabNav(modalOpen);
     setListenForExit(!modalOpen);
     setTimeout(() => {
-      if(!modalOpen) setTab(1);
+      if (!modalOpen) setTab(1);
     }, 500);
   }, [modalOpen]);
 
@@ -67,21 +80,32 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
   return (
     <PlayerContext.Provider
       value={{
-        tab,
-        setTab,
-        isModalOpen: modalOpen,
-        setModalOpen,
-        closeMenu,
         showNoPerms,
+        closeMenu,
       }}
     >
-      <>
-        <PlayerModal />
-        {children}
-      </>
+      <Dialog
+        open={modalOpen}
+        fullWidth
+        onClose={() => setModalOpen(false)}
+        maxWidth="md"
+        PaperProps={{
+          style: {
+            backgroundColor: theme.palette.background.default,
+            minHeight: 450,
+            maxHeight: 650,
+            borderRadius: 15,
+          },
+          id: "player-modal-container",
+        }}
+      >
+        <React.Suspense fallback={<LoadingModal />}>
+          <PlayerModal />
+        </React.Suspense>
+      </Dialog>
+      {children}
     </PlayerContext.Provider>
   );
 };
 
-export const usePlayerModalContext = () =>
-  useContext<PlayerProviderCtx>(PlayerContext);
+export const usePlayerModalContext = () => useContext(PlayerContext);

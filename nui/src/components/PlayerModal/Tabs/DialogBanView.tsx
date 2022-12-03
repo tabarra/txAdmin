@@ -8,7 +8,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useAssociatedPlayerValue, usePlayerDetailsValue } from "../../../state/playerDetails.state";
+import {
+  useAssociatedPlayerValue,
+  usePlayerDetailsValue,
+} from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
@@ -17,6 +20,7 @@ import { userHasPerm } from "../../../utils/miscUtils";
 import { usePermissionsValue } from "../../../state/permissions.state";
 import { DialogLoadError } from "./DialogLoadError";
 import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 
 const DialogBanView: React.FC = () => {
   const assocPlayer = useAssociatedPlayerValue();
@@ -26,54 +30,60 @@ const DialogBanView: React.FC = () => {
   const [customDuration, setCustomDuration] = useState("hours");
   const [customDurLength, setCustomDurLength] = useState("1");
   const t = useTranslate();
+  const setModalOpen = useSetPlayerModalVisibility();
   const { enqueueSnackbar } = useSnackbar();
-  const { showNoPerms, setModalOpen } = usePlayerModalContext();
+  const { showNoPerms } = usePlayerModalContext();
   const playerPerms = usePermissionsValue();
 
   if (typeof assocPlayer !== "object") {
     return <DialogLoadError />;
   }
 
-  const onJoinCheckBan = ('meta' in playerDetails && playerDetails.meta.onJoinCheckBan);
+  const onJoinCheckBan =
+    "meta" in playerDetails && playerDetails.meta.onJoinCheckBan;
 
-  const handleBan = async (e) => {
+  const handleBan = (e: React.FormEvent) => {
     e.preventDefault();
     if (!userHasPerm("players.ban", playerPerms)) return showNoPerms("Ban");
 
     const trimmedReason = reason.trim();
     if (!trimmedReason.length) {
-      return enqueueSnackbar(
-        t("nui_menu.player_modal.ban.reason_required"),
-        { variant: 'error' }
-      );
+      enqueueSnackbar(t("nui_menu.player_modal.ban.reason_required"), {
+        variant: "error",
+      });
+      return;
     }
 
-    const actualDuration = duration === "custom"
-      ? `${customDurLength} ${customDuration}`
-      : duration;
-    try {
-      const result = await fetchWebPipe<GenericApiResp>(`/player/ban?mutex=current&netid=${assocPlayer.id}`, {
+    const actualDuration =
+      duration === "custom" ? `${customDurLength} ${customDuration}` : duration;
+
+    fetchWebPipe<GenericApiResp>(
+      `/player/ban?mutex=current&netid=${assocPlayer.id}`,
+      {
         method: "POST",
         data: {
           reason: trimmedReason,
           duration: actualDuration,
         },
-      });
-      if ('success' in result && result.success === true) {
-        setModalOpen(false);
-        enqueueSnackbar(
-          t(`nui_menu.player_modal.ban.success`),
-          { variant: 'success' }
-        );
-      } else {
-        enqueueSnackbar(
-          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
-          { variant: 'error' }
-        );
       }
-    } catch (error) {
-      enqueueSnackbar((error as Error).message, { variant: 'error' });
-    }
+    )
+      .then((result) => {
+        if ("success" in result && result.success) {
+          setModalOpen(false);
+          enqueueSnackbar(t(`nui_menu.player_modal.ban.success`), {
+            variant: "success",
+          });
+        } else {
+          enqueueSnackbar(
+            (result as GenericApiError).error ??
+              t("nui_menu.misc.unknown_error"),
+            { variant: "error" }
+          );
+        }
+      })
+      .catch((error) => {
+        enqueueSnackbar((error as Error).message, { variant: "error" });
+      });
   };
 
   const banDurations = [
@@ -132,11 +142,16 @@ const DialogBanView: React.FC = () => {
 
   return (
     <DialogContent>
-      <Typography variant="h6" sx={{ mb: 2 }}>{t("nui_menu.player_modal.ban.title")}</Typography>
-      {!onJoinCheckBan && <Alert severity="warning" variant="outlined" sx={{ mb: 2 }}>
-        <strong>Ban checking is disabled.</strong> <br />
-        You need to enable it (<code>txAdmin &gt; Settings</code>) for the ban to take effect.
-      </Alert>}
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        {t("nui_menu.player_modal.ban.title")}
+      </Typography>
+      {!onJoinCheckBan && (
+        <Alert severity="warning" variant="outlined" sx={{ mb: 2 }}>
+          <strong>Ban checking is disabled.</strong> <br />
+          You need to enable it (<code>txAdmin &gt; Settings</code>) for the ban
+          to take effect.
+        </Alert>
+      )}
       <form onSubmit={handleBan}>
         <TextField
           autoFocus

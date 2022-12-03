@@ -4,6 +4,7 @@ import { PageTabs} from "@nui/src/components/misc/PageTabs";
 import { txAdminMenuPage, usePageValue } from "@nui/src/state/page.state";
 import { MainPageList } from "@nui/src/components/MainPage/MainPageList";
 import { useServerCtxValue } from "@nui/src/state/server.state";
+import { useDebounce } from "@nui/src/hooks/useDebouce";
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
@@ -27,6 +28,12 @@ export const MenuRootContent: React.FC = React.memo(() => {
   const padSize = Math.max(0, 9 - serverCtx.txAdminVersion.length);
   const versionPad = "\u0020\u205F".repeat(padSize);
 
+  // Hack to prevent collapse transition from breaking
+  // In some cases, i.e, when setting target player from playerModal
+  // Collapse transition can break due to multiple page updates within a short
+  // time frame
+  const debouncedCurPage = useDebounce(curPage, 50)
+
   return (
     <StyledRoot p={2} pb={1}>
       <TxAdminLogo />
@@ -44,7 +51,7 @@ export const MenuRootContent: React.FC = React.memo(() => {
       </Typography>
       <PageTabs />
       <Collapse
-        in={curPage === txAdminMenuPage.Main}
+        in={debouncedCurPage === txAdminMenuPage.Main}
         unmountOnExit
         mountOnEnter
       >

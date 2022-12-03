@@ -65,7 +65,7 @@ legacyBans: [{
 - FIXME: what is the correct handling of license2?
 - Any other identifier can be present in more than one player
 - Identifier and HWIDs array will contain EVERY id to ever join a server with that specific license
-- For hwid matching, add a setting with numbers `3, 5, 7 (default), 11, 13` (13 should be 65% of the median number of hwids)
+- For hwid matching, add a setting with numbers `3, 5, 7 (default), 11, 13` (13 should be 65% of the median number of hwids FIXME: this seems to be wrong, check stats)
 - If you join an account with new license, but matching identifier with another one, it will be registered as a new account
 - If your identifier matches any account that is banned, the ban apllies to you
     - make sure the ban message makes clear which identifier matched and that it is from another account (maybe even say the name)

@@ -237,8 +237,8 @@ export default class FXRunner {
         this.fxChild.stdout.setEncoding('utf8');
 
         //Setting up event handlers
-        this.fxChild.on('close', function (_code) {
-            logWarn(`>> [${pid}] FXServer Closed.`);
+        this.fxChild.on('close', function (code) {
+            logWarn(`>> [${pid}] FXServer Closed (0x${code.toString(16).toUpperCase()}).`);
             this.history[historyIndex].timestamps.close = now();
         }.bind(this));
         this.fxChild.on('disconnect', function () {
