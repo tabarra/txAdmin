@@ -24,7 +24,7 @@
             "label_author": "Gebanned Door",
             "label_reason": "Ban Reden",
             "label_id": "Ban ID",
-            "note_multiple_bans": "Opmerking: U hebt meer dan één actiefe ban op uw Identifiers."
+            "note_multiple_bans": "Opmerking: U hebt meer dan één actieve ban op uw Identifiers."
         }
     },
     "server_actions": {
@@ -139,7 +139,7 @@
                 "boost": {
                     "title": "Opvoeren",
                     "label": "Voer het voertuig op voor maximaal plezier (en misschien snelheid)",
-                    "success": "Voertuig Opgevoerd!",
+                    "success": "Voertuig opgevoerd!",
                     "already_boosted": "Dit voertuig is al opgevoerd.",
                     "unsupported_class": "Deze voertuigklasse wordt niet ondersteund."
                 }
@@ -293,7 +293,7 @@
                 "btn_revoke": "INTREKKEN",
                 "revoked_success": "Actie Ingetrokken!",
                 "banned_by": "Verbannen Door %{author}",
-                "warned_by": "Gewaarschuwed Door %{author}",
+                "warned_by": "Gewaarschuwd Door %{author}",
                 "revoked_by": "Ingetrokken Door %{author}.",
                 "expired_at": "Verlopen Op %{date}.",
                 "expires_at": "Verloopt Op %{date}."
