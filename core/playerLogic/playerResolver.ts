@@ -45,7 +45,12 @@ export default (mutex: any, netid: any, license: any) => {
 
     //If license provided or resolved through licenseCache, search in the database
     if (typeof searchLicense === 'string' && searchLicense.length) {
-        return new DatabasePlayer(searchLicense, playerDatabase);
+        const onlineMatches = playerlistManager.getOnlinePlayersByLicense(searchLicense);
+        if(onlineMatches.length){
+            return onlineMatches.at(-1);
+        }else{
+            return new DatabasePlayer(searchLicense, playerDatabase);
+        }
     }
 
     //Player not found

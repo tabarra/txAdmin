@@ -91,6 +91,14 @@ export default class PlayerlistManager {
         return this.#playerlist[netid];
     }
 
+    /**
+     * Returns a specifc ServerPlayer or undefined.
+     * NOTE: this returns the actual object and not a deep clone!
+     */
+     getOnlinePlayersByLicense(searchLicense: string) {
+        return this.#playerlist.filter(p => p && p.license === searchLicense && p.isConnected) as ServerPlayer[];
+    }
+
 
     /**
      * Handler for all txAdminPlayerlistEvent structured trace events
