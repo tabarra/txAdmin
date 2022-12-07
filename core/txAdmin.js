@@ -206,7 +206,9 @@ export default class TxAdmin {
         }
 
         //Once they all finish loading, the function below will print the banner
-        printBanner();
+        if (!process.env.SKIP_BANNER) {
+            printBanner();
+        }
 
         //Run Update Checker every 15 minutes
         updateChecker();
