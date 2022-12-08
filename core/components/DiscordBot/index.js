@@ -180,7 +180,7 @@ export default class DiscordBot {
      * FIXME: add lru-cache
      * @param {string} uid
      */
-    async resolveMember(uid) {
+    async resolveMember(uid , roleIds , isDWl) {
         if (!this.client || this.client.status) throw new Error(`discord bot not ready yet`);
         const avatarOptions = {size: 64};
 
@@ -188,9 +188,20 @@ export default class DiscordBot {
         if (this.announceChannel?.guild) {
             try {
                 const member = await this.announceChannel.guild.members.fetch(uid);
+                let hasPermission = true
+                if (isDWl){
+                    let hasRole=false;
+                    roleIds=roleIds.split(",").forEach(role => {
+                        if(member.roles.cache.has(role)){
+                            hasRole=true
+                        }
+                    });
+                    hasPermission = hasRole 
+                }
                 return {
                     tag: `${member.nickname ?? member.user.username}#${member.user.discriminator}`,
                     avatar: (member ?? member.user).displayAvatarURL(avatarOptions),
+                    hasPermission : hasPermission
                 };
             } catch (error) { }
         }
@@ -201,6 +212,7 @@ export default class DiscordBot {
             return {
                 tag: `${user.username}#${user.discriminator}`,
                 avatar: user.displayAvatarURL(avatarOptions),
+                hasPermission : "Hello"
             };
         } else {
             throw new Error(`could not resolve discord user`);

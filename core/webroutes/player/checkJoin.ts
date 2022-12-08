@@ -12,6 +12,7 @@ import playerResolver from '@core/playerLogic/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import { Context } from 'koa';
 import DiscordBot from '@core/components/DiscordBot';
+import { stringify } from 'node:querystring';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -237,8 +238,42 @@ async function checkWhitelist(
     const allIdsFilter = (x: DatabaseWhitelistApprovalsType) => {
         return validIdsArray.includes(x.identifier);
     }
+    
+    //Prepare rejection message
+    let customMessage = '';
+    if (playerDatabase.config.whitelistRejectionMessage) {
+        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
+    }
+    //Resolve player discord
+    let discordTag, discordAvatar, discordHasPermission;
+    if (validIdsObject.discord && discordBot.client) {
+        try {
+            const { tag, avatar, hasPermission } = await discordBot.resolveMember(validIdsObject.discord,playerDatabase.config.discordWhiteListRoles,playerDatabase.config.onJoinCheckDiscordWhitelist);
+            discordTag = tag;
+            discordAvatar = avatar;
+            discordHasPermission = hasPermission;
+            if (!discordHasPermission){
+                const reason = rejectMessageTemplate(
+                    'You are not whitelisted to join this server.',
+                    `${customMessage}`
+                );
+                return { allow: false, reason }
+            }else{
+                return { allow: true };
+            }
+            
+            // return { allow: false, discordTag }
+        } catch (error) { 
+            const reason = rejectMessageTemplate(
+                'Error',
+                'Something wents wrong plz dm the server owner'
+            );
+            return { allow: false, reason }
+        }
+    }
+
     const approvals = playerDatabase.getWhitelistApprovals(allIdsFilter);
-    if (approvals.length) {
+    if (approvals.length ) {
         //update or register player
         if (typeof player !== 'undefined' && player.license) {
             player.setWhitelist(true);
@@ -265,15 +300,7 @@ async function checkWhitelist(
 
 
     //Player is not whitelisted
-    //Resolve player discord
-    let discordTag, discordAvatar;
-    if (validIdsObject.discord && discordBot.client) {
-        try {
-            const { tag, avatar } = await discordBot.resolveMember(validIdsObject.discord);
-            discordTag = tag;
-            discordAvatar = avatar;
-        } catch (error) { }
-    }
+    
 
     //Check if this player has an active wl request
     //NOTE: it could return multiple, but we are not dealing with it
@@ -298,12 +325,7 @@ async function checkWhitelist(
             tsLastAttempt: ts,
         });
     }
-
-    //Prepare rejection message
-    let customMessage = '';
-    if (playerDatabase.config.whitelistRejectionMessage) {
-        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
-    }
+    
 
     const label_req_id = `Request ID`;
     const reason = rejectMessageTemplate(

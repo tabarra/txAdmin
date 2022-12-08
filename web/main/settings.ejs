@@ -279,6 +279,38 @@
                         </div>
 
                         <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Enable Discord Whitelist
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckDiscordWhitelist"
+                                        <%= playerDatabase.onJoinCheckDiscordWhitelist || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Enable checking for <strong>Discord Whitelist Role</strong> status on player join. <br>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-discordWhiteListRoles" class="col-sm-3 col-form-label">Discord Whitelist <br>Roles</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmPlayerManager-discordWhiteListRoles"
+                                    value="<%= playerDatabase.discordWhiteListRoles || '' %>" 
+                                    placeholder="578045190955335691" <%= readOnly ? 'disabled' : '' %>>
+                                <span class="form-text text-muted">
+                                    The ID of the roles You want to check for whitelist. <br>
+                                    Seperate white , <br>
+                                    To get the Role ID, go to Discord's settings and
+                                    <a href="https://support.discordapp.com/hc/article_attachments/115002742731/mceclip0.png"
+                                    target="_blank" > enable developer mode</a>, then right-click on the role name and select "Copy ID".
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row">
                             <label for="frmPlayerManager-banRejectionMessage" class="col-sm-3 col-form-label">
                                 Ban Custom <br>
                                 Rejection Message
@@ -577,6 +609,8 @@
         let data = {
             onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
             onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
+            onJoinCheckDiscordWhitelist: $('#frmPlayerManager-onJoinCheckDiscordWhitelist').is(':checked'),
+            discordWhiteListRoles: $('#frmPlayerManager-discordWhiteListRoles').val(),
             whitelistRejectionMessage: $('#frmPlayerManager-whitelistRejectionMessage').val().trim(),
             banRejectionMessage: $('#frmPlayerManager-banRejectionMessage').val().trim(),
         }

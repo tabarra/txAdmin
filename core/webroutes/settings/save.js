@@ -186,6 +186,8 @@ async function handlePlayerDatabase(ctx) {
         ctx.request.body.onJoinCheckBan,
         ctx.request.body.onJoinCheckWhitelist,
         ctx.request.body.whitelistRejectionMessage,
+        ctx.request.body.onJoinCheckDiscordWhitelist,
+        ctx.request.body.discordWhiteListRoles,
         ctx.request.body.banRejectionMessage,
     )) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
@@ -195,6 +197,8 @@ async function handlePlayerDatabase(ctx) {
     let cfg = {
         onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
         onJoinCheckWhitelist: (ctx.request.body.onJoinCheckWhitelist === 'true'),
+        onJoinCheckDiscordWhitelist: (ctx.request.body.onJoinCheckDiscordWhitelist === 'true'),
+        discordWhiteListRoles: ctx.request.body.discordWhiteListRoles.trim(),
         whitelistRejectionMessage: ctx.request.body.whitelistRejectionMessage.trim(),
         banRejectionMessage: ctx.request.body.banRejectionMessage.trim(),
     };
@@ -211,6 +215,8 @@ async function handlePlayerDatabase(ctx) {
     let newConfig = globals.configVault.getScopedStructure('playerDatabase');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
     newConfig.onJoinCheckWhitelist = cfg.onJoinCheckWhitelist;
+    newConfig.onJoinCheckDiscordWhitelist = cfg.onJoinCheckDiscordWhitelist;
+    newConfig.discordWhiteListRoles = cfg.discordWhiteListRoles;
     newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
     newConfig.banRejectionMessage = cfg.banRejectionMessage;
     let saveStatus = globals.configVault.saveProfile('playerDatabase', newConfig);
