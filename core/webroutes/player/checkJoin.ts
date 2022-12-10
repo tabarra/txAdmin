@@ -251,6 +251,7 @@ async function checkWhitelist(
                 playTime: 0,
                 tsLastConnection: ts,
                 tsJoined: ts,
+                tsWhitelisted: ts,
             });
         }
 

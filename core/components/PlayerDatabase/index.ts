@@ -421,10 +421,10 @@ export default class PlayerDatabase {
         const oneDay = 24 * 60 * 60;
 
         //Optimize players
-        //Players that have not joined the last 9 days, and have less than 2 hours of playtime
+        //Players that have not joined the last 16 days, and have less than 2 hours of playtime
         let playerRemoved;
         try {
-            const nineDaysAgo = now() - (9 * oneDay);
+            const nineDaysAgo = now() - (16 * oneDay);
             const filter = (p: DatabasePlayerType) => {
                 return (p.tsLastConnection < nineDaysAgo && p.playTime < 120);
             }

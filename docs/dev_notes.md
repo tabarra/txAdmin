@@ -149,11 +149,16 @@ The diagnostics reporting button thing (2d?):
 
 
 After v5.0.0 release:
-- [ ] add stats for HWID: `count, q50, q75, q99`. Result will only be valid for servers with netid over 1k but that's fine
+- [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
+- [ ] server logger add events/min average
+- [ ] add stats for HWID: `count, q1, q25, q50, q75, q99`. Result will only be valid for servers with netid over 1k but that's fine
 - [ ] migrate `!addwl` make possible to `/addwl @mention`
+- [ ] admin-only mode for the server
+- [ ] add lru-cache to `DiscordBot.resolveMember()`
+- [ ] bot status "watching xx/yy players"
+
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
-- [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
 - [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] create new whitelist events
     - [ ] whitelistPlayer:
@@ -169,15 +174,11 @@ After v5.0.0 release:
         - author: either player name, or admin name
         - requestId: Rxxxx
         - license: xxxxxx
-- [ ] admin-only mode for the server
-- [ ] add lru-cache to `DiscordBot.resolveMember()`
 - [ ] mock out insights page (assets + http reqs)
-- [ ] server logger add events/min average
 - [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
 - [ ] At the schedule restart input prompt, add a note saying what is the current server time
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 - [ ] create events for dynamic scheduled restarts
-- [ ] bot status "watching xx/yy players"
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 - [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
 
