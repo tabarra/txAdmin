@@ -6,7 +6,7 @@ export { default as liveConsole } from './liveConsole.js';
 export { default as resources } from './resources.js';
 export { default as status } from './status.js';
 export { default as chartData } from './chartData.js';
-export { default as txAdminLog } from './txAdminLog.js';
+export { default as systemLog } from './systemLog.js';
 export { default as databaseActions } from './databaseActions';
 
 export { default as auth_get } from './authentication/get';
