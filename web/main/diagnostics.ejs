@@ -3,18 +3,32 @@
 
 <div class="row justify-content-md-center">
     <div class="col-lg-8 col-xl-5 mw-col6">
+        <!-- Environment Card -->
+        <div class="card card-accent-danger" style="min-height: 160px;">
+            <div class="card-header font-weight-bold">Environment:</div>
+            <div class="card-body">
+                <% if (host.error !== false) { %>
+                    <%- host.error %>
+                <% } else { %>
+                    <strong>Node:</strong> <%= host.nodeVersion %> <br>
+                    <strong>OS:</strong> <%= host.osDistro %> <br>
+                    <strong>Username:</strong> <%= host.username %> <br>
+                    <strong>Host CPUs:</strong> <%= host.cpus %> <%- host.clockWarning %><br>
+                    <strong>Host Memory:</strong> <%= host.memory %>
+                <% } %>
+            </div>
+        </div>
 
         <!-- txAdmin Config Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">txAdmin Info:</div>
+            <div class="card-header font-weight-bold">txAdmin Runtime:</div>
             <div class="card-body">
                 <h5>Stats:</h5>
                 <strong>Versions:</strong> 
                     <code>v<%= txAdminVersion %></code> / <code><%= fxServerVersion %></code> <br>
                 <strong>Uptime:</strong> <code><%= txadmin.uptime %></code> <br>
-                <strong>Ban/Whitelist Checking:</strong> 
-                    <code><%= txadmin.banlistEnabled %></code>, 
-                    <code><%= txadmin.whitelistEnabled %></code> <br>
+                <strong>FXServer Path:</strong> <code><%= txadmin.fxServerPath %></code> <br>
+                <strong>Connect Endpoint:</strong> <code><%= txadmin.fxServerHost %></code> <br>
                 <strong>HTTP Counter:</strong> 
                     <code><%= txadmin.httpCounterLog %></code> &lt; <code><%= txadmin.httpCounterMax %></code> <br>
                 <strong>Monitor Restarts:</strong> 
@@ -31,16 +45,12 @@
                 ├─ Admin: <code><%= txadmin.loggerStatusAdmin %></code> <br>
                 ├─ FXServer: <code><%= txadmin.loggerStatusFXServer %></code> <br>
                 └─ Server: <code><%= txadmin.loggerStatusServer %></code> <br>
-                <hr>
-                <h5>Settings:</h5>
-                <strong>Schedule:</strong> <code><%= txadmin.schedule %></code> <br>
-                <strong>Cooldown:</strong> <code><%= txadmin.cooldown %></code> <br>
-                <strong>FXServer Path:</strong> <code><%= txadmin.fxServerPath %></code> <br>
-                <strong>Server Data Path:</strong> <code><%= txadmin.serverDataPath %></code> <br>
-                <strong>CFG Path:</strong> <code><%= txadmin.cfgPath %></code> <br>
-                <strong>Connect Endpoint:</strong> <code><%= txadmin.fxServerHost %></code> <br>
-                <strong>Additional Arguments:</strong> <code><%= txadmin.commandLine %></code>
             </div>
+        </div>
+
+        <!-- Execution time -->
+        <div class="text-center mb-4">
+            <small class="text-muted"><%- message %></small>
         </div>
 
     </div>
@@ -48,20 +58,25 @@
 
 
     <div class="col-lg-8 col-xl-5 mw-col6">
-
-        <!-- Environment Card -->
-        <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">Environment:</div>
-            <div class="card-body">
-                <% if (host.error !== false) { %>
-                    <%- host.error %>
-                <% } else { %>
-                    <strong>Node:</strong> <%= host.nodeVersion %> <br>
-                    <strong>OS:</strong> <%= host.osDistro %> <br>
-                    <strong>Username:</strong> <%= host.username %> <br>
-                    <strong>Host CPUs:</strong> <%= host.cpus %> <%- host.clockWarning %><br>
-                    <strong>Host Memory:</strong> <%= host.memory %>
-                <% } %>
+        <!-- Diagnostics Report -->
+        <div class="card card-accent-info">
+            <div class="card-header font-weight-bold">Diagnostics Report:</div>
+            <div class="card-body text-center">
+                <div class="row text-center">
+                    <div class="col-lg-9 text-lg-left">
+                        To receive txAdmin Support, it is recommended that you send the diagnostics data directly to the Support Team.
+                    </div>
+                    <div class="col-lg-3 text-lg-right">
+                        <button
+                            class="btn btn-sm btn-outline-info"
+                            type="button"
+                            onclick="showSendDiagnosticsDataModal()"
+                        >
+                            Review Details <br>
+                            & Send Data
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -106,11 +121,6 @@
                     <% } %>
                 <% } %>
             </div>
-        </div>
-
-        <!-- Execution time -->
-        <div class="text-center mb-4">
-            <small class="text-muted"><%- message %></small>
         </div>
 
     </div>

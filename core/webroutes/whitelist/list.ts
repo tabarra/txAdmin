@@ -38,7 +38,7 @@ async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
         totalPages: number;
         currPage: number;
         requests: DatabaseWhitelistRequestsType[];
-    } | GenericApiError
+    } | GenericApiError;
     const sendTypedResp = (data: resp) => ctx.send(data);
 
     const requests = playerDatabase.getWhitelistRequests().reverse();

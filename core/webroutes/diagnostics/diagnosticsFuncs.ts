@@ -1,59 +1,34 @@
-const modulename = 'WebServer:Diagnostics';
+const modulename = 'WebServer:DiagnosticsFuncs';
 import os from 'node:os';
 import bytes from 'bytes';
-import humanizeDuration from 'humanize-duration';
-import logger from '@core/extras/console.js';
-import * as helpers from '@core/extras/helpers';
-import Cache from '../extras/dataCache';
+import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import pidUsageTree from '@core/extras/pidUsageTree.js';
 import { verbose, txEnv } from '@core/globalData';
+import logger from '@core/extras/console.js';
+import FXRunner from '@core/components/FxRunner';
+import HealthMonitor from '@core/components/HealthMonitor';
+import WebServer from '@core/components/WebServer';
+import Logger from '@core/components/Logger';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
-const cache = new Cache(5);
 
-
-/**
- * Returns the output page containing the full report
- * @param {object} ctx
- */
-export default async function Diagnostics(ctx) {
-    const cachedData = cache.get();
-    if (cachedData !== false) {
-        cachedData.message = 'This page was cached in the last 5 seconds';
-        return ctx.utils.render('main/diagnostics', cachedData);
-    }
-
-    const timeStart = Date.now();
-    const data = {
-        headerTitle: 'Diagnostics',
-        message: '',
-    };
-    [data.host, data.txadmin, data.fxserver, data.proccesses] = await Promise.all([
-        getHostData(),
-        gettxAdminData(),
-        getFXServerData(),
-        getProcessesData(),
-    ]);
-
-    const timeElapsed = Date.now() - timeStart;
-    data.message = `Executed in ${timeElapsed} ms`;
-
-    cache.set(data);
-    return ctx.utils.render('main/diagnostics', data);
-};
-
-
-//================================================================
 /**
  * Gets the Processes Data.
- * TODO: get process name with wmic
- *       wmic PROCESS get "Name,ParentProcessId,ProcessId,CommandLine,CreationDate,UserModeTime,WorkingSetSize"
  */
-async function getProcessesData() {
-    const procList = [];
+export const getProcessesData = async () => {
+    type ProcDataType = {
+        pid: number;
+        ppid: number;
+        name: string;
+        cpu: string;
+        memory: string;
+        order: number;
+    }
+    const procList: ProcDataType[] = [];
     try {
+        const txProcessId = process.pid;
         const processes = await pidUsageTree(process.pid);
 
         //NOTE: Cleaning invalid proccesses that might show up in Linux
@@ -64,13 +39,14 @@ async function getProcessesData() {
         //Foreach PID
         Object.keys(processes).forEach((pid) => {
             const curr = processes[pid];
+            const currPidInt = parseInt(pid);
 
             //Define name and order
             let procName;
-            let order = process.timestamp || 1;
-            if (pid == process.pid) {
+            let order = curr.timestamp || 1;
+            if (currPidInt === txProcessId) {
                 procName = 'txAdmin (inside FXserver)';
-                order = 0;
+                order = 0; //forcing order because all process can start at the same second
             } else if (curr.memory <= 10 * 1024 * 1024) {
                 procName = 'FXServer MiniDump';
             } else {
@@ -78,8 +54,8 @@ async function getProcessesData() {
             }
 
             procList.push({
-                pid: pid,
-                ppid: (curr.ppid == process.pid) ? 'txAdmin' : curr.ppid,
+                pid: currPidInt,
+                ppid: (curr.ppid == txProcessId) ? 'txAdmin' : curr.ppid,
                 name: procName,
                 cpu: (curr.cpu).toFixed(2) + '%',
                 memory: bytes(curr.memory),
@@ -92,36 +68,34 @@ async function getProcessesData() {
     }
 
     //Sort procList array
-    procList.sort(( a, b ) => {
-        if ( a.order < b.order )  return -1;
-        if ( a.order > b.order ) return 1;
-        return 0;
-    });
+    procList.sort(( a, b ) => a.order - b.order);
 
     return procList;
 }
 
 
-//================================================================
 /**
  * Gets the FXServer Data.
  */
-async function getFXServerData() {
+export const getFXServerData = async () => {
+    const fxRunner = (globals.fxRunner as FXRunner);
+    const healthMonitor = (globals.healthMonitor as HealthMonitor);
+
     //Sanity Check
-    if (globals.fxRunner.fxChild === null || globals.fxRunner.fxServerHost === null) {
+    if (fxRunner.fxChild === null || fxRunner.fxServerHost === null) {
         return {error: 'Server Offline'};
     }
 
     //Preparing request
     const requestOptions = {
-        url: `http://${globals.fxRunner.fxServerHost}/info.json`,
+        url: `http://${fxRunner.fxServerHost}/info.json`,
         maxRedirects: 0,
-        timeout: globals.healthMonitor.hardConfigs.timeout,
+        timeout: healthMonitor.hardConfigs.timeout,
         retry: {limit: 0},
     };
 
     //Making HTTP Request
-    let infoData;
+    let infoData: Record<string, any>;
     try {
         infoData = await got.get(requestOptions).json();
     } catch (error) {
@@ -131,10 +105,10 @@ async function getFXServerData() {
     }
 
     //Helper function
-    const getBuild = (ver) => {
+    const getBuild = (ver: any) => {
         try {
-            const regex = /v1\.0\.0\.(\d{4,5})\s*/;
-            const res = regex.exec(ver);
+            const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
+            // @ts-ignore: let it throw
             return parseInt(res[1]);
         } catch (error) {
             return 0;
@@ -162,11 +136,12 @@ async function getFXServerData() {
 }
 
 
-//================================================================
 /**
  * Gets the Host Data.
  */
-async function getHostData() {
+export const getHostData = async () => {
+    const healthMonitor = (globals.healthMonitor as HealthMonitor);
+
     try {
         const userInfo = os.userInfo();
         const hostData = {
@@ -179,7 +154,7 @@ async function getHostData() {
             error: false,
         };
 
-        const stats = globals.healthMonitor.hostStats;
+        const stats = healthMonitor.hostStats;
         if (stats) {
             hostData.memory = `${stats.memory.usage}% (${stats.memory.used.toFixed(2)}/${stats.memory.total.toFixed(2)} GB)`;
             hostData.cpus = `${stats.cpu.usage}% of ${stats.cpu.count}x ${stats.cpu.speed} MHz`;
@@ -200,53 +175,47 @@ async function getHostData() {
 }
 
 
-//================================================================
 /**
  * Gets txAdmin Data
  */
-async function gettxAdminData() {
-    const humanizeOptions = {
+export const getTxAdminData = async () => {
+    const fxRunner = (globals.fxRunner as FXRunner);
+    const webServer = (globals.webServer as WebServer);
+    const logger = (globals.logger as Logger);
+    const databus = (globals.databus as any);
+
+    const humanizeOptions: HumanizerOptions = {
         round: true,
         units: ['d', 'h', 'm'],
     };
 
-    const playerDbConfigs = globals.playerDatabase.config;
-    const httpCounter = globals.databus.txStatsData.httpCounter;
+    const httpCounter = databus.txStatsData.httpCounter;
     return {
         //Stats
         uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
-        banlistEnabled: playerDbConfigs.onJoinCheckBan.toString(),
-        whitelistEnabled: playerDbConfigs.onJoinCheckWhitelist.toString(),
         httpCounterLog: httpCounter.log.join(', ') || '--',
         httpCounterMax: httpCounter.max || '--',
         monitorRestarts: {
-            close: globals.databus.txStatsData.monitorStats.restartReasons.close,
-            heartBeat: globals.databus.txStatsData.monitorStats.restartReasons.heartBeat,
-            healthCheck: globals.databus.txStatsData.monitorStats.restartReasons.healthCheck,
+            close: databus.txStatsData.monitorStats.restartReasons.close,
+            heartBeat: databus.txStatsData.monitorStats.restartReasons.heartBeat,
+            healthCheck: databus.txStatsData.monitorStats.restartReasons.healthCheck,
         },
-        hbFD3Fails: globals.databus.txStatsData.monitorStats.heartBeatStats.fd3Failed,
-        hbHTTPFails: globals.databus.txStatsData.monitorStats.heartBeatStats.httpFailed,
-        hbBootSeconds: globals.databus.txStatsData.monitorStats.bootSeconds.join(', ') || '--',
-        freezeSeconds: globals.databus.txStatsData.monitorStats.freezeSeconds.join(', ') || '--',
-        koaSessions: Object.keys(globals.webServer.koaSessionMemoryStore.sessions).length || '--',
+        hbFD3Fails: databus.txStatsData.monitorStats.heartBeatStats.fd3Failed,
+        hbHTTPFails: databus.txStatsData.monitorStats.heartBeatStats.httpFailed,
+        hbBootSeconds: databus.txStatsData.monitorStats.bootSeconds.join(', ') || '--',
+        freezeSeconds: databus.txStatsData.monitorStats.freezeSeconds.join(', ') || '--',
+        koaSessions: Object.keys(webServer.koaSessionMemoryStore.sessions).length || '--',
 
         //Log stuff:
-        logStorageSize: (await globals.logger.getStorageSize()).total,
-        loggerStatusAdmin: globals.logger.admin.getUsageStats(),
-        loggerStatusFXServer: globals.logger.fxserver.getUsageStats(),
-        loggerStatusServer: globals.logger.server.getUsageStats(),
+        logStorageSize: (await logger.getStorageSize()).total,
+        loggerStatusAdmin: logger.admin.getUsageStats(),
+        loggerStatusFXServer: logger.fxserver.getUsageStats(),
+        loggerStatusServer: logger.server.getUsageStats(),
 
-        //Settings
-        cooldown: globals.healthMonitor.config.cooldown,
-        schedule: globals.healthMonitor.config.restarterSchedule.join(', ') || '--',
-        commandLine: (globals.fxRunner.config.commandLine && globals.fxRunner.config.commandLine.length)
-            ? helpers.redactApiKeys(globals.fxRunner.config.commandLine)
-            : '--',
+        //Env stuff
         fxServerPath: txEnv.fxServerPath,
-        serverDataPath: globals.fxRunner.config.serverDataPath,
-        cfgPath: globals.fxRunner.config.cfgPath,
-        fxServerHost: (globals.fxRunner.fxServerHost)
-            ? globals.fxRunner.fxServerHost
+        fxServerHost: (fxRunner.fxServerHost)
+            ? fxRunner.fxServerHost
             : '--',
     };
 }
