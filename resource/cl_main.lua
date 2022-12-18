@@ -118,5 +118,6 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDebug')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-playerIdDistance')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDrunkDuration')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-changePlateText')
 end)
 
