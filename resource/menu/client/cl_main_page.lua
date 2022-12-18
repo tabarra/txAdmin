@@ -6,6 +6,7 @@ if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 
+local changePlate = GetConvar('txAdmin-changePlateText', 'false') == 'true'
 
 --[[ NUI CALLBACKS ]]
 
@@ -223,7 +224,9 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5); --testar, o certo é 0~1
 
     PlaySoundFrontend(-1, 'CONFIRM_BEEP', 'HUD_MINI_GAME_SOUNDSET', 1)
-    SetVehicleNumberPlateText(veh, "TX B00ST")
+    if changePlate then
+        SetVehicleNumberPlateText(veh, "TX B00ST")
+    end
     SetVehicleCanBreak(veh, false) -- If this is set to false, the vehicle simply can't break
     SetVehicleEngineCanDegrade(veh, false) -- Engine strong
     SetVehicleMod(veh, 15, 3, false) -- Max Suspension
