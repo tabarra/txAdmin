@@ -6,7 +6,7 @@ if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 
-local changePlate = GetConvar('txAdmin-changePlateText', 'true') == 'false'
+local changePlate = GetConvar('txAdmin-changePlateText', 'true') == 'true'
 
 --[[ NUI CALLBACKS ]]
 
