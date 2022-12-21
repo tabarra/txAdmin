@@ -3,7 +3,7 @@ import path from 'node:path';
 import slash from 'slash';
 
 import logger from '@core/extras/console';
-import { txEnv } from '@core/globalData';
+import { txEnv, convars } from '@core/globalData';
 
 import { printBanner } from '@core/extras/banner';
 import setupProfile from '@core/extras/setupProfile';
@@ -206,7 +206,9 @@ export default class TxAdmin {
         }
 
         //Once they all finish loading, the function below will print the banner
-        printBanner();
+        if (!convars.skipIpBanner) {
+            printBanner();
+        }
 
         //Run Update Checker every 15 minutes
         updateChecker();
