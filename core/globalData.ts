@@ -129,6 +129,7 @@ const isDevMode = getConvarBool('txAdminDevMode');
 const verboseConvar = getConvarBool('txAdminVerbose');
 const debugPlayerlistGenerator = getConvarBool('txDebugPlayerlistGenerator');
 const debugExternalSource = getConvarString('txDebugExternalSource');
+const skipIpBanner = getConvarBool('txSkipIpBanner');
 
 
 /**
@@ -214,6 +215,7 @@ export const convars = Object.freeze({
     isDevMode,
     debugPlayerlistGenerator,
     debugExternalSource,
+    skipIpBanner,
     //Convars - zap dependant
     isZapHosting,
     forceInterface,
