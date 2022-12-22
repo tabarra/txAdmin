@@ -285,6 +285,15 @@ export default class ConfigVault {
 
     //================================================================
     /**
+     * Return configs for a specific scope (reconstructed and freezed)
+     */
+    getRawFile() {
+        return cloneDeep(this.configFile);
+    }
+
+
+    //================================================================
+    /**
      * Return all configs individually reconstructed and freezed
      */
     getAll() {

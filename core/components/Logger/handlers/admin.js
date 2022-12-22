@@ -38,9 +38,9 @@ export default class AdminLogger extends LoggerBase {
     /**
      * Returns an string with everything in admin.log (the active log rotate file)
      */
-    getRecentBuffer() {
+    async getRecentBuffer() {
         try {
-            return fsp.readFile(path.join(this.basePath, 'admin.log'), 'utf8');
+            return await fsp.readFile(path.join(this.basePath, 'admin.log'), 'utf8');
         } catch (error) {
             return false;
         }

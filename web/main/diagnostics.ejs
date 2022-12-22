@@ -70,7 +70,7 @@
                         <button
                             class="btn btn-sm btn-outline-info"
                             type="button"
-                            onclick="showSendDiagnosticsDataModal()"
+                            onclick="showReportModal()"
                         >
                             Review Details <br>
                             & Send Data
@@ -128,3 +128,156 @@
 </div>
 
 <%- await include('parts/footer.ejs', locals) %>
+
+<!-- Submit Report modal -->
+<div class="modal fade" id="modReport" tabindex="-1" role="dialog" aria-labelledby="modReport-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modReport-title">Send Diagnostics Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Spinner -->
+                <div class="d-none" id="modReport-spinnerBody">
+                    <div style="min-height: 125px;">
+                        <div class="txSpinner">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Review -->
+                <div class="d-none" id="modReport-infoBody">
+                    <p>
+                        This <i>optional</i> feature sends a diagnostics report to the txAdmin/Cfx.re teams, and may be required to diagnose a wide range of server issues. <br>
+                        After sending the data, you will receive a Report ID you can send in the support channels.
+                    </p>
+                    <ul style="padding-inline-start: 1rem;">
+                        <li>
+                            <strong>Which data will be sent?</strong>
+                            <ul style="padding-inline-start: 1rem;">
+                                <li>All diagnostics page data</li>
+                                <li>Recent txAdmin (system), live console and server log</li>
+                                <li>Environment variables</li>
+                                <li>Server performance (dashboard chart) data</li>
+                                <li>Player database statistics</li>
+                                <li>txAdmin settings (no bot token)</li>
+                                <li>List of admins (no passwords/hashes)</li>
+                                <li>List of files/folders in server data folder</li>
+                                <li>Config files in server data folder (no subfolder).</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Who can access the data?</strong> <br>
+                            The data will be available for only 2 hours for the txAdmin support team (identified by role), as well as the Cfx.re team.
+                        </li>
+                        <li>
+                            <strong>Sensitive Information Protection:</strong> <br>
+                            <ul style="padding-inline-start: 1rem;">
+                                <li><strong>Settings:</strong> the Discord Bot Token will be removed</li>
+                                <li><strong>Admin List:</strong> the password hashes will not be sent</li>
+                                <li><strong>Env Vars / CFG Files:</strong> parameters with <code>key, license, pass, private, secret, token</code> in their name will be masked.</li>
+                                <li><strong>Logs:</strong> any identifiable IPv4 address in logs will be masked.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Result Success -->
+                <div class="d-none" id="modReport-resultSuccessBody">
+                    <style>
+                        .reportIdCode {
+                            font-size: 1.75rem;
+                            letter-spacing: 0.65rem;
+                            background-color: rgb(128 128 128 / 20%);
+                            padding: 0.25rem 0.1rem 0.25rem 0.85rem;
+                            text-align: center;
+                        }
+                    </style>
+                    <div class="text-center">
+                        <h2>Report ID: <code class="reportIdCode" id="modReport-reportId">??????</code></h2>
+                    </div>
+                </div>
+
+                <!-- Result Error -->
+                <div class="d-none" id="modReport-resultErrorBody">
+                    <div class="text-center">
+                        <h4 class="text-danger" id="modReport-resultErrorMessage">sdfsdf sdf sdfsdf</h4>
+                    </div>
+                </div>
+                
+                <p class="lead mb-1 pt-2 text-center" style="font-style: italic;">
+                    For txAdmin support, join the official Discord: 
+                    <a href="https://discord.gg/uAmsGa2" target="_blank" style="vertical-align: text-bottom;">
+                        <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
+                    </a>
+                </p>
+            </div>
+
+            
+            <div class="modal-footer text-center">
+                <div class="mx-auto">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    &nbsp;
+                    &nbsp;
+                    <button type="button" class="btn btn-success" id="modReport-saveBtn">Agree & Send Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const els = {
+        modal: document.getElementById('modReport'),
+        infoBody: document.getElementById('modReport-infoBody'),
+        spinnerBody: document.getElementById('modReport-spinnerBody'),
+        resultSuccessBody: document.getElementById('modReport-resultSuccessBody'),
+        resultErrorBody: document.getElementById('modReport-resultErrorBody'),
+        resultErrorMessage: document.getElementById('modReport-resultErrorMessage'),
+        saveBtn: document.getElementById('modReport-saveBtn'),
+        reportId: document.getElementById('modReport-reportId'),
+    }
+
+    function showReportModal() {
+        els.infoBody.classList.remove('d-none');
+        els.resultSuccessBody.classList.add('d-none');
+        els.resultErrorBody.classList.add('d-none');
+        els.spinnerBody.classList.add('d-none');
+        els.saveBtn.classList.remove('d-none');
+        els.saveBtn.classList.remove('disabled');
+        $('#modReport').modal('show');
+    }
+
+    els.saveBtn.onclick = () => {
+        els.infoBody.classList.add('d-none');
+        els.spinnerBody.classList.remove('d-none');
+        els.saveBtn.classList.add('disabled');
+
+        txAdminAPI({
+            type: "POST",
+            url: `diagnostics/sendReport`,
+            success: function (data) {
+                els.spinnerBody.classList.add('d-none');
+                els.saveBtn.classList.add('d-none');
+                if(data.error){
+                    els.resultErrorBody.classList.remove('d-none');
+                    els.resultErrorMessage.textContent = data.error;
+                }else if(data.reportId){
+                    els.resultSuccessBody.classList.remove('d-none');
+                    els.reportId.textContent = data.reportId;
+                }else{
+                    els.resultErrorBody.classList.remove('d-none');
+                    els.resultErrorMessage.textContent = 'Unknown backend error.';
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                els.resultErrorBody.classList.remove('d-none');
+                els.resultErrorMessage.textContent = `Error: ${message}`;
+            }
+        });
+    }
+</script>

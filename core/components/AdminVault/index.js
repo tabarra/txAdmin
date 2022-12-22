@@ -179,6 +179,16 @@ export default class AdminVault {
 
     //================================================================
     /**
+     * Returns the raw array of admins, except for the hash
+     */
+    getRawAdminsList() {
+        if (this.admins === false) return [];
+        return cloneDeep(this.admins);
+    }
+
+
+    //================================================================
+    /**
      * Returns all data from an admin by provider user id (ex discord id), or false
      * @param {string} uid
      */
