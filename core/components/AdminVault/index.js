@@ -166,13 +166,12 @@ export default class AdminVault {
     getAdminsList() {
         if (this.admins == false) return [];
         return this.admins.map((user) => {
-            let out = {
+            return {
                 name: user.name,
                 master: user.master,
                 providers: Object.keys(user.providers),
                 permissions: user.permissions,
             };
-            return out;
         });
     }
 

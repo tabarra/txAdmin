@@ -1,4 +1,4 @@
-const modulename = 'WebServer:updateChecker';
+const modulename = 'updateChecker';
 import semver from 'semver';
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';

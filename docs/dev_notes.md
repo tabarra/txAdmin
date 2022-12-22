@@ -1,161 +1,28 @@
-# FIXME: breaking changes
-- didn't note anything before commit d2cfc42e5e0001afce6bafa17df4c7a9a6bbf42d
-- playerBanned event lost the `target` prop
-- changed warn ids prefix from A to W
-- removed the option to import bans from other resources
-- The optimizer will remove:
-    - players that havent connected in 9 days and have less than two hours of playtime
-    - wl requests and approvals older than a week
-- cfx.re finally deprecated
-
-
-# Coisas pra falar no trailer:
-- playerlist mostra nomes limpos, e da match em caracteres (sem fuse.js ainda)
-- players page mostra limpo, busca com fuse.js (not perfect)
-- now we are saving old player identifiers
-
-- whitelist in a separate page
-- !addwl temporarily disabled
-- explain the new flow
-- show the buttons on the page, and search with fuse
-- show settings page rejection messages config
-
-- changed the way ban messages look + mostrar na tela
-
-- new player modal
-- you can now easily see if player is whitelisted, also the bans/warns
-- you can now also revoke bans/warns directly into the modal
-
-- new events for playerDirectMessage and actionRevoked
-- updated lowdb to increase performance
-- fixed memory leak for big servers
-- dm via snackbar instead of chat
-
-- removed the option to import bans from other resources
-- The optimizer will remove:
-    - players that havent connected in 9 days and have less than two hours of playtime
-    - wl requests and approvals older than a week
-- car boost option
-
-
-
 # TODO:
-- [x] player join/leave
-- [x] increment player time
-- [x] fix web playerlist
-- [x] handle server restarts
-- [x] send join/leave to log
-- [x] resolve player function
-- [x] update lowdb
-- [x] make a backup before migrations
-- [x] create database migration:
-        - convert name -> displayName + pureName
-        - create array for old identifiers
-        - whitelist becomes a player prop, removes from actions
-        - remove empty notes
-- [x] get player modal (log, playerlist, db players page)
-- [x] modal buttons:
-    - [x] action details
-    - [x] set note
-    - [x] add/remove wl
-    - [x] warn
-    - [x] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`) (FIXME: close #625)
-    - [x] dm (replace `txaSendDM` with event+snackbar)
-    - [x] kick
-    - [x] revoke action (+ actionRevoked event - PR #612)
-- [x] db revoke_action/ban_ids routes + buttons on players page
-- [x] whitelist page
-- [x] join check + whitelist
-- [x] whitelist page actions
-    - [x] remove wl approval
-    - [x] add wl approval
-    - [x] approve wl request
-    - [x] remove wl request
-    - [x] search wl request
-    - [x] wl request pagination
-    - [x] wl request ignore all button
-- [x] settings stuff
-    - [x] add new custom connect reject messages for whitelist/bans
-    - [x] remove minSessionTime from everywhere
-    - [x] remove wipePendingWLOnStart from everywhere
-    - [x] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
-    - [x] FIXME: settings > player manager > save is erroring out
-    - [x] FIXME: diagnostics erroring out
-- [x] cleanup
-    - [x] remove all references to the old playerController
-    - [x] clean PlayerDatabase file (mainly methods)
-    - [x] tidy up the files, specially comments missing everywhere
-- [x] migrate warn action id prefix from A to W
-- [x] add database schema basic safeguards to player database
-- [x] add fuse.js to players page search
-- [x] test `adminVault.refreshOnlineAdmins()` 
+- [x] rename txAdmin Logs to System Logs (check chungus commands as well)
+- [ ] Finish diagnostics report function
+- [ ] upgrade packages
+- [ ] bot: upgrade discord.js
+- [ ] bot: convert into slash commands
+- [ ] bot: add /addwl command back
+- [ ] bot: add /info command
+- [ ] bot: add persistent /status message
+- [ ] bot: add dynamic activity ("watching xx/yy players")
+- [ ] add discord whitelist mode
+- [ ] add admin-only mode
+- [ ] add cap to `stats_heatmapData_v1.json`
+- [ ] Remove approved table from whitelist page?
+- [ ] 
 
-- [x] FIXME: references to `playerlistManager.playerlist` or `playerlistManager.getPlayerList()` might want just the list of active players
-- [x] FIXME: double check what happens when there is more than one player with the same license online
-    - the scenario below also applies to two connected players with same license, the dbData will be out of sync, but i think it only applies to visible stuff in player modal like the notes, which may cause an overwrite
-- [x] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
-    - consider scenario where the player is on the server, and you search for it on the playerlist
-    - (also valid for player join check)
-    - there will be 2 player.dbData, states that can be overwritten.
-    - potential solution is to always prioritize ServerPlayer on player resolver
-    - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
-    - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
-
-- [x] modal should also return old ids in a separate prop only available for registered players
-- [x] ban/warn all available identifiers
-- [x] add last connection date to offline player modal (issue #689)
-- [x] fix player modal in nui menu
-    - [x] upper-level error handling
-    - [x] actions tab
-    - [x] ids tab
-    - [x] history tab
-    - [x] info tab
-    - [x] ban tab
-
-- [x] players page search by identifiers must also search for the new player.ids field
-- [x] web: enable settign whitelist even with wl disabled + add warning to ban (nui only, i'll do web after)
-- [x] migrate master action > database cleanup (specially case for removing older whitelists) 
-- [x] remove master action > importing bans
-- [x] create daily cron to optimize database:
-    - [x] player rule: haven't connected in the past 9 days and had less than 2 hours of playtime.
-    - [x] whitelistApprovals/whitelistRequests rule: older than 7 days
-
-
-After merging feat/core-playerlist, but still in v5.0.0  (1d?):
-- [x] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
-- [x] apply stashes
-- [x] feat: add commonjs package.json to builds
-- [x] fix translations:
-    - [x] merge all translations
-    - [x] `ban_messages.reject.*` to all translations (try to convert manually)
-    - [x] `nui_menu.misc.directmessage_title`
-    - [x] `player_modal.history.*` 
-    - [x] `player_modal.ban.success / reason_required` 
-    - [x] `player_modal.ids.*`
-    - [x] `player_modal.info.*`
-- [x] add car boost function
-
-TODO for beta2:
-- [x] merge taso PR
-- [x] fix car boost func (double + veh type check)
-- [x] fix csrf
-- [x] force `txAdminAPI` to have `dataType: 'json'` for all calls
-- [x] write changelog + announcement
-- [x] announce to top servers
-
-The diagnostics reporting button thing (2d?):
-- [ ] do frontend button + modals
-- [ ] FIXME: define steps
-
+teste:
+    remover meu admin do sv zap
+    dar join
+    apertar f1 e ver se aparece a mensagem de perms
 
 After v5.0.0 release:
-- [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
 - [ ] server logger add events/min average
 - [ ] add stats for HWID: `count, q1, q25, q50, q75, q99`. Result will only be valid for servers with netid over 1k but that's fine
-- [ ] migrate `!addwl` make possible to `/addwl @mention`
-- [ ] admin-only mode for the server
 - [ ] add lru-cache to `DiscordBot.resolveMember()`
-- [ ] bot status "watching xx/yy players"
 
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
@@ -182,8 +49,18 @@ After v5.0.0 release:
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 - [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
 
-Experiment: other than the color, on the perf chart we could draw likes for q50, q90, q99 tick times, maybe it's easier to understand
 
+Optional:
+- [ ] fix cfx.re login match by admin id
+- [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
+- [ ] stats: jwe
+- [ ] set nui/vite.config.ts > target > chrome103
+
+
+----------------------------------------------------
+
+
+> Experiment: other than the color, on the perf chart we could draw likes for q50, q90, q99 tick times, maybe it's easier to understand
 ```json
 [
     0.6303839732888147,
@@ -204,16 +81,32 @@ Experiment: other than the color, on the perf chart we could draw likes for q50,
 ]
 ```
 
+> Maybe do this on the ban message page template
+```css
+background-image: url("https://i.imgur.com/5bFhvBv.png");
+background-repeat: no-repeat;
+background-position: right 15px bottom 15px;
+```
 
-# REFACTOR DEV:
+```js
+//Resource didn't finish starting (if res boot still active)
+`resource "${starting.startingResName}" failed to start within the [120~600]s time limit`
 
-## Approve whitelist discord command set names:
-- approve request with license+name but no discord: whitelistRequests.playerName
-- approve request with license+name and discord: whitelistRequests.discordTag
-- approve license: unknown
-- approve mention: mentioned member tag
+//Resources started, but no heartbeat whithin limit after that
+`server failed to start within time limit - 30s after last resource started`
 
+//No resource started starting, hb over limit
+`server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`
 
+//Server started, but some time after it stopped replying http requests
+//elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit
+'server partial hang detected'
+
+//else
+'server hang detected'
+```
+
+----------------------------------------------------
 
 ## New pages:
 Overview:
@@ -241,55 +134,8 @@ Whitelist Page/routes:
 
 
 
-
-
-
-
-
-----------------------------------------------------
-
-
-
-
-
-teste:
-    remover meu admin do sv zap
-    dar join
-    apertar f1 e ver se aparece a mensagem de perms
-
-
-
-```js
-//Resource didn't finish starting (if res boot still active)
-`resource "${starting.startingResName}" failed to start within the [120~600]s time limit`
-
-//Resources started, but no heartbeat whithin limit after that
-`server failed to start within time limit - 30s after last resource started`
-
-//No resource started starting, hb over limit
-`server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`
-
-//Server started, but some time after it stopped replying http requests
-//elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit
-'server partial hang detected'
-
-//else
-'server hang detected'
-```
-
-https://cs.github.com/?scopeName=All+repos&scope=&q=repo%3Avercel%2Fnext.js+%40next%2Fenv
-https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
-
-
-
-Optional:
-- [ ] fix cfx.re login match by admin id
-- [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
-- [ ] stats: jwe
-- [ ] set nui/vite.config.ts > target > chrome103
-
 ## The Big Things before ts+react rewrite:
-- [ ] in-core playerlist state tracking
+- [x] in-core playerlist state tracking
 - [ ] new proxy console util
 - [ ] global socket.io connection for playerlist + async responses
 - [ ] in-core resource state tracking
@@ -365,6 +211,7 @@ const defaults = {
 - 'convict' was the name of that one lib
 
 
+
 ### old settings refactor note:
 - save only what changed
 - make big settings a class (like TFR)
@@ -372,6 +219,9 @@ const defaults = {
 - settings.get('object.dot.notation');
 - settings.set('object.dot.notation');
 - npm search for "object dot"
+
+https://cs.github.com/?scopeName=All+repos&scope=&q=repo%3Avercel%2Fnext.js+%40next%2Fenv
+https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
 
 
 
@@ -422,6 +272,8 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 ### Server Insights page ideas:
 - resource load times
 - resource streamed assets
+- biggest events, or resources kbps out? something to help see which resource is bottlenecking the network
+    - apparently this can be done in scheduler quite easily by modifying the definition of `TriggerClientEvent`
 - http requests (grouped by resource, grouped by root domain or both?)
 - performance chart with ram usage
 - player count (loger window, maybe with some other data)
@@ -510,8 +362,6 @@ CreateThread(function()
     Wait(0)
   end
 end)
-
-
 
 
 ### TP:

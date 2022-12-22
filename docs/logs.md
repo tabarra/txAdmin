@@ -10,7 +10,7 @@ Contains log of administrative actions as well as some automated ones like serve
 - maxFiles: false
 - maxSize: false
 
-## FXServer:
+## FXServer Console Log:
 Contains the log of everything that happens in the fxserver console (`stdin`, `stdout`, `stderr`). Any live console input is prefixed with `> `.
 - Recent Buffer: 64~128kb
 - Interval: 1d
@@ -24,7 +24,7 @@ Contains all actions that happen inside the server, for example player join/leav
 - maxFiles: 7
 - maxSize: 10G
 
-## Console log (not released):
+## TODO: System Logs (not yet released):
 Contains everything that txAdmin prints on the console.
 - Recent Buffer: last 500 lines
 - Interval: 1d

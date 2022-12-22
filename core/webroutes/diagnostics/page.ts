@@ -2,8 +2,8 @@ const modulename = 'WebServer:Diagnostics';
 import logger from '@core/extras/console.js';
 import Cache from '../../extras/dataCache';
 import { Context } from 'koa';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
 import * as diagnosticsFuncs from './diagnosticsFuncs';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 const cache = new Cache(5);
 

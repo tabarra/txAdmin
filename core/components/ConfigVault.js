@@ -274,6 +274,7 @@ export default class ConfigVault {
         return cloneDeep(this.config[scope]);
     }
 
+
     //================================================================
     /**
      * Return configs for a specific scope (reconstructed and freezed)
