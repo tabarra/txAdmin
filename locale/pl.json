@@ -46,7 +46,7 @@
     "nui_menu": {
         "misc": {
             "help_message": "Menu txAdmin jest włączone, wpisz /tx aby je otworzyć.\nMożesz również skonfigurować inny bind w [Ustawienia/Przypisane klawisze/FiveM/Menu: Open Main Page]",
-            "menu_not_allowed": "Twoje identyfikatory nie są zgodne z żadnym administratorem zarejestrowanym w txAdmin, udaj się do menadżera administratorów i upewnij się, że Twoje identyfikatory są zapisane.",
+            "menu_not_allowed": "Twoje identyfikatory nie są zgodne z żadnym administratorem zarejestrowanym w txAdmin, udaj się do menadżera administratorów i upewnij się, że Twoje identyfikatory są przypisane do utworzonego konta.",
             "no_perms": "Nie posiadasz tego uprawnienia.",
             "unknown_error": "Wystąpił nieznany błąd.",
             "not_enabled": "Menu txAdmin nie jest uruchomione! Możesz je włączyć z poziomu ustawień txAdmin.",
