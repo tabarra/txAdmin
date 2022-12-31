@@ -17,14 +17,14 @@
         "kick_temporary": "(%{author}) Zostałeś zbanowany na tym serwerze z powodu \"%{reason}\". Twój ban wygaśnie za: %{expiration}.",
         "kick_permanent": "(%{author}) Zostałeś permanentnie zbanowany na tym serwerze za \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+            "title_permanent": "Zostałeś permanentnie zbanowany na tym serwerze.",
+            "title_temporary": "Zostałeś tymczasowo zbanowany na tym serwerze.",
+            "label_expiration": "Twój ban wygaśnie za",
+            "label_date": "Data zbanowania",
+            "label_author": "Zbanowany przez",
+            "label_reason": "Powód bana",
+            "label_id": "Identyfikator bana",
+            "note_multiple_bans": "Uwaga: Masz więcej niż jedną aktywną blokadę na swoje identyfikatory."
         }
     },
     "server_actions": {
@@ -45,14 +45,14 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "Menu txAdmin'a jest włączone, wpisz /tx aby je otworzyć.\nMożesz również skonfigurować inny bind w [Ustawienia/Przypisane klawisze/FiveM/Menu: Open Main Page]",
-            "menu_not_allowed": "Twoje identyfikatory nie są zgodne z żadnym adminem zarejestrowanym w txAdmin'e, udaj się do menadżera adminów i upewnij się że zapisałeś dodanych administratorów.",
+            "help_message": "Menu txAdmin jest włączone, wpisz /tx aby je otworzyć.\nMożesz również skonfigurować inny bind w [Ustawienia/Przypisane klawisze/FiveM/Menu: Open Main Page]",
+            "menu_not_allowed": "Twoje identyfikatory nie są zgodne z żadnym administratorem zarejestrowanym w txAdmin, udaj się do menadżera administratorów i upewnij się, że Twoje identyfikatory są zapisane.",
             "no_perms": "Nie posiadasz tego uprawnienia.",
             "unknown_error": "Wystąpił nieznany błąd.",
-            "not_enabled": "Menu txAdmin'a nie jest uruchomione! Możesz je włączyć z poziomu ustawień txAdmin'a.",
-            "announcement_title": "Ogłoszenie serwerowe nadane przez %{author}:",
+            "not_enabled": "Menu txAdmin nie jest uruchomione! Możesz je włączyć z poziomu ustawień txAdmin.",
+            "announcement_title": "Ogłoszenie nadane przez %{author}:",
             "dialog_empty_input": "Nie możesz pozostawić pustego pola tekstowego.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "Wiadomość od %{author}:"
         },
         "frozen": {
             "froze_player": "Zamroziłeś gracza!",
@@ -75,15 +75,15 @@
                 "noclip": {
                     "title": "NoClip",
                     "label": "Lataj tu i tam",
-                    "success": "Włączono NoClip'a"
+                    "success": "Znajdujesz się w trybie NoClip"
                 },
                 "godmode": {
-                    "title": "God",
+                    "title": "Bóg",
                     "label": "Nieśmiertelność",
-                    "success": "Włączono God Mode"
+                    "success": "Znajdujesz się w trybie boga"
                 },
                 "normal": {
-                    "title": "Normal",
+                    "title": "Normalny",
                     "label": "Tryb domyślny",
                     "success": "Przywrócono domyślny tryb gracza."
                 }
@@ -93,11 +93,11 @@
                 "generic_success": "Zostałeś wysłany do tunelu czasoprzestrzennego!",
                 "waypoint": {
                     "title": "Znacznik",
-                    "label": "Teleportuj do ustawionego znacznika",
-                    "error": "Nie masz ustawionego znacznika."
+                    "label": "Teleportuj się do ustawionego punktu na mapie",
+                    "error": "Nie masz ustawionego punktu na mapie."
                 },
                 "coords": {
-                    "title": "Kordy",
+                    "title": "Koordynaty",
                     "label": "Teleportuj się do wybranych koordynatów",
                     "dialog_title": "Teleport",
                     "dialog_desc": "Podaj koordynaty w formacie x,y,z, aby przejść przez tunel czasoprzestrzenny.",
@@ -109,16 +109,16 @@
                     "error": "Nie masz ostatniej lokalizacji, do której mógłbyś wrócić!"
                 },
                 "copy": {
-                    "title": "Skopiuj kordy",
-                    "label": "Skopiowano kordy do schowka."
+                    "title": "Skopiuj koordynaty",
+                    "label": "Skopiuj koordynaty do schowka"
                 }
             },
             "vehicle": {
                 "title": "Pojazd",
-                "onesync_error": "Ta opcja wymaga, aby OneSync był włączony do obsługi serwerowych Entity",
+                "onesync_error": "Ta opcja wymaga, aby OneSync był włączony do obsługi podmiotów serwerowych",
                 "not_in_veh_error": "Nie jesteś w żadnym pojeździe!",
                 "spawn": {
-                    "title": "Stwórz pojazd",
+                    "title": "Stwórz",
                     "label": "Stwórz pojazd po nazwie modelu",
                     "dialog_title": "Stwórz pojazd",
                     "dialog_desc": "Wprowadź nazwę modelu pojazdu, który chcesz stworzyć.",
@@ -137,20 +137,20 @@
                     "success": "Usunięto pojazd!"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported."
+                    "title": "Przyśpiesz",
+                    "label": "Przyśpiesz pojazd, aby osiągnąć maksymalną frajdę oraz prędkość",
+                    "success": "Pojazd został przyśpieszony!",
+                    "already_boosted": "Ten pojazd był już przyśpieszany.",
+                    "unsupported_class": "Ta klasa pojazdów nie jest obsługiwana."
                 }
             },
             "heal": {
                 "title": "Ulecz",
                 "myself": {
-                    "title": "Mnie",
+                    "title": "Siebie",
                     "label": "Przywraca zdrowie",
                     "success_0": "Wszystko wyleczone!",
-                    "success_1": "Powinieneś czuć się teraz dobrze !",
+                    "success_1": "Powinieneś czuć się teraz dobrze!",
                     "success_2": "Przywrócono do full'a!",
                     "success_3": "Ała, już naprawione!"
                 },
@@ -162,23 +162,23 @@
             },
             "announcement": {
                 "title": "Wyślij ogłoszenie",
-                "label": "Wyślij ogłoszenie do wszystkich graczy online .",
-                "dialog_desc": "Wyślij ogłoszenie do wszystkich graczy online .",
+                "label": "Wyślij ogłoszenie do wszystkich graczy na serwerze",
+                "dialog_desc": "Wyślij ogłoszenie do wszystkich obecnych graczy na serwerze.",
                 "dialog_placeholder": "Twoje ogłoszenie...",
                 "dialog_success": "Wysyłanie ogłoszenia."
             },
             "clear_area": {
                 "title": "Zrestartuj obszar świata",
                 "label": "Zresetuj określony obszar świata do stanu domyślnego",
-                "dialog_desc": "Wprowadź promień, w którym chcesz zresetować jednostki w (0-300). Nie usunie to entity spawnowanych po stronie serwera. ",
+                "dialog_desc": "Wprowadź promień, w którym chcesz zresetować jednostki w (0-300). Nie usunie to podmiotów spawnowanych po stronie serwera.",
                 "dialog_success": "Oczyszczono obszar w promieniu %{radius}m",
                 "dialog_error": "Wprowadzono niepoprawny promień. Spróbuj ponownie."
             },
             "player_ids": {
-                "title": "Przełącz ID graczy",
-                "label": "Przełącz pokazywanie ID graczy (i innych informacji) nad głowami pobliskich graczy",
-                "alert_show": "Pokazywanie NetID pobliskich graczy.",
-                "alert_hide": "Chowanie NetID pobliskich graczy."
+                "title": "Przełącz identyfikatory graczy",
+                "label": "Przełącz pokazywanie identyfikatorów graczy (i innych informacji) nad głowami pobliskich graczy",
+                "alert_show": "Włączono pokazywanie informacji o pobliskich graczach.",
+                "alert_hide": "Schowano informacje o pobliskich graczach."
             }
         },
         "page_players": {
@@ -204,12 +204,12 @@
         "player_modal": {
             "misc": {
                 "error": "Wystąpił błąd podczas pobierania szczegółów tego użytkownika. Błąd jest pokazany poniżej:",
-                "target_not_found": "Nie udało się znaleźć gracza online z ID lub nazwą użytkownika %{target}"
+                "target_not_found": "Nie udało się znaleźć gracza online z identyfikatorem lub nazwą użytkownika %{target}"
             },
             "tabs": {
                 "actions": "Akcje",
                 "info": "Info",
-                "ids": "IDs",
+                "ids": "Identyfikatory",
                 "history": "Historia",
                 "ban": "Bany"
             },
@@ -219,16 +219,16 @@
                 "moderation": {
                     "title": "Moderacja",
                     "options": {
-                        "dm": "DM",
+                        "dm": "Wiadomość",
                         "warn": "Ostrzeżenie",
                         "kick": "Wyrzucenie",
                         "set_admin": "Nadaj Admina"
                     },
                     "dm_dialog": {
                         "title": "Bezpośrednia wiadomość",
-                        "description": "Jaki jest powód bezpośredniego wysyłania wiadomości do tego gracza ?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "description": "Jaki jest powód bezpośredniego wysyłania wiadomości do tego gracza?",
+                        "placeholder": "Wiadomość...",
+                        "success": "Twój wiadomość została wysłana!"
                     },
                     "warn_dialog": {
                         "title": "Ostrzeżenie",
@@ -275,28 +275,28 @@
                 "session_time": "Długość sesji",
                 "play_time": "Czas gry",
                 "joined": "Dołączył",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "whitelisted_label": "Whitelist",
+                "whitelisted_notyet": "Brak",
+                "btn_wl_add": "DAJ WL",
+                "btn_wl_remove": "USUŃ WL",
+                "btn_wl_success": "Status whitelisty został zmieniony.",
+                "log_label": "Historia",
+                "log_empty": "Nie znaleziono żadnych banów/ostrzeżeń.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bany",
+                "log_warn_count": "%{smart_count} ostrzeżenie |||| %{smart_count} ostrzeżenia",
+                "log_btn": "DETALE",
+                "notes_changed": "Zmieniono notatkę gracza.",
+                "notes_placeholder": "Notatki dotyczące tego gracza..."
             },
             "history": {
                 "title": "Powiązana historia ",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "UNIEWAŻNIJ",
+                "revoked_success": "Akcja unieważniona!",
+                "banned_by": "ZBANOWANY przez %{author}",
+                "warned_by": "OSTRZEŻONY przez %{author}",
+                "revoked_by": "Unieważnione przez %{author}.",
+                "expired_at": "Wygasł: %{date}.",
+                "expires_at": "Wygasa: %{date}."
             },
             "ban": {
                 "title": "Zbanuj gracza",
@@ -310,12 +310,12 @@
                 "custom": "Własny",
                 "helper_text": "Wybierz czas trwania ",
                 "submit": "Nałóż bana",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "reason_required": "Wymagany jest powód.",
+                "success": "Gracz został zbanowany!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "current_ids": "Bieżące Identyfikatory",
+                "previous_ids": "Wcześniej Używane Identyfikatory"
             }
         }
     }
