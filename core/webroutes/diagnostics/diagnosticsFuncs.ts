@@ -6,12 +6,43 @@ import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import pidUsageTree from '@core/extras/pidUsageTree.js';
 import { verbose, txEnv } from '@core/globalData';
-import logger from '@core/extras/console.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import FXRunner from '@core/components/FxRunner';
 import HealthMonitor from '@core/components/HealthMonitor';
 import WebServer from '@core/components/WebServer';
 import Logger from '@core/components/Logger';
+import si from 'systeminformation';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
+
+//Helpers
+const MEGABYTE = 1024 * 1024;
+type HostStaticDataType = {
+    nodeVersion: string,
+    username: string,
+    osDistro: string,
+    cpu: {
+        manufacturer: string;
+        brand: string;
+        speedMin: number;
+        speedMax: number;
+        physicalCores: number;
+        cores: number;
+        clockWarning: string;
+    },
+};
+type HostDynamicDataType = {
+    cpuUsage: number;
+    memory: {
+        usage: number;
+        used: number;
+        total: number;
+    },
+};
+type HostDataReturnType = {
+    static: HostStaticDataType,
+    dynamic?: HostDynamicDataType
+} | { error: string };
+let hostStaticDataCache: HostStaticDataType;
 
 
 /**
@@ -22,8 +53,8 @@ export const getProcessesData = async () => {
         pid: number;
         ppid: number;
         name: string;
-        cpu: string;
-        memory: string;
+        cpu: number;
+        memory: number;
         order: number;
     }
     const procList: ProcDataType[] = [];
@@ -47,7 +78,7 @@ export const getProcessesData = async () => {
             if (currPidInt === txProcessId) {
                 procName = 'txAdmin (inside FXserver)';
                 order = 0; //forcing order because all process can start at the same second
-            } else if (curr.memory <= 10 * 1024 * 1024) {
+            } else if (curr.memory <= 10 * MEGABYTE) {
                 procName = 'FXServer MiniDump';
             } else {
                 procName = 'FXServer';
@@ -57,8 +88,8 @@ export const getProcessesData = async () => {
                 pid: currPidInt,
                 ppid: (curr.ppid == txProcessId) ? 'txAdmin' : curr.ppid,
                 name: procName,
-                cpu: (curr.cpu).toFixed(2) + '%',
-                memory: bytes(curr.memory),
+                cpu: curr.cpu,
+                memory: curr.memory / (MEGABYTE),
                 order: order,
             });
         });
@@ -68,7 +99,7 @@ export const getProcessesData = async () => {
     }
 
     //Sort procList array
-    procList.sort(( a, b ) => a.order - b.order);
+    procList.sort((a, b) => a.order - b.order);
 
     return procList;
 }
@@ -83,7 +114,7 @@ export const getFXServerData = async () => {
 
     //Sanity Check
     if (fxRunner.fxChild === null || fxRunner.fxServerHost === null) {
-        return {error: 'Server Offline'};
+        return { error: 'Server Offline' };
     }
 
     //Preparing request
@@ -91,7 +122,7 @@ export const getFXServerData = async () => {
         url: `http://${fxRunner.fxServerHost}/info.json`,
         maxRedirects: 0,
         timeout: healthMonitor.hardConfigs.timeout,
-        retry: {limit: 0},
+        retry: { limit: 0 },
     };
 
     //Making HTTP Request
@@ -101,7 +132,7 @@ export const getFXServerData = async () => {
     } catch (error) {
         logWarn('Failed to get FXServer information.');
         if (verbose) dir(error);
-        return {error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)'};
+        return { error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 
     //Helper function
@@ -131,46 +162,79 @@ export const getFXServerData = async () => {
     } catch (error) {
         logWarn('Failed to process FXServer information.');
         if (verbose) dir(error);
-        return {error: 'Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)'};
+        return { error: 'Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 }
+
 
 
 /**
  * Gets the Host Data.
  */
-export const getHostData = async () => {
+export const getHostData = async (): Promise<HostDataReturnType> => {
     const healthMonitor = (globals.healthMonitor as HealthMonitor);
 
-    try {
-        const userInfo = os.userInfo();
-        const hostData = {
-            nodeVersion: process.version,
-            osDistro: await getOsDistro(),
-            username: `${userInfo.username}`,
-            memory: 'not available',
-            cpus: 'not available',
-            clockWarning: '',
-            error: false,
-        };
+    //Get and cache static information
+    if (!hostStaticDataCache) {
+        try {
+            const userInfo = os.userInfo();
+            const cpuStats = await si.cpu();
 
-        const stats = healthMonitor.hostStats;
-        if (stats) {
-            hostData.memory = `${stats.memory.usage}% (${stats.memory.used.toFixed(2)}/${stats.memory.total.toFixed(2)} GB)`;
-            hostData.cpus = `${stats.cpu.usage}% of ${stats.cpu.count}x ${stats.cpu.speed} MHz`;
-            if (stats.cpu.count < 8) {
-                if (stats.cpu.speed <= 2400) {
-                    hostData.clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
-                } else if (stats.cpu.speed < 3000) {
-                    hostData.clockWarning = '<span class="badge badge-warning"> SLOW </span>';
+            //TODO: move this to frontend
+            let clockWarning = '';
+            if (cpuStats.cores < 8) {
+                if (cpuStats.speedMin <= 2.4) {
+                    clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
+                } else if (cpuStats.speedMin < 3.0) {
+                    clockWarning = '<span class="badge badge-warning"> SLOW </span>';
                 }
             }
+
+            hostStaticDataCache = {
+                nodeVersion: process.version,
+                username: userInfo.username,
+                osDistro: await getOsDistro(),
+                cpu: {
+                    manufacturer: cpuStats.manufacturer,
+                    brand: cpuStats.brand,
+                    speedMin: cpuStats.speedMin,
+                    speedMax: cpuStats.speedMax,
+                    physicalCores: cpuStats.physicalCores,
+                    cores: cpuStats.cores,
+                    clockWarning,
+                }
+            }
+        } catch (error) {
+            logError('Error getting Host static data.');
+            if (verbose) dir(error);
+            return { error: 'Failed to retrieve host static data. <br>Check the terminal for more information (if verbosity is enabled)' };
         }
-        return hostData;
+    }
+
+    //Get dynamic info (mem/cpu usage) and prepare output
+    try {
+        const stats = healthMonitor.hostStats;
+        if (stats) {
+            return {
+                static: hostStaticDataCache,
+                dynamic: {
+                    cpuUsage: stats.cpu.usage,
+                    memory: {
+                        usage: stats.memory.usage,
+                        used: stats.memory.used,
+                        total: stats.memory.total,
+                    }
+                }
+            };
+        } else {
+            return {
+                static: hostStaticDataCache,
+            };
+        }
     } catch (error) {
-        logError('Error getting Host data');
+        logError('Error getting Host dynamic data.');
         if (verbose) dir(error);
-        return {error: 'Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)'};
+        return { error: 'Failed to retrieve host dynamic data. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 }
 

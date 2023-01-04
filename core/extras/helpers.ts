@@ -54,10 +54,11 @@ export const parseSchedule = (scheduleTimes: string[]) => {
 export const redactApiKeys = (src: string) => {
     if (typeof src !== 'string' || !src.length) return src;
     return src
-        .replace(/licenseKey\s+["']?(cfxk_\w{1,60}_\w{1,20}|\w{32})["']?/gi, 'licenseKey [redacted cfx token]')
-        .replace(/steam_webApiKey\s+["']?\w{32}["']?/gi, 'steam_webApiKey [redacted steam api key]')
-        .replace(/sv_tebexSecret\s+["']?\w{40}["']?/gi, 'sv_tebexSecret [redacted tebex secret]')
-        .replace(/rcon_password\s+["']?[^"']+["']?/gi, 'rcon_password [redacted rcon password]');
+        .replace(/licenseKey\s+["']?(cfxk_\w{1,60}_\w{1,20}|\w{32})["']?/gi, 'licenseKey [REDACTED]')
+        .replace(/steam_webApiKey\s+["']?\w{32}["']?/gi, 'steam_webApiKey [REDACTED]')
+        .replace(/sv_tebexSecret\s+["']?\w{40}["']?/gi, 'sv_tebexSecret [REDACTED]')
+        .replace(/rcon_password\s+["']?[^"']+["']?/gi, 'rcon_password [REDACTED]')
+        .replace(/mysql_connection_string\s+["']?[^"']+["']?/gi, 'mysql_connection_string [REDACTED]');
 };
 
 

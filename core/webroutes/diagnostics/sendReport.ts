@@ -3,15 +3,20 @@ import Logger from '@core/components/Logger';
 import ConfigVault from '@core/components/ConfigVault';
 import logger, { ogConsole } from '@core/extras/console.js';
 import got from '@core/extras/got';
-import { txEnv } from '@core/globalData';
+import { txEnv, verbose } from '@core/globalData';
 import { GenericApiError } from '@shared/genericApiTypes';
 import { Context } from 'koa';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
 import AdminVault from '@core/components/AdminVault';
 import { redactApiKeys } from '@core/extras/helpers';
+import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@core/extras/serverDataScanner.js';
+import PlayerDatabase from '@core/components/PlayerDatabase';
+import Cache from '@core/extras/dataCache';
+import { getChartData } from '../chartData';
 const { dir, log, logOk, logWarn, logError, getLog } = logger(modulename);
 
 //Consts & Helpers
+const reportIdCache = new Cache(60);
 const maskedKeywords = ['key', 'license', 'pass', 'private', 'secret', 'token'];
 const maskString = (input: string) => input.replace(/\w/gi, 'x');
 const maskIps = (input: string) => input.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/gi, 'x.x.x.x');
@@ -39,15 +44,18 @@ export default async function SendDiagnosticsReport(ctx: Context) {
     const logger = (globals.logger as Logger);
     const configVault = (globals.configVault as ConfigVault);
     const adminVault = (globals.adminVault as AdminVault);
+    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
 
     type SuccessResp = {
         reportId: string;
     };
     const sendTypedResp = (data: SuccessResp | GenericApiError) => ctx.send(data);
 
-    // return sendTypedResp({ error: 'test error' });
-    // return sendTypedResp({ reportId: 'sdfsdf' });
-
+    //Rate limit (and cache) report submissions
+    const cachedReportId = reportIdCache.get();
+    if (cachedReportId !== false) {
+        return sendTypedResp({ error: `You can send at most one report per minute. Your last report ID was ${cachedReportId}.` });
+    }
 
     //Diagnostics
     let diagnostics;
@@ -98,49 +106,74 @@ export default async function SendDiagnosticsReport(ctx: Context) {
 
     const serverLog = (logger.server.getRecentBuffer(500) as ServerLogType[])
         .map((l) => ({ ...l, msg: maskIps(l.msg) }));
+    const fxserverLog = maskIps(logger.fxserver.getRecentBuffer());
+
+    //Getting server data content
+    let serverDataContent: ServerDataContentType = [];
+    let cfgFiles: ServerDataConfigsType = [];
+    if (settings.fxRunner.serverDataPath) {
+        serverDataContent = await getServerDataContent(settings.fxRunner.serverDataPath);
+        const rawCfgFiles = await getServerDataConfigs(settings.fxRunner.serverDataPath, serverDataContent);
+        cfgFiles = rawCfgFiles.map(([fName, fData]) => [fName, redactApiKeys(fData)]);
+    }
+
+    //Database & perf stats
+    let dbStats = {};
+    try {
+        dbStats = playerDatabase.getDatabaseStats();
+    } catch (error) { }
+
+    let perfSvMain = [];
+    try {
+        perfSvMain = getChartData('svMain');
+    } catch (error) { }
 
     //Prepare report object
     const reportData = {
         $schemaVersion: 1,
         $txVersion: txEnv.txAdminVersion,
-        // diagnostics, //FIXME: add more hardware data
-        // txConsoleLog, //DONE
-        // txActionLog, //DONE
-        // serverLog, //DONE
-        // envVars, //DONE
-        // perfSvMain: null, //TODO:
-        // dbStats: null, //TODO:
-        // settings, //DONE
-        // adminList, //DONE
-        // serverDataContent: null, //TODO:
-        // cfgFiles: null, //TODO:
+        diagnostics,
+        txConsoleLog,
+        txActionLog,
+        serverLog,
+        fxserverLog,
+        envVars,
+        perfSvMain,
+        dbStats,
+        settings,
+        adminList,
+        serverDataContent,
+        cfgFiles,
     };
 
-    ogConsole.dir(reportData);
-
-    
-
-
     // //Preparing request
-    // const requestOptions = {
-    //     url: `http://${globals.fxRunner.fxServerHost}/info.json`,
-    //     maxRedirects: 0,
-    //     timeout: globals.healthMonitor.hardConfigs.timeout,
-    //     retry: {limit: 0},
-    // };
+    const requestOptions = {
+        url: `https://txapi.cfx-services.net/public/submit`,
+        // url: `http://0.0.0.0:8121/public/submit`,
+        retry: { limit: 1 },
+        json: reportData,
+    };
 
-    // //Making HTTP Request
-    // let infoData: Record<string, unknown>;
-    // try {
-    //     infoData = await got.get(requestOptions).json();
-    // } catch (error) {
-    //     logWarn('Failed to get FXServer information.');
-    //     if (verbose) dir(error);
-    //     return {error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)'};
-    // }
-
-
-
-
-    return sendTypedResp({ error: 'temp' });
+    //Making HTTP Request
+    try {
+        type ResponseType = { reportId: string } | { error: string, message?: string };
+        const apiResp = await got.post(requestOptions).json() as ResponseType;
+        if ('reportId' in apiResp) {
+            reportIdCache.set(apiResp.reportId);
+            logWarn(`Diagnostics data report ID ${apiResp.reportId} sent by ${ctx.session.auth.username}`);
+            return sendTypedResp({ reportId: apiResp.reportId });
+        } else {
+            if (verbose) dir(apiResp);
+            return sendTypedResp({ error: `Report failed: ${apiResp.message ?? apiResp.error}` });
+        }
+    } catch (error) {
+        try {
+            const apiErrorResp = JSON.parse(error?.response?.body);
+            // ogConsole.dir(apiErrorResp); //DEBUG
+            const reason = apiErrorResp.message ?? apiErrorResp.error ?? (error as Error).message;
+            return sendTypedResp({ error: `Report failed: ${reason}` });
+        } catch (error2) {
+            return sendTypedResp({ error: `Report failed: ${(error as Error).message}` });
+        }
+    }
 };

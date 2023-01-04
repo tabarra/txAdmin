@@ -388,6 +388,49 @@ export default class PlayerDatabase {
 
 
     /**
+     * Returns actions/players stats for the database
+     */
+    getDatabaseStats() {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+
+        const actionStats = this.#db.obj.chain.get('actions')
+            .reduce((acc, a, ind) => {
+                if (a.type == 'ban') {
+                    acc.bans++;
+                } else if (a.type == 'warn') {
+                    acc.warns++;
+                }
+                return acc;
+            }, { bans: 0, warns: 0 })
+            .value();
+
+        const playerStats = this.#db.obj.chain.get('players')
+            .reduce((acc, p, ind) => {
+                acc.players++;
+                acc.playTime += p.playTime;
+                if (p.tsWhitelisted) acc.whitelists++;
+                return acc;
+            }, { players: 0, playTime: 0, whitelists: 0 })
+            .value();
+
+        
+        //Stats only:
+        //FIXME: reevaluate this in the future
+        const databus = (globals.databus as any);
+        databus.txStatsData.playerDBStats = {
+            ts: now(),
+            players: playerStats.players,
+            playTime: playerStats.playTime,
+            whitelists: playerStats.whitelists,
+            bans: actionStats.bans,
+            warns: actionStats.warns,
+        };
+
+        return { ...actionStats, ...playerStats }
+    }
+
+
+    /**
      * Cleans the database by removing every entry that matches the provided filter function.
      * @returns {number} number of removed items
      */
