@@ -497,7 +497,7 @@ export default class PlayerDatabase {
         }
 
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
-        logOk(`Database optimized, removed:`);
+        logOk(`Internal Database optimized. This applies only for the txAdmin internal database, and does not affect your MySQL or framework (ESX/QBCore/etc) databases.`);
         logOk(`- ${playerRemoved} players that haven't connected in the past 9 days and had less than 2 hours of playtime.`);
         logOk(`- ${wlRequestsRemoved} whitelist requests older than a week.`);
         logOk(`- ${wlApprovalsRemoved} whitelist approvals older than a week.`);

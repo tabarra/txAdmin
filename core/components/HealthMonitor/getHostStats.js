@@ -1,6 +1,6 @@
 const modulename = 'Monitor:HostStatus';
 import os from 'node:os';
-import si from 'systeminformation'
+import si from 'systeminformation';
 import logger from '@core/extras/console.js';
 import { txEnv, verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);

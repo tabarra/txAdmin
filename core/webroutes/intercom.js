@@ -42,6 +42,7 @@ export default async function Intercom(ctx) {
                 admins: (globals.adminVault.admins) ? globals.adminVault.admins.length : 1,
                 tmpLooksLikeRecipe: (globals.fxRunner.config.serverDataPath || '').includes('.base'),
             };
+            //NOTE: txStatsData.playerDBStats is cheap-ish to get sync from playerDatabase.getDatabaseStats()
             const outData = Object.assign(extractData, globals.databus.txStatsData);
             return ctx.send(JSON.stringify(outData, null, 2));
         } catch (error) {

@@ -50,7 +50,6 @@ export default class FXRunner {
         this.restartDelayOverride == false;
         this.history = [];
         this.lastKillRequest = 0;
-        this.fxServerPort = null;
         this.fxServerHost = null;
         this.currentMutex = null;
         this.outputHandler = new OutputHandler();

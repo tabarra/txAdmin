@@ -20,7 +20,7 @@ export default async function Diagnostics(ctx: Context) {
     }
 
     const timeStart = Date.now();
-    const data = {
+    const data: any = {
         headerTitle: 'Diagnostics',
         message: '',
     };
