@@ -15,11 +15,11 @@ import config from '../.deploy.config.js';
  * Gets the pre-release expiration const to be defined by esbuild.
  * @returns false | timestamp
  */
-const getPreReleaseExpiration = () => {
+const getPreReleaseExpirationString = () => {
     if (process?.env?.TX_PRERELEASE_BUILD === 'true') {
-        return new Date().setUTCHours(24 * config.preReleaseExpirationDays, 0, 0, 0);
+        return new Date().setUTCHours(24 * config.preReleaseExpirationDays, 0, 0, 0).toString();
     } else {
-        return false;
+        return '0';
     }
 };
 
@@ -161,7 +161,7 @@ const runDevTask = () => {
         target: 'node16',
         charset: 'utf8',
         define: {
-            TX_PRERELEASE_BUILD_EXPIRATION: getPreReleaseExpiration(),
+            TX_PRERELEASE_EXPIRATION: getPreReleaseExpirationString(),
         },
         //no minify, no banner
         watch: {
@@ -206,7 +206,7 @@ const runPublishTask = () => {
             minifyWhitespace: true,
             charset: 'utf8',
             define: {
-                TX_PRERELEASE_BUILD_EXPIRATION: getPreReleaseExpiration(),
+                TX_PRERELEASE_EXPIRATION: getPreReleaseExpirationString(),
             },
             banner: {
                 js: txLicenseBanner,

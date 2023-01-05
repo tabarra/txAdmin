@@ -1,16 +1,18 @@
-import humanizeDuration from 'humanize-duration';
+import humanizeDuration, { Unit } from 'humanize-duration';
 import chalk from 'chalk';
 
-const printWarning = (msg) => {
+const printWarning = (msg: string) => {
     console.log(chalk.bold.bgRedBright(`[txAdmin] ATTENTION!`) + ' ' + msg);
 }
 
+//@ts-ignore esbuild will replace TX_PRERELEASE_EXPIRATION with a string
+const PRERELEASE_EXPIRATION = parseInt(TX_PRERELEASE_EXPIRATION)
 const humanizeOptions = {
     round: true,
-    units: ['d', 'h', 'm'],
+    units: ['d', 'h', 'm'] as Unit[],
 };
 
-const printExpirationBanner = (timeUntilExpiration) => {
+const printExpirationBanner = (timeUntilExpiration: number) => {
     const timeLeft = humanizeDuration(timeUntilExpiration, humanizeOptions)
     const timeLeftStyled = chalk.inverse(` ${timeLeft} `);
     printWarning('This is a pre-release version of txAdmin!');
@@ -21,7 +23,9 @@ const printExpirationBanner = (timeUntilExpiration) => {
 }
 
 const cronCheckExpiration = () => {
-    const timeUntilExpiration = TX_PRERELEASE_BUILD_EXPIRATION - Date.now();
+    if (isNaN(PRERELEASE_EXPIRATION) || PRERELEASE_EXPIRATION === 0) return;
+
+    const timeUntilExpiration = PRERELEASE_EXPIRATION - Date.now();
     if (timeUntilExpiration < 0) {
         printWarning('This pre-release version has expired, please update your txAdmin.');
         printWarning('For more information: https://discord.gg/txAdmin.');
@@ -32,8 +36,9 @@ const cronCheckExpiration = () => {
 }
 
 export default () => {
-    if (typeof TX_PRERELEASE_BUILD_EXPIRATION !== 'number') return;
-    const timeUntilExpiration = TX_PRERELEASE_BUILD_EXPIRATION - Date.now();
+    if (isNaN(PRERELEASE_EXPIRATION) || PRERELEASE_EXPIRATION === 0) return;
+
+    const timeUntilExpiration = PRERELEASE_EXPIRATION - Date.now();
     if (timeUntilExpiration < 0) {
         printWarning('This pre-release version has expired, please update your txAdmin.');
         process.exit(1);
