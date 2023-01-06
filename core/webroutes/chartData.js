@@ -18,8 +18,8 @@ export const getChartData = (threadName) => {
 
     //Process log
     try {
-        // const maxDeltaTime = 288; //5*288 = 1440 = 1 day
-        const maxDeltaTime = 360; //5*360 = 30 hours
+        //every hour = 12 records
+        const maxDeltaTime = 360; //30*12
         const outData = globals.statsCollector.perfSeries.slice(-maxDeltaTime).map((s) => {
             return {
                 ts: s.ts,

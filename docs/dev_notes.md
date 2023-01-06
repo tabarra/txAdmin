@@ -1,7 +1,9 @@
 # TODO:
 - [x] rename txAdmin Logs to System Logs (check chungus commands as well)
-- [ ] Finish diagnostics report function
-- [ ] upgrade packages
+- [x] Finish diagnostics report function
+- [x] Make cyclical exec in cfg file block the server start
+- [x] change nui player card default tab back to actions
+- [x] upgrade packages
 - [ ] bot: upgrade discord.js
 - [ ] bot: convert into slash commands
 - [ ] bot: add /addwl command back
@@ -10,7 +12,7 @@
 - [ ] bot: add dynamic activity ("watching xx/yy players")
 - [ ] add discord whitelist mode
 - [ ] add admin-only mode
-- [ ] add cap to `stats_heatmapData_v1.json`
+- [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lenthCap)
 - [ ] Remove approved table from whitelist page?
 - [ ] 
 
@@ -44,7 +46,7 @@ After v5.0.0 release:
 - [ ] mock out insights page (assets + http reqs)
 - [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
 - [ ] At the schedule restart input prompt, add a note saying what is the current server time
-- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
+- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Behare that this is not trivial without also turning missing exec target read error also being error
 - [ ] create events for dynamic scheduled restarts
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 - [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?

@@ -599,7 +599,7 @@ export const validateFixServerConfig = async (cfgPath: string, serverDataPath: s
     return {
         connectEndpoint,
         errors: errors.toMarkdown(),
-        warnings: errors.toMarkdown(),
+        warnings: warnings.toMarkdown(),
         // errors: errors.store,
         // warnings: warnings.store,
         // endpoints, //Not being used
