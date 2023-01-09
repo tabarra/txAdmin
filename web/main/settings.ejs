@@ -31,7 +31,10 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'discord' ? 'active' : '' %>" id="nav-discord-tab" data-toggle="tab" href="#nav-discord"
-                            role="tab" aria-controls="nav-discord" aria-selected="true">Discord</a>
+                            role="tab" aria-controls="nav-discord" aria-selected="true">
+                            Discord
+                            &nbsp; <span class="badge badge-danger">NEW</span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">Menu</a>
@@ -365,20 +368,6 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-prefix" class="col-sm-3 col-form-label">
-                                Command Prefix
-                                <span class="text-danger">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmDiscord-prefix" value="<%= discord.prefix || '' %>"
-                                    placeholder="/" maxlength="1" <%= readOnly ? 'disabled' : '' %>>
-                                <span class="form-text text-muted">
-                                    The prefix for all commands.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
                             <label for="frmDiscord-statusMessage" class="col-sm-3 col-form-label">
                                 Status Command Message
                                 <span class="text-danger">*</span>
@@ -633,10 +622,9 @@
             enabled: ($('#frmDiscord-enabled').is(':checked') === true),
             token: $('#frmDiscord-token').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
-            prefix: $('#frmDiscord-prefix').val().trim(),
             statusMessage: $('#frmDiscord-statusMessage').val().trim(),
         };
-        if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
+        if (data.enabled && (!data.token.length || !data.statusMessage.length)) {
             return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
@@ -645,6 +633,7 @@
             type: "POST",
             url: '/settings/save/discord',
             data: data,
+            tiemout: REQ_TIMEOUT_LONG,
             success: function (data) {
                 notify.update('progress', 0);
                 notify.update('type', data.type);

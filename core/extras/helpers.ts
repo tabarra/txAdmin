@@ -65,13 +65,13 @@ export const redactApiKeys = (src: string) => {
 /**
  * Returns the unix timestamp in seconds.
  */
-export const now = () => { return Math.round(Date.now() / 1000); };
+export const now = () => Math.round(Date.now() / 1000);
 
 
 /**
  * Returns false if any argument is undefined
  */
-export const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };
+export const anyUndefined = (...args: any) => [...args].some((x) => (typeof x === 'undefined'));
 
 
 /**

@@ -43,16 +43,17 @@ const SHUTDOWN_NOTICE_DELAY = 5000;
 
 
 export default class FXRunner {
-    constructor(config) {
+    constructor(txAdmin, config) {
         this.config = config;
         this.spawnVariables = null;
         this.fxChild = null;
-        this.restartDelayOverride == false;
+        this.restartDelayOverride = 0;
         this.history = [];
         this.lastKillRequest = 0;
         this.fxServerHost = null;
         this.currentMutex = null;
-        this.outputHandler = new OutputHandler();
+        this.cfxId = null;
+        this.outputHandler = new OutputHandler(txAdmin);
     }
 
 

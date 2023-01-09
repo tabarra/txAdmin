@@ -145,12 +145,10 @@ export default class ConfigVault {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token: toDefault(cfg.discordBot.token, null),
                 announceChannel: toDefault(cfg.discordBot.announceChannel, null),
-                prefix: toDefault(cfg.discordBot.prefix, '!'),
                 statusMessage: toDefault(
                     cfg.discordBot.statusMessage,
                     '**IP:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>',
                 ),
-                commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
             out.fxRunner = {
                 serverDataPath: toDefault(cfg.fxRunner.serverDataPath, null),
@@ -226,9 +224,7 @@ export default class ConfigVault {
 
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
-            cfg.discordBot.prefix = cfg.discordBot.prefix || '!';
             cfg.discordBot.statusMessage = cfg.discordBot.statusMessage || '**Join:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>';
-            cfg.discordBot.commandCooldown = parseInt(cfg.discordBot.commandCooldown) || 30; //not in template
 
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template

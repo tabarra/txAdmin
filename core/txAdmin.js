@@ -164,7 +164,7 @@ export default class TxAdmin {
             this.adminVault = new AdminVault();
             globals.adminVault = this.adminVault;
 
-            this.discordBot = new DiscordBot(profileConfig.discordBot);
+            this.discordBot = new DiscordBot(this, profileConfig.discordBot);
             globals.discordBot = this.discordBot;
 
             this.logger = new Logger(profileConfig.logger);
@@ -173,7 +173,7 @@ export default class TxAdmin {
             this.translator = new Translator();
             globals.translator = this.translator;
 
-            this.fxRunner = new FxRunner(profileConfig.fxRunner);
+            this.fxRunner = new FxRunner(this, profileConfig.fxRunner);
             globals.fxRunner = this.fxRunner;
 
             this.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
