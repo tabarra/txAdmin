@@ -1,8 +1,9 @@
 const modulename = 'ConfigVault';
 import fs from 'node:fs';
-import { cloneDeep }  from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
+import { defaultEmbedJson, defaultembedConfigJson } from '@core/components/DiscordBot/defaultJsons';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -145,10 +146,8 @@ export default class ConfigVault {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token: toDefault(cfg.discordBot.token, null),
                 announceChannel: toDefault(cfg.discordBot.announceChannel, null),
-                statusMessage: toDefault(
-                    cfg.discordBot.statusMessage,
-                    '**IP:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>',
-                ),
+                embedJson: toDefault(cfg.discordBot.embedJson, null),
+                embedConfigJson: toDefault(cfg.discordBot.embedConfigJson, null),
             };
             out.fxRunner = {
                 serverDataPath: toDefault(cfg.fxRunner.serverDataPath, null),
@@ -224,7 +223,8 @@ export default class ConfigVault {
 
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
-            cfg.discordBot.statusMessage = cfg.discordBot.statusMessage || '**Join:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>';
+            cfg.discordBot.embedJson = cfg.discordBot.embedJson || defaultEmbedJson;
+            cfg.discordBot.embedConfigJson = cfg.discordBot.embedConfigJson || defaultembedConfigJson;
 
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template

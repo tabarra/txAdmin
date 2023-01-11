@@ -1,12 +1,13 @@
 const modulename = 'DiscordBot';
-import Discord, { Client, Intents } from 'discord.js';
-// import { Client, GatewayIntentBits, Partials, EmbedBuilder } from 'discord.js';
+import Discord, { Client, Intents } from 'discord.js'; //djs v13
+// import Discord, { Client, IntentsBitField } from 'discord.js'; //v14
 import logger, { ogConsole } from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
 import { now } from '@core/extras/helpers';
 import TxAdmin from '@core/txAdmin';
 import slashCommands from './slash';
 import interactionCreateHandler from './interactionCreateHandler';
+import { generateStatusMessage } from './commands/status';
 // import commands from './commands';
 const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
@@ -15,7 +16,8 @@ type DiscordBotConfigType = {
     enabled: boolean;
     token: string;
     announceChannel: string;
-    statusMessage: string;
+    embedJson: string;
+    embedConfigJson: string;
 }
 
 
@@ -53,6 +55,13 @@ export default class DiscordBot {
         if (this.config.enabled) {
             this.startBot().catch(() => { });
         }
+
+        //Cron
+        setInterval(() => {
+            if (this.config.enabled) {
+                this.updateStatus().catch();
+            }
+        }, 60_000)
     }
 
 
@@ -108,15 +117,31 @@ export default class DiscordBot {
             return false;
         }
 
+        //Updating bot activity
         try {
-            this.client.user.setActivity(globals.config.serverName, { type: 'WATCHING' });
+            const serverClients = this.#txAdmin.playerlistManager.onlineCount;
+            const serverMaxClients = this.#txAdmin.persistentCache.get('fxsRuntime:maxClients') ?? '??';
+            const serverName = this.#txAdmin.globalConfig.serverName;
+            const message = `[${serverClients}/${serverMaxClients}] on ${serverName}`;
+            this.client.user.setActivity(message, { type: 'PLAYING' });
         } catch (error) {
-            if (verbose) logWarn('failed to set bot activity', 'updateStatus');
+            if (verbose) logWarn(`Failed to set bot activity: ${(error as Error).message}`, 'updateStatus');
         }
 
-        //TODO: status message
-        //generate embed in another file?
-        // the /setstatus command just sends message, gets its id, saves to kvp, then calls this function
+        //Updating server status embed
+        try {
+            const oldChannelId = this.#txAdmin.persistentCache.get('discord:status:channelId');
+            const oldMessageId = this.#txAdmin.persistentCache.get('discord:status:messageId');
+
+            if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
+                const oldChannel = await this.client.channels.fetch(oldChannelId);
+                if (!oldChannel?.isText()) throw new Error(`oldChannel is not text-based`);
+                await oldChannel.messages.edit(oldMessageId, generateStatusMessage(this.#txAdmin));
+            }
+
+        } catch (error) {
+            if (verbose) logWarn(`Failed to update status embed: ${(error as Error).message}`, 'updateStatus');
+        }
     }
 
 
@@ -138,7 +163,7 @@ export default class DiscordBot {
             this.client.on('ready', async () => {
                 if (!this.client?.isReady()) throw new Error(`ready event while not being ready`);
                 // logOk(`Started and logged in as '${this.client?.user?.tag}'`);
-                this.updateStatus();
+                this.updateStatus().catch();
 
                 //Saving announcements channel
                 const fetchedChannel = this.client.channels.cache.find((x) => x.id === this.config.announceChannel);
@@ -162,7 +187,7 @@ export default class DiscordBot {
             });
             this.client.on('resume', () => {
                 if (verbose) logOk('Connection with Discord API server resumed');
-                this.updateStatus();
+                this.updateStatus().catch();
             });
             this.client.on('interactionCreate', interactionCreateHandler.bind(null, this.#txAdmin));
             this.client.on('debug', logDebug);
@@ -175,44 +200,6 @@ export default class DiscordBot {
         });
     }
 
-    // async handleMessage(message: string) {
-    //     //Ignoring bots and DMs
-    //     if (message.author.bot) return;
-    //     if (!message.content.startsWith(this.config.prefix)) return;
-
-    //     //Parse message
-    //     const args = message.content.slice(this.config.prefix.length).split(/\s+/);
-    //     const commandName = args.shift().toLowerCase();
-
-    //     //Check if its a recognized command
-    //     const command = this.commands.get(commandName);
-    //     if (!command) return;
-
-    //     //Check spam limiter
-    //     if (!this.cooldowns.has(commandName)) {
-    //         this.cooldowns.set(commandName, now());
-    //     } else {
-    //         const cooldownTime = command.cooldown || 30;
-    //         const expirationTime = this.cooldowns.get(commandName) + cooldownTime;
-    //         const ts = now();
-    //         if (ts < expirationTime) {
-    //             const timeLeft = expirationTime - ts;
-    //             if (verbose) log(`Spam prevented for command "${commandName}".`);
-    //             return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandName}\` command again.`);
-    //         }
-    //     }
-
-    //     //Increment usage stats
-    //     this.usageStats[commandName] = (typeof this.usageStats[commandName] == 'undefined') ? 1 : this.usageStats[commandName] + 1;
-
-    //     //Executing command
-    //     try {
-    //         await command.execute(message, args);
-    //     } catch (error) {
-    //         logError(`Failed to execute ${commandName}: ${error.message}`);
-    //     }
-    // }
-
 
     /**
      * Resolves a user by its discord identifier.
@@ -220,6 +207,7 @@ export default class DiscordBot {
      * FIXME: add lru-cache
      */
     async resolveMember(uid: string) {
+        return; //FIXME:
         if (!this.client?.isReady()) throw new Error(`discord bot not ready yet`);
         const avatarOptions: Discord.StaticImageURLOptions = { size: 64 };
 

@@ -4,12 +4,14 @@
 - [x] Make cyclical exec in cfg file block the server start
 - [x] change nui player card default tab back to actions
 - [x] upgrade packages
-- [ ] bot: upgrade discord.js
-- [ ] bot: convert into slash commands
+- [x] bot: upgrade discord.js
+- [x] bot: convert into slash commands
+- [x] bot: add NEW tag to settings menu and discord tab
+- [x] bot: add dynamic activity ("watching xx/yy players")
+- [x] bot: add persistent /status message
 - [ ] bot: add /addwl command back
 - [ ] bot: add /info command
-- [ ] bot: add persistent /status message
-- [ ] bot: add dynamic activity ("watching xx/yy players")
+- [x] bot: fix resolveMember()
 - [ ] add discord whitelist mode
 - [ ] add admin-only mode
 - [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lenthCap)

@@ -29,8 +29,8 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
     if (interaction.user.bot) return;
 
     //DEBUG
-    const copy = Object.assign(cloneDeep(interaction), { user: false, member: false });
-    ogConsole.dir(copy)
+    // const copy = Object.assign(cloneDeep(interaction), { user: false, member: false });
+    // ogConsole.dir(copy)
 
     //Process buttons
     if (interaction.isButton()) {
@@ -50,16 +50,21 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
     }
 
     //Process Slash commands
-    if (interaction.isApplicationCommand()) {
+    if (interaction.isCommand()) {
         //Get interaction
         const handler = handlers[interaction.commandName as keyof typeof handlers];
-        if (!handler) return noHandlerResponse(interaction).catch();
+        if (!handler) {
+            noHandlerResponse(interaction).catch();
+            return;
+        }
 
         //Executes interaction
         try {
-            return await handler(interaction, txAdmin);
+            await handler(interaction, txAdmin);
+            return;
         } catch (error) {
-            return logError(`Error executing ${interaction.commandName}: ${(error as Error).message}`);
+            logError(`Error executing ${interaction.commandName}: ${(error as Error).message}`);
+            return;
         }
     }
 

@@ -90,7 +90,7 @@ async function handleGlobal(ctx: Context) {
 
     //Sending output
     if (saveStatus) {
-        globals.config = globals.configVault.getScoped('global');
+        globals.func_txAdminRefreshConfig()
         globals.translator.refreshConfig();
         ctx.utils.logAction('Changing global settings.');
         return ctx.send({type: 'success', message: '<strong>Global configuration saved!</strong>'});

@@ -25,6 +25,13 @@ export default class PlayerlistManager {
         this.#txAdmin = txAdmin;
     }
 
+    /**
+     * Number of online/connected players.
+     */
+    get onlineCount() {
+        return this.#playerlist.filter(p => p && p.isConnected).length;
+    }
+
 
     /**
      * Handler for server restart - it will kill all players and reset the licenseCache

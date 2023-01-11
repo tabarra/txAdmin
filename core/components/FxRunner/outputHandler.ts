@@ -63,13 +63,14 @@ export default class OutputHandler {
 
             //Handle bind errors
             if (channel == 'citizen-server-impl' && data.type == 'nucleus_connected') {
-                if(typeof data.url !== 'string'){
+                if (typeof data.url !== 'string') {
                     logError(`FD3 nucleus_connected event without URL.`);
-                }else{
+                } else {
                     try {
                         const matches = /^(https:\/\/)?.*-([0-9a-z]{6,})\.users\.cfx\.re\/?$/.exec(data.url);
-                        // @ts-expect-error: let it throw
+                        if (!matches || !matches[2]) throw new Error(`invalid cfxid`);
                         this.#txAdmin.fxRunner.cfxId = matches[2];
+                        this.#txAdmin.persistentCache.set('fxsRuntime:cfxId', matches[2]);
                     } catch (error) {
                         logError(`Error decoding server nucleus URL.`);
                     }
@@ -114,7 +115,7 @@ export default class OutputHandler {
     /**
      * handles stdout and stderr from child fxserver and send to be processed by the logger
      */
-    write(source: string, mutex: string, data: string|Buffer) {
+    write(source: string, mutex: string, data: string | Buffer) {
         data = data.toString();
         this.#txAdmin.logger.fxserver.writeStdIO(source, data);
 
