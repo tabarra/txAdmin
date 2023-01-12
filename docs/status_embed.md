@@ -4,6 +4,7 @@
 
 Starting in v5.1, **txAdmin** now has a Discord Persistent Status Embed feature.  
 This is a Discord embed that txAdmin will update every minute, and you can configure it to display server status, and any other random thing that you can normally do with a Discord embed.  
+To add the embed, type `/status add` on a channel that the txAdmin bot has Send Message permission.  
   
 To modify the embed, navigate to `txAdmin > Settings > Discord Bot`, and click on the two JSON editor buttons. 
 > **Important:** If you are having issues with the JSON encoding, we recommend you use [jsoneditoronline.org](https://jsoneditoronline.org/) to modify your JSON.

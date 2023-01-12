@@ -15,6 +15,7 @@ const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 type DiscordBotConfigType = {
     enabled: boolean;
     token: string;
+    guild: string;
     announceChannel: string;
     embedJson: string;
     embedConfigJson: string;
@@ -45,7 +46,8 @@ export default class DiscordBot {
         txadmin: 0,
     };
     readonly cooldowns = new Map();
-    client: Client | undefined;
+    #client: Client | undefined;
+    guild: Discord.Guild | undefined;
     announceChannel: Discord.TextBasedChannel | undefined;
 
 
@@ -70,11 +72,11 @@ export default class DiscordBot {
      */
     async refreshConfig() {
         this.config = this.#txAdmin.configVault.getScoped('discordBot');
-        if (this.client) {
+        if (this.#client) {
             logWarn('Stopping Discord Bot');
-            this.client.destroy();
+            this.#client.destroy();
             setTimeout(() => {
-                if (!this.config.enabled) this.client = undefined;
+                if (!this.config.enabled) this.#client = undefined;
             }, 1000);
         }
 
@@ -85,6 +87,20 @@ export default class DiscordBot {
         }
     }
 
+    /**
+     * Passthrough to discord.js isReady()
+     */
+    get isClientReady() {
+        return (this.#client) ? this.#client.isReady() : false;
+    }
+
+    /**
+     * Passthrough to discord.js websocket status
+     */
+    get wsStatus() {
+        return (this.#client) ? this.#client.ws.status : false;
+    }
+
 
     /**
      * Send an announcement to the configured channel
@@ -93,7 +109,7 @@ export default class DiscordBot {
     async sendAnnouncement(message: string) {
         if (
             !this.config.announceChannel
-            || !this.client?.isReady()
+            || !this.#client?.isReady()
             || !this.announceChannel
         ) {
             if (verbose) logWarn('not ready yet', 'sendAnnouncement');
@@ -112,7 +128,7 @@ export default class DiscordBot {
      * Update persistent status and activity
      */
     async updateStatus() {
-        if (!this.client?.isReady()) {
+        if (!this.#client?.isReady()) {
             if (verbose) logWarn('not ready yet', 'updateStatus');
             return false;
         }
@@ -123,7 +139,7 @@ export default class DiscordBot {
             const serverMaxClients = this.#txAdmin.persistentCache.get('fxsRuntime:maxClients') ?? '??';
             const serverName = this.#txAdmin.globalConfig.serverName;
             const message = `[${serverClients}/${serverMaxClients}] on ${serverName}`;
-            this.client.user.setActivity(message, { type: 'PLAYING' });
+            this.#client.user.setActivity(message, { type: 'PLAYING' });
         } catch (error) {
             if (verbose) logWarn(`Failed to set bot activity: ${(error as Error).message}`, 'updateStatus');
         }
@@ -134,7 +150,7 @@ export default class DiscordBot {
             const oldMessageId = this.#txAdmin.persistentCache.get('discord:status:messageId');
 
             if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
-                const oldChannel = await this.client.channels.fetch(oldChannelId);
+                const oldChannel = await this.#client.channels.fetch(oldChannelId);
                 if (!oldChannel?.isText()) throw new Error(`oldChannel is not text-based`);
                 await oldChannel.messages.edit(oldMessageId, generateStatusMessage(this.#txAdmin));
             }
@@ -150,50 +166,69 @@ export default class DiscordBot {
      */
     startBot() {
         return new Promise<void>((resolve, reject) => {
+            const sendError = (msg: string) => {
+                logError(msg);
+                return reject(new Error(msg));
+            }
+
+            //Check for guild id
+            if(typeof this.config.guild !== 'string' || !this.config.guild.length){
+                return sendError('Discord bot enabled while guild id is not set.');
+            }
+
             //State check
-            if (this.client?.ws.status !== 3 && this.client?.ws.status !== 5) {
+            if (this.#client?.ws.status !== 3 && this.#client?.ws.status !== 5) {
                 logWarn('Destroying client before restart.');
-                this.client?.destroy();
+                this.#client?.destroy();
             }
 
             //Setting up client object
-            this.client = new Client(this.#clientOptions);
+            this.#client = new Client(this.#clientOptions);
 
             //Setup Ready listener
-            this.client.on('ready', async () => {
-                if (!this.client?.isReady()) throw new Error(`ready event while not being ready`);
+            this.#client.on('ready', async () => {
+                if (!this.#client?.isReady()) throw new Error(`ready event while not being ready`);
                 // logOk(`Started and logged in as '${this.client?.user?.tag}'`);
                 this.updateStatus().catch();
 
-                //Saving announcements channel
-                const fetchedChannel = this.client.channels.cache.find((x) => x.id === this.config.announceChannel);
-                if (!fetchedChannel) {
-                    logError(`Channel ${this.config.announceChannel} not found`);
-                } else if (!fetchedChannel.isText()) {
-                    logError(`Channel ${this.config.announceChannel} - ${fetchedChannel.name} is not a text channel`);
-                } else {
-                    this.announceChannel = fetchedChannel;
+                //Fetching guild
+                const guild = this.#client.guilds.cache.find((guild) => guild.id === this.config.guild);
+                if (!guild){
+                    return sendError(`Discord bot could not resolve guild id ${this.config.guild}`);
+                }
+                this.guild = guild;
+
+                //Fetching announcements channel
+                if(this.config.announceChannel){
+                    const fetchedChannel = this.#client.channels.cache.find((x) => x.id === this.config.announceChannel);
+                    if (!fetchedChannel) {
+                        return sendError(`Channel ${this.config.announceChannel} not found.`);
+                    } else if (!fetchedChannel.isText()) {
+                        return sendError(`Channel ${this.config.announceChannel} - ${fetchedChannel.name} is not a text channel.`);
+                    } else {
+                        this.announceChannel = fetchedChannel;
+                    }
                 }
 
-                this.client.application.commands.set(slashCommands);
+                this.#client.application.commands.set(slashCommands);
 
                 return resolve();
             });
 
             //Setup remaining event listeners
-            this.client.on('error', (error) => {
+            this.#client.on('error', (error) => {
                 logError(`Error from Discord.js client: ${error.message}`);
                 return reject(error);
             });
-            this.client.on('resume', () => {
+            this.#client.on('resume', () => {
                 if (verbose) logOk('Connection with Discord API server resumed');
                 this.updateStatus().catch();
             });
-            this.client.on('interactionCreate', interactionCreateHandler.bind(null, this.#txAdmin));
-            this.client.on('debug', logDebug);
+            this.#client.on('interactionCreate', interactionCreateHandler.bind(null, this.#txAdmin));
+            this.#client.on('debug', logDebug);
 
             //Start bot
-            this.client.login(this.config.token).catch((error) => {
+            this.#client.login(this.config.token).catch((error) => {
                 logError(`Discord login failed with error: ${(error as Error).message}`);
                 return reject(error);
             });
@@ -203,27 +238,25 @@ export default class DiscordBot {
 
     /**
      * Resolves a user by its discord identifier.
-     * NOTE: using announceChannel to find out the guild
      * FIXME: add lru-cache
      */
     async resolveMember(uid: string) {
-        return; //FIXME:
-        if (!this.client?.isReady()) throw new Error(`discord bot not ready yet`);
+        if (!this.#client?.isReady()) throw new Error(`discord bot not ready yet`);
         const avatarOptions: Discord.StaticImageURLOptions = { size: 64 };
 
         //Check if in guild member
-        if (this.announceChannel?.guild) {
+        if (this.guild) {
             try {
-                const member = await this.announceChannel.guild.members.fetch(uid);
+                const member = await this.guild.members.fetch(uid);
                 return {
                     tag: `${member.nickname ?? member.user.username}#${member.user.discriminator}`,
-                    avatar: (member ?? member.user).displayAvatarURL(avatarOptions),
+                    avatar: member.displayAvatarURL(avatarOptions) ?? member.user.displayAvatarURL(avatarOptions),
                 };
             } catch (error) { }
         }
 
         //Checking if user resolvable
-        const user = await this.client.users.fetch(uid);
+        const user = await this.#client.users.fetch(uid);
         if (user) {
             return {
                 tag: `${user.username}#${user.discriminator}`,

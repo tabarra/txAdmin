@@ -11,9 +11,9 @@
 - [x] bot: add persistent /status message
 - [x] bot: embed/config editor on settings page
 - [x] bot: embed/config docs file
+- [x] bot: fix resolveMember()
 - [ ] bot: add /addwl command back
 - [ ] bot: add /info command
-- [ ] bot: fix resolveMember()
 - [ ] add discord whitelist modes
 - [ ] add admin-only mode
 - [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lenthCap)

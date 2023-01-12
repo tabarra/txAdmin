@@ -292,6 +292,7 @@ async function handleDiscord(ctx: Context) {
     if (
         isUndefined(ctx.request.body.enabled)
         || isUndefined(ctx.request.body.token)
+        || isUndefined(ctx.request.body.guild)
         || isUndefined(ctx.request.body.announceChannel)
         || isUndefined(ctx.request.body.embedJson)
         || isUndefined(ctx.request.body.embedConfigJson)
@@ -300,9 +301,10 @@ async function handleDiscord(ctx: Context) {
     }
 
     //Prepare body input
-    let cfg = {
+    const cfg = {
         enabled: (ctx.request.body.enabled === 'true'),
         token: ctx.request.body.token.trim(),
+        guild: ctx.request.body.guild.trim(),
         announceChannel: ctx.request.body.announceChannel.trim(),
         embedJson: ctx.request.body.embedJson.trim(),
         embedConfigJson: ctx.request.body.embedConfigJson.trim(),
@@ -316,13 +318,14 @@ async function handleDiscord(ctx: Context) {
     }
 
     //Preparing & saving config
-    let newConfig = configVault.getScopedStructure('discordBot');
+    const newConfig = configVault.getScopedStructure('discordBot');
     newConfig.enabled = cfg.enabled;
     newConfig.token = cfg.token;
+    newConfig.guild = (cfg.guild.length) ? cfg.guild : false;
     newConfig.announceChannel = (cfg.announceChannel.length) ? cfg.announceChannel : false;
     newConfig.embedJson = cfg.embedJson;
     newConfig.embedConfigJson = cfg.embedConfigJson;
-    let saveStatus = configVault.saveProfile('discordBot', newConfig);
+    const saveStatus = configVault.saveProfile('discordBot', newConfig);
 
     //Sending output
     if (saveStatus) {

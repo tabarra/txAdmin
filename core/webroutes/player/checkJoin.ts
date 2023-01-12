@@ -267,7 +267,7 @@ async function checkWhitelist(
     //Player is not whitelisted
     //Resolve player discord
     let discordTag, discordAvatar;
-    if (validIdsObject.discord && discordBot.client) {
+    if (validIdsObject.discord && discordBot.isClientReady) {
         try {
             const { tag, avatar } = await discordBot.resolveMember(validIdsObject.discord);
             discordTag = tag;

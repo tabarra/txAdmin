@@ -145,6 +145,7 @@ export default class ConfigVault {
             out.discordBot = {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token: toDefault(cfg.discordBot.token, null),
+                guild: toDefault(cfg.discordBot.guild, null),
                 announceChannel: toDefault(cfg.discordBot.announceChannel, null),
                 embedJson: toDefault(cfg.discordBot.embedJson, defaultEmbedJson),
                 embedConfigJson: toDefault(cfg.discordBot.embedConfigJson, defaultembedConfigJson),
