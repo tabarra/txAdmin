@@ -2,10 +2,11 @@ const modulename = 'DiscordBot:interactionHandler';
 import { Interaction } from 'discord.js';
 import TxAdmin from '@core/txAdmin.js';
 import logger, { ogConsole } from '@core/extras/console.js';
+import infoCommandHandler from './commands/info';
 import statusCommandHandler from './commands/status';
 import whitelistCommandHandler from './commands/whitelist';
-import { cloneDeep } from 'lodash-es'; //DEBUG
 import { embedder } from './discordHelpers';
+import { cloneDeep } from 'lodash-es'; //DEBUG
 const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
 
@@ -13,6 +14,7 @@ const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 const handlers = {
     status: statusCommandHandler,
     whitelist: whitelistCommandHandler,
+    info: infoCommandHandler,
 }
 
 const noHandlerResponse = async (interaction: Interaction) => {

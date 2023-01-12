@@ -1,5 +1,5 @@
 const modulename = 'DiscordBot:cmd:whitelist';
-import { ColorResolvable, CommandInteraction, GuildMember, MessageEmbed, StaticImageURLOptions } from 'discord.js';
+import { CommandInteraction, StaticImageURLOptions } from 'discord.js';
 import logger from '@core/extras/console.js';
 import TxAdmin from '@core/txAdmin';
 import { now } from '@core/extras/helpers';
@@ -12,12 +12,14 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  * Command /whitelist member <mention>
  */
 const handleMemberSubcommand = async (interaction: CommandInteraction, txAdmin: TxAdmin, adminName: string) => {
-    const avatarOptions: StaticImageURLOptions = { size: 64 };
-    const member = interaction.options.getMember('member', true) as GuildMember;
-
     //Preparing player id/name/avatar
+    const member = interaction.options.getMember('member', true);
+    if(!('user' in member)){
+        return await interaction.reply(embedder.danger(`Failed to resolve member ID.`));
+    }
     const identifier = `discord:${member.id}`;
     const playerName = `${member.nickname ?? member.user.username}#${member.user.discriminator}`;
+    const avatarOptions: StaticImageURLOptions = { size: 64 };
     const playerAvatar = member.displayAvatarURL(avatarOptions) ?? member.user.displayAvatarURL(avatarOptions);
 
     //Registering approval

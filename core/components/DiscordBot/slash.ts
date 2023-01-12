@@ -1,5 +1,4 @@
 import { ApplicationCommandDataResolvable } from 'discord.js';
-import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { ApplicationCommandOptionType, ApplicationCommandType } from './extractedEnums';
 
 
@@ -24,7 +23,7 @@ const statusCommand: ApplicationCommandDataResolvable = {
 const whitelistCommand: ApplicationCommandDataResolvable = {
     type: ApplicationCommandType.ChatInput as number,
     name: 'whitelist',
-    description: 'Status embed commands;',
+    description: 'Status embed commands.',
     options: [
         {
             type: ApplicationCommandOptionType.Subcommand as number,
@@ -57,10 +56,61 @@ const whitelistCommand: ApplicationCommandDataResolvable = {
     ]
 }
 
+const infoCommand: ApplicationCommandDataResolvable = {
+    type: ApplicationCommandType.ChatInput as number,
+    name: 'info',
+    description: 'Searches for a player in the txAdmin Database and prints information.',
+    options: [
+        {
+            type: ApplicationCommandOptionType.Subcommand as number,
+            name: 'self',
+            description: 'Searches for whomever is using the command.',
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand as number,
+            name: 'member',
+            description: 'Searches for a player with matching Discord ID.',
+            options: [
+                {
+                    type: 'USER',
+                    name: 'member',
+                    description: 'The member that will be searched for.',
+                    required: true,
+                },
+                {
+                    type: 'BOOLEAN',
+                    name: 'admininfo',
+                    description: 'For admins to show identifiers and history information.'
+                }
+            ]
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand as number,
+            name: 'id',
+            description: 'Searches for an identifier.',
+            options: [
+                {
+                    type: 'STRING',
+                    name: 'id',
+                    description: 'The ID to search for (eg fivem:271816).',
+                    required: true,
+                    minLength: 5,
+                },
+                {
+                    type: 'BOOLEAN',
+                    name: 'admininfo',
+                    description: 'For admins to show identifiers and history information.'
+                }
+            ]
+        },
+    ]
+}
+
 /**
  * Exported commands
  */
 export default [
     statusCommand,
     whitelistCommand,
+    infoCommand,
 ] as ApplicationCommandDataResolvable[];

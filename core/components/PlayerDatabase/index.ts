@@ -94,6 +94,20 @@ export default class PlayerDatabase {
     /**
      * Register a player to the database
      */
+    getPlayersByFilter(filter: object | Function): DatabasePlayerType[] {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+
+        //Check for duplicated license
+        return this.#db.obj.chain.get('players')
+            .filter(filter as any)
+            .cloneDeep()
+            .value();
+    }
+
+
+    /**
+     * Register a player to the database
+     */
     registerPlayer(player: DatabasePlayerType): void {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         //TODO: validate player data vs DatabasePlayerType props

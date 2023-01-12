@@ -13,7 +13,7 @@
 - [x] bot: embed/config docs file
 - [x] bot: fix resolveMember()
 - [x] bot: add /whitelist command
-- [ ] bot: add /info command
+- [x] bot: add /info command
 - [ ] add new whitelist modes
     - [ ] admin-only
     - [ ] guild presence

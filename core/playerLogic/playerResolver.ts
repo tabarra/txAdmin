@@ -47,7 +47,7 @@ export default (mutex: any, netid: any, license: any) => {
     if (typeof searchLicense === 'string' && searchLicense.length) {
         const onlineMatches = playerlistManager.getOnlinePlayersByLicense(searchLicense);
         if(onlineMatches.length){
-            return onlineMatches.at(-1);
+            return onlineMatches.at(-1) as ServerPlayer;
         }else{
             return new DatabasePlayer(searchLicense, playerDatabase);
         }
