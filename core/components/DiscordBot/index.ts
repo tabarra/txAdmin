@@ -172,7 +172,7 @@ export default class DiscordBot {
             }
 
             //Check for guild id
-            if(typeof this.config.guild !== 'string' || !this.config.guild.length){
+            if (typeof this.config.guild !== 'string' || !this.config.guild.length) {
                 return sendError('Discord bot enabled while guild id is not set.');
             }
 
@@ -188,18 +188,16 @@ export default class DiscordBot {
             //Setup Ready listener
             this.#client.on('ready', async () => {
                 if (!this.#client?.isReady()) throw new Error(`ready event while not being ready`);
-                // logOk(`Started and logged in as '${this.client?.user?.tag}'`);
-                this.updateStatus().catch();
 
                 //Fetching guild
                 const guild = this.#client.guilds.cache.find((guild) => guild.id === this.config.guild);
-                if (!guild){
+                if (!guild) {
                     return sendError(`Discord bot could not resolve guild id ${this.config.guild}`);
                 }
                 this.guild = guild;
 
                 //Fetching announcements channel
-                if(this.config.announceChannel){
+                if (this.config.announceChannel) {
                     const fetchedChannel = this.#client.channels.cache.find((x) => x.id === this.config.announceChannel);
                     if (!fetchedChannel) {
                         return sendError(`Channel ${this.config.announceChannel} not found.`);
@@ -211,6 +209,8 @@ export default class DiscordBot {
                 }
 
                 this.#client.application.commands.set(slashCommands);
+                logOk(`Started and logged in as '${this.#client.user.tag}'`);
+                this.updateStatus().catch();
 
                 return resolve();
             });

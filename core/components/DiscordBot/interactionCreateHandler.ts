@@ -3,13 +3,16 @@ import { Interaction } from 'discord.js';
 import TxAdmin from '@core/txAdmin.js';
 import logger, { ogConsole } from '@core/extras/console.js';
 import statusCommandHandler from './commands/status';
+import whitelistCommandHandler from './commands/whitelist';
 import { cloneDeep } from 'lodash-es'; //DEBUG
+import { embedder } from './discordHelpers';
 const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
 
 //All commands
 const handlers = {
     status: statusCommandHandler,
+    whitelist: whitelistCommandHandler,
 }
 
 const noHandlerResponse = async (interaction: Interaction) => {
@@ -63,8 +66,9 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
             await handler(interaction, txAdmin);
             return;
         } catch (error) {
-            logError(`Error executing ${interaction.commandName}: ${(error as Error).message}`);
-            return;
+            const msg = `Error executing ${interaction.commandName}: ${(error as Error).message}`;
+            logError(msg);
+            return await interaction.reply(embedder.danger(msg, true));
         }
     }
 

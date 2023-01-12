@@ -12,7 +12,7 @@
 - [x] bot: embed/config editor on settings page
 - [x] bot: embed/config docs file
 - [x] bot: fix resolveMember()
-- [ ] bot: add /addwl command back
+- [x] bot: add /whitelist command
 - [ ] bot: add /info command
 - [ ] add new whitelist modes
     - [ ] admin-only

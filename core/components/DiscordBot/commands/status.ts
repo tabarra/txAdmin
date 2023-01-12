@@ -6,6 +6,7 @@ import { txEnv } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import { cloneDeep } from 'lodash-es';
 import { MessageButtonStyles } from '../extractedEnums';
+import { embedder, ensurePermission, logDiscordAdminAction } from '../discordHelpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Humanizer options
@@ -194,24 +195,8 @@ export const removeOldEmbed = async (interaction: BaseCommandInteraction, txAdmi
 
 export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
     //Check permissions
-    //TODO: generalize this to other commands?
-    const admin = txAdmin.adminVault.getAdminByProviderUID(interaction.user.id);
-    if (!admin) {
-        return await interaction.reply({
-            content: 'your Discord ID is not registered in txAdmin :face_with_monocle:',
-            ephemeral: true
-        });
-    }
-    if (
-        admin.master !== true
-        && !admin.permissions.includes('all_permissions')
-        && !admin.permissions.includes('settings.write')
-    ) {
-        return await interaction.reply({
-            content: 'you do not have the "Settings: Change" permissions required to set the embed :face_with_raised_eyebrow:',
-            ephemeral: true
-        });
-    }
+    const adminName = await ensurePermission(interaction, txAdmin, 'settings.write');
+    if (typeof adminName !== 'string') return;
 
     //Attempt to remove old message
     const isRemoveOnly = (interaction.options.getSubcommand() === 'remove');
@@ -220,17 +205,15 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
         txAdmin.persistentCache.delete('discord:status:channelId');
         txAdmin.persistentCache.delete('discord:status:messageId');
         if (isRemoveOnly) {
-            return await interaction.reply({
-                content: `Old status embed removed.`,
-                ephemeral: true
-            });
+            const msg = `Old status embed removed.`;
+            logDiscordAdminAction(txAdmin, adminName, msg);
+            return await interaction.reply(embedder.success(msg, true));
         }
     } catch (error) {
         if (isRemoveOnly) {
-            return await interaction.reply({
-                content: `**Failed to remove old status embed:**\n${(error as Error).message}`,
-                ephemeral: true
-            });
+            return await interaction.reply(
+                embedder.warning(`**Failed to remove old status embed:**\n${(error as Error).message}`, true)
+            );
         }
     }
 
@@ -239,10 +222,9 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
     try {
         newStatusMessage = generateStatusMessage(txAdmin);
     } catch (error) {
-        return await interaction.reply({
-            content: `**Failed to generate new embed:**\n${(error as Error).message}`,
-            ephemeral: true
-        });
+        return await interaction.reply(
+            embedder.warning(`**Failed to generate new embed:**\n${(error as Error).message}`, true)
+        );
     }
 
     //Attempt to send new message
@@ -255,14 +237,13 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
         newMessage.edit(newStatusMessage);
         txAdmin.persistentCache.set('discord:status:channelId', interaction.channelId);
         txAdmin.persistentCache.set('discord:status:messageId', newMessage.id);
-        return await interaction.reply({
-            content: `Embed saved!`,
-            ephemeral: true
-        });
     } catch (error) {
-        return await interaction.reply({
-            content: `**Failed to send new embed:**\n${(error as Error).message}`,
-            ephemeral: true
-        });
+        return await interaction.reply(
+            embedder.warning(`**Failed to send new embed:**\n${(error as Error).message}`, true)
+        );
     }
+
+    const msg = `Status embed saved.`;
+    logDiscordAdminAction(txAdmin, adminName, msg);
+    return await interaction.reply(embedder.success(msg));
 }

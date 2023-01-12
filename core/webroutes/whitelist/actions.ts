@@ -142,7 +142,7 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
         const req = requests[0]; //just getting the first
 
         //Register whitelistApprovals
-        const playerName = req.discordTag ?? req.playerDisplayName
+        const playerName = req.discordTag ?? req.playerDisplayName;
         try {
             playerDatabase.registerWhitelistApprovals({
                 identifier: `license:${req.license}`,
