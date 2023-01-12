@@ -115,7 +115,7 @@ export default class PlayerDatabase {
      * Updates a player setting assigning srcData props to the database player.
      * The source data object is deep cloned to prevent weird side effects.
      */
-    updatePlayer(license: string, srcData: Exclude<object, null>, srcUniqueId: Symbol): DatabasePlayerType {
+    updatePlayer(license: string, srcData: object, srcUniqueId: Symbol): DatabasePlayerType {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (typeof (srcData as any).license !== 'undefined') {
             throw new Error(`cannot license field`);
@@ -162,7 +162,7 @@ export default class PlayerDatabase {
      */
     getRegisteredActions(
         idArray: string[],
-        filter: Exclude<object, null> | Function = {}
+        filter: object | Function = {}
     ): DatabaseActionType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
@@ -275,7 +275,7 @@ export default class PlayerDatabase {
      * Returns all whitelist approvals, which can be optionally filtered
      */
     getWhitelistApprovals(
-        filter?: Exclude<object, null> | Function
+        filter?: object | Function
     ): DatabaseWhitelistApprovalsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         return this.#db.obj.chain.get('whitelistApprovals')
@@ -289,7 +289,7 @@ export default class PlayerDatabase {
      * Removes whitelist approvals based on a filter.
      */
     removeWhitelistApprovals(
-        filter: Exclude<object, null> | Function
+        filter: object | Function
     ): DatabaseWhitelistApprovalsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         this.#db.writeFlag(SAVE_PRIORITY_MEDIUM);
@@ -324,7 +324,7 @@ export default class PlayerDatabase {
      * Returns all whitelist approvals, which can be optionally filtered
      */
     getWhitelistRequests(
-        filter?: Exclude<object, null> | Function
+        filter?: object | Function
     ): DatabaseWhitelistRequestsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         return this.#db.obj.chain.get('whitelistRequests')
@@ -338,7 +338,7 @@ export default class PlayerDatabase {
      * Removes whitelist requests based on a filter.
      */
     removeWhitelistRequests(
-        filter: Exclude<object, null> | Function
+        filter: object | Function
     ): DatabaseWhitelistRequestsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
@@ -352,7 +352,7 @@ export default class PlayerDatabase {
      * Updates a whitelist request setting assigning srcData props to the database object.
      * The source data object is deep cloned to prevent weird side effects.
      */
-    updateWhitelistRequests(license: string, srcData: Exclude<object, null>): DatabaseWhitelistRequestsType {
+    updateWhitelistRequests(license: string, srcData: object): DatabaseWhitelistRequestsType {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (typeof (srcData as any).id !== 'undefined' || typeof (srcData as any).license !== 'undefined') {
             throw new Error(`cannot update id or license fields`);

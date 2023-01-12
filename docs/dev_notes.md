@@ -14,11 +14,14 @@
 - [x] bot: fix resolveMember()
 - [ ] bot: add /addwl command back
 - [ ] bot: add /info command
-- [ ] add discord whitelist modes
-- [ ] add admin-only mode
-- [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lenthCap)
+- [ ] add new whitelist modes
+    - [ ] admin-only
+    - [ ] guild presence
+    - [ ] roles
+- [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
 - [ ] Remove approved table from whitelist page?
-- [ ] 
+- [ ] the PR about hiding notifications
+
 
 teste:
     remover meu admin do sv zap

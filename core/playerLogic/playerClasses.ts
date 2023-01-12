@@ -29,7 +29,7 @@ export class BasePlayer {
      * Mutates the database data based on a source object to be applied
      * FIXME: if this is called for a disconnected ServerPlayer, it will not clean after 120s
      */
-    protected mutateDbData(srcData: Exclude<object, null>) {
+    protected mutateDbData(srcData: object) {
         if (!this.license) throw new Error(`cannot mutate database for a player that has no license`);
         this.dbData = this.dbInstance.updatePlayer(this.license, srcData, this.uniqueId);
     }

@@ -122,7 +122,7 @@ export const generateStatusMessage = (
             return inputValue;
         }
     }
-    function processObject(inputData: Exclude<Object, null>) {
+    function processObject(inputData: object) {
         const input = cloneDeep(inputData);
         const out: any = {};
         for (const [key, value] of Object.entries(input)) {

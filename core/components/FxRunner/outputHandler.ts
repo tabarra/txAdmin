@@ -36,7 +36,7 @@ export default class OutputHandler {
      *   script_log
      *   script_structured_trace (handled by server logger)
      */
-    trace(mutex: string, trace: Exclude<null, object>) {
+    trace(mutex: string, trace: object) {
         try {
             //Filter valid and fresh packages
             if (mutex !== this.#txAdmin.fxRunner.currentMutex) return;
