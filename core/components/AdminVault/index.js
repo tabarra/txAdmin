@@ -194,6 +194,7 @@ export default class AdminVault {
     getAdminByProviderUID(uid) {
         if (this.admins == false) return false;
         let id = uid.trim().toLowerCase();
+        if (!id.length) return false;
         let admin = this.admins.find((user) => {
             return Object.keys(user.providers).find((provider) => {
                 return (id === user.providers[provider].id.toLowerCase());
