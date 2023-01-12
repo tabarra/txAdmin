@@ -9,7 +9,7 @@ const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
 //All commands
 const handlers = {
-    status: statusCommandHandler
+    status: statusCommandHandler,
 }
 
 const noHandlerResponse = async (interaction: Interaction) => {

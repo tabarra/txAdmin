@@ -146,8 +146,8 @@ export default class ConfigVault {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token: toDefault(cfg.discordBot.token, null),
                 announceChannel: toDefault(cfg.discordBot.announceChannel, null),
-                embedJson: toDefault(cfg.discordBot.embedJson, null),
-                embedConfigJson: toDefault(cfg.discordBot.embedConfigJson, null),
+                embedJson: toDefault(cfg.discordBot.embedJson, defaultEmbedJson),
+                embedConfigJson: toDefault(cfg.discordBot.embedConfigJson, defaultembedConfigJson),
             };
             out.fxRunner = {
                 serverDataPath: toDefault(cfg.fxRunner.serverDataPath, null),

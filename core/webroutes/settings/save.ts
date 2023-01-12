@@ -8,6 +8,7 @@ import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
 import { Context } from 'koa';
 import ConfigVault from '@core/components/ConfigVault';
 import DiscordBot from '@core/components/DiscordBot';
+import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -292,7 +293,8 @@ async function handleDiscord(ctx: Context) {
         isUndefined(ctx.request.body.enabled)
         || isUndefined(ctx.request.body.token)
         || isUndefined(ctx.request.body.announceChannel)
-        || isUndefined(ctx.request.body.statusMessage)
+        || isUndefined(ctx.request.body.embedJson)
+        || isUndefined(ctx.request.body.embedConfigJson)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -302,15 +304,24 @@ async function handleDiscord(ctx: Context) {
         enabled: (ctx.request.body.enabled === 'true'),
         token: ctx.request.body.token.trim(),
         announceChannel: ctx.request.body.announceChannel.trim(),
-        statusMessage: ctx.request.body.statusMessage.trim(),
+        embedJson: ctx.request.body.embedJson.trim(),
+        embedConfigJson: ctx.request.body.embedConfigJson.trim(),
     };
+
+    //Validating embed JSONs
+    try {
+        generateStatusMessage(globals.txAdmin, cfg.embedJson, cfg.embedConfigJson);
+    } catch (error) {
+        return ctx.send({type: 'danger', message: `<strong>Saving embed config failed:</strong> ${(error as Error).message}`});
+    }
 
     //Preparing & saving config
     let newConfig = configVault.getScopedStructure('discordBot');
     newConfig.enabled = cfg.enabled;
     newConfig.token = cfg.token;
     newConfig.announceChannel = (cfg.announceChannel.length) ? cfg.announceChannel : false;
-    newConfig.statusMessage = cfg.statusMessage;
+    newConfig.embedJson = cfg.embedJson;
+    newConfig.embedConfigJson = cfg.embedConfigJson;
     let saveStatus = configVault.saveProfile('discordBot', newConfig);
 
     //Sending output
@@ -318,7 +329,10 @@ async function handleDiscord(ctx: Context) {
         ctx.utils.logAction('Changing discordBot settings.');
         try {
             await discordBot.refreshConfig();
-            return ctx.send({type: 'success', message: '<strong>Discord configuration saved!</strong>'});
+            return ctx.send({
+                type: 'success',
+                message: '<strong>Discord configuration saved!</strong><br>\nIf <em>(and only if)</em> the status embed is not being updated, check the System Logs page and make sure there are no embed errors.'
+            });
         } catch (error) {
             return ctx.send({type: 'danger', message: `<strong>Error starting the bot:</strong> ${(error as Error).message}`});
         }

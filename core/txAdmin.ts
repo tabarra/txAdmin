@@ -35,6 +35,8 @@ const cleanPath = (x: string) => { return slash(path.normalize(x)); };
 // Long ago I wanted to replace this with dependency injection.
 // I Totally gave up.
 const globalsInternal: Record<string, any> = {
+    txAdmin: null, //self reference for webroutes that need to access it from the globals
+
     adminVault: null,
     discordBot: null,
     fxRunner: null,
@@ -149,6 +151,9 @@ export default class TxAdmin {
 
     constructor(serverProfile: string) {
         log(`Profile '${serverProfile}' starting...`);
+
+        //FIXME: hacky self reference because some webroutes need to access globals.txAdmin to pass it down
+        globalsInternal.txAdmin = this;
 
         //Check if the profile exists and call setup if it doesn't
         const profilePath = cleanPath(path.join(txEnv.dataPath, serverProfile));

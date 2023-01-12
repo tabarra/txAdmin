@@ -9,10 +9,12 @@
 - [x] bot: add NEW tag to settings menu and discord tab
 - [x] bot: add dynamic activity ("watching xx/yy players")
 - [x] bot: add persistent /status message
+- [x] bot: embed/config editor on settings page
+- [x] bot: embed/config docs file
 - [ ] bot: add /addwl command back
 - [ ] bot: add /info command
-- [x] bot: fix resolveMember()
-- [ ] add discord whitelist mode
+- [ ] bot: fix resolveMember()
+- [ ] add discord whitelist modes
 - [ ] add admin-only mode
 - [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lenthCap)
 - [ ] Remove approved table from whitelist page?

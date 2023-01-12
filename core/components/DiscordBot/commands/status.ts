@@ -35,22 +35,26 @@ const isValidButtonConfig = (btn: any) => {
 }
 
 
-export const generateStatusMessage = (txAdmin: TxAdmin) => {
+export const generateStatusMessage = (
+    txAdmin: TxAdmin,
+    rawEmbedJson: string = txAdmin.discordBot.config.embedJson,
+    rawEmbedConfigJson: string = txAdmin.discordBot.config.embedConfigJson
+) => {
     //Parsing decoded JSONs
-    let embedConfigJson;
-    try {
-        embedConfigJson = JSON.parse(txAdmin.discordBot.config.embedConfigJson);
-        if (!(embedConfigJson instanceof Object)) throw new Error(`not an Object`);
-    } catch (error) {
-        throw new Error(`Embed Config JSON Error: ${(error as Error).message}`);
-    }
-
     let embedJson;
     try {
-        embedJson = JSON.parse(txAdmin.discordBot.config.embedJson);
+        embedJson = JSON.parse(rawEmbedJson);
         if (!(embedJson instanceof Object)) throw new Error(`not an Object`);
     } catch (error) {
         throw new Error(`Embed JSON Error: ${(error as Error).message}`);
+    }
+
+    let embedConfigJson;
+    try {
+        embedConfigJson = JSON.parse(rawEmbedConfigJson);
+        if (!(embedConfigJson instanceof Object)) throw new Error(`not an Object`);
+    } catch (error) {
+        throw new Error(`Embed Config JSON Error: ${(error as Error).message}`);
     }
 
     //Prepare placeholders
@@ -153,7 +157,7 @@ export const generateStatusMessage = (txAdmin: TxAdmin) => {
             for (const cfgButton of embedConfigJson.buttons) {
                 if (isValidButtonConfig(cfgButton)) {
                     buttons.push(new MessageButton({
-                        style: MessageButtonStyles.LINK,
+                        style: MessageButtonStyles.LINK as number,
                         label: processValue(cfgButton.label),
                         url: processValue(cfgButton.url),
                         emoji: (cfgButton.emoji !== undefined) ? cfgButton.emoji : undefined,

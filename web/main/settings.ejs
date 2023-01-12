@@ -1,5 +1,19 @@
 <%- await include('parts/header.ejs', locals) %>
 
+<!-- Page CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css" 
+    integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="css/codemirror_lucario.css">
+<style>
+    .cm-s-lucario{
+        font-size: 1.05rem !important;
+    }
+    .CodeMirror{
+        min-height: min(calc(100vh - 250px), 450px);
+    }
+</style>
+
 
 <div class="text-center mb-4">
     <h2>Settings</h2>
@@ -368,15 +382,32 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-statusMessage" class="col-sm-3 col-form-label">
-                                Status Command Message
+                            <label class="col-sm-3 col-form-label">
+                                Status Embed
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmDiscord-statusMessage" rows="3" class="form-control expandable-textarea" placeholder="**Join:** `connect cfx.re/join/xxxxxx`&#10;**Players:** &lt;players&gt;&#10;**Uptime:** &lt;uptime&gt;" <%= readOnly ? 'disabled' : '' %>><%= discord.statusMessage || '' %></textarea>
+                                <button
+                                    class="btn btn-sm btn-secondary"
+                                    type="submit"
+                                    id="frmDiscord-editStatusEmbedJsonBtn"
+                                    <%= readOnly ? 'disabled' : '' %>
+                                >
+                                    <i class="icon-pencil"></i> Change Embed JSON
+                                </button>
+                                <button
+                                    class="btn btn-sm btn-secondary"
+                                    type="submit"
+                                    id="frmDiscord-editStatusEmbedConfigJsonBtn"
+                                    <%= readOnly ? 'disabled' : '' %>
+                                >
+                                    <i class="icon-pencil"></i> Change Config JSON
+                                </button>
+                                <textarea id="frmDiscord-statusEmbedJson" class="d-none"><%= discord.embedJson || '' %></textarea>
+                                <textarea id="frmDiscord-statusEmbedConfigJson" class="d-none"><%= discord.embedConfigJson || '' %></textarea>
                                 <span class="form-text text-muted">
-                                    The response to the <code>/status</code> command. <br>
-                                    Supported placeholders: <code>players</code>, <code>port</code>, <code>uptime</code>.
+                                    The server status embed is customizable by editing the two JSONs above. <br>
+                                    <strong>Note:</strong> Use the command <code>/status add</code> on a channel that the bot has the "Send Message" permission to setup the embed.
                                 </span>
                             </div>
                         </div>
@@ -453,6 +484,45 @@
 
 
 <%- await include('parts/footer.ejs', locals) %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js" 
+    integrity="sha512-ZTpbCvmiv7Zt4rK0ltotRJVRaSBKFQHQTrwfs6DoYlBYzO1MA6Oz2WguC+LkV8pGiHraYLEpo7Paa+hoVbCfKw==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="js/codeEditor/mode/yaml.js"></script>
+<script src="js/codeEditor/autorefresh.js"></script>
+
+<!-- Submit Report modal -->
+<div class="modal fade" id="modJsonEditor" tabindex="-1" role="dialog" aria-labelledby="modJsonEditor-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: min(730px, calc(100% - 30px));">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modJsonEditor-title">JSON Editor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="modJsonEditor-infoBody">
+                    <p class="text-center">
+                        For information regarding the placeholders and how to customize the embed, refer to <a href="https://github.com/tabarra/txAdmin/blob/master/docs/status_embed.md" target="_blank" rel="noopener noreferrer">our docs</a>. <br>
+                        If you are having issue with the JSON formatting, you can use <a href="https://jsoneditoronline.org" id="modJsonEditor-externalEditorBtn" target="_blank" rel="noopener noreferrer">https://jsoneditoronline.org/</a>.
+                    </p>
+                    <textarea id="modJsonEditor-cmTarget" class="cms-s-lucario" name="code"></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer text-center">
+                <div class="mx-auto">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    &nbsp;
+                    &nbsp;
+                    <button type="button" class="btn btn-success" id="modJsonEditor-saveBtn">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>
@@ -617,14 +687,87 @@
 
 
     //============================================== Discord Settings
+    let jsonBeingEdited = false;
+    const discEls = {
+        modal: document.getElementById('modJsonEditor'),
+        title: document.getElementById('modJsonEditor-title'),
+        cmTarget: document.getElementById('modJsonEditor-cmTarget'),
+        externalEditorBtn: document.getElementById('modJsonEditor-externalEditorBtn'),
+        saveBtn: document.getElementById('modJsonEditor-saveBtn'),
+        embedJsonBtn: document.getElementById('frmDiscord-editStatusEmbedJsonBtn'),
+        embedJsonText: document.getElementById('frmDiscord-statusEmbedJson'),
+        embedConfigJsonBtn: document.getElementById('frmDiscord-editStatusEmbedConfigJsonBtn'),
+        embedConfigJsonText: document.getElementById('frmDiscord-statusEmbedConfigJson'),
+    }
+    const setJsonEditor = (jsonString) => {
+        if(window.CMInstance){
+            window.CMInstance.toTextArea();
+            window.CMInstance = null;
+        }
+        discEls.cmTarget.value = jsonString;
+        window.CMInstance = CodeMirror.fromTextArea(discEls.cmTarget, {
+            mode: "yaml", //couldn't find the json one
+            autoRefresh:true,
+            lineNumbers:true,
+            lineWrapping: true,
+            theme: "lucario"
+        });
+    }
+    
+    discEls.embedJsonBtn.addEventListener('click', (e) => {
+        discEls.title.textContent = 'Embed JSON Editor';
+        jsonBeingEdited = discEls.embedJsonText;
+        setJsonEditor(discEls.embedJsonText.value);
+        $('#modJsonEditor').modal('show');
+    });
+    discEls.embedConfigJsonBtn.addEventListener('click', (e) => {
+        discEls.title.textContent = 'Embed Config JSON Editor';
+        jsonBeingEdited = discEls.embedConfigJsonText;
+        setJsonEditor(discEls.embedConfigJsonText.value);
+        $('#modJsonEditor').modal('show');
+    });
+    discEls.saveBtn.addEventListener('click', (e) => {
+        if(jsonBeingEdited){
+            const editorData = window.CMInstance.getValue();
+            try {
+                const parsed = JSON.parse(editorData);
+            } catch (error) {
+                const notify = $.notify(
+                    {message: `<b>Invalid JSON:</b><br>${error.message}`}, 
+                    {type: 'danger'}
+                );
+                return;
+            }
+            jsonBeingEdited.value = window.CMInstance.getValue();
+            jsonBeingEdited = false;
+        }
+        $('#modJsonEditor').modal('hide');
+        window.CMInstance.toTextArea();
+        window.CMInstance = null;
+        discEls.cmTarget.value = '';
+    });
+    discEls.externalEditorBtn.addEventListener('click', (e) => {
+        if(!jsonBeingEdited) return;
+        const editorData = window.CMInstance.getValue();
+        const leftText = (jsonBeingEdited.id === 'frmDiscord-statusEmbedJson')
+            ? window.CMInstance.getValue()
+            : discEls.embedJsonText.value;
+        const rightText = (jsonBeingEdited.id === 'frmDiscord-statusEmbedConfigJson')
+            ? window.CMInstance.getValue()
+            : discEls.embedConfigJsonText.value;
+        const jsonEditorUrl = `https://jsoneditoronline.org/#left=json.${encodeURIComponent(leftText)}&right=json.${encodeURIComponent(rightText)}`;
+        discEls.externalEditorBtn.setAttribute('href', jsonEditorUrl);
+    });
+
     $('#frmDiscord-save').click(function () {
         let data = {
             enabled: ($('#frmDiscord-enabled').is(':checked') === true),
             token: $('#frmDiscord-token').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
-            statusMessage: $('#frmDiscord-statusMessage').val().trim(),
+            embedJson: discEls.embedJsonText.value.trim(),
+            embedConfigJson: discEls.embedConfigJsonText.value.trim(),
         };
-        if (data.enabled && (!data.token.length || !data.statusMessage.length)) {
+        if (data.enabled && (!data.token.length || !data.embedJson.length || !data.embedConfigJson.length)) {
             return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
