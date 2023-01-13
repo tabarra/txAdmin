@@ -310,6 +310,21 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-whitelistedDiscordRoles" class="col-sm-3 col-form-label">
+                                Whitelisted Roles
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmPlayerManager-whitelistedDiscordRoles" value="<%= playerDatabase.whitelistedDiscordRoles || '' %>"
+                                    placeholder="578102842909523978, 845330415191064617" <%= readOnly ? 'disabled' : '' %>>
+                                <span class="form-text text-muted">
+                                    The ID of the Discord roles that are whitelisted to join the server. <br>
+                                    This field supports multiple roles, separated by comma. <br>
+                                    <strong>Note:</strong> Requires the whitelist mode to be set to "Discord Guild Roles".
+                                </span>
+                            </div>
+                        </div>
+
                         <hr>
 
                         <div class="form-group row">
@@ -673,10 +688,11 @@
 
     //============================================== Player Manager Settings
     $('#frmPlayerManager-save').click(function () {
-        let data = {
-            onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
+        const data = {
             whitelistMode: $('#frmPlayerManager-whitelistMode').val(),
             whitelistRejectionMessage: $('#frmPlayerManager-whitelistRejectionMessage').val().trim(),
+            whitelistedDiscordRoles: $('#frmPlayerManager-whitelistedDiscordRoles').val().trim(),
+            onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
             banRejectionMessage: $('#frmPlayerManager-banRejectionMessage').val().trim(),
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});

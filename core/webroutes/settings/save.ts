@@ -188,6 +188,7 @@ async function handlePlayerDatabase(ctx: Context) {
         ctx.request.body,
         ctx.request.body.onJoinCheckBan,
         ctx.request.body.whitelistMode,
+        ctx.request.body.whitelistedDiscordRoles,
         ctx.request.body.whitelistRejectionMessage,
         ctx.request.body.banRejectionMessage,
     )) {
@@ -195,12 +196,31 @@ async function handlePlayerDatabase(ctx: Context) {
     }
 
     //Prepare body input
-    let cfg = {
+    const cfg = {
         onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
         whitelistMode: ctx.request.body.whitelistMode.trim(),
         whitelistRejectionMessage: ctx.request.body.whitelistRejectionMessage.trim(),
         banRejectionMessage: ctx.request.body.banRejectionMessage.trim(),
+        whitelistedDiscordRoles: ctx.request.body.whitelistedDiscordRoles
+            .split(',')
+            .map((x: string) => x.trim())
+            .filter((x: string) => x.length),
     };
+
+    //Validating Discord whitelisted roles
+    if(cfg.whitelistMode === 'guildRoles' && !cfg.whitelistedDiscordRoles.length){
+        return ctx.send({
+            type: 'danger',
+            message: 'The whitelisted roles field is required when the whitelist mode is set to Discord Guild Role'
+        });
+    }
+    const invalidRoleInputs = cfg.whitelistedDiscordRoles.filter((x: string) => !/^\d{7,20}$/.test(x));
+    if(invalidRoleInputs.length){
+        return ctx.send({
+            type: 'danger',
+            message: `The whitelist role(s) "${invalidRoleInputs.join(', ')}" do not appear to be valid`
+        });
+    }
 
     //Validating custom rejection messages
     if (cfg.whitelistRejectionMessage.length > 512) {
@@ -211,12 +231,13 @@ async function handlePlayerDatabase(ctx: Context) {
     }
 
     //Preparing & saving config
-    let newConfig = globals.configVault.getScopedStructure('playerDatabase');
+    const newConfig = globals.configVault.getScopedStructure('playerDatabase');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
     newConfig.whitelistMode = cfg.whitelistMode;
+    newConfig.whitelistedDiscordRoles = cfg.whitelistedDiscordRoles;
     newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
     newConfig.banRejectionMessage = cfg.banRejectionMessage;
-    let saveStatus = globals.configVault.saveProfile('playerDatabase', newConfig);
+    const saveStatus = globals.configVault.saveProfile('playerDatabase', newConfig);
 
     //Sending output
     if (saveStatus) {

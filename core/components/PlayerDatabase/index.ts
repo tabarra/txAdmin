@@ -22,6 +22,7 @@ export class DuplicateKeyError extends Error {
 type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     whitelistMode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
+    whitelistedDiscordRoles: string[];
     banRejectionMessage: string;
     whitelistRejectionMessage: string;
 }

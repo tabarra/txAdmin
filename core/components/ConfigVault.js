@@ -128,6 +128,7 @@ export default class ConfigVault {
             out.playerDatabase = {
                 onJoinCheckBan: toDefault(cfg.playerDatabase.onJoinCheckBan, true),
                 whitelistMode: toDefault(cfg.playerDatabase.whitelistMode, 'disabled'),
+                whitelistedDiscordRoles: toDefault(cfg.playerDatabase.whitelistedDiscordRoles, []),
                 whitelistRejectionMessage: toDefault(
                     cfg.playerDatabase.whitelistRejectionMessage,
                     'Please join http://discord.gg/example and request to be whitelisted.',
@@ -212,6 +213,7 @@ export default class ConfigVault {
                 ? true
                 : (cfg.playerDatabase.onJoinCheckBan === 'true' || cfg.playerDatabase.onJoinCheckBan === true);
             cfg.playerDatabase.whitelistMode = cfg.playerDatabase.whitelistMode || 'disabled';
+            cfg.playerDatabase.whitelistedDiscordRoles = cfg.playerDatabase.whitelistedDiscordRoles || [];
             cfg.playerDatabase.whitelistRejectionMessage = cfg.playerDatabase.whitelistRejectionMessage || '';
             cfg.playerDatabase.banRejectionMessage = cfg.playerDatabase.banRejectionMessage || '';
 

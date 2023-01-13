@@ -14,10 +14,10 @@
 - [x] bot: fix resolveMember()
 - [x] bot: add /whitelist command
 - [x] bot: add /info command
-- [ ] add new whitelist modes
+- [x] add new whitelist modes
     - [x] admin-only (#516)
     - [x] guild membership (#450)
-    - [ ] guild roles
+    - [x] guild roles
 - [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
 - [ ] Remove approved table from whitelist page?
 - [ ] the PR about hiding notifications
