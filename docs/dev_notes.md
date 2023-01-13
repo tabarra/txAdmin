@@ -16,11 +16,14 @@
 - [x] bot: add /info command
 - [ ] add new whitelist modes
     - [x] admin-only (#516)
-    - [ ] guild presence (#450)
-    - [ ] roles
+    - [x] guild membership (#450)
+    - [ ] guild roles
 - [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
 - [ ] Remove approved table from whitelist page?
 - [ ] the PR about hiding notifications
+- [ ] merge translations
+- [ ] remove `discord.*` from locale files
+
 
 
 teste:

@@ -1,9 +1,7 @@
 const modulename = 'DiscordBot';
 import Discord, { Client, Intents } from 'discord.js'; //djs v13
-// import Discord, { Client, IntentsBitField } from 'discord.js'; //v14
 import logger, { ogConsole } from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
-import { now } from '@core/extras/helpers';
 import TxAdmin from '@core/txAdmin';
 import slashCommands from './slash';
 import interactionCreateHandler from './interactionCreateHandler';
@@ -48,6 +46,7 @@ export default class DiscordBot {
     readonly cooldowns = new Map();
     #client: Client | undefined;
     guild: Discord.Guild | undefined;
+    guildName: string | undefined;
     announceChannel: Discord.TextBasedChannel | undefined;
 
 
@@ -195,6 +194,7 @@ export default class DiscordBot {
                     return sendError(`Discord bot could not resolve guild id ${this.config.guild}`);
                 }
                 this.guild = guild;
+                this.guildName = guild.name;
 
                 //Fetching announcements channel
                 if (this.config.announceChannel) {
@@ -237,10 +237,34 @@ export default class DiscordBot {
 
 
     /**
+     * Return if an ID is a guild member, and their roles
+     */
+    async resolveMemberRoles(uid: string) {
+        if (!this.config.enabled) throw new Error(`discord bot is disabled`);
+        if (!this.#client?.isReady()) throw new Error(`discord bot not ready yet`);
+        if (!this.guild) throw new Error(`guild not resolved`);
+
+        try {
+            const member = await this.guild.members.fetch(uid);
+            return {
+                isMember: true,
+                memberRoles: member.roles.cache.map((role) => role.id)
+            };
+        } catch (error) {
+            if ((error as any).httpStatus === 404) {
+                return { isMember: false }
+            } else {
+                throw error;
+            }
+        }
+    }
+
+
+    /**
      * Resolves a user by its discord identifier.
      * FIXME: add lru-cache
      */
-    async resolveMember(uid: string) {
+    async resolveMemberProfile(uid: string) {
         if (!this.#client?.isReady()) throw new Error(`discord bot not ready yet`);
         const avatarOptions: Discord.StaticImageURLOptions = { size: 64 };
 

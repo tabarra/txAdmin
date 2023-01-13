@@ -100,9 +100,18 @@ export default async function PlayerCheckJoin(ctx: Context) {
         }
 
         //Checking whitelist
-        if(playerDatabase.config.whitelistMode === 'adminOnly'){
+        if (playerDatabase.config.whitelistMode === 'adminOnly') {
             const result = await checkAdminOnlyMode(validIdsArray, validIdsObject, playerName);
             if (!result.allow) return sendTypedResp(result);
+
+        } else if (playerDatabase.config.whitelistMode === 'approvedLicense') {
+            const result = await checkApprovedLicense(validIdsArray, validIdsObject, playerName);
+            if (!result.allow) return sendTypedResp(result);
+
+        } else if (playerDatabase.config.whitelistMode === 'guildMember') {
+            const result = await checkGuildMember(validIdsArray, validIdsObject, playerName);
+            if (!result.allow) return sendTypedResp(result);
+
         }
 
         //If not blocked by ban/wl, allow join
@@ -193,7 +202,7 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
 
 
 /**
- * Checks if the player is whitelisted
+ * Checks if the player is an admin
  */
 async function checkAdminOnlyMode(
     validIdsArray: string[],
@@ -216,7 +225,7 @@ async function checkAdminOnlyMode(
 
     //Looking for admin
     const admin = adminVault.getAdminByIdentifiers(validIdsArray);
-    if(admin) return { allow: true };
+    if (admin) return { allow: true };
 
     //Prepare rejection message
     let customMessage = '';
@@ -233,7 +242,58 @@ async function checkAdminOnlyMode(
 
 
 /**
- * Checks if the player is whitelisted
+ * Checks if the player is a discord guild member
+ */
+async function checkGuildMember(
+    validIdsArray: string[],
+    validIdsObject: PlayerIdsObjectType,
+    playerName: string
+): Promise<AllowRespType | DenyRespType> {
+    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+    const discordBot = (globals.discordBot as DiscordBot);
+
+    //Check if discord id is available
+    if (!validIdsObject.discord) {
+        return {
+            allow: false,
+            reason: rejectMessageTemplate(
+                'This server is in <strong>Discord Guild Member Whitelist</strong> mode.',
+                'You do not have the <code>discord</code> identifier, which is required to validade if you have joined our Discord Guild. Please open Discord and try again.'
+            ),
+        }
+    }
+
+    //Resolving member
+    let errorTitle, errorMessage;
+    try {
+        const { isMember, memberRoles } = await discordBot.resolveMemberRoles(validIdsObject.discord);
+        if (isMember) {
+            return { allow: true };
+        }else{
+            errorTitle = `Discord Guild Member Whitelist is required to join this server.`;
+            errorMessage = `Please join <strong>${discordBot.guildName}</strong> the server then try again.`;
+        }
+    } catch (error) {
+        errorTitle = `Error validating Discord Guild Member Whitelist:`;
+        errorMessage = `<code>${(error as Error).message}</code>`;
+    }
+
+    //Prepare rejection message
+    let customMessage = '';
+    if (playerDatabase.config.whitelistRejectionMessage) {
+        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
+    }
+    const reason = rejectMessageTemplate(
+        errorTitle,
+        `${errorMessage} <br>
+        ${customMessage}`
+    );
+    return { allow: false, reason };
+}
+
+
+/**
+ * Checks if the player has a whitelisted license
  */
 async function checkApprovedLicense(
     validIdsArray: string[],
@@ -304,7 +364,7 @@ async function checkApprovedLicense(
     let discordTag, discordAvatar;
     if (validIdsObject.discord && discordBot.isClientReady) {
         try {
-            const { tag, avatar } = await discordBot.resolveMember(validIdsObject.discord);
+            const { tag, avatar } = await discordBot.resolveMemberProfile(validIdsObject.discord);
             discordTag = tag;
             discordAvatar = avatar;
         } catch (error) { }

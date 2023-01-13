@@ -66,7 +66,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
             : `${idType}:${idValue}`;
         if (idType === 'discord') {
             try {
-                const { tag, avatar } = await discordBot.resolveMember(idValue);
+                const { tag, avatar } = await discordBot.resolveMemberProfile(idValue);
                 playerName = tag;
                 playerAvatar = avatar;
             } catch (error) { }
