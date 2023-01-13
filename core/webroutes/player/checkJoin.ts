@@ -114,7 +114,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
 
         } else if (playerDatabase.config.whitelistMode === 'guildRoles') {
             const result = await checkGuildRoles(validIdsArray, validIdsObject, playerName);
-            if (!result.allow) return sendTypedResp(result);  
+            if (!result.allow) return sendTypedResp(result);
         }
 
         //If not blocked by ban/wl, allow join
@@ -272,7 +272,7 @@ async function checkGuildMember(
         const { isMember, memberRoles } = await discordBot.resolveMemberRoles(validIdsObject.discord);
         if (isMember) {
             return { allow: true };
-        }else{
+        } else {
             errorTitle = `Discord Guild Member Whitelist is required to join this server.`;
             errorMessage = `Please join the guild <strong>${discordBot.guildName}</strong> then try again.`;
         }
@@ -324,13 +324,13 @@ async function checkGuildRoles(
         if (isMember) {
             const matchingRole = playerDatabase.config.whitelistedDiscordRoles
                 .find((requiredRole) => memberRoles?.includes(requiredRole));
-            if(matchingRole){
+            if (matchingRole) {
                 return { allow: true };
-            }else{
+            } else {
                 errorTitle = `You do not have a whitelisted role required to join.`;
                 errorMessage = `Please join the guild <strong>${discordBot.guildName}</strong>, get one of the required roles, then try again.`;
             }
-        }else{
+        } else {
             errorTitle = `Discord Role Whitelist is required to join this server.`;
             errorMessage = `To join this server you are required to have at least one of the whitelisted roles on the guild <strong>${discordBot.guildName}</strong>.`;
         }

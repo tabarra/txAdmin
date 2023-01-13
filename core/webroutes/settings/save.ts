@@ -80,7 +80,7 @@ async function handleGlobal(ctx: Context) {
     try {
         globals.translator.getLanguagePhrases(cfg.language);
     } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>Language error:</strong> ${(error as Error).message}`});
+        return ctx.send({ type: 'danger', message: `<strong>Language error:</strong> ${(error as Error).message}` });
     }
 
     //Preparing & saving config
@@ -94,10 +94,10 @@ async function handleGlobal(ctx: Context) {
         globals.func_txAdminRefreshConfig()
         globals.translator.refreshConfig();
         ctx.utils.logAction('Changing global settings.');
-        return ctx.send({type: 'success', message: '<strong>Global configuration saved!</strong>'});
+        return ctx.send({ type: 'success', message: '<strong>Global configuration saved!</strong>' });
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing global settings.`);
-        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
 
@@ -141,7 +141,7 @@ async function handleFXServer(ctx: Context) {
         const msg = cfg.serverDataPath.includes('resources')
             ? 'The base must be the folder that contains the resources folder.'
             : (error as Error).message;
-        return ctx.send({type: 'danger', message: `<strong>Server Data Folder error:</strong> ${msg}`});
+        return ctx.send({ type: 'danger', message: `<strong>Server Data Folder error:</strong> ${msg}` });
     }
 
     //Validating CFG Path
@@ -152,7 +152,7 @@ async function handleFXServer(ctx: Context) {
             throw new Error('The path provided is not a file');
         }
     } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${(error as Error).message}`});
+        return ctx.send({ type: 'danger', message: `<strong>CFG Path error:</strong> ${(error as Error).message}` });
     }
 
     //Preparing & saving config
@@ -169,10 +169,10 @@ async function handleFXServer(ctx: Context) {
     if (saveStatus) {
         globals.fxRunner.refreshConfig();
         ctx.utils.logAction('Changing fxRunner settings.');
-        return ctx.send({type: 'success', message: '<strong>FXServer configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
+        return ctx.send({ type: 'success', message: '<strong>FXServer configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing fxRunner settings.`);
-        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
 
@@ -208,14 +208,14 @@ async function handlePlayerDatabase(ctx: Context) {
     };
 
     //Validating Discord whitelisted roles
-    if(cfg.whitelistMode === 'guildRoles' && !cfg.whitelistedDiscordRoles.length){
+    if (cfg.whitelistMode === 'guildRoles' && !cfg.whitelistedDiscordRoles.length) {
         return ctx.send({
             type: 'danger',
             message: 'The whitelisted roles field is required when the whitelist mode is set to Discord Guild Role'
         });
     }
     const invalidRoleInputs = cfg.whitelistedDiscordRoles.filter((x: string) => !/^\d{7,20}$/.test(x));
-    if(invalidRoleInputs.length){
+    if (invalidRoleInputs.length) {
         return ctx.send({
             type: 'danger',
             message: `The whitelist role(s) "${invalidRoleInputs.join(', ')}" do not appear to be valid`
@@ -224,10 +224,10 @@ async function handlePlayerDatabase(ctx: Context) {
 
     //Validating custom rejection messages
     if (cfg.whitelistRejectionMessage.length > 512) {
-        return ctx.send({type: 'danger', message: 'The whitelist rejection message must be less than 512 characters.'});
+        return ctx.send({ type: 'danger', message: 'The whitelist rejection message must be less than 512 characters.' });
     }
     if (cfg.banRejectionMessage.length > 512) {
-        return ctx.send({type: 'danger', message: 'The ban rejection message must be less than 512 characters.'});
+        return ctx.send({ type: 'danger', message: 'The ban rejection message must be less than 512 characters.' });
     }
 
     //Preparing & saving config
@@ -243,10 +243,10 @@ async function handlePlayerDatabase(ctx: Context) {
     if (saveStatus) {
         globals.playerDatabase.refreshConfig();
         ctx.utils.logAction('Changing Player Controller settings.');
-        return ctx.send({type: 'success', message: '<strong>Player Controller configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
+        return ctx.send({ type: 'success', message: '<strong>Player Controller configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing Player Controller settings.`);
-        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
 
@@ -278,7 +278,7 @@ async function handleMonitor(ctx: Context) {
     if (invalidRestartTimes.length) {
         let message = '<strong>The following entries were not recognized as valid 24h times:</strong><br>';
         message += invalidRestartTimes.join('<br>\n');
-        return ctx.send({type: 'danger', message: message});
+        return ctx.send({ type: 'danger', message: message });
     }
 
     //Preparing & saving config
@@ -293,10 +293,10 @@ async function handleMonitor(ctx: Context) {
         globals.healthMonitor.refreshConfig();
         globals.scheduler.refreshConfig();
         ctx.utils.logAction('Changing monitor settings.');
-        return ctx.send({type: 'success', message: '<strong>Monitor/Restarter configuration saved!</strong>'});
+        return ctx.send({ type: 'success', message: '<strong>Monitor/Restarter configuration saved!</strong>' });
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing monitor settings.`);
-        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
 
@@ -335,7 +335,7 @@ async function handleDiscord(ctx: Context) {
     try {
         generateStatusMessage(globals.txAdmin, cfg.embedJson, cfg.embedConfigJson);
     } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>Saving embed config failed:</strong> ${(error as Error).message}`});
+        return ctx.send({ type: 'danger', message: `<strong>Saving embed config failed:</strong> ${(error as Error).message}` });
     }
 
     //Preparing & saving config
@@ -358,12 +358,12 @@ async function handleDiscord(ctx: Context) {
                 message: '<strong>Discord configuration saved!</strong><br>\nIf <em>(and only if)</em> the status embed is not being updated, check the System Logs page and make sure there are no embed errors.'
             });
         } catch (error) {
-            return ctx.send({type: 'danger', message: `<strong>Error starting the bot:</strong> ${(error as Error).message}`});
+            return ctx.send({ type: 'danger', message: `<strong>Error starting the bot:</strong> ${(error as Error).message}` });
         }
-        
+
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing discordBot settings.`);
-        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
 
@@ -403,9 +403,9 @@ async function handleMenu(ctx: Context) {
         globals.config = globals.configVault.getScoped('global');
         globals.fxRunner.resetConvars();
         ctx.utils.logAction('Changing menu settings.');
-        return ctx.send({type: 'success', message: '<strong>Menu configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
+        return ctx.send({ type: 'success', message: '<strong>Menu configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing menu settings.`);
-        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }

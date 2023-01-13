@@ -23,8 +23,8 @@ export default class StatsCollector {
             playerCountFile: `${globals.info.serverProfilePath}/data/stats_playerCount_v1.json`,
             performance: {
                 resolution: 5,
-                // lenthCap: 288, //5*288 = 1440 = 1 day
-                lenthCap: 360, //5*360 = 30 hours
+                // lengthCap: 288, //5*288 = 1440 = 1 day
+                lengthCap: 360, //5*360 = 30 hours
             },
         };
         // this.playersBuffer = [];
