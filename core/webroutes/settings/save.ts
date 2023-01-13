@@ -187,7 +187,7 @@ async function handlePlayerDatabase(ctx: Context) {
     if (anyUndefined(
         ctx.request.body,
         ctx.request.body.onJoinCheckBan,
-        ctx.request.body.onJoinCheckWhitelist,
+        ctx.request.body.whitelistMode,
         ctx.request.body.whitelistRejectionMessage,
         ctx.request.body.banRejectionMessage,
     )) {
@@ -197,7 +197,7 @@ async function handlePlayerDatabase(ctx: Context) {
     //Prepare body input
     let cfg = {
         onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
-        onJoinCheckWhitelist: (ctx.request.body.onJoinCheckWhitelist === 'true'),
+        whitelistMode: ctx.request.body.whitelistMode.trim(),
         whitelistRejectionMessage: ctx.request.body.whitelistRejectionMessage.trim(),
         banRejectionMessage: ctx.request.body.banRejectionMessage.trim(),
     };
@@ -213,7 +213,7 @@ async function handlePlayerDatabase(ctx: Context) {
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('playerDatabase');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
-    newConfig.onJoinCheckWhitelist = cfg.onJoinCheckWhitelist;
+    newConfig.whitelistMode = cfg.whitelistMode;
     newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
     newConfig.banRejectionMessage = cfg.banRejectionMessage;
     let saveStatus = globals.configVault.saveProfile('playerDatabase', newConfig);

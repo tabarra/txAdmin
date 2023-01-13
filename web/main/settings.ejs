@@ -41,7 +41,10 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'playerManager' ? 'active' : '' %>" id="nav-playerManager-tab" data-toggle="tab" href="#nav-playerManager"
-                            role="tab" aria-controls="nav-playerManager" aria-selected="true">Player Manager</a>
+                            role="tab" aria-controls="nav-playerManager" aria-selected="true">
+                            Player Manager
+                            &nbsp; <span class="badge badge-danger">NEW</span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'discord' ? 'active' : '' %>" id="nav-discord-tab" data-toggle="tab" href="#nav-discord"
@@ -262,49 +265,33 @@
                     <!-- Player Manager Tab -->
                     <div class="tab-pane fade <%= activeTab === 'playerManager' ? 'active show' : '' %>" id="nav-playerManager" role="tabpanel" aria-labelledby="nav-playerManager-tab">
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Enable Banlist
+                            <label for="frmPlayerManager-whitelistMode" class="col-sm-3 col-form-label">
+                                Whitelist Mode
                             </label>
                             <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
-                                        <%= playerDatabase.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
-                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
-                                </label>
+                                <select class="form-control" id="frmPlayerManager-whitelistMode" <%= readOnly ? 'disabled' : '' %>>
+                                    <option value="disabled" <%= playerDatabase.whitelistMode === 'disabled' ? 'selected' : '' %>>Disabled</option>
+                                    <option value="adminOnly" <%= playerDatabase.whitelistMode === 'adminOnly' ? 'selected' : '' %>>Admin-only (maintenance mode)</option>
+                                    <option value="guildMember" <%= playerDatabase.whitelistMode === 'guildMember' ? 'selected' : '' %>>Discord Guild Member</option>
+                                    <option value="guildRoles" <%= playerDatabase.whitelistMode === 'guildRoles' ? 'selected' : '' %>>Discord Guild Roles</option>
+                                    <option value="approvedLicense" <%= playerDatabase.whitelistMode === 'license' ? 'selected' : '' %>>Approved License</option>
+                                </select>
                                 <span class="form-text text-muted">
-                                    Enable checking for <strong>Ban</strong> status on player join. <br>
-                                    Bans will not work if this option is disabled.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Enable Whitelist
-                            </label>
-                            <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckWhitelist"
-                                        <%= playerDatabase.onJoinCheckWhitelist || '' %> <%= readOnly ? 'disabled' : '' %>>
-                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    Enable checking for <strong>Whitelist</strong> status on player join. <br>
-                                    Whitelists will not work if this option is disabled.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="frmPlayerManager-banRejectionMessage" class="col-sm-3 col-form-label">
-                                Ban Custom <br>
-                                Rejection Message
-                            </label>
-                            <div class="col-sm-9">
-                                <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.banRejectionMessage || '' %></textarea>
-                                <span class="form-text text-muted">
-                                    Optional message to display to a player on the rejection message that shows when they try to connect while bein banned. <br>
-                                    If you have a ban appeal process, you can use this field to inform the players.
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Disabled:</strong> No whitelist status will be checked by txAdmin.
+                                    </p>
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Admin-only:</strong> Will only allow server join if your <code>fivem:</code> or <code>discord:</code> identifiers are attached to a txAdmin administrator. Also known as maintenance mode.
+                                    </p>
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Discord Guild Member:</strong> Checks if the player joining has a <code>discord:</code> identifier and is present in the Discord guild configured in the Discord Tab.
+                                    </p>
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Discord Guild Roles:</strong> Checks if the player joining has a <code>discord:</code> identifier and is present in the Discord guild configured in the Discord Tab and has at least one of the roles specified below.
+                                    </p>
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Approved License:</strong> The player <code>license:</code> identifier must be whitelisted by a txAdmin administrator. This can be done through the <a href="/whitelist">Whitelist page</a>, or the <code>/whitelist</code> Discord bot slash command.
+                                    </p>
                                 </span>
                             </div>
                         </div>
@@ -319,6 +306,39 @@
                                 <span class="form-text text-muted">
                                     Optional message to display to a player on the rejection message that shows when they try to connect while not being whitelisted. <br>
                                     If you have a Discord whitelisting process, you can put here links to your guild.
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Enable Ban Checking
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
+                                        <%= playerDatabase.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Enable checking for ban status on player join. <br>
+                                    <strong>Note:</strong> txAdmin bans will not work if this option is disabled.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-banRejectionMessage" class="col-sm-3 col-form-label">
+                                Ban Custom <br>
+                                Rejection Message
+                            </label>
+                            <div class="col-sm-9">
+                                <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.banRejectionMessage || '' %></textarea>
+                                <span class="form-text text-muted">
+                                    Optional message to display to a player on the rejection message that shows when they try to connect while bein banned. <br>
+                                    If you have a ban appeal process, you can use this field to inform the players.
                                 </span>
                             </div>
                         </div>
@@ -655,7 +675,7 @@
     $('#frmPlayerManager-save').click(function () {
         let data = {
             onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
-            onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
+            whitelistMode: $('#frmPlayerManager-whitelistMode').val(),
             whitelistRejectionMessage: $('#frmPlayerManager-whitelistRejectionMessage').val().trim(),
             banRejectionMessage: $('#frmPlayerManager-banRejectionMessage').val().trim(),
         }

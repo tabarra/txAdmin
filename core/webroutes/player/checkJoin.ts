@@ -12,6 +12,7 @@ import playerResolver from '@core/playerLogic/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import { Context } from 'koa';
 import DiscordBot from '@core/components/DiscordBot';
+import AdminVault from '@core/components/AdminVault';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -61,7 +62,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
     const sendTypedResp = (data: PlayerCheckJoinApiRespType) => ctx.send(data);
 
     //If checking not required at all
-    if (!playerDatabase.config.onJoinCheckBan && !playerDatabase.config.onJoinCheckWhitelist) {
+    if (!playerDatabase.config.onJoinCheckBan && playerDatabase.config.whitelistMode === 'disabled') {
         return sendTypedResp({ allow: true });
     }
 
@@ -98,15 +99,9 @@ export default async function PlayerCheckJoin(ctx: Context) {
             if (!result.allow) return sendTypedResp(result);
         }
 
-        // If discord whitelist enabled
-        //TODO: add here discord whitelisting, don't interact with the code below
-
-        // If admin-only mode enabled (#516)
-        //TODO: easy to do, just need to figure out the UI
-
-        // If whitelist checking enabled
-        if (playerDatabase.config.onJoinCheckWhitelist) {
-            const result = await checkWhitelist(validIdsArray, validIdsObject, playerName);
+        //Checking whitelist
+        if(playerDatabase.config.whitelistMode === 'adminOnly'){
+            const result = await checkAdminOnlyMode(validIdsArray, validIdsObject, playerName);
             if (!result.allow) return sendTypedResp(result);
         }
 
@@ -200,7 +195,47 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
 /**
  * Checks if the player is whitelisted
  */
-async function checkWhitelist(
+async function checkAdminOnlyMode(
+    validIdsArray: string[],
+    validIdsObject: PlayerIdsObjectType,
+    playerName: string
+): Promise<AllowRespType | DenyRespType> {
+    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+    const adminVault = (globals.adminVault as AdminVault);
+
+    //Check if fivem/discord ids are available
+    if (!validIdsObject.license && !validIdsObject.discord) {
+        return {
+            allow: false,
+            reason: rejectMessageTemplate(
+                'This server is in <strong>Admin-only</strong> mode.',
+                'You do not have <code>discord</code> or <code>fivem</code> identifiers, which is required to validade if you are a txAdmin administrator.'
+            ),
+        }
+    }
+
+    //Looking for admin
+    const admin = adminVault.getAdminByIdentifiers(validIdsArray);
+    if(admin) return { allow: true };
+
+    //Prepare rejection message
+    let customMessage = '';
+    if (playerDatabase.config.whitelistRejectionMessage) {
+        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
+    }
+    const reason = rejectMessageTemplate(
+        'This server is in <strong>Admin-only</strong> mode.',
+        `Your identifiers are not assigned to any txAdmin administrator. <br>
+        ${customMessage}`
+    );
+    return { allow: false, reason };
+}
+
+
+/**
+ * Checks if the player is whitelisted
+ */
+async function checkApprovedLicense(
     validIdsArray: string[],
     validIdsObject: PlayerIdsObjectType,
     playerName: string
