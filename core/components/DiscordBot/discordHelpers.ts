@@ -1,20 +1,24 @@
 const modulename = 'DiscordBot:cmd';
 import logger from '@core/extras/console.js';
 import TxAdmin from "@core/txAdmin";
-import { ColorResolvable, CommandInteraction, MessageEmbed } from "discord.js";
+import { ColorResolvable, CommandInteraction, EmbedBuilder, InteractionReplyOptions } from "discord.js";
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Generic embed generation functions
  */
-const genericEmbed = (msg: string, ephemeral = false, color?: ColorResolvable, emoji?: string) => {
+const genericEmbed = (
+    msg: string,
+    ephemeral = false,
+    color: ColorResolvable | null = null,
+    emoji?: string
+): InteractionReplyOptions => {
     return {
         ephemeral,
-        embeds: [new MessageEmbed({
-            color,
+        embeds: [new EmbedBuilder({
             description: emoji ? `:${emoji}: ${msg}` : msg,
-        })],
+        }).setColor(color)],
     }
 }
 

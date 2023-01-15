@@ -1,5 +1,5 @@
 const modulename = 'DiscordBot:interactionHandler';
-import { Interaction } from 'discord.js';
+import { Interaction, InteractionType } from 'discord.js';
 import TxAdmin from '@core/txAdmin.js';
 import logger, { ogConsole } from '@core/extras/console.js';
 import infoCommandHandler from './commands/info';
@@ -20,9 +20,9 @@ const handlers = {
 const noHandlerResponse = async (interaction: Interaction) => {
     if (interaction.isRepliable()) {
         //@ts-ignore
-        const identifier = interaction?.commandName ?? interaction?.customId;
+        const identifier = interaction?.commandName ?? interaction?.customId ?? 'unknown';
         await interaction.reply({
-            content: `No handler available for this interaction (${interaction.type} > ${identifier})`,
+            content: `No handler available for this interaction (${InteractionType[interaction.type]} > ${identifier})`,
             ephemeral: true,
         });
     }
@@ -30,12 +30,13 @@ const noHandlerResponse = async (interaction: Interaction) => {
 
 
 export default async (txAdmin: TxAdmin, interaction: Interaction) => {
-    //Handler filter
-    if (interaction.user.bot) return;
-
     //DEBUG
     // const copy = Object.assign(cloneDeep(interaction), { user: false, member: false });
-    // ogConsole.dir(copy)
+    // ogConsole.dir(copy);
+    // return;
+
+    //Handler filter
+    if (interaction.user.bot) return;
 
     //Process buttons
     if (interaction.isButton()) {
@@ -55,7 +56,7 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
     }
 
     //Process Slash commands
-    if (interaction.isCommand()) {
+    if (interaction.isChatInputCommand()) {
         //Get interaction
         const handler = handlers[interaction.commandName as keyof typeof handlers];
         if (!handler) {
@@ -70,7 +71,8 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
         } catch (error) {
             const msg = `Error executing ${interaction.commandName}: ${(error as Error).message}`;
             logError(msg);
-            return await interaction.reply(embedder.danger(msg, true));
+            await interaction.reply(embedder.danger(msg, true));
+            return ;
         }
     }
 

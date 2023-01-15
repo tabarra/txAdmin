@@ -1,12 +1,11 @@
 const modulename = 'DiscordBot';
-import Discord, { Client, Intents } from 'discord.js'; //djs v13
+import Discord, { ActivityType, ChannelType, Client, GatewayIntentBits } from 'discord.js';
 import logger, { ogConsole } from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData';
+import { verbose } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import slashCommands from './slash';
 import interactionCreateHandler from './interactionCreateHandler';
 import { generateStatusMessage } from './commands/status';
-// import commands from './commands';
 const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
 //Helpers
@@ -23,19 +22,23 @@ type DiscordBotConfigType = {
 export default class DiscordBot {
     readonly #txAdmin: TxAdmin;
     readonly #clientOptions: Discord.ClientOptions = {
-        intents: new Intents([
-            Intents.FLAGS.GUILDS,
-            Intents.FLAGS.GUILD_MEMBERS,
-        ]),
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMembers,
+        ],
         allowedMentions: {
             parse: ['users'],
             repliedUser: true,
         },
-        http: {
-            agent: {
-                localAddress: convars.forceInterface ? convars.forceInterface : undefined,
-            }
-        }
+        //FIXME: undici source address
+        // rest: {
+        //     agent: new Dispatcher()
+        // }
+        // http: {
+        //     agent: {
+        //         localAddress: convars.forceInterface ? convars.forceInterface : undefined,
+        //     }
+        // }
     }
     readonly usageStats = {
         addwl: 0,
@@ -106,12 +109,13 @@ export default class DiscordBot {
      * @param {string} message
      */
     async sendAnnouncement(message: string) {
+        if (!this.config.enabled) return;
         if (
             !this.config.announceChannel
             || !this.#client?.isReady()
             || !this.announceChannel
         ) {
-            if (verbose) logWarn('not ready yet', 'sendAnnouncement');
+            if (verbose) logWarn('not ready yet to send announcement');
             return false;
         }
 
@@ -128,7 +132,7 @@ export default class DiscordBot {
      */
     async updateStatus() {
         if (!this.#client?.isReady()) {
-            if (verbose) logWarn('not ready yet', 'updateStatus');
+            if (verbose) logWarn('not ready yet to update status');
             return false;
         }
 
@@ -138,9 +142,9 @@ export default class DiscordBot {
             const serverMaxClients = this.#txAdmin.persistentCache.get('fxsRuntime:maxClients') ?? '??';
             const serverName = this.#txAdmin.globalConfig.serverName;
             const message = `[${serverClients}/${serverMaxClients}] on ${serverName}`;
-            this.#client.user.setActivity(message, { type: 'PLAYING' });
+            this.#client.user.setActivity(message, { type: ActivityType.Playing });
         } catch (error) {
-            if (verbose) logWarn(`Failed to set bot activity: ${(error as Error).message}`, 'updateStatus');
+            if (verbose) logWarn(`Failed to set bot activity: ${(error as Error).message}`);
         }
 
         //Updating server status embed
@@ -150,12 +154,13 @@ export default class DiscordBot {
 
             if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
                 const oldChannel = await this.#client.channels.fetch(oldChannelId);
-                if (!oldChannel?.isText()) throw new Error(`oldChannel is not text-based`);
+                if (!oldChannel) throw new Error(`oldChannel could not be resolved`);
+                if (oldChannel.type !== ChannelType.GuildText) throw new Error(`oldChannel is not guild text channel`);
                 await oldChannel.messages.edit(oldMessageId, generateStatusMessage(this.#txAdmin));
             }
 
         } catch (error) {
-            if (verbose) logWarn(`Failed to update status embed: ${(error as Error).message}`, 'updateStatus');
+            if (verbose) logWarn(`Failed to update status embed: ${(error as Error).message}`);
         }
     }
 
@@ -201,8 +206,8 @@ export default class DiscordBot {
                     const fetchedChannel = this.#client.channels.cache.find((x) => x.id === this.config.announceChannel);
                     if (!fetchedChannel) {
                         return sendError(`Channel ${this.config.announceChannel} not found.`);
-                    } else if (!fetchedChannel.isText()) {
-                        return sendError(`Channel ${this.config.announceChannel} - ${fetchedChannel.name} is not a text channel.`);
+                    } else if (fetchedChannel.type !== ChannelType.GuildText) {
+                        return sendError(`Channel ${this.config.announceChannel} - ${(fetchedChannel as any)?.name} is not a text channel.`);
                     } else {
                         this.announceChannel = fetchedChannel;
                     }
@@ -225,6 +230,7 @@ export default class DiscordBot {
                 this.updateStatus().catch();
             });
             this.#client.on('interactionCreate', interactionCreateHandler.bind(null, this.#txAdmin));
+            //@ts-ignore
             this.#client.on('debug', logDebug);
 
             //Start bot
@@ -266,7 +272,7 @@ export default class DiscordBot {
      */
     async resolveMemberProfile(uid: string) {
         if (!this.#client?.isReady()) throw new Error(`discord bot not ready yet`);
-        const avatarOptions: Discord.StaticImageURLOptions = { size: 64 };
+        const avatarOptions: Discord.ImageURLOptions = { size: 64, forceStatic: true };
 
         //Check if in guild member
         if (this.guild) {

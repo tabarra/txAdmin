@@ -1,5 +1,5 @@
 const modulename = 'DiscordBot:cmd:info';
-import { CommandInteraction, EmbedFieldData, MessageEmbed, MessageEmbedOptions } from 'discord.js';
+import { APIEmbedField, CommandInteraction, EmbedBuilder, EmbedData } from 'discord.js';
 import logger, { ogConsole } from '@core/extras/console.js';
 import TxAdmin from '@core/txAdmin';
 import { parsePlayerId } from '@core/extras/helpers';
@@ -45,6 +45,7 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
 
     //Check for admininfo & permission
     let includeAdminInfo = false;
+    //@ts-ignore: somehow vscode is resolving interaction as CommandInteraction
     const adminInfoFlag = interaction.options.getBoolean('admininfo');
     if (adminInfoFlag) {
         const admin = txAdmin.adminVault.getAdminByProviderUID(interaction.user.id);
@@ -57,6 +58,7 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
 
     //Detect search identifier
     let searchId;
+    //@ts-ignore: somehow vscode is resolving interaction as CommandInteraction
     const subcommand = interaction.options.getSubcommand();
     if (subcommand === 'self') {
         const targetId = interaction.member?.user.id;
@@ -66,13 +68,14 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
         searchId = `discord:${targetId}`;
 
     } else if (subcommand === 'member') {
-        const member = interaction.options.getMember('member', true);
-        if (!('user' in member)) {
+        const member = interaction.options.getMember('member');
+        if(!member || !('user' in member)){
             return await interaction.reply(embedder.danger(`Failed to resolve member ID.`));
         }
         searchId = `discord:${member.user.id}`;
 
     } else if (subcommand === 'id') {
+        //@ts-ignore: somehow vscode is resolving interaction as CommandInteraction
         const input = interaction.options.getString('id', true).trim();
         if (!input.length) {
             return await interaction.reply(embedder.danger('Invalid identifier.'));
@@ -113,7 +116,7 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
         };
 
         //If admin query
-        let fields: EmbedFieldData[] | undefined;
+        let fields: APIEmbedField[] | undefined;
         if (includeAdminInfo) {
             //Counting bans/warns
             const actionHistory = player.getHistory();
@@ -145,14 +148,13 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
         const description = Object.entries(bodyText)
             .map(([label, value]) => `**• ${label}:** \`${value}\``)
             .join('\n')
-        const embedData: MessageEmbedOptions = {
-            color: '#4262e2',
+        const embedData: EmbedData = {
             title: player.displayName,
             fields,
             description,
             footer,
         };
-        embeds.push(new MessageEmbed(embedData));
+        embeds.push(new EmbedBuilder(embedData).setColor('#4262e2'));
     }
 
     //Send embeds :)

@@ -1,11 +1,10 @@
 const modulename = 'DiscordBot:cmd:status';
 import humanizeDuration from 'humanize-duration';
-import { BaseCommandInteraction, ColorResolvable, CommandInteraction, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
-import logger, { ogConsole } from '@core/extras/console.js';
+import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, ColorResolvable, EmbedBuilder } from 'discord.js';
+import logger from '@core/extras/console.js';
 import { txEnv } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import { cloneDeep } from 'lodash-es';
-import { MessageButtonStyles } from '../extractedEnums';
 import { embedder, ensurePermission, logDiscordAdminAction } from '../discordHelpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -136,7 +135,7 @@ export const generateStatusMessage = (
     //Attempting to instantiate embed class
     let embed;
     try {
-        embed = new MessageEmbed(processedEmbedData);
+        embed = new EmbedBuilder(processedEmbedData);
         embed.setColor(placeholders.statusColor as ColorResolvable);
         embed.setTimestamp();
         embed.setFooter({
@@ -149,7 +148,7 @@ export const generateStatusMessage = (
     }
 
     //Attempting to instantiate buttons
-    let buttons = [];
+    const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
     try {
         if (Array.isArray(embedConfigJson?.buttons)) {
             if (embedConfigJson.buttons.length > 5) {
@@ -157,8 +156,8 @@ export const generateStatusMessage = (
             }
             for (const cfgButton of embedConfigJson.buttons) {
                 if (isValidButtonConfig(cfgButton)) {
-                    buttons.push(new MessageButton({
-                        style: MessageButtonStyles.LINK as number,
+                    buttonsRow.addComponents(new ButtonBuilder({
+                        style: ButtonStyle.Link,
                         label: processValue(cfgButton.label),
                         url: processValue(cfgButton.url),
                         emoji: (cfgButton.emoji !== undefined) ? cfgButton.emoji : undefined,
@@ -174,26 +173,26 @@ export const generateStatusMessage = (
 
     return {
         embeds: [embed],
-        components: [new MessageActionRow({ components: buttons })]
+        components: [buttonsRow],
     };
 }
 
-export const removeOldEmbed = async (interaction: BaseCommandInteraction, txAdmin: TxAdmin) => {
+export const removeOldEmbed = async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin) => {
     const oldChannelId = txAdmin.persistentCache.get('discord:status:channelId');
     const oldMessageId = txAdmin.persistentCache.get('discord:status:messageId');
     if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
         const oldChannel = await interaction.client.channels.fetch(oldChannelId);
-        if (oldChannel?.isText()) {
+        if (oldChannel?.type === ChannelType.GuildText) {
             await oldChannel.messages.delete(oldMessageId);
         } else {
-            throw new Error(`oldChannel is not text-based`);
+            throw new Error(`oldChannel is not a guild text channel`);
         }
     } else {
         throw new Error(`no old message id saved, maybe was never sent, maybe it was removed`);
     }
 }
 
-export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
+export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin) => {
     //Check permissions
     const adminName = await ensurePermission(interaction, txAdmin, 'settings.write');
     if (typeof adminName !== 'string') return;
@@ -229,8 +228,8 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
 
     //Attempt to send new message
     try {
-        if (!interaction.channel?.isText()) throw new Error(`channel type not supported`);
-        const placeholderEmbed = new MessageEmbed({
+        if (interaction.channel?.type !== ChannelType.GuildText) throw new Error(`channel type not supported`);
+        const placeholderEmbed = new EmbedBuilder({
             description: '_placeholder message, attempting to edit with embed..._'
         })
         const newMessage = await interaction.channel.send({ embeds: [placeholderEmbed] });
@@ -245,5 +244,5 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
 
     const msg = `Status embed saved.`;
     logDiscordAdminAction(txAdmin, adminName, msg);
-    return await interaction.reply(embedder.success(msg));
+    return await interaction.reply(embedder.success(msg, true));
 }

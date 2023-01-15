@@ -1,6 +1,6 @@
 const modulename = 'DiscordBot:cmd:whitelist';
-import { CommandInteraction, StaticImageURLOptions } from 'discord.js';
-import logger from '@core/extras/console.js';
+import { CommandInteraction as ChatInputCommandInteraction, CommandInteraction, CommandInteractionOptionResolver, ImageURLOptions } from 'discord.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import TxAdmin from '@core/txAdmin';
 import { now } from '@core/extras/helpers';
 import { DuplicateKeyError } from '@core/components/PlayerDatabase';
@@ -11,15 +11,15 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 /**
  * Command /whitelist member <mention>
  */
-const handleMemberSubcommand = async (interaction: CommandInteraction, txAdmin: TxAdmin, adminName: string) => {
+const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin, adminName: string) => {
     //Preparing player id/name/avatar
-    const member = interaction.options.getMember('member', true);
-    if(!('user' in member)){
+    const member = interaction.options.getMember('member');
+    if(!member || !('user' in member)){
         return await interaction.reply(embedder.danger(`Failed to resolve member ID.`));
     }
     const identifier = `discord:${member.id}`;
     const playerName = `${member.nickname ?? member.user.username}#${member.user.discriminator}`;
-    const avatarOptions: StaticImageURLOptions = { size: 64 };
+    const avatarOptions: ImageURLOptions = { size: 64, forceStatic: true };
     const playerAvatar = member.displayAvatarURL(avatarOptions) ?? member.user.displayAvatarURL(avatarOptions);
 
     //Registering approval
@@ -44,7 +44,8 @@ const handleMemberSubcommand = async (interaction: CommandInteraction, txAdmin: 
 /**
  * Command /whitelist request <id>
  */
-const handleRequestSubcommand = async (interaction: CommandInteraction, txAdmin: TxAdmin, adminName: string) => {
+const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin, adminName: string) => {
+    //@ts-ignore: somehow vscode is resolving interaction as CommandInteraction
     const input = interaction.options.getString('id', true);
     const reqId = input.trim().toUpperCase();
     if (reqId.length !== 5 || reqId[0] !== 'R') {
@@ -90,11 +91,12 @@ const handleRequestSubcommand = async (interaction: CommandInteraction, txAdmin:
 /**
  * Handler for /whitelist
  */
-export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
+export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin) => {
     //Check permissions
     const adminName = await ensurePermission(interaction, txAdmin, 'players.whitelist');
     if (typeof adminName !== 'string') return;
 
+    //@ts-ignore: somehow vscode is resolving interaction as CommandInteraction
     const subcommand = interaction.options.getSubcommand();
     if (subcommand === 'member') {
         return await handleMemberSubcommand(interaction, txAdmin, adminName);
