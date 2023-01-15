@@ -26,7 +26,7 @@ export default async function FXServerControls(ctx) {
         ctx.utils.logCommand('RESTART SERVER');
         //TODO: delay override message logic should be on fxserver, but for now keep here
         // as it messages with the sync notification on the UI
-        if (globals.fxRunner.restartDelayOverride || globals.fxRunner.restartDelayOverride <= 4000) {
+        if (globals.fxRunner.restartDelayOverride && globals.fxRunner.restartDelayOverride <= 4000) {
             globals.fxRunner.restartServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username);
             return ctx.send({ type: 'success', message: `Restarting the fxserver with delay override ${globals.fxRunner.restartDelayOverride}.` });
         } else {
