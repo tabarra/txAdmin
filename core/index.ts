@@ -1,6 +1,6 @@
 import TxAdmin from './txAdmin';
 import logger from '@core/extras/console';
-import { txEnv } from './globalData';
+import { txEnv, convars } from './globalData';
 import checkPreRelease from '@core/extras/checkPreRelease';
 const { dir, log, logOk, logWarn, logError, setTTYTitle } = logger();
 
@@ -65,7 +65,10 @@ process.on('uncaughtException', function (err: Error) {
 process.on('exit', (_code) => {
     log('Stopping txAdmin');
 });
-// Error.stackTraceLimit = 25;
-// process.on('warning', (warning) => {
-//     dir(warning);
-// });
+Error.stackTraceLimit = 25;
+process.removeAllListeners('warning');
+process.on('warning', (warning) => {
+    if(warning.name !== 'ExperimentalWarning' || convars.isDevMode){
+        dir(warning);
+    }
+});
