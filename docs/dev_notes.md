@@ -23,7 +23,8 @@
 - [x] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
 - [x] chore(core): move admin action log() to logger
 - [x] Improve the message `[txAdmin] You do not have at least 1 valid identifier [...]`
-- [ ] CFG Editor: add hotkeys for search, comment, and restart sv
+- [x] CFG Editor: add hotkeys for search, comment, and restart sv
+- [x] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
 - [ ] the PR about hiding notifications
 - [ ] merge translations
 - [ ] remove `discord.*` from locale files

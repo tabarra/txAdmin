@@ -155,6 +155,7 @@ end
 
 -- Kicks a player
 local function handleKickEvent(eventData)
+    Wait(0) -- give other resources a chance to read player data
     DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
 end
 
@@ -171,6 +172,7 @@ end
 
 -- Ban player(s) via netid or identifiers
 local function handleBanEvent(eventData)
+    Wait(0) -- give other resources a chance to read player data
     local kickCount = 0
     for _, playerID in pairs(GetPlayers()) do
         local identifiers = GetPlayerIdentifiers(playerID)
