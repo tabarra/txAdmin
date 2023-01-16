@@ -76,8 +76,7 @@ export default class HealthMonitor {
         //Restart server
         this.isAwaitingRestart = true;
         const logMessage = `Restarting server (${reasonInternal}).`;
-        globals.logger.admin.write(`[MONITOR] ${logMessage}`);
-        logWarn(logMessage);
+        globals.logger.admin.write('MONITOR', logMessage);
         globals.fxRunner.restartServer(reasonTranslated, null);
     }
 
@@ -133,7 +132,7 @@ export default class HealthMonitor {
                 if (convars.deployerDefaults?.maxClients && maxClients > convars.deployerDefaults.maxClients) {
                     globals.fxRunner.srvCmd(`sv_maxclients ${convars.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
                     logError(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
-                    globals.logger.admin.write(`[SYSTEM] changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
+                    globals.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
                 }
             }
         }

@@ -222,8 +222,7 @@ export default class Scheduler {
 
         //Restart server
         const logMessage = `Restarting server (${reasonInternal}).`;
-        globals.logger.admin.write(`[SCHEDULER] ${logMessage}`);
+        globals.logger.admin.write('SCHEDULER', logMessage);
         globals.fxRunner.restartServer(reasonTranslated, null);
-        logWarn(logMessage);
     }
 };

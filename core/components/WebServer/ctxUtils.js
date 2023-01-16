@@ -143,8 +143,7 @@ async function renderLoginView(data, txVars) {
  * @param {string} data
  */
 function logCommand(ctx, data) {
-    log(`${ctx.session.auth.username} executing: ` + chalk.inverse(' ' + data + ' '));
-    globals.logger.admin.write(`[${ctx.session.auth.username}] ${data}`);
+    globals.logger.admin.write(ctx.session.auth.username, data, 'command');
 }
 
 
@@ -152,12 +151,11 @@ function logCommand(ctx, data) {
 /**
  * Logs an action to the console and the action logger
  * @param {object} ctx
- * @param {string} data
+ * @param {string} action
  */
-function logAction(ctx, data) {
+function logAction(ctx, action) {
     const sess = ctx.nuiSession ?? ctx.session;
-    log(`[${sess.auth.username}] ${data}`);
-    globals.logger.admin.write(`[${sess.auth.username}] ${data}`);
+    globals.logger.admin.write(sess.auth.username, action);
 }
 
 

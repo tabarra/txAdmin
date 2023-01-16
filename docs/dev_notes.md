@@ -21,6 +21,7 @@
 - [x] bot: update AGAIN to djs v14
 - [x] fix `Restarting the fxserver with delay override 0.`
 - [x] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
+- [x] chore(core): move admin action log() to logger
 - [ ] Remove approved table from whitelist page?
 - [ ] the PR about hiding notifications
 - [ ] merge translations

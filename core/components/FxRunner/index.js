@@ -450,8 +450,7 @@ export default class FXRunner {
      * @param {string} command
      */
     liveConsoleCmdHandler(session, command) {
-        log(`${session.auth.username} executing ` + chalk.inverse(' ' + command + ' '), 'SocketIO');
-        globals.logger.admin.write(`[${session.auth.username}] ${command}`);
+        globals.logger.admin.write(session.auth.username, command, 'command');
         globals.fxRunner.srvCmd(command);
     }
 
