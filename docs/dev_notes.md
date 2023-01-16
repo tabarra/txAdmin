@@ -22,7 +22,8 @@
 - [x] fix `Restarting the fxserver with delay override 0.`
 - [x] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
 - [x] chore(core): move admin action log() to logger
-- [ ] Remove approved table from whitelist page?
+- [x] Improve the message `[txAdmin] You do not have at least 1 valid identifier [...]`
+- [ ] CFG Editor: add hotkeys for search, comment, and restart sv
 - [ ] the PR about hiding notifications
 - [ ] merge translations
 - [ ] remove `discord.*` from locale files

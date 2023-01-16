@@ -306,28 +306,28 @@ function handleConnections(name, setKickReason, d)
             playerName = name
         }
         if #exData.playerIds <= 1 then
-            d.done("[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg")
+            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, which you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
             return
         end
 
         --Attempt to validate the user
-        d.update("[txAdmin] Checking banlist/whitelist... (0/10)")
+        d.update("\n[txAdmin] Checking banlist/whitelist... (0/10)")
         CreateThread(function()
             local attempts = 0
             local isDone = false;
             --Do 10 attempts
             while isDone == false and attempts < 10 do
                 attempts = attempts + 1
-                d.update("[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
+                d.update("\n[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
                 PerformHttpRequest(url, function(httpCode, rawData, resultHeaders)
                     -- Validating response
                     local respStr = tostring(rawData)
                     if httpCode ~= 200 then
-                        logError("[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
+                        logError("\n[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
                     end
                     local respObj = json.decode(respStr)
                     if not respObj or type(respObj.allow) ~= "boolean" then
-                        logError("[txAdmin] Checking banlist/whitelist failed with invalid response: "..respStr)
+                        logError("\n[txAdmin] Checking banlist/whitelist failed with invalid response: "..respStr)
                     end
                     
                     if respObj.allow == true then
@@ -337,7 +337,7 @@ function handleConnections(name, setKickReason, d)
                         end
                     else 
                         if not isDone then
-                            local reason = respObj.reason or "[txAdmin] no reason provided"
+                            local reason = respObj.reason or "\n[txAdmin] no reason provided"
                             d.done("\n"..reason)
                             isDone = true
                         end
@@ -348,7 +348,7 @@ function handleConnections(name, setKickReason, d)
 
             --Block client if failed
             if not isDone then
-                d.done('[txAdmin] Failed to validate your banlist/whitelist status. Try again later.')
+                d.done("\n[txAdmin] Failed to validate your banlist/whitelist status. Try again later.")
                 isDone = true
             end
         end)
