@@ -12,6 +12,36 @@
     .CodeMirror{
         min-height: min(calc(100vh - 250px), 450px);
     }
+
+    /* https://codemirror.net/5/addon/dialog/dialog.css */
+    .CodeMirror-dialog {
+        position: absolute;
+        left: 0; right: 0;
+        background: inherit;
+        z-index: 15;
+        padding: .1em .8em;
+        overflow: hidden;
+        color: inherit;
+    }
+    .CodeMirror-dialog-top {
+        border-bottom: 1px solid #eee;
+        top: 0;
+    }
+    .CodeMirror-dialog-bottom {
+        border-top: 1px solid #eee;
+        bottom: 0;
+    }
+    .CodeMirror-dialog input {
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 20em;
+        color: inherit;
+        font-family: monospace;
+    }
+    .CodeMirror-dialog button {
+        font-size: 70%;
+    }
 </style>
 
 
@@ -545,6 +575,9 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="js/codeEditor/mode/yaml.js"></script>
 <script src="js/codeEditor/autorefresh.js"></script>
+<script src="js/codeEditor/searchcursor.js"></script>
+<script src="js/codeEditor/dialog.js"></script>
+<script src="js/codeEditor/search.js"></script>
 
 <!-- Submit Report modal -->
 <div class="modal fade" id="modJsonEditor" tabindex="-1" role="dialog" aria-labelledby="modJsonEditor-title" aria-hidden="true">
