@@ -20,7 +20,7 @@
     - [x] guild roles
 - [x] bot: update AGAIN to djs v14
 - [x] fix `Restarting the fxserver with delay override 0.`
-- [ ] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
+- [x] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
 - [ ] Remove approved table from whitelist page?
 - [ ] the PR about hiding notifications
 - [ ] merge translations
