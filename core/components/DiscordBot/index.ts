@@ -30,10 +30,7 @@ export default class DiscordBot {
             parse: ['users'],
             repliedUser: true,
         },
-        //FIXME: undici source address
-        // rest: {
-        //     agent: new Dispatcher()
-        // }
+        //FIXME: fixme
         // http: {
         //     agent: {
         //         localAddress: convars.forceInterface ? convars.forceInterface : undefined,
@@ -257,7 +254,8 @@ export default class DiscordBot {
                 memberRoles: member.roles.cache.map((role) => role.id)
             };
         } catch (error) {
-            if ((error as any).httpStatus === 404) {
+            //https://discord.com/developers/docs/topics/opcodes-and-status-codes
+            if ((error as any).code === 10007) {
                 return { isMember: false }
             } else {
                 throw error;

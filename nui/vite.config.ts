@@ -13,7 +13,7 @@ const baseConfig = {
         reportCompressedSize: false,
         outDir: '../dist/nui',
         minify: true,
-        target: 'chrome91',
+        target: 'chrome103',
         sourcemap: false,
 
         //Doing this because fxserver's cicd doesn't wipe the dist folder

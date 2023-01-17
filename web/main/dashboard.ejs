@@ -323,7 +323,7 @@
             if(Array.isArray(parsedPerfData)){
                 perfData = parsedPerfData;
                 const medianPlayers = d3.median(perfData, x => x.clients);
-                if(medianPlayers > 80){
+                if(medianPlayers > 95){
                     document.getElementById('tsMedianPlayerCount').textContent = medianPlayers.toFixed(0);
                     document.getElementById('tsMessage').classList.remove('d-none');
                 }

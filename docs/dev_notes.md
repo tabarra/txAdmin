@@ -31,13 +31,59 @@
 - [x] set nui/vite.config.ts > target > chrome103
 - [x] checkJoin: add messages to locale files
 - [x] checkJoin: customMessage `\n` to `<br>`
+- [ ] fix cfx.re login match by admin id
 - [ ] bot: change settings page description
 - [ ] update readme with new features
 - [ ] fix broken runtime stats
+- [ ] stats: 
+    - [ ] fix broken runtime stats
+    - [ ] add recipe name
+    - [ ] if ptero
+    - [ ] how many scheduled restart times
+    - [ ] drop zap/discord as login methods
+    - [ ] HWID: `count, q1, q25, q50, q75, q99`.
+    - [ ] jwe
 
+
+
+# Next up:
+- [ ] add superjump
 - [ ] the PR about hiding notifications
+- [ ] wav for announcements
 - [ ] bot: fix http agent options for localAddress
 - [ ] bot: add rate limit events to diagnostics page
+- [ ] change dashboard median player message
+    - top 1000: "your server seems to be in top 1000, join and type /server to track your progress"
+    - top 500: "you might be in top 500, join discord and see if you are eligible for the role"
+
+```lua
+--Superjump
+CreateThread(function()
+  local Wait = Wait
+  local id = PlayerId()
+  while true do
+    SetSuperJumpThisFrame(id)
+    Wait(0)
+  end
+end)
+```
+
+===================
+### MUI update
+5.10.17 ok
+5.11.0 broken
+To test it, remove the `^`
+rm -rf node_modules/; npm i; npm list @mui/material; npm run dev:menu:game
+===================
+
+
+### Server resource scanner
+ScanResourceRoot('C:/whatever/resources/', data => {
+    const fs = require('fs');
+    fs.writeFileSync('L:/tmp/ugh.json', JSON.stringify(data));
+})
+
+
 
 
 
@@ -48,14 +94,13 @@ teste:
     dar join
     apertar f1 e ver se aparece a mensagem de perms
 
-After v5.0.0 release:
+# TODO: sooner than later
 - [ ] server logger add events/min average
-- [ ] add stats for HWID: `count, q1, q25, q50, q75, q99`. Result will only be valid for servers with netid over 1k but that's fine
 - [ ] add lru-cache to `DiscordBot.resolveMember()`
 
 - [ ] no duplicated id type in bans? preparing for the new db migration
-- [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
 - [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
+- [ ] create events for dynamic scheduled restarts
 - [ ] create new whitelist events
     - [ ] whitelistPlayer:
         - license: xxxxx
@@ -71,19 +116,9 @@ After v5.0.0 release:
         - requestId: Rxxxx
         - license: xxxxxx
 - [ ] mock out insights page (assets + http reqs)
-- [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
 - [ ] At the schedule restart input prompt, add a note saying what is the current server time
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Behare that this is not trivial without also turning missing exec target read error also being error
-- [ ] create events for dynamic scheduled restarts
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
-- [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
-
-
-Optional:
-- [ ] fix cfx.re login match by admin id
-- [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
-- [ ] stats: jwe
-- [ ] set nui/vite.config.ts > target > chrome103
 
 
 ----------------------------------------------------
@@ -205,6 +240,9 @@ process.exit();
 
 
 ## New config
+- 2023 acho que os defaults deveriam existir dentro dos components
+e sempre que outro componente precisar saber uma config, deve passar pelo componente
+
 - do research, but i think we don't need any lib
 - break up cfg files into `txData/<profile>/global.txcfg` and `txData/<profile>/server.txcfg`
 - cfg file format is
@@ -269,7 +307,6 @@ Up next-ish:
     - [ ] Update `development.md`
 - [ ] checar se outros resources conseguem chamar 'txaLogger:menuEvent'?
 - [ ] add ram usage to perf chart?
-- [ ] wav for announcements
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
 - [ ] replace all fxRunner.srvCmd* and only expose:
@@ -277,6 +314,10 @@ Up next-ish:
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
 - [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
 - [ ] after menu client messages rework, add lua54
+- [ ] add an fxserver changelog page
+- [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
+- [ ] maybe remove the sv_maxclients enforcement in the cfg file
+- [ ] fix the interface enforcement without port being set as zap server?
 
 
 ### Randoms:
@@ -381,16 +422,6 @@ Update event idea (not yet greenlit):
 - 1 hour after the event start it will become a red update box with generic message, or blue if it's just a patch;
 - Note: regarding the changelog part, bubble asked me to ignore for now (may/13) but will talk again somewhen;
 
-
-### Superjump
-CreateThread(function()
-  local Wait = Wait
-  local id = PlayerId()
-  while true do
-    SetSuperJumpThisFrame(id)
-    Wait(0)
-  end
-end)
 
 
 ### TP:
@@ -518,64 +549,6 @@ https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
 
 
 
-=======================================
-
-Small Stuff:
-- [ ] try json stream on lowdb
-- [ ] block execution if GetCurrentResourceName() != 'monitor'
-- [ ] player modal must show if the user is banned/whitelisted or not, and an easy way to revoke it
-- [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
-- [ ] on recipe import, check if indexOf('<html>')
-- [ ] enable squirrelly file caching via `renderFile()`
-- [ ] make the commands (kick, warn, etc) return success or danger, then edit DialogActionView.tsx
-    - can be done by adding a randid to the command, then making the cmdBuffer match for `<id><OK|NOK>` 
-
-- [ ] break `playerController` actions stuff to another file
-- [ ] if isZapHosting && forceInterface, add `set sv_listingIPOverride "xxx.xxx.xxx.xxx"` in deployer
-- [ ] maybe remove the sv_maxclients enforcement in the cfg file
-- [ ] fix the interface enforcement without port being set as zap server?
-
-
-> ASAP!:
-- [ ] a way to create admins file without cfx.re 
-- [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
-    - Manual Approval (default)
-    - Discord: be in guild
-    - Discord: have a role in guild
-- [ ] persistent discord status message that is set up by `/statusfixed`:
-    - this will trigger a big status message to be sent in that channel
-    - this message id can be stored in the config file
-    - if discord id is present, use that instead of name (careful with the pings!)
-- [ ] (really needed?) ignore key bindings commands https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446
-- [ ] add custom event for broadcast
-
-
-> Hopefully now:
-- [ ] check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] create `admin.useroptions` for dark mode, welcome modals and such
-
-> Soon™ (hopefully the next update)
-- [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
-- [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
-- [ ] add new hardware bans
-- [ ] add stats enc?
-- [ ] apply the new action log html to the modal
-- [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
-- [ ] add ban/whitelist fxs-side cache (last 1000 bans + 1000 whitelists), automatically updated
-    - before starting the server, get last 1k bans/whitelists and write to a json file
-    - quen monitor starts, it will read the file and load to memory
-    - start sending the affected identifiers for the events `txAdmin:events:*` whitelisted, banned, and create a new for action revoked (type, action id).
-    - monitor listens to the event, and when it happens either add it to the cache, or erase from cache
-- [ ] add a commend system?
-- [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
-
-> Soon™® (hopefully in two months or so)
-- [ ] tweak dashboard update checker behavior
-- [ ] add an fxserver changelog page
-- [ ] Social auth provider setup retry every 15 seconds
-- [ ] show error when saving discord settings with wrong token
-- [ ] break down `playerController` into separate files even more
-- [ ] rename `playerController` to `playerManager`?
 
 =======================================
 
@@ -610,29 +583,6 @@ Message from bubble:
 > - use spectate native
 > and when stopping spectating do the opposite of that
 
-
-
-=======================================
-
-## Bot Commands:
-https://www.npmjs.com/package/eris - avarianknight recommended
-
-DONE:
-/addwl <wl req id>
-/addwl <license>
-
-TODO: Bot commands (in dev order):
-/kick <mention>
-/log <mention> - shows the last 5 log entries for an discord identifier (make it clear its only looking for the ID)
-/ban <mention> <time> <reason>
-/unban <ban-id>
-
-/info - shows your info like join date and play time
-/info <mention> - shows someone else's info
-/addwl <mention>
-/removewl <mention>
-
-=======================================
 
 ## References
 
