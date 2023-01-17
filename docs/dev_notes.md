@@ -31,7 +31,7 @@
 - [x] set nui/vite.config.ts > target > chrome103
 - [x] checkJoin: add messages to locale files
 - [x] checkJoin: customMessage `\n` to `<br>`
-- [ ] fix cfx.re login match by admin id
+- [x] fix(core): cfx.re login match by admin id instead of name
 - [ ] bot: change settings page description
 - [ ] update readme with new features
 - [ ] fix broken runtime stats

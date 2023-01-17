@@ -160,14 +160,14 @@ export const authLogic = (sess, perm, epType) => {
                 let admin = globals.adminVault.getAdminByName(sess.auth.username);
                 if (admin) {
                     if (
-                        typeof sess.auth.password_hash == 'string'
-                        && admin.password_hash == sess.auth.password_hash
+                        typeof sess.auth.password_hash === 'string'
+                        && admin.password_hash === sess.auth.password_hash
                     ) {
                         isValidAuth = true;
                     } else if (
-                        typeof sess.auth.provider == 'string'
-                        && typeof admin.providers[sess.auth.provider] == 'object'
-                        && sess.auth.provider_uid == admin.providers[sess.auth.provider].id
+                        typeof sess.auth.provider === 'string'
+                        && typeof admin.providers[sess.auth.provider] === 'object'
+                        && sess.auth.provider_identifier === admin.providers[sess.auth.provider].identifier
                     ) {
                         isValidAuth = true;
                     }

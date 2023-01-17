@@ -1,6 +1,6 @@
 const modulename = 'WebServer:ProviderCallback';
 import crypto from 'node:crypto';
-import logger from '@core/extras/console.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -102,7 +102,7 @@ export default async function ProviderCallback(ctx) {
 
     //Check & Login user
     try {
-        const admin = globals.adminVault.getAdminByProviderUID(userInfo.name);
+        const admin = globals.adminVault.getAdminByIdentifiers([identifier]);
         if (!admin) {
             ctx.session.auth = {};
             return returnJustMessage(
@@ -113,7 +113,7 @@ export default async function ProviderCallback(ctx) {
         }
 
         //Setting session
-        ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo);
+        ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo, identifier);
         ctx.session.auth.username = admin.name;
 
         //Save the updated provider identifier & data to the admins file
