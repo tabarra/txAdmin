@@ -27,16 +27,39 @@
             "note_multiple_bans": "Nota: você tem mais de um ban ativo em seus ids."
         }
     },
+    "whitelist_messages": {
+        "admin_only": {
+            "mode_title": "Este esrvidor está em modo <strong>Manutenção</strong>.",
+            "insufficient_ids": "Você não tem um ID <code>discord</code> ou <code>fivem</code>, e é necessário ter ao menos um deles para validar se você é um administrador.",
+            "deny_message": "Seus IDs não estão associados a nenhum administrador."
+        },
+        "guild_member": {
+            "mode_title": "Este esrvidor está em modo <strong>Whitelist por Discord</strong>.",
+            "insufficient_ids": "Você não tem um ID <code>discord</code>, que é necessário para validar se você entrou no nosso Discord. Por favor abra o Discord e tente novamente.",
+            "deny_title": "Você precisa entrar em nosso Discord para poder se conectar.",
+            "deny_message": "Por favor entre no %{guildname} e tente novamente."
+        },
+        "guild_roles": {
+            "mode_title": "Este esrvidor está em modo <strong>Whitelist por grupo de Discord</strong>.",
+            "insufficient_ids": "Você não tem um ID <code>discord</code>, que é necessário para validar se você entrou no nosso Discord. Por favor abra o Discord e tente novamente.",
+            "deny_notmember_title": "Você precisa entrar em nosso Discord para poder se conectar.",
+            "deny_notmember_message": "Por favor entre no %{guildname}, adquira um dos grupos necessários e tente novamente.",
+            "deny_noroles_title": "Você não tem um dos grupos de Discord necessários para se conectar.",
+            "deny_noroles_message": "Para se conectar, você precisa ter pelo menos um dos grupos de whitelist no servidor do Discord %{guildname}."
+        },
+        "approved_license": {
+            "mode_title": "Este esrvidor está em modo <strong>Whitelist por Licença</strong>.",
+            "insufficient_ids": "Você não tem o ID <code>license</code>, o que significa que o servidor habilitou <code>sv_lan</code>. Se você é o dono do servidor, você pode desabilitar este modo modificando o <code>server.cfg</code>.",
+            "deny_title": "Você não foi aprovado(a) para entrar neste servidor.",
+            "request_id_label": "ID de Requisição"
+        }
+    },
     "server_actions": {
         "restarting": "Servidor reiniciando (%{reason}).",
         "restarting_discord": "**%{servername}** está reiniciando (%{reason}).",
         "stopping": "Servidor desligando (%{reason}).",
         "stopping_discord": "**%{servername}** está desligando (%{reason}).",
         "spawning_discord": "**%{servername}** está iniciando."
-    },
-    "discord": {
-        "status_online": "**%{servername}** está **Online**!",
-        "status_offline": "**%{servername}** está **Offline**!"
     },
     "nui_warning": {
         "title": "ADVERTÊNCIA",

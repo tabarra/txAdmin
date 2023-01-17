@@ -25,9 +25,17 @@
 - [x] Improve the message `[txAdmin] You do not have at least 1 valid identifier [...]`
 - [x] CFG Editor: add hotkeys for search, comment, and restart sv
 - [x] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
+- [x] merge translations
+- [x] remove `discord.*` from locale files
+- [x] adjust the message that shows when deployer step 3 has no server.cfg to read
+- [x] set nui/vite.config.ts > target > chrome103
+- [x] checkJoin: add messages to locale files
+- [x] checkJoin: customMessage `\n` to `<br>`
+- [ ] bot: change settings page description
+- [ ] update readme with new features
+- [ ] fix broken runtime stats
+
 - [ ] the PR about hiding notifications
-- [ ] merge translations
-- [ ] remove `discord.*` from locale files
 - [ ] bot: fix http agent options for localAddress
 - [ ] bot: add rate limit events to diagnostics page
 

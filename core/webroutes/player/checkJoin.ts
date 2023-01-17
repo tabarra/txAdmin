@@ -17,7 +17,13 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
 //Helper
+const htmlCodeTag = '<code style="background-color: hsl(202deg 40% 66% / 35%); padding: 2px 2px; border-radius: 4px;">';
+const htmlCodeIdTag = '<code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">';
+const htmlGuildNameTag = '<strong style="color: cornflowerblue">';
 const rejectMessageTemplate = (title: string, content: string) => {
+    content = content.replaceAll('<code>', htmlCodeTag);
+    content = content.replaceAll('<codeid>', htmlCodeIdTag).replaceAll('</codeid>', '</code>');
+    content = content.replaceAll('<guildname>', htmlGuildNameTag).replaceAll('</guildname>', '</strong>');
     return `
     <div style="
         background-color: rgba(30, 30, 30, 0.5);
@@ -36,9 +42,14 @@ const rejectMessageTemplate = (title: string, content: string) => {
             position: absolute;
             right: 15px;
             bottom: 15px;
-            opacity: 65%;
+            opacity: 25%;
         ">
     </div>`.replaceAll(/[\r\n]/g, '');
+}
+
+const prepCustomMessage = (msg: string) => {
+    if(!msg) return '';
+    return '<br>' + msg.trim().replaceAll(/\n/g, '<br>');
 }
 
 //Resp Type
@@ -181,19 +192,14 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
         )
         const note = (activeBans.length > 1) ? `<br>${textKeys.note_multiple_bans}` : '';
 
-        let customMessage = '';
-        if (playerDatabase.config.banRejectionMessage) {
-            customMessage = `<br>${playerDatabase.config.banRejectionMessage.trim()}`;
-        }
-
         const reason = rejectMessageTemplate(
             title,
             `${expLine}
             <strong>${textKeys.label_date}:</strong> ${banDate} <br>
             <strong>${textKeys.label_author}:</strong> ${xss(ban.author)} <br>
             <strong>${textKeys.label_reason}:</strong> ${xss(ban.reason)} <br>
-            <strong>${textKeys.label_id}:</strong> <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${ban.id}</code> <br>
-            ${customMessage}
+            <strong>${textKeys.label_id}:</strong> <codeid>${ban.id}</codeid> <br>
+            ${prepCustomMessage(playerDatabase.config.banRejectionMessage)}
             <span style="font-style: italic;">${note}</span>`
         );
 
@@ -214,14 +220,21 @@ async function checkAdminOnlyMode(
 ): Promise<AllowRespType | DenyRespType> {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const adminVault = (globals.adminVault as AdminVault);
+    const translator = (globals.translator as Translator);
+
+    const textKeys = {
+        mode_title: translator.t('whitelist_messages.admin_only.mode_title'),
+        insufficient_ids: translator.t('whitelist_messages.admin_only.insufficient_ids'),
+        deny_message: translator.t('whitelist_messages.admin_only.deny_message'),
+    };
 
     //Check if fivem/discord ids are available
     if (!validIdsObject.license && !validIdsObject.discord) {
         return {
             allow: false,
             reason: rejectMessageTemplate(
-                'This server is in <strong>Admin-only</strong> mode.',
-                'You do not have <code>discord</code> or <code>fivem</code> identifiers, which is required to validade if you are a txAdmin administrator.'
+                textKeys.mode_title,
+                textKeys.insufficient_ids
             ),
         }
     }
@@ -231,14 +244,10 @@ async function checkAdminOnlyMode(
     if (admin) return { allow: true };
 
     //Prepare rejection message
-    let customMessage = '';
-    if (playerDatabase.config.whitelistRejectionMessage) {
-        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
-    }
     const reason = rejectMessageTemplate(
-        'This server is in <strong>Admin-only</strong> mode.',
-        `Your identifiers are not assigned to any txAdmin administrator. <br>
-        ${customMessage}`
+        textKeys.mode_title,
+        `${textKeys.deny_message} <br>
+        ${prepCustomMessage(playerDatabase.config.whitelistRejectionMessage)}`
     );
     return { allow: false, reason };
 }
@@ -254,14 +263,23 @@ async function checkGuildMember(
 ): Promise<AllowRespType | DenyRespType> {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const discordBot = (globals.discordBot as DiscordBot);
+    const translator = (globals.translator as Translator);
+
+    const guildname = `<guildname>${discordBot.guildName}</guildname>`;
+    const textKeys = {
+        mode_title: translator.t('whitelist_messages.guild_member.mode_title'),
+        insufficient_ids: translator.t('whitelist_messages.guild_member.insufficient_ids'),
+        deny_title: translator.t('whitelist_messages.guild_member.deny_title'),
+        deny_message: translator.t('whitelist_messages.guild_member.deny_message', {guildname}),
+    };
 
     //Check if discord id is available
     if (!validIdsObject.discord) {
         return {
             allow: false,
             reason: rejectMessageTemplate(
-                'This server is in <strong>Discord Guild Member Whitelist</strong> mode.',
-                'You do not have the <code>discord</code> identifier, which is required to validade if you have joined our Discord Guild. Please open Discord and try again.'
+                textKeys.mode_title,
+                textKeys.insufficient_ids
             ),
         }
     }
@@ -273,8 +291,8 @@ async function checkGuildMember(
         if (isMember) {
             return { allow: true };
         } else {
-            errorTitle = `Discord Guild Member Whitelist is required to join this server.`;
-            errorMessage = `Please join the guild <strong>${discordBot.guildName}</strong> then try again.`;
+            errorTitle = textKeys.deny_title;
+            errorMessage = textKeys.deny_message;
         }
     } catch (error) {
         errorTitle = `Error validating Discord Guild Member Whitelist:`;
@@ -282,14 +300,10 @@ async function checkGuildMember(
     }
 
     //Prepare rejection message
-    let customMessage = '';
-    if (playerDatabase.config.whitelistRejectionMessage) {
-        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
-    }
     const reason = rejectMessageTemplate(
         errorTitle,
         `${errorMessage} <br>
-        ${customMessage}`
+        ${prepCustomMessage(playerDatabase.config.whitelistRejectionMessage)}`
     );
     return { allow: false, reason };
 }
@@ -305,14 +319,25 @@ async function checkGuildRoles(
 ): Promise<AllowRespType | DenyRespType> {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const discordBot = (globals.discordBot as DiscordBot);
+    const translator = (globals.translator as Translator);
+
+    const guildname = `<guildname>${discordBot.guildName}</guildname>`;
+    const textKeys = {
+        mode_title: translator.t('whitelist_messages.guild_roles.mode_title'),
+        insufficient_ids: translator.t('whitelist_messages.guild_roles.insufficient_ids'),
+        deny_notmember_title: translator.t('whitelist_messages.guild_roles.deny_notmember_title'),
+        deny_notmember_message: translator.t('whitelist_messages.guild_roles.deny_notmember_message', {guildname}),
+        deny_noroles_title: translator.t('whitelist_messages.guild_roles.deny_noroles_title'),
+        deny_noroles_message: translator.t('whitelist_messages.guild_roles.deny_noroles_message', {guildname}),
+    };
 
     //Check if discord id is available
     if (!validIdsObject.discord) {
         return {
             allow: false,
             reason: rejectMessageTemplate(
-                'This server is in <strong>Discord Role Whitelist</strong> mode.',
-                'You do not have the <code>discord</code> identifier, which is required to validade if you have joined our Discord Guild. Please open Discord and try again.'
+                textKeys.mode_title,
+                textKeys.insufficient_ids
             ),
         }
     }
@@ -327,12 +352,12 @@ async function checkGuildRoles(
             if (matchingRole) {
                 return { allow: true };
             } else {
-                errorTitle = `You do not have a whitelisted role required to join.`;
-                errorMessage = `Please join the guild <strong>${discordBot.guildName}</strong>, get one of the required roles, then try again.`;
+                errorTitle = textKeys.deny_noroles_title;
+                errorMessage = textKeys.deny_noroles_message;
             }
         } else {
-            errorTitle = `Discord Role Whitelist is required to join this server.`;
-            errorMessage = `To join this server you are required to have at least one of the whitelisted roles on the guild <strong>${discordBot.guildName}</strong>.`;
+            errorTitle = textKeys.deny_notmember_title;
+            errorMessage = textKeys.deny_notmember_message;
         }
     } catch (error) {
         errorTitle = `Error validating Discord Role Whitelist:`;
@@ -340,14 +365,10 @@ async function checkGuildRoles(
     }
 
     //Prepare rejection message
-    let customMessage = '';
-    if (playerDatabase.config.whitelistRejectionMessage) {
-        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
-    }
     const reason = rejectMessageTemplate(
         errorTitle,
         `${errorMessage} <br>
-        ${customMessage}`
+        ${prepCustomMessage(playerDatabase.config.whitelistRejectionMessage)}`
     );
     return { allow: false, reason };
 }
@@ -363,14 +384,22 @@ async function checkApprovedLicense(
 ): Promise<AllowRespType | DenyRespType> {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const discordBot = (globals.discordBot as DiscordBot);
+    const translator = (globals.translator as Translator);
+
+    const textKeys = {
+        mode_title: translator.t('whitelist_messages.approved_license.mode_title'),
+        insufficient_ids: translator.t('whitelist_messages.approved_license.insufficient_ids'),
+        deny_title: translator.t('whitelist_messages.approved_license.deny_title'),
+        request_id_label: translator.t('whitelist_messages.approved_license.request_id_label'),
+    };
 
     //Check if license is available
     if (!validIdsObject.license) {
         return {
             allow: false,
             reason: rejectMessageTemplate(
-                'This server has whitelist enabled and requires all players to have the license identifier.',
-                'If you are the server owner, remove <code>sv_lan</code> from your server config file.'
+                textKeys.mode_title,
+                textKeys.insufficient_ids
             ),
         }
     }
@@ -456,17 +485,11 @@ async function checkApprovedLicense(
     }
 
     //Prepare rejection message
-    let customMessage = '';
-    if (playerDatabase.config.whitelistRejectionMessage) {
-        customMessage = `<br>${playerDatabase.config.whitelistRejectionMessage.trim()}`;
-    }
-
-    const label_req_id = `Request ID`;
     const reason = rejectMessageTemplate(
-        'You are not whitelisted to join this server.',
-        `<strong>${label_req_id}:</strong>
-        <code style="letter-spacing: 2px; background-color: #ff7f5059; padding: 2px 4px; border-radius: 6px;">${wlRequestId}</code> <br>
-        ${customMessage}`
+        textKeys.deny_title,
+        `<strong>${textKeys.request_id_label}:</strong>
+        <codeid>${wlRequestId}</codeid> <br>
+        ${prepCustomMessage(playerDatabase.config.whitelistRejectionMessage)}`
     );
     return { allow: false, reason }
 }

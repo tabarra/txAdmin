@@ -165,7 +165,11 @@ const processStuff = () => {
         //     alert_hide: data.nui_menu.page_main.player_ids.alert_hide,
         // };
         // data.nui_menu.player_modal.ban.submit = 'Apply ban';
+        
+        //remove stuff
+        // data.whitelist_messages = undefined;
 
+        //Save file - FIXME: commented out just to make sure i don't fuck it up by accident
         // const out = JSON.stringify(data, null, 4) + '\n';
         // fs.writeFileSync(path, out);
         // console.log(`Edited file: ${name}`);
