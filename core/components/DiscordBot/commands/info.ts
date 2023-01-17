@@ -107,7 +107,7 @@ export default async (interaction: CommandInteraction, txAdmin: TxAdmin) => {
 
         //Basic data
         const bodyText: Record<string, string> = {
-            'Play time': humanizer(dbData.playTime * 1000),
+            'Play time': humanizer(dbData.playTime * 60 * 1000),
             'Join date': tsToLocaleDate(dbData.tsJoined),
             'Last connection': tsToLocaleDate(dbData.tsLastConnection),
             'Whitelisted': (dbData.tsWhitelisted)
