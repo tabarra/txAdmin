@@ -186,7 +186,7 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
         return
     end
 
-    logger(source, 'MenuEvent', message)
+    logger(source, 'MenuEvent', message) --pass down event for stats collecting
 end)
 
 -- Extra handlers

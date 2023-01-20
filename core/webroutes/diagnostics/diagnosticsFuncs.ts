@@ -44,6 +44,11 @@ type HostDataReturnType = {
 } | { error: string };
 let hostStaticDataCache: HostStaticDataType;
 
+//Pre-calculate static data
+setTimeout(() => {
+    getHostData().catch();
+}, 10_000);
+
 
 /**
  * Gets the Processes Data.

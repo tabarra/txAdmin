@@ -32,17 +32,10 @@
 - [x] checkJoin: add messages to locale files
 - [x] checkJoin: customMessage `\n` to `<br>`
 - [x] fix(core): cfx.re login match by admin id instead of name
-- [ ] bot: change settings page description
-- [ ] update readme with new features
-- [ ] fix broken runtime stats
-- [ ] stats: 
-    - [ ] fix broken runtime stats
-    - [ ] add recipe name
-    - [ ] if ptero
-    - [ ] how many scheduled restart times
-    - [ ] drop zap/discord as login methods
-    - [ ] HWID: `count, q1, q25, q50, q75, q99`.
-    - [ ] jwe
+- [x] finish txdiagnostics backend, test e2e one last time
+- [x] bot: change settings page description
+
+
 
 
 
@@ -55,6 +48,10 @@
 - [ ] change dashboard median player message
     - top 1000: "your server seems to be in top 1000, join and type /server to track your progress"
     - top 500: "you might be in top 500, join discord and see if you are eligible for the role"
+- [ ] update readme with new features
+- [ ] stats: 
+    - [ ] ????
+    - [ ] jwe
 
 ```lua
 --Superjump

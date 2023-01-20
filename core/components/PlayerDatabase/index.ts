@@ -433,7 +433,6 @@ export default class PlayerDatabase {
         //FIXME: reevaluate this in the future
         const databus = (globals.databus as any);
         databus.txStatsData.playerDBStats = {
-            ts: now(),
             players: playerStats.players,
             playTime: playerStats.playTime,
             whitelists: playerStats.whitelists,
