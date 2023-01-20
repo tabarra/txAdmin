@@ -331,12 +331,15 @@ export const parseRecursiveConfig = async (
 
             // If exec command, process recursively then flatten the output
             if (cmdObject.command === 'exec') {
-                const recursiveCfgAbsolutePath = resolveCFGFilePath(cmdObject.args[0], serverDataPath);
-                try {
-                    const extractedCommands = await parseRecursiveConfig(null, recursiveCfgAbsolutePath, serverDataPath, stack);
-                    parsedCommands.push(...extractedCommands);
-                } catch (error) {
-                    parsedCommands.push(new ExecRecursionError(cfgAbsolutePath, (error as Error).message, lineNumber));
+                //FIXME: temporarily disable resoure references
+                if(!cmdObject.args[0].startsWith('@')){
+                    const recursiveCfgAbsolutePath = resolveCFGFilePath(cmdObject.args[0], serverDataPath);
+                    try {
+                        const extractedCommands = await parseRecursiveConfig(null, recursiveCfgAbsolutePath, serverDataPath, stack);
+                        parsedCommands.push(...extractedCommands);
+                    } catch (error) {
+                        parsedCommands.push(new ExecRecursionError(cfgAbsolutePath, (error as Error).message, lineNumber));
+                    }
                 }
             }
         }
