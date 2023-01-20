@@ -67,13 +67,13 @@ local CREATE_AUTOMOBILE = GetHashKey('CREATE_AUTOMOBILE')
 
 --- Spawn a vehicle on the server at the request of a client
 ---@param model string
----@param isAutomobile boolean
-RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
+---@param modelType string
+RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, modelType)
   local src = source
   if type(model) ~= 'string' then
     return
   end
-  if type(isAutomobile) ~= 'boolean' then
+  if type(modelType) ~= 'string' then
     return
   end
 
@@ -97,25 +97,20 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
       seatsToPlace[-1] = ped
     end
 
-    local veh
-    if isAutomobile then
-      coords = vec4(coords[1], coords[2], coords[3], heading)
-      veh = Citizen.InvokeNative(CREATE_AUTOMOBILE, GetHashKey(model), coords);
-    else
-      veh = CreateVehicle(model, coords[1], coords[2], coords[3], heading, true, true)
-    end
+    local veh = CreateVehicleServerSetter(model, modelType, coords.x, coords.y, coords.z, heading)
     local tries = 0
     while not DoesEntityExist(veh) do
       Wait(0)
       tries = tries + 1
-      if tries > 250 then
+      if tries > 350 then
         break
       end
     end
     local netID = NetworkGetNetworkIdFromEntity(veh)
-    debugPrint(string.format("spawn vehicle (src=^3%d^0, model=^4%s^0, isAuto=%s^0, netID=^3%s^0)", src, model,
-        (isAutomobile and '^2yes' or '^3no'), netID))
-
+    debugPrint(string.format("spawn vehicle (src=^3%d^0, model=^4%s^0, modelType=^4%s^0, netID=^3%s^0)", src, model,
+        (modelType), netID))
+    local RoutingBucket = GetPlayerRoutingBucket(src)
+    SetEntityRoutingBucket(veh, RoutingBucket)    
     -- map all player ids to peds
     local players = GetPlayers()
     local pedMap = {}
