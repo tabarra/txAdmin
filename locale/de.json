@@ -57,7 +57,7 @@
     "server_actions": {
         "restarting": "Server Neustart (%{reason}).",
         "restarting_discord": "**%{servername}** wird neu gestartet (%{reason}).",
-        "stopping": "Server wird herunte rgefahren (%{reason}).",
+        "stopping": "Server wird heruntergefahren (%{reason}).",
         "stopping_discord": "**%{servername}** wird heruntergefahren (%{reason}).",
         "spawning_discord": "**%{servername}** startet."
     },
