@@ -29,29 +29,29 @@
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "Dieser Server ist im <strong>Admin Only</strong> Modus.",
+            "mode_title": "Dieser Server ist im <strong>Wartungsmodus</strong>",
             "insufficient_ids": "Du hast keine <code>Discord</code>oder <code>FiveM</code> identifier, mindestens eins von beiden ist erforderlich, um zu überprüfen, ob du ein txAdmin-Administrator bist.",
             "deny_message": "Deine identifier sind keinem txAdmin Administrator zugewiesen."
         },
         "guild_member": {
-            "mode_title": "Dieser Server ist im <strong>Discord Guild Member Whitelist</strong> Modus.",
+            "mode_title": "Dieser Server ist im <strong>Discord Member Whitelist</strong> Modus.",
             "insufficient_ids": "Du hast keine <code>Discord</code> identifier, welche aber erforderlich sind, um zu überprüfen, ob du auf dem Discord-Server bist.",
-            "deny_title": "Du musst auf unserem Discord-Server sein, um dich zu verbinden",
+            "deny_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden",
             "deny_message": "Bitte trete unserem Discord %{guildname} bei, dann versuche es erneut."
         },
         "guild_roles": {
             "mode_title": "Dieser Server ist im <strong>Discord Rollen Whitelist</strong> Modus.",
             "insufficient_ids": "Du hast keine <code>Discord</code> identifier, welche aber erforderlich sind. Um zu überprüfen, ob du auf dem Discord-Server bist, öffne Discord und versuche es erneut.",
-            "deny_notmember_title": "Du musst auf unserem Discord-Server sein, um dich zu verbinden",
-            "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei, hol dir eine der erforderlichen Rollen, dann versuche es erneut.",
-            "deny_noroles_title": "Du hast keine Whitelist rolle, die für das Verbinden erforderlich ist.",
-            "deny_noroles_message": "Um diesem Server beizutreten ist mindestens eine Whitelist Rolle benötigt, Discord: %{guildname}."
+            "deny_notmember_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden",
+            "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderlichen rollen und versuche es erneut",
+            "deny_noroles_title": "Du hast nicht die erforderlichen Rolle(n), um den Server zu betreten.",
+            "deny_noroles_message": "Um diesem Server beizutreten, benötigst du mindestens eine der Whitelist Rolle(n). Discord: %{guildname}."
         },
         "approved_license": {
             "mode_title": "Dieser Server ist im <strong>License Whitelist</strong> Modus.",
-            "insufficient_ids": "Du hast keine <code>License</code> identifier, was bedeutet dieser Server hat <code>sv_lan</code> aktiviert, bist du der Serverbesitzer, dann kannst du dies in der server.cfg ändern.",
+            "insufficient_ids": "Du hast keine <code>License</code> identifier, was bedeutet dieser Server hat <code>sv_lan</code> aktiviert. Solltest du der Serverbesitzer sein, dann kannst du dies in der server.cfg ändern.",
             "deny_title": "Du bist nicht gewhitelisted auf diesem Server.",
-            "request_id_label": "Anfrage-ID"
+            "request_id_label": "Whitelist-ID"
         }
     },
     "server_actions": {
