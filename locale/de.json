@@ -43,7 +43,7 @@
             "mode_title": "Dieser Server ist im <strong>Discord Rollen Whitelist</strong> Modus.",
             "insufficient_ids": "Du hast keine <code>Discord</code> identifier, welche aber erforderlich sind. Um zu überprüfen, ob du auf dem Discord-Server bist, öffne Discord und versuche es erneut.",
             "deny_notmember_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden",
-            "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderlichen rollen und versuche es erneut",
+            "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderlichen Rolle(n) und versuche es erneut",
             "deny_noroles_title": "Du hast nicht die erforderlichen Rolle(n), um den Server zu betreten.",
             "deny_noroles_message": "Um diesem Server beizutreten, benötigst du mindestens eine der Whitelist Rolle(n). Discord: %{guildname}."
         },
@@ -57,7 +57,7 @@
     "server_actions": {
         "restarting": "Server Neustart (%{reason}).",
         "restarting_discord": "**%{servername}** wird neu gestartet (%{reason}).",
-        "stopping": "Server wird heruntergefahren (%{reason}).",
+        "stopping": "Server wird herunte rgefahren (%{reason}).",
         "stopping_discord": "**%{servername}** wird heruntergefahren (%{reason}).",
         "spawning_discord": "**%{servername}** startet."
     },
