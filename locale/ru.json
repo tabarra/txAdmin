@@ -105,6 +105,11 @@
                     "label": "Непобедимый",
                     "success": "Режим Бога включен"
                 },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
+                },
                 "normal": {
                     "title": "Обычный",
                     "label": "Режим по умолчанию",

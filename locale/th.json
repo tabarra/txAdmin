@@ -105,6 +105,11 @@
                     "label": "อยู่ยงคงกระพัน",
                     "success": "เปิดใช้โหมดพระเจ้า"
                 },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
+                },
                 "normal": {
                     "title": "โหมดธรรมดา",
                     "label": "โหมดเริ่มต้น",

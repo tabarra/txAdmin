@@ -105,6 +105,11 @@
                     "label": "Включи ремижът на безсмъртие, предпазвайки те от умиране.",
                     "success": "Безсмъртието е включено."
                 },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
+                },
                 "normal": {
                     "title": "Нормално",
                     "label": "Връща те към нормалният игрален режим, позволявайки да умреш.",

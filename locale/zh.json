@@ -105,6 +105,11 @@
                     "label": "无敌",
                     "success": "上帝模式 启用"
                 },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
+                },
                 "normal": {
                     "title": "正常",
                     "label": "默认模式",

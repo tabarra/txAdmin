@@ -105,6 +105,11 @@
                     "label": "Invencível",
                     "success": "Modo Deus habilitado."
                 },
+                "superjump": {
+                    "title": "Super Pulo",
+                    "label": "Pular muito alto, e correr muito rápido",
+                    "success": "Super Pulo habilitado."
+                },
                 "normal": {
                     "title": "Normal",
                     "label": "Modo padrão",

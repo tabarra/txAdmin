@@ -105,6 +105,11 @@
                     "label": "Uporabi God Mode, da postaneš nesmrten",
                     "success": "God Mode omogočen"
                 },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
+                },
                 "normal": {
                     "title": "Normal",
                     "label": "Vrne se nazaj v privzeti/običajni način igralca",

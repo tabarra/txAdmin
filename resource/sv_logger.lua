@@ -98,6 +98,8 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
             message = "enabled god mode"
         elseif data == 'noclip' then
             message = "enabled noclip"
+        elseif data == 'superjump' then
+            message = "enabled super jump"
         elseif data == 'none' then
             message = "became mortal (standard mode)"
         else

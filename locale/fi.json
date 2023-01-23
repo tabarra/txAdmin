@@ -105,6 +105,11 @@
                     "label": "Kuolematon",
                     "success": "God Mode päällä"
                 },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
+                },
                 "normal": {
                     "title": "Normaali",
                     "label": "Palauta pelaajan tila normaaliksi",

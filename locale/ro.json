@@ -105,6 +105,11 @@
                     "label": "Invincibilitate",
                     "success": "God Mode activat"
                 },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
+                },
                 "normal": {
                     "title": "Normal",
                     "label": "Mod Normal",

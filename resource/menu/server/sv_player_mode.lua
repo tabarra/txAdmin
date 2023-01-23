@@ -7,7 +7,7 @@ local IS_PTFX_DISABLED = (GetConvar('txAdmin-menuPtfxDisable', 'false') == 'true
 
 RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, nearbyPlayers)
   local src = source
-  if mode ~= 'godmode' and mode ~= 'noclip' and mode ~= 'none' then
+  if mode ~= 'godmode' and mode ~= 'noclip' and mode ~= 'superjump' and mode ~= 'none' then
     debugPrint("Invalid player mode requested by " .. GetPlayerName(src) .. " (mode: " .. (mode or 'nil'))
     return
   end

@@ -7,6 +7,34 @@ if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
 end
 
 local noClipEnabled = false
+local superJumpEnabled = false
+
+local function toggleSuperJump(enabled)
+    superJumpEnabled = enabled
+    if enabled then
+        sendPersistentAlert('superJumpEnabled', 'info', 'nui_menu.page_main.player_mode.superjump.success', true)
+        CreateThread(function()
+            local Wait = Wait
+            local pid = PlayerId()
+            SetRunSprintMultiplierForPlayer(pid, 1.49)
+            local frameCounter = 0
+            while superJumpEnabled do
+                frameCounter = frameCounter + 1
+                if frameCounter > 250 then
+                    RestorePlayerStamina(pid, 100.0)
+                    frameCounter = 0
+                end
+                SetSuperJumpThisFrame(pid)
+                Wait(0)
+            end
+          end)
+    else
+        local pid = PlayerId()
+        SetRunSprintMultiplierForPlayer(pid, 1.0)
+        clearPersistentAlert('superJumpEnabled')
+    end
+end
+
 
 local function toggleGodMode(enabled)
     if enabled then
@@ -160,12 +188,19 @@ RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
     if mode == 'godmode' then
         toggleFreecam(false)
         toggleGodMode(true)
+        toggleSuperJump(false)
     elseif mode == 'noclip' then
-        toggleGodMode(false)
         toggleFreecam(true)
+        toggleGodMode(false)
+        toggleSuperJump(false)
+    elseif mode == 'superjump' then
+        toggleFreecam(false)
+        toggleGodMode(false)
+        toggleSuperJump(true)
     elseif mode == 'none' then
         toggleFreecam(false)
         toggleGodMode(false)
+        toggleSuperJump(false)
     end
 end)
 

@@ -170,9 +170,9 @@ const processStuff = () => {
         // data.whitelist_messages = undefined;
 
         //Save file - FIXME: commented out just to make sure i don't fuck it up by accident
-        // const out = JSON.stringify(data, null, 4) + '\n';
-        // fs.writeFileSync(path, out);
-        // console.log(`Edited file: ${name}`);
+        const out = JSON.stringify(data, null, 4) + '\n';
+        fs.writeFileSync(path, out);
+        console.log(`Edited file: ${name}`);
     });
 };
 

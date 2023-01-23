@@ -8,8 +8,8 @@
     - [x] bot save: intent message
     - [x] bot save: could not resolve guild id = was the bot invited?
     - [x] embed jsons reset buttons
+- [x] add superjump
 - [ ] status embed every 30 seconds or reactive to status changes
-- [ ] add superjump
 - [ ] the PR about hiding notifications
 - [ ] wav for announcements
 - [ ] create events for dynamic scheduled restarts
@@ -40,18 +40,6 @@
 - [ ] stats: 
     - [ ] ????
     - [ ] jwe
-
-```lua
---Superjump
-CreateThread(function()
-  local Wait = Wait
-  local id = PlayerId()
-  while true do
-    SetSuperJumpThisFrame(id)
-    Wait(0)
-  end
-end)
-```
 
 
 # Next up:
