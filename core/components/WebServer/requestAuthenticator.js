@@ -29,7 +29,7 @@ export const requestAuth = (epType) => {
         if (epType === 'api') {
             const sessToken = ctx.session?.auth?.csrfToken;
             const headerToken = ctx.headers['x-txadmin-csrftoken'];
-            if(sessToken && (sessToken !== headerToken)){
+            if (sessToken && (sessToken !== headerToken)) {
                 //DEBUG
                 // ogConsole.dir({
                 //     route: `${ctx.method} ${ctx.path}`,
@@ -51,7 +51,11 @@ export const requestAuth = (epType) => {
             if (verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
             ctx.session.auth = {};
             if (epType === 'web') {
-                return ctx.response.redirect('/auth?logout');
+                if (ctx.method === 'GET' && ctx.path !== '/') {
+                    return ctx.response.redirect(`/auth?logout&r=${encodeURIComponent(ctx.path)}`);
+                } else {
+                    return ctx.response.redirect(`/auth?logout`);
+                }
             } else if (epType === 'api') {
                 return ctx.send({ logout: true });
             } else if (epType === 'nuiStart') {

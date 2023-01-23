@@ -1,54 +1,42 @@
 # TODO:
-- [x] rename txAdmin Logs to System Logs (check chungus commands as well)
-- [x] Finish diagnostics report function
-- [x] Make cyclical exec in cfg file block the server start
-- [x] change nui player card default tab back to actions
-- [x] upgrade packages
-- [x] bot: upgrade discord.js
-- [x] bot: convert into slash commands
-- [x] bot: add NEW tag to settings menu and discord tab
-- [x] bot: add dynamic activity ("watching xx/yy players")
-- [x] bot: add persistent /status message
-- [x] bot: embed/config editor on settings page
-- [x] bot: embed/config docs file
-- [x] bot: fix resolveMember()
-- [x] bot: add /whitelist command
-- [x] bot: add /info command
-- [x] add new whitelist modes
-    - [x] admin-only (#516)
-    - [x] guild membership (#450)
-    - [x] guild roles
-- [x] bot: update AGAIN to djs v14
-- [x] fix `Restarting the fxserver with delay override 0.`
-- [x] add cap to `stats_heatmapData_v1.json` (StatsCollector.hardConfigs.performance.lengthCap)
-- [x] chore(core): move admin action log() to logger
-- [x] Improve the message `[txAdmin] You do not have at least 1 valid identifier [...]`
-- [x] CFG Editor: add hotkeys for search, comment, and restart sv
-- [x] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
-- [x] merge translations
-- [x] remove `discord.*` from locale files
-- [x] adjust the message that shows when deployer step 3 has no server.cfg to read
-- [x] set nui/vite.config.ts > target > chrome103
-- [x] checkJoin: add messages to locale files
-- [x] checkJoin: customMessage `\n` to `<br>`
-- [x] fix(core): cfx.re login match by admin id instead of name
-- [x] finish txdiagnostics backend, test e2e one last time
-- [x] bot: change settings page description
-
-
-
-
-
-# Next up:
+- [x] QoL: add redirect post login if invalid sess
+- [ ] Improve discord embed UX:
+    - [x] embed placeholder
+    - [x] check for the emoji
+    - [x] check for the url fields
+    - [ ] discord auth not admin response
+    - [ ] bot save: intent message
+    - [ ] bot save: could not resolve guild id = was the bot invited?
+    - [ ] embed jsons reset buttons
+- [ ] status embed every 30 seconds or reactive to status changes
 - [ ] add superjump
 - [ ] the PR about hiding notifications
 - [ ] wav for announcements
+- [ ] create events for dynamic scheduled restarts
+- [ ] create new whitelist events
+    - [ ] whitelistPlayer:
+        - license: xxxxx
+        - author: admin name
+        - status: true/false
+    - [ ] whitelistPreApproval:
+        - action: added/removed
+        - identifier: `discord:xxxxxx` / `license:xxxxx`
+        - author: admin name
+    - [ ] whitelistRequest:
+        - action: requested/approved/denied
+        - author: either player name, or admin name
+        - requestId: Rxxxx
+        - license: xxxxxx
+- [ ] At the schedule restart input prompt, add a note saying what is the current server time
+
+
+## Optional
 - [ ] bot: fix http agent options for localAddress
 - [ ] bot: add rate limit events to diagnostics page
 - [ ] change dashboard median player message
     - top 1000: "your server seems to be in top 1000, join and type /server to track your progress"
     - top 500: "you might be in top 500, join discord and see if you are eligible for the role"
-- [ ] update readme with new features
+- [ ] update readme with new features and contributing warning
 - [ ] stats: 
     - [ ] ????
     - [ ] jwe
@@ -65,12 +53,17 @@ CreateThread(function()
 end)
 ```
 
+
+# Next up:
+- [ ] xxxxxx
+
 ===================
 ### MUI update
 5.10.17 ok
 5.11.0 broken
 To test it, remove the `^`
 rm -rf node_modules/; npm i; npm list @mui/material; npm run dev:menu:game
+https://github.com/mui/material-ui/blob/master/CHANGELOG.md
 ===================
 
 
@@ -97,23 +90,7 @@ teste:
 
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
-- [ ] create events for dynamic scheduled restarts
-- [ ] create new whitelist events
-    - [ ] whitelistPlayer:
-        - license: xxxxx
-        - author: admin name
-        - status: true/false
-    - [ ] whitelistPreApproval:
-        - action: added/removed
-        - identifier: `discord:xxxxxx` / `license:xxxxx`
-        - author: admin name
-    - [ ] whitelistRequest:
-        - action: requested/approved/denied
-        - author: either player name, or admin name
-        - requestId: Rxxxx
-        - license: xxxxxx
 - [ ] mock out insights page (assets + http reqs)
-- [ ] At the schedule restart input prompt, add a note saying what is the current server time
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Behare that this is not trivial without also turning missing exec target read error also being error
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 
@@ -513,7 +490,7 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 
 
 ### txPointing (old txBanana)
-- code prototype with ItsANoBrainer#1337
+- code prototype with ItsANoBrainer#1337 (https://github.com/tabarra/txBanana)
 - keybind to toggle gun (grab or put away)
 - when you point at player, show above head some info
 - when you "shoot" it will open the player menu and hopefully fire a laser or something

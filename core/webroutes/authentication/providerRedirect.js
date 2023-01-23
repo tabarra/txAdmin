@@ -1,13 +1,11 @@
 const modulename = 'WebServer:ProviderRedirect';
 import logger from '@core/extras/console.js';
+import { isValidRedirectPath } from '@core/extras/helpers';
 import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const genCallbackURL = (ctx, provider) => {
-    return ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
-};
 const returnJustMessage = (ctx, errorTitle, errorMessage) => {
     return ctx.utils.render('login', { template: 'justMessage', errorTitle, errorMessage });
 };
@@ -30,10 +28,17 @@ export default async function ProviderRedirect(ctx) {
     //Make sure the session is initialized
     ctx.session.startedSocialLogin = Date.now();
 
-    //Generatte CitizenFX provider Auth URL
+    //Save redirection path in session, if any
+    //NOTE: technically we don't need to regex validate here, as that will be done on providerCallback
+    if(isValidRedirectPath(ctx.query?.r)){
+        ctx.session.socialLoginRedirect = ctx.query.r;
+    }
+
+    //Generate CitizenFX provider Auth URL
+    const callbackUrl = ctx.protocol + '://' + ctx.get('host') + `/auth/citizenfx/callback`;
     try {
         const urlCitizenFX = await globals.adminVault.providers.citizenfx.getAuthURL(
-            genCallbackURL(ctx, 'citizenfx'),
+            callbackUrl,
             ctx.session._sessCtx.externalKey,
         );
         return ctx.response.redirect(urlCitizenFX);

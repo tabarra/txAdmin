@@ -2,6 +2,7 @@ const modulename = 'WebServer:ProviderCallback';
 import crypto from 'node:crypto';
 import logger, { ogConsole } from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
+import { isValidRedirectPath } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -122,7 +123,8 @@ export default async function ProviderCallback(ctx) {
         ctx.utils.logAction(`logged in from ${ctx.ip} via citizenfx`);
         globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
         globals.databus.txStatsData.login.methods.citizenfx++;
-        return ctx.response.redirect('/');
+        const redirectPath = (isValidRedirectPath(ctx.session?.socialLoginRedirect)) ? ctx.session.socialLoginRedirect : '/';
+        return ctx.response.redirect(redirectPath);
     } catch (error) {
         ctx.session.auth = {};
         if (verbose) logError(`Failed to login: ${error.message}`);

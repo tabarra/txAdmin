@@ -167,3 +167,11 @@ export type PlayerIdsObjectType = {
     steam: string | null;
     xbl: string | null;
 };
+
+
+/**
+ * Validates if a redirect path is valid or not.
+ * To prevent open redirect, we need to make sure the first char is / and the second is not,
+ * otherwise //example.com would be a valid redirect to <proto>://example.com
+ */
+export const isValidRedirectPath = (redirPath: unknown) => typeof redirPath === 'string' && /^\/\w/.test(redirPath);
