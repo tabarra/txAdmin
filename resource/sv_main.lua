@@ -28,6 +28,9 @@ TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
 TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
 TX_DEBUGMODE = (GetConvar('txAdmin-debugMode', 'false') == 'true') -- TODO: start using this global
+TX_CUSTOM_ANNOUNCEMENT = (GetConvar('txAdmin-customAnnouncement', 'false') == 'true')
+TX_CUSTOM_DIRECTMESSAGE = (GetConvar('txAdmin-customDirectMessage', 'false') == 'true')
+TX_CUSTOM_WARNING = (GetConvar('txAdmin-customWarning', 'false') == 'true')
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
@@ -143,13 +146,17 @@ end
 -- =============================================
 -- Broadcast admin message to all players
 local function handleAnnouncementEvent(eventData)
-    TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
+    if not TX_CUSTOM_ANNOUNCEMENT then
+        TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
+    end
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
 end
 
 -- Sends a direct message from an admin to a player
 local function handleDirectMessageEvent(eventData)
-    TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
+    if not TX_CUSTOM_DIRECTMESSAGE then
+        TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
+    end
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(DM) "..eventData.author, eventData.message)
 end
 
@@ -163,7 +170,9 @@ end
 local function handleWarnEvent(eventData)
     local pName = GetPlayerName(eventData.target)
     if pName ~= nil then
-        TriggerClientEvent('txAdminClient:warn', eventData.target, eventData.author, eventData.reason)
+        if not TX_CUSTOM_WARNING then
+            TriggerClientEvent("txAdminClient:warn", eventData.target, eventData.author, eventData.reason)
+        end
         log("Warning "..pName.." with reason: "..eventData.reason)
     else
         logError('handleWarnEvent: player not found')
