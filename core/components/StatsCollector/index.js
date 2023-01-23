@@ -71,7 +71,7 @@ export default class StatsCollector {
                 const heatmapData = JSON.parse(rawFile);
                 if (!Array.isArray(heatmapData)) throw new Error('data is not an array');
                 if (!validatePerfCacheData(heatmapData)) throw new Error('invalid data in cache');
-                this.perfSeries = heatmapData.slice(0, this.hardConfigs.performance.lengthCap);
+                this.perfSeries = heatmapData.slice(-this.hardConfigs.performance.lengthCap);
             } catch (error) {
                 logError(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
                 logError('Since this is not a critical file, it will be reset.');
