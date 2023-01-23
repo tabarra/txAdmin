@@ -58,8 +58,9 @@ const resourceName = GetCurrentResourceName();
 //4548 = more or less when node v16 was added
 //4574 = add missing PRINT_STRUCTURED_TRACE declaration
 //4574 = add resource field to PRINT_STRUCTURED_TRACE
+//5894 = CREATE_VEHICLE_SERVER_SETTER
 //6185 = added ScanResourceRoot (not yet in use)
-const minFXServerVersion = 4574;
+const minFXServerVersion = 5894;
 const fxServerVersion = getBuild(getConvarString('version'));
 if (fxServerVersion === 9999) {
     logError('It looks like you are running a custom build of fxserver.');
