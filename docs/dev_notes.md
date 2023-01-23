@@ -1,13 +1,13 @@
 # TODO:
-- [x] QoL: add redirect post login if invalid sess
-- [ ] Improve discord embed UX:
+- [x] QoL: add redirect post login if invalid session
+- [x] Improve discord embed UX:
     - [x] embed placeholder
     - [x] check for the emoji
     - [x] check for the url fields
-    - [ ] discord auth not admin response
-    - [ ] bot save: intent message
-    - [ ] bot save: could not resolve guild id = was the bot invited?
-    - [ ] embed jsons reset buttons
+    - [x] discord auth not admin response
+    - [x] bot save: intent message
+    - [x] bot save: could not resolve guild id = was the bot invited?
+    - [x] embed jsons reset buttons
 - [ ] status embed every 30 seconds or reactive to status changes
 - [ ] add superjump
 - [ ] the PR about hiding notifications

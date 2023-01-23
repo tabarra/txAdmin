@@ -167,9 +167,11 @@ export default class DiscordBot {
      */
     startBot() {
         return new Promise<void>((resolve, reject) => {
-            const sendError = (msg: string) => {
+            const sendError = (msg: string, code?: string) => {
                 logError(msg);
-                return reject(new Error(msg));
+                const e = new Error(msg);
+                e.code = code;
+                return reject(e);
             }
 
             //Check for guild id
@@ -193,7 +195,7 @@ export default class DiscordBot {
                 //Fetching guild
                 const guild = this.#client.guilds.cache.find((guild) => guild.id === this.config.guild);
                 if (!guild) {
-                    return sendError(`Discord bot could not resolve guild id ${this.config.guild}`);
+                    return sendError(`Discord bot could not resolve guild id ${this.config.guild}`, 'CustomNoGuild');
                 }
                 this.guild = guild;
                 this.guildName = guild.name;

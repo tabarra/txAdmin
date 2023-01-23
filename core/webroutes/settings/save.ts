@@ -335,7 +335,11 @@ async function handleDiscord(ctx: Context) {
     try {
         generateStatusMessage(globals.txAdmin, cfg.embedJson, cfg.embedConfigJson);
     } catch (error) {
-        return ctx.send({ type: 'danger', message: `<strong>Saving embed config failed:</strong> ${(error as Error).message}` });
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Embed validation failed:**\n${(error as Error).message}`,
+        });
     }
 
     //Preparing & saving config
@@ -355,10 +359,29 @@ async function handleDiscord(ctx: Context) {
             await discordBot.refreshConfig();
             return ctx.send({
                 type: 'success',
-                message: '<strong>Discord configuration saved!</strong><br>\nIf <em>(and only if)</em> the status embed is not being updated, check the System Logs page and make sure there are no embed errors.'
+                markdown: true,
+                message: `**Discord configuration saved!**
+                If <em>(and only if)</em> the status embed is not being updated, check the System Logs page and make sure there are no embed errors.`
             });
         } catch (error) {
-            return ctx.send({ type: 'danger', message: `<strong>Error starting the bot:</strong> ${(error as Error).message}` });
+            const errorCode = (error as any).code;
+            let extraContext;
+            if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
+                extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
+                - Go to the Dev Portal (<https://discord.com/developers/applications>)
+                - Navigate to \`Bot > Privileged Gateway Intents\`.
+                - Enable the \`GUILD_MEMBERS\` intent.
+                - Save on the dev portal.
+                - Go to the \`txAdmin > Settings > Discord Bot\` and press save.`;
+            } else if (errorCode === 'CustomNoGuild') {
+                extraContext = `This probably means the bot is not in the guild you are trying to use.
+                Please invite the bot to the guild and try again.`;
+            }
+            return ctx.send({
+                type: 'danger',
+                markdown: true,
+                message: `**Error starting the bot:** ${(error as Error).message}\n${extraContext}`
+            });
         }
 
     } else {

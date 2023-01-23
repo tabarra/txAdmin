@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { cloneDeep } from 'lodash-es';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
-import { defaultEmbedJson, defaultembedConfigJson } from '@core/components/DiscordBot/defaultJsons';
+import { defaultEmbedJson, defaultEmbedConfigJson } from '@core/components/DiscordBot/defaultJsons';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -149,7 +149,7 @@ export default class ConfigVault {
                 guild: toDefault(cfg.discordBot.guild, null),
                 announceChannel: toDefault(cfg.discordBot.announceChannel, null),
                 embedJson: toDefault(cfg.discordBot.embedJson, defaultEmbedJson),
-                embedConfigJson: toDefault(cfg.discordBot.embedConfigJson, defaultembedConfigJson),
+                embedConfigJson: toDefault(cfg.discordBot.embedConfigJson, defaultEmbedConfigJson),
             };
             out.fxRunner = {
                 serverDataPath: toDefault(cfg.fxRunner.serverDataPath, null),
@@ -225,7 +225,7 @@ export default class ConfigVault {
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
             cfg.discordBot.embedJson = cfg.discordBot.embedJson || defaultEmbedJson;
-            cfg.discordBot.embedConfigJson = cfg.discordBot.embedConfigJson || defaultembedConfigJson;
+            cfg.discordBot.embedConfigJson = cfg.discordBot.embedConfigJson || defaultEmbedConfigJson;
 
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template

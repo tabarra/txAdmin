@@ -25,7 +25,9 @@ const convertMarkdown = (input, inline = false) => {
         breaks: true,
     };
     const func = inline ? marked.parseInline : marked.parse;
-    return func(toConvert, markedOptions);
+    return func(toConvert, markedOptions)
+        .replaceAll('&amp;lt;', '&lt;')
+        .replaceAll('&amp;gt;', '&gt;');
 };
 
 //================================================================

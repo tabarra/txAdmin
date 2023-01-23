@@ -1,8 +1,11 @@
 const modulename = 'DiscordBot:cmd';
 import logger from '@core/extras/console.js';
 import TxAdmin from "@core/txAdmin";
+import orderedEmojis from 'unicode-emoji-json/data-ordered-emoji';
 import { ColorResolvable, CommandInteraction, EmbedBuilder, InteractionReplyOptions } from "discord.js";
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const allEmojis = new Set(orderedEmojis);
+
 
 
 /**
@@ -37,7 +40,7 @@ export const ensurePermission = async (interaction: CommandInteraction, txAdmin:
     const admin = txAdmin.adminVault.getAdminByProviderUID(interaction.user.id);
     if (!admin) {
         await interaction.reply(
-            embedder.warning('Your Discord ID is not registered in txAdmin :face_with_monocle:', true)
+            embedder.warning(`**Your account does not have txAdmin access.** :face_with_monocle:\nIf you are already registered in txAdmin, visit the Admin Manager page, and make sure the Discord ID for your user is set to \`${interaction.user.id}\`.`, true)
         );
         return false;
     }
@@ -49,7 +52,7 @@ export const ensurePermission = async (interaction: CommandInteraction, txAdmin:
         //@ts-ignore: not important
         const permName = txAdmin.adminVault.registeredPermissions[reqPerm] ?? 'Unknown';
         await interaction.reply(
-            embedder.danger(`You do not have the "${permName}" permissions.`, true)
+            embedder.danger(`Your txAdmin account does not have the "${permName}" permissions required for this action.`, true)
         );
         return false;
     }
@@ -64,3 +67,40 @@ export const ensurePermission = async (interaction: CommandInteraction, txAdmin:
 export const logDiscordAdminAction = async (txAdmin: TxAdmin, adminName: string, message: string) => {
     txAdmin.logger.admin.write(adminName, message);
 }
+
+
+/**
+ * Tests if an embed url is valid or not
+ * 
+ */
+export const isValidEmbedUrl = (url: unknown) => {
+    return typeof url === 'string' && /^(https?|discord):\/\//.test(url);
+}
+
+
+/**
+ * Tests if an emoji STRING is valid or not.
+ * Acceptable options:
+ * - UTF-8 emoji ('😄')
+ * - Valid emoji ID ('1062339910654246964')
+ * - Discord custom emoji (`<:name:id>` or `<a:name:id>`)
+ */
+export const isValidButtonEmoji = (emoji: unknown) => {
+    if (typeof emoji !== 'string') return false;
+    if (/^\d{17,19}$/.test(emoji)) return true;
+    if (/^<a?:\w{2,32}:\d{17,19}>$/.test(emoji)) return true;
+    return allEmojis.has(emoji);
+}
+
+
+//Works
+// ogConsole.dir(isValidEmoji('<:txicon:1062339910654246964>'))
+// ogConsole.dir(isValidEmoji('1062339910654246964'))
+// ogConsole.dir(isValidEmoji('😄'))
+// ogConsole.dir(isValidEmoji('🇵🇼'))
+// ogConsole.dir(isValidEmoji('\u{1F469}\u{200D}\u{2764}\u{FE0F}\u{200D}\u{1F48B}\u{200D}\u{1F469}'))
+
+//Discord throws api error
+// ogConsole.dir(isValidEmoji(':smile:'))
+// ogConsole.dir(isValidEmoji('smile'))
+// ogConsole.dir(isValidEmoji({name: 'smile'}))

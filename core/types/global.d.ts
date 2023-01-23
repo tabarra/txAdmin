@@ -4,8 +4,8 @@ declare global {
             globals: any;
         }
         interface ProcessEnv {
-            [x: string ]: string;
-       }
+            [x: string]: string;
+        }
     }
 }
 
@@ -23,4 +23,9 @@ declare function VerifyPasswordHash(password: string, hash: string): boolean;
 
 declare namespace Intl {
     function getCanonicalLocales(locales: string | string[]): string[];
+}
+
+declare module 'unicode-emoji-json/data-ordered-emoji' {
+    const emojis: string[];
+    export = emojis;
 }

@@ -75,7 +75,7 @@ On the JSON, you don't need to set `color` or `footer` as txAdmin will replace t
 The configuration of the embed, where you can change the status texts, as well as the embed color. 
 You can set up to 5 buttons.  
 For emojis, you can use an actual unicode emoji character, or the emoji ID.  
-To get the emoji ID, insert it into discord, and add `\` before to get the full name (eg `<:txicon:1062339910654246964>`) where you can copy the ID part of it.
+To get the emoji ID, insert it into discord, and add `\` before it then send the message to get the full name (eg `<:txicon:1062339910654246964>`).
 
 ```json
 {
