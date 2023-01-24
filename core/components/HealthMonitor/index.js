@@ -82,8 +82,17 @@ export default class HealthMonitor {
 
 
     //================================================================
+    setCurrentStatus(newStatus) {
+        if(newStatus !== this.currentStatus){
+            this.currentStatus = newStatus;
+            globals.discordBot.updateStatus().catch();
+        }
+    }
+
+
+    //================================================================
     resetMonitorStats() {
-        this.currentStatus = 'OFFLINE'; // options: OFFLINE, ONLINE, PARTIAL
+        this.setCurrentStatus('OFFLINE'); // options: OFFLINE, ONLINE, PARTIAL
         this.lastRefreshStatus = null; //to prevent DDoS crash false positive
         this.lastSuccessfulHealthCheck = null; //to see if its above limit
         this.lastStatusWarningMessage = null; //to prevent spamming
@@ -188,7 +197,7 @@ export default class HealthMonitor {
             && anySuccessfulHeartBeat
             && !heartBeatFailed
         ) {
-            this.currentStatus = 'ONLINE';
+            this.setCurrentStatus('ONLINE');
             if (this.hasServerStartedYet == false) {
                 this.hasServerStartedYet = true;
                 globals.databus.txStatsData.monitorStats.bootSeconds.push(processUptime);
@@ -197,7 +206,7 @@ export default class HealthMonitor {
         }
 
         //Now to the (un)fun part: if the status != healthy
-        this.currentStatus = (healthCheckFailed && heartBeatFailed) ? 'OFFLINE' : 'PARTIAL';
+        this.setCurrentStatus((healthCheckFailed && heartBeatFailed) ? 'OFFLINE' : 'PARTIAL');
         const timesPrefix = `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)})`;
         const elapsedLastWarning = currTimestamp - this.lastStatusWarningMessage;
 

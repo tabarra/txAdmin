@@ -31,7 +31,7 @@
         - license?: xxxxxx, if action != deniedAll
         - adminName?: admin name, if action != requested
 - [x] wav for announcements and DMs
-- [ ] update status embed as soon as server status changes
+- [x] update status embed as soon as server status changes
 
 
 
