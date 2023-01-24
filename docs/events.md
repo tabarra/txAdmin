@@ -12,10 +12,9 @@ Event Data:
 - `secondsRemaining`: The number of seconds before the scheduled restart.  
 - `translatedMessage`: The translated message to show on the announcement.
 
-Example usage on ESX v1.2:
+Example usage on ESX Legacy:
 ```lua
-ESX = nil
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+ESX = exports["es_extended"]:getSharedObject()
 
 AddEventHandler('txAdmin:events:scheduledRestart', function(eventData)
     if eventData.secondsRemaining == 60 then
