@@ -228,9 +228,9 @@ const runPublishTask = () => {
 /**
  * Init parts
  */
-process.stdout.write('.\n'.repeat(80) + '\x1B[2J\x1B[H');
 const taskType = process.argv[2];
 if (taskType === 'dev') {
+    process.stdout.write('.\n'.repeat(80) + '\x1B[2J\x1B[H');
     runDevTask();
 } else if (taskType === 'publish') {
     runPublishTask();

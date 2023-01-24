@@ -50,6 +50,16 @@
 # Next up:
 - [ ] xxxxxx
 
+//essa logica não é "GetConvarBool" e sim negativa
+GetConvar\('([^']+)', 'false'\) ~= 'true'
+GetConvarBool('$1')
+
+function GetConvarBool(cvName)
+  return (GetConvar(cvName, 'false') ~= 'true')
+end
+
+criar variáveis globais setadas no shared, pra salvar o trabalho de dar GetConvar em todo arquivo
+
 ===================
 ### MUI update
 5.10.17 ok
@@ -209,6 +219,7 @@ process.exit();
 ## New config
 - 2023 acho que os defaults deveriam existir dentro dos components
 e sempre que outro componente precisar saber uma config, deve passar pelo componente
+- need to have a version and have migration, like the database
 
 - do research, but i think we don't need any lib
 - break up cfg files into `txData/<profile>/global.txcfg` and `txData/<profile>/server.txcfg`
@@ -371,6 +382,7 @@ https://tanstack.com/virtual/v3
 For the tx ingame menu, replace actions grid with flexbox
 https://youtu.be/3elGSZSWTbM
 around 12:00
+https://immerjs.github.io/immer/ maybe?
 
 
 ### Update Event + Rollout strategy
