@@ -106,9 +106,9 @@
                     "success": "God Mode ingeschakeld"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "SuperJump",
+                    "label": "Schakel de supersprongmodus in, de speler zal ook sneller rennen",
+                    "success": "SuperJump ingeschakeld"
                 },
                 "normal": {
                     "title": "Normaal",
