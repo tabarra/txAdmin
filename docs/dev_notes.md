@@ -30,8 +30,8 @@
         - requestId?: Rxxxx, if action != deniedAll
         - license?: xxxxxx, if action != deniedAll
         - adminName?: admin name, if action != requested
-- [ ] status embed every 30 seconds or reactive to status changes
-- [ ] wav for announcements
+- [x] wav for announcements and DMs
+- [ ] update status embed as soon as server status changes
 
 
 
