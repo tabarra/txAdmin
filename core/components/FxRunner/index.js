@@ -412,6 +412,7 @@ export default class FXRunner {
                 eventType,
                 JSON.stringify(data),
             );
+            if(verbose) dir({ eventType, data});
             return this.srvCmd(eventCommand);
         } catch (error) {
             if (verbose) {

@@ -31,6 +31,12 @@ const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, 
             tsApproved: now(),
             approvedBy: adminName,
         });
+        txAdmin.fxRunner.sendEvent('whitelistPreApproval', {
+            action: 'added',
+            identifier,
+            playerName,
+            adminName,
+        });
     } catch (error) {
         return await interaction.reply(embedder.danger(`Failed to save whitelist approval: ${(error as Error).message}`));
     }
@@ -60,14 +66,22 @@ const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction,
     const req = requests[0]; //just getting the first
 
     //Register whitelistApprovals
+    const identifier = `license:${req.license}`;
     const playerName = req.discordTag ?? req.playerDisplayName;
     try {
         txAdmin.playerDatabase.registerWhitelistApprovals({
-            identifier: `license:${req.license}`,
+            identifier,
             playerName,
             playerAvatar: (req.discordAvatar) ? req.discordAvatar : null,
             tsApproved: now(),
             approvedBy: adminName,
+        });
+        txAdmin.fxRunner.sendEvent('whitelistRequest', {
+            action: 'approved',
+            playerName,
+            requestId: req.id,
+            license: req.license,
+            adminName,
         });
     } catch (error) {
         if (!(error instanceof DuplicateKeyError)) {

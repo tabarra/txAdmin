@@ -6,6 +6,7 @@ import PlayerDatabase, { DuplicateKeyError } from '@core/components/PlayerDataba
 import { now, parsePlayerId } from '@core/extras/helpers';
 import DiscordBot from '@core/components/DiscordBot';
 import { DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
+import FXRunner from '@core/components/FxRunner';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -47,6 +48,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const discordBot = (globals.discordBot as DiscordBot);
+    const fxRunner = (globals.fxRunner as FXRunner);
 
     //Input validation
     if (typeof ctx.request.body?.identifier !== 'string') {
@@ -75,11 +77,17 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
         //Registering approval
         try {
             playerDatabase.registerWhitelistApprovals({
-                identifier,
+                identifier: idlowerCased,
                 playerName,
                 playerAvatar,
                 tsApproved: now(),
                 approvedBy: ctx.session.auth.username,
+            });
+            fxRunner.sendEvent('whitelistPreApproval', {
+                action: 'added',
+                identifier: idlowerCased,
+                playerName,
+                adminName: ctx.session.auth.username,
             });
         } catch (error) {
             return { error: `Failed to save wl approval: ${(error as Error).message}` };
@@ -90,6 +98,11 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
     } else if (action === 'remove') {
         try {
             playerDatabase.removeWhitelistApprovals({ identifier: idlowerCased });
+            fxRunner.sendEvent('whitelistPreApproval', {
+                action: 'removed',
+                identifier: idlowerCased,
+                adminName: ctx.session.auth.username,
+            });
         } catch (error) {
             return { error: `Failed to remove wl approval: ${(error as Error).message}` };
         }
@@ -108,6 +121,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
 async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp> {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+    const fxRunner = (globals.fxRunner as FXRunner);
 
     //Checkinf for the deny all action, the others need reqId
     if (action === 'deny_all') {
@@ -115,11 +129,14 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
         if (isNaN(cutoff)) {
             return { error: 'newestVisible not specified' };
         }
-        
 
         try {
             const filter = (req: DatabaseWhitelistRequestsType) => req.tsLastAttempt <= cutoff;
             playerDatabase.removeWhitelistRequests(filter);
+            fxRunner.sendEvent('whitelistRequest', {
+                action: 'deniedAll',
+                adminName: ctx.session.auth.username,
+            });
         } catch (error) {
             return { error: `Failed to remove all wl request: ${(error as Error).message}` };
         }
@@ -143,13 +160,21 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
 
         //Register whitelistApprovals
         const playerName = req.discordTag ?? req.playerDisplayName;
+        const identifier = `license:${req.license}`;
         try {
             playerDatabase.registerWhitelistApprovals({
-                identifier: `license:${req.license}`,
+                identifier,
                 playerName,
                 playerAvatar: (req.discordAvatar) ? req.discordAvatar : null,
                 tsApproved: now(),
                 approvedBy: ctx.session.auth.username,
+            });
+            fxRunner.sendEvent('whitelistRequest', {
+                action: 'approved',
+                playerName,
+                requestId: req.id,
+                license: req.license,
+                adminName: ctx.session.auth.username,
             });
         } catch (error) {
             if (!(error instanceof DuplicateKeyError)) {
@@ -168,7 +193,17 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
 
     } else if (action === 'deny') {
         try {
-            playerDatabase.removeWhitelistRequests({ id: reqId });
+            const requests = playerDatabase.removeWhitelistRequests({ id: reqId });
+            if(requests.length){
+                const req = requests[0]; //just getting the first
+                fxRunner.sendEvent('whitelistRequest', {
+                    action: 'denied',
+                    playerName: req.playerDisplayName,
+                    requestId: req.id,
+                    license: req.license,
+                    adminName: ctx.session.auth.username,
+                });
+            }
         } catch (error) {
             return { error: `Failed to remove wl request: ${(error as Error).message}` };
         }

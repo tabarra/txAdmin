@@ -13,6 +13,7 @@ import humanizeDuration, { Unit } from 'humanize-duration';
 import { Context } from 'koa';
 import DiscordBot from '@core/components/DiscordBot';
 import AdminVault from '@core/components/AdminVault';
+import FXRunner from '@core/components/FxRunner';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -385,6 +386,7 @@ async function checkApprovedLicense(
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const discordBot = (globals.discordBot as DiscordBot);
     const translator = (globals.translator as Translator);
+    const fxRunner = (globals.fxRunner as FXRunner);
 
     const textKeys = {
         mode_title: translator.t('whitelist_messages.approved_license.mode_title'),
@@ -481,6 +483,12 @@ async function checkApprovedLicense(
             discordTag,
             discordAvatar,
             tsLastAttempt: ts,
+        });
+        fxRunner.sendEvent('whitelistRequest', {
+            action: 'requested',
+            playerName: displayName,
+            requestId: wlRequestId,
+            license: validIdsObject.license,
         });
     }
 

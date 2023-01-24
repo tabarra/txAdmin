@@ -12,23 +12,27 @@
 - [x] the PR about hiding notifications
     - [x] remove monitor.disableChatWarnings
 - [x] At the schedule restart input prompt, add a note saying what is the current server time
-- [ ] status embed every 30 seconds or reactive to status changes
-- [ ] wav for announcements
-- [ ] create events for dynamic scheduled restarts
-- [ ] create new whitelist events
-    - [ ] whitelistPlayer:
+- [x] create events for dynamic scheduled restarts
+- [x] create new whitelist events
+    - [x] whitelistPlayer:
+        - action: added/removed
         - license: xxxxx
-        - author: admin name
-        - status: true/false
-    - [ ] whitelistPreApproval:
+        - playerName: player name
+        - adminName: admin name
+    - [x] whitelistPreApproval:
         - action: added/removed
         - identifier: `discord:xxxxxx` / `license:xxxxx`
-        - author: admin name
-    - [ ] whitelistRequest:
-        - action: requested/approved/denied
-        - author: either player name, or admin name
-        - requestId: Rxxxx
-        - license: xxxxxx
+        - playerName?: player name
+        - adminName: admin name
+    - [x] whitelistRequest:
+        - action: requested/approved/denied/deniedAll
+        - playerName?: player name, if action != deniedAll
+        - requestId?: Rxxxx, if action != deniedAll
+        - license?: xxxxxx, if action != deniedAll
+        - adminName?: admin name, if action != requested
+- [ ] status embed every 30 seconds or reactive to status changes
+- [ ] wav for announcements
+
 
 
 ## Optional
