@@ -447,12 +447,25 @@
         statusCard.nextRestartBtnEnable.classList.add('d-none');
     }
     document.getElementById('ctrl-schedule-restart').onclick = async () => {
+        const svTimezone = '<%= serverTimezone %>';
+        const timeFormatterOptions = {
+            timeZone: svTimezone,
+            timeStyle: 'short',
+            hour12: false
+        }
+        const timeFormatter = new Intl.DateTimeFormat([], timeFormatterOptions);
+        const serverTime = timeFormatter.format(new Date());
+
         const input = await txAdminPrompt({
             modalColor: 'orange',
             confirmBtnClass: 'btn-orange',
             title: 'Schedule Restart',
-            description: 'Type in the time for the server to restart in the 24-hour format <code>HH:MM</code>.<br>\n<strong>Note:</strong> Make sure your schedule matches your server time and not your local time.', 
-            placeholder: '16:15'
+            placeholder: '16:15',
+            description: [
+                'Type in the time for the server to restart in the 24-hour format <code>HH:MM</code>.',
+                'Make sure your schedule matches your server time and not your local time.',
+                `<strong>Current Server Time:</strong> ${serverTime} (${svTimezone})`
+            ].join('<br>'), 
         });
 
         const [hours, minutes] = input.split(':', 2).map(x => parseInt(x));

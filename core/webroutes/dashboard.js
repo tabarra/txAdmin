@@ -24,6 +24,7 @@ export default async function Dashboard(ctx) {
     const renderData = {
         headerTitle: 'Dashboard',
         discordEvent: false,
+        serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         // discordEvent: {
         //     timestamp: 1645512230000,
         //     time: '45 minutes',

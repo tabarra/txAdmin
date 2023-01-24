@@ -11,6 +11,7 @@
 - [x] add superjump
 - [x] the PR about hiding notifications
     - [x] remove monitor.disableChatWarnings
+- [x] At the schedule restart input prompt, add a note saying what is the current server time
 - [ ] status embed every 30 seconds or reactive to status changes
 - [ ] wav for announcements
 - [ ] create events for dynamic scheduled restarts
@@ -28,7 +29,6 @@
         - author: either player name, or admin name
         - requestId: Rxxxx
         - license: xxxxxx
-- [ ] At the schedule restart input prompt, add a note saying what is the current server time
 
 
 ## Optional
