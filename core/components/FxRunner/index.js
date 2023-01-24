@@ -37,6 +37,10 @@ const getMutableConvars = (isCmdLine = false) => {
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
         [`${p}set`, 'txAdmin-menuAlignRight', globals.config.menuAlignRight],
         [`${p}set`, 'txAdmin-menuPageKey', globals.config.menuPageKey],
+        [`${p}set`, 'txAdmin-hideDefaultAnnouncement', globals.config.hideDefaultAnnouncement],
+        [`${p}set`, 'txAdmin-hideDefaultDirectMessage', globals.config.hideDefaultDirectMessage],
+        [`${p}set`, 'txAdmin-hideDefaultWarning', globals.config.hideDefaultWarning],
+        [`${p}set`, 'txAdmin-hideDefaultScheduledRestartWarning', globals.config.hideDefaultScheduledRestartWarning],
     ];
 };
 const SHUTDOWN_NOTICE_DELAY = 5000;

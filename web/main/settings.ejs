@@ -84,7 +84,10 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">Menu</a>
+                        <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">
+                            Game
+                            &nbsp; <span class="badge badge-danger">NEW</span>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -511,7 +514,7 @@
                     </div>
                     <!-- /Discord Tab -->
 
-                    <!-- Menu Tab -->
+                    <!-- Game/Menu Tab -->
                     <div class="tab-pane fade <%= activeTab === 'menu' ? 'active show' : '' %>" id="nav-menu" role="tabpanel" aria-labelledby="nav-menu-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Enable Menu</label>
@@ -522,13 +525,13 @@
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    When enabled, admins will be able to open the menu by typing <code>/tx</code> or using the keybind configured in the FiveM settings.
+                                    When enabled, admins will be able to open the menu by typing <code>/tx</code> or using the keybind configured in the FiveM/RedM settings.
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Align Right</label>
+                            <label class="col-sm-3 col-form-label">Align Menu Right</label>
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmMenu-alignRight"
@@ -542,7 +545,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmMenu-pageKey" class="col-sm-3 col-form-label">Page Switch Key</label>
+                            <label for="frmMenu-pageKey" class="col-sm-3 col-form-label">Menu Page Switch Key</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmMenu-pageKey"
                                     value="<%= global.menuPageKey || '' %>"
@@ -551,6 +554,75 @@
                                     The key used to to switch tabs in the menu. <br>
                                     Click above and press any key to change the configuration. <br>
                                     <strong>Note:</strong> The default is <code>Tab</code>, and you cannot use <code>Escape</code> or <code>Backspace</code>.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Announcement <br>
+                                Notification
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideDefaultAnnouncement"
+                                        <%= global.hideDefaultAnnouncement || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Suppresses the display of announcements, allowing you to implement your own announcement via the event <code>txAdmin:events:announcement</code>
+                                    <a href="https://github.com/tabarra/txAdmin/blob/master/docs/menu.md" target="_blank" rel="noopener noreferrer">(docs page)</a>.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Direct Message <br>
+                                Notification
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideDefaultDirectMessage"
+                                        <%= global.hideDefaultDirectMessage || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Suppresses the display of direct messages, allowing you to implement your own direct message notification via the event <code>txAdmin:events:playerDirectMessage</code>
+                                    <a href="https://github.com/tabarra/txAdmin/blob/master/docs/menu.md" target="_blank" rel="noopener noreferrer">(docs page)</a>.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Warning <br>
+                                Notification
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideDefaultWarning"
+                                        <%= global.hideDefaultWarning || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Suppresses the display of warnings, allowing you to implement your own warning via the event <code>txAdmin:events:playerWarned</code>
+                                    <a href="https://github.com/tabarra/txAdmin/blob/master/docs/menu.md" target="_blank" rel="noopener noreferrer">(docs page)</a>.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Scheduled Restart <br>
+                                Warnings
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideDefaultScheduledRestartWarning"
+                                        <%= global.hideDefaultScheduledRestartWarning || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Suppresses the display of scheduled restart warnings, allowing you to implement your own warning via the event <code>txAdmin:events:scheduledRestart</code>
+                                    <a href="https://github.com/tabarra/txAdmin/blob/master/docs/menu.md" target="_blank" rel="noopener noreferrer">(docs page)</a>.
                                 </span>
                             </div>
                         </div>
@@ -760,7 +832,6 @@
     $('#frmMonitor-save').click(function () {
         let data = {
             restarterSchedule: $('#frmMonitor-restarterSchedule').val().trim(),
-            disableChatWarnings: ($('#frmMonitor-chatMessages').is(':checked') === true),
             resourceStartingTolerance: $('#frmMonitor-resourceStartingTolerance').val(),
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
@@ -912,7 +983,11 @@
         let data = {
             menuEnabled: ($('#frmMenu-enabled').is(':checked') === true),
             menuAlignRight: ($('#frmMenu-alignRight').is(':checked') === true),
-            menuPageKey: $('#frmMenu-pageKey').val().trim()
+            menuPageKey: $('#frmMenu-pageKey').val().trim(),
+            hideDefaultAnnouncement: ($('#frmMenu-hideDefaultAnnouncement').is(':checked') === true),
+            hideDefaultDirectMessage: ($('#frmMenu-hideDefaultDirectMessage').is(':checked') === true),
+            hideDefaultWarning: ($('#frmMenu-hideDefaultWarning').is(':checked') === true),
+            hideDefaultScheduledRestartWarning: ($('#frmMenu-hideDefaultScheduledRestartWarning').is(':checked') === true),
         };
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 

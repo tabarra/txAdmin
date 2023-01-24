@@ -9,8 +9,9 @@
     - [x] bot save: could not resolve guild id = was the bot invited?
     - [x] embed jsons reset buttons
 - [x] add superjump
+- [x] the PR about hiding notifications
+    - [x] remove monitor.disableChatWarnings
 - [ ] status embed every 30 seconds or reactive to status changes
-- [ ] the PR about hiding notifications
 - [ ] wav for announcements
 - [ ] create events for dynamic scheduled restarts
 - [ ] create new whitelist events

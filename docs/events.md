@@ -7,8 +7,10 @@ The event name will be `txAdmin:events:<name>` and the first (and only) paramete
 
 ## txAdmin:events:scheduledRestart (v3.2)
 Called automatically `[30, 15, 10, 5, 4, 3, 2, 1]` minutes before a scheduled restart, as well as the times configured in the settings page.  
+Can be used with the convar `txAdmin-hideDefaultScheduledRestartWarning` to display a custom warning notification.  
 Event Data:
 - `secondsRemaining`: The number of seconds before the scheduled restart.  
+- `translatedMessage`: The translated message to show on the announcement.
 
 Example usage on ESX v1.2:
 ```lua
@@ -39,6 +41,7 @@ Event Data:
 
 ## txAdmin:events:playerWarned (v3.7)
 Called when a player is warned using txAdmin.  
+Can be used with the convar `txAdmin-hideDefaultWarning` to display custom warning.  
 Event Data:
 - `target`: The id of the player that was warned.
 - `author`: The name of the admin.
@@ -78,6 +81,7 @@ Event Data:
 
 ## txAdmin:events:announcement (v4.8)
 Called when an announcement is made using txAdmin.  
+Can be used with the convar `txAdmin-hideDefaultAnnouncement` to display custom announcement notifications.  
 Event Data:
 - `author`: The name of the admin or `txAdmin`.
 - `message`: The message of the broadcast.
@@ -92,6 +96,7 @@ Event Data:
 
 ## txAdmin:events:playerDirectMessage (v5.0)
 Called when an admin DMs a player.
+Can be used with the convar `txAdmin-hideDefaultDirectMessage` to display custom direct message notifications.  
 Event Data:
 - `target`: The id of the player to receive the DM.
 - `author`: The name of the admin.

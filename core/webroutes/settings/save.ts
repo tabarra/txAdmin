@@ -260,7 +260,6 @@ async function handleMonitor(ctx: Context) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.restarterSchedule),
-        isUndefined(ctx.request.body.disableChatWarnings),
         isUndefined(ctx.request.body.resourceStartingTolerance)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
@@ -269,7 +268,6 @@ async function handleMonitor(ctx: Context) {
     //Prepare body input
     let cfg = {
         restarterSchedule: ctx.request.body.restarterSchedule.split(',').map((x: string) => x.trim()),
-        disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true'),
         resourceStartingTolerance: ctx.request.body.resourceStartingTolerance,
     };
 
@@ -284,7 +282,6 @@ async function handleMonitor(ctx: Context) {
     //Preparing & saving config
     const newConfig = globals.configVault.getScopedStructure('monitor');
     newConfig.restarterSchedule = validRestartTimes.map(t => t.string);
-    newConfig.disableChatWarnings = cfg.disableChatWarnings;
     newConfig.resourceStartingTolerance = cfg.resourceStartingTolerance;
     const saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
@@ -403,6 +400,10 @@ async function handleMenu(ctx: Context) {
         isUndefined(ctx.request.body.menuEnabled)
         || isUndefined(ctx.request.body.menuAlignRight)
         || isUndefined(ctx.request.body.menuPageKey)
+        || isUndefined(ctx.request.body.hideDefaultAnnouncement)
+        || isUndefined(ctx.request.body.hideDefaultDirectMessage)
+        || isUndefined(ctx.request.body.hideDefaultWarning)
+        || isUndefined(ctx.request.body.hideDefaultScheduledRestartWarning)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -412,6 +413,10 @@ async function handleMenu(ctx: Context) {
         menuEnabled: (ctx.request.body.menuEnabled === 'true'),
         menuAlignRight: (ctx.request.body.menuAlignRight === 'true'),
         menuPageKey: ctx.request.body.menuPageKey.trim(),
+        hideDefaultAnnouncement: (ctx.request.body.hideDefaultAnnouncement === 'true'),
+        hideDefaultDirectMessage: (ctx.request.body.hideDefaultDirectMessage === 'true'),
+        hideDefaultWarning: (ctx.request.body.hideDefaultWarning === 'true'),
+        hideDefaultScheduledRestartWarning: (ctx.request.body.hideDefaultScheduledRestartWarning === 'true'),
     };
 
     //Preparing & saving config
@@ -419,6 +424,10 @@ async function handleMenu(ctx: Context) {
     newConfig.menuEnabled = cfg.menuEnabled;
     newConfig.menuAlignRight = cfg.menuAlignRight;
     newConfig.menuPageKey = cfg.menuPageKey;
+    newConfig.hideDefaultAnnouncement = cfg.hideDefaultAnnouncement;
+    newConfig.hideDefaultDirectMessage = cfg.hideDefaultDirectMessage;
+    newConfig.hideDefaultWarning = cfg.hideDefaultWarning;
+    newConfig.hideDefaultScheduledRestartWarning = cfg.hideDefaultScheduledRestartWarning;
     const saveStatus = globals.configVault.saveProfile('global', newConfig);
 
     //Sending output
