@@ -17,41 +17,41 @@
         "kick_temporary": "(%{author}) Has sido baneado del servidor por \"%{reason}\". Tu baneo expirará en: %{expiration}.",
         "kick_permanent": "(%{author}) Has sido baneado permanentemente del servidor por \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
+            "title_permanent": "Has sido expulsado permanentemente de este servidor.",
+            "title_temporary": "Has sido expulsado temporalmente de este servidor.",
+            "label_expiration": "Tu expulsión expirará en",
+            "label_date": "Fecha de expulsión",
+            "label_author": "Expulsado por",
+            "label_reason": "Razón de la expulsión",
             "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+            "note_multiple_bans": "Nota: tiene más de una prohibición activa en sus identificadores."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Este servidor está en modo <strong>sólo administrador</strong>.",
+            "insufficient_ids": "No tiene identificadores <code>discord o fivem</code>, y al menos uno de ellos es necesario para validar si es administrador de txAdmin.",
+            "deny_message": "Sus identificadores no están asignados a ningún administrador de txAdmin."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Este servidor está en modo <strong>Lista blanca de miembros de discord</strong>.",
+            "insufficient_ids": "No tienes el identificador <code>discord</code>, que es necesario para validar si te has unido a nuestro discord. Abre Discord e inténtalo de nuevo.",
+            "deny_title": "Es necesario que te unas a nuestro Discord para conectarte.",
+            "deny_message": "Por favor, únete al discord %{guildname} e inténtalo de nuevo."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Este servidor está en modo <strong>Lista blanca de roles de discord</strong>.",
+            "insufficient_ids": "No tienes el identificador <code>discord</code>, que es necesario para validar si te has unido a nuestro Discord. Abre Discord e inténtalo de nuevo.",
+            "deny_notmember_title": "Es necesario que te unas a nuestra Discord para conectarte.",
+            "deny_notmember_message": "Por favor, únete a %{guildname}, consigue uno de los roles requeridos, e inténtalo de nuevo.",
+            "deny_noroles_title": "Usted no tiene un rol en la lista blanca requerido para unirse.",
+            "deny_noroles_message": "Para unirte a este servidor debes tener al menos uno de los roles de la lista blanca del Discord %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Este servidor está en modo <strong>Lista blanca de licencias</strong>.",
+            "insufficient_ids": "No tiene el identificador de <code>licencia</code>, lo que significa que el servidor tiene <code>sv_lan</code> activado. Si usted es el propietario del servidor, puede desactivarlo en el archivo <code>server.cfg</code>.",
+            "deny_title": "No estás en la lista blanca para unirte a este servidor.",
+            "request_id_label": "Solicitar ID"
         }
     },
     "server_actions": {
@@ -75,7 +75,7 @@
             "not_enabled": "¡Menú txAdmin no está activado! Puedes activarlo en la página de ajustes de txAdmin.",
             "announcement_title": "Anuncio del servidor de %{author}:",
             "dialog_empty_input": "La entrada no puede estar vacía.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "MD de admin %{author}:"
         },
         "frozen": {
             "froze_player": "¡Has congelado al jugador!",
@@ -106,9 +106,9 @@
                     "success": "God Mode activado"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Super Salto",
+                    "label": "Activa el modo super salto, el jugador también correrá más rápido",
+                    "success": "Super Salto Activado"
                 },
                 "normal": {
                     "title": "Normal",
@@ -166,10 +166,10 @@
                 },
                 "boost": {
                     "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported."
+                    "label": "Potencia el coche para conseguir la máxima diversión (y quizá velocidad)",
+                    "success": "¡Vehículo potenciado!",
+                    "already_boosted": "Este vehículo ya estaba potenciado.",
+                    "unsupported_class": "Esta clase de vehículo no es compatible."
                 }
             },
             "heal": {
@@ -304,27 +304,27 @@
                 "play_time": "Tiempo de juege",
                 "joined": "Se unió",
                 "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
+                "whitelisted_notyet": "todavía no",
+                "btn_wl_add": "AÑADIR WL",
+                "btn_wl_remove": "ELIMINAR WL",
+                "btn_wl_success": "Se ha modificado el estado de la lista blanca.",
                 "log_label": "Log",
-                "log_empty": "No bans/warns found.",
+                "log_empty": "No se han encontrado prohibiciones/avisos.",
                 "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
                 "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "log_btn": "DETALLES",
+                "notes_changed": "Nota de jugador cambiada.",
+                "notes_placeholder": "Notas sobre este jugador..."
             },
             "history": {
                 "title": "Historial relacionado",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "REVOCAR",
+                "revoked_success": "¡Acción revocada!",
+                "banned_by": "BANEADO por %{author}",
+                "warned_by": "ADVERTIDO por %{author}",
+                "revoked_by": "Revocado por %{author}.",
+                "expired_at": "Expirado el %{date}.",
+                "expires_at": "Expirado el %{date}."
             },
             "ban": {
                 "title": "Banear jugador",
@@ -338,12 +338,12 @@
                 "custom": "Personalizado",
                 "helper_text": "Por favor, elige una duración",
                 "submit": "Aplicar baneo",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "reason_required": "El campo Motivo es obligatorio.",
+                "success": "¡Jugador expulsado!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "current_ids": "Identificadores actuales",
+                "previous_ids": "Identificadores utilizados anteriormente"
             }
         }
     }
