@@ -112,3 +112,9 @@ Event Data:
 - `playerName`: name of the player that received the action, or `false` if doesn't apply.
 - `playerIds`: Array containing all identifiers (ex. license, discord, etc.) this action applied to.
 - `revokedBy`: The name of the admin that revoked the action.
+
+## txAdmin:events:skippedNextScheduledRestart (v5.2)
+Called when an admin skips the next scheduled restart.
+Event Data:
+- `secondsRemaining`: The number of seconds before the previously scheduled restart.  
+- `temporary`: If it was a temporary scheduled restart or one configured in the settings page.

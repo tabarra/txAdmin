@@ -85,11 +85,22 @@ export default class Scheduler {
      */
     setNextSkip(enabled) {
         if (enabled) {
+            let prevMinuteFloorTs, temporary;
             if (this.nextTempSchedule) {
+                prevMinuteFloorTs = this.nextTempSchedule.minuteFloorTs;
+                temporary = true;
                 this.nextTempSchedule = false;
             } else if (this.calculatedNextRestartMinuteFloorTs) {
+                prevMinuteFloorTs = this.calculatedNextRestartMinuteFloorTs;
+                temporary = false;
                 this.nextSkip = this.calculatedNextRestartMinuteFloorTs;
             }
+
+            //Dispatch `txAdmin:events:skippedNextScheduledRestart` 
+            globals.fxRunner.sendEvent('skippedNextScheduledRestart', {
+                secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
+                temporary
+            });
         } else {
             this.nextSkip = false;
         }
