@@ -29,7 +29,9 @@ const isValidButtonConfig = (btn: any) => {
     return (
         btn !== null && btnType === 'object'
         && typeof btn.label === 'string'
+        && btn.label.length
         && typeof btn.url === 'string'
+        && btn.label.url
         && (typeof btn.emoji === 'string' || btn.emoji === undefined)
     );
 }
@@ -129,7 +131,8 @@ export const generateStatusMessage = (
             const processed = processValue(value);
             if(key === 'url' && !isValidEmbedUrl(processed)){
                 throw new Error(`Invalid URL \`${processed}\`.
-                Every URL must start with one of ('http://', 'https://', 'discord://').`);
+                Every URL must start with one of ('http://', 'https://', 'discord://').
+                URLs cannot be empty, if you do not want a link, remove the URL line.`);
             }
             out[key] = processed;
         }
@@ -161,12 +164,16 @@ export const generateStatusMessage = (
             }
             for (const cfgButton of embedConfigJson.buttons) {
                 if (!isValidButtonConfig(cfgButton)) {
-                    throw new Error('Invalid button in Discord Status Embed Config.');
+                    throw new Error(`Invalid button in Discord Status Embed Config.
+                    All buttons must have:
+                    - Label: string, not empty
+                    - URL: string, not empty, valid URL`);
                 }
                 const processedUrl = processValue(cfgButton.url);
                 if(!isValidEmbedUrl(processedUrl)) {
                     throw new Error(`Invalid URL \`${processedUrl}\` for button \`${cfgButton.label}\`.
-                    Every URL must start with one of ('http://', 'https://', 'discord://').`);
+                    Every URL must start with one of ('http://', 'https://', 'discord://').
+                    URLs cannot be empty, if you do not want a link, you must remove the entire button.`);
                 }
                 const btn = new ButtonBuilder({
                     style: ButtonStyle.Link,

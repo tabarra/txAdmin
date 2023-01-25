@@ -1,39 +1,12 @@
 # TODO:
-- [x] QoL: add redirect post login if invalid session
-- [x] Improve discord embed UX:
-    - [x] embed placeholder
-    - [x] check for the emoji
-    - [x] check for the url fields
-    - [x] discord auth not admin response
-    - [x] bot save: intent message
-    - [x] bot save: could not resolve guild id = was the bot invited?
-    - [x] embed jsons reset buttons
-- [x] add superjump
-- [x] the PR about hiding notifications
-    - [x] remove monitor.disableChatWarnings
-- [x] At the schedule restart input prompt, add a note saying what is the current server time
-- [x] create events for dynamic scheduled restarts
-- [x] create new whitelist events
-    - [x] whitelistPlayer:
-        - action: added/removed
-        - license: xxxxx
-        - playerName: player name
-        - adminName: admin name
-    - [x] whitelistPreApproval:
-        - action: added/removed
-        - identifier: `discord:xxxxxx` / `license:xxxxx`
-        - playerName?: player name
-        - adminName: admin name
-    - [x] whitelistRequest:
-        - action: requested/approved/denied/deniedAll
-        - playerName?: player name, if action != deniedAll
-        - requestId?: Rxxxx, if action != deniedAll
-        - license?: xxxxxx, if action != deniedAll
-        - adminName?: admin name, if action != requested
-- [x] wav for announcements and DMs
-- [x] update status embed as soon as server status changes
+- [ ] fix: menu > send announcement does not drigger discord msg nor custom event
+- [ ] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
 
-
+(function() {
+    var s = document.createElement('script');
+    s.setAttribute('src', 'https://nthitz.github.io/turndownforwhatjs/tdfw.js');
+    document.body.appendChild(s);
+})()
 
 ## Optional
 - [ ] bot: fix http agent options for localAddress

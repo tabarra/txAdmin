@@ -358,7 +358,7 @@ async function handleDiscord(ctx: Context) {
                 type: 'success',
                 markdown: true,
                 message: `**Discord configuration saved!**
-                If <em>(and only if)</em> the status embed is not being updated, check the System Logs page and make sure there are no embed errors.`
+                If _(and only if)_ the status embed is not being updated, check the System Logs page and make sure there are no embed errors.`
             });
         } catch (error) {
             const errorCode = (error as any).code;
