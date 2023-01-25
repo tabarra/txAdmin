@@ -31,7 +31,7 @@ const isValidButtonConfig = (btn: any) => {
         && typeof btn.label === 'string'
         && btn.label.length
         && typeof btn.url === 'string'
-        && btn.label.url
+        && btn.url.length
         && (typeof btn.emoji === 'string' || btn.emoji === undefined)
     );
 }

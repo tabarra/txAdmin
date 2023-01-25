@@ -362,7 +362,7 @@ async function handleDiscord(ctx: Context) {
             });
         } catch (error) {
             const errorCode = (error as any).code;
-            let extraContext;
+            let extraContext = '';
             if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
                 extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
                 - Go to the Dev Portal (<https://discord.com/developers/applications>)
@@ -377,7 +377,7 @@ async function handleDiscord(ctx: Context) {
             return ctx.send({
                 type: 'danger',
                 markdown: true,
-                message: `**Error starting the bot:** ${(error as Error).message}\n${extraContext}`
+                message: `**Error starting the bot:** ${(error as Error).message}\n${extraContext}`.trim()
             });
         }
 
