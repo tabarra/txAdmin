@@ -24,34 +24,34 @@
             "label_author": "Kitiltó neve",
             "label_reason": "Kitiltás indoka",
             "label_id": "Ban ID",
-            "note_multiple_bans": "Figyelem: Több mint egy kitiltásod van ezen a fiókon."
+            "note_multiple_bans": "Figyelem: Több mint egy aktív kitiltásod van ezen a fiókon."
         }
     },
     "whitelist_messages": {
         "admin_only": {
             "mode_title": "Ez a szerver <strong>csak Adminok</strong> módban van.",
-            "insufficient_ids": "Nincs <code>discord</code> vagy <code>fivem</code> azonosítód, valamelyik szükséges ahhoz, hogy azonosítsd magad ha txAdmin adminisztrátor vagy.",
+            "insufficient_ids": "Nincs <code>Discord</code> vagy <code>fivem</code> azonosítód, valamelyik szükséges ahhoz, hogy azonosítsd magad ha txAdmin adminisztrátor vagy.",
             "deny_message": "Az azonosítód nem tartozik egy txAdmin adminisztrátorhoz sem."
         },
         "guild_member": {
             "mode_title": "Ez a szerver <strong>Discord szerver tag whitelist</strong> módban van.",
-            "insufficient_ids": "A <code>discord</code> azonosítód nem elérhető, ami szükséged az ellenőrzéshez, hogy fent vagy-e a szerveren. Kérlek nyisd meg a discordot és próbáld meg újra.",
+            "insufficient_ids": "A <code>Discord</code> azonosítód nem elérhető, ami szükséges annak az ellenőrzéséhez, hogy fent vagy-e a szerveren. Kérlek nyisd meg a Discordot és próbáld meg újra.",
             "deny_title": "Kérlek lépj be a szerverünkre a csatlakozáshoz",
             "deny_message": "Kérlek csatlakozz ide %{guildname}, és próbáld újra."
         },
         "guild_roles": {
             "mode_title": "Ez a szerver <strong>Discord whitelist rang</strong> módban van.",
-            "insufficient_ids": "A <code>discord</code> azonosítód nem elérhető, ami szükséged az ellenőrzéshez, hogy fent vagy-e a szerveren. Kérlek nyisd meg a discordot és próbáld meg újra.",
+            "insufficient_ids": "A <code>Discord</code> azonosítód nem elérhető, ami szükséges annak az ellenőrzéséhez, hogy fent vagy-e a szerveren. Kérlek nyisd meg a Discordot és próbáld meg újra.",
             "deny_notmember_title": "Kérlek lépj be a szerverünkre a csatlakozáshoz",
             "deny_notmember_message": "Kérlek csatlakozz ide %{guildname}, szerezd meg a szükséges rangot és próbáld újra.",
-            "deny_noroles_title": "Nem vagy engedélyezve a discord szerveren (Nincs meg a megfelelő rang).",
+            "deny_noroles_title": "Nem vagy engedélyezve a Discord szerveren (Nincs meg a megfelelő rang).",
             "deny_noroles_message": "A csatlakozáshoz szükséged lesz a whitelistelt rangra a következő szerveren: %{guildname}."
         },
         "approved_license": {
             "mode_title": "Ez a szerver <strong>License Whitelist</strong> módban van.",
             "insufficient_ids": "Nincs <code>license</code> azonosítód, ami azt jelenti, hogy a szerveren az <code>sv_lan</code> be van kapcsolva. Ha te vagy a tulajdonos, a <code>server.cfg</code> fájlban ki tudod kapcsolni.",
             "deny_title": "Nem vagy engedélyezve a szerveren.",
-            "request_id_label": "Request ID"
+            "request_id_label": "Kérés ID"
         }
     },
     "server_actions": {
@@ -98,17 +98,17 @@
                 "noclip": {
                     "title": "NoClip",
                     "label": "Körbe repülés",
-                    "success": "NoClip engedélyezve"
+                    "success": "NoClip bekapcsolva"
                 },
                 "godmode": {
                     "title": "God",
                     "label": "Halhatatlanság",
-                    "success": "God mód engedélyezve"
+                    "success": "God mód bekapcsolva"
                 },
                 "superjump": {
                     "title": "Super Jump",
                     "label": "Magas ugrás és gyors futás",
-                    "success": "Super Jump engedélyezve"
+                    "success": "Super Jump bekapcsolva"
                 },
                 "normal": {
                     "title": "Normál",
@@ -169,7 +169,7 @@
                     "label": "Boostold a járművedet!",
                     "success": "Jármű boostolva!",
                     "already_boosted": "Ezt a járművet már boostoltad.",
-                    "unsupported_class": "Ez a jármű típus nem támogatott."
+                    "unsupported_class": "Ez a járműtípus nem támogatott."
                 }
             },
             "heal": {
