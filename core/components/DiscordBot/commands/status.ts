@@ -31,10 +31,19 @@ const isValidButtonConfig = (btn: any) => {
         && typeof btn.label === 'string'
         && btn.label.length
         && typeof btn.url === 'string'
-        && btn.url.length
+        // && btn.url.length //let the function handle it
         && (typeof btn.emoji === 'string' || btn.emoji === undefined)
     );
 }
+
+const validUrlMessage = `Every URL must start with one of (\`http://\`, \`https://\`, \`discord://\`).
+URLs cannot be empty, if you do not want a URL then remove the URL line.`;
+
+const validEmojiMessage = `All emojis must be one of:
+- UTF-8 emoji ('😄')
+- Valid emoji ID ('1062339910654246964')
+- Discord custom emoji (\`<:name:id>\` or \`<a:name:id>\`).
+To get the full emoji code, insert it into discord, and add \`\\\` before it then send the message`
 
 
 export const generateStatusMessage = (
@@ -129,10 +138,18 @@ export const generateStatusMessage = (
         const out: any = {};
         for (const [key, value] of Object.entries(input)) {
             const processed = processValue(value);
-            if(key === 'url' && !isValidEmbedUrl(processed)){
-                throw new Error(`Invalid URL \`${processed}\`.
-                Every URL must start with one of ('http://', 'https://', 'discord://').
-                URLs cannot be empty, if you do not want a link, remove the URL line.`);
+            if (key === 'url' && !isValidEmbedUrl(processed)) {
+                const messageHead = processed.length
+                    ? `Invalid URL \`${processed}\`.`
+                    : `Empty URL.`;
+                const badPlaceholderMessage = processed.startsWith('{{')
+                    ? 'Your URL starts with `{{`, try removing it.'
+                    : '';
+                throw new Error([
+                    messageHead,
+                    validUrlMessage,
+                    badPlaceholderMessage
+                ].join('\n'));
             }
             out[key] = processed;
         }
@@ -152,7 +169,7 @@ export const generateStatusMessage = (
 
         });
     } catch (error) {
-        throw new Error(`Embed Class Error: ${(error as Error).message}`);
+        throw new Error(`**Embed Class Error:** ${(error as Error).message}`);
     }
 
     //Attempting to instantiate buttons
@@ -170,24 +187,27 @@ export const generateStatusMessage = (
                     - URL: string, not empty, valid URL`);
                 }
                 const processedUrl = processValue(cfgButton.url);
-                if(!isValidEmbedUrl(processedUrl)) {
-                    throw new Error(`Invalid URL \`${processedUrl}\` for button \`${cfgButton.label}\`.
-                    Every URL must start with one of ('http://', 'https://', 'discord://').
-                    URLs cannot be empty, if you do not want a link, you must remove the entire button.`);
+                if (!isValidEmbedUrl(processedUrl)) {
+                    const messageHead = processedUrl.length
+                        ? `Invalid URL \`${processedUrl}\``
+                        : `Empty URL`;
+                    const badPlaceholderMessage = processedUrl.startsWith('{{')
+                        ? 'Your URL starts with `{{`, try removing it.'
+                        : '';
+                    throw new Error([
+                        `${messageHead} for button \`${cfgButton.label}\`.`,
+                        validUrlMessage,
+                        badPlaceholderMessage
+                    ].join('\n'));
                 }
                 const btn = new ButtonBuilder({
                     style: ButtonStyle.Link,
                     label: processValue(cfgButton.label),
                     url: processedUrl,
                 });
-                if(cfgButton.emoji !== undefined){
-                    if(!isValidButtonEmoji(cfgButton.emoji)) {
-                        throw new Error(`Invalid emoji for button \`${cfgButton.label}\`.
-                        All emojis must be one of:
-                        - UTF-8 emoji ('😄')
-                        - Valid emoji ID ('1062339910654246964')
-                        - Discord custom emoji (\`<:name:id>\` or \`<a:name:id>\`).
-                        To get the full emoji code, insert it into discord, and add \`\\\` before it then send the message`);
+                if (cfgButton.emoji !== undefined) {
+                    if (!isValidButtonEmoji(cfgButton.emoji)) {
+                        throw new Error(`Invalid emoji for button \`${cfgButton.label}\`.\n${validEmojiMessage}`);
                     }
                     btn.setEmoji(cfgButton.emoji);
                 }
@@ -195,7 +215,7 @@ export const generateStatusMessage = (
             }
         }
     } catch (error) {
-        throw new Error(`Embed Buttons Error: ${(error as Error).message}`);
+        throw new Error(`**Embed Buttons Error:** ${(error as Error).message}`);
     }
 
     return {
