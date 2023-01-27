@@ -106,9 +106,9 @@
                     "success": "God Mode aktiviert"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Super Sprünge",
+                    "label": "Aktiviert super hohe Sprünge und beschleunigt das Rennen",
+                    "success": "Super Sprünge aktivier"
                 },
                 "normal": {
                     "title": "Normal",
