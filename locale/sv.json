@@ -26,32 +26,32 @@
             "label_id": "Bannlysnings ID",
             "note_multiple_bans": "OBS Du kan vara bannlyst på flera identifikationer."
         }
-    },
+       },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Denna server är i <strong> Administratörs </strong> läge.",
+            "insufficient_ids": "Du har inte <code>discord</code> eller <code>fivem</code> identifikationer, och minst en av de är behövda för att verifera din txAdmin administration.", 
+            "deny_message": "Dina identifikationer är inte kopplade till något txAdmin konto."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Denna server är i <strong> discord vitlistnings </strong> läge.",
+            "insufficient_ids": "Du har inte <code>discord</code> identifikation, detta är nödvändligt för att bekräfta att du är med i discord servern. Testa och öppna discord och pröva igen.",
+            "deny_title": "Du måste gå med i våran discord server för att kunna komma in.",
+            "deny_message": "Du måste joina våran server: %{guildname} och pröva igen."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Denna server är i <strong> discord roll vitlistnings </strong> läge.",
+            "insufficient_ids": "Du har inte <code>discord</code> identifikation, detta är nödvändligt för att bekräfta att du är med i discord servern. Testa och öppna discord och pröva igen.",
+            "deny_notmember_title": "Du måste gå med i discorden.",
+            "deny_notmember_message": "Vänligen gå med i %{guildname}, Få de roller du behöver och testa igen.",
+            "deny_noroles_title": "Du har inte den vitlistade rollen som krävs.",
+            "deny_noroles_message": "För att kunna gå in på servern måste du ha minst en vitlistad roll hos %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Denna server är i <strong>Licens vitlistnings</strong> läge.",
+            "insufficient_ids": "Du har inte <code>license</code> identifikation, detta menas med att servern har på <code>sv_lan</code> . Om du är server ägare kan du stänga av de i  <code>server.cfg</code> filen.",
+            "deny_title": "Du är inte vitlistad för att joina denna server.",
+            "request_id_label": "Begär identifikation"
         }
     },
     "server_actions": {
