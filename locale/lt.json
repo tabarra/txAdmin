@@ -4,12 +4,12 @@
         "humanizer_language": "lt"
     },
     "restarter": {
-        "start_timeout": "nepavyko paleisti",
-        "crash_detected": "aptiktas serverio nulūžimas",
-        "hang_detected": "aptiktas serverio pakibimas",
+        "start_timeout": "Nepavyko paleisti",
+        "crash_detected": "Aptiktas serverio nulūžimas",
+        "hang_detected": "Aptiktas serverio pakibimas",
         "partial_hang_warn": "Dėl pakibimo, serveris persijungs automatiškai po 1 min. Atsijunkite nedelsiant.",
         "partial_hang_warn_discord": "Dėl pakibimo, **%{servername}** serveris persijungs po 1 min.",
-        "schedule_reason": "automatinis %{time} perkrovimas",
+        "schedule_reason": "Automatinis %{time} perkrovimas",
         "schedule_warn": "Serveris persikraus už %{smart_count} min. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} min. Prašome atsijungti.",
         "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} min. |||| **%{servername}** automatiškai persikraus už %{smart_count} min."
     },
@@ -17,47 +17,47 @@
         "kick_temporary": "(%{author}) Buvote užblokuotas iš serverio dėl \"%{reason}\". Blokavimas bus baigtas: %{expiration}.",
         "kick_permanent": "(%{author}) Buvote užblokuotas iš serverio visam laikui dėl \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+            "title_permanent": "Esate visam laikui užblokuotas nuo prisijungimo į serverį.",
+            "title_temporary": "Esate laikinai užblokuotas nuo prisijungimo į serverį.",
+            "label_expiration": "Tavo užblokavimas baigsis po",
+            "label_date": "Užblokavimo data",
+            "label_author": "Tave užblokavo",
+            "label_reason": "Užblokavimo priežastis",
+            "label_id": "Užblokavimo ID",
+            "note_multiple_bans": "P.S. Tu turi daugiau nei vieną užblokavimą ant savo identifikatorių"
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Šis serveris yra <strong>Tik Administratoriams</strong> rėžime.",
+            "insufficient_ids": "Tu neturi <code>discord</code> arba <code>fivem</code> identifikatorių, ar bent vieno iš jų, jog patvirtinti, kad esi txAdmin administratorius.",
+            "deny_message": "Tavo identifikatoriai nėra sujungti su txAdmin administratoriumi."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Šois serveris yra <strong>Discord Gildijos (Serverio) Nario Baltojo Sąrašo</strong> rėžime",
+            "insufficient_ids": "Tu neturi <code>discord</code> identifikatoriaus, kuris yra reikalingas patvirtinti, jog prisijungėte į Discord gildiją (serverį). Atidarykite Discord ir bandykite vėl.",
+            "deny_title": "Tau reikia prisijungti į Discord gildiją (serverį)",
+            "deny_message": "Prašome prisijungti į %{guildname} gildiją (serverį) ir bandyti vėl."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Šis serveris yra <strong>Discord Rolių Baltojo Sąrašo</strong> rėžime.",
+            "insufficient_ids": "Tu neturi <code>discord</code> identifikatoriaus, kuris yra reikalingas patvirtinti, jog prisijungėte į Discord gildiją (serverį). Atidarykite Discord ir bandykite vėl.",
+            "deny_notmember_title": "Tau reikia prisijungti į Discord gildiją (serverį), kad prisijungti.",
+            "deny_notmember_message": "Prašome prisijungti į %{guildname}, gauti reikiamą rolę ir bandyti vėl.",
+            "deny_noroles_title": "Tu neturi reikiamos rolės, jog prisijungti.",
+            "deny_noroles_message": "Jog prisijungti į serverį, tau reikia turėti bent vieną baltąjame sąraše esančių rolių %{guildname} Discord gildijoje (serveryje)."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Šis serveris yra <strong>Licenzijos Baltojo Sąrašo</strong> rėžime.",
+            "insufficient_ids": "Tu neturi reikiamo <code>license</code> identifikatoriaus, kas rodo, jog serveris yra įjungęs <code>sv_lan</code>. Jei esi serverio savininkas, gali tai pakeisti <code>server.cfg</code> faile.",
+            "deny_title": "Neesi baltąjame sąraše, jog galėtum prisijungti į šį serverį.",
+            "request_id_label": "Prašymo ID"
         }
     },
     "server_actions": {
         "restarting": "Serverio perkrovimas (%{reason}).",
         "restarting_discord": "**%{servername}** yra perkraunamas (%{reason}).",
-        "stopping": "Serverio išjungiamas (%{reason}).",
+        "stopping": "Serveris išjungiamas (%{reason}).",
         "stopping_discord": "**%{servername}** yra išjungiamas (%{reason}).",
         "spawning_discord": "**%{servername}** yra įjungiamas."
     },
@@ -68,14 +68,14 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Meniu iįjungtas, rašykite /tx norėdami jį atidaryti.\nMygtuką galite priskirti ar pakeisti [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
+            "help_message": "txAdmin Meniu įjungtas, rašykite /tx norėdami jį atidaryti.\nMygtuką galite priskirti ar pakeisti [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Jūsų identifikavimas txAdmin sistemai nebuvo rastas.\nJei esate užregistruotas txAdmin sistemoje, eikite į Admin Manager ir įsitikinkite, kad jūsų atpažinimas išsaugotas.",
             "no_perms": "Neturite tam teisių.",
             "unknown_error": "Nežinoma klaida.",
             "not_enabled": "txAdmin meniu nėra įjungtas! Tai galite padaryti per txAdmin nustatymų (settings) puslapį.",
             "announcement_title": "Serverio pranešimas nuo: %{author}:",
             "dialog_empty_input": "Turite užpildyti įvesties laukelius.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "PŽ. iš administratoriaus %{author}:"
         },
         "frozen": {
             "froze_player": "Užšaldėte žaidėją!",
@@ -106,9 +106,9 @@
                     "success": "Nemirtingumas įjungtas"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Super Šuolis",
+                    "label": "Įjungti/išjungti super šuolio rėžimą, jūsų veikėjas taippat bėgs greičiau",
+                    "success": "Super Šuolis įjungtas"
                 },
                 "normal": {
                     "title": "Normal",
@@ -117,10 +117,10 @@
                 }
             },
             "teleport": {
-                "title": "Teleport",
+                "title": "Teleportacija",
                 "generic_success": "Pakeisti savo poziciją!",
                 "waypoint": {
-                    "title": "Waypoint",
+                    "title": "Pažymėtas taškas (Waypoint)",
                     "label": "Nusikelkite į pažymėtą žemėlapyje vietą",
                     "error": "Pirma pažymėkite vietą žemėlapyje."
                 },
@@ -165,11 +165,11 @@
                     "success": "Tr. priemonė ištrinta!"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported."
+                    "title": "Turbo",
+                    "label": "Paturbink tr. priemonę, kad pasiektum maksimalų džiaugsmo (ir galbūt greičio) lygį.",
+                    "success": "Tr. priemonė paturbinta",
+                    "already_boosted": "Ši tr. priemonė jau yra paturbinta.",
+                    "unsupported_class": "Ši tr. priemonių klasė nėra palaikoma."
                 }
             },
             "heal": {
@@ -217,7 +217,7 @@
                 "zero_players": "Žaidėjų nerasta"
             },
             "sort": {
-                "label": "Rykiuoti pagal",
+                "label": "Rikiuoti pagal",
                 "distance": "Atstumą",
                 "id": "ID",
                 "joined_first": "Pirmi prisijungę",
@@ -305,8 +305,8 @@
                 "joined": "Prisijungęs",
                 "whitelisted_label": "Whitelisted",
                 "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_add": "PRIDĖTI WL",
+                "btn_wl_remove": "PANAIKINTI WL",
                 "btn_wl_success": "Whitelist status changed.",
                 "log_label": "Log",
                 "log_empty": "No bans/warns found.",
@@ -337,13 +337,13 @@
                 "permanent": "Visam laikui",
                 "custom": "Custom",
                 "helper_text": "Pasirinkti laiką",
-                "submit": "Apply ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "submit": "Užblokuoti",
+                "reason_required": "Priežasties laukas yra privalomas!",
+                "success": "Žaidėjas užblokuotas!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "current_ids": "Dabartiniai Identifikatoriai",
+                "previous_ids": "Ankščiau Naudoti Identifikatoriai"
             }
         }
     }
