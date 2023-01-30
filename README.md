@@ -1,27 +1,23 @@
 <p align="center">
 	<h1 align="center">
-		txAdmin for FiveM
+		ragexAdmin for RageMP
 	</h1>
 	<p align="center">
-		<img width="420" height="237" src="docs/banner.png">
+		<img width="420" height="237" src="">
 	</p>
 	<h4 align="center">
-		Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
+		<strike>Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a></strike>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over <strong>18000</strong> servers worldwide at any given time.
+		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your RageMP Server remotely, in <strike>use by over <strong>18000</strong> servers worldwide at any given time.</strike>
 	</p>
-	<p align="center">
-		<a href="https://zap-hosting.com/txadmin4" target="_blank" rel="noopener">
-			<img src="docs/zaphosting.png" alt="zap-hosting"></img>
-		</a>
-	</p>
+	
 </p>
 
 <br/>
 
 
-## Main Features
+## Coming Features
 - Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
 - Start/Stop/Restart your server instance or resources
 - Server tick time performance chart ([example](https://i.imgur.com/VG8hpzr.gif))
@@ -38,7 +34,7 @@
 	- Player troll: make drunk, set fire, wild attack
 	- Player ban
 - Access control:
-	- Login via Password or CitizenFX
+	- Login via Password
 	- Admin permission system ([more info](docs/permissions.md))
 	- Action logging
 	- Brute-force protection
@@ -70,12 +66,12 @@
 Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 
 ## Running (Windows/Linux)
-**txAdmin is included in all FXServer builds** above 2524, so to run it for the first time simply do the following:
+**ragexAdmin is included in all RageMP builds** <strike>above 2524, so to run it for the first time simply do the following:
 - Update FXServer to the latest artifact/build (2524 or superior)
 - If Windows, run FXServer.exe | If Linux, run `screen ./run.sh`
-- Open one of the URLs shown and configure txAdmin
+- Open one of the URLs shown and configure txAdmin</strike>
 
-txAdmin requires to be launched from *inside* FXServer in monitor mode, to do that, just execute the `run.sh` or `FXServer.exe` without **any** `+exec` arguments.  
+<strike>txAdmin requires to be launched from *inside* FXServer in monitor mode, to do that, just execute the `run.sh` or `FXServer.exe` without **any** `+exec` arguments.  
   
 ### ConVars
 - **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder. The default is `default`.
@@ -104,4 +100,4 @@ If you want to run it from build & source, please do read [this](docs/developmen
 - [Announcement Sound](https://freesound.org/people/IENBA/sounds/545495/) made by IENBA is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
 - [Message Sound](https://freesound.org/people/Divinux/sounds/198414/) made by Divinux is licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/);
 - Special thanks to everyone that contributed to this project, specially the very fine Discord folks that provide support for others;
-- Also thanks to our Discord's `sky{something}` bot, who will hopefully spare us when he becomes self aware and rebels against humanity. 
+- Also thanks to our Discord's `sky{something}` bot, who will hopefully spare us when he becomes self aware and rebels against humanity. </strike>
