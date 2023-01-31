@@ -3,6 +3,12 @@ if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
 
+if GetConvar("gamename", "gta5") == "rdr3" then
+  RedM = true
+  print("RedM mode Enabled, make sure you are using oneSync infinity  go to tx admin settings") -- can be disabled rdr3 only supports infinity
+else
+  RedM = false
+end
 
 ServerCtxObj = {
   oneSync = {
@@ -56,7 +62,7 @@ local function getCustomLocaleData()
   -- Get file data
   local fileHandle = io.open(filePath, "rb")
   if not fileHandle then
-    print('^1WARNING: failed to load custom locale from path: '..filePath)
+    print('^1WARNING: failed to load custom locale from path: ' .. filePath)
     return false
   end
   local fileData = fileHandle:read "*a"
@@ -64,13 +70,12 @@ local function getCustomLocaleData()
 
   -- Parse and validate data
   local locale = json.decode(fileData)
-  if
-    not locale
-    or type(locale['$meta']) ~= "table"
-    or type(locale['nui_warning']) ~= "table"
-    or type(locale['nui_menu']) ~= "table"
+  if not locale
+      or type(locale['$meta']) ~= "table"
+      or type(locale['nui_warning']) ~= "table"
+      or type(locale['nui_menu']) ~= "table"
   then
-    print('^1WARNING: load or validate custom locale JSON data from path: '..filePath)
+    print('^1WARNING: load or validate custom locale JSON data from path: ' .. filePath)
     return false
   end
 
@@ -125,10 +130,13 @@ local function syncServerCtx()
 
   local announceNotiPos = GetConvar('txAdmin-menuAnnounceNotiPos', 'top-center')
   -- verify we have a valid position type
-  if announceNotiPos == 'top-center' or announceNotiPos == 'top-right' or announceNotiPos == 'top-left' or announceNotiPos == 'bottom-center' or announceNotiPos == 'bottom-right' or announceNotiPos == 'bottom-left' then
+  if announceNotiPos == 'top-center' or announceNotiPos == 'top-right' or announceNotiPos == 'top-left' or
+      announceNotiPos == 'bottom-center' or announceNotiPos == 'bottom-right' or announceNotiPos == 'bottom-left' then
     ServerCtxObj.announceNotiPos = announceNotiPos
   else
-    local errorMsg = ('^1Invalid notification position: %s, this must match one of the following "top-center, top-left, top-right, bottom-left, bottom-right, bottom-center" defaulting to "top-center"'):format(announceNotiPos)
+    local errorMsg = (
+        '^1Invalid notification position: %s, this must match one of the following "top-center, top-left, top-right, bottom-left, bottom-right, bottom-center" defaulting to "top-center"'
+        ):format(announceNotiPos)
     txPrint(errorMsg)
     ServerCtxObj.announceNotiPos = 'top-center'
   end
