@@ -163,6 +163,7 @@ local function setVehicleHandlingValue(veh, field, newValue)
     -- local currValue = GetVehicleHandlingFloat(veh, 'CHandlingData', field)
     SetVehicleHandlingField(veh, 'CHandlingData', field, newValue * 1.0)
 end
+
 local function setVehicleHandlingModifier(veh, field, multiplier)
     local currValue = GetVehicleHandlingFloat(veh, 'CHandlingData', field)
     local newValue = (multiplier * 1.0) * currValue;
@@ -170,29 +171,29 @@ local function setVehicleHandlingModifier(veh, field, multiplier)
 end
 
 local boostableVehicleClasses = {
-    [0]='Compacts',
-    [1]='Sedans',
-    [2]='SUVs',
-    [3]='Coupes',
-    [4]='Muscle',
-    [5]='Sports Classics',
-    [6]='Sports',
-    [7]='Super',
+    [0] = 'Compacts',
+    [1] = 'Sedans',
+    [2] = 'SUVs',
+    [3] = 'Coupes',
+    [4] = 'Muscle',
+    [5] = 'Sports Classics',
+    [6] = 'Sports',
+    [7] = 'Super',
     -- [8]='Motorcycles',
-    [9]='Off-road',
+    [9] = 'Off-road',
     -- [10]='Industrial',
-    [11]='Utility',
-    [12]='Vans',
+    [11] = 'Utility',
+    [12] = 'Vans',
     -- [13]='Cycles',
     -- [14]='Boats',
     -- [15]='Helicopters',
     -- [16]='Planes',
-    [17]='Service',
-    [18]='Emergency',
-    [19]='Military',
-    [20]='Commercial',
+    [17] = 'Service',
+    [18] = 'Emergency',
+    [19] = 'Military',
+    [20] = 'Commercial',
     -- [21]='Trains',
-    [22]='Open Wheel'
+    [22] = 'Open Wheel'
 }
 
 RegisterNetEvent('txAdmin:menu:boostVehicle', function()
@@ -216,7 +217,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     if not boostableVehicleClasses[vehClass] then
         return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.unsupported_class', true)
     end
-    
+
     --Modify car
     setVehicleHandlingValue(veh, 'fInitialDriveMaxFlatVel', 300.40120); --the signature, don't change
     setVehicleHandlingValue(veh, 'fHandBrakeForce', 10.0);
@@ -226,7 +227,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     setVehicleHandlingModifier(veh, 'fInitialDriveForce', 2.0); --accelerates real fast, almost no side effects
     setVehicleHandlingModifier(veh, 'fDriveInertia', 1.25);
     setVehicleHandlingValue(veh, 'fInitialDragCoeff', 10.0);
-    
+
     SetVehicleHandlingVector(veh, 'CHandlingData', 'vecInertiaMultiplier', vector3(0.1, 0.1, 0.1))
     setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001); --testar, o certo é 0~1
     setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001); --testar, o certo é >1
@@ -377,6 +378,43 @@ local function teleportToCoords(coords)
     DoScreenFadeIn(500)
 end
 
+---RedM waypoint TP with ground check
+local TeleportToWaypoint = function()
+
+    local ped = PlayerPedId()
+    local GetGroundZAndNormalFor_3dCoord = GetGroundZAndNormalFor_3dCoord
+    local waypoint = IsWaypointActive()
+    local coords = GetWaypointCoords()
+    local x, y, groundZ, startingpoint = coords.x, coords.y, 650.0, 750.0
+    local found = false
+
+    if not waypoint then
+        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
+        return
+    end
+    sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
+    DoScreenFadeOut(500)
+    Wait(1000)
+    FreezeEntityPosition(ped, true)
+    --find ground
+    for i = startingpoint, 0, -25.0 do
+        local z = i
+        if (i % 2) ~= 0 then
+            z = startingpoint + i
+        end
+        SetEntityCoords(ped, x, y, z - 1000)
+        Wait(1000)
+        found, groundZ = GetGroundZAndNormalFor_3dCoord(x, y, z)
+        if found then
+            SetEntityCoords(ped, x, y, groundZ)
+            FreezeEntityPosition(ped, false)
+            Wait(1000)
+            DoScreenFadeIn(650)
+            break
+        end
+    end
+end
+
 -- Teleport the player to the coordinates
 ---@param x number
 ---@param y number
@@ -385,14 +423,20 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
     teleportToCoords(vec3(x, y, z))
 end)
 
+
 -- Teleport to the current waypoint
 RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
-    local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
-    if waypoint and waypoint > 0 then
-        sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
-        local blipCoords = GetBlipInfoIdCoord(waypoint)
-        teleportToCoords(vec3(blipCoords[1], blipCoords[2], 0))
-    else
-        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
+
+    if not RedM then
+        local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
+        if waypoint and waypoint > 0 then
+            sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
+            local blipCoords = GetBlipInfoIdCoord(waypoint)
+            teleportToCoords(vec3(blipCoords[1], blipCoords[2], 0))
+        else
+            sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
+        end
+    else -- if REDM
+        TeleportToWaypoint()
     end
 end)
