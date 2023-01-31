@@ -41,6 +41,21 @@ local function cleanUpGamerTags()
     playerGamerTags = {}
 end
 
+local function cleanUpGamerTags()
+    debugPrint('Cleaning up gamer tags table')
+    for _, v in pairs(playerGamerTags) do
+        if IsMpGamerTagActive(v.gamerTag) then
+            if RedM then
+                Citizen.InvokeNative(0x93171DDDAB274EB8, v.gamerTag, 0)
+            else
+                RemoveMpGamerTag(v.gamerTag)
+            end
+
+        end
+    end
+    playerGamerTags = {}
+end
+
 local function showGamerTags()
     local curCoords = GetEntityCoords(PlayerPedId())
     -- Per infinity this will only return players within 300m
@@ -56,33 +71,42 @@ local function showGamerTags()
                 gamerTag = CreateFakeMpGamerTag(targetPed, playerStr, false, false, 0),
                 ped = targetPed
             }
+
         end
 
         local targetTag = playerGamerTags[i].gamerTag
-
         local targetPedCoords = GetEntityCoords(targetPed)
 
         -- Distance Check
         if #(targetPedCoords - curCoords) <= distanceToCheck then
-            -- Setup name
-            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.GamerName, 1)
+            if not RedM then -- avoid errors
+                -- Setup name
+                SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.GamerName, 1)
 
-            -- Setup AudioIcon
-            SetMpGamerTagAlpha(targetTag, gamerTagCompsEnum.AudioIcon, 255)
-            -- Set audio to red when player is talking
-            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.AudioIcon, NetworkIsPlayerTalking(i))
-            -- Setup Health
-            SetMpGamerTagHealthBarColor(targetTag, 129)
-            SetMpGamerTagAlpha(targetTag, gamerTagCompsEnum.HealthArmour, 255)
-            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.HealthArmour, 1)
+                -- Setup AudioIcon
+                SetMpGamerTagAlpha(targetTag, gamerTagCompsEnum.AudioIcon, 255)
+                -- Set audio to red when player is talking
+                SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.AudioIcon, NetworkIsPlayerTalking(i))
+                -- Setup Health
+                SetMpGamerTagHealthBarColor(targetTag, 129)
+                SetMpGamerTagAlpha(targetTag, gamerTagCompsEnum.HealthArmour, 255)
+                SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.HealthArmour, 1)
+            else
+                Citizen.InvokeNative(0x93171DDDAB274EB8, gamerTagCompsEnum.GamerName, 1) -- SetMpGamerTagVisibility
+            end
         else
-            -- Cleanup name
-            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.GamerName, 0)
-            -- Cleanup Health
-            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.HealthArmour, 0)
-            -- Cleanup AudioIcon
-            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.AudioIcon, 0)
+            if not RedM then
+                -- Cleanup name
+                SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.GamerName, 0)
+                -- Cleanup Health
+                SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.HealthArmour, 0)
+                -- Cleanup AudioIcon
+                SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.AudioIcon, 0)
+            else
+                Citizen.InvokeNative(0x93171DDDAB274EB8, gamerTagCompsEnum.GamerName, 0) -- SetMpGamerTagVisibility
+            end
         end
+
     end
 end
 
