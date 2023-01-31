@@ -372,7 +372,11 @@ local function teleportToCoords(coords)
         handleTpForFreecam(x, y, z)
     else
         lastTpCoords = GetEntityCoords(ped)
-        handleTpNormally(x, y, z)
+        if not RedM then
+            handleTpNormally(x, y, z)
+        else -- redm
+            SetEntityCoords(ped, x, y, z) -- simple tp to coords
+        end
     end
 
     DoScreenFadeIn(500)
