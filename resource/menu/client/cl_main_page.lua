@@ -63,41 +63,90 @@ if isMenuDebug then
     end)
 end
 
+
+
 local oldVehVelocity = 0.0
+
+---if ped is in any vehicle then delete
+local GetVehicle = function()
+    local ped = PlayerPedId()
+    local oldVeh = GetVehiclePedIsIn(ped, false)
+    if oldVeh and oldVeh > 0 then
+        oldVehVelocity = GetEntityVelocity(oldVeh)
+        DeleteVehicle(oldVeh)
+    end
+
+end
+
 RegisterNUICallback('spawnVehicle', function(data, cb)
     if type(data) ~= 'table' then error("Invalid spawnVehicle NUI callback data") end
     local model = data.model
     if type(model) ~= 'string' then return end
-    if not IsModelValid(model) or not IsModelAVehicle(model) then
-        debugPrint("^1Invalid vehicle model requested: " .. model)
-        cb({ e = true })
-    else
-        local VehicleType = GetVehicleClassFromName(model)
-        local types = {
-            [8] = "bike",
-            [11] = "trailer",
-            [13] = "bike",
-            [14] = "boat",
-            [15] = "heli",
-            [16] = "plane",
-            [21] = "train",
-        }
-        local modelType = types[VehicleType] or "automobile"
-        if model == GetHashKey("submersible") or model == GetHashKey("submersible2") then
-            modelType = "submarine"
+
+    if not RedM then -- rdr3 support
+        if isModelValid(model) then
+
+            local VehicleType = GetVehicleClassFromName(model)
+            local types = {
+                [8] = "bike",
+                [11] = "trailer",
+                [13] = "bike",
+                [14] = "boat",
+                [15] = "heli",
+                [16] = "plane",
+                [21] = "train",
+            }
+            local modelType = types[VehicleType] or "automobile"
+            if model == GetHashKey("submersible") or model == GetHashKey("submersible2") then
+                modelType = "submarine"
+            end
+            -- collect the old velocity
+            GetVehicle()
+            TriggerServerEvent('txAdmin:menu:spawnVehicle', model, modelType)
+            cb({})
         end
-        -- collect the old velocity
-        local ped = PlayerPedId()
-        local oldVeh = GetVehiclePedIsIn(ped, false)
-        if oldVeh and oldVeh > 0 then
-            oldVehVelocity = GetEntityVelocity(oldVeh)
-            DeleteVehicle(oldVeh)
+    else
+        if not IsModelValid(model) then -- alow spawning horses or animals so we dont check if is a vehicle
+            debugPrint("^1Invalid  model requested: " .. model)
+            cb({ e = true })
         end
 
-        TriggerServerEvent('txAdmin:menu:spawnVehicle', model, modelType)
+        if IsModelAVehicle(model) then
+            ModelType = "vehicle"
+            GetVehicle()
+        else
+            ModelType = "ped" -- allow animals or peds
+        end
+        TriggerServerEvent('txAdmin:menu:spawnVehicle', model, ModelType)
         cb({})
+
     end
 end)
+
+local LoadModel = function(model)
+    RequestModel(model)
+    while not HasModelLoaded(model) do
+        RequestModel(model)
+        Wait(100)
+    end
+end
+--RedM
+RegisterNetEvent("txAdmin:menu:spawnVehicleRdr3", function(model, modeltype)
+    local player = PlayerPedId()
+    local playerCoords = GetEntityCoords(player)
+
+    if modeltype == "vehicle" then
+        LoadModel(model)
+        local entity = CreateVehicle(model, playerCoords.x, playerCoords.y, playerCoords.z, true, true, true) -- net worked and added to entitycreation listener
+        Citizen.InvokeNative(0x77FF8D35EEC6BBC4, entity, 1, 0) -- _EQUIP_META_PED_OUTFIT_PRESET
+        SetPedIntoVehicle(PlayerPedId(), entity, -1) -- set player on driver
+    elseif modeltype == "ped" then
+        LoadModel(model)
+        local ped = CreatePed(model, playerCoords.x, playerCoords.y, playerCoords.z, true, true, true)
+        Citizen.InvokeNative(0x77FF8D35EEC6BBC4, ped, 1, 0) -- EQUIP_META_PED_OUTFIT_PRESET
+    end
+end)
+--
 
 RegisterNUICallback("deleteVehicle", function(data, cb)
     local ped = PlayerPedId()
@@ -135,6 +184,9 @@ RegisterNUICallback('sendAnnouncement', function(data, cb)
 end)
 
 RegisterNUICallback('fixVehicle', function(_, cb)
+    if RedM then
+        return sendSnackbarMessage('error', 'this option is not available  for RedM', false) -- need translate
+    end
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
     if (veh == 0) then
@@ -147,6 +199,9 @@ end)
 
 
 RegisterNUICallback('boostVehicle', function(_, cb)
+    if RedM then
+        return sendSnackbarMessage('error', 'this option is not available  for RedM', false) -- need translate
+    end
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
     if (veh == 0) then
