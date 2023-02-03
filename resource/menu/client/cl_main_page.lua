@@ -50,8 +50,12 @@ RegisterNUICallback('copyCurrentCoords', function(_, cb)
 end)
 
 RegisterNUICallback('clearArea', function(radius, cb)
+    if IsGameRedM then -- to avoid errors in redm
+        return sendSnackbarMessage('error', 'this option is not available  for RedM', false) -- need translate
+    end
     TriggerServerEvent('txAdmin:menu:clearArea', radius)
     cb({})
+
 end)
 
 -- [[ Spawn weapon (only in dev, for now) ]]
@@ -64,11 +68,10 @@ if isMenuDebug then
 end
 
 
-
 local oldVehVelocity = 0.0
 
 ---if ped is in any vehicle then delete
-local GetVehicle = function()
+local function GetVehicle()
     local ped = PlayerPedId()
     local oldVeh = GetVehiclePedIsIn(ped, false)
     if oldVeh and oldVeh > 0 then
@@ -83,7 +86,7 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
     local model = data.model
     if type(model) ~= 'string' then return end
 
-    if not RedM then -- rdr3 support
+    if not IsGameRedM then -- rdr3 support
         if isModelValid(model) then
 
             local VehicleType = GetVehicleClassFromName(model)
@@ -123,14 +126,15 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
     end
 end)
 
-local LoadModel = function(model)
+local function LoadModel(model)
     RequestModel(model)
     while not HasModelLoaded(model) do
         RequestModel(model)
         Wait(100)
     end
 end
---RedM
+
+--IsGameRedM
 RegisterNetEvent("txAdmin:menu:spawnVehicleRdr3", function(model, modeltype)
     local player = PlayerPedId()
     local playerCoords = GetEntityCoords(player)
@@ -184,7 +188,7 @@ RegisterNUICallback('sendAnnouncement', function(data, cb)
 end)
 
 RegisterNUICallback('fixVehicle', function(_, cb)
-    if RedM then
+    if IsGameRedM then
         return sendSnackbarMessage('error', 'this option is not available  for RedM', false) -- need translate
     end
     local ped = PlayerPedId()
@@ -199,7 +203,7 @@ end)
 
 
 RegisterNUICallback('boostVehicle', function(_, cb)
-    if RedM then
+    if IsGameRedM then
         return sendSnackbarMessage('error', 'this option is not available  for RedM', false) -- need translate
     end
     local ped = PlayerPedId()
@@ -252,6 +256,8 @@ local boostableVehicleClasses = {
 }
 
 RegisterNetEvent('txAdmin:menu:boostVehicle', function()
+
+
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
 
@@ -306,6 +312,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     SetVehicleCheatPowerIncrease(veh, 1.8) -- Torque multiplier
 
     sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
+
 end)
 
 RegisterNetEvent('txAdmin:menu:fixVehicle', function()
@@ -357,13 +364,16 @@ end)
 
 local function handleTpNormally(x, y, z)
     local ped = PlayerPedId()
+
     local veh = GetVehiclePedIsIn(ped, false)
     SetPedCoordsKeepVehicle(ped, x, y, 100.0)
+    SetEntityCoords(ped, x, y, 100.0)
     if veh > 0 then
         FreezeEntityPosition(veh, true)
     else
         FreezeEntityPosition(ped, true)
     end
+
     while IsEntityWaitingForWorldCollision(ped) do
         debugPrint("waiting for collision...")
         Wait(100)
@@ -388,7 +398,9 @@ local function handleTpNormally(x, y, z)
     end
     -- update ped again
     ped = PlayerPedId()
+
     SetPedCoordsKeepVehicle(ped, x, y, z)
+
     if veh > 0 then
         FreezeEntityPosition(veh, false)
     else
@@ -425,20 +437,29 @@ local function teleportToCoords(coords)
         local curCamPos = GetFreecamPosition()
         lastTpCoords = curCamPos
         handleTpForFreecam(x, y, z)
+
     else
         lastTpCoords = GetEntityCoords(ped)
-        if not RedM then
+        if not IsGameRedM then
             handleTpNormally(x, y, z)
         else -- redm
-            SetEntityCoords(ped, x, y, z) -- simple tp to coords
+            SetEntityCoords(ped, x, y, z)
         end
     end
-
     DoScreenFadeIn(500)
 end
 
----RedM waypoint TP with ground check
-local TeleportToWaypoint = function()
+-- Teleport the player to the coordinates
+---@param x number
+---@param y number
+---@param z number
+RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
+    teleportToCoords(vec3(x, y, z))
+end)
+
+---IsGameRedM waypoint TP
+
+local function TeleportToWaypoint()
 
     local ped = PlayerPedId()
     local GetGroundZAndNormalFor_3dCoord = GetGroundZAndNormalFor_3dCoord
@@ -474,19 +495,10 @@ local TeleportToWaypoint = function()
     end
 end
 
--- Teleport the player to the coordinates
----@param x number
----@param y number
----@param z number
-RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
-    teleportToCoords(vec3(x, y, z))
-end)
-
-
 -- Teleport to the current waypoint
 RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
 
-    if not RedM then
+    if not IsGameRedM then
         local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
         if waypoint and waypoint > 0 then
             sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)

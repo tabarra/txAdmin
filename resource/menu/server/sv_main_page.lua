@@ -80,7 +80,7 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, modelType)
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
   TriggerEvent("txaLogger:menuEvent", src, "spawnVehicle", allow, model)
   if allow then
-    if RedM then
+    if IsGameRedM then
       TriggerClientEvent("txAdmin:menu:spawnVehicleRdr3", src, model, modelType) -- only works in client side for Rdr3
       return
     end

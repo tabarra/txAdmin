@@ -67,8 +67,11 @@ local function toggleFreecam(enabled)
         StartFreecamThread()
 
         Citizen.CreateThread(function()
+
             while IsFreecamActive() do
+
                 SetEntityLocallyInvisible(ped)
+
                 if freecamVeh > 0 then
                     if DoesEntityExist(freecamVeh) then
                         SetEntityLocallyInvisible(freecamVeh)
@@ -143,10 +146,12 @@ local function createPlayerModePtfxLoop(tgtPedId)
 end
 
 RegisterNetEvent('txcl:syncPtfxEffect', function(tgtSrc)
-    debugPrint('Syncing particle effect for target netId')
-    local tgtPlayer = GetPlayerFromServerId(tgtSrc)
-    if tgtPlayer == -1 then return end
-    createPlayerModePtfxLoop(GetPlayerPed(tgtPlayer))
+    if not IsGameRedM then
+        debugPrint('Syncing particle effect for target netId')
+        local tgtPlayer = GetPlayerFromServerId(tgtSrc)
+        if tgtPlayer == -1 then return end
+        createPlayerModePtfxLoop(GetPlayerPed(tgtPlayer))
+    end
 end)
 
 -- Ask server for playermode change and sends nearby playerlist
@@ -181,10 +186,10 @@ end)
 -- [[ Player mode changed cb event ]]
 RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
 
-    if RedM then -- its needed new funtions , for now we disable it so it doesnt throw errors
-        TriggerEvent("txAdmin:Client:ToggleMode", mode) -- maybe an event for people to use their systems ?
+    if IsGameRedM then
         return sendSnackbarMessage('error', 'this options are not available for RedM', false)
     end
+
     if ptfx then
         createPlayerModePtfxLoop(PlayerPedId())
     end

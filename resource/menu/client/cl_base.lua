@@ -13,15 +13,8 @@ lastTpCoords = false;
 RedM = false
 local isMenuEnabled = (GetConvar('txAdmin-menuEnabled', 'false') == 'true')
 
+IsGameRedM = GetGameName() == "redm"
 --Redm support
-CreateThread(function()
-  Wait(2000)
-  if (GetGameName() == "redm") then
-    RedM = true
-  else
-    RedM = false
-  end
-end)
 
 -- Check if menu is in debug mode
 CreateThread(function()

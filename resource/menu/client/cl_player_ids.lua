@@ -35,17 +35,7 @@ local function cleanUpGamerTags()
     debugPrint('Cleaning up gamer tags table')
     for _, v in pairs(playerGamerTags) do
         if IsMpGamerTagActive(v.gamerTag) then
-            RemoveMpGamerTag(v.gamerTag)
-        end
-    end
-    playerGamerTags = {}
-end
-
-local function cleanUpGamerTags()
-    debugPrint('Cleaning up gamer tags table')
-    for _, v in pairs(playerGamerTags) do
-        if IsMpGamerTagActive(v.gamerTag) then
-            if RedM then
+            if IsGameRedM then
                 Citizen.InvokeNative(0x93171DDDAB274EB8, v.gamerTag, 0)
             else
                 RemoveMpGamerTag(v.gamerTag)
@@ -79,7 +69,7 @@ local function showGamerTags()
 
         -- Distance Check
         if #(targetPedCoords - curCoords) <= distanceToCheck then
-            if not RedM then -- avoid errors
+            if not IsGameRedM then -- avoid errors
                 -- Setup name
                 SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.GamerName, 1)
 
@@ -95,7 +85,7 @@ local function showGamerTags()
                 Citizen.InvokeNative(0x93171DDDAB274EB8, gamerTagCompsEnum.GamerName, 1) -- SetMpGamerTagVisibility
             end
         else
-            if not RedM then
+            if not IsGameRedM then
                 -- Cleanup name
                 SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.GamerName, 0)
                 -- Cleanup Health

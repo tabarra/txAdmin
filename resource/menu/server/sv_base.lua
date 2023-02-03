@@ -3,12 +3,7 @@ if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
 
-if GetConvar("gamename", "gta5") == "rdr3" then
-  RedM = true
-  print("RedM mode Enabled, make sure you are using oneSync infinity  go to tx admin settings") -- can be disabled rdr3 only supports infinity
-else
-  RedM = false
-end
+IsGameRedM = GetConvar("gamename", "gta5") == "rdr3"
 
 ServerCtxObj = {
   oneSync = {
