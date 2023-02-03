@@ -16,7 +16,7 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
     Wait(250)
     local coords = GetEntityCoords(GetPlayerPed(src))
     TriggerEvent("txaLogger:menuEvent", src, "teleportWaypoint", true,
-        { x = coords[1], y = coords[2], z = coords[3] })
+      { x = coords[1], y = coords[2], z = coords[3] })
   else
     TriggerEvent("txaLogger:menuEvent", src, "teleportWaypoint", false)
   end
@@ -80,6 +80,10 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, modelType)
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
   TriggerEvent("txaLogger:menuEvent", src, "spawnVehicle", allow, model)
   if allow then
+    if IsGameRedM then
+      TriggerClientEvent("txAdmin:menu:spawnVehicleRdr3", src, model, modelType) -- only works in client side for Rdr3
+      return
+    end
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
@@ -108,9 +112,9 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, modelType)
     end
     local netID = NetworkGetNetworkIdFromEntity(veh)
     debugPrint(string.format("spawn vehicle (src=^3%d^0, model=^4%s^0, modelType=^4%s^0, netID=^3%s^0)", src, model,
-        (modelType), netID))
+      (modelType), netID))
     local RoutingBucket = GetPlayerRoutingBucket(src)
-    SetEntityRoutingBucket(veh, RoutingBucket)    
+    SetEntityRoutingBucket(veh, RoutingBucket)
     -- map all player ids to peds
     local players = GetPlayers()
     local pedMap = {}
@@ -148,7 +152,7 @@ RegisterNetEvent('txAdmin:menu:healAllPlayers', function()
   if allow then
     -- For use with third party resources that handle players
     -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
-    TriggerEvent("txAdmin:events:healedPlayer", {id = -1})
+    TriggerEvent("txAdmin:events:healedPlayer", { id = -1 })
     TriggerClientEvent('txAdmin:menu:healed', -1)
   end
 end)
@@ -160,7 +164,7 @@ RegisterNetEvent('txAdmin:menu:healMyself', function()
   if allow then
     -- For use with third party resources that handle players
     -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
-    TriggerEvent("txAdmin:events:healedPlayer", {id = src})
+    TriggerEvent("txAdmin:events:healedPlayer", { id = src })
     TriggerClientEvent('txAdmin:menu:healed', src)
   end
 end)
@@ -178,7 +182,7 @@ RegisterNetEvent('txAdmin:menu:healPlayer', function(id)
       -- For use with third party resources that handle players
       -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
       -- TriggerEvent('txAdmin:healedPlayer', id)
-      TriggerEvent("txAdmin:events:healedPlayer", {id = id})
+      TriggerEvent("txAdmin:events:healedPlayer", { id = id })
       TriggerClientEvent('txAdmin:menu:healed', id)
     end
   end

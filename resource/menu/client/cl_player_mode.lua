@@ -27,14 +27,13 @@ local function toggleSuperJump(enabled)
                 SetSuperJumpThisFrame(pid)
                 Wait(0)
             end
-          end)
+        end)
     else
         local pid = PlayerId()
         SetRunSprintMultiplierForPlayer(pid, 1.0)
         clearPersistentAlert('superJumpEnabled')
     end
 end
-
 
 local function toggleGodMode(enabled)
     if enabled then
@@ -68,8 +67,11 @@ local function toggleFreecam(enabled)
         StartFreecamThread()
 
         Citizen.CreateThread(function()
+
             while IsFreecamActive() do
+
                 SetEntityLocallyInvisible(ped)
+
                 if freecamVeh > 0 then
                     if DoesEntityExist(freecamVeh) then
                         SetEntityLocallyInvisible(freecamVeh)
@@ -110,7 +112,6 @@ local function toggleFreecam(enabled)
     end
 end
 
-
 local PTFX_ASSET = 'ent_dst_elec_fire_sp'
 local PTFX_DICT = 'core'
 local LOOP_AMOUNT = 25
@@ -129,9 +130,10 @@ local function createPlayerModePtfxLoop(tgtPedId)
 
         local particleTbl = {}
 
-        for i=0, LOOP_AMOUNT do
+        for i = 0, LOOP_AMOUNT do
             UseParticleFxAssetNextCall(PTFX_DICT)
-            local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, tgtPedId, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, false, false, false)
+            local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, tgtPedId, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5,
+                false, false, false)
             particleTbl[#particleTbl + 1] = partiResult
             Wait(0)
         end
@@ -144,10 +146,12 @@ local function createPlayerModePtfxLoop(tgtPedId)
 end
 
 RegisterNetEvent('txcl:syncPtfxEffect', function(tgtSrc)
-    debugPrint('Syncing particle effect for target netId')
-    local tgtPlayer = GetPlayerFromServerId(tgtSrc)
-    if tgtPlayer == -1 then return end
-    createPlayerModePtfxLoop(GetPlayerPed(tgtPlayer))
+    if not IsGameRedM then
+        debugPrint('Syncing particle effect for target netId')
+        local tgtPlayer = GetPlayerFromServerId(tgtSrc)
+        if tgtPlayer == -1 then return end
+        createPlayerModePtfxLoop(GetPlayerPed(tgtPlayer))
+    end
 end)
 
 -- Ask server for playermode change and sends nearby playerlist
@@ -181,7 +185,12 @@ end)
 
 -- [[ Player mode changed cb event ]]
 RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
-    if ptfx then 
+
+    if IsGameRedM then
+        return sendSnackbarMessage('error', 'this options are not available for RedM', false)
+    end
+
+    if ptfx then
         createPlayerModePtfxLoop(PlayerPedId())
     end
 
@@ -203,4 +212,3 @@ RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
         toggleSuperJump(false)
     end
 end)
-

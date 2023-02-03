@@ -50,8 +50,12 @@ RegisterNUICallback('copyCurrentCoords', function(_, cb)
 end)
 
 RegisterNUICallback('clearArea', function(radius, cb)
+    if IsGameRedM then -- to avoid errors in redm
+        return sendSnackbarMessage('error', 'this option is not available  for RedM', false) -- need translate
+    end
     TriggerServerEvent('txAdmin:menu:clearArea', radius)
     cb({})
+
 end)
 
 -- [[ Spawn weapon (only in dev, for now) ]]
@@ -63,41 +67,90 @@ if isMenuDebug then
     end)
 end
 
+
 local oldVehVelocity = 0.0
+
+---if ped is in any vehicle then delete
+local function GetVehicle()
+    local ped = PlayerPedId()
+    local oldVeh = GetVehiclePedIsIn(ped, false)
+    if oldVeh and oldVeh > 0 then
+        oldVehVelocity = GetEntityVelocity(oldVeh)
+        DeleteVehicle(oldVeh)
+    end
+
+end
+
 RegisterNUICallback('spawnVehicle', function(data, cb)
     if type(data) ~= 'table' then error("Invalid spawnVehicle NUI callback data") end
     local model = data.model
     if type(model) ~= 'string' then return end
-    if not IsModelValid(model) or not IsModelAVehicle(model) then
-        debugPrint("^1Invalid vehicle model requested: " .. model)
-        cb({ e = true })
-    else
-        local VehicleType = GetVehicleClassFromName(model)
-        local types = {
-            [8] = "bike",
-            [11] = "trailer",
-            [13] = "bike",
-            [14] = "boat",
-            [15] = "heli",
-            [16] = "plane",
-            [21] = "train",
-        }
-        local modelType = types[VehicleType] or "automobile"
-        if model == GetHashKey("submersible") or model == GetHashKey("submersible2") then
-            modelType = "submarine"
+
+    if not IsGameRedM then -- rdr3 support
+        if isModelValid(model) then
+
+            local VehicleType = GetVehicleClassFromName(model)
+            local types = {
+                [8] = "bike",
+                [11] = "trailer",
+                [13] = "bike",
+                [14] = "boat",
+                [15] = "heli",
+                [16] = "plane",
+                [21] = "train",
+            }
+            local modelType = types[VehicleType] or "automobile"
+            if model == GetHashKey("submersible") or model == GetHashKey("submersible2") then
+                modelType = "submarine"
+            end
+            -- collect the old velocity
+            GetVehicle()
+            TriggerServerEvent('txAdmin:menu:spawnVehicle', model, modelType)
+            cb({})
         end
-        -- collect the old velocity
-        local ped = PlayerPedId()
-        local oldVeh = GetVehiclePedIsIn(ped, false)
-        if oldVeh and oldVeh > 0 then
-            oldVehVelocity = GetEntityVelocity(oldVeh)
-            DeleteVehicle(oldVeh)
+    else
+        if not IsModelValid(model) then -- alow spawning horses or animals so we dont check if is a vehicle
+            debugPrint("^1Invalid  model requested: " .. model)
+            cb({ e = true })
         end
 
-        TriggerServerEvent('txAdmin:menu:spawnVehicle', model, modelType)
+        if IsModelAVehicle(model) then
+            ModelType = "vehicle"
+            GetVehicle()
+        else
+            ModelType = "ped" -- allow animals or peds
+        end
+        TriggerServerEvent('txAdmin:menu:spawnVehicle', model, ModelType)
         cb({})
+
     end
 end)
+
+local function LoadModel(model)
+    RequestModel(model)
+    while not HasModelLoaded(model) do
+        RequestModel(model)
+        Wait(100)
+    end
+end
+
+--IsGameRedM
+RegisterNetEvent("txAdmin:menu:spawnVehicleRdr3", function(model, modeltype)
+    local player = PlayerPedId()
+    local playerCoords = GetEntityCoords(player)
+
+    if modeltype == "vehicle" then
+        LoadModel(model)
+        local entity = CreateVehicle(model, playerCoords.x, playerCoords.y, playerCoords.z, true, true, true) -- net worked and added to entitycreation listener
+        Citizen.InvokeNative(0x77FF8D35EEC6BBC4, entity, 1, 0) -- _EQUIP_META_PED_OUTFIT_PRESET
+        SetPedIntoVehicle(PlayerPedId(), entity, -1) -- set player on driver
+    elseif modeltype == "ped" then
+        LoadModel(model)
+        local ped = CreatePed(model, playerCoords.x, playerCoords.y, playerCoords.z, true, true, true)
+        Citizen.InvokeNative(0x77FF8D35EEC6BBC4, ped, 1, 0) -- EQUIP_META_PED_OUTFIT_PRESET
+    end
+end)
+--
 
 RegisterNUICallback("deleteVehicle", function(data, cb)
     local ped = PlayerPedId()
@@ -135,6 +188,9 @@ RegisterNUICallback('sendAnnouncement', function(data, cb)
 end)
 
 RegisterNUICallback('fixVehicle', function(_, cb)
+    if IsGameRedM then
+        return sendSnackbarMessage('error', 'this option is not available  for RedM', false) -- need translate
+    end
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
     if (veh == 0) then
@@ -147,6 +203,9 @@ end)
 
 
 RegisterNUICallback('boostVehicle', function(_, cb)
+    if IsGameRedM then
+        return sendSnackbarMessage('error', 'this option is not available  for RedM', false) -- need translate
+    end
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
     if (veh == 0) then
@@ -163,6 +222,7 @@ local function setVehicleHandlingValue(veh, field, newValue)
     -- local currValue = GetVehicleHandlingFloat(veh, 'CHandlingData', field)
     SetVehicleHandlingField(veh, 'CHandlingData', field, newValue * 1.0)
 end
+
 local function setVehicleHandlingModifier(veh, field, multiplier)
     local currValue = GetVehicleHandlingFloat(veh, 'CHandlingData', field)
     local newValue = (multiplier * 1.0) * currValue;
@@ -170,32 +230,34 @@ local function setVehicleHandlingModifier(veh, field, multiplier)
 end
 
 local boostableVehicleClasses = {
-    [0]='Compacts',
-    [1]='Sedans',
-    [2]='SUVs',
-    [3]='Coupes',
-    [4]='Muscle',
-    [5]='Sports Classics',
-    [6]='Sports',
-    [7]='Super',
+    [0] = 'Compacts',
+    [1] = 'Sedans',
+    [2] = 'SUVs',
+    [3] = 'Coupes',
+    [4] = 'Muscle',
+    [5] = 'Sports Classics',
+    [6] = 'Sports',
+    [7] = 'Super',
     -- [8]='Motorcycles',
-    [9]='Off-road',
+    [9] = 'Off-road',
     -- [10]='Industrial',
-    [11]='Utility',
-    [12]='Vans',
+    [11] = 'Utility',
+    [12] = 'Vans',
     -- [13]='Cycles',
     -- [14]='Boats',
     -- [15]='Helicopters',
     -- [16]='Planes',
-    [17]='Service',
-    [18]='Emergency',
-    [19]='Military',
-    [20]='Commercial',
+    [17] = 'Service',
+    [18] = 'Emergency',
+    [19] = 'Military',
+    [20] = 'Commercial',
     -- [21]='Trains',
-    [22]='Open Wheel'
+    [22] = 'Open Wheel'
 }
 
 RegisterNetEvent('txAdmin:menu:boostVehicle', function()
+
+
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
 
@@ -216,7 +278,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     if not boostableVehicleClasses[vehClass] then
         return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.unsupported_class', true)
     end
-    
+
     --Modify car
     setVehicleHandlingValue(veh, 'fInitialDriveMaxFlatVel', 300.40120); --the signature, don't change
     setVehicleHandlingValue(veh, 'fHandBrakeForce', 10.0);
@@ -226,7 +288,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     setVehicleHandlingModifier(veh, 'fInitialDriveForce', 2.0); --accelerates real fast, almost no side effects
     setVehicleHandlingModifier(veh, 'fDriveInertia', 1.25);
     setVehicleHandlingValue(veh, 'fInitialDragCoeff', 10.0);
-    
+
     SetVehicleHandlingVector(veh, 'CHandlingData', 'vecInertiaMultiplier', vector3(0.1, 0.1, 0.1))
     setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001); --testar, o certo é 0~1
     setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001); --testar, o certo é >1
@@ -250,6 +312,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     SetVehicleCheatPowerIncrease(veh, 1.8) -- Torque multiplier
 
     sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
+
 end)
 
 RegisterNetEvent('txAdmin:menu:fixVehicle', function()
@@ -301,13 +364,16 @@ end)
 
 local function handleTpNormally(x, y, z)
     local ped = PlayerPedId()
+
     local veh = GetVehiclePedIsIn(ped, false)
     SetPedCoordsKeepVehicle(ped, x, y, 100.0)
+    SetEntityCoords(ped, x, y, 100.0)
     if veh > 0 then
         FreezeEntityPosition(veh, true)
     else
         FreezeEntityPosition(ped, true)
     end
+
     while IsEntityWaitingForWorldCollision(ped) do
         debugPrint("waiting for collision...")
         Wait(100)
@@ -332,7 +398,9 @@ local function handleTpNormally(x, y, z)
     end
     -- update ped again
     ped = PlayerPedId()
+
     SetPedCoordsKeepVehicle(ped, x, y, z)
+
     if veh > 0 then
         FreezeEntityPosition(veh, false)
     else
@@ -369,11 +437,15 @@ local function teleportToCoords(coords)
         local curCamPos = GetFreecamPosition()
         lastTpCoords = curCamPos
         handleTpForFreecam(x, y, z)
+
     else
         lastTpCoords = GetEntityCoords(ped)
-        handleTpNormally(x, y, z)
+        if not IsGameRedM then
+            handleTpNormally(x, y, z)
+        else -- redm
+            SetEntityCoords(ped, x, y, z)
+        end
     end
-
     DoScreenFadeIn(500)
 end
 
@@ -385,14 +457,57 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
     teleportToCoords(vec3(x, y, z))
 end)
 
+---IsGameRedM waypoint TP
+
+local function TeleportToWaypoint()
+
+    local ped = PlayerPedId()
+    local GetGroundZAndNormalFor_3dCoord = GetGroundZAndNormalFor_3dCoord
+    local waypoint = IsWaypointActive()
+    local coords = GetWaypointCoords()
+    local x, y, groundZ, startingpoint = coords.x, coords.y, 650.0, 750.0
+    local found = false
+
+    if not waypoint then
+        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
+        return
+    end
+    sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
+    DoScreenFadeOut(500)
+    Wait(1000)
+    FreezeEntityPosition(ped, true)
+    --find ground
+    for i = startingpoint, 0, -25.0 do
+        local z = i
+        if (i % 2) ~= 0 then
+            z = startingpoint + i
+        end
+        SetEntityCoords(ped, x, y, z - 1000)
+        Wait(1000)
+        found, groundZ = GetGroundZAndNormalFor_3dCoord(x, y, z)
+        if found then
+            SetEntityCoords(ped, x, y, groundZ)
+            FreezeEntityPosition(ped, false)
+            Wait(1000)
+            DoScreenFadeIn(650)
+            break
+        end
+    end
+end
+
 -- Teleport to the current waypoint
 RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
-    local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
-    if waypoint and waypoint > 0 then
-        sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
-        local blipCoords = GetBlipInfoIdCoord(waypoint)
-        teleportToCoords(vec3(blipCoords[1], blipCoords[2], 0))
-    else
-        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
+
+    if not IsGameRedM then
+        local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
+        if waypoint and waypoint > 0 then
+            sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
+            local blipCoords = GetBlipInfoIdCoord(waypoint)
+            teleportToCoords(vec3(blipCoords[1], blipCoords[2], 0))
+        else
+            sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
+        end
+    else -- if REDM
+        TeleportToWaypoint()
     end
 end)

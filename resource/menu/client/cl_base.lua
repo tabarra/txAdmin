@@ -10,10 +10,13 @@ isMenuDebug = false
 isMenuVisible = false
 menuPermissions = {}
 lastTpCoords = false;
+RedM = false
 local isMenuEnabled = (GetConvar('txAdmin-menuEnabled', 'false') == 'true')
 
+IsGameRedM = GetGameName() == "redm"
+--Redm support
 
--- Check if menu is in debug mode 
+-- Check if menu is in debug mode
 CreateThread(function()
   isMenuDebug = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
 end)
@@ -31,7 +34,6 @@ local function checkMenuAccessible()
   return true
 end
 
-
 -- Register txAdmin command
 local function txadmin(_, args)
   if not checkMenuAccessible() then return end
@@ -45,6 +47,7 @@ local function txadmin(_, args)
     sendMenuMessage('openPlayerModal', targetPlayer)
   end
 end
+
 RegisterCommand('txadmin', txadmin)
 RegisterCommand('tx', txadmin)
 
@@ -70,7 +73,7 @@ TriggerServerEvent('txsv:checkAdminStatus')
 -- Triggered as callback of txsv:checkAdminStatus
 RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
   if type(perms) == 'table' then
-    print("^2[AUTH] logged in as '"..username.."' with perms: " .. json.encode(perms or "nil"))
+    print("^2[AUTH] logged in as '" .. username .. "' with perms: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
     RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
@@ -79,7 +82,7 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
     RegisterKeyMapping('txAdmin:menu:endSpectate', 'Menu: Exit spectate mode', 'keyboard', 'BACK')
   else
-    print("^3[AUTH] rejected (" .. tostring(rejectReason) ..")")
+    print("^3[AUTH] rejected (" .. tostring(rejectReason) .. ")")
     menuIsAccessible = false
     menuPermissions = {}
   end
@@ -97,6 +100,7 @@ local function retryAuthentication()
   sendMenuMessage('setPermissions', menuPermissions)
   TriggerServerEvent('txsv:checkAdminStatus')
 end
+
 RegisterCommand('txAdmin-reauth', retryAuthentication)
 RegisterNetEvent('txAdmin:menu:reAuth', retryAuthentication)
 
@@ -109,7 +113,7 @@ CreateThread(function()
     'chat:addSuggestion',
     '/tx',
     'Opens the main txAdmin Menu or specific for a player.',
-    {{ name="player ID/name", help="(Optional) Open player modal for specific ID or name." }}
+    { { name = "player ID/name", help = "(Optional) Open player modal for specific ID or name." } }
   )
   TriggerEvent(
     'chat:addSuggestion',
@@ -118,9 +122,9 @@ CreateThread(function()
   )
   TriggerEvent(
     'chat:addSuggestion',
-    '/txAdmin-debug',  -- on /scripts/menu/server/sv_base.lua
+    '/txAdmin-debug', -- on /scripts/menu/server/sv_base.lua
     'Enables or disables the debug mode. Requires \'control.server\' permission.',
-    {{ name="1|0", help="1 to enable, 0 to disable" }}
+    { { name = "1|0", help = "1 to enable, 0 to disable" } }
   )
 end)
 
@@ -151,7 +155,7 @@ RegisterNUICallback('reactLoaded', function(aaa, cb)
   print("React loaded, sending variables.")
   sendMenuMessage('setDebugMode', isMenuDebug)
   sendMenuMessage('setPermissions', menuPermissions)
-  
+
   CreateThread(function()
     updateServerCtx()
     while ServerCtx == false do Wait(0) end
