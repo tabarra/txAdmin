@@ -42,7 +42,15 @@ local function toggleGodMode(enabled)
     else
         clearPersistentAlert('godModeEnabled')
     end
-    SetEntityInvincible(PlayerPedId(), enabled)
+    SetPlayerInvincible(PlayerId(), enabled)
+    CreateThread(function()
+        while enabled do
+            Wait(1000)
+            if not GetPlayerInvincible(PlayerId()) then 
+                SetPlayerInvincible(PlayerId(), true)
+            end
+        end
+    end)
 end
 
 local freecamVeh = 0
