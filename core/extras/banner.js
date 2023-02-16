@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError } = logger();
 
 
 const printMultiline = (lines, color) => {
-    const prefix = color('[txAdmin]');
+    const prefix = color('[ImmortalRoleplay]');
     if (!Array.isArray(lines)) lines = lines.split('\n');
     const message = lines.map((line) => `${prefix} ${line}`);
     console.log(message.join('\n'));

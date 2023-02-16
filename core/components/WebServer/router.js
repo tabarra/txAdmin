@@ -18,7 +18,7 @@ export default (config) => {
         duration: config.limiterMinutes * 60 * 1000, // 15 minutes
         errorMessage: `<html>
                 <head>
-                    <title>txAdmin Rate Limit</title>
+                    <title>Immortal Roleplay Rate Limit</title>
                     <style>
                         body {
                             background-color: #171718;

@@ -172,7 +172,7 @@ end
 -- Kicks a player
 local function handleKickEvent(eventData)
     Wait(0) -- give other resources a chance to read player data
-    DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
+    DropPlayer(eventData.target, '[ImmortalRoleplay] ' .. eventData.reason)
 end
 
 -- Warn specific player via server ID
@@ -203,7 +203,7 @@ local function handleBanEvent(eventData)
                     if searchIdentifier == playerIdentifier then
                         log("handleBanEvent: Kicking #"..playerID..": "..eventData.reason)
                         kickCount = kickCount + 1
-                        DropPlayer(playerID, '[txAdmin] ' .. eventData.kickMessage)
+                        DropPlayer(playerID, '[ImmortalRoleplay] ' .. eventData.kickMessage)
                         found = true
                         break
                     end
@@ -224,7 +224,7 @@ local function handleShutdownEvent(eventData)
     rejectAllConnections = true
     local players = GetPlayers()
     for _, serverID in pairs(players) do
-        DropPlayer(serverID, '[txAdmin] ' .. eventData.message)
+        DropPlayer(serverID, '[ImmortalRoleplay] ' .. eventData.message)
     end
 end
 
@@ -311,7 +311,7 @@ function handleConnections(name, setKickReason, d)
     -- if server is shutting down
     if rejectAllConnections then
         CancelEvent()
-        setKickReason("[txAdmin] Server is shutting down, try again in a few seconds.")
+        setKickReason("[ImmortalRoleplay] Server is shutting down, try again in a few seconds.")
         return
     end
 
@@ -328,28 +328,28 @@ function handleConnections(name, setKickReason, d)
             playerName = name
         }
         if #exData.playerIds <= 1 then
-            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, which you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
+            d.done("\n[ImmortalRoleplay] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, which you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
             return
         end
 
         --Attempt to validate the user
-        d.update("\n[txAdmin] Checking banlist/whitelist... (0/10)")
+        d.update("\n[ImmortalRoleplay] Checking banlist/whitelist... (0/10)")
         CreateThread(function()
             local attempts = 0
             local isDone = false;
             --Do 10 attempts
             while isDone == false and attempts < 10 do
                 attempts = attempts + 1
-                d.update("\n[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
+                d.update("\n[ImmortalRoleplay] Checking banlist/whitelist... ("..attempts.."/10)")
                 PerformHttpRequest(url, function(httpCode, rawData, resultHeaders)
                     -- Validating response
                     local respStr = tostring(rawData)
                     if httpCode ~= 200 then
-                        logError("\n[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
+                        logError("\n[ImmortalRoleplay] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
                     end
                     local respObj = json.decode(respStr)
                     if not respObj or type(respObj.allow) ~= "boolean" then
-                        logError("\n[txAdmin] Checking banlist/whitelist failed with invalid response: "..respStr)
+                        logError("\n[ImmortalRoleplay] Checking banlist/whitelist failed with invalid response: "..respStr)
                     end
                     
                     if respObj.allow == true then
@@ -359,7 +359,7 @@ function handleConnections(name, setKickReason, d)
                         end
                     else 
                         if not isDone then
-                            local reason = respObj.reason or "\n[txAdmin] no reason provided"
+                            local reason = respObj.reason or "\n[ImmortalRoleplay] no reason provided"
                             d.done("\n"..reason)
                             isDone = true
                         end
@@ -370,7 +370,7 @@ function handleConnections(name, setKickReason, d)
 
             --Block client if failed
             if not isDone then
-                d.done("\n[txAdmin] Failed to validate your banlist/whitelist status. Try again later.")
+                d.done("\n[ImmortalRoleplay] Failed to validate your banlist/whitelist status. Try again later.")
                 isDone = true
             end
         end)

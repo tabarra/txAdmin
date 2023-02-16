@@ -6,15 +6,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>txAdmin Login</title>
-    <meta name="description" content="Remotely Manage & Monitor your GTA5 FiveM Server with txAdmin v<%= txAdminVersion %> atop FXServer <%= fxServerVersion %>">
+    <title>Immortal Roleplay Login</title>
     <meta name="author" content="André Tabarra">
     <meta name="robots" content="noindex">
     <!-- Open Graph Meta Tags -->
-    <meta property="og:url" content="https://github.com/tabarra/txAdmin">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="txAdmin - <%= serverName %>">
-    <meta property="og:description" content="Remotely Manage & Monitor your GTA5 FiveM Server with txAdmin v<%= txAdminVersion %> atop FXServer <%= fxServerVersion %>">
     <meta property="og:image" content="https://i.imgur.com/Z3S9q6J.png">
     <!--style-->
     <!-- <link rel="stylesheet" href="css/simple-line-icons.css"> -->
@@ -328,36 +324,6 @@
         <!-- Info Row -->
         <div class="row justify-content-center">
             <div class="col-md-4 ">
-                <div class="alert alert-secondary text-center small" style="min-width: 280px;" role="alert">
-                    <h5 class="text-muted">
-                        <strong>txAdmin</strong> Official Discord: <br>
-                        <a href="https://discord.gg/uAmsGa2" target="_blank">
-                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
-                        </a>
-                    </h5>
-                    
-                    <% if (dynamicAd) { %>
-                        <div class="hrsep hrsep-small">Ad</div>
-                        <a class="zapAdContainer" href="<%= dynamicAd.link %>" target="_blank" rel="noopener noreferrer">
-                            <img class="zapLogo show-dark-mode" alt="zap hosting" src="<%= dynamicAd.logoDarkMode %>">
-                            <img class="zapLogo show-light-mode" alt="zap hosting" src="<%= dynamicAd.logoLightMode %>">
-                            <div class="zapText attentionText">
-                                <%- dynamicAd.text %>
-                                <svg class="c-icon zapTextIcon">
-                                    <use href="img/coreui_icons.svg#cil-external-link"></use>
-                                </svg>
-                            </div>
-                        </a>
-                    <% } %>
-
-                    <div class="hrsep hrsep-small">Info</div>
-                    <div class="text-muted">
-                        <strong>Server profile:</strong> <%= serverProfile %> <br>
-                        <strong>txAdmin version:</strong> <%= txAdminVersion %> <br>
-                        <strong>FXServer build:</strong> <%= fxServerVersion %> 
-                    </div>
-                </div>
-
                 <!-- Dark/Light mode toggle -->
                 <% if (isWebInterface) { %>
                     <div style="text-align: center">

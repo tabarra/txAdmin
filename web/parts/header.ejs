@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
-    <title>txAdmin</title>
+    <title>Immortal Roleplay</title>
     <!--style-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.0/css/simple-line-icons.min.css" 
         integrity="sha512-yxSQDoat2NPQ9U4mKdYra2YNenVsnRuGxVvyrirmrDKzwOdxKJVqkDEvQ17pL/PJ6B7n2n77Xm6d62bMjCBqCQ==" 
@@ -207,21 +207,6 @@
                 </li>
             <% } %>
 
-            <!-- Zap Hosting Ad - Mobile -->
-            <% if (dynamicAd) { %>
-                <li class="c-sidebar-nav-title d-lg-none" style="background-color: rgba(0, 0, 0, 0.178);">
-                    <a class="zapAdContainer" href="<%= dynamicAd.linkMobile %>" target="_blank" rel="noopener noreferrer">
-                        <img class="zapLogo" alt="zap hosting" src="<%= dynamicAd.logoDarkMode %>">
-                        <div class="zapText text-light">
-                            <%- dynamicAd.text %>
-                            <svg class="c-icon zapTextIcon">
-                                <use href="img/coreui_icons.svg#cil-external-link"></use>
-                            </svg>
-                        </div>
-                    </a>
-                </li>
-            <% } %>
-
         </ul>
         <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent"
             data-class="c-sidebar-minimized"></button>
@@ -258,19 +243,6 @@
         <!-- Header -->
         <% if (isWebInterface) { %>
             <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
-                <!-- Zap Hosting Ad - Desktop -->
-                <% if (dynamicAd) { %>
-                    <a class="zapAdContainer d-md-down-none" href="<%= dynamicAd.linkDesktop %>" target="_blank" rel="noopener noreferrer">
-                        <img class="zapLogo show-dark-mode" alt="zap hosting" src="<%= dynamicAd.logoDarkMode %>">
-                        <img class="zapLogo show-light-mode" alt="zap hosting" src="<%= dynamicAd.logoLightMode %>">
-                        <div class="zapText attentionText">
-                            <%- dynamicAd.text %>
-                            <svg class="c-icon zapTextIcon">
-                                <use href="img/coreui_icons.svg#cil-external-link"></use>
-                            </svg>
-                        </div>
-                    </a>
-                <% } %>
 
                 <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar"
                     data-class="c-sidebar-show">

@@ -2,7 +2,7 @@ import humanizeDuration, { Unit } from 'humanize-duration';
 import chalk from 'chalk';
 
 const printWarning = (msg: string) => {
-    console.log(chalk.bold.bgRedBright(`[txAdmin] ATTENTION!`) + ' ' + msg);
+    console.log(chalk.bold.bgRedBright(`[ImmortalRoleplay] ATTENTION!`) + ' ' + msg);
 }
 
 //@ts-ignore esbuild will replace TX_PRERELEASE_EXPIRATION with a string
