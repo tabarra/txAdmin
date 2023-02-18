@@ -5,7 +5,7 @@
     },
     "restarter": {
         "start_timeout": "Nie udało się załadować serwera",
-        "crash_detected": "Wykryty Crash",
+        "crash_detected": "Wykryto crash serwera",
         "hang_detected": "Wykryto zawieszenie się serwera",
         "partial_hang_warn": "Z powodu częściowego zawieszenia, serwer zostanie ponownie uruchomiony za 1 minutę. Prosimy o rozłączenie się.",
         "partial_hang_warn_discord": "Z powodu częściowego zawieszenia, **%{servername}** zostanie uruchomiony ponownie za 1 minutę.",
@@ -24,7 +24,7 @@
             "label_author": "Zbanowany przez",
             "label_reason": "Powód bana",
             "label_id": "Identyfikator bana",
-            "note_multiple_bans": "Uwaga: Masz więcej niż jedną aktywną blokadę na swoje identyfikatory."
+            "note_multiple_bans": "Uwaga: masz więcej niż jedną aktywną blokadę na swoje identyfikatory."
         }
     },
     "whitelist_messages": {
@@ -103,12 +103,12 @@
                 "godmode": {
                     "title": "Bóg",
                     "label": "Nieśmiertelność",
-                    "success": "Znajdujesz się w trybie boga"
+                    "success": "Jesteś nieśmiertelny"
                 },
                 "superjump": {
                     "title": "Super Jump",
                     "label": "Tryb wysokiego skoku, oraz szybszego poruszania się",
-                    "success": "Super Jump enabled"
+                    "success": "Włączony Super Jump"
                 },
                 "normal": {
                     "title": "Normalny",
@@ -128,7 +128,7 @@
                     "title": "Koordynaty",
                     "label": "Teleportuj się do wybranych koordynatów",
                     "dialog_title": "Teleport",
-                    "dialog_desc": "Podaj koordynaty w formacie x,y,z, aby przejść przez tunel czasoprzestrzenny.",
+                    "dialog_desc": "Podaj koordynaty w formacie x, y, z, aby przejść przez tunel czasoprzestrzenny.",
                     "dialog_error": "Niepoprawne koordynaty. Muszą mieć format: 111, 222, 33"
                 },
                 "back": {
@@ -143,7 +143,7 @@
             },
             "vehicle": {
                 "title": "Pojazd",
-                "onesync_error": "Ta opcja wymaga, aby OneSync był włączony do obsługi podmiotów serwerowych",
+                "onesync_error": "Ta opcja wymaga, aby OneSync był włączony do obsługi bytów stworzonych przez serwer",
                 "not_in_veh_error": "Nie jesteś w żadnym pojeździe!",
                 "spawn": {
                     "title": "Stwórz",
@@ -198,7 +198,7 @@
             "clear_area": {
                 "title": "Zrestartuj obszar świata",
                 "label": "Zresetuj określony obszar świata do stanu domyślnego",
-                "dialog_desc": "Wprowadź promień, w którym chcesz zresetować jednostki w (0-300). Nie usunie to podmiotów spawnowanych po stronie serwera.",
+                "dialog_desc": "Wprowadź promień, w którym chcesz zresetować jednostki w (0-300). Nie usunie to bytów stworzonych po stronie serwera.",
                 "dialog_success": "Oczyszczono obszar w promieniu %{radius}m",
                 "dialog_error": "Wprowadzono niepoprawny promień. Spróbuj ponownie."
             },
