@@ -271,22 +271,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Disable Announcements
-                            </label>
-                            <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmMonitor-chatMessages"
-                                        <%= monitor.disableChatWarnings || '' %> <%= readOnly ? 'disabled' : '' %>>
-                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    Check this if you want to disable broadcast warning messages in game before each scheduled restart.
-                                </span>
-                            </div>
-                        </div>
-
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Monitor/Restarter Settings
