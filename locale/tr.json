@@ -50,7 +50,7 @@
         "approved_license": {
             "mode_title": "Bu sunucu <strong>Lisans Beyaz Listesi</strong> modunda.",
             "insufficient_ids": "<code>license</code> tanımlayıcısına sahip değilsiniz, bu sunucunun <code>sv_lan</code> özelliği etkinleştirilmiş demektir. Sunucu sahibiyseniz, <code>server.cfg</code> dosyasında devre dışı bırakabilirsiniz.",
-            "deny_title": "Bu sunucuya katılmak için beyaz listeli değilsiniz.,
+            "deny_title": "Bu sunucuya katılmak için beyaz listeli değilsiniz.",
             "request_id_label": "Talep ID"
         }
     },
