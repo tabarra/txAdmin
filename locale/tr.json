@@ -106,9 +106,9 @@
                     "success": "Tanrı modu etkinleştirilmiş"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Süper Zıplama",
+                    "label": "Süper Zıplama modunu aç/kapat, oyuncu aynı zamanda daha hızlı koşacaktır",
+                    "success": "Süper Zıplama etkinleştirilmiş"
                 },
                 "normal": {
                     "title": "Normal",
