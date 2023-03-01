@@ -30,14 +30,10 @@ export const requestAuth = (epType) => {
             const sessToken = ctx.session?.auth?.csrfToken;
             const headerToken = ctx.headers['x-txadmin-csrftoken'];
             if (sessToken && (sessToken !== headerToken)) {
-                //DEBUG
-                // ogConsole.dir({
-                //     route: `${ctx.method} ${ctx.path}`,
-                //     sessToken,
-                //     headerToken
-                // });
                 if (verbose) logWarn(`Invalid CSRF token: ${ctx.path}`, epType);
-                const msg = 'Invalid CSRF token, please report this issue to the txAdmin developers.';
+                const msg = (headerToken)
+                    ? 'Error: Invalid CSRF token, please report this issue to the txAdmin developers.'
+                    : 'Error: Missing HTTP header \'x-txadmin-csrftoken\'. This likely means your files are not updated or you are using some reverse proxy that is removing this header from the HTTP request.';
                 //to maintain compatibility with all routes
                 return ctx.send({
                     type: 'danger',
