@@ -300,7 +300,7 @@
                                             <i class="icon-user"></i>
                                         </span>
                                     </div>
-                                    <input class="form-control" type="text" name="username" placeholder="Username" required>
+                                    <input class="form-control" type="text" name="username" id="frm-username" placeholder="Username" required>
                                 </div>
                                 <div class="input-group mb-4 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
@@ -308,12 +308,25 @@
                                             <i class="icon-lock"></i>
                                         </span>
                                     </div>
-                                    <input class="form-control" type="password" name="password" placeholder="Password" required>
+                                    <input class="form-control" type="password" name="password" id="frm-password" placeholder="Password" required>
                                 </div>
                                 <div class="row justify-content-center">
                                     <button class="btn btn-primary px-4" type="submit">Login</button>
                                 </div>
                             </form>
+
+                            <script>
+                                try {
+                                    const rawLocalStorageStr = localStorage.getItem('txAdminDevPassAutofill');
+                                    if(rawLocalStorageStr){
+                                        const [user, pass] = JSON.parse(rawLocalStorageStr);
+                                        document.getElementById('frm-username').value = user;
+                                        document.getElementById('frm-password').value = pass;
+                                    }
+                                } catch (error) {
+                                    console.error('Username/Pass autofill failed', error);
+                                }
+                            </script>
                         <% } %>
                     </div>
                     <% if (message && template !== 'justMessage') { %>
