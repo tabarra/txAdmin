@@ -1,5 +1,6 @@
 const modulename = 'AdminVault';
 import fse from 'fs-extra';
+import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
 import { nanoid } from 'nanoid';
@@ -79,9 +80,14 @@ export default class AdminVault {
         //Check if admins file exists
         let adminFileExists;
         try {
-            adminFileExists = fse.existsSync(this.adminsFile);
+            fs.statSync(this.adminsFile, fs.constants.F_OK);
+            adminFileExists = true;
         } catch (error) {
-            throw new Error(`Failed to check presence of admin file with error: ${error.message}`);
+            if (error.code === 'ENOENT') {
+                adminFileExists = false;
+            } else {
+                throw new Error(`Failed to check presence of admin file with error: ${error.message}`);
+            }
         }
 
         //Printing PIN or starting loop
@@ -263,7 +269,7 @@ export default class AdminVault {
                 logError(`Failed to restore admins.json file: ${error.message}`);
                 if (verbose) dir(error);
             }
-        }
+        };
         try {
             const jsonData = await fse.readFile(this.adminsFile, 'utf8');
             const inboundHash = createHash('sha1').update(jsonData).digest('hex');
