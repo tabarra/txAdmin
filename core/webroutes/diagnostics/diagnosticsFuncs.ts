@@ -1,6 +1,5 @@
 const modulename = 'WebServer:DiagnosticsFuncs';
 import os from 'node:os';
-import bytes from 'bytes';
 import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
@@ -181,28 +180,35 @@ export const getHostData = async (): Promise<HostDataReturnType> => {
 
     //Get and cache static information
     if (!hostStaticDataCache) {
+        //This errors out on pterodactyl egg
+        let osUsername = 'unknown';
         try {
             const userInfo = os.userInfo();
+            osUsername = userInfo.username;
+        } catch (error) {}
+
+        try {
             const cpuStats = await si.cpu();
+            const cpuSpeed = cpuStats.speedMin || cpuStats.speed;
 
             //TODO: move this to frontend
             let clockWarning = '';
             if (cpuStats.cores < 8) {
-                if (cpuStats.speedMin <= 2.4) {
+                if (cpuSpeed <= 2.4) {
                     clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
-                } else if (cpuStats.speedMin < 3.0) {
+                } else if (cpuSpeed < 3.0) {
                     clockWarning = '<span class="badge badge-warning"> SLOW </span>';
                 }
             }
 
             hostStaticDataCache = {
                 nodeVersion: process.version,
-                username: userInfo.username,
+                username: osUsername,
                 osDistro: await getOsDistro(),
                 cpu: {
                     manufacturer: cpuStats.manufacturer,
                     brand: cpuStats.brand,
-                    speedMin: cpuStats.speedMin,
+                    speedMin: cpuSpeed,
                     speedMax: cpuStats.speedMax,
                     physicalCores: cpuStats.physicalCores,
                     cores: cpuStats.cores,
