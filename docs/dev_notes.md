@@ -1,5 +1,6 @@
 # TODO:
-- [ ] fix: menu > send announcement does not drigger discord msg nor custom event
+- [x] fix diagnostics data error on pterodactyl
+- [ ] fix: menu > send announcement does not trigger discord msg nor custom event
 - [ ] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
 
 (function() {
@@ -33,14 +34,6 @@ end
 
 criar variáveis globais setadas no shared, pra salvar o trabalho de dar GetConvar em todo arquivo
 
-===================
-### MUI update
-5.10.17 ok
-5.11.0 broken
-To test it, remove the `^`
-rm -rf node_modules/; npm i; npm list @mui/material; npm run dev:menu:game
-https://github.com/mui/material-ui/blob/master/CHANGELOG.md
-===================
 
 
 ### Server resource scanner
@@ -170,6 +163,7 @@ Whitelist Page/routes:
 console.log('aaa', {àa:true});
 const {Console} = require('node:console');
 const ogConsole = new Console({
+    //we can pipe this through something that logs the output
     stdout: process.stdout,
     stderr: process.stderr,
     colorMode: true,
@@ -356,6 +350,8 @@ For the tx ingame menu, replace actions grid with flexbox
 https://youtu.be/3elGSZSWTbM
 around 12:00
 https://immerjs.github.io/immer/ maybe?
+
+if tailwind, check https://daisyui.com/docs/themes/
 
 
 ### Update Event + Rollout strategy

@@ -4,7 +4,7 @@ import { ApplicationCommandDataResolvable, ApplicationCommandOptionType, Applica
 const statusCommand: ApplicationCommandDataResolvable = {
     type: ApplicationCommandType.ChatInput,
     name: 'status',
-    description: 'Status embed commands;',
+    description: 'Adds or removes the configurable, persistent, auto-updated embed.',
     options: [
         {
             type: ApplicationCommandOptionType.Subcommand,
@@ -22,7 +22,7 @@ const statusCommand: ApplicationCommandDataResolvable = {
 const whitelistCommand: ApplicationCommandDataResolvable = {
     type: ApplicationCommandType.ChatInput,
     name: 'whitelist',
-    description: 'Status embed commands.',
+    description: 'Whitelist embed commands.',
     options: [
         {
             type: ApplicationCommandOptionType.Subcommand,
