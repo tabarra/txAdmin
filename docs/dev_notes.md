@@ -3,6 +3,35 @@
 - [ ] fix: menu > send announcement does not trigger discord msg nor custom event
 - [ ] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
 
+
+## Console Rewrite
+- [x] Upgrade chalk, drop the chalk.keyword thing
+- [x] Rewrite console logger module to be proxied to node:console
+- [x] Move verbose to be part of the console (after the functional-ish change)
+- [ ] Replace custom-scoped logs (search for `log\(.+, `)
+- [ ] Replace log function everywhere
+- [ ] Add `[OUTDATED]` as a clog header prefix 
+- [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
+- [ ] Search for `node:console`, as i'm using it everywhere to test stuff
+- [ ] Migrate logger function to use the new logger component
+
+```js
+import consoleFactory from '@utils/console.js';
+const console = consoleFactory(modulename)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 (function() {
     var s = document.createElement('script');
     s.setAttribute('src', 'https://nthitz.github.io/turndownforwhatjs/tdfw.js');
@@ -148,39 +177,6 @@ Whitelist Page/routes:
 - [ ] in-core resource state tracking
 - [ ] new config (prepared for multiserver)
 - [ ] multiserver tx instance (backend only)
-
-
-## Console Rewrite
-- [ ] Rewrite console logger module to be proxied to node:console
-- [ ] Add `[OUTDATED]` as a clog header prefix 
-- [ ] Move verbose to be part of the console (after the functional-ish change)
-- [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
-- [ ] Upgrade chalk, drop the chalk.keyword thing
-- [ ] Search for `node:console`, as i'm using it everywhere to test stuff
-- [ ] Migrate logger function to use the new logger component
-
-```js
-console.log('aaa', {àa:true});
-const {Console} = require('node:console');
-const ogConsole = new Console({
-    //we can pipe this through something that logs the output
-    stdout: process.stdout,
-    stderr: process.stderr,
-    colorMode: true,
-});
-
-const chalk = require('chalk');
-const tag = chalk.bold.bgBlue(`[test]`)
-const testLog = (...args) => xxx.log.call(null, tag, ...args)
-
-testLog({àa:true});
-log('adsfsdf')
-
-import consoleFactory from '@utils/console.js';
-const console = consoleFactory(modulename)
-
-process.exit();
-```
 
 
 ## New config

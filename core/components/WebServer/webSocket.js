@@ -88,7 +88,7 @@ export default class WebSocket {
                     const { isValidAuth, isValidPerm } = authLogic(socket.session, room.commands[commandName].permission, logPrefix);
 
                     if (!isValidAuth || !isValidPerm) {
-                        if (verbose) log('dropping existing connection due to missing auth/permissionnew', logPrefix);
+                        if (verbose) log('dropping existing connection due to missing auth/permission', logPrefix);
                         return terminateSession(socket);
                     }
                     room.commands[commandName].handler(socket.session, ...cmdArgs);
