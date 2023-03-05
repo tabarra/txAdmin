@@ -2,7 +2,7 @@
 - [x] fix diagnostics data error on pterodactyl
 - [ ] fix: menu > send announcement does not trigger discord msg nor custom event
 - [ ] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
-
+- [ ] ConfigVault.saveProfile should probably throw the error up
 
 ## Console Rewrite
 - [x] Upgrade chalk, drop the chalk.keyword thing
@@ -37,6 +37,16 @@ const console = consoleFactory(modulename)
     s.setAttribute('src', 'https://nthitz.github.io/turndownforwhatjs/tdfw.js');
     document.body.appendChild(s);
 })()
+
+
+cache static files
+
+
+günther
+> I solved the problem.
+> 
+> - The problem was caused by the force steam setting in the jdlogs script, it was fixed by turning off that setting. If the player's Steam application is closed, the script warns the player to open steam in the background and prevents them from logging into the server, but in tx admin, the player seems to be logged into the server and therefore we see unknown texts. in the player list.
+
 
 ## Optional
 - [ ] bot: fix http agent options for localAddress
@@ -84,7 +94,7 @@ teste:
 
 # TODO: sooner than later
 - [ ] server logger add events/min average
-- [ ] add lru-cache to `DiscordBot.resolveMember()`
+- [ ] add lru-cache to `DiscordBot.resolveMember()` really needed? it probably wouldn't try to resolve the same player twice because he would be in the wl requests already
 
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions

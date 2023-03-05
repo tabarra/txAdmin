@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import colorize from 'json-colorizer';
 const verbose = false;
 
-const header = 'txAdmin';
+const header = '<<<OLD>>>';
 let logHistory = [];
 
 //Helpers

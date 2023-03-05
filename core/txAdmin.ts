@@ -249,6 +249,8 @@ export default class TxAdmin {
         //Run Update Checker every 15 minutes
         updateChecker();
         setInterval(updateChecker, 15 * 60 * 1000);
+
+        //TODO: cron to update setTTYTitle
     }
 
     /**

@@ -156,6 +156,7 @@ const runDevTask = () => {
     esbuild.build({
         entryPoints: ['./core'],
         bundle: true,
+        sourcemap: 'linked',
         outfile: path.join(monitorPath, 'core', 'index.js'),
         platform: 'node',
         target: 'node16',
