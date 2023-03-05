@@ -144,6 +144,11 @@ export default (config) => {
         router.post('/dev/:scope', webRoutes.dev_post);
     };
 
+    //Insights page mock
+    // router.get('/insights', (ctx) => {
+    //     return ctx.utils.render('main/insights', { headerTitle: 'Insights' });
+    // });
+
     //Return router
     return router;
 };
