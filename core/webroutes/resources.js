@@ -2,8 +2,8 @@ const modulename = 'WebServer:Resources';
 import path from 'path';
 import slash from 'slash';
 import slug from 'slug';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };

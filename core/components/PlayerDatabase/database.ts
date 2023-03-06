@@ -4,12 +4,11 @@ import { ExpChain } from 'lodash';
 import lodash from 'lodash-es';
 import { Low, Adapter } from 'lowdb';
 import { TextFile } from 'lowdb/node';
-import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData';
+import { convars } from '@core/globalData';
 import { DatabaseDataType } from './databaseTypes.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
-
 import migrations from './migrations.js';
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Consts & helpers
 export const DATABASE_VERSION = 3;
@@ -103,20 +102,20 @@ export class Database {
             dbo = new LowWithLodash(adapterAsync);
             await dbo.read();
         } catch (errorMain) {
-            logError('Your txAdmin player/actions database could not be loaded.');
+            console.error('Your txAdmin player/actions database could not be loaded.');
             try {
                 await fsp.copyFile(this.backupPath, this.dbPath);
                 const adapterAsync = new JSONFile<DatabaseDataType>(this.dbPath);
                 dbo = new LowWithLodash(adapterAsync);
                 await dbo.read();
-                logWarn('The database file was restored with the automatic backup file.');
-                logWarn('A five minute rollback is expected.');
+                console.warn('The database file was restored with the automatic backup file.');
+                console.warn('A five minute rollback is expected.');
             } catch (errorBackup) {
-                logError('It was also not possible to load the automatic backup file.');
-                logError(`Main error: '${(errorMain as Error).message}'`);
-                logError(`Backup error: '${(errorBackup as Error).message}'`);
-                logError(`Database path: '${this.dbPath}'`);
-                logError('If there is a file in that location, you may try to delete or restore it manually.');
+                console.error('It was also not possible to load the automatic backup file.');
+                console.error(`Main error: '${(errorMain as Error).message}'`);
+                console.error(`Backup error: '${(errorBackup as Error).message}'`);
+                console.error(`Database path: '${this.dbPath}'`);
+                console.error('If there is a file in that location, you may try to delete or restore it manually.');
                 process.exit();
             }
         }
@@ -141,8 +140,8 @@ export class Database {
             this.lastWrite = Date.now();
             this.isReady = true;
         } catch (error) {
-            logError('Failed to setup database object.');
-            dir(error);
+            console.error('Failed to setup database object.');
+            console.dir(error);
             process.exit();
         }
     }
@@ -154,10 +153,10 @@ export class Database {
     async backupDatabase(targetPath?: string) {
         try {
             await fsp.copyFile(this.dbPath, targetPath ?? this.backupPath);
-            if (verbose) logOk('Database file backed up.');
+            console.verbose.debug('Database file backed up.');
         } catch (error) {
-            logError(`Failed to backup database file '${this.dbPath}'`);
-            if (verbose) dir(error);
+            console.error(`Failed to backup database file '${this.dbPath}'`);
+            console.verbose.dir(error);
         }
     }
 
@@ -170,7 +169,7 @@ export class Database {
             throw new Error('unknown priority flag!');
         }
         if (flag > this.#writePending) {
-            if (verbose) log(`writeFlag > ${['no', 'low', 'med', 'high'][flag]}`);
+            console.verbose.log(`writeFlag > ${['no', 'low', 'med', 'high'][flag]}`);
             this.#writePending = flag;
         }
     }
@@ -192,13 +191,11 @@ export class Database {
                 const timeElapsed = Date.now() - timeStart;
                 this.#writePending = SAVE_STANDBY;
                 this.lastWrite = timeStart;
-                if (verbose) logOk(`DB file saved, took ${timeElapsed}ms.`);
+                console.verbose.debug(`DB file saved, took ${timeElapsed}ms.`);
             } catch (error) {
-                logError(`Failed to save players database with error: ${(error as Error).message}`);
-                if (verbose) dir(error);
+                console.error(`Failed to save players database with error: ${(error as Error).message}`);
+                console.verbose.dir(error);
             }
-        } else {
-            if (verbose) logOk('Skipping DB file save.');
         }
     }
 }

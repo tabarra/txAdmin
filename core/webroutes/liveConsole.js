@@ -1,6 +1,6 @@
 const modulename = 'WebServer:LiveConsole';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 /**

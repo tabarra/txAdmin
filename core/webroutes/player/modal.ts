@@ -1,12 +1,12 @@
 const modulename = 'WebServer:PlayerModal';
 import dateFormat from 'dateformat';
-import logger from '@core/extras/console.js';
 import playerResolver from '@core/playerLogic/playerResolver';
 import { Context } from 'koa';
 import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData, PlayerModalMeta } from '@shared/playerApiTypes';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { ServerPlayer } from '@core/playerLogic/playerClasses';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -24,7 +24,7 @@ const processHistoryLog = (hist: DatabaseActionType[]) => {
             };
         });
     } catch (error) {
-        logError(`Error processing player history: ${(error as Error).message}`);
+        console.error(`Error processing player history: ${(error as Error).message}`);
         return [];
     }
 };
@@ -100,8 +100,8 @@ export default async function PlayerModal(ctx: Context) {
         }
     }
 
-    // ogConsole.dir(metaFields);
-    // ogConsole.dir(playerData);
+    // console.dir(metaFields);
+    // console.dir(playerData);
     return sendTypedResp({
         meta: metaFields,
         player: playerData

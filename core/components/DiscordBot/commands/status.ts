@@ -1,12 +1,12 @@
 const modulename = 'DiscordBot:cmd:status';
 import humanizeDuration from 'humanize-duration';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, ColorResolvable, EmbedBuilder } from 'discord.js';
-import logger from '@core/extras/console.js';
 import { txEnv } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import { cloneDeep } from 'lodash-es';
 import { embedder, ensurePermission, isValidButtonEmoji, isValidEmbedUrl, logDiscordAdminAction } from '../discordHelpers';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Humanizer options
 const humanizer = humanizeDuration.humanizer({

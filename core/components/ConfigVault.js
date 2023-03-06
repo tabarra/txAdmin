@@ -1,10 +1,10 @@
 const modulename = 'ConfigVault';
 import fs from 'node:fs';
 import { cloneDeep } from 'lodash-es';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
 import { defaultEmbedJson, defaultEmbedConfigJson } from '@core/components/DiscordBot/defaultJsons';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
+
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -55,7 +55,7 @@ export default class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             this.setupFolderStructure();
         } catch (error) {
-            logError(error.message);
+            console.error(error.message);
             process.exit(0);
         }
     }
@@ -80,7 +80,7 @@ export default class ConfigVault {
         try {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
-            if (rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
+            if (rawFile.includes('\\')) console.error(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
             throw new Error(`Unable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
         }
 
@@ -174,7 +174,7 @@ export default class ConfigVault {
                 out.global.language = 'pt';
             }
         } catch (error) {
-            if (verbose) dir(error);
+            console.verbose.dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
         }
 
@@ -239,7 +239,7 @@ export default class ConfigVault {
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in template
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
-            if (verbose) dir(error);
+            console.verbose.dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);
         }
 
@@ -263,7 +263,7 @@ export default class ConfigVault {
                 fs.mkdirSync(logsPath);
             }
         } catch (error) {
-            logError(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`);
+            console.error(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`);
             process.exit();
         }
     }
@@ -330,7 +330,7 @@ export default class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             return true;
         } catch (error) {
-            dir(error);
+            console.dir(error);
             return false;
         }
     }

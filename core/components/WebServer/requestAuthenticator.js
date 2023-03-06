@@ -1,7 +1,7 @@
 const modulename = 'WebServer:RequestAuthenticator';
-import logger, { ogConsole } from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import { convars } from '@core/globalData';
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -30,7 +30,7 @@ export const requestAuth = (epType) => {
             const sessToken = ctx.session?.auth?.csrfToken;
             const headerToken = ctx.headers['x-txadmin-csrftoken'];
             if (sessToken && (sessToken !== headerToken)) {
-                if (verbose) logWarn(`Invalid CSRF token: ${ctx.path}`, epType);
+                console.verbose.warn(`Invalid CSRF token: ${ctx.path}`, epType);
                 const msg = (headerToken)
                     ? 'Error: Invalid CSRF token, please report this issue to the txAdmin developers.'
                     : 'Error: Missing HTTP header \'x-txadmin-csrftoken\'. This likely means your files are not updated or you are using some reverse proxy that is removing this header from the HTTP request.';
@@ -44,7 +44,7 @@ export const requestAuth = (epType) => {
         }
 
         if (!isValidAuth) {
-            if (verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
+            console.verbose.warn(`Invalid session auth: ${ctx.path}`, epType);
             ctx.session.auth = {};
             if (epType === 'web') {
                 if (ctx.method === 'GET' && ctx.path !== '/') {
@@ -115,7 +115,7 @@ export const requestAuth = (epType) => {
         } else {
             if (socket.session) socket.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
-            if (verbose) logWarn('Auth denied when creating session');
+            console.verbose.warn('Auth denied when creating session');
             next(new Error('Authentication Denied'));
         }
     };
@@ -183,13 +183,11 @@ export const authLogic = (sess, perm, epType) => {
                     ));
                 }
             } catch (error) {
-                if (verbose) {
-                    logError('Error validating session data:', epType);
-                    dir(error);
-                }
+                console.verbose.error('Error validating session data:', epType);
+                console.verbose.dir(error);
             }
         } else {
-            if (verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
+            console.verbose.warn(`Expired session from ${sess.auth.username}`, epType);
         }
     }
 
@@ -209,9 +207,7 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
         && !convars.isZapHosting
         && !globals.webServer.config.disableNuiSourceCheck
     ) {
-        if (verbose) {
-            logWarn(`NUI Auth Failed: reqIP "${reqIP}" not in ${JSON.stringify(convars.loopbackInterfaces)}.`);
-        }
+        console.verbose.warn(`NUI Auth Failed: reqIP "${reqIP}" not in ${JSON.stringify(convars.loopbackInterfaces)}.`);
         return { isValidAuth: false, rejectReason: 'Invalid Request: source' };
     }
 
@@ -225,9 +221,7 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
 
     // Check token value
     if (reqHeader['x-txadmin-token'] !== globals.webServer.luaComToken) {
-        if (verbose) {
-            logWarn(`NUI Auth Failed: token received ${reqHeader['x-txadmin-token']} !== expected ${globals.webServer.luaComToken}.`);
-        }
+        console.verbose.warn(`NUI Auth Failed: token received ${reqHeader['x-txadmin-token']} !== expected ${globals.webServer.luaComToken}.`);
         return { isValidAuth: false, rejectReason: 'Unauthorized: token value' };
     }
 
@@ -244,15 +238,13 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
     try {
         const admin = globals.adminVault.getAdminByIdentifiers(identifiers);
         if (!admin) {
-            if (verbose) {
-                logWarn(`NUI Auth Failed: no admin found with identifiers ${JSON.stringify(identifiers)}.`);
-            }
+            console.verbose.warn(`NUI Auth Failed: no admin found with identifiers ${JSON.stringify(identifiers)}.`);
             return { isValidAuth: false, rejectReason: 'Unauthorized: admin not found' };
         }
         return { isValidAuth: true, admin };
     } catch (error) {
-        logWarn(`Failed to authenticate NUI user with error: ${error.message}`);
-        if (verbose) dir(error);
+        console.warn(`Failed to authenticate NUI user with error: ${error.message}`);
+        console.verbose.dir(error);
         return { isValidAuth: false, rejectReason: 'internal error' };
     }
 };

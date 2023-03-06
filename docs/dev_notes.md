@@ -3,21 +3,27 @@
 - [ ] fix: menu > send announcement does not trigger discord msg nor custom event
 - [ ] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
 - [ ] ConfigVault.saveProfile should probably throw the error up
+- [ ] whitelist "discord no id" message should tell the user to open discord desktop
 
 ## Console Rewrite
 - [x] Upgrade chalk, drop the chalk.keyword thing
 - [x] Rewrite console logger module to be proxied to node:console
 - [x] Move verbose to be part of the console (after the functional-ish change)
-- [ ] Replace custom-scoped logs (search for `log\(.+, `)
-- [ ] Replace log function everywhere
+- [x] Replace custom-scoped logs (search for `log\(.+, `)
+- [x] Replace log function everywhere (`[\s\(\{;](log\w*|dir)\(`)
+- [x] Search for `return console.` or `= console.` wince we don't return anything anymore
+- [ ] replace `PLACEHOLDER_GETLOG` with some getter
+- [x] Check again `checkPreRelease.ts`
 - [ ] Add `[OUTDATED]` as a clog header prefix 
-- [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
-- [ ] Search for `node:console`, as i'm using it everywhere to test stuff
+- [x] Remove the GlobalData from a bunch of files which include it just because of verbosity
+- [x] Search for `(verbose)`
+- [x] Search for `node:console` / `ogConsole`
 - [ ] Migrate logger function to use the new logger component
+- [ ] Remove old console and rename `newConsole` to `console`
 
 ```js
-import consoleFactory from '@utils/console.js';
-const console = consoleFactory(modulename)
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 ```
 
 

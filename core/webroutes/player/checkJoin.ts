@@ -4,17 +4,16 @@ import { GenericApiError } from '@shared/genericApiTypes';
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseActionType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
 import Translator from '@core/components/Translator';
-import logger, { ogConsole } from '@core/extras/console.js';
 import { anyUndefined, now, parsePlayerIds, PlayerIdsObjectType } from '@core/extras/helpers';
 import xssInstancer from '@core/extras/xss';
-import { verbose } from '@core/globalData';
 import playerResolver from '@core/playerLogic/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import { Context } from 'koa';
 import DiscordBot from '@core/components/DiscordBot';
 import AdminVault from '@core/components/AdminVault';
 import FXRunner from '@core/components/FxRunner';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 const xss = xssInstancer();
 
 //Helper
@@ -134,8 +133,8 @@ export default async function PlayerCheckJoin(ctx: Context) {
         return sendTypedResp({ allow: true });
     } catch (error) {
         const msg = `Failed to check ban/whitelist status: ${(error as Error).message}`;
-        logError(msg);
-        if (verbose) dir(error);
+        console.error(msg);
+        console.verbose.dir(error);
         return sendTypedResp({ error: msg });
     }
 };

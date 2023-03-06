@@ -1,5 +1,5 @@
 import TxAdmin from './txAdmin';
-import {  convars } from './globalData';
+import { convars } from './globalData';
 import checkPreRelease from '@core/extras/checkPreRelease';
 import consoleFactory, { setTTYTitle } from '@extras/newConsole';
 const console = consoleFactory();

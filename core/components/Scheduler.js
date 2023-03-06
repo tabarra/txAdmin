@@ -1,8 +1,8 @@
 const modulename = 'Scheduler';
-import logger from '@core/extras/console.js';
 import { parseSchedule } from '@core/extras/helpers';
-import { verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
+
 
 //Helpers
 const scheduleWarnings = [30, 15, 10, 5, 4, 3, 2, 1];
@@ -171,7 +171,7 @@ export default class Scheduler {
 
         //Checking if skipped
         if (this.nextSkip === this.calculatedNextRestartMinuteFloorTs) {
-            if (verbose) log(`Skipping next scheduled restart`);
+            console.verbose.log(`Skipping next scheduled restart`);
             return;
         }
 
@@ -218,7 +218,7 @@ export default class Scheduler {
     async restartFXServer(reasonInternal, reasonTranslated) {
         //sanity check
         if (globals.fxRunner.fxChild === null) {
-            logWarn('Server not started, no need to restart');
+            console.warn('Server not started, no need to restart');
             return false;
         }
 

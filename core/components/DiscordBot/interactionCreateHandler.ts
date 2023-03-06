@@ -1,13 +1,13 @@
 const modulename = 'DiscordBot:interactionHandler';
 import { Interaction, InteractionType } from 'discord.js';
 import TxAdmin from '@core/txAdmin.js';
-import logger, { ogConsole } from '@core/extras/console.js';
 import infoCommandHandler from './commands/info';
 import statusCommandHandler from './commands/status';
 import whitelistCommandHandler from './commands/whitelist';
 import { embedder } from './discordHelpers';
 import { cloneDeep } from 'lodash-es'; //DEBUG
-const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 //All commands
@@ -32,7 +32,7 @@ const noHandlerResponse = async (interaction: Interaction) => {
 export default async (txAdmin: TxAdmin, interaction: Interaction) => {
     //DEBUG
     // const copy = Object.assign(cloneDeep(interaction), { user: false, member: false });
-    // ogConsole.dir(copy);
+    // console.dir(copy);
     // return;
 
     //Handler filter
@@ -44,14 +44,14 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
         // const [iid, ...args] = interaction.customId.split(':');
         // const handler = txChungus.interactionsManager.cache.get(`button:${iid}`);
         // if (!handler) {
-        //     logError(`No handler available for button interaction ${interaction.customId}`);
+        //     console.error(`No handler available for button interaction ${interaction.customId}`);
         //     return;
         // }
         // //Executes interaction
         // try {
         //     return await handler.execute(interaction, args, txChungus);
         // } catch (error) {
-        //     return await logError(`Error executing ${interaction.customId}: ${error.message}`);
+        //     return await console.error(`Error executing ${interaction.customId}: ${error.message}`);
         // }
     }
 
@@ -70,7 +70,7 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
             return;
         } catch (error) {
             const msg = `Error executing ${interaction.commandName}: ${(error as Error).message}`;
-            logError(msg);
+            console.error(msg);
             await interaction.reply(embedder.danger(msg, true));
             return ;
         }

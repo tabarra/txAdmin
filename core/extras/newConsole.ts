@@ -6,7 +6,6 @@ import chalk from 'chalk';
 import slash from 'slash';
 import ErrorStackParser from 'error-stack-parser';
 import sourceMapSupport from 'source-map-support'
-import { txEnv, convars } from '../globalData';
 
 /*
     FIXME: test styling notes
@@ -18,15 +17,25 @@ import { txEnv, convars } from '../globalData';
 
 //Variables
 const header = 'txAdmin';
-let internalVerboseFlag = true;
+let _verboseFlag = false;
+let _txAdminVersion: string | undefined;
+const stackPathAliases: [string, string][] = [];
 
-//If dev move, read sourcemap and change the path alias
-let pathAliasFind: string;
-if (convars.isDevMode) {
-    sourceMapSupport.install();
-    pathAliasFind = txEnv.txAdminResourcePath + '/core';
-} else {
-    pathAliasFind = txEnv.txAdminResourcePath!;
+export const setConsoleEnvData = (
+    txAdminVersion: string,
+    txAdminResourcePath: string,
+    isDevMode: boolean,
+    isVerbose: boolean,
+) => {
+    _txAdminVersion = txAdminVersion;
+    _verboseFlag = isVerbose;
+    if (isDevMode) {
+        sourceMapSupport.install();
+        //for some reason when using sourcemap it ends up with core/core/
+        stackPathAliases.push([txAdminResourcePath + '/core', '@monitor']);
+    } else {
+        stackPathAliases.push([txAdminResourcePath, '@monitor']);
+    }
 }
 
 
@@ -47,7 +56,7 @@ const verboseStream = new Writable({
     defaultEncoding: 'utf8',
     write(chunk, encoding, callback) {
         //TODO: log stuff
-        if (internalVerboseFlag) process.stdout.write(chunk);
+        if (_verboseFlag) process.stdout.write(chunk);
         callback();
     },
 });
@@ -89,16 +98,19 @@ const getPrettyError = (error: Error) => {
         try {
             for (const line of ErrorStackParser.parse(error)) {
                 if (line.fileName && line.fileName.startsWith('node:')) continue;
-                const outPath = cleanPath(line.fileName ?? 'unknown').replace(pathAliasFind, '@monitor');
+                let outPath = cleanPath(line.fileName ?? 'unknown');
+                for (const [find, replace] of stackPathAliases) {
+                    outPath = outPath.replace(find, replace);
+                }
                 const outPos = chalk.blueBright(`${line.lineNumber}:${line.columnNumber}`);
                 const outName = chalk.yellowBright(line.functionName || '<unknown>');
                 out.push(`${ERR_STACK_PREFIX} ${outPath} > ${outPos} > ${outName}`);
             }
         } catch (error) {
-            out.push(`${chalk.redBright('[txAdmin]')} Unnable to parse stack.`);
+            out.push(`${chalk.redBright('[txAdmin]')} Unnable to parse error stack.`);
         }
     } else {
-        out.push(`${chalk.redBright('[txAdmin]')} Stack not available.`);
+        out.push(`${chalk.redBright('[txAdmin]')} Error stack not available.`);
     }
     return out.join('\n');
 }
@@ -142,8 +154,9 @@ export const cleanTerminal = () => {
  * Sets terminal title
  */
 export const setTTYTitle = (title: string) => {
-    title = (title) ? `txAdmin v${txEnv.txAdminVersion}: ${title}` : 'txAdmin';
-    process.stdout.write(`\x1B]0;${title}\x07`);
+    const tx = _txAdminVersion ? `txAdmin v${_txAdminVersion}`: 'txAdmin';
+    const out = (title) ? `${tx}: ${title}` : tx;
+    process.stdout.write(`\x1B]0;${out}\x07`);
 }
 
 /**
@@ -156,15 +169,23 @@ export const getTimestamp = () => (new Date).toLocaleString(
 
 
 /**
+ * Generated the colored log prefix (ts+tags)
+ */
+export const genLogPrefix = (currContext: string, color: Function) => {
+    const currTime = getTimestamp();
+    const timeTag = chalk.inverse(`[${currTime}]`);
+    const headerTag = color(`[${currContext}]`);
+    return `${timeTag}${headerTag}`;
+}
+
+
+/**
  * Generates a custom log function with custom context and specific Console
  */
 const getLogFunc = (currContext: string, color: Function, consoleInstance?: Console) => {
     return (message?: any, ...optParams: any) => {
         if (!consoleInstance) consoleInstance = defaultConsole;
-        const currTime = getTimestamp();
-        const timeTag = chalk.inverse(`[${currTime}]`);
-        const headerTag = color(`[${currContext}]`);
-        const prefix = `${timeTag}${headerTag}`;
+        const prefix = genLogPrefix(currContext, color);
         if (typeof message === 'string') {
             return consoleInstance.log.call(null, `${prefix} ${message}`, ...optParams);
         } else {
@@ -189,6 +210,12 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
         warn: getLogFunc(currContext, chalk.bold.bgYellow),
         error: getLogFunc(currContext, chalk.bold.bgRed),
         dir: (data: any, options?: InspectOptions) => dirHandler.call(null, data, options),
+        multiline: (text: string | string[], color: Function) => {
+            if (!Array.isArray(text)) text = text.split('\n');
+            const prefix = genLogPrefix(currContext, color);
+            const message = text.map((line) => `${prefix} ${line}`);
+            defaultConsole.log(message.join('\n'));
+        },
 
         verbose: {
             debug: getLogFunc(currContext, chalk.bold.bgMagenta, verboseConsole),
@@ -198,8 +225,8 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
             error: getLogFunc(currContext, chalk.bold.bgRed, verboseConsole),
             dir: (data: any, options?: InspectOptions) => dirHandler.call(null, data, options, verboseConsole)
         },
-        get isVerbose() { return internalVerboseFlag },
-        setVerbose: (state: boolean) => { internalVerboseFlag = !!state; },
+        get isVerbose() { return _verboseFlag },
+        setVerbose: (state: boolean) => { _verboseFlag = !!state; },
     };
 };
 export default consoleFactory;

@@ -1,12 +1,12 @@
 const modulename = 'WebServer:PlayerActions';
 import humanizeDuration, { Unit } from 'humanize-duration';
-import logger from '@core/extras/console.js';
 import { Context } from 'koa';
 import playerResolver from '@core/playerLogic/playerResolver';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { PlayerClass, ServerPlayer } from '@core/playerLogic/playerClasses';
 import { anyUndefined, calcExpirationFromDuration } from '@core/extras/helpers';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 /**

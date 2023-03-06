@@ -6,16 +6,16 @@ import chalk from 'chalk';
 import xssInstancer from '@core/extras/xss.js';
 import * as helpers from '@core/extras/helpers';
 import consts from '@core/extras/consts';
-import logger from '@core/extras/console.js';
-import { convars, txEnv, verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import { convars, txEnv } from '@core/globalData';
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const xss = xssInstancer();
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const getRenderErrorText = (view, error, data) => {
-    logError(`Error rendering ${view}.`);
-    if (verbose) dir(error);
+    console.error(`Error rendering ${view}.`);
+    console.verbose.dir(error);
     if (!isUndefined(data.discord) && !isUndefined(data.discord.token)) data.discord.token = '[redacted]';
     let out = '<pre>\n';
     out += `Error rendering '${view}'.\n`;
@@ -74,7 +74,7 @@ async function loadWebTemplate(name) {
                 e = new Error(`The '${name}' template was not found:\n` +
                     `You probably deleted the 'citizen/system_resources/monitor/web/${name}.ejs' file, or the folders above it.`, undefined, e);
             }
-            logError(e);
+            console.dir(e);
         }
     }
 
@@ -95,7 +95,7 @@ async function renderView(view, reqSess, data, txVars) {
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = !txEnv.isWindows;
-    data.showAdvanced = (convars.isDevMode || verbose);
+    data.showAdvanced = (convars.isDevMode || console.isVerbose);
     data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('main');
 
     let out;
@@ -128,7 +128,7 @@ async function renderLoginView(data, txVars) {
     try {
         out = await loadWebTemplate('standalone/login').then(template => template(data));
     } catch (error) {
-        logError(error);
+        console.error(error);
         out = getRenderErrorText('Login', error, data);
     }
 
@@ -174,7 +174,7 @@ function hasPermission(ctx, perm) {
             || sess.auth.permissions.includes(perm)
         );
     } catch (error) {
-        if (verbose) logWarn(`Error validating permission '${perm}' denied.`);
+        console.verbose.warn(`Error validating permission '${perm}' denied.`);
         return false;
     }
 }
@@ -190,13 +190,13 @@ function testPermission(ctx, perm, fromCtx) {
     try {
         const sess = ctx.nuiSession ?? ctx.session;
         if (!hasPermission(ctx, perm)) {
-            if (verbose) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            console.verbose.warn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         } else {
             return true;
         }
     } catch (error) {
-        if (verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
+        if (typeof fromCtx === 'string') console.verbose.warn(`Error validating permission '${perm}' denied.`, fromCtx);
         return false;
     }
 }

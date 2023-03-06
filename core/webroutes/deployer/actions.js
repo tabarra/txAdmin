@@ -4,10 +4,10 @@ import { cloneDeep }  from 'lodash-es';
 import slash from 'slash';
 import mysql from 'mysql2/promise'
 import consts from '@core/extras/consts';
-import logger from '@core/extras/console.js';
 import { txEnv, convars } from '@core/globalData';
 import { validateModifyServerConfig } from '../../extras/fxsConfigHelper';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -236,7 +236,7 @@ async function handleSaveConfig(ctx) {
             return ctx.send({ success: true });
         }
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
         return ctx.send({
             type: 'danger',
             markdown: true,

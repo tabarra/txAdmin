@@ -1,11 +1,10 @@
 const modulename = 'PlayerlistManager';
 import { cloneDeep } from 'lodash-es';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
 import TxAdmin from '@core/txAdmin.js';
 import { ServerPlayer } from '@core/playerLogic/playerClasses.js';
 import { DatabasePlayerType } from '../PlayerDatabase/databaseTypes';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -124,7 +123,7 @@ export default class PlayerlistManager {
                     data: { ids: this.#playerlist[payload.id]!.ids }
                 }], mutex);
             } catch (error) {
-                if (verbose) logWarn(`playerJoining event error: ${(error as Error).message}`);
+                console.verbose.warn(`playerJoining event error: ${(error as Error).message}`);
             }
 
         } else if (payload.event === 'playerDropped') {
@@ -139,10 +138,10 @@ export default class PlayerlistManager {
                     data: { reason: payload.reason }
                 }], mutex);
             } catch (error) {
-                if (verbose) logWarn(`playerDropped event error: ${(error as Error).message}`);
+                console.verbose.warn(`playerDropped event error: ${(error as Error).message}`);
             }
         } else {
-            logWarn(`Invalid event: ${payload?.event}`);
+            console.warn(`Invalid event: ${payload?.event}`);
         }
     }
 };

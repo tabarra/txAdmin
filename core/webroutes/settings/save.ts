@@ -2,14 +2,14 @@ const modulename = 'WebServer:SettingsSave';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import slash from 'slash';
-import logger from '@core/extras/console.js';
 import { parseSchedule, anyUndefined } from '@core/extras/helpers';
 import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
 import { Context } from 'koa';
 import ConfigVault from '@core/components/ConfigVault';
 import DiscordBot from '@core/components/DiscordBot';
 import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 //Helper functions
@@ -96,7 +96,7 @@ async function handleGlobal(ctx: Context) {
         ctx.utils.logAction('Changing global settings.');
         return ctx.send({ type: 'success', message: '<strong>Global configuration saved!</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing global settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing global settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -171,7 +171,7 @@ async function handleFXServer(ctx: Context) {
         ctx.utils.logAction('Changing fxRunner settings.');
         return ctx.send({ type: 'success', message: '<strong>FXServer configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing fxRunner settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing fxRunner settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -245,7 +245,7 @@ async function handlePlayerDatabase(ctx: Context) {
         ctx.utils.logAction('Changing Player Controller settings.');
         return ctx.send({ type: 'success', message: '<strong>Player Controller configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing Player Controller settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing Player Controller settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -292,7 +292,7 @@ async function handleMonitor(ctx: Context) {
         ctx.utils.logAction('Changing monitor settings.');
         return ctx.send({ type: 'success', message: '<strong>Monitor/Restarter configuration saved!</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing monitor settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing monitor settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -382,7 +382,7 @@ async function handleDiscord(ctx: Context) {
         }
 
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing discordBot settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing discordBot settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -437,7 +437,7 @@ async function handleMenu(ctx: Context) {
         ctx.utils.logAction('Changing menu settings.');
         return ctx.send({ type: 'success', message: '<strong>Menu configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing menu settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing menu settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }

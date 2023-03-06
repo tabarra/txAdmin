@@ -1,9 +1,8 @@
 /* eslint-disable padded-blocks */
 const modulename = 'Logger:Server';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
 import { LoggerBase, separator } from '../loggerUtils.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 /*
 NOTE: Expected time cap based on log size cap to prevent memory leak
@@ -63,7 +62,7 @@ export default class ServerLogger extends LoggerBase {
         this.lrStream.write(`\n${separator('txAdmin Starting')}\n`);
         this.lrStream.on('rotated', (filename) => {
             this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            if (verbose) log(`Rotated file ${filename}`);
+            console.verbose.log(`Rotated file ${filename}`);
         });
 
         this.recentBuffer = [];
@@ -98,7 +97,7 @@ export default class ServerLogger extends LoggerBase {
      */
     write(data, mutex) {
         if (!Array.isArray(data)) {
-            if (verbose) logWarn(`write() expected array, got ${typeof data}`);
+            console.verbose.warn(`write() expected array, got ${typeof data}`);
             return false;
         }
 
@@ -107,10 +106,8 @@ export default class ServerLogger extends LoggerBase {
             try {
                 const { eventObject, eventString } = this.processEvent(data[i], mutex);
                 if (!eventObject || !eventString) {
-                    if (verbose) {
-                        logWarn('Failed to parse event:');
-                        dir(data[i]);
-                    }
+                    console.verbose.warn('Failed to parse event:');
+                    console.verbose.dir(data[i]);
                     continue;
                 }
 
@@ -124,10 +121,8 @@ export default class ServerLogger extends LoggerBase {
                 //Write to file
                 this.lrStream.write(`${eventString}\n`);
             } catch (error) {
-                if (verbose) {
-                    logError('Error processing FD3 txAdminLogData:');
-                    dir(error);
-                }
+                console.verbose.error('Error processing FD3 txAdminLogData:');
+                console.verbose.dir(error);
             }
         }
     }
@@ -151,7 +146,7 @@ export default class ServerLogger extends LoggerBase {
             srcString = 'CONSOLE';
 
         } else if (typeof eventData.src === 'number' && eventData.src > 0) {
-            const player = globals.playerlistManager.getPlayerById(eventData.src)
+            const player = globals.playerlistManager.getPlayerById(eventData.src);
             if (player) {
                 const playerID = `${mutex}#${eventData.src}`;
                 srcObject = { id: playerID, name: player.displayName };
@@ -159,10 +154,8 @@ export default class ServerLogger extends LoggerBase {
             } else {
                 srcObject = { id: false, name: 'UNKNOWN PLAYER' };
                 srcString = 'UNKNOWN PLAYER';
-                if (verbose) {
-                    logWarn('Unknown numeric event source from object:');
-                    dir(eventData);
-                }
+                console.verbose.warn('Unknown numeric event source from object:');
+                console.verbose.dir(eventData);
             }
         } else {
             srcObject = { id: false, name: 'UNKNOWN' };
@@ -222,10 +215,8 @@ export default class ServerLogger extends LoggerBase {
                 : 'did unknown action';
 
         } else if (eventData.type !== 'playerJoining') {
-            if (verbose) {
-                logWarn(`Unrecognized event: ${eventData.type}`);
-                dir(eventData);
-            }
+            console.verbose.warn(`Unrecognized event: ${eventData.type}`);
+            console.verbose.dir(eventData);
             eventMessage = eventData.type;
         }
 

@@ -1,14 +1,13 @@
 const modulename = 'OutputHandler';
-import logger from '@core/extras/console.js';
 import { anyUndefined } from '@core/extras/helpers';
-import { verbose } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Helpers
 const deferError = (m: string, t = 500) => {
     setTimeout(() => {
-        logError(m);
+        console.error(m);
     }, t);
 };
 
@@ -42,7 +41,7 @@ export default class OutputHandler {
             if (mutex !== this.#txAdmin.fxRunner.currentMutex) return;
             // const json = JSON.stringify(trace);
             // if (json.includes('mapmanager')) {
-            //     dir(trace);
+            //     console.dir(trace);
             // }
             if (anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
             const { channel, data } = trace.value;
@@ -64,7 +63,7 @@ export default class OutputHandler {
             //Handle bind errors
             if (channel == 'citizen-server-impl' && data.type == 'nucleus_connected') {
                 if (typeof data.url !== 'string') {
-                    logError(`FD3 nucleus_connected event without URL.`);
+                    console.error(`FD3 nucleus_connected event without URL.`);
                 } else {
                     try {
                         const matches = /^(https:\/\/)?.*-([0-9a-z]{6,})\.users\.cfx\.re\/?$/.exec(data.url);
@@ -72,7 +71,7 @@ export default class OutputHandler {
                         this.#txAdmin.fxRunner.cfxId = matches[2];
                         this.#txAdmin.persistentCache.set('fxsRuntime:cfxId', matches[2]);
                     } catch (error) {
-                        logError(`Error decoding server nucleus URL.`);
+                        console.error(`Error decoding server nucleus URL.`);
                     }
                 }
                 return;
@@ -105,10 +104,8 @@ export default class OutputHandler {
                 }
             }
         } catch (error) {
-            if (verbose) {
-                logError('Error processing FD3 stream output:');
-                dir(error);
-            }
+            console.verbose.error('Error processing FD3 stream output:');
+            console.verbose.dir(error);
         }
     }
 

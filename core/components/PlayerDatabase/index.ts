@@ -1,6 +1,4 @@
 const modulename = 'PlayerDatabase';
-import logger, { ogConsole } from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
 import { genActionID, genWhitelistRequestID } from './idGenerator';
@@ -8,7 +6,8 @@ import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionType, DatabaseDataType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
 import { now } from '@core/extras/helpers';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 //Consts
@@ -189,7 +188,7 @@ export default class PlayerDatabase {
                 .value();
         } catch (error) {
             const msg = `Failed to search for a registered action database with error: ${(error as Error).message}`;
-            if (verbose) logError(msg);
+            console.verbose.error(msg);
             throw new Error(msg);
         }
     }
@@ -240,8 +239,8 @@ export default class PlayerDatabase {
             return actionID;
         } catch (error) {
             let msg = `Failed to register event to database with message: ${(error as Error).message}`;
-            logError(msg);
-            if (verbose) dir(error);
+            console.error(msg);
+            console.verbose.dir(error);
             throw error;
         }
     }
@@ -279,8 +278,8 @@ export default class PlayerDatabase {
 
         } catch (error) {
             const msg = `Failed to revoke action with message: ${(error as Error).message}`;
-            logError(msg);
-            if (verbose) dir(error);
+            console.error(msg);
+            console.verbose.dir(error);
             throw error;
         }
     }
@@ -464,7 +463,7 @@ export default class PlayerDatabase {
             return removed.length;
         } catch (error) {
             const msg = `Failed to clean database with error: ${(error as Error).message}`;
-            if (verbose) logError(msg);
+            console.verbose.error(msg);
             throw new Error(msg);
         }
     }
@@ -488,7 +487,7 @@ export default class PlayerDatabase {
             playerRemoved = this.cleanDatabase('players', filter);
         } catch (error) {
             const msg = `Failed to optimize players database with error: ${(error as Error).message}`;
-            logError(msg);
+            console.error(msg);
         }
 
         //Optimize whitelistRequests + whitelistApprovals
@@ -507,13 +506,13 @@ export default class PlayerDatabase {
             wlApprovalsRemoved = this.removeWhitelistApprovals(wlApprovalsFilter).length;
         } catch (error) {
             const msg = `Failed to optimize players database with error: ${(error as Error).message}`;
-            logError(msg);
+            console.error(msg);
         }
 
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
-        logOk(`Internal Database optimized. This applies only for the txAdmin internal database, and does not affect your MySQL or framework (ESX/QBCore/etc) databases.`);
-        logOk(`- ${playerRemoved} players that haven't connected in the past 9 days and had less than 2 hours of playtime.`);
-        logOk(`- ${wlRequestsRemoved} whitelist requests older than a week.`);
-        logOk(`- ${wlApprovalsRemoved} whitelist approvals older than a week.`);
+        console.ok(`Internal Database optimized. This applies only for the txAdmin internal database, and does not affect your MySQL or framework (ESX/QBCore/etc) databases.`);
+        console.ok(`- ${playerRemoved} players that haven't connected in the past 9 days and had less than 2 hours of playtime.`);
+        console.ok(`- ${wlRequestsRemoved} whitelist requests older than a week.`);
+        console.ok(`- ${wlApprovalsRemoved} whitelist approvals older than a week.`);
     }
 };

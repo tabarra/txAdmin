@@ -1,8 +1,8 @@
 const modulename = 'WebServer:Intercom';
 import { cloneDeep }  from 'lodash-es';
-import logger from '@core/extras/console.js';
 import { convars, txEnv } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };

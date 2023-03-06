@@ -1,8 +1,8 @@
 const modulename = 'WebServer:SystemLog';
 import dateFormat from 'dateformat';
 import xssInstancer from '@core/extras/xss.js';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError, getLog } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 const xss = xssInstancer();
 
 

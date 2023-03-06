@@ -4,11 +4,12 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
 import { nanoid } from 'nanoid';
-import logger from '@core/extras/console.js';
-import { convars, txEnv, verbose } from '@core/globalData';
+import { convars, txEnv } from '@core/globalData';
 import CitizenFXProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
+
 
 //Helpers
 const migrateProviderIdentifiers = (providerName, providerData) => {
@@ -96,7 +97,7 @@ export default class AdminVault {
                 this.addMasterPin = (Math.random() * 10000).toFixed().padStart(4, '0');
                 this.admins = false;
             } else {
-                log(`Setting up master account '${convars.defaultMasterAccount.name}'. The password is the same as in zap-hosting.com.`);
+                console.log(`Setting up master account '${convars.defaultMasterAccount.name}'. The password is the same as in zap-hosting.com.`);
                 this.createAdminsFile(convars.defaultMasterAccount.name, false, false, convars.defaultMasterAccount.password_hash, false);
             }
         } else {
@@ -157,7 +158,7 @@ export default class AdminVault {
             return true;
         } catch (error) {
             let message = `Failed to create '${this.adminsFile}' with error: ${error.message}`;
-            if (verbose) logError(message);
+            console.verbose.error(message);
             throw new Error(message);
         }
     }
@@ -264,21 +265,21 @@ export default class AdminVault {
         const restore = async () => {
             try {
                 await this.writeAdminsFile();
-                logOk('Restored admins.json file.');
+                console.ok('Restored admins.json file.');
             } catch (error) {
-                logError(`Failed to restore admins.json file: ${error.message}`);
-                if (verbose) dir(error);
+                console.error(`Failed to restore admins.json file: ${error.message}`);
+                console.verbose.dir(error);
             }
         };
         try {
             const jsonData = await fse.readFile(this.adminsFile, 'utf8');
             const inboundHash = createHash('sha1').update(jsonData).digest('hex');
             if (this.adminsFileHash !== inboundHash) {
-                logWarn('The admins.json file was modified or deleted by an external source, txAdmin will try to restore it.');
+                console.warn('The admins.json file was modified or deleted by an external source, txAdmin will try to restore it.');
                 restore();
             }
         } catch (error) {
-            logError(`Cannot check admins file integrity: ${error.message}`);
+            console.error(`Cannot check admins file integrity: ${error.message}`);
             restore();
         }
     }
@@ -470,7 +471,7 @@ export default class AdminVault {
         let migrated = false;
 
         const callError = (x) => {
-            logError(`Unable to load admins. (${x}, please read the documentation)`);
+            console.error(`Unable to load admins. (${x}, please read the documentation)`);
             process.exit(1);
         };
 
@@ -478,7 +479,7 @@ export default class AdminVault {
             raw = await fsp.readFile(this.adminsFile, 'utf8');
             this.adminsFileHash = createHash('sha1').update(raw).digest('hex');
             if (raw === this.lastAdminFile) {
-                if (verbose) log('Admin file didn\'t change, skipping.');
+                console.verbose.log('Admin file didn\'t change, skipping.');
                 return;
             }
             this.lastAdminFile = raw;
@@ -534,9 +535,9 @@ export default class AdminVault {
         if (migrated) {
             try {
                 await this.writeAdminsFile();
-                logOk('The admins.json file was migrated to a new version.');
+                console.ok('The admins.json file was migrated to a new version.');
             } catch (error) {
-                logError(`Failed to migrate admins.json with error: ${error.message}`);
+                console.error(`Failed to migrate admins.json with error: ${error.message}`);
             }
         }
 
@@ -565,10 +566,8 @@ export default class AdminVault {
 
             return globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
         } catch (error) {
-            if (verbose) {
-                logError('Failed to refreshOnlineAdmins() with error:');
-                dir(error);
-            }
+            console.verbose.error('Failed to refreshOnlineAdmins() with error:');
+            console.verbose.dir(error);
         }
     }
 

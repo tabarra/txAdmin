@@ -1,10 +1,7 @@
 const modulename = 'WebSocket';
-import xssInstancer from '@core/extras/xss.js';
 import { authLogic } from './requestAuthenticator';
-import { verbose } from '@core/globalData';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const xss = xssInstancer({ mark: ['class'] });
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Helpers
 const getIP = (socket) => {
@@ -65,7 +62,7 @@ export default class WebSocket {
         try {
             //Check if joining any room
             if (!socket.handshake.query.room || !Object.keys(this.rooms).includes(socket.handshake.query.room)) {
-                if (verbose) log('dropping new connection without query.room', 'SocketIO');
+                console.verbose.warn('SocketIO', 'dropping new connection without query.room');
                 socket.disconnect(0);
             }
 
@@ -77,7 +74,7 @@ export default class WebSocket {
             //Checking Auth/Perms
             const { isValidAuth, isValidPerm } = authLogic(socket.session, room.permission, logPrefix);
             if (!isValidAuth || !isValidPerm) {
-                if (verbose) log('dropping new connection without auth or perm', logPrefix);
+                console.verbose.warn(logPrefix, 'dropping new connection without auth or perm');
                 //${getIP(socket)} ???
                 return terminateSession(socket);
             }
@@ -88,7 +85,7 @@ export default class WebSocket {
                     const { isValidAuth, isValidPerm } = authLogic(socket.session, room.commands[commandName].permission, logPrefix);
 
                     if (!isValidAuth || !isValidPerm) {
-                        if (verbose) log('dropping existing connection due to missing auth/permission', logPrefix);
+                        console.verbose.warn(logPrefix, 'dropping existing connection due to missing auth/permission');
                         return terminateSession(socket);
                     }
                     room.commands[commandName].handler(socket.session, ...cmdArgs);
@@ -103,15 +100,15 @@ export default class WebSocket {
 
             //General events
             socket.on('disconnect', (reason) => {
-                if (verbose) log(`Client disconnected with reason: ${reason}`, 'SocketIO');
+                console.verbose.debug('SocketIO', `Client disconnected with reason: ${reason}`);
             });
             socket.on('error', (error) => {
-                if (verbose) log(`Socket error with message: ${error.message}`, 'SocketIO');
+                console.verbose.debug('SocketIO', `Socket error with message: ${error.message}`);
             });
 
-            if (verbose) log(`Connected: ${socket.session.auth.username} from ${getIP(socket)}`, 'SocketIO');
+            console.verbose.log('SocketIO', `Connected: ${socket.session.auth.username} from ${getIP(socket)}`);
         } catch (error) {
-            log(`Error handling new connection: ${error.message}`, 'SocketIO');
+            console.error('SocketIO', `Error handling new connection: ${error.message}`);
             socket.disconnect();
         }
     }

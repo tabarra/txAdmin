@@ -1,11 +1,12 @@
 const modulename = 'StatsCollector';
 import fse from 'fs-extra';
-import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData';
-import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './statsUtils.js'
+import { convars } from '@core/globalData';
+import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './statsUtils.js';
 import got from '@core/extras/got.js';
 // import TimeSeries from './timeSeries.js'; //NOTE: may still use for the player counter
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
+
 
 //Helper functions
 const getEpoch = (mod, ts = false) => {
@@ -37,10 +38,8 @@ export default class StatsCollector {
             try {
                 await this.collectPerformance();
             } catch (error) {
-                if (verbose) {
-                    logError('Error while collecting fxserver performance data');
-                    dir(error);
-                }
+                console.verbose.error('Error while collecting fxserver performance data');
+                console.verbose.dir(error);
             }
         }, 60 * 1000);
     }
@@ -54,14 +53,14 @@ export default class StatsCollector {
         let rawFile = null;
         try {
             rawFile = await fse.readFile(this.hardConfigs.heatmapDataFile, 'utf8');
-        } catch (error) {}
+        } catch (error) { }
 
         const setFile = async () => {
             try {
                 await fse.writeFile(this.hardConfigs.heatmapDataFile, '[]');
                 this.perfSeries = [];
             } catch (error) {
-                logError(`Unable to create stats_heatmapData_v1 with error: ${error.message}`);
+                console.error(`Unable to create stats_heatmapData_v1 with error: ${error.message}`);
                 process.exit();
             }
         };
@@ -73,8 +72,8 @@ export default class StatsCollector {
                 if (!validatePerfCacheData(heatmapData)) throw new Error('invalid data in cache');
                 this.perfSeries = heatmapData.slice(-this.hardConfigs.performance.lengthCap);
             } catch (error) {
-                logError(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
-                logError('Since this is not a critical file, it will be reset.');
+                console.error(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
+                console.error('Since this is not a critical file, it will be reset.');
                 await setFile();
             }
         } else {
@@ -102,7 +101,7 @@ export default class StatsCollector {
         // }
         // const playerlist = globals.playerlistManager.getPlayerList();
         // this.playersTimeSeries.add(playerlist.length);
-        // dir(playerlist.length)
+        // console.dir(playerlist.length)
     }
 
 
@@ -139,7 +138,6 @@ export default class StatsCollector {
             && getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution)
             && now - lastSnap.ts < cfg.resolution * 60 * 1000
         ) {
-            if (verbose) log('Skipping perf collection due to resolution');
             return;
         }
 
@@ -182,19 +180,15 @@ export default class StatsCollector {
 
         //Push to cache and save it
         this.perfSeries.push(currSnapshot);
-        if (this.perfSeries.length > this.hardConfigs.performance.lengthCap){
+        if (this.perfSeries.length > this.hardConfigs.performance.lengthCap) {
             this.perfSeries.shift();
         }
         try {
             await fse.outputJSON(this.hardConfigs.heatmapDataFile, this.perfSeries);
-            if (verbose) {
-                logOk(`Collected performance snapshot #${this.perfSeries.length}`);
-            }
+            console.verbose.ok(`Collected performance snapshot #${this.perfSeries.length}`);
         } catch (error) {
-            if (verbose) {
-                logWarn('Failed to write the performance history log file with error:');
-                dir(error);
-            }
+            console.verbose.warn('Failed to write the performance history log file with error:');
+            console.verbose.dir(error);
         }
     }
 };

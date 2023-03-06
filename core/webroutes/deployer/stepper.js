@@ -1,8 +1,8 @@
 const modulename = 'WebServer:DeployerStepper';
 import fse from 'fs-extra';
-import logger from '@core/extras/console.js';
 import { convars } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -90,7 +90,7 @@ export default async function DeployerStepper(ctx) {
 Make sure everything is correct in the recipe and try again.`;
             }
         } catch (error) {
-            if (convars.verbose) dir(error);
+            console.verbose.dir(error);
             renderData.serverCFG = errorMessage;
         }
     } else {

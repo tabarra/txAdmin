@@ -8,8 +8,8 @@ import StreamZip from 'node-stream-zip';
 import { cloneDeep, escapeRegExp }  from 'lodash-es';
 import mysql from 'mysql2/promise';
 import got from '@core/extras/got.js';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 
 //Helper functions
@@ -449,7 +449,7 @@ const taskFailTest = async (options, basePath, deployerCtx) => {
 const taskDumpVars = async (options, basePath, deployerCtx) => {
     const toDump = cloneDeep(deployerCtx);
     toDump.dbConnection = (toDump.dbConnection && toDump.dbConnection.constructor && toDump.dbConnection.constructor.name) ? toDump.dbConnection.constructor.name : undefined;
-    dir(toDump);
+    console.dir(toDump);
 };
 
 

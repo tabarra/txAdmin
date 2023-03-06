@@ -4,14 +4,15 @@ import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import pidUsageTree from '@core/extras/pidUsageTree.js';
-import { verbose, txEnv } from '@core/globalData';
-import logger, { ogConsole } from '@core/extras/console.js';
+import { txEnv } from '@core/globalData';
 import FXRunner from '@core/components/FxRunner';
 import HealthMonitor from '@core/components/HealthMonitor';
 import WebServer from '@core/components/WebServer';
 import Logger from '@core/components/Logger';
 import si from 'systeminformation';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
+
 
 //Helpers
 const MEGABYTE = 1024 * 1024;
@@ -98,8 +99,8 @@ export const getProcessesData = async () => {
             });
         });
     } catch (error) {
-        logError('Error getting processes tree usage data.');
-        if (verbose) dir(error);
+        console.error('Error getting processes tree usage data.');
+        console.verbose.dir(error);
     }
 
     //Sort procList array
@@ -134,8 +135,8 @@ export const getFXServerData = async () => {
     try {
         infoData = await got.get(requestOptions).json();
     } catch (error) {
-        logWarn('Failed to get FXServer information.');
-        if (verbose) dir(error);
+        console.warn('Failed to get FXServer information.');
+        console.verbose.dir(error);
         return { error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 
@@ -164,8 +165,8 @@ export const getFXServerData = async () => {
             txAdminVersion: (infoData.vars && infoData.vars['txAdmin-version']) ? infoData.vars['txAdmin-version'] : '--',
         };
     } catch (error) {
-        logWarn('Failed to process FXServer information.');
-        if (verbose) dir(error);
+        console.warn('Failed to process FXServer information.');
+        console.verbose.dir(error);
         return { error: 'Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 }
@@ -216,8 +217,8 @@ export const getHostData = async (): Promise<HostDataReturnType> => {
                 }
             }
         } catch (error) {
-            logError('Error getting Host static data.');
-            if (verbose) dir(error);
+            console.error('Error getting Host static data.');
+            console.verbose.dir(error);
             return { error: 'Failed to retrieve host static data. <br>Check the terminal for more information (if verbosity is enabled)' };
         }
     }
@@ -243,8 +244,8 @@ export const getHostData = async (): Promise<HostDataReturnType> => {
             };
         }
     } catch (error) {
-        logError('Error getting Host dynamic data.');
-        if (verbose) dir(error);
+        console.error('Error getting Host dynamic data.');
+        console.verbose.dir(error);
         return { error: 'Failed to retrieve host dynamic data. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 }

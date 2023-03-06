@@ -1,12 +1,12 @@
 const modulename = 'WebServer:DatabaseActions';
 import { GenericApiResp } from '@shared/genericApiTypes';
-import logger from '@core/extras/console.js';
 import { Context } from 'koa';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { calcExpirationFromDuration } from '@core/extras/helpers';
 import consts from '@core/extras/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };

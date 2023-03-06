@@ -4,11 +4,11 @@ import humanizeDuration from 'humanize-duration';
 import * as nanoidSecure from 'nanoid';
 import * as nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@core/extras/consts';
-import logger from '@core/extras/console.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
 import { DatabaseObjectType } from './database';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/newConsole';
+const console = consoleFactory(modulename);
 
 //Consts
 type IdStorageTypes = DatabaseObjectType | Set<string>;
@@ -46,14 +46,14 @@ const printDiagnostics = async () => {
     }
 
     const osDistro = await getOsDistro();
-    logError(noIdErrorMessage);
-    logError(`Uptime: ${uptime}`);
-    logError(`Entropy: ${entropy}`);
-    logError(`Distro: ${osDistro}`);
-    logError(`txAdmin: ${txEnv.txAdminVersion}`);
-    logError(`FXServer: ${txEnv.fxServerVersion}`);
-    logError(`ZAP: ${convars.isZapHosting}`);
-    logError(`Unique Test: secure ${secureStorage.size}/100, non-secure ${nonsecureStorage.size}/100`);
+    console.error(noIdErrorMessage);
+    console.error(`Uptime: ${uptime}`);
+    console.error(`Entropy: ${entropy}`);
+    console.error(`Distro: ${osDistro}`);
+    console.error(`txAdmin: ${txEnv.txAdminVersion}`);
+    console.error(`FXServer: ${txEnv.fxServerVersion}`);
+    console.error(`ZAP: ${convars.isZapHosting}`);
+    console.error(`Unique Test: secure ${secureStorage.size}/100, non-secure ${nonsecureStorage.size}/100`);
 };
 
 /**
