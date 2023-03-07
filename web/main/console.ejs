@@ -161,6 +161,7 @@
             node.appendChild(document.createTextNode(btnText));
             node.setAttribute('id', stringToDOMId(command));
             node.setAttribute('class', 'btn btn-outline-light btn-sm m-1');
+            node.setAttribute('title', command);
             node.onclick = (e) => {
                 input.value = command;
                 input.focus();
