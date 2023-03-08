@@ -152,7 +152,7 @@ export default class DiscordBot {
             if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
                 const oldChannel = await this.#client.channels.fetch(oldChannelId);
                 if (!oldChannel) throw new Error(`oldChannel could not be resolved`);
-                if (oldChannel.type !== ChannelType.GuildText) throw new Error(`oldChannel is not guild text channel`);
+                if (!(oldChannel.type == ChannelType.GuildText || oldChannel.type == ChannelType.GuildAnnouncement)) throw new Error(`oldChannel is not guild text or annoucement channel`);
                 await oldChannel.messages.edit(oldMessageId, generateStatusMessage(this.#txAdmin));
             }
 
@@ -205,8 +205,8 @@ export default class DiscordBot {
                     const fetchedChannel = this.#client.channels.cache.find((x) => x.id === this.config.announceChannel);
                     if (!fetchedChannel) {
                         return sendError(`Channel ${this.config.announceChannel} not found.`);
-                    } else if (fetchedChannel.type !== ChannelType.GuildText) {
-                        return sendError(`Channel ${this.config.announceChannel} - ${(fetchedChannel as any)?.name} is not a text channel.`);
+                    } else if (!(fetchedChannel.type == ChannelType.GuildText || fetchedChannel.type == ChannelType.GuildAnnouncement)) {
+                        return sendError(`Channel ${this.config.announceChannel} - ${(fetchedChannel as any)?.name} is not a text or annoucement channel.`);
                     } else {
                         this.announceChannel = fetchedChannel;
                     }
