@@ -205,7 +205,7 @@ export const removeOldEmbed = async (interaction: ChatInputCommandInteraction, t
         if (oldChannel?.type === ChannelType.GuildText || oldChannel?.type === ChannelType.GuildAnnouncement) {
             await oldChannel.messages.delete(oldMessageId);
         } else {
-            throw new Error(`oldChannel is not a guild text channel`);
+            throw new Error(`oldChannel is not a guild text or announcement channel`);
         }
     } else {
         throw new Error(`no old message id saved, maybe was never sent, maybe it was removed`);
