@@ -1,5 +1,49 @@
 <%- await include('parts/header.ejs', locals) %>
 
+<!-- Page CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css" 
+    integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="css/codemirror_lucario.css">
+<style>
+    .cm-s-lucario{
+        font-size: 1.05rem !important;
+    }
+    .CodeMirror{
+        min-height: min(calc(100vh - 250px), 450px);
+    }
+
+    /* https://codemirror.net/5/addon/dialog/dialog.css */
+    .CodeMirror-dialog {
+        position: absolute;
+        left: 0; right: 0;
+        background: inherit;
+        z-index: 15;
+        padding: .1em .8em;
+        overflow: hidden;
+        color: inherit;
+    }
+    .CodeMirror-dialog-top {
+        border-bottom: 1px solid #eee;
+        top: 0;
+    }
+    .CodeMirror-dialog-bottom {
+        border-top: 1px solid #eee;
+        bottom: 0;
+    }
+    .CodeMirror-dialog input {
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 20em;
+        color: inherit;
+        font-family: monospace;
+    }
+    .CodeMirror-dialog button {
+        font-size: 70%;
+    }
+</style>
+
 
 <div class="text-center mb-4">
     <h2>Settings</h2>
@@ -27,14 +71,23 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'playerManager' ? 'active' : '' %>" id="nav-playerManager-tab" data-toggle="tab" href="#nav-playerManager"
-                            role="tab" aria-controls="nav-playerManager" aria-selected="true">Player Manager</a>
+                            role="tab" aria-controls="nav-playerManager" aria-selected="true">
+                            Player Manager
+                            &nbsp; <span class="badge badge-danger">NEW</span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'discord' ? 'active' : '' %>" id="nav-discord-tab" data-toggle="tab" href="#nav-discord"
-                            role="tab" aria-controls="nav-discord" aria-selected="true">Discord</a>
+                            role="tab" aria-controls="nav-discord" aria-selected="true">
+                            Discord
+                            &nbsp; <span class="badge badge-danger">NEW</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">Menu</a>
+                        <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">
+                            Game
+                            &nbsp; <span class="badge badge-danger">NEW</span>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -245,49 +298,33 @@
                     <!-- Player Manager Tab -->
                     <div class="tab-pane fade <%= activeTab === 'playerManager' ? 'active show' : '' %>" id="nav-playerManager" role="tabpanel" aria-labelledby="nav-playerManager-tab">
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Enable Banlist
+                            <label for="frmPlayerManager-whitelistMode" class="col-sm-3 col-form-label">
+                                Whitelist Mode
                             </label>
                             <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
-                                        <%= playerDatabase.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
-                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
-                                </label>
+                                <select class="form-control" id="frmPlayerManager-whitelistMode" <%= readOnly ? 'disabled' : '' %>>
+                                    <option value="disabled" <%= playerDatabase.whitelistMode === 'disabled' ? 'selected' : '' %>>Disabled</option>
+                                    <option value="adminOnly" <%= playerDatabase.whitelistMode === 'adminOnly' ? 'selected' : '' %>>Admin-only (maintenance mode)</option>
+                                    <option value="guildMember" <%= playerDatabase.whitelistMode === 'guildMember' ? 'selected' : '' %>>Discord Guild Member</option>
+                                    <option value="guildRoles" <%= playerDatabase.whitelistMode === 'guildRoles' ? 'selected' : '' %>>Discord Guild Roles</option>
+                                    <option value="approvedLicense" <%= playerDatabase.whitelistMode === 'approvedLicense' ? 'selected' : '' %>>Approved License</option>
+                                </select>
                                 <span class="form-text text-muted">
-                                    Enable checking for <strong>Ban</strong> status on player join. <br>
-                                    Bans will not work if this option is disabled.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Enable Whitelist
-                            </label>
-                            <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckWhitelist"
-                                        <%= playerDatabase.onJoinCheckWhitelist || '' %> <%= readOnly ? 'disabled' : '' %>>
-                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    Enable checking for <strong>Whitelist</strong> status on player join. <br>
-                                    Whitelists will not work if this option is disabled.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="frmPlayerManager-banRejectionMessage" class="col-sm-3 col-form-label">
-                                Ban Custom <br>
-                                Rejection Message
-                            </label>
-                            <div class="col-sm-9">
-                                <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.banRejectionMessage || '' %></textarea>
-                                <span class="form-text text-muted">
-                                    Optional message to display to a player on the rejection message that shows when they try to connect while bein banned. <br>
-                                    If you have a ban appeal process, you can use this field to inform the players.
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Disabled:</strong> No whitelist status will be checked by txAdmin.
+                                    </p>
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Admin-only:</strong> Will only allow server join if your <code>fivem:</code> or <code>discord:</code> identifiers are attached to a txAdmin administrator. Also known as maintenance mode.
+                                    </p>
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Discord Guild Member:</strong> Checks if the player joining has a <code>discord:</code> identifier and is present in the Discord guild configured in the Discord Tab.
+                                    </p>
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Discord Guild Roles:</strong> Checks if the player joining has a <code>discord:</code> identifier and is present in the Discord guild configured in the Discord Tab and has at least one of the roles specified below.
+                                    </p>
+                                    <p class="form-text text-muted mb-2">
+                                        <strong class="text-secondary">Approved License:</strong> The player <code>license:</code> identifier must be whitelisted by a txAdmin administrator. This can be done through the <a href="/whitelist">Whitelist page</a>, or the <code>/whitelist</code> Discord bot slash command.
+                                    </p>
                                 </span>
                             </div>
                         </div>
@@ -302,6 +339,54 @@
                                 <span class="form-text text-muted">
                                     Optional message to display to a player on the rejection message that shows when they try to connect while not being whitelisted. <br>
                                     If you have a Discord whitelisting process, you can put here links to your guild.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-whitelistedDiscordRoles" class="col-sm-3 col-form-label">
+                                Whitelisted Roles
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmPlayerManager-whitelistedDiscordRoles" value="<%= playerDatabase.whitelistedDiscordRoles || '' %>"
+                                    placeholder="000000000000000000, 000000000000000000" <%= readOnly ? 'disabled' : '' %>>
+                                <span class="form-text text-muted">
+                                    The ID of the Discord roles that are whitelisted to join the server. <br>
+                                    This field supports multiple roles, separated by comma. <br>
+                                    <strong>Note:</strong> Requires the whitelist mode to be set to "Discord Guild Roles".
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Enable Ban Checking
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
+                                        <%= playerDatabase.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Enable checking for ban status on player join. <br>
+                                    <strong>Note:</strong> txAdmin bans will not work if this option is disabled.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-banRejectionMessage" class="col-sm-3 col-form-label">
+                                Ban Custom <br>
+                                Rejection Message
+                            </label>
+                            <div class="col-sm-9">
+                                <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.banRejectionMessage || '' %></textarea>
+                                <span class="form-text text-muted">
+                                    Optional message to display to a player on the rejection message that shows when they try to connect while bein banned. <br>
+                                    If you have a ban appeal process, you can use this field to inform the players.
                                 </span>
                             </div>
                         </div>
@@ -331,19 +416,42 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-token" class="col-sm-3 col-form-label">Token <span
-                                    class="text-danger">*</span></label>
+                            <label for="frmDiscord-token" class="col-sm-3 col-form-label">
+                                Token
+                                <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control blur-input" id="frmDiscord-token" 
                                     value="<%= readOnly ? '[redacted]' : (discord.token || '') %>"
-                                    placeholder="CXPcWbxKOHpwlUBaYKznIfkz.ExpTAB.NX-3YxfmVIGUJLGbPamViXGAEiY"
+                                    placeholder="xxxxxxxxxxxxxxxxxxxxxxxx.xxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxx"
                                     maxlength="96" autocomplete="off" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     To get a token and the bot to join your server, follow these two guides:
                                     <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html"
                                         target="_blank" rel="noopener noreferrer">Setting up a bot application</a> and
                                     <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html"
-                                        target="_blank" rel="noopener noreferrer">Adding your bot to servers</a>.
+                                        target="_blank" rel="noopener noreferrer">Adding your bot to servers</a> <br>
+                                    <strong>Note:</strong> Do not reuse the same token for another bot.  <br>
+                                    <strong>Note:</strong> The bot requires the GUILD MEMBERS intent, which can be set at the
+                                    <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer">Discord Developer Portal</a>.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmDiscord-guild" class="col-sm-3 col-form-label">
+                                Guild ID
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="frmDiscord-guild"
+                                    value="<%= discord.guild || '' %>" 
+                                    placeholder="000000000000000000" <%= readOnly ? 'disabled' : '' %>>
+                                <span class="form-text text-muted">
+                                    The ID of the Discord Guild of your server. <br>
+                                    To get the Guild ID, go to Discord's settings and
+                                    <a href="https://support.discordapp.com/hc/article_attachments/115002742731/mceclip0.png"
+                                    target="_blank" > enable developer mode</a>, then right-click on the guild icon select "Copy ID".
                                 </span>
                             </div>
                         </div>
@@ -353,7 +461,7 @@
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmDiscord-announceChannel"
                                     value="<%= discord.announceChannel || '' %>" 
-                                    placeholder="578045190955335691" <%= readOnly ? 'disabled' : '' %>>
+                                    placeholder="000000000000000000" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     The ID of the channel to send Announcements (eg server restarts). <br>
                                     Leave it blank to disable this feature. <br>
@@ -365,29 +473,34 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-prefix" class="col-sm-3 col-form-label">
-                                Command Prefix
+                            <label class="col-sm-3 col-form-label">
+                                Status Embed
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmDiscord-prefix" value="<%= discord.prefix || '' %>"
-                                    placeholder="/" maxlength="1" <%= readOnly ? 'disabled' : '' %>>
+                                <button
+                                    class="btn btn-sm btn-secondary"
+                                    type="submit"
+                                    id="frmDiscord-editStatusEmbedJsonBtn"
+                                    <%= readOnly ? 'disabled' : '' %>
+                                >
+                                    <i class="icon-pencil"></i> Change Embed JSON
+                                </button>
+                                <button
+                                    class="btn btn-sm btn-secondary"
+                                    type="submit"
+                                    id="frmDiscord-editStatusEmbedConfigJsonBtn"
+                                    <%= readOnly ? 'disabled' : '' %>
+                                >
+                                    <i class="icon-pencil"></i> Change Config JSON
+                                </button>
+                                <textarea id="frmDiscord-statusEmbedJson" class="d-none"><%= discord.embedJson || '' %></textarea>
+                                <textarea id="frmDiscord-statusEmbedConfigJson" class="d-none"><%= discord.embedConfigJson || '' %></textarea>
+                                <textarea id="frmDiscord-statusEmbedJsonDefault" class="d-none"><%= defaults.discord.embedJson || '' %></textarea>
+                                <textarea id="frmDiscord-statusEmbedConfigJsonDefault" class="d-none"><%= defaults.discord.embedConfigJson || '' %></textarea>
                                 <span class="form-text text-muted">
-                                    The prefix for all commands.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="frmDiscord-statusMessage" class="col-sm-3 col-form-label">
-                                Status Command Message
-                                <span class="text-danger">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <textarea id="frmDiscord-statusMessage" rows="3" class="form-control expandable-textarea" placeholder="**Join:** `connect cfx.re/join/xxxxxx`&#10;**Players:** &lt;players&gt;&#10;**Uptime:** &lt;uptime&gt;" <%= readOnly ? 'disabled' : '' %>><%= discord.statusMessage || '' %></textarea>
-                                <span class="form-text text-muted">
-                                    The response to the <code>/status</code> command. <br>
-                                    Supported placeholders: <code>players</code>, <code>port</code>, <code>uptime</code>.
+                                    The server status embed is customizable by editing the two JSONs above. <br>
+                                    <strong>Note:</strong> Use the command <code>/status add</code> on a channel that the bot has the "Send Message" permission to setup the embed.
                                 </span>
                             </div>
                         </div>
@@ -401,7 +514,7 @@
                     </div>
                     <!-- /Discord Tab -->
 
-                    <!-- Menu Tab -->
+                    <!-- Game/Menu Tab -->
                     <div class="tab-pane fade <%= activeTab === 'menu' ? 'active show' : '' %>" id="nav-menu" role="tabpanel" aria-labelledby="nav-menu-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Enable Menu</label>
@@ -412,13 +525,13 @@
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    When enabled, admins will be able to open the menu by typing <code>/tx</code> or using the keybind configured in the FiveM settings.
+                                    When enabled, admins will be able to open the menu by typing <code>/tx</code> or using the keybind configured in the FiveM/RedM settings.
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Align Right</label>
+                            <label class="col-sm-3 col-form-label">Align Menu Right</label>
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmMenu-alignRight"
@@ -432,7 +545,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmMenu-pageKey" class="col-sm-3 col-form-label">Page Switch Key</label>
+                            <label for="frmMenu-pageKey" class="col-sm-3 col-form-label">Menu Page Switch Key</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmMenu-pageKey"
                                     value="<%= global.menuPageKey || '' %>"
@@ -441,6 +554,75 @@
                                     The key used to to switch tabs in the menu. <br>
                                     Click above and press any key to change the configuration. <br>
                                     <strong>Note:</strong> The default is <code>Tab</code>, and you cannot use <code>Escape</code> or <code>Backspace</code>.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Announcement <br>
+                                Notification
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideDefaultAnnouncement"
+                                        <%= global.hideDefaultAnnouncement || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Suppresses the display of announcements, allowing you to implement your own announcement via the event <code>txAdmin:events:announcement</code>
+                                    <a href="https://github.com/tabarra/txAdmin/blob/master/docs/menu.md" target="_blank" rel="noopener noreferrer">(docs page)</a>.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Direct Message <br>
+                                Notification
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideDefaultDirectMessage"
+                                        <%= global.hideDefaultDirectMessage || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Suppresses the display of direct messages, allowing you to implement your own direct message notification via the event <code>txAdmin:events:playerDirectMessage</code>
+                                    <a href="https://github.com/tabarra/txAdmin/blob/master/docs/menu.md" target="_blank" rel="noopener noreferrer">(docs page)</a>.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Warning <br>
+                                Notification
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideDefaultWarning"
+                                        <%= global.hideDefaultWarning || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Suppresses the display of warnings, allowing you to implement your own warning via the event <code>txAdmin:events:playerWarned</code>
+                                    <a href="https://github.com/tabarra/txAdmin/blob/master/docs/menu.md" target="_blank" rel="noopener noreferrer">(docs page)</a>.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Scheduled Restart <br>
+                                Warnings
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideDefaultScheduledRestartWarning"
+                                        <%= global.hideDefaultScheduledRestartWarning || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Suppresses the display of scheduled restart warnings, allowing you to implement your own warning via the event <code>txAdmin:events:scheduledRestart</code>
+                                    <a href="https://github.com/tabarra/txAdmin/blob/master/docs/menu.md" target="_blank" rel="noopener noreferrer">(docs page)</a>.
                                 </span>
                             </div>
                         </div>
@@ -464,6 +646,51 @@
 
 
 <%- await include('parts/footer.ejs', locals) %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js" 
+    integrity="sha512-ZTpbCvmiv7Zt4rK0ltotRJVRaSBKFQHQTrwfs6DoYlBYzO1MA6Oz2WguC+LkV8pGiHraYLEpo7Paa+hoVbCfKw==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="js/codeEditor/mode/yaml.js"></script>
+<script src="js/codeEditor/autorefresh.js"></script>
+<script src="js/codeEditor/searchcursor.js"></script>
+<script src="js/codeEditor/dialog.js"></script>
+<script src="js/codeEditor/search.js"></script>
+
+<!-- Embed JSON editors -->
+<div class="modal fade" id="modJsonEditor" tabindex="-1" role="dialog" aria-labelledby="modJsonEditor-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: min(730px, calc(100% - 30px));">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modJsonEditor-title">JSON Editor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="modJsonEditor-infoBody">
+                    <p class="text-center">
+                        For information regarding the placeholders and how to customize the embed, refer to <a href="https://github.com/tabarra/txAdmin/blob/master/docs/status_embed.md" target="_blank" rel="noopener noreferrer">our docs</a>. <br>
+                        If you are having issue with the JSON formatting, you can use <a href="https://jsoneditoronline.org" id="modJsonEditor-externalEditorBtn" target="_blank" rel="noopener noreferrer">https://jsoneditoronline.org/</a>.
+                    </p>
+                    <textarea id="modJsonEditor-cmTarget" class="cms-s-lucario" name="code"></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer text-center">
+                <div class="mx-auto">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    &nbsp;
+                    &nbsp;
+                    <button type="button" class="btn btn-secondary" id="modJsonEditor-revertBtn">Revert to Default</button>
+                    &nbsp;
+                    &nbsp;
+                    <button type="button" class="btn btn-success" id="modJsonEditor-saveBtn">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>
@@ -574,10 +801,11 @@
 
     //============================================== Player Manager Settings
     $('#frmPlayerManager-save').click(function () {
-        let data = {
-            onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
-            onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
+        const data = {
+            whitelistMode: $('#frmPlayerManager-whitelistMode').val(),
             whitelistRejectionMessage: $('#frmPlayerManager-whitelistRejectionMessage').val().trim(),
+            whitelistedDiscordRoles: $('#frmPlayerManager-whitelistedDiscordRoles').val().trim(),
+            onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
             banRejectionMessage: $('#frmPlayerManager-banRejectionMessage').val().trim(),
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
@@ -604,7 +832,6 @@
     $('#frmMonitor-save').click(function () {
         let data = {
             restarterSchedule: $('#frmMonitor-restarterSchedule').val().trim(),
-            disableChatWarnings: ($('#frmMonitor-chatMessages').is(':checked') === true),
             resourceStartingTolerance: $('#frmMonitor-resourceStartingTolerance').val(),
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
@@ -628,15 +855,97 @@
 
 
     //============================================== Discord Settings
+    let jsonBeingEdited = false;
+    let defaultOfJsonBeingEdited = false;
+    const discEls = {
+        modal: document.getElementById('modJsonEditor'),
+        title: document.getElementById('modJsonEditor-title'),
+        cmTarget: document.getElementById('modJsonEditor-cmTarget'),
+        externalEditorBtn: document.getElementById('modJsonEditor-externalEditorBtn'),
+        saveBtn: document.getElementById('modJsonEditor-saveBtn'),
+        revertBtn: document.getElementById('modJsonEditor-revertBtn'),
+        embedJsonBtn: document.getElementById('frmDiscord-editStatusEmbedJsonBtn'),
+        embedJsonText: document.getElementById('frmDiscord-statusEmbedJson'),
+        embedJsonDefault: document.getElementById('frmDiscord-statusEmbedJsonDefault'),
+        embedConfigJsonBtn: document.getElementById('frmDiscord-editStatusEmbedConfigJsonBtn'),
+        embedConfigJsonText: document.getElementById('frmDiscord-statusEmbedConfigJson'),
+        embedConfigJsonDefault: document.getElementById('frmDiscord-statusEmbedConfigJsonDefault'),
+    }
+    const setJsonEditor = (jsonString) => {
+        if(window.CMInstance){
+            window.CMInstance.toTextArea();
+            window.CMInstance = null;
+        }
+        discEls.cmTarget.value = jsonString;
+        window.CMInstance = CodeMirror.fromTextArea(discEls.cmTarget, {
+            mode: "yaml", //couldn't find the json one
+            autoRefresh:true,
+            lineNumbers:true,
+            lineWrapping: true,
+            theme: "lucario"
+        });
+    }
+    
+    discEls.revertBtn.addEventListener('click', (e) => {
+        setJsonEditor(defaultOfJsonBeingEdited);
+    });
+    discEls.embedJsonBtn.addEventListener('click', (e) => {
+        discEls.title.textContent = 'Embed JSON Editor';
+        jsonBeingEdited = discEls.embedJsonText;
+        defaultOfJsonBeingEdited = discEls.embedJsonDefault.value;
+        setJsonEditor(discEls.embedJsonText.value);
+        $('#modJsonEditor').modal('show');
+    });
+    discEls.embedConfigJsonBtn.addEventListener('click', (e) => {
+        discEls.title.textContent = 'Embed Config JSON Editor';
+        jsonBeingEdited = discEls.embedConfigJsonText;
+        defaultOfJsonBeingEdited = discEls.embedConfigJsonDefault.value;
+        setJsonEditor(discEls.embedConfigJsonText.value);
+        $('#modJsonEditor').modal('show');
+    });
+    discEls.saveBtn.addEventListener('click', (e) => {
+        if(jsonBeingEdited){
+            const editorData = window.CMInstance.getValue();
+            try {
+                const parsed = JSON.parse(editorData);
+            } catch (error) {
+                const notify = $.notify(
+                    {message: `<b>Invalid JSON:</b><br>${error.message}`}, 
+                    {type: 'danger'}
+                );
+                return;
+            }
+            jsonBeingEdited.value = window.CMInstance.getValue();
+            jsonBeingEdited = false;
+        }
+        $('#modJsonEditor').modal('hide');
+        window.CMInstance.toTextArea();
+        window.CMInstance = null;
+        discEls.cmTarget.value = '';
+    });
+    discEls.externalEditorBtn.addEventListener('click', (e) => {
+        if(!jsonBeingEdited) return;
+        const editorData = window.CMInstance.getValue();
+        const leftText = (jsonBeingEdited.id === 'frmDiscord-statusEmbedJson')
+            ? window.CMInstance.getValue()
+            : discEls.embedJsonText.value;
+        const rightText = (jsonBeingEdited.id === 'frmDiscord-statusEmbedConfigJson')
+            ? window.CMInstance.getValue()
+            : discEls.embedConfigJsonText.value;
+        const jsonEditorUrl = `https://jsoneditoronline.org/#left=json.${encodeURIComponent(leftText)}&right=json.${encodeURIComponent(rightText)}`;
+        discEls.externalEditorBtn.setAttribute('href', jsonEditorUrl);
+    });
+
     $('#frmDiscord-save').click(function () {
         let data = {
             enabled: ($('#frmDiscord-enabled').is(':checked') === true),
             token: $('#frmDiscord-token').val().trim(),
+            guild: $('#frmDiscord-guild').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
-            prefix: $('#frmDiscord-prefix').val().trim(),
-            statusMessage: $('#frmDiscord-statusMessage').val().trim(),
+            embedJson: discEls.embedJsonText.value.trim(),
+            embedConfigJson: discEls.embedConfigJsonText.value.trim(),
         };
-        if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
+        if (data.enabled && (!data.token.length || !data.guild.length || !data.embedJson.length || !data.embedConfigJson.length)) {
             return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
@@ -645,10 +954,9 @@
             type: "POST",
             url: '/settings/save/discord',
             data: data,
+            tiemout: REQ_TIMEOUT_LONG,
             success: function (data) {
-                notify.update('progress', 0);
-                notify.update('type', data.type);
-                notify.update('message', data.message);
+                updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -675,7 +983,11 @@
         let data = {
             menuEnabled: ($('#frmMenu-enabled').is(':checked') === true),
             menuAlignRight: ($('#frmMenu-alignRight').is(':checked') === true),
-            menuPageKey: $('#frmMenu-pageKey').val().trim()
+            menuPageKey: $('#frmMenu-pageKey').val().trim(),
+            hideDefaultAnnouncement: ($('#frmMenu-hideDefaultAnnouncement').is(':checked') === true),
+            hideDefaultDirectMessage: ($('#frmMenu-hideDefaultDirectMessage').is(':checked') === true),
+            hideDefaultWarning: ($('#frmMenu-hideDefaultWarning').is(':checked') === true),
+            hideDefaultScheduledRestartWarning: ($('#frmMenu-hideDefaultScheduledRestartWarning').is(':checked') === true),
         };
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 

@@ -56,8 +56,6 @@ export default async function PlayerModal(ctx: Context) {
             kick: ctx.utils.hasPermission('players.kick'),
             ban: ctx.utils.hasPermission('players.ban'),
         },
-        onJoinCheckBan: globals.playerDatabase.config.onJoinCheckBan,
-        onJoinCheckWhitelist: globals.playerDatabase.config.onJoinCheckWhitelist,
         serverTime: tsNow,
     };
 

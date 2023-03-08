@@ -14,17 +14,44 @@
         "schedule_warn_discord": "**%{servername}** heeft een geplande restart over %{smart_count} minuut. |||| **%{servername}** heeft een geplande restart over %{smart_count} minuten."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Je bent verbannen van deze server omwille van \"%{reason}\". Je ban zal vervallen over: %{expiration}.",
-        "kick_permanent": "(%{author}) Je bent permanent verbannen van deze server omwille van \"%{reason}\".",
+        "kick_temporary": "(%{author}) Je bent tijdelijk verbannen van deze server met de reden: \"%{reason}\". Je ban zal vervallen over: %{expiration}.",
+        "kick_permanent": "(%{author}) Je bent permanent verbannen van deze server met de reden: \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
+            "title_permanent": "Je bent permanent verbannen van deze server.",
+            "title_temporary": "Je bent tijdelijk verbannen van deze server.",
+            "label_expiration": "Je ban zal verlopen over",
+            "label_date": "Gebanned Op",
+            "label_author": "Gebanned Door",
+            "label_reason": "Ban Reden",
             "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+            "note_multiple_bans": "Opmerking: U hebt meer dan één actieve ban op uw Identifiers."
+        }
+    },
+    "whitelist_messages": {
+        "admin_only": {
+            "mode_title": "Deze server is in <strong>Admin-only</strong> modus.",
+            "insufficient_ids": "Je hebt geen <code>discord</code> of <code>fivem</code> identifiers, op zijn minst is een van deze vereist om te valideren of jij een txAdmin administrator bent.",
+            "deny_message": "Jouw identifiers zijn niet gekoppeld aan een txAdmin administrator."
+        },
+        "guild_member": {
+            "mode_title": "Deze server is in <strong>Discord Guild Member Whitelist</strong> modus.",
+            "insufficient_ids": "Je hebt niet de <code>discord</code> identifier, welke is vereist om te valideren of jij onze Discord Guild bent gejoind. Open Discord en probeer het opnieuw.",
+            "deny_title": "Je moet onze Discord Guild joinen om verbinding te maken.",
+            "deny_message": "Join de guild %{guildname}, probeer het daarna opnieuw."
+        },
+        "guild_roles": {
+            "mode_title": "Deze server is in <strong>Discord Role Whitelist</strong> modus.",
+            "insufficient_ids": "Je hebt niet de <code>discord</code> identifier, welke is vereist om te valideren of jij onze Discord Guild bent gejoind. Open Discord en probeer het opnieuw.",
+            "deny_notmember_title": "Je moet onze Discord Guild joinen om verbinding te maken.",
+            "deny_notmember_message": "Join %{guildname}, krijg een van de vereiste roles, probeer het daarna opnieuw.",
+            "deny_noroles_title": "Je hebt geen whitelisted role die vereist is om te joinen.",
+            "deny_noroles_message": "Om deze server te joinen ben je op zijn minst vereist om een van de whitelisted roles te hebben in de guild %{guildname}."
+        },
+        "approved_license": {
+            "mode_title": "Deze server is in <strong>License Whitelist</strong> modus.",
+            "insufficient_ids": "Je hebt niet de <code>license</code> identifier, wat betekent dat de server <code>sv_lan</code> enabled heeft. Als je de server eigenaar bent, kan je dit uitzetten in de <code>server.cfg</code> file.",
+            "deny_title": "Je bent niet gewhitelist om deze server te joinen.",
+            "request_id_label": "Request ID"
         }
     },
     "server_actions": {
@@ -34,14 +61,10 @@
         "stopping_discord": "**%{servername}** is aan het stoppen (%{reason}).",
         "spawning_discord": "**%{servername}** is aan het opstarten."
     },
-    "discord": {
-        "status_online": "**%{servername}** is op dit moment **Online**!",
-        "status_offline": "**%{servername}** is op dit moment **Offline**!"
-    },
     "nui_warning": {
         "title": "WAARSCHUWING",
         "warned_by": "Gewaarschuwd door:",
-        "instruction": "Houd [SPATIE] 10 seconden ingedrukt om dit bericht te negeren."
+        "instruction": "Houd [SPATIE] 10 seconden ingedrukt om dit bericht te verbergen."
     },
     "nui_menu": {
         "misc": {
@@ -51,13 +74,13 @@
             "unknown_error": "Er is een onbekende error opgetreden.",
             "not_enabled": "Het txAdmin Menu is uitgeschakeld! Je kan hem inschakelen bij de txAdmin instellingen pagina.",
             "announcement_title": "Server Mededeling door %{author}:",
-            "dialog_empty_input": "Je kan niet niks invullen.",
-            "directmessage_title": "DM from admin %{author}:"
+            "dialog_empty_input": "Je moet iets invullen.",
+            "directmessage_title": "Privé Bericht van %{author}:"
         },
         "frozen": {
             "froze_player": "Je hebt de speler gefreezed!",
             "unfroze_player": "Je hebt de speler geunfreezed!",
-            "was_frozen": "Je bent gefreezed door een server admin!"
+            "was_frozen": "Je bent gefreezed door een staff lid!"
         },
         "common": {
             "cancel": "Annuleer",
@@ -82,6 +105,11 @@
                     "label": "Onzichtbaar",
                     "success": "God Mode ingeschakeld"
                 },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
+                },
                 "normal": {
                     "title": "Normaal",
                     "label": "Normale modus",
@@ -90,7 +118,7 @@
             },
             "teleport": {
                 "title": "Teleporteren",
-                "generic_success": "Je bent door het wormgat gestuurd!",
+                "generic_success": "Je bent geteleporteerd!",
                 "waypoint": {
                     "title": "Waypoint",
                     "label": "Ga naar de gezette waypoint",
@@ -100,7 +128,7 @@
                     "title": "Coördinaten",
                     "label": "Ga naar de gespecificeerde coördinaten",
                     "dialog_title": "Teleporteer",
-                    "dialog_desc": "Geef coördinaten in een x, y, z format om door het wormgat te gaan.",
+                    "dialog_desc": "Geef coördinaten in een x, y, z formaat om te teleporteren.",
                     "dialog_error": "Ongeldige coördinaten. Geef ze in het volgende format: 111, 222, 33"
                 },
                 "back": {
@@ -119,9 +147,9 @@
                 "not_in_veh_error": "Je zit niet in een voertuig!",
                 "spawn": {
                     "title": "Spawn",
-                    "label": "Spawn een voertuig door middel van de spawnnaam",
+                    "label": "Spawn een voertuig door middel van de spawn naam",
                     "dialog_title": "Spawn voertuig",
-                    "dialog_desc": "Vul de spawnnaam in om het voertuig te spawnen.",
+                    "dialog_desc": "Vul de spawn naam in om het voertuig te spawnen.",
                     "dialog_success": "Vehicle gespawned!",
                     "dialog_error": "Het voertuig model '%{modelName}' bestaat niet!",
                     "dialog_info": "Proberen %{modelName} te spawnen."
@@ -137,11 +165,11 @@
                     "success": "Voertuig verwijderd!"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported."
+                    "title": "Opvoeren",
+                    "label": "Voer het voertuig op voor maximaal plezier (en misschien snelheid)",
+                    "success": "Voertuig opgevoerd!",
+                    "already_boosted": "Dit voertuig is al opgevoerd.",
+                    "unsupported_class": "Deze voertuigklasse wordt niet ondersteund."
                 }
             },
             "heal": {
@@ -222,12 +250,12 @@
                         "dm": "DM",
                         "warn": "Waarschuw",
                         "kick": "Kick",
-                        "set_admin": "Geef Admin"
+                        "set_admin": "Geef Perms"
                     },
                     "dm_dialog": {
                         "title": "Privé Bericht",
                         "description": "Wat wil je als privébericht sturen?",
-                        "placeholder": "Reden...",
+                        "placeholder": "Bericht...",
                         "success": "Jouw DM is verzonden!"
                     },
                     "warn_dialog": {
@@ -275,28 +303,28 @@
                 "session_time": "Sessie Tijd",
                 "play_time": "Speel Tijd",
                 "joined": "Gejoined",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
+                "whitelisted_label": "Gewhitelist",
+                "whitelisted_notyet": "nog niet",
+                "btn_wl_add": "WL Toevoegen",
+                "btn_wl_remove": "WL Verwijderen",
+                "btn_wl_success": "Whitelist status gewijzigd.",
                 "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_empty": "Geen verbanningen/waarschuwingen gevonden.",
+                "log_ban_count": "%{smart_count} verbanning |||| %{smart_count} verbanningen",
+                "log_warn_count": "%{smart_count} waarschuwing |||| %{smart_count} waarschuwingen",
                 "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "notes_changed": "Speler Notities veranderd.",
+                "notes_placeholder": "Notities over deze speler..."
             },
             "history": {
                 "title": "Gerelateerde geschiedenis",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "INTREKKEN",
+                "revoked_success": "Actie Ingetrokken!",
+                "banned_by": "Verbannen Door %{author}",
+                "warned_by": "Gewaarschuwd Door %{author}",
+                "revoked_by": "Ingetrokken Door %{author}.",
+                "expired_at": "Verlopen Op %{date}.",
+                "expires_at": "Verloopt Op %{date}."
             },
             "ban": {
                 "title": "Ban speler",
@@ -309,13 +337,13 @@
                 "permanent": "Permanent",
                 "custom": "Custom",
                 "helper_text": "Selecteer een lengte",
-                "submit": "Apply ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "submit": "Ban Geven",
+                "reason_required": "Je moet een reden opgeven.",
+                "success": "Speler verbannen!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "current_ids": "Huidige Identifiers",
+                "previous_ids": "Eerder gebruikte Identifiers"
             }
         }
     }

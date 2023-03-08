@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import isLocalhost from 'is-localhost-ip';
@@ -9,15 +10,13 @@ const { dir, log, logOk, logWarn, logError } = logger();
 /**
  * Detect the dominant newline character of a string.
  * Extracted from https://www.npmjs.com/package/detect-newline
- * @param {*} string
- * @returns
  */
-const detectNewline = (string) => {
-    if (typeof string !== 'string') {
+const detectNewline = (str: string) => {
+    if (typeof str !== 'string') {
         throw new TypeError('Expected a string');
     }
 
-    const newlines = string.match(/(?:\r?\n)/g) || [];
+    const newlines = str.match(/(?:\r?\n)/g) || [];
 
     if (newlines.length === 0) {
         return;
@@ -34,7 +33,12 @@ const detectNewline = (string) => {
  * Helper function to store commands
  */
 class Command {
-    constructor(tokens, filePath, fileLine) {
+    readonly command: string;
+    readonly args: string[];
+    readonly file: string;
+    readonly line: number;
+
+    constructor(tokens: string[], filePath: string, fileLine: number) {
         if (!Array.isArray(tokens) || tokens.length < 1) {
             throw new Error('Invalid command format');
         }
@@ -49,7 +53,7 @@ class Command {
     }
 
     //Kinda confusing name, but it returns the value of a set if it's for that ne var
-    getSetForVariable(varname) {
+    getSetForVariable(varname: string) {
         if (
             ['set', 'sets', 'setr'].includes(this.command)
             && this.args.length === 2
@@ -74,24 +78,21 @@ class Command {
  * Helper function to store exec errors
  */
 class ExecRecursionError {
-    constructor(file, message) {
-        this.file = file;
-        this.message = message;
-    }
+    constructor(readonly file: string, readonly message: string, readonly line: number) { }
 }
 
 /**
  * Helper class to store file TODOs, errors and warnings
  */
 class FilesInfoList {
-    constructor() {
-        this.store = {};
-    }
-    add(file, info) {
+    readonly store: Record<string, [number | false, string][]> = {};
+
+    constructor() { }
+    add(file: string, line: number | false, msg: string) {
         if (Array.isArray(this.store[file])) {
-            this.store[file].push(info);
+            this.store[file].push([line, msg]);
         } else {
-            this.store[file] = [info];
+            this.store[file] = [[line, msg]];
         }
     }
     count() {
@@ -108,8 +109,9 @@ class FilesInfoList {
         for (const file of files) {
             const fileInfos = this.store[file];
             msgLines.push(`\`${file}\`:`);
-            fileInfos.forEach((msg) => {
-                msgLines.push(`\t${msg}`);
+            fileInfos.forEach(([line, msg]) => {
+                const linePrefix = line ? `Line ${line}: ` : '';
+                msgLines.push(`\t${linePrefix}${msg}`);
             });
         }
         return msgLines.join('\n');
@@ -119,9 +121,8 @@ class FilesInfoList {
 
 /**
  * Returns the first likely server.cfg given a server data path, or false
- * @param {string} serverDataPath
  */
-export const findLikelyCFGPath = (serverDataPath) => {
+export const findLikelyCFGPath = (serverDataPath: string) => {
     const attempts = [
         'server.cfg',
         'server.cfg.txt',
@@ -145,11 +146,8 @@ export const findLikelyCFGPath = (serverDataPath) => {
 
 /**
  * Returns the absolute path of the given CFG Path
- * @param {string} cfgPath
- * @param {string} serverDataPath
- * @returns {string} cfg file absolute path
  */
-export const resolveCFGFilePath = (cfgPath, serverDataPath) => {
+export const resolveCFGFilePath = (cfgPath: string, serverDataPath: string) => {
     return (path.isAbsolute(cfgPath)) ? path.normalize(cfgPath) : path.resolve(serverDataPath, cfgPath);
 };
 
@@ -158,10 +156,8 @@ export const resolveCFGFilePath = (cfgPath, serverDataPath) => {
  * Reads CFG Path and return the file contents, or throw error if:
  *  - the path is not valid (must be absolute)
  *  - cannot read the file data
- * @param {string} cfgFullPath
- * @returns {string} raw cfg file
  */
-export const readRawCFGFile = async (cfgPath) => {
+export const readRawCFGFile = async (cfgPath: string) => {
     //Validating if the path is absolute
     if (!path.isAbsolute(cfgPath)) {
         throw new Error('File path must be absolute.');
@@ -191,10 +187,8 @@ export const readRawCFGFile = async (cfgPath) => {
  * Notable difference: we don't handle inline block comment
  * Original Line Parser:
  *  fivem/code/client/citicore/console/Console.cpp > ProgramArguments Tokenize
- * @param {string} input
- * @returns {array} array of commands
  */
-export const readLineCommands = (input) => {
+export const readLineCommands = (input: string) => {
     let inQuote = false;
     let inEscape = false;
     const prevCommands = [];
@@ -294,14 +288,13 @@ export const readLineCommands = (input) => {
  *  fivem/code/client/citicore/console/Console.cpp > Context::ExecuteBuffer
  *
  * FIXME: support `@resource/whatever.cfg` syntax
- *
- * @param {string|null} cfgInputString the cfg string to validate before saving, or null to load from file
- * @param {string} cfgPath
- * @param {string} serverDataPath
- * @param {array} stack
- * @returns {object} recursive cfg structure
  */
-export const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serverDataPath, stack) => {
+export const parseRecursiveConfig = async (
+    cfgInputString: string | null, //cfg string, or null to load from file
+    cfgAbsolutePath: string,
+    serverDataPath: string,
+    stack?: string[]
+) => {
     if (typeof cfgInputString !== 'string' && cfgInputString !== null) {
         throw new Error('cfgInputString expected to be string or null');
     }
@@ -322,7 +315,7 @@ export const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serv
     const cfgLines = cfgData.split('\n');
 
     // Parse CFG lines
-    const parsedCommands = [];
+    const parsedCommands: (Command|ExecRecursionError)[] = [];
     for (let i = 0; i < cfgLines.length; i++) {
         const lineString = cfgLines[i].trim();
         const lineNumber = i + 1;
@@ -338,13 +331,15 @@ export const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serv
 
             // If exec command, process recursively then flatten the output
             if (cmdObject.command === 'exec') {
-                const recursiveCfgAbsolutePath = resolveCFGFilePath(cmdObject.args[0], serverDataPath);
-                try {
-                    const extractedCommands = await parseRecursiveConfig(null, recursiveCfgAbsolutePath, serverDataPath, stack);
-                    parsedCommands.push(...extractedCommands);
-                } catch (error) {
-                    const msg = `Line ${lineNumber}: ${error.message}`;
-                    parsedCommands.push(new ExecRecursionError(cfgAbsolutePath, msg));
+                //FIXME: temporarily disable resoure references
+                if(!cmdObject.args[0].startsWith('@')){
+                    const recursiveCfgAbsolutePath = resolveCFGFilePath(cmdObject.args[0], serverDataPath);
+                    try {
+                        const extractedCommands = await parseRecursiveConfig(null, recursiveCfgAbsolutePath, serverDataPath, stack);
+                        parsedCommands.push(...extractedCommands);
+                    } catch (error) {
+                        parsedCommands.push(new ExecRecursionError(cfgAbsolutePath, (error as Error).message, lineNumber));
+                    }
                 }
             }
         }
@@ -353,18 +348,19 @@ export const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serv
     return parsedCommands;
 };
 
+type EndpointsObjectType = Record<string, { tcp?: true; udp?: true; }>
 
 /**
  * Validates a list of parsed commands to return endpoints, errors, warnings and lines to comment out
  * @param {array} parsedCommands
  * @returns {object}
  */
-const validateCommands = async (parsedCommands) => {
+const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]) => {
     const zapPrefix = (convars.isZapHosting) ? ' [ZAP-Hosting]' : '';
     const checkedInterfaces = new Map();
 
     //To return
-    const endpoints = {};
+    const endpoints: EndpointsObjectType = {};
     const errors = new FilesInfoList();
     const warnings = new FilesInfoList();
     const toCommentOut = new FilesInfoList();
@@ -372,14 +368,14 @@ const validateCommands = async (parsedCommands) => {
     for (const cmd of parsedCommands) {
         //In case of error
         if (cmd instanceof ExecRecursionError) {
-            warnings.add(cmd.file, cmd.message);
+            warnings.add(cmd.file, cmd.line, cmd.message);
             continue;
         }
 
         //Check for +set
         if (['+set', '+setr', '+setr'].includes(cmd.command)) {
             const msg = `Line ${cmd.line}: remove the '+' from '${cmd.command}', as this is not an launch parameter.`;
-            warnings.add(cmd.file, msg);
+            warnings.add(cmd.file, cmd.line, msg);
             continue;
         }
 
@@ -391,18 +387,26 @@ const validateCommands = async (parsedCommands) => {
         ) {
             toCommentOut.add(
                 cmd.file,
-                [cmd.line, 'you MUST NOT start/stop/ensure txadmin resources.'],
+                cmd.line,
+                'you MUST NOT start/stop/ensure txadmin resources.',
             );
             continue;
         }
 
         //Check sv_maxClients against ZAP config
         const isMaxClientsString = cmd.getSetForVariable('sv_maxclients');
-        if (convars.deployerDefaults?.maxClients && isMaxClientsString) {
+        if (
+            typeof convars.deployerDefaults === 'object'
+            && convars.deployerDefaults?.maxClients
+            && isMaxClientsString
+        ) {
             const maxClients = parseInt(isMaxClientsString);
             if (maxClients > convars.deployerDefaults.maxClients) {
-                const msg = `Line ${cmd.line}:${zapPrefix} your 'sv_maxclients' SHOULD be <= ${convars.deployerDefaults.maxClients}.`;
-                warnings.add(cmd.file, msg);
+                warnings.add(
+                    cmd.file,
+                    cmd.line,
+                    `${zapPrefix} your 'sv_maxclients' SHOULD be <= ${convars.deployerDefaults.maxClients}.`
+                );
                 continue;
             }
         }
@@ -411,7 +415,8 @@ const validateCommands = async (parsedCommands) => {
         if (cmd.getSetForVariable('onesync')) {
             toCommentOut.add(
                 cmd.file,
-                [cmd.line, 'onesync MUST only be set in the txAdmin settings page.'],
+                cmd.line,
+                'onesync MUST only be set in the txAdmin settings page.',
             );
             continue;
         }
@@ -420,8 +425,11 @@ const validateCommands = async (parsedCommands) => {
         if (cmd.command === 'endpoint_add_tcp' || cmd.command === 'endpoint_add_udp') {
             //Validating args length
             if (cmd.args.length !== 1) {
-                const msg = `Line ${cmd.line}: the 'endpoint_add_*' commands MUST have exactly 1 argument (received ${cmd.args.length})`;
-                warnings.add(cmd.file, msg);
+                warnings.add(
+                    cmd.file,
+                    cmd.line,
+                    `the 'endpoint_add_*' commands MUST have exactly 1 argument (received ${cmd.args.length})`
+                );
                 continue;
             }
 
@@ -429,8 +437,11 @@ const validateCommands = async (parsedCommands) => {
             const endpointsRegex = /^\[?(([0-9.]{7,15})|([a-z0-9:]{2,29}))\]?:(\d{1,5})$/gi;
             const matches = [...cmd.args[0].matchAll(endpointsRegex)];
             if (!Array.isArray(matches) || !matches.length) {
-                const msg = `Line ${cmd.line}: the \`${cmd.args[0]}\` is not in a valid \`ip:port\` format.`;
-                errors.add(cmd.file, msg);
+                errors.add(
+                    cmd.file,
+                    cmd.line,
+                    `the \`${cmd.args[0]}\` is not in a valid \`ip:port\` format.`
+                );
                 continue;
             }
             const [_matchedString, iface, ipv4, ipv6, portString] = matches[0];
@@ -442,31 +453,46 @@ const validateCommands = async (parsedCommands) => {
                 checkedInterfaces.set(iface, canBind);
             }
             if (canBind === false) {
-                const msg = `Line ${cmd.line}: the '${cmd.command}' interface '${iface}' is not available for this host.`;
-                errors.add(cmd.file, msg);
+                errors.add(
+                    cmd.file,
+                    cmd.line,
+                    `the '${cmd.command}' interface '${iface}' is not available for this host.`
+                );
                 continue;
             }
             if (convars.forceInterface && iface !== convars.forceInterface) {
-                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' interface MUST be '${convars.forceInterface}'.`;
-                errors.add(cmd.file, msg);
+                errors.add(
+                    cmd.file,
+                    cmd.line,
+                    `${zapPrefix} the '${cmd.command}' interface MUST be '${convars.forceInterface}'.`
+                );
                 continue;
             }
 
             //Validating port
             const port = parseInt(portString);
             if (port >= 40120 && port <= 40150) {
-                const msg = `Line ${cmd.line}: the '${cmd.command}' port '${port}' is dedicated for txAdmin and CAN NOT be used for FXServer.`;
-                errors.add(cmd.file, msg);
+                errors.add(
+                    cmd.file,
+                    cmd.line,
+                    `the '${cmd.command}' port '${port}' is dedicated for txAdmin and CAN NOT be used for FXServer.`
+                );
                 continue;
             }
             if (port === convars.txAdminPort) {
-                const msg = `Line ${cmd.line}: the '${cmd.command}' port '${port}' is being used by txAdmin and CAN NOT be used for FXServer at the same time.`;
-                errors.add(cmd.file, msg);
+                errors.add(
+                    cmd.file,
+                    cmd.line,
+                    `the '${cmd.command}' port '${port}' is being used by txAdmin and CAN NOT be used for FXServer at the same time.`
+                );
                 continue;
             }
             if (convars.forceFXServerPort && port !== convars.forceFXServerPort) {
-                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' port MUST be '${convars.forceFXServerPort}'.`;
-                errors.add(cmd.file, msg);
+                errors.add(
+                    cmd.file,
+                    cmd.line,
+                    `${zapPrefix} the '${cmd.command}' port MUST be '${convars.forceFXServerPort}'.`
+                );
                 continue;
             }
 
@@ -477,8 +503,11 @@ const validateCommands = async (parsedCommands) => {
                 endpoints[endpoint] = {};
             }
             if (endpoints[endpoint][protocol]) {
-                const msg = `Line ${cmd.line}: you CANNOT execute '${cmd.command}' twice for the interface '${endpoint}'.`;
-                errors.add(cmd.file, msg);
+                errors.add(
+                    cmd.file,
+                    cmd.line,
+                    `you CANNOT execute '${cmd.command}' twice for the interface '${endpoint}'.`
+                );
                 continue;
             } else {
                 endpoints[endpoint][protocol] = true;
@@ -492,10 +521,8 @@ const validateCommands = async (parsedCommands) => {
 
 /**
  * Process endpoints object, checks validity, and then returns a connection string
- * @param {object} endpoints
- * @returns {string} connect string
  */
-const getConnectEndpoint = (endpoints) => {
+const getConnectEndpoint = (endpoints: EndpointsObjectType) => {
     if (!Object.keys(endpoints).length) {
         let msg;
         if (convars.forceInterface && convars.forceFXServerPort) {
@@ -525,23 +552,20 @@ const getConnectEndpoint = (endpoints) => {
 /**
  * Validates & ensures correctness in fxserver config file recursively.
  * Used when trying to start server, or validate the server.cfg.
- *
- * @param {string} cfgPath
- * @param {string} serverDataPath
- * @returns {object} recursive cfg structure
+ * Returns errors, warnings and connectEndpoint
  */
-export const validateFixServerConfig = async (cfgPath, serverDataPath) => {
+export const validateFixServerConfig = async (cfgPath: string, serverDataPath: string) => {
     //Parsing fxserver config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(null, cfgAbsolutePath, serverDataPath);
     const { endpoints, errors, warnings, toCommentOut } = await validateCommands(parsedCommands);
 
     //Validating if a valid endpoint was detected
-    let connectEndpoint = false;
+    let connectEndpoint: string | false = false;
     try {
         connectEndpoint = getConnectEndpoint(endpoints);
     } catch (error) {
-        errors.add(cfgAbsolutePath, error.message);
+        errors.add(cfgAbsolutePath, false, (error as Error).message);
     }
 
     //Commenting out lines or registering them as warnings
@@ -554,11 +578,12 @@ export const validateFixServerConfig = async (cfgPath, serverDataPath) => {
             const fileEOL = detectNewline(cfgRaw);
             const cfgLines = cfgRaw.split(/\r?\n/);
             for (const [ln, reason] of actions) {
+                if (ln === false) continue;
                 if (typeof cfgLines[ln - 1] !== 'string') {
                     throw new Error(`Line ${ln} not found.`);
                 }
                 cfgLines[ln - 1] = `## [txAdmin CFG validator]: ${reason}${fileEOL}# ${cfgLines[ln - 1]}`;
-                warnings.add(targetCfgPath, `Commented out line ${ln}: ${reason}`);
+                warnings.add(targetCfgPath, ln, `Commented out: ${reason}`);
             }
 
             //Saving modified lines
@@ -568,7 +593,7 @@ export const validateFixServerConfig = async (cfgPath, serverDataPath) => {
         } catch (error) {
             if (verbose) logError(error);
             for (const [ln, reason] of actions) {
-                errors.add(targetCfgPath, `Please comment out line ${ln}: ${reason}`);
+                errors.add(targetCfgPath, ln, `Please comment out this line: ${reason}`);
             }
         }
     }
@@ -577,7 +602,7 @@ export const validateFixServerConfig = async (cfgPath, serverDataPath) => {
     return {
         connectEndpoint,
         errors: errors.toMarkdown(),
-        warnings: errors.toMarkdown(),
+        warnings: warnings.toMarkdown(),
         // errors: errors.store,
         // warnings: warnings.store,
         // endpoints, //Not being used
@@ -590,13 +615,13 @@ export const validateFixServerConfig = async (cfgPath, serverDataPath) => {
  * In case of any errors, it does not save the contents.
  * Does not comment out (fix) bad lines.
  * Used whenever a user wants to modify server.cfg.
- *
- * @param {string} cfgInputString the cfg string to validate before saving
- * @param {string} cfgPath
- * @param {string} serverDataPath
- * @returns {object} recursive cfg structure
+ * Returns if saved, and warnings
  */
-export const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
+export const validateModifyServerConfig = async (
+    cfgInputString: string,
+    cfgPath: string,
+    serverDataPath: string
+) => {
     if (typeof cfgInputString !== 'string') {
         throw new Error('cfgInputString expected to be string.');
     }
@@ -604,13 +629,13 @@ export const validateModifyServerConfig = async (cfgInputString, cfgPath, server
     //Parsing fxserver config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(cfgInputString, cfgAbsolutePath, serverDataPath);
-    const { endpoints, errors, warnings, _toCommentOut } = await validateCommands(parsedCommands);
+    const { endpoints, errors, warnings } = await validateCommands(parsedCommands);
 
     //Validating if a valid endpoint was detected
     try {
         const _connectEndpoint = getConnectEndpoint(endpoints);
     } catch (error) {
-        errors.add(cfgAbsolutePath, error.message);
+        errors.add(cfgAbsolutePath, false, (error as Error).message);
     }
 
     //If there are any errors
@@ -628,7 +653,7 @@ export const validateModifyServerConfig = async (cfgInputString, cfgPath, server
         await fsp.copyFile(cfgAbsolutePath, `${cfgAbsolutePath}.bkp`);
         await fsp.writeFile(cfgAbsolutePath, cfgInputString, 'utf8');
     } catch (error) {
-        throw new Error(`Failed to edit 'server.cfg' with error: ${error.message}`);
+        throw new Error(`Failed to edit 'server.cfg' with error: ${(error as Error).message}`);
     }
 
     return {

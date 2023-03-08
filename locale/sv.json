@@ -14,17 +14,44 @@
         "schedule_warn_discord": "**%{servername}** är schemalagd att startas om inom %{smart_count} minuter. |||| **%{servername}** är schemalagd att startas om inom %{smart_count} minuter."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Du har blivit bannad från denna server på grund av \"%{reason}\". Din bannlysning går ut : %{expiration}.",
+        "kick_temporary": "(%{author}) Du har blivit bannlyst från denna server på grund av \"%{reason}\". Din bannlysning går ut : %{expiration}.",
         "kick_permanent": "(%{author}) Du har blivit permanent bannlyst från denna server på grund av \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+            "title_permanent": "Du har blivit permanent bannlyst från servern.",
+            "title_temporary": "Du har blivit temorärt bannlyst.",
+            "label_expiration": "Din bannlysning går ut inom",
+            "label_date": "bannlysning datum",
+            "label_author": "Bannlyst av ",
+            "label_reason": "Bannlysnings anledning",
+            "label_id": "Bannlysnings ID",
+            "note_multiple_bans": "OBS Du kan vara bannlyst på flera identifikationer."
+        }
+    },
+    "whitelist_messages": {
+        "admin_only": {
+            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
+            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
+            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+        },
+        "guild_member": {
+            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
+            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
+            "deny_title": "You are required to join our Discord Guild to connect.",
+            "deny_message": "Please join the guild %{guildname} then try again."
+        },
+        "guild_roles": {
+            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
+            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
+            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
+            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
+            "deny_noroles_title": "You do not have a whitelisted role required to join.",
+            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+        },
+        "approved_license": {
+            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
+            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
+            "deny_title": "You are not whitelisted to join this server.",
+            "request_id_label": "Request ID"
         }
     },
     "server_actions": {
@@ -33,10 +60,6 @@
         "stopping": "Servern stängs av (%{reason}).",
         "stopping_discord": "**%{servername}** håller på att stängas av (%{reason}).",
         "spawning_discord": "**%{servername}** håller på att startas."
-    },
-    "discord": {
-        "status_online": "**%{servername}** är just nu **Igång**!",
-        "status_offline": "**%{servername}** är just nu **Avstängd**!"
     },
     "nui_warning": {
         "title": "VARNING",
@@ -81,6 +104,11 @@
                     "title": "Gud",
                     "label": "Oförstörbar",
                     "success": "Gudläge aktiverat"
+                },
+                "superjump": {
+                    "title": "Super Jump",
+                    "label": "Toggle super jump mode, the player will also run faster",
+                    "success": "Super Jump enabled"
                 },
                 "normal": {
                     "title": "Vanlig",
@@ -137,8 +165,8 @@
                     "success": "Fordon bortaget!"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
+                    "title": "Trimma",
+                    "label": "Trimma bilen och nå maximalt nöje (och kanske hastighet)",
                     "success": "Vehicle boosted!",
                     "already_boosted": "This vehicle was already boosted.",
                     "unsupported_class": "This vehicle class is not supported."
@@ -204,12 +232,12 @@
         "player_modal": {
             "misc": {
                 "error": "Kunde inte ta emot spelarens information. Felkod syns nedan:",
-                "target_not_found": "Kunde inte hitta en spelare med det id:et %{target}"
+                "target_not_found": "Kunde inte hitta en spelare med den identifikationen %{target}"
             },
             "tabs": {
                 "actions": "Alternativ",
-                "info": "Info",
-                "ids": "IDs",
+                "info": "Information",
+                "ids": "identifikationer",
                 "history": "Historik",
                 "ban": "Bannlys"
             },
@@ -275,31 +303,31 @@
                 "session_time": "Session tid",
                 "play_time": "Speltid",
                 "joined": "Anslöt",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "whitelisted_label": "Vitlistad",
+                "whitelisted_notyet": "Inte ännu vitlistad",
+                "btn_wl_add": "Lägg till vitlistning",
+                "btn_wl_remove": "Ta bort vitlistning",
+                "btn_wl_success": "Vitlistnings status ändrad.",
+                "log_label": "Historik",
+                "log_empty": "Inga bannlysningar eller varnningar funna.",
+                "log_ban_count": "%{smart_count} Bannlysning |||| %{smart_count} Bannlysningar",
+                "log_warn_count": "%{smart_count} Varning |||| %{smart_count} Varnningar",
+                "log_btn": "Detaljer",
+                "notes_changed": "Spelar notering ändrad.",
+                "notes_placeholder": "Noteringar om spelare..."
             },
             "history": {
                 "title": "Historik",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "Dra tillbaka",
+                "revoked_success": "Handling tillbaka dragen",
+                "banned_by": "Bannlyst av %{author}",
+                "warned_by": "Varnad av %{author}",
+                "revoked_by": "Tillbaka dragen av %{author}.",
+                "expired_at": "Gick ut den %{date}.",
+                "expires_at": "Går ut den %{date}."
             },
             "ban": {
-                "title": "Banna spelare",
+                "title": "Bannlys spelare",
                 "reason_placeholder": "Anledning",
                 "duration_placeholder": "Varaktighet",
                 "hours": "Timmar",
@@ -309,13 +337,13 @@
                 "permanent": "Permanent",
                 "custom": "Anpassad",
                 "helper_text": "Vänligen välj en varaktighet",
-                "submit": "Tillämpa bann",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "submit": "Tillämpa bannlysning",
+                "reason_required": "Du måste fylla i anledning.",
+                "success": "Spelare är bannlyst"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "current_ids": "Nuvarande identifikationer",
+                "previous_ids": "Tidigare använda identifikationer"
             }
         }
     }

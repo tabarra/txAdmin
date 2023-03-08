@@ -26,7 +26,7 @@ export default async function GetStatus(ctx) {
  * Returns the Discord Bot data
  */
 function prepareDiscordStatus() {
-    const client = globals.discordBot.client;
+    const wsStatus = globals.discordBot.wsStatus;
     const statusCodes = [
         ['READY', 'success'],
         ['CONNECTING', 'warning'],
@@ -39,15 +39,15 @@ function prepareDiscordStatus() {
         ['RESUMING', 'warning'],
     ];
 
-    if (client == null) {
+    if (wsStatus === false) {
         return {
             status: 'DISABLED',
             statusClass: 'secondary',
         };
-    } else if (statusCodes[client.ws?.status]) {
+    } else if (statusCodes[wsStatus]) {
         return {
-            status: statusCodes[client.ws?.status][0],
-            statusClass: statusCodes[client.ws?.status][1],
+            status: statusCodes[wsStatus][0],
+            statusClass: statusCodes[wsStatus][1],
         };
     } else {
         return {

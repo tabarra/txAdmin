@@ -404,9 +404,9 @@ function showPlayer(playerRef, keepTabSelection = false) {
                     `</div>`
                 ].join('\n');
 
-                modPlayer.Main.logCountBans.innerText = (counts.bans === 1) ? '1 ban' : `${counts.ban} bans`;
+                modPlayer.Main.logCountBans.innerText = (counts.ban === 1) ? '1 ban' : `${counts.ban} bans`;
                 if (counts.ban) modPlayer.Main.logCountBans.classList.add('text-danger');
-                modPlayer.Main.logCountWarns.innerText = (counts.warns === 1) ? '1 warn' : `${counts.warn} warns`;
+                modPlayer.Main.logCountWarns.innerText = (counts.warn === 1) ? '1 warn' : `${counts.warn} warns`;
                 if (counts.warn) modPlayer.Main.logCountWarns.classList.add('text-warning');
             }
 

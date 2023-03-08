@@ -282,7 +282,7 @@
                             <h1 class="mb-3">Login</h1>
                             <% if (isWebInterface) { %>
                                 <a class="btn cfxrebtn<%= citizenfxDisabled ? ' disabled' : '' %>"
-                                   role="button" href="auth/citizenfx/redirect">
+                                   role="button" href="auth/citizenfx/redirect" id="btn-cfxredirect">
                                     <i class="cfxrelogo"><svg><use href="#cfxre-icon"></use></svg></i>
                                 </a>
                             <% } else { %>
@@ -293,7 +293,7 @@
                         
                             <div class="hrsep">OR</div>
 
-                            <form action="auth/password" method="post">
+                            <form action="auth/password" id="form-password" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -387,6 +387,18 @@
     <script src="<%= resourcePath %>js/coreui.bundle.min.js"></script>
     <script src="<%= resourcePath %>js/txadmin/base.js"></script>
     <script>
+        const searchParams = new URLSearchParams(window.location.search);
+        const encodedRedirectTarget = encodeURIComponent(searchParams.get('r'));
+        if(encodedRedirectTarget){
+            const passwordForm = document.getElementById('form-password');
+            if(passwordForm){
+                passwordForm.action = `${passwordForm.action}?r=${encodedRedirectTarget}`;
+            }
+            const cfxRedirectButton = document.getElementById('btn-cfxredirect');
+            if(cfxRedirectButton){
+                cfxRedirectButton.href = `${cfxRedirectButton.href}?r=${encodedRedirectTarget}`;
+            }
+        }
         window.history.pushState(null, 'txAdmin', '/auth');
     </script>
 </body>

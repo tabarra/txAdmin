@@ -1,189 +1,107 @@
-# FIXME: breaking changes
-- didn't note anything before commit d2cfc42e5e0001afce6bafa17df4c7a9a6bbf42d
-- playerBanned event lost the `target` prop
-- changed warn ids prefix from A to W
-- removed the option to import bans from other resources
-- The optimizer will remove:
-    - players that havent connected in 9 days and have less than two hours of playtime
-    - wl requests and approvals older than a week
-- cfx.re finally deprecated
-
-
-# Coisas pra falar no trailer:
-- playerlist mostra nomes limpos, e da match em caracteres (sem fuse.js ainda)
-- players page mostra limpo, busca com fuse.js (not perfect)
-- now we are saving old player identifiers
-
-- whitelist in a separate page
-- !addwl temporarily disabled
-- explain the new flow
-- show the buttons on the page, and search with fuse
-- show settings page rejection messages config
-
-- changed the way ban messages look + mostrar na tela
-
-- new player modal
-- you can now easily see if player is whitelisted, also the bans/warns
-- you can now also revoke bans/warns directly into the modal
-
-- new events for playerDirectMessage and actionRevoked
-- updated lowdb to increase performance
-- fixed memory leak for big servers
-- dm via snackbar instead of chat
-
-- removed the option to import bans from other resources
-- The optimizer will remove:
-    - players that havent connected in 9 days and have less than two hours of playtime
-    - wl requests and approvals older than a week
-- car boost option
-
-
-
 # TODO:
-- [x] player join/leave
-- [x] increment player time
-- [x] fix web playerlist
-- [x] handle server restarts
-- [x] send join/leave to log
-- [x] resolve player function
-- [x] update lowdb
-- [x] make a backup before migrations
-- [x] create database migration:
-        - convert name -> displayName + pureName
-        - create array for old identifiers
-        - whitelist becomes a player prop, removes from actions
-        - remove empty notes
-- [x] get player modal (log, playerlist, db players page)
-- [x] modal buttons:
-    - [x] action details
-    - [x] set note
-    - [x] add/remove wl
-    - [x] warn
-    - [x] ban (also replace `txaDropIdentifiers` with `txAdmin:events:playerBanned`) (FIXME: close #625)
-    - [x] dm (replace `txaSendDM` with event+snackbar)
-    - [x] kick
-    - [x] revoke action (+ actionRevoked event - PR #612)
-- [x] db revoke_action/ban_ids routes + buttons on players page
-- [x] whitelist page
-- [x] join check + whitelist
-- [x] whitelist page actions
-    - [x] remove wl approval
-    - [x] add wl approval
-    - [x] approve wl request
-    - [x] remove wl request
-    - [x] search wl request
-    - [x] wl request pagination
-    - [x] wl request ignore all button
-- [x] settings stuff
-    - [x] add new custom connect reject messages for whitelist/bans
-    - [x] remove minSessionTime from everywhere
-    - [x] remove wipePendingWLOnStart from everywhere
-    - [x] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
-    - [x] FIXME: settings > player manager > save is erroring out
-    - [x] FIXME: diagnostics erroring out
-- [x] cleanup
-    - [x] remove all references to the old playerController
-    - [x] clean PlayerDatabase file (mainly methods)
-    - [x] tidy up the files, specially comments missing everywhere
-- [x] migrate warn action id prefix from A to W
-- [x] add database schema basic safeguards to player database
-- [x] add fuse.js to players page search
-- [x] test `adminVault.refreshOnlineAdmins()` 
-
-- [x] FIXME: references to `playerlistManager.playerlist` or `playerlistManager.getPlayerList()` might want just the list of active players
-- [x] FIXME: double check what happens when there is more than one player with the same license online
-    - the scenario below also applies to two connected players with same license, the dbData will be out of sync, but i think it only applies to visible stuff in player modal like the notes, which may cause an overwrite
-- [x] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
-    - consider scenario where the player is on the server, and you search for it on the playerlist
-    - (also valid for player join check)
-    - there will be 2 player.dbData, states that can be overwritten.
-    - potential solution is to always prioritize ServerPlayer on player resolver
-    - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
-    - maybe doesn't really matter?! maybe we just need to add a method to PlayerlistManager to notify when a player dbData was modified, and that would trigger `ServerPlayer.updateDbData()` or something like that?
-
-- [x] modal should also return old ids in a separate prop only available for registered players
-- [x] ban/warn all available identifiers
-- [x] add last connection date to offline player modal (issue #689)
-- [x] fix player modal in nui menu
-    - [x] upper-level error handling
-    - [x] actions tab
-    - [x] ids tab
-    - [x] history tab
-    - [x] info tab
-    - [x] ban tab
-
-- [x] players page search by identifiers must also search for the new player.ids field
-- [x] web: enable settign whitelist even with wl disabled + add warning to ban (nui only, i'll do web after)
-- [x] migrate master action > database cleanup (specially case for removing older whitelists) 
-- [x] remove master action > importing bans
-- [x] create daily cron to optimize database:
-    - [x] player rule: haven't connected in the past 9 days and had less than 2 hours of playtime.
-    - [x] whitelistApprovals/whitelistRequests rule: older than 7 days
-
-
-After merging feat/core-playerlist, but still in v5.0.0  (1d?):
-- [x] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
-- [x] apply stashes
-- [x] feat: add commonjs package.json to builds
-- [x] fix translations:
-    - [x] merge all translations
-    - [x] `ban_messages.reject.*` to all translations (try to convert manually)
-    - [x] `nui_menu.misc.directmessage_title`
-    - [x] `player_modal.history.*` 
-    - [x] `player_modal.ban.success / reason_required` 
-    - [x] `player_modal.ids.*`
-    - [x] `player_modal.info.*`
-- [x] add car boost function
-
-TODO for beta2:
-- [x] merge taso PR
-- [x] fix car boost func (double + veh type check)
-- [x] fix csrf
-- [x] force `txAdminAPI` to have `dataType: 'json'` for all calls
-- [x] write changelog + announcement
-- [x] announce to top servers
-
-The diagnostics reporting button thing (2d?):
-- [ ] do frontend button + modals
-- [ ] FIXME: define steps
-
-
-After v5.0.0 release:
-- [ ] rename txAdmin Logs to System Logs (check chungus commands as well)
-- [ ] server logger add events/min average
-- [ ] add stats for HWID: `count, q1, q25, q50, q75, q99`. Result will only be valid for servers with netid over 1k but that's fine
-- [ ] migrate `!addwl` make possible to `/addwl @mention`
-- [ ] admin-only mode for the server
-- [ ] add lru-cache to `DiscordBot.resolveMember()`
-- [ ] bot status "watching xx/yy players"
-
-- [ ] no duplicated id type in bans? preparing for the new db migration
-- [ ] add a `Wait(0)` on `sv_main.lua` kick/ban handlers? (Issue #639)
-- [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
-- [ ] create new whitelist events
-    - [ ] whitelistPlayer:
+- [x] QoL: add redirect post login if invalid session
+- [x] Improve discord embed UX:
+    - [x] embed placeholder
+    - [x] check for the emoji
+    - [x] check for the url fields
+    - [x] discord auth not admin response
+    - [x] bot save: intent message
+    - [x] bot save: could not resolve guild id = was the bot invited?
+    - [x] embed jsons reset buttons
+- [x] add superjump
+- [x] the PR about hiding notifications
+    - [x] remove monitor.disableChatWarnings
+- [x] At the schedule restart input prompt, add a note saying what is the current server time
+- [x] create events for dynamic scheduled restarts
+- [x] create new whitelist events
+    - [x] whitelistPlayer:
+        - action: added/removed
         - license: xxxxx
-        - author: admin name
-        - status: true/false
-    - [ ] whitelistPreApproval:
+        - playerName: player name
+        - adminName: admin name
+    - [x] whitelistPreApproval:
         - action: added/removed
         - identifier: `discord:xxxxxx` / `license:xxxxx`
-        - author: admin name
-    - [ ] whitelistRequest:
-        - action: requested/approved/denied
-        - author: either player name, or admin name
-        - requestId: Rxxxx
-        - license: xxxxxx
+        - playerName?: player name
+        - adminName: admin name
+    - [x] whitelistRequest:
+        - action: requested/approved/denied/deniedAll
+        - playerName?: player name, if action != deniedAll
+        - requestId?: Rxxxx, if action != deniedAll
+        - license?: xxxxxx, if action != deniedAll
+        - adminName?: admin name, if action != requested
+- [x] wav for announcements and DMs
+- [x] update status embed as soon as server status changes
+
+
+
+## Optional
+- [ ] bot: fix http agent options for localAddress
+- [ ] bot: add rate limit events to diagnostics page
+- [ ] change dashboard median player message
+    - top 1000: "your server seems to be in top 1000, join and type /server to track your progress"
+    - top 500: "you might be in top 500, join discord and see if you are eligible for the role"
+- [ ] update readme with new features and contributing warning
+- [ ] stats: 
+    - [ ] ????
+    - [ ] jwe
+
+
+# Next up:
+- [ ] xxxxxx
+
+//essa logica não é "GetConvarBool" e sim negativa
+GetConvar\('([^']+)', 'false'\) ~= 'true'
+GetConvarBool('$1')
+
+function GetConvarBool(cvName)
+  return (GetConvar(cvName, 'false') ~= 'true')
+end
+
+criar variáveis globais setadas no shared, pra salvar o trabalho de dar GetConvar em todo arquivo
+
+===================
+### MUI update
+5.10.17 ok
+5.11.0 broken
+To test it, remove the `^`
+rm -rf node_modules/; npm i; npm list @mui/material; npm run dev:menu:game
+https://github.com/mui/material-ui/blob/master/CHANGELOG.md
+===================
+
+
+### Server resource scanner
+ScanResourceRoot('C:/whatever/resources/', data => {
+    const fs = require('fs');
+    fs.writeFileSync('L:/tmp/ugh.json', JSON.stringify(data));
+})
+
+
+
+
+
+
+
+teste:
+    remover meu admin do sv zap
+    dar join
+    apertar f1 e ver se aparece a mensagem de perms
+
+# TODO: sooner than later
+- [ ] server logger add events/min average
+- [ ] add lru-cache to `DiscordBot.resolveMember()`
+
+- [ ] no duplicated id type in bans? preparing for the new db migration
+- [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] mock out insights page (assets + http reqs)
-- [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
-- [ ] At the schedule restart input prompt, add a note saying what is the current server time
-- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
-- [ ] create events for dynamic scheduled restarts
+- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Behare that this is not trivial without also turning missing exec target read error also being error
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
-- [ ] if you wait for the deployer to finish, and delete the server.cfg before pressing NEXT to go to the third step, does it show the no server.cfg message? shouldn't we adjust this message to tell the user that he probably deleted stuff?
 
-Experiment: other than the color, on the perf chart we could draw likes for q50, q90, q99 tick times, maybe it's easier to understand
 
+----------------------------------------------------
+
+
+> Experiment: other than the color, on the perf chart we could draw likes for q50, q90, q99 tick times, maybe it's easier to understand
 ```json
 [
     0.6303839732888147,
@@ -204,16 +122,32 @@ Experiment: other than the color, on the perf chart we could draw likes for q50,
 ]
 ```
 
+> Maybe do this on the ban message page template
+```css
+background-image: url("https://i.imgur.com/5bFhvBv.png");
+background-repeat: no-repeat;
+background-position: right 15px bottom 15px;
+```
 
-# REFACTOR DEV:
+```js
+//Resource didn't finish starting (if res boot still active)
+`resource "${starting.startingResName}" failed to start within the [120~600]s time limit`
 
-## Approve whitelist discord command set names:
-- approve request with license+name but no discord: whitelistRequests.playerName
-- approve request with license+name and discord: whitelistRequests.discordTag
-- approve license: unknown
-- approve mention: mentioned member tag
+//Resources started, but no heartbeat whithin limit after that
+`server failed to start within time limit - 30s after last resource started`
 
+//No resource started starting, hb over limit
+`server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`
 
+//Server started, but some time after it stopped replying http requests
+//elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit
+'server partial hang detected'
+
+//else
+'server hang detected'
+```
+
+----------------------------------------------------
 
 ## New pages:
 Overview:
@@ -241,55 +175,8 @@ Whitelist Page/routes:
 
 
 
-
-
-
-
-
-----------------------------------------------------
-
-
-
-
-
-teste:
-    remover meu admin do sv zap
-    dar join
-    apertar f1 e ver se aparece a mensagem de perms
-
-
-
-```js
-//Resource didn't finish starting (if res boot still active)
-`resource "${starting.startingResName}" failed to start within the [120~600]s time limit`
-
-//Resources started, but no heartbeat whithin limit after that
-`server failed to start within time limit - 30s after last resource started`
-
-//No resource started starting, hb over limit
-`server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`
-
-//Server started, but some time after it stopped replying http requests
-//elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit
-'server partial hang detected'
-
-//else
-'server hang detected'
-```
-
-https://cs.github.com/?scopeName=All+repos&scope=&q=repo%3Avercel%2Fnext.js+%40next%2Fenv
-https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
-
-
-
-Optional:
-- [ ] fix cfx.re login match by admin id
-- [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
-- [ ] stats: jwe
-- [ ] set nui/vite.config.ts > target > chrome103
-
 ## The Big Things before ts+react rewrite:
-- [ ] in-core playerlist state tracking
+- [x] in-core playerlist state tracking
 - [ ] new proxy console util
 - [ ] global socket.io connection for playerlist + async responses
 - [ ] in-core resource state tracking
@@ -330,6 +217,10 @@ process.exit();
 
 
 ## New config
+- 2023 acho que os defaults deveriam existir dentro dos components
+e sempre que outro componente precisar saber uma config, deve passar pelo componente
+- need to have a version and have migration, like the database
+
 - do research, but i think we don't need any lib
 - break up cfg files into `txData/<profile>/global.txcfg` and `txData/<profile>/server.txcfg`
 - cfg file format is
@@ -365,6 +256,7 @@ const defaults = {
 - 'convict' was the name of that one lib
 
 
+
 ### old settings refactor note:
 - save only what changed
 - make big settings a class (like TFR)
@@ -372,6 +264,9 @@ const defaults = {
 - settings.get('object.dot.notation');
 - settings.set('object.dot.notation');
 - npm search for "object dot"
+
+https://cs.github.com/?scopeName=All+repos&scope=&q=repo%3Avercel%2Fnext.js+%40next%2Fenv
+https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
 
 
 
@@ -390,7 +285,6 @@ Up next-ish:
     - [ ] Update `development.md`
 - [ ] checar se outros resources conseguem chamar 'txaLogger:menuEvent'?
 - [ ] add ram usage to perf chart?
-- [ ] wav for announcements
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
 - [ ] replace all fxRunner.srvCmd* and only expose:
@@ -398,6 +292,10 @@ Up next-ish:
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
 - [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
 - [ ] after menu client messages rework, add lua54
+- [ ] add an fxserver changelog page
+- [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
+- [ ] maybe remove the sv_maxclients enforcement in the cfg file
+- [ ] fix the interface enforcement without port being set as zap server?
 
 
 ### Randoms:
@@ -422,6 +320,8 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 ### Server Insights page ideas:
 - resource load times
 - resource streamed assets
+- biggest events, or resources kbps out? something to help see which resource is bottlenecking the network
+    - apparently this can be done in scheduler quite easily by modifying the definition of `TriggerClientEvent`
 - http requests (grouped by resource, grouped by root domain or both?)
 - performance chart with ram usage
 - player count (loger window, maybe with some other data)
@@ -482,6 +382,7 @@ https://tanstack.com/virtual/v3
 For the tx ingame menu, replace actions grid with flexbox
 https://youtu.be/3elGSZSWTbM
 around 12:00
+https://immerjs.github.io/immer/ maybe?
 
 
 ### Update Event + Rollout strategy
@@ -499,18 +400,6 @@ Update event idea (not yet greenlit):
 - 1 hour before it will become a glowing green box;
 - 1 hour after the event start it will become a red update box with generic message, or blue if it's just a patch;
 - Note: regarding the changelog part, bubble asked me to ignore for now (may/13) but will talk again somewhen;
-
-
-### Superjump
-CreateThread(function()
-  local Wait = Wait
-  local id = PlayerId()
-  while true do
-    SetSuperJumpThisFrame(id)
-    Wait(0)
-  end
-end)
-
 
 
 
@@ -606,7 +495,7 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 
 
 ### txPointing (old txBanana)
-- code prototype with ItsANoBrainer#1337
+- code prototype with ItsANoBrainer#1337 (https://github.com/tabarra/txBanana)
 - keybind to toggle gun (grab or put away)
 - when you point at player, show above head some info
 - when you "shoot" it will open the player menu and hopefully fire a laser or something
@@ -639,64 +528,6 @@ https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
 
 
 
-=======================================
-
-Small Stuff:
-- [ ] try json stream on lowdb
-- [ ] block execution if GetCurrentResourceName() != 'monitor'
-- [ ] player modal must show if the user is banned/whitelisted or not, and an easy way to revoke it
-- [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
-- [ ] on recipe import, check if indexOf('<html>')
-- [ ] enable squirrelly file caching via `renderFile()`
-- [ ] make the commands (kick, warn, etc) return success or danger, then edit DialogActionView.tsx
-    - can be done by adding a randid to the command, then making the cmdBuffer match for `<id><OK|NOK>` 
-
-- [ ] break `playerController` actions stuff to another file
-- [ ] if isZapHosting && forceInterface, add `set sv_listingIPOverride "xxx.xxx.xxx.xxx"` in deployer
-- [ ] maybe remove the sv_maxclients enforcement in the cfg file
-- [ ] fix the interface enforcement without port being set as zap server?
-
-
-> ASAP!:
-- [ ] a way to create admins file without cfx.re 
-- [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
-    - Manual Approval (default)
-    - Discord: be in guild
-    - Discord: have a role in guild
-- [ ] persistent discord status message that is set up by `/statusfixed`:
-    - this will trigger a big status message to be sent in that channel
-    - this message id can be stored in the config file
-    - if discord id is present, use that instead of name (careful with the pings!)
-- [ ] (really needed?) ignore key bindings commands https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446
-- [ ] add custom event for broadcast
-
-
-> Hopefully now:
-- [ ] check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] create `admin.useroptions` for dark mode, welcome modals and such
-
-> Soon™ (hopefully the next update)
-- [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
-- [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
-- [ ] add new hardware bans
-- [ ] add stats enc?
-- [ ] apply the new action log html to the modal
-- [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
-- [ ] add ban/whitelist fxs-side cache (last 1000 bans + 1000 whitelists), automatically updated
-    - before starting the server, get last 1k bans/whitelists and write to a json file
-    - quen monitor starts, it will read the file and load to memory
-    - start sending the affected identifiers for the events `txAdmin:events:*` whitelisted, banned, and create a new for action revoked (type, action id).
-    - monitor listens to the event, and when it happens either add it to the cache, or erase from cache
-- [ ] add a commend system?
-- [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
-
-> Soon™® (hopefully in two months or so)
-- [ ] tweak dashboard update checker behavior
-- [ ] add an fxserver changelog page
-- [ ] Social auth provider setup retry every 15 seconds
-- [ ] show error when saving discord settings with wrong token
-- [ ] break down `playerController` into separate files even more
-- [ ] rename `playerController` to `playerManager`?
 
 =======================================
 
@@ -731,29 +562,6 @@ Message from bubble:
 > - use spectate native
 > and when stopping spectating do the opposite of that
 
-
-
-=======================================
-
-## Bot Commands:
-https://www.npmjs.com/package/eris - avarianknight recommended
-
-DONE:
-/addwl <wl req id>
-/addwl <license>
-
-TODO: Bot commands (in dev order):
-/kick <mention>
-/log <mention> - shows the last 5 log entries for an discord identifier (make it clear its only looking for the ID)
-/ban <mention> <time> <reason>
-/unban <ban-id>
-
-/info - shows your info like join date and play time
-/info <mention> - shows someone else's info
-/addwl <mention>
-/removewl <mention>
-
-=======================================
 
 ## References
 

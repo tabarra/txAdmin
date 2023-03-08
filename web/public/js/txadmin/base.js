@@ -6,6 +6,7 @@
 const REQ_TIMEOUT_SHORT = 1500;
 const REQ_TIMEOUT_MEDIUM = 5000;
 const REQ_TIMEOUT_LONG = 9000;
+const REQ_TIMEOUT_REALLY_LONG = 13000;
 const STATUS_REFRESH_INTERVAL = (isWebInterface) ? 1000 : 5000;
 const SPINNER_HTML = '<div class="txSpinner">Loading...</div>';
 
@@ -24,7 +25,9 @@ const convertMarkdown = (input, inline = false) => {
         breaks: true,
     };
     const func = inline ? marked.parseInline : marked.parse;
-    return func(toConvert, markedOptions);
+    return func(toConvert, markedOptions)
+        .replaceAll('&amp;lt;', '&lt;')
+        .replaceAll('&amp;gt;', '&gt;');
 };
 
 //================================================================
@@ -80,7 +83,7 @@ for (let pfp of pfpList) {
 //================================================================
 const checkApiLogoutRefresh = (data) => {
     if (data.logout === true) {
-        window.location = '/auth?logout';
+        window.location = `/auth?logout&r=${encodeURIComponent(window.location.pathname)}`;
         return true;
     } else if (data.refresh === true) {
         window.location.reload(true);

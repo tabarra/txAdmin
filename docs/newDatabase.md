@@ -168,3 +168,7 @@ Ways to "click" on a user (reference them)
 
 talvez fazer os usuários serem uma classe com props .warn, .ban e etc seja uma boa
 ele teria prop pra setar como offline, e uma prop pra marca-lo como temp que ele mesmo remove depois do tempo
+
+
+2023 NOTE: maybe worth to separate databases? for searching ids/hwids a hyper optimized db which links the identifier to a license, and then another license just to store players, bans, etc? 
+https://www.npmjs.com/package/lmdb

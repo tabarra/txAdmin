@@ -12,8 +12,6 @@ export type PlayerHistoryItem = {
 }
 
 export type PlayerModalMeta = {
-    onJoinCheckBan: boolean;
-    onJoinCheckWhitelist: boolean;
     serverTime: number; //required to calculate if bans have expired on frontend
     tmpPerms: {
         message: boolean;

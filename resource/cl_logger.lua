@@ -21,7 +21,6 @@ local deathHashTable = {
     [GetHashKey('WEAPON_COMPACTRIFLE')] = 'Compact Rifle',
     [GetHashKey('WEAPON_DBSHOTGUN')] = 'Double Barrel Shotgun',
     [GetHashKey('WEAPON_DOUBLEACTION')] = 'Double Action Revolver',
-    [GetHashKey('WEAPON_FLAREGUN')] = 'Flare gun',
     [GetHashKey('WEAPON_GUSENBERG')] = 'Gusenberg',
     [GetHashKey('WEAPON_HEAVYPISTOL')] = 'Heavy Pistol',
     [GetHashKey('WEAPON_HEAVYSHOTGUN')] = 'Heavy Shotgun',

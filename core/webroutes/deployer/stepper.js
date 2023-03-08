@@ -76,8 +76,10 @@ export default async function DeployerStepper(ctx) {
     } else if (globals.deployer.step === 'run') {
         renderData.deployPath = globals.deployer.deployPath;
     } else if (globals.deployer.step === 'configure') {
-        const errorMessage = `# This recipe didn't create the ./server.cfg for you, meaning the process likely failed.
-# Please make sure everything is correct, or insert here the contents of the ./server.cfg
+        const errorMessage = `# server.cfg Not Found!
+# This probably means you deleted it before pressing "Next".
+# Press cancel and start the deployer again,
+# or insert here the server.cfg contents.
 # (╯°□°）╯︵ ┻━┻`;
         try {
             renderData.serverCFG = await fse.readFile(`${globals.deployer.deployPath}/server.cfg`, 'utf8');

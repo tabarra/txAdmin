@@ -4,6 +4,7 @@ import logger from '@core/extras/console.js';
 import { convars, txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import { redactApiKeys } from '../../extras/helpers';
+import { defaultEmbedConfigJson, defaultEmbedJson } from '@core/components/DiscordBot/defaultJsons';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);;
 
 
@@ -35,6 +36,12 @@ export default async function SettingsGet(ctx) {
         activeTab: 'global',
         isZapHosting: convars.isZapHosting,
         txDataPath: txEnv.dataPath,
+        defaults: {
+            discord: {
+                embedJson: defaultEmbedJson,
+                embedConfigJson: defaultEmbedConfigJson,
+            }
+        }
     };
 
     if (renderData.readOnly) {
@@ -46,21 +53,28 @@ export default async function SettingsGet(ctx) {
 
 
 //================================================================
-function cleanRenderData(inputData) {
+function cleanRenderData(inputData: object) {
     const input = cloneDeep(inputData);
-    const out = {};
-    Object.keys(input).forEach((prop) => {
-        if (input[prop] == null || input[prop] === false || typeof input[prop] === 'undefined') {
-            out[prop] = '';
-        } else if (input[prop] === true) {
-            out[prop] = 'checked';
-        } else if (input[prop].constructor === Array) {
-            out[prop] = input[prop].join(', ');
-        } else if (input[prop].constructor === Object) {
-            out[prop] = cleanRenderData(input[prop]);
+
+    const processValue = (inputValue: any): any => {
+        if (inputValue === null || inputValue === false || typeof inputValue === 'undefined') {
+            return '';
+        } else if (inputValue === true) {
+            return 'checked';
+        } else if (Array.isArray(inputValue)) {
+            return inputValue.join(', ');
+        } else if (typeof inputValue === 'object') {
+            return cleanRenderData(inputValue);
         } else {
-            out[prop] = input[prop];
+            return inputValue;
         }
-    });
+    }
+
+    //Prepare output object
+    const out: any = {};
+    for (const [key, value] of Object.entries(input)) {
+        const processed = processValue(value);
+        out[key] = processed;
+    }
     return out;
 }

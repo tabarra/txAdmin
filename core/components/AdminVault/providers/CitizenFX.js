@@ -122,12 +122,14 @@ export default class CitizenFXProvider {
      *
      * @param {object} tokenSet
      * @param {object} userInfo
-     * @returns {(object)}
+     * @param {string} identifier
+     * @returns {object}
      */
-    async getUserSession(tokenSet, userInfo) {
+    async getUserSession(tokenSet, userInfo, identifier) {
         return {
             provider: 'citizenfx',
             provider_uid: userInfo.name,
+            provider_identifier: identifier,
             // expires_at: tokenSet.expires_at,
             expires_at: Math.round(Date.now() / 1000) + 86400,
             picture: userInfo.picture,

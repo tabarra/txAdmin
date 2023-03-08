@@ -9,35 +9,18 @@ const caches = {
     svMain: new Cache(30),
 };
 
-
-/**
- * Returns the output page containing the action log, and the console log
- * @param {object} ctx
- */
-export default async function chartData(ctx) {
-    if (!Array.isArray(globals.statsCollector.perfSeries)) {
-        return ctx.send({failReason: 'not_set'});
-    }
-    if (globals.statsCollector.perfSeries.length < 12) {
-        return ctx.send({failReason: 'not_enough_data'});
-    }
-
-    //Process data & filter thread
-    const availableThreads = ['svNetwork', 'svSync', 'svMain'];
-    const threadName = (availableThreads.includes(ctx.params.thread)) ? ctx.params.thread : 'svMain';
-
+export const getChartData = (threadName) => {
     //If cache available
     const cachedData = caches[threadName].get();
     if (cachedData !== false) {
-        return ctx.send(cachedData);
+        return cachedData;
     }
 
     //Process log
-    let outData;
     try {
-        // const maxDeltaTime = 288; //5*288 = 1440 = 1 day
-        const maxDeltaTime = 360; //5*360 = 30 hours
-        outData = globals.statsCollector.perfSeries.slice(-maxDeltaTime).map((s) => {
+        //every hour = 12 records
+        const maxDeltaTime = 360; //30*12
+        const outData = globals.statsCollector.perfSeries.slice(-maxDeltaTime).map((s) => {
             return {
                 ts: s.ts,
                 skipped: s.skipped,
@@ -46,11 +29,30 @@ export default async function chartData(ctx) {
                 buckets: s.perf[threadName].buckets,
             };
         });
+        caches[threadName].set(outData);
+        return outData;
     } catch (error) {
-        outData = {failReason: 'data_processing'};
+        return { failReason: 'data_processing' };
+    }
+};
+
+
+/**
+ * Returns the output page containing the action log, and the console log
+ * @param {object} ctx
+ */
+export default async function chartData(ctx) {
+    if (!Array.isArray(globals.statsCollector.perfSeries)) {
+        return ctx.send({ failReason: 'not_set' });
+    }
+    if (globals.statsCollector.perfSeries.length < 12) {
+        return ctx.send({ failReason: 'not_enough_data' });
     }
 
+    //Process data & filter thread
+    const availableThreads = ['svNetwork', 'svSync', 'svMain'];
+    const threadName = (availableThreads.includes(ctx.params.thread)) ? ctx.params.thread : 'svMain';
+
     //Output
-    caches[threadName].set(outData);
-    return ctx.send(outData);
+    return ctx.send(getChartData(threadName));
 };

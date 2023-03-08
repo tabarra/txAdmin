@@ -1,11 +1,12 @@
 const modulename = 'OutputHandler';
 import logger from '@core/extras/console.js';
+import { anyUndefined } from '@core/extras/helpers';
 import { verbose } from '@core/globalData';
+import TxAdmin from '@core/txAdmin';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
-const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
-const deferError = (m, t = 500) => {
+const deferError = (m: string, t = 500) => {
     setTimeout(() => {
         logError(m);
     }, t);
@@ -16,9 +17,12 @@ const deferError = (m, t = 500) => {
  * FXServer output helper that mostly relays to other components.
  */
 export default class OutputHandler {
-    constructor() {
-        this.enableCmdBuffer = false;
-        this.cmdBuffer = '';
+    readonly #txAdmin: TxAdmin;
+    enableCmdBuffer = false;
+    cmdBuffer = '';
+
+    constructor(txAdmin: TxAdmin) {
+        this.#txAdmin = txAdmin;
     }
 
 
@@ -31,14 +35,11 @@ export default class OutputHandler {
      *   bind_error
      *   script_log
      *   script_structured_trace (handled by server logger)
-     *
-     * @param {String} mutex
-     * @param {Object} data
      */
-    trace(mutex, trace) {
+    trace(mutex: string, trace: object) {
         try {
             //Filter valid and fresh packages
-            if (mutex !== globals.fxRunner.currentMutex) return;
+            if (mutex !== this.#txAdmin.fxRunner.currentMutex) return;
             // const json = JSON.stringify(trace);
             // if (json.includes('mapmanager')) {
             //     dir(trace);
@@ -49,14 +50,31 @@ export default class OutputHandler {
             //Handle bind errors
             if (channel == 'citizen-server-impl' && data.type == 'bind_error') {
                 try {
-                    if (!globals.fxRunner.restartDelayOverride) {
-                        globals.fxRunner.restartDelayOverride = 10000;
-                    } else if (globals.fxRunner.restartDelayOverride <= 45000) {
-                        globals.fxRunner.restartDelayOverride += 5000;
+                    if (!this.#txAdmin.fxRunner.restartDelayOverride) {
+                        this.#txAdmin.fxRunner.restartDelayOverride = 10000;
+                    } else if (this.#txAdmin.fxRunner.restartDelayOverride <= 45000) {
+                        this.#txAdmin.fxRunner.restartDelayOverride += 5000;
                     }
                     const [_ip, port] = data.address.split(':');
-                    deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
+                    deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${this.#txAdmin.fxRunner.restartDelayOverride}.`);
                 } catch (e) { }
+                return;
+            }
+
+            //Handle bind errors
+            if (channel == 'citizen-server-impl' && data.type == 'nucleus_connected') {
+                if (typeof data.url !== 'string') {
+                    logError(`FD3 nucleus_connected event without URL.`);
+                } else {
+                    try {
+                        const matches = /^(https:\/\/)?.*-([0-9a-z]{6,})\.users\.cfx\.re\/?$/.exec(data.url);
+                        if (!matches || !matches[2]) throw new Error(`invalid cfxid`);
+                        this.#txAdmin.fxRunner.cfxId = matches[2];
+                        this.#txAdmin.persistentCache.set('fxsRuntime:cfxId', matches[2]);
+                    } catch (error) {
+                        logError(`Error decoding server nucleus URL.`);
+                    }
+                }
                 return;
             }
 
@@ -77,13 +95,13 @@ export default class OutputHandler {
                 && data.resource === 'monitor'
             ) {
                 if (data.payload.type === 'txAdminHeartBeat') {
-                    globals.healthMonitor.handleHeartBeat('fd3');
+                    this.#txAdmin.healthMonitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
-                    globals.logger.server.write(data.payload.logs, mutex);
+                    this.#txAdmin.logger.server.write(data.payload.logs, mutex);
                 } else if (data.payload.type === 'txAdminResourceEvent') {
-                    globals.resourcesManager.handleServerEvents(data.payload, mutex);
+                    this.#txAdmin.resourcesManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminPlayerlistEvent') {
-                    globals.playerlistManager.handleServerEvents(data.payload, mutex);
+                    this.#txAdmin.playerlistManager.handleServerEvents(data.payload, mutex);
                 }
             }
         } catch (error) {
@@ -96,13 +114,10 @@ export default class OutputHandler {
 
     /**
      * handles stdout and stderr from child fxserver and send to be processed by the logger
-     * @param {String} source
-     * @param {String} mutex
-     * @param {String|Buffer} data likely string
      */
-    write(source, mutex, data) {
+    write(source: string, mutex: string, data: string | Buffer) {
         data = data.toString();
-        globals.logger.fxserver.writeStdIO(source, data);
+        this.#txAdmin.logger.fxserver.writeStdIO(source, data);
 
         //FIXME: deprecate this whenever
         if (this.enableCmdBuffer) this.cmdBuffer += data.replace(/\u001b[^m]*?m/g, '');

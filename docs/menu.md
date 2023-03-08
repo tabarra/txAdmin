@@ -23,21 +23,39 @@ in the admin manager as shown below.
 ![img](https://i.imgur.com/LP7Ij8M.png)
 
 ## Convars
-The txAdmin menu has a variety of different convars that can alter the default behavior of the menu.  
+The txAdmin menu has a variety convars that can alter the default behavior of the menu.  
 Convars configured in the settings page should not be set manually.
 
-**txAdmin-menuEnabled** (settings page only)
+### Settings page only
+**txAdmin-menuEnabled**
 - Description: Whether the menu is enabled or not. Changing it requires server restart.
 - Default: `true`
 
-**txAdmin-menuAlignRight** (settings page only)
+**txAdmin-menuAlignRight**
 - Description: Whether to align the menu to the right of the screen instead of the left.
 - Default: `false`
 
-**txAdmin-menuPageKey** (settings page only)
+**txAdmin-menuPageKey**
 - Description: Will change the key used for changing pages in the menu. This value must be the exact browser key code for your preferred key. You can use [this](https://keycode.info/) website and the `event.code` section to find it.
 - Default: `Tab`
 
+**txAdmin-hideDefaultAnnouncement**
+- Description: Suppresses the display of announcements, allowing you to implement your own announcement via the event `txAdmin:events:announcement`.
+- Default: `false`
+
+**txAdmin-hideDefaultDirectMessage**
+- Description: Suppresses the display of direct messages, allowing you to implement your own direct message notification via the event `txAdmin:events:playerDirectMessage`.
+- Default: `false`
+
+**txAdmin-hideDefaultWarning**
+- Description: Suppresses the display of warnings, allowing you to implement your own warning via the event `txAdmin:events:playerWarned`.
+- Default: `false`
+
+**txAdmin-hideDefaultScheduledRestartWarning**
+- Description: Suppresses the display of scheduled restart warnings, allowing you to implement your own warning via the event `txAdmin:events:scheduledRestart`.
+- Default: `false`
+
+### Convar only (not in settings page)
 **txAdmin-menuDebug**
 - Description: Will toggle debug printing on the server and client.
 - Default: `false`
@@ -64,6 +82,7 @@ positions, `top-center`, `top-left`, `top-right`, `bottom-center`, `bottom-left`
 - Default: `top-center`
 - Usage: `+set txAdmin-menuAnnounceNotiPos top-right`
 
+
 ## Commands
 **tx | txadmin**
 - Description: Will toggle the in-game menu. This command has an optional argument of a player id that will quickly open up the target player's info modal.
@@ -81,7 +100,6 @@ positions, `top-center`, `top-left`, `top-right`, `bottom-center`, `bottom-left`
 - Required Perm: `none`
 
 ## Troubleshooting menu access
-
 - If you type `/tx` and nothing happens, your menu is probably disabled.  
 - If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you are registered on txAdmin, you can type `/txAdmin-reauth` in the chat to retry the authentication.  
 - If you can't authenticate and the reason id `Invalid Request: source`, this means the source IP of the HTTP request being made by fxserver to txAdmin is not a "localhost" one, which might occur if your host has multiple IPs. To disable this protection, edit your `config.json` file and add `webServer.disableNuiSourceCheck` with value `true` then restart txAdmin.

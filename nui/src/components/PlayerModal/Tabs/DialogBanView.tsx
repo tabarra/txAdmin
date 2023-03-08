@@ -39,9 +39,6 @@ const DialogBanView: React.FC = () => {
     return <DialogLoadError />;
   }
 
-  const onJoinCheckBan =
-    "meta" in playerDetails && playerDetails.meta.onJoinCheckBan;
-
   const handleBan = (e: React.FormEvent) => {
     e.preventDefault();
     if (!userHasPerm("players.ban", playerPerms)) return showNoPerms("Ban");
@@ -145,13 +142,6 @@ const DialogBanView: React.FC = () => {
       <Typography variant="h6" sx={{ mb: 2 }}>
         {t("nui_menu.player_modal.ban.title")}
       </Typography>
-      {!onJoinCheckBan && (
-        <Alert severity="warning" variant="outlined" sx={{ mb: 2 }}>
-          <strong>Ban checking is disabled.</strong> <br />
-          You need to enable it (<code>txAdmin &gt; Settings</code>) for the ban
-          to take effect.
-        </Alert>
-      )}
       <form onSubmit={handleBan}>
         <TextField
           autoFocus

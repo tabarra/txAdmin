@@ -29,7 +29,7 @@ export class BasePlayer {
      * Mutates the database data based on a source object to be applied
      * FIXME: if this is called for a disconnected ServerPlayer, it will not clean after 120s
      */
-    protected mutateDbData(srcData: Exclude<object, null>) {
+    protected mutateDbData(srcData: object) {
         if (!this.license) throw new Error(`cannot mutate database for a player that has no license`);
         this.dbData = this.dbInstance.updatePlayer(this.license, srcData, this.uniqueId);
     }
@@ -260,24 +260,29 @@ export class ServerPlayer extends BasePlayer {
 export class DatabasePlayer extends BasePlayer {
     readonly isRegistered = true; //no need to check because otherwise constructor throws
 
-    constructor(license: string, dbInstance: PlayerDatabase) {
+    constructor(license: string, dbInstance: PlayerDatabase, srcPlayerData?: DatabasePlayerType) {
         super(dbInstance, Symbol(`db${license}`));
         if (typeof license !== 'string') {
             throw new Error(`invalid player license`);
         }
 
-        //find db player
-        const dbPlayer = this.dbInstance.getPlayerData(license);
-        if (!dbPlayer) {
-            throw new Error(`player not found in database`);
+        //Set dbData either from constructor params, or from querying the database
+        if(srcPlayerData){
+            this.dbData = srcPlayerData;
+        }else{
+            const foundData = this.dbInstance.getPlayerData(license);
+            if (!foundData) {
+                throw new Error(`player not found in database`);
+            }else{
+                this.dbData = foundData;
+            }
         }
 
         //fill in data
-        this.dbData = dbPlayer;
         this.license = license;
-        this.ids = dbPlayer.ids;
-        this.displayName = dbPlayer.displayName;
-        this.pureName = dbPlayer.pureName;
+        this.ids = this.dbData.ids;
+        this.displayName = this.dbData.displayName;
+        this.pureName = this.dbData.pureName;
     }
 
     /**

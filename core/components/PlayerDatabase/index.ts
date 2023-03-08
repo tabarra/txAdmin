@@ -21,7 +21,8 @@ export class DuplicateKeyError extends Error {
 }
 type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
-    onJoinCheckWhitelist: boolean;
+    whitelistMode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
+    whitelistedDiscordRoles: string[];
     banRejectionMessage: string;
     whitelistRejectionMessage: string;
 }
@@ -94,6 +95,20 @@ export default class PlayerDatabase {
     /**
      * Register a player to the database
      */
+    getPlayersByFilter(filter: object | Function): DatabasePlayerType[] {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+
+        //Check for duplicated license
+        return this.#db.obj.chain.get('players')
+            .filter(filter as any)
+            .cloneDeep()
+            .value();
+    }
+
+
+    /**
+     * Register a player to the database
+     */
     registerPlayer(player: DatabasePlayerType): void {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         //TODO: validate player data vs DatabasePlayerType props
@@ -115,7 +130,7 @@ export default class PlayerDatabase {
      * Updates a player setting assigning srcData props to the database player.
      * The source data object is deep cloned to prevent weird side effects.
      */
-    updatePlayer(license: string, srcData: Exclude<object, null>, srcUniqueId: Symbol): DatabasePlayerType {
+    updatePlayer(license: string, srcData: object, srcUniqueId: Symbol): DatabasePlayerType {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (typeof (srcData as any).license !== 'undefined') {
             throw new Error(`cannot license field`);
@@ -162,7 +177,7 @@ export default class PlayerDatabase {
      */
     getRegisteredActions(
         idArray: string[],
-        filter: Exclude<object, null> | Function = {}
+        filter: object | Function = {}
     ): DatabaseActionType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
@@ -275,7 +290,7 @@ export default class PlayerDatabase {
      * Returns all whitelist approvals, which can be optionally filtered
      */
     getWhitelistApprovals(
-        filter?: Exclude<object, null> | Function
+        filter?: object | Function
     ): DatabaseWhitelistApprovalsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         return this.#db.obj.chain.get('whitelistApprovals')
@@ -289,7 +304,7 @@ export default class PlayerDatabase {
      * Removes whitelist approvals based on a filter.
      */
     removeWhitelistApprovals(
-        filter: Exclude<object, null> | Function
+        filter: object | Function
     ): DatabaseWhitelistApprovalsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         this.#db.writeFlag(SAVE_PRIORITY_MEDIUM);
@@ -324,7 +339,7 @@ export default class PlayerDatabase {
      * Returns all whitelist approvals, which can be optionally filtered
      */
     getWhitelistRequests(
-        filter?: Exclude<object, null> | Function
+        filter?: object | Function
     ): DatabaseWhitelistRequestsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         return this.#db.obj.chain.get('whitelistRequests')
@@ -338,7 +353,7 @@ export default class PlayerDatabase {
      * Removes whitelist requests based on a filter.
      */
     removeWhitelistRequests(
-        filter: Exclude<object, null> | Function
+        filter: object | Function
     ): DatabaseWhitelistRequestsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
@@ -352,7 +367,7 @@ export default class PlayerDatabase {
      * Updates a whitelist request setting assigning srcData props to the database object.
      * The source data object is deep cloned to prevent weird side effects.
      */
-    updateWhitelistRequests(license: string, srcData: Exclude<object, null>): DatabaseWhitelistRequestsType {
+    updateWhitelistRequests(license: string, srcData: object): DatabaseWhitelistRequestsType {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (typeof (srcData as any).id !== 'undefined' || typeof (srcData as any).license !== 'undefined') {
             throw new Error(`cannot update id or license fields`);
@@ -384,6 +399,48 @@ export default class PlayerDatabase {
             .push({ id, ...cloneDeep(request) })
             .value();
         return id;
+    }
+
+
+    /**
+     * Returns actions/players stats for the database
+     */
+    getDatabaseStats() {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+
+        const actionStats = this.#db.obj.chain.get('actions')
+            .reduce((acc, a, ind) => {
+                if (a.type == 'ban') {
+                    acc.bans++;
+                } else if (a.type == 'warn') {
+                    acc.warns++;
+                }
+                return acc;
+            }, { bans: 0, warns: 0 })
+            .value();
+
+        const playerStats = this.#db.obj.chain.get('players')
+            .reduce((acc, p, ind) => {
+                acc.players++;
+                acc.playTime += p.playTime;
+                if (p.tsWhitelisted) acc.whitelists++;
+                return acc;
+            }, { players: 0, playTime: 0, whitelists: 0 })
+            .value();
+
+        
+        //Stats only:
+        //FIXME: reevaluate this in the future
+        const databus = (globals.databus as any);
+        databus.txStatsData.playerDBStats = {
+            players: playerStats.players,
+            playTime: playerStats.playTime,
+            whitelists: playerStats.whitelists,
+            bans: actionStats.bans,
+            warns: actionStats.warns,
+        };
+
+        return { ...actionStats, ...playerStats }
     }
 
 
@@ -454,7 +511,7 @@ export default class PlayerDatabase {
         }
 
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
-        logOk(`Database optimized, removed:`);
+        logOk(`Internal Database optimized. This applies only for the txAdmin internal database, and does not affect your MySQL or framework (ESX/QBCore/etc) databases.`);
         logOk(`- ${playerRemoved} players that haven't connected in the past 9 days and had less than 2 hours of playtime.`);
         logOk(`- ${wlRequestsRemoved} whitelist requests older than a week.`);
         logOk(`- ${wlApprovalsRemoved} whitelist approvals older than a week.`);

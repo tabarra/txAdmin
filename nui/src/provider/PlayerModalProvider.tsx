@@ -54,7 +54,7 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
     setDisableTabNav(modalOpen);
     setListenForExit(!modalOpen);
     setTimeout(() => {
-      if (!modalOpen) setTab(1);
+      if (!modalOpen) setTab(0);
     }, 500);
   }, [modalOpen]);
 

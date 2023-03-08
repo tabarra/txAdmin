@@ -477,14 +477,14 @@ pre.thin-scroll{
     }
 }
 
-.res-switch {
+.switch-lg {
     width: 65px;
 }
 
-.res-switch .c-switch-input:checked~.c-switch-slider::before {
+.switch-lg .c-switch-input:checked~.c-switch-slider::before {
     -webkit-transform:translateX(40px);
     transform:translateX(40px)
 }
-.res-switch .c-switch-slider::after {
+.switch-lg .c-switch-slider::after {
     width: 65%;
 }

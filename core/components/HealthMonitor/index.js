@@ -76,15 +76,23 @@ export default class HealthMonitor {
         //Restart server
         this.isAwaitingRestart = true;
         const logMessage = `Restarting server (${reasonInternal}).`;
-        globals.logger.admin.write(`[MONITOR] ${logMessage}`);
-        logWarn(logMessage);
+        globals.logger.admin.write('MONITOR', logMessage);
         globals.fxRunner.restartServer(reasonTranslated, null);
     }
 
 
     //================================================================
+    setCurrentStatus(newStatus) {
+        if(newStatus !== this.currentStatus){
+            this.currentStatus = newStatus;
+            globals.discordBot.updateStatus().catch();
+        }
+    }
+
+
+    //================================================================
     resetMonitorStats() {
-        this.currentStatus = 'OFFLINE'; // options: OFFLINE, ONLINE, PARTIAL
+        this.setCurrentStatus('OFFLINE'); // options: OFFLINE, ONLINE, PARTIAL
         this.lastRefreshStatus = null; //to prevent DDoS crash false positive
         this.lastSuccessfulHealthCheck = null; //to see if its above limit
         this.lastStatusWarningMessage = null; //to prevent spamming
@@ -125,17 +133,16 @@ export default class HealthMonitor {
         }
 
         //Checking for the maxClients
-        if (
-            convars.deployerDefaults
-            && convars.deployerDefaults.maxClients
-            && dynamicResp
-            && dynamicResp.sv_maxclients
-        ) {
+        if (dynamicResp && dynamicResp.sv_maxclients !== undefined) {
             const maxClients = parseInt(dynamicResp.sv_maxclients);
-            if (!isNaN(maxClients) && maxClients > convars.deployerDefaults.maxClients) {
-                globals.fxRunner.srvCmd(`sv_maxclients ${convars.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
-                logError(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
-                globals.logger.admin.write(`[SYSTEM] changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
+            if (!isNaN(maxClients)) {
+                globals.persistentCache.set('fxsRuntime:maxClients', maxClients);
+
+                if (convars.deployerDefaults?.maxClients && maxClients > convars.deployerDefaults.maxClients) {
+                    globals.fxRunner.srvCmd(`sv_maxclients ${convars.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
+                    logError(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
+                    globals.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
+                }
             }
         }
 
@@ -190,7 +197,7 @@ export default class HealthMonitor {
             && anySuccessfulHeartBeat
             && !heartBeatFailed
         ) {
-            this.currentStatus = 'ONLINE';
+            this.setCurrentStatus('ONLINE');
             if (this.hasServerStartedYet == false) {
                 this.hasServerStartedYet = true;
                 globals.databus.txStatsData.monitorStats.bootSeconds.push(processUptime);
@@ -199,7 +206,7 @@ export default class HealthMonitor {
         }
 
         //Now to the (un)fun part: if the status != healthy
-        this.currentStatus = (healthCheckFailed && heartBeatFailed) ? 'OFFLINE' : 'PARTIAL';
+        this.setCurrentStatus((healthCheckFailed && heartBeatFailed) ? 'OFFLINE' : 'PARTIAL');
         const timesPrefix = `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)})`;
         const elapsedLastWarning = currTimestamp - this.lastStatusWarningMessage;
 
@@ -268,11 +275,11 @@ export default class HealthMonitor {
         }
 
         //Maybe it just finished loading the resources, but no HeartBeat yet
-        if(
+        if (
             anySuccessfulHeartBeat === false
             && starting.lastStartElapsedSecs !== null
             && starting.lastStartElapsedSecs < this.hardConfigs.heartBeat.resStartedCooldown
-        ){
+        ) {
             if (processUptime % 15 == 0) {
                 logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
                 logWarn(`No resource start pending, last resource started ${starting.lastStartElapsedSecs}s ago.`);
@@ -289,19 +296,19 @@ export default class HealthMonitor {
                 //if server didn't fully start yet
                 globals.databus.txStatsData.monitorStats.bootSeconds.push(false);
 
-                if(starting.startingElapsedSecs !== null){
+                if (starting.startingElapsedSecs !== null) {
                     //Resource didn't finish starting (if res boot still active)
                     this.restartFXServer(
                         `resource "${starting.startingResName}" failed to start within the ${this.config.resourceStartingTolerance}s time limit`,
                         globals.translator.t('restarter.start_timeout'),
                     );
-                }else if(starting.lastStartElapsedSecs !== null){
+                } else if (starting.lastStartElapsedSecs !== null) {
                     //Resources started, but no heartbeat whithin limit after that
                     this.restartFXServer(
                         `server failed to start within time limit - ${this.hardConfigs.heartBeat.resStartedCooldown}s after last resource started`,
                         globals.translator.t('restarter.start_timeout'),
                     );
-                }else{
+                } else {
                     //No resource started starting, hb over limit
                     this.restartFXServer(
                         `server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`,

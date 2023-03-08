@@ -28,6 +28,10 @@ TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
 TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
 TX_DEBUGMODE = (GetConvar('txAdmin-debugMode', 'false') == 'true') -- TODO: start using this global
+TX_HIDE_ANNOUNCEMENT = (GetConvar('txAdmin-hideDefaultAnnouncement', 'false') == 'true')
+TX_HIDE_DIRECTMESSAGE = (GetConvar('txAdmin-hideDefaultDirectMessage', 'false') == 'true')
+TX_HIDE_WARNING = (GetConvar('txAdmin-hideDefaultWarning', 'false') == 'true')
+TX_HIDE_SCHEDULEDRESTARTWARNING = (GetConvar('txAdmin-hideDefaultScheduledRestartWarning', 'false') == 'true')
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
@@ -143,18 +147,31 @@ end
 -- =============================================
 -- Broadcast admin message to all players
 local function handleAnnouncementEvent(eventData)
-    TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
+    if not TX_HIDE_ANNOUNCEMENT then
+        TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
+    end
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
+end
+
+-- Broadcast through an announcement that the server will restart in XX minutes
+local function handleScheduledRestartEvent(eventData)
+    if not TX_HIDE_SCHEDULEDRESTARTWARNING then
+        TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.translatedMessage, 'txAdmin')
+    end
+    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) txAdmin", eventData.translatedMessage)
 end
 
 -- Sends a direct message from an admin to a player
 local function handleDirectMessageEvent(eventData)
-    TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
+    if not TX_HIDE_DIRECTMESSAGE then
+        TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
+    end
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(DM) "..eventData.author, eventData.message)
 end
 
 -- Kicks a player
 local function handleKickEvent(eventData)
+    Wait(0) -- give other resources a chance to read player data
     DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
 end
 
@@ -162,7 +179,9 @@ end
 local function handleWarnEvent(eventData)
     local pName = GetPlayerName(eventData.target)
     if pName ~= nil then
-        TriggerClientEvent('txAdminClient:warn', eventData.target, eventData.author, eventData.reason)
+        if not TX_HIDE_WARNING then
+            TriggerClientEvent("txAdminClient:warn", eventData.target, eventData.author, eventData.reason)
+        end
         log("Warning "..pName.." with reason: "..eventData.reason)
     else
         logError('handleWarnEvent: player not found')
@@ -171,6 +190,7 @@ end
 
 -- Ban player(s) via netid or identifiers
 local function handleBanEvent(eventData)
+    Wait(0) -- give other resources a chance to read player data
     local kickCount = 0
     for _, playerID in pairs(GetPlayers()) do
         local identifiers = GetPlayerIdentifiers(playerID)
@@ -234,6 +254,8 @@ function txaEvent(source, args)
         return handleBanEvent(eventData)
     elseif eventName == 'serverShuttingDown' then 
         return handleShutdownEvent(eventData)
+    elseif eventName == 'scheduledRestart' then 
+        return handleScheduledRestartEvent(eventData)
     end
     CancelEvent()
 end
@@ -306,28 +328,28 @@ function handleConnections(name, setKickReason, d)
             playerName = name
         }
         if #exData.playerIds <= 1 then
-            d.done("[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg")
+            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, which you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
             return
         end
 
         --Attempt to validate the user
-        d.update("[txAdmin] Checking banlist/whitelist... (0/10)")
+        d.update("\n[txAdmin] Checking banlist/whitelist... (0/10)")
         CreateThread(function()
             local attempts = 0
             local isDone = false;
             --Do 10 attempts
             while isDone == false and attempts < 10 do
                 attempts = attempts + 1
-                d.update("[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
+                d.update("\n[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
                 PerformHttpRequest(url, function(httpCode, rawData, resultHeaders)
                     -- Validating response
                     local respStr = tostring(rawData)
                     if httpCode ~= 200 then
-                        logError("[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
+                        logError("\n[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
                     end
                     local respObj = json.decode(respStr)
                     if not respObj or type(respObj.allow) ~= "boolean" then
-                        logError("[txAdmin] Checking banlist/whitelist failed with invalid response: "..respStr)
+                        logError("\n[txAdmin] Checking banlist/whitelist failed with invalid response: "..respStr)
                     end
                     
                     if respObj.allow == true then
@@ -337,7 +359,7 @@ function handleConnections(name, setKickReason, d)
                         end
                     else 
                         if not isDone then
-                            local reason = respObj.reason or "[txAdmin] no reason provided"
+                            local reason = respObj.reason or "\n[txAdmin] no reason provided"
                             d.done("\n"..reason)
                             isDone = true
                         end
@@ -348,7 +370,7 @@ function handleConnections(name, setKickReason, d)
 
             --Block client if failed
             if not isDone then
-                d.done('[txAdmin] Failed to validate your banlist/whitelist status. Try again later.')
+                d.done("\n[txAdmin] Failed to validate your banlist/whitelist status. Try again later.")
                 isDone = true
             end
         end)

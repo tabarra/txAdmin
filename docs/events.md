@@ -7,8 +7,10 @@ The event name will be `txAdmin:events:<name>` and the first (and only) paramete
 
 ## txAdmin:events:scheduledRestart (v3.2)
 Called automatically `[30, 15, 10, 5, 4, 3, 2, 1]` minutes before a scheduled restart, as well as the times configured in the settings page.  
+Can be used with the convar `txAdmin-hideDefaultScheduledRestartWarning` to display a custom warning notification.  
 Event Data:
 - `secondsRemaining`: The number of seconds before the scheduled restart.  
+- `translatedMessage`: The translated message to show on the announcement.
 
 Example usage on ESX v1.2:
 ```lua
@@ -39,6 +41,7 @@ Event Data:
 
 ## txAdmin:events:playerWarned (v3.7)
 Called when a player is warned using txAdmin.  
+Can be used with the convar `txAdmin-hideDefaultWarning` to display custom warning.  
 Event Data:
 - `target`: The id of the player that was warned.
 - `author`: The name of the admin.
@@ -48,7 +51,7 @@ Event Data:
 
 ## txAdmin:events:playerBanned (v3.7)
 Called when a player is banned using txAdmin.  
-On update v5.0.0 the field `target` was replaced by `targetNetId` and `targetIds`.
+On update v5.0.0 the field `target` was replaced by `targetNetId` and `targetIds`.  
 Event Data:
 - `author`: The name of the admin.
 - `reason`: The reason of the ban.
@@ -63,7 +66,7 @@ Event Data:
 
 
 ## txAdmin:events:playerWhitelisted (v3.7)
-This event was deprecated on v5.0.0.
+This event was deprecated on v5.0.0, and on v5.2.0 new events were added to replace this one.
 
 ## txAdmin:event:configChanged (v4.0)
 Called when the txAdmin settings change in a way that could be relevant for the server.   
@@ -72,19 +75,20 @@ At the moment, this is only used to signal the txAdmin in-game Menu if the confi
 
 ## txAdmin:events:healedPlayer (v4.8)
 Called when a heal event is triggered for a player/whole server.  
-This is most useful for servers running "ambulance job" or other resources that keep a player unconscious even after the health being restored to 100%;  
+This is most useful for servers running "ambulance job" or other resources that keep a player unconscious even after the health being restored to 100%.  
 Event Data:
 - `id`: The ID of the healed player, or `-1` if the entire server was healed.
 
 ## txAdmin:events:announcement (v4.8)
 Called when an announcement is made using txAdmin.  
+Can be used with the convar `txAdmin-hideDefaultAnnouncement` to display custom announcement notifications.  
 Event Data:
 - `author`: The name of the admin or `txAdmin`.
 - `message`: The message of the broadcast.
 
 ## txAdmin:events:serverShuttingDown (v4.15)
 Called when the server is about to shut down.  
-This can be triggered in a scheduled and unscheduled stop or restart, by an admin or by the system.
+This can be triggered in a scheduled and unscheduled stop or restart, by an admin or by the system.  
 Event Data:
 - `delay`: How many milliseconds txAdmin will wait before killing the server process.
 - `author`: The name of the admin or `txAdmin`.
@@ -92,13 +96,14 @@ Event Data:
 
 ## txAdmin:events:playerDirectMessage (v5.0)
 Called when an admin DMs a player.
+Can be used with the convar `txAdmin-hideDefaultDirectMessage` to display custom direct message notifications.  
 Event Data:
 - `target`: The id of the player to receive the DM.
 - `author`: The name of the admin.
 - `message`: The message content.
 
 ## txAdmin:events:actionRevoked (v5.0)
-Called when an admin revokes a database action (ex. ban, warn).
+Called when an admin revokes a database action (ex. ban, warn).  
 Event Data:
 - `actionId`: The id of the player to receive the DM.
 - `actionType`: The type of the action that was revoked.
@@ -107,3 +112,37 @@ Event Data:
 - `playerName`: name of the player that received the action, or `false` if doesn't apply.
 - `playerIds`: Array containing all identifiers (ex. license, discord, etc.) this action applied to.
 - `revokedBy`: The name of the admin that revoked the action.
+
+## txAdmin:events:skippedNextScheduledRestart (v5.2)
+Called when an admin skips the next scheduled restart.  
+Event Data:
+- `secondsRemaining`: The number of seconds before the previously scheduled restart.  
+- `temporary`: If it was a temporary scheduled restart or one configured in the settings page.
+
+## txAdmin:events:whitelistPlayer (v5.2)
+Called when a player is whitelisted, or has the whitelisted status revoked.  
+This event is only fired when the player is already registered, and is not related to whitelist requests or approved whitelists pending join.  
+Event Data:
+- `action`: `added`/`removed`.
+- `license`: The license of the player.
+- `playerName`: The player display name.
+- `adminName`: Name of the admin that performed the action.
+
+## txAdmin:events:whitelistPreApproval (v5.2)
+Called when manually adding some identifier to the whitelist pre-approvals, meaning that as soon as a player with this identifier connects to the server, they will be saved to the database as a whitelisted player (without triggering `txAdmin:events:whitelistPlayer`).  
+This event is not gonna be called when a whitelist request is approved, for that use `txAdmin:events:whitelistRequest`.
+This can be done in the Whitelist Page, or using the `/whitelist <member>` Discord bot slash command.  
+Event Data:
+- `action`: `added`/`removed`.
+- `identifier`: The identifier that was pre-approved (eg. `discord:xxxxxx`).
+- `playerName?`: The player display name, except when action is `removed`.
+- `adminName`: Name of the admin that performed the action.
+
+## txAdmin:events:whitelistRequest (v5.2)
+Called whenever some event related to the whitelist requests happen.  
+Event Data:
+- `action`: `requested`/`approved`/`denied`/`deniedAll`.
+- `playerName?`: The player display name, except when action is `deniedAll`.
+- `requestId?`: The request ID (eg. `Rxxxx`), except when action is `deniedAll`.
+- `license?`: The license of the player/requester, except when action is `deniedAll`.
+- `adminName?`: Name of the admin that performed the action, except when action is `requested`.

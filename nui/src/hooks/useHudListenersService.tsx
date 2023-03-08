@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useNuiEvent } from "./useNuiEvent";
 import { Box, Typography } from "@mui/material";
@@ -71,6 +71,13 @@ export const useHudListenersService = () => {
   const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
   const setPage = useSetPage();
   const notiPos = useAnnounceNotiPosValue();
+
+  const announcementSound = useRef<HTMLAudioElement>(
+    new Audio("sounds/announcement.mp3")
+  );
+  const messageSound = useRef<HTMLAudioElement>(
+    new Audio("sounds/message.mp3")
+  );
 
   const snackFormat = (m: string) => (
     <span style={{ whiteSpace: "pre-wrap" }}>{m}</span>
@@ -163,6 +170,7 @@ export const useHudListenersService = () => {
   });
 
   useNuiEvent<AddAnnounceData>("addAnnounceMessage", ({ message, author }) => {
+    announcementSound.current.play();
     enqueueSnackbar(
       <AnnounceMessage
         message={message}
@@ -180,6 +188,7 @@ export const useHudListenersService = () => {
   });
 
   useNuiEvent<AddAnnounceData>("addDirectMessage", ({ message, author }) => {
+    messageSound.current.play();
     enqueueSnackbar(
       <AnnounceMessage
         message={message}

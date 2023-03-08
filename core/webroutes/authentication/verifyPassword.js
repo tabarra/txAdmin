@@ -1,5 +1,6 @@
 const modulename = 'WebServer:AuthVerify';
 import logger from '@core/extras/console.js';
+import { isValidRedirectPath } from '@core/extras/helpers';
 import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -54,5 +55,6 @@ export default async function AuthVerify(ctx) {
         return ctx.utils.render('login', renderData);
     }
 
-    return ctx.response.redirect('/');
+    const redirectPath = (isValidRedirectPath(ctx.query?.r)) ? ctx.query.r : '/';
+    return ctx.response.redirect(redirectPath);
 };

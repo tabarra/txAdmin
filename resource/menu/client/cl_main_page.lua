@@ -72,9 +72,20 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
         debugPrint("^1Invalid vehicle model requested: " .. model)
         cb({ e = true })
     else
-        local isAutomobile = IsThisModelACar(model)
-        if isAutomobile ~= false then isAutomobile = true end
-
+        local VehicleType = GetVehicleClassFromName(model)
+        local types = {
+            [8] = "bike",
+            [11] = "trailer",
+            [13] = "bike",
+            [14] = "boat",
+            [15] = "heli",
+            [16] = "plane",
+            [21] = "train",
+        }
+        local modelType = types[VehicleType] or "automobile"
+        if model == GetHashKey("submersible") or model == GetHashKey("submersible2") then
+            modelType = "submarine"
+        end
         -- collect the old velocity
         local ped = PlayerPedId()
         local oldVeh = GetVehiclePedIsIn(ped, false)
@@ -83,7 +94,7 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
             DeleteVehicle(oldVeh)
         end
 
-        TriggerServerEvent('txAdmin:menu:spawnVehicle', model, isAutomobile)
+        TriggerServerEvent('txAdmin:menu:spawnVehicle', model, modelType)
         cb({})
     end
 end)

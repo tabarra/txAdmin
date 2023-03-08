@@ -3,7 +3,6 @@ import humanizeDuration from 'humanize-duration';
 import { processActionList, processPlayerList } from './processor';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
-import { now } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -27,7 +26,7 @@ export default async function PlayerList(ctx) {
     };
     const respData = {
         headerTitle: 'Players',
-        stats: await getStats(dbo),
+        stats: getStats(),
         queryLimits,
         lastActions: await getLastActions(dbo, queryLimits.actions),
         lastPlayers: await getLastPlayers(dbo, queryLimits.players),
@@ -47,31 +46,11 @@ export default async function PlayerList(ctx) {
 
 /**
  * Get stats on actions and players
- * @param {object} dbo
- * @returns {object} array of actions
  */
-async function getStats(dbo) {
+function getStats() {
     try {
-        const actionStats = await dbo.chain.get('actions')
-            .reduce((acc, a, ind) => {
-                if (a.type == 'ban') {
-                    acc.bans++;
-                } else if (a.type == 'warn') {
-                    acc.warns++;
-                }
-                return acc;
-            }, {bans:0, warns:0})
-            .value();
-
-        const playerStats = await dbo.chain.get('players')
-            .reduce((acc, p, ind) => {
-                acc.players++;
-                acc.playTime += p.playTime;
-                if(p.tsWhitelisted) acc.whitelists++;
-                return acc;
-            }, {players:0, playTime:0, whitelists:0})
-            .value();
-        const playTimeSeconds = playerStats.playTime * 60 * 1000;
+        const stats = globals.playerDatabase.getDatabaseStats();
+        const playTimeSeconds = stats.playTime * 60 * 1000;
         let humanizeOptions = {
             round: true,
             units: ['y', 'd', 'h'],
@@ -88,23 +67,12 @@ async function getStats(dbo) {
         };
         const playTime = humanizeDuration(playTimeSeconds, humanizeOptions);
 
-        //Stats only:
-        //DEBUG reevaluate this in the future
-        globals.databus.txStatsData.playerDBStats = {
-            ts: now(),
-            players: playerStats.players,
-            playTime: playerStats.playTime,
-            bans: actionStats.bans,
-            warns: actionStats.warns,
-            whitelists: playerStats.whitelists,
-        };
-
         return {
-            players: playerStats.players.toLocaleString(),
+            players: stats.players.toLocaleString(),
             playTime: playTime,
-            bans: actionStats.bans.toLocaleString(),
-            warns: actionStats.warns.toLocaleString(),
-            whitelists: playerStats.whitelists.toLocaleString(),
+            bans: stats.bans.toLocaleString(),
+            warns: stats.warns.toLocaleString(),
+            whitelists: stats.whitelists.toLocaleString(),
         };
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;

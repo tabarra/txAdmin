@@ -1,13 +1,17 @@
 import TxAdmin from './txAdmin';
 import logger from '@core/extras/console';
-import { txEnv } from './globalData.ts';
-import checkPreRelease from '@core/extras/checkPreRelease.js';
+import { txEnv, convars } from './globalData';
+import checkPreRelease from '@core/extras/checkPreRelease';
 const { dir, log, logOk, logWarn, logError, setTTYTitle } = logger();
 
 
 /**
  * Starting txAdmin (have fun :p)
  */
+const logDie = (x: string) => {
+    logError(x);
+    process.exit(1);
+};
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
 if (serverProfile.endsWith('.base')) {
     logDie(`Looks like the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
@@ -48,20 +52,23 @@ process.stdout.on('error', (data) => { });
 process.stderr.on('error', (data) => { });
 
 //Handle "the unexpected"
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', (err: Error) => {
     logError('Ohh nooooo - unhandledRejection');
     logError(err.message);
     dir(err.stack);
 });
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', function (err: Error) {
     logError('Ohh nooooo - uncaughtException');
     logError(err.message);
     dir(err.stack);
 });
-process.on('exit', (code) => {
+process.on('exit', (_code) => {
     log('Stopping txAdmin');
 });
-// Error.stackTraceLimit = 25;
-// process.on('warning', (warning) => {
-//     dir(warning);
-// });
+Error.stackTraceLimit = 25;
+process.removeAllListeners('warning');
+process.on('warning', (warning) => {
+    if(warning.name !== 'ExperimentalWarning' || convars.isDevMode){
+        dir(warning);
+    }
+});

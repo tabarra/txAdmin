@@ -266,14 +266,12 @@ async function handleSetWhitelist(ctx: Context, sess: any, player: PlayerClass):
             return { success: true };
         }
 
-        //FIXME: make this code look like the one from the other functions, separating setWhitelist in trycatch and here doing a cmdOk check
-        //FIXME:
-        // Dispatch `txAdmin:events:playerWhitelisted`
-        // globals.fxRunner.sendEvent('playerWhitelisted', {
-        //     license: player.license,
-        //     author: sess.auth.username,
-        //     status,
-        // });
+        globals.fxRunner.sendEvent('whitelistPlayer', {
+            action: status ? 'added' : 'removed',
+            license: player.license,
+            playerName: player.displayName,
+            adminName: sess.auth.username,
+        });
 
         return { success: true };
     } catch (error) {

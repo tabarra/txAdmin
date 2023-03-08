@@ -13,6 +13,36 @@
     .CodeMirror{
         height: calc(100vh - 250px);
     }
+
+    /* https://codemirror.net/5/addon/dialog/dialog.css */
+    .CodeMirror-dialog {
+        position: absolute;
+        left: 0; right: 0;
+        background: inherit;
+        z-index: 15;
+        padding: .1em .8em;
+        overflow: hidden;
+        color: inherit;
+    }
+    .CodeMirror-dialog-top {
+        border-bottom: 1px solid #eee;
+        top: 0;
+    }
+    .CodeMirror-dialog-bottom {
+        border-top: 1px solid #eee;
+        bottom: 0;
+    }
+    .CodeMirror-dialog input {
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 20em;
+        color: inherit;
+        font-family: monospace;
+    }
+    .CodeMirror-dialog button {
+        font-size: 70%;
+    }
 </style>
 
 <!-- Hacky hack but ok, no time to do it better: -->
@@ -36,10 +66,10 @@
     <div class="mx-auto">
         <button type="button" id="ctrl-restart" class="btn btn-outline-danger btn-sm mb-2"
             onclick="txApiFxserverControl('restart')" <%=disableRestart %> >
-            RESTART SERVER
+            RESTART SERVER (CTRL+R)
         </button>
         <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">
-            Save File
+            Save File (CTRL+S)
         </button>
     </div>
 </div>
@@ -54,6 +84,11 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="js/codeEditor/mode/simple.js"></script>
 <script src="js/codeEditor/mode/fivem-cfg.js"></script>
+<script src="js/codeEditor/comment.js"></script>
+<script src="js/codeEditor/searchcursor.js"></script>
+<script src="js/codeEditor/dialog.js"></script>
+<script src="js/codeEditor/search.js"></script>
+
 <script>
     //============================================== CodeMirror & Hook Setup
     const saveButton = document.getElementById('cfgEditor-save');
@@ -69,9 +104,14 @@
 
         window.addEventListener("keydown", (event) => {
             if (event.ctrlKey && event.key == 's') {
-                console.dir(event)
                 event.preventDefault();
                 saveButton.click();
+            } else if (event.ctrlKey && event.key == 'r') {
+                txApiFxserverControl('restart')
+                event.preventDefault();
+            } else if (event.ctrlKey && event.key == ';') {
+                window.CMInstance.toggleComment({lineComment: "#"})
+                event.preventDefault();
             }
         })
     };

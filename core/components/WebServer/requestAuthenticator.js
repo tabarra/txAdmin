@@ -29,7 +29,7 @@ export const requestAuth = (epType) => {
         if (epType === 'api') {
             const sessToken = ctx.session?.auth?.csrfToken;
             const headerToken = ctx.headers['x-txadmin-csrftoken'];
-            if(sessToken && (sessToken !== headerToken)){
+            if (sessToken && (sessToken !== headerToken)) {
                 //DEBUG
                 // ogConsole.dir({
                 //     route: `${ctx.method} ${ctx.path}`,
@@ -51,7 +51,11 @@ export const requestAuth = (epType) => {
             if (verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
             ctx.session.auth = {};
             if (epType === 'web') {
-                return ctx.response.redirect('/auth?logout');
+                if (ctx.method === 'GET' && ctx.path !== '/') {
+                    return ctx.response.redirect(`/auth?logout&r=${encodeURIComponent(ctx.path)}`);
+                } else {
+                    return ctx.response.redirect(`/auth?logout`);
+                }
             } else if (epType === 'api') {
                 return ctx.send({ logout: true });
             } else if (epType === 'nuiStart') {
@@ -160,14 +164,14 @@ export const authLogic = (sess, perm, epType) => {
                 let admin = globals.adminVault.getAdminByName(sess.auth.username);
                 if (admin) {
                     if (
-                        typeof sess.auth.password_hash == 'string'
-                        && admin.password_hash == sess.auth.password_hash
+                        typeof sess.auth.password_hash === 'string'
+                        && admin.password_hash === sess.auth.password_hash
                     ) {
                         isValidAuth = true;
                     } else if (
-                        typeof sess.auth.provider == 'string'
-                        && typeof admin.providers[sess.auth.provider] == 'object'
-                        && sess.auth.provider_uid == admin.providers[sess.auth.provider].id
+                        typeof sess.auth.provider === 'string'
+                        && typeof admin.providers[sess.auth.provider] === 'object'
+                        && sess.auth.provider_identifier === admin.providers[sess.auth.provider].identifier
                     ) {
                         isValidAuth = true;
                     }

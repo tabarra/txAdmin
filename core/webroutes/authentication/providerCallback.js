@@ -1,7 +1,8 @@
 const modulename = 'WebServer:ProviderCallback';
 import crypto from 'node:crypto';
-import logger from '@core/extras/console.js';
+import logger, { ogConsole } from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
+import { isValidRedirectPath } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -102,7 +103,7 @@ export default async function ProviderCallback(ctx) {
 
     //Check & Login user
     try {
-        const admin = globals.adminVault.getAdminByProviderUID(userInfo.name);
+        const admin = globals.adminVault.getAdminByIdentifiers([identifier]);
         if (!admin) {
             ctx.session.auth = {};
             return returnJustMessage(
@@ -113,7 +114,7 @@ export default async function ProviderCallback(ctx) {
         }
 
         //Setting session
-        ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo);
+        ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo, identifier);
         ctx.session.auth.username = admin.name;
 
         //Save the updated provider identifier & data to the admins file
@@ -122,7 +123,8 @@ export default async function ProviderCallback(ctx) {
         ctx.utils.logAction(`logged in from ${ctx.ip} via citizenfx`);
         globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
         globals.databus.txStatsData.login.methods.citizenfx++;
-        return ctx.response.redirect('/');
+        const redirectPath = (isValidRedirectPath(ctx.session?.socialLoginRedirect)) ? ctx.session.socialLoginRedirect : '/';
+        return ctx.response.redirect(redirectPath);
     } catch (error) {
         ctx.session.auth = {};
         if (verbose) logError(`Failed to login: ${error.message}`);

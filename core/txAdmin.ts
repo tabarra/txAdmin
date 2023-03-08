@@ -23,17 +23,20 @@ import WebServer from '@core/components/WebServer';
 import ResourcesManager from '@core/components/ResourcesManager';
 import PlayerlistManager from '@core/components/PlayerlistManager';
 import PlayerDatabase from '@core/components/PlayerDatabase';
+import PersistentCache from '@core/components/PersistentCache';
 
 const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
 
 
 //Helpers
-const cleanPath = (x) => { return slash(path.normalize(x)); };
+const cleanPath = (x: string) => { return slash(path.normalize(x)); };
 
 
 // Long ago I wanted to replace this with dependency injection.
 // I Totally gave up.
-global.globals = {
+const globalsInternal: Record<string, any> = {
+    txAdmin: null, //self reference for webroutes that need to access it from the globals
+
     adminVault: null,
     discordBot: null,
     fxRunner: null,
@@ -50,6 +53,10 @@ global.globals = {
     config: null,
     deployer: null,
     info: {},
+
+    //FIXME: settings:save webroute cannot call txAdmin.refreshConfig for now
+    //so this hack allows it to call it
+    func_txAdminRefreshConfig: ()=>{},
 
     //NOTE: still not ideal, but since the extensions system changed entirely,
     //      will have to rethink the plans for this variable.
@@ -104,6 +111,9 @@ global.globals = {
     },
 };
 
+//@ts-ignore: yes i know this is wrong
+global.globals = globalsInternal;
+
 
 /**
  * Main APP
@@ -123,10 +133,27 @@ export default class TxAdmin {
     resourcesManager;
     playerlistManager;
     playerDatabase;
+    persistentCache;
 
-    constructor(serverProfile) {
+    //Runtime
+    readonly info: {
+        serverProfile: string;
+        serverProfilePath: string;
+    }
+    globalConfig: {
+        serverName: string,
+        language: string,
+        menuEnabled: boolean,
+        menuAlignRight: boolean,
+        menuPageKey: string,
+    }
+    
+
+    constructor(serverProfile: string) {
         log(`Profile '${serverProfile}' starting...`);
-        globals.info.serverProfile = serverProfile;
+
+        //FIXME: hacky self reference because some webroutes need to access globals.txAdmin to pass it down
+        globalsInternal.txAdmin = this;
 
         //Check if the profile exists and call setup if it doesn't
         const profilePath = cleanPath(path.join(txEnv.dataPath, serverProfile));
@@ -134,21 +161,29 @@ export default class TxAdmin {
             try {
                 setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, serverProfile, profilePath);
             } catch (error) {
-                logError(`Failed to create profile '${serverProfile}' with error: ${error.message}`);
+                logError(`Failed to create profile '${serverProfile}' with error: ${(error as Error).message}`);
                 process.exit();
             }
         }
-        globals.info.serverProfilePath = profilePath;
+        this.info = {
+            serverProfile: serverProfile,
+            serverProfilePath: profilePath
+        }
+        globalsInternal.info = this.info;
 
         //Load Config Vault
         let profileConfig;
         try {
             this.configVault = new ConfigVault(profilePath, serverProfile);
-            globals.configVault = this.configVault;
-            profileConfig = globals.configVault.getAll();
-            globals.config = profileConfig.global;
+            globalsInternal.configVault = this.configVault;
+            profileConfig = globalsInternal.configVault.getAll();
+            this.globalConfig = profileConfig.global;
+            globalsInternal.config = this.globalConfig;
+
+            //FIXME: hacky fix for settings:save to be able to update this
+            globalsInternal.func_txAdminRefreshConfig = this.refreshConfig.bind(this);
         } catch (error) {
-            logError(`Error starting ConfigVault: ${error.message}`);
+            logError(`Error starting ConfigVault: ${(error as Error).message}`);
             dir(error);
             process.exit(1);
         }
@@ -159,48 +194,51 @@ export default class TxAdmin {
         //  - translator before scheduler (in case it tries to send translated msg immediately)
         //  - adminVault before webserver
         //  - logger before fxrunner
-        //FIXME: After the migration, delete the globals.
+        //FIXME: After the migration, delete the globalsInternal.
         try {
             this.adminVault = new AdminVault();
-            globals.adminVault = this.adminVault;
+            globalsInternal.adminVault = this.adminVault;
 
-            this.discordBot = new DiscordBot(profileConfig.discordBot);
-            globals.discordBot = this.discordBot;
+            this.discordBot = new DiscordBot(this, profileConfig.discordBot);
+            globalsInternal.discordBot = this.discordBot;
 
             this.logger = new Logger(profileConfig.logger);
-            globals.logger = this.logger;
+            globalsInternal.logger = this.logger;
 
             this.translator = new Translator();
-            globals.translator = this.translator;
+            globalsInternal.translator = this.translator;
 
-            this.fxRunner = new FxRunner(profileConfig.fxRunner);
-            globals.fxRunner = this.fxRunner;
+            this.fxRunner = new FxRunner(this, profileConfig.fxRunner);
+            globalsInternal.fxRunner = this.fxRunner;
 
-            this.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
-            globals.dynamicAds = this.dynamicAds;
+            this.dynamicAds = new DynamicAds();
+            globalsInternal.dynamicAds = this.dynamicAds;
 
             this.healthMonitor = new HealthMonitor(profileConfig.monitor);
-            globals.healthMonitor = this.healthMonitor;
+            globalsInternal.healthMonitor = this.healthMonitor;
 
             this.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
-            globals.scheduler = this.scheduler;
+            globalsInternal.scheduler = this.scheduler;
 
-            this.statsCollector = new StatsCollector(profileConfig.statsCollector);
-            globals.statsCollector = this.statsCollector;
+            this.statsCollector = new StatsCollector();
+            globalsInternal.statsCollector = this.statsCollector;
 
             this.webServer = new WebServer(profileConfig.webServer);
-            globals.webServer = this.webServer;
+            globalsInternal.webServer = this.webServer;
 
-            this.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
-            globals.resourcesManager = this.resourcesManager;
+            this.resourcesManager = new ResourcesManager();
+            globalsInternal.resourcesManager = this.resourcesManager;
 
             this.playerlistManager = new PlayerlistManager(this);
-            globals.playerlistManager = this.playerlistManager;
+            globalsInternal.playerlistManager = this.playerlistManager;
 
             this.playerDatabase = new PlayerDatabase(this, profileConfig.playerDatabase);
-            globals.playerDatabase = this.playerDatabase;
+            globalsInternal.playerDatabase = this.playerDatabase;
+
+            this.persistentCache = new PersistentCache(this);
+            globalsInternal.persistentCache = this.persistentCache;
         } catch (error) {
-            logError(`Error starting main components: ${error.message}`);
+            logError(`Error starting main components: ${(error as Error).message}`);
             dir(error);
             process.exit(1);
         }
@@ -211,5 +249,13 @@ export default class TxAdmin {
         //Run Update Checker every 15 minutes
         updateChecker();
         setInterval(updateChecker, 15 * 60 * 1000);
+    }
+
+    /**
+     * Refreshes the global config
+     */
+    refreshConfig() {
+        this.globalConfig = this.configVault.getScoped('global');
+        globalsInternal.config = this.globalConfig;
     }
 };

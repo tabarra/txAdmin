@@ -90,16 +90,17 @@ export default (config) => {
     router.post('/intercom/:scope', requestAuth('intercom'), webRoutes.intercom);
 
     //Diagnostic routes
-    router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics);
+    router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics_page);
+    router.post('/diagnostics/sendReport', requestAuth('web'), webRoutes.diagnostics_sendReport);
     router.get('/advanced', requestAuth('web'), webRoutes.advanced_get);
-    router.post('/advanced', requestAuth('api'), webRoutes.advanced_actions); //FIXME: add action to URL
+    router.post('/advanced', requestAuth('api'), webRoutes.advanced_actions);
 
     //Data routes
-    router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
+    router.get('/systemLog', requestAuth('web'), webRoutes.systemLog);
     router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
     router.get('/serverLog/partial', requestAuth('api'), webRoutes.serverLogPartial);
-    router.get('/status/:scope?', requestAuth('api'), webRoutes.status); //FIXME: param fix due to missing search
-    router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData); //FIXME: param fix due to missing search
+    router.get('/status/:scope?', requestAuth('api'), webRoutes.status);
+    router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData);
     router.post('/database/:action', requestAuth('api'), webRoutes.databaseActions);
 
     /*

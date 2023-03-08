@@ -85,11 +85,22 @@ export default class Scheduler {
      */
     setNextSkip(enabled) {
         if (enabled) {
+            let prevMinuteFloorTs, temporary;
             if (this.nextTempSchedule) {
+                prevMinuteFloorTs = this.nextTempSchedule.minuteFloorTs;
+                temporary = true;
                 this.nextTempSchedule = false;
             } else if (this.calculatedNextRestartMinuteFloorTs) {
+                prevMinuteFloorTs = this.calculatedNextRestartMinuteFloorTs;
+                temporary = false;
                 this.nextSkip = this.calculatedNextRestartMinuteFloorTs;
             }
+
+            //Dispatch `txAdmin:events:skippedNextScheduledRestart` 
+            globals.fxRunner.sendEvent('skippedNextScheduledRestart', {
+                secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
+                temporary
+            });
         } else {
             this.nextSkip = false;
         }
@@ -190,19 +201,10 @@ export default class Scheduler {
             const discordMsg = globals.translator.t('restarter.schedule_warn_discord', tOptions);
             globals.discordBot.sendAnnouncement(discordMsg);
 
-            // Dispatch `txAdmin:events:announcement`
-            //TODO: remove disableChatWarnings?
-            if (!this.config.disableChatWarnings) {
-                const serverMsg = globals.translator.t('restarter.schedule_warn', tOptions);
-                globals.fxRunner.sendEvent('announcement', {
-                    author: 'txAdmin',
-                    message: serverMsg,
-                });
-            }
-
             //Dispatch `txAdmin:events:scheduledRestart` 
             globals.fxRunner.sendEvent('scheduledRestart', {
                 secondsRemaining: nextDistMins * 60,
+                translatedMessage: globals.translator.t('restarter.schedule_warn', tOptions)
             });
         }
     }
@@ -222,8 +224,7 @@ export default class Scheduler {
 
         //Restart server
         const logMessage = `Restarting server (${reasonInternal}).`;
-        globals.logger.admin.write(`[SCHEDULER] ${logMessage}`);
+        globals.logger.admin.write('SCHEDULER', logMessage);
         globals.fxRunner.restartServer(reasonTranslated, null);
-        logWarn(logMessage);
     }
 };

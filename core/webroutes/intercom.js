@@ -27,21 +27,24 @@ export default async function Intercom(ctx) {
         try {
             globals.healthMonitor.handleHeartBeat('http', postData);
             const extractData = {
+                //FIXME: mover isso pro stats collector, calcular a cada 5 mins, add hardware, recipe, ptero, etc
                 //Changelog:
                 // 6: added txStatsData.randIDFailures
                 // 7: changed web folder paths, which affect txStatsData.pageViews
-                '$statsVersion': 7,
+                // 8: removed discordBotStats and whitelistEnabled
+                '$statsVersion': 8,
                 isZapHosting: convars.isZapHosting,
                 txAdminVersion: txEnv.txAdminVersion,
                 txAdminIsDefaultPort: (convars.txAdminPort == 40120),
                 txAdminUptime: Math.round(process.uptime()),
                 fxServerUptime: globals.fxRunner.getUptime(),
-                discordBotStats: (globals.discordBot.config.enabled) ? globals.discordBot.usageStats : false,
+                // discordBotStats: (globals.discordBot.config.enabled) ? globals.discordBot.usageStats : false, //FIXME:
                 banlistEnabled: globals.playerDatabase.config.onJoinCheckBan,
-                whitelistEnabled: globals.playerDatabase.config.onJoinCheckWhitelist,
+                // whitelistEnabled: globals.playerDatabase.config.onJoinCheckWhitelist, //FIXME: false / string with options > whitelistMode
                 admins: (globals.adminVault.admins) ? globals.adminVault.admins.length : 1,
                 tmpLooksLikeRecipe: (globals.fxRunner.config.serverDataPath || '').includes('.base'),
             };
+            //NOTE: txStatsData.playerDBStats is cheap-ish to get sync from playerDatabase.getDatabaseStats()
             const outData = Object.assign(extractData, globals.databus.txStatsData);
             return ctx.send(JSON.stringify(outData, null, 2));
         } catch (error) {
