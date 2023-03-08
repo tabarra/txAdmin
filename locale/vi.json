@@ -29,29 +29,29 @@
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Máy chủ đang trong chế độ <strong> chỉ Admin</strong>.",
+            "insufficient_ids": "Bạn không có bất kì định danh <code>discord</code> hay <code>fivem</code>, bạn cần có ít nhất một định danh để xác thực bạn là Admin.",
+            "deny_message": "Mã định danh của bạn không được chỉ định cho bất kỳ quản trị viên txAdmin nào."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Máy chủ đang trong chế độ <strong>Whitelist Discord</strong>.",
+            "insufficient_ids": "Bạn không có định danh <code>discord</code>, bạn cần mở Discord để xác nhận bạn là thành viên trong Discord của máy chủ..",
+            "deny_title": "Bạn cần tham gia Discord của máy chủ để tham gia.",
+            "deny_message": "Vui lòng tham gia Discord %{guildname} và thử lại."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Máy chủ đang trong chế độ <strong>Whitelist Discord Role</strong>.",
+            "insufficient_ids": "Bạn không có định danh <code>discord</code>, bạn cần mở Discord để xác nhận bạn là thành viên trong Discord của máy chủ..",
+            "deny_notmember_title": "Bạn cần tham gia Discord của máy chủ để tham gia.",
+            "deny_notmember_message": "Vui lòng tham gia Discord %{guildname} để xin cấp Roles sau đó thử lại.",
+            "deny_noroles_title": "Bạn chưa được cấp Role WhiteList để tham gia máy chủ.",
+            "deny_noroles_message": "Để tham gia máy chủ, bạn cần được cấp Role Whitelist tại Discord %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Máy chủ đang trong chế độ <strong>Whitelist License</strong>.",
+            "insufficient_ids": "Bạn không có định danh <code>Rockstar License</code>, có nghĩa máy chủ đang ở chế độ <code>sv_lan</code>. Nếu bạn là chủ máy chủ, bạn có thể sửa trong tập tin <code>server.cfg</code>.",
+            "deny_title": "Bạn chưa được cấp WhiteList.",
+            "request_id_label": "ID Yêu cầu"
         }
     },
     "server_actions": {
@@ -107,8 +107,8 @@
                 },
                 "superjump": {
                     "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "label": "Bật chế độ nhảy siêu cao, đồng thời chạy nhanh hơn",
+                    "success": "Đã bật siêu nhảy"
                 },
                 "normal": {
                     "title": "Normal",
@@ -142,7 +142,7 @@
                 }
             },
             "vehicle": {
-                "title": "xe",
+                "title": "Phương tiện",
                 "onesync_error": "Yêu cầu Onesync",
                 "not_in_veh_error": "Bạn đang ở trong xe!",
                 "spawn": {
