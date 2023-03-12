@@ -45,9 +45,9 @@ export default class FXServerLogger extends LoggerBase {
             console.verbose.log(`Rotated file ${filename}`);
         });
 
-
         this.recentBuffer = '';
-        this.recentBufferMaxSize = 128 * 1024; //128kb
+        this.recentBufferMaxSize = 256 * 1024; //kb
+        this.recentBufferTrimSliceSize = 32 * 1024; //how much will be cut when overflows
     }
 
 
@@ -131,8 +131,8 @@ export default class FXServerLogger extends LoggerBase {
     appendRecent(data) {
         this.recentBuffer += data;
         if (this.recentBuffer.length > this.recentBufferMaxSize) {
-            this.recentBuffer = this.recentBuffer.slice(-0.5 * this.recentBufferMaxSize);
-            this.recentBuffer = this.recentBuffer.substr(this.recentBuffer.indexOf('\n'));
+            this.recentBuffer = this.recentBuffer.slice(this.recentBufferTrimSliceSize - this.recentBufferMaxSize);
+            this.recentBuffer = this.recentBuffer.substring(this.recentBuffer.indexOf('\n'));
         }
     }
 };
