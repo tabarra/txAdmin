@@ -107,7 +107,7 @@
                 },
                 "superjump": {
                     "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
+                    "label": "Basculer sur le mode super saut, le joueur courra également plus vite",
                     "success": "Super Jump enabled"
                 },
                 "normal": {
