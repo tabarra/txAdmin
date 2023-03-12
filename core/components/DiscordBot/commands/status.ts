@@ -229,10 +229,10 @@ export const removeOldEmbed = async (interaction: ChatInputCommandInteraction, t
     const oldMessageId = txAdmin.persistentCache.get('discord:status:messageId');
     if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
         const oldChannel = await interaction.client.channels.fetch(oldChannelId);
-        if (oldChannel?.type === ChannelType.GuildText) {
+        if (oldChannel?.type === ChannelType.GuildText || oldChannel?.type === ChannelType.GuildAnnouncement) {
             await oldChannel.messages.delete(oldMessageId);
         } else {
-            throw new Error(`oldChannel is not a guild text channel`);
+            throw new Error(`oldChannel is not a guild text or announcement channel`);
         }
     } else {
         throw new Error(`no old message id saved, maybe was never sent, maybe it was removed`);
@@ -275,7 +275,7 @@ export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin
 
     //Attempt to send new message
     try {
-        if (interaction.channel?.type !== ChannelType.GuildText) throw new Error(`channel type not supported`);
+        if (!(interaction.channel?.type == ChannelType.GuildText || interaction.channel?.type == ChannelType.GuildAnnouncement)) throw new Error(`channel type not supported`);
         const placeholderEmbed = new EmbedBuilder({
             description: '_placeholder message, attempting to edit with embed..._\n**Note:** If you are seeing this message, it probably means that something was wrong with the configured Embed JSONs and Discord\'s API rejected the request to replace this placeholder.'
         })
