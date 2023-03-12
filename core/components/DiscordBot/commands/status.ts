@@ -275,7 +275,9 @@ export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin
 
     //Attempt to send new message
     try {
-        if (!(interaction.channel?.type == ChannelType.GuildText || interaction.channel?.type == ChannelType.GuildAnnouncement)) throw new Error(`channel type not supported`);
+        if (interaction.channel?.type !== ChannelType.GuildText && interaction.channel?.type !== ChannelType.GuildAnnouncement) {
+            throw new Error(`channel type not supported`);
+        }
         const placeholderEmbed = new EmbedBuilder({
             description: '_placeholder message, attempting to edit with embed..._\n**Note:** If you are seeing this message, it probably means that something was wrong with the configured Embed JSONs and Discord\'s API rejected the request to replace this placeholder.'
         })
