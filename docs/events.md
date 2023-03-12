@@ -2,7 +2,7 @@
 
 txAdmin sends **server events** to allow for integration of some functionalities with other resources.
 The event name will be `txAdmin:events:<name>` and the first (and only) parameter will be a table that may contain relevant data.  
-> **Important:** do not fully rely on events where consistency is key since they may be executed while the server is not online therefore your resource would not be notified about it. For instance, while the server us stopped one could whitelist or ban player identifiers.
+> **Important:** do not fully rely on events where consistency is key since they may be executed while the server is not online therefore your resource would not be notified about it. For instance, while the server is stopped one could whitelist or ban player identifiers.
 
 
 ## txAdmin:events:scheduledRestart (v3.2)
