@@ -365,14 +365,19 @@ async function handleDiscord(ctx: Context) {
             let extraContext = '';
             if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
                 extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
-                - Go to the Dev Portal (<https://discord.com/developers/applications>)
+                - Go to the Dev Portal (https://discord.com/developers/applications)
                 - Navigate to \`Bot > Privileged Gateway Intents\`.
                 - Enable the \`GUILD_MEMBERS\` intent.
                 - Save on the dev portal.
                 - Go to the \`txAdmin > Settings > Discord Bot\` and press save.`;
             } else if (errorCode === 'CustomNoGuild') {
-                extraContext = `This probably means the bot is not in the guild you are trying to use.
-                Please invite the bot to the guild and try again.`;
+                const inviteUrl = ('clientId' in (error as any))
+                    ? `https://discord.com/oauth2/authorize?client_id=${(error as any).clientId}&scope=bot&permissions=0`
+                    : `https://discordapi.com/permissions.html#0`
+                extraContext = `**This usually mean one of the issues below:**
+                - **Wrong guild/server ID:** read the description of the guild/server ID setting for more information.
+                - **Bot is not in the guild/server:** you need to [INVITE THE BOT](${inviteUrl}) to join the server.
+                - **Wrong bot:** you may be using the token of another discord bot.`;
             }
             return ctx.send({
                 type: 'danger',

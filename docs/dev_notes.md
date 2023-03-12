@@ -1,8 +1,9 @@
 # TODO:
 - [x] fix diagnostics data error on pterodactyl
 - [x] new console utility + refactoring
+- [x] change dashboard median player message
+- [x] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
 - [ ] fix: menu > send announcement does not trigger discord msg nor custom event
-- [ ] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
 - [ ] ConfigVault.saveProfile should probably throw the error up
 - [ ] whitelist "discord no id" message should tell the user to open discord desktop
 
@@ -26,9 +27,6 @@ günther
 ## Optional
 - [ ] bot: fix http agent options for localAddress
 - [ ] bot: add rate limit events to diagnostics page
-- [ ] change dashboard median player message
-    - top 1000: "your server seems to be in top 1000, join and type /server to track your progress"
-    - top 500: "you might be in top 500, join discord and see if you are eligible for the role"
 - [ ] update readme with new features and contributing warning
 - [ ] stats: 
     - [ ] ????
