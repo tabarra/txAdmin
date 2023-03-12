@@ -152,9 +152,9 @@ export const printBanner = async () => {
         ...addrs.map((addr) => chalk.inverse(` http://${addr}:${convars.txAdminPort}/ `)),
         ...adminPinLines,
     ];
-    console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bold.bgGreen);
+    console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);
     if (convars.forceInterface === false) {
-        console.multiline(msgRes.value, chalk.bold.bgBlue);
+        console.multiline(msgRes.value, chalk.bgBlue);
     }
 
     //Opening page

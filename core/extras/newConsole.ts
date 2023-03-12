@@ -7,10 +7,6 @@ import slash from 'slash';
 import ErrorStackParser from 'error-stack-parser';
 import sourceMapSupport from 'source-map-support'
 
-/*
-    FIXME: test styling notes
-    - time dim, separated, tag with color and no bg
-*/
 
 //Buffer handler
 //NOTE: the buffer will take between 64~72kb
@@ -196,18 +192,15 @@ export const getTimestamp = () => (new Date).toLocaleString(
 /**
  * Generated the colored log prefix (ts+tags)
  */
-export const genLogPrefix = (currContext: string, color: Function) => {
-    const currTime = getTimestamp();
-    const timeTag = chalk.inverse(`[${currTime}]`);
-    const headerTag = color(`[${currContext}]`);
-    return `${timeTag}${headerTag}`;
+export const genLogPrefix = (currContext: string, color: ChalkInstance) => {
+    return color.black(`[${getTimestamp()}][${currContext}]`);
 }
 
 
 /**
  * Generates a custom log function with custom context and specific Console
  */
-const getLogFunc = (currContext: string, color: Function, consoleInstance?: Console) => {
+const getLogFunc = (currContext: string, color: ChalkInstance, consoleInstance?: Console) => {
     return (message?: any, ...optParams: any) => {
         if (!consoleInstance) consoleInstance = defaultConsole;
         const prefix = genLogPrefix(currContext, color);
@@ -229,25 +222,26 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
     return {
         ...defaultConsole,
         tag: (subCtx: string) => consoleFactory(ctx, subCtx),
-        debug: getLogFunc(currContext, chalk.bold.bgMagenta),
-        log: getLogFunc(currContext, chalk.bold.bgBlue),
-        ok: getLogFunc(currContext, chalk.bold.bgGreen),
-        warn: getLogFunc(currContext, chalk.bold.bgYellow),
-        error: getLogFunc(currContext, chalk.bold.bgRed),
+        debug: getLogFunc(currContext, chalk.bgMagenta),
+        log: getLogFunc(currContext, chalk.bgBlue),
+        ok: getLogFunc(currContext, chalk.bgGreen),
+        warn: getLogFunc(currContext, chalk.bgYellow),
+        error: getLogFunc(currContext, chalk.bgRed),
         dir: (data: any, options?: InspectOptions) => dirHandler.call(null, data, options),
-        multiline: (text: string | string[], color: Function) => {
+        multiline: (text: string | string[], color: ChalkInstance) => {
             if (!Array.isArray(text)) text = text.split('\n');
             const prefix = genLogPrefix(currContext, color);
-            const message = text.map((line) => `${prefix} ${line}`);
-            defaultConsole.log(message.join('\n'));
+            for (const line of text) {
+                defaultConsole.log(prefix, line);
+            }
         },
 
         verbose: {
-            debug: getLogFunc(currContext, chalk.bold.bgMagenta, verboseConsole),
-            log: getLogFunc(currContext, chalk.bold.bgBlue, verboseConsole),
-            ok: getLogFunc(currContext, chalk.bold.bgGreen, verboseConsole),
-            warn: getLogFunc(currContext, chalk.bold.bgYellow, verboseConsole),
-            error: getLogFunc(currContext, chalk.bold.bgRed, verboseConsole),
+            debug: getLogFunc(currContext, chalk.bgMagenta, verboseConsole),
+            log: getLogFunc(currContext, chalk.bgBlue, verboseConsole),
+            ok: getLogFunc(currContext, chalk.bgGreen, verboseConsole),
+            warn: getLogFunc(currContext, chalk.bgYellow, verboseConsole),
+            error: getLogFunc(currContext, chalk.bgRed, verboseConsole),
             dir: (data: any, options?: InspectOptions) => dirHandler.call(null, data, options, verboseConsole)
         },
         get isVerbose() { return _verboseFlag },

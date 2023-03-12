@@ -181,7 +181,7 @@ export default class DiscordBot {
 
             //State check
             if (this.#client?.ws.status !== 3 && this.#client?.ws.status !== 5) {
-                console.warn('Destroying client before restart.');
+                console.verbose.warn('Destroying client before restart.');
                 this.#client?.destroy();
             }
 
