@@ -8,7 +8,7 @@ import { Context } from 'koa';
 import ConfigVault from '@core/components/ConfigVault';
 import DiscordBot from '@core/components/DiscordBot';
 import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

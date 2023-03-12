@@ -24,7 +24,7 @@ import PlayerlistManager from '@core/components/PlayerlistManager';
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import PersistentCache from '@core/components/PersistentCache';
 
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
 

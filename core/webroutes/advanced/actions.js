@@ -2,7 +2,7 @@ const modulename = 'WebServer:AdvancedActions';
 import bytes from 'bytes';
 import humanizeDuration from 'humanize-duration';
 import got from '@core/extras/got.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

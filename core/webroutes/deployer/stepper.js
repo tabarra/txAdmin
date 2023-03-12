@@ -1,7 +1,7 @@
 const modulename = 'WebServer:DeployerStepper';
 import fse from 'fs-extra';
 import { convars } from '@core/globalData';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

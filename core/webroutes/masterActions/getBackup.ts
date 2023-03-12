@@ -2,7 +2,7 @@ const modulename = 'WebServer:MasterActions:GetBackup';
 import fsp from 'node:fs/promises';
 import dateFormat from 'dateformat';
 import { Context } from 'koa';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

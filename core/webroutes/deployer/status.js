@@ -1,5 +1,5 @@
 const modulename = 'WebServer:DeployerStatus';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

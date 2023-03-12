@@ -1,6 +1,6 @@
 const modulename = 'WebServer:CFGEditorSave';
 import { validateModifyServerConfig } from '@core/extras/fxsConfigHelper';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

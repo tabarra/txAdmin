@@ -1,7 +1,7 @@
 const modulename = 'OutputHandler';
 import { anyUndefined } from '@core/extras/helpers';
 import TxAdmin from '@core/txAdmin';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helpers

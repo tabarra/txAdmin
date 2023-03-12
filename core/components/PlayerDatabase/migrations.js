@@ -3,7 +3,7 @@ import { genActionID } from './idGenerator.js';
 import cleanPlayerName from '@shared/cleanPlayerName.js';
 import { DATABASE_VERSION, defaultDatabase } from './database.js';
 import { now } from '@core/extras/helpers.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

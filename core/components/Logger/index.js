@@ -3,7 +3,7 @@ import AdminLogger from './handlers/admin';
 import FXServerLogger from './handlers/fxserver';
 import ServerLogger from './handlers/server';
 import { getLogSizes } from './loggerUtils.js'
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 // NOTE: to turn this into an universal class outside txAdmin() instance

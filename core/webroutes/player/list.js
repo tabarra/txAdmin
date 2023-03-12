@@ -1,7 +1,7 @@
 const modulename = 'WebServer:PlayerList';
 import humanizeDuration from 'humanize-duration';
 import { processActionList, processPlayerList } from './processor';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

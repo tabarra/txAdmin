@@ -5,7 +5,7 @@ import playerResolver from '@core/playerLogic/playerResolver';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { PlayerClass, ServerPlayer } from '@core/playerLogic/playerClasses';
 import { anyUndefined, calcExpirationFromDuration } from '@core/extras/helpers';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

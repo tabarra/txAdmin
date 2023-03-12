@@ -12,7 +12,7 @@ import { getServerDataConfigs, getServerDataContent, ServerDataContentType, Serv
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import Cache from '@core/extras/dataCache';
 import { getChartData } from '../chartData';
-import consoleFactory, { getLogBuffer } from '@extras/newConsole';
+import consoleFactory, { getLogBuffer } from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Consts & Helpers

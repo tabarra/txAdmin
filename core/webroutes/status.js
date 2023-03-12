@@ -1,5 +1,5 @@
 const modulename = 'WebServer:GetStatus';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

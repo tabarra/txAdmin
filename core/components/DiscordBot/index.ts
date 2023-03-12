@@ -4,7 +4,7 @@ import TxAdmin from '@core/txAdmin';
 import slashCommands from './slash';
 import interactionCreateHandler from './interactionCreateHandler';
 import { generateStatusMessage } from './commands/status';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

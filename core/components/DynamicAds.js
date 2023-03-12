@@ -2,7 +2,7 @@ const modulename = 'DynamicAds';
 import xss from 'xss';
 import defaultAds from '../../dynamicAds.json';
 import got from '@core/extras/got.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

@@ -8,7 +8,7 @@ import YAML from 'js-yaml';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { txEnv } from '@core/globalData';
 import recipeEngine from './recipeEngine.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

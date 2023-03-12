@@ -6,7 +6,7 @@ import { now, parsePlayerId } from '@core/extras/helpers';
 import DiscordBot from '@core/components/DiscordBot';
 import { DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
 import FXRunner from '@core/components/FxRunner';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

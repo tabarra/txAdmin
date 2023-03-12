@@ -1,6 +1,6 @@
 const modulename = 'WebSocket';
 import { authLogic } from './requestAuthenticator';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helpers

@@ -10,7 +10,7 @@ import HealthMonitor from '@core/components/HealthMonitor';
 import WebServer from '@core/components/WebServer';
 import Logger from '@core/components/Logger';
 import si from 'systeminformation';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

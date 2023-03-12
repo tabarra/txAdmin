@@ -4,7 +4,7 @@ import { convars } from '@core/globalData';
 import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './statsUtils.js';
 import got from '@core/extras/got.js';
 // import TimeSeries from './timeSeries.js'; //NOTE: may still use for the player counter
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

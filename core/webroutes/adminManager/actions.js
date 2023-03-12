@@ -3,7 +3,7 @@ import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes'
 import got from '@core/extras/got.js';
 import consts from '@core/extras/consts';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

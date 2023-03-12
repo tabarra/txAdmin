@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import dateFormat from 'dateformat';
 import { txEnv } from '@core/globalData';
 import { LoggerBase, separator } from '@core/components/Logger/loggerUtils.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

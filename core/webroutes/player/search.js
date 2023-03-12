@@ -4,7 +4,7 @@ import consts from '@core/extras/consts';
 import cleanPlayerName from '@core/../shared/cleanPlayerName';
 import { cloneDeep } from 'lodash-es';
 import { processActionList, processPlayerList } from './processor';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

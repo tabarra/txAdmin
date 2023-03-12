@@ -2,7 +2,7 @@ const modulename = 'AdminVault:CitizenFXProvider';
 import crypto from 'node:crypto'
 import { Issuer, custom } from 'openid-client';
 
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

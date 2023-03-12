@@ -6,7 +6,7 @@ import { embedder } from '../discordHelpers';
 import { findPlayersByIdentifier } from '@core/playerLogic/playerFinder';
 import { txEnv } from '@core/globalData';
 import humanizeDuration from 'humanize-duration';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import slash from 'slash';
 
-import consoleFactory, { setConsoleEnvData } from '@extras/newConsole';
+import consoleFactory, { setConsoleEnvData } from '@extras/console';
 const console = consoleFactory();
 
 

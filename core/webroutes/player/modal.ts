@@ -5,7 +5,7 @@ import { Context } from 'koa';
 import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData, PlayerModalMeta } from '@shared/playerApiTypes';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { ServerPlayer } from '@core/playerLogic/playerClasses';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helpers

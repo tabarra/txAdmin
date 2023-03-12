@@ -5,7 +5,7 @@ import slash from 'slash';
 import { Deployer, validateTargetPath, parseValidateRecipe } from '@core/extras/deployer';
 import { validateFixServerConfig, findLikelyCFGPath } from '@core/extras/fxsConfigHelper';
 import got from '@core/extras/got.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

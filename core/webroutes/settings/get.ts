@@ -4,7 +4,7 @@ import { convars, txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import { redactApiKeys } from '../../extras/helpers';
 import { defaultEmbedConfigJson, defaultEmbedJson } from '@core/components/DiscordBot/defaultJsons';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

@@ -7,7 +7,7 @@ import { DatabaseActionType, DatabasePlayerType } from '@core/components/PlayerD
 import { now } from '@core/extras/helpers';
 import { GenericApiError } from '@shared/genericApiTypes';
 import { Context } from 'koa';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

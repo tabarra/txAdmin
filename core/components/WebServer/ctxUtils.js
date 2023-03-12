@@ -7,7 +7,7 @@ import xssInstancer from '@core/extras/xss.js';
 import * as helpers from '@core/extras/helpers';
 import consts from '@core/extras/consts';
 import { convars, txEnv } from '@core/globalData';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

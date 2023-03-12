@@ -12,7 +12,7 @@ import { Context } from 'koa';
 import DiscordBot from '@core/components/DiscordBot';
 import AdminVault from '@core/components/AdminVault';
 import FXRunner from '@core/components/FxRunner';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 const xss = xssInstancer();
 

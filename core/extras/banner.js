@@ -5,7 +5,7 @@ import open from 'open';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory();
 
 

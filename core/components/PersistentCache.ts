@@ -2,7 +2,7 @@ const modulename = 'PersistentCache';
 import fsp from 'node:fs/promises';
 import TxAdmin from '@core/txAdmin';
 import throttle from 'lodash/throttle.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

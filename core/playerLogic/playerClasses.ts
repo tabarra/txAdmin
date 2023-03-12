@@ -4,7 +4,7 @@ import cleanPlayerName from '@shared/cleanPlayerName';
 import { DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
 import { cloneDeep } from 'lodash-es';
 import { parsePlayerIds, now } from '@core/extras/helpers';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

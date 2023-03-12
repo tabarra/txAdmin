@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash-es';
 import TxAdmin from '@core/txAdmin.js';
 import { ServerPlayer } from '@core/playerLogic/playerClasses.js';
 import { DatabasePlayerType } from '../PlayerDatabase/databaseTypes';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

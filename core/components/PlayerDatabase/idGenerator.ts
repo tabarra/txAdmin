@@ -7,7 +7,7 @@ import consts from '@core/extras/consts';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
 import { DatabaseObjectType } from './database';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Consts

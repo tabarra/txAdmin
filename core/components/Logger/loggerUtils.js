@@ -5,7 +5,7 @@ import bytes from 'bytes';
 import dateFormat from 'dateformat';
 import rfs from 'rotating-file-stream';
 import { cloneDeep, defaultsDeep }  from 'lodash-es';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

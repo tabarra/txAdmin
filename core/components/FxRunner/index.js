@@ -11,7 +11,7 @@ import OutputHandler from './outputHandler';
 
 import { customAlphabet } from 'nanoid/non-secure';
 import dict51 from 'nanoid-dictionary/nolookalikes';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 const genMutex = customAlphabet(dict51, 5);
 

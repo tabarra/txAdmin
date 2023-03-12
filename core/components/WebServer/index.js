@@ -23,7 +23,7 @@ import { convars, txEnv } from '@core/globalData';
 import { requestAuth } from './requestAuthenticator.js';
 import WebCtxUtils from './ctxUtils.js';
 import router from './router';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict51, 20);
 

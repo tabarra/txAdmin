@@ -5,7 +5,7 @@ import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseType
 import { calcExpirationFromDuration } from '@core/extras/helpers';
 import consts from '@core/extras/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

@@ -4,7 +4,7 @@ import TxAdmin from '@core/txAdmin';
 import { now } from '@core/extras/helpers';
 import { DuplicateKeyError } from '@core/components/PlayerDatabase';
 import { embedder, ensurePermission, logDiscordAdminAction } from '../discordHelpers';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

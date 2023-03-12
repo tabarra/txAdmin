@@ -2,7 +2,7 @@ const modulename = 'WebServer:Resources';
 import path from 'path';
 import slash from 'slash';
 import slug from 'slug';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

@@ -7,7 +7,7 @@ import { TextFile } from 'lowdb/node';
 import { convars } from '@core/globalData';
 import { DatabaseDataType } from './databaseTypes.js';
 import migrations from './migrations.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Consts & helpers

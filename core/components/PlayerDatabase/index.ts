@@ -6,7 +6,7 @@ import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionType, DatabaseDataType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
 import { now } from '@core/extras/helpers';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

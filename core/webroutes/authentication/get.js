@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AuthGet';
 import chalk from 'chalk';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

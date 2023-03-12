@@ -1,7 +1,7 @@
 const modulename = 'WebServer:ProviderCallback';
 import crypto from 'node:crypto';
 import { isValidRedirectPath } from '@core/extras/helpers';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

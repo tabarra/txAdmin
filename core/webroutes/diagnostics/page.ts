@@ -2,7 +2,7 @@ const modulename = 'WebServer:Diagnostics';
 import Cache from '../../extras/dataCache';
 import { Context } from 'koa';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 const cache = new Cache(5);
 

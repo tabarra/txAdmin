@@ -1,6 +1,6 @@
 const modulename = 'WebServer:SystemLog';
 import xssInstancer from '@core/extras/xss.js';
-import consoleFactory, { getLogBuffer } from '@extras/newConsole';
+import consoleFactory, { getLogBuffer } from '@extras/console';
 const console = consoleFactory(modulename);
 const xss = xssInstancer();
 

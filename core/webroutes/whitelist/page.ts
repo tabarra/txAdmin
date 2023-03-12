@@ -1,6 +1,6 @@
 const modulename = 'WebServer:WhitelistPage';
 import { Context } from 'koa';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 

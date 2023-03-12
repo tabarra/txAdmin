@@ -1,6 +1,6 @@
 const modulename = 'WebServer:FXServerCommands';
 import xssInstancer from '@core/extras/xss.js';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 const xss = xssInstancer();
 
