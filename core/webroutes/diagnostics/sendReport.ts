@@ -12,7 +12,7 @@ import { getServerDataConfigs, getServerDataContent, ServerDataContentType, Serv
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import Cache from '@core/extras/dataCache';
 import { getChartData } from '../chartData';
-import consoleFactory from '@extras/newConsole';
+import consoleFactory, { getLogBuffer } from '@extras/newConsole';
 const console = consoleFactory(modulename);
 
 //Consts & Helpers
@@ -20,12 +20,6 @@ const reportIdCache = new Cache(60);
 const maskedKeywords = ['key', 'license', 'pass', 'private', 'secret', 'token'];
 const maskString = (input: string) => input.replace(/\w/gi, 'x');
 const maskIps = (input: string) => input.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/gi, 'x.x.x.x');
-type ConsolePrintType = {
-    ts: number;
-    type: string;
-    ctx: string;
-    msg: string;
-}
 type ServerLogType = {
     ts: number;
     type: string;
@@ -95,9 +89,7 @@ export default async function SendDiagnosticsReport(ctx: Context) {
     }
 
     //Remove IP from logs
-    const txConsoleLog = (getLog() as ConsolePrintType[])
-        .slice(-500)
-        .map((l) => ({ ...l, msg: maskIps(l.msg) }));
+    const txSystemLog = maskIps(getLogBuffer());
 
     const rawTxActionLog = await logger.admin.getRecentBuffer();
     const txActionLog = (typeof rawTxActionLog !== 'string')
@@ -133,7 +125,7 @@ export default async function SendDiagnosticsReport(ctx: Context) {
         $schemaVersion: 1,
         $txVersion: txEnv.txAdminVersion,
         diagnostics,
-        txConsoleLog,
+        txSystemLog,
         txActionLog,
         serverLog,
         fxserverLog,
@@ -149,7 +141,7 @@ export default async function SendDiagnosticsReport(ctx: Context) {
     // //Preparing request
     const requestOptions = {
         url: `https://txapi.cfx-services.net/public/submit`,
-        // url: `http://0.0.0.0:8121/public/submit`,
+        // url: `http://127.0.0.1:8121/public/submit`,
         retry: { limit: 1 },
         json: reportData,
     };

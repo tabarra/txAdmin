@@ -1,5 +1,6 @@
 # TODO:
 - [x] fix diagnostics data error on pterodactyl
+- [x] new console utility + refactoring
 - [ ] fix: menu > send announcement does not trigger discord msg nor custom event
 - [ ] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
 - [ ] ConfigVault.saveProfile should probably throw the error up
@@ -20,18 +21,6 @@
 - [x] Search for `node:console` / `ogConsole`
 - [ ] Migrate logger function to use the new logger component
 - [ ] Remove old console and rename `newConsole` to `console`
-
-```js
-import consoleFactory from '@extras/newConsole';
-const console = consoleFactory(modulename);
-```
-
-
-
-
-
-
-
 
 
 
@@ -188,7 +177,7 @@ Whitelist Page/routes:
 
 ## The Big Things before ts+react rewrite:
 - [x] in-core playerlist state tracking
-- [ ] new proxy console util
+- [x] new proxy console util
 - [ ] global socket.io connection for playerlist + async responses
 - [ ] in-core resource state tracking
 - [ ] new config (prepared for multiserver)

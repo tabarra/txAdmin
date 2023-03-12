@@ -74,4 +74,9 @@ files {
     'web/public/js/txadmin/base.js',
     'web/public/js/txadmin/main.js',
     'web/public/js/txadmin/players.js',
+    'web/public/xtermjs/xterm.min.css',
+    'web/public/xtermjs/xterm.min.js',
+    'web/public/xtermjs/xterm-addon-fit.min.js',
+    'web/public/xtermjs/xterm-addon-search.js',
+    'web/public/xtermjs/xterm-addon-search-bar.min.js',
 }

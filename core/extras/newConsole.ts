@@ -2,7 +2,7 @@ import { Console } from 'node:console';
 import { InspectOptions } from 'node:util';
 import { Writable } from 'node:stream';
 import path from 'node:path';
-import chalk from 'chalk';
+import chalk, { ChalkInstance } from 'chalk';
 import slash from 'slash';
 import ErrorStackParser from 'error-stack-parser';
 import sourceMapSupport from 'source-map-support'
@@ -10,16 +10,41 @@ import sourceMapSupport from 'source-map-support'
 /*
     FIXME: test styling notes
     - time dim, separated, tag with color and no bg
-    - shorten txAdmin to tx?
-
-    FIXME: add log buffer to be used by diagnostics report and system logs page
 */
 
+//Buffer handler
+//NOTE: the buffer will take between 64~72kb
+const headBufferLimit = 8 * 1024; //4kb
+const bodyBufferLimit = 64 * 1024; //64kb
+const bodyTrimSliceSize = 8 * 1024;
+const BUFFER_CUT_WARNING = chalk.bgRgb(255, 69, 0)('[!] The log body was sliced to prevent memory exhaustion. [!]');
+let headBuffer = '';
+let bodyBuffer = '';
+
+const writeToBuffer = (chunk: string) => {
+    //if head not full yet
+    if (headBuffer.length + chunk.length < headBufferLimit) {
+        headBuffer += chunk;
+        return;
+    }
+
+    //write to body and trim if needed
+    bodyBuffer += chunk;
+    if (bodyBuffer.length > bodyBufferLimit) {
+        let trimmedBody = bodyBuffer.slice(bodyTrimSliceSize - bodyBufferLimit);
+        trimmedBody = trimmedBody.substring(trimmedBody.indexOf('\n'));
+        bodyBuffer = `\n${BUFFER_CUT_WARNING}\n${trimmedBody}`;
+    }
+}
+
+export const getLogBuffer = () => headBuffer + bodyBuffer;
+
+
 //Variables
-const header = 'txAdmin';
-let _verboseFlag = false;
-let _txAdminVersion: string | undefined;
+const header = 'tx';
 const stackPathAliases: [string, string][] = [];
+let _txAdminVersion: string | undefined;
+let _verboseFlag = false;
 
 export const setConsoleEnvData = (
     txAdminVersion: string,
@@ -46,7 +71,7 @@ const defaultStream = new Writable({
     decodeStrings: true,
     defaultEncoding: 'utf8',
     write(chunk, encoding, callback) {
-        //TODO: log stuff
+        writeToBuffer(chunk)
         process.stdout.write(chunk);
         callback();
     },
@@ -55,7 +80,7 @@ const verboseStream = new Writable({
     decodeStrings: true,
     defaultEncoding: 'utf8',
     write(chunk, encoding, callback) {
-        //TODO: log stuff
+        writeToBuffer(chunk)
         if (_verboseFlag) process.stdout.write(chunk);
         callback();
     },
@@ -154,7 +179,7 @@ export const cleanTerminal = () => {
  * Sets terminal title
  */
 export const setTTYTitle = (title: string) => {
-    const tx = _txAdminVersion ? `txAdmin v${_txAdminVersion}`: 'txAdmin';
+    const tx = _txAdminVersion ? `txAdmin v${_txAdminVersion}` : 'txAdmin';
     const out = (title) ? `${tx}: ${title}` : tx;
     process.stdout.write(`\x1B]0;${out}\x07`);
 }
