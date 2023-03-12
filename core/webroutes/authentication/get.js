@@ -1,7 +1,7 @@
 const modulename = 'WebServer:AuthGet';
 import chalk from 'chalk';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 //Helper functions
@@ -17,7 +17,7 @@ export default async function AuthGet(ctx) {
     if (globals.adminVault.admins === false) {
         template = 'noMaster';
         if (globals.adminVault.addMasterPin) {
-            log('Use this PIN to add a new master account: ' + chalk.inverse(` ${globals.adminVault.addMasterPin} `));
+            console.log('Use this PIN to add a new master account: ' + chalk.inverse(` ${globals.adminVault.addMasterPin} `));
         }
     } else {
         template = 'normal';

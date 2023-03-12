@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import isLocalhost from 'is-localhost-ip';
+import { convars } from '@core/globalData';
+import consoleFactory from '@extras/console';
+const console = consoleFactory();
 
-import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger();
 
 /**
  * Detect the dominant newline character of a string.
@@ -588,10 +588,10 @@ export const validateFixServerConfig = async (cfgPath: string, serverDataPath: s
 
             //Saving modified lines
             const newCfg = cfgLines.join(fileEOL);
-            logWarn(`Saving modified file '${targetCfgPath}'`);
+            console.warn(`Saving modified file '${targetCfgPath}'`);
             await fsp.writeFile(targetCfgPath, newCfg, 'utf8');
         } catch (error) {
-            if (verbose) logError(error);
+            console.verbose.error(error);
             for (const [ln, reason] of actions) {
                 errors.add(targetCfgPath, ln, `Please comment out this line: ${reason}`);
             }
@@ -649,7 +649,7 @@ export const validateModifyServerConfig = async (
 
     //Save file + backup
     try {
-        logWarn(`Saving modified file '${cfgAbsolutePath}'`);
+        console.warn(`Saving modified file '${cfgAbsolutePath}'`);
         await fsp.copyFile(cfgAbsolutePath, `${cfgAbsolutePath}.bkp`);
         await fsp.writeFile(cfgAbsolutePath, cfgInputString, 'utf8');
     } catch (error) {

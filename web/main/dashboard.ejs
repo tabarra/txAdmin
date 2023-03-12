@@ -261,8 +261,8 @@
 <div class="row justify-content-md-center">
     <div class="col-md-6 text-center">
         <div id="tsMessage" class="d-none">
-            🏆 With <span id="tsMedianPlayerCount">?</span> median players, your server may be in the worldwide Top 500 servers. <br>
-            Join <strong><a href="https://discord.gg/qmMq79D59T" target="_blank">discord.gg/txAdmin</a></strong> to check the rank and maybe get the <i>TOP SERVER</i> role.
+            🏆 With <span id="tsMedianPlayerCount">?</span> median players, your server may be in the worldwide Top 1000 servers. <br>
+            Join <strong><a href="https://discord.gg/qmMq79D59T" target="_blank">discord.gg/txAdmin</a></strong> and use the <code>/server</code> command to check the rank see if you are eligible for the <i>TOP SERVER</i> role (Top 500 only).
         </div>
         <% if (fxsOutdated) { %>
             <div class="alert alert-<%= fxsOutdated.color %> border-<%= fxsOutdated.color %>" role="alert">
@@ -323,7 +323,7 @@
             if(Array.isArray(parsedPerfData)){
                 perfData = parsedPerfData;
                 const medianPlayers = d3.median(perfData, x => x.clients);
-                if(medianPlayers > 95){
+                if(medianPlayers > 55){
                     document.getElementById('tsMedianPlayerCount').textContent = medianPlayers.toFixed(0);
                     document.getElementById('tsMessage').classList.remove('d-none');
                 }

@@ -1,12 +1,11 @@
 const modulename = 'WebServer:PlayerListSearch';
 import Fuse from "fuse.js";
 import consts from '@core/extras/consts';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
 import cleanPlayerName from '@core/../shared/cleanPlayerName';
 import { cloneDeep } from 'lodash-es';
 import { processActionList, processPlayerList } from './processor';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -101,10 +100,8 @@ export default async function PlayerListSearch(ctx) {
         //Give output
         return ctx.send(outData);
     } catch (error) {
-        if (verbose) {
-            logError(`handleSearch failed with error: ${error.message}`);
-            dir(error);
-        }
+        console.verbose.error(`handleSearch failed with error: ${error.message}`);
+        console.verbose.dir(error);
         return ctx.send({error: `Search failed with error: ${error.message}`});
     }
 };

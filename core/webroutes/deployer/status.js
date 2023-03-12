@@ -1,6 +1,6 @@
 const modulename = 'WebServer:DeployerStatus';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -21,7 +21,7 @@ export default async function DeployerStatus(ctx) {
     //Prepare data
     const outData = {
         progress: globals.deployer.progress,
-        log: globals.deployer.getLog(),
+        log: globals.deployer.getDeployerLog(),
     };
     if (globals.deployer.step == 'configure') {
         outData.status = 'done';

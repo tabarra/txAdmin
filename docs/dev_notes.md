@@ -1,46 +1,32 @@
 # TODO:
-- [x] QoL: add redirect post login if invalid session
-- [x] Improve discord embed UX:
-    - [x] embed placeholder
-    - [x] check for the emoji
-    - [x] check for the url fields
-    - [x] discord auth not admin response
-    - [x] bot save: intent message
-    - [x] bot save: could not resolve guild id = was the bot invited?
-    - [x] embed jsons reset buttons
-- [x] add superjump
-- [x] the PR about hiding notifications
-    - [x] remove monitor.disableChatWarnings
-- [x] At the schedule restart input prompt, add a note saying what is the current server time
-- [x] create events for dynamic scheduled restarts
-- [x] create new whitelist events
-    - [x] whitelistPlayer:
-        - action: added/removed
-        - license: xxxxx
-        - playerName: player name
-        - adminName: admin name
-    - [x] whitelistPreApproval:
-        - action: added/removed
-        - identifier: `discord:xxxxxx` / `license:xxxxx`
-        - playerName?: player name
-        - adminName: admin name
-    - [x] whitelistRequest:
-        - action: requested/approved/denied/deniedAll
-        - playerName?: player name, if action != deniedAll
-        - requestId?: Rxxxx, if action != deniedAll
-        - license?: xxxxxx, if action != deniedAll
-        - adminName?: admin name, if action != requested
-- [x] wav for announcements and DMs
-- [x] update status embed as soon as server status changes
+- [x] fix diagnostics data error on pterodactyl
+- [x] new console utility + refactoring
+- [x] change dashboard median player message
+- [x] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
+- [ ] fix: menu > send announcement does not trigger discord msg nor custom event
+- [ ] ConfigVault.saveProfile should probably throw the error up
+- [ ] whitelist "discord no id" message should tell the user to open discord desktop
 
+
+(function() {
+    var s = document.createElement('script');
+    s.setAttribute('src', 'https://nthitz.github.io/turndownforwhatjs/tdfw.js');
+    document.body.appendChild(s);
+})()
+
+
+cache static files
+
+
+günther
+> I solved the problem.
+> 
+> - The problem was caused by the force steam setting in the jdlogs script, it was fixed by turning off that setting. If the player's Steam application is closed, the script warns the player to open steam in the background and prevents them from logging into the server, but in tx admin, the player seems to be logged into the server and therefore we see unknown texts. in the player list.
 
 
 ## Optional
 - [ ] bot: fix http agent options for localAddress
 - [ ] bot: add rate limit events to diagnostics page
-- [ ] change dashboard median player message
-    - top 1000: "your server seems to be in top 1000, join and type /server to track your progress"
-    - top 500: "you might be in top 500, join discord and see if you are eligible for the role"
 - [ ] update readme with new features and contributing warning
 - [ ] stats: 
     - [ ] ????
@@ -60,14 +46,6 @@ end
 
 criar variáveis globais setadas no shared, pra salvar o trabalho de dar GetConvar em todo arquivo
 
-===================
-### MUI update
-5.10.17 ok
-5.11.0 broken
-To test it, remove the `^`
-rm -rf node_modules/; npm i; npm list @mui/material; npm run dev:menu:game
-https://github.com/mui/material-ui/blob/master/CHANGELOG.md
-===================
 
 
 ### Server resource scanner
@@ -89,7 +67,7 @@ teste:
 
 # TODO: sooner than later
 - [ ] server logger add events/min average
-- [ ] add lru-cache to `DiscordBot.resolveMember()`
+- [ ] add lru-cache to `DiscordBot.resolveMember()` really needed? it probably wouldn't try to resolve the same player twice because he would be in the wl requests already
 
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
@@ -177,43 +155,11 @@ Whitelist Page/routes:
 
 ## The Big Things before ts+react rewrite:
 - [x] in-core playerlist state tracking
-- [ ] new proxy console util
+- [x] new proxy console util
 - [ ] global socket.io connection for playerlist + async responses
 - [ ] in-core resource state tracking
 - [ ] new config (prepared for multiserver)
 - [ ] multiserver tx instance (backend only)
-
-
-## Console Rewrite
-- [ ] Rewrite console logger module to be proxied to node:console
-- [ ] Add `[OUTDATED]` as a clog header prefix 
-- [ ] Move verbose to be part of the console (after the functional-ish change)
-- [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
-- [ ] Upgrade chalk, drop the chalk.keyword thing
-- [ ] Search for `node:console`, as i'm using it everywhere to test stuff
-- [ ] Migrate logger function to use the new logger component
-
-```js
-console.log('aaa', {àa:true});
-const {Console} = require('node:console');
-const ogConsole = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-    colorMode: true,
-});
-
-const chalk = require('chalk');
-const tag = chalk.bold.bgBlue(`[test]`)
-const testLog = (...args) => xxx.log.call(null, tag, ...args)
-
-testLog({àa:true});
-log('adsfsdf')
-
-import consoleFactory from '@utils/console.js';
-const console = consoleFactory(modulename)
-
-process.exit();
-```
 
 
 ## New config
@@ -383,6 +329,8 @@ For the tx ingame menu, replace actions grid with flexbox
 https://youtu.be/3elGSZSWTbM
 around 12:00
 https://immerjs.github.io/immer/ maybe?
+
+if tailwind, check https://daisyui.com/docs/themes/
 
 
 ### Update Event + Rollout strategy

@@ -1,9 +1,10 @@
 const modulename = 'HealthMonitor';
-import got from 'got'; //we want internal requests to have 127.0.0.1 src
-import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData';
+import got from 'got'; //we need internal requests to have 127.0.0.1 src
+import { convars } from '@core/globalData';
 import getHostStats from './getHostStats';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -69,7 +70,7 @@ export default class HealthMonitor {
     async restartFXServer(reasonInternal, reasonTranslated) {
         //sanity check
         if (globals.fxRunner.fxChild === null) {
-            logWarn('Server not started, no need to restart');
+            console.warn('Server not started, no need to restart');
             return false;
         }
 
@@ -140,7 +141,7 @@ export default class HealthMonitor {
 
                 if (convars.deployerDefaults?.maxClients && maxClients > convars.deployerDefaults.maxClients) {
                     globals.fxRunner.srvCmd(`sv_maxclients ${convars.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
-                    logError(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
+                    console.error(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
                     globals.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
                 }
             }
@@ -175,8 +176,8 @@ export default class HealthMonitor {
         if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
             globals.databus.txStatsData.monitorStats.freezeSeconds.push(elapsedRefreshStatus - 1);
             if (globals.databus.txStatsData.monitorStats.freezeSeconds.length > 30) globals.databus.txStatsData.monitorStats.freezeSeconds.shift();
-            logError(`FXServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
-            logError('Don\'t worry, txAdmin is preventing the server from being restarted.');
+            console.error(`FXServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
+            console.error('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
             return;
         }
@@ -212,8 +213,8 @@ export default class HealthMonitor {
 
         //Check if still in cooldown
         if (processUptime < this.config.cooldown) {
-            if (verbose && processUptime > 10 && elapsedLastWarning > 10) {
-                logWarn(`${timesPrefix} FXServer is not responding. Still in cooldown of ${this.config.cooldown}s.`);
+            if (console.isVerbose && processUptime > 10 && elapsedLastWarning > 10) {
+                console.warn(`${timesPrefix} FXServer is not responding. Still in cooldown of ${this.config.cooldown}s.`);
                 this.lastStatusWarningMessage = currTimestamp;
             }
             return;
@@ -236,7 +237,7 @@ export default class HealthMonitor {
                 ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})`
                 : `${timesPrefix} FXServer is not responding. (HB Failed)`;
             this.lastStatusWarningMessage = currTimestamp;
-            logWarn(msg);
+            console.warn(msg);
         }
 
         //If http partial crash, warn 1 minute before
@@ -268,8 +269,8 @@ export default class HealthMonitor {
             && starting.startingElapsedSecs < this.config.resourceStartingTolerance
         ) {
             if (processUptime % 15 == 0) {
-                logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
-                logWarn(`The server is currently starting ${starting.startingResName} (${starting.startingElapsedSecs}s ago).`);
+                console.warn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
+                console.warn(`The server is currently starting ${starting.startingResName} (${starting.startingElapsedSecs}s ago).`);
             }
             return;
         }
@@ -281,8 +282,8 @@ export default class HealthMonitor {
             && starting.lastStartElapsedSecs < this.hardConfigs.heartBeat.resStartedCooldown
         ) {
             if (processUptime % 15 == 0) {
-                logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
-                logWarn(`No resource start pending, last resource started ${starting.lastStartElapsedSecs}s ago.`);
+                console.warn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
+                console.warn(`No resource start pending, last resource started ${starting.lastStartElapsedSecs}s ago.`);
             }
             return;
         }

@@ -1,9 +1,8 @@
 const modulename = 'WebServer:PlayerList';
 import humanizeDuration from 'humanize-duration';
 import { processActionList, processPlayerList } from './processor';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -76,7 +75,7 @@ function getStats() {
         };
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;
-        if (verbose) logError(msg);
+        console.verbose.error(msg);
         return [];
     }
 }
@@ -99,7 +98,7 @@ async function getLastActions(dbo, limit) {
         return await processActionList(lastActions);
     } catch (error) {
         const msg = `getLastActions failed with error: ${error.message}`;
-        if (verbose) logError(msg);
+        console.verbose.error(msg);
         return [];
     }
 }
@@ -122,7 +121,7 @@ async function getLastPlayers(dbo, limit) {
         return await processPlayerList(lastPlayers);
     } catch (error) {
         const msg = `getLastPlayers failed with error: ${error.message}`;
-        if (verbose) logError(msg);
+        console.verbose.error(msg);
         return [];
     }
 }

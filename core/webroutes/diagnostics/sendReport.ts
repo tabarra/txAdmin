@@ -1,9 +1,8 @@
 const modulename = 'WebServer:SendDiagnosticsReport';
 import Logger from '@core/components/Logger';
 import ConfigVault from '@core/components/ConfigVault';
-import logger, { ogConsole } from '@core/extras/console.js';
 import got from '@core/extras/got';
-import { txEnv, verbose } from '@core/globalData';
+import { txEnv } from '@core/globalData';
 import { GenericApiError } from '@shared/genericApiTypes';
 import { Context } from 'koa';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
@@ -13,19 +12,14 @@ import { getServerDataConfigs, getServerDataContent, ServerDataContentType, Serv
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import Cache from '@core/extras/dataCache';
 import { getChartData } from '../chartData';
-const { dir, log, logOk, logWarn, logError, getLog } = logger(modulename);
+import consoleFactory, { getLogBuffer } from '@extras/console';
+const console = consoleFactory(modulename);
 
 //Consts & Helpers
 const reportIdCache = new Cache(60);
 const maskedKeywords = ['key', 'license', 'pass', 'private', 'secret', 'token'];
 const maskString = (input: string) => input.replace(/\w/gi, 'x');
 const maskIps = (input: string) => input.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/gi, 'x.x.x.x');
-type ConsolePrintType = {
-    ts: number;
-    type: string;
-    ctx: string;
-    msg: string;
-}
 type ServerLogType = {
     ts: number;
     type: string;
@@ -95,9 +89,7 @@ export default async function SendDiagnosticsReport(ctx: Context) {
     }
 
     //Remove IP from logs
-    const txConsoleLog = (getLog() as ConsolePrintType[])
-        .slice(-500)
-        .map((l) => ({ ...l, msg: maskIps(l.msg) }));
+    const txSystemLog = maskIps(getLogBuffer());
 
     const rawTxActionLog = await logger.admin.getRecentBuffer();
     const txActionLog = (typeof rawTxActionLog !== 'string')
@@ -133,7 +125,7 @@ export default async function SendDiagnosticsReport(ctx: Context) {
         $schemaVersion: 1,
         $txVersion: txEnv.txAdminVersion,
         diagnostics,
-        txConsoleLog,
+        txSystemLog,
         txActionLog,
         serverLog,
         fxserverLog,
@@ -149,7 +141,7 @@ export default async function SendDiagnosticsReport(ctx: Context) {
     // //Preparing request
     const requestOptions = {
         url: `https://txapi.cfx-services.net/public/submit`,
-        // url: `http://0.0.0.0:8121/public/submit`,
+        // url: `http://127.0.0.1:8121/public/submit`,
         retry: { limit: 1 },
         json: reportData,
     };
@@ -160,16 +152,16 @@ export default async function SendDiagnosticsReport(ctx: Context) {
         const apiResp = await got.post(requestOptions).json() as ResponseType;
         if ('reportId' in apiResp) {
             reportIdCache.set(apiResp.reportId);
-            logWarn(`Diagnostics data report ID ${apiResp.reportId} sent by ${ctx.session.auth.username}`);
+            console.warn(`Diagnostics data report ID ${apiResp.reportId} sent by ${ctx.session.auth.username}`);
             return sendTypedResp({ reportId: apiResp.reportId });
         } else {
-            if (verbose) dir(apiResp);
+            console.verbose.dir(apiResp);
             return sendTypedResp({ error: `Report failed: ${apiResp.message ?? apiResp.error}` });
         }
     } catch (error) {
         try {
             const apiErrorResp = JSON.parse(error?.response?.body);
-            // ogConsole.dir(apiErrorResp); //DEBUG
+            // console.dir(apiErrorResp); //DEBUG
             const reason = apiErrorResp.message ?? apiErrorResp.error ?? (error as Error).message;
             return sendTypedResp({ error: `Report failed: ${reason}` });
         } catch (error2) {

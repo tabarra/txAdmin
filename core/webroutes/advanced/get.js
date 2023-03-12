@@ -1,7 +1,6 @@
 const modulename = 'WebServer:AdvancedGet';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -16,6 +15,6 @@ export default async function AdvancedGet(ctx) {
 
     return ctx.utils.render('main/advanced', {
         headerTitle: 'Advanced',
-        verbosityEnabled: verbose,
+        verbosityEnabled: console.isVerbose,
     });
 };

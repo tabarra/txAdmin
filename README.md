@@ -9,7 +9,7 @@
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over <strong>18000</strong> servers worldwide at any given time.
+		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over <strong>20.000</strong> servers worldwide at any given time.
 	</p>
 	<p align="center">
 		<a href="https://zap-hosting.com/txadmin4" target="_blank" rel="noopener">
@@ -26,9 +26,9 @@
 - Start/Stop/Restart your server instance or resources
 - Server tick time performance chart ([example](https://i.imgur.com/VG8hpzr.gif))
 - Full-featured in-game admin menu:
-	- Player Mode: NoClip, God
+	- Player Mode: NoClip, God, SuperJump
 	- Teleport:  waypoint, coords and back
-	- Vehicle: Spawn, Fix, Delete
+	- Vehicle: Spawn, Fix, Delete, Boost
 	- Heal: yourself, everyone
 	- Send Announcements
 	- Reset World Area
@@ -43,9 +43,9 @@
 	- Action logging
 	- Brute-force protection
 - Discord Integration:
-	- Server status command (`/status`)
-	- Add to Whitelist command  (`/addwl`)
-	- Command spam prevention
+	- Server configurable, persistent, auto-updated status embed
+	- Command to whitelist players
+	- Command to display player infos
 - Monitoring:
 	- Auto Restart FXServer on crash
 	- Server’s CPU/RAM consumption
@@ -55,17 +55,16 @@
 - Player Manager:
 	- [Warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E)
 	- Ban (temporary or permanently) system
-	- Whitelist system
+	- Whitelist system (Discord member, Discord Role, Approved License, Admin-only)
 	- Take notes about players
 	- Keep track of player's play and session time
-	- Import bans from EasyAdmin, BanSQL, vMenu, vRP, el_bwh
 	- Self-contained player database with backup tool (no MySQL required!)
 	- Clean/Optimize the database by removing old players, or bans/warns/whitelists
 - Real-time playerlist
 - Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
 - Translation Support ([more info](docs/translation.md))
 - FiveM's Server CFG editor & validator
-- Responsive web interface with Dark Mode 😎
+- Responsive(ish) web interface with Dark Mode 😎
 
 Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 

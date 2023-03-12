@@ -1,12 +1,12 @@
 const modulename = 'DiscordBot';
 import Discord, { ActivityType, ChannelType, Client, GatewayIntentBits } from 'discord.js';
-import logger, { ogConsole } from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import slashCommands from './slash';
 import interactionCreateHandler from './interactionCreateHandler';
 import { generateStatusMessage } from './commands/status';
-const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 //Helpers
 type DiscordBotConfigType = {
@@ -72,7 +72,7 @@ export default class DiscordBot {
     async refreshConfig() {
         this.config = this.#txAdmin.configVault.getScoped('discordBot');
         if (this.#client) {
-            logWarn('Stopping Discord Bot');
+            console.warn('Stopping Discord Bot');
             this.#client.destroy();
             setTimeout(() => {
                 if (!this.config.enabled) this.#client = undefined;
@@ -112,14 +112,14 @@ export default class DiscordBot {
             || !this.#client?.isReady()
             || !this.announceChannel
         ) {
-            if (verbose) logWarn('not ready yet to send announcement');
+            console.verbose.warn('not ready yet to send announcement');
             return false;
         }
 
         try {
             await this.announceChannel.send(message);
         } catch (error) {
-            logError(`Error sending Discord announcement: ${(error as Error).message}`);
+            console.error(`Error sending Discord announcement: ${(error as Error).message}`);
         }
     }
 
@@ -129,7 +129,7 @@ export default class DiscordBot {
      */
     async updateStatus() {
         if (!this.#client?.isReady()) {
-            if (verbose) logWarn('not ready yet to update status');
+            console.verbose.warn('not ready yet to update status');
             return false;
         }
 
@@ -141,7 +141,7 @@ export default class DiscordBot {
             const message = `[${serverClients}/${serverMaxClients}] on ${serverName}`;
             this.#client.user.setActivity(message, { type: ActivityType.Watching });
         } catch (error) {
-            if (verbose) logWarn(`Failed to set bot activity: ${(error as Error).message}`);
+            console.verbose.warn(`Failed to set bot activity: ${(error as Error).message}`);
         }
 
         //Updating server status embed
@@ -152,12 +152,14 @@ export default class DiscordBot {
             if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
                 const oldChannel = await this.#client.channels.fetch(oldChannelId);
                 if (!oldChannel) throw new Error(`oldChannel could not be resolved`);
-                if (oldChannel.type !== ChannelType.GuildText) throw new Error(`oldChannel is not guild text channel`);
+                if (oldChannel.type !== ChannelType.GuildText && oldChannel.type !== ChannelType.GuildAnnouncement) {
+                    throw new Error(`oldChannel is not guild text or annoucement channel`);
+                }
                 await oldChannel.messages.edit(oldMessageId, generateStatusMessage(this.#txAdmin));
             }
 
         } catch (error) {
-            if (verbose) logWarn(`Failed to update status embed: ${(error as Error).message}`);
+            console.verbose.warn(`Failed to update status embed: ${(error as Error).message}`);
         }
     }
 
@@ -167,10 +169,14 @@ export default class DiscordBot {
      */
     startBot() {
         return new Promise<void>((resolve, reject) => {
-            const sendError = (msg: string, code?: string) => {
-                logError(msg);
+            type ErrorOptData = {
+                code?: string;
+                clientId?: string;
+            }
+            const sendError = (msg: string, data: ErrorOptData = {}) => {
+                console.error(msg);
                 const e = new Error(msg);
-                e.code = code;
+                Object.assign(e, data);
                 return reject(e);
             }
 
@@ -181,7 +187,7 @@ export default class DiscordBot {
 
             //State check
             if (this.#client?.ws.status !== 3 && this.#client?.ws.status !== 5) {
-                logWarn('Destroying client before restart.');
+                console.verbose.warn('Destroying client before restart.');
                 this.#client?.destroy();
             }
 
@@ -195,7 +201,13 @@ export default class DiscordBot {
                 //Fetching guild
                 const guild = this.#client.guilds.cache.find((guild) => guild.id === this.config.guild);
                 if (!guild) {
-                    return sendError(`Discord bot could not resolve guild id ${this.config.guild}`, 'CustomNoGuild');
+                    return sendError(
+                        `Discord bot could not resolve guild/server ID ${this.config.guild}.`,
+                        {
+                            code: 'CustomNoGuild',
+                            clientId: this.#client.user.id
+                        }
+                    );
                 }
                 this.guild = guild;
                 this.guildName = guild.name;
@@ -205,15 +217,15 @@ export default class DiscordBot {
                     const fetchedChannel = this.#client.channels.cache.find((x) => x.id === this.config.announceChannel);
                     if (!fetchedChannel) {
                         return sendError(`Channel ${this.config.announceChannel} not found.`);
-                    } else if (fetchedChannel.type !== ChannelType.GuildText) {
-                        return sendError(`Channel ${this.config.announceChannel} - ${(fetchedChannel as any)?.name} is not a text channel.`);
+                    } else if (fetchedChannel.type !== ChannelType.GuildText && fetchedChannel.type !== ChannelType.GuildAnnouncement) {
+                        return sendError(`Channel ${this.config.announceChannel} - ${(fetchedChannel as any)?.name} is not a text or annoucement channel.`);
                     } else {
                         this.announceChannel = fetchedChannel;
                     }
                 }
 
                 this.#client.application.commands.set(slashCommands);
-                logOk(`Started and logged in as '${this.#client.user.tag}'`);
+                console.ok(`Started and logged in as '${this.#client.user.tag}'`);
                 this.updateStatus().catch();
 
                 return resolve();
@@ -221,20 +233,19 @@ export default class DiscordBot {
 
             //Setup remaining event listeners
             this.#client.on('error', (error) => {
-                logError(`Error from Discord.js client: ${error.message}`);
+                console.error(`Error from Discord.js client: ${error.message}`);
                 return reject(error);
             });
             this.#client.on('resume', () => {
-                if (verbose) logOk('Connection with Discord API server resumed');
+                console.verbose.ok('Connection with Discord API server resumed');
                 this.updateStatus().catch();
             });
             this.#client.on('interactionCreate', interactionCreateHandler.bind(null, this.#txAdmin));
-            //@ts-ignore
-            this.#client.on('debug', logDebug);
+            // this.#client.on('debug', console.verbose.debug);
 
             //Start bot
             this.#client.login(this.config.token).catch((error) => {
-                logError(`Discord login failed with error: ${(error as Error).message}`);
+                console.error(`Discord login failed with error: ${(error as Error).message}`);
                 return reject(error);
             });
         });

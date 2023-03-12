@@ -1,8 +1,7 @@
 const modulename = 'WebServer:ProviderRedirect';
-import logger from '@core/extras/console.js';
 import { isValidRedirectPath } from '@core/extras/helpers';
-import { verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -43,7 +42,7 @@ export default async function ProviderRedirect(ctx) {
         );
         return ctx.response.redirect(urlCitizenFX);
     } catch (error) {
-        if (verbose) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
+        console.verbose.warn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
         return returnJustMessage(ctx, 'Failed to generate callback URL:', error.message);
     }
 };

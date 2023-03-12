@@ -1,5 +1,4 @@
 const modulename = 'WebServer:WhitelistActions';
-import logger, { ogConsole } from '@core/extras/console.js';
 import { Context } from 'koa';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import PlayerDatabase, { DuplicateKeyError } from '@core/components/PlayerDatabase';
@@ -7,7 +6,8 @@ import { now, parsePlayerId } from '@core/extras/helpers';
 import DiscordBot from '@core/components/DiscordBot';
 import { DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
 import FXRunner from '@core/components/FxRunner';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };

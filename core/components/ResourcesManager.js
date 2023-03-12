@@ -1,6 +1,6 @@
 const modulename = 'ResourcesManager';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /*
@@ -55,7 +55,7 @@ export default class ResourcesManager {
      * @param {string} mutex
      */
     handleServerEvents(payload, mutex) {
-        // log(`${payload.event}: ${payload.resource}`);
+        // console.log(`${payload.event}: ${payload.resource}`);
         if (payload.event === 'onResourceStarting') {
             this.activeStartingResource = payload.resource;
             this.activeStartingTime = new Date();

@@ -2,14 +2,14 @@ const modulename = 'WebServer:SettingsSave';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import slash from 'slash';
-import logger from '@core/extras/console.js';
 import { parseSchedule, anyUndefined } from '@core/extras/helpers';
 import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
 import { Context } from 'koa';
 import ConfigVault from '@core/components/ConfigVault';
 import DiscordBot from '@core/components/DiscordBot';
 import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 //Helper functions
@@ -96,7 +96,7 @@ async function handleGlobal(ctx: Context) {
         ctx.utils.logAction('Changing global settings.');
         return ctx.send({ type: 'success', message: '<strong>Global configuration saved!</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing global settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing global settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -171,7 +171,7 @@ async function handleFXServer(ctx: Context) {
         ctx.utils.logAction('Changing fxRunner settings.');
         return ctx.send({ type: 'success', message: '<strong>FXServer configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing fxRunner settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing fxRunner settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -245,7 +245,7 @@ async function handlePlayerDatabase(ctx: Context) {
         ctx.utils.logAction('Changing Player Controller settings.');
         return ctx.send({ type: 'success', message: '<strong>Player Controller configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing Player Controller settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing Player Controller settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -292,7 +292,7 @@ async function handleMonitor(ctx: Context) {
         ctx.utils.logAction('Changing monitor settings.');
         return ctx.send({ type: 'success', message: '<strong>Monitor/Restarter configuration saved!</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing monitor settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing monitor settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -358,31 +358,36 @@ async function handleDiscord(ctx: Context) {
                 type: 'success',
                 markdown: true,
                 message: `**Discord configuration saved!**
-                If <em>(and only if)</em> the status embed is not being updated, check the System Logs page and make sure there are no embed errors.`
+                If _(and only if)_ the status embed is not being updated, check the System Logs page and make sure there are no embed errors.`
             });
         } catch (error) {
             const errorCode = (error as any).code;
-            let extraContext;
+            let extraContext = '';
             if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
                 extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
-                - Go to the Dev Portal (<https://discord.com/developers/applications>)
+                - Go to the Dev Portal (https://discord.com/developers/applications)
                 - Navigate to \`Bot > Privileged Gateway Intents\`.
                 - Enable the \`GUILD_MEMBERS\` intent.
                 - Save on the dev portal.
                 - Go to the \`txAdmin > Settings > Discord Bot\` and press save.`;
             } else if (errorCode === 'CustomNoGuild') {
-                extraContext = `This probably means the bot is not in the guild you are trying to use.
-                Please invite the bot to the guild and try again.`;
+                const inviteUrl = ('clientId' in (error as any))
+                    ? `https://discord.com/oauth2/authorize?client_id=${(error as any).clientId}&scope=bot&permissions=0`
+                    : `https://discordapi.com/permissions.html#0`
+                extraContext = `**This usually mean one of the issues below:**
+                - **Wrong guild/server ID:** read the description of the guild/server ID setting for more information.
+                - **Bot is not in the guild/server:** you need to [INVITE THE BOT](${inviteUrl}) to join the server.
+                - **Wrong bot:** you may be using the token of another discord bot.`;
             }
             return ctx.send({
                 type: 'danger',
                 markdown: true,
-                message: `**Error starting the bot:** ${(error as Error).message}\n${extraContext}`
+                message: `**Error starting the bot:** ${(error as Error).message}\n${extraContext}`.trim()
             });
         }
 
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing discordBot settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing discordBot settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }
@@ -437,7 +442,7 @@ async function handleMenu(ctx: Context) {
         ctx.utils.logAction('Changing menu settings.');
         return ctx.send({ type: 'success', message: '<strong>Menu configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing menu settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing menu settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }

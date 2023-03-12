@@ -1,12 +1,11 @@
 const modulename = 'Player';
-import logger, { ogConsole } from '@core/extras/console.js';
 import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
-import { verbose } from '@core/globalData.js';
 import { DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
 import { cloneDeep } from 'lodash-es';
 import { parsePlayerIds, now } from '@core/extras/helpers';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -157,7 +156,7 @@ export class ServerPlayer extends BasePlayer {
 
         //Make sure the database is ready - this should be impossible
         if (!this.dbInstance.isReady) {
-            logError(`Players database not yet ready, cannot read db status for player id ${this.displayName}.`);
+            console.error(`Players database not yet ready, cannot read db status for player id ${this.displayName}.`);
             return;
         }
 
@@ -189,10 +188,11 @@ export class ServerPlayer extends BasePlayer {
                 };
                 this.dbInstance.registerPlayer(toRegister);
                 this.dbData = toRegister;
-                if (verbose) logOk(`Adding '${this.displayName}' to players database.`);
+                console.verbose.ok(`Adding '${this.displayName}' to players database.`);
             }
         } catch (error) {
-            logError(`Failed to load/register player ${this.displayName} from/to the database with error: ${(error as Error).message}`);
+            console.error(`Failed to load/register player ${this.displayName} from/to the database with error:`);
+            console.dir(error);
         }
     }
 
@@ -238,7 +238,8 @@ export class ServerPlayer extends BasePlayer {
         try {
             this.mutateDbData({ playTime: this.dbData.playTime + 1 });
         } catch (error) {
-            logWarn(`Failed to update playtime for player ${this.displayName}: ${(error as Error).message}`);
+            console.warn(`Failed to update playtime for player ${this.displayName}:`);
+            console.dir(error);
         }
     }
 

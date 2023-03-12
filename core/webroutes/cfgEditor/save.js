@@ -1,7 +1,8 @@
 const modulename = 'WebServer:CFGEditorSave';
-import logger from '@core/extras/console.js';
 import { validateModifyServerConfig } from '@core/extras/fxsConfigHelper';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };

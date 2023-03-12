@@ -1,9 +1,9 @@
 const modulename = 'WebServer:MasterActions:GetBackup';
 import fsp from 'node:fs/promises';
 import dateFormat from 'dateformat';
-import logger from '@core/extras/console.js';
 import { Context } from 'koa';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -24,11 +24,11 @@ export default async function MasterActionsGet(ctx: Context) {
     try {
         readFile = await fsp.readFile(dbPath);
     } catch (error) {
-        logError(`Could not read database file ${dbPath}.`);
+        console.error(`Could not read database file ${dbPath}.`);
         return ctx.utils.render('main/message', {message: `Failed to generate backup file with error: ${(error as Error).message}`});
     }
     const now = dateFormat(new Date(), 'yyyy-mm-dd_HH-MM-ss');
     ctx.attachment(`playersDB_${now}.json`);
     ctx.body = readFile;
-    log(`[${ctx.session.auth.username}] Downloading player database.`);
+    console.log(`[${ctx.session.auth.username}] Downloading player database.`);
 };

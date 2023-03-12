@@ -1,12 +1,12 @@
 const modulename = 'DiscordBot:cmd:status';
 import humanizeDuration from 'humanize-duration';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, ColorResolvable, EmbedBuilder } from 'discord.js';
-import logger from '@core/extras/console.js';
 import { txEnv } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import { cloneDeep } from 'lodash-es';
 import { embedder, ensurePermission, isValidButtonEmoji, isValidEmbedUrl, logDiscordAdminAction } from '../discordHelpers';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 //Humanizer options
 const humanizer = humanizeDuration.humanizer({
@@ -29,10 +29,21 @@ const isValidButtonConfig = (btn: any) => {
     return (
         btn !== null && btnType === 'object'
         && typeof btn.label === 'string'
+        && btn.label.length
         && typeof btn.url === 'string'
+        // && btn.url.length //let the function handle it
         && (typeof btn.emoji === 'string' || btn.emoji === undefined)
     );
 }
+
+const validUrlMessage = `Every URL must start with one of (\`http://\`, \`https://\`, \`discord://\`).
+URLs cannot be empty, if you do not want a URL then remove the URL line.`;
+
+const validEmojiMessage = `All emojis must be one of:
+- UTF-8 emoji ('😄')
+- Valid emoji ID ('1062339910654246964')
+- Discord custom emoji (\`<:name:id>\` or \`<a:name:id>\`).
+To get the full emoji code, insert it into discord, and add \`\\\` before it then send the message`
 
 
 export const generateStatusMessage = (
@@ -127,9 +138,18 @@ export const generateStatusMessage = (
         const out: any = {};
         for (const [key, value] of Object.entries(input)) {
             const processed = processValue(value);
-            if(key === 'url' && !isValidEmbedUrl(processed)){
-                throw new Error(`Invalid URL \`${processed}\`.
-                Every URL must start with one of ('http://', 'https://', 'discord://').`);
+            if (key === 'url' && !isValidEmbedUrl(processed)) {
+                const messageHead = processed.length
+                    ? `Invalid URL \`${processed}\`.`
+                    : `Empty URL.`;
+                const badPlaceholderMessage = processed.startsWith('{{')
+                    ? 'Your URL starts with `{{`, try removing it.'
+                    : '';
+                throw new Error([
+                    messageHead,
+                    validUrlMessage,
+                    badPlaceholderMessage
+                ].join('\n'));
             }
             out[key] = processed;
         }
@@ -149,7 +169,7 @@ export const generateStatusMessage = (
 
         });
     } catch (error) {
-        throw new Error(`Embed Class Error: ${(error as Error).message}`);
+        throw new Error(`**Embed Class Error:** ${(error as Error).message}`);
     }
 
     //Attempting to instantiate buttons
@@ -161,26 +181,33 @@ export const generateStatusMessage = (
             }
             for (const cfgButton of embedConfigJson.buttons) {
                 if (!isValidButtonConfig(cfgButton)) {
-                    throw new Error('Invalid button in Discord Status Embed Config.');
+                    throw new Error(`Invalid button in Discord Status Embed Config.
+                    All buttons must have:
+                    - Label: string, not empty
+                    - URL: string, not empty, valid URL`);
                 }
                 const processedUrl = processValue(cfgButton.url);
-                if(!isValidEmbedUrl(processedUrl)) {
-                    throw new Error(`Invalid URL \`${processedUrl}\` for button \`${cfgButton.label}\`.
-                    Every URL must start with one of ('http://', 'https://', 'discord://').`);
+                if (!isValidEmbedUrl(processedUrl)) {
+                    const messageHead = processedUrl.length
+                        ? `Invalid URL \`${processedUrl}\``
+                        : `Empty URL`;
+                    const badPlaceholderMessage = processedUrl.startsWith('{{')
+                        ? 'Your URL starts with `{{`, try removing it.'
+                        : '';
+                    throw new Error([
+                        `${messageHead} for button \`${cfgButton.label}\`.`,
+                        validUrlMessage,
+                        badPlaceholderMessage
+                    ].join('\n'));
                 }
                 const btn = new ButtonBuilder({
                     style: ButtonStyle.Link,
                     label: processValue(cfgButton.label),
                     url: processedUrl,
                 });
-                if(cfgButton.emoji !== undefined){
-                    if(!isValidButtonEmoji(cfgButton.emoji)) {
-                        throw new Error(`Invalid emoji for button \`${cfgButton.label}\`.
-                        All emojis must be one of:
-                        - UTF-8 emoji ('😄')
-                        - Valid emoji ID ('1062339910654246964')
-                        - Discord custom emoji (\`<:name:id>\` or \`<a:name:id>\`).
-                        To get the full emoji code, insert it into discord, and add \`\\\` before it then send the message`);
+                if (cfgButton.emoji !== undefined) {
+                    if (!isValidButtonEmoji(cfgButton.emoji)) {
+                        throw new Error(`Invalid emoji for button \`${cfgButton.label}\`.\n${validEmojiMessage}`);
                     }
                     btn.setEmoji(cfgButton.emoji);
                 }
@@ -188,7 +215,7 @@ export const generateStatusMessage = (
             }
         }
     } catch (error) {
-        throw new Error(`Embed Buttons Error: ${(error as Error).message}`);
+        throw new Error(`**Embed Buttons Error:** ${(error as Error).message}`);
     }
 
     return {
@@ -202,10 +229,10 @@ export const removeOldEmbed = async (interaction: ChatInputCommandInteraction, t
     const oldMessageId = txAdmin.persistentCache.get('discord:status:messageId');
     if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
         const oldChannel = await interaction.client.channels.fetch(oldChannelId);
-        if (oldChannel?.type === ChannelType.GuildText) {
+        if (oldChannel?.type === ChannelType.GuildText || oldChannel?.type === ChannelType.GuildAnnouncement) {
             await oldChannel.messages.delete(oldMessageId);
         } else {
-            throw new Error(`oldChannel is not a guild text channel`);
+            throw new Error(`oldChannel is not a guild text or announcement channel`);
         }
     } else {
         throw new Error(`no old message id saved, maybe was never sent, maybe it was removed`);
@@ -248,7 +275,9 @@ export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin
 
     //Attempt to send new message
     try {
-        if (interaction.channel?.type !== ChannelType.GuildText) throw new Error(`channel type not supported`);
+        if (interaction.channel?.type !== ChannelType.GuildText && interaction.channel?.type !== ChannelType.GuildAnnouncement) {
+            throw new Error(`channel type not supported`);
+        }
         const placeholderEmbed = new EmbedBuilder({
             description: '_placeholder message, attempting to edit with embed..._\n**Note:** If you are seeing this message, it probably means that something was wrong with the configured Embed JSONs and Discord\'s API rejected the request to replace this placeholder.'
         })

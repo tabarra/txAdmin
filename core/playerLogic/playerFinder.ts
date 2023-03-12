@@ -1,6 +1,5 @@
 import { DatabasePlayerType } from "@core/components/PlayerDatabase/databaseTypes.js";
 import PlayerDatabase from "@core/components/PlayerDatabase/index.js";
-import { ogConsole } from "@core/extras/console.js";
 import { DatabasePlayer } from "./playerClasses.js"
 
 

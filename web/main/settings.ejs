@@ -73,20 +73,17 @@
                         <a class="nav-item nav-link <%= activeTab === 'playerManager' ? 'active' : '' %>" id="nav-playerManager-tab" data-toggle="tab" href="#nav-playerManager"
                             role="tab" aria-controls="nav-playerManager" aria-selected="true">
                             Player Manager
-                            &nbsp; <span class="badge badge-danger">NEW</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'discord' ? 'active' : '' %>" id="nav-discord-tab" data-toggle="tab" href="#nav-discord"
                             role="tab" aria-controls="nav-discord" aria-selected="true">
                             Discord
-                            &nbsp; <span class="badge badge-danger">NEW</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">
                             Game
-                            &nbsp; <span class="badge badge-danger">NEW</span>
                         </a>
                     </li>
                 </ul>
@@ -271,22 +268,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Disable Announcements
-                            </label>
-                            <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmMonitor-chatMessages"
-                                        <%= monitor.disableChatWarnings || '' %> <%= readOnly ? 'disabled' : '' %>>
-                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    Check this if you want to disable broadcast warning messages in game before each scheduled restart.
-                                </span>
-                            </div>
-                        </div>
-
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Monitor/Restarter Settings
@@ -440,7 +421,7 @@
 
                         <div class="form-group row">
                             <label for="frmDiscord-guild" class="col-sm-3 col-form-label">
-                                Guild ID
+                                Guild/Server ID
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
@@ -448,7 +429,7 @@
                                     value="<%= discord.guild || '' %>" 
                                     placeholder="000000000000000000" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
-                                    The ID of the Discord Guild of your server. <br>
+                                    The ID of the Discord Guild (also known as Discord Server). <br>
                                     To get the Guild ID, go to Discord's settings and
                                     <a href="https://support.discordapp.com/hc/article_attachments/115002742731/mceclip0.png"
                                     target="_blank" > enable developer mode</a>, then right-click on the guild icon select "Copy ID".
@@ -629,7 +610,7 @@
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmMenu-save" <%= readOnly ? 'disabled' : '' %>>
-                                <i class="icon-check"></i> Save Menu Settings
+                                <i class="icon-check"></i> Save Game Settings
                             </button>
                         </div>
                     </div>

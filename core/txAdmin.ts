@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import slash from 'slash';
 
-import logger from '@core/extras/console';
 import { txEnv } from '@core/globalData';
 
 import { printBanner } from '@core/extras/banner';
@@ -25,7 +24,8 @@ import PlayerlistManager from '@core/components/PlayerlistManager';
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import PersistentCache from '@core/components/PersistentCache';
 
-const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
 
 //Helpers
@@ -150,7 +150,7 @@ export default class TxAdmin {
     
 
     constructor(serverProfile: string) {
-        log(`Profile '${serverProfile}' starting...`);
+        console.log(`Profile '${serverProfile}' starting...`);
 
         //FIXME: hacky self reference because some webroutes need to access globals.txAdmin to pass it down
         globalsInternal.txAdmin = this;
@@ -161,7 +161,7 @@ export default class TxAdmin {
             try {
                 setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, serverProfile, profilePath);
             } catch (error) {
-                logError(`Failed to create profile '${serverProfile}' with error: ${(error as Error).message}`);
+                console.error(`Failed to create profile '${serverProfile}' with error: ${(error as Error).message}`);
                 process.exit();
             }
         }
@@ -183,8 +183,8 @@ export default class TxAdmin {
             //FIXME: hacky fix for settings:save to be able to update this
             globalsInternal.func_txAdminRefreshConfig = this.refreshConfig.bind(this);
         } catch (error) {
-            logError(`Error starting ConfigVault: ${(error as Error).message}`);
-            dir(error);
+            console.error(`Error starting ConfigVault:`);
+            console.dir(error);
             process.exit(1);
         }
 
@@ -238,17 +238,23 @@ export default class TxAdmin {
             this.persistentCache = new PersistentCache(this);
             globalsInternal.persistentCache = this.persistentCache;
         } catch (error) {
-            logError(`Error starting main components: ${(error as Error).message}`);
-            dir(error);
+            console.error(`Error starting main components:`);
+            console.dir(error);
             process.exit(1);
         }
 
         //Once they all finish loading, the function below will print the banner
-        printBanner();
+        try {
+            printBanner();
+        } catch (error) {
+            console.dir(error);
+        }
 
         //Run Update Checker every 15 minutes
         updateChecker();
         setInterval(updateChecker, 15 * 60 * 1000);
+
+        //TODO: cron to update setTTYTitle
     }
 
     /**

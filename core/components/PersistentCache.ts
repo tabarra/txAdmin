@@ -1,12 +1,10 @@
 const modulename = 'PersistentCache';
-import fs from 'node:fs';
 import fsp from 'node:fs/promises';
-import path from 'node:path';
-import logger, { ogConsole } from '@core/extras/console.js';
-import { txEnv, verbose } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import throttle from 'lodash/throttle.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 //NOTE: due to limitations on how we compare value changes we can only accept these types
 //This is to prevent saving the same value repeatedly (eg sv_maxClients every 3 seconds)
@@ -75,12 +73,12 @@ export default class PersistentCache {
         if (!(this.#cache instanceof Map)) return false;
         try {
             const toSave = JSON.stringify([...this.#cache.entries()]);
-            // ogConsole.log('Saving:', toSave)
+            // console.debug('Saving:', toSave)
             await fsp.writeFile(this.cacheFilePath, toSave);
-            // ogConsole.log('Finished saving:', toSave)
-            if (verbose) logOk(`Saved cachedData.json with ${this.#cache.size} entries.`);
+            // console.debug('Finished saving:', toSave)
+            console.verbose.debug(`Saved cachedData.json with ${this.#cache.size} entries.`);
         } catch (error) {
-            logError(`Unable to save cachedData.json with error: ${(error as Error).message}`);
+            console.error(`Unable to save cachedData.json with error: ${(error as Error).message}`);
         }
     }
 
@@ -94,9 +92,9 @@ export default class PersistentCache {
             try {
                 await fsp.writeFile(this.cacheFilePath, '[]');
                 this.#cache = new Map();
-                if (verbose) logWarn(`Reset cachedData.json.`);
+                console.verbose.warn(`Reset cachedData.json.`);
             } catch (error) {
-                logError(`Unable to create cachedData.json with error: ${(error as Error).message}`);
+                console.error(`Unable to create cachedData.json with error: ${(error as Error).message}`);
             }
         };
 
@@ -107,10 +105,10 @@ export default class PersistentCache {
                 const fileData = JSON.parse(rawFile);
                 if (!Array.isArray(fileData)) throw new Error('data is not an array');
                 this.#cache = new Map(fileData);
-                if (verbose) logOk(`Loaded cachedData.json with ${this.#cache.size} entries.`);
+                console.verbose.ok(`Loaded cachedData.json with ${this.#cache.size} entries.`);
             } catch (error) {
-                logError(`Failed to load cachedData.json with message: ${(error as Error).message}`);
-                logError('Since this is not a critical file, it will be reset.');
+                console.error(`Failed to load cachedData.json with message: ${(error as Error).message}`);
+                console.error('Since this is not a critical file, it will be reset.');
                 await resetCacheFile();
             }
         }

@@ -1,7 +1,7 @@
 const modulename = 'WebServer:FXServerDownloadLog';
 import fs from 'node:fs';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -20,10 +20,10 @@ export default async function FXServerDownloadLog(ctx) {
         // readFile = fs.createReadStream(globals.fxRunner.config.logPath);
         readFile = fs.readFileSync(globals.fxRunner.config.logPath);
     } catch (error) {
-        logError(`Could not read log file ${globals.fxRunner.config.logPath}.`);
+        console.error(`Could not read log file ${globals.fxRunner.config.logPath}.`);
     }
     const now = (new Date() / 1000).toFixed();
     ctx.attachment(`fxserver_${now}.log`);
     ctx.body = readFile;
-    log(`[${ctx.session.auth.username}] Downloading console log file.`);
+    console.log(`[${ctx.session.auth.username}] Downloading console log file.`);
 };

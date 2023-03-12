@@ -1,6 +1,6 @@
 const modulename = 'WebServer:GetStatus';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -122,7 +122,7 @@ function preparePlayersData() {
     try {
         return globals.playerlistManager.getPlayerList();
     } catch (error) {
-        if (verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
+        console.verbose.error(`Failed to generate playerlist with error: ${error.message}`);
         return false;
     }
 }

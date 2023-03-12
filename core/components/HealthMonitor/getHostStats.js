@@ -1,9 +1,9 @@
 const modulename = 'Monitor:HostStatus';
 import os from 'node:os';
 import si from 'systeminformation';
-import logger from '@core/extras/console.js';
-import { txEnv, verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import { txEnv } from '@core/globalData';
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 //Const -hopefully
 const giga = 1024 * 1024 * 1024;
@@ -11,7 +11,7 @@ const cpus = os.cpus();
 
 export default async () => {
     const out = {
-        memory: {usage: 0, used: 0, total: 0},
+        memory: { usage: 0, used: 0, total: 0 },
         cpu: {
             count: cpus.length,
             speed: cpus[0].speed,
@@ -38,10 +38,8 @@ export default async () => {
             usage: Math.round((used / total) * 100),
         };
     } catch (error) {
-        if (verbose) {
-            logError('Failed to get memory usage.');
-            dir(error);
-        }
+        console.verbose.error('Failed to get memory usage.');
+        console.verbose.dir(error);
     }
 
     //Getting CPU usage
@@ -49,10 +47,8 @@ export default async () => {
         const loads = await si.currentLoad();
         out.cpu.usage = Math.round(loads.currentLoad);
     } catch (error) {
-        if (verbose) {
-            logError('Failed to get CPU usage.');
-            dir(error);
-        }
+        console.verbose.error('Failed to get CPU usage.');
+        console.verbose.dir(error);
     }
 
     return out;

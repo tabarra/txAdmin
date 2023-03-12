@@ -29,7 +29,7 @@ module.exports = {
         'no-empty': ['error', { allowEmptyCatch: true }],
         'no-prototype-builtins': 'off',
         'no-unused-vars': ['warn', {
-            varsIgnorePattern: '^(_|(dir|log)\\w*)',
+            varsIgnorePattern: '^_\\w*',
             vars: 'all',
             args: 'none', //diff
             ignoreRestSiblings: true,

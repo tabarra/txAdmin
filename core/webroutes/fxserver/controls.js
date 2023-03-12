@@ -1,6 +1,6 @@
 const modulename = 'WebServer:FXServerControls';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -56,7 +56,7 @@ export default async function FXServerControls(ctx) {
             return ctx.send({ type: 'success', message: 'Starting server...' });
         }
     } else {
-        logWarn(`Unknown control action '${action}'.`);
+        console.warn(`Unknown control action '${action}'.`);
         return ctx.utils.error(400, 'Unknown Action');
     }
 };

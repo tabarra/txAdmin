@@ -2,10 +2,11 @@ const modulename = 'Translator';
 import fs from 'node:fs';
 import path from 'node:path';
 import Polyglot from 'node-polyglot';
-import logger from '@core/extras/console.js';
-import { txEnv, verbose } from '@core/globalData';
+import { txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 
 /**
@@ -42,14 +43,14 @@ export default class Translator {
             const polyglotOptions = {
                 allowMissing: false,
                 onMissingKey: (key: string) => {
-                    logError(`Missing key '${key}' from translation file.`, 'Translator');
+                    console.error(`Missing key '${key}' from translation file.`, 'Translator');
                     return key;
                 },
                 phrases,
             };
             this.#polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
-            logError((error as Error).message);
+            console.dir(error);
             if (isFirstTime) process.exit();
         }
     }
@@ -67,7 +68,7 @@ export default class Translator {
         try {
             globals.fxRunner.resetConvars();
         } catch (error) {
-            if (verbose) dir(error);
+            console.verbose.dir(error);
         }
     }
 
@@ -108,7 +109,7 @@ export default class Translator {
         try {
             return this.#polyglot.t(key, options);
         } catch (error) {
-            logError(`Error performing a translation with key '${key}'`);
+            console.error(`Error performing a translation with key '${key}'`);
             return key;
         }
     }

@@ -3,8 +3,8 @@ import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes'
 import got from '@core/extras/got.js';
 import consts from '@core/extras/consts';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const nanoid = customAlphabet(dict51, 20);
@@ -108,7 +108,7 @@ async function handleAdd(ctx) {
                 return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID3'});
             }
         } catch (error) {
-            logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
+            console.error(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
         }
     }
 
@@ -203,7 +203,7 @@ async function handleEdit(ctx) {
                 return ctx.send({type: 'danger', message: '(ERR3) Invalid CitizenFX ID'});
             }
         } catch (error) {
-            logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
+            console.error(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
         }
     }
 

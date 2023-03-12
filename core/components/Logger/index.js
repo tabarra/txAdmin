@@ -3,8 +3,8 @@ import AdminLogger from './handlers/admin';
 import FXServerLogger from './handlers/fxserver';
 import ServerLogger from './handlers/server';
 import { getLogSizes } from './loggerUtils.js'
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 // NOTE: to turn this into an universal class outside txAdmin() instance
 // when a txAdmin profile starts, it does universal.logger.start(profilename)

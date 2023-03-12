@@ -5,9 +5,8 @@ import slash from 'slash';
 import { Deployer, validateTargetPath, parseValidateRecipe } from '@core/extras/deployer';
 import { validateFixServerConfig, findLikelyCFGPath } from '@core/extras/fxsConfigHelper';
 import got from '@core/extras/got.js';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -24,7 +23,7 @@ const getPotentialServerDataFolders = (source) => {
             .filter((dirent) => getDirectories(path.join(source, dirent)).includes('resources'))
             .map((dirent) => slash(path.join(source, dirent)) + '/');
     } catch (error) {
-        if (verbose) logWarn(`Failed to find server data folder with message: ${error.message}`);
+        console.verbose.warn(`Failed to find server data folder with message: ${error.message}`);
         return [];
     }
 };
@@ -300,7 +299,7 @@ async function handleSaveLocal(ctx) {
             return ctx.send({success: true});
         }
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
         return ctx.send({success: false, markdown: true, message: '**Error saving the configuration file.**'});
     }
 }
@@ -360,7 +359,7 @@ async function handleSaveDeployerImport(ctx) {
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -407,7 +406,7 @@ async function handleSaveDeployerCustom(ctx) {
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        console.warn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }

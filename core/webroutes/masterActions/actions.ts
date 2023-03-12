@@ -4,11 +4,11 @@ import ConfigVault from '@core/components/ConfigVault';
 import FXRunner from '@core/components/FxRunner';
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseActionType, DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
-import logger, { ogConsole } from '@core/extras/console.js';
 import { now } from '@core/extras/helpers';
 import { GenericApiError } from '@shared/genericApiTypes';
 import { Context } from 'koa';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -72,7 +72,7 @@ async function handleResetFXServer(ctx: Context) {
         ctx.utils.logAction('Resetting fxRunner settings.');
         return ctx.send({ success: true });
     } else {
-        logWarn(`[${ctx.session.auth.username}] Error resetting fxRunner settings.`);
+        console.warn(`[${ctx.session.auth.username}] Error resetting fxRunner settings.`);
         return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
     }
 }

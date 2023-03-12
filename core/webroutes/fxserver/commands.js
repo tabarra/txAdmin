@@ -1,7 +1,7 @@
 const modulename = 'WebServer:FXServerCommands';
 import xssInstancer from '@core/extras/xss.js';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 const xss = xssInstancer();
 
 //Helper functions
@@ -57,7 +57,7 @@ export default async function FXServerCommands(ctx) {
             setTimeout(async () => {
                 ExecuteCommand(`profiler save "${escape(savePath)}"`);
                 setTimeout(async () => {
-                    logOk(`Profile saved to: ${savePath}`);
+                    console.ok(`Profile saved to: ${savePath}`);
                     globals.fxRunner.srvCmd(`profiler view "${escape(savePath)}"`);
                 }, 150);
             }, 150);

@@ -1,9 +1,9 @@
 const modulename = 'DiscordBot:cmd';
-import logger from '@core/extras/console.js';
 import TxAdmin from "@core/txAdmin";
 import orderedEmojis from 'unicode-emoji-json/data-ordered-emoji';
 import { ColorResolvable, CommandInteraction, EmbedBuilder, InteractionReplyOptions } from "discord.js";
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 const allEmojis = new Set(orderedEmojis);
 
 
@@ -94,13 +94,13 @@ export const isValidButtonEmoji = (emoji: unknown) => {
 
 
 //Works
-// ogConsole.dir(isValidEmoji('<:txicon:1062339910654246964>'))
-// ogConsole.dir(isValidEmoji('1062339910654246964'))
-// ogConsole.dir(isValidEmoji('😄'))
-// ogConsole.dir(isValidEmoji('🇵🇼'))
-// ogConsole.dir(isValidEmoji('\u{1F469}\u{200D}\u{2764}\u{FE0F}\u{200D}\u{1F48B}\u{200D}\u{1F469}'))
+// console.dir(isValidEmoji('<:txicon:1062339910654246964>'))
+// console.dir(isValidEmoji('1062339910654246964'))
+// console.dir(isValidEmoji('😄'))
+// console.dir(isValidEmoji('🇵🇼'))
+// console.dir(isValidEmoji('\u{1F469}\u{200D}\u{2764}\u{FE0F}\u{200D}\u{1F48B}\u{200D}\u{1F469}'))
 
 //Discord throws api error
-// ogConsole.dir(isValidEmoji(':smile:'))
-// ogConsole.dir(isValidEmoji('smile'))
-// ogConsole.dir(isValidEmoji({name: 'smile'}))
+// console.dir(isValidEmoji(':smile:'))
+// console.dir(isValidEmoji('smile'))
+// console.dir(isValidEmoji({name: 'smile'}))

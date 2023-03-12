@@ -1,0 +1,357 @@
+<%- await include('parts/header.ejs', locals) %>
+
+
+<style>
+    .header-elements {
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+
+    #reqs-tableBody{
+        /* font-family: monospace; */
+    }
+</style>
+
+<div class="text-center mb-4">
+    <h2>Server Insights</h2>
+</div>
+
+<!-- TAB SELECTOR -->
+<div class="mb-4">
+    <ul class="nav nav-pills nav-tabs justify-content-center">
+        <li class="nav-item">
+            <a class="nav-item nav-link active" id="nav-resources-tab" data-toggle="tab" href="#nav-resources"
+                role="tab" aria-controls="nav-resources" aria-selected="true">
+                Resources
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-item nav-link" id="nav-http-tab" data-toggle="tab" href="#nav-http"
+                role="tab" aria-controls="nav-http" aria-selected="true">
+                HTTP Requests
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-item nav-link" id="nav-assets-tab" data-toggle="tab" href="#nav-assets"
+                role="tab" aria-controls="nav-assets" aria-selected="true">
+                Streamed Assets
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-item nav-link" id="nav-players-tab" data-toggle="tab" href="#nav-players"
+                role="tab" aria-controls="nav-players" aria-selected="true">
+                Players
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+<div class="row justify-content-md-center">
+    <div class="col-md-10">
+        <div class="tab-content" id="nav-tabContent">
+
+            <!-- resources Tab -->
+            <div class="tab-pane fade active show" id="nav-resources" role="tabpanel" aria-labelledby="nav-resources-tab">
+                <div class="card card-accent-info">
+                    <div class="card-header" style="display: flex; justify-content: space-between;">
+                        <div>
+                            <span style="font-size: x-large">Resources: <span id="reqs-counter">123</span></span>
+                        </div>
+                        <div class="header-elements">
+                            <div class="form-group mb-0">
+                                <div class="input-group input-group-sm">
+                                    <input class="form-control" id="reqs-searchInput" type="text"
+                                        placeholder="chat">
+                                    <span class="input-group-append">
+                                        <button class="btn btn-sm btn-secondary" type="button" id="reqs-searchButton">
+                                            Search
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive text-center d-nonex" id="reqs-content">
+                            <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                                <thead>
+                                    <tr class="text-left">
+                                        <th>Name</th>
+                                        <th>Boot Time</th>
+                                        <th>Assets</th>
+                                        <th>Outbound Events</th>
+                                        <th>HTTP Requests</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reqs-tableBody">
+                                    <tr>
+                                        <td>whatever</td>
+                                        <td class="text-danger">2.1 mins</td>
+                                        <td>
+                                            32
+                                            <span class="text-danger">(255 MB)</span>
+                                        </td>
+                                        <td>15.2 kbps</td>
+                                        <td>123</td>
+                                    </tr>
+                                    <tr>
+                                        <td>lorem</td>
+                                        <td>1s</td>
+                                        <td>&nbsp;1 (1.82 MB)</td>
+                                        <td>2.4 mbps</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ipsum</td>
+                                        <td>1s</td>
+                                        <td>&nbsp;0</td>
+                                        <td>0 kbps</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>dolor</td>
+                                        <td>1s</td>
+                                        <td>&nbsp;0</td>
+                                        <td>0 kbps</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>sit</td>
+                                        <td>1s</td>
+                                        <td>&nbsp;0</td>
+                                        <td>0 kbps</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>amet</td>
+                                        <td>1s</td>
+                                        <td>&nbsp;0</td>
+                                        <td>0 kbps</td>
+                                        <td>0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- //END OF TAB -->
+
+
+
+            <!-- HTTP REQUESTS Tab -->
+            <div class="tab-pane fade" id="nav-http" role="tabpanel" aria-labelledby="nav-http-tab">
+                <div class="card card-accent-info">
+                    <div class="card-header" style="display: flex; justify-content: space-between;">
+                        <div>
+                            <span style="font-size: x-large">HTTP Requests: <span id="reqs-counter">1234</span></span> <br>
+                            <small>Those are HTTP requests performed by your resources.</small>
+                        </div>
+                        <div class="header-elements">
+                            <div class="form-group mb-0">
+                                <div class="input-group input-group-sm">
+                                    <input class="form-control" id="reqs-searchInput" type="text"
+                                        placeholder="domain">
+                                    <span class="input-group-append">
+                                        <button class="btn btn-sm btn-secondary" type="button" id="reqs-searchButton">
+                                            Search
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive text-center d-nonex" id="reqs-content">
+                            <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                                <thead>
+                                    <tr class="text-left">
+                                        <th>Resource</th>
+                                        <th>Domain</th>
+                                        <th>Requests</th>
+                                        <th>Failure Rate</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reqs-tableBody">
+                                    <tr>
+                                        <td>whatever</td>
+                                        <td style="font-family: monospace;">api.discord.com</td>
+                                        <td>857</td>
+                                        <td>6.2%</td>
+                                        <td>
+                                            <button class="btn btn-inline btn-dark" type="button">
+                                                VIEW LOG
+                                            </button>
+                                            <button class="btn btn-inline btn-danger" type="button">
+                                                BLOCK
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>lorem</td>
+                                        <td style="font-family: monospace;">3nas7dfg8.shop</td>
+                                        <td>456</td>
+                                        <td>0%</td>
+                                        <td>
+                                            <button class="btn btn-inline btn-dark" type="button">
+                                                VIEW LOG
+                                            </button>
+                                            <button class="btn btn-inline btn-danger" type="button">
+                                                BLOCK
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>ipsum</td>
+                                        <td style="font-family: monospace;">whatever.com</td>
+                                        <td>123</td>
+                                        <td>0%</td>
+                                        <td>
+                                            <button class="btn btn-inline btn-dark" type="button">
+                                                VIEW LOG
+                                            </button>
+                                            <button class="btn btn-inline btn-danger" type="button">
+                                                BLOCK
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>dolor</td>
+                                        <td style="font-family: monospace;">whatever.com</td>
+                                        <td>123</td>
+                                        <td>0%</td>
+                                        <td>
+                                            <button class="btn btn-inline btn-dark" type="button">
+                                                VIEW LOG
+                                            </button>
+                                            <button class="btn btn-inline btn-danger" type="button">
+                                                BLOCK
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>sit</td>
+                                        <td style="font-family: monospace;">whatever.com</td>
+                                        <td>123</td>
+                                        <td>0%</td>
+                                        <td>
+                                            <button class="btn btn-inline btn-dark" type="button">
+                                                VIEW LOG
+                                            </button>
+                                            <button class="btn btn-inline btn-danger" type="button">
+                                                BLOCK
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>amet</td>
+                                        <td style="font-family: monospace;">whatever.com</td>
+                                        <td>123</td>
+                                        <td>0%</td>
+                                        <td>
+                                            <button class="btn btn-inline btn-dark" type="button">
+                                                VIEW LOG
+                                            </button>
+                                            <button class="btn btn-inline btn-danger" type="button">
+                                                BLOCK
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- //END OF TAB -->
+
+
+
+
+
+            <!-- ASSETS Tab -->
+            <div class="tab-pane fade" id="nav-assets" role="tabpanel" aria-labelledby="nav-assets-tab">
+                <div class="card card-accent-info">
+                    <div class="card-header" style="display: flex; justify-content: space-between;">
+                        <div>
+                            <span style="font-size: x-large">Streamed Assets: <span id="reqs-counter">123.5 MiB</span></span> <br>
+                            <small>Those are files sent sent to the client blabla bla Lorem ipsum dolor sit amet, consectetur adipiscing elit</small>
+                        </div>
+                        <div class="header-elements">
+                            <div class="form-group mb-0">
+                                <div class="input-group input-group-sm">
+                                    <input class="form-control" id="reqs-searchInput" type="text"
+                                        placeholder="resource or file">
+                                    <span class="input-group-append">
+                                        <button class="btn btn-sm btn-secondary" type="button" id="reqs-searchButton">
+                                            Search
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive text-center d-nonex" id="reqs-content">
+                            <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                                <thead>
+                                    <tr class="text-left">
+                                        <th>Resource</th>
+                                        <th>File</th>
+                                        <th>Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reqs-tableBody">
+                                    <tr>
+                                        <td>whatever</td>
+                                        <td>prison_main/desertos_prison.ytd</td>
+                                        <td>
+                                            <span class="text-danger">255 MiB</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>lorem</td>
+                                        <td>something/something.wth</td>
+                                        <td class="text-warning">50 MB</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ipsum</td>
+                                        <td>something/something.wth</td>
+                                        <td class="text-info">1.23 MB</td>
+                                    </tr>
+                                    <tr>
+                                        <td>dolor</td>
+                                        <td>something/something.wth</td>
+                                        <td class="text-info">1.23 MB</td>
+                                    </tr>
+                                    <tr>
+                                        <td>sit</td>
+                                        <td>something/something.wth</td>
+                                        <td class="text-info">1.23 MB</td>
+                                    </tr>
+                                    <tr>
+                                        <td>amet</td>
+                                        <td>something/something.wth</td>
+                                        <td class="text-info">1.23 MB</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- //END OF TAB -->
+
+            
+
+
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<%- await include('parts/footer.ejs', locals) %>
+
+

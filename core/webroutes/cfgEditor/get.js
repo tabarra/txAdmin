@@ -1,7 +1,7 @@
 const modulename = 'WebServer:CFGEditorGet';
-import logger from '@core/extras/console.js';
 import { resolveCFGFilePath, readRawCFGFile } from '@core/extras/fxsConfigHelper';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**

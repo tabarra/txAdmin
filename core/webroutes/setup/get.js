@@ -1,9 +1,10 @@
 const modulename = 'WebServer:SetupGet';
 import path from 'path';
-import logger from '@core/extras/console.js';
 import { convars, txEnv } from '@core/globalData';
 import { engineVersion } from '../../extras/deployer';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 /**
  * Returns the output page containing the live console

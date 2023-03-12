@@ -1,8 +1,8 @@
 const modulename = 'TimeSeries';
 import fse from 'fs-extra';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 //Helpers
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -81,7 +81,7 @@ export default class TimeSeries {
         try {
             await fse.writeFile(this.file, JSON.stringify(this.log));
         } catch (error) {
-            if (verbose) logWarn('Error writing the player history log file.');
+            console.verbose.warn('Error writing the player history log file.');
         }
     }
 

@@ -1,9 +1,8 @@
 import humanizeDuration, { Unit } from 'humanize-duration';
 import chalk from 'chalk';
+import consoleFactory from '@extras/console';
+const console = consoleFactory('ATTENTION');
 
-const printWarning = (msg: string) => {
-    console.log(chalk.bold.bgRedBright(`[txAdmin] ATTENTION!`) + ' ' + msg);
-}
 
 //@ts-ignore esbuild will replace TX_PRERELEASE_EXPIRATION with a string
 const PRERELEASE_EXPIRATION = parseInt(TX_PRERELEASE_EXPIRATION)
@@ -15,11 +14,11 @@ const humanizeOptions = {
 const printExpirationBanner = (timeUntilExpiration: number) => {
     const timeLeft = humanizeDuration(timeUntilExpiration, humanizeOptions)
     const timeLeftStyled = chalk.inverse(` ${timeLeft} `);
-    printWarning('This is a pre-release version of txAdmin!');
-    printWarning('This build is meant to be used by txAdmin beta testers.');
-    printWarning('txAdmin will automatically shut down when this pre-release expires.');
-    printWarning(`Time until expiration: ${timeLeftStyled}.`);
-    printWarning('For more information: https://discord.gg/txAdmin.');
+    console.error('This is a pre-release version of txAdmin!');
+    console.error('This build is meant to be used by txAdmin beta testers.');
+    console.error('txAdmin will automatically shut down when this pre-release expires.');
+    console.error(`Time until expiration: ${timeLeftStyled}.`);
+    console.error('For more information: https://discord.gg/txAdmin.');
 }
 
 const cronCheckExpiration = () => {
@@ -27,10 +26,10 @@ const cronCheckExpiration = () => {
 
     const timeUntilExpiration = PRERELEASE_EXPIRATION - Date.now();
     if (timeUntilExpiration < 0) {
-        printWarning('This pre-release version has expired, please update your txAdmin.');
-        printWarning('For more information: https://discord.gg/txAdmin.');
+        console.error('This pre-release version has expired, please update your txAdmin.');
+        console.error('For more information: https://discord.gg/txAdmin.');
         process.exit(1);
-    } else if(timeUntilExpiration < 24 * 60 * 60 * 1000){
+    } else if (timeUntilExpiration < 24 * 60 * 60 * 1000) {
         printExpirationBanner(timeUntilExpiration);
     }
 }
@@ -40,7 +39,8 @@ export default () => {
 
     const timeUntilExpiration = PRERELEASE_EXPIRATION - Date.now();
     if (timeUntilExpiration < 0) {
-        printWarning('This pre-release version has expired, please update your txAdmin.');
+        console.error('This pre-release version has expired, please update your txAdmin.');
+        console.error('For more information: https://discord.gg/txAdmin.');
         process.exit(1);
     }
 

@@ -5,11 +5,12 @@ import dateFormat from 'dateformat'
 import fse from 'fs-extra';
 import open from 'open';
 import YAML from 'js-yaml';
-import logger from '@core/extras/console.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
-import { txEnv, verbose } from '@core/globalData';
+import { txEnv } from '@core/globalData';
 import recipeEngine from './recipeEngine.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 //Helper functions
 const getTimestamp = () => { return dateFormat(new Date(), 'HH:MM:ss'); };
@@ -81,7 +82,7 @@ export const parseValidateRecipe = (rawRecipe) => {
     try {
         recipe = YAML.load(rawRecipe, { schema: YAML.JSON_SCHEMA });
     } catch (error) {
-        if (verbose) dir(error);
+        console.verbose.dir(error);
         throw new Error('invalid yaml');
     }
 
@@ -136,7 +137,7 @@ export const parseValidateRecipe = (rawRecipe) => {
     }
 
     //Output
-    if (verbose) dir(outRecipe);
+    console.verbose.dir(outRecipe);
     return outRecipe;
 };
 
@@ -152,7 +153,7 @@ export class Deployer {
      * @param {boolean} isTrustedSource
      */
     constructor(originalRecipe, deploymentID, deployPath, isTrustedSource, customMetaData = {}) {
-        log('Deployer instance ready.');
+        console.log('Deployer instance ready.');
 
         //Setup variables
         this.step = 'review';
@@ -172,21 +173,21 @@ export class Deployer {
         try {
             this.recipe = parseValidateRecipe(impRecipe);
         } catch (error) {
-            if (verbose) dir(error);
+            console.verbose.dir(error);
             throw new Error(`Recipe Error: ${error.message}`);
         }
     }
 
     //Dumb helpers - don't care enough to make this less bad
-    log(str) {
+    customLog(str) {
         this.logLines.push(`[${getTimestamp()}] ${str}`);
-        log(str);
+        console.log(str);
     }
-    logError(str) {
+    customLogError(str) {
         this.logLines.push(`[${getTimestamp()}] ${str}`);
-        logError(str);
+        console.error(str);
     }
-    getLog() {
+    getDeployerLog() {
         return this.logLines.join('\n');
     }
 
@@ -208,7 +209,7 @@ export class Deployer {
         try {
             await fse.ensureDir(this.deployPath);
         } catch (error) {
-            if (verbose) dir(error);
+            console.verbose.dir(error);
             throw new Error(`Failed to create ${this.deployPath} with error: ${error.message}`);
         }
 
@@ -232,7 +233,7 @@ export class Deployer {
         if (this.step !== 'input') throw new Error('expected input step');
         Object.assign(this.recipe.variables, userInputs);
         this.logLines = [];
-        this.log(`Starting deployment of ${this.recipe.name}.`);
+        this.customLog(`Starting deployment of ${this.recipe.name}.`);
         this.deployFailed = false;
         this.progress = 0;
         this.step = 'run';
@@ -268,7 +269,7 @@ export class Deployer {
             this.progress = Math.round((index / this.recipe.tasks.length) * 100);
             const task = this.recipe.tasks[index];
             const taskID = `[task${index + 1}:${task.action}]`;
-            this.log(`Running ${taskID}...`);
+            this.customLog(`Running ${taskID}...`);
             const taskTimeoutSeconds = task.timeoutSeconds ?? recipeEngine[task.action].timeoutSeconds;
 
             try {
@@ -295,14 +296,14 @@ export class Deployer {
                             contextVariables.$step
                         ]);
                 }
-                this.logError(msg);
+                this.customLogError(msg);
                 return await this.markFailedDeploy();
             }
         }
 
         //Set progress
         this.progress = 100;
-        this.log('All tasks completed.');
+        this.customLog('All tasks completed.');
 
         //Check deploy folder validity (resources + server.cfg)
         try {
@@ -312,7 +313,7 @@ export class Deployer {
                 throw new Error('this recipe didn\'t create a \'server.cfg\' file.');
             }
         } catch (error) {
-            this.logError(`Deploy validation error: ${error.message}`);
+            this.customLogError(`Deploy validation error: ${error.message}`);
             return await this.markFailedDeploy();
         }
 
@@ -323,14 +324,14 @@ export class Deployer {
                 file: './server.cfg',
             };
             await recipeEngine['replace_string'].run(task, this.deployPath, contextVariables);
-            this.log('Replacing all vars in server.cfg... ✔️');
+            this.customLog('Replacing all vars in server.cfg... ✔️');
         } catch (error) {
-            this.logError(`Failed to replace all vars in server.cfg: ${error.message}`);
+            this.customLogError(`Failed to replace all vars in server.cfg: ${error.message}`);
             return await this.markFailedDeploy();
         }
 
         //Else: success :)
-        this.log('Deploy finished and folder validated. All done!');
+        this.customLog('Deploy finished and folder validated. All done!');
         this.step = 'configure';
         if (txEnv.isWindows) {
             try {

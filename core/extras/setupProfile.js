@@ -2,16 +2,16 @@ const modulename = 'SetupProfile';
 import path from 'path';
 import fs from 'fs-extra';
 import chalk from 'chalk';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 //Helpers
-const printDivider = () => { log('='.repeat(57)); };
+const DIVIDER = '='.repeat(57);
 
 //Default config structure
 const defaultConfig = {
     global: {
-        verbose: false,
         serverName: null,
         language: 'en',
     },
@@ -35,15 +35,15 @@ const defaultConfig = {
 
 //================================================================
 export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePath) => {
-    printDivider();
+    console.log(DIVIDER);
     //Sanity check presence of profile
     if (fs.existsSync(profilePath)) {
-        logError(`There is already a profile named '${serverProfile}'.`);
+        console.error(`There is already a profile named '${serverProfile}'.`);
         process.exit();
     }
 
     //Create new profile folder
-    log('Creating new profile folder...');
+    console.log('Creating new profile folder...');
     try {
         const jsonConfig = JSON.stringify(defaultConfig, null, 2);
         fs.mkdirSync(profilePath);
@@ -51,10 +51,11 @@ export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePat
         fs.mkdirSync(`${profilePath}/data/`);
         fs.writeFileSync(`${profilePath}/config.json`, jsonConfig);
     } catch (error) {
-        logError(`Failed to set up folder structure in '${profilePath}' with error: ${error.message}`);
+        console.error(`Failed to set up folder structure in '${profilePath}' with error:`);
+        console.dir(error);
         process.exit();
     }
-    logOk(`Server profile was saved in '${profilePath}'`);
+    console.ok(`Server profile was saved in '${profilePath}'`);
 
 
     //Saving start.bat
@@ -66,10 +67,11 @@ pause`;
             const batFolder = path.resolve(fxServerPath, '..');
             const batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
             fs.writeFileSync(batPath, batData);
-            logOk(`You can use ${chalk.inverse(batPath)} to start this profile.`);
+            console.ok(`You can use ${chalk.inverse(batPath)} to start this profile.`);
         } catch (error) {
-            logWarn(`Failed to create 'start_${fxServerVersion}_${serverProfile}.bat' with error: ${error.message}`);
+            console.warn(`Failed to create 'start_${fxServerVersion}_${serverProfile}.bat' with error:`);
+            console.dir(error);
         }
     }
-    printDivider();
+    console.log(DIVIDER);
 };

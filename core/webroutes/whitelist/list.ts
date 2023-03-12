@@ -2,11 +2,11 @@ const modulename = 'WebServer:WhitelistList';
 import Fuse from "fuse.js";
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
-import logger, { ogConsole } from '@core/extras/console.js';
 import { Context } from 'koa';
 import cleanPlayerName from "@shared/cleanPlayerName";
 import { GenericApiError } from "@core/../shared/genericApiTypes";
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**

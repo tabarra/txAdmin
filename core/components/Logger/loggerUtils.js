@@ -5,9 +5,8 @@ import bytes from 'bytes';
 import dateFormat from 'dateformat';
 import rfs from 'rotating-file-stream';
 import { cloneDeep, defaultsDeep }  from 'lodash-es';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**
@@ -63,7 +62,7 @@ export const getLogSizes = async (basePath, filterRegex) => {
 
         //If disabled
         if (lrProfileConfig === false) {
-            logWarn(`${logName} persistent logging disabled.`, logName);
+            console.warn(`${logName} persistent logging disabled.`, logName);
             this.lrStream = {
                 write: () => {},
             };
@@ -85,7 +84,7 @@ export const getLogSizes = async (basePath, filterRegex) => {
         this.lrStream = rfs.createStream(filenameGenerator, lrOptions);
         this.lrStream.on('error', (error) => {
             if (error.code !== 'ERR_STREAM_DESTROYED') {
-                if (verbose) logError(error, logName);
+                console.verbose.error(error, logName);
                 this.lrErrors++;
                 this.lrLastError = error.message;
             }

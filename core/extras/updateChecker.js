@@ -1,9 +1,10 @@
 const modulename = 'updateChecker';
 import semver from 'semver';
 import got from '@core/extras/got.js';
-import logger from '@core/extras/console.js';
-import { txEnv, verbose } from '@core/globalData';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import { txEnv } from '@core/globalData';
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
+
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -58,7 +59,7 @@ export default async () => {
             throw new Error(`expected prop ${missing} not found in api response.`);
         }
     } catch (error) {
-        if (verbose) logWarn(`Failed to retrieve FXServer/txAdmin update data with error: ${error.message}`);
+        console.verbose.warn(`Failed to retrieve FXServer/txAdmin update data with error: ${error.message}`);
         if (globals.databus.updateChecker === null) globals.databus.updateChecker = false;
         return;
     }
@@ -70,19 +71,19 @@ export default async () => {
         if (isOutdated) {
             const semverDiff = semver.diff(txEnv.txAdminVersion, apiResponse.latest_txadmin);
             if (semverDiff === 'patch') {
-                logWarn('This version of txAdmin is outdated.');
-                logWarn('A patch (bug fix) update is available for txAdmin.');
-                logWarn('If you are experiencing any kind of issue, please update now.');
-                logWarn('For more information: https://discord.gg/uAmsGa2');
+                console.warn('This version of txAdmin is outdated.');
+                console.warn('A patch (bug fix) update is available for txAdmin.');
+                console.warn('If you are experiencing any kind of issue, please update now.');
+                console.warn('For more information: https://discord.gg/uAmsGa2');
                 txOutput = {
                     semverDiff,
                     latest: apiResponse.latest_txadmin,
                     color: 'secondary',
                 };
             } else {
-                logError('This version of txAdmin is outdated.');
-                logError('Please update as soon as possible.');
-                logError('For more information: https://discord.gg/uAmsGa2');
+                console.error('This version of txAdmin is outdated.');
+                console.error('Please update as soon as possible.');
+                console.error('For more information: https://discord.gg/uAmsGa2');
                 txOutput = {
                     semverDiff,
                     latest: apiResponse.latest_txadmin,
@@ -91,8 +92,8 @@ export default async () => {
             }
         }
     } catch (error) {
-        logWarn('Error checking for txAdmin updates. Enable verbosity for more information.');
-        if (verbose) dir(error);
+        console.verbose.warn('Error checking for txAdmin updates. Enable verbosity for more information.');
+        console.verbose.dir(error);
     }
 
     //Checking FXServer version
@@ -127,8 +128,8 @@ export default async () => {
             };
         }
     } catch (error) {
-        logWarn('Error checking for FXServer updates. Enable verbosity for more information.');
-        if (verbose) dir(error);
+        console.warn('Error checking for FXServer updates. Enable verbosity for more information.');
+        console.verbose.dir(error);
     }
 
     //Output

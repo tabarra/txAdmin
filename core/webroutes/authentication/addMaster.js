@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AddMaster';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -60,7 +60,7 @@ async function handlePin(ctx) {
 
     //Checking the PIN
     if (ctx.request.body.pin !== globals.adminVault.addMasterPin) {
-        logWarn(`Wrong PIN for from: ${ctx.ip}`);
+        console.warn(`Wrong PIN for from: ${ctx.ip}`);
         const message = 'Wrong PIN.';
         return ctx.utils.render('login', { template: 'noMaster', message });
     }
@@ -108,7 +108,7 @@ async function handleCallback(ctx) {
         const currentURL = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
         tokenSet = await globals.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
-        logWarn(`Code Exchange error: ${error.message}`);
+        console.warn(`Code Exchange error: ${error.message}`);
         if (!isUndefined(error.tolerance)) {
             return returnJustMessage(
                 ctx,
@@ -137,7 +137,7 @@ async function handleCallback(ctx) {
     try {
         userInfo = await globals.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
-        logError(`Get UserInfo error: ${error.message}`);
+        console.error(`Get UserInfo error: ${error.message}`);
         return returnJustMessage(
             ctx,
             'Get UserInfo error:',
@@ -240,7 +240,7 @@ async function handleSave(ctx) {
         delete ctx.session.tmpAddMasterUserInfo;
     } catch (error) {
         ctx.session.auth = {};
-        logError(`Failed to login: ${error.message}`);
+        console.error(`Failed to login: ${error.message}`);
         return returnJustMessage(
             ctx,
             'Failed to login:',

@@ -1,12 +1,12 @@
 const modulename = 'Logger:Admin';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
-import dateFormat from 'dateformat';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
-import { LoggerBase, separator } from '@core/components/Logger/loggerUtils.js';
 import chalk from 'chalk';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import dateFormat from 'dateformat';
+import { txEnv } from '@core/globalData';
+import { LoggerBase, separator } from '@core/components/Logger/loggerUtils.js';
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 export default class AdminLogger extends LoggerBase {
@@ -20,10 +20,11 @@ export default class AdminLogger extends LoggerBase {
 
         };
         super(basePath, 'admin', lrDefaultOptions, lrProfileConfig);
-        this.lrStream.write(`\n${separator('txAdmin Starting')}\n`);
+        const sepText = separator(`txAdmin v${txEnv.txAdminVersion} atop fxserver ${txEnv.fxServerVersion} Starting`);
+        this.lrStream.write(`\n${sepText}\n`);
         this.lrStream.on('rotated', (filename) => {
             this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            if (verbose) log(`Rotated file ${filename}`);
+            console.verbose.log(`Rotated file ${filename}`);
         });
 
         this.writeCounter = 0;
@@ -59,10 +60,10 @@ export default class AdminLogger extends LoggerBase {
         let saveMsg;
         if(type === 'command'){
             saveMsg = `[${author}] executed "${action}"`;
-            log(`${author} executed ` + chalk.inverse(' ' + action + ' '));
+            console.log(`${author} executed ` + chalk.inverse(' ' + action + ' '));
         }else{
             saveMsg = `[${author}] ${action}`;
-            log(saveMsg);
+            console.log(saveMsg);
         }
         const timestamp = dateFormat(new Date(), 'HH:MM:ss');
         this.lrStream.write(`[${timestamp}]${saveMsg}\n`);

@@ -1,7 +1,7 @@
 const modulename = 'WebServer:ChartData';
 import Cache from '../extras/dataCache';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 const caches = {
     svNetwork: new Cache(30),

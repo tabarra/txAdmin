@@ -18,6 +18,7 @@ function applyPlayerlistFilter() {
         if (
             search == ''
             || (typeof el.dataset['pname'] == 'string' && el.dataset['pname'].includes(search))
+            || (typeof el.dataset['netid'] == 'string' && el.dataset['netid'].includes(search))
         ) {
             el.hidden = false;
         } else {
@@ -69,6 +70,7 @@ function updatePlayer(player) {
     el.firstElementChild.innerHTML = `[${player.netid}]`.padStart(padSize, 'x').replace(/x/g, '&nbsp;');
     el.lastElementChild.textContent = player.displayName;
     el.dataset['pname'] = player.pureName;
+    el.dataset['netid'] = player.netid;
 }
 
 

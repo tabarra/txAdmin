@@ -1,11 +1,11 @@
 const modulename = 'WebServer:SettingsGet';
 import { cloneDeep }  from 'lodash-es';
-import logger from '@core/extras/console.js';
 import { convars, txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import { redactApiKeys } from '../../extras/helpers';
 import { defaultEmbedConfigJson, defaultEmbedJson } from '@core/components/DiscordBot/defaultJsons';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);;
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 /**

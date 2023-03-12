@@ -1,8 +1,7 @@
 const modulename = 'WebServer:SystemLog';
-import dateFormat from 'dateformat';
 import xssInstancer from '@core/extras/xss.js';
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError, getLog } = logger(modulename);
+import consoleFactory, { getLogBuffer } from '@extras/console';
+const console = consoleFactory(modulename);
 const xss = xssInstancer();
 
 
@@ -13,22 +12,12 @@ const xss = xssInstancer();
 export default async function SystemLog(ctx) {
     //Check permissions
     if (!ctx.utils.hasPermission('txadmin.log.view')) {
-        return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
+        return ctx.utils.render('main/message', { message: 'You don\'t have permission to view this page.' });
     }
 
-    //Console
-    const rawConsoleLog = getLog();
-    const consoleLogLines = [];
-    rawConsoleLog.forEach((logData) => {
-        const ts = dateFormat(new Date(logData.ts * 1000), 'HH:MM:ss');
-        const mark = `<mark class="consoleMark-${logData.type.toLowerCase()}">[${ts}][${logData.ctx}]</mark>`;
-        consoleLogLines.push(`${mark}  ${xss(logData.msg)}`);
+    return ctx.utils.render('main/systemLog', {
+        headerTitle: 'System Log',
+        consoleLog: getLogBuffer(),
+        actionLog: xss(await globals.logger.admin.getRecentBuffer()),
     });
-    const consoleLog = consoleLogLines.join('\n');
-
-    //Actions
-    const actionLog = xss(await globals.logger.admin.getRecentBuffer());
-
-    //Output
-    return ctx.utils.render('main/systemLog', {headerTitle: 'System Log', consoleLog, actionLog});
 };

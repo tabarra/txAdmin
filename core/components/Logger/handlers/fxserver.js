@@ -1,10 +1,9 @@
 const modulename = 'Logger:FXServer';
 import bytes from 'bytes';
 import chalk from 'chalk';
-import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData';
 import { LoggerBase, separator } from '../loggerUtils.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import consoleFactory from '@extras/console';
+const console = consoleFactory(modulename);
 
 
 //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
@@ -43,12 +42,12 @@ export default class FXServerLogger extends LoggerBase {
         super(basePath, 'fxserver', lrDefaultOptions, lrProfileConfig);
         this.lrStream.on('rotated', (filename) => {
             this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            if (verbose) log(`Rotated file ${filename}`);
+            console.verbose.log(`Rotated file ${filename}`);
         });
 
-
         this.recentBuffer = '';
-        this.recentBufferMaxSize = 128 * 1024; //128kb
+        this.recentBufferMaxSize = 256 * 1024; //kb
+        this.recentBufferTrimSliceSize = 32 * 1024; //how much will be cut when overflows
     }
 
 
@@ -132,8 +131,8 @@ export default class FXServerLogger extends LoggerBase {
     appendRecent(data) {
         this.recentBuffer += data;
         if (this.recentBuffer.length > this.recentBufferMaxSize) {
-            this.recentBuffer = this.recentBuffer.slice(-0.5 * this.recentBufferMaxSize);
-            this.recentBuffer = this.recentBuffer.substr(this.recentBuffer.indexOf('\n'));
+            this.recentBuffer = this.recentBuffer.slice(this.recentBufferTrimSliceSize - this.recentBufferMaxSize);
+            this.recentBuffer = this.recentBuffer.substring(this.recentBuffer.indexOf('\n'));
         }
     }
 };
