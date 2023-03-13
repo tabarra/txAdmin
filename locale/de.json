@@ -45,7 +45,7 @@
             "deny_notmember_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden.",
             "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderliche(n) Rolle(n). Versuche dich anschließend erneut zu verbinden.",
             "deny_noroles_title": "Du hast nicht die erforderliche(n) Rolle(n), um dich verbinden zu können.",
-            "deny_noroles_message": "Um diesem Server beizutreten benötigst du mindestens eine der erforderlichen Rolle(n). Discord: %{guildname}."
+            "deny_noroles_message": "Um dich verbinden zu können, benötigst du mindestens eine der dafür erforderlichen Rollen. Discord: %{guildname}."
         },
         "approved_license": {
             "mode_title": "Dieser Server ist im <strong>Whitelist</strong> Modus.",
