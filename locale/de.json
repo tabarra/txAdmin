@@ -49,7 +49,7 @@
         },
         "approved_license": {
             "mode_title": "Dieser Server ist im <strong>Whitelist</strong> Modus.",
-            "insufficient_ids": "Du hast keine <code>License</code> identifier, was bedeutet dieser Server hat <code>sv_lan</code> aktiviert. Solltest du der Serverbesitzer sein, dann kannst du dies in der server.cfg ändern.",
+            "insufficient_ids": "Du hast keinen <code>License</code> Identifier, was bedeutet, dass dieser Server <code>sv_lan</code> aktiviert hat. Solltest du der Serverbesitzer sein, dann kannst du das in der server.cfg ändern.",
             "deny_title": "Du bist nicht auf diesem Server gewhitelisted.",
             "request_id_label": "Whitelist-ID"
         }
