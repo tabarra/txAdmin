@@ -5,7 +5,7 @@
     },
     "restarter": {
         "start_timeout": "Nie udało się załadować serwera",
-        "crash_detected": "Wykryty Crash",
+        "crash_detected": "Wykryto crash serwera",
         "hang_detected": "Wykryto zawieszenie się serwera",
         "partial_hang_warn": "Z powodu częściowego zawieszenia, serwer zostanie ponownie uruchomiony za 1 minutę. Prosimy o rozłączenie się.",
         "partial_hang_warn_discord": "Z powodu częściowego zawieszenia, **%{servername}** zostanie uruchomiony ponownie za 1 minutę.",
@@ -24,33 +24,33 @@
             "label_author": "Zbanowany przez",
             "label_reason": "Powód bana",
             "label_id": "Identyfikator bana",
-            "note_multiple_bans": "Uwaga: Masz więcej niż jedną aktywną blokadę na swoje identyfikatory."
+            "note_multiple_bans": "Uwaga: masz więcej niż jedną aktywną blokadę na swoje identyfikatory."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Ten serwer jest w trybie <strong>Admin-only</strong>.",
+            "insufficient_ids": "Nie posiadasz identyfikatora <code>discord</code> lub <code>fivem</code>, przynajmniej jeden z nich jest wymagany jeśli posiadasz konto w txAdmin'ie.",
+            "deny_message": "Żaden z twoich identyfikatorów nie jest przypisany do konta txAdmin."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Ten serwer jest w trybie <strong>Discord Guild Member Whitelist</strong>.",
+            "insufficient_ids": "Nie posiadasz identyfikatora <code>discord</code>, który jest wymagany by zweryfikować czy jesteś na naszym serwerze Discord. Uruchom ponownie Discord, i spróbuj ponownie.",
+            "deny_title": "Musisz dołączyć na nasz serwer Discord aby połączyć się na serwer.",
+            "deny_message": "Dołącz na serwer Discord %{guildname} i spróbuj ponownie."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Ten serwer jest w trybie <strong>Discord Role Whitelist</strong>.",
+            "insufficient_ids": "Nie posiadasz identyfikatora <code>discord</code>, który jest wymagany by zweryfikować czy jesteś na naszym serwerze Discord. Uruchom ponownie Discord, i spróbuj ponownie.",
+            "deny_notmember_title": "Musisz dołączyć na nasz serwer Discord aby połączyć się na serwer.",
+            "deny_notmember_message": "Dołącz na serwer Discord %{guildname}, zdobądź jedną z wymaganych ról, i spróbuj ponownie.",
+            "deny_noroles_title": "Nie posiadasz wymaganej roli aby się połączyć.",
+            "deny_noroles_message": "Aby połączyć się z tym serwerem, musisz posiadać jedną z wymaganych ról na serwerze Discord %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
+            "mode_title": "Ten serwer jest w trybie <strong>License Whitelist</strong>.",
+            "insufficient_ids": "Nie posiadasz identyfikatora <code>license</code>, co oznacza że ten serwer ma uruchomiony <code>sv_lan</code>. Jeśli jesteś właścicielem tego serwera, możesz go wyłączyć w pliku <code>server.cfg</code>.",
+            "deny_title": "Nie jesteś uprawniony aby dołączyć na ten serwer.",
             "request_id_label": "Request ID"
         }
     },
@@ -103,12 +103,12 @@
                 "godmode": {
                     "title": "Bóg",
                     "label": "Nieśmiertelność",
-                    "success": "Znajdujesz się w trybie boga"
+                    "success": "Jesteś nieśmiertelny"
                 },
                 "superjump": {
                     "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "label": "Tryb wysokiego skoku, oraz szybszego poruszania się",
+                    "success": "Włączony Super Jump"
                 },
                 "normal": {
                     "title": "Normalny",
@@ -128,7 +128,7 @@
                     "title": "Koordynaty",
                     "label": "Teleportuj się do wybranych koordynatów",
                     "dialog_title": "Teleport",
-                    "dialog_desc": "Podaj koordynaty w formacie x,y,z, aby przejść przez tunel czasoprzestrzenny.",
+                    "dialog_desc": "Podaj koordynaty w formacie x, y, z, aby przejść przez tunel czasoprzestrzenny.",
                     "dialog_error": "Niepoprawne koordynaty. Muszą mieć format: 111, 222, 33"
                 },
                 "back": {
@@ -143,7 +143,7 @@
             },
             "vehicle": {
                 "title": "Pojazd",
-                "onesync_error": "Ta opcja wymaga, aby OneSync był włączony do obsługi podmiotów serwerowych",
+                "onesync_error": "Ta opcja wymaga, aby OneSync był włączony do obsługi bytów stworzonych przez serwer",
                 "not_in_veh_error": "Nie jesteś w żadnym pojeździe!",
                 "spawn": {
                     "title": "Stwórz",
@@ -198,7 +198,7 @@
             "clear_area": {
                 "title": "Zrestartuj obszar świata",
                 "label": "Zresetuj określony obszar świata do stanu domyślnego",
-                "dialog_desc": "Wprowadź promień, w którym chcesz zresetować jednostki w (0-300). Nie usunie to podmiotów spawnowanych po stronie serwera.",
+                "dialog_desc": "Wprowadź promień, w którym chcesz zresetować jednostki w (0-300). Nie usunie to bytów stworzonych po stronie serwera.",
                 "dialog_success": "Oczyszczono obszar w promieniu %{radius}m",
                 "dialog_error": "Wprowadzono niepoprawny promień. Spróbuj ponownie."
             },
