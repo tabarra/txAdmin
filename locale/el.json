@@ -17,9 +17,9 @@
         "kick_temporary": "(%{author}) Έχει απαγορευτεί η είσοδος σου στον διακομιστή για: \"%{reason}\". Η απαγορευσή σου θα λήξει σε: %{expiration}.",
         "kick_permanent": "(%{author}) Έχει απαγορευτεί η είσοδος σου στον διακομιστή για: \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
+            "title_permanent": "Έχετε αποκλειστεί οριστικά από αυτόν τον διακομιστή.",
+            "title_temporary": "Έχετε αποκλειστεί προσωρινά από αυτόν τον διακομιστή.",
+            "label_expiration": "Το ban σου θα λήξει",
             "label_date": "Ban Date",
             "label_author": "Banned by",
             "label_reason": "Ban Reason",
@@ -29,28 +29,28 @@
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Ο διακομιστής βρίσκεται σε <strong>Admin-only</strong> mode.",
+            "insufficient_ids": "Δεν έχεις <code>discord</code> or <code>fivem</code> identifiers, και τουλάχιστον ένα από αυτά απαιτείται για επικύρωση εάν είστε διαχειριστής στο txAdmin.",
+            "deny_message": "Τα identifiers σου δεν σχετίζονται με κάποιον txAdmin administrator."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Ο διακομιστής βρίσκεται σε <strong>Discord Guild Member Whitelist</strong> mode.",
+            "insufficient_ids": "Δεν έχεις <code>discord</code> identifier, το οποίο απαιτείται για την επικύρωση του αν έχεις μπεί στο Discord μας. Άνοιξε το Discord και ξανάπροσπάθησε.",
+            "deny_title": "Πρέπει να είσαι στο Discord μας για να συνδεθείς.",
+            "deny_message": "Συνδέσου στο %{guildname} και ξανά προσπάθησε."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Ο διακομιστής βρίσκεται σε <strong>Discord Role Whitelist</strong> mode.",
+            "insufficient_ids": "Δεν έχεις <code>discord</code> identifier, το οποίο απαιτείται για την επικύρωση του αν έχεις μπεί στο Discord μας. Άνοιξε το Discord και ξανάπροσπάθησε.",
+            "deny_notmember_title": "Πρέπει να είσαι στο Discord μας για να συνδεθείς.",
+            "deny_notmember_message": "Συνδέσου στο %{guildname} και ξανά προσπάθησε.",
+            "deny_noroles_title": "Δεν έχεις το whitelisted role που απαιτείται για να συνδεθείς.",
+            "deny_noroles_message": "Για να συνδεθείτε σε αυτόν τον διακομιστή, πρέπει να έχετε τουλάχιστον έναν από τους whitelisted roles στο Discord %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
+            "mode_title": "Ο διακομιστής βρίσκεται σε <strong>License Whitelist</strong> mode.",
+            "insufficient_ids": "Δεν έχεις το <code>license</code> identifier, το οποίο σημαίνει ότι ο διακομιστής έχει το <code>sv_lan</code> ανοικτό. Αν είσαι ο server owner, πρέπει να το κλείσεις στο <code>server.cfg</code> file.",
+            "deny_title": "Δεν είσαι whitelisted για να συνδεθείς",
             "request_id_label": "Request ID"
         }
     },
