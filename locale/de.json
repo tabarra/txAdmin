@@ -34,7 +34,7 @@
             "deny_message": "Deine Identifier sind keinem txAdmin-Administrator zugewiesen. Der Zugang wurde verweigert."
         },
         "guild_member": {
-            "mode_title": "Dieser Server befindet sich im <strong>Discord</strong> Modus.",
+            "mode_title": "Dieser Server befindet sich im <strong>Discord-Whitelist</strong> Modus.",
             "insufficient_ids": "Es konnte keine <code>Discord</code> identifier gefunden werden. Bitte Discord starten und es erneut versuchen.",
             "deny_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden.",
             "deny_message": "Bitte trete unserem Discord %{guildname} bei und versuche es erneut."
