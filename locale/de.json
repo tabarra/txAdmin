@@ -42,7 +42,7 @@
         "guild_roles": {
             "mode_title": "Dieser Server befindet sich im <strong>Discord</strong> Modus.",
             "insufficient_ids": "Es konnte kein <code>Discord</code> Identifier bei dir gefunden werden. Bitte starte Discord neu und versuche es dann erneut.",
-            "deny_notmember_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden.",
+            "deny_notmember_title": "Du musst auf unserem Discord-Server sein und die nötige Rolle haben, um dich verbinden zu können.",
             "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderliche(n) Rolle(n). Versuche dich anschließend erneut zu verbinden.",
             "deny_noroles_title": "Du hast nicht die erforderliche(n) Rolle(n), um dich verbinden zu können.",
             "deny_noroles_message": "Um dich verbinden zu können, benötigst du mindestens eine der dafür erforderlichen Rollen. Discord: %{guildname}."
