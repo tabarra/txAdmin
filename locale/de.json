@@ -36,7 +36,7 @@
         "guild_member": {
             "mode_title": "Dieser Server befindet sich im <strong>Discord-Whitelist</strong> Modus.",
             "insufficient_ids": "Es konnte kein <code>Discord</code> Identifier bei dir gefunden werden. Bitte starte Discord neu und versuche es dann erneut.",
-            "deny_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden.",
+            "deny_title": "Du musst auf unserem Discord-Server sein, um dich verbinden zu können.",
             "deny_message": "Bitte trete unserem Discord %{guildname} bei und versuche es erneut."
         },
         "guild_roles": {
