@@ -29,29 +29,29 @@
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Bu sunucu <strong>Sadece-Yetkili</strong> modundunadır.",
+            "insufficient_ids": "<code>discord</code> veya <code>fivem</code> tanımlayıcısına sahip değilsiniz, en az bir tanesi sizin bir txAdmin yöneticisi olup olmadığınızı doğrulamak için gereklidir.",
+            "deny_message": "Tanımlayıcılarınız herhangi bir txAdmin yöneticisine ait değildir."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Bu sunucu <strong>Discord Üye Beyaz Listesi</strong> modundunadır.",
+            "insufficient_ids": "<code>discord</code> tanımlayıcısına sahip değilsiniz, Discord Sunucusuna katılıp katılmadığınızı doğrulamak için gereklidir. Lütfen Discord'u açıp tekrar deneyin.",
+            "deny_title": "Bağlanmak için Discord Sunucumuzda bulunmanız gerekiyor.",
+            "deny_message": "Lütfen %{guildname} sunucumuza katılın ve tekrar deneyin."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Bu sunucu <strong>Discord Rol Beyaz Listesi</strong> modunda.",
+            "insufficient_ids": "<code>discord</code> tanımlayıcısına sahip değilsiniz, Discord Sunucusuna katılıp katılmadığınızı doğrulamak için gereklidir. Lütfen Discord'u açıp tekrar deneyin.",
+            "deny_notmember_title": "Bağlanmak için Discord Sunucumuzda bulunmanız gerekiyor.",
+            "deny_notmember_message": "Lütfen %{guildname} sunucumuzda bulunun, gerekli rollerden birini alın ve tekrar deneyin",
+            "deny_noroles_title": "Katılmak için beyaz listelenmiş bir role sahip değilsiniz.",
+            "deny_noroles_message": "Bu sunucuya katılmak için %{guildname} sunucumuzda beyaz listelenmiş rollerden en az birine sahip olmanız gerekiyor."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Bu sunucu <strong>Lisans Beyaz Listesi</strong> modunda.",
+            "insufficient_ids": "<code>license</code> tanımlayıcısına sahip değilsiniz, bu sunucunun <code>sv_lan</code> özelliği etkinleştirilmiş demektir. Sunucu sahibiyseniz, <code>server.cfg</code> dosyasında devre dışı bırakabilirsiniz.",
+            "deny_title": "Bu sunucuya katılmak için beyaz listeli değilsiniz.",
+            "request_id_label": "Talep ID"
         }
     },
     "server_actions": {
@@ -106,9 +106,9 @@
                     "success": "Tanrı modu etkinleştirilmiş"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Süper Zıplama",
+                    "label": "Süper Zıplama modunu aç/kapat, oyuncu aynı zamanda daha hızlı koşacaktır",
+                    "success": "Süper Zıplama etkinleştirilmiş"
                 },
                 "normal": {
                     "title": "Normal",
