@@ -7,18 +7,18 @@
         "start_timeout": "未能及时启动",
         "crash_detected": "检测到服务器已崩溃",
         "hang_detected": "检测到服务器挂起",
-        "partial_hang_warn": "由于部分挂起，此服务器将在 1 分钟后重新启动。请立即断开连接。",
+        "partial_hang_warn": "由于部分挂起，本服务器将在 1 分钟后重新启动。请立即断开连接。",
         "partial_hang_warn_discord": "由于部分挂起, **%{servername}** 将在1分钟后重启",
         "schedule_reason": "预计 %{time}后重启",
-        "schedule_warn": "此服务器计划 %{smart_count} 分钟后重新启动， 请立即断开连接。 |||| 服务器计划 %{smart_count} 分钟后重新启动。",
+        "schedule_warn": "本服务器计划 %{smart_count} 分钟后重新启动， 请立即断开连接。 |||| 服务器计划 %{smart_count} 分钟后重新启动。",
         "schedule_warn_discord": "**%{servername}** 预计 %{smart_count} 分钟后重新启动。 |||| **%{servername}** 预计 %{smart_count} 分钟后重新启动。"
     },
     "ban_messages": {
         "kick_temporary": "您因 \"%{reason}\" 而被封禁。您可在 %{expiration} 后再次登录服务器。操作人：%{author}",
         "kick_permanent": "您因 \"%{reason}\" 而被永久封禁。操作人：%{author}",
         "reject": {
-            "title_permanent": "您已被此服务器永久封禁。",
-            "title_temporary": "您已被此服务器暂时封禁。",
+            "title_permanent": "您已被本服务器永久封禁。",
+            "title_temporary": "您已被本服务器暂时封禁。",
             "label_expiration": "封禁解除时间：",
             "label_date": "封禁日期",
             "label_author": "操作人",
@@ -29,28 +29,28 @@
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "本服务器处于 <strong>仅限管理员</strong> 模式",
+            "insufficient_ids": "您没有 <code>discord</code> 或 <code>fivem</code> 标识符，如果您是管理员，则需要其中一个标识符来验证。",
+            "deny_message": "您不是本服务器的管理员。"
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "本服务器处于 <strong>Discord服务器白名单</strong> 模式",
+            "insufficient_ids": "你没有 <code>discord</code> 标识符，这是为了验证您是否加入了我们的Discord服务器，请打开Discord再试。",
+            "deny_title": "您必须加入我们的Discord服务器才能连接。",
+            "deny_message": "请加入我们的Discord服务器 %{guildname} 再试。"
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "本服务器处于 <strong>Discord规则白名单</strong> 模式.",
+            "insufficient_ids": "你没有 <code>discord</code> 标识符，这是为了验证您是否加入了我们的Discord服务器，请打开Discord再试。",
+            "deny_notmember_title": "您必须加入我们的Discord服务器才能连接。",
+            "deny_notmember_message": "请加入 %{guildname} 并获取需要的角色再试。",
+            "deny_noroles_title": "您没有加入所需的白名单角色。",
+            "deny_noroles_message": "要加入此服务器，您需要在Discord服务器中有至少一个白名单角色 %{guildname}。"
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
+            "mode_title": "本服务器处于 <strong>机器码白名单</strong> 模式",
+            "insufficient_ids": "你没有 <code>license</code> 标识符，这意味着服务器已启用 <code>sv_lan</code> 如果您是服务器所有者，可以在 <code>server.cfg</code> 中禁用。",
+            "deny_title": "您没有加入本服务器的白名单。",
             "request_id_label": "Request ID"
         }
     },
@@ -96,24 +96,24 @@
             "player_mode": {
                 "title": "玩家模式",
                 "noclip": {
-                    "title": "穿墙模式",
+                    "title": "穿墙",
                     "label": "自由视角",
                     "success": "穿墙模式 启用"
                 },
                 "godmode": {
-                    "title": "上帝模式",
+                    "title": "上帝",
                     "label": "无敌",
                     "success": "上帝模式 启用"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "超人",
+                    "label": "超级跳跃和快速奔跑",
+                    "success": "超人模式 启用"
                 },
                 "normal": {
                     "title": "正常",
                     "label": "默认模式",
-                    "success": "返回玩家默认模式"
+                    "success": "返回正常模式"
                 }
             },
             "teleport": {
@@ -165,11 +165,11 @@
                     "success": "载具已删除！"
                 },
                 "boost": {
-                    "title": "满改",
-                    "label": "将载具改装升级到最大（可能会更快）",
-                    "success": "载具已满改！",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported."
+                    "title": "加速",
+                    "label": "加速载具",
+                    "success": "载具已加速！",
+                    "already_boosted": "载具已经被加速了",
+                    "unsupported_class": "这辆载具不支持加速"
                 }
             },
             "heal": {
