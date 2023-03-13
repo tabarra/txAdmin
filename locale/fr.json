@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "Ce serveur est en mode <strong>Discord Member Whitelist</strong>.",
-            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour valider que vous avez rejoint notre serveur Discord. Veuillez ouvrir Discord et réessayer.",
+            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour valider que vous avez rejoint notre serveur Discord. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_title": "Vous devez rejoindre notre serveur Discord pour vous connecter.",
             "deny_message": "Veuillez rejoindre le serveur %{guildname} puis réessayer."
         },
         "guild_roles": {
             "mode_title": "Ce serveur est en mode <strong>Discord Role Whitelist</strong>.",
-            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour valider que vous avez rejoint notre serveur Discord. Veuillez ouvrir Discord et réessayer.",
+            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour valider que vous avez rejoint notre serveur Discord. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_notmember_title": "Vous devez rejoindre notre serveur Discord pour vous connecter.",
             "deny_notmember_message": "Veuillez rejoindre le serveur %{guildname}, obtenez l'un des rôles requis, puis réessayez.",
             "deny_noroles_title": "Vous n'avez pas le rôle requis pour vous connecter.",

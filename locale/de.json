@@ -30,18 +30,18 @@
     "whitelist_messages": {
         "admin_only": {
             "mode_title": "Dieser Server ist im <strong>Wartungsmodus</strong>",
-            "insufficient_ids": "Du hast keine <code>Discord</code>oder <code>FiveM</code> identifier, mindestens eins von beiden ist erforderlich, um zu überprüfen, ob du ein txAdmin-Administrator bist.",
+            "insufficient_ids": "Du hast keine <code>discord</code>oder <code>FiveM</code> identifier, mindestens eins von beiden ist erforderlich, um zu überprüfen, ob du ein txAdmin-Administrator bist.",
             "deny_message": "Deine identifier sind keinem txAdmin Administrator zugewiesen."
         },
         "guild_member": {
             "mode_title": "Dieser Server ist im <strong>Discord Member Whitelist</strong> Modus.",
-            "insufficient_ids": "Du hast keine <code>Discord</code> identifier, welche aber erforderlich sind, um zu überprüfen, ob du auf dem Discord-Server bist.",
+            "insufficient_ids": "Du hast keine <code>discord</code> identifier, welche aber erforderlich sind, um zu überprüfen, ob du auf dem Discord-Server bist. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden",
             "deny_message": "Bitte trete unserem Discord %{guildname} bei, dann versuche es erneut."
         },
         "guild_roles": {
             "mode_title": "Dieser Server ist im <strong>Discord Rollen Whitelist</strong> Modus.",
-            "insufficient_ids": "Du hast keine <code>Discord</code> identifier, welche aber erforderlich sind. Um zu überprüfen, ob du auf dem Discord-Server bist, öffne Discord und versuche es erneut.",
+            "insufficient_ids": "Du hast keine <code>discord</code> identifier, welche aber erforderlich sind. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_notmember_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden",
             "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderlichen Rolle(n) und versuche es erneut",
             "deny_noroles_title": "Du hast nicht die erforderlichen Rolle(n), um den Server zu betreten.",

@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "Bu sunucu <strong>Discord Üye Beyaz Listesi</strong> modundunadır.",
-            "insufficient_ids": "<code>discord</code> tanımlayıcısına sahip değilsiniz, Discord Sunucusuna katılıp katılmadığınızı doğrulamak için gereklidir. Lütfen Discord'u açıp tekrar deneyin.",
+            "insufficient_ids": "<code>discord</code> tanımlayıcısına sahip değilsiniz, Discord Sunucusuna katılıp katılmadığınızı doğrulamak için gereklidir. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_title": "Bağlanmak için Discord Sunucumuzda bulunmanız gerekiyor.",
             "deny_message": "Lütfen %{guildname} sunucumuza katılın ve tekrar deneyin."
         },
         "guild_roles": {
             "mode_title": "Bu sunucu <strong>Discord Rol Beyaz Listesi</strong> modunda.",
-            "insufficient_ids": "<code>discord</code> tanımlayıcısına sahip değilsiniz, Discord Sunucusuna katılıp katılmadığınızı doğrulamak için gereklidir. Lütfen Discord'u açıp tekrar deneyin.",
+            "insufficient_ids": "<code>discord</code> tanımlayıcısına sahip değilsiniz, Discord Sunucusuna katılıp katılmadığınızı doğrulamak için gereklidir. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_notmember_title": "Bağlanmak için Discord Sunucumuzda bulunmanız gerekiyor.",
             "deny_notmember_message": "Lütfen %{guildname} sunucumuzda bulunun, gerekli rollerden birini alın ve tekrar deneyin",
             "deny_noroles_title": "Katılmak için beyaz listelenmiş bir role sahip değilsiniz.",

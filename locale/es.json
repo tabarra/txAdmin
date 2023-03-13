@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "Este servidor está en modo <strong>Lista blanca de miembros de discord</strong>.",
-            "insufficient_ids": "No tienes el identificador <code>discord</code>, que es necesario para validar si te has unido a nuestro discord. Abre Discord e inténtalo de nuevo.",
+            "insufficient_ids": "No tienes el identificador <code>discord</code>, que es necesario para validar si te has unido a nuestro discord. Abre Discord Desktop e inténtalo de nuevo (la version Web no funcionará).",
             "deny_title": "Es necesario que te unas a nuestro Discord para conectarte.",
             "deny_message": "Por favor, únete al discord %{guildname} e inténtalo de nuevo."
         },
         "guild_roles": {
             "mode_title": "Este servidor está en modo <strong>Lista blanca de roles de discord</strong>.",
-            "insufficient_ids": "No tienes el identificador <code>discord</code>, que es necesario para validar si te has unido a nuestro Discord. Abre Discord e inténtalo de nuevo.",
+            "insufficient_ids": "No tienes el identificador <code>discord</code>, que es necesario para validar si te has unido a nuestro Discord. Abre Discord Desktop e inténtalo de nuevo (la version Web no funcionará).",
             "deny_notmember_title": "Es necesario que te unas a nuestra Discord para conectarte.",
             "deny_notmember_message": "Por favor, únete a %{guildname}, consigue uno de los roles requeridos, e inténtalo de nuevo.",
             "deny_noroles_title": "Usted no tiene un rol en la lista blanca requerido para unirse.",

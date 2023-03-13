@@ -30,20 +30,20 @@
     "whitelist_messages": {
         "admin_only": {
             "mode_title": "See server on <strong>Ainult Administraatori</strong> režiimis.",
-            "insufficient_ids": "Teil pole <code>discordi</code> või <code>fivemi</code> identifikaatoreid ja vähemalt üks neist on vajalik kinnitada, kui olete txAdmini administraator.",
+            "insufficient_ids": "Teil pole <code>discord</code> või <code>fivemi</code> identifikaatoreid ja vähemalt üks neist on vajalik kinnitada, kui olete txAdmini administraator.",
             "deny_message": "Teie identifikaatoreid ei ole määratud ühelegi txAdmini administraatorile."
         },
         "guild_member": {
             "mode_title": "See server on <strong>Discord Server Liikme Whitelisti</strong> režiimis.",
-            "insufficient_ids": "Teil pole <code>discordi</code> identifikaatorit, mis on vajalik kinnitada serveriga liitumiseks, kui olete liitunud meie Discord serveriga. Palun avage Discord ja proovige uuesti.",
+            "insufficient_ids": "Teil pole <code>discord</code> identifikaatorit, mis on vajalik kinnitada serveriga liitumiseks, kui olete liitunud meie Discord serveriga. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_title": "Ühendamiseks peate liituma meie Discord serveriga.",
-            "deny_message": "Palun liituge Discordi serveriga %{guildname} ning proovige uuesti."
+            "deny_message": "Palun liituge Discord serveriga %{guildname} ning proovige uuesti."
         },
         "guild_roles": {
-            "mode_title": "See server on <strong>Discordi Rolli Whitelisti</strong> režiimis.",
-            "insufficient_ids": "Teil pole <code>discordi</code> identifikaatorit, mis on vajalik kinnitada serveriga liitumiseks, kui olete liitunud meie Discord serveriga. Palun avage Discord ja proovige uuesti.",
+            "mode_title": "See server on <strong>Discord Rolli Whitelisti</strong> režiimis.",
+            "insufficient_ids": "Teil pole <code>discord</code> identifikaatorit, mis on vajalik kinnitada serveriga liitumiseks, kui olete liitunud meie Discord serveriga. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_notmember_title": "Ühendamiseks peate liituma meie Discord serveriga.",
-            "deny_notmember_message": "Palun liituge Discordi serveriga %{guildname}, saage üks vajalikest rollidest ja proovige uuesti.",
+            "deny_notmember_message": "Palun liituge Discord serveriga %{guildname}, saage üks vajalikest rollidest ja proovige uuesti.",
             "deny_noroles_title": "Teil pole liitumiseks vajalikku rolli.",
             "deny_noroles_message": "Selle serveriga liitumiseks peate saama vähemalt üks whitelistitud rollidest Discord serveris %{guildname}."
         },

@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "Este servidor está em modo <strong>Whitelist por Discord</strong>.",
-            "insufficient_ids": "Você não tem um ID <code>discord</code>, que é necessário para validar se você entrou no nosso Discord. Por favor abra o Discord e tente novamente.",
+            "insufficient_ids": "Você não tem um ID <code>discord</code>, que é necessário para validar se você entrou no nosso Discord. Por favor abra o Discord Desktop e tente novamente (a versão Web não vai funcionar).",
             "deny_title": "Você precisa entrar em nosso Discord para poder se conectar.",
             "deny_message": "Por favor entre no %{guildname} e tente novamente."
         },
         "guild_roles": {
             "mode_title": "Este servidor está em modo <strong>Whitelist por grupo de Discord</strong>.",
-            "insufficient_ids": "Você não tem um ID <code>discord</code>, que é necessário para validar se você entrou no nosso Discord. Por favor abra o Discord e tente novamente.",
+            "insufficient_ids": "Você não tem um ID <code>discord</code>, que é necessário para validar se você entrou no nosso Discord. Por favor abra o Discord Desktop e tente novamente (a versão Web não vai funcionar).",
             "deny_notmember_title": "Você precisa entrar em nosso Discord para poder se conectar.",
             "deny_notmember_message": "Por favor entre no %{guildname}, adquira um dos grupos necessários e tente novamente.",
             "deny_noroles_title": "Você não tem um dos grupos de Discord necessários para se conectar.",

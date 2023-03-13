@@ -3,9 +3,10 @@
 - [x] new console utility + refactoring
 - [x] change dashboard median player message
 - [x] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
+- [x] merge translations
+- [x] whitelist "discord no id" message should tell the user to open discord desktop
 - [ ] fix: menu > send announcement does not trigger discord msg nor custom event
 - [ ] ConfigVault.saveProfile should probably throw the error up
-- [ ] whitelist "discord no id" message should tell the user to open discord desktop
 
 
 (function() {

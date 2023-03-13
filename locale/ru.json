@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "Этот сервер находится в режиме <strong>Discord Whitelist</strong>.",
-            "insufficient_ids": "У вас нет идентификатора <code>discord</code>, который необходим для подтверждения того, что вы присоединились к нашей гильдии Discord. Пожалуйста, откройте Discord и попробуйте еще раз.",
+            "insufficient_ids": "У вас нет идентификатора <code>discord</code>, который необходим для подтверждения того, что вы присоединились к нашей гильдии Discord. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_title": "Вам необходимо вступить в наш гильдию Discord, чтобы подключиться.",
             "deny_message": "Пожалуйста, вступите в гильдию  %{guildname} а затем попробуйте еще раз."
         },
         "guild_roles": {
             "mode_title": "Этот сервер находится в режиме <strong>Discord роль Whitelist</strong>.",
-            "insufficient_ids": "У вас нет идентификатора <code>discord</code>, который необходим для подтверждения того, что вы присоединились к нашей гильдии Discord. Пожалуйста, откройте Discord и попробуйте еще раз.",
+            "insufficient_ids": "У вас нет идентификатора <code>discord</code>, который необходим для подтверждения того, что вы присоединились к нашей гильдии Discord. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_notmember_title": "Для подключения вам необходимо вступить в нашу гильдию Discord.",
             "deny_notmember_message": "Пожалуйста, присоединитесь к %{guildname}, получите одну из требуемых ролей, а затем попробуйте еще раз.",
             "deny_noroles_title": "У вас нет роли, внесенной в белый список, необходимой для присоединения.",

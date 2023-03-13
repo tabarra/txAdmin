@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "本服务器处于 <strong>Discord服务器白名单</strong> 模式",
-            "insufficient_ids": "你没有 <code>discord</code> 标识符，这是为了验证您是否加入了我们的Discord服务器，请打开Discord再试。",
+            "insufficient_ids": "你没有 <code>discord</code> 标识符，这是为了验证您是否加入了我们的Discord服务器，请打开Discord Desktop再试。",
             "deny_title": "您必须加入我们的Discord服务器才能连接。",
             "deny_message": "请加入我们的Discord服务器 %{guildname} 再试。"
         },
         "guild_roles": {
             "mode_title": "本服务器处于 <strong>Discord规则白名单</strong> 模式.",
-            "insufficient_ids": "你没有 <code>discord</code> 标识符，这是为了验证您是否加入了我们的Discord服务器，请打开Discord再试。",
+            "insufficient_ids": "你没有 <code>discord</code> 标识符，这是为了验证您是否加入了我们的Discord服务器，请打开Discord Desktop再试。",
             "deny_notmember_title": "您必须加入我们的Discord服务器才能连接。",
             "deny_notmember_message": "请加入 %{guildname} 并获取需要的角色再试。",
             "deny_noroles_title": "您没有加入所需的白名单角色。",

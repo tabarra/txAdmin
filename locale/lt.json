@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "Šois serveris yra <strong>Discord Gildijos (Serverio) Nario Baltojo Sąrašo</strong> rėžime",
-            "insufficient_ids": "Tu neturi <code>discord</code> identifikatoriaus, kuris yra reikalingas patvirtinti, jog prisijungėte į Discord gildiją (serverį). Atidarykite Discord ir bandykite vėl.",
+            "insufficient_ids": "Tu neturi <code>discord</code> identifikatoriaus, kuris yra reikalingas patvirtinti, jog prisijungėte į Discord gildiją (serverį). Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_title": "Tau reikia prisijungti į Discord gildiją (serverį)",
             "deny_message": "Prašome prisijungti į %{guildname} gildiją (serverį) ir bandyti vėl."
         },
         "guild_roles": {
             "mode_title": "Šis serveris yra <strong>Discord Rolių Baltojo Sąrašo</strong> rėžime.",
-            "insufficient_ids": "Tu neturi <code>discord</code> identifikatoriaus, kuris yra reikalingas patvirtinti, jog prisijungėte į Discord gildiją (serverį). Atidarykite Discord ir bandykite vėl.",
+            "insufficient_ids": "Tu neturi <code>discord</code> identifikatoriaus, kuris yra reikalingas patvirtinti, jog prisijungėte į Discord gildiją (serverį). Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_notmember_title": "Tau reikia prisijungti į Discord gildiją (serverį), kad prisijungti.",
             "deny_notmember_message": "Prašome prisijungti į %{guildname}, gauti reikiamą rolę ir bandyti vėl.",
             "deny_noroles_title": "Tu neturi reikiamos rolės, jog prisijungti.",

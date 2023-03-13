@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "Máy chủ đang trong chế độ <strong>Whitelist Discord</strong>.",
-            "insufficient_ids": "Bạn không có định danh <code>discord</code>, bạn cần mở Discord để xác nhận bạn là thành viên trong Discord của máy chủ..",
+            "insufficient_ids": "Bạn không có định danh <code>discord</code>, bạn cần mở Discord Desktop để xác nhận bạn là thành viên trong Discord của máy chủ.",
             "deny_title": "Bạn cần tham gia Discord của máy chủ để tham gia.",
             "deny_message": "Vui lòng tham gia Discord %{guildname} và thử lại."
         },
         "guild_roles": {
             "mode_title": "Máy chủ đang trong chế độ <strong>Whitelist Discord Role</strong>.",
-            "insufficient_ids": "Bạn không có định danh <code>discord</code>, bạn cần mở Discord để xác nhận bạn là thành viên trong Discord của máy chủ..",
+            "insufficient_ids": "Bạn không có định danh <code>discord</code>, bạn cần mở Discord Desktop để xác nhận bạn là thành viên trong Discord của máy chủ.",
             "deny_notmember_title": "Bạn cần tham gia Discord của máy chủ để tham gia.",
             "deny_notmember_message": "Vui lòng tham gia Discord %{guildname} để xin cấp Roles sau đó thử lại.",
             "deny_noroles_title": "Bạn chưa được cấp Role WhiteList để tham gia máy chủ.",

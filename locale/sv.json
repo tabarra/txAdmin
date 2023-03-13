@@ -35,13 +35,13 @@
         },
         "guild_member": {
             "mode_title": "Denna server har <strong>Discord Server Medlems Whitelist</strong>.",
-            "insufficient_ids": "Du har inte en <code>discord</code> identifikation, som är nödvändigt för att validera om du har gått med i våran Discord Server. Var vänlig öppna Discord och försök igen.",
+            "insufficient_ids": "Du har inte en <code>discord</code> identifikation, som är nödvändigt för att validera om du har gått med i våran Discord Server. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_title": "Du måste gå med i våran Discord Server för att kunna ansluta till servern.",
             "deny_message": "Var vänlig gå med i %{guildname} och sedan försök igen."
         },
         "guild_roles": {
             "mode_title": "Denna servern har <strong>Discord Rolls Whitelist</strong>.",
-            "insufficient_ids": "Du har inte en <code>discord</code> identifikation, vilket är nödvändigt för att validera om du gått med i våran Discord Server. Var vänlig öppna Discord och försök igen.",
+            "insufficient_ids": "Du har inte en <code>discord</code> identifikation, vilket är nödvändigt för att validera om du gått med i våran Discord Server. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_notmember_title": "Du måste gå med i våran Discord Server för att kunna ansluta till servern.",
             "deny_notmember_message": "Var vänlig gå med i %{guildname}, och skaffa rollen som är nödvändig för att ansluta, sedan försök igen.",
             "deny_noroles_title": "Du har inte rollen som krävs för att kun",
