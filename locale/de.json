@@ -31,7 +31,7 @@
         "admin_only": {
             "mode_title": "Dieser Server befindet sich derzeit im <strong>Wartungsmodus</strong>",
             "insufficient_ids": "Du hast keine <code>Discord</code>oder <code>FiveM</code> identifier. Mindestens eine von beiden ist erforderlich, um dich als txAdmin-Mitglied zu registrieren.",
-            "deny_message": "Deine identifier ist keinem txAdmin-Mitglied zugewiesen. Der Zugang wurde verweigert."
+            "deny_message": "Deine Identifier sind keinem txAdmin-Administrator zugewiesen. Der Zugang wurde verweigert."
         },
         "guild_member": {
             "mode_title": "Dieser Server befindet sich im <strong>Discord</strong> Modus.",
