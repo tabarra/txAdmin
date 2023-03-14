@@ -217,31 +217,32 @@ async function handleSaveConfig(ctx) {
     if (typeof globals.deployer.recipe.onesync !== 'undefined') {
         newFXRunnerConfig.onesync = globals.deployer.recipe.onesync;
     }
-    const saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
-
-    if (saveFXRunnerStatus) {
-        globals.fxRunner.refreshConfig();
-        ctx.utils.logAction('Completed and committed server deploy.');
-
-        //Starting server
-        const spawnMsg = await globals.fxRunner.spawnServer(false);
-        if (spawnMsg !== null) {
-            return ctx.send({
-                type: 'danger',
-                markdown: true,
-                message: `Config file saved, but faied to start server with error:\n${spawnMsg}`,
-            });
-        } else {
-            globals.deployer = null;
-            return ctx.send({ success: true });
-        }
-    } else {
+    try {
+        globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
+    } catch (error) {
         console.warn(`[${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
+        console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: '**Error saving the configuration file.**',
+            message: `**Error saving the configuration file:** ${error.message}`
         });
+    }
+
+    globals.fxRunner.refreshConfig();
+    ctx.utils.logAction('Completed and committed server deploy.');
+
+    //Starting server
+    const spawnMsg = await globals.fxRunner.spawnServer(false);
+    if (spawnMsg !== null) {
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `Config file saved, but faied to start server with error:\n${spawnMsg}`,
+        });
+    } else {
+        globals.deployer = null;
+        return ctx.send({ success: true });
     }
 }
 

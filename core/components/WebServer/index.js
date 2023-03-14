@@ -87,6 +87,7 @@ export default class WebServer {
                     || error.code.startsWith('ECONN')
                     || error.code.startsWith('EPIPE')
                     || error.code.startsWith('ECANCELED')
+                    || error.code.startsWith('ECONNRESET')
                 )
             ) {
                 console.verbose.error(`Probably harmless error on ${ctx.path}`);

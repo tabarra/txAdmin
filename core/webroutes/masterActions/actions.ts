@@ -64,17 +64,22 @@ async function handleResetFXServer(ctx: Context) {
     const newConfig = configVault.getScopedStructure('fxRunner');
     newConfig.serverDataPath = null;
     newConfig.cfgPath = null;
-    const saveStatus = configVault.saveProfile('fxRunner', newConfig);
+    try {
+        configVault.saveProfile('fxRunner', newConfig);
+    } catch (error) {
+        console.warn(`[${ctx.session.auth.username}] Error changing FXServer settings.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${(error as Error).message}`
+        });
+    }
 
     //Sending output
-    if (saveStatus) {
-        fxRunner.refreshConfig();
-        ctx.utils.logAction('Resetting fxRunner settings.');
-        return ctx.send({ success: true });
-    } else {
-        console.warn(`[${ctx.session.auth.username}] Error resetting fxRunner settings.`);
-        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
-    }
+    fxRunner.refreshConfig();
+    ctx.utils.logAction('Resetting fxRunner settings.');
+    return ctx.send({ success: true });
 }
 
 

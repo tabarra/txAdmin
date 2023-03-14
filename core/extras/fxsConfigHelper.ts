@@ -323,14 +323,12 @@ export const parseRecursiveConfig = async (
 
         // For each command in that line
         for (const cmdTokens of lineCommands) {
-            if (!cmdTokens.length) {
-                continue;
-            }
+            if (!cmdTokens.length) continue;
             const cmdObject = new Command(cmdTokens, cfgAbsolutePath, lineNumber);
             parsedCommands.push(cmdObject);
 
             // If exec command, process recursively then flatten the output
-            if (cmdObject.command === 'exec') {
+            if (cmdObject.command === 'exec' && typeof cmdObject.args[0] === 'string') {
                 //FIXME: temporarily disable resoure references
                 if(!cmdObject.args[0].startsWith('@')){
                     const recursiveCfgAbsolutePath = resolveCFGFilePath(cmdObject.args[0], serverDataPath);

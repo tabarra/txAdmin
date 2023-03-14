@@ -71,7 +71,7 @@ async function handleGlobal(ctx: Context) {
     }
 
     //Prepare body input
-    let cfg = {
+    const cfg = {
         serverName: ctx.request.body.serverName.trim(),
         language: ctx.request.body.language.trim(),
     };
@@ -80,25 +80,34 @@ async function handleGlobal(ctx: Context) {
     try {
         globals.translator.getLanguagePhrases(cfg.language);
     } catch (error) {
-        return ctx.send({ type: 'danger', message: `<strong>Language error:</strong> ${(error as Error).message}` });
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Language error:** ${(error as Error).message}`
+        });
     }
 
     //Preparing & saving config
-    let newConfig = globals.configVault.getScopedStructure('global');
+    const newConfig = globals.configVault.getScopedStructure('global');
     newConfig.serverName = cfg.serverName;
     newConfig.language = cfg.language;
-    let saveStatus = globals.configVault.saveProfile('global', newConfig);
+    try {
+        globals.configVault.saveProfile('global', newConfig);
+    } catch (error) {
+        console.warn(`[${ctx.session.auth.username}] Error changing global settings.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${(error as Error).message}`
+        });
+    }
 
     //Sending output
-    if (saveStatus) {
-        globals.func_txAdminRefreshConfig()
-        globals.translator.refreshConfig();
-        ctx.utils.logAction('Changing global settings.');
-        return ctx.send({ type: 'success', message: '<strong>Global configuration saved!</strong>' });
-    } else {
-        console.warn(`[${ctx.session.auth.username}] Error changing global settings.`);
-        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
-    }
+    globals.func_txAdminRefreshConfig()
+    globals.translator.refreshConfig();
+    ctx.utils.logAction('Changing global settings.');
+    return ctx.send({ type: 'success', markdown: true, message: '**Global configuration saved!**' });
 }
 
 
@@ -121,7 +130,7 @@ async function handleFXServer(ctx: Context) {
     }
 
     //Prepare body input
-    let cfg = {
+    const cfg = {
         serverDataPath: slash(path.normalize(ctx.request.body.serverDataPath + '/')),
         cfgPath: slash(path.normalize(ctx.request.body.cfgPath)),
         commandLine: ctx.request.body.commandLine.trim(),
@@ -156,24 +165,34 @@ async function handleFXServer(ctx: Context) {
     }
 
     //Preparing & saving config
-    let newConfig = globals.configVault.getScopedStructure('fxRunner');
+    const newConfig = globals.configVault.getScopedStructure('fxRunner');
     newConfig.serverDataPath = cfg.serverDataPath;
     newConfig.cfgPath = cfg.cfgPath;
     newConfig.onesync = cfg.onesync;
     newConfig.autostart = cfg.autostart;
     newConfig.quiet = cfg.quiet;
     newConfig.commandLine = cfg.commandLine;
-    let saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
+    try {
+        globals.configVault.saveProfile('fxRunner', newConfig);
+    } catch (error) {
+        console.warn(`[${ctx.session.auth.username}] Error changing FXServer settings.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${(error as Error).message}`
+        });
+    }
 
     //Sending output
-    if (saveStatus) {
-        globals.fxRunner.refreshConfig();
-        ctx.utils.logAction('Changing fxRunner settings.');
-        return ctx.send({ type: 'success', message: '<strong>FXServer configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
-    } else {
-        console.warn(`[${ctx.session.auth.username}] Error changing fxRunner settings.`);
-        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
-    }
+    globals.fxRunner.refreshConfig();
+    ctx.utils.logAction('Changing fxRunner settings.');
+    return ctx.send({
+        type: 'success',
+        markdown: true,
+        message: `**FXServer configuration saved!**
+        You need to restart the server for the changes to take effect.`
+    });
 }
 
 
@@ -237,17 +256,27 @@ async function handlePlayerDatabase(ctx: Context) {
     newConfig.whitelistedDiscordRoles = cfg.whitelistedDiscordRoles;
     newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
     newConfig.banRejectionMessage = cfg.banRejectionMessage;
-    const saveStatus = globals.configVault.saveProfile('playerDatabase', newConfig);
+    try {
+        globals.configVault.saveProfile('playerDatabase', newConfig);
+    } catch (error) {
+        console.warn(`[${ctx.session.auth.username}] Error changing Player Manager settings.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${(error as Error).message}`
+        });
+    }
 
     //Sending output
-    if (saveStatus) {
-        globals.playerDatabase.refreshConfig();
-        ctx.utils.logAction('Changing Player Controller settings.');
-        return ctx.send({ type: 'success', message: '<strong>Player Controller configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
-    } else {
-        console.warn(`[${ctx.session.auth.username}] Error changing Player Controller settings.`);
-        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
-    }
+    globals.playerDatabase.refreshConfig();
+    ctx.utils.logAction('Changing Player Manager settings.');
+    return ctx.send({
+        type: 'success',
+        markdown: true,
+        message: `**Player Manager configuration saved!**
+        You need to restart the server for the changes to take effect.`
+    });
 }
 
 
@@ -283,18 +312,27 @@ async function handleMonitor(ctx: Context) {
     const newConfig = globals.configVault.getScopedStructure('monitor');
     newConfig.restarterSchedule = validRestartTimes.map(t => t.string);
     newConfig.resourceStartingTolerance = cfg.resourceStartingTolerance;
-    const saveStatus = globals.configVault.saveProfile('monitor', newConfig);
+    try {
+        globals.configVault.saveProfile('monitor', newConfig);
+    } catch (error) {
+        console.warn(`[${ctx.session.auth.username}] Error changing Restarter settings.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${(error as Error).message}`
+        });
+    }
 
     //Sending output
-    if (saveStatus) {
-        globals.healthMonitor.refreshConfig();
-        globals.scheduler.refreshConfig();
-        ctx.utils.logAction('Changing monitor settings.');
-        return ctx.send({ type: 'success', message: '<strong>Monitor/Restarter configuration saved!</strong>' });
-    } else {
-        console.warn(`[${ctx.session.auth.username}] Error changing monitor settings.`);
-        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
-    }
+    globals.healthMonitor.refreshConfig();
+    globals.scheduler.refreshConfig();
+    ctx.utils.logAction('Changing monitor settings.');
+    return ctx.send({
+        type: 'success',
+        markdown: true,
+        message: `**Restarter configuration saved!**`
+    });
 }
 
 
@@ -347,49 +385,55 @@ async function handleDiscord(ctx: Context) {
     newConfig.announceChannel = (cfg.announceChannel.length) ? cfg.announceChannel : false;
     newConfig.embedJson = cfg.embedJson;
     newConfig.embedConfigJson = cfg.embedConfigJson;
-    const saveStatus = configVault.saveProfile('discordBot', newConfig);
+    try {
+        globals.configVault.saveProfile('discordBot', newConfig);
+    } catch (error) {
+        console.warn(`[${ctx.session.auth.username}] Error changing Discord settings.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${(error as Error).message}`
+        });
+    }
+
+    //Restarting discord bot
+    ctx.utils.logAction('Changing discordBot settings.');
+    try {
+        await discordBot.refreshConfig();
+    } catch (error) {
+        const errorCode = (error as any).code;
+        let extraContext = '';
+        if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
+            extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
+            - Go to the Dev Portal (https://discord.com/developers/applications)
+            - Navigate to \`Bot > Privileged Gateway Intents\`.
+            - Enable the \`GUILD_MEMBERS\` intent.
+            - Save on the dev portal.
+            - Go to the \`txAdmin > Settings > Discord Bot\` and press save.`;
+        } else if (errorCode === 'CustomNoGuild') {
+            const inviteUrl = ('clientId' in (error as any))
+                ? `https://discord.com/oauth2/authorize?client_id=${(error as any).clientId}&scope=bot&permissions=0`
+                : `https://discordapi.com/permissions.html#0`
+            extraContext = `**This usually mean one of the issues below:**
+            - **Wrong guild/server ID:** read the description of the guild/server ID setting for more information.
+            - **Bot is not in the guild/server:** you need to [INVITE THE BOT](${inviteUrl}) to join the server.
+            - **Wrong bot:** you may be using the token of another discord bot.`;
+        }
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error starting the bot:** ${(error as Error).message}\n${extraContext}`.trim()
+        });
+    }
 
     //Sending output
-    if (saveStatus) {
-        ctx.utils.logAction('Changing discordBot settings.');
-        try {
-            await discordBot.refreshConfig();
-            return ctx.send({
-                type: 'success',
-                markdown: true,
-                message: `**Discord configuration saved!**
-                If _(and only if)_ the status embed is not being updated, check the System Logs page and make sure there are no embed errors.`
-            });
-        } catch (error) {
-            const errorCode = (error as any).code;
-            let extraContext = '';
-            if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
-                extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
-                - Go to the Dev Portal (https://discord.com/developers/applications)
-                - Navigate to \`Bot > Privileged Gateway Intents\`.
-                - Enable the \`GUILD_MEMBERS\` intent.
-                - Save on the dev portal.
-                - Go to the \`txAdmin > Settings > Discord Bot\` and press save.`;
-            } else if (errorCode === 'CustomNoGuild') {
-                const inviteUrl = ('clientId' in (error as any))
-                    ? `https://discord.com/oauth2/authorize?client_id=${(error as any).clientId}&scope=bot&permissions=0`
-                    : `https://discordapi.com/permissions.html#0`
-                extraContext = `**This usually mean one of the issues below:**
-                - **Wrong guild/server ID:** read the description of the guild/server ID setting for more information.
-                - **Bot is not in the guild/server:** you need to [INVITE THE BOT](${inviteUrl}) to join the server.
-                - **Wrong bot:** you may be using the token of another discord bot.`;
-            }
-            return ctx.send({
-                type: 'danger',
-                markdown: true,
-                message: `**Error starting the bot:** ${(error as Error).message}\n${extraContext}`.trim()
-            });
-        }
-
-    } else {
-        console.warn(`[${ctx.session.auth.username}] Error changing discordBot settings.`);
-        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
-    }
+    return ctx.send({
+        type: 'success',
+        markdown: true,
+        message: `**Discord configuration saved!**
+        If _(and only if)_ the status embed is not being updated, check the System Logs page and make sure there are no embed errors.`
+    });
 }
 
 
@@ -433,16 +477,26 @@ async function handleMenu(ctx: Context) {
     newConfig.hideDefaultDirectMessage = cfg.hideDefaultDirectMessage;
     newConfig.hideDefaultWarning = cfg.hideDefaultWarning;
     newConfig.hideDefaultScheduledRestartWarning = cfg.hideDefaultScheduledRestartWarning;
-    const saveStatus = globals.configVault.saveProfile('global', newConfig);
+    try {
+        globals.configVault.saveProfile('global', newConfig);
+    } catch (error) {
+        console.warn(`[${ctx.session.auth.username}] Error changing Global settings.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${(error as Error).message}`
+        });
+    }
 
     //Sending output
-    if (saveStatus) {
-        globals.config = globals.configVault.getScoped('global');
-        globals.fxRunner.resetConvars();
-        ctx.utils.logAction('Changing menu settings.');
-        return ctx.send({ type: 'success', message: '<strong>Menu configuration saved!<br>You need to restart the server for the changes to take effect.</strong>' });
-    } else {
-        console.warn(`[${ctx.session.auth.username}] Error changing menu settings.`);
-        return ctx.send({ type: 'danger', message: '<strong>Error saving the configuration file.</strong>' });
-    }
+    globals.config = globals.configVault.getScoped('global');
+    globals.fxRunner.resetConvars();
+    ctx.utils.logAction('Changing menu settings.');
+    return ctx.send({
+        type: 'success',
+        markdown: true,
+        message: `**Game configuration saved!**
+        You need to restart the server for the changes to take effect.`
+    });
 }

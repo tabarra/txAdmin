@@ -93,6 +93,23 @@ const verboseConsole = new Console({
 });
 
 
+/**
+ * Returns current ts in h23 format
+ */
+export const getTimestamp = () => (new Date).toLocaleString(
+    undefined,
+    { timeStyle: 'medium', hourCycle: 'h23' }
+);
+
+
+/**
+ * Generated the colored log prefix (ts+tags)
+ */
+export const genLogPrefix = (currContext: string, color: ChalkInstance) => {
+    return color.black(`[${getTimestamp()}][${currContext}]`);
+}
+
+
 //Dir helpers
 const cleanPath = (x: string) => { return slash(path.normalize(x)); };
 const ERR_STACK_PREFIX = chalk.redBright('    =>');
@@ -108,11 +125,12 @@ const orangeredColor = chalk.rgb(255, 69, 0);
  */
 const getPrettyError = (error: Error) => {
     const out: string[] = [];
+    const prefix = `[${getTimestamp()}][tx]`;
 
     //banner
-    out.push(chalk.redBright(`[txAdmin] ${error.name}: `) + error.message);
-    if ('type' in error) out.push(`${chalk.redBright('[txAdmin] Type:')} ${error.type}`);
-    if ('code' in error) out.push(`${chalk.redBright('[txAdmin] Code:')} ${error.code}`);
+    out.push(chalk.redBright(`${prefix} ${error.name}: `) + error.message);
+    if ('type' in error) out.push(chalk.redBright(`${prefix} Type:`) + ` ${error.type}`);
+    if ('code' in error) out.push(chalk.redBright(`${prefix} Code:`) + ` ${error.code}`);
 
     //stack
     if (typeof error.stack === 'string') {
@@ -125,13 +143,17 @@ const getPrettyError = (error: Error) => {
                 }
                 const outPos = chalk.blueBright(`${line.lineNumber}:${line.columnNumber}`);
                 const outName = chalk.yellowBright(line.functionName || '<unknown>');
-                out.push(`${ERR_STACK_PREFIX} ${outPath} > ${outPos} > ${outName}`);
+                if(!outPath.startsWith('@monitor/core')){
+                    out.push(chalk.dim(`${ERR_STACK_PREFIX} ${outPath} > ${outPos} > ${outName}`));
+                }else{
+                    out.push(`${ERR_STACK_PREFIX} ${outPath} > ${outPos} > ${outName}`);
+                }
             }
         } catch (error) {
-            out.push(`${chalk.redBright('[txAdmin]')} Unnable to parse error stack.`);
+            out.push(chalk.redBright(prefix) + ` Unnable to parse error stack.`);
         }
     } else {
-        out.push(`${chalk.redBright('[txAdmin]')} Error stack not available.`);
+        out.push(chalk.redBright(prefix) + ` Error stack not available.`);
     }
     return out.join('\n');
 }
@@ -178,22 +200,6 @@ export const setTTYTitle = (title: string) => {
     const tx = _txAdminVersion ? `txAdmin v${_txAdminVersion}` : 'txAdmin';
     const out = (title) ? `${tx}: ${title}` : tx;
     process.stdout.write(`\x1B]0;${out}\x07`);
-}
-
-/**
- * Returns current ts in h23 format
- */
-export const getTimestamp = () => (new Date).toLocaleString(
-    undefined,
-    { timeStyle: 'medium', hourCycle: 'h23' }
-);
-
-
-/**
- * Generated the colored log prefix (ts+tags)
- */
-export const genLogPrefix = (currContext: string, color: ChalkInstance) => {
-    return color.black(`[${getTimestamp()}][${currContext}]`);
 }
 
 

@@ -321,17 +321,11 @@ export default class ConfigVault {
      * @param {string} newConfig
      */
     saveProfile(scope, newConfig) {
-        try {
-            let toSave = cloneDeep(this.configFile);
-            toSave[scope] = newConfig;
-            toSave = removeNulls(toSave);
-            fs.writeFileSync(this.configFilePath, JSON.stringify(toSave, null, 2), 'utf8');
-            this.configFile = toSave;
-            this.config = this.setupConfigDefaults(this.configFile);
-            return true;
-        } catch (error) {
-            console.dir(error);
-            return false;
-        }
+        let toSave = cloneDeep(this.configFile);
+        toSave[scope] = newConfig;
+        toSave = removeNulls(toSave);
+        fs.writeFileSync(this.configFilePath, JSON.stringify(toSave, null, 2), 'utf8');
+        this.configFile = toSave;
+        this.config = this.setupConfigDefaults(this.configFile);
     }
 };
