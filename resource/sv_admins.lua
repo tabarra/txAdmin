@@ -72,6 +72,7 @@ RegisterNetEvent('txsv:checkAdminStatus', function()
         ))
         TX_ADMINS[srcString] = {
             tag = adminTag,
+            username = resp.username,
             perms = resp.permissions,
             bucket = 0
         }

@@ -6,8 +6,8 @@
 - [x] merge translations
 - [x] whitelist "discord no id" message should tell the user to open discord desktop
 - [x] update most packages
-- [ ] fix: menu > send announcement does not trigger discord msg nor custom event
-- [ ] ConfigVault.saveProfile should probably throw the error up
+- [x] ConfigVault.saveProfile should probably throw the error up
+- [x] fix: menu > send announcement does not trigger discord msg nor custom event
 
 
 (function() {
@@ -159,7 +159,6 @@ Whitelist Page/routes:
 - [x] in-core playerlist state tracking
 - [x] new proxy console util
 - [ ] global socket.io connection for playerlist + async responses
-- [ ] in-core resource state tracking
 - [ ] new config (prepared for multiserver)
 - [ ] multiserver tx instance (backend only)
 
@@ -247,8 +246,6 @@ Up next-ish:
 
 
 ### Randoms:
-- BUG: nui menu triggered announcements are not sent to the discord
-
 -- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
 
 FIXME: sendMenuMessage('setServerCtx', ServerCtx)

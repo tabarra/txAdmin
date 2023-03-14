@@ -101,6 +101,8 @@ export default class OutputHandler {
                     this.#txAdmin.resourcesManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminPlayerlistEvent') {
                     this.#txAdmin.playerlistManager.handleServerEvents(data.payload, mutex);
+                } else if (data.payload.type === 'txAdminCommandBridge') {
+                    this.bridgeCommand(data.payload);
                 }
             }
         } catch (error) {
@@ -108,6 +110,46 @@ export default class OutputHandler {
             console.verbose.dir(error);
         }
     }
+
+
+    /**
+     * handles stdout and stderr from child fxserver and send to be processed by the logger
+     * TODO: use zod for type safety
+     */
+    bridgeCommand(payload: any) {
+        if (payload.command === 'announcement') {
+            try {
+                // FIXME: discordBot.sendAnnouncement podia gerar um embed com cor variável e emoji
+                //Validate input
+                if (typeof payload.author !== 'string') throw new Error(`invalid author`);
+                if (typeof payload.message !== 'string') throw new Error(`invalid message`);
+                const message = (payload.message ?? '').trim();
+                if (!message.length) throw new Error(`empty message`);
+
+                //Resolve admin
+                const author = payload.author;
+                this.#txAdmin.logger.admin.write(author, `Sending announcement: ${message}`);
+
+                // Dispatch `txAdmin:events:announcement`
+                this.#txAdmin.fxRunner.sendEvent('announcement', { message, author });
+
+                // Sending discord announcement
+                const discMessage = message.replace(/\`/g, '\\`').replace(/\n/g, '\n> ');
+                const discMsgTitle = this.#txAdmin.translator.t(
+                    'nui_menu.misc.announcement_title',
+                    { author }
+                );
+                this.#txAdmin.discordBot.sendAnnouncement(`${discMsgTitle}\n> ${discMessage}`);
+            } catch (error) {
+                console.verbose.warn(`bridgeCommand handler error:`);
+                console.verbose.dir(error);
+            }
+        } else {
+            console.warn(`Command bridge received invalid command:`);
+            console.dir(payload);
+        }
+    }
+
 
     /**
      * handles stdout and stderr from child fxserver and send to be processed by the logger

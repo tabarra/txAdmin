@@ -108,6 +108,7 @@ export default class PlayerlistManager {
 
     /**
      * Handler for all txAdminPlayerlistEvent structured trace events
+     * TODO: use zod for type safety
      */
     async handleServerEvents(payload: any, mutex: string) {
         if (payload.event === 'playerJoining') {

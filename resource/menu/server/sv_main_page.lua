@@ -23,16 +23,19 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
 end)
 
 RegisterNetEvent('txAdmin:menu:sendAnnouncement', function(message)
-  --FIXME: this is not being relayed to discord
   local src = source
   if type(message) ~= 'string' then
     return
   end
   local allow = PlayerHasTxPermission(src, 'players.message')
   TriggerEvent("txaLogger:menuEvent", src, "announcement", allow, message)
-  if allow and not TX_HIDE_ANNOUNCEMENT then
-    local author = TX_ADMINS[tostring(src)].tag
-    TriggerClientEvent("txAdmin:receiveAnnounce", -1, message, author)
+  if allow then
+    PrintStructuredTrace(json.encode({
+      type = 'txAdminCommandBridge',
+      command = 'announcement',
+      author = TX_ADMINS[tostring(src)].username,
+      message = message,
+    }))
   end
 end)
 
@@ -130,7 +133,7 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, modelType)
 end)
 
 --- Deletes the vehicle the player is currently in
---- @param netId int
+--- @param netId number
 RegisterNetEvent("txAdmin:menu:deleteVehicle", function(netId)
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
