@@ -14,6 +14,7 @@ And as part of the process, we "retired" many features and parts of our code bas
 - **Menu Weed troll effect:** It was just too similar to the drunk effect one, not worth keeping;
 - **Discord /status command:** Removed to give place for the persistent & auto-updated embed message;
 - **Import bans from EasyAdmin, BanSQL, vMenu, vRP, el_bwh:** It was there for over a year, who wanted to migrate could have migrated already. Furthermore it is kinda easy write code to import it directly into the database JSON file;
-  
+- **Cfx.re proxy URL:** The `https://monitor-xxxxx.users.cfx.re/` reverse proxy URL has been deprecated due to the complexity it added to txAdmin while being used by only 1% of all txAdmin servers.
+
 Don't cry because they are gone.  
-Smile because they existed :)
+Smile because they once existed :)

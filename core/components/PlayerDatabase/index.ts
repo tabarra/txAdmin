@@ -480,9 +480,9 @@ export default class PlayerDatabase {
         //Players that have not joined the last 16 days, and have less than 2 hours of playtime
         let playerRemoved;
         try {
-            const nineDaysAgo = now() - (16 * oneDay);
+            const sixteenDaysAgo = now() - (16 * oneDay);
             const filter = (p: DatabasePlayerType) => {
-                return (p.tsLastConnection < nineDaysAgo && p.playTime < 120);
+                return (p.tsLastConnection < sixteenDaysAgo && p.playTime < 120);
             }
             playerRemoved = this.cleanDatabase('players', filter);
         } catch (error) {
@@ -511,7 +511,7 @@ export default class PlayerDatabase {
 
         this.#db.writeFlag(SAVE_PRIORITY_LOW);
         console.ok(`Internal Database optimized. This applies only for the txAdmin internal database, and does not affect your MySQL or framework (ESX/QBCore/etc) databases.`);
-        console.ok(`- ${playerRemoved} players that haven't connected in the past 9 days and had less than 2 hours of playtime.`);
+        console.ok(`- ${playerRemoved} players that haven't connected in the past 16 days and had less than 2 hours of playtime.`);
         console.ok(`- ${wlRequestsRemoved} whitelist requests older than a week.`);
         console.ok(`- ${wlApprovalsRemoved} whitelist approvals older than a week.`);
     }

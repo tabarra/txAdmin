@@ -9,7 +9,8 @@
 - [x] ConfigVault.saveProfile should probably throw the error up
 - [x] fix: menu > send announcement does not trigger discord msg nor custom event
 - [x] migrate discord announcements to use embeds
-
+- [x] improve sv_main join check error handling
+- [ ] global socket.io connection for playerlist
 
 (function() {
     var s = document.createElement('script');
@@ -19,12 +20,6 @@
 
 
 cache static files
-
-
-günther
-> I solved the problem.
-> 
-> - The problem was caused by the force steam setting in the jdlogs script, it was fixed by turning off that setting. If the player's Steam application is closed, the script warns the player to open steam in the background and prevents them from logging into the server, but in tx admin, the player seems to be logged into the server and therefore we see unknown texts. in the player list.
 
 
 ## Optional
