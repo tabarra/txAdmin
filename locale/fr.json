@@ -17,41 +17,41 @@
         "kick_temporary": "(%{author}) Vous avez été banni pour: \"%{reason}\". Votre bannissement expirera dans: %{expiration}.",
         "kick_permanent": "(%{author}) Vous avez été définitivement banni de ce serveur pour: \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
+            "title_permanent": "Vous avez été définitivement banni de ce serveur.",
+            "title_temporary": "Vous avez été temporairement banni de ce serveur.",
+            "label_expiration": "Votre bannisement expirera dans",
+            "label_date": "Bannie le",
+            "label_author": "Bannie par",
+            "label_reason": "Bannie pour",
             "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+            "note_multiple_bans": "Remarque : vous avez plus d'un ban actif sur vos identifiants."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Ce serveur est reservé au <strong>Admin</strong> seulement.",
+            "insufficient_ids": "Vous n'avez pas d'identifiants <code>discord</code> ou <code>fivem</code>, et au moins l'un d'entre eux est requis pour valider si vous êtes un administrateur txAdmin.",
+            "deny_message": "Vos identifiants ne sont attribués à aucun administrateur txAdmin."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Ce serveur est reservé au <strong>Membre du Serveur Discord</strong>.",
+            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour valider si vous avez rejoint notre serveur Discord. Veuillez ouvrir Discord et réessayer.",
+            "deny_title": "Vous devez rejoindre notre server Discord  pour vous connecter.",
+            "deny_message": "Veuillez rejoindre le serveur discord %{guildname} puis réessayer."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Ce serveur est reservé au <strong>Membre du Serveur Discord (Ayant un rôle Whitelist)</strong>.",
+            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour valider si vous avez rejoint notre serveur Discord. Veuillez ouvrir Discord et réessayer.",
+            "deny_notmember_title": "Vous devez rejoindre notre server Discord pour vous connecter.",
+            "deny_notmember_message": "Veuillez rejoindre %{guildname}, obtenir l'un des rôles requis, puis réessayer.",
+            "deny_noroles_title": "Vous n'avez pas de rôle sur la Whitelist requis pour rejoindre.",
+            "deny_noroles_message": "Pour rejoindre ce serveur, vous devez avoir au moins un des rôles sur Whitelist sur le serveur %{guildname}."
         },
         "approved_license": {
             "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "insufficient_ids": "Vous n'avez pas l'identifiant <code>license</code>, ce qui signifie que le serveur a <code>sv_lan</code> activé. Si vous êtes le propriétaire du serveur, vous pouvez le désactiver dans le fichier <code>server.cfg</code>.",
+            "deny_title": "Vous n'êtes pas sur la whiteliste pour rejoindre ce serveur.",
+            "request_id_label": "ID de la demande"
         }
     },
     "server_actions": {
@@ -309,7 +309,7 @@
                 "btn_wl_remove": "REMOVE WL",
                 "btn_wl_success": "Whitelist status changed.",
                 "log_label": "Log",
-                "log_empty": "No bans/warns found.",
+                "log_empty": "Aucun bannisement/warns trouvé.",
                 "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
                 "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
                 "log_btn": "DETAILS",
@@ -337,13 +337,13 @@
                 "permanent": "Permanente",
                 "custom": "Personnalisée",
                 "helper_text": "Selectionnez une durée",
-                "submit": "Apply ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "submit": "Appliquer le bannisement",
+                "reason_required": "Le champ Raison est obligatoire.",
+                "success": "Joueur banni !"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "current_ids": "Identifiants actuels",
+                "previous_ids": "Identifiants précédamment utilisés"
             }
         }
     }
