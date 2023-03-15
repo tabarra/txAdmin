@@ -342,26 +342,29 @@ function handleConnections(name, setKickReason, d)
                 attempts = attempts + 1
                 d.update("\n[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
                 PerformHttpRequest(url, function(httpCode, rawData, resultHeaders)
-                    -- Validating response
-                    local respStr = tostring(rawData)
-                    if httpCode ~= 200 then
-                        logError("\n[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..respStr)
-                    end
-                    local respObj = json.decode(respStr)
-                    if not respObj or type(respObj.allow) ~= "boolean" then
-                        logError("\n[txAdmin] Checking banlist/whitelist failed with invalid response: "..respStr)
-                    end
-                    
-                    if respObj.allow == true then
-                        if not isDone then
-                            d.done()
-                            isDone = true
-                        end
-                    else 
-                        if not isDone then
-                            local reason = respObj.reason or "\n[txAdmin] no reason provided"
-                            d.done("\n"..reason)
-                            isDone = true
+                    -- rawData = nil
+                    -- httpCode = 408
+
+                    if not rawData or httpCode ~= 200 then
+                        logError("Checking banlist/whitelist failed with code "..httpCode.." and message: "..tostring(rawData))
+                    else
+                        local respStr = tostring(rawData)
+                        local respObj = json.decode(respStr)
+                        if not respObj or type(respObj.allow) ~= "boolean" then
+                            logError("Checking banlist/whitelist failed with invalid response: "..respStr)
+                        else
+                            if respObj.allow == true then
+                                if not isDone then
+                                    d.done()
+                                    isDone = true
+                                end
+                            else
+                                if not isDone then
+                                    local reason = respObj.reason or "\n[txAdmin] no reason provided"
+                                    d.done("\n"..reason)
+                                    isDone = true
+                                end
+                            end
                         end
                     end
                 end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
