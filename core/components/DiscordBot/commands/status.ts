@@ -173,12 +173,13 @@ export const generateStatusMessage = (
     }
 
     //Attempting to instantiate buttons
-    const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
+    let buttonsRow: ActionRowBuilder<ButtonBuilder> | undefined;
     try {
-        if (Array.isArray(embedConfigJson?.buttons)) {
+        if (Array.isArray(embedConfigJson?.buttons) && embedConfigJson.buttons.length) {
             if (embedConfigJson.buttons.length > 5) {
                 throw new Error(`Over limit of 5 buttons.`);
             }
+            buttonsRow = new ActionRowBuilder<ButtonBuilder>();
             for (const cfgButton of embedConfigJson.buttons) {
                 if (!isValidButtonConfig(cfgButton)) {
                     throw new Error(`Invalid button in Discord Status Embed Config.
@@ -220,7 +221,7 @@ export const generateStatusMessage = (
 
     return {
         embeds: [embed],
-        components: [buttonsRow],
+        components: buttonsRow ? [buttonsRow] : undefined,
     };
 }
 
