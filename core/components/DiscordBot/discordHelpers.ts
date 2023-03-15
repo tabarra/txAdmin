@@ -25,11 +25,19 @@ const genericEmbed = (
     }
 }
 
+export const embedColors = {
+    info: '#1D76C9',
+    success: '#0BA70B',
+    warning: '#FFF100',
+    danger: '#A70B28',
+} as const;
+
 export const embedder = {
     generic: genericEmbed,
-    success: (msg: string, ephemeral = false) => genericEmbed(msg, ephemeral, '#0BA70B', 'white_check_mark'),
-    warning: (msg: string, ephemeral = false) => genericEmbed(msg, ephemeral, '#FFF100', 'warning'),
-    danger: (msg: string, ephemeral = false) => genericEmbed(msg, ephemeral, '#A70B28', 'no_entry_sign'),
+    info: (msg: string, ephemeral = false) => genericEmbed(msg, ephemeral, embedColors.info, 'information_source'),
+    success: (msg: string, ephemeral = false) => genericEmbed(msg, ephemeral, embedColors.success, 'white_check_mark'),
+    warning: (msg: string, ephemeral = false) => genericEmbed(msg, ephemeral, embedColors.warning, 'warning'),
+    danger: (msg: string, ephemeral = false) => genericEmbed(msg, ephemeral, embedColors.danger, 'no_entry_sign'),
 }
 
 

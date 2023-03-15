@@ -119,7 +119,6 @@ export default class OutputHandler {
     bridgeCommand(payload: any) {
         if (payload.command === 'announcement') {
             try {
-                // FIXME: discordBot.sendAnnouncement podia gerar um embed com cor variável e emoji
                 //Validate input
                 if (typeof payload.author !== 'string') throw new Error(`invalid author`);
                 if (typeof payload.message !== 'string') throw new Error(`invalid message`);
@@ -134,12 +133,14 @@ export default class OutputHandler {
                 this.#txAdmin.fxRunner.sendEvent('announcement', { message, author });
 
                 // Sending discord announcement
-                const discMessage = message.replace(/\`/g, '\\`').replace(/\n/g, '\n> ');
-                const discMsgTitle = this.#txAdmin.translator.t(
-                    'nui_menu.misc.announcement_title',
-                    { author }
-                );
-                this.#txAdmin.discordBot.sendAnnouncement(`${discMsgTitle}\n> ${discMessage}`);
+                this.#txAdmin.discordBot.sendAnnouncement({
+                    type: 'info',
+                    title: {
+                        key: 'nui_menu.misc.announcement_title',
+                        data: {author}
+                    },
+                    description: message
+                });
             } catch (error) {
                 console.verbose.warn(`bridgeCommand handler error:`);
                 console.verbose.dir(error);

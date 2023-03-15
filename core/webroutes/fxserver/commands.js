@@ -77,12 +77,14 @@ export default async function FXServerCommands(ctx) {
         ctx.utils.logAction(`Sending announcement: ${parameter}`);
 
         // Sending discord announcement
-        const discMessage = message.replace(/\`/g, '\\`').replace(/\n/g, '\n> ');
-        const discMsgTitle = globals.translator.t(
-            'nui_menu.misc.announcement_title',
-            {author: ctx.session.auth.username}
-        );
-        await globals.discordBot.sendAnnouncement(`${discMsgTitle}\n> ${discMessage}`);
+        globals.discordBot.sendAnnouncement({
+            type: 'info',
+            title: {
+                key: 'nui_menu.misc.announcement_title',
+                data: {author: ctx.session.auth.username}
+            },
+            description: message
+        });
 
         return ctx.send({
             type: cmdOk ? 'success' : 'danger',

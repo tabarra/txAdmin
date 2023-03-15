@@ -8,6 +8,7 @@
 - [x] update most packages
 - [x] ConfigVault.saveProfile should probably throw the error up
 - [x] fix: menu > send announcement does not trigger discord msg nor custom event
+- [x] migrate discord announcements to use embeds
 
 
 (function() {

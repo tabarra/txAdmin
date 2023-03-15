@@ -1,10 +1,11 @@
 const modulename = 'DiscordBot';
-import Discord, { ActivityType, ChannelType, Client, GatewayIntentBits } from 'discord.js';
+import Discord, { ActivityType, ChannelType, Client, EmbedBuilder, GatewayIntentBits } from 'discord.js';
 import TxAdmin from '@core/txAdmin';
 import slashCommands from './slash';
 import interactionCreateHandler from './interactionCreateHandler';
 import { generateStatusMessage } from './commands/status';
 import consoleFactory from '@extras/console';
+import { embedColors } from './discordHelpers';
 const console = consoleFactory(modulename);
 
 
@@ -16,6 +17,17 @@ type DiscordBotConfigType = {
     announceChannel: string;
     embedJson: string;
     embedConfigJson: string;
+}
+
+type MessageTranslationType = {
+    key: string;
+    data?: object;
+}
+
+type AnnouncementType = {
+    title?: string | MessageTranslationType;
+    description: string | MessageTranslationType;
+    type: keyof typeof embedColors;
 }
 
 
@@ -103,9 +115,8 @@ export default class DiscordBot {
 
     /**
      * Send an announcement to the configured channel
-     * @param {string} message
      */
-    async sendAnnouncement(message: string) {
+    async sendAnnouncement(content: AnnouncementType) {
         if (!this.config.enabled) return;
         if (
             !this.config.announceChannel
@@ -117,7 +128,21 @@ export default class DiscordBot {
         }
 
         try {
-            await this.announceChannel.send(message);
+            let title;
+            if (content.title) {
+                title = (typeof content.title === 'string')
+                    ? content.title
+                    : this.#txAdmin.translator.t(content.title.key, content.title.data);
+            }
+            let description;
+            if (content.description) {
+                description = (typeof content.description === 'string')
+                    ? content.description
+                    : this.#txAdmin.translator.t(content.description.key, content.description.data);
+            }
+            
+            const embed = new EmbedBuilder({ title, description }).setColor(embedColors[content.type]);
+            await this.announceChannel.send({ embeds: [embed] });
         } catch (error) {
             console.error(`Error sending Discord announcement: ${(error as Error).message}`);
         }

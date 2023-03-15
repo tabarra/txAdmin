@@ -203,8 +203,13 @@ export default class FXRunner {
 
         //Announcing
         if (announce === 'true' || announce === true) {
-            let discordMessage = globals.translator.t('server_actions.spawning_discord', { servername: globals.config.serverName });
-            globals.discordBot.sendAnnouncement(discordMessage);
+            globals.discordBot.sendAnnouncement({
+                type: 'success',
+                description: {
+                    key: 'server_actions.spawning_discord',
+                    data: { servername: globals.config.serverName }
+                }
+            });
         }
 
         //Starting server
@@ -343,6 +348,7 @@ export default class FXRunner {
 
             // Send warnings
             const messageType = isRestarting ? 'restarting' : 'stopping';
+            const messageColor = isRestarting ? 'warning' : 'danger';
             const tOptions = {
                 servername: globals.config.serverName,
                 reason: reason ?? 'no reason provided',
@@ -352,9 +358,13 @@ export default class FXRunner {
                 author: author ?? 'txAdmin',
                 message: globals.translator.t(`server_actions.${messageType}`, tOptions),
             });
-            globals.discordBot.sendAnnouncement(
-                globals.translator.t(`server_actions.${messageType}_discord`, tOptions),
-            );
+            globals.discordBot.sendAnnouncement({
+                type: messageColor,
+                description: {
+                    key: `server_actions.${messageType}_discord`,
+                    data: tOptions
+                }
+            });
 
             //Awaiting restart delay
             await sleep(SHUTDOWN_NOTICE_DELAY);

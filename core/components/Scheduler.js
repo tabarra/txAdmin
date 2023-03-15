@@ -195,11 +195,16 @@ export default class Scheduler {
             const tOptions = {
                 smart_count: nextDistMins,
                 servername: globals.config.serverName,
-            };
+            }
 
             //Send discord warning
-            const discordMsg = globals.translator.t('restarter.schedule_warn_discord', tOptions);
-            globals.discordBot.sendAnnouncement(discordMsg);
+            globals.discordBot.sendAnnouncement({
+                type: 'warning',
+                description: {
+                    key: 'restarter.schedule_warn_discord',
+                    data: tOptions
+                }
+            });
 
             //Dispatch `txAdmin:events:scheduledRestart` 
             globals.fxRunner.sendEvent('scheduledRestart', {
