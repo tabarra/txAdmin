@@ -29,28 +29,28 @@
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Ten serwer jest w trybie <strong>Admin-only</strong>.",
+            "insufficient_ids": "Nie posiadasz identyfikatora <code>discord</code> lub <code>fivem</code>, a co najmniej jeden z nich jest wymagany do sprawdzenia czy jesteś administratorem.",
+            "deny_message": "Twoje identyfikatory nie są przypisane do żadnego konta administratora txAdmin."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Ten serwer jest w trybie <strong>Discord Guild Member Whitelist</strong>.",
+            "insufficient_ids": "Nie posiadasz identyfikatora<code>discord</code>, który jest wymagany aby sprawdzić czy dołączyłeś do serwera Discord. Uruchom ponownie discorda.",
+            "deny_title": "Musisz dołączyć do serwera discord, aby połączyć się z serwerem.",
+            "deny_message": "Dołącz na serwer Discord %{guildname} i spróbuj ponownie."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Ten serwer jest w trybie<strong>Discord Role Whitelist</strong>.",
+            "insufficient_ids": "Nie posiadasz identyfikatora<code>discord</code>, który jest wymagany aby sprawdzić czy dołączyłeś do serwera Discord. Uruchom ponownie discorda.",
+            "deny_notmember_title": "Musisz dołączyć do serwera discord, aby połączyć się z serwerem.",
+            "deny_notmember_message": "Dołącz na serwer Discord %{guildname}, zdobądź jedną z wymaganych ról i spróbuj ponownie.",
+            "deny_noroles_title": "Nie posiadasz wymaganej roli wymaganej do wejścia na serwer.",
+            "deny_noroles_message": "Aby połączyć się z serwerem musisz posiadać co najmniej jedną z wymaganych ról na serwerze Discord %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
+            "mode_title": "Ten serwer jest w trybie <strong>License Whitelist</strong>.",
+            "insufficient_ids": "Nie posiadasz identyfikatora <code>license</code>, który oznacza, że serwer posiada włączony tryb <code>sv_lan</code>. Jeżeli jesteś właścicielem tego serwera, możesz wyłączyć to w pliku <code>server.cfg</code>.",
+            "deny_title": "Nie posiadasz whitelisty na tym serwerze.",
             "request_id_label": "Request ID"
         }
     },
@@ -106,9 +106,9 @@
                     "success": "Znajdujesz się w trybie boga"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Super Skok",
+                    "label": "Włącz tryb super skoku, będziesz się również szybciej przemieszczać",
+                    "success": "Znajdujesz się w trybie super skoku"
                 },
                 "normal": {
                     "title": "Normalny",
