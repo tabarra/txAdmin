@@ -113,13 +113,20 @@ end)
 --[[ Handle player Join or Leave ]]
 AddEventHandler('playerJoining', function(srcString, _oldID)
     -- sanity checking source
-    if source <= 0 then 
+    if source <= 0 then
         logError('playerJoining event with source '..json.encode(source))
         return
     end
 
+    -- checking if the player was not already dropped
+    local playerDetectedName = GetPlayerName(source)
+    if type(playerDetectedName) ~= 'string' then
+        logError('Received a playerJoining for a player that was already dropped. There is some resource dropping the player at the playerJoining event handler without first waiting for a tick.')
+        return
+    end
+
     local playerData = {
-        name = sub(GetPlayerName(source) or "unknown", 1, 75),
+        name = sub(playerDetectedName or "unknown", 1, 75),
         ids = GetPlayerIdentifiers(source),
         hwids = GetPlayerTokens(source),
     }

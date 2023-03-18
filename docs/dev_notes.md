@@ -10,6 +10,7 @@
 - [x] fix: menu > send announcement does not trigger discord msg nor custom event
 - [x] migrate discord announcements to use embeds
 - [x] improve sv_main join check error handling
+- [x] fix "unknown" in playerlist caused by DropPlayer at playerConnecting events
 - [ ] global socket.io connection for playerlist
 
 (function() {
