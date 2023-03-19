@@ -221,10 +221,53 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
 //================================================================
 //=================================================== On Page Load
 //================================================================
+const getSocket = (rooms) => {
+    const socketOpts = {
+        transports: ['polling'],
+        upgrade: false,
+        query: { rooms }
+    };
+
+    const socket = isWebInterface
+        ? io({ ...socketOpts, path: '/socket.io' })
+        : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
+
+    socket.on('logout', () => {
+        console.log('Received logout command from websocket.');
+        window.location = `/auth?logout&r=${encodeURIComponent(window.location.pathname)}`;
+    });
+
+    return socket;
+}
+
+const startMainSocket = () => {
+    const rooms = isWebInterface ? ['status', 'playerlist'] : ['playerlist'];
+    const socket = getSocket(rooms);
+    socket.on('error', (error) => {
+        console.log('Main Socket.IO', error);
+    });
+    socket.on('connect', () => {
+        console.log("Main Socket.IO Connected.");
+    });
+    socket.on('disconnect', (message) => {
+        console.log("Main Socket.IO Disonnected:", message);
+    });
+    socket.on('status', function (status) {
+        // console.log('status', JSON.stringify(status, null, 2));
+    });
+    socket.on('playerlist', function (playerlistData) {
+        if(!isWebInterface) return;
+        // console.log('playerlist', playerlistData);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function (event) {
     //Setting up status refresh
-    refreshData();
-    setInterval(refreshData, STATUS_REFRESH_INTERVAL);
+    // refreshData();
+    // setInterval(refreshData, STATUS_REFRESH_INTERVAL);
+
+    //Starting status/playerlist socket.io
+    startMainSocket();
 
     //Opening modal
     if (typeof isTempPassword !== 'undefined') {

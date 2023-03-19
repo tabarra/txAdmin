@@ -223,7 +223,7 @@ export default class TxAdmin {
             this.statsCollector = new StatsCollector();
             globalsInternal.statsCollector = this.statsCollector;
 
-            this.webServer = new WebServer(profileConfig.webServer);
+            this.webServer = new WebServer(this, profileConfig.webServer);
             globalsInternal.webServer = this.webServer;
 
             this.resourcesManager = new ResourcesManager();

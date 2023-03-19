@@ -70,6 +70,7 @@ files {
     'web/public/js/coreui.bundle.min.js',
     'web/public/js/bootstrap-notify.min.js',
     'web/public/js/jquery-confirm.min.js',
+    'web/public/js/socket.io.min.js',
     'web/public/js/humanizeDuration.min.js',
     'web/public/js/txadmin/base.js',
     'web/public/js/txadmin/main.js',

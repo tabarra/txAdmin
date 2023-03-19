@@ -20,7 +20,6 @@ import dict51 from 'nanoid-dictionary/nolookalikes';
 
 import { setHttpCallback } from '@citizenfx/http-wrapper';
 import { convars, txEnv } from '@core/globalData';
-import { requestAuth } from './requestAuthenticator.js';
 import WebCtxUtils from './ctxUtils.js';
 import router from './router';
 import consoleFactory from '@extras/console';
@@ -29,7 +28,8 @@ const nanoid = customAlphabet(dict51, 20);
 
 
 export default class WebServer {
-    constructor(config) {
+    constructor(txAdmin, config) {
+        this.txAdmin = txAdmin;
         this.config = config;
         this.luaComToken = nanoid();
         this.webSocket = null;
@@ -199,16 +199,10 @@ export default class WebServer {
         //Start SocketIO
         this.io = new SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore));
-        this.io.use(requestAuth('socket'));
 
         //Setting up webSocket
-        this.webSocket = new WebSocket(this.io);
+        this.webSocket = new WebSocket(this.txAdmin, this.io);
         this.io.on('connection', this.webSocket.handleConnection.bind(this.webSocket));
-        //NOTE: when using namespaces:
-        // this.io.on('connection', client => {
-        //     console.error('Triggered when not using any type of namespace.')
-        // });
-        // this.io.of('/console').use(this.webSocket.handleConnection.bind(this.webSocket));
     }
 
 

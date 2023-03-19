@@ -106,20 +106,6 @@ export const requestAuth = (epType) => {
         }
     };
 
-    //Socket auth function (used as middleware for all incoming socket.io connections)
-    const socketAuth = async (socket, next) => {
-        const { isValidAuth } = authLogic(socket.session, true, epType);
-
-        if (isValidAuth) {
-            await next();
-        } else {
-            if (socket.session) socket.session.auth = {}; //a bit redundant but it wont hurt anyone
-            socket.disconnect(0);
-            console.verbose.warn('Auth denied when creating session');
-            next(new Error('Authentication Denied'));
-        }
-    };
-
     //Return the appropriate function
     if (epType === 'intercom') {
         return intercomAuth;
@@ -131,8 +117,6 @@ export const requestAuth = (epType) => {
         return defaultAuth;
     } else if (epType === 'nui') {
         return nuiAuth;
-    } else if (epType === 'socket') {
-        return socketAuth;
     } else {
         return () => { throw new Error('Unknown auth type'); };
     }
@@ -141,8 +125,8 @@ export const requestAuth = (epType) => {
 
 /**
  * Autentication & authorization logic used in both websocket and webserver
- * @param {object} sess
- * @param {string} perm
+ * @param {unknown} sess
+ * @param {string|true} perm
  * @param {string} epType endpoint type
  */
 export const authLogic = (sess, perm, epType) => {

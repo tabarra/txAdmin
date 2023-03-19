@@ -7,7 +7,6 @@ const REQ_TIMEOUT_SHORT = 1500;
 const REQ_TIMEOUT_MEDIUM = 5000;
 const REQ_TIMEOUT_LONG = 9000;
 const REQ_TIMEOUT_REALLY_LONG = 13000;
-const STATUS_REFRESH_INTERVAL = (isWebInterface) ? 1000 : 5000;
 const SPINNER_HTML = '<div class="txSpinner">Loading...</div>';
 
 //Helpers

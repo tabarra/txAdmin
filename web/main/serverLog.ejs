@@ -208,7 +208,6 @@
 <%- await include('parts/footer.ejs', locals) %>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>
 <script>
     (function () {
         //============================================== Preparing variables
@@ -222,17 +221,10 @@
         const MAX_HISTORY_SIZE = 500;
         const frameTimeOptions = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
         const eventTimeOptions = {hour: '2-digit', minute: '2-digit', second: '2-digit'};
-        const defaultSocketOpts = {
-            transports: ['polling'],
-            upgrade: false,
-            query: {
-                room: 'serverlog'
-            }
-        }
         let logStartTs, logEndTs;
         let eventFilters = {};
         let autoScroll = true;
-        let socket;
+        const pageSocket = getSocket('serverlog');
         const logContainerSpinner = `<div style="height: 90%;" class="d-flex"><div style="margin: auto;">${SPINNER_HTML}</div></div>`;
 
 
@@ -261,26 +253,18 @@
             viewOlderBtn.disabled = false;
             viewNewerBtn.disabled = true;
 
-            if (isWebInterface) {
-                socket = io({ ...defaultSocketOpts, path: '/socket.io' });
-                // socket = {on:()=>{}}
-            } else {
-                socket = io('monitor', { ...defaultSocketOpts, path: '/WebPipe/socket.io' });
-            }
-            socket.on('error', (error) => {
-                console.dir(error)
+            //Socket stuff
+            pageSocket.on('error', (error) => {
+                console.log('Page Socket.IO', error)
             });
-            socket.on('connect', () => {
-                console.log("Socket.IO Connected.");
+            pageSocket.on('connect', () => {
+                console.log("Page Socket.IO Connected.");
                 logContainer.innerHTML = '';
             });
-            socket.on('disconnect', () => {
-                console.log("Socket.IO Disonnected.");
+            pageSocket.on('disconnect', (message) => {
+                console.log("Page Socket.IO Disonnected:", message);
             });
-            socket.on('goDashboard', (error) => {
-                window.location = '/';
-            });
-            socket.on('logData', processLog);
+            pageSocket.on('logData', processLog);
         }
 
         function goHistory(direction) {
@@ -292,7 +276,7 @@
             }else{
                 throw new Error(`unknown direction`);
             }
-            socket.disconnect();
+            pageSocket.disconnect();
             logContainer.innerHTML = logContainerSpinner;
             modeLabel.classList.add('text-warning');
             modeLabel.classList.remove('text-success');
