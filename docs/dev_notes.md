@@ -13,6 +13,33 @@
 - [x] fix "unknown" in playerlist caused by DropPlayer at playerConnecting events
 - [x] global socket.io connection for playerlist
 
+
+function convertHrtime(hrtime) {
+	const nanoseconds = hrtime;
+	const number = Number(nanoseconds);
+	const milliseconds = number / 1000000;
+	const seconds = number / 1000000000;
+
+	return {
+		seconds,
+		milliseconds,
+		nanoseconds
+	};
+}
+
+const start = process.hrtime.bigint();
+
+for (let i = 0; i < 1000; i++) {
+    process.hrtime.bigint();
+}
+
+const duration = process.hrtime.bigint() - start;
+console.log(`${duration}ns`);
+console.dir(convertHrtime(duration));
+
+
+
+
 (function() {
     var s = document.createElement('script');
     s.setAttribute('src', 'https://nthitz.github.io/turndownforwhatjs/tdfw.js');
@@ -312,6 +339,19 @@ Instance[]:
 Questions:
 - How to make the database interface (currently in playerController)
 - Should break logger and config in 2 or work top->down?
+
+march/2023 insight:
+- if no `txData/config`
+- move the profile config and data to txdata
+- rename `txData/<profile>` to `txData/<profile>_bkp`
+- at run time:
+    - check if `txData/lock` exists
+    - if it doesn't
+        - save pid + interface + port to lock file
+    - if it does
+        - see if the pid is running
+        - say "you cant run two tx on the same txdata, open <url> to visit the other one"
+
 
 
 ### New UI stuff

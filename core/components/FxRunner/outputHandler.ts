@@ -11,6 +11,17 @@ const deferError = (m: string, t = 500) => {
     }, t);
 };
 
+type StructuredTraceType = {
+    key: number;
+    value: {
+        channel: string;
+        data: any;
+        file: string;
+        func: string;
+        line: number;
+    }
+}
+
 
 /**
  * FXServer output helper that mostly relays to other components.
@@ -35,19 +46,15 @@ export default class OutputHandler {
      *   script_log
      *   script_structured_trace (handled by server logger)
      */
-    trace(mutex: string, trace: object) {
+    trace(mutex: string, trace: StructuredTraceType) {
         try {
             //Filter valid and fresh packages
             if (mutex !== this.#txAdmin.fxRunner.currentMutex) return;
-            // const json = JSON.stringify(trace);
-            // if (json.includes('mapmanager')) {
-            //     console.dir(trace);
-            // }
             if (anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
             const { channel, data } = trace.value;
 
             //Handle bind errors
-            if (channel == 'citizen-server-impl' && data.type == 'bind_error') {
+            if (channel == 'citizen-server-impl' && data?.type == 'bind_error') {
                 try {
                     if (!this.#txAdmin.fxRunner.restartDelayOverride) {
                         this.#txAdmin.fxRunner.restartDelayOverride = 10000;
@@ -137,7 +144,7 @@ export default class OutputHandler {
                     type: 'info',
                     title: {
                         key: 'nui_menu.misc.announcement_title',
-                        data: {author}
+                        data: { author }
                     },
                     description: message
                 });
