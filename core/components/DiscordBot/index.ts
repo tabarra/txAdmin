@@ -140,7 +140,7 @@ export default class DiscordBot {
                     ? content.description
                     : this.#txAdmin.translator.t(content.description.key, content.description.data);
             }
-            
+
             const embed = new EmbedBuilder({ title, description }).setColor(embedColors[content.type]);
             await this.announceChannel.send({ embeds: [embed] });
         } catch (error) {
@@ -286,10 +286,10 @@ export default class DiscordBot {
         if (!this.guild) throw new Error(`guild not resolved`);
 
         try {
-            const member = await this.guild.members.fetch(uid);
+            const member = this.guild.members.cache.find(m => m.id === uid) ?? await this.guild.members.fetch(uid);
             return {
                 isMember: true,
-                memberRoles: member.roles.cache.map((role) => role.id)
+                memberRoles: member.roles.cache.map((role) => role.id),
             };
         } catch (error) {
             //https://discord.com/developers/docs/topics/opcodes-and-status-codes
@@ -304,7 +304,6 @@ export default class DiscordBot {
 
     /**
      * Resolves a user by its discord identifier.
-     * FIXME: add lru-cache
      */
     async resolveMemberProfile(uid: string) {
         if (!this.#client?.isReady()) throw new Error(`discord bot not ready yet`);
@@ -313,7 +312,7 @@ export default class DiscordBot {
         //Check if in guild member
         if (this.guild) {
             try {
-                const member = await this.guild.members.fetch(uid);
+                const member = this.guild.members.cache.find(m => m.id === uid) ?? await this.guild.members.fetch(uid);
                 return {
                     tag: `${member.nickname ?? member.user.username}#${member.user.discriminator}`,
                     avatar: member.displayAvatarURL(avatarOptions) ?? member.user.displayAvatarURL(avatarOptions),

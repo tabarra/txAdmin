@@ -12,6 +12,10 @@
 - [x] improve sv_main join check error handling
 - [x] fix "unknown" in playerlist caused by DropPlayer at playerConnecting events
 - [x] global socket.io connection for playerlist
+- [x] fix(bot): use cache when resolving members when possible
+- [ ] add hwid token bans
+- [ ] review taso's spectate fix pr
+
 
 
 function convertHrtime(hrtime) {
@@ -93,8 +97,6 @@ teste:
 
 # TODO: sooner than later
 - [ ] server logger add events/min average
-- [ ] add lru-cache to `DiscordBot.resolveMember()` really needed? it probably wouldn't try to resolve the same player twice because he would be in the wl requests already
-
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] mock out insights page (assets + http reqs)
