@@ -40,7 +40,6 @@ export default class HealthMonitor {
 
         //Setting up
         this.hostStats = null;
-        this.schedule = null;
         this.resetMonitorStats();
 
         //Cron functions
@@ -48,8 +47,13 @@ export default class HealthMonitor {
             this.sendHealthCheck();
             this.refreshServerStatus();
         }, 1000);
+
+        //NOTE: if ever changing this, need to make sure the other data
+        //in the status event will be pushed, since right some of now it
+        //relies on this event every 5 seconds
         setInterval(async () => {
             this.hostStats = await getHostStats();
+            globals.webServer?.webSocket.pushRefresh('status');
         }, 5000);
     }
 
@@ -87,6 +91,7 @@ export default class HealthMonitor {
         if(newStatus !== this.currentStatus){
             this.currentStatus = newStatus;
             globals.discordBot.updateStatus().catch();
+            globals.webServer?.webSocket.pushRefresh('status');
         }
     }
 

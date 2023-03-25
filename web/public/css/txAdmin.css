@@ -196,7 +196,7 @@ mark {background-color: #ffeaa7;}
 .playerlist>.player:hover {
     background-color: #F2F2F2;
 }
-.playerlist>.player>.pping {
+.playerlist>.player>.netid {
     font-family: Consolas, monaco, monospace;
 }
 .playerlist>.player>.pname {

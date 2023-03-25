@@ -17,10 +17,11 @@ export type RoomCommandHandlerType = {
 
 export type RoomType = {
     permission: string | true;
-    eventName: string,
-    outBuffer: string | any[],
-    commands?: Record<string, RoomCommandHandlerType>,
-    initialData: () => any,
+    eventName: string;
+    cumulativeBuffer: boolean;
+    outBuffer: any;
+    commands?: Record<string, RoomCommandHandlerType>;
+    initialData: () => any;
 }
 
 //NOTE: quen adding multiserver, create dynamic rooms like playerlist#<svname>
@@ -160,14 +161,20 @@ export default class WebSocket {
     /**
      * Adds data to the buffer
      */
-    buffer(roomName: RoomNames, data: string | any[]) {
+    buffer(roomName: RoomNames, data: any) {
         const room = this.#rooms[roomName];
         if (!room) throw new Error('Room not found');
 
-        if (Array.isArray(room.outBuffer)) {
-            room.outBuffer.push(data);
-        } else if (typeof room.outBuffer === 'string') {
-            room.outBuffer += data;
+        if (room.cumulativeBuffer) {
+            if (Array.isArray(room.outBuffer)) {
+                room.outBuffer.push(data);
+            } else if (typeof room.outBuffer === 'string') {
+                room.outBuffer += data;
+            } else {
+                throw new Error(`cumulative buffers can only be arrays or strings`);
+            }
+        } else {
+            room.outBuffer = data;
         }
     }
 
@@ -178,12 +185,18 @@ export default class WebSocket {
      */
     flushBuffers() {
         for (const [roomName, room] of Object.entries(this.#rooms)) {
-            if (!room.outBuffer.length) continue;
-            this.#io.to(roomName).emit(room.eventName, room.outBuffer);
-            if (Array.isArray(room.outBuffer)) {
-                room.outBuffer = [];
-            } else if (typeof room.outBuffer === 'string') {
-                room.outBuffer = '';
+            if (room.cumulativeBuffer && room.outBuffer.length) {
+                this.#io.to(roomName).emit(room.eventName, room.outBuffer);
+                if (Array.isArray(room.outBuffer)) {
+                    room.outBuffer = [];
+                } else if (typeof room.outBuffer === 'string') {
+                    room.outBuffer = '';
+                } else {
+                    throw new Error(`cumulative buffers can only be arrays or strings`);
+                }
+            } else if(!room.cumulativeBuffer && room.outBuffer !== null){
+                this.#io.to(roomName).emit(room.eventName, room.outBuffer);
+                room.outBuffer = null;
             }
         }
     }
@@ -195,14 +208,11 @@ export default class WebSocket {
      * event handling, things might take a tick to update their status (maybe discord bot?)
      */
     pushRefresh(roomName: RoomNames) {
-        if (!VALID_ROOMS.includes(roomName)) throw new Error(`Invalid room ${roomName}`);
+        if (!VALID_ROOMS.includes(roomName)) throw new Error(`Invalid room '${roomName}'.`);
         const room = this.#rooms[roomName];
+        if (room.cumulativeBuffer) throw new Error(`The room '${roomName}' has a cumulative buffer.`);
         setImmediate(() => {
-            if (Array.isArray(room.outBuffer)) {
-                room.outBuffer.push(room.initialData());
-            } else if (typeof room.outBuffer === 'string') {
-                console.dir(new Error(`pushRefresh not implemented for string buffers`));
-            }
+            room.outBuffer = room.initialData();
         });
     }
 };

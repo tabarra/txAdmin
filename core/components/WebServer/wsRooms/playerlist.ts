@@ -11,10 +11,13 @@ const console = consoleFactory(modulename);
 export default (txAdmin: TxAdmin): RoomType => ({
     permission: true, //everyone can see it
     eventName: 'playerlist',
+    cumulativeBuffer: true,
     outBuffer: [],
     initialData: () => {
-        return {
-            initial: txAdmin.playerlistManager.getPlayerList(),
-        };
+        return [{
+            mutex: txAdmin.fxRunner.currentMutex,
+            type: 'fullPlayerlist',
+            playerlist: txAdmin.playerlistManager.getPlayerList(),
+        }];
     },
 })

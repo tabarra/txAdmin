@@ -49,6 +49,11 @@ export default class PlayerlistManager {
         }
         this.licenseCache = this.licenseCache.slice(-this.licenseCacheLimit);
         this.#playerlist = [];
+        this.#txAdmin.webServer.webSocket!.buffer('playerlist', {
+            mutex: oldMutex,
+            type: 'fullPlayerlist',
+            playerlist: [],
+        });
     }
 
 
@@ -116,13 +121,23 @@ export default class PlayerlistManager {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
                 if (typeof this.#playerlist[payload.id] !== 'undefined') throw new Error(`duplicated player id`);
                 //TODO: pass serverInstance instead of playerDatabase
-                this.#playerlist[payload.id] = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
+                const svPlayer = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
+                this.#playerlist[payload.id] = svPlayer;
                 this.#txAdmin.logger.server.write([{
                     type: 'playerJoining',
                     src: payload.id,
                     ts: Date.now(),
                     data: { ids: this.#playerlist[payload.id]!.ids }
                 }], mutex);
+                this.#txAdmin.webServer.webSocket!.buffer('playerlist', {
+                    mutex,
+                    type: 'playerJoining',
+                    netid: svPlayer.netid,
+                    displayName: svPlayer.displayName,
+                    pureName: svPlayer.pureName,
+                    ids: svPlayer.ids,
+                    license: svPlayer.license,
+                });
             } catch (error) {
                 console.verbose.warn(`playerJoining event error: ${(error as Error).message}`);
             }
@@ -138,6 +153,11 @@ export default class PlayerlistManager {
                     ts: Date.now(),
                     data: { reason: payload.reason }
                 }], mutex);
+                this.#txAdmin.webServer.webSocket!.buffer('playerlist', {
+                    mutex,
+                    type: 'playerDropped',
+                    netid: this.#playerlist[payload.id]!.netid,
+                });
             } catch (error) {
                 console.verbose.warn(`playerDropped event error: ${(error as Error).message}`);
             }

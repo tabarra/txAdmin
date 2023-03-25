@@ -240,6 +240,7 @@ export default class FXRunner {
                 },
             });
             historyIndex = this.history.length - 1;
+            globals.webServer?.webSocket.pushRefresh('status');
         } catch (error) {
             console.error('Failed to start FXServer with the following error:');
             console.dir(error);
@@ -259,6 +260,7 @@ export default class FXRunner {
             }
             console.warn(`>> [${pid}] FXServer Closed (${printableCode}).`);
             this.history[historyIndex].timestamps.close = now();
+            globals.webServer?.webSocket.pushRefresh('status');
         }.bind(this));
         this.fxChild.on('disconnect', function () {
             console.warn(`>> [${pid}] FXServer Disconnected.`);
@@ -271,6 +273,7 @@ export default class FXRunner {
             process.stdout.write('\n'); //Make sure this isn't concatenated with the last line
             console.warn(`>> [${pid}] FXServer Exited.`);
             this.history[historyIndex].timestamps.exit = now();
+            globals.webServer?.webSocket.pushRefresh('status');
             if (this.history[historyIndex].timestamps.exit - this.history[historyIndex].timestamps.start <= 5) {
                 setTimeout(() => {
                     console.warn('FXServer didn\'t start. This is not an issue with txAdmin.');

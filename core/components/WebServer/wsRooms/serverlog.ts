@@ -7,6 +7,7 @@ import { RoomType } from "../webSocket";
 export default (txAdmin: TxAdmin): RoomType => ({
     permission: true, //everyone can see it
     eventName: 'logData',
+    cumulativeBuffer: true,
     outBuffer: [],
     initialData: () => txAdmin.logger.server.getRecentBuffer(500),
     commands: {},

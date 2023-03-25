@@ -11,7 +11,7 @@
 - [x] migrate discord announcements to use embeds
 - [x] improve sv_main join check error handling
 - [x] fix "unknown" in playerlist caused by DropPlayer at playerConnecting events
-- [ ] global socket.io connection for playerlist
+- [x] global socket.io connection for playerlist
 
 (function() {
     var s = document.createElement('script');
@@ -155,7 +155,7 @@ Whitelist Page/routes:
 ## The Big Things before ts+react rewrite:
 - [x] in-core playerlist state tracking
 - [x] new proxy console util
-- [ ] global socket.io connection for playerlist + async responses
+- [x] global socket.io connection for playerlist + async responses
 - [ ] new config (prepared for multiserver)
 - [ ] multiserver tx instance (backend only)
 

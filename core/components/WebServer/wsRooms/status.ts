@@ -50,6 +50,7 @@ const prepareServerStatus = (txAdmin: TxAdmin) => {
         status: txAdmin.healthMonitor.currentStatus || '??',
         process: txAdmin.fxRunner.getStatus(),
         name: txAdmin.globalConfig.serverName,
+        players: txAdmin.playerlistManager.onlineCount,
         scheduler: txAdmin.scheduler.getStatus(),
         statusClass: 'dark',
     };
@@ -105,7 +106,8 @@ const prepareHostData = (txAdmin: TxAdmin) => {
 export default (txAdmin: TxAdmin): RoomType => ({
     permission: true, //everyone can see it
     eventName: 'status',
-    outBuffer: [],
+    cumulativeBuffer: false,
+    outBuffer: null,
     initialData: () => {
         return {
             discord: prepareDiscordStatus(txAdmin), //passive update when HostData updates

@@ -106,51 +106,35 @@ const updateHostStats = (hostData) => {
     $('#hostusage-memory-text').html(hostData.memory.text);
 };
 
-function refreshData() {
-    const scope = (isWebInterface) ? 'web' : 'iframe';
-    txAdminAPI({
-        type: 'GET',
-        url: `status/${scope}`,
-        timeout: REQ_TIMEOUT_SHORT,
-        success: function (data) {
-            if (checkApiLogoutRefresh(data)) return;
-            updateStatusCard(data.discord, data.server);
-            if (isWebInterface) {
-                updatePageTitle(data.server.statusClass, data.server.name, data.players.length);
-                updateHostStats(data.host);
-                processPlayers(data.players, data.server.mutex);
-            }
-        },
-        error: function (xmlhttprequest, textstatus, message) {
-            let out = null;
-            if (textstatus == 'parsererror') {
-                out = 'Response parse error.\nTry refreshing your window.';
-            } else {
-                out = `Request error: ${textstatus}\n${message}`;
-            }
-            if (statusCard.self) {
-                setBadgeColor(statusCard.discord, 'light');
-                statusCard.discord.textContent = '--';
-                setBadgeColor(statusCard.server, 'light');
-                statusCard.server.textContent = '--';
-                statusCard.serverProcess.textContent = '--';
-                setNextRestartTimeClass('text-muted');
-                statusCard.nextRestartTime.textContent = '--';
-                statusCard.nextRestartBtnCancel.classList.add('d-none');
-                statusCard.nextRestartBtnEnable.classList.add('d-none');
-            }
-            if (isWebInterface) {
-                $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
-                $('#hostusage-cpu-text').html('error');
-                $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
-                $('#hostusage-memory-text').html('error');
-                document.title = 'ERROR - txAdmin';
-                faviconEl.href = `img/favicon_offline.png`;
-                processPlayers(out);
-            }
-        },
-    });
-};
+function updateStatus(data) {
+    updateStatusCard(data.discord, data.server);
+    if (isWebInterface) {
+        updatePageTitle(data.server.statusClass, data.server.name, data.server.players);
+        updateHostStats(data.host);
+    }
+}
+function updateStatusOffline() {
+    if (statusCard.self) {
+        setBadgeColor(statusCard.discord, 'light');
+        statusCard.discord.textContent = '--';
+        setBadgeColor(statusCard.server, 'light');
+        statusCard.server.textContent = '--';
+        statusCard.serverProcess.textContent = '--';
+        setNextRestartTimeClass('text-muted');
+        statusCard.nextRestartTime.textContent = '--';
+        statusCard.nextRestartBtnCancel.classList.add('d-none');
+        statusCard.nextRestartBtnEnable.classList.add('d-none');
+    }
+    if (isWebInterface) {
+        $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
+        $('#hostusage-cpu-text').html('error');
+        $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
+        $('#hostusage-memory-text').html('error');
+        document.title = 'ERROR - txAdmin';
+        faviconEl.href = `img/favicon_offline.png`;
+        setPlayerlistMessage('Page Disconnected 😓');
+    }
+}
 
 
 
@@ -241,7 +225,7 @@ const getSocket = (rooms) => {
 }
 
 const startMainSocket = () => {
-    const rooms = isWebInterface ? ['status', 'playerlist'] : ['playerlist'];
+    const rooms = isWebInterface ? ['status', 'playerlist'] : ['status'];
     const socket = getSocket(rooms);
     socket.on('error', (error) => {
         console.log('Main Socket.IO', error);
@@ -251,13 +235,14 @@ const startMainSocket = () => {
     });
     socket.on('disconnect', (message) => {
         console.log("Main Socket.IO Disonnected:", message);
+        updateStatusOffline();
     });
     socket.on('status', function (status) {
-        // console.log('status', JSON.stringify(status, null, 2));
+        updateStatus(status);
     });
     socket.on('playerlist', function (playerlistData) {
         if(!isWebInterface) return;
-        // console.log('playerlist', playerlistData);
+        processPlayerlistEvents(playerlistData);
     });
 }
 
