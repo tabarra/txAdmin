@@ -80,19 +80,12 @@ export default class WebServer {
         //Setting up app
         this.app.use(WebCtxUtils);
         this.app.on('error', (error, ctx) => {
-            if (
-                typeof error.code == 'string'
-                && (
-                    error.code.startsWith('HPE_')
-                    || error.code.startsWith('ECONN')
-                    || error.code.startsWith('EPIPE')
-                    || error.code.startsWith('ECANCELED')
-                    || error.code.startsWith('ECONNRESET')
-                )
-            ) {
-                console.verbose.error(`Probably harmless error on ${ctx.path}`);
-                console.verbose.dir(error);
-            } else {
+            if (!(
+                error.code?.startsWith('HPE_')
+                || error.code?.startsWith('ECONN')
+                || error.code === 'EPIPE'
+                || error.code === 'ECANCELED'
+            )) {
                 console.error(`Probably harmless error on ${ctx.path}`);
                 console.error('Please be kind and send a screenshot of this error to the txAdmin developer.');
                 console.dir(error);
@@ -100,7 +93,7 @@ export default class WebServer {
         });
 
         //Disable CORS on dev mode
-        if(convars.isDevMode){
+        if (convars.isDevMode) {
             this.app.use(KoaCors());
         }
 

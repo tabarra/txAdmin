@@ -92,8 +92,10 @@ ConVar usage **example** for different port and profile:
 ./run.sh +set serverProfile dev_server +set txAdminPort 40121
 ```
 
-### Development
-If you want to run it from build & source, please do read [this](docs/development.md).
+### Contributing & Development
+- All PRs should be based on the develop branch, specially translation PRs.
+- Before putting effort for any significant PR, make sure to join our discord and talk to us, since the change you want to do might not have been done for a reason or there might be some required context.
+- If you want to run it from build & source, please do read [this](docs/development.md).
 
 
 ## License, Credits and Thanks
