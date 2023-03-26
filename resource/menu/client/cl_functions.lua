@@ -40,8 +40,8 @@ function sendMenuMessage(action, data)
 end
 
 --- Close the menu if pause menu is opened using the default P key
-local function whileIsMenuVisible()
-    print('starting function')
+local function createPauseMenuCheckerThread()
+    debugPrint('Starting gamer tag follower thread')
     CreateThread(function()
         while isMenuVisible do
             if IsPauseMenuActive() then
@@ -72,7 +72,7 @@ function toggleMenuVisibility(visible)
         isMenuVisible = not isMenuVisible
         sendMenuMessage('setVisible', isMenuVisible)
     end
-    whileIsMenuVisible()
+    createPauseMenuCheckerThread()
 
     -- check if noclip and spectate still works with menu closed
     if not isMenuVisible then

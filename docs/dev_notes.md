@@ -13,8 +13,14 @@
 - [x] fix "unknown" in playerlist caused by DropPlayer at playerConnecting events
 - [x] global socket.io connection for playerlist
 - [x] fix(bot): use cache when resolving members when possible
-- [ ] add hwid token bans
+- [x] merge menu performance PRs
 - [ ] review taso's spectate fix pr
+- [ ] add hwid token bans
+- [ ] fix some RedM issues
+- [ ] make `recipes/indexv4.json` dropping version and adding tags
+    - drop author field as well?
+    - remove zap esx pack? last update was 6 months ago
+- [ ] add redm recipes
 
 
 
