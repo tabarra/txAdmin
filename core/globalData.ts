@@ -193,6 +193,7 @@ if (fs.existsSync(zapCfgFile)) {
     } else {
         if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) logDie('txAdminInterface is not valid.');
         forceInterface = txAdminInterfaceConvar;
+        loopbackInterfaces.push(forceInterface);
     }
 }
 if (verboseConvar) {
