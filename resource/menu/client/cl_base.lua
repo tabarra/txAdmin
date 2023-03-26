@@ -147,11 +147,11 @@ RegisterNUICallback('focusInputs', function(shouldFocus, cb)
 end)
 
 
-RegisterNUICallback('reactLoaded', function(aaa, cb)
+RegisterNUICallback('reactLoaded', function(_, cb)
   print("React loaded, sending variables.")
   sendMenuMessage('setDebugMode', isMenuDebug)
   sendMenuMessage('setPermissions', menuPermissions)
-  
+
   CreateThread(function()
     updateServerCtx()
     while ServerCtx == false do Wait(0) end
@@ -168,15 +168,4 @@ RegisterNUICallback('closeMenu', function(_, cb)
   SetNuiFocus(false)
   SetNuiFocusKeepInput(false)
   cb({})
-end)
-
-
---[[ Threads ]]
-CreateThread(function()
-  while true do
-    if isMenuVisible and IsPauseMenuActive() then
-      toggleMenuVisibility()
-    end
-    Wait(250)
-  end
 end)

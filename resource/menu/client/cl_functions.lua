@@ -39,6 +39,20 @@ function sendMenuMessage(action, data)
     })
 end
 
+--- Close the menu if pause menu is opened using the default P key
+local function whileIsMenuVisible()
+    print('starting function')
+    CreateThread(function()
+        while isMenuVisible do
+            if IsPauseMenuActive() then
+                toggleMenuVisibility(false)
+                print('isMenuVisible && IsPauseMenuActive')
+            end
+            Wait(250)
+        end
+    end)
+end
+
 --- Toggle visibility of the txAdmin NUI menu
 function toggleMenuVisibility(visible)
     if (visible == true and isMenuVisible) or (visible == false and not isMenuVisible) then
@@ -58,6 +72,8 @@ function toggleMenuVisibility(visible)
         isMenuVisible = not isMenuVisible
         sendMenuMessage('setVisible', isMenuVisible)
     end
+    whileIsMenuVisible()
+
     -- check if noclip and spectate still works with menu closed
     if not isMenuVisible then
         SetNuiFocus(false)
@@ -104,7 +120,7 @@ function DoesPlayerHavePerm(perms, perm)
     if type(perms) ~= 'table' then
         return false
     end
-    
+
     for _, v in pairs(perms) do
         if v == perm or v == 'all_permissions' then
             return true
