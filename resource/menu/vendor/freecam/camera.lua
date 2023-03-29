@@ -4,6 +4,7 @@ local SetCamRot = SetCamRot
 local IsCamActive = IsCamActive
 local SetCamCoord = SetCamCoord
 local LoadInterior = LoadInterior
+local UnpinInterior = UnpinInterior
 local SetFocusArea = SetFocusArea
 local LockMinimapAngle = LockMinimapAngle
 local GetInteriorAtCoords = GetInteriorAtCoords
@@ -55,11 +56,26 @@ function GetFreecamPosition()
   return _internal_pos
 end
 
+local lastLoadedInterior = 0
+
 function SetFreecamPosition(x, y, z)
   local pos = vector3(x, y, z)
   local int = GetInteriorAtCoords(pos)
 
-  LoadInterior(int)
+  if lastLoadedInterior ~= int then
+
+    if int ~= 0 then
+      LoadInterior(int)
+    end
+
+    if lastLoadedInterior ~= 0 then
+      UnpinInterior(lastLoadedInterior)
+    end
+
+    lastLoadedInterior = int
+
+  end
+  
   SetFocusArea(pos)
   LockMinimapPosition(x, y)
   SetCamCoord(_internal_camera, pos)
