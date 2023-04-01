@@ -286,7 +286,8 @@
                         "bring_player": "将玩家召唤过来",
                         "spectate_failed": "无法解析目标！正在退出观看，",
                         "spectate_yourself": "您不能观看您自己",
-                        "freeze_yourself": "您不能冻结您自己"
+                        "freeze_yourself": "您不能冻结您自己",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

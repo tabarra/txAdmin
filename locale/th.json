@@ -286,7 +286,8 @@
                         "bring_player": "เรียกผู้เล่นมา",
                         "spectate_failed": "ล้มเหลวในการไปหาเป้าหมาย ออกจากโหมดรับชม",
                         "spectate_yourself": "คุณไม่สามารถรับชมตัวเองได้",
-                        "freeze_yourself": "คุณไม่สามารถระงับตัวเองได้"
+                        "freeze_yourself": "คุณไม่สามารถระงับตัวเองได้",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

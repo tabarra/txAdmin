@@ -13,7 +13,7 @@ lastTpCoords = false;
 local isMenuEnabled = (GetConvar('txAdmin-menuEnabled', 'false') == 'true')
 
 
--- Check if menu is in debug mode 
+-- Check if menu is in debug mode
 CreateThread(function()
   isMenuDebug = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
 end)
@@ -78,6 +78,8 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
     RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
     RegisterKeyMapping('txAdmin:menu:endSpectate', 'Menu: Exit spectate mode', 'keyboard', 'BACK')
+    RegisterKeyMapping('txAdmin:menu:specNextPlayer', 'Menu: Spectate next player', 'KEYBOARD', 'DOWN')
+    RegisterKeyMapping('txAdmin:menu:specPrevPlayer', 'Menu: Spectate previous player', 'KEYBOARD', 'UP')
   else
     print("^3[AUTH] rejected (" .. tostring(rejectReason) ..")")
     menuIsAccessible = false

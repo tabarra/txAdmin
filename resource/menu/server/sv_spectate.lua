@@ -3,67 +3,99 @@ if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
 
--- Holds map containing source players original routing
--- bucket so we can use it on end spectate.
-local ORIGINAL_SPEC_BUCKET = {}
-
-RegisterNetEvent('txAdmin:menu:spectatePlayer', function(id)
+--- Logic for starting to spectate + authorization + routing buckets
+--- @param targetId number The player id to spectate.
+local function handleSpectatePlayer(targetId)
   local src = source
   -- Sanity as this is still converted tonumber on client side
-  if type(id) ~= 'string' and type(id) ~= 'number' then
+  if type(targetId) ~= 'string' and type(targetId) ~= 'number' then
     return
   end
-
-  id = tonumber(id)
+  targetId = tonumber(targetId)
 
   local allow = PlayerHasTxPermission(src, 'players.spectate')
 
   if allow then
-    local target = GetPlayerPed(id)
+    local targetPed = GetPlayerPed(targetId)
     -- Lets exit if the target doesn't exist
-    if not target then
+    if not targetPed then
       return
     end
-    local tgtBucket = GetPlayerRoutingBucket(id)
+    -- checking if spectator and target are on the same routing bucket
+    local targetBucket = GetPlayerRoutingBucket(targetId)
     local srcBucket = GetPlayerRoutingBucket(src)
-    -- If our source and target are not in the same routing bucket
-    -- lets store it in our map
-
-    -- If a player isn't stored within the map upon the spectateExit call,
-    -- it can be assumed that the player had the same routing bucket as its target,
-    -- and we don't need to store data in the map
-    if tgtBucket ~= srcBucket then
-      debugPrint(('Target and source buckets differ | src: %s, bkt: %i | tgt: %s, bkt: %i'):format(src, srcBucket, target, tgtBucket))
-      ORIGINAL_SPEC_BUCKET[src] = srcBucket
-      SetPlayerRoutingBucket(src, tgtBucket)
+    local sourcePlayerStateBag = Player(src).state
+    if srcBucket ~= targetBucket then
+      debugPrint(('Target and source buckets differ | src: %s, bkt: %i | tgt: %s, bkt: %i'):format(src, srcBucket, targetId, targetBucket))
+      -- if there was a routing bucket set, we shouldn't overwrite it due to the cycle feature
+      if sourcePlayerStateBag.__spectateReturnBucket == nil then
+        sourcePlayerStateBag.__spectateReturnBucket = srcBucket
+      end
+      SetPlayerRoutingBucket(src, targetBucket)
     end
 
-    local tgtCoords = GetEntityCoords(target)
-    TriggerClientEvent('txAdmin:menu:specPlayerResp', src, id, tgtCoords)
+    TriggerClientEvent('txAdmin:menu:specPlayerResp', src, targetId, GetEntityCoords(targetPed))
   end
-  TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
+  TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, targetId)
+end
+
+RegisterNetEvent('txAdmin:menu:spectatePlayer', handleSpectatePlayer)
+
+
+--- Called to get the previous/next player to cycle to
+--- @param currentTargetId number The current target id.
+--- @param isNextPlayer boolean If we should cycle to the next player or not.
+RegisterNetEvent('txAdmin:menu:specPlayerCycle', function(currentTargetId, isNextPlayer)
+  local src = source
+
+  local onlinePlayers = GetPlayers()
+  -- We don't allow cycling if there are less than two players online.
+  if #onlinePlayers <= 2 then
+    return TriggerClientEvent("txAdmin:menu:specPlayerCycleFail", src)
+  end
+
+  -- Filter out the current src from the online players list
+  local sourceIndex = tableIndexOf(onlinePlayers, tostring(src))
+  table.remove(onlinePlayers, sourceIndex)
+
+  -- Find next target
+  local nextTargetId
+  local currentTargetServerIndex = tableIndexOf(onlinePlayers, tostring(currentTargetId))
+  if currentTargetServerIndex < 0 then
+    debugPrint('Current spectate target id not found for online players, resetting to onlinePlayers[1]')
+    nextTargetId = onlinePlayers[1]
+    --TODO: the correct thing would be to do a while to find the corect next/rev, based on value and not index
+  else
+    if isNext then
+      nextTargetId = onlinePlayers[currentTargetServerIndex + 1] or onlinePlayers[1]
+    else
+      nextTargetId = onlinePlayers[currentTargetServerIndex - 1] or onlinePlayers[#onlinePlayers]
+    end
+  end
+
+  -- Replying to client
+  debugPrint(('Cycling to %s player | src: %s, curTgtId: %s, nextTgtId: %s'):format(
+    isNextPlayer and 'next' or 'prev',
+    src,
+    currentTargetId,
+    nextTargetId
+  ))
+  handleSpectatePlayer(nextTargetId)
 end)
 
 RegisterNetEvent('txAdmin:menu:endSpectate', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.spectate')
   if allow then
+    local sourcePlayerStateBag = Player(src).state
     -- If this is nil, assume that no routing bucket change is needed,
     -- as it wasn't stored
-    local prevRoutBucket = ORIGINAL_SPEC_BUCKET[src]
+    local prevRoutBucket = sourcePlayerStateBag.__spectateReturnBucket
     -- Since lua treats 0 as truthy, actually don't need to handle
     -- explicit nil check for int 0
     if prevRoutBucket then
       SetPlayerRoutingBucket(src, prevRoutBucket)
-      -- Clean up our prev bucket map
-      ORIGINAL_SPEC_BUCKET[src] = nil
+      sourcePlayerStateBag.__spectateReturnBucket = nil
     end
-  end
-end)
-
-AddEventHandler('playerDropped', function()
-  local src = source
-  if ORIGINAL_SPEC_BUCKET[src] then
-    ORIGINAL_SPEC_BUCKET[src] = nil
   end
 end)

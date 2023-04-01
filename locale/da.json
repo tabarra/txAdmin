@@ -286,7 +286,8 @@
                         "bring_player": "Tp spilleren til dig",
                         "spectate_failed": "Det lykkedes ikke at spectate målet!Stopper med at spectate.",
                         "spectate_yourself": "Du kan ikke spectate dig selv.",
-                        "freeze_yourself": "Du kan ikke fryse dig selv."
+                        "freeze_yourself": "Du kan ikke fryse dig selv.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

@@ -286,7 +286,8 @@
                         "bring_player": "Tuodaan pelaaja",
                         "spectate_failed": "Virhe kohteen tavoittamisessa!",
                         "spectate_yourself": "Et voi katsoa itseäsi.",
-                        "freeze_yourself": "Et voi jäädyttää itseäsi."
+                        "freeze_yourself": "Et voi jäädyttää itseäsi.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

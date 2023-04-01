@@ -286,7 +286,8 @@
                         "bring_player": "Телепортиране на играч до теб",
                         "spectate_failed": "Не успешно наблюдаване! Излизане от наблюдение.",
                         "spectate_yourself": "Не можеш да наблюдаваш себе си.",
-                        "freeze_yourself": "Не можеш да замръзиш себе си."
+                        "freeze_yourself": "Не можеш да замръзиш себе си.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

@@ -286,7 +286,8 @@
                         "bring_player": "Teleportowanie gracza",
                         "spectate_failed": "Nie udało się rozwiązać celu! Wyjście z Obserwacji.",
                         "spectate_yourself": "Nie możesz obserwować samego siebie.",
-                        "freeze_yourself": "Nie możesz zamrozić samego siebie."
+                        "freeze_yourself": "Nie możesz zamrozić samego siebie.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

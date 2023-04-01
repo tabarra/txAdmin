@@ -286,7 +286,8 @@
                         "bring_player": "Přináším hráče",
                         "spectate_failed": "Nepodařilo se udržet signál pozorování! Vypínám pozorování.",
                         "spectate_yourself": "Nemůžeš pozorovat sebe.",
-                        "freeze_yourself": "Nemůžeš zmrazit sebe."
+                        "freeze_yourself": "Nemůžeš zmrazit sebe.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

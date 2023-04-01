@@ -286,7 +286,8 @@
                         "bring_player": "Spieler teleportiert",
                         "spectate_failed": "Der Spieler konnte nicht beobachtet werden! Beobachtung abgebrochen.",
                         "spectate_yourself": "Du kannst dich nicht selbst beobachten",
-                        "freeze_yourself": "Du kannst dich nicht selbst einfrieren"
+                        "freeze_yourself": "Du kannst dich nicht selbst einfrieren",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

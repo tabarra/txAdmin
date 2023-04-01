@@ -286,7 +286,8 @@
                         "bring_player": "Oyuncu yanınıza ışınlandı",
                         "spectate_failed": "Hedef çözülemedi! İzlemeden çıkıldı.",
                         "spectate_yourself": "Kendini izleyemezsiniz.",
-                        "freeze_yourself": "Kendini donduramazsın."
+                        "freeze_yourself": "Kendini donduramazsın.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

@@ -286,7 +286,8 @@
                         "bring_player": "Žaidėjas atkeliamas",
                         "spectate_failed": "Žaidėjas nerastas! Stebėjimas išjungiamas.",
                         "spectate_yourself": "Negalite stebėti savęs.",
-                        "freeze_yourself": "Negalite užšaldyti savęs."
+                        "freeze_yourself": "Negalite užšaldyti savęs.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

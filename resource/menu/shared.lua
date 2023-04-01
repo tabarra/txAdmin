@@ -1,5 +1,10 @@
 debugModeEnabled = false
 
+CreateThread(function()
+  debugModeEnabled = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
+end)
+
+---FIXME: description
 function debugPrint(...)
   local args = {...}
   local appendedStr = ''
@@ -13,8 +18,8 @@ function debugPrint(...)
   end
 end
 
--- Used whenever we want to convey a message as from txAdminMenu without
--- being in debug mode.
+--- Used whenever we want to convey a message as from txAdminMenu without
+--- being in debug mode.
 function txPrint(...)
   local args = {...}
   local appendedStr = ''
@@ -26,6 +31,16 @@ function txPrint(...)
   print(msg)
 end
 
-CreateThread(function()
-  debugModeEnabled = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
-end)
+---FIXME: description
+---@param tgtTable table
+---@param value any
+---@return integer
+function tableIndexOf(tgtTable, value)
+  for i=1, #tgtTable do
+    debugPrint(('tgtTableVal: %s, value: %s'):format(tgtTable[i], value))
+    if tgtTable[i] == value then
+      return i
+    end
+  end
+  return -1
+end

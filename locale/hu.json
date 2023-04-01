@@ -286,7 +286,8 @@
                         "bring_player": "Játékos megidézve",
                         "spectate_failed": "Hiba a játékos megfigyelésénél! Kilépés a megfigyelésből.",
                         "spectate_yourself": "Magadat nem figyelheted meg.",
-                        "freeze_yourself": "Magadat nem fagyaszthatod le."
+                        "freeze_yourself": "Magadat nem fagyaszthatod le.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

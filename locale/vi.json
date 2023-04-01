@@ -286,7 +286,8 @@
                         "bring_player": "Đưa người chơi tới chỗ bạn",
                         "spectate_failed": "Có lỗi khi thực hiện theo dõi, đang thoát chế độ theo dõi.",
                         "spectate_yourself": "Bạn không thể tự theo dõi chính mình.",
-                        "freeze_yourself": "Bạn không thể tự đóng băng bản thân!"
+                        "freeze_yourself": "Bạn không thể tự đóng băng bản thân!",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

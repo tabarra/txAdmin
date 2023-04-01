@@ -286,7 +286,8 @@
                         "bring_player": "Телепортируем игрока",
                         "spectate_failed": "Не удалось найти цель! Выходим из наблюдения.",
                         "spectate_yourself": "Вы не можете наблюдать за самим собой.",
-                        "freeze_yourself": "Вы не можете заморозить себя."
+                        "freeze_yourself": "Вы не можете заморозить себя.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

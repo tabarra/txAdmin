@@ -286,7 +286,8 @@
                         "bring_player": "Lähed mängija juurde",
                         "spectate_failed": "Eesmärki ei õnnestunud lahendada! Lahkun Specatatest.",
                         "spectate_yourself": "Sa ei saa ennast specateda.",
-                        "freeze_yourself": "Te ei saa ennast külmutada."
+                        "freeze_yourself": "Te ei saa ennast külmutada.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

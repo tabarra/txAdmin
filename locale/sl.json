@@ -286,7 +286,8 @@
                         "bring_player": "TPjam igralca",
                         "spectate_failed": "Igralca več ni bilo mogoče najti! Izstopam iz Spectate načina.",
                         "spectate_yourself": "Ne moreš spectate-at sam sebe.",
-                        "freeze_yourself": "Sam sebe ne moreš zamrzniti."
+                        "freeze_yourself": "Sam sebe ne moreš zamrzniti.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

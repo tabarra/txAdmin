@@ -286,7 +286,8 @@
                         "bring_player": "Bringando il Giocatore",
                         "spectate_failed": "Impossibile risolvere il bersaglio! Uscendo dallo Spectate.",
                         "spectate_yourself": "Non puoi spectarti da solo.",
-                        "freeze_yourself": "Non puoi freezarti da solo."
+                        "freeze_yourself": "Non puoi freezarti da solo.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

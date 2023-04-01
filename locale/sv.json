@@ -286,7 +286,8 @@
                         "bring_player": "Ta spelare till dig",
                         "spectate_failed": "Misslyckades att hitta spelaren, avslutar åskådarläget.",
                         "spectate_yourself": "Du kan inte åskåda dig själv.",
-                        "freeze_yourself": "Du kan inte frysa dig själv."
+                        "freeze_yourself": "Du kan inte frysa dig själv.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {

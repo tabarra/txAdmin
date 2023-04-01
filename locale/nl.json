@@ -286,7 +286,8 @@
                         "bring_player": "Speler aan het brengen",
                         "spectate_failed": "Kon de speler niet vinden! Spectate aan het afsluiten.",
                         "spectate_yourself": "Je kan jezelf niet spectaten.",
-                        "freeze_yourself": "Je kan jezelf niet freezen."
+                        "freeze_yourself": "Je kan jezelf niet freezen.",
+                        "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },
                 "troll": {
