@@ -14,13 +14,25 @@
 - [x] global socket.io connection for playerlist
 - [x] fix(bot): use cache when resolving members when possible
 - [x] merge menu performance PRs
-- [ ] review taso's spectate fix pr
-- [ ] add hwid token bans
-- [ ] fix some RedM issues
+- [X] Resource: fix spectate (merge changes from taso's pr)
+- [x] Resource: fix noclip game crashes
+- [x] Resource: do all files need to check env with `GetConvar` or can i do it only in `shared.lua`?
+- [ ] Resource: rename menu events to `txAdmin:menu:clreq:xxx` and `txAdmin:menu:svresp:xxx`?
+- [ ] Resource: Refactor the debug vars and debugPrint
+- [ ] Resource: Clean the prints from the client
+    - search: `\Wprint\(`
+    - include: `*.lua`
+    - exclude: `sv_*`
+    - also check `debugPrint` and `txPrint`
+- [ ] Resource: fix some RedM issues
 - [ ] make `recipes/indexv4.json` dropping version and adding tags
     - drop author field as well?
     - remove zap esx pack? last update was 6 months ago
 - [ ] add redm recipes
+- [ ] add hwid token bans
+- [ ] update discord.js - should be drop in
+
+FIXME: playerlist broken, mutex undefined
 
 
 
@@ -74,7 +86,7 @@ cache static files
 
 //essa logica não é "GetConvarBool" e sim negativa
 GetConvar\('([^']+)', 'false'\) ~= 'true'
-GetConvarBool('$1')
+not GetConvarBool('$1')
 
 function GetConvarBool(cvName)
   return (GetConvar(cvName, 'false') ~= 'true')

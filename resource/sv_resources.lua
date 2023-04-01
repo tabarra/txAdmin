@@ -1,11 +1,10 @@
+-- Prevent running in monitor mode
+if not TX_SERVER_MODE then return end
+
+
 -- =============================================
 --  Report all resource events to txAdmin
 -- =============================================
---Check Environment
-if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-    return
-end
-
 
 local function reportResourceEvent(event, resource)
     -- print(string.format("\27[107m\27[30m %s: %s \27[0m", event, resource))

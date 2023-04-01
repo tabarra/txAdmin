@@ -1,7 +1,5 @@
---Check Environment
-if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-  return
-end
+-- Prevent running in monitor mode
+if not TX_SERVER_MODE then return end
 
 local frozenPlayers = {}
 

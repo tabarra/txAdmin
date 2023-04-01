@@ -1,10 +1,11 @@
+-- Prevent running in monitor mode
+if not TX_SERVER_MODE then return end
+
+
 -- =============================================
 --  Server PlayerList handler
 -- =============================================
---Check Environment
-if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-    return
-end
+
 function logError(x)
     print("^5[txAdminClient]^1 " .. x .. "^0")
 end

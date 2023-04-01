@@ -1,3 +1,10 @@
+-- Setting global enablle/disable variable for all sv_*.lua files
+TX_SERVER_MODE = (GetConvar('txAdminServerMode', 'false') == 'true')
+
+-- Prevent running in monitor mode
+if not TX_SERVER_MODE then return end
+
+
 debugModeEnabled = false
 
 CreateThread(function()

@@ -13,10 +13,10 @@ fx_version 'cerulean'
 games { 'gta5', 'rdr3' }
 
 -- NOTE: All server_scripts will be executed both on monitor and server mode 
--- NOTE: Due to global package constraints, js scripts will be loaded from main.js
+-- NOTE: Due to global package constraints, js scripts will be loaded from entrypoint.js
 -- NOTE: Due to people drag-n-dropping their artifacts, we can't do globbing
 shared_scripts {
-    'resource/menu/shared.lua'
+    'resource/shared.lua'
 }
 
 server_scripts {

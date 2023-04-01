@@ -1,11 +1,6 @@
--- =============================================
---  This file is responsible for all the webpipe
---  handling and caching.
--- =============================================
--- Checking Environment (sv_main MUST run first)
-if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-  return
-end
+-- Prevent running in monitor mode
+if not TX_SERVER_MODE then return end
+
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
   log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
   return
@@ -15,9 +10,12 @@ if TX_LUACOMTOKEN == "removed" then
   return
 end
 
---
--- [[ WebPipe Proxy ]]
---
+
+-- =============================================
+--  This file is responsible for all the webpipe
+--  handling and caching.
+-- =============================================
+
 local _pipeLastReject
 local _pipeFastCache = {}
 

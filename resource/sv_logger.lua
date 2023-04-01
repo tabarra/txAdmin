@@ -1,10 +1,10 @@
+-- Prevent running in monitor mode
+if not TX_SERVER_MODE then return end
+
+
 -- =============================================
 --  Logger
 -- =============================================
---Check Environment
-if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-    return
-end
 
 -- Micro optimization & variables
 local sub = string.sub
