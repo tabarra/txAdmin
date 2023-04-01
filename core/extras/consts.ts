@@ -1,7 +1,9 @@
 const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ'; //i,o removed
 export default {
     validIdentifiers: {
-        discord: /^discord:\d{7,20}$/,
+        // https://github.com/discordjs/discord.js/pull/9144
+        // validated in txtracker dataset
+        discord: /^discord:\d{17,20}$/,
         fivem: /^fivem:\d{1,8}$/,
         license: /^license:[0-9A-Fa-f]{40}$/,
         license2: /^license2:[0-9A-Fa-f]{40}$/,

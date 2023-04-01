@@ -233,7 +233,7 @@ async function handlePlayerDatabase(ctx: Context) {
             message: 'The whitelisted roles field is required when the whitelist mode is set to Discord Guild Role'
         });
     }
-    const invalidRoleInputs = cfg.whitelistedDiscordRoles.filter((x: string) => !/^\d{7,20}$/.test(x));
+    const invalidRoleInputs = cfg.whitelistedDiscordRoles.filter((x: string) => !/^\d{17,20}$/.test(x));
     if (invalidRoleInputs.length) {
         return ctx.send({
             type: 'danger',
