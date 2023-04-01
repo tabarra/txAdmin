@@ -141,6 +141,11 @@
         //Helper Functions
         const stringToDOMId = (str) => `${str.replace(/\s?\s+/g, '-').slice(0, 32)}${str.length > 32 ? '_trim' : ''}`.trim();
 
+        const setInputValue = (newValue) => {
+            input.value = newValue;
+            input.focus();
+        }
+
         const addCommandHistoryEntry = (command) => {
             const btnText = `${command.slice(0, 15)}${command.length > 15 ? '...' : ''}`;
             const node = document.createElement('button');
@@ -149,8 +154,7 @@
             node.setAttribute('class', 'btn btn-outline-light btn-sm m-1');
             node.setAttribute('title', command);
             node.onclick = (e) => {
-                input.value = command;
-                input.focus();
+                setInputValue(command);
             };
             historyElement.appendChild(node);
         }
@@ -225,7 +229,7 @@
         consoleForm.addEventListener("submit", function (e) {
             e.preventDefault();
             const command = input.value.trim();
-            input.value = '';
+            setInputValue('');
             if(!command.length) return;
             arrowHistIndex = -1;
 
@@ -254,6 +258,7 @@
             let changed = false;
 
             if (event.key === "ArrowUp") {
+                event.preventDefault();
                 changed = true;
                 if (typeof arrowHistIndex === 'undefined' && commandCache.length > 0) {
                     arrowHistIndex = 0;
@@ -262,6 +267,7 @@
                 }
 
             } else if (event.key === "ArrowDown") {
+                event.preventDefault();
                 changed = true;
                 if (arrowHistIndex > 0) {
                     arrowHistIndex -= 1;
@@ -270,7 +276,7 @@
                 }
             }
 
-            if (changed) input.value = commandCache[arrowHistIndex] || "";
+            if (changed) setInputValue(commandCache[arrowHistIndex] || '');
         });
 
         //Buttons
