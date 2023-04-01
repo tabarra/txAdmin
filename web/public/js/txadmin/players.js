@@ -114,6 +114,7 @@ function processPlayerlistEvents(events) {
             if (event.playerlist.length) {
                 biggestIdLength = event.playerlist[event.playerlist.length - 1].netid.toString().length;
                 for (const player of event.playerlist) {
+                    player.mutex = event.mutex;
                     addPlayer(player);
                 }
             }
