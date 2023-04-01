@@ -55,11 +55,12 @@ function GetFreecamPosition()
   return _internal_pos
 end
 
+-- NOTE: if ever removing the SetEntityCoords and doing just camera, need to load interiors somwhow
+-- in this case, do something like https://github.com/tabarra/txAdmin/pull/789
 function SetFreecamPosition(x, y, z)
   local pos = vector3(x, y, z)
-  local int = GetInteriorAtCoords(pos)
-
-  LoadInterior(int)
+  -- local int = GetInteriorAtCoords(pos)
+  -- LoadInterior(int)
   SetFocusArea(pos)
   LockMinimapPosition(x, y)
   SetCamCoord(_internal_camera, pos)
