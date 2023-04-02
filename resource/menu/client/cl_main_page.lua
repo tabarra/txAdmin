@@ -86,6 +86,11 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
         if model == GetHashKey("submersible") or model == GetHashKey("submersible2") then
             modelType = "submarine"
         end
+            
+        if model == GetHashKey("blimp") then
+            modelType = "heli"        
+        end
+            
         -- collect the old velocity
         local ped = PlayerPedId()
         local oldVeh = GetVehiclePedIsIn(ped, false)
