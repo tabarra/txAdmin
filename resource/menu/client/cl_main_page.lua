@@ -83,12 +83,12 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
             [21] = "train",
         }
         local modelType = types[VehicleType] or "automobile"
-        if model == GetHashKey("submersible") or model == GetHashKey("submersible2") then
+        if model == "submersible" or model == "submersible2" then
             modelType = "submarine"
         end
-            
-        if model == GetHashKey("blimp") then
-            modelType = "heli"        
+
+        if model == "blimp" or model == "blimp2" or model == "blimp3" then
+            modelType = "heli"
         end
             
         -- collect the old velocity
