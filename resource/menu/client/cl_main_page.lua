@@ -83,13 +83,20 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
             [21] = "train",
         }
         local modelType = types[VehicleType] or "automobile"
-        if model == "submersible" or model == "submersible2" then
-            modelType = "submarine"
-        end
+      
+        local badTypes = {
+            ["submersible"] = "submarine",
+            ["submersible2"] = "submarine",
+            ["blimp"] = "heli",
+            ["blimp2"] = "heli",
+            ["blimp3"] = "heli"
+        }
 
-        if model == "blimp" or model == "blimp2" or model == "blimp3" then
-            modelType = "heli"
+        if badTypes[model] then
+            debugPrint("Model ".. model.." is included as a bad typed model, setting it from "..modelType.. " to "..badTypes[model])
+            modelType = badTypes[model]
         end
+    
             
         -- collect the old velocity
         local ped = PlayerPedId()
