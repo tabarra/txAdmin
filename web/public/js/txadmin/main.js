@@ -276,6 +276,7 @@ async function txApiFxserverControl(action) {
         data: {action},
         timeout: REQ_TIMEOUT_LONG,
         success: function (data) {
+            if (checkApiLogoutRefresh(data)) return;
             updateMarkdownNotification(data, notify);
         },
         error: function (xmlhttprequest, textstatus, message) {

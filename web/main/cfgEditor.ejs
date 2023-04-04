@@ -130,6 +130,7 @@
             url: '/cfgEditor/save',
             data: {cfgData},
             success: function (data) {
+                if (checkApiLogoutRefresh(data)) return;
                 updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {

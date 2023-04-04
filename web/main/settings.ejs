@@ -729,6 +729,7 @@
             url: '/settings/save/global',
             data: data,
             success: function (data) {
+                if (checkApiLogoutRefresh(data)) return;
                 updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {
@@ -765,6 +766,7 @@
             url: '/settings/save/fxserver',
             data: data,
             success: function (data) {
+                if (checkApiLogoutRefresh(data)) return;
                 updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {
@@ -792,6 +794,7 @@
             url: '/settings/save/playerDatabase',
             data: data,
             success: function (data) {
+                if (checkApiLogoutRefresh(data)) return;
                 updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {
@@ -816,6 +819,7 @@
             url: '/settings/save/monitor',
             data: data,
             success: function (data) {
+                if (checkApiLogoutRefresh(data)) return;
                 updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {
@@ -929,6 +933,7 @@
             data: data,
             tiemout: REQ_TIMEOUT_LONG,
             success: function (data) {
+                if (checkApiLogoutRefresh(data)) return;
                 updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {
@@ -969,6 +974,7 @@
             url: '/settings/save/menu',
             data: data,
             success: function (data) {
+                if (checkApiLogoutRefresh(data)) return;
                 updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {

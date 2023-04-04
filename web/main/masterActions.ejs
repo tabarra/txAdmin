@@ -217,6 +217,7 @@
                 data: {},
                 timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
+                    if (checkApiLogoutRefresh(data)) return;
                     if(data.success == true){
                         window.location = '/setup';
                         return;
