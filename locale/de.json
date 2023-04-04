@@ -29,28 +29,28 @@
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "Dieser Server ist im <strong>Wartungsmodus</strong>",
-            "insufficient_ids": "Du hast keine <code>discord</code>oder <code>FiveM</code> identifier, mindestens eins von beiden ist erforderlich, um zu überprüfen, ob du ein txAdmin-Administrator bist.",
-            "deny_message": "Deine identifier sind keinem txAdmin Administrator zugewiesen."
+            "mode_title": "Dieser Server befindet sich derzeit im <strong>Wartungsmodus</strong>",
+            "insufficient_ids": "Du hast keinen <code>discord</code>oder <code>FiveM</code> Identifier. Mindestens einer von beiden ist erforderlich, um dich als registrierten txAdmin-Administrator zu erkennen.",
+            "deny_message": "Deine Identifier sind keinem txAdmin-Administrator zugewiesen. Der Zugang wurde verweigert."
         },
         "guild_member": {
-            "mode_title": "Dieser Server ist im <strong>Discord Member Whitelist</strong> Modus.",
-            "insufficient_ids": "Du hast keine <code>discord</code> identifier, welche aber erforderlich sind, um zu überprüfen, ob du auf dem Discord-Server bist. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden",
-            "deny_message": "Bitte trete unserem Discord %{guildname} bei, dann versuche es erneut."
+            "mode_title": "Dieser Server befindet sich im <strong>Discord-Whitelist</strong> Modus.",
+            "insufficient_ids": "Es konnte kein <code>discord</code> Identifier bei dir gefunden werden. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "deny_title": "Du musst auf unserem Discord-Server sein, um dich verbinden zu können.",
+            "deny_message": "Bitte trete unserem Discord %{guildname} bei und versuche es erneut."
         },
         "guild_roles": {
-            "mode_title": "Dieser Server ist im <strong>Discord Rollen Whitelist</strong> Modus.",
-            "insufficient_ids": "Du hast keine <code>discord</code> identifier, welche aber erforderlich sind. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "Du musst auf unserem Discord-Server sein, um dich mit dem Server zu verbinden",
-            "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderlichen Rolle(n) und versuche es erneut",
-            "deny_noroles_title": "Du hast nicht die erforderlichen Rolle(n), um den Server zu betreten.",
-            "deny_noroles_message": "Um diesem Server beizutreten, benötigst du mindestens eine der Whitelist Rolle(n). Discord: %{guildname}."
+            "mode_title": "Dieser Server befindet sich im <strong>Discord-Rollen-Whitelist</strong> Modus.",
+            "insufficient_ids": "Es konnte kein <code>discord</code> Identifier bei dir gefunden werden. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "deny_notmember_title": "Du musst auf unserem Discord-Server sein und die nötige Rolle haben, um dich verbinden zu können.",
+            "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderliche(n) Rolle(n). Versuche dich anschließend erneut zu verbinden.",
+            "deny_noroles_title": "Du hast nicht die erforderliche(n) Rolle(n), um dich verbinden zu können.",
+            "deny_noroles_message": "Um dich verbinden zu können, benötigst du mindestens eine der dafür erforderlichen Rollen. Discord: %{guildname}."
         },
         "approved_license": {
-            "mode_title": "Dieser Server ist im <strong>License Whitelist</strong> Modus.",
-            "insufficient_ids": "Du hast keine <code>License</code> identifier, was bedeutet dieser Server hat <code>sv_lan</code> aktiviert. Solltest du der Serverbesitzer sein, dann kannst du dies in der server.cfg ändern.",
-            "deny_title": "Du bist nicht gewhitelisted auf diesem Server.",
+            "mode_title": "Dieser Server ist im <strong>Whitelist</strong> Modus.",
+            "insufficient_ids": "Du hast keinen <code>License</code> Identifier, was bedeutet, dass dieser Server <code>sv_lan</code> aktiviert hat. Solltest du der Serverbesitzer sein, dann kannst du das in der server.cfg ändern.",
+            "deny_title": "Du bist nicht auf diesem Server gewhitelisted.",
             "request_id_label": "Whitelist-ID"
         }
     },
@@ -106,9 +106,9 @@
                     "success": "God Mode aktiviert"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Supersprung",
+                    "label": "Der Spieler springt nun höher. Dadurch wird ebenfalls die Laufgeschwindigkeit erhöht",
+                    "success": "Supersprung aktiviert"
                 },
                 "normal": {
                     "title": "Normal",
