@@ -29,29 +29,29 @@
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "A szerver jelenleg <strong>Kizárólag adminok</strong> részére elérhető.",
+            "insufficient_ids": "Neked nincs <code>discord</code> vagy <code>fivem</code> hitelesítésed, ezek közül legalább egy szükséges az admin jogaid bizonyítására.",
+            "deny_message": "Nem találhatóak az adataid az adminok között."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "A szerver <strong>Discord Tagoknak Fenntartva</strong> módban van.",
+            "insufficient_ids": "Nincs <code>discord</code> hitelesítésed, amire szükség van a csatlakozáshoz. Nyisd meg a discordot és próbáld újra.",
+            "deny_title": "Muszáj vagy először a Discord közösséghez csatlakozni.",
+            "deny_message": "Kérlek lépj be a(z) %{guildname} és próbáld újra."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "A szerver <strong>Discord Rang Whitelist</strong> módban van.",
+            "insufficient_ids": "Nincs <code>discord</code> hitelesítésed, amire szükség van a csatlakozáshoz. Nyisd meg a discordot és próbáld újra.",
+            "deny_notmember_title": "Muszáj vagy először a Discord közösséghez csatlakozni.",
+            "deny_notmember_message": "Kérlek lépj be a(z) %{guildname}, szerezd meg a megfelelő rangot a csatlakozáshoz, majd próbáld újra.",
+            "deny_noroles_title": "Nincs engedélyezett rangod a discord közösségben, ami szükséges a csatlakozáshoz.",
+            "deny_noroles_message": "A csatlakozáshoz szükséges legalább egy engedélyezett rang a(z) %{guildname} közösségben."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "A szerver <strong>License Whitelist</strong> módban van.",
+            "insufficient_ids": "Neked nincs <code>license</code> hitelesítésed, ami azt jelenti, hogy a szerveren <code>sv_lan</code> engedélyezve van. Ha te vagy a szerver tulajdonosa, akkor ki tudod kapcsolni ezt a beállítást a  <code>server.cfg</code> fájlban.",
+            "deny_title": "Nem vagy engedélyezve a szerverhez való csatlakozáshoz.",
+            "request_id_label": "ID kérelem"
         }
     },
     "server_actions": {
