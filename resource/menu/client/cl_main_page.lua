@@ -270,8 +270,7 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
     local tries = 0
     while not NetworkDoesEntityExistWithNetworkId(vehNetID) and tries < 1000 do Wait(0) end
     if tries >= 1000 then
-        print("^1Failed to seat into vehicle (net=" .. vehNetID .. ")")
-        return
+        return sendSnackbarMessage('error', 'Failed to seat into vehicle (net=' .. vehNetID .. ')')
     end
 
     local veh = NetToVeh(vehNetID)
@@ -354,7 +353,9 @@ local function handleTpForFreecam(x, y, z)
 end
 
 local function teleportToCoords(coords)
-    if type(coords) ~= 'vector3' then print("^1Invalid coords") end
+    if type(coords) ~= 'vector3' then
+        return debugPrint("^1Invalid coords")
+    end
     local x = coords[1]
     local y = coords[2]
     local z = coords[3]

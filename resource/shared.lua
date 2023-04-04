@@ -18,38 +18,28 @@ TX_MENU_ENABLED = GetConvarBool('txAdmin-menuEnabled')
 -- On the server, this is updated by running txaSetDebugMode on Live Console
 TX_DEBUG_MODE = GetConvarBool('txAdmin-debugMode')
 
--- =============================================
---  Server mode only
--- =============================================
 
----FIXME: description
-function debugPrint(...)
-  local args = {...}
-  local appendedStr = ''
-  if TX_DEBUG_MODE then
-    for _, v in ipairs(args) do
-      appendedStr = appendedStr .. ' ' .. (type(v)=="table" and json.encode(v) or tostring(v))
-    end
-    local msgTemplate = '^3[txAdminMenu]^0%s^0'
-    local msg = msgTemplate:format(appendedStr)
-    print(msg)
-  end
-end
-
---- Used whenever we want to convey a message as from txAdminMenu without
---- being in debug mode.
+--- Prints formatted string to console
 function txPrint(...)
   local args = {...}
   local appendedStr = ''
   for _, v in ipairs(args) do
-    appendedStr = appendedStr .. ' ' .. tostring(v)
+    appendedStr = appendedStr .. ' ' .. (type(v)=="table" and json.encode(v) or tostring(v))
   end
-  local msgTemplate = '^3[txAdminMenu]^0%s^0'
+  local msgTemplate = '^3[txAdmin]^0%s^0'
   local msg = msgTemplate:format(appendedStr)
   print(msg)
 end
 
----FIXME: description
+--- Prints formatted string to console if debug mode is enabled
+function debugPrint(...)
+  if TX_DEBUG_MODE then
+    txPrint(...)
+  end
+end
+
+
+--- Finds the index of a table element
 ---@param tgtTable table
 ---@param value any
 ---@return integer

@@ -2,11 +2,8 @@
 if not TX_SERVER_MODE then return end
 
 --Helpers
-function log(x)
-    print("^5[txAdminClient]^0 " .. x)
-end
-function logError(x)
-    print("^5[txAdminClient]^1 " .. x .. "^0")
+local function logError(x)
+    txPrint("^1" .. x)
 end
 function unDeQuote(x)
     local new, count = string.gsub(x, utf8.char(65282), '"')
@@ -28,11 +25,11 @@ TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
-    log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+    txPrint('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
     return
 end
 if TX_LUACOMTOKEN == "removed" then
-    log('^1Please do not restart the monitor resource.')
+    txPrint('^1Please do not restart the monitor resource.')
     return
 end
 
@@ -53,7 +50,7 @@ end)
 -- =============================================
 local rejectAllConnections = false
 local hbReturnData = 'no-data'
-log("Version "..TX_VERSION.." starting...")
+txPrint("Version "..TX_VERSION.." starting...")
 CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
@@ -74,7 +71,7 @@ CreateThread(function()
     end)
     AddEventHandler('playerConnecting', handleConnections)
     SetHttpHandler(handleHttp)
-    log("Threads and commands set up. All Ready.")
+    txPrint("Threads and commands set up. All Ready.")
 end)
 
 
@@ -116,7 +113,7 @@ end
 -- stdin commands
 -- =============================================
 function txaPing(source, args)
-    log("Pong! (txAdmin resource is running)")
+    txPrint("Pong! (txAdmin resource is running)")
     CancelEvent()
 end
 
@@ -127,7 +124,7 @@ function txaKickAll(source, args)
     else
         args[1] = unDeQuote(args[1])
     end
-    log("Kicking all players with reason: "..args[1])
+    txPrint("Kicking all players with reason: "..args[1])
     for _, pid in pairs(GetPlayers()) do
         DropPlayer(pid, "\n".."Kicked for: " .. args[1])
     end
@@ -180,7 +177,7 @@ local function handleWarnEvent(eventData)
         if not cvHideWarning then
             TriggerClientEvent("txAdminClient:warn", eventData.target, eventData.author, eventData.reason)
         end
-        log("Warning "..pName.." with reason: "..eventData.reason)
+        txPrint("Warning "..pName.." with reason: "..eventData.reason)
     else
         logError('handleWarnEvent: player not found')
     end
@@ -199,7 +196,7 @@ local function handleBanEvent(eventData)
 
                 for _, playerIdentifier in pairs(identifiers) do
                     if searchIdentifier == playerIdentifier then
-                        log("handleBanEvent: Kicking #"..playerID..": "..eventData.reason)
+                        txPrint("handleBanEvent: Kicking #"..playerID..": "..eventData.reason)
                         kickCount = kickCount + 1
                         DropPlayer(playerID, '[txAdmin] ' .. eventData.kickMessage)
                         found = true
@@ -212,13 +209,13 @@ local function handleBanEvent(eventData)
     end
 
     if kickCount == 0 then
-        log("handleBanEvent: No players found to kick")
+        txPrint("handleBanEvent: No players found to kick")
     end
 end
 
 -- Kicks all players and lock joins in preparation for server shutdown
 local function handleShutdownEvent(eventData)
-    print('Server shutdown imminent. Kicking all players.')
+    txPrint('Server shutdown imminent. Kicking all players.')
     rejectAllConnections = true
     local players = GetPlayers()
     for _, serverID in pairs(players) do
@@ -292,7 +289,7 @@ function txaReportResources(source, args)
         txAdminToken = TX_LUACOMTOKEN,
         resources = resources
     }
-    log('Sending resources list to txAdmin.')
+    txPrint('Sending resources list to txAdmin.')
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
@@ -314,12 +311,12 @@ function txaSetDebugMode(source, args)
     -- changing mode
     if args[1] == '1' then
         TX_DEBUG_MODE = true
-        print("^1!! Debug Mode enabled via console !!^0")
+        txPrint("^1!! Debug Mode enabled via console !!")
     elseif args[1] == '0' then
         TX_DEBUG_MODE = false
-        print("^1!! Debug Mode disabled via console !!^0")
+        txPrint("^1!! Debug Mode disabled via console !!")
     else
-        print("^1!! txaSetDebugMode only accepts '1' or '0' as input. !!^0")
+        txPrint("^1!! txaSetDebugMode only accepts '1' or '0' as input. !!")
     end
     SetConvarReplicated('txAdmin-debugMode', tostring(TX_DEBUG_MODE))
     TriggerClientEvent('txAdmin:events:setDebugMode', -1, TX_DEBUG_MODE)

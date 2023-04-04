@@ -29,7 +29,7 @@ local function getCustomLocaleData()
   -- Get file data
   local fileHandle = io.open(filePath, "rb")
   if not fileHandle then
-    print('^1WARNING: failed to load custom locale from path: '..filePath)
+    txPrint('^1WARNING: failed to load custom locale from path: '..filePath)
     return false
   end
   local fileData = fileHandle:read "*a"
@@ -43,7 +43,7 @@ local function getCustomLocaleData()
     or type(locale['nui_warning']) ~= "table"
     or type(locale['nui_menu']) ~= "table"
   then
-    print('^1WARNING: load or validate custom locale JSON data from path: '..filePath)
+    txPrint('^1WARNING: load or validate custom locale JSON data from path: '..filePath)
     return false
   end
 

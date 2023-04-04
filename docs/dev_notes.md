@@ -17,22 +17,50 @@
 - [X] Resource: fix spectate (merge changes from taso's pr)
 - [x] Resource: fix noclip game crashes
 - [x] Resource: do all files need to check env with `GetConvar` or can i do it only in `shared.lua`?
+- [x] Resource: add `GetConvarBool` and refactor existing `GetConvar` calls
+- [x] Resource: Refactor the debug vars and debugPrint
+    - [x] move the debug code form `menu/sv_base.lua` to somewhere else
+    - [x] by disabling the server stuff, need to make sure none of the global variables set by it are required in non-menu code
+- [x] Resource: Clean the prints from the client (search with `\Wprint\(`)
+- [x] Resource: Clean the print functions on the server (txPrint?)
+- [ ] Resource: refactor `/txAdmin-reauth` to return the full cause in the snackbar
+- [ ] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
+- [ ] Web: test all pages I added `checkApiLogoutRefresh`
 - [ ] Resource: rename menu events to `txAdmin:menu:clreq:xxx` and `txAdmin:menu:svresp:xxx`?
-- [ ] Resource: Refactor the debug vars and debugPrint
-- [ ] Resource: Clean the prints from the client
-    - search: `\Wprint\(`
-    - include: `*.lua`
-    - exclude: `sv_*`
-    - also check `debugPrint` and `txPrint`
 - [ ] Resource: fix some RedM issues
 - [ ] make `recipes/indexv4.json` dropping version and adding tags
     - drop author field as well?
     - remove zap esx pack? last update was 6 months ago
 - [ ] add redm recipes
+    - need to add a tracking for % of redm/fivem/libertym servers
 - [ ] add hwid token bans
+    - add an option to wipe all hwids from the database
 - [ ] update discord.js - should be drop in
 
-FIXME: playerlist broken, mutex undefined
+FIXME: renomear eventos abaixo
+TODO: ver se tem como setar sem o menu estar habilitado
+txAdmin:events:getServerCtx
+txAdmin:events:setServerCtx
+
+isMenuDebug - client
+debugModeEnabled - shared + sv
+TX_DEBUGMODE - nowhere
+
+txaSetDebugMode
+
+txAdmin-menuDebug -> txAdmin-debugMode
+
+
+RegisterNetEvent\(['"]
+
+txAdmin:menu:clreq:xxx
+txAdmin:menu:svresp:xxx
+
+txAdmin:menu:clReq:xxx
+txAdmin:menu:svResp:xxx
+
+txAdmin:req:xxx
+txAdmin:resp:xxx
 
 
 
@@ -84,16 +112,6 @@ cache static files
 # Next up:
 - [ ] xxxxxx
 
-//essa logica não é "GetConvarBool" e sim negativa
-GetConvar\('([^']+)', 'false'\) ~= 'true'
-not GetConvarBool('$1')
-
-function GetConvarBool(cvName)
-  return (GetConvar(cvName, 'false') ~= 'true')
-end
-
-criar variáveis globais setadas no shared, pra salvar o trabalho de dar GetConvar em todo arquivo
-
 
 
 ### Server resource scanner
@@ -116,8 +134,6 @@ teste:
 # TODO: sooner than later
 - [ ] server logger add events/min average
 - [ ] no duplicated id type in bans? preparing for the new db migration
-- [ ] reorder `sv_main.lua` and add `local` prefix to most if not all functions
-- [ ] mock out insights page (assets + http reqs)
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Behare that this is not trivial without also turning missing exec target read error also being error
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 
@@ -621,7 +637,7 @@ export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
 npx depcheck
 npm-upgrade
 con_miniconChannels script:monitor*
-+setr txAdmin-menuDebug true
++setr txAdmin-debugMode true
 nui_devtoold mpMenu
 
 # hang fxserver (runcode)

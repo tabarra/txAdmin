@@ -6,8 +6,8 @@ if not TX_SERVER_MODE then return end
 --  Server PlayerList handler
 -- =============================================
 
-function logError(x)
-    print("^5[txAdminClient]^1 " .. x .. "^0")
+local function logError(x)
+    txPrint("^1" .. x)
 end
 local oneSyncConvar = GetConvar('onesync', 'off')
 local onesyncEnabled = oneSyncConvar == 'on' or oneSyncConvar == 'legacy'
@@ -15,7 +15,6 @@ local onesyncEnabled = oneSyncConvar == 'on' or oneSyncConvar == 'legacy'
 
 -- Optimizations
 local floor = math.floor
-local max = math.max
 local min = math.min
 local sub = string.sub
 local tonumber = tonumber

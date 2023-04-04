@@ -46,7 +46,6 @@ local function createPauseMenuCheckerThread()
         while isMenuVisible do
             if IsPauseMenuActive() then
                 toggleMenuVisibility(false)
-                print('isMenuVisible && IsPauseMenuActive')
             end
             Wait(250)
         end
