@@ -10,24 +10,23 @@ end
 -- NOTE: not available on client
 TX_SERVER_MODE = GetConvarBool('txAdminServerMode')
 
--- Setting global enablle/disable variable for all menu-related files
+-- Setting global enable/disable variable for all menu-related files
 TX_MENU_ENABLED = GetConvarBool('txAdmin-menuEnabled')
+
+-- Setting global debug variable for all files
+-- On the client, this is updated by receiving a `txAdmin:events:setDebugMode` event.
+-- On the server, this is updated by running txaSetDebugMode on Live Console
+TX_DEBUG_MODE = GetConvarBool('txAdmin-debugMode')
 
 -- =============================================
 --  Server mode only
 -- =============================================
 
-debugModeEnabled = false
-
-CreateThread(function()
-  debugModeEnabled = GetConvarBool('txAdmin-menuDebug')
-end)
-
 ---FIXME: description
 function debugPrint(...)
   local args = {...}
   local appendedStr = ''
-  if debugModeEnabled then
+  if TX_DEBUG_MODE then
     for _, v in ipairs(args) do
       appendedStr = appendedStr .. ' ' .. (type(v)=="table" and json.encode(v) or tostring(v))
     end

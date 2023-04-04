@@ -40,7 +40,7 @@ RegisterNetEvent('txsv:checkAdminStatus', function()
     if type(failedAuths[srcString]) == 'number' and failedAuths[srcString] + attemptCooldown > GetGameTimer() then
         return handleAuthFail(source, "too many auth attempts")
     end
-    
+
     -- Prepping http request
     local url = "http://"..TX_LUACOMHOST.."/nui/auth"
     local headers = {

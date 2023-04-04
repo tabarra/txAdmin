@@ -6,16 +6,10 @@
 -- Global Variables
 -- TODO: they should be upper case
 menuIsAccessible = false
-isMenuDebug = false
 isMenuVisible = false
 menuPermissions = {}
 lastTpCoords = false;
 
-
--- Check if menu is in debug mode
-CreateThread(function()
-  isMenuDebug = GetConvarBool('txAdmin-menuDebug')
-end)
 
 local function checkMenuAccessible()
   if not TX_MENU_ENABLED then
@@ -117,20 +111,13 @@ CreateThread(function()
     '/txAdmin-reauth',
     'Retries to authenticate the menu NUI.'
   )
-  TriggerEvent(
-    'chat:addSuggestion',
-    '/txAdmin-debug',  -- on /scripts/menu/server/sv_base.lua
-    'Enables or disables the debug mode. Requires \'control.server\' permission.',
-    {{ name="1|0", help="1 to enable, 0 to disable" }}
-  )
 end)
 
 
 -- Will toggle debug logging
 RegisterNetEvent('txAdmin:events:setDebugMode', function(enabled)
-  isMenuDebug = enabled
-  debugModeEnabled = enabled
-  sendMenuMessage('setDebugMode', isMenuDebug)
+  TX_DEBUG_MODE = enabled
+  sendMenuMessage('setDebugMode', TX_DEBUG_MODE)
 end)
 
 
@@ -149,14 +136,15 @@ end)
 
 
 RegisterNUICallback('reactLoaded', function(_, cb)
-  print("React loaded, sending variables.")
-  sendMenuMessage('setDebugMode', isMenuDebug)
-  sendMenuMessage('setPermissions', menuPermissions)
+  debugPrint("React loaded, requesting ServerCtx.")
 
   CreateThread(function()
     updateServerCtx()
     while ServerCtx == false do Wait(0) end
+    debugPrint("ServerCtx loaded, sending variables.")
+    sendMenuMessage('setDebugMode', TX_DEBUG_MODE)
     sendMenuMessage('setServerCtx', ServerCtx)
+    sendMenuMessage('setPermissions', menuPermissions)
   end)
 
   cb({})

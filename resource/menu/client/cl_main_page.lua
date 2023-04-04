@@ -54,13 +54,12 @@ RegisterNUICallback('clearArea', function(radius, cb)
 end)
 
 -- [[ Spawn weapon (only in dev, for now) ]]
-if isMenuDebug then
-    RegisterNUICallback('spawnWeapon', function(weapon, cb)
-        debugPrint("Spawning weapon: " .. weapon)
-        GiveWeaponToPed(PlayerPedId(), weapon, 500, false, true)
-        cb({})
-    end)
-end
+RegisterNUICallback('spawnWeapon', function(weapon, cb)
+    if not TX_DEBUG_MODE then return end
+    debugPrint("Spawning weapon: " .. weapon)
+    GiveWeaponToPed(PlayerPedId(), weapon, 500, false, true)
+    cb({})
+end)
 
 local oldVehVelocity = 0.0
 RegisterNUICallback('spawnVehicle', function(data, cb)

@@ -91,7 +91,7 @@ end
 AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     if not allowed then return end
     local message
-    
+
     --SELF menu options
     if event == 'playerModeChanged' then
         if data == 'godmode' then

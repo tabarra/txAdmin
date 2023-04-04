@@ -25,11 +25,6 @@ TX_PLAYERLIST = {}
 TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
 TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
-TX_DEBUGMODE = GetConvarBool('txAdmin-debugMode') -- TODO: start using this global
-TX_HIDE_ANNOUNCEMENT = GetConvarBool('txAdmin-hideDefaultAnnouncement')
-TX_HIDE_DIRECTMESSAGE = GetConvarBool('txAdmin-hideDefaultDirectMessage')
-TX_HIDE_WARNING = GetConvarBool('txAdmin-hideDefaultWarning')
-TX_HIDE_SCHEDULEDRESTARTWARNING = GetConvarBool('txAdmin-hideDefaultScheduledRestartWarning')
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
@@ -47,10 +42,9 @@ end
 SetConvar("txAdmin-luaComToken", "removed")
 CreateThread(function()
     Wait(0)
-    if debugModeEnabled then
-        debugPrint("Restoring txAdmin-luaComToken for next monitor restart")
-        SetConvar("txAdmin-luaComToken", TX_LUACOMTOKEN)
-    end
+    if not TX_DEBUG_MODE then return end
+    debugPrint("Restoring txAdmin-luaComToken for next monitor restart")
+    SetConvar("txAdmin-luaComToken", TX_LUACOMTOKEN)
 end)
 
 
@@ -65,6 +59,7 @@ CreateThread(function()
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaEvent", txaEvent, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
+    RegisterCommand("txaSetDebugMode", txaSetDebugMode, true)
     CreateThread(function()
         while true do
             HTTPHeartBeat()
@@ -143,9 +138,14 @@ end
 -- =============================================
 --  Events handling
 -- =============================================
+local cvHideAnnouncement = GetConvarBool('txAdmin-hideDefaultAnnouncement')
+local cvHideDirectMessage = GetConvarBool('txAdmin-hideDefaultDirectMessage')
+local cvHideWarning = GetConvarBool('txAdmin-hideDefaultWarning')
+local cvHideScheduledRestartWarning = GetConvarBool('txAdmin-hideDefaultScheduledRestartWarning')
+
 -- Broadcast admin message to all players
 local function handleAnnouncementEvent(eventData)
-    if not TX_HIDE_ANNOUNCEMENT then
+    if not cvHideAnnouncement then
         TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
     end
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
@@ -153,7 +153,7 @@ end
 
 -- Broadcast through an announcement that the server will restart in XX minutes
 local function handleScheduledRestartEvent(eventData)
-    if not TX_HIDE_SCHEDULEDRESTARTWARNING then
+    if not cvHideScheduledRestartWarning then
         TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.translatedMessage, 'txAdmin')
     end
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) txAdmin", eventData.translatedMessage)
@@ -161,7 +161,7 @@ end
 
 -- Sends a direct message from an admin to a player
 local function handleDirectMessageEvent(eventData)
-    if not TX_HIDE_DIRECTMESSAGE then
+    if not cvHideDirectMessage then
         TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
     end
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(DM) "..eventData.author, eventData.message)
@@ -177,7 +177,7 @@ end
 local function handleWarnEvent(eventData)
     local pName = GetPlayerName(eventData.target)
     if pName ~= nil then
-        if not TX_HIDE_WARNING then
+        if not cvHideWarning then
             TriggerClientEvent("txAdminClient:warn", eventData.target, eventData.author, eventData.reason)
         end
         log("Warning "..pName.." with reason: "..eventData.reason)
@@ -299,6 +299,30 @@ function txaReportResources(source, args)
             logError("ReportResources failed with code "..httpCode.." and message: "..resp)
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+end
+
+
+-- =============================================
+-- Setter for the txAdmin-debugMode convar and TX_DEBUG_MODE global variable
+-- =============================================
+function txaSetDebugMode(source, args)
+    -- prevent execution from admins or resources
+    if source ~= 0 or GetInvokingResource() ~= nil then return end
+    -- validating argument
+    if args[1] == nil then return end
+
+    -- changing mode
+    if args[1] == '1' then
+        TX_DEBUG_MODE = true
+        print("^1!! Debug Mode enabled via console !!^0")
+    elseif args[1] == '0' then
+        TX_DEBUG_MODE = false
+        print("^1!! Debug Mode disabled via console !!^0")
+    else
+        print("^1!! txaSetDebugMode only accepts '1' or '0' as input. !!^0")
+    end
+    SetConvarReplicated('txAdmin-debugMode', tostring(TX_DEBUG_MODE))
+    TriggerClientEvent('txAdmin:events:setDebugMode', -1, TX_DEBUG_MODE)
 end
 
 

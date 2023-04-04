@@ -3,23 +3,23 @@
 -- =============================================
 ServerCtx = false
 
--- NOTE: for now the ServerCtx is only being set when the menu tries to load (enabled or not)
---- Will update ServerCtx based on GlobalState and will send it to NUI
+--- Updates ServerCtx based on GlobalState and will send it to NUI
+--- NOTE: for now the ServerCtx is only being set when the menu tries to load (enabled or not)
 function updateServerCtx()
-    _ServerCtx = GlobalState.txAdminServerCtx
-    if _ServerCtx == nil then
-        print('^3ServerCtx fallback support activated.')
+    stateBagServerCtx = GlobalState.txAdminServerCtx
+    if stateBagServerCtx == nil then
+        debugPrint('^3ServerCtx fallback support activated.')
         TriggerServerEvent('txAdmin:events:getServerCtx')
     else
-        ServerCtx = _ServerCtx
-        print('^2ServerCtx updated from global state')
+        ServerCtx = stateBagServerCtx
+        debugPrint('^2ServerCtx updated from global state')
     end
 end
 
 RegisterNetEvent('txAdmin:events:setServerCtx', function(ctx)
     if type(ctx) ~= 'table' then return end
     ServerCtx = ctx
-    print('^2ServerCtx updated from server event.')
+    debugPrint('^2ServerCtx updated from server event.')
     sendMenuMessage('setServerCtx', ServerCtx)
 end)
 
@@ -83,7 +83,7 @@ end)
 --  Other stuff
 -- =============================================
 -- Removing unwanted chat suggestions
--- We only want suggestion for: /tx, /txAdmin-debug, /txAdmin-reauth
+-- We only want suggestion for: /tx, /txAdmin-reauth
 -- The suggestion is added after 500ms, so we need to wait more
 CreateThread(function()
     Wait(1000)
@@ -93,6 +93,7 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txaKickAll')
     TriggerEvent('chat:removeSuggestion', '/txaEvent')
     TriggerEvent('chat:removeSuggestion', '/txaReportResources')
+    TriggerEvent('chat:removeSuggestion', '/txaSetDebugMode')
 
     --Keybinds
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:noClipToggle')
@@ -109,13 +110,13 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txAdmin-luaComToken')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-checkPlayerJoin')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-pipeToken')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-debugMode')
     TriggerEvent('chat:removeSuggestion', '/txAdminServerMode')
 
     --Menu convars
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuEnabled')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuAlignRight')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuPageKey')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDebug')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-playerIdDistance')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDrunkDuration')
 end)

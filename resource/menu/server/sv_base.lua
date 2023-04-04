@@ -19,32 +19,6 @@ ServerCtxObj = {
   announceNotiPos = '', -- top-center, top-right, top-left, bottom-center, bottom-right, bottom-left
 }
 
-
-RegisterCommand('txAdmin-debug', function(src, args)
-  if src > 0 then
-    if not PlayerHasTxPermission(src, 'control.server') then
-      return
-    end
-  end
-
-  local playerName = (src > 0) and GetPlayerName(src) or 'Console'
-
-  if not args[1] then
-    return
-  end
-
-  if args[1] == '1' then
-    debugModeEnabled = true
-    debugPrint("^1!! Debug mode enabled by ^2" .. playerName .. "^1 !!^0")
-    TriggerClientEvent('txAdmin:events:setDebugMode', -1, true)
-  elseif args[1] == '0' then
-    debugPrint("^1!! Debug mode disabled by ^2" .. playerName .. "^1 !!^0")
-    debugModeEnabled = false
-    TriggerClientEvent('txAdmin:events:setDebugMode', -1, false)
-  end
-end)
-
-
 local function getCustomLocaleData()
   --Get convar
   local filePath = GetConvar('txAdmin-localeFile', 'false')
