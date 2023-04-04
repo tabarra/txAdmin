@@ -1,6 +1,7 @@
 -- Prevent running in monitor mode
 if not TX_SERVER_MODE then return end
-
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
 
 ServerCtxObj = {
   oneSync = {
@@ -96,7 +97,7 @@ local function syncServerCtx()
   local switchPageKey = GetConvar('txAdmin-menuPageKey', 'Tab')
   ServerCtxObj.switchPageKey = switchPageKey
 
-  local alignRight = (GetConvar('txAdmin-menuAlignRight', 'false') == 'true')
+  local alignRight = GetConvarBool('txAdmin-menuAlignRight')
   ServerCtxObj.alignRight = alignRight
 
   local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')
@@ -154,7 +155,7 @@ end)
 
 
 CreateThread(function()
-  -- If we don't wait for a tick there is some race condition that
+  -- If we don't wait for two ticks there is some race condition that
   -- sometimes prevents debugPrint lmao
   Wait(0)
   syncServerCtx()

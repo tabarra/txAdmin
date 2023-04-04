@@ -1,10 +1,10 @@
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
+
 -- ===============
 --  This file contains functionality purely related
---  to player modes (noclip, godmode)
+--  to player modes (noclip, godmode, super jump)
 -- ===============
-if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
-    return
-end
 
 local noClipEnabled = false
 local superJumpEnabled = false
@@ -203,4 +203,3 @@ RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
         toggleSuperJump(false)
     end
 end)
-

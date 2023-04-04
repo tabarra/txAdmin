@@ -1,11 +1,10 @@
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
+
 -- =============================================
 --  This file is for all main page logic not controlled in its
 --  own file (mainly simpler logic)
 -- =============================================
-if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
-    return
-end
-
 
 --[[ NUI CALLBACKS ]]
 
@@ -216,7 +215,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     if not boostableVehicleClasses[vehClass] then
         return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.unsupported_class', true)
     end
-    
+
     --Modify car
     setVehicleHandlingValue(veh, 'fInitialDriveMaxFlatVel', 300.40120); --the signature, don't change
     setVehicleHandlingValue(veh, 'fHandBrakeForce', 10.0);
@@ -226,7 +225,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     setVehicleHandlingModifier(veh, 'fInitialDriveForce', 2.0); --accelerates real fast, almost no side effects
     setVehicleHandlingModifier(veh, 'fDriveInertia', 1.25);
     setVehicleHandlingValue(veh, 'fInitialDragCoeff', 10.0);
-    
+
     SetVehicleHandlingVector(veh, 'CHandlingData', 'vecInertiaMultiplier', vector3(0.1, 0.1, 0.1))
     setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001); --testar, o certo é 0~1
     setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001); --testar, o certo é >1
@@ -377,7 +376,7 @@ local function teleportToCoords(coords)
     DoScreenFadeIn(500)
 end
 
--- Teleport the player to the coordinates
+--- Teleport the player to the coordinates
 ---@param x number
 ---@param y number
 ---@param z number

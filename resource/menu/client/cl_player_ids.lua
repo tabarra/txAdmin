@@ -1,9 +1,9 @@
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
+
 -- =============================================
 --  This file contains all overhead player ID logic
 -- =============================================
-if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
-    return
-end
 
 local isPlayerIDActive = false
 local playerGamerTags = {}

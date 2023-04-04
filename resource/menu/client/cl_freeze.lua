@@ -1,9 +1,9 @@
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
+
 -- =============================================
 --  This file contains all player freeze logic
 -- =============================================
-if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
-  return
-end
 
 local function sendFreezeAlert(isFrozen)
   if isFrozen then

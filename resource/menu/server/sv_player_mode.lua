@@ -1,7 +1,9 @@
 -- Prevent running in monitor mode
 if not TX_SERVER_MODE then return end
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
 
-local IS_PTFX_DISABLED = (GetConvar('txAdmin-menuPtfxDisable', 'false') == 'true')
+local IS_PTFX_DISABLED = GetConvarBool('txAdmin-menuPtfxDisable')
 
 RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, nearbyPlayers)
   local src = source

@@ -1,9 +1,9 @@
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
+
 -- =============================================
 --  Troll action logic from the player modal is located here (callbacks, events)
 -- =============================================
-if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
-    return
-end
 
 local EFFECT_TIME_MS = GetConvarInt('txAdmin-menuDrunkDuration', 30)*1000
 local DRUNK_ANIM_SET = "move_m@drunk@verydrunk"

@@ -1,5 +1,7 @@
 -- Prevent running in monitor mode
 if not TX_SERVER_MODE then return end
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
 
 -- =============================================
 --  This file is for server side handlers related to
@@ -64,7 +66,6 @@ RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
   end
 end)
 
-local CREATE_AUTOMOBILE = GetHashKey('CREATE_AUTOMOBILE')
 
 --- Spawn a vehicle on the server at the request of a client
 ---@param model string

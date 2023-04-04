@@ -1,9 +1,9 @@
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
+
 -- =============================================
 --  This file contains misc stuff, maybe deprecate?
 -- =============================================
-if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
-    return
-end
 
 -- Consts
 SoundEnum = {

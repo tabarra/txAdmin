@@ -1,5 +1,7 @@
 -- Prevent running in monitor mode
 if not TX_SERVER_MODE then return end
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
 
 --- Determine if a source has a given permission
 ---@param source number

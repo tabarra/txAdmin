@@ -1,5 +1,7 @@
 -- Prevent running in monitor mode
 if not TX_SERVER_MODE then return end
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
 
 --- Logic for starting to spectate + authorization + routing buckets
 --- @param targetId number The player id to spectate.

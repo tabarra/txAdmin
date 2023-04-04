@@ -10,16 +10,15 @@ isMenuDebug = false
 isMenuVisible = false
 menuPermissions = {}
 lastTpCoords = false;
-local isMenuEnabled = (GetConvar('txAdmin-menuEnabled', 'false') == 'true')
 
 
 -- Check if menu is in debug mode
 CreateThread(function()
-  isMenuDebug = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
+  isMenuDebug = GetConvarBool('txAdmin-menuDebug')
 end)
 
 local function checkMenuAccessible()
-  if not isMenuEnabled then
+  if not TX_MENU_ENABLED then
     sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
     return false
   end
@@ -60,9 +59,9 @@ end)
 -- =============================================
 --  The rest of the file will only run if menu is enabled
 -- =============================================
-if not isMenuEnabled then
-  return
-end
+
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
 
 -- Checking with server if we are an admin
 TriggerServerEvent('txsv:checkAdminStatus')

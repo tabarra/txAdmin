@@ -25,11 +25,11 @@ TX_PLAYERLIST = {}
 TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
 TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
-TX_DEBUGMODE = (GetConvar('txAdmin-debugMode', 'false') == 'true') -- TODO: start using this global
-TX_HIDE_ANNOUNCEMENT = (GetConvar('txAdmin-hideDefaultAnnouncement', 'false') == 'true')
-TX_HIDE_DIRECTMESSAGE = (GetConvar('txAdmin-hideDefaultDirectMessage', 'false') == 'true')
-TX_HIDE_WARNING = (GetConvar('txAdmin-hideDefaultWarning', 'false') == 'true')
-TX_HIDE_SCHEDULEDRESTARTWARNING = (GetConvar('txAdmin-hideDefaultScheduledRestartWarning', 'false') == 'true')
+TX_DEBUGMODE = GetConvarBool('txAdmin-debugMode') -- TODO: start using this global
+TX_HIDE_ANNOUNCEMENT = GetConvarBool('txAdmin-hideDefaultAnnouncement')
+TX_HIDE_DIRECTMESSAGE = GetConvarBool('txAdmin-hideDefaultDirectMessage')
+TX_HIDE_WARNING = GetConvarBool('txAdmin-hideDefaultWarning')
+TX_HIDE_SCHEDULEDRESTARTWARNING = GetConvarBool('txAdmin-hideDefaultScheduledRestartWarning')
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
@@ -314,7 +314,7 @@ function handleConnections(name, setKickReason, d)
     end
 
     local player = source
-    if GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
+    if GetConvarBool("txAdmin-checkPlayerJoin") then
         d.defer()
         Wait(0)
 

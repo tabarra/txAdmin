@@ -1,14 +1,26 @@
--- Setting global enablle/disable variable for all sv_*.lua files
-TX_SERVER_MODE = (GetConvar('txAdminServerMode', 'false') == 'true')
+-- =============================================
+--  Truly global
+-- =============================================
 
--- Prevent running in monitor mode
-if not TX_SERVER_MODE then return end
+function GetConvarBool(cvName)
+  return (GetConvar(cvName, 'false') == 'true')
+end
 
+-- Setting global enable/disable variable for all sv_*.lua files
+-- NOTE: not available on client
+TX_SERVER_MODE = GetConvarBool('txAdminServerMode')
+
+-- Setting global enablle/disable variable for all menu-related files
+TX_MENU_ENABLED = GetConvarBool('txAdmin-menuEnabled')
+
+-- =============================================
+--  Server mode only
+-- =============================================
 
 debugModeEnabled = false
 
 CreateThread(function()
-  debugModeEnabled = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
+  debugModeEnabled = GetConvarBool('txAdmin-menuDebug')
 end)
 
 ---FIXME: description

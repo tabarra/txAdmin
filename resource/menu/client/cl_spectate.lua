@@ -1,9 +1,9 @@
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
+
 -- =============================================
 --  Contains all spectate related logic
 -- =============================================
-if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
-    return
-end
 
 -- Last spectate location stored in a vec3
 local spectatorReturnCoords

@@ -1,5 +1,7 @@
 -- Prevent running in monitor mode
 if not TX_SERVER_MODE then return end
+-- Prevent running if menu is disabled
+if not TX_MENU_ENABLED then return end
 
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
   log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
