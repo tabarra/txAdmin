@@ -1,6 +1,6 @@
 -- Modifying or rewriting this resource for local use only is strongly discouraged.
 -- Feel free to open an issue or pull request in our GitHub.
--- Official discord server: https://discord.gg/AFAAXzq
+-- Official discord server: https://discord.gg/txAdmin
 
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'

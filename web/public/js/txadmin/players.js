@@ -92,6 +92,7 @@ function setPlayerlistMessage(message) {
     Array.from(playerlistElement.children).forEach((el) => el.hidden = true);
     plistMsgElement.textContent = message;
     plistMsgElement.hidden = false;
+    plistCountElement.textContent = '--';
 }
 
 function processPlayerlistEvents(events) {

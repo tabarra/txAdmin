@@ -100,6 +100,8 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:endSpectate')
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:openPlayersPage')
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:togglePlayerIDs')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:specNextPlayer')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:specPrevPlayer')
 
     --Convars
     TriggerEvent('chat:removeSuggestion', '/txAdmin-version')
@@ -111,6 +113,10 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txAdmin-checkPlayerJoin')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-pipeToken')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-debugMode')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultAnnouncement')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultDirectMessage')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultWarning')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultScheduledRestartWarning')
     TriggerEvent('chat:removeSuggestion', '/txAdminServerMode')
 
     --Menu convars
