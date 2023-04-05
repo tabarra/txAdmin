@@ -24,9 +24,19 @@ end
 --- Snackbar message
 ---@param level string The severity of the message can be 'info', 'error', or 'warning'
 ---@param message string Message to display with snackbar
-function sendSnackbarMessage(level, message, isTranslationKey)
+---@param isTranslationKey boolean
+---@param tOptions table | nil
+function sendSnackbarMessage(level, message, isTranslationKey, tOptions)
     debugPrint(('Sending snackbar message, level: %s, message: %s, isTranslationKey: %s'):format(level, message, isTranslationKey))
-    sendMenuMessage('setSnackbarAlert', { level = level, message = message, isTranslationKey = isTranslationKey })
+    sendMenuMessage(
+        'setSnackbarAlert',
+        {
+            level = level,
+            message = message,
+            isTranslationKey = isTranslationKey,
+            tOptions = tOptions
+        }
+    )
 end
 
 --- Send data to the NUI frame

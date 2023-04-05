@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menu ingeschakeld, type /tx om het te openen.\nJe kan ook een keybind registreren in [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Jouw identifiers zijn niet gelijk aan degenen die in txAdmin zijn geregistreerd.\nAls je wel geregistreerd staat bij txAdmin, ga naar Admin Manager en sla je identifiers op.",
+            "menu_not_admin": "Jouw identifiers zijn niet gelijk aan degenen die in txAdmin zijn geregistreerd.\nAls je wel geregistreerd staat bij txAdmin, ga naar Admin Manager en sla je identifiers op.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Je hebt hier geen permissie voor.",
             "unknown_error": "Er is een onbekende error opgetreden.",
             "not_enabled": "Het txAdmin Menu is uitgeschakeld! Je kan hem inschakelen bij de txAdmin instellingen pagina.",

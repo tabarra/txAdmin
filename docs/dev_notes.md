@@ -24,7 +24,7 @@
 - [x] Resource: Clean the prints from the client (search with `\Wprint\(`)
 - [x] Resource: Clean the print functions on the server (txPrint?)
 - [x] Web: test all pages I added `checkApiLogoutRefresh`
-- [ ] Resource: refactor `/txAdmin-reauth` to return the full cause in the snackbar
+- [x] Resource: refactor `/txAdmin-reauth` to return the full cause in the snackbar
 - [ ] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] Resource: rename menu events to `txAdmin:menu:clreq:xxx` and `txAdmin:menu:svresp:xxx`?
 - [ ] Resource: fix some RedM issues

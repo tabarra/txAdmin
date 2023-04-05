@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin менюто е включено, напиши /tx, за да го отвориш.\nМоже също да го конфигурирате с копче в [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Твоите идентификатори не са съвместими с тези, които са регистрирани в txAdmin.\nАко си регистриран в txAdmin, отиди в Admin Manager и се увери, че идентификаторите са запазиени.",
+            "menu_not_admin": "Твоите идентификатори не са съвместими с тези, които са регистрирани в txAdmin.\nАко си регистриран в txAdmin, отиди в Admin Manager и се увери, че идентификаторите са запазиени.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Нямаш правомощията за това.",
             "unknown_error": "Възникна неизвестна грешка..",
             "not_enabled": "txAdmin менюто не е включено! Може да го включиш чрез настройките на txAdmin.",

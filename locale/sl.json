@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Meni omogočen, napiši /tx da ga odpreš.\nTipko za txAdmin Meni lahko tudi spremeniš [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Tvoji podatki se ne ujemajo z nobenim obstoječim txAdmin profilom.\nČe si registriran na txAdminu, pojdi v upravitelja administratorjev in se prepričaj, da so tvoji podatki pravilni shranjeni.",
+            "menu_not_admin": "Tvoji podatki se ne ujemajo z nobenim obstoječim txAdmin profilom.\nČe si registriran na txAdminu, pojdi v upravitelja administratorjev in se prepričaj, da so tvoji podatki pravilni shranjeni.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Nimaš tega dovoljenja.",
             "unknown_error": "Prišlo je do neznane težave.",
             "not_enabled": "txAdmin Meni ni omogočen! Lahko ga omogočiš v txAdmin nastavitvah.",

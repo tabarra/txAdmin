@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "Menú txAdmin disponible, escribe /tx para abrirlo.\nTambien puedes configurar una asignación de teclas en [Ajustes > Asignación de teclas > FiveM > Menu: Abrir página principal].",
-            "menu_not_allowed": "Tus identificadores no estan registrados en txAdmin.\nSi estas registrado en txAdmin, ve a gestor de administradores y asegurate que tus identificadores estan guardados.",
+            "menu_not_admin": "Tus identificadores no estan registrados en txAdmin.\nSi estas registrado en txAdmin, ve a gestor de administradores y asegurate que tus identificadores estan guardados.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "No tienes este permiso",
             "unknown_error": "Ha ocurrido un error.",
             "not_enabled": "¡Menú txAdmin no está activado! Puedes activarlo en la página de ajustes de txAdmin.",

@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menyn är aktiverad, skriv /tx i chatten för att öppna den.\nDu kan ändra knapp på [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Dina id stämmer inte överns med dom som är registerade i txAdmin regisrtert.\nOm du är registerad på Txadmin,gå till administratör hanteraren och dubbelkolla att id:en är korrekta.",
+            "menu_not_admin": "Dina id stämmer inte överns med dom som är registerade i txAdmin regisrtert.\nOm du är registerad på Txadmin,gå till administratör hanteraren och dubbelkolla att id:en är korrekta.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Du har inte behörighet för detta.",
             "unknown_error": "Ett okänt problem har uppstått",
             "not_enabled": "Txadmin menyn är inte aktiverad! Du kan aktivera den på Txadmin panelen.",

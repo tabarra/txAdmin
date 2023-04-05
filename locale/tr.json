@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menüsü etkinleştirildi, açmak için /tx yazın.\nAyrıca [Oyun Ayarları > Tuş Bağlantıları > FiveM > Menü: Ana Sayfayı Aç] öğesinde bir tuş ataması yapılandırabilirsiniz.",
-            "menu_not_allowed": "Tanımlayıcılarınız, txAdmin'de kayıtlı herhangi bir yöneticiyle eşleşmiyor.\ntxAdmin'de kayıtlıysanız, Admin Manager'e gidin ve tanımlayıcılarınızın kaydedildiğinden emin olun.",
+            "menu_not_admin": "Tanımlayıcılarınız, txAdmin'de kayıtlı herhangi bir yöneticiyle eşleşmiyor.\ntxAdmin'de kayıtlıysanız, Admin Manager'e gidin ve tanımlayıcılarınızın kaydedildiğinden emin olun.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Bu izne sahip değilsiniz.",
             "unknown_error": "Bilinmeyen bir hata oluştu.",
             "not_enabled": "txAdmin Menüsü etkin değil! Bunu txAdmin ayarları sayfasından etkinleştirebilirsiniz.",

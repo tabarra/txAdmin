@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menü aktiviert, tippe /tx ein, um es zu öffnen.\nDu kannst zusätzlich in den Einstellungen eine Taste zuweisen [Einstellungen > Steuerung > FiveM > txAdmin].",
-            "menu_not_allowed": "Deine IDs stimmen mit keiner bei txAdmin registrierten überein.\n Wenn du bei txAdmin registriert bist, stelle sicher, dass die richtigen IDs gespeichert sind.",
+            "menu_not_admin": "Deine IDs stimmen mit keiner bei txAdmin registrierten überein.\n Wenn du bei txAdmin registriert bist, stelle sicher, dass die richtigen IDs gespeichert sind.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Dafür hast du keine Berechtigung.",
             "unknown_error": "Ein unbekannter Fehler ist aufgetreten.",
             "not_enabled": "Das txAdmin Menü ist nicht aktiviert. Du kannst es in den txAdmin Einstellungen aktivieren.",

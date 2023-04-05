@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin 菜单已启用，键入 /tx 以打开它。\n您也可以在 [游戏设置 > 按键绑定 > FiveM > 菜单：打开主页] 配置按键绑定。",
-            "menu_not_allowed": "您的标识符与在 txAdmin 上注册的任何管理员都不匹配。\n如果您在 txAdmin 上注册，请转到管理员管理器并确保您的标识符已保存",
+            "menu_not_admin": "您的标识符与在 txAdmin 上注册的任何管理员都不匹配。\n如果您在 txAdmin 上注册，请转到管理员管理器并确保您的标识符已保存",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "您没有权限",
             "unknown_error": "出现未知错误。",
             "not_enabled": "txAdmin 菜单未启用！您可以在 txAdmin 设置页面中启用它。",

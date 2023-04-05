@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menu päällä. Kirjoita /tx avataksesi.\nVoit myös asettaa menulle oman näppäimen: [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Tietosi eivät vastaa yhtäkään txAdminiin rekisteröityä ylläpitäjää.\nMikäli olet rekisteröitynyt txAdminiin, siirry kohtaan [Admin Manager] ja varmista että tietosi ovat tallennettu.",
+            "menu_not_admin": "Tietosi eivät vastaa yhtäkään txAdminiin rekisteröityä ylläpitäjää.\nMikäli olet rekisteröitynyt txAdminiin, siirry kohtaan [Admin Manager] ja varmista että tietosi ovat tallennettu.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Sinulla ei ole oikeuksia tähän.",
             "unknown_error": "Tuntematon virhe",
             "not_enabled": "txAdmin Menu ei ole käytössä! Voit ottaa sen käyttöön txAdminin asetuksista.",

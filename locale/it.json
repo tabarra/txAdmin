@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menu attivato, scrivi /tx per aprirlo.\nPuoi bindare un tasto in [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "I tuoi identificativi non corrispondono ad un admin registrato nel txAdmin.\nSe sei registrato al txAdmin, vai nella sezione Admin Manager e controlla che siano presenti i tuoi identificativi.",
+            "menu_not_admin": "I tuoi identificativi non corrispondono ad un admin registrato nel txAdmin.\nSe sei registrato al txAdmin, vai nella sezione Admin Manager e controlla che siano presenti i tuoi identificativi.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Non hai questo permesso.",
             "unknown_error": "Si è verificato un errore sconosciuto.",
             "not_enabled": "Il menu txAdmin non è attivo! Puoi attivarlo dalle impostazioni del txAdmin.",

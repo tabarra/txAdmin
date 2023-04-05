@@ -10,14 +10,27 @@ isMenuVisible = false
 menuPermissions = {}
 lastTpCoords = false;
 
+-- Locals
+local noMenuReason = 'unknown reason'
+local awaitingReauth = false
 
+--- Logic to displaying the menu auth rejected snackbar
+local function displayAuthRejectedError()
+  if noMenuReason == 'admin_not_found' then
+    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_admin', true)
+  else
+    sendSnackbarMessage('error', 'nui_menu.misc.menu_auth_failed', true, { reason = noMenuReason })
+  end
+end
+
+--- Tests for menu accessibility and displays error snackbar if needed
 local function checkMenuAccessible()
   if not TX_MENU_ENABLED then
     sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
     return false
   end
   if not menuIsAccessible then
-    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
+    displayAuthRejectedError()
     return false
   end
 
@@ -63,7 +76,7 @@ TriggerServerEvent('txsv:checkAdminStatus')
 -- Triggered as callback of txsv:checkAdminStatus
 RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
   if type(perms) == 'table' then
-    print("^2[AUTH] logged in as '"..username.."' with perms: " .. json.encode(perms or "nil"))
+    debugPrint("^2[AUTH] logged in as '" .. username .. "' with perms: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
     RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
@@ -74,7 +87,12 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     RegisterKeyMapping('txAdmin:menu:specNextPlayer', 'Menu: Spectate next player', 'KEYBOARD', 'DOWN')
     RegisterKeyMapping('txAdmin:menu:specPrevPlayer', 'Menu: Spectate previous player', 'KEYBOARD', 'UP')
   else
-    print("^3[AUTH] rejected (" .. tostring(rejectReason) ..")")
+    noMenuReason = tostring(rejectReason)
+    debugPrint("^3[AUTH] rejected (" .. noMenuReason .. ")")
+    if awaitingReauth then
+      displayAuthRejectedError()
+      awaitingReauth = false
+    end
     menuIsAccessible = false
     menuPermissions = {}
   end
@@ -85,15 +103,19 @@ end)
 --[[ Debug Events / Commands ]]
 -- Command/event to trigger a authentication attempt
 local function retryAuthentication()
-  print("^5[AUTH] Retrying menu authentication.")
+  debugPrint("^5[AUTH] Retrying menu authentication.")
   menuIsAccessible = false
   menuPermissions = {}
   sendMenuMessage('resetSession')
   sendMenuMessage('setPermissions', menuPermissions)
   TriggerServerEvent('txsv:checkAdminStatus')
 end
-RegisterCommand('txAdmin-reauth', retryAuthentication)
 RegisterNetEvent('txAdmin:menu:reAuth', retryAuthentication)
+RegisterCommand('txAdmin-reauth', function ()
+  sendSnackbarMessage('info', 'Retrying menu authentication.', false)
+  awaitingReauth = true
+  retryAuthentication()
+end)
 
 
 -- Register chat suggestions
@@ -104,7 +126,7 @@ CreateThread(function()
     'chat:addSuggestion',
     '/tx',
     'Opens the main txAdmin Menu or specific for a player.',
-    {{ name="player ID/name", help="(Optional) Open player modal for specific ID or name." }}
+    { { name = "player ID/name", help = "(Optional) Open player modal for specific ID or name." } }
   )
   TriggerEvent(
     'chat:addSuggestion',

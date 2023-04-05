@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmini menüü on lubatud, selle avamiseks kirjutage /tx.\nSaate konfigureerida ka klahvide sidumise menüüs [Mängu seaded > Klahvide sidumised > FiveM > Menüü: ava põhileht].",
-            "menu_not_allowed": "Teie identifikaatorid ei ühti ühegi txAdminis registreeritud administraatoriga.\nKui olete txAdminis registreeritud, minge administraatorihaldurisse ja veenduge, et teie identifikaatorid on salvestatud.",
+            "menu_not_admin": "Teie identifikaatorid ei ühti ühegi txAdminis registreeritud administraatoriga.\nKui olete txAdminis registreeritud, minge administraatorihaldurisse ja veenduge, et teie identifikaatorid on salvestatud.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Teil pole selleks luba.",
             "unknown_error": "Ilmnes tundmatu viga.",
             "not_enabled": "txAdmini menüü pole lubatud! Saate selle lubada txAdmini seadete lehel.",

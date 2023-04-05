@@ -22,6 +22,7 @@ interface SnackbarAlert {
   level: SnackbarAlertSeverities;
   message: string;
   isTranslationKey?: boolean;
+  tOptions?: object;
 }
 
 interface SnackbarPersistentAlert extends SnackbarAlert {
@@ -85,12 +86,13 @@ export const useHudListenersService = () => {
 
   useNuiEvent<SnackbarAlert>(
     "setSnackbarAlert",
-    ({ level, message, isTranslationKey }) => {
+    ({ level, message, isTranslationKey, tOptions }) => {
+      if (isTranslationKey) {
+        message = t(message, tOptions);
+      }
       enqueueSnackbar(
-        isTranslationKey ? snackFormat(t(message)) : snackFormat(message),
-        {
-          variant: level,
-        }
+        snackFormat(message),
+        { variant: level }
       );
     }
   );

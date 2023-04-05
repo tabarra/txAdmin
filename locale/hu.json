@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "A txAdmin rendelkezik játékon belüli menüvel!\nGyorsgomb [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] Próbáld ki!",
-            "menu_not_allowed": "Az azonosítód nem egyezik a txAdminban található admin azonosítókkal.\nHa regisztrálva vagy txAdminban, bizonyosodj meg róla hogy el van mentve az Admin Managerben.",
+            "menu_not_admin": "Az azonosítód nem egyezik a txAdminban található admin azonosítókkal.\nHa regisztrálva vagy txAdminban, bizonyosodj meg róla hogy el van mentve az Admin Managerben.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Ehhez nincs engedélyed.",
             "unknown_error": "Ismeretlen hiba lépett fel.",
             "not_enabled": "A txAdmin menü nincs engedélyezve! Engedélyezheted a txAdmin beállítások fülön.",

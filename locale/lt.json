@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Meniu įjungtas, rašykite /tx norėdami jį atidaryti.\nMygtuką galite priskirti ar pakeisti [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Jūsų identifikavimas txAdmin sistemai nebuvo rastas.\nJei esate užregistruotas txAdmin sistemoje, eikite į Admin Manager ir įsitikinkite, kad jūsų atpažinimas išsaugotas.",
+            "menu_not_admin": "Jūsų identifikavimas txAdmin sistemai nebuvo rastas.\nJei esate užregistruotas txAdmin sistemoje, eikite į Admin Manager ir įsitikinkite, kad jūsų atpažinimas išsaugotas.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Neturite tam teisių.",
             "unknown_error": "Nežinoma klaida.",
             "not_enabled": "txAdmin meniu nėra įjungtas! Tai galite padaryti per txAdmin nustatymų (settings) puslapį.",

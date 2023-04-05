@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "Menu txAdmin activé, ecrivez /tx pour l'ouvrir.\nVous pouvez aussi configurer une touche [Paramètre du Jeu > Configuration des touches > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Votre identifiant ne coïncide avec aucun identifiant d'un administrateur sur txAdmin.\nSi vous êtes enregistré(e) sur txAdmin, allez dans Admin Manager et assurez-vous que votre identifiant est bien enregistré.",
+            "menu_not_admin": "Votre identifiant ne coïncide avec aucun identifiant d'un administrateur sur txAdmin.\nSi vous êtes enregistré(e) sur txAdmin, allez dans Admin Manager et assurez-vous que votre identifiant est bien enregistré.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Vous n'avez pas les permissions suffisantes.",
             "unknown_error": "Une erreur inconnue s'est produite.",
             "not_enabled": "Le Menu txAdmin n'est pas activé ! Vous pouvez l'activer dans les paramètres de txAdmin.",

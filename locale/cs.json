@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menu povoleno, napiš /tx pro otevření.\nmůžeš také nakonfigurovat bind v [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Tvé identifiery se neshodují s identifiery žádného administrátora.\nPokud jsi registrovaný v txAdminu, jdi do Admin Manager a ujisti se, že tvé identifiery jsou uložené.",
+            "menu_not_admin": "Tvé identifiery se neshodují s identifiery žádného administrátora.\nPokud jsi registrovaný v txAdminu, jdi do Admin Manager a ujisti se, že tvé identifiery jsou uložené.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Na toto nemáš práva.",
             "unknown_error": "Nastala neznámá chyba.",
             "not_enabled": "txAdmin menu není povoleno! můžeš ho povolit v txAdmin stránce nastavení.",

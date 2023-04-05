@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "To txAdmin Menu ενεργοποιήθηκε, πληκτρολόγησε /tx για να το ανοίξεις.\nΕπίσης μπορείς να καθορίσεις και keybind [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Τα αναγνωριστικά σου δεν ταιρίαζουν με αυτά κάποιου δηλωμένου Admin στο txAdmin.\nΕαν είσαι δηλωμένος στο txAdmin, πήγαινε στο Admin Manager και επιβεβαίωσε ότι τα αναγνωριστικά σου έχουν αποθηκευτεί.",
+            "menu_not_admin": "Τα αναγνωριστικά σου δεν ταιρίαζουν με αυτά κάποιου δηλωμένου Admin στο txAdmin.\nΕαν είσαι δηλωμένος στο txAdmin, πήγαινε στο Admin Manager και επιβεβαίωσε ότι τα αναγνωριστικά σου έχουν αποθηκευτεί.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Δεν έχεις αυτή την άδεια",
             "unknown_error": "Προκλήθηκε ένα άγνωστο σφάλμα.",
             "not_enabled": "Tο txAdmin Menu δεν είναι ενεργοποιημένο ! Μπορείς να το ενεργοποιήσεις στήν σελίδα ρυθμίσεων του txAdmin.",

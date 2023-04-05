@@ -69,7 +69,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin đang bật, dùng /tx để mở.\nBạn có thể cài đặt phím tắt bằng cách vào cài đặt game [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Thông tin tài khoản của bạn không có quyền thao tác.\nNếu bạn đã có tài khoản txAdmin, hãy chắc chắn rằng bạn có đủ các quyền.",
+            "menu_not_admin": "Thông tin tài khoản của bạn không có quyền thao tác.\nNếu bạn đã có tài khoản txAdmin, hãy chắc chắn rằng bạn có đủ các quyền.",
+            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
             "no_perms": "Bạn không có quyền!",
             "unknown_error": "Có lỗi xảy ra.",
             "not_enabled": "txAdmin Menu chưa được bật, bạn có thể bật tại mục cài đặt.",
