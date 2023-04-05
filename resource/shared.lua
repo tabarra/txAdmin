@@ -26,7 +26,7 @@ function txPrint(...)
   for _, v in ipairs(args) do
     appendedStr = appendedStr .. ' ' .. (type(v)=="table" and json.encode(v) or tostring(v))
   end
-  local msgTemplate = '^3[txAdmin]^0%s^0'
+  local msgTemplate = '^5[txAdmin]^0%s^0'
   local msg = msgTemplate:format(appendedStr)
   print(msg)
 end

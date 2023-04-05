@@ -25,7 +25,7 @@
 - [x] Resource: Clean the print functions on the server (txPrint?)
 - [x] Web: test all pages I added `checkApiLogoutRefresh`
 - [x] Resource: refactor `/txAdmin-reauth` to return the full cause in the snackbar
-- [ ] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
+- [x] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [ ] Resource: rename menu events to `txAdmin:menu:clreq:xxx` and `txAdmin:menu:svresp:xxx`?
 - [ ] Resource: fix some RedM issues
 - [ ] make `recipes/indexv4.json` dropping version and adding tags
@@ -36,6 +36,12 @@
 - [ ] add hwid token bans
     - add an option to wipe all hwids from the database
 - [ ] update discord.js - should be drop in
+
+
+GetGameName() == "redm"
+se for gta4, desabilitar IS_MENU_ENABLED
+
+
 
 FIXME: renomear eventos abaixo
 TODO: ver se tem como setar sem o menu estar habilitado
