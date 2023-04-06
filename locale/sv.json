@@ -282,13 +282,13 @@
                         "toggle_freeze": "Växla frysläge"
                     },
                     "notifications": {
-                        "heal_player": "Läk spelare",
-                        "tp_player": "Teleporterna till spelare",
-                        "bring_player": "Ta spelare till dig",
+                        "heal_player": "Spelare är läkt",
+                        "tp_player": "Spelare teleporterad till dig",
+                        "bring_player": "Tog spelare till dig",
                         "spectate_failed": "Misslyckades att hitta spelaren, avslutar åskådarläget.",
                         "spectate_yourself": "Du kan inte åskåda dig själv.",
                         "freeze_yourself": "Du kan inte frysa dig själv.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Där finns inga spelare att gå mellan."
                     }
                 },
                 "troll": {
