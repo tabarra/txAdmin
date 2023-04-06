@@ -281,7 +281,7 @@
                         "spectate": "Åskåda",
                         "toggle_freeze": "Växla frysläge"
                     },
-                        "notifications": {
+                    "notifications": {
                         "heal_player": "Spelare är läkt",
                         "tp_player": "Spelare teleporterad till dig",
                         "bring_player": "Tog spelare till dig",
