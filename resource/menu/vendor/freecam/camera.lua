@@ -4,7 +4,7 @@ local SetCamRot = SetCamRot
 local IsCamActive = IsCamActive
 local SetCamCoord = SetCamCoord
 local LoadInterior = LoadInterior
-local SetFocusArea = SetFocusArea
+local SetFocusPosAndVel = SetFocusPosAndVel
 local LockMinimapAngle = LockMinimapAngle
 local GetInteriorAtCoords = GetInteriorAtCoords
 local LockMinimapPosition = LockMinimapPosition
@@ -61,9 +61,11 @@ function SetFreecamPosition(x, y, z)
   local pos = vector3(x, y, z)
   -- local int = GetInteriorAtCoords(pos)
   -- LoadInterior(int)
-  SetFocusArea(pos)
-  LockMinimapPosition(x, y)
+  SetFocusPosAndVel(x, y, z)
   SetCamCoord(_internal_camera, pos)
+  if IS_FIVEM then
+    LockMinimapPosition(x, y)
+  end
 
   _internal_pos = pos
 end
@@ -142,8 +144,10 @@ function SetFreecamActive(active)
   else
     DestroyCam(_internal_camera)
     ClearFocus()
-    UnlockMinimapPosition()
     UnlockMinimapAngle()
+    if IS_FIVEM then
+      UnlockMinimapPosition()
+    end
     TriggerEvent('freecam:onExit')
   end
 

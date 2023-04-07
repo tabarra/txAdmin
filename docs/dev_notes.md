@@ -38,8 +38,45 @@
 - [ ] update discord.js - should be drop in
 
 
-GetGameName() == "redm"
-se for gta4, desabilitar IS_MENU_ENABLED
+# RedM Migrations
+- [ ] Player Mode
+    - [ ] noclip
+        - [x] controls
+        - [ ] bug: after exiting, the mouse doesn't move the camera, pressing C fixes it which probably indicates its an issue destroying the camera created
+    - [ ] god mode
+    - [ ] super jump
+    - [ ] normal
+    - [ ] particles
+- [ ] Teleport
+    - [ ] waypoint
+    - [ ] coords
+    - [ ] back
+    - [ ] copy coords
+- [ ] Vehicle
+    - [ ] spawn
+    - [ ] fix
+    - [ ] delete
+    - [ ] boost
+- [ ] Heal
+    - [ ] self
+    - [ ] everyone
+- [ ] Announcements
+- [ ] reset world area
+- [ ] player ids
+
+- [ ] Actions
+    - [ ] heal
+    - [ ] go to
+    - [ ] bring
+    - [ ] spectate
+    - [ ] freeze
+    - [ ] troll: set drunk
+    - [ ] troll: set fire
+    - [ ] troll: wild attack
+    
+
+
+
 
 
 
@@ -47,14 +84,6 @@ FIXME: renomear eventos abaixo
 TODO: ver se tem como setar sem o menu estar habilitado
 txAdmin:events:getServerCtx
 txAdmin:events:setServerCtx
-
-isMenuDebug - client
-debugModeEnabled - shared + sv
-TX_DEBUGMODE - nowhere
-
-txaSetDebugMode
-
-txAdmin-menuDebug -> txAdmin-debugMode
 
 
 RegisterNetEvent\(['"]
@@ -409,6 +438,7 @@ around 12:00
 https://immerjs.github.io/immer/ maybe?
 
 if tailwind, check https://daisyui.com/docs/themes/
+https://ui.shadcn.com/
 
 
 ### Update Event + Rollout strategy
