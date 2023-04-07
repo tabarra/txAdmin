@@ -10,6 +10,7 @@ interface OneSyncCtx {
 
 export interface ServerCtx {
   oneSync: OneSyncCtx;
+  gameName: string;
   projectName: null | string;
   maxClients: number;
   locale: string;

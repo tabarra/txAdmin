@@ -3,12 +3,12 @@ if not TX_SERVER_MODE then return end
 -- Prevent running if menu is disabled
 if not TX_MENU_ENABLED then return end
 
-ServerCtxObj = {
+local ServerCtxObj = {
   oneSync = {
     type = nil,
     status = false
   },
-
+  gameName = GAME_NAME,
   projectName = nil,
   maxClients = 30,
   locale = nil,

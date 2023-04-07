@@ -6,6 +6,7 @@
       "type": null,
       "status": false
     },
+    "gameName": "fivem",
     "announceNotiPos": "top-center",
     "projectName": "Context Loading...",
     "maxClients": 48,
