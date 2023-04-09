@@ -40,18 +40,18 @@
 
 # RedM Migrations
 - [ ] Player Mode
-    - [ ] noclip
+    - [x] noclip
         - [x] controls
-        - [ ] bug: after exiting, the mouse doesn't move the camera, pressing C fixes it which probably indicates its an issue destroying the camera created
+        - [x] bug: after exiting, the mouse doesn't move the camera, pressing C fixes it which probably indicates its an issue destroying the camera created
     - [ ] god mode
-    - [ ] super jump
-    - [ ] normal
-    - [ ] particles
+    - [x] super jump
+    - [x] normal
+    - [x] particles
 - [ ] Teleport
     - [ ] waypoint
     - [ ] coords
     - [ ] back
-    - [ ] copy coords
+    - [x] copy coords
 - [ ] Vehicle
     - [ ] spawn
     - [ ] fix
