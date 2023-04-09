@@ -71,6 +71,23 @@ local function UpdateCamera()
 end
 
 -------------------------------------------------------------------------------
+if IS_REDM then
+  local informationTable = {
+    text = { 'Faster', 'Slower', 'Fwd/Back', 'Left/Right', 'Down', 'Up' },
+    key = { CONTROLS.MOVE_FAST, CONTROLS.MOVE_SLOW, CONTROLS.MOVE_Y, CONTROLS.MOVE_X, CONTROLS.MOVE_Z[2], CONTROLS.MOVE_Z[1] }
+  }
+  promptGroupId = GetRandomIntInRange(0, 65536)
+  for i = 1, 6 do
+    local string = CreateVarString(10, 'LITERAL_STRING', informationTable.text[i])
+    local prompt = PromptRegisterBegin()
+    PromptSetText(prompt, string)
+    PromptSetControlAction(prompt, informationTable.key[i])
+    PromptSetGroup(prompt, promptGroupId, 0)
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptRegisterEnd(prompt)
+  end
+end
 function StartFreecamThread()
   -- Camera/Pos updating thread
   Citizen.CreateThread(function ()
@@ -81,12 +98,12 @@ function StartFreecamThread()
     local function updatePos(pos, rotZ)
       if pos ~= nil and rotZ ~= nil then
         -- Update ped
-        SetEntityCoords(ped, pos.x, pos.y, pos.z)
+        SetEntityCoords(ped, pos.x, pos.y, pos.z, false, false, false, false)
         SetEntityHeading(ped, rotZ)
         -- Update veh
         local veh = GetVehiclePedIsIn(ped, false)
-        if veh and veh > 0 then 
-          SetEntityCoords(veh, pos.x, pos.y, pos.z)
+        if veh and veh > 0 then
+          SetEntityCoords(veh, pos.x, pos.y, pos.z, false, false, false, false)
         end
       end
     end
@@ -107,74 +124,80 @@ function StartFreecamThread()
     updatePos(loopPos, loopRotZ)
   end)
 
-  local function InstructionalButton(controlButton, text)
-    ScaleformMovieMethodAddParamPlayerNameString(controlButton)
-    BeginTextCommandScaleformString("STRING")
-    AddTextComponentScaleform(text)
-    EndTextCommandScaleformString()
-  end
-
-  --Scaleform drawing thread
-  Citizen.CreateThread(function()
-    if not IS_FIVEM then return end
-
-    local scaleform = RequestScaleformMovie("instructional_buttons")
-    while not HasScaleformMovieLoaded(scaleform) do
-      Wait(1)
+  if IS_FIVEM then
+    local function InstructionalButton(controlButton, text)
+      ScaleformMovieMethodAddParamPlayerNameString(controlButton)
+      BeginTextCommandScaleformString("STRING")
+      AddTextComponentSubstringKeyboardDisplay(text)
+      EndTextCommandScaleformString()
     end
-    PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
-    PopScaleformMovieFunctionVoid()
 
-    PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
-    PushScaleformMovieFunctionParameterInt(200)
-    PopScaleformMovieFunctionVoid()
+    --Scaleform drawing thread
+    Citizen.CreateThread(function()
 
-    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-    PushScaleformMovieFunctionParameterInt(0)
-    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_FAST, 1), "Faster")
-    PopScaleformMovieFunctionVoid()
+      local scaleform = RequestScaleformMovie("instructional_buttons")
+      while not HasScaleformMovieLoaded(scaleform) do
+        Wait(1)
+      end
+      BeginScaleformMovieMethod(scaleform, "CLEAR_ALL")
+      EndScaleformMovieMethod()
 
-    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-    PushScaleformMovieFunctionParameterInt(1)
-    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_SLOW, 1), "Slower")
-    PopScaleformMovieFunctionVoid()
+      BeginScaleformMovieMethod(scaleform, "SET_CLEAR_SPACE")
+      ScaleformMovieMethodAddParamInt(200)
+      EndScaleformMovieMethod()
 
-    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-    PushScaleformMovieFunctionParameterInt(2)
-    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Y, 1), "Fwd/Back")
-    PopScaleformMovieFunctionVoid()
+      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
+      ScaleformMovieMethodAddParamInt(0)
+      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_FAST, true), "Faster")
+      EndScaleformMovieMethod()
 
-    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-    PushScaleformMovieFunctionParameterInt(3)
-    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_X, 1), "Left/Right")
-    PopScaleformMovieFunctionVoid()
+      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
+      ScaleformMovieMethodAddParamInt(1)
+      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_SLOW, true), "Slower")
+      EndScaleformMovieMethod()
 
-    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-    PushScaleformMovieFunctionParameterInt(4)
-    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Z[2], 1), "Down")
-    PopScaleformMovieFunctionVoid()
+      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
+      ScaleformMovieMethodAddParamInt(2)
+      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Y, true), "Fwd/Back")
+      EndScaleformMovieMethod()
 
-    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-    PushScaleformMovieFunctionParameterInt(5)
-    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Z[1], 1), "Up")
-    PopScaleformMovieFunctionVoid()
+      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
+      ScaleformMovieMethodAddParamInt(3)
+      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_X, true), "Left/Right")
+      EndScaleformMovieMethod()
 
-    PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
-    PopScaleformMovieFunctionVoid()
+      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
+      ScaleformMovieMethodAddParamInt(4)
+      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Z[2], true), "Down")
+      EndScaleformMovieMethod()
 
-    PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(80)
-    PopScaleformMovieFunctionVoid()
+      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
+      ScaleformMovieMethodAddParamInt(5)
+      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Z[1], true), "Up")
+      EndScaleformMovieMethod()
 
+      BeginScaleformMovieMethod(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
+      EndScaleformMovieMethod()
+
+      BeginScaleformMovieMethod(scaleform, "SET_BACKGROUND_COLOUR")
+      ScaleformMovieMethodAddParamInt(0)
+      ScaleformMovieMethodAddParamInt(0)
+      ScaleformMovieMethodAddParamInt(0)
+      ScaleformMovieMethodAddParamInt(80)
+      EndScaleformMovieMethod()
+
+      while IsFreecamActive() do
+        DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
+        Wait(0)
+      end
+      SetScaleformMovieAsNoLongerNeeded(scaleform)
+    end)
+  else
     while IsFreecamActive() do
-      DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
+      PromptSetActiveGroupThisFrame(promptGroupId, CreateVarString(10, 'LITERAL_STRING', 'Controls'), 1, 0, 0, 0)
       Wait(0)
     end
-    SetScaleformMovieAsNoLongerNeeded()
-  end)
+  end
 end
 
 --------------------------------------------------------------------------------

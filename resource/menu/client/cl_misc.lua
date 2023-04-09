@@ -13,7 +13,7 @@ SoundEnum = {
 
 -- Audio play callback
 RegisterNUICallback('playSound', function(sound, cb)
-    PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
+    PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', true)
     cb({})
 end)
 

@@ -16,7 +16,7 @@ local function toggleSuperJump(enabled)
         CreateThread(function()
             local Wait = Wait
             local pid = PlayerId()
-            SetRunSprintMultiplierForPlayer(pid, 1.49)
+            if IS_FIVEM then SetRunSprintMultiplierForPlayer(pid, 1.49) end
             local frameCounter = 0
             while superJumpEnabled do
                 frameCounter = frameCounter + 1
@@ -29,9 +29,10 @@ local function toggleSuperJump(enabled)
             end
           end)
     else
+        clearPersistentAlert('superJumpEnabled')
+        if not IS_FIVEM then return end
         local pid = PlayerId()
         SetRunSprintMultiplierForPlayer(pid, 1.0)
-        clearPersistentAlert('superJumpEnabled')
     end
 end
 
@@ -46,10 +47,11 @@ local function toggleGodMode(enabled)
 end
 
 local freecamVeh = 0
+local invisibleLocally = IS_FIVEM and SetEntityLocallyInvisible or SetPlayerInvisibleLocally
 local function toggleFreecam(enabled)
     noClipEnabled = enabled
     local ped = PlayerPedId()
-    SetEntityVisible(ped, not enabled)
+    SetEntityVisible(ped, not enabled, false)
     SetEntityInvincible(ped, enabled)
     FreezeEntityPosition(ped, enabled)
 
@@ -69,10 +71,10 @@ local function toggleFreecam(enabled)
 
         Citizen.CreateThread(function()
             while IsFreecamActive() do
-                SetEntityLocallyInvisible(ped)
+                invisibleLocally(ped, true)
                 if freecamVeh > 0 then
                     if DoesEntityExist(freecamVeh) then
-                        SetEntityLocallyInvisible(freecamVeh)
+                        invisibleLocally(freecamVeh, true) -- only works for players in RedM, but to prevent errors.
                     else
                         freecamVeh = 0
                     end
@@ -87,7 +89,7 @@ local function toggleFreecam(enabled)
                 local coords = GetEntityCoords(ped)
                 NetworkSetEntityInvisibleToNetwork(freecamVeh, false)
                 SetEntityCollision(freecamVeh, true, true)
-                SetEntityCoords(freecamVeh, coords[1], coords[2], coords[3])
+                SetEntityCoords(freecamVeh, coords[1], coords[2], coords[3], false, false, false, false)
                 SetPedIntoVehicle(ped, freecamVeh, -1)
                 freecamVeh = 0
             end
@@ -96,7 +98,11 @@ local function toggleFreecam(enabled)
 
     local function disableNoClip()
         SetFreecamActive(false)
-        SetGameplayCamRelativeHeading(0)
+        if IS_FIVEM then
+            SetGameplayCamRelativeHeading(0)
+        else
+            Citizen.InvokeNative(0x14F3947318CA8AD2, 0.0, 0.0) -- SetThirdPersonCamRelativeHeadingLimitsThisUpdate
+        end
     end
 
     if not IsFreecamActive() and enabled then
@@ -111,7 +117,7 @@ local function toggleFreecam(enabled)
 end
 
 
-local PTFX_ASSET = 'ent_dst_elec_fire_sp'
+local PTFX_ASSET = IS_FIVEM and 'ent_dst_elec_fire_sp' or 'ent_amb_smoke_smolder'
 local PTFX_DICT = 'core'
 local LOOP_AMOUNT = 25
 local PTFX_DURATION = 1000
@@ -129,8 +135,8 @@ local function createPlayerModePtfxLoop(tgtPedId)
 
         local particleTbl = {}
 
-        for i=0, LOOP_AMOUNT do
-            UseParticleFxAssetNextCall(PTFX_DICT)
+        for i = 0, LOOP_AMOUNT do
+            UseParticleFxAsset(PTFX_DICT)
             local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, tgtPedId, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, false, false, false)
             particleTbl[#particleTbl + 1] = partiResult
             Wait(0)
@@ -171,7 +177,7 @@ RegisterCommand('txAdmin:menu:noClipToggle', function()
         return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
     end
     askChangePlayerMode(noClipEnabled and 'none' or 'noclip')
-end)
+end, false)
 
 -- Menu callback to change the player mode
 RegisterNUICallback('playerModeChanged', function(mode, cb)

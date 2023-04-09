@@ -34,7 +34,7 @@ function GetInitialCameraRotation()
     return _internal_rot
   end
 
-  local rot = GetGameplayCamRot()
+  local rot = GetGameplayCamRot(2)
   return vector3(rot.x, 0.0, rot.z)
 end
 
@@ -45,8 +45,8 @@ function IsFreecamFrozen()
 end
 
 function SetFreecamFrozen(frozen)
-  local frozen = frozen == true
-  _internal_isFrozen = frozen
+  local _frozen = frozen == true
+  _internal_isFrozen = _frozen
 end
 
 --------------------------------------------------------------------------------
@@ -61,8 +61,8 @@ function SetFreecamPosition(x, y, z)
   local pos = vector3(x, y, z)
   -- local int = GetInteriorAtCoords(pos)
   -- LoadInterior(int)
-  SetFocusPosAndVel(x, y, z)
-  SetCamCoord(_internal_camera, pos)
+  SetFocusPosAndVel(x, y, z, 0.0, 0.0, 0.0)
+  SetCamCoord(_internal_camera, x, y, z)
   if IS_FIVEM then
     LockMinimapPosition(x, y)
   end
@@ -83,7 +83,7 @@ function SetFreecamRotation(x, y, z)
   local rot = vector3(rotX, rotY, rotZ)
 
   LockMinimapAngle(floor(rotZ))
-  SetCamRot(_internal_camera, rot)
+  SetCamRot(_internal_camera, rotX, rotY, rotZ, 2)
 
   _internal_rot  = rot
   _internal_vecX = vecX
@@ -131,6 +131,8 @@ function SetFreecamActive(active)
   local enableEasing = _G.CAMERA_SETTINGS.ENABLE_EASING
   local easingDuration = _G.CAMERA_SETTINGS.EASING_DURATION
 
+  RenderScriptCams(active, enableEasing, easingDuration, true, false, 0)
+  SetEveryoneIgnorePlayer(PlayerPedId(), active)
   if active then
     local pos = GetInitialCameraPosition()
     local rot = GetInitialCameraRotation()
@@ -142,7 +144,7 @@ function SetFreecamActive(active)
     SetFreecamRotation(rot.x, rot.y, rot.z)
     TriggerEvent('freecam:onEnter')
   else
-    DestroyCam(_internal_camera)
+    DestroyCam(_internal_camera, false)
     ClearFocus()
     UnlockMinimapAngle()
     if IS_FIVEM then
@@ -150,6 +152,4 @@ function SetFreecamActive(active)
     end
     TriggerEvent('freecam:onExit')
   end
-
-  RenderScriptCams(active, enableEasing, easingDuration, true, true)
 end
