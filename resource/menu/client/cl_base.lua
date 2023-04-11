@@ -51,15 +51,15 @@ local function txadmin(_, args)
     sendMenuMessage('openPlayerModal', targetPlayer)
   end
 end
-RegisterCommand('txadmin', txadmin, false)
-RegisterCommand('tx', txadmin, false)
+RegisterCommand('txadmin', txadmin)
+RegisterCommand('tx', txadmin)
 
 RegisterCommand('txAdmin:menu:openPlayersPage', function()
   if not checkMenuAccessible() then return end
   sendMenuMessage('setMenuPage', 1)
   toggleMenuVisibility(true)
   SetNuiFocus(true, true)
-end, false)
+end)
 
 
 
@@ -115,7 +115,7 @@ RegisterCommand('txAdmin-reauth', function ()
   sendSnackbarMessage('info', 'Retrying menu authentication.', false)
   awaitingReauth = true
   retryAuthentication()
-end, false)
+end)
 
 
 -- Register chat suggestions

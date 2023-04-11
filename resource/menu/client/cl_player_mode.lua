@@ -177,7 +177,7 @@ RegisterCommand('txAdmin:menu:noClipToggle', function()
         return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
     end
     askChangePlayerMode(noClipEnabled and 'none' or 'noclip')
-end, false)
+end)
 
 -- Menu callback to change the player mode
 RegisterNUICallback('playerModeChanged', function(mode, cb)

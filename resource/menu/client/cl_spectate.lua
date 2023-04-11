@@ -234,7 +234,7 @@ RegisterCommand('txAdmin:menu:endSpectate', function()
     if not isSpectateEnabled or isMenuVisible then return end
     TriggerServerEvent('txAdmin:menu:endSpectate')
     stopSpectating()
-end, false)
+end)
 
 --- Cycles the spectate to next or previous player
 --- @param isNext boolean - If true, will spectate the next player in the list
@@ -259,11 +259,11 @@ end
 
 RegisterCommand('txAdmin:menu:specNextPlayer', function()
     handleSpecCycle(true)
-end, false)
+end)
 
 RegisterCommand('txAdmin:menu:specPrevPlayer', function()
     handleSpecCycle(false)
-end, false)
+end)
 
 RegisterNetEvent('txAdmin:menu:specPlayerCycleFail', function()
     sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.notifications.spectate_cycle_failed', true)
