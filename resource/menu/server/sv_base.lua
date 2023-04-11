@@ -8,7 +8,6 @@ local ServerCtxObj = {
     type = nil,
     status = false
   },
-  gameName = GAME_NAME,
   projectName = nil,
   maxClients = 30,
   locale = nil,

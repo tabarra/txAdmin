@@ -161,6 +161,7 @@ RegisterNUICallback('reactLoaded', function(_, cb)
     updateServerCtx()
     while ServerCtx == false do Wait(0) end
     debugPrint("ServerCtx loaded, sending variables.")
+    sendMenuMessage('setGameName', GAME_NAME)
     sendMenuMessage('setDebugMode', TX_DEBUG_MODE)
     sendMenuMessage('setServerCtx', ServerCtx)
     sendMenuMessage('setPermissions', menuPermissions)

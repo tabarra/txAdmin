@@ -1,40 +1,40 @@
-// import './module-augmentation.d.ts'
+// import './module-augmentation'
 import { createTheme } from "@mui/material";
 
 
-export const MenuTheme = createTheme({
-  name: 'fivem',
-  logo: 'images/txadmin.png',
+export const MenuThemeRedm = createTheme({
+  name: 'redm',
+  logo: 'images/txadmin-redm.png',
   palette: {
     mode: "dark",
     primary: {
-      main: "rgba(0,197,140,0.87)",
+      main: "#F7DC6F",
     },
     success: {
-      main: "rgba(0,149,108,0.87)",
+      main: "#82E0AA",
     },
     warning: {
-      main: "rgb(255,189,22)",
+      main: "#F5B041",
     },
     error: {
-      main: "rgb(194,13,37)",
+      main: "#E74C3C",
     },
     info: {
-      main: "rgb(9,96,186)",
+      main: "#85C1E9",
     },
     background: {
-      default: "#151a1f",
-      paper: "#24282B",
+      default: "#332E27",
+      paper: "#4B3B2E",
     },
     action: {
       selected: "rgba(255, 255, 255, 0.08)",
     },
     secondary: {
-      main: "#fff",
+      main: "#D6A2E8",
     },
     text: {
-      secondary: "rgba(221,221,221,0.54)",
-      primary: "#fff",
+      secondary: "#E6D5C9",
+      primary: "#E8E1DC",
     },
   },
   components: {
