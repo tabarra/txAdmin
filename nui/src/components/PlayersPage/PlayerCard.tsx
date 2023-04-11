@@ -66,7 +66,7 @@ const determineHealthBGColor = (val: number) => {
 const determineHealthColor = (val: number, theme: Theme) => {
   if (val <= 20) return theme.palette.error.light;
   else if (val <= 60) return theme.palette.warning.light;
-  else return theme.palette.primary.light;
+  else return theme.palette.success.light;
 };
 
 const HealthBarBackground = styled(Box, {

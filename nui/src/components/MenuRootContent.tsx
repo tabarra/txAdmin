@@ -1,16 +1,23 @@
 import React from "react";
-import { Box, Collapse, styled, Typography } from "@mui/material";
+import { Box, Collapse, styled, Typography, useTheme } from "@mui/material";
 import { PageTabs} from "@nui/src/components/misc/PageTabs";
 import { txAdminMenuPage, usePageValue } from "@nui/src/state/page.state";
 import { MainPageList } from "@nui/src/components/MainPage/MainPageList";
 import { useServerCtxValue } from "@nui/src/state/server.state";
 import { useDebounce } from "@nui/src/hooks/useDebouce";
 
-const TxAdminLogo: React.FC = () => (
-  <Box my={1} display="flex" justifyContent="center">
-    <img src="images/txadmin.png" alt="txAdmin logo" />
-  </Box>
-);
+interface TxAdminLogoProps {
+  themeName: string;
+}
+
+const TxAdminLogo: React.FC<TxAdminLogoProps> = ({ themeName }) => {
+  const imgName = themeName === 'fivem' ? 'txadmin.png' : 'txadmin-redm.png';
+  return (
+    <Box my={1} display="flex" justifyContent="center">
+      <img src={`images/${imgName}`} alt="txAdmin logo" />
+    </Box>
+  )
+};
 
 const StyledRoot = styled(Box)(({ theme }) => ({
   height: "fit-content",
@@ -23,6 +30,7 @@ const StyledRoot = styled(Box)(({ theme }) => ({
 }));
 
 export const MenuRootContent: React.FC = React.memo(() => {
+  const theme = useTheme();
   const serverCtx = useServerCtxValue();
   const curPage = usePageValue()
   const padSize = Math.max(0, 9 - serverCtx.txAdminVersion.length);
@@ -36,7 +44,7 @@ export const MenuRootContent: React.FC = React.memo(() => {
 
   return (
     <StyledRoot p={2} pb={1}>
-      <TxAdminLogo />
+      <TxAdminLogo themeName={theme.name}/>
       <Typography
         color="textSecondary"
         style={{

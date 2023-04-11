@@ -29,7 +29,7 @@ export const PageTabs: React.FC = () => {
         value={page}
         centered
         indicatorColor="primary"
-        textColor="secondary"
+        textColor="primary"
         onChange={(_, newVal) => setPage(newVal)}
       >
         <StyledTab label="Main" wrapped disableFocusRipple />
