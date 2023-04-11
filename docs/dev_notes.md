@@ -36,13 +36,16 @@
 - [ ] add hwid token bans
     - add an option to wipe all hwids from the database
 - [ ] update discord.js - should be drop in
+- [ ] add bot enabled / whitelist back into stats
 
 
 # RedM Migrations
 - [ ] Player Mode
     - [ ] noclip
         - [x] controls
-        - [ ] bug: after exiting, the mouse doesn't move the camera, pressing C fixes it which probably indicates its an issue destroying the camera created
+        - [x] bug: after exiting, the mouse doesn't move
+        - [ ] check using it on vehicle
+        - [ ] scaleform
     - [ ] god mode
     - [ ] super jump
     - [ ] normal

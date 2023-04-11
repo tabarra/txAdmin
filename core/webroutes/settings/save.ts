@@ -148,7 +148,7 @@ async function handleFXServer(ctx: Context) {
         }
     } catch (error) {
         const msg = cfg.serverDataPath.includes('resources')
-            ? 'The base must be the folder that contains the resources folder.'
+            ? 'Looks like this path is the \'resources\' folder, but the server data path must be the folder that contains the resources folder instead of the resources folder itself.'
             : (error as Error).message;
         return ctx.send({ type: 'danger', message: `<strong>Server Data Folder error:</strong> ${msg}` });
     }
