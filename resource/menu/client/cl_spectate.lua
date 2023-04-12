@@ -30,7 +30,7 @@ end)
 local function InstructionalButton(controlButton, text)
     ScaleformMovieMethodAddParamPlayerNameString(controlButton)
     BeginTextCommandScaleformString("STRING")
-    AddTextComponentSubstringKeyboardDisplay(text)
+    AddTextComponentScaleform(text)
     EndTextCommandScaleformString()
 end
 
@@ -43,46 +43,46 @@ local function createScaleformThread()
         while not HasScaleformMovieLoaded(scaleform) do
             Wait(1)
         end
-        BeginScaleformMovieMethod(scaleform, "CLEAR_ALL")
-        EndScaleformMovieMethod()
+        PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
+        PopScaleformMovieFunctionVoid()
 
-        BeginScaleformMovieMethod(scaleform, "SET_CLEAR_SPACE")
-        ScaleformMovieMethodAddParamInt(200)
-        EndScaleformMovieMethod()
+        PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
+        PushScaleformMovieFunctionParameterInt(200)
+        PopScaleformMovieFunctionVoid()
 
         -- Next player button - txAdmin:menu:specNextPlayer
-        BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-        ScaleformMovieMethodAddParamInt(2)
+        PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+        PushScaleformMovieFunctionParameterInt(2)
         InstructionalButton('~INPUT_698AE6AF~', "Next Player")
-        EndScaleformMovieMethod()
+        PopScaleformMovieFunctionVoid()
 
         -- Previous player button - txAdmin:menu:specPrevPlayer
-        BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-        ScaleformMovieMethodAddParamInt(1)
+        PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+        PushScaleformMovieFunctionParameterInt(1)
         InstructionalButton('~INPUT_5E76B036~', "Previous Player")
-        EndScaleformMovieMethod()
+        PopScaleformMovieFunctionVoid()
 
         -- Exit spectate button - txAdmin:menu:endSpectate
-        BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-        ScaleformMovieMethodAddParamInt(0)
+        PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+        PushScaleformMovieFunctionParameterInt(0)
         InstructionalButton('~INPUT_417C207D~', "Exit Spectate")
-        EndScaleformMovieMethod()
+        PopScaleformMovieFunctionVoid()
 
-        BeginScaleformMovieMethod(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
-        EndScaleformMovieMethod()
+        PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
+        PopScaleformMovieFunctionVoid()
 
-        BeginScaleformMovieMethod(scaleform, "SET_BACKGROUND_COLOUR")
-        ScaleformMovieMethodAddParamInt(0)
-        ScaleformMovieMethodAddParamInt(0)
-        ScaleformMovieMethodAddParamInt(0)
-        ScaleformMovieMethodAddParamInt(80)
-        EndScaleformMovieMethod()
+        PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(80)
+        PopScaleformMovieFunctionVoid()
 
         while isSpectateEnabled do
             DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
             Wait(0)
         end
-        SetScaleformMovieAsNoLongerNeeded(scaleform)
+        SetScaleformMovieAsNoLongerNeeded()
     end)
 end
 
@@ -98,7 +98,7 @@ local function createGamerTagInfo()
     end
     SetMpGamerTagVisibility(storedGameTag, 2, 1)  --set the visibility of component 2(healthArmour) to true
     SetMpGamerTagAlpha(storedGameTag, 2, 255) --set the alpha of component 2(healthArmour) to 255
-    SetMpGamerTagHealthBarColour(storedGameTag, 129) --set component 2(healthArmour) color to 129(HUD_COLOUR_YOGA)
+    SetMpGamerTagHealthBarColor(storedGameTag, 129) --set component 2(healthArmour) color to 129(HUD_COLOUR_YOGA)
     SetMpGamerTagAlpha(storedGameTag, 4, 255) --set the alpha of component 1(name) to 255
     SetMpGamerTagColour(storedGameTag, 4, 66)
     SetMpGamerTagVisibility(storedGameTag, 4, NetworkIsPlayerTalking(storedTargetPlayerId))
@@ -146,7 +146,7 @@ local function collisionTpCoordTransition(coords)
     -- Teleport player back
     local playerPed = PlayerPedId()
     RequestCollisionAtCoord(coords.x, coords.y, coords.z)
-    SetEntityCoords(playerPed, coords.x, coords.y, coords.z, false, false, false, false)
+    SetEntityCoords(playerPed, coords.x, coords.y, coords.z)
     local attempts = 0
     while not HasCollisionLoadedAroundEntity(playerPed) do
         Wait(5)
