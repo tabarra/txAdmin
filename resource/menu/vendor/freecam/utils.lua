@@ -52,7 +52,7 @@ function IsGamepadControl()
   if IS_FIVEM then
     return not IsUsingKeyboard(2)
   else
-    return not Citizen.InvokeNative(0xA571D46727E2B718, 2)
+    return not Citizen.InvokeNative(0xA571D46727E2B718, 2) -- IsUsingKeyboardAndMouse
   end
 end
 

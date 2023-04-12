@@ -41,20 +41,20 @@
 
 # RedM Migrations
 - [ ] Player Mode
-    - [x] noclip
+    - [ ] noclip
         - [x] controls
         - [x] bug: after exiting, the mouse doesn't move
-        - [ ] check using it on vehicle
-        - [x] scaleform
+        - [ ] check using it on vehicle + horse
+        - [x] scaleform/prompt
     - [ ] god mode
-    - [x] super jump
-    - [x] normal
+    - [check] super jump
+    - [check] normal
     - [x] particles
 - [ ] Teleport
     - [ ] waypoint
     - [ ] coords
     - [ ] back
-    - [x] copy coords
+    - [check] copy coords
 - [ ] Vehicle
     - [ ] spawn
     - [ ] fix
@@ -72,6 +72,7 @@
     - [ ] go to
     - [ ] bring
     - [ ] spectate
+        - [ ] copy prompt helper from freecam?
     - [ ] freeze
     - [ ] troll: set drunk
     - [ ] troll: set fire

@@ -71,20 +71,25 @@ local function UpdateCamera()
 end
 
 -------------------------------------------------------------------------------
+local redmInstructionGroupId
 if IS_REDM then
-  local informationTable = {
-    text = { 'Faster', 'Slower', 'Fwd/Back', 'Left/Right', 'Down', 'Up' },
-    key = { CONTROLS.MOVE_FAST, CONTROLS.MOVE_SLOW, CONTROLS.MOVE_Y, CONTROLS.MOVE_X, CONTROLS.MOVE_Z[2], CONTROLS.MOVE_Z[1] }
+  local keysTable = {
+    ['Faster'] = CONTROLS.MOVE_FAST,
+    ['Slower'] = CONTROLS.MOVE_SLOW,
+    ['Fwd/Back'] = CONTROLS.MOVE_Y,
+    ['Left/Right'] = CONTROLS.MOVE_X,
+    ['Down'] = CONTROLS.MOVE_Z[2],
+    ['Up'] = CONTROLS.MOVE_Z[1],
   }
-  promptGroupId = GetRandomIntInRange(0, 65536)
-  for i = 1, 6 do
-    local string = CreateVarString(10, 'LITERAL_STRING', informationTable.text[i])
+
+  redmInstructionGroupId = GetRandomIntInRange(0, 65535)
+  for keyLabel, keyControl in pairs(keysTable) do
     local prompt = PromptRegisterBegin()
-    PromptSetText(prompt, string)
-    PromptSetControlAction(prompt, informationTable.key[i])
-    PromptSetGroup(prompt, promptGroupId, 0)
+    PromptSetText(prompt, CreateVarString(10, 'LITERAL_STRING', keyLabel))
+    PromptSetControlAction(prompt, keyControl)
+    PromptSetGroup(prompt, redmInstructionGroupId, 0)
     PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
+    PromptSetEnabled(prompt, true)
     PromptRegisterEnd(prompt)
   end
 end
@@ -193,8 +198,9 @@ function StartFreecamThread()
       SetScaleformMovieAsNoLongerNeeded(scaleform)
     end)
   else
+    local promptTitle = CreateVarString(10, 'LITERAL_STRING', 'Controls')
     while IsFreecamActive() do
-      PromptSetActiveGroupThisFrame(promptGroupId, CreateVarString(10, 'LITERAL_STRING', 'Controls'), 1, 0, 0, 0)
+      PromptSetActiveGroupThisFrame(redmInstructionGroupId, promptTitle, 1, 0, 0, 0)
       Wait(0)
     end
   end

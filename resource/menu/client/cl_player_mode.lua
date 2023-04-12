@@ -47,7 +47,7 @@ local function toggleGodMode(enabled)
 end
 
 local freecamVeh = 0
-local invisibleLocally = IS_FIVEM and SetEntityLocallyInvisible or SetPlayerInvisibleLocally
+local setLocallyInvisibleFunc = IS_FIVEM and SetEntityLocallyInvisible or SetPlayerInvisibleLocally
 local function toggleFreecam(enabled)
     noClipEnabled = enabled
     local ped = PlayerPedId()
@@ -71,10 +71,10 @@ local function toggleFreecam(enabled)
 
         Citizen.CreateThread(function()
             while IsFreecamActive() do
-                invisibleLocally(ped, true)
+                setLocallyInvisibleFunc(ped, true)
                 if freecamVeh > 0 then
                     if DoesEntityExist(freecamVeh) then
-                        invisibleLocally(freecamVeh, true) -- only works for players in RedM, but to prevent errors.
+                        setLocallyInvisibleFunc(freecamVeh, true) -- only works for players in RedM, but to prevent errors.
                     else
                         freecamVeh = 0
                     end
@@ -117,10 +117,18 @@ local function toggleFreecam(enabled)
 end
 
 
-local PTFX_ASSET = IS_FIVEM and 'ent_dst_elec_fire_sp' or 'ent_amb_smoke_smolder'
-local PTFX_DICT = 'core'
-local LOOP_AMOUNT = 25
-local PTFX_DURATION = 1000
+local PTFX_DICT, PTFX_ASSET, LOOP_AMOUNT, PTFX_DURATION
+if IS_FIVEM then
+    PTFX_DICT = 'core'
+    PTFX_ASSET = 'ent_dst_elec_fire_sp'
+    LOOP_AMOUNT = 25
+    PTFX_DURATION = 1000
+else
+    PTFX_DICT = 'core'
+    PTFX_ASSET = 'fire_wrecked_hot_air_balloon'
+    LOOP_AMOUNT = 10
+    PTFX_DURATION = 850
+end
 
 -- Applies the particle effect to a ped
 local function createPlayerModePtfxLoop(tgtPedId)
