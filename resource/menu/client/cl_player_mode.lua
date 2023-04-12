@@ -16,12 +16,23 @@ local function toggleSuperJump(enabled)
         CreateThread(function()
             local Wait = Wait
             local pid = PlayerId()
-            if IS_FIVEM then SetRunSprintMultiplierForPlayer(pid, 1.49) end
+            if IS_FIVEM then
+                SetRunSprintMultiplierForPlayer(pid, 1.49)
+            else
+                --FIXME: this works, but i cannot revert it to the correct value, therefore better disable it
+                -- Citizen.InvokeNative(0xBBADFB5E5E5766FB, pid, 0.0) -- SetPlayerStaminaSprintDepletionMultiplier
+            end
+
+            -- loop to keep player fast
             local frameCounter = 0
             while superJumpEnabled do
                 frameCounter = frameCounter + 1
                 if frameCounter > 250 then
-                    RestorePlayerStamina(pid, 100.0)
+                    if IS_FIVEM then
+                        RestorePlayerStamina(pid, 100.0)
+                    else
+                        -- Citizen.InvokeNative(0x675680D089BFA21F, ped, 100.0) -- RestorePedStamina
+                    end
                     frameCounter = 0
                 end
                 SetSuperJumpThisFrame(pid)
@@ -29,10 +40,13 @@ local function toggleSuperJump(enabled)
             end
           end)
     else
+        if IS_FIVEM then
+            local pid = PlayerId()
+            SetRunSprintMultiplierForPlayer(pid, 1.0)
+        else
+            -- Citizen.InvokeNative(0xBBADFB5E5E5766FB, pid, -1.0) -- SetPlayerStaminaSprintDepletionMultiplier
+        end
         clearPersistentAlert('superJumpEnabled')
-        if not IS_FIVEM then return end
-        local pid = PlayerId()
-        SetRunSprintMultiplierForPlayer(pid, 1.0)
     end
 end
 
@@ -51,7 +65,7 @@ local setLocallyInvisibleFunc = IS_FIVEM and SetEntityLocallyInvisible or SetPla
 local function toggleFreecam(enabled)
     noClipEnabled = enabled
     local ped = PlayerPedId()
-    SetEntityVisible(ped, not enabled, false)
+    SetEntityVisible(ped, not enabled)
     SetEntityInvincible(ped, enabled)
     FreezeEntityPosition(ped, enabled)
 

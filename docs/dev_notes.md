@@ -44,17 +44,18 @@
     - [ ] noclip
         - [x] controls
         - [x] bug: after exiting, the mouse doesn't move
-        - [ ] check using it on vehicle + horse
+        - [ ] fix behavior while seated on vehicle or horse
         - [x] scaleform/prompt
-    - [ ] god mode
-    - [check] super jump
-    - [check] normal
+    - [x] god mode
+    - [x] super jump
+        - [ ] fix stamina bug
+    - [x] normal
     - [x] particles
 - [ ] Teleport
     - [ ] waypoint
     - [ ] coords
     - [ ] back
-    - [check] copy coords
+    - [x] copy coords
 - [ ] Vehicle
     - [ ] spawn
     - [ ] fix
@@ -73,13 +74,13 @@
     - [ ] bring
     - [ ] spectate
         - [ ] copy prompt helper from freecam?
-    - [ ] freeze
+    - [x] freeze
     - [ ] troll: set drunk
     - [ ] troll: set fire
     - [ ] troll: wild attack
     
-
-
+- [x] Generalize the sound function in `cl_misc.lua` and replace the other `PlaySoundFrontend`
+- [ ] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
 
 
 
