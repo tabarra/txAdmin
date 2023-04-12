@@ -231,7 +231,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     setVehicleHandlingValue(veh, 'fRollCentreHeightFront', 0.5); --testar, o certo é 0~1
     setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5); --testar, o certo é 0~1
 
-    PlaySoundFrontend(-1, 'CONFIRM_BEEP', 'HUD_MINI_GAME_SOUNDSET', 1)
+    playLibrarySound('confirm')
     SetVehicleNumberPlateText(veh, "TX B00ST")
     SetVehicleCanBreak(veh, false) -- If this is set to false, the vehicle simply can't break
     SetVehicleEngineCanDegrade(veh, false) -- Engine strong

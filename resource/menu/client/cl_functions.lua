@@ -88,7 +88,7 @@ function toggleMenuVisibility(visible)
         SetNuiFocus(false)
         SetNuiFocusKeepInput(false)
     end
-    PlaySoundFrontend(-1, SoundEnum['enter'], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
+    playLibrarySound('enter')
 end
 
 --- Calculate a safe Z coordinate based off the (X, Y)

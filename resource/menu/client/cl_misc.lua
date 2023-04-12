@@ -6,14 +6,34 @@ if not TX_MENU_ENABLED then return end
 -- =============================================
 
 -- Consts
-SoundEnum = {
-    move = 'NAV_UP_DOWN',
-    enter = 'SELECT'
-}
+local soundLibrary
+if IS_FIVEM then
+    soundLibrary = {
+        move = {'NAV_UP_DOWN', 'HUD_FRONTEND_DEFAULT_SOUNDSET'},
+        enter = {'SELECT', 'HUD_FRONTEND_DEFAULT_SOUNDSET'},
+        confirm = {'CONFIRM_BEEP', 'HUD_MINI_GAME_SOUNDSET'},
+    }
+else
+    soundLibrary = {
+        move = {'round_start_countdown_tick', 'RDRO_Poker_Sounds'},
+        enter = {'BET_PROMPT', 'HUD_POKER'},
+        confirm = {'BULLSEYE', 'FMA_ARCHERY_Sounds'},
+    }
+end
+
+function playLibrarySound(sound)
+    if IS_FIVEM then
+        PlaySoundFrontend(-1, soundLibrary[sound][1], soundLibrary[sound][2], 1)
+    else
+        Citizen.InvokeNative(0x9D746964E0CF2C5F, soundLibrary[sound][1], soundLibrary[sound][2])  -- ReleaseShardSounds
+        Wait(0)
+        PlaySoundFrontend(soundLibrary[sound][1], soundLibrary[sound][2], true, 1);
+    end
+end
 
 -- Audio play callback
 RegisterNUICallback('playSound', function(sound, cb)
-    PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', true)
+    playLibrarySound(sound)
     cb({})
 end)
 
