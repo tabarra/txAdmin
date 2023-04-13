@@ -62,9 +62,9 @@
     - [ ] fix
     - [ ] delete
     - [ ] boost
-- [ ] Heal
-    - [ ] self
-    - [ ] everyone
+- [x] Heal
+    - [x] self
+    - [x] everyone
 - [ ] Announcements
 - [ ] reset world area
 - [ ] player ids
@@ -83,6 +83,7 @@
     
 - [x] Generalize the sound function in `cl_misc.lua` and replace the other `PlaySoundFrontend`
 - [ ] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
+- [ ] Find out why the players page doesn't reflect the player health, maybe it is client side only?
 
 
 
