@@ -299,8 +299,27 @@ end)
 local function handleTpNormally(x, y, z)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
-    SetPedCoordsKeepVehicle(ped, x, y, 100.0)
+    local horse
+    if IS_FIVEM then
+        SetPedCoordsKeepVehicle(ped, x, y, 100.0)
+    else
+        if IsPedOnMount(ped) then
+            horse = GetMount(ped)
+            SetEntityCoords(horse, x, y, 100.0, false, false, false, false)
+            FreezeEntityPosition(horse, true)
+        end
+        SetEntityCoords(ped, x, y, 100.0, false, false, false, false)
+    end
+
+    --Prepare vehicle
     if veh > 0 then
+        if IS_REDM then
+            SetVehicleCanBreak(veh, false)
+            SetVehicleWheelsCanBreak(veh, false)
+            SetEntityCollision(veh, false, false)
+            SetEntityCoords(veh, x, y, 100.0, false, false, false, false)
+            SetPedIntoVehicle(ped, veh, -1)
+        end
         FreezeEntityPosition(veh, true)
     else
         FreezeEntityPosition(ped, true)
@@ -327,16 +346,44 @@ local function handleTpNormally(x, y, z)
             z = _finalZ
         end
     end
-    -- update ped again
-    ped = PlayerPedId()
-    SetPedCoordsKeepVehicle(ped, x, y, z)
+
+    -- Teleport to targert
+    ped = PlayerPedId()  --update ped id
+    if IS_FIVEM then
+        SetPedCoordsKeepVehicle(ped, x, y, z)
+    else
+        if horse then
+            SetEntityCoords(horse, x, y, z + 0.5, false, false, false, false)
+            FreezeEntityPosition(horse, false)
+        end
+        SetEntityCoords(ped, x, y, z + 0.5, false, false, false, false)
+    end
+
+    -- handle vehicle teleport
     if veh > 0 then
+        veh = GetVehiclePedIsIn(ped, false) --update veh id
+        SetEntityAlpha(veh, 125)
+        SetEntityCoords(veh, x, y, z + 0.5, false, false, false, false)
+        SetPedIntoVehicle(ped, veh, -1)
+        SetVehicleOnGroundProperly(veh)
+        SetEntityCollision(veh, true, true)
         FreezeEntityPosition(veh, false)
+        CreateThread(function()
+            Wait(2000)
+            ResetEntityAlpha(veh)
+            SetVehicleCanBreak(veh, true)
+            SetVehicleWheelsCanBreak(veh, true)
+        end)
     else
         FreezeEntityPosition(ped, false)
     end
 
-    SetGameplayCamRelativeHeading(0)
+    -- point camera to the ped direction
+    if IS_FIVEM then
+        SetGameplayCamRelativeHeading(0)
+    else
+        Citizen.InvokeNative(0x14F3947318CA8AD2, 0.0, 0.0) -- SetThirdPersonCamRelativeHeadingLimitsThisUpdate
+    end
 end
 
 local function handleTpForFreecam(x, y, z)
@@ -386,12 +433,18 @@ end)
 
 -- Teleport to the current waypoint
 RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
-    local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
-    if waypoint and waypoint > 0 then
-        sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
-        local blipCoords = GetBlipInfoIdCoord(waypoint)
-        teleportToCoords(vec3(blipCoords[1], blipCoords[2], 0))
-    else
-        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
+    if not IsWaypointActive() then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
     end
+
+    local destCoords
+    if IS_FIVEM then
+        local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
+        destCoords = GetBlipInfoIdCoord(waypoint)
+    else
+        destCoords = GetWaypointCoords()
+    end
+
+    teleportToCoords(vec3(destCoords.x, destCoords.y, 0))
+    sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
 end)

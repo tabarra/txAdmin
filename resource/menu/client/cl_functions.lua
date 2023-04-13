@@ -100,7 +100,7 @@ function FindZForCoords(x, y)
     local START_Z = 1500
     local z = START_Z
     while found and z > 0 do
-        local _found, _z = GetGroundZFor_3dCoord(x + 0.0, y + 0.0, z - 1.0)
+        local _found, _z = GetGroundZAndNormalFor_3dCoord(x + 0.0, y + 0.0, z - 1.0)
         if _found then
             z = _z + 0.0
         end

@@ -37,6 +37,7 @@
     - add an option to wipe all hwids from the database
 - [ ] update discord.js - should be drop in
 - [ ] add bot enabled / whitelist back into stats
+- [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
 
 
 # RedM Migrations
@@ -51,10 +52,10 @@
         - [x] fix stamina bug
     - [x] normal
     - [x] particles
-- [ ] Teleport
-    - [ ] waypoint
-    - [ ] coords
-    - [ ] back
+- [x] Teleport
+    - [x] waypoint
+    - [x] coords
+    - [x] back
     - [x] copy coords
 - [ ] Vehicle
     - [ ] spawn
@@ -67,6 +68,7 @@
 - [ ] Announcements
 - [ ] reset world area
 - [ ] player ids
+- [ ] logger (death reasons, explosions, etc)
 
 - [ ] Actions
     - [ ] heal
@@ -444,6 +446,7 @@ https://immerjs.github.io/immer/ maybe?
 
 if tailwind, check https://daisyui.com/docs/themes/
 https://ui.shadcn.com/
+https://huemint.com/website-2/
 
 
 ### Update Event + Rollout strategy
