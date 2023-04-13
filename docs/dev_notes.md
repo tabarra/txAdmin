@@ -48,7 +48,7 @@
         - [x] scaleform/prompt
     - [x] god mode
     - [x] super jump
-        - [ ] fix stamina bug
+        - [x] fix stamina bug
     - [x] normal
     - [x] particles
 - [ ] Teleport

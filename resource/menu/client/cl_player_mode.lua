@@ -8,7 +8,7 @@ if not TX_MENU_ENABLED then return end
 
 local noClipEnabled = false
 local superJumpEnabled = false
-
+local moveRateOverride = IS_FIVEM and 1.75 or 1.15
 local function toggleSuperJump(enabled)
     superJumpEnabled = enabled
     if enabled then
@@ -16,36 +16,22 @@ local function toggleSuperJump(enabled)
         CreateThread(function()
             local Wait = Wait
             local pid = PlayerId()
-            if IS_FIVEM then
-                SetRunSprintMultiplierForPlayer(pid, 1.49)
-            else
-                --FIXME: this works, but i cannot revert it to the correct value, therefore better disable it
-                -- Citizen.InvokeNative(0xBBADFB5E5E5766FB, pid, 0.0) -- SetPlayerStaminaSprintDepletionMultiplier
-            end
-
+            local ped = PlayerPedId()
             -- loop to keep player fast
             local frameCounter = 0
             while superJumpEnabled do
                 frameCounter = frameCounter + 1
-                if frameCounter > 250 then
-                    if IS_FIVEM then
-                        RestorePlayerStamina(pid, 100.0)
-                    else
-                        -- Citizen.InvokeNative(0x675680D089BFA21F, ped, 100.0) -- RestorePedStamina
-                    end
+                if frameCounter > 200 then
+                    RestorePlayerStamina(pid, 100.0)
+                    ped = PlayerPedId()
                     frameCounter = 0
                 end
+                SetPedMoveRateOverride(ped, moveRateOverride)
                 SetSuperJumpThisFrame(pid)
                 Wait(0)
             end
-          end)
+        end)
     else
-        if IS_FIVEM then
-            local pid = PlayerId()
-            SetRunSprintMultiplierForPlayer(pid, 1.0)
-        else
-            -- Citizen.InvokeNative(0xBBADFB5E5E5766FB, pid, -1.0) -- SetPlayerStaminaSprintDepletionMultiplier
-        end
         clearPersistentAlert('superJumpEnabled')
     end
 end
