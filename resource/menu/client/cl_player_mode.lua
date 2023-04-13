@@ -8,7 +8,7 @@ if not TX_MENU_ENABLED then return end
 
 local noClipEnabled = false
 local superJumpEnabled = false
-
+local moveRateOverride = IS_FIVEM and 1.75 or 1.15
 local function toggleSuperJump(enabled)
     superJumpEnabled = enabled
     if enabled then
@@ -16,16 +16,17 @@ local function toggleSuperJump(enabled)
         CreateThread(function()
             local Wait = Wait
             local pid = PlayerId()
+            local ped = PlayerPedId()
             -- loop to keep player fast
             local frameCounter = 0
             while superJumpEnabled do
-                local ped = PlayerPedId()
                 frameCounter = frameCounter + 1
                 if frameCounter > 200 then
                     RestorePlayerStamina(pid, 100.0)
+                    ped = PlayerPedId()
                     frameCounter = 0
                 end
-                SetPedMoveRateOverride(ped, 1.75)
+                SetPedMoveRateOverride(ped, moveRateOverride)
                 SetSuperJumpThisFrame(pid)
                 Wait(0)
             end
