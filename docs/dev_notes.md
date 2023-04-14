@@ -77,9 +77,9 @@
     - [ ] spectate
         - [ ] copy prompt helper from freecam?
     - [x] freeze
-    - [ ] troll: set drunk
-    - [ ] troll: set fire
-    - [ ] troll: wild attack
+    - [x] troll: set drunk
+    - [x] troll: set fire
+    - [x] troll: wild attack
     
 - [x] Generalize the sound function in `cl_misc.lua` and replace the other `PlaySoundFrontend`
 - [ ] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
