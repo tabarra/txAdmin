@@ -65,15 +65,15 @@
 - [x] Heal
     - [x] self
     - [x] everyone
-- [ ] Announcements
-- [ ] reset world area
-- [ ] player ids
+- [x] Announcements
+- [ ] reset world area (FIXME: doesn't work, disable button?)
+- [x] player ids
 - [ ] logger (death reasons, explosions, etc)
 
 - [ ] Actions
-    - [ ] heal
-    - [ ] go to
-    - [ ] bring
+    - [x] heal
+    - [x] go to
+    - [x] bring
     - [ ] spectate
         - [ ] copy prompt helper from freecam?
     - [x] freeze
@@ -84,7 +84,21 @@
 - [x] Generalize the sound function in `cl_misc.lua` and replace the other `PlaySoundFrontend`
 - [ ] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
 - [ ] Find out why the players page doesn't reflect the player health, maybe it is client side only?
+- [ ] check again for any added `print()`
 
+
+
+SetMinimapHideFow(true)
+
+return TaskLeaveAnyVehicle(ped, 0, 16)
+
+return IsPedOnMount(ped)
+-- redm: 1 if in horse, false if not, false if in carriage
+-- fivem: xxx if in horse, false if not, false if in car
+
+return IsPedOnVehicle(ped)
+-- redm: false if in horse, false if not, 1 if in carriage
+-- fivem: xxx if in horse, false if not, false if in car
 
 
 
@@ -441,8 +455,8 @@ https://auto-animate.formkit.com
 https://tanstack.com/virtual/v3
 
 For the tx ingame menu, replace actions grid with flexbox
-https://youtu.be/3elGSZSWTbM
-around 12:00
+https://youtu.be/3elGSZSWTbM around 12:00
+outro video com template completo, sem  https://youtu.be/YVI-q3idGiM
 https://immerjs.github.io/immer/ maybe?
 
 if tailwind, check https://daisyui.com/docs/themes/
