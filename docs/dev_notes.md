@@ -32,7 +32,9 @@
     - drop author field as well?
     - remove zap esx pack? last update was 6 months ago
 - [ ] add redm recipes
+    - use `sv_enforceGameBuild 1491`
     - need to add a tracking for % of redm/fivem/libertym servers
+- [ ] add `sv_enforceGameBuild 2699` for fivem recipe
 - [ ] add hwid token bans
     - add an option to wipe all hwids from the database
 - [ ] update discord.js - should be drop in
@@ -75,7 +77,7 @@
     - [x] go to
     - [x] bring
     - [ ] spectate
-        - [ ] copy prompt helper from freecam?
+        - [x] copy prompt helper from freecam
     - [x] freeze
     - [x] troll: set drunk
     - [x] troll: set fire
@@ -86,7 +88,16 @@
 - [ ] Find out why the players page doesn't reflect the player health, maybe it is client side only?
 - [ ] check again for any added `print()`
 
+-1885.7838, 2637.4695, 675.8902, 86.1232
 
+-- DEBUG Commands
+RegisterCommand('spec1', function()
+    isSpectateEnabled = true
+    createInstructionalThreads()
+end)
+RegisterCommand('spec0', function()
+    isSpectateEnabled = false
+end)
 
 SetMinimapHideFow(true)
 

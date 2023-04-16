@@ -162,15 +162,20 @@ end
 
 
 --- Function to enable or disable the player ids
-function toggleShowPlayerIDs(enabled)
+function toggleShowPlayerIDs(enabled, showNotification)
     if not menuIsAccessible then return end
 
     isPlayerIdsEnabled = enabled
+    local snackMessage
     if isPlayerIdsEnabled then
-        sendSnackbarMessage('info', 'nui_menu.page_main.player_ids.alert_show', true)
+        snackMessage = 'nui_menu.page_main.player_ids.alert_show'
         createGamerTagThread()
     else
-        sendSnackbarMessage('info', 'nui_menu.page_main.player_ids.alert_hide', true)
+        snackMessage = 'nui_menu.page_main.player_ids.alert_hide'
+    end
+
+    if showNotification then
+        sendSnackbarMessage('info', snackMessage, true)
     end
     debugPrint('Show Player IDs Status: ' .. tostring(isPlayerIdsEnabled))
 end
@@ -179,7 +184,7 @@ end
 --- Receives the return from the server and toggles player ids on/off
 RegisterNetEvent('txAdmin:menu:showPlayerIDs', function(enabled)
     debugPrint('Received showPlayerIDs event')
-    toggleShowPlayerIDs(enabled)
+    toggleShowPlayerIDs(enabled, true)
 end)
 
 --- Sends perms request to the server to enable player ids

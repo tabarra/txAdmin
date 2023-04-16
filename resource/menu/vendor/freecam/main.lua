@@ -71,31 +71,24 @@ local function UpdateCamera()
 end
 
 -------------------------------------------------------------------------------
-local redmInstructionGroupId
+local keysTable = {
+  {'Slower', CONTROLS.MOVE_SLOW},
+  {'Faster', CONTROLS.MOVE_FAST},
+  {'Down', CONTROLS.MOVE_Z[2]},
+  {'Up', CONTROLS.MOVE_Z[1]},
+  {'Left/Right', CONTROLS.MOVE_X},
+  {'Fwd/Back', CONTROLS.MOVE_Y},
+}
+local redmInstructionGroup, redmPromptTitle
 if IS_REDM then
-  local keysTable = {
-    ['Faster'] = CONTROLS.MOVE_FAST,
-    ['Slower'] = CONTROLS.MOVE_SLOW,
-    ['Fwd/Back'] = CONTROLS.MOVE_Y,
-    ['Left/Right'] = CONTROLS.MOVE_X,
-    ['Down'] = CONTROLS.MOVE_Z[2],
-    ['Up'] = CONTROLS.MOVE_Z[1],
-  }
-
-  redmInstructionGroupId = GetRandomIntInRange(0, 65535)
-  for keyLabel, keyControl in pairs(keysTable) do
-    local prompt = PromptRegisterBegin()
-    PromptSetText(prompt, CreateVarString(10, 'LITERAL_STRING', keyLabel))
-    PromptSetControlAction(prompt, keyControl)
-    PromptSetGroup(prompt, redmInstructionGroupId, 0)
-    PromptSetEnabled(prompt, true)
-    PromptSetEnabled(prompt, true)
-    PromptRegisterEnd(prompt)
-  end
+  redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'NoClip')
+  redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
 end
+
+
 function StartFreecamThread()
   -- Camera/Pos updating thread
-  Citizen.CreateThread(function ()
+  Citizen.CreateThread(function()
     local ped = PlayerPedId()
     local initialPos = GetEntityCoords(ped)
     SetFreecamPosition(initialPos[1], initialPos[2], initialPos[3])
@@ -129,81 +122,23 @@ function StartFreecamThread()
     updatePos(loopPos, loopRotZ)
   end)
 
-  if IS_FIVEM then
-    local function InstructionalButton(controlButton, text)
-      ScaleformMovieMethodAddParamPlayerNameString(controlButton)
-      BeginTextCommandScaleformString("STRING")
-      AddTextComponentSubstringKeyboardDisplay(text)
-      EndTextCommandScaleformString()
-    end
-
-    --Scaleform drawing thread
-    Citizen.CreateThread(function()
-
-      local scaleform = RequestScaleformMovie("instructional_buttons")
-      while not HasScaleformMovieLoaded(scaleform) do
-        Wait(1)
-      end
-      BeginScaleformMovieMethod(scaleform, "CLEAR_ALL")
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "SET_CLEAR_SPACE")
-      ScaleformMovieMethodAddParamInt(200)
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-      ScaleformMovieMethodAddParamInt(0)
-      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_FAST, true), "Faster")
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-      ScaleformMovieMethodAddParamInt(1)
-      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_SLOW, true), "Slower")
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-      ScaleformMovieMethodAddParamInt(2)
-      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Y, true), "Fwd/Back")
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-      ScaleformMovieMethodAddParamInt(3)
-      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_X, true), "Left/Right")
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-      ScaleformMovieMethodAddParamInt(4)
-      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Z[2], true), "Down")
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
-      ScaleformMovieMethodAddParamInt(5)
-      InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Z[1], true), "Up")
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
-      EndScaleformMovieMethod()
-
-      BeginScaleformMovieMethod(scaleform, "SET_BACKGROUND_COLOUR")
-      ScaleformMovieMethodAddParamInt(0)
-      ScaleformMovieMethodAddParamInt(0)
-      ScaleformMovieMethodAddParamInt(0)
-      ScaleformMovieMethodAddParamInt(80)
-      EndScaleformMovieMethod()
-
-      while IsFreecamActive() do
-        DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
-        Wait(0)
-      end
-      SetScaleformMovieAsNoLongerNeeded(scaleform)
-    end)
-  else
-    local promptTitle = CreateVarString(10, 'LITERAL_STRING', 'Controls')
+  -- Start instructional thread
+  CreateThread(function()
+    local fivemScaleform = IS_FIVEM and makeFivemInstructionalScaleform(keysTable)
     while IsFreecamActive() do
-      PromptSetActiveGroupThisFrame(redmInstructionGroupId, promptTitle, 1, 0, 0, 0)
+      if IS_FIVEM then
+        DrawScaleformMovieFullscreen(fivemScaleform, 255, 255, 255, 255, 0)
+      else
+        PromptSetActiveGroupThisFrame(redmInstructionGroup.groupId, redmPromptTitle, 1, 0, 0, 0)
+      end
       Wait(0)
     end
-  end
+
+    --cleanup of the scaleform movie
+    if IS_FIVEM then
+      SetScaleformMovieAsNoLongerNeeded()
+    end
+  end)
 end
 
 --------------------------------------------------------------------------------

@@ -5,123 +5,40 @@ if not TX_MENU_ENABLED then return end
 --  Contains all spectate related logic
 -- =============================================
 
+-- Control keys config
+local CONTROLS
+if IS_FIVEM then
+    CONTROLS = {
+        next = 187, --INPUT_FRONTEND_DOWN
+        prev = 188, --INPUT_FRONTEND_UP
+        exit = 194, --INPUT_FRONTEND_RRIGHT
+    }
+else
+    CONTROLS = {
+        next = 0x05CA7C52, --INPUT_FRONTEND_DOWN
+        prev = 0x6319DB71, --INPUT_FRONTEND_UP
+        exit = 0x156F7119, --INPUT_FRONTEND_CANCEL
+    }
+end
+
+
 -- Last spectate location stored in a vec3
 local spectatorReturnCoords
 -- Spectate mode
 local isSpectateEnabled = false
 -- Whether should we lock the camera to the target ped
 local isInTransitionState = false
-
 -- Spectated ped
 local storedTargetPed
 -- Spectated player's client ID
 local storedTargetPlayerId
 -- Spectated players associated server id
 local storedTargetServerId
--- Spectated players associated GameTag
-local storedGameTag
 
 
-RegisterNUICallback('spectatePlayer', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:spectatePlayer', tonumber(data.id))
-    cb({})
-end)
-
-local function InstructionalButton(controlButton, text)
-    ScaleformMovieMethodAddParamPlayerNameString(controlButton)
-    BeginTextCommandScaleformString("STRING")
-    AddTextComponentScaleform(text)
-    EndTextCommandScaleformString()
-end
-
---- Creates and draws the instructional scaleform
---- NOTE: online JOAAT will not work, need to use the implementation
---- found in fivem/ext/sdk/resources/sdk-root/shell/src/utils/joaat.ts
-local function createScaleformThread()
-    CreateThread(function()
-        local scaleform = RequestScaleformMovie("instructional_buttons")
-        while not HasScaleformMovieLoaded(scaleform) do
-            Wait(1)
-        end
-        PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
-        PopScaleformMovieFunctionVoid()
-
-        PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
-        PushScaleformMovieFunctionParameterInt(200)
-        PopScaleformMovieFunctionVoid()
-
-        -- Next player button - txAdmin:menu:specNextPlayer
-        PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-        PushScaleformMovieFunctionParameterInt(2)
-        InstructionalButton('~INPUT_698AE6AF~', "Next Player")
-        PopScaleformMovieFunctionVoid()
-
-        -- Previous player button - txAdmin:menu:specPrevPlayer
-        PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-        PushScaleformMovieFunctionParameterInt(1)
-        InstructionalButton('~INPUT_5E76B036~', "Previous Player")
-        PopScaleformMovieFunctionVoid()
-
-        -- Exit spectate button - txAdmin:menu:endSpectate
-        PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-        PushScaleformMovieFunctionParameterInt(0)
-        InstructionalButton('~INPUT_417C207D~', "Exit Spectate")
-        PopScaleformMovieFunctionVoid()
-
-        PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
-        PopScaleformMovieFunctionVoid()
-
-        PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
-        PushScaleformMovieFunctionParameterInt(0)
-        PushScaleformMovieFunctionParameterInt(0)
-        PushScaleformMovieFunctionParameterInt(0)
-        PushScaleformMovieFunctionParameterInt(80)
-        PopScaleformMovieFunctionVoid()
-
-        while isSpectateEnabled do
-            DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
-            Wait(0)
-        end
-        SetScaleformMovieAsNoLongerNeeded()
-    end)
-end
-
+--- Helper function to get coords under target
 local function calculateSpectatorCoords(coords)
     return vec3(coords.x, coords.y, coords.z - 15.0)
-end
-
---- Called every 50 frames in SpectateMode to determine whether or not to recreate the GamerTag
-local function createGamerTagInfo()
-    if not isInTransitionState then
-        local nameTag = ('[%d] %s'):format(GetPlayerServerId(storedTargetPlayerId), GetPlayerName(storedTargetPlayerId))
-        storedGameTag = CreateFakeMpGamerTag(storedTargetPed, nameTag, false, false, '', 0, 0, 0, 0)
-    end
-    SetMpGamerTagVisibility(storedGameTag, 2, 1)  --set the visibility of component 2(healthArmour) to true
-    SetMpGamerTagAlpha(storedGameTag, 2, 255) --set the alpha of component 2(healthArmour) to 255
-    SetMpGamerTagHealthBarColor(storedGameTag, 129) --set component 2(healthArmour) color to 129(HUD_COLOUR_YOGA)
-    SetMpGamerTagAlpha(storedGameTag, 4, 255) --set the alpha of component 1(name) to 255
-    SetMpGamerTagColour(storedGameTag, 4, 66)
-    SetMpGamerTagVisibility(storedGameTag, 4, NetworkIsPlayerTalking(storedTargetPlayerId))
-    --debugPrint(('Created gamer tag for ped (%s), TargetPlayerID (%s)'):format(storedTargetPed, storedTargetPlayerId))
-end
-
---- Called to cleanup Gamer Tag's once spectate mode is disabled
-local function clearGamerTagInfo()
-    if not storedGameTag then return end
-    RemoveMpGamerTag(storedGameTag)
-    storedGameTag = nil
-end
-
---- Starts the gamer tag thread
-local function createSpectatorGamerTagThread()
-    debugPrint('Starting gamer tag follower thread')
-    CreateThread(function()
-        while isSpectateEnabled and not isInTransitionState do
-            createGamerTagInfo()
-            Wait(50)
-        end
-        clearGamerTagInfo()
-    end)
 end
 
 --- Will freeze the player and set the entity to invisible
@@ -172,7 +89,9 @@ local function stopSpectating()
 
     -- reset spectator
     NetworkSetInSpectatorMode(false, nil)
-    SetMinimapInSpectatorMode(false, nil)
+    if IS_FIVEM then
+        SetMinimapInSpectatorMode(false, nil)
+    end
     if spectatorReturnCoords then
         debugPrint('Returning spectator to original coords')
         if not pcall(collisionTpCoordTransition, spectatorReturnCoords) then
@@ -182,9 +101,9 @@ local function stopSpectating()
         debugPrint('No spectator return coords saved')
     end
     prepareSpectatorPed(false)
+    toggleShowPlayerIDs(false, false)
 
     -- resetting cache + threads
-    clearGamerTagInfo()
     storedTargetPed = nil
     storedTargetPlayerId = nil
     storedTargetServerId = nil
@@ -194,6 +113,9 @@ local function stopSpectating()
     DoScreenFadeIn(500)
     while IsScreenFadingIn() do Wait(5) end
     isInTransitionState = false
+
+    --logging that we stopped
+    TriggerServerEvent('txAdmin:menu:endSpectate')
 end
 
 --- Starts the thread that continuously teleport the spectator under the target
@@ -229,12 +151,6 @@ local function createSpectatorTeleportThread()
     end)
 end
 
-RegisterCommand('txAdmin:menu:endSpectate', function()
-    -- We don't want this triggering when menu is open or when spectate isn't enabled
-    if not isSpectateEnabled or isMenuVisible then return end
-    TriggerServerEvent('txAdmin:menu:endSpectate')
-    stopSpectating()
-end)
 
 --- Cycles the spectate to next or previous player
 --- @param isNext boolean - If true, will spectate the next player in the list
@@ -257,18 +173,90 @@ local function handleSpecCycle(isNext)
     TriggerServerEvent('txAdmin:menu:specPlayerCycle', storedTargetServerId, isNext)
 end
 
-RegisterCommand('txAdmin:menu:specNextPlayer', function()
-    handleSpecCycle(true)
+-- Instructional stuff
+local keysTable = {
+    {'Exit Spectate', CONTROLS.exit},
+    {'Previous Player', CONTROLS.prev},
+    {'Next Player', CONTROLS.next},
+}
+
+local redmInstructionGroup, redmPromptTitle
+if IS_REDM then
+    redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'Spectate')
+    redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
+end
+
+--- Key press checking (fivem)
+local function fivemCheckControls()
+    if IsControlJustPressed(0, CONTROLS.next) then
+        handleSpecCycle(true)
+    end
+    if IsControlJustPressed(0, CONTROLS.prev) then
+        handleSpecCycle(false)
+    end
+    if IsControlJustPressed(0, CONTROLS.exit) then
+        stopSpectating()
+    end
+end
+
+--- Key press checking (redm)
+local function redmCheckControls()
+    if PromptIsJustPressed(redmInstructionGroup.prompts['Next Player']) then
+        handleSpecCycle(true)
+    end
+    if PromptIsJustPressed(redmInstructionGroup.prompts['Previous Player']) then
+        handleSpecCycle(false)
+    end
+    if PromptIsJustPressed(redmInstructionGroup.prompts['Exit Spectate']) then
+        stopSpectating()
+    end
+end
+local checkControlsFunc = IS_FIVEM and fivemCheckControls or redmCheckControls
+
+
+--- Creates and draws the instructional scaleform
+local function createInstructionalThreads()
+    --drawing thread
+    CreateThread(function()
+        local fivemScaleform = IS_FIVEM and makeFivemInstructionalScaleform(keysTable)
+        while isSpectateEnabled do
+            if IS_FIVEM then
+                DrawScaleformMovieFullscreen(fivemScaleform, 255, 255, 255, 255, 0)
+            else
+                PromptSetActiveGroupThisFrame(redmInstructionGroup.groupId, redmPromptTitle, 1, 0, 0, 0)
+            end
+            Wait(0)
+        end
+
+        --cleanup of the scaleform movie
+        if IS_FIVEM then
+            SetScaleformMovieAsNoLongerNeeded()
+        end
+    end)
+
+    --controls thread for redm - disabled when menu is visible
+    CreateThread(function()
+        while isSpectateEnabled do
+            if not isMenuVisible then
+                checkControlsFunc()
+            end
+            Wait(5)
+        end
+    end)
+end
+
+
+-- Register NUI callback
+RegisterNUICallback('spectatePlayer', function(data, cb)
+    TriggerServerEvent('txAdmin:menu:spectatePlayer', tonumber(data.id))
+    cb({})
 end)
 
-RegisterCommand('txAdmin:menu:specPrevPlayer', function()
-    handleSpecCycle(false)
-end)
 
+-- Client-side event handler for failed cype (no next player or whatever)
 RegisterNetEvent('txAdmin:menu:specPlayerCycleFail', function()
     sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.notifications.spectate_cycle_failed', true)
 end)
-
 
 -- Client-side event handler for an authorized spectate request
 RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, targetCoords)
@@ -344,16 +332,16 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, targetC
 
     -- start spectating
     NetworkSetInSpectatorMode(true, resolvedPed)
-    SetMinimapInSpectatorMode(true, resolvedPed)
+    if IS_FIVEM then
+        SetMinimapInSpectatorMode(true, resolvedPed)
+    end
     debugPrint(('Set spectate to true for resolvedPed (%s)'):format(resolvedPed))
 
     isSpectateEnabled = true
     isInTransitionState = false
-    clearGamerTagInfo()
-    createGamerTagInfo()
-    createSpectatorGamerTagThread() --needs to be called after ending transition state
+    toggleShowPlayerIDs(true, false)
     createSpectatorTeleportThread()
-    createScaleformThread()
+    createInstructionalThreads()
 
     -- Fade screen back
     DoScreenFadeIn(500)

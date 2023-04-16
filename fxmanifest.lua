@@ -44,6 +44,7 @@ client_scripts {
     'resource/menu/client/cl_webpipe.lua',
     'resource/menu/client/cl_base.lua',
     'resource/menu/client/cl_functions.lua',
+    'resource/menu/client/cl_instructional_ui.lua',
     'resource/menu/client/cl_main_page.lua',
     'resource/menu/client/cl_misc.lua',
     'resource/menu/client/cl_player_ids.lua',
