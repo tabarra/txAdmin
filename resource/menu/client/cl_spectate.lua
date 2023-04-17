@@ -42,11 +42,15 @@ local function calculateSpectatorCoords(coords)
 end
 
 --- Will freeze the player and set the entity to invisible
---- @param bool boolean - Whether we should prepare or cleanup
-local function prepareSpectatorPed(bool)
+--- @param enabled boolean - Whether we should prepare or cleanup
+local function prepareSpectatorPed(enabled)
     local playerPed = PlayerPedId()
-    FreezeEntityPosition(playerPed, bool)
-    SetEntityVisible(playerPed, not bool, 0)
+    FreezeEntityPosition(playerPed, enabled)
+    SetEntityVisible(playerPed, not enabled, 0)
+
+    if enabled then
+        TaskLeaveAnyVehicle(playerPed, 0, 16)
+    end
 end
 
 --- Will load collisions, tp the player, and fade screen
@@ -208,6 +212,7 @@ local function redmCheckControls()
         handleSpecCycle(false)
     end
     if PromptIsJustPressed(redmInstructionGroup.prompts['Exit Spectate']) then
+        debugPrint('exit spectate button pressed')
         stopSpectating()
     end
 end
@@ -216,6 +221,7 @@ local checkControlsFunc = IS_FIVEM and fivemCheckControls or redmCheckControls
 
 --- Creates and draws the instructional scaleform
 local function createInstructionalThreads()
+    debugPrint('Starting instructional buttons thread')
     --drawing thread
     CreateThread(function()
         local fivemScaleform = IS_FIVEM and makeFivemInstructionalScaleform(keysTable)
@@ -232,6 +238,7 @@ local function createInstructionalThreads()
         if IS_FIVEM then
             SetScaleformMovieAsNoLongerNeeded()
         end
+        debugPrint('Finished drawer thread')
     end)
 
     --controls thread for redm - disabled when menu is visible
@@ -242,6 +249,8 @@ local function createInstructionalThreads()
             end
             Wait(5)
         end
+
+        debugPrint('Finished buttons checker thread')
     end)
 end
 
@@ -296,11 +305,11 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, targetC
     end
 
     -- resolving target and saving in cache
-    -- this will try for up to 5 seconds
+    -- this will try for up to 15 seconds (redm is slow af)
     local targetResolveAttempts = 0
     local resolvedPlayerId = -1
     local resolvedPed = 0
-    while (resolvedPlayerId <= 0 or resolvedPed <= 0) and targetResolveAttempts < 100 do
+    while (resolvedPlayerId <= 0 or resolvedPed <= 0) and targetResolveAttempts < 300 do
         targetResolveAttempts = targetResolveAttempts + 1
         resolvedPlayerId = GetPlayerFromServerId(targetServerId)
         resolvedPed = GetPlayerPed(resolvedPlayerId)
@@ -347,3 +356,17 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, targetC
     DoScreenFadeIn(500)
     while IsScreenFadedOut() do Wait(5) end
 end)
+
+
+-- DEBUG Commands
+-- RegisterCommand('spec0', function()
+--     isSpectateEnabled = false
+-- end)
+-- RegisterCommand('spec1', function()
+--     isSpectateEnabled = true
+--     createInstructionalThreads()
+-- end)
+-- RegisterCommand('spec2', function()
+--     print('isSpectateEnabled', isSpectateEnabled)
+--     print('isInTransitionState', isInTransitionState)
+-- end)
