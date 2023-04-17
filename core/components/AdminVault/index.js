@@ -401,6 +401,8 @@ export default class AdminVault {
 
     /**
      * Refreshes admin's social login data
+     * TODO: this should be stored on PersistentCache instead of admins.json
+     *       otherwise it refreshes the admins connected
      * @param {string} name
      * @param {string} provider
      * @param {string} identifier

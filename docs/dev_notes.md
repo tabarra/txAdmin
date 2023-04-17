@@ -72,11 +72,11 @@
 - [x] player ids
 - [ ] logger (death reasons, explosions, etc)
 
-- [ ] Actions
+- [x] Actions
     - [x] heal
     - [x] go to
     - [x] bring
-    - [ ] spectate
+    - [x] spectate
         - [x] copy prompt helper from freecam
     - [x] freeze
     - [x] troll: set drunk

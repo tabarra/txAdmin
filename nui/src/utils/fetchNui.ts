@@ -30,7 +30,14 @@ export async function fetchNui<T = any>(
   // bail out of having to make failing HTTP reqs, speeding up data dispatching.
   if (isBrowserEnv() && opts?.mockResp) return opts.mockResp;
 
-  const resp = await fetch(`https://monitor/${eventName}`, options);
-
-  return await resp.json();
+  try {
+    const resp = await fetch(`https://monitor/${eventName}`, options);
+    return await resp.json();
+  } catch (error) {
+    if (error.name === 'SyntaxError') {
+      throw new Error(`JSON error. Maybe the NUI Callback \'${eventName}\' is not registered. This can be caused if the file that registers it has a lua syntax error.`);
+    }else{
+      throw error;
+    }
+  }
 }
