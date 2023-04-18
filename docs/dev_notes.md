@@ -26,7 +26,7 @@
 - [x] Web: test all pages I added `checkApiLogoutRefresh`
 - [x] Resource: refactor `/txAdmin-reauth` to return the full cause in the snackbar
 - [x] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
-- [ ] Resource: rename menu events to `txAdmin:menu:clreq:xxx` and `txAdmin:menu:svresp:xxx`?
+- [x] Resource: rename menu events to `txsv:xxx` and `txcl:xxx`
 - [ ] Resource: fix some RedM issues
 - [ ] make `recipes/indexv4.json` dropping version and adding tags
     - drop author field as well?
@@ -110,25 +110,6 @@ return IsPedOnMount(ped)
 return IsPedOnVehicle(ped)
 -- redm: false if in horse, false if not, 1 if in carriage
 -- fivem: xxx if in horse, false if not, false if in car
-
-
-
-FIXME: renomear eventos abaixo
-TODO: ver se tem como setar sem o menu estar habilitado
-txAdmin:events:getServerCtx
-txAdmin:events:setServerCtx
-
-
-RegisterNetEvent\(['"]
-
-txAdmin:menu:clreq:xxx
-txAdmin:menu:svresp:xxx
-
-txAdmin:menu:clReq:xxx
-txAdmin:menu:svResp:xxx
-
-txAdmin:req:xxx
-txAdmin:resp:xxx
 
 
 

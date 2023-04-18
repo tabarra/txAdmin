@@ -58,6 +58,14 @@ Keep in mind that for every change you will need to restart the `monitor` resour
 Also, when running in game mode, it takes between 10 and 30 seconds for the vite builder to finish for you to be able to restart the `monitor` resource ingame.
 
 
+### Resource event naming rules:
+
+- The event prefix must be `tx<cl|sv>:` indicating where it is registered.
+- Events that request something (like permission) from the server starts with `txsv:req`.
+- Events can have verbs like `txsv:checkAdminStatus` or `txcl:setServerCtx`.
+- Since most events are menu related, scoping events to menu is not required.
+
+
 ### Building/Publishing
 First make sure the files are linted properly and that the typecheck is successful, and then run the build command. The output will be on the `dist/` folder.
 ```sh

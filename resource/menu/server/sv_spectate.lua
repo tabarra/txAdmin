@@ -34,24 +34,24 @@ local function handleSpectatePlayer(targetId)
       SetPlayerRoutingBucket(src, targetBucket)
     end
 
-    TriggerClientEvent('txAdmin:menu:specPlayerResp', src, targetId, GetEntityCoords(targetPed))
+    TriggerClientEvent('txcl:spectate:start', src, targetId, GetEntityCoords(targetPed))
   end
-  TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, targetId)
+  TriggerEvent('txsv:logger:menuEvent', src, 'spectatePlayer', allow, targetId)
 end
 
-RegisterNetEvent('txAdmin:menu:spectatePlayer', handleSpectatePlayer)
+RegisterNetEvent('txsv:req:spectate:start', handleSpectatePlayer)
 
 
 --- Called to get the previous/next player to cycle to
 --- @param currentTargetId number The current target id.
 --- @param isNextPlayer boolean If we should cycle to the next player or not.
-RegisterNetEvent('txAdmin:menu:specPlayerCycle', function(currentTargetId, isNextPlayer)
+RegisterNetEvent('txsv:req:spectate:cycle', function(currentTargetId, isNextPlayer)
   local src = source
 
   local onlinePlayers = GetPlayers()
   -- We don't allow cycling if there are less than two players online.
   if #onlinePlayers <= 2 then
-    return TriggerClientEvent("txAdmin:menu:specPlayerCycleFail", src)
+    return TriggerClientEvent('txcl:spectate:cycleFailed', src)
   end
 
   -- Filter out the current src from the online players list
@@ -83,7 +83,7 @@ RegisterNetEvent('txAdmin:menu:specPlayerCycle', function(currentTargetId, isNex
   handleSpectatePlayer(nextTargetId)
 end)
 
-RegisterNetEvent('txAdmin:menu:endSpectate', function()
+RegisterNetEvent('txsv:req:spectate:end', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.spectate')
   if allow then

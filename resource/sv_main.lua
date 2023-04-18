@@ -174,7 +174,7 @@ local function txaSetDebugMode(source, args)
         txPrint("^1!! txaSetDebugMode only accepts '1' or '0' as input. !!")
     end
     SetConvarReplicated('txAdmin-debugMode', tostring(TX_DEBUG_MODE))
-    TriggerClientEvent('txAdmin:events:setDebugMode', -1, TX_DEBUG_MODE)
+    TriggerClientEvent('txcl:setDebugMode', -1, TX_DEBUG_MODE)
 end
 
 
@@ -190,9 +190,9 @@ local cvHideScheduledRestartWarning = GetConvarBool('txAdmin-hideDefaultSchedule
 --- Broadcast admin message to all players
 local function handleAnnouncementEvent(eventData)
     if not cvHideAnnouncement then
-        TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
+        TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, eventData.author)
     end
-    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(Broadcast) '..eventData.author, eventData.message)
 end
 
 
@@ -200,9 +200,9 @@ end
 --- Broadcast through an announcement that the server will restart in XX minutes
 local function handleScheduledRestartEvent(eventData)
     if not cvHideScheduledRestartWarning then
-        TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.translatedMessage, 'txAdmin')
+        TriggerClientEvent('txcl:showAnnouncement', -1, eventData.translatedMessage, 'txAdmin')
     end
-    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) txAdmin", eventData.translatedMessage)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(Broadcast) txAdmin', eventData.translatedMessage)
 end
 
 
@@ -210,9 +210,9 @@ end
 --- Sends a direct message from an admin to a player
 local function handleDirectMessageEvent(eventData)
     if not cvHideDirectMessage then
-        TriggerClientEvent("txAdmin:receiveDirectMessage", eventData.target, eventData.message, eventData.author)
+        TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, eventData.author)
     end
-    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(DM) "..eventData.author, eventData.message)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(DM) '..eventData.author, eventData.message)
 end
 
 
@@ -229,9 +229,9 @@ local function handleWarnEvent(eventData)
     local pName = GetPlayerName(eventData.target)
     if pName ~= nil then
         if not cvHideWarning then
-            TriggerClientEvent("txAdminClient:warn", eventData.target, eventData.author, eventData.reason)
+            TriggerClientEvent('txcl:showWarning', eventData.target, eventData.author, eventData.reason)
         end
-        txPrint("Warning "..pName.." with reason: "..eventData.reason)
+        txPrint('Warning '..pName..' with reason: '..eventData.reason)
     else
         logError('handleWarnEvent: player not found')
     end
@@ -295,7 +295,7 @@ local function txaEvent(source, args)
     -- processing event
     local eventName = unDeQuote(args[1])
     local eventData = json.decode(unDeQuote(args[2]))
-    TriggerEvent("txAdmin:events:" .. eventName, eventData)
+    TriggerEvent('txAdmin:events:' .. eventName, eventData)
 
     if eventName == 'announcement' then 
         return handleAnnouncementEvent(eventData)

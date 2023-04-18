@@ -11,23 +11,23 @@ if not TX_MENU_ENABLED then return end
 -- Data is a object with x, y, z
 RegisterNUICallback('tpToCoords', function(data, cb)
     debugPrint(json.encode(data))
-    TriggerServerEvent('txAdmin:menu:tpToCoords', data.x + 0.0, data.y + 0.0, data.z + 0.0)
+    TriggerServerEvent('txsv:req:tpToCoords', data.x + 0.0, data.y + 0.0, data.z + 0.0)
     cb({})
 end)
 
 RegisterNUICallback('tpToWaypoint', function(_, cb)
-    TriggerServerEvent('txAdmin:menu:tpToWaypoint')
+    TriggerServerEvent('txsv:req:tpToWaypoint')
     cb({})
 end)
 
 RegisterNUICallback('tpToPlayer', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:tpToPlayer', tonumber(data.id))
+    TriggerServerEvent('txsv:req:tpToPlayer', tonumber(data.id))
     cb({})
 end)
 
 RegisterNUICallback('tpBack', function(_, cb)
     if lastTpCoords then
-        TriggerServerEvent('txAdmin:menu:tpToCoords', lastTpCoords.x, lastTpCoords.y, lastTpCoords.z)
+        TriggerServerEvent('txsv:req:tpToCoords', lastTpCoords.x, lastTpCoords.y, lastTpCoords.z)
         cb({})
     else
         cb({ e = true })
@@ -35,7 +35,7 @@ RegisterNUICallback('tpBack', function(_, cb)
 end)
 
 RegisterNUICallback('summonPlayer', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:summonPlayer', tonumber(data.id))
+    TriggerServerEvent('txsv:req:bringPlayer', tonumber(data.id))
     cb({})
 end)
 
@@ -49,7 +49,7 @@ RegisterNUICallback('copyCurrentCoords', function(_, cb)
 end)
 
 RegisterNUICallback('clearArea', function(radius, cb)
-    TriggerServerEvent('txAdmin:menu:clearArea', radius)
+    TriggerServerEvent('txsv:req:clearArea', radius)
     cb({})
 end)
 
@@ -62,24 +62,24 @@ RegisterNUICallback('spawnWeapon', function(weapon, cb)
 end)
 
 RegisterNUICallback('healPlayer', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:healPlayer', tonumber(data.id))
+    TriggerServerEvent('txsv:req:healPlayer', tonumber(data.id))
     cb({})
 end)
 
 RegisterNUICallback('healMyself', function(_, cb)
-    TriggerServerEvent('txAdmin:menu:healMyself')
+    TriggerServerEvent('txsv:req:healMyself')
     cb({})
 end)
 
 RegisterNUICallback('healAllPlayers', function(_, cb)
-    TriggerServerEvent('txAdmin:menu:healAllPlayers')
+    TriggerServerEvent('txsv:req:healEveryone')
     cb({})
 end)
 
 -- Data will be an object with a message attribute
 RegisterNUICallback('sendAnnouncement', function(data, cb)
     debugPrint(data.message)
-    TriggerServerEvent('txAdmin:menu:sendAnnouncement', data.message)
+    TriggerServerEvent('txsv:req:sendAnnouncement', data.message)
     cb({})
 end)
 
@@ -217,12 +217,12 @@ end
 ---@param x number
 ---@param y number
 ---@param z number
-RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
+RegisterNetEvent('txcl:tpToCoords', function(x, y, z)
     teleportToCoords(vec3(x, y, z))
 end)
 
 -- Teleport to the current waypoint
-RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
+RegisterNetEvent('txcl:tpToWaypoint', function()
     if not IsWaypointActive() then
         return sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
     end
@@ -237,4 +237,15 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
 
     teleportToCoords(vec3(destCoords.x, destCoords.y, 0))
     sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
+end)
+
+
+RegisterNetEvent('txcl:clearArea', function(radius)
+    local curCoords = GetEntityCoords(PlayerPedId())
+    local radiusToFloat = radius + 0.0
+    debugPrint(('Radius to clear %d'):format(radius))
+    -- WTF?: User reports that this native actually clears dead peds compared to
+    -- ClearArea? Weird considering Gottfried updated this native from _CLEAR_AREA_OF_EVERYTHING
+    -- after found nativedb info. Maybe needs research lmao?
+    ClearAreaLeaveVehicleHealth(curCoords.x, curCoords.y, curCoords.z, radiusToFloat, false, false, false, false, false)
 end)

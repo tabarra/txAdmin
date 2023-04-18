@@ -38,7 +38,7 @@ RegisterNUICallback('playSound', function(sound, cb)
 end)
 
 -- Heals local player
-RegisterNetEvent('txAdmin:menu:healed', function()
+RegisterNetEvent('txcl:heal', function()
     debugPrint('Received heal event, healing to full')
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)

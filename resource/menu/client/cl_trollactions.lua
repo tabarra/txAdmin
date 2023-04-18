@@ -110,7 +110,6 @@ local function startWildAttack()
     local animalPed
     if IS_FIVEM then
         animalPed = CreatePed(1, animalHash, coordsBehindPlayer.x, coordsBehindPlayer.y, groundZ, playerHeading, true, false)
-        print(animalPed)
     else
         animalPed = CreatePed(animalHash, coordsBehindPlayer.x, coordsBehindPlayer.y, groundZ, playerHeading, true, false)
         Citizen.InvokeNative(0x77FF8D35EEC6BBC4, animalPed, 1, 0) --EquipMetaPedOutfitPreset
@@ -131,7 +130,7 @@ end
 
 
 --[[ Net Events ]]
-RegisterNetEvent('txAdmin:menu:drunkEffect', function()
+RegisterNetEvent('txcl:setDrunk', function()
     if IS_FIVEM then
         drunkThreadFivem()
     else
@@ -139,29 +138,29 @@ RegisterNetEvent('txAdmin:menu:drunkEffect', function()
     end
 end)
 
-RegisterNetEvent('txAdmin:menu:setOnFire', function()
+RegisterNetEvent('txcl:setOnFire', function()
     debugPrint('Setting player on fire')
     local playerPed = PlayerPedId()
     StartEntityFire(playerPed)
 end)
 
-RegisterNetEvent('txAdmin:menu:wildAttack', function()
+RegisterNetEvent('txcl:wildAttack', function()
     startWildAttack()
 end)
 
 
 --[[ NUI Callbacks ]]
 RegisterNUICallback('drunkEffectPlayer', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:drunkEffectPlayer', tonumber(data.id))
+    TriggerServerEvent('txsv:req:troll:setDrunk', tonumber(data.id))
     cb({})
 end)
 
 RegisterNUICallback('setOnFire', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:setOnFire', tonumber(data.id))
+    TriggerServerEvent('txsv:req:troll:setOnFire', tonumber(data.id))
     cb({})
 end)
 
 RegisterNUICallback('wildAttack', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:wildAttack', tonumber(data.id))
+    TriggerServerEvent('txsv:req:troll:wildAttack', tonumber(data.id))
     cb({})
 end)

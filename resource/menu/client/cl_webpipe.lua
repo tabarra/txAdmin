@@ -67,13 +67,12 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
         pipeCallbackCounter = 1
     end
 
-    TriggerServerEvent('txAdmin:WebPipe', id, method, path, headers, body or '')
+    TriggerServerEvent('txsv:webpipe:req', id, method, path, headers, body or '')
 end)
 
 
 -- receive the http responses from server
-RegisterNetEvent('txAdmin:WebPipe')
-AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, headers)
+RegisterNetEvent('txcl:webpipe:resp', function(callbackId, statusCode, body, headers)
     local ret = pipeReturnCallbacks[callbackId]
     if not ret then return end
 

@@ -25,7 +25,7 @@ TX_SERVER_MODE = GetConvarBool('txAdminServerMode')
 TX_MENU_ENABLED = GetConvarBool('txAdmin-menuEnabled')
 
 -- Setting global debug variable for all files
--- On the client, this is updated by receiving a `txAdmin:events:setDebugMode` event.
+-- On the client, this is updated by receiving a `txcl:setDebugMode` event.
 -- On the server, this is updated by running txaSetDebugMode on Live Console
 TX_DEBUG_MODE = GetConvarBool('txAdmin-debugMode')
 

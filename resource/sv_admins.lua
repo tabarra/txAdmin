@@ -31,7 +31,7 @@ local function handleAuthFail(src, reason)
 end
 
 -- Handle menu auth requests
-RegisterNetEvent('txsv:checkAdminStatus', function()
+RegisterNetEvent('txsv:checkIfAdmin', function()
     local src = source
     local srcString = tostring(source)
     debugPrint('Handling authentication request from player #'..srcString)
@@ -108,6 +108,6 @@ AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
 
     -- Informing clients that they need to reauth
     for id, _ in pairs(refreshAdminIds) do
-        TriggerClientEvent('txAdmin:menu:reAuth', tonumber(id))
+        TriggerClientEvent('txcl:reAuth', tonumber(id))
     end
 end)

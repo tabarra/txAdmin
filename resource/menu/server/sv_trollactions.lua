@@ -3,29 +3,29 @@ if not TX_SERVER_MODE then return end
 -- Prevent running if menu is disabled
 if not TX_MENU_ENABLED then return end
 
-RegisterNetEvent('txAdmin:menu:drunkEffectPlayer', function(id)
+RegisterNetEvent('txsv:req:troll:setDrunk', function(id)
     local src = source
     local allow = PlayerHasTxPermission(src, 'players.troll')
     if allow then
-        TriggerClientEvent('txAdmin:menu:drunkEffect', id)
+        TriggerClientEvent('txcl:setDrunk', id)
     end
-    TriggerEvent('txaLogger:menuEvent', src, 'drunkEffect', allow, id)
+    TriggerEvent('txsv:logger:menuEvent', src, 'drunkEffect', allow, id)
 end)
 
-RegisterNetEvent('txAdmin:menu:setOnFire', function(id)
+RegisterNetEvent('txsv:req:troll:setOnFire', function(id)
     local src = source
     local allow = PlayerHasTxPermission(src, 'players.troll')
     if allow then
-        TriggerClientEvent('txAdmin:menu:setOnFire', id)
+        TriggerClientEvent('txcl:setOnFire', id)
     end
-    TriggerEvent('txaLogger:menuEvent', src, 'setOnFire', allow, id)
+    TriggerEvent('txsv:logger:menuEvent', src, 'setOnFire', allow, id)
 end)
 
-RegisterNetEvent('txAdmin:menu:wildAttack', function(id)
+RegisterNetEvent('txsv:req:troll:wildAttack', function(id)
     local src = source
     local allow = PlayerHasTxPermission(src, 'players.troll')
     if allow then
-        TriggerClientEvent('txAdmin:menu:wildAttack', id)
+        TriggerClientEvent('txcl:wildAttack', id)
     end
-    TriggerEvent('txaLogger:menuEvent', src, 'wildAttack', allow, id)
+    TriggerEvent('txsv:logger:menuEvent', src, 'wildAttack', allow, id)
 end)

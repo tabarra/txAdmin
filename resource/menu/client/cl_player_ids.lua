@@ -182,14 +182,14 @@ end
 
 
 --- Receives the return from the server and toggles player ids on/off
-RegisterNetEvent('txAdmin:menu:showPlayerIDs', function(enabled)
+RegisterNetEvent('txcl:showPlayerIDs', function(enabled)
     debugPrint('Received showPlayerIDs event')
     toggleShowPlayerIDs(enabled, true)
 end)
 
 --- Sends perms request to the server to enable player ids
 local function togglePlayerIDsHandler()
-    TriggerServerEvent('txAdmin:menu:showPlayerIDs', not isPlayerIdsEnabled)
+    TriggerServerEvent('txsv:req:showPlayerIDs', not isPlayerIdsEnabled)
 end
 
 RegisterNUICallback('togglePlayerIDs', function(_, cb)

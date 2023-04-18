@@ -139,7 +139,7 @@ AddEventHandler('playerJoining', function(srcString, _oldID)
 
     -- relaying this info to all admins
     for adminID, _ in pairs(TX_ADMINS) do
-        TriggerClientEvent('txcl:updatePlayer', adminID, source, playerData.name)
+        TriggerClientEvent('txcl:plist:updatePlayer', adminID, source, playerData.name)
     end
 end)
 
@@ -159,7 +159,7 @@ AddEventHandler('playerDropped', function(reason)
 
     -- relaying this info to all admins
     for adminID, _ in pairs(TX_ADMINS) do
-        TriggerClientEvent('txcl:updatePlayer', adminID, source, false)
+        TriggerClientEvent('txcl:plist:updatePlayer', adminID, source, false)
     end
 end)
 
@@ -180,7 +180,7 @@ end)
 -- for serverID=1, 500 do
 --     fake_playerlist[serverID] = getFakePlayer()
 -- end
-RegisterNetEvent('txsv:getDetailedPlayerlist', function()
+RegisterNetEvent('txsv:req:plist:getDetailed', function()
     if TX_ADMINS[tostring(source)] == nil then
         debugPrint('Ignoring unauthenticated getDetailedPlayerlist() by ' .. source)
         return
@@ -196,7 +196,7 @@ RegisterNetEvent('txsv:getDetailedPlayerlist', function()
         admins[#admins + 1] = tonumber(adminID)
     end
     --DEBUG replace admins with fake_admins
-    TriggerClientEvent('txcl:setDetailedPlayerlist', source, players, admins)
+    TriggerClientEvent('txcl:plist:setDetailed', source, players, admins)
 end)
 
 
@@ -214,5 +214,5 @@ function sendInitialPlayerlist(adminID)
     -- debugPrint("====================================")
 
     debugPrint('Sending initial playerlist to ' .. adminID)
-    TriggerClientEvent('txcl:setInitialPlayerlist', adminID, payload)
+    TriggerClientEvent('txcl:plist:setInitial', adminID, payload)
 end

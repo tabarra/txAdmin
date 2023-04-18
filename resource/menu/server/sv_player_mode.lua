@@ -5,7 +5,7 @@ if not TX_MENU_ENABLED then return end
 
 local IS_PTFX_DISABLED = GetConvarBool('txAdmin-menuPtfxDisable')
 
-RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, nearbyPlayers)
+RegisterNetEvent('txsv:req:changePlayerMode', function(mode, nearbyPlayers)
   local src = source
   if mode ~= 'godmode' and mode ~= 'noclip' and mode ~= 'superjump' and mode ~= 'none' then
     debugPrint("Invalid player mode requested by " .. GetPlayerName(src) .. " (mode: " .. (mode or 'nil'))
@@ -13,13 +13,13 @@ RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, nearbyPlayers)
   end
 
   local allow = PlayerHasTxPermission(src, 'players.playermode')
-  TriggerEvent("txaLogger:menuEvent", src, "playerModeChanged", allow, mode)
+  TriggerEvent('txsv:logger:menuEvent', src, "playerModeChanged", allow, mode)
   if allow then
-    TriggerClientEvent('txAdmin:menu:playerModeChanged', src, mode, not IS_PTFX_DISABLED)
+    TriggerClientEvent('txcl:setPlayerMode', src, mode, not IS_PTFX_DISABLED)
 
     if not IS_PTFX_DISABLED then
       for _, v in ipairs(nearbyPlayers) do
-        TriggerClientEvent('txcl:syncPtfxEffect', v, src)
+        TriggerClientEvent('txcl:showPtfx', v, src)
       end
     end
   end

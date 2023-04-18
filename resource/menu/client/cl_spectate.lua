@@ -119,7 +119,7 @@ local function stopSpectating()
     isInTransitionState = false
 
     --logging that we stopped
-    TriggerServerEvent('txAdmin:menu:endSpectate')
+    TriggerServerEvent('txsv:req:spectate:end')
 end
 
 --- Starts the thread that continuously teleport the spectator under the target
@@ -174,7 +174,7 @@ local function handleSpecCycle(isNext)
         tostring(storedTargetServerId),
         tostring(isNext)
     ))
-    TriggerServerEvent('txAdmin:menu:specPlayerCycle', storedTargetServerId, isNext)
+    TriggerServerEvent('txsv:req:spectate:cycle', storedTargetServerId, isNext)
 end
 
 -- Instructional stuff
@@ -257,18 +257,18 @@ end
 
 -- Register NUI callback
 RegisterNUICallback('spectatePlayer', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:spectatePlayer', tonumber(data.id))
+    TriggerServerEvent('txsv:req:spectate:start', tonumber(data.id))
     cb({})
 end)
 
 
 -- Client-side event handler for failed cype (no next player or whatever)
-RegisterNetEvent('txAdmin:menu:specPlayerCycleFail', function()
+RegisterNetEvent('txcl:spectate:cycleFailed', function()
     sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.notifications.spectate_cycle_failed', true)
 end)
 
 -- Client-side event handler for an authorized spectate request
-RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, targetCoords)
+RegisterNetEvent('txcl:spectate:start', function(targetServerId, targetCoords)
     if isInTransitionState then
         stopSpectating()
         error('Spectate request received while in transition state')

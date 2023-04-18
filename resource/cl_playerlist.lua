@@ -48,7 +48,7 @@ end
 
 -- Triggered when the admin authenticates
 -- Replaces current playerlist
-RegisterNetEvent('txcl:setInitialPlayerlist', function(payload)
+RegisterNetEvent('txcl:plist:setInitial', function(payload)
     -- print("========== EVENT setInitialPlayerlist")
     -- print(json.encode(payload)) -- [[id, name]]
     -- print("------------------------------------")
@@ -74,7 +74,7 @@ end)
 --  > run through inbound playerlist updating existing data
 --  > try to get the dist from all players (susceptible to area culling, but that's fine)
 --  > TODO: decide what to do in case of missing or extra ids (missed updatePlayer?)
-RegisterNetEvent('txcl:setDetailedPlayerlist', function(players, admins)
+RegisterNetEvent('txcl:plist:setDetailed', function(players, admins)
     -- print("========== EVENT setDetailedPlayerlist")
     -- print(json.encode(players)) -- [[id, health, vType]]
     -- print("------------------------------------")
@@ -131,13 +131,13 @@ end)
 
 -- Triggered on player join/leave
 -- add/remove specific id to playerlist
-RegisterNetEvent('txcl:updatePlayer', function(id, data)
+RegisterNetEvent('txcl:plist:updatePlayer', function(id, data)
     local pids = tostring(id)
     if data == false then
-        debugPrint("^2txcl:updatePlayer: ^3"..id.."^2 disconnected")
+        debugPrint("^2txcl:plist:updatePlayer: ^3"..id.."^2 disconnected")
         LOCAL_PLAYERLIST[pids] = nil
     else
-        debugPrint("^2txcl:updatePlayer: ^3"..id.."^2 connected")
+        debugPrint("^2txcl:plist:updatePlayer: ^3"..id.."^2 connected")
         LOCAL_PLAYERLIST[pids] = {
             name = data,
             health = 0,
@@ -152,14 +152,14 @@ end)
 
 -- Triggered when the "player" tab opens in the menu, and every 5s after that
 RegisterNUICallback('signalPlayersPageOpen', function(_, cb)
-    TriggerServerEvent("txsv:getDetailedPlayerlist") --request latest from server
+    TriggerServerEvent('txsv:req:plist:getDetailed') --request latest from server
     cb({})
 end)
 
 
 -- DEBUG only
 -- RegisterCommand('tnew', function()
---     TriggerServerEvent("txsv:getDetailedPlayerlist")
+--     TriggerServerEvent('txsv:req:plist:getDetailed')
 -- end)
 -- RegisterCommand('tprint', function()
 --     print("------------------------------------")

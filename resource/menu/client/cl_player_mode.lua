@@ -157,7 +157,7 @@ local function createPlayerModePtfxLoop(tgtPedId)
     end)
 end
 
-RegisterNetEvent('txcl:syncPtfxEffect', function(tgtSrc)
+RegisterNetEvent('txcl:showPtfx', function(tgtSrc)
     debugPrint('Syncing particle effect for target netId')
     local tgtPlayer = GetPlayerFromServerId(tgtSrc)
     if tgtPlayer == -1 then return end
@@ -175,7 +175,7 @@ local function askChangePlayerMode(mode)
         nearbyPlayers[#nearbyPlayers + 1] = GetPlayerServerId(player)
     end
 
-    TriggerServerEvent('txAdmin:menu:playerModeChanged', mode, nearbyPlayers)
+    TriggerServerEvent('txsv:req:changePlayerMode', mode, nearbyPlayers)
 end
 
 -- NoClip toggle keybind
@@ -194,8 +194,8 @@ RegisterNUICallback('playerModeChanged', function(mode, cb)
 end)
 
 -- [[ Player mode changed cb event ]]
-RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
-    if ptfx then 
+RegisterNetEvent('txcl:setPlayerMode', function(mode, ptfx)
+    if ptfx then
         createPlayerModePtfxLoop(PlayerPedId())
     end
 

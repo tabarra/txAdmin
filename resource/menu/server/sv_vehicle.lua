@@ -8,28 +8,28 @@ if not TX_MENU_ENABLED then return end
 --  actions defined on Menu's "Main Page"
 -- =============================================
 
-RegisterNetEvent('txAdmin:menu:fixVehicle', function()
+RegisterNetEvent('txsv:req:vehicle:fix', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
-  TriggerEvent("txaLogger:menuEvent", src, "vehicleRepair", allow)
+  TriggerEvent('txsv:logger:menuEvent', src, 'vehicleRepair', allow)
   if allow then
-    TriggerClientEvent('txAdmin:menu:fixVehicle', src)
+    TriggerClientEvent('txcl:vehicle:fix', src)
   end
 end)
 
-RegisterNetEvent('txAdmin:menu:boostVehicle', function()
+RegisterNetEvent('txsv:req:vehicle:boost', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
-  TriggerEvent("txaLogger:menuEvent", src, "vehicleBoost", allow)
+  TriggerEvent('txsv:logger:menuEvent', src, 'vehicleBoost', allow)
   if allow then
-    TriggerClientEvent('txAdmin:menu:boostVehicle', src)
+    TriggerClientEvent('txcl:vehicle:boost', src)
   end
 end)
 
 --- Spawn a vehicle on the server at the request of a client
 ---@param model string
 ---@param modelType string
-RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, modelType)
+RegisterNetEvent('txsv:req:vehicle:spawn', function(model, modelType)
   local src = source
   if type(model) ~= 'string' then
     return
@@ -39,7 +39,7 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, modelType)
   end
 
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
-  TriggerEvent("txaLogger:menuEvent", src, "spawnVehicle", allow, model)
+  TriggerEvent('txsv:logger:menuEvent', src, 'spawnVehicle', allow, model)
   if allow then
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
@@ -92,24 +92,12 @@ end)
 
 --- Deletes the vehicle the player is currently in
 --- @param netId number
-RegisterNetEvent("txAdmin:menu:deleteVehicle", function(netId)
+RegisterNetEvent('txsv:req:vehicle:delete', function(netId)
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
-  TriggerEvent("txaLogger:menuEvent", src, "deleteVehicle", allow)
+  TriggerEvent('txsv:logger:menuEvent', src, 'deleteVehicle', allow)
   if allow then
     local vehicle = NetworkGetEntityFromNetworkId(netId)
     DeleteEntity(vehicle)
-  end
-end)
-
-RegisterNetEvent('txAdmin:menu:healAllPlayers', function()
-  local src = source
-  local allow = PlayerHasTxPermission(src, 'players.heal')
-  TriggerEvent("txaLogger:menuEvent", src, "healAll", true)
-  if allow then
-    -- For use with third party resources that handle players
-    -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
-    TriggerEvent("txAdmin:events:healedPlayer", {id = -1})
-    TriggerClientEvent('txAdmin:menu:healed', -1)
   end
 end)

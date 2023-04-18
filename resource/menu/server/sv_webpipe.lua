@@ -38,10 +38,10 @@ local function sendResponse(src, callbackId, statusCode, path, body, headers, ca
     debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0"):format(
       src, callbackId, resultColor, json.encode(headers)))
   end
-  TriggerLatentClientEvent('txAdmin:WebPipe', src, 125000, callbackId, statusCode, body, headers)
+  TriggerLatentClientEvent('txcl:webpipe:resp', src, 125000, callbackId, statusCode, body, headers)
 end
 
-RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
+RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers, body)
   local s = source
   local src = tostring(s)
   if type(callbackId) ~= 'number' or type(headers) ~= 'table' then
@@ -69,7 +69,7 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
     end
     debugPrint(string.format(
         "^3WebPipe[^5%d^0:^1%d^3]^0 ^1rejected request from ^3%s^1 for ^5%s^0", s, callbackId, s, path))
-    TriggerClientEvent('txAdmin:WebPipe', s, callbackId, 403, "{}", {})
+    TriggerClientEvent('txcl:webpipe:resp', s, callbackId, 403, "{}", {})
     return
   end
 

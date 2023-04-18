@@ -142,11 +142,11 @@ local function processDeath(ped)
         killer = GetPlayerServerId(killer)
     end
 
-    TriggerServerEvent("txaLogger:DeathNotice", killer, deathReason)
+    TriggerServerEvent('txsv:logger:deathEvent', killer, deathReason)
 end
 
 -- Trigger Event From External Script
--- NOTE: couldn't people just call the txaLogger:DeathNotice event???
+-- NOTE: couldn't people just call the txsv:logger:deathEvent event???
 RegisterNetEvent('txAdmin:beta:deathLog')
 AddEventHandler('txAdmin:beta:deathLog', function(ped)
 	processDeath(ped) -- Remember to add a wait function before reviving into an animation.

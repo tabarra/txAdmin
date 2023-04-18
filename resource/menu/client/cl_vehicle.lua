@@ -38,7 +38,7 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
             DeleteVehicle(oldVeh)
         end
 
-        TriggerServerEvent('txAdmin:menu:spawnVehicle', model, modelType)
+        TriggerServerEvent('txsv:req:vehicle:spawn', model, modelType)
         cb({})
     end
 end)
@@ -48,7 +48,7 @@ RegisterNUICallback("deleteVehicle", function(data, cb)
     local veh = GetVehiclePedIsIn(ped, false)
     if veh and veh > 0 then
         local netId = NetworkGetNetworkIdFromEntity(veh)
-        TriggerServerEvent("txAdmin:menu:deleteVehicle", netId)
+        TriggerServerEvent("txsv:req:vehicle:delete", netId)
 
         cb({})
     else
@@ -56,10 +56,6 @@ RegisterNUICallback("deleteVehicle", function(data, cb)
     end
 end)
 
-RegisterNUICallback('healAllPlayers', function(_, cb)
-    TriggerServerEvent('txAdmin:menu:healAllPlayers')
-    cb({})
-end)
 
 RegisterNUICallback('fixVehicle', function(_, cb)
     local ped = PlayerPedId()
@@ -68,7 +64,7 @@ RegisterNUICallback('fixVehicle', function(_, cb)
         return cb({ e = true })
     end
 
-    TriggerServerEvent('txAdmin:menu:fixVehicle')
+    TriggerServerEvent('txsv:req:vehicle:fix')
     cb({})
 end)
 
@@ -80,7 +76,7 @@ RegisterNUICallback('boostVehicle', function(_, cb)
         return cb({ e = true })
     end
 
-    TriggerServerEvent('txAdmin:menu:boostVehicle')
+    TriggerServerEvent('txsv:req:vehicle:boost')
     cb({})
 end)
 
@@ -123,7 +119,7 @@ local boostableVehicleClasses = {
     [22]='Open Wheel'
 }
 
-RegisterNetEvent('txAdmin:menu:boostVehicle', function()
+RegisterNetEvent('txcl:vehicle:boost', function()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
 
@@ -180,7 +176,7 @@ RegisterNetEvent('txAdmin:menu:boostVehicle', function()
     sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
 end)
 
-RegisterNetEvent('txAdmin:menu:fixVehicle', function()
+RegisterNetEvent('txcl:vehicle:fix', function()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
     if veh and veh > 0 then

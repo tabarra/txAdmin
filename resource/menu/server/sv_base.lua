@@ -111,13 +111,13 @@ local function syncServerCtx()
 
   -- Telling admins that the server context changed
   for adminID, _ in pairs(TX_ADMINS) do
-    TriggerClientEvent('txAdmin:events:setServerCtx', adminID, ServerCtxObj)
+    TriggerClientEvent('txcl:setServerCtx', adminID, ServerCtxObj)
   end
 end
 
-RegisterNetEvent('txAdmin:events:getServerCtx', function()
+RegisterNetEvent('txsv:req:serverCtx', function()
   local src = source
-  TriggerClientEvent('txAdmin:events:setServerCtx', src, ServerCtxObj)
+  TriggerClientEvent('txcl:setServerCtx', src, ServerCtxObj)
 end)
 
 -- Everytime the txAdmin convars are changed this event will fire

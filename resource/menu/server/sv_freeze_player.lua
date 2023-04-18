@@ -13,15 +13,15 @@ local function setPlayerFrozenInMap(targetId, status)
   frozenPlayers[targetId] = status or nil
 end
 
-RegisterNetEvent("txAdmin:menu:freezePlayer", function(targetId)
+RegisterNetEvent('txsv:req:freezePlayer', function(targetId)
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.freeze')
-  TriggerEvent("txaLogger:menuEvent", src, "freezePlayer", allow, targetId)
+  TriggerEvent('txsv:logger:menuEvent', src, 'freezePlayer', allow, targetId)
   if allow then
     local newFrozenStatus = not isPlayerFrozen(targetId)
     setPlayerFrozenInMap(targetId, newFrozenStatus)
 
-    TriggerClientEvent("txAdmin:menu:freezeResp", src, newFrozenStatus)
-    TriggerClientEvent("txAdmin:menu:freezePlayer", targetId, newFrozenStatus)
+    TriggerClientEvent('txcl:freezePlayerOk', src, newFrozenStatus)
+    TriggerClientEvent('txcl:setFrozen', targetId, newFrozenStatus)
   end
 end)

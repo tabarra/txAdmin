@@ -71,9 +71,9 @@ end)
 if not TX_MENU_ENABLED then return end
 
 -- Checking with server if we are an admin
-TriggerServerEvent('txsv:checkAdminStatus')
+TriggerServerEvent('txsv:checkIfAdmin')
 
--- Triggered as callback of txsv:checkAdminStatus
+-- Triggered as callback of txsv:checkIfAdmin
 RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
   if type(perms) == 'table' then
     debugPrint("^2[AUTH] logged in as '" .. username .. "' with perms: " .. json.encode(perms or "nil"))
@@ -105,9 +105,9 @@ local function retryAuthentication()
   menuPermissions = {}
   sendMenuMessage('resetSession')
   sendMenuMessage('setPermissions', menuPermissions)
-  TriggerServerEvent('txsv:checkAdminStatus')
+  TriggerServerEvent('txsv:checkIfAdmin')
 end
-RegisterNetEvent('txAdmin:menu:reAuth', retryAuthentication)
+RegisterNetEvent('txcl:reAuth', retryAuthentication)
 RegisterCommand('txAdmin-reauth', function ()
   sendSnackbarMessage('info', 'Retrying menu authentication.', false)
   awaitingReauth = true
@@ -134,7 +134,7 @@ end)
 
 
 -- Will toggle debug logging
-RegisterNetEvent('txAdmin:events:setDebugMode', function(enabled)
+RegisterNetEvent('txcl:setDebugMode', function(enabled)
   TX_DEBUG_MODE = enabled
   sendMenuMessage('setDebugMode', TX_DEBUG_MODE)
 end)
