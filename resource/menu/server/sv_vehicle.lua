@@ -67,9 +67,9 @@ RegisterNetEvent('txsv:req:vehicle:spawn', function(model, modelType)
         break
       end
     end
-    local netID = NetworkGetNetworkIdFromEntity(veh)
-    debugPrint(string.format("spawn vehicle (src=^3%d^0, model=^4%s^0, modelType=^4%s^0, netID=^3%s^0)", src, model,
-        (modelType), netID))
+    local vehNetId = NetworkGetNetworkIdFromEntity(veh)
+    debugPrint(string.format("spawn vehicle (src=^3%d^0, model=^4%s^0, modelType=^4%s^0, vehNetId=^3%s^0)", src, model,
+        (modelType), vehNetId))
     local RoutingBucket = GetPlayerRoutingBucket(src)
     SetEntityRoutingBucket(veh, RoutingBucket)    
     -- map all player ids to peds
@@ -84,20 +84,20 @@ RegisterNetEvent('txsv:req:vehicle:spawn', function(model, modelType)
       debugPrint(("setting %d into seat index %d"):format(seatPed, seatIndex))
       local targetSrc = pedMap[seatPed]
       if type(targetSrc) == 'string' then
-        TriggerClientEvent('txAdmin:events:queueSeatInVehicle', targetSrc, netID, seatIndex)
+        TriggerClientEvent('txAdmin:events:queueSeatInVehicle', targetSrc, vehNetId, seatIndex)
       end
     end
   end
 end)
 
 --- Deletes the vehicle the player is currently in
---- @param netId number
-RegisterNetEvent('txsv:req:vehicle:delete', function(netId)
+--- @param vehNetId number
+RegisterNetEvent('txsv:req:vehicle:delete', function(vehNetId)
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
   TriggerEvent('txsv:logger:menuEvent', src, 'deleteVehicle', allow)
   if allow then
-    local vehicle = NetworkGetEntityFromNetworkId(netId)
+    local vehicle = NetworkGetEntityFromNetworkId(vehNetId)
     DeleteEntity(vehicle)
   end
 end)

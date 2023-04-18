@@ -62,7 +62,7 @@
 - [ ] Vehicle
     - [ ] spawn
     - [ ] fix
-    - [ ] delete
+    - [x] delete
     - [ ] boost
 - [x] Heal
     - [x] self

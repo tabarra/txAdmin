@@ -46,9 +46,12 @@ end)
 RegisterNUICallback("deleteVehicle", function(data, cb)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
+    if IS_REDM and IsPedOnMount(ped) then
+        veh = GetMount(ped)
+    end
     if veh and veh > 0 then
-        local netId = NetworkGetNetworkIdFromEntity(veh)
-        TriggerServerEvent("txsv:req:vehicle:delete", netId)
+        local vehNetId = NetworkGetNetworkIdFromEntity(veh)
+        TriggerServerEvent("txsv:req:vehicle:delete", vehNetId)
 
         cb({})
     else
