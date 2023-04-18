@@ -16,7 +16,7 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
         debugPrint("^1Invalid vehicle model requested: " .. model)
         cb({ e = true })
     else
-        local VehicleType = GetVehicleClassFromName(model)
+        local vehClass = GetVehicleClassFromName(model)
         local types = {
             [8] = "bike",
             [11] = "trailer",
@@ -26,9 +26,19 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
             [16] = "plane",
             [21] = "train",
         }
-        local modelType = types[VehicleType] or "automobile"
-        if model == GetHashKey("submersible") or model == GetHashKey("submersible2") then
-            modelType = "submarine"
+        local modelType = types[vehClass] or "automobile"
+
+        local mismatchedTypes = {
+            ["submersible"] = "submarine",
+            ["submersible2"] = "submarine",
+            ["blimp"] = "heli",
+            ["blimp2"] = "heli",
+            ["blimp3"] = "heli"
+        }
+
+        if mismatchedTypes[model] then
+            debugPrint("Model ".. model.." class doesn't match its type, setting it from "..modelType.. " to "..mismatchedTypes[model])
+            modelType = mismatchedTypes[model]
         end
         -- collect the old velocity
         local ped = PlayerPedId()
