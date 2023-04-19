@@ -7,50 +7,102 @@ if not TX_MENU_ENABLED then return end
 
 --[[ NUI CALLBACKS ]]
 
-local oldVehVelocity = 0.0
-RegisterNUICallback('spawnVehicle', function(data, cb)
-    if type(data) ~= 'table' then error("Invalid spawnVehicle NUI callback data") end
-    local model = data.model
-    if type(model) ~= 'string' then return end
-    if not IsModelValid(model) or not IsModelAVehicle(model) then
-        debugPrint("^1Invalid vehicle model requested: " .. model)
-        cb({ e = true })
-    else
-        local vehClass = GetVehicleClassFromName(model)
-        local types = {
-            [8] = "bike",
-            [11] = "trailer",
-            [13] = "bike",
-            [14] = "boat",
-            [15] = "heli",
-            [16] = "plane",
-            [21] = "train",
-        }
-        local modelType = types[vehClass] or "automobile"
+-- NOTE: this is not a complete list, but most others have the type "automobile"
+local vehClassNamesEnum = {
+    [8] = "bike",
+    [11] = "trailer",
+    [13] = "bike",
+    [14] = "boat",
+    [15] = "heli",
+    [16] = "plane",
+    [21] = "train",
+}
 
-        local mismatchedTypes = {
-            ["submersible"] = "submarine",
-            ["submersible2"] = "submarine",
-            ["blimp"] = "heli",
-            ["blimp2"] = "heli",
-            ["blimp3"] = "heli"
-        }
+-- Since we don't have the vehicle types on the server, we need this translation table
+-- NOTE: this list was generated for game build 2802/mpchristmas3
+-- How to update the list: https://gist.github.com/tabarra/32ef90524188093ab4218ee7b5121269
+local mismatchedTypes = {
+    ["airtug"] = "automobile",       -- trailer
+    ["avisa"] = "submarine",         -- boat
+    ["blimp"] = "heli",              -- plane
+    ["blimp2"] = "heli",             -- plane
+    ["blimp3"] = "heli",             -- plane
+    ["caddy"] = "automobile",        -- trailer
+    ["caddy2"] = "automobile",       -- trailer
+    ["caddy3"] = "automobile",       -- trailer
+    ["chimera"] = "automobile",      -- bike
+    ["docktug"] = "automobile",      -- trailer
+    ["forklift"] = "automobile",     -- trailer
+    ["kosatka"] = "submarine",       -- boat
+    ["mower"] = "automobile",        -- trailer
+    ["policeb"] = "bike",            -- automobile
+    ["ripley"] = "automobile",       -- trailer
+    ["rrocket"] = "automobile",      -- bike
+    ["sadler"] = "automobile",       -- trailer
+    ["sadler2"] = "automobile",      -- trailer
+    ["scrap"] = "automobile",        -- trailer
+    ["slamtruck"] = "automobile",    -- trailer
+    ["Stryder"] = "automobile",      -- bike
+    ["submersible"] = "submarine",   -- boat
+    ["submersible2"] = "submarine",  -- boat
+    ["thruster"] = "heli",           -- automobile
+    ["towtruck"] = "automobile",     -- trailer
+    ["towtruck2"] = "automobile",    -- trailer
+    ["tractor"] = "automobile",      -- trailer
+    ["tractor2"] = "automobile",     -- trailer
+    ["tractor3"] = "automobile",     -- trailer
+    ["trailersmall2"] = "trailer",   -- automobile
+    ["utillitruck"] = "automobile",  -- trailer
+    ["utillitruck2"] = "automobile", -- trailer
+    ["utillitruck3"] = "automobile", -- trailer
+}
 
-        if mismatchedTypes[model] then
-            debugPrint("Model ".. model.." class doesn't match its type, setting it from "..modelType.. " to "..mismatchedTypes[model])
-            modelType = mismatchedTypes[model]
-        end
-        -- collect the old velocity
-        local ped = PlayerPedId()
-        local oldVeh = GetVehiclePedIsIn(ped, false)
-        if oldVeh and oldVeh > 0 then
-            oldVehVelocity = GetEntityVelocity(oldVeh)
-            DeleteVehicle(oldVeh)
-        end
-
-        TriggerServerEvent('txsv:req:vehicle:spawn', model, modelType)
-        cb({})
+local function handleSpawnRequestFivem(model)
+    if not IsModelAVehicle(model) then
+        debugPrint("^1Model provided is not a vehicle: " .. model)
+        return false
     end
+
+    --Resolve vehicle type, required for server setter
+    --NOTE: check if GetVehicleTypeFromName is already available
+    local modelType
+    if mismatchedTypes[model] then
+        modelType = mismatchedTypes[model]
+    else
+        local modelClassNumber = GetVehicleClassFromName(model)
+        modelType = vehClassNamesEnum[modelClassNumber] or "automobile"
+    end
+
+    --Request from server
+    TriggerServerEvent('txsv:req:vehicle:spawn:fivem', model, modelType)
+    return true
+end
+
+local function handleSpawnRequestRedm(model)
+    --check if model is valid vehicle or horse (IsThisModelAHorse)
+    if not IsModelAVehicle(model) and not Citizen.InvokeNative(0x772A1969F649E902, GetHashKey('model')) then
+        debugPrint("^1Model provided is not a vehicle or horse: " .. model)
+        return false
+    end
+
+    --request
+    TriggerServerEvent('txsv:req:vehicle:spawn:redm', model)
+    return true
+end
+
+local gameSpawnReqHandler = IS_FIVEM and handleSpawnRequestFivem or handleSpawnRequestRedm
+
+RegisterNUICallback('spawnVehicle', function(data, cb)
+    if type(data) ~= 'table' or type(data.model) ~= 'string' then
+        error("Invalid spawnVehicle NUI callback data")
+    end
+    if not IsModelValid(data.model) then
+        debugPrint("^1Invalid vehicle/horse model requested: " .. data.model)
+        cb({ e = true })
+    end
+
+    local spawnReqDone = gameSpawnReqHandler(data.model)
+    cb(spawnReqDone and {} or { e = true })
 end)
 
 RegisterNUICallback("deleteVehicle", function(data, cb)
@@ -202,14 +254,18 @@ RegisterNetEvent('txcl:vehicle:fix', function()
 end)
 
 -- Spawn vehicles, with support for entity lockdown
-RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
+RegisterNetEvent('txcl:seatInVehicle', function(vehNetID, seat, oldVehVelocity)
     if type(vehNetID) ~= 'number' then return end
     if type(seat) ~= 'number' then return end
+    if type(oldVehVelocity) ~= 'vector3' then return end
 
-    local tries = 0
-    while not NetworkDoesEntityExistWithNetworkId(vehNetID) and tries < 1000 do Wait(0) end
-    if tries >= 1000 then
-        return sendSnackbarMessage('error', 'Failed to seat into vehicle (net=' .. vehNetID .. ')')
+    local attemptsCounter = 0
+    local attemptsLimit = 400 -- 400*5 = 2s
+    while not NetworkDoesEntityExistWithNetworkId(vehNetID) and attemptsCounter < attemptsLimit do
+        Wait(5)
+    end
+    if not NetworkDoesEntityExistWithNetworkId(vehNetID) then
+        return sendSnackbarMessage('error', 'Failed to seat into vehicle (net=' .. vehNetID .. ')', false)
     end
 
     local veh = NetToVeh(vehNetID)
@@ -218,9 +274,7 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
         if seat == -1 then
             SetVehicleEngineOn(veh, true, true, false)
             SetEntityVelocity(veh, oldVehVelocity)
-            --SetVehicleForwardSpeed(veh, #(oldVehVelocity[1] + oldVehVelocity[2]))
             SetVehicleOnGroundProperly(veh)
         end
     end
-    oldVehVelocity = 0.0
 end)

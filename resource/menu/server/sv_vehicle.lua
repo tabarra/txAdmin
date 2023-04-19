@@ -29,63 +29,75 @@ end)
 --- Spawn a vehicle on the server at the request of a client
 ---@param model string
 ---@param modelType string
-RegisterNetEvent('txsv:req:vehicle:spawn', function(model, modelType)
+RegisterNetEvent('txsv:req:vehicle:spawn:fivem', function(model, modelType)
   local src = source
-  if type(model) ~= 'string' then
-    return
-  end
-  if type(modelType) ~= 'string' then
-    return
-  end
+  if type(model) ~= 'string' then return end
+  if type(modelType) ~= 'string' then return end
 
+  --check permission
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
   TriggerEvent('txsv:logger:menuEvent', src, 'spawnVehicle', allow, model)
-  if allow then
-    local ped = GetPlayerPed(src)
-    local coords = GetEntityCoords(ped)
-    local heading = GetEntityHeading(ped)
+  if not allow then return end
 
-    local seatsToPlace = {}
-    local oldVeh = GetVehiclePedIsIn(ped, false)
-    if oldVeh and oldVeh > 0 then
-      for i = 6, -1, -1 do
-        local pedInSeat = GetPedInVehicleSeat(oldVeh, i)
-        if pedInSeat > 0 then
-          seatsToPlace[i] = pedInSeat
-        end
-      end
-    else
-      seatsToPlace[-1] = ped
-    end
+  --resolve source ped
+  local ped = GetPlayerPed(src)
+  local coords = GetEntityCoords(ped)
+  local heading = GetEntityHeading(ped)
+  local sourceBucket = GetPlayerRoutingBucket(src)
 
-    local veh = CreateVehicleServerSetter(model, modelType, coords.x, coords.y, coords.z, heading)
-    local tries = 0
-    while not DoesEntityExist(veh) do
-      Wait(0)
-      tries = tries + 1
-      if tries > 350 then
-        break
+  --collect data from old current vehicle (if any)
+  local seatsToPlace = {}
+  local oldVeh = GetVehiclePedIsIn(ped, false)
+  local oldVehVelocity
+  if oldVeh and oldVeh > 0 then
+    oldVehVelocity = GetEntityVelocity(oldVeh)
+
+    --for each seat
+    for i = 6, -1, -1 do
+      local pedInSeat = GetPedInVehicleSeat(oldVeh, i)
+      if pedInSeat > 0 then
+        seatsToPlace[i] = pedInSeat
       end
     end
-    local vehNetId = NetworkGetNetworkIdFromEntity(veh)
-    debugPrint(string.format("spawn vehicle (src=^3%d^0, model=^4%s^0, modelType=^4%s^0, vehNetId=^3%s^0)", src, model,
-        (modelType), vehNetId))
-    local RoutingBucket = GetPlayerRoutingBucket(src)
-    SetEntityRoutingBucket(veh, RoutingBucket)    
-    -- map all player ids to peds
-    local players = GetPlayers()
-    local pedMap = {}
-    for _, id in pairs(players) do
-      local pedId = GetPlayerPed(id)
-      pedMap[pedId] = id
-    end
+    DeleteEntity(oldVeh)
+  else
+    seatsToPlace[-1] = ped
+  end
 
-    for seatIndex, seatPed in pairs(seatsToPlace) do
-      debugPrint(("setting %d into seat index %d"):format(seatPed, seatIndex))
-      local targetSrc = pedMap[seatPed]
-      if type(targetSrc) == 'string' then
-        TriggerClientEvent('txAdmin:events:queueSeatInVehicle', targetSrc, vehNetId, seatIndex)
-      end
+  --spawn new vehicle
+  local newVeh = CreateVehicleServerSetter(model, modelType, coords.x, coords.y, coords.z, heading)
+  local attemptsCounter = 0
+  local attemptsLimit = 400 -- 400*5 = 2s
+  while not DoesEntityExist(newVeh) do
+    Wait(5)
+    attemptsCounter = attemptsCounter + 1
+    if attemptsCounter > attemptsLimit then
+      return debugPrint('Failed to spawn vehicle entity')
+    end
+  end
+  SetEntityRoutingBucket(newVeh, sourceBucket)
+  SetEntityVelocity(newVeh, oldVehVelocity)
+
+  local vehNetId = NetworkGetNetworkIdFromEntity(newVeh)
+  debugPrint(string.format(
+    "spawn vehicle (src=^3%d^0, model=^4%s^0, modelType=^4%s^0, vehNetId=^3%s^0)",
+    src, model, modelType, vehNetId
+  ))
+
+  --Moving peds to new vehicle and deleting old one
+  --creating a ped/netid map
+  local players = GetPlayers()
+  local pedNetIdMap = {}
+  for _, id in pairs(players) do
+    local pedId = GetPlayerPed(id)
+    pedNetIdMap[pedId] = id
+  end
+  --sending seatInVehicle event to each client
+  for seatIndex, seatPed in pairs(seatsToPlace) do
+    local targetSrc = pedNetIdMap[seatPed]
+    if type(targetSrc) == 'string' then
+      debugPrint(("setting netid %d (ped %d) into seat index %d"):format(targetSrc, seatPed, seatIndex))
+      TriggerClientEvent('txcl:seatInVehicle', targetSrc, vehNetId, seatIndex, oldVehVelocity)
     end
   end
 end)
