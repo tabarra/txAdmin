@@ -82,17 +82,14 @@ local function toggleFreecam(enabled)
                 Wait(0)
             end
 
-            if not DoesEntityExist(freecamVeh) then
-                freecamVeh = 0
-            end
-            if freecamVeh > 0 then
+            if freecamVeh > 0 and DoesEntityExist(freecamVeh) then
                 local coords = GetEntityCoords(ped)
                 NetworkSetEntityInvisibleToNetwork(freecamVeh, false)
                 SetEntityCollision(freecamVeh, true, true)
                 SetEntityCoords(freecamVeh, coords[1], coords[2], coords[3], false, false, false, false)
                 SetPedIntoVehicle(ped, freecamVeh, -1)
-                freecamVeh = 0
             end
+            freecamVeh = 0
         end)
     end
 
