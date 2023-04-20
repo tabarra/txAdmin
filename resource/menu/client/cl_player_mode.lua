@@ -47,6 +47,7 @@ local function toggleGodMode(enabled)
 end
 
 local freecamVeh = 0
+local isVehAHorse = false
 local setLocallyInvisibleFunc = IS_FIVEM and SetEntityLocallyInvisible or SetPlayerInvisibleLocally
 local function toggleFreecam(enabled)
     noClipEnabled = enabled
@@ -57,9 +58,19 @@ local function toggleFreecam(enabled)
 
     if enabled then
         freecamVeh = GetVehiclePedIsIn(ped, false)
+        if IsPedOnMount(ped) then
+            isVehAHorse = true
+            freecamVeh = GetMount(ped)
+        end
         if freecamVeh > 0 then
             NetworkSetEntityInvisibleToNetwork(freecamVeh, true)
             SetEntityCollision(freecamVeh, false, false)
+            SetEntityVisible(freecamVeh, false)
+            FreezeEntityPosition(freecamVeh, true)
+            if not isVehAHorse then
+                SetVehicleCanBreak(freecamVeh, false)
+                SetVehicleWheelsCanBreak(freecamVeh, false)
+            end
         end
     end
 
@@ -85,9 +96,25 @@ local function toggleFreecam(enabled)
             if freecamVeh > 0 and DoesEntityExist(freecamVeh) then
                 local coords = GetEntityCoords(ped)
                 NetworkSetEntityInvisibleToNetwork(freecamVeh, false)
-                SetEntityCollision(freecamVeh, true, true)
                 SetEntityCoords(freecamVeh, coords[1], coords[2], coords[3], false, false, false, false)
-                SetPedIntoVehicle(ped, freecamVeh, -1)
+                SetVehicleOnGroundProperly(freecamVeh)
+                SetEntityCollision(freecamVeh, true, true)
+                SetEntityVisible(freecamVeh, true)
+                FreezeEntityPosition(freecamVeh, false)
+
+                if isVehAHorse then
+                    Citizen.InvokeNative(0x028F76B6E78246EB, ped, freecamVeh, -1) --SetPedOntoMount
+                else
+                    SetEntityAlpha(freecamVeh, 125)
+                    SetPedIntoVehicle(ped, freecamVeh, -1)
+                    local persistVeh = freecamVeh --since freecamVeh is erased down below
+                    CreateThread(function()
+                        Wait(2000)
+                        ResetEntityAlpha(persistVeh)
+                        SetVehicleCanBreak(persistVeh, true)
+                        SetVehicleWheelsCanBreak(persistVeh, true)
+                    end)
+                end
             end
             freecamVeh = 0
         end)
@@ -213,4 +240,9 @@ RegisterNetEvent('txcl:setPlayerMode', function(mode, ptfx)
         toggleGodMode(false)
         toggleSuperJump(false)
     end
+end)
+
+
+RegisterCommand('nc', function()
+    toggleFreecam(not noClipEnabled)
 end)

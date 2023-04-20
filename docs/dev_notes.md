@@ -27,7 +27,7 @@
 - [x] Resource: refactor `/txAdmin-reauth` to return the full cause in the snackbar
 - [x] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [x] Resource: rename menu events to `txsv:xxx` and `txcl:xxx`
-- [ ] Resource: fix some RedM issues
+- [ ] Resource: full redm compatibility
 - [ ] make `recipes/indexv4.json` dropping version and adding tags
     - drop author field as well?
     - remove zap esx pack? last update was 6 months ago
@@ -43,11 +43,11 @@
 
 
 # RedM Migrations
-- [ ] Player Mode
-    - [ ] noclip
+- [x] Player Mode
+    - [x] noclip
         - [x] controls
         - [x] bug: after exiting, the mouse doesn't move
-        - [ ] fix behavior while seated on vehicle or horse
+        - [x] fix behavior while seated on vehicle or horse
         - [x] scaleform/prompt
     - [x] god mode
     - [x] super jump

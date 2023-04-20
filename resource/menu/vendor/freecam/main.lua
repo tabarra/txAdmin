@@ -92,7 +92,10 @@ function StartFreecamThread()
     local ped = PlayerPedId()
     local initialPos = GetEntityCoords(ped)
     SetFreecamPosition(initialPos[1], initialPos[2], initialPos[3])
-    local veh = GetVehiclePedIsIn(PlayerPedId(), false)
+    local veh = GetVehiclePedIsIn(ped, false)
+    if IsPedOnMount(ped) then
+      veh = GetMount(ped)
+    end
 
     local function updatePos(pos, rotZ)
       if pos ~= nil and rotZ ~= nil then
