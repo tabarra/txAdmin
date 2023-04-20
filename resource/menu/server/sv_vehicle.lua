@@ -26,10 +26,24 @@ RegisterNetEvent('txsv:req:vehicle:boost', function()
   end
 end)
 
---- Spawn a vehicle on the server at the request of a client
+---Since we can't spawn it on the server, we just respond to the client and let it handle the spawn
+---@param model string
+RegisterNetEvent('txsv:req:vehicle:spawn:redm', function(model)
+  if not IS_REDM then return end
+  local src = source
+  if type(model) ~= 'string' then return end
+  local allow = PlayerHasTxPermission(src, 'menu.vehicle')
+  TriggerEvent('txsv:logger:menuEvent', src, 'spawnVehicle', allow, model)
+  if allow then
+    TriggerClientEvent('txcl:vehicle:spawn:redm', src, model)
+  end
+end)
+
+--- Spawn a vehicle on the server at the request of a client (fivem)
 ---@param model string
 ---@param modelType string
 RegisterNetEvent('txsv:req:vehicle:spawn:fivem', function(model, modelType)
+  if not IS_FIVEM then return end
   local src = source
   if type(model) ~= 'string' then return end
   if type(modelType) ~= 'string' then return end

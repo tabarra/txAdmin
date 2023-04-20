@@ -80,7 +80,7 @@ end
 
 local function handleSpawnRequestRedm(model)
     --check if model is valid vehicle or horse (IsThisModelAHorse)
-    if not IsModelAVehicle(model) and not Citizen.InvokeNative(0x772A1969F649E902, GetHashKey('model')) then
+    if not IsModelAVehicle(model) and not Citizen.InvokeNative(0x772A1969F649E902, GetHashKey(model)) then
         debugPrint("^1Model provided is not a vehicle or horse: " .. model)
         return false
     end
@@ -98,7 +98,7 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
     end
     if not IsModelValid(data.model) then
         debugPrint("^1Invalid vehicle/horse model requested: " .. data.model)
-        cb({ e = true })
+        return cb({ e = true })
     end
 
     local spawnReqDone = gameSpawnReqHandler(data.model)
@@ -253,11 +253,64 @@ RegisterNetEvent('txcl:vehicle:fix', function()
     end
 end)
 
--- Spawn vehicles, with support for entity lockdown
+-- Spawn vehicle - used in redm
+RegisterNetEvent('txcl:vehicle:spawn:redm', function(model)
+    if not IS_REDM then return end
+    if type(model) ~= 'string' then return end
+
+    -- check model
+    local modelHash = GetHashKey(model)
+    local isVehicle = IsModelAVehicle(model)
+    local isHorse = Citizen.InvokeNative(0x772A1969F649E902, modelHash) --IsThisModelAHorse
+    if not isVehicle and not isHorse then
+        return debugPrint("^1Model provided is not a vehicle or horse: " .. model)
+    end
+
+    -- get player data
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    local playerHeading = GetEntityHeading(playerPed)
+    local currentVeh = GetVehiclePedIsIn(playerPed, false)
+    if IsPedOnMount(playerPed) then
+        currentVeh = GetMount(playerPed)
+    end
+    local currentVehVelocity
+    if currentVeh then
+        currentVehVelocity = GetEntityVelocity(currentVeh)
+        DeleteEntity(currentVeh)
+    end
+
+    -- request new model
+    RequestModel(modelHash)
+    while not HasModelLoaded(modelHash) do
+        Wait(15)
+    end
+
+    -- spawn it
+    local newVeh
+    if isVehicle then
+        newVeh = CreateVehicle(modelHash, playerCoords, playerHeading, true, false, false)
+        SetPedIntoVehicle(playerPed, newVeh, -1)
+        SetVehicleOnGroundProperly(newVeh)
+    else
+        newVeh = CreatePed(modelHash, playerCoords, playerHeading, true, false)
+        Citizen.InvokeNative(0x77FF8D35EEC6BBC4, newVeh, 1, 0) --EquipMetaPedOutfitPreset
+        -- Citizen.InvokeNative(0x283978A15512B2FE, newVeh, true) --SetRandomOutfitVariation
+        Citizen.InvokeNative(0x028F76B6E78246EB, playerPed, newVeh, -1) --SetPedOntoMount
+    end
+
+    -- preserving speed, doesn't work well for horses
+    if currentVehVelocity then
+        SetEntityVelocity(newVeh, currentVehVelocity)
+    end
+    SetModelAsNoLongerNeeded(modelHash)
+end)
+
+
+-- Spawn vehicles, with support for entity lockdown - used in fivem
 RegisterNetEvent('txcl:seatInVehicle', function(vehNetID, seat, oldVehVelocity)
     if type(vehNetID) ~= 'number' then return end
     if type(seat) ~= 'number' then return end
-    if type(oldVehVelocity) ~= 'vector3' then return end
 
     local attemptsCounter = 0
     local attemptsLimit = 400 -- 400*5 = 2s
@@ -273,8 +326,10 @@ RegisterNetEvent('txcl:seatInVehicle', function(vehNetID, seat, oldVehVelocity)
         SetPedIntoVehicle(PlayerPedId(), veh, seat)
         if seat == -1 then
             SetVehicleEngineOn(veh, true, true, false)
-            SetEntityVelocity(veh, oldVehVelocity)
             SetVehicleOnGroundProperly(veh)
+            if type(oldVehVelocity) ~= 'vector3' then
+                SetEntityVelocity(veh, oldVehVelocity)
+            end
         end
     end
 end)

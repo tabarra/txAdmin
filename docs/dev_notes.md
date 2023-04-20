@@ -60,7 +60,7 @@
     - [x] back
     - [x] copy coords
 - [ ] Vehicle
-    - [ ] spawn
+    - [x] spawn
     - [ ] fix
     - [x] delete
     - [ ] boost
@@ -88,21 +88,18 @@
 - [ ] Find out why the players page doesn't reflect the player health, maybe it is client side only?
 - [ ] check again for any added `print()`
 
--1885.7838, 2637.4695, 675.8902, 86.1232
+--DEBUG
+RegisterCommand('go', function()
+    Wait(2500)
+    gameSpawnReqHandler('p_c_horse_01')
+    -- gameSpawnReqHandler('a_c_horse_morgan_bay')
+    -- gameSpawnReqHandler('cart01')
+end)
 
--- DEBUG Commands
-RegisterCommand('spec1', function()
-    isSpectateEnabled = true
-    createInstructionalThreads()
-end)
-RegisterCommand('spec0', function()
-    isSpectateEnabled = false
-end)
 
 SetMinimapHideFow(true)
 
 return TaskLeaveAnyVehicle(ped, 0, 16)
-
 return IsPedOnMount(ped)
 -- redm: 1 if in horse, false if not, false if in carriage
 -- fivem: xxx if in horse, false if not, false if in car
@@ -688,6 +685,7 @@ export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
 npx depcheck
 npm-upgrade
 con_miniconChannels script:monitor*
+con_miniconChannels script:runcode
 +setr txAdmin-debugMode true
 nui_devtoold mpMenu
 
