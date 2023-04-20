@@ -59,16 +59,16 @@
     - [x] coords
     - [x] back
     - [x] copy coords
-- [ ] Vehicle
+- [x] Vehicle
     - [x] spawn
-    - [ ] fix
+    - [x] fix
     - [x] delete
-    - [ ] boost
+    - [ ] boost (FIXME: doesn't work, disable button)
 - [x] Heal
     - [x] self
     - [x] everyone
 - [x] Announcements
-- [ ] reset world area (FIXME: doesn't work, disable button?)
+- [ ] reset world area (FIXME: doesn't work, disable button)
 - [x] player ids
 - [ ] logger (death reasons, explosions, etc)
 
@@ -94,6 +94,12 @@ RegisterCommand('go', function()
     gameSpawnReqHandler('p_c_horse_01')
     -- gameSpawnReqHandler('a_c_horse_morgan_bay')
     -- gameSpawnReqHandler('cart01')
+end)
+RegisterCommand('horse', function()
+    gameSpawnReqHandler('p_c_horse_01')
+end)
+RegisterCommand('cart', function()
+    gameSpawnReqHandler('cart01')
 end)
 
 

@@ -125,7 +125,7 @@ end)
 RegisterNUICallback('fixVehicle', function(_, cb)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
-    if (veh == 0) then
+    if (veh == 0) and not IsPedOnMount(ped) then
         return cb({ e = true })
     end
 
@@ -250,6 +250,13 @@ RegisterNetEvent('txcl:vehicle:fix', function()
         SetVehicleEngineOn(veh, true, false)
         SetVehicleDirtLevel(veh, 0.0)
         SetVehicleOnGroundProperly(veh)
+    elseif IS_REDM and IsPedOnMount(ped) then
+        local horse = GetMount(ped)
+        ResurrectPed(horse)
+        SetEntityHealth(horse, GetEntityMaxHealth(horse))
+        Citizen.InvokeNative(0xC6258F41D86676E0, horse, 0, 100) -- SetAttributeCoreValue
+        Citizen.InvokeNative(0xC6258F41D86676E0, horse, 1, 100) -- SetAttributeCoreValue
+        Citizen.InvokeNative(0xC6258F41D86676E0, horse, 2, 100) -- SetAttributeCoreValue
     end
 end)
 
