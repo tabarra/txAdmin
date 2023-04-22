@@ -1,58 +1,111 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import MenuWrapper from "./MenuWrapper";
 import "./index.css";
-import { ThemeProvider, StyledEngineProvider } from "@mui/material";
-import { MenuTheme } from "./styles/theme";
-import { MenuThemeRedm } from "./styles/theme-redm";
+import { ThemeProvider, StyledEngineProvider, createTheme } from "@mui/material";
 import { RecoilRoot } from "recoil";
 import { KeyboardNavProvider } from "./provider/KeyboardNavProvider";
-import { SnackbarProvider } from "notistack";
+import { MaterialDesignContent, SnackbarProvider } from "notistack";
 import { registerDebugFunctions } from "./utils/registerDebugFunctions";
 import { useNuiEvent } from "./hooks/useNuiEvent";
+import styled from "@emotion/styled";
+import rawMenuTheme from "./styles/theme";
+import rawMenuRedmTheme from "./styles/theme-redm";
+import { useIsRedm } from "./state/isRedm.state";
 
 registerDebugFunctions();
 
-const rootContainer = document.getElementById("root");
-const root = createRoot(rootContainer);
+//Instantiating the two themes
+declare module '@mui/material/styles' {
+  interface Theme {
+      name: string;
+      logo: string;
+  }
+
+  // allow configuration using `createTheme`
+  interface ThemeOptions {
+      name?: string;
+      logo?: string;
+  }
+}
+const menuRedmTheme = createTheme(rawMenuRedmTheme);
+const menuTheme = createTheme(rawMenuTheme);
+
+//Overwriting the notistack colors
+//Actually using the colors from the RedM theme, but could start using `theme` if needed
+const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ theme }) => ({
+  '&.notistack-MuiContent-default': {
+    color: menuRedmTheme.palette.text.primary,
+    backgroundColor: menuRedmTheme.palette.background.default,
+  },
+  '&.notistack-MuiContent-info': {
+    backgroundColor: menuRedmTheme.palette.info.main,
+    color: menuRedmTheme.palette.info.contrastText,
+  },
+  '&.notistack-MuiContent-success': {
+    backgroundColor: menuRedmTheme.palette.success.main,
+    color: menuRedmTheme.palette.success.contrastText,
+  },
+  '&.notistack-MuiContent-warning': {
+    backgroundColor: menuRedmTheme.palette.warning.main,
+    color: menuRedmTheme.palette.warning.contrastText,
+  },
+  '&.notistack-MuiContent-error': {
+    backgroundColor: menuRedmTheme.palette.error.main,
+    color: menuRedmTheme.palette.error.contrastText,
+  },
+}));
+
 
 const App = () => {
-  const [isRedmTheme, setIsRedmTheme] = useState(false);
-
+  const [isRedm, setIsRedm] = useIsRedm();
   useNuiEvent<string>("setGameName", (gameName: string) => {
-    setIsRedmTheme(gameName === 'redm')
+    setIsRedm(gameName === 'redm')
   });
 
-  //FIXME: finish writing the new theme and remove this snippet
+  // FIXME: finish writing the new theme and remove this snippet
   // useEffect(() => {
   //   const timer = setInterval(() => {
-  //     setIsRedmTheme(currState => !currState);
+  //     // setIsRedmTheme(currState => !currState);
+  //     setIsRedm(currState => !currState);
   //   }, 1000);
-
   //   return () => {
   //     clearTimeout(timer);
   //   };
   // }, []);
 
   return (
-    <RecoilRoot>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={isRedmTheme ? MenuThemeRedm : MenuTheme}>
-          <KeyboardNavProvider>
-            <SnackbarProvider
-              maxSnack={5}
-              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-              disableWindowBlurListener={true}
-            >
-              <React.Suspense fallback={<></>}>
-                <MenuWrapper />
-              </React.Suspense>
-            </SnackbarProvider>
-          </KeyboardNavProvider>
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </RecoilRoot>
-  );
-};
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={isRedm ? menuRedmTheme : menuTheme}>
+        <KeyboardNavProvider>
+          <SnackbarProvider
+            maxSnack={5}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            disableWindowBlurListener={true}
+            autoHideDuration={60_000} //DEBUG
+            Components={{
+              default: StyledMaterialDesignContent,
+              info: StyledMaterialDesignContent,
+              success: StyledMaterialDesignContent,
+              warning: StyledMaterialDesignContent,
+              error: StyledMaterialDesignContent,
+            }}
+          >
+            <React.Suspense fallback={<></>}>
+              <MenuWrapper />
+            </React.Suspense>
+          </SnackbarProvider>
+        </KeyboardNavProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
+  )
+}
 
-root.render(<App />);
+
+const rootContainer = document.getElementById("root");
+const root = createRoot(rootContainer);
+root.render(
+  <RecoilRoot>
+    <App />
+  </RecoilRoot>
+);

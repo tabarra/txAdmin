@@ -77,7 +77,7 @@
     "nanoid-dictionary": "^4.3.0",
     "node-polyglot": "^2.5.0",
     "node-stream-zip": "^1.15.0",
-    "notistack": "^2.0.8",
+    "notistack": "^3.0.1",
     "open": "7.1.0",
     "openid-client": "^5.4.0",
     "pidtree": "^0.6.0",

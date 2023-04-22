@@ -1,8 +1,4 @@
-// import './module-augmentation.d.ts'
-import { createTheme } from "@mui/material";
-
-
-export const MenuTheme = createTheme({
+export default {
   name: 'fivem',
   logo: 'images/txadmin.png',
   palette: {
@@ -33,8 +29,8 @@ export const MenuTheme = createTheme({
       main: "#fff",
     },
     text: {
-      secondary: "rgba(221,221,221,0.54)",
       primary: "#fff",
+      secondary: "rgba(221,221,221,0.54)",
     },
   },
   components: {
@@ -49,4 +45,4 @@ export const MenuTheme = createTheme({
     },
     MuiPaper: { styleOverrides: { root: { backgroundImage: "unset" } } },
   },
-});
+} as const;
