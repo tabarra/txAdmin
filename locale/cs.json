@@ -5,7 +5,7 @@
     },
     "restarter": {
         "start_timeout": "server se nestihl spustit v požadovaném čase",
-        "crash_detected": "pád detekován",
+        "crash_detected": "pád detekován!",
         "hang_detected": "přerušení připojení detekováno",
         "partial_hang_warn": "Kvůli částečnému přerušení připojení se tento server restartuje za 1 minutu. Odpojte se prosím.",
         "partial_hang_warn_discord": "Kvůli částečnému přerušení připojení se **%{servername}** restartuje za 1 minutu.",
@@ -17,41 +17,41 @@
         "kick_temporary": "(%{author}) Dostal jsi ban, důvod banu je: \"%{reason}\". Ban vyprší za: %{expiration}.",
         "kick_permanent": "(%{author}) Byl ti permanentně odebrán přístup k serveru a to z důvodu: \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers."
+            "title_permanent": "Byl jsi permanentně zabanován na tomto serveru.",
+            "title_temporary": "Byl jsi dočasně zabanován na tomto serveru.",
+            "label_expiration": "Tvuj ban vyprší za:",
+            "label_date": "Datum banu:",
+            "label_author": "Ban udělil:",
+            "label_reason": "Důvod banu:",
+            "label_id": "Ban ID:",
+            "note_multiple_bans": "Poznámka: máš víc jak jeden aktivní ban na tvém identifikátoru."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Tento server je v <strong>Admin-only</strong> režimu!",
+            "insufficient_ids": "Nemáš <code>discord</code> nebo <code>fivem</code> identifikátor, a proto nemáš přístup k txAdmin menu.",
+            "deny_message": "Vaše identifikátory nejsou přiřazeny žádnému správci txAdmin."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Tento server je v <strong>Discord Guild Member Whitelist</strong> režimu!",
+            "insufficient_ids": "Nemáš <code>discord</code> identifikátor, který je potřebný k určení jestli si připojený na našem Discord serveru. Prosím otevři aplikaci Discord a zkus to znova.",
+            "deny_title": "Chcete-li se připojit, musíte se připojit na náš Discord server",
+            "deny_message": "Připoj se prosím na %{guildname} a zkus to znova."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open Discord and try again.",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Tento server je v <strong>Discord Role Whitelist</strong> režimu.",
+            "insufficient_ids": "Nemáš <code>discord</code> identifikátor, který je potřebný k určení jestli si připojený na našem Discord serveru. Prosím otevři aplikaci Discord a zkus to znova.",
+            "deny_notmember_title": "Chcete-li se připojit, musíte se připojit na náš Discord server",
+            "deny_notmember_message": "Připoj se prosím na %{guildname}, kde dostaneš potřebnou roli a zkus to znova.",
+            "deny_noroles_title": "Nemáš Whitelist roli, která je potřebná k připojení na server.",
+            "deny_noroles_message": "Chcete-li se připojit k tomuto serveru, musíte mít alespoň jednu z povolených rolí na serveru %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Tento server je v <strong>License Whitelist</strong> režimu.",
+            "insufficient_ids": "Nemáš <code>license</code> identifikátor, co znamená že server má <code>sv_lan</code> povolen. Pokud jste vlastníkem serveru, můžete jej zakázat v <code>server.cfg</code> souboru.",
+            "deny_title": "Nemáš Whitelist aby ses mohl připojit na server.",
+                "request_id_label": "Žádost ID"
         }
     },
     "server_actions": {
@@ -75,7 +75,7 @@
             "not_enabled": "txAdmin menu není povoleno! můžeš ho povolit v txAdmin stránce nastavení.",
             "announcement_title": "Server oznámení od %{author}:",
             "dialog_empty_input": "Vsut nemůže být prázdný.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM od admina %{author}:"
         },
         "frozen": {
             "froze_player": "Zmrazil jsi hráče!",
@@ -107,8 +107,8 @@
                 },
                 "superjump": {
                     "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "label": "Přepněte režim super skoku, hráč také poběží rychleji",
+                    "success": "Super Jump povolen"
                 },
                 "normal": {
                     "title": "Normální",
@@ -166,10 +166,10 @@
                 },
                 "boost": {
                     "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported."
+                    "label": "Vylepšete auto, abyste dosáhli maximální zábavy (a možná i rychlosti)",
+                    "success": "Vozidlo vyboostěno!",
+                    "already_boosted": "Tohle vozidlo je již vyboostěno.",
+                    "unsupported_class": "Tento typ vozidla není podporována."
                 }
             },
             "heal": {
@@ -304,27 +304,27 @@
                 "play_time": "Čas hraní",
                 "joined": "Připojeno",
                 "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
+                "whitelisted_notyet": "ještě ne",
+                "btn_wl_add": "PŘIDAT WL",
+                "btn_wl_remove": "ODSTRANIT WL",
+                "btn_wl_success": "Whitelist status změněn.",
                 "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "log_empty": "Žádné bany/varování.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} banů",
+                "log_warn_count": "%{smart_count} varován |||| %{smart_count} varování",
+                "log_btn": "DETAILY",
+                "notes_changed": "Hráčovi poznímky upraveny.",
+                "notes_placeholder": "Poznámky ohledně tohohle hráče..."
             },
             "history": {
                 "title": "Související historie",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "ODVOLAT",
+                "revoked_success": "Akce byla odvoláná!",
+                "banned_by": "ZABANOVÁN od %{author}",
+                "warned_by": "VAROVÁN od %{author}",
+                "revoked_by": "Odvoláno %{author}.",
+                "expired_at": "Vyprší %{date}.",
+                "expires_at": "Vyprší %{date}."
             },
             "ban": {
                 "title": "Zabanovat hráče",
@@ -338,12 +338,12 @@
                 "custom": "Vlastní",
                 "helper_text": "Prosím vyber délku trvání",
                 "submit": "Použít ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "reason_required": "Pole -Důvod- musí být vyplněný.",
+                "success": "Hráč zabanován!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "current_ids": "Aktuální identifikátory",
+                "previous_ids": "Předchozí použítý identifikátory"
             }
         }
     }
