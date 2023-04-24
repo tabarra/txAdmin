@@ -92,7 +92,7 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
         PaperProps={{
           style: {
             backgroundColor: theme.palette.background.default,
-            minHeight: 450,
+            minHeight: 455,
             maxHeight: 650,
             borderRadius: 15,
           },

@@ -143,7 +143,7 @@ const DialogInfoView: React.FC = () => {
             : t("nui_menu.player_modal.info.whitelisted_notyet")}
         </span>{" "}
         <ButtonXS
-          color={player.tsWhitelisted ? "error" : "primary"}
+          color={player.tsWhitelisted ? "error" : "success"}
           variant="outlined"
           onClick={btnChangeWhitelistStatus as any}
           disabled={!meta.tmpPerms.whitelist || !player.license}
@@ -175,14 +175,14 @@ const DialogInfoView: React.FC = () => {
           )}
         </span>{" "}
         <ButtonXS
-          color="secondary"
+          color="info"
           variant="outlined"
           onClick={btnLogDetails as any}
         >
           {t("nui_menu.player_modal.info.log_btn")}
         </ButtonXS>
       </Typography>
-      <form onSubmit={handleSaveNote}>
+      <form onSubmit={handleSaveNote} style={{marginBlockEnd: 0}}>
         <Box pt={1}>
           <TextField
             autoFocus

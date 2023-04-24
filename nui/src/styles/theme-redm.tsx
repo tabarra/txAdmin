@@ -5,7 +5,8 @@ export default {
     mode: "dark",
     primary: {
       // main: "#F7DC6F",
-      main: "#F4D03E", //darker
+      // main: "#F4D03E", //darker
+      main: "#F4DF88", //desaturated
     },
     success: {
       // main: "#82E0AA",
@@ -32,7 +33,8 @@ export default {
     },
     secondary: {
       // main: "#D6A2E8",
-      main: "#BB64D9", //darker
+      // main: "#BB64D9", //darker
+      main: "#C68ED9", //desaturated
     },
     text: {
       primary: "#E8E1DC",

@@ -31,7 +31,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
     borderRadius: 10,
     cursor: "pointer",
     "&:hover": {
-      backgroundColor: "#35393C",
+      backgroundColor: theme.palette.action.selected,
     },
   },
 

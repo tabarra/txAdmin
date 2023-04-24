@@ -59,20 +59,10 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ theme }) =>
 
 const App = () => {
   const [isRedm, setIsRedm] = useIsRedm();
+
   useNuiEvent<string>("setGameName", (gameName: string) => {
     setIsRedm(gameName === 'redm')
   });
-
-  // FIXME: finish writing the new theme and remove this snippet
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     // setIsRedmTheme(currState => !currState);
-  //     setIsRedm(currState => !currState);
-  //   }, 1000);
-  //   return () => {
-  //     clearTimeout(timer);
-  //   };
-  // }, []);
 
   return (
     <StyledEngineProvider injectFirst>
@@ -82,7 +72,6 @@ const App = () => {
             maxSnack={5}
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             disableWindowBlurListener={true}
-            autoHideDuration={60_000} //DEBUG
             Components={{
               default: StyledMaterialDesignContent,
               info: StyledMaterialDesignContent,
