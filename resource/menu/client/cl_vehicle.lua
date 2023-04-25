@@ -185,6 +185,7 @@ local boostableVehicleClasses = {
 }
 
 RegisterNetEvent('txcl:vehicle:boost', function()
+    if IS_REDM then return end
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
 

@@ -48,12 +48,12 @@
         - [x] spawn
         - [x] fix
         - [x] delete
-        - [ ] boost (FIXME: doesn't work, disable button)
+        - [x] boost (FIXME: doesn't work, disable button)
     - [x] Heal
         - [x] self
         - [x] everyone
     - [x] Announcements
-    - [ ] reset world area (FIXME: doesn't work, disable button)
+    - [x] reset world area (FIXME: doesn't work, disable button)
     - [x] player ids
     - [ ] logger (death reasons, explosions, etc)
 

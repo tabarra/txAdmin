@@ -241,6 +241,7 @@ end)
 
 
 RegisterNetEvent('txcl:clearArea', function(radius)
+    if IS_REDM then return end
     local curCoords = GetEntityCoords(PlayerPedId())
     local radiusToFloat = radius + 0.0
     debugPrint(('Radius to clear %d'):format(radius))
