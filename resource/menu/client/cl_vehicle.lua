@@ -301,8 +301,8 @@ RegisterNetEvent('txcl:vehicle:spawn:redm', function(model)
         SetVehicleOnGroundProperly(newVeh)
     else
         newVeh = CreatePed(modelHash, playerCoords, playerHeading, true, false)
-        Citizen.InvokeNative(0x77FF8D35EEC6BBC4, newVeh, 1, 0) --EquipMetaPedOutfitPreset
-        -- Citizen.InvokeNative(0x283978A15512B2FE, newVeh, true) --SetRandomOutfitVariation
+        -- Citizen.InvokeNative(0x77FF8D35EEC6BBC4, newVeh, 1, 0) --EquipMetaPedOutfitPreset
+        Citizen.InvokeNative(0x283978A15512B2FE, newVeh, true) --SetRandomOutfitVariation
         Citizen.InvokeNative(0x028F76B6E78246EB, playerPed, newVeh, -1) --SetPedOntoMount
     end
 
