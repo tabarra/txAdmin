@@ -48,7 +48,6 @@ client_scripts {
     'resource/menu/client/cl_instructional_ui.lua',
     'resource/menu/client/cl_main_page.lua',
     'resource/menu/client/cl_vehicle.lua',
-    'resource/menu/client/cl_misc.lua',
     'resource/menu/client/cl_player_ids.lua',
     'resource/menu/client/cl_player_mode.lua',
     'resource/menu/client/cl_spectate.lua',

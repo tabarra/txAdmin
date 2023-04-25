@@ -72,7 +72,7 @@
 - [x] Make Z optional in tp to coords feature
 - [x] Vehicle spawn should accept `[horse, cart, boat]` options, maybe add the buttons
 - [x] Find out why the players page doesn't reflect the player health, maybe it is client side only?
-- [ ] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
+- [x] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
 
 - [ ] make `recipes/indexv4.json` dropping version and adding tags
     - drop author field as well?
