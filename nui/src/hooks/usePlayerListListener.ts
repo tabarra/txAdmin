@@ -34,7 +34,7 @@ export interface PlayerData {
   dist: number;
   /**
    * A non-normalized player health value
-   * Can be only be 0-200
+   * Integer between 0-100 or -1 if information is not available
    **/
   health: number;
   /**

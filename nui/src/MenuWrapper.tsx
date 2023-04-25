@@ -36,6 +36,7 @@ debugData<any>(
     },
     {
       action: "setGameName",
+      // data: 'fivem',
       data: 'redm',
     },
   ],

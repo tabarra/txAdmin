@@ -323,6 +323,7 @@ export const MainPageList: React.FC = () => {
       title: t("nui_menu.page_main.clear_area.title"),
       description: t("nui_menu.page_main.clear_area.dialog_desc"),
       placeholder: "300",
+      suggestions: ['50', '150', '300'],
       onSubmit: (msg) => {
         const parsedRadius = parseInt(msg);
 

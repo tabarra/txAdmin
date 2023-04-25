@@ -356,17 +356,3 @@ RegisterNetEvent('txcl:spectate:start', function(targetServerId, targetCoords)
     DoScreenFadeIn(500)
     while IsScreenFadedOut() do Wait(5) end
 end)
-
-
--- DEBUG Commands
--- RegisterCommand('spec0', function()
---     isSpectateEnabled = false
--- end)
--- RegisterCommand('spec1', function()
---     isSpectateEnabled = true
---     createInstructionalThreads()
--- end)
--- RegisterCommand('spec2', function()
---     print('isSpectateEnabled', isSpectateEnabled)
---     print('isInTransitionState', isInTransitionState)
--- end)
