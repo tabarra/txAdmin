@@ -28,65 +28,77 @@
 - [x] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [x] Resource: rename menu events to `txsv:xxx` and `txcl:xxx`
 - [ ] Resource: full redm compatibility
+    - [x] Player Mode
+        - [x] noclip
+            - [x] controls
+            - [x] bug: after exiting, the mouse doesn't move
+            - [x] fix behavior while seated on vehicle or horse
+            - [x] scaleform/prompt
+        - [x] god mode
+        - [x] super jump
+            - [x] fix stamina bug
+        - [x] normal
+        - [x] particles
+    - [x] Teleport
+        - [x] waypoint
+        - [x] coords
+        - [x] back
+        - [x] copy coords
+    - [x] Vehicle
+        - [x] spawn
+        - [x] fix
+        - [x] delete
+        - [ ] boost (FIXME: doesn't work, disable button)
+    - [x] Heal
+        - [x] self
+        - [x] everyone
+    - [x] Announcements
+    - [ ] reset world area (FIXME: doesn't work, disable button)
+    - [x] player ids
+    - [ ] logger (death reasons, explosions, etc)
+
+    - [x] Actions
+        - [x] heal
+        - [x] go to
+        - [x] bring
+        - [x] spectate
+            - [x] copy prompt helper from freecam
+        - [x] freeze
+        - [x] troll: set drunk
+        - [x] troll: set fire
+        - [x] troll: wild attack
+
+- [x] Make Z optional in tp to coords feature
+- [ ] Find out why the players page doesn't reflect the player health, maybe it is client side only?
+- [ ] Vehicle spawn should accept `[horse, cart, boat]` options, maybe add the buttons
+- [x] Generalize the sound function in `cl_misc.lua` and replace the other `PlaySoundFrontend`
+- [ ] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
+
 - [ ] make `recipes/indexv4.json` dropping version and adding tags
     - drop author field as well?
     - remove zap esx pack? last update was 6 months ago
-- [ ] add redm recipes
-    - use `sv_enforceGameBuild 1491`
-    - need to add a tracking for % of redm/fivem/libertym servers
 - [ ] add `sv_enforceGameBuild 2699` for fivem recipe
-- [ ] add hwid token bans
-    - add an option to wipe all hwids from the database
-- [ ] update discord.js - should be drop in
+- [ ] add redm cfx default recipe (use `sv_enforceGameBuild 1491`)
+- [ ] add vorp recipe
+
+> required
 - [ ] add bot enabled / whitelist back into stats
 - [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
+- [ ] add isPterodactyl to stats
+- [ ] Check again for any added `print()`
+
+- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
+- [ ] add hwid token bans
+    - add an option to wipe all hwids from the database
+    - must start tracking the search duration
+- [ ] update discord.js - should be drop in
+- [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
+- [ ] Update packages
 
 
-# RedM Migrations
-- [x] Player Mode
-    - [x] noclip
-        - [x] controls
-        - [x] bug: after exiting, the mouse doesn't move
-        - [x] fix behavior while seated on vehicle or horse
-        - [x] scaleform/prompt
-    - [x] god mode
-    - [x] super jump
-        - [x] fix stamina bug
-    - [x] normal
-    - [x] particles
-- [x] Teleport
-    - [x] waypoint
-    - [x] coords
-    - [x] back
-    - [x] copy coords
-- [x] Vehicle
-    - [x] spawn
-    - [x] fix
-    - [x] delete
-    - [ ] boost (FIXME: doesn't work, disable button)
-- [x] Heal
-    - [x] self
-    - [x] everyone
-- [x] Announcements
-- [ ] reset world area (FIXME: doesn't work, disable button)
-- [x] player ids
-- [ ] logger (death reasons, explosions, etc)
 
-- [x] Actions
-    - [x] heal
-    - [x] go to
-    - [x] bring
-    - [x] spectate
-        - [x] copy prompt helper from freecam
-    - [x] freeze
-    - [x] troll: set drunk
-    - [x] troll: set fire
-    - [x] troll: wild attack
-    
-- [x] Generalize the sound function in `cl_misc.lua` and replace the other `PlaySoundFrontend`
-- [ ] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
-- [ ] Find out why the players page doesn't reflect the player health, maybe it is client side only?
-- [ ] check again for any added `print()`
+
+
 
 --DEBUG
 RegisterCommand('go', function()
@@ -649,6 +661,8 @@ https://www.npmjs.com/package/humanize-duration
 https://kinark.github.io/Materialize-stepper/
 
 https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
+https://github.com/femga/rdr3_discoveries
 
 
 =======================================

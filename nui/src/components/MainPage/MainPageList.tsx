@@ -134,30 +134,29 @@ export const MainPageList: React.FC = () => {
       description: t("nui_menu.page_main.teleport.coords.dialog_desc"),
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
-        // TODO: accept X, Y and calculate Z
-        // TODO: accept heading
         // Testing examples:
         // {x: -1; y: 2; z:3}
         // {x = -1.01; y= 2.02; z=3.03}
         // -1, 2, 3
-        const [x, y, z] = Array.from(
+        let [x, y, z] = Array.from(
           coords.matchAll(/-?\d{1,4}(?:\.\d{1,9})?/g),
           (m) => parseFloat(m[0])
         );
-
-        if ([x, y, z].every((n) => typeof n === "number")) {
-          enqueueSnackbar(t("nui_menu.page_main.teleport.generic_success"), {
-            variant: "success",
-          });
-          fetchNui("tpToCoords", { x, y, z });
-        } else {
-          enqueueSnackbar(
+        if (typeof x !== 'number' || typeof y !== 'number') {
+          return enqueueSnackbar(
             t("nui_menu.page_main.teleport.coords.dialog_error"),
-            {
-              variant: "error",
-            }
+            { variant: "error" }
           );
         }
+        if (typeof z !== 'number') {
+          z = 0;
+        }
+
+        enqueueSnackbar(
+          t("nui_menu.page_main.teleport.generic_success"),
+          { variant: "success" }
+        );
+        fetchNui("tpToCoords", { x, y, z });
       },
     });
   };
