@@ -109,7 +109,7 @@
                 "superjump": {
                     "title": "Super Jump",
                     "label": "Basculer sur le mode super saut, le joueur courra également plus vite",
-                    "success": "Super Jump enabled"
+                    "success": "Super Jump activé"
                 },
                 "normal": {
                     "title": "Normal",
@@ -288,7 +288,7 @@
                         "spectate_failed": "Impossible de trouver le joueur ! Désactivation du mode surveillance.",
                         "spectate_yourself": "Vous ne pouvez pas vous surveiller vous-même.",
                         "freeze_yourself": "Vous ne pouvez pas vous geler vous-même.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Il n'y a pas de joueurs vers lesquels faire du vélo."
                     }
                 },
                 "troll": {
