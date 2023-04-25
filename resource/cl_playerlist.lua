@@ -79,7 +79,8 @@ RegisterNetEvent('txcl:plist:setDetailed', function(players, admins)
     -- print(json.encode(players)) -- [[id, health, vType]]
     -- print("------------------------------------")
     local myID = GetPlayerServerId(PlayerId())
-    local myCoords = GetEntityCoords(PlayerPedId())
+    local myPed = PlayerPedId()
+    local myCoords = GetEntityCoords(myPed)
 
     for _, playerData in pairs(players) do
         local pid = playerData[1]
@@ -99,17 +100,27 @@ RegisterNetEvent('txcl:plist:setDetailed', function(players, admins)
             LOCAL_PLAYERLIST[pids].vType = vTypeMap[tostring(playerData[3])] or "unknown"
         end
 
-        --Getting distance
+        -- Getting distance
+        -- NOTE: RedM doesn't save ped health data on server, so need to get locally
         if pid == myID then
             LOCAL_PLAYERLIST[pids].dist = 0
+            if IS_REDM then
+                LOCAL_PLAYERLIST[pids].health = GetPedHealthPercent(myPed)
+            end
         else
             local remotePlayer = GetPlayerFromServerId(pid)
             if remotePlayer == -1 then
                 LOCAL_PLAYERLIST[pids].dist = -1
+                if IS_REDM then
+                    LOCAL_PLAYERLIST[pids].health = -1
+                end
             else
                 local remotePed = GetPlayerPed(remotePlayer)
                 local remoteCoords = GetEntityCoords(remotePed)
                 LOCAL_PLAYERLIST[pids].dist = floor(#(myCoords - remoteCoords))
+                if IS_REDM then
+                    LOCAL_PLAYERLIST[pids].health = GetPedHealthPercent(remotePed)
+                end
             end
         end
     end

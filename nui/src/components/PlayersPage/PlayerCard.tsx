@@ -58,13 +58,15 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const determineHealthBGColor = (val: number) => {
-  if (val <= 20) return "#4a151b";
+  if (val === -1) return "#4A4243";
+  else if (val <= 20) return "#4a151b";
   else if (val <= 60) return "#624d18";
   else return "#097052";
 };
 
 const determineHealthColor = (val: number, theme: Theme) => {
-  if (val <= 20) return theme.palette.error.light;
+  if (val === -1) return "#4A4243";
+  else if (val <= 20) return theme.palette.error.light;
   else if (val <= 60) return theme.palette.warning.light;
   else return theme.palette.success.light;
 };
@@ -106,8 +108,9 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
     setModalOpen(true);
   };
 
-  const upperCaseStatus =
-    playerData.vType.charAt(0).toUpperCase() + playerData.vType.slice(1);
+  const upperCaseStatus = playerData.vType.charAt(0).toUpperCase() + playerData.vType.slice(1);
+  const healthBarSize = Math.max(0, playerData.health);
+  console.log('playerData.health', playerData.health);
 
   return (
     <StyledBox p={1}>
@@ -167,7 +170,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
           <div>
             <Tooltip
               title={t("nui_menu.page_players.card.health", {
-                percentHealth: playerData.health,
+                percentHealth: playerData.health ?? '0',
               })}
               placement="bottom"
               arrow
@@ -177,7 +180,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
             >
               <HealthBarBackground healthVal={playerData.health}>
                 <HealthBar
-                  width={`${playerData.health}%`}
+                  width={`${healthBarSize}%`}
                   healthVal={playerData.health}
                 />
               </HealthBarBackground>

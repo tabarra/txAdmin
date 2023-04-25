@@ -63,3 +63,11 @@ function tableIndexOf(tgtTable, value)
   end
   return -1
 end
+
+
+---Shortcut for calculating a ped % health
+---@param ped any
+---@return integer
+function GetPedHealthPercent(ped)
+  return math.floor((GetEntityHealth(ped) / GetEntityMaxHealth(ped)) * 100)
+end

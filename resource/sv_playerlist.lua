@@ -49,7 +49,7 @@ CreateThread(function()
         for yieldCounter, serverID in pairs(players) do
             -- Updating player vehicle/health
             -- NOTE: after testing this seem not to need any error handling
-            local health = 0
+            local health = -1
             local vType = -1
             if onesyncEnabled == true then
                 local ped = GetPlayerPed(serverID)
@@ -59,10 +59,7 @@ CreateThread(function()
                 else
                     vType = vTypeMap["walking"]
                 end
-                -- Its extremely hard to normalize this value to actually reflect
-                -- it as a percentage of the current users max health depending on the server
-                -- Therefore, lets just handle for base case of maxHealth 175 and health range from 100-175
-                health = floor((GetEntityHealth(ped) - 100) / (GetEntityMaxHealth(ped) - 100) * 100)
+                health = GetPedHealthPercent(ped)
             end
 
             -- Updating TX_PLAYERLIST
