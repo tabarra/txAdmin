@@ -198,7 +198,8 @@ export const MainPageList: React.FC = () => {
     openDialog({
       title: t("nui_menu.page_main.vehicle.spawn.dialog_title"),
       description: t("nui_menu.page_main.vehicle.spawn.dialog_desc"),
-      placeholder: dialogData.shortcuts.join(', ') + ', etc.',
+      placeholder: 'any vehicle model or ' + dialogData.shortcuts.join(', '),
+      suggestions: dialogData.shortcuts,
       onSubmit: (modelName: string) => {
         modelName = vehiclePlaceholderReplacer(modelName, dialogData.shortcutsData);
         fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {

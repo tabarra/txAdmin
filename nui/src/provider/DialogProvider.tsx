@@ -29,6 +29,7 @@ import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
 import { useSetDisableTab, useSetListenForExit } from "../state/keys.state";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
+import { Box } from "@mui/system";
 
 const StyledDialogTitle = styled(DialogTitle)(({theme}) => ({
   color: theme.palette.primary.main,
@@ -43,6 +44,7 @@ interface InputDialogProps {
   placeholder: string;
   onSubmit: (inputValue: string) => void;
   isMultiline?: boolean;
+  suggestions?: string[]
 }
 
 interface DialogProviderContext {
@@ -87,17 +89,17 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
     }
   }, [dialogOpen, setDisabledKeyNav, setDisableTabs]);
 
-  const handleDialogSubmit = () => {
-    if (!dialogInputVal.trim()) {
+  const handleDialogSubmit = (suggested?: string) => {
+    if (!canSubmit) return;
+
+    const input = suggested ?? dialogInputVal;
+    if (!input.trim()) {
       return enqueueSnackbar(t("nui_menu.misc.dialog_empty_input"), {
         variant: "error",
       });
     }
 
-    if (!canSubmit) return;
-
-    dialogProps.onSubmit(dialogInputVal);
-
+    dialogProps.onSubmit(input);
     setCanSubmit(false);
 
     setListenForExit(true);
@@ -178,17 +180,36 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
             />
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={handleDialogClose}
-              style={{
-                color: theme.palette.text.secondary,
-              }}
-            >
-              {t("nui_menu.common.cancel")}
-            </Button>
-            <Button type="submit" color="primary">
-              {t("nui_menu.common.submit")}
-            </Button>
+            <Box display="flex" justifyContent="space-between" width="100%">
+              <Box>
+                {Array.isArray(dialogProps.suggestions) && dialogProps.suggestions.map(suggestion => (
+                  <Button
+                    onClick={()=>{
+                      handleDialogSubmit(suggestion);
+                    }}
+                    style={{
+                      color: theme.palette.text.secondary,
+                    }}
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </Box>
+              <Box>
+                <Button
+                  onClick={handleDialogClose}
+                  style={{
+                    color: theme.palette.text.secondary,
+                  }}
+                >
+                  {t("nui_menu.common.cancel")}
+                </Button>
+                <Button type="submit" color="primary">
+                  {t("nui_menu.common.submit")}
+                </Button>
+              </Box>
+            </Box>
+
           </DialogActions>
         </form>
       </Dialog>
