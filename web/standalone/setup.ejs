@@ -77,14 +77,53 @@
             display: -webkit-box;
             -webkit-box-orient: vertical;
         }
-        .template-cards > .title{
+        .template-cards > .titleText{
             -webkit-line-clamp: 1;
         }
         .template-cards > .description{
             -webkit-line-clamp: 2;
         }
-        .template-cards > .title::before{
+        .template-cards > .titleText::before{
             content: "⭐";
+        }
+        .template-cards > .title{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .template-cards .tagList{
+            display: flex;
+            flex-direction: row-reverse;
+        }
+
+        .recipeTag {
+            display: inline-block;
+            padding: .25em .4em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25rem;
+            margin: 0px 0.15rem;
+        }
+        .recipeTagFivem {
+            color: #FF8637;
+            border: 1px solid #FF8637;
+        }
+        .recipeTagRedm {
+            color: #FA0211;
+            border: 1px solid #FA0211;
+        }
+        .recipeTagDefault {
+            color: #6b6b6b;
+            border: 1px solid #6b6b6b;
+        }
+        body.theme--dark .recipeTagDefault {
+            color: #d6d6d6;
+            border: 1px solid #d6d6d6;
         }
     </style>
     
@@ -201,9 +240,12 @@
                                     <!-- select template buttons -->
                                     <template id="s4PopularTemplateCardTemplate">
                                         <div class="bigbutton template-cards border-dark next-step">
-                                            <span class="title">
-                                                <strong></strong> <em></em>
-                                            </span>
+                                            <div class="title">
+                                                <span class="titleText">
+                                                    <strong></strong>
+                                                </span>
+                                                <div class="tagList"></div>
+                                            </div>
                                             <span class="description"></span>
                                         </div>
                                     </template>
@@ -397,7 +439,7 @@
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
     <script>
         //Constants
-        const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv3.json';
+        const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv4.json';
         const txDataPath = '<%= txDataPath %>';
         const deployerEngineVersion = parseInt('<%= deployerEngineVersion %>');
         const isReset = ('<%= isReset %>' === 'true');
@@ -573,6 +615,16 @@
             }
         }
 
+        function tagToGlass(tag) {
+            if (tag === 'fivem') {
+                return 'recipeTagFivem';
+            } else if (tag === 'redm') {
+                return 'recipeTagRedm';
+            } else {
+                return 'recipeTagDefault';
+            }
+        }
+
         //Download Popular Recipe list and create cards
         async function setFavTemplatesCards(){
             //NOTE: mocked
@@ -614,17 +666,25 @@
                             newNode.innerHTML = s4PopularTemplateCardTemplate.innerHTML;
                             // newNode.classList.add('col-12', 'col-md-6', 'p-0'); //2 per line
                             newNode.classList.add('col-8');
-                            newNode.querySelector('.title > strong').innerText = recipe.name;
+                            newNode.querySelector('.titleText > strong').innerText = recipe.name;
                             newNode.querySelector('.description').innerText = recipe.description;
                             if(recipe.engine !== deployerEngineVersion){
                                 hasIncompatible = true;
                                 newNode.querySelector('.bigbutton').classList.add('disabled');
-                                newNode.querySelector('.title > em').className = 'text-danger';
-                                newNode.querySelector('.title > em').innerText = (recipe.version)? `(v${recipe.version} - incompatible)` : '';
+                                const newTag = document.createElement("span");
+                                newTag.classList.add('recipeTag', 'recipeTagDefault')
+                                newTag.textContent = 'INCOMPATIBLE';
+                                newNode.querySelector('.tagList').appendChild(newTag);
                             }else{
                                 newNode.querySelector('.bigbutton').onclick = () => {selectTemplate(key)};
-                                newNode.querySelector('.title > em').className = 'text-muted';
-                                newNode.querySelector('.title > em').innerText = (recipe.version)? `(v${recipe.version})` : '';
+                                if (Array.isArray(recipe.tags)) {
+                                    recipe.tags.forEach(tag => {
+                                        const newTag = document.createElement("span");
+                                        newTag.classList.add('recipeTag', tagToGlass(tag))
+                                        newTag.textContent = (tag || '').toUpperCase();
+                                        newNode.querySelector('.tagList').appendChild(newTag);
+                                    })
+                                }
                             }
                             s4PopularTemplateRow.appendChild(newNode);
                         });
