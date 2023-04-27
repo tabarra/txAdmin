@@ -74,14 +74,15 @@
 - [x] Find out why the players page doesn't reflect the player health, maybe it is client side only?
 - [x] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
 
-- [ ] make `recipes/indexv4.json` dropping version and adding tags
+- [x] make `recipes/indexv4.json` dropping version and adding tags
     - drop author field as well?
     - remove zap esx pack? last update was 6 months ago
-- [ ] add `sv_enforceGameBuild 2699` for fivem recipe
-- [ ] add redm cfx default recipe (use `sv_enforceGameBuild 1491`)
+- [x] add `sv_enforceGameBuild 2699` for fivem recipe
+- [x] add redm cfx default recipe (use `sv_enforceGameBuild 1491`)
 - [ ] add vorp recipe
 
 > required
+- [x] Update packages... again
 - [ ] add bot enabled / whitelist back into stats
 - [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
 - [ ] add isPterodactyl to stats
@@ -93,7 +94,6 @@
     - must start tracking the search duration
 - [ ] update discord.js - should be drop in
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
-- [ ] Update packages
 
 
 

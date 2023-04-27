@@ -117,7 +117,7 @@ class txAdminRunner {
 /**
  * Development task, it will copy the files to target fxserver, build+bundle core, and watch for changes.
  */
-const runDevTask = () => {
+const runDevTask = async () => {
     //Extract paths and validate them
     if (typeof config.fxserverPath !== 'string') {
         console.error('config.fxserverPath not configured.');
@@ -152,8 +152,9 @@ const runDevTask = () => {
 
     //Transpile & bundle
     //NOTE: "result" is {errors[], warnings[], stop()}
-    console.log('[BUILDER] Building core.');
-    esbuild.build({
+    console.log('[BUILDER] Setting up esbuild.');
+    const buildOptions = {
+        //no minify, no banner
         entryPoints: ['./core'],
         bundle: true,
         sourcemap: 'linked',
@@ -163,27 +164,33 @@ const runDevTask = () => {
         charset: 'utf8',
         define: {
             TX_PRERELEASE_EXPIRATION: getPreReleaseExpirationString(),
-        },
-        //no minify, no banner
-        watch: {
-            onRebuild(error, result) {
-                if (error) {
+        }
+    };
+    const plugins = [{
+        name: 'fxsRestarter',
+        setup(build) {
+            build.onStart(() => {
+                console.log(`[BUILDER] Build started.`);
+                txInstance.killServer();
+            });
+            build.onEnd(({ errors }) => {
+                if (errors.length) {
                     console.log(`[BUILDER] Failed with errors.`);
-                    txInstance.killServer();
                 } else {
-                    console.log('[BUILDER] Finished rebuild.');
-                    txInstance.killServer();
+                    console.log('[BUILDER] Finished build.');
                     txInstance.spawnServer();
                 }
-            },
+            });
         },
-    }).then((result) => {
-        console.log('[BUILDER] Finished initial build.');
-        txInstance.spawnServer();
-    }).catch((error) => {
-        console.log('[BUILDER] Failed initial build.');
-        console.log('[BUILDER] You need to fix the error and restart the builder script entirely');
-    });
+    }];
+
+    try {
+        const esbuildCtx = await esbuild.context({ ...buildOptions, plugins });
+        await esbuildCtx.watch();
+    } catch (error) {
+        console.log('[BUILDER] Something went very wrong.');
+        process.exit(1);
+    }
 };
 
 

@@ -99,14 +99,14 @@ export class Database {
         let dbo;
         try {
             const adapterAsync = new JSONFile<DatabaseDataType>(this.dbPath);
-            dbo = new LowWithLodash(adapterAsync);
+            dbo = new LowWithLodash(adapterAsync, defaultDatabase);
             await dbo.read();
         } catch (errorMain) {
             console.error('Your txAdmin player/actions database could not be loaded.');
             try {
                 await fsp.copyFile(this.backupPath, this.dbPath);
                 const adapterAsync = new JSONFile<DatabaseDataType>(this.dbPath);
-                dbo = new LowWithLodash(adapterAsync);
+                dbo = new LowWithLodash(adapterAsync, defaultDatabase);
                 await dbo.read();
                 console.warn('The database file was restored with the automatic backup file.');
                 console.warn('A five minute rollback is expected.');
@@ -122,8 +122,7 @@ export class Database {
 
         //Setting up loaded database
         try {
-            //If new database
-            dbo.data ||= lodash.cloneDeep(defaultDatabase);
+            //Need to write the database, in case it is new
             await dbo.write();
 
             //Need to chain after setting defaults

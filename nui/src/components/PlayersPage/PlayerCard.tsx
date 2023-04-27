@@ -110,7 +110,6 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
 
   const upperCaseStatus = playerData.vType.charAt(0).toUpperCase() + playerData.vType.slice(1);
   const healthBarSize = Math.max(0, playerData.health);
-  console.log('playerData.health', playerData.health);
 
   return (
     <StyledBox p={1}>

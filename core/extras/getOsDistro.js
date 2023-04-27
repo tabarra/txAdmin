@@ -4,7 +4,7 @@ const console = consoleFactory(modulename);
 
 /*
     NOTE: this is straight from @sindresorhus/windows-release, but with async functions.
-            I have windows-release dependency mostly just so I know when there are updates to it.
+    I have windows-release dependency mostly just so I know when there are updates to it.
 */
 import os from 'node:os';
 import execa from 'execa';
