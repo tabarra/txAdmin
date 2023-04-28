@@ -27,7 +27,7 @@
 - [x] Resource: refactor `/txAdmin-reauth` to return the full cause in the snackbar
 - [x] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
 - [x] Resource: rename menu events to `txsv:xxx` and `txcl:xxx`
-- [ ] Resource: full redm compatibility
+- [x] Resource: full redm compatibility
     - [x] Player Mode
         - [x] noclip
             - [x] controls
@@ -55,7 +55,7 @@
     - [x] Announcements
     - [x] reset world area (FIXME: doesn't work, disable button)
     - [x] player ids
-    - [ ] logger (death reasons, explosions, etc)
+    - [x] logger (death reasons, explosions, etc)
 
     - [x] Actions
         - [x] heal
@@ -92,7 +92,6 @@
 - [ ] add hwid token bans
     - add an option to wipe all hwids from the database
     - must start tracking the search duration
-- [ ] update discord.js - should be drop in
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
 
 
@@ -662,7 +661,9 @@ https://kinark.github.io/Materialize-stepper/
 
 https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
+### RedM stuff
 https://github.com/femga/rdr3_discoveries
+https://vespura.com/doc/natives/
 
 
 =======================================
