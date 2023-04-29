@@ -48,12 +48,12 @@
         - [x] spawn
         - [x] fix
         - [x] delete
-        - [x] boost (FIXME: doesn't work, disable button)
+        - [x] boost (doesn't work, disable button)
     - [x] Heal
         - [x] self
         - [x] everyone
     - [x] Announcements
-    - [x] reset world area (FIXME: doesn't work, disable button)
+    - [x] reset world area (doesn't work, disable button)
     - [x] player ids
     - [x] logger (death reasons, explosions, etc)
 
@@ -94,37 +94,52 @@
     - must start tracking the search duration
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
 
+=======================================================================
+> FIXME: criar volume local bindado em /fxserver
+docker run \
+  -p 40121:40120 \
+  -p 30121:30120 -p 30121:30120/udp \
+  --name fxstest \
+  ubuntu
 
+docker exec -it fxstest bash
+apt update
+apt install wget xz-utils nano
+apt install iputils-ping bind9-host mycli
 
+mycli -u root -h 172.17.0.2
 
+cfxk_1VMO47fvNuVJ8OkTrrCKK_2SkUUo
+=======================================================================
 
+"9:0000000000000000000000000000000000000000000000000000000000000001",
+"9:0000000000000000000000000000000000000000000000000000000000000002",
+"9:0000000000000000000000000000000000000000000000000000000000000003",
+"9:0000000000000000000000000000000000000000000000000000000000000004",
+"9:0000000000000000000000000000000000000000000000000000000000000005",
+"9:0000000000000000000000000000000000000000000000000000000000000006"
 
---DEBUG
-RegisterCommand('go', function()
-    Wait(2500)
-    gameSpawnReqHandler('p_c_horse_01')
-    -- gameSpawnReqHandler('a_c_horse_morgan_bay')
-    -- gameSpawnReqHandler('cart01')
-end)
-RegisterCommand('horse', function()
-    gameSpawnReqHandler('p_c_horse_01')
-end)
-RegisterCommand('cart', function()
-    gameSpawnReqHandler('cart01')
-end)
+//FiveM
+[
+'2:5208e33d0101f1321f70144a7240803091e937c1d8706b501fd29a1ae483bfa3',
+'3:ad900a3e544fe041035e4b0bc3220d2845dea24db8ccb4b0871c03651db3243f',
+'5:8a566bae5fd25977740579ec51921b0a9877908b0ce271eb8bead7a73237349c',
+  '4:1bcd628567da10a439612f00cabd12f31b798f18d6f082b3314e1a8671bdbe29',
+'4:0c03d88eafe46ba5dfaa063af0e5ea7f9f25c28c4c1428deb3393f80034d9753',
+  '4:35fe4c4c2369a44b16158c92021949d8334ab62500aa8729144c43278455250e'
+]
 
+//RedM
+[
+'2:5208e33d0101f1321f70144a7240803091e937c1d8706b501fd29a1ae483bfa3',
+'3:ad900a3e544fe041035e4b0bc3220d2845dea24db8ccb4b0871c03651db3243f',
+'5:8a566bae5fd25977740579ec51921b0a9877908b0ce271eb8bead7a73237349c',
+  '4:0c67db88d06d10450ca5e1ecd797f121effaeb41fdf2f0d7eb4cef228bcc4258',
+'4:0c03d88eafe46ba5dfaa063af0e5ea7f9f25c28c4c1428deb3393f80034d9753',
+  '4:bb030b94d17fa29f4feef12a6413965677078046c47e6d852cbb0c696718a9c7'
+]
 
-SetMinimapHideFow(true)
-
-return TaskLeaveAnyVehicle(ped, 0, 16)
-return IsPedOnMount(ped)
--- redm: 1 if in horse, false if not, false if in carriage
--- fivem: xxx if in horse, false if not, false if in car
-
-return IsPedOnVehicle(ped)
--- redm: false if in horse, false if not, 1 if in carriage
--- fivem: xxx if in horse, false if not, false if in car
-
+=======================================================================
 
 
 function convertHrtime(hrtime) {
@@ -151,7 +166,7 @@ console.log(`${duration}ns`);
 console.dir(convertHrtime(duration));
 
 
-
+=======================================================================
 
 (function() {
     var s = document.createElement('script');
@@ -160,7 +175,7 @@ console.dir(convertHrtime(duration));
 })()
 
 
-cache static files
+=======================================================================
 
 
 ## Optional
@@ -185,7 +200,7 @@ ScanResourceRoot('C:/whatever/resources/', data => {
 
 
 
-
+=======================================================================
 
 
 

@@ -91,7 +91,7 @@ const citizenRootConvar = getConvarString('citizen_root');
 if (!citizenRootConvar) {
     logDie('citizen_root convar not set');
 }
-const fxServerPath = cleanPath(citizenRootConvar);
+const fxServerPath = cleanPath(citizenRootConvar as string);
 
 //Setting data path
 let dataPath;

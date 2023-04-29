@@ -1,6 +1,6 @@
 const modulename = 'IDGen';
 import fsp from 'node:fs/promises';
-import humanizeDuration from 'humanize-duration';
+import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import * as nanoidSecure from 'nanoid';
 import * as nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@core/extras/consts';
@@ -20,7 +20,7 @@ const noIdErrorMessage = 'Unnable to generate new Random ID possibly due to the 
  * Prints a diagnostics message to the console that should help us identify what is the problem and the potential solution
  */
 const printDiagnostics = async () => {
-    const humanizeOptions = {
+    const humanizeOptions: HumanizerOptions = {
         round: true,
         units: ['d', 'h', 'm'],
     };
