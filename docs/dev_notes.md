@@ -89,9 +89,12 @@
 - [ ] Check again for any added `print()`
 
 - [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
-- [ ] add hwid token bans
-    - add an option to wipe all hwids from the database
-    - must start tracking the search duration
+- [ ] add hwid token bans (#446)
+    - [x] save player hwids + ban with hwid + check join using hwid as well
+    - [ ] rename `action[].identifiers` to `action[].ids`
+    - [ ] add settings page option to configure the required hwid matches
+    - [ ] add an option to wipe all hwids from the database
+    - [ ] start tracking the ban search duration
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
 
 =======================================================================
@@ -184,7 +187,7 @@ console.dir(convertHrtime(duration));
 - [ ] update readme with new features and contributing warning
 - [ ] stats: 
     - [ ] ????
-    - [ ] jwe
+    - [ ] jwe (in header?)
 
 
 # Next up:

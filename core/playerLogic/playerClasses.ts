@@ -2,9 +2,10 @@ const modulename = 'Player';
 import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, union } from 'lodash-es';
 import { parsePlayerIds, now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
+import consts from '@extras/consts';
 const console = consoleFactory(modulename);
 
 
@@ -37,12 +38,22 @@ export class BasePlayer {
      * Returns all available identifiers (current+db)
      */
     getAllIdentifiers() {
-        if (!this.ids.length) return [];
-        let allIds = [...this.ids];
         if (this.dbData && this.dbData.ids) {
-            allIds = allIds.concat(this.dbData.ids.filter(id => !allIds.includes(id)));
+            return union(this.ids, this.dbData.ids);
+        } else {
+            return [...this.ids];
         }
-        return allIds;
+    }
+
+    /**
+     * Returns all available hardware identifiers (current+db)
+     */
+    getAllHardwareIdentifiers() {
+        if (this.dbData && this.dbData.hwids) {
+            return union(this.hwids, this.dbData.hwids);
+        } else {
+            return [...this.hwids];
+        }
     }
 
     /**
@@ -52,7 +63,10 @@ export class BasePlayer {
      */
     getHistory() {
         if (!this.ids.length) return [];
-        return this.dbInstance.getRegisteredActions(this.getAllIdentifiers());
+        return this.dbInstance.getRegisteredActions(
+            this.getAllIdentifiers(),
+            this.getAllHardwareIdentifiers()
+        );
     }
 
     /**
@@ -125,11 +139,9 @@ export class ServerPlayer extends BasePlayer {
         const { validIdsArray, validIdsObject } = parsePlayerIds(playerData.ids);
         this.license = validIdsObject.license;
         this.ids = validIdsArray;
-
-        //TODO: re-enable it when migrating to new database
-        // this.hwids = playerData.hwids.filter(x => {
-        //     return typeof x === 'string' && consts.regexValidHwidToken.test(x);
-        // });
+        this.hwids = playerData.hwids.filter(x => {
+            return typeof x === 'string' && consts.regexValidHwidToken.test(x);
+        });
 
         //Processing player name
         const { displayName, pureName } = cleanPlayerName(playerData.name);
@@ -170,16 +182,15 @@ export class ServerPlayer extends BasePlayer {
                     displayName: this.displayName,
                     pureName: this.pureName,
                     tsLastConnection: this.tsConnected,
-                    ids: [
-                        ...dbPlayer.ids,
-                        ...this.ids.filter(id => !dbPlayer.ids.includes(id))
-                    ]
+                    ids: union(dbPlayer.ids, this.ids),
+                    hwids: union(dbPlayer.hwids, this.hwids),
                 });
             } else {
                 //Register player to the database
                 const toRegister = {
                     license: this.license,
                     ids: this.ids,
+                    hwids: this.hwids,
                     displayName: this.displayName,
                     pureName: this.pureName,
                     playTime: 0,
@@ -268,13 +279,13 @@ export class DatabasePlayer extends BasePlayer {
         }
 
         //Set dbData either from constructor params, or from querying the database
-        if(srcPlayerData){
+        if (srcPlayerData) {
             this.dbData = srcPlayerData;
-        }else{
+        } else {
             const foundData = this.dbInstance.getPlayerData(license);
             if (!foundData) {
                 throw new Error(`player not found in database`);
-            }else{
+            } else {
                 this.dbData = foundData;
             }
         }

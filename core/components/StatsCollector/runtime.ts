@@ -55,3 +55,5 @@ type RuntimeDataType = {
 }
 
 //FIXME: http counter > keep max counter only
+//FIXME: do i still need tmpHwidsCount?
+//FIXME: add ban search time QuantileArray

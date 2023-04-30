@@ -1,6 +1,7 @@
 export type DatabasePlayerType = {
     license: string;
     ids: string[];
+    hwids: string[];
     displayName: string;
     pureName: string;
     playTime: number;
@@ -16,7 +17,8 @@ export type DatabasePlayerType = {
 export type DatabaseActionType = {
     id: string;
     type: 'ban' | 'warn';
-    identifiers: string[];
+    identifiers: string[]; //should really be "ids"
+    hwids?: string[]; //used only in bans
     playerName: string | false;
     reason: string;
     author: string;

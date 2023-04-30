@@ -117,6 +117,27 @@ export default async (dbo) => {
         await dbo.write();
     }
 
+    if (dbo.data.version === 3) {
+        console.warn('Migrating your players database from v3 to v4.');
+        console.warn('This process will add a HWIDs array to the player data.');
+        // console.warn('As well as rename \'action[].identifiers\' to \'action[].ids\'.');
+
+        //Migrating players
+        for (const player of dbo.data.players) {
+            player.hwids = [];
+        }
+
+        //Migrating actions
+        // for (const action of dbo.data.actions) {
+        //     action.ids = action.identifiers;
+        //     action.identifiers = undefined;
+        // }
+
+        //Saving db
+        dbo.data.version = 4;
+        await dbo.write();
+    }
+
     if (dbo.data.version !== DATABASE_VERSION) {
         console.error(`Your players database is on v${dbo.data.version}, which is different from this version of txAdmin (v${DATABASE_VERSION}).`);
         console.error('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');

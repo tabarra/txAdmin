@@ -168,6 +168,7 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
 
     //Validating player
     const allIds = player.getAllIdentifiers();
+    const allHwids = player.getAllHardwareIdentifiers();
     if (!allIds.length) {
         return { error: 'Cannot ban a player with no identifiers.' }
     }
@@ -181,7 +182,8 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
             sess.auth.username,
             reason,
             expiration,
-            player.displayName
+            player.displayName,
+            allHwids
         );
     } catch (error) {
         return { error: `Failed to ban player: ${(error as Error).message}` };

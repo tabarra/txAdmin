@@ -337,6 +337,7 @@ local function handleConnections(name, setKickReason, d)
         local exData = {
             txAdminToken = TX_LUACOMTOKEN,
             playerIds = GetPlayerIdentifiers(player),
+            playerHwids = GetPlayerTokens(player),
             playerName = name
         }
         if #exData.playerIds <= 1 then

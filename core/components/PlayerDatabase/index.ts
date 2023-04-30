@@ -172,18 +172,28 @@ export default class PlayerDatabase {
 
     /**
      * Searches for any registered action in the database by a list of identifiers and optional filters
-     * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revocation.timestamp: null})
+     * Usage example: getRegisteredActions(['license:xxx'], undefined, {type: 'ban', revocation.timestamp: null})
      */
     getRegisteredActions(
-        idArray: string[],
-        filter: object | Function = {}
+        idsArray: string[],
+        hwidsArray?: string[],
+        customFilter: object | Function = {}
     ): DatabaseActionType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
-        if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
+        if (!Array.isArray(idsArray)) throw new Error('idsArray should be an array');
+        if (hwidsArray && !Array.isArray(hwidsArray)) throw new Error('hwidsArray should be an array or undefined');
+        const idsFilter = (action: DatabaseActionType) => idsArray.some((fi) => action.identifiers.includes(fi))
+        const hwidsFilter = (action: DatabaseActionType) => !!hwidsArray?.some((fi) => action.hwids?.includes(fi))
+
         try {
+            //small optimization
+            const idsMatchFilter = hwidsArray && hwidsArray.length
+                ? (a: DatabaseActionType) => idsFilter(a) || hwidsFilter(a)
+                : (a: DatabaseActionType) => idsFilter(a)
+            
             return this.#db.obj.chain.get('actions')
-                .filter(filter as any)
-                .filter((a) => idArray.some((fi) => a.identifiers.includes(fi)))
+                .filter(customFilter as any)
+                .filter(idsMatchFilter)
                 .cloneDeep()
                 .value();
         } catch (error) {
@@ -203,7 +213,8 @@ export default class PlayerDatabase {
         author: string,
         reason: string,
         expiration: number | false = false,
-        playerName: string | false = false
+        playerName: string | false = false,
+        hwids?: string[], //only used for bans
     ): string {
         //Sanity check
         if (!this.#db.obj) throw new Error(`database not ready yet`);
@@ -213,6 +224,8 @@ export default class PlayerDatabase {
         if (typeof reason !== 'string' || !reason.length) throw new Error('Invalid reason.');
         if (expiration !== false && (typeof expiration !== 'number')) throw new Error('Invalid expiration.');
         if (playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
+        if (hwids && !Array.isArray(hwids)) throw new Error('Invalid hwids array.');
+        if (type !== 'ban' && hwids) throw new Error('Hwids should only be used for bans.')
 
         //Saves it to the database
         const timestamp = now();
@@ -222,6 +235,7 @@ export default class PlayerDatabase {
                 id: actionID,
                 type,
                 identifiers,
+                hwids,
                 playerName,
                 reason,
                 author,

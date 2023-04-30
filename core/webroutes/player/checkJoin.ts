@@ -82,31 +82,34 @@ export default async function PlayerCheckJoin(ctx: Context) {
         ctx.request.body,
         ctx.request.body.playerName,
         ctx.request.body.playerIds,
+        ctx.request.body.playerHwids,
     )) {
         return sendTypedResp({ error: 'Invalid request.' });
     }
-    const { playerName, playerIds } = ctx.request.body;
+    const { playerName, playerIds, playerHwids } = ctx.request.body;
 
     //DEBUG: save join log
     const toLog = {
         ts: Date.now(),
         playerName,
         playerIds,
+        playerHwids,
     };
     globals.databus.joinCheckHistory.push(toLog);
     if (globals.databus.joinCheckHistory.length > 25) globals.databus.joinCheckHistory.shift();
 
     //Validating body data
     if (typeof playerName !== 'string') return sendTypedResp({ error: 'playerName should be an string.' });
-    if (!Array.isArray(playerIds)) return sendTypedResp({ error: 'Identifiers should be an array.' });
+    if (!Array.isArray(playerIds)) return sendTypedResp({ error: 'playerIds should be an array.' });
     const { validIdsArray, validIdsObject } = parsePlayerIds(playerIds);
     if (validIdsArray.length < 1) return sendTypedResp({ error: 'Identifiers array must contain at least 1 valid identifier.' });
+    if (!Array.isArray(playerHwids)) return sendTypedResp({ error: 'playerHwids should be an array.' });
 
 
     try {
         // If ban checking enabled
         if (playerDatabase.config.onJoinCheckBan) {
-            const result = checkBan(validIdsArray);
+            const result = checkBan(validIdsArray, playerHwids);
             if (!result.allow) return sendTypedResp(result);
         }
 
@@ -143,7 +146,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
 /**
  * Checks if the player is banned
  */
-function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
+function checkBan(validIdsArray: string[], playerHwids: string[]): AllowRespType | DenyRespType {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const translator = (globals.translator as Translator);
 
@@ -156,7 +159,7 @@ function checkBan(validIdsArray: string[]): AllowRespType | DenyRespType {
             && (!action.revocation.timestamp)
         );
     };
-    const activeBans = playerDatabase.getRegisteredActions(validIdsArray, filter);
+    const activeBans = playerDatabase.getRegisteredActions(validIdsArray, playerHwids, filter);
     if (activeBans.length) {
         const ban = activeBans[0];
 
