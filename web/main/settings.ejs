@@ -241,10 +241,10 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmMonitor-resourceStartingTolerance" <%= readOnly ? 'disabled' : '' %>>
-                                    <option value="90" <%= monitor.resourceStartingTolerance === '90' ? 'selected' : '' %>>1.5 minutes (default)</option>
-                                    <option value="180" <%= monitor.resourceStartingTolerance === '180' ? 'selected' : '' %>>3 minutes</option>
-                                    <option value="300" <%= monitor.resourceStartingTolerance === '300' ? 'selected' : '' %>>5 minutes</option>
-                                    <option value="600" <%= monitor.resourceStartingTolerance === '600' ? 'selected' : '' %>>10 minutes</option>
+                                    <option value="90" <%= monitor.resourceStartingTolerance === 90 ? 'selected' : '' %>>1.5 minutes (default)</option>
+                                    <option value="180" <%= monitor.resourceStartingTolerance === 180 ? 'selected' : '' %>>3 minutes</option>
+                                    <option value="300" <%= monitor.resourceStartingTolerance === 300 ? 'selected' : '' %>>5 minutes</option>
+                                    <option value="600" <%= monitor.resourceStartingTolerance === 600 ? 'selected' : '' %>>10 minutes</option>
                                 </select>
                                 <span class="form-text text-muted">
                                     At server boot, how much time to wait for any single resource to start before restarting the server. <br>

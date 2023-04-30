@@ -297,8 +297,13 @@ async function handleMonitor(ctx: Context) {
     //Prepare body input
     let cfg = {
         restarterSchedule: ctx.request.body.restarterSchedule.split(',').map((x: string) => x.trim()),
-        resourceStartingTolerance: ctx.request.body.resourceStartingTolerance,
+        resourceStartingTolerance: parseInt(ctx.request.body.resourceStartingTolerance),
     };
+
+    //Checking if resourceStartingTolerance is valid integer
+    if (typeof cfg.resourceStartingTolerance !== 'number' || isNaN(cfg.resourceStartingTolerance)) {
+        return ctx.send({ type: 'danger', message: 'resourceStartingTolerance must be a number.' });
+    }
 
     //Validating restart times
     const { valid: validRestartTimes, invalid: invalidRestartTimes } = parseSchedule(cfg.restarterSchedule);

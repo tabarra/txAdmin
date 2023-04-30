@@ -173,6 +173,14 @@ export default class ConfigVault {
             if (out.global.language === 'pt_PT' || out.global.language === 'pt_BR') {
                 out.global.language = 'pt';
             }
+
+            //Fixing resourceStartingTolerance being saved as string
+            if (typeof out.monitor.resourceStartingTolerance === 'string') {
+                out.monitor.resourceStartingTolerance = parseInt(out.monitor.resourceStartingTolerance);
+                if (isNaN(out.monitor.resourceStartingTolerance)) {
+                    out.monitor.resourceStartingTolerance = 120;
+                }
+            }
         } catch (error) {
             console.verbose.dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
