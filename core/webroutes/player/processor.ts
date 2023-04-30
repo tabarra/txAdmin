@@ -30,7 +30,7 @@ export const processActionList = (list: DatabaseActionType[]) => {
         if (log.playerName) {
             actReference = xss(log.playerName);
         } else {
-            actReference = '<i>' + xss(log.identifiers.map((x) => x.split(':')[0]).join(', ')) + '</i>';
+            actReference = '<i>' + xss(log.ids.map((x) => x.split(':')[0]).join(', ')) + '</i>';
         }
         if (log.type == 'ban') {
             out.color = 'danger';

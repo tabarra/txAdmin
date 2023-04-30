@@ -120,7 +120,7 @@ export default async (dbo) => {
     if (dbo.data.version === 3) {
         console.warn('Migrating your players database from v3 to v4.');
         console.warn('This process will add a HWIDs array to the player data.');
-        // console.warn('As well as rename \'action[].identifiers\' to \'action[].ids\'.');
+        console.warn('As well as rename \'action[].identifiers\' to \'action[].ids\'.');
 
         //Migrating players
         for (const player of dbo.data.players) {
@@ -128,10 +128,10 @@ export default async (dbo) => {
         }
 
         //Migrating actions
-        // for (const action of dbo.data.actions) {
-        //     action.ids = action.identifiers;
-        //     action.identifiers = undefined;
-        // }
+        for (const action of dbo.data.actions) {
+            action.ids = action.identifiers;
+            action.identifiers = undefined;
+        }
 
         //Saving db
         dbo.data.version = 4;

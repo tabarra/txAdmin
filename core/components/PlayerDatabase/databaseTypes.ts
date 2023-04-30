@@ -17,7 +17,7 @@ export type DatabasePlayerType = {
 export type DatabaseActionType = {
     id: string;
     type: 'ban' | 'warn';
-    identifiers: string[]; //should really be "ids"
+    ids: string[];
     hwids?: string[]; //used only in bans
     playerName: string | false;
     reason: string;

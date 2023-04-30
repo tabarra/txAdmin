@@ -182,7 +182,7 @@ export default class PlayerDatabase {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (!Array.isArray(idsArray)) throw new Error('idsArray should be an array');
         if (hwidsArray && !Array.isArray(hwidsArray)) throw new Error('hwidsArray should be an array or undefined');
-        const idsFilter = (action: DatabaseActionType) => idsArray.some((fi) => action.identifiers.includes(fi))
+        const idsFilter = (action: DatabaseActionType) => idsArray.some((fi) => action.ids.includes(fi))
         const hwidsFilter = (action: DatabaseActionType) => !!hwidsArray?.some((fi) => action.hwids?.includes(fi))
 
         try {
@@ -208,7 +208,7 @@ export default class PlayerDatabase {
      * Registers an action (ban, warn) and returns action id
      */
     registerAction(
-        identifiers: string[],
+        ids: string[],
         type: 'ban' | 'warn',
         author: string,
         reason: string,
@@ -218,7 +218,7 @@ export default class PlayerDatabase {
     ): string {
         //Sanity check
         if (!this.#db.obj) throw new Error(`database not ready yet`);
-        if (!Array.isArray(identifiers) || !identifiers.length) throw new Error('Invalid identifiers array.');
+        if (!Array.isArray(ids) || !ids.length) throw new Error('Invalid ids array.');
         if (!validActions.includes(type)) throw new Error('Invalid action type.');
         if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
         if (typeof reason !== 'string' || !reason.length) throw new Error('Invalid reason.');
@@ -234,7 +234,7 @@ export default class PlayerDatabase {
             const toDB: DatabaseActionType = {
                 id: actionID,
                 type,
-                identifiers,
+                ids,
                 hwids,
                 playerName,
                 reason,

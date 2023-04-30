@@ -91,7 +91,7 @@
 - [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
 - [ ] add hwid token bans (#446)
     - [x] save player hwids + ban with hwid + check join using hwid as well
-    - [ ] rename `action[].identifiers` to `action[].ids`
+    - [x] rename `action[].identifiers` to `action[].ids`
     - [ ] add settings page option to configure the required hwid matches
     - [ ] add an option to wipe all hwids from the database
     - [ ] start tracking the ban search duration
