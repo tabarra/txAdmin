@@ -79,23 +79,27 @@
     - remove zap esx pack? last update was 6 months ago
 - [x] add `sv_enforceGameBuild 2699` for fivem recipe
 - [x] add redm cfx default recipe (use `sv_enforceGameBuild 1491`)
-- [ ] add vorp recipe
+- [x] Check again for any added `print()`
+- [ ] add vorp recipe TODO:
 
-> required
 - [x] Update packages... again
-- [ ] add bot enabled / whitelist back into stats
-- [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
-- [ ] add isPterodactyl to stats
-- [ ] Check again for any added `print()`
 
-- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
 - [ ] add hwid token bans (#446)
     - [x] save player hwids + ban with hwid + check join using hwid as well
     - [x] rename `action[].identifiers` to `action[].ids`
-    - [ ] add settings page option to configure the required hwid matches
+    - [x] add settings page option to configure the required hwid matches
     - [ ] add an option to wipe all hwids from the database
     - [ ] start tracking the ban search duration
+- [ ] Update discord.js... AGAIN!
+
+> beta release
+- [ ] add bot enabled / whitelist back into stats
+- [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
+- [ ] add isPterodactyl to stats
+
+- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
+    - [ ] maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
 
 =======================================================================
 > FIXME: criar volume local bindado em /fxserver

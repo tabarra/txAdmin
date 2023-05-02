@@ -156,6 +156,25 @@ export const parsePlayerIds = (ids: string[]) => {
     return { invalidIdsArray, validIdsArray, validIdsObject };
 }
 
+/**
+ * Get valid and invalid player HWIDs
+ */
+export const filterPlayerHwids = (hwids: string[]) => {
+    let invalidHwidsArray: string[] = [];
+    let validHwidsArray: string[] = [];
+
+    for (const hwidString of hwids) {
+        if (typeof hwidString !== 'string') continue;
+        if (consts.regexValidHwidToken.test(hwidString)) {
+            validHwidsArray.push(hwidString);
+        } else {
+            invalidHwidsArray.push(hwidString);
+        }
+    }
+
+    return { invalidHwidsArray, validHwidsArray };
+}
+
 
 //Maybe extract to some shared folder
 export type PlayerIdsObjectType = {

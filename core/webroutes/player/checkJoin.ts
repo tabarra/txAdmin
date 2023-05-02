@@ -4,7 +4,7 @@ import { GenericApiError } from '@shared/genericApiTypes';
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseActionType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
 import Translator from '@core/components/Translator';
-import { anyUndefined, now, parsePlayerIds, PlayerIdsObjectType } from '@core/extras/helpers';
+import { anyUndefined, filterPlayerHwids, now, parsePlayerIds, PlayerIdsObjectType } from '@core/extras/helpers';
 import xssInstancer from '@core/extras/xss';
 import playerResolver from '@core/playerLogic/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
@@ -104,12 +104,13 @@ export default async function PlayerCheckJoin(ctx: Context) {
     const { validIdsArray, validIdsObject } = parsePlayerIds(playerIds);
     if (validIdsArray.length < 1) return sendTypedResp({ error: 'Identifiers array must contain at least 1 valid identifier.' });
     if (!Array.isArray(playerHwids)) return sendTypedResp({ error: 'playerHwids should be an array.' });
+    const { validHwidsArray } = filterPlayerHwids(playerHwids);
 
 
     try {
         // If ban checking enabled
         if (playerDatabase.config.onJoinCheckBan) {
-            const result = checkBan(validIdsArray, playerHwids);
+            const result = checkBan(validIdsArray, validHwidsArray);
             if (!result.allow) return sendTypedResp(result);
         }
 
@@ -146,7 +147,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
 /**
  * Checks if the player is banned
  */
-function checkBan(validIdsArray: string[], playerHwids: string[]): AllowRespType | DenyRespType {
+function checkBan(validIdsArray: string[], validHwidsArray: string[]): AllowRespType | DenyRespType {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const translator = (globals.translator as Translator);
 
@@ -159,7 +160,7 @@ function checkBan(validIdsArray: string[], playerHwids: string[]): AllowRespType
             && (!action.revocation.timestamp)
         );
     };
-    const activeBans = playerDatabase.getRegisteredActions(validIdsArray, playerHwids, filter);
+    const activeBans = playerDatabase.getRegisteredActions(validIdsArray, validHwidsArray, filter);
     if (activeBans.length) {
         const ban = activeBans[0];
 

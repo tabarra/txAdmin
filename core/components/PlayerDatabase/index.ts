@@ -22,8 +22,9 @@ type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     whitelistMode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
     whitelistedDiscordRoles: string[];
-    banRejectionMessage: string;
     whitelistRejectionMessage: string;
+    requiredBanHwidMatches: number;
+    banRejectionMessage: string;
 }
 
 
@@ -38,6 +39,11 @@ export default class PlayerDatabase {
     constructor(txAdmin: TxAdmin, public config: PlayerDbConfigType) {
         this.#txAdmin = txAdmin;
         this.#db = new Database();
+
+        //Checking config validity
+        if (this.config.requiredBanHwidMatches < 0 || this.config.requiredBanHwidMatches > 6) {
+            throw new Error('The playerDatabase.requiredBanHwidMatches setting must be between 0 (disabled) and 6.');
+        }
 
         //Database optimization cron function
         setTimeout(() => {
@@ -183,11 +189,15 @@ export default class PlayerDatabase {
         if (!Array.isArray(idsArray)) throw new Error('idsArray should be an array');
         if (hwidsArray && !Array.isArray(hwidsArray)) throw new Error('hwidsArray should be an array or undefined');
         const idsFilter = (action: DatabaseActionType) => idsArray.some((fi) => action.ids.includes(fi))
-        const hwidsFilter = (action: DatabaseActionType) => !!hwidsArray?.some((fi) => action.hwids?.includes(fi))
+        const hwidsFilter = (action: DatabaseActionType) => {
+            if (!action.hwids) return false;
+            const count = hwidsArray!.filter((fi) => action.hwids!.includes(fi)).length
+            return count >= this.config.requiredBanHwidMatches;
+        }
 
         try {
             //small optimization
-            const idsMatchFilter = hwidsArray && hwidsArray.length
+            const idsMatchFilter = hwidsArray && hwidsArray.length && this.config.requiredBanHwidMatches
                 ? (a: DatabaseActionType) => idsFilter(a) || hwidsFilter(a)
                 : (a: DatabaseActionType) => idsFilter(a)
             

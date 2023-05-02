@@ -209,6 +209,7 @@ async function handlePlayerDatabase(ctx: Context) {
         ctx.request.body.whitelistMode,
         ctx.request.body.whitelistedDiscordRoles,
         ctx.request.body.whitelistRejectionMessage,
+        ctx.request.body.requiredBanHwidMatches,
         ctx.request.body.banRejectionMessage,
     )) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
@@ -216,9 +217,10 @@ async function handlePlayerDatabase(ctx: Context) {
 
     //Prepare body input
     const cfg = {
-        onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
         whitelistMode: ctx.request.body.whitelistMode.trim(),
         whitelistRejectionMessage: ctx.request.body.whitelistRejectionMessage.trim(),
+        onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
+        requiredBanHwidMatches: parseInt(ctx.request.body.requiredBanHwidMatches),
         banRejectionMessage: ctx.request.body.banRejectionMessage.trim(),
         whitelistedDiscordRoles: ctx.request.body.whitelistedDiscordRoles
             .split(',')
@@ -241,6 +243,14 @@ async function handlePlayerDatabase(ctx: Context) {
         });
     }
 
+    //Validating HWID bans
+    if (typeof cfg.requiredBanHwidMatches !== 'number' || isNaN(cfg.requiredBanHwidMatches)) {
+        return ctx.send({ type: 'danger', message: 'requiredBanHwidMatches must be a number.' });
+    }
+    if (cfg.requiredBanHwidMatches < 0 || cfg.requiredBanHwidMatches > 6) {
+        return ctx.send({ type: 'danger', message: 'The Required Ban HWID matches must be between 0 (disabled) and 6.' });
+    }
+
     //Validating custom rejection messages
     if (cfg.whitelistRejectionMessage.length > 512) {
         return ctx.send({ type: 'danger', message: 'The whitelist rejection message must be less than 512 characters.' });
@@ -255,6 +265,7 @@ async function handlePlayerDatabase(ctx: Context) {
     newConfig.whitelistMode = cfg.whitelistMode;
     newConfig.whitelistedDiscordRoles = cfg.whitelistedDiscordRoles;
     newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
+    newConfig.requiredBanHwidMatches = cfg.requiredBanHwidMatches;
     newConfig.banRejectionMessage = cfg.banRejectionMessage;
     try {
         globals.configVault.saveProfile('playerDatabase', newConfig);

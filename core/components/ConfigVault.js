@@ -136,6 +136,7 @@ export default class ConfigVault {
                     cfg.playerDatabase.whitelistRejectionMessage,
                     'Please join http://discord.gg/example and request to be whitelisted.',
                 ),
+                requiredBanHwidMatches: toDefault(cfg.playerDatabase.requiredBanHwidMatches, 1),
                 banRejectionMessage: toDefault(
                     cfg.playerDatabase.banRejectionMessage,
                     'You can join http://discord.gg/example to appeal this ban.',
@@ -229,6 +230,7 @@ export default class ConfigVault {
             cfg.playerDatabase.whitelistMode = cfg.playerDatabase.whitelistMode || 'disabled';
             cfg.playerDatabase.whitelistedDiscordRoles = cfg.playerDatabase.whitelistedDiscordRoles || [];
             cfg.playerDatabase.whitelistRejectionMessage = cfg.playerDatabase.whitelistRejectionMessage || '';
+            cfg.playerDatabase.requiredBanHwidMatches = parseInt(cfg.playerDatabase.requiredBanHwidMatches) ?? 1;
             cfg.playerDatabase.banRejectionMessage = cfg.playerDatabase.banRejectionMessage || '';
 
             //WebServer
