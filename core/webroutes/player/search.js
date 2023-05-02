@@ -7,6 +7,10 @@ import { processActionList, processPlayerList } from './processor';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
+//Helper const
+const joinedValidIDKeys = Object.keys(consts.validIdentifiers).join('|');
+const idsRegex = new RegExp(`((${joinedValidIDKeys}):\\w+)`, 'g');
+
 
 /**
  * Handles the search functionality.
@@ -37,8 +41,6 @@ export default async function PlayerListSearch(ctx) {
 
     try {
         //Getting valid identifiers
-        const joinedValidIDKeys = Object.keys(consts.validIdentifiers).join('|');
-        const idsRegex = new RegExp(`((${joinedValidIDKeys}):\\w+)`, 'g');
         const idsArray = [...searchString.matchAll(idsRegex)]
             .map((x) => x[0])
             .filter((e, i, arr) => {

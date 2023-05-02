@@ -105,22 +105,6 @@ export default async function AdvancedActions(ctx) {
         return ctx.send({ type: 'success', message: JSON.stringify(outData, null, 2) });
     } else if (action == 'getProcessEnv') {
         return ctx.send({ type: 'success', message: JSON.stringify(process.env, null, 2) });
-    } else if (action == 'remove-all-identifiers-except-first-license-from-bans-and-warns-that-happened-after-v5-beta1') {
-        //FIXME: temp - remove after beta expires
-        const dbo = globals.playerDatabase.getDb();
-        const cnt = {
-            ban: 0,
-            warn: 0,
-        };
-        dbo.data.actions.forEach((action) => {
-            //beta1 commit && beta1 + 3w
-            if (action.timestamp > 1668575245 && action.timestamp < 1670402658) {
-                action.identifiers = [action.identifiers[0]];
-                cnt[action.type]++;
-            }
-        });
-
-        return ctx.send({ type: 'success', message: JSON.stringify(cnt, null, 2) });
     } else if (action == 'xxxxxx') {
         // const res = globals.playerDatabase.xxxxx();
         // console.dir(res);

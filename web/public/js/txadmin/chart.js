@@ -79,7 +79,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .domain([0, 1])
     const svg = d3.create("svg")
         .attr("viewBox", [0, 0, width, height]);
-    const bgColor = options.bgColor || d3.color(color(0)).darker(0.35);
+    const bgColor = options.bgColor || d3.color(color(0)).darker(1.35);
 
 
     // X Axis - Time

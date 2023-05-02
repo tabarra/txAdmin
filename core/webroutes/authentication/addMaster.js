@@ -60,7 +60,7 @@ async function handlePin(ctx) {
 
     //Checking the PIN
     if (ctx.request.body.pin !== globals.adminVault.addMasterPin) {
-        console.warn(`Wrong PIN for from: ${ctx.ip}`);
+        console.warn(`Wrong PIN from: ${ctx.ip}`);
         const message = 'Wrong PIN.';
         return ctx.utils.render('login', { template: 'noMaster', message });
     }

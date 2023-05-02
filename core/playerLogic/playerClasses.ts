@@ -12,7 +12,7 @@ const console = consoleFactory(modulename);
 /**
  * Base class for ServerPlayer and DatabasePlayer.
  * NOTE: player classes are responsible to every and only business logic regarding the player object in the database.
- * In the future, when actions become part of the player object, algo ass them to these classes.
+ * In the future, when actions become part of the player object, also add them to these classes.
  */
 export class BasePlayer {
     displayName: string = 'unknown';
@@ -293,6 +293,7 @@ export class DatabasePlayer extends BasePlayer {
         //fill in data
         this.license = license;
         this.ids = this.dbData.ids;
+        this.hwids = this.dbData.hwids;
         this.displayName = this.dbData.displayName;
         this.pureName = this.dbData.pureName;
     }

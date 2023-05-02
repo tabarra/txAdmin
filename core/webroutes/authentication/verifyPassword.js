@@ -24,12 +24,12 @@ export default async function AuthVerify(ctx) {
         //Checking admin
         const admin = globals.adminVault.getAdminByName(ctx.request.body.username);
         if (!admin) {
-            console.warn(`Wrong username for from: ${ctx.ip}`);
+            console.warn(`Wrong username from: ${ctx.ip}`);
             renderData.message = 'Wrong Username!';
             return ctx.utils.render('login', renderData);
         }
         if (!VerifyPasswordHash(ctx.request.body.password.trim(), admin.password_hash)) {
-            console.warn(`Wrong password for from: ${ctx.ip}`);
+            console.warn(`Wrong password from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
         }

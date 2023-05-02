@@ -139,7 +139,7 @@ async function handleWarning(ctx: Context, sess: any, player: PlayerClass): Prom
  * Handle Banning command
  */
 async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
-    //Checking request & identifiers
+    //Checking request
     if (
         anyUndefined(
             ctx.request.body,
@@ -166,7 +166,7 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
         return { error: 'You don\'t have permission to execute this action.' }
     }
 
-    //Validating player
+    //Validating player - hwids.length can be zero 
     const allIds = player.getAllIdentifiers();
     const allHwids = player.getAllHardwareIdentifiers();
     if (!allIds.length) {

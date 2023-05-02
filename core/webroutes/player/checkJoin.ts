@@ -120,7 +120,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
             if (!result.allow) return sendTypedResp(result);
 
         } else if (playerDatabase.config.whitelistMode === 'approvedLicense') {
-            const result = await checkApprovedLicense(validIdsArray, validIdsObject, playerName);
+            const result = await checkApprovedLicense(validIdsArray, validIdsObject, validHwidsArray, playerName);
             if (!result.allow) return sendTypedResp(result);
 
         } else if (playerDatabase.config.whitelistMode === 'guildMember') {
@@ -384,6 +384,7 @@ async function checkGuildRoles(
 async function checkApprovedLicense(
     validIdsArray: string[],
     validIdsObject: PlayerIdsObjectType,
+    validHwidsArray: string[],
     playerName: string
 ): Promise<AllowRespType | DenyRespType> {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
@@ -436,6 +437,7 @@ async function checkApprovedLicense(
             playerDatabase.registerPlayer({
                 license: validIdsObject.license,
                 ids: validIdsArray,
+                hwids: validHwidsArray,
                 displayName,
                 pureName,
                 playTime: 0,
