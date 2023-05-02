@@ -24,7 +24,8 @@
             "label_author": "Banni par",
             "label_reason": "Raison du bannissement",
             "label_id": "ID de sanction",
-            "note_multiple_bans": "Note : vous avez plus d'un bannissement sur votre identifiant."
+            "note_multiple_bans": "Note : vous avez plus d'un bannissement sur votre identifiant.",
+            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
         }
     },
     "whitelist_messages": {

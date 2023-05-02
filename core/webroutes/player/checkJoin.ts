@@ -110,7 +110,7 @@ export default async function PlayerCheckJoin(ctx: Context) {
     try {
         // If ban checking enabled
         if (playerDatabase.config.onJoinCheckBan) {
-            const result = checkBan(validIdsArray, validHwidsArray);
+            const result = checkBan(validIdsArray, validIdsObject, validHwidsArray);
             if (!result.allow) return sendTypedResp(result);
         }
 
@@ -147,7 +147,11 @@ export default async function PlayerCheckJoin(ctx: Context) {
 /**
  * Checks if the player is banned
  */
-function checkBan(validIdsArray: string[], validHwidsArray: string[]): AllowRespType | DenyRespType {
+function checkBan(
+    validIdsArray: string[],
+    validIdsObject: PlayerIdsObjectType,
+    validHwidsArray: string[]
+): AllowRespType | DenyRespType {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const translator = (globals.translator as Translator);
 
@@ -164,6 +168,7 @@ function checkBan(validIdsArray: string[], validHwidsArray: string[]): AllowResp
     if (activeBans.length) {
         const ban = activeBans[0];
 
+        //Translation keys
         const textKeys = {
             title_permanent: translator.t('ban_messages.reject.title_permanent'),
             title_temporary: translator.t('ban_messages.reject.title_temporary'),
@@ -173,9 +178,11 @@ function checkBan(validIdsArray: string[], validHwidsArray: string[]): AllowResp
             label_reason: translator.t('ban_messages.reject.label_reason'),
             label_id: translator.t('ban_messages.reject.label_id'),
             note_multiple_bans: translator.t('ban_messages.reject.note_multiple_bans'),
+            note_diff_license: translator.t('ban_messages.reject.note_diff_license'),
         };
         const language = translator.t('$meta.humanizer_language');
 
+        //Ban data
         let title;
         let expLine = '';
         if (ban.expiration) {
@@ -194,8 +201,18 @@ function checkBan(validIdsArray: string[], validHwidsArray: string[]): AllowResp
             translator.canonical,
             { dateStyle: 'medium', timeStyle: 'medium' }
         )
-        const note = (activeBans.length > 1) ? `<br>${textKeys.note_multiple_bans}` : '';
 
+        //Informational notes
+        let note = '';
+        if (activeBans.length > 1) {
+            note += `<br>${textKeys.note_multiple_bans}`;
+        }
+        const bannedLicense = ban.ids.find(id => id.startsWith('license:'));
+        if (bannedLicense && validIdsObject.license && bannedLicense.substring(8) !== validIdsObject.license) {
+            note += `<br>${textKeys.note_diff_license}`;
+        }
+
+        //Prepare rejection message
         const reason = rejectMessageTemplate(
             title,
             `${expLine}

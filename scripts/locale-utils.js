@@ -144,27 +144,9 @@ const diffCommand = () => {
 };
 
 const processStuff = () => {
-    console.log(defaultLang.nui_menu.page_main.announcement.dialog_desc);
     langs.forEach(({ name, path, data }) => {
-        // nui_menu.misc.general_no_perms, nui_menu.misc.action_unauthorized
-        // console.log(data.nui_menu.misc.general_no_perms);
-        // console.log(data.nui_menu.misc.action_unauthorized);
-
-        //nui_menu.common.error, nui_menu.misc.unknown_error
-        // console.log(data.nui_menu.common.error);
-        // console.log(data.nui_menu.misc.unknown_error);
-
-        // if (data.nui_menu.page_main.announcement.dialog_desc !== 'Send an announcement to all online players.') {
-        //     console.log(chalk.yellow(`>> ${name}`));
-        //     console.log(data.nui_menu.page_main.announcement.dialog_desc);
-        // }
-        // data.nui_menu.page_main.player_ids = {
-        //     title: data.nui_menu.page_main.player_ids.title,
-        //     label: defaultLang.nui_menu.page_main.player_ids.label,
-        //     alert_show: data.nui_menu.page_main.player_ids.alert_show,
-        //     alert_hide: data.nui_menu.page_main.player_ids.alert_hide,
-        // };
-        // data.nui_menu.player_modal.ban.submit = 'Apply ban';
+        //add stuff
+        data.ban_messages.reject.note_diff_license = 'Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban.';
         
         //remove stuff
         // data.whitelist_messages = undefined;
@@ -188,5 +170,5 @@ if (command === 'rebase') {
 } else if (command === 'processStuff') {
     processStuff();
 } else {
-    console.log('Usage: \'node locale/_utils.json <rebase|diff>\'');
+    console.log('Usage: \'scripts/locale-utils.js <rebase|diff|processStuff>\'');
 }

@@ -24,7 +24,8 @@
             "label_author": "操作人",
             "label_reason": "封禁原因",
             "label_id": "封禁ID",
-            "note_multiple_bans": "提示：您还有其他激活的封禁。"
+            "note_multiple_bans": "提示：您还有其他激活的封禁。",
+            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
         }
     },
     "whitelist_messages": {

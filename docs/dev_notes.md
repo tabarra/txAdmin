@@ -88,6 +88,7 @@
     - [x] save player hwids + ban with hwid + check join using hwid as well
     - [x] rename `action[].identifiers` to `action[].ids`
     - [x] add settings page option to configure the required hwid matches
+    - [x] add ban message clarification if its from another license
     - [ ] add an option to wipe all hwids from the database
     - [ ] start tracking the ban search duration
 - [ ] Update discord.js... AGAIN!

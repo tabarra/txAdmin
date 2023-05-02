@@ -24,7 +24,8 @@
             "label_author": "Забанил",
             "label_reason": "Причина бана",
             "label_id": "Бан ID",
-            "note_multiple_bans": "Примечание: у вас более одного активного запрета на ваши идентификаторы."
+            "note_multiple_bans": "Примечание: у вас более одного активного запрета на ваши идентификаторы.",
+            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
         }
     },
     "whitelist_messages": {

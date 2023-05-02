@@ -24,7 +24,8 @@
             "label_author": "Gebannt von",
             "label_reason": "Grund",
             "label_id": "Bann-ID",
-            "note_multiple_bans": "Es gibt mehr als einen aktiven Bann für diesen Identifier"
+            "note_multiple_bans": "Es gibt mehr als einen aktiven Bann für diesen Identifier",
+            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
         }
     },
     "whitelist_messages": {

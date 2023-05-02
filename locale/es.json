@@ -24,7 +24,8 @@
             "label_author": "Expulsado por",
             "label_reason": "Razón de la expulsión",
             "label_id": "Ban ID",
-            "note_multiple_bans": "Nota: tiene más de una prohibición activa en sus identificadores."
+            "note_multiple_bans": "Nota: tiene más de una prohibición activa en sus identificadores.",
+            "note_diff_license": "Nota: el baneo de arriba fue aplicado para otra <code>license</code>, lo que significa que alguno de tus IDs/HWIDs coinciden con los del baneo asociado."
         }
     },
     "whitelist_messages": {

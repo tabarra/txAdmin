@@ -24,7 +24,8 @@
             "label_author": "Porttikiellon antanut",
             "label_reason": "Porttikiellon syy",
             "label_id": "Porttikiellon ID",
-            "note_multiple_bans": "Huom: you have more than one active ban on your identifiers."
+            "note_multiple_bans": "Huom: you have more than one active ban on your identifiers.",
+            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
         }
     },
     "whitelist_messages": {

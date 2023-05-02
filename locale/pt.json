@@ -24,7 +24,8 @@
             "label_author": "Autor",
             "label_reason": "Motivo",
             "label_id": "ID do ban",
-            "note_multiple_bans": "Nota: você tem mais de um ban ativo em seus ids."
+            "note_multiple_bans": "Nota: você tem mais de um ban ativo em seus ids.",
+            "note_diff_license": "Nota: o ban acima foi aplicado em outra <code>license</code>, o que significa que um de seus IDs/HWIDs condiz com algum deste ban."
         }
     },
     "whitelist_messages": {
