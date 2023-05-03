@@ -200,7 +200,7 @@ export default class PlayerDatabase {
             const idsMatchFilter = hwidsArray && hwidsArray.length && this.config.requiredBanHwidMatches
                 ? (a: DatabaseActionType) => idsFilter(a) || hwidsFilter(a)
                 : (a: DatabaseActionType) => idsFilter(a)
-            
+
             return this.#db.obj.chain.get('actions')
                 .filter(customFilter as any)
                 .filter(idsMatchFilter)
@@ -451,7 +451,7 @@ export default class PlayerDatabase {
             }, { players: 0, playTime: 0, whitelists: 0 })
             .value();
 
-        
+
         //Stats only:
         //FIXME: reevaluate this in the future
         const databus = (globals.databus as any);
@@ -485,6 +485,52 @@ export default class PlayerDatabase {
                 .remove(filterFunc as any)
                 .value();
             return removed.length;
+        } catch (error) {
+            const msg = `Failed to clean database with error: ${(error as Error).message}`;
+            console.verbose.error(msg);
+            throw new Error(msg);
+        }
+    }
+
+
+    /**
+     * Cleans the hwids from the database.
+     * @returns {number} number of removed HWIDs
+     */
+    wipeHwids(
+        fromPlayers: boolean,
+        fromBans: boolean,
+    ): number {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+        if (!Array.isArray(this.#db.obj.data.players)) throw new Error('Players table isn\'t an array yet.');
+        if (!Array.isArray(this.#db.obj.data.players)) throw new Error('Actions table isn\'t an array yet.');
+        if (typeof fromPlayers !== 'boolean' || typeof fromBans !== 'boolean') throw new Error('The parameters should be booleans.');
+
+        try {
+            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            let removed = 0;
+            if (fromPlayers) {
+                this.#db.obj.chain.get('players')
+                    .map(player => {
+                        removed += player.hwids.length;
+                        player.hwids = [];
+                        return player;
+                    })
+                    .value();
+            }
+            if (fromBans)
+                this.#db.obj.chain.get('actions')
+                    .map(action => {
+                        if (action.type !== 'ban' || !action.hwids) {
+                            return action;
+                        } else {
+                            removed += action.hwids.length;
+                            action.hwids = [];
+                            return action;
+                        }
+                    })
+                    .value();
+            return removed;
         } catch (error) {
             const msg = `Failed to clean database with error: ${(error as Error).message}`;
             console.verbose.error(msg);

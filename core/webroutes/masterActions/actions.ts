@@ -94,6 +94,7 @@ async function handleCleanDatabase(ctx: Context) {
         msElapsed: number;
         playersRemoved: number;
         actionsRemoved: number;
+        hwidsRemoved: number;
     }
     const sendTypedResp = (data: successResp | GenericApiError) => ctx.send(data);
 
@@ -102,11 +103,11 @@ async function handleCleanDatabase(ctx: Context) {
         typeof ctx.request.body.players !== 'string'
         || typeof ctx.request.body.bans !== 'string'
         || typeof ctx.request.body.warns !== 'string'
+        || typeof ctx.request.body.hwids !== 'string'
     ) {
-        return sendTypedResp({error: 'xxxx'});
-        return ctx.utils.error(400, 'Invalid Request');
+        return sendTypedResp({error: 'Invalid Request'});
     }
-    const { players, bans, warns } = ctx.request.body;
+    const { players, bans, warns, hwids } = ctx.request.body;
     const daySecs = 86400;
     const currTs = now();
 
@@ -158,25 +159,50 @@ async function handleCleanDatabase(ctx: Context) {
         return bansFilter(x) || warnsFilter(x);
     };
 
+    let hwidsWipePlayers: boolean;
+    let hwidsWipeBans: boolean;
+    if (hwids === 'none') {
+        hwidsWipePlayers = false;
+        hwidsWipeBans = false;
+    } else if (hwids === 'players') {
+        hwidsWipePlayers = true;
+        hwidsWipeBans = false;
+    } else if (hwids === 'bans') {
+        hwidsWipePlayers = false;
+        hwidsWipeBans = true;
+    } else if (hwids === 'all') {
+        hwidsWipePlayers = true;
+        hwidsWipeBans = true;
+    } else {
+        return sendTypedResp({error: 'Invalid HWIDs filter type.'});
+    }
+
     //Run db cleaner
     const tsStart = Date.now();
     let playersRemoved = 0;
     try {
-        playersRemoved = await playerDatabase.cleanDatabase('players', playersFilter);
+        playersRemoved = playerDatabase.cleanDatabase('players', playersFilter);
     } catch (error) {
         return sendTypedResp({error: `<b>Failed to clean players with error:</b><br>${(error as Error).message}`});
     }
 
     let actionsRemoved = 0;
     try {
-        actionsRemoved = await playerDatabase.cleanDatabase('actions', actionsFilter);
+        actionsRemoved = playerDatabase.cleanDatabase('actions', actionsFilter);
     } catch (error) {
         return sendTypedResp({error: `<b>Failed to clean actions with error:</b><br>${(error as Error).message}`});
     }
 
+    let hwidsRemoved = 0;
+    try {
+        hwidsRemoved = playerDatabase.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
+    } catch (error) {
+        return sendTypedResp({error: `<b>Failed to clean HWIDs with error:</b><br>${(error as Error).message}`});
+    }
+
     //Return results
     const msElapsed = Date.now() - tsStart;
-    return sendTypedResp({msElapsed, playersRemoved, actionsRemoved});
+    return sendTypedResp({msElapsed, playersRemoved, actionsRemoved, hwidsRemoved});
 }
 
 

@@ -146,6 +146,23 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="cleandb-hwids" class="col-sm-3 col-form-label">
+                                HWIDs
+                            </label>
+                            <div class="col-sm-9">
+                                <select id="cleandb-hwids" name="hwids" class="form-control" required>
+                                    <option value="none" selected>none</option>
+                                    <option value="players">from players</option>
+                                    <option value="bans">from bans</option>
+                                    <option value="all" class="font-weight-bold text-danger">REMOVE ALL HWIDS</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    Player Hardware ID Tokens (HWIDs) are tied to the server owner, and if it changes, no HWID will match anymore. And because of that, if you change your <code>sv_licenseKey</code> to one owned by another person, it is recommended that you wipe the existing HWIDs.
+                                </span>
+                            </div>
+                        </div>
+
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-outline-danger" id="cleandb-submitButton" <%= disableActions %>>
                                 <i class="icon-check"></i> Clean Database
@@ -240,6 +257,7 @@
         const frmPlayers = document.getElementById('cleandb-players');
         const frmBans = document.getElementById('cleandb-bans');
         const frmWarns = document.getElementById('cleandb-warns');
+        const frmHwids = document.getElementById('cleandb-hwids');
         const cleandbSubmitBtn = document.getElementById('cleandb-submitButton');
 
         cleandbSubmitBtn.onclick = async (event) => {
@@ -253,6 +271,9 @@
             }
             if(frmWarns.value !== 'none'){
                 changes.push(`Remove warns ${frmWarns.options[frmWarns.selectedIndex].text}.`);
+            }
+            if(frmHwids.value !== 'none'){
+                changes.push(`Remove HWIDs ${frmHwids.options[frmHwids.selectedIndex].text}.`);
             }
             if(!changes.length){
                 return $.notify({ message: 'You need to select at least one option.' }, {type: 'danger'});
@@ -273,6 +294,7 @@
                     players: frmPlayers.value,
                     bans: frmBans.value,
                     warns: frmWarns.value,
+                    hwids: frmHwids.value,
                 },
                 timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
@@ -287,6 +309,7 @@
                             title: 'Result:',
                             content: `<b>Players deleted: ${data.playersRemoved}</b> <br>
                                 <b>Actions deleted: ${data.actionsRemoved}</b> <br>
+                                <b>HWIDs deleted: ${data.hwidsRemoved}</b> <br>
                                 Process finished in ${data.msElapsed}ms.`
                         });
                     }
