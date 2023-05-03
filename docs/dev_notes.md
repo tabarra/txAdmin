@@ -88,10 +88,16 @@
     - [x] add ban message clarification if its from another license
     - [x] add an option to wipe all hwids from the database
 - [x] add hwids to player modals
-- [ ] add vorp recipe
-- [ ] Update discord.js... AGAIN!
+- [x] add vorp recipe
+    - [x] reorganize folder
+    - [x] `server.cfg`:
+        - set steam_webApiKey "{{steam_webApiKey}}"
+        - clean the lines at the end of server.cfg
+        - server.cfg fix exec line 40 [vorp_official_plugins]
+    - [x] find out where that .replxx_history is comming from
 
 > beta release
+- [ ] Update discord.js... AGAIN!
 - [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
 - [ ] stats: 
     - [ ] adapt the new runtime specs, separate temp stats from classic stats
@@ -132,20 +138,23 @@ console.log(`${duration}ns`);
 console.dir(convertHrtime(duration));
 
 =======================================================================
-> FIXME: criar volume local bindado em /fxserver
+> FIXME: chat doesn't build, possibly docker image issue
 docker run \
   -p 40121:40120 \
   -p 30121:30120 -p 30121:30120/udp \
   --name fxstest \
-  ubuntu
+  --volume "E:\\FiveM\\dockerFxserver":/fxserver \
+  -it ubuntu bash
 
 docker exec -it fxstest bash
 apt update
-apt install wget xz-utils nano
-apt install iputils-ping bind9-host mycli
+apt install -y wget xz-utils nano iputils-ping bind9-host mycli
 
 mycli -u root -h 172.17.0.2
 
+cd /fxserver
+wget https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/6427-843247aae475eb586950a706015e89033e01b3f4/fx.tar.xz
+tar xvf fx.tar.xz
 
 =======================================================================
 
