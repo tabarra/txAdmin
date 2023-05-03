@@ -6,7 +6,6 @@ if not TX_MENU_ENABLED then return end
 -- =============================================
 
 --[[ NUI CALLBACKS ]]
-
 -- NOTE: this is not a complete list, but most others have the type "automobile"
 local vehClassNamesEnum = {
     [8] = "bike",
@@ -147,7 +146,6 @@ end)
 
 
 --[[ EVENT HANDLERS + FUNCTION LOGIC ]]
-
 local function setVehicleHandlingValue(veh, field, newValue)
     -- local currValue = GetVehicleHandlingFloat(veh, 'CHandlingData', field)
     SetVehicleHandlingField(veh, 'CHandlingData', field, newValue * 1.0)
@@ -159,34 +157,81 @@ local function setVehicleHandlingModifier(veh, field, multiplier)
 end
 
 local boostableVehicleClasses = {
-    [0]='Compacts',
-    [1]='Sedans',
-    [2]='SUVs',
-    [3]='Coupes',
-    [4]='Muscle',
-    [5]='Sports Classics',
-    [6]='Sports',
-    [7]='Super',
+    [0] = 'Compacts',
+    [1] = 'Sedans',
+    [2] = 'SUVs',
+    [3] = 'Coupes',
+    [4] = 'Muscle',
+    [5] = 'Sports Classics',
+    [6] = 'Sports',
+    [7] = 'Super',
     -- [8]='Motorcycles',
-    [9]='Off-road',
+    [9] = 'Off-road',
     -- [10]='Industrial',
-    [11]='Utility',
-    [12]='Vans',
+    [11] = 'Utility',
+    [12] = 'Vans',
     -- [13]='Cycles',
     -- [14]='Boats',
     -- [15]='Helicopters',
     -- [16]='Planes',
-    [17]='Service',
-    [18]='Emergency',
-    [19]='Military',
-    [20]='Commercial',
+    [17] = 'Service',
+    [18] = 'Emergency',
+    [19] = 'Military',
+    [20] = 'Commercial',
     -- [21]='Trains',
-    [22]='Open Wheel'
+    [22] = 'Open Wheel'
 }
 
+
+
+local isUsingBoost = false
+local function BoostGoldCoresRedM(entity)
+    local duration = 4000.0
+    if not isUsingBoost then duration = 0.0 end
+
+    Citizen.InvokeNative(0x4AF5A4C7B9157D14, entity, 0, duration, true) -- INNER HEALTH
+    Citizen.InvokeNative(0xF6A7C08DF2E28B28, entity, 0, duration, true) -- OUTTER HEALTH
+    Citizen.InvokeNative(0x4AF5A4C7B9157D14, entity, 1, duration, true) -- INNER STAMINA
+    Citizen.InvokeNative(0xF6A7C08DF2E28B28, entity, 1, duration, true) -- OUTTER STAMINA
+end
+
+
 RegisterNetEvent('txcl:vehicle:boost', function()
-    if IS_REDM then return end
     local ped = PlayerPedId()
+    local IS_REDM = true
+
+    if IS_REDM then
+        -- BOOST  PLAYER OR HORSE
+        -- VEHICLES DONT HAVE BOOST
+        local ispedonfoot   = IsPedOnFoot(ped)
+        local playerOnHorse = IsPedOnMount(ped)
+        local mount         = GetMount(ped)
+        local seat          = (Citizen.InvokeNative(0x4E76CB57222A00E5, ped) == -1)
+
+        if not isUsingBoost then
+            isUsingBoost = true
+            if playerOnHorse then
+                if mount and seat then -- allow only if its the driver
+                    BoostGoldCoresRedM(mount)
+                end
+            elseif ispedonfoot then
+                BoostGoldCoresRedM(ped)
+            end
+            AnimpostfxPlay('PlayerOverpower')
+        else
+            isUsingBoost = false
+            if playerOnHorse then
+                if mount and seat then -- allow only if its the driver
+                    BoostGoldCoresRedM(mount)
+                end
+            elseif ispedonfoot then
+                BoostGoldCoresRedM(ped)
+            end
+        end
+        sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
+        return
+    end
+
     local veh = GetVehiclePedIsIn(ped, false)
 
     --Check if in vehicle
@@ -218,25 +263,25 @@ RegisterNetEvent('txcl:vehicle:boost', function()
     setVehicleHandlingValue(veh, 'fInitialDragCoeff', 10.0);
 
     SetVehicleHandlingVector(veh, 'CHandlingData', 'vecInertiaMultiplier', vector3(0.1, 0.1, 0.1))
-    setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001); --testar, o certo é 0~1
-    setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001); --testar, o certo é >1
+    setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001);   --testar, o certo é 0~1
+    setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001);  --testar, o certo é >1
     setVehicleHandlingValue(veh, 'fRollCentreHeightFront', 0.5); --testar, o certo é 0~1
-    setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5); --testar, o certo é 0~1
+    setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5);  --testar, o certo é 0~1
 
     playLibrarySound('confirm')
     SetVehicleNumberPlateText(veh, "TX B00ST")
-    SetVehicleCanBreak(veh, false) -- If this is set to false, the vehicle simply can't break
+    SetVehicleCanBreak(veh, false)         -- If this is set to false, the vehicle simply can't break
     SetVehicleEngineCanDegrade(veh, false) -- Engine strong
-    SetVehicleMod(veh, 15, 3, false) -- Max Suspension
-    SetVehicleMod(veh, 11, 3, false) -- Max Engine
-    SetVehicleMod(veh, 16, 4, false) -- Max Armor
-    SetVehicleMod(veh, 12, 2, false) -- Max Brakes
-    SetVehicleMod(veh, 13, 2, false) -- Max Transmission
-    ToggleVehicleMod(veh, 18, true) -- modTurbo
-    SetVehicleMod(veh, 18, 0, false) -- Turbo
-    SetVehicleNitroEnabled(veh, true) -- Gives the vehicle a nitro boost
-    SetVehicleTurboPressure(veh, 100.0) -- Pressure of the turbo is 100%
-    EnableVehicleExhaustPops(veh, true) -- This forces the exhaust to always "pop"
+    SetVehicleMod(veh, 15, 3, false)       -- Max Suspension
+    SetVehicleMod(veh, 11, 3, false)       -- Max Engine
+    SetVehicleMod(veh, 16, 4, false)       -- Max Armor
+    SetVehicleMod(veh, 12, 2, false)       -- Max Brakes
+    SetVehicleMod(veh, 13, 2, false)       -- Max Transmission
+    ToggleVehicleMod(veh, 18, true)        -- modTurbo
+    SetVehicleMod(veh, 18, 0, false)       -- Turbo
+    SetVehicleNitroEnabled(veh, true)      -- Gives the vehicle a nitro boost
+    SetVehicleTurboPressure(veh, 100.0)    -- Pressure of the turbo is 100%
+    EnableVehicleExhaustPops(veh, true)    -- This forces the exhaust to always "pop"
     SetVehicleCheatPowerIncrease(veh, 1.8) -- Torque multiplier
 
     sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
@@ -303,7 +348,7 @@ RegisterNetEvent('txcl:vehicle:spawn:redm', function(model)
     else
         newVeh = CreatePed(modelHash, playerCoords, playerHeading, true, false)
         -- Citizen.InvokeNative(0x77FF8D35EEC6BBC4, newVeh, 1, 0) --EquipMetaPedOutfitPreset
-        Citizen.InvokeNative(0x283978A15512B2FE, newVeh, true) --SetRandomOutfitVariation
+        Citizen.InvokeNative(0x283978A15512B2FE, newVeh, true)          --SetRandomOutfitVariation
         Citizen.InvokeNative(0x028F76B6E78246EB, playerPed, newVeh, -1) --SetPedOntoMount
     end
 
