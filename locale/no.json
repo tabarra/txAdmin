@@ -25,7 +25,7 @@
             "label_reason": "Ban Reason",
             "label_id": "Ban ID",
             "note_multiple_bans": "Note: you have more than one active ban on your identifiers.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_diff_license": "Merk: utstengelsen du ser over ble gitt til en annen <code>license</code>, som betyr at noen av dine IDer/HWIDer er assosiert med den utestengingen."
         }
     },
     "whitelist_messages": {
