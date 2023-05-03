@@ -230,6 +230,7 @@ const modPlayer = {
         tab: document.getElementById('modPlayerIDs-tab'),
         currList: document.getElementById('modPlayerIDs-currList'),
         oldList: document.getElementById('modPlayerIDs-oldList'),
+        hwidsList: document.getElementById('modPlayerIDs-hwidsList'),
     },
     History: {
         body: document.getElementById('modPlayerHistory'),
@@ -304,6 +305,7 @@ function showPlayer(playerRef, keepTabSelection = false) {
 
     modPlayer.IDs.currList.innerText = 'loading...';
     modPlayer.IDs.oldList.innerText = 'loading...';
+    modPlayer.IDs.hwidsList.innerText = 'loading...';
     modPlayer.History.list.innerText = 'loading...';
 
     modPlayer.Ban.tab.classList.add('nav-link-disabled', 'disabled');
@@ -363,15 +365,25 @@ function showPlayer(playerRef, keepTabSelection = false) {
 
                 //Old identifiers
                 if (Array.isArray(player.oldIds)) {
-                    const filteredIds = player.oldIds
+                    const filteredOldIds = player.oldIds
                         .filter(id => !player.isConnected || !player.ids.includes(id)) //don't filter when offline
                         .map(id => `<div class="idsText border-dark text-muted">${xss(id)}</div>`)
                         .join('\n');
-                    modPlayer.IDs.oldList.innerHTML = (filteredIds.length)
-                        ? filteredIds
+                    modPlayer.IDs.oldList.innerHTML = (filteredOldIds.length)
+                        ? filteredOldIds
                         : '<em class="text-secondary">No previous ID to show.</em>';
                 } else {
                     modPlayer.IDs.oldList.innerHTML = '<em class="text-secondary">No previous ID to show.</em>';
+                }
+
+                //All HWIDs
+                if (Array.isArray(player.oldHwids) && player.oldHwids.length) {
+                    const filteredIds = player.oldHwids
+                        .map(xss)
+                        .join('\n');
+                    modPlayer.IDs.hwidsList.innerHTML = `<div class="idsText border-dark text-muted" style="font-size: x-small;">${filteredIds}</div>`;
+                } else {
+                    modPlayer.IDs.hwidsList.innerHTML = '<em class="text-secondary">No HWIDs to show.</em>';
                 }
 
                 //Whitelist

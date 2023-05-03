@@ -321,7 +321,8 @@
             },
             "ids": {
                 "current_ids": "Định danh hiện tại",
-                "previous_ids": "Định danh được sử dụng trước đây"
+                "previous_ids": "Định danh được sử dụng trước đây",
+                "all_hwids": "All Hardware IDs"
             },
             "history": {
                 "title": "Lịch sử liên quan",

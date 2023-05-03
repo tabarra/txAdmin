@@ -146,7 +146,7 @@ const diffCommand = () => {
 const processStuff = () => {
     langs.forEach(({ name, path, data }) => {
         //add stuff
-        data.ban_messages.reject.note_diff_license = 'Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban.';
+        // data.nui_menu.player_modal.ids.all_hwids = 'All Hardware IDs';
         
         //remove stuff
         // data.whitelist_messages = undefined;

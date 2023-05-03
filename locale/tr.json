@@ -346,7 +346,8 @@
             },
             "ids": {
                 "current_ids": "Geçerli Tanımlayıcılar",
-                "previous_ids": "Daha Önce Kullanılan Tanımlayıcılar"
+                "previous_ids": "Daha Önce Kullanılan Tanımlayıcılar",
+                "all_hwids": "All Hardware IDs"
             }
         }
     }

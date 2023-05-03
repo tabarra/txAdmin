@@ -346,7 +346,8 @@
             },
             "ids": {
                 "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers"
+                "previous_ids": "Previously Used Identifiers",
+                "all_hwids": "All Hardware IDs"
             }
         }
     }

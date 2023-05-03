@@ -346,7 +346,8 @@
             },
             "ids": {
                 "current_ids": "Nykyiset tunnisteet",
-                "previous_ids": "Aiemmin käytetyt tunnisteet"
+                "previous_ids": "Aiemmin käytetyt tunnisteet",
+                "all_hwids": "All Hardware IDs"
             }
         }
     }

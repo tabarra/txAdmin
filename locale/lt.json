@@ -346,7 +346,8 @@
             },
             "ids": {
                 "current_ids": "Dabartiniai Identifikatoriai",
-                "previous_ids": "Ankščiau Naudoti Identifikatoriai"
+                "previous_ids": "Ankščiau Naudoti Identifikatoriai",
+                "all_hwids": "All Hardware IDs"
             }
         }
     }

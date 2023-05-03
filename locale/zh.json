@@ -346,7 +346,8 @@
             },
             "ids": {
                 "current_ids": "当前标识符",
-                "previous_ids": "曾使用过的标识符"
+                "previous_ids": "曾使用过的标识符",
+                "all_hwids": "All Hardware IDs"
             }
         }
     }

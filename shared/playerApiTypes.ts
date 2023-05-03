@@ -29,6 +29,7 @@ export type PlayerModalPlayerData = {
     isRegistered: boolean;
     isConnected: boolean;
     ids: string[]; //can be empty
+    hwids: string[]; //can be empty
     license: string | null;
     actionHistory: PlayerHistoryItem[]; //can be empty
 
@@ -43,6 +44,7 @@ export type PlayerModalPlayerData = {
     notesLog?: string;
     notes?: string;
     oldIds?: string[]; //will also include the current ones
+    oldHwids?: string[]; //will also include the current ones
     tsLastConnection?: number; //only show if offline
 }
 

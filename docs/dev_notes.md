@@ -87,7 +87,7 @@
     - [x] add settings page option to configure the required hwid matches
     - [x] add ban message clarification if its from another license
     - [x] add an option to wipe all hwids from the database
-- [ ] maybe add hwids to player modals
+- [x] add hwids to player modals
 - [ ] add vorp recipe
 - [ ] Update discord.js... AGAIN!
 
@@ -130,6 +130,21 @@ for (let i = 0; i < 1000; i++) {
 const duration = process.hrtime.bigint() - start;
 console.log(`${duration}ns`);
 console.dir(convertHrtime(duration));
+
+=======================================================================
+> FIXME: criar volume local bindado em /fxserver
+docker run \
+  -p 40121:40120 \
+  -p 30121:30120 -p 30121:30120/udp \
+  --name fxstest \
+  ubuntu
+
+docker exec -it fxstest bash
+apt update
+apt install wget xz-utils nano
+apt install iputils-ping bind9-host mycli
+
+mycli -u root -h 172.17.0.2
 
 
 =======================================================================
