@@ -198,7 +198,7 @@ end
 
 RegisterNetEvent('txcl:vehicle:boost', function()
     local ped = PlayerPedId()
-    local IS_REDM = true
+
 
     if IS_REDM then
         -- BOOST  PLAYER OR HORSE
