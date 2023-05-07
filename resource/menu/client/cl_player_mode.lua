@@ -241,8 +241,3 @@ RegisterNetEvent('txcl:setPlayerMode', function(mode, ptfx)
         toggleSuperJump(false)
     end
 end)
-
-
-RegisterCommand('nc', function()
-    toggleFreecam(not noClipEnabled)
-end)
