@@ -131,6 +131,7 @@ async function handleBandIds(ctx: Context, sess: any): Promise<GenericApiResp> {
             durationTranslated,
             targetNetId: null,
             targetIds: identifiers,
+            targetHwids: [],
             targetName: 'identifiers',
             kickMessage,
         });
@@ -179,7 +180,8 @@ async function handleRevokeAction(ctx: Context, sess: any): Promise<GenericApiRe
             actionReason: action.reason,
             actionAuthor: action.author,
             playerName: action.playerName,
-            playerIds: action.identifiers,
+            playerIds: action.ids,
+            playerHwids: action.hwids ?? [],
             revokedBy: sess.auth.username,
         });
     } catch (error) { }

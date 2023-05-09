@@ -97,6 +97,8 @@
     - [x] find out where that .replxx_history is comming from
 
 > beta release
+- [x] fix system log page font fallback
+- [x] fix playerBanned and actionRevoked events playerIds and add playerHwids
 - [ ] Update discord.js... AGAIN!
 - [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
 - [ ] stats: 
