@@ -103,7 +103,7 @@
 - [x] updated some packages
 - [x] fix adminvault behavior on empty `admins.json` file
 - [x] change `cl_main.lua` RedM detection
-- [ ] check/merge redm vehicle boost
+- [x] check/merge redm vehicle boost
 
 > beta2 release
 - [ ] inject consts isZapHosting and isPterodactyl in ctxUtil

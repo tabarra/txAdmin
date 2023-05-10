@@ -171,7 +171,8 @@
                     "label": "Boostez la voiture pour obtenir un maximum de fun (et peut-être de vitesse).",
                     "success": "Véhicule boosté !",
                     "already_boosted": "Ce véhicule est déjà boosté.",
-                    "unsupported_class": "Cette classe de véhicule n'est pas supportée."
+                    "unsupported_class": "Cette classe de véhicule n'est pas supportée.",
+                    "redm_not_mounted": "You can only boost when mounted on a horse."
                 }
             },
             "heal": {

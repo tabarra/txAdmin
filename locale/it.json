@@ -171,7 +171,8 @@
                     "label": "Boosta l'auto per un maggiore divertimento (e forse velocità)",
                     "success": "Veicolo boostato!",
                     "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported."
+                    "unsupported_class": "This vehicle class is not supported.",
+                    "redm_not_mounted": "You can only boost when mounted on a horse."
                 }
             },
             "heal": {

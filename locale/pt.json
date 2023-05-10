@@ -171,7 +171,8 @@
                     "label": "Aumenta as caracterísiticas do veículo para atingir máxima diversão (e talvez velocidade)",
                     "success": "Nitro adicionado!",
                     "already_boosted": "Esse carro já tem nitro.",
-                    "unsupported_class": "Esta classe de veículo não é suportada."
+                    "unsupported_class": "Esta classe de veículo não é suportada.",
+                    "redm_not_mounted": "Você só pode usar \"nitro\" se estiver montado em um cavalo."
                 }
             },
             "heal": {

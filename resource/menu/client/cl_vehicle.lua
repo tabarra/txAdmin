@@ -114,7 +114,6 @@ RegisterNUICallback("deleteVehicle", function(data, cb)
     if veh and veh > 0 then
         local vehNetId = NetworkGetNetworkIdFromEntity(veh)
         TriggerServerEvent("txsv:req:vehicle:delete", vehNetId)
-
         cb({})
     else
         cb({ e = true })
@@ -137,12 +136,15 @@ end)
 RegisterNUICallback('boostVehicle', function(_, cb)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
-    if (veh == 0) then
-        return cb({ e = true })
+    if IS_REDM and IsPedOnMount(ped) then
+        veh = GetMount(ped)
     end
-
-    TriggerServerEvent('txsv:req:vehicle:boost')
-    cb({})
+    if veh and veh > 0 then
+        TriggerServerEvent('txsv:req:vehicle:boost')
+        cb({})
+    else
+        cb({ e = true })
+    end
 end)
 
 
@@ -184,8 +186,7 @@ local boostableVehicleClasses = {
     [22]='Open Wheel'
 }
 
-RegisterNetEvent('txcl:vehicle:boost', function()
-    if IS_REDM then return end
+local function boostVehicleFivem()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
 
@@ -240,8 +241,36 @@ RegisterNetEvent('txcl:vehicle:boost', function()
     SetVehicleCheatPowerIncrease(veh, 1.8) -- Torque multiplier
 
     sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
-end)
+end
 
+local function boostVehicleRedm()
+    local ped = PlayerPedId()
+    local horse = IsPedOnMount(ped) and GetMount(ped) or false
+    if not horse then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.redm_not_mounted', true)
+    end
+
+    local boostedFlag = Citizen.InvokeNative(0x200373A8DF081F22, horse, 0)
+    if boostedFlag then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.boost.already_boosted', true)
+    end
+
+    local duration = 4000.0
+    -- Inner/Outter Health
+    Citizen.InvokeNative(0x4AF5A4C7B9157D14, horse, 0, duration, true) --EnableAttributeCoreOverpower
+    Citizen.InvokeNative(0xF6A7C08DF2E28B28, horse, 0, duration, true) --EnableAttributeOverpower
+    -- Inner/Outter Stamina
+    Citizen.InvokeNative(0x4AF5A4C7B9157D14, horse, 1, duration, true) --EnableAttributeCoreOverpower
+    Citizen.InvokeNative(0xF6A7C08DF2E28B28, horse, 1, duration, true) --EnableAttributeOverpower
+
+    AnimpostfxPlay('PlayerOverpower')
+    sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
+end
+
+local boostVehicleFunc = IS_FIVEM and boostVehicleFivem or boostVehicleRedm
+RegisterNetEvent('txcl:vehicle:boost', boostVehicleFunc)
+
+-- Fix vehicle
 RegisterNetEvent('txcl:vehicle:fix', function()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)

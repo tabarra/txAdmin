@@ -171,7 +171,8 @@
                     "label": "Paturbink tr. priemonę, kad pasiektum maksimalų džiaugsmo (ir galbūt greičio) lygį.",
                     "success": "Tr. priemonė paturbinta",
                     "already_boosted": "Ši tr. priemonė jau yra paturbinta.",
-                    "unsupported_class": "Ši tr. priemonių klasė nėra palaikoma."
+                    "unsupported_class": "Ši tr. priemonių klasė nėra palaikoma.",
+                    "redm_not_mounted": "You can only boost when mounted on a horse."
                 }
             },
             "heal": {

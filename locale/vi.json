@@ -171,7 +171,8 @@
                     "label": "Nâng cấp xe để kiểm tra tốc độ tối đa.",
                     "success": "Xe đã được nâng cấp",
                     "already_boosted": "Xe này đã được độ.",
-                    "unsupported_class": "Loại xe này không được hỗ trợ."
+                    "unsupported_class": "Loại xe này không được hỗ trợ.",
+                    "redm_not_mounted": "You can only boost when mounted on a horse."
                 }
             },
             "heal": {
