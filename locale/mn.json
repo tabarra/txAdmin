@@ -41,7 +41,7 @@
             "deny_message": "Та %{guildname} Discord серверт нэгдсэний дараа дахин оролдоно уу."
         },
         "guild_roles": {
-            "mode_title": "<strong>MNFCANDY NETWORK</strong>",
+            "mode_title": "<strong>Discord Role шалгасан гишүүнчлэл</strong>",
             "insufficient_ids": "Танд <code>discord</code> онцгой код байхгүй байна, Discord серверт нэгдсэний дараа дахин оролдоно уу. (Web Discord ажиллахгүй болно.)",
             "deny_notmember_title": "Та Discord серверт байхгүй байна.",
             "deny_notmember_message": "Та манай %{guildname} Discord серверт нэгдсэний дараа дахин оролдоно уу. (Web Discord ажиллахгүй болно.)",
