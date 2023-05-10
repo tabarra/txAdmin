@@ -49,9 +49,15 @@ RegisterNetEvent('txcl:showDirectMessage', function(message, author)
 end)
 
 -- TODO: remove [SPACE] holding requirement?
-local isRDR = not TerraingridActivate and true or false
-local dismissKey = isRDR and 0xD9D0E1C0 or 22
-local dismissKeyGroup = isRDR and 1 or 0
+local dismissKey, dismissKeyGroup
+if IS_FIVEM then
+    dismissKey = 22
+    dismissKeyGroup = 0
+else
+    dismissKey = 0xD9D0E1C0
+    dismissKeyGroup = 1
+end
+
 RegisterNetEvent('txcl:showWarning', function(author, reason)
     toggleMenuVisibility(false)
     sendMenuMessage('setWarnOpen', {

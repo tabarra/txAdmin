@@ -102,7 +102,7 @@
 - [x] fix playerBanned and actionRevoked events playerIds and add playerHwids
 - [x] updated some packages
 - [x] fix adminvault behavior on empty `admins.json` file
-- [ ] change `cl_main.lua` RedM detection
+- [x] change `cl_main.lua` RedM detection
 - [ ] check/merge redm vehicle boost
 
 > beta2 release
