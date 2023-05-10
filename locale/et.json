@@ -171,7 +171,8 @@
                     "label": "Kiirenda sõiduk, et saavutada maksimaalne lõbu (Ja võib olla ka kiirus)",
                     "success": "Sõiduk kiirendatud!",
                     "already_boosted": "Praegune sõiduk on juba kiirendatud.",
-                    "unsupported_class": "Paregune sõiduki klass ei ole lubatud."
+                    "unsupported_class": "Paregune sõiduki klass ei ole lubatud.",
+                    "redm_not_mounted": "You can only boost when mounted on a horse."
                 }
             },
             "heal": {

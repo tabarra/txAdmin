@@ -61,6 +61,7 @@ Event Data:
 - `durationTranslated`: xxx or `null`. Added in v5.0.
 - `targetNetId`: The netid of the player that was banned, or `null` if a ban was applied to identifiers only. Added in v5.0.
 - `targetIds`: The identifiers that were banned. Added in v5.0.
+- `targetHwids`: The hardware identifiers that were banned. Might be an empty array. Added in v6.0.
 - `targetName`: The clean name of the banned player, or `identifiers` if ban was applied to ids only (legacy ban). Added in v5.0.
 - `kickMessage`: The message to show the player as a kick reason. Added in v5.0.
 
@@ -111,6 +112,7 @@ Event Data:
 - `actionAuthor`: The name of the admin that issued the action.
 - `playerName`: name of the player that received the action, or `false` if doesn't apply.
 - `playerIds`: Array containing all identifiers (ex. license, discord, etc.) this action applied to.
+- `playerHwids`: Array containing all hardware ID tokens this action applied to. Might be an empty array. Added in v6.0.
 - `revokedBy`: The name of the admin that revoked the action.
 
 ## txAdmin:events:skippedNextScheduledRestart (v5.2)

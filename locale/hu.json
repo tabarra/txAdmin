@@ -171,7 +171,8 @@
                     "label": "Boostold a járművedet!",
                     "success": "Jármű boostolva!",
                     "already_boosted": "Ezt a járművet már boostoltad.",
-                    "unsupported_class": "Ez a járműtípus nem támogatott."
+                    "unsupported_class": "Ez a járműtípus nem támogatott.",
+                    "redm_not_mounted": "You can only boost when mounted on a horse."
                 }
             },
             "heal": {

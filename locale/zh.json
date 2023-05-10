@@ -171,7 +171,8 @@
                     "label": "加速载具",
                     "success": "载具已加速！",
                     "already_boosted": "载具已经被加速了",
-                    "unsupported_class": "这辆载具不支持加速"
+                    "unsupported_class": "这辆载具不支持加速",
+                    "redm_not_mounted": "You can only boost when mounted on a horse."
                 }
             },
             "heal": {

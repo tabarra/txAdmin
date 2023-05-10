@@ -153,7 +153,7 @@ export default class DiscordBot {
      * Update persistent status and activity
      */
     async updateStatus() {
-        if (!this.#client?.isReady()) {
+        if (!this.#client?.isReady() || !this.#client.user) {
             console.verbose.warn('not ready yet to update status');
             return false;
         }
@@ -221,7 +221,7 @@ export default class DiscordBot {
 
             //Setup Ready listener
             this.#client.on('ready', async () => {
-                if (!this.#client?.isReady()) throw new Error(`ready event while not being ready`);
+                if (!this.#client?.isReady() || !this.#client.user) throw new Error(`ready event while not being ready`);
 
                 //Fetching guild
                 const guild = this.#client.guilds.cache.find((guild) => guild.id === this.config.guild);
@@ -249,7 +249,7 @@ export default class DiscordBot {
                     }
                 }
 
-                this.#client.application.commands.set(slashCommands);
+                this.guild.commands.set(slashCommands);
                 console.ok(`Started and logged in as '${this.#client.user.tag}'`);
                 this.updateStatus().catch();
 

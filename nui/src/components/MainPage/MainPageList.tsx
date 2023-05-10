@@ -257,12 +257,6 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleBoostVehicle = () => {
-    if (isRedm) {
-      return enqueueSnackbar(
-        'This options is not yet available for RedM.',
-        { variant: "error" }
-      );
-    }
     fetchNui("boostVehicle").then(({ e }) => {
       if (e) {
         return enqueueSnackbar(
@@ -315,7 +309,7 @@ export const MainPageList: React.FC = () => {
   const handleClearArea = () => {
     if (isRedm) {
       return enqueueSnackbar(
-        'This options is not yet available for RedM.',
+        'This option is not yet available for RedM.',
         { variant: "error" }
       );
     }

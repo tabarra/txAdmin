@@ -225,6 +225,7 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
         durationTranslated,
         targetNetId: (player instanceof ServerPlayer) ? player.netid : null,
         targetIds: player.ids,
+        targetHwids: player.hwids,
         targetName: player.displayName,
         kickMessage,
     });

@@ -171,7 +171,8 @@
                     "label": "Przyśpiesz pojazd, aby osiągnąć maksymalną frajdę oraz prędkość",
                     "success": "Pojazd został przyśpieszony!",
                     "already_boosted": "Ten pojazd był już przyśpieszany.",
-                    "unsupported_class": "Ta klasa pojazdów nie jest obsługiwana."
+                    "unsupported_class": "Ta klasa pojazdów nie jest obsługiwana.",
+                    "redm_not_mounted": "You can only boost when mounted on a horse."
                 }
             },
             "heal": {
