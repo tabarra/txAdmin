@@ -101,11 +101,11 @@
 - [x] remove debug noclip command
 - [x] fix playerBanned and actionRevoked events playerIds and add playerHwids
 - [x] updated some packages
-- [ ] fix adminvault behavior on empty `admins.json` file
+- [x] fix adminvault behavior on empty `admins.json` file
 - [ ] change `cl_main.lua` RedM detection
+- [ ] check/merge redm vehicle boost
 
 > beta2 release
-- [ ] Update discord.js... AGAIN!
 - [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
 - [ ] stats: 
     - [ ] adapt the new runtime specs, separate temp stats from classic stats
