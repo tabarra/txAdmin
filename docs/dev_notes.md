@@ -96,9 +96,15 @@
         - server.cfg fix exec line 40 [vorp_official_plugins]
     - [x] find out where that .replxx_history is comming from
 
-> beta release
+> beta1 release
 - [x] fix system log page font fallback
+- [x] remove debug noclip command
 - [x] fix playerBanned and actionRevoked events playerIds and add playerHwids
+- [x] updated some packages
+- [ ] fix adminvault behavior on empty `admins.json` file
+- [ ] change `cl_main.lua` RedM detection
+
+> beta2 release
 - [ ] Update discord.js... AGAIN!
 - [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
 - [ ] stats: 
