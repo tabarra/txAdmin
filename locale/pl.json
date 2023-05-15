@@ -25,7 +25,7 @@
             "label_reason": "Powód bana",
             "label_id": "Identyfikator bana",
             "note_multiple_bans": "Uwaga: masz więcej niż jedną aktywną blokadę na swoje identyfikatory.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_diff_license": "Uwaga: powyższy ban został nadany na inną <code>licencję</code>, co oznacza że któryś z twoich identyfikatorów pokrywa się z tymi zbanowanymi."
         }
     },
     "whitelist_messages": {
@@ -172,7 +172,7 @@
                     "success": "Pojazd został przyśpieszony!",
                     "already_boosted": "Ten pojazd był już przyśpieszany.",
                     "unsupported_class": "Ta klasa pojazdów nie jest obsługiwana.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "Możesz użyć przyśpieszenia tylko wtedy, gdy jesteś na koniu."
                 }
             },
             "heal": {
@@ -290,7 +290,7 @@
                         "spectate_failed": "Nie udało się rozwiązać celu! Wyjście z Obserwacji.",
                         "spectate_yourself": "Nie możesz obserwować samego siebie.",
                         "freeze_yourself": "Nie możesz zamrozić samego siebie.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Nie ma już więcej graczy do obserwowania."
                     }
                 },
                 "troll": {
@@ -348,7 +348,7 @@
             "ids": {
                 "current_ids": "Bieżące Identyfikatory",
                 "previous_ids": "Wcześniej Używane Identyfikatory",
-                "all_hwids": "All Hardware IDs"
+                "all_hwids": "Wszystkie Identyfikatory HWID"
             }
         }
     }
