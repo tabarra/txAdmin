@@ -435,6 +435,12 @@ async function handleDiscord(ctx: Context) {
             - **Wrong guild/server ID:** read the description of the guild/server ID setting for more information.
             - **Bot is not in the guild/server:** you need to [INVITE THE BOT](${inviteUrl}) to join the server.
             - **Wrong bot:** you may be using the token of another discord bot.`;
+        } else if (errorCode === 'DangerousPermission') {
+            extraContext = `Please keep in mind that:
+            - These permissions are dangerous because if the bot token leaks, an attacker can cause permanent damage to your server.
+            - You need to remove the permissions listed above to be able to enable this bot.
+            - No bot should have more permissions than strictly needed, specially \`Administrator\`.
+            - You should never have multiple bots using the same token, create a new one for each bot.`;
         }
         return ctx.send({
             type: 'danger',

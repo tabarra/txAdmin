@@ -106,6 +106,7 @@
 - [x] check/merge redm vehicle boost
 
 > beta2 release
+- [x] bot should check if it has any dangerous permission
 - [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
 - [ ] stats: 
     - [ ] adapt the new runtime specs, separate temp stats from classic stats
@@ -113,8 +114,6 @@
     - [ ] add isPterodactyl to stats
     - [ ] start tracking the ban search duration
     - [ ] jwe (in header?)
-- [ ] bot should check if it has any dangerous permission
-    - message should also inform the user that multiple bots on the same token is a terrible idea
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
     - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
 - [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
