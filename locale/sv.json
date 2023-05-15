@@ -50,7 +50,7 @@
         },
         "approved_license": {
             "mode_title": "Denna servern har <strong>Licens Whitelist</strong> läge.",
-            "insufficient_ids": "Du har inte en <code>licens</code> identifikation, vilket betyder att servern har <code>sv_lan</code> påslaget. Om du är server ägaren s¨kan du stänga av detta i <code>server.cfg</code> filen.",
+            "insufficient_ids": "Du har inte en <code>licens</code> identifikation, vilket betyder att servern har <code>sv_lan</code> påslaget. Om du är server ägaren kan du stänga av detta i <code>server.cfg</code> filen.",
             "deny_title": "Du är inte whitelistad i denna server.",
             "request_id_label": "Begärelse ID"
         }
