@@ -172,7 +172,7 @@
                     "success": "Fahrzeug geboosted.",
                     "already_boosted": "Dieses Fahrzeug wurde schon geboosted!",
                     "unsupported_class": "Diese Fahrzeugart wird nicht unterstützt.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "Du kannst dich nur boosten, wenn du auf einem Pferd sitzt."
                 }
             },
             "heal": {
@@ -348,7 +348,7 @@
             "ids": {
                 "current_ids": "Aktuelle Identifier",
                 "previous_ids": "Zuvor benutzte Identifier",
-                "all_hwids": "All Hardware IDs"
+                "all_hwids": "Alle Hardware IDs"
             }
         }
     }
