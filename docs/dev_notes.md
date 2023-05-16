@@ -108,7 +108,7 @@
 
 - [x] bot should check if it has any dangerous permission
 - [x] improve zap/ptero detection
-- [ ] flexibilized ad options
+- [x] flexibilized ad options
 - [ ] stats: 
     - [ ] adapt the new runtime specs, separate temp stats from classic stats
     - [ ] add bot enabled / whitelist back into stats
