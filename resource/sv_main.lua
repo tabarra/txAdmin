@@ -137,7 +137,7 @@ local function txaReportResources(source, args)
             description = resDesc,
             path = GetResourcePath(resName)
         }
-        table.insert(resources, currentRes)
+        resources[#resources+1] = currentRes
     end
 
     --Send to txAdmin
@@ -282,8 +282,18 @@ local function handleShutdownEvent(eventData)
 end
 
 
---- Command that receives all incoming tx events and dispatches 
+--- Command that receives all incoming tx events and dispatches
 --- it to the respective event handler
+local eventHandlers = {
+    announcement = handleAnnouncementEvent,
+    playerDirectMessage = handleDirectMessageEvent,
+    playerKicked = handleKickEvent,
+    playerWarned = handleWarnEvent,
+    playerBanned = handleBanEvent,
+    serverShuttingDown = handleShutdownEvent,
+    scheduledRestart = handleScheduledRestartEvent,
+}
+
 local function txaEvent(source, args)
     -- sanity check
     if type(args[1]) ~= 'string' or type(args[2]) ~= 'string' then
@@ -297,23 +307,14 @@ local function txaEvent(source, args)
     local eventData = json.decode(unDeQuote(args[2]))
     TriggerEvent('txAdmin:events:' .. eventName, eventData)
 
-    if eventName == 'announcement' then 
-        return handleAnnouncementEvent(eventData)
-    elseif eventName == 'playerDirectMessage' then 
-        return handleDirectMessageEvent(eventData)
-    elseif eventName == 'playerKicked' then 
-        return handleKickEvent(eventData)
-    elseif eventName == 'playerWarned' then 
-        return handleWarnEvent(eventData)
-    elseif eventName == 'playerBanned' then 
-        return handleBanEvent(eventData)
-    elseif eventName == 'serverShuttingDown' then 
-        return handleShutdownEvent(eventData)
-    elseif eventName == 'scheduledRestart' then 
-        return handleScheduledRestartEvent(eventData)
+    local eventHandler = eventHandlers[eventName]
+    if eventHandler then
+        return eventHandler(eventData)
     end
+
     CancelEvent()
 end
+
 
 
 -- =============================================

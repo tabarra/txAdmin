@@ -23,30 +23,24 @@ RegisterNetEvent('txcl:setServerCtx', function(ctx)
     sendMenuMessage('setServerCtx', ServerCtx)
 end)
 
-
-
 -- =============================================
 --  Announcement, DirectMessage and Warn handling
 -- =============================================
 -- Dispatch Announcements
-RegisterNetEvent('txcl:showAnnouncement', function(message, author)
-    sendMenuMessage(
-        'addAnnounceMessage',
-        {
-            message = message,
-            author = author
-        }
-    )
-end)
-RegisterNetEvent('txcl:showDirectMessage', function(message, author)
-    sendMenuMessage(
-        'addDirectMessage',
-        {
-            message = message,
-            author = author
-        }
-    )
-end)
+local function registerEvent(eventName, menuMessage)
+    RegisterNetEvent(eventName, function(message, author)
+        sendMenuMessage(
+            menuMessage,
+            {
+                message = message,
+                author = author
+            }
+        )
+    end)
+end
+
+registerEvent('txcl:showAnnouncement', 'addAnnounceMessage')
+registerEvent('txcl:showDirectMessage', 'addDirectMessage')
 
 -- TODO: remove [SPACE] holding requirement?
 local dismissKey, dismissKeyGroup
@@ -84,7 +78,6 @@ RegisterNetEvent('txcl:showWarning', function(author, reason)
     end)
 end)
 
-
 -- =============================================
 --  Other stuff
 -- =============================================
@@ -94,39 +87,22 @@ end)
 CreateThread(function()
     Wait(1000)
     --Commands
-    TriggerEvent('chat:removeSuggestion', '/txadmin') --too spammy
-    TriggerEvent('chat:removeSuggestion', '/txaPing')
-    TriggerEvent('chat:removeSuggestion', '/txaKickAll')
-    TriggerEvent('chat:removeSuggestion', '/txaEvent')
-    TriggerEvent('chat:removeSuggestion', '/txaReportResources')
-    TriggerEvent('chat:removeSuggestion', '/txaSetDebugMode')
+    local suggestionsToRemove = {
+        --Commands
+        '/txadmin', '/txaPing', '/txaKickAll', '/txaEvent', '/txaReportResources', '/txaSetDebugMode',
+        --Keybinds
+        '/txAdmin:menu:noClipToggle', '/txAdmin:menu:openPlayersPage', '/txAdmin:menu:togglePlayerIDs',
+        --Convars
+        '/txAdmin-version', '/txAdmin-locale', '/txAdmin-localeFile', '/txAdmin-verbose', '/txAdmin-luaComHost',
+        '/txAdmin-luaComToken', '/txAdmin-checkPlayerJoin', '/txAdmin-pipeToken', '/txAdmin-debugMode',
+        '/txAdmin-hideDefaultAnnouncement', '/txAdmin-hideDefaultDirectMessage', '/txAdmin-hideDefaultWarning',
+        '/txAdmin-hideDefaultScheduledRestartWarning', '/txAdminServerMode',
+        --Menu convars
+        '/txAdmin-menuEnabled', '/txAdmin-menuAlignRight', '/txAdmin-menuPageKey', '/txAdmin-playerIdDistance',
+        '/txAdmin-menuDrunkDuration'
+    }
 
-    --Keybinds
-    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:noClipToggle')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:openPlayersPage')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:togglePlayerIDs')
-
-    --Convars
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-version')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-locale')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-localeFile')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-verbose')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-luaComHost')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-luaComToken')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-checkPlayerJoin')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-pipeToken')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-debugMode')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultAnnouncement')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultDirectMessage')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultWarning')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultScheduledRestartWarning')
-    TriggerEvent('chat:removeSuggestion', '/txAdminServerMode')
-
-    --Menu convars
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuEnabled')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuAlignRight')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuPageKey')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-playerIdDistance')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDrunkDuration')
+    for _, suggestion in ipairs(suggestionsToRemove) do
+        TriggerEvent('chat:removeSuggestion', suggestion)
+    end
 end)
-
