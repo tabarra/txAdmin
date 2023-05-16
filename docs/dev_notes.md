@@ -94,9 +94,9 @@
         - set steam_webApiKey "{{steam_webApiKey}}"
         - clean the lines at the end of server.cfg
         - server.cfg fix exec line 40 [vorp_official_plugins]
-    - [x] find out where that .replxx_history is comming from
-
+    - [x] find out where that .replxx_history is coming from
 > beta1 release
+
 - [x] fix system log page font fallback
 - [x] remove debug noclip command
 - [x] fix playerBanned and actionRevoked events playerIds and add playerHwids
@@ -104,10 +104,11 @@
 - [x] fix adminvault behavior on empty `admins.json` file
 - [x] change `cl_main.lua` RedM detection
 - [x] check/merge redm vehicle boost
-
 > beta2 release
+
 - [x] bot should check if it has any dangerous permission
-- [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
+- [x] improve zap/ptero detection
+- [ ] flexibilized ad options
 - [ ] stats: 
     - [ ] adapt the new runtime specs, separate temp stats from classic stats
     - [ ] add bot enabled / whitelist back into stats
