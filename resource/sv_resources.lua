@@ -31,7 +31,7 @@ local resourceEvents = {
     onResourceListRefresh: A server-side event triggered when the refresh command completes.
     onResourceStop: An event that is triggered immediately when a resource is stopping.
     onServerResourceStop: An event that is triggered after a resource has stopped.
-]]
+--]]
 
 local AddEventHandler = AddEventHandler
 
