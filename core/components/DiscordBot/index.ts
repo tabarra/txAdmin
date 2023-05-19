@@ -197,6 +197,7 @@ export default class DiscordBot {
             type ErrorOptData = {
                 code?: string;
                 clientId?: string;
+                prohibitedPermsInUse?: string[];
             }
             const sendError = (msg: string, data: ErrorOptData = {}) => {
                 console.error(msg);
@@ -236,6 +237,40 @@ export default class DiscordBot {
                 }
                 this.guild = guild;
                 this.guildName = guild.name;
+
+                //Checking for dangerous permissions
+                // https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
+                // These are the same perms that require 2fa enabled - although it doesn't apply here
+                const prohibitedPerms = [
+                    'Administrator', //'ADMINISTRATOR',
+                    'BanMembers', //'BAN_MEMBERS'
+                    'KickMembers', //'KICK_MEMBERS'
+                    'ManageChannels', //'MANAGE_CHANNELS',
+                    'ManageGuildExpressions', //'MANAGE_GUILD_EXPRESSIONS'
+                    'ManageGuild', //'MANAGE_GUILD',
+                    'ManageMessages', //'MANAGE_MESSAGES'
+                    'ManageRoles', //'MANAGE_ROLES',
+                    'ManageThreads', //'MANAGE_THREADS'
+                    'ManageWebhooks', //'MANAGE_WEBHOOKS'
+                    'ViewCreatorMonetizationAnalytics', //'VIEW_CREATOR_MONETIZATION_ANALYTICS'
+                ]
+                const botPerms = this.guild.members.me?.permissions.serialize();
+                if (!botPerms) {
+                    return sendError(`Discord bot could not detect its own permissions.`);
+                }
+                const prohibitedPermsInUse = Object.entries(botPerms)
+                    .filter(([permName, permEnabled]) => prohibitedPerms.includes(permName) && permEnabled)
+                    .map((x) => x[0])
+                if (prohibitedPermsInUse.length) {
+                    const name = this.#client.user.username;
+                    const perms = prohibitedPermsInUse.includes('Administrator')
+                        ? 'Administrator'
+                        : prohibitedPermsInUse.join(', ');
+                    return sendError(
+                        `This bot (${name}) has dangerous permissions (${perms}) and for your safety the bot has been disabled.`,
+                        { code: 'DangerousPermission' }
+                    );
+                }
 
                 //Fetching announcements channel
                 if (this.config.announceChannel) {

@@ -94,9 +94,9 @@
         - set steam_webApiKey "{{steam_webApiKey}}"
         - clean the lines at the end of server.cfg
         - server.cfg fix exec line 40 [vorp_official_plugins]
-    - [x] find out where that .replxx_history is comming from
-
+    - [x] find out where that .replxx_history is coming from
 > beta1 release
+
 - [x] fix system log page font fallback
 - [x] remove debug noclip command
 - [x] fix playerBanned and actionRevoked events playerIds and add playerHwids
@@ -104,17 +104,17 @@
 - [x] fix adminvault behavior on empty `admins.json` file
 - [x] change `cl_main.lua` RedM detection
 - [x] check/merge redm vehicle boost
-
 > beta2 release
-- [ ] inject consts isZapHosting and isPterodactyl in ctxUtil
+
+- [x] bot should check if it has any dangerous permission
+- [x] improve zap/ptero detection
+- [x] flexibilized ad options
 - [ ] stats: 
     - [ ] adapt the new runtime specs, separate temp stats from classic stats
     - [ ] add bot enabled / whitelist back into stats
     - [ ] add isPterodactyl to stats
     - [ ] start tracking the ban search duration
     - [ ] jwe (in header?)
-- [ ] bot should check if it has any dangerous permission
-    - message should also inform the user that multiple bots on the same token is a terrible idea
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
     - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
 - [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker

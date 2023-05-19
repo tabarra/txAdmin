@@ -43,6 +43,9 @@ const RESOURCE_PATH = 'nui://monitor/web/public/';
 const THEME_DARK = 'theme--dark';
 const DEFAULT_AVATAR = 'img/default_avatar.png';
 
+const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
+const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
+
 function getEjsOptions(filePath) {
     const webTemplateRoot = path.resolve(txEnv.txAdminResourcePath, 'web');
     const webCacheDir = path.resolve(txEnv.txAdminResourcePath, 'web-cache', filePath);
@@ -257,19 +260,21 @@ export default async function WebCtxUtils(ctx, next) {
 
         // Setting up default render data:
         const baseViewData = {
-            isWebInterface: isWebInterface,
+            isWebInterface,
             basePath: (isWebInterface) ? '/' : WEBPIPE_PATH,
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
             serverProfile: globals.info.serverProfile,
             serverName: globals.config.serverName || globals.info.serverProfile,
             uiTheme: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface) ? THEME_DARK : '',
-            fxServerVersion: (convars.isZapHosting) ? `${txEnv.fxServerVersion}/ZAP` : txEnv.fxServerVersion,
+            fxServerVersion: displayFxserverVersion,
             txAdminVersion: txEnv.txAdminVersion,
             txaOutdated: globals.databus.updateChecker?.txadmin,
             fxsOutdated: globals.databus.updateChecker?.fxserver,
             jsInjection: getJavascriptConsts({
+                isZapHosting: convars.isZapHosting, //not in use
+                isPterodactyl: convars.isPterodactyl, //not in use
+                isWebInterface,
                 csrfToken: (ctx.session?.auth?.csrfToken) ? ctx.session.auth.csrfToken : 'not_set',
-                isWebInterface: isWebInterface,
                 TX_BASE_PATH: (isWebInterface) ? '' : WEBPIPE_PATH,
                 PAGE_TITLE: data?.headerTitle ?? 'txAdmin',
             }),

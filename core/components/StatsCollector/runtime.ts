@@ -23,7 +23,7 @@ type RuntimeDataType = {
     //static
     txAdminPort: number;
     isZapHosting: boolean;
-    isPterodactyl: boolean; //check if proc.env.TXADMIN_ENABLE exists
+    isPterodactyl: boolean;
     osDistro: string;
     hostCpuModel: string;
     hostTotalMemory: string;
