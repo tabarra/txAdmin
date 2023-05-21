@@ -234,6 +234,7 @@ async function handleSave(ctx) {
         ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(
             ctx.session.tmpAddMasterTokenSet,
             ctx.session.tmpAddMasterUserInfo,
+            identifier,
         );
         ctx.session.auth.username = ctx.session.tmpAddMasterUserInfo.name;
         delete ctx.session.tmpAddMasterTokenSet;
