@@ -1,7 +1,8 @@
-const modulename = 'StatsCollector';
+const modulename = 'PerformanceCollector';
 import fse from 'fs-extra';
+import * as d3array from 'd3-array';
 import { convars } from '@core/globalData';
-import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './statsUtils.js';
+import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './perfUtils.js';
 import got from '@core/extras/got.js';
 // import TimeSeries from './timeSeries.js'; //NOTE: may still use for the player counter
 import consoleFactory from '@extras/console';
@@ -16,7 +17,7 @@ const getEpoch = (mod, ts = false) => {
 };
 
 
-export default class StatsCollector {
+export default class PerformanceCollector {
     constructor() {
         // this.playersTimeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.hardConfigs = {
@@ -45,7 +46,6 @@ export default class StatsCollector {
     }
 
 
-    //================================================================
     /**
      * Loads the database/cache/history for the performance heatmap
      */
@@ -82,7 +82,6 @@ export default class StatsCollector {
     }
 
 
-    //================================================================
     /**
      * TODO:
      * Cron function to collect the player count from fxserver.
@@ -105,7 +104,47 @@ export default class StatsCollector {
     }
 
 
-    //================================================================
+    /**
+     * Returns a summary of the collected data and returns.
+     * Format: { medianPlayers: number, epochs: number, buckets: number[] } | null
+     */
+    getSummary(threadName) {
+        if (this.perfSeries === null) return;
+        const availableThreads = ['svNetwork', 'svSync', 'svMain'];
+        if (!availableThreads.includes(threadName)) throw new Error('unknown thread name');
+
+        //Getting snapshots
+        const snapsPerHour = 60 / this.hardConfigs.performance.resolution;
+        const minSnapshots = 4 * snapsPerHour;
+        const maxDeltaTime = 30 * snapsPerHour; //30 hours
+        const relevantSnapshots = this.perfSeries.slice(-maxDeltaTime);
+        if (relevantSnapshots.length < minSnapshots) {
+            return null; //not enough data for meaningful analysis
+        }
+
+        //that's short for cumulative buckets 😏
+        const cumBuckets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let cumTicks = 0;
+
+        //Processing each snapshot - then each bucket
+        for (const snapshop of relevantSnapshots) {
+            for (let bIndex = 0; bIndex < 15; bIndex++) {
+                const prevBucket = (bIndex) ? snapshop.perfSrc[threadName].buckets[bIndex - 1] : 0;
+                const tickCount = snapshop.perfSrc[threadName].buckets[bIndex] - prevBucket;
+                cumTicks += tickCount;
+                cumBuckets[bIndex] += tickCount;
+            }
+        }
+
+        //Formatting Output
+        return {
+            buckets: cumBuckets.map(ticks => ticks / cumTicks),
+            medianPlayers: d3array.median(relevantSnapshots, x => x.clients),
+            epochs: relevantSnapshots.length,
+        };
+    }
+
+
     /**
      * Cron function to collect the performance data from fxserver.
      * This function will also collect player count and process the perf history.
@@ -135,7 +174,7 @@ export default class StatsCollector {
         //Check skip rules
         if (
             lastSnap
-            && getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution)
+            && getEpoch(cfg.resolution, lastSnap.ts) === getEpoch(cfg.resolution)
             && now - lastSnap.ts < cfg.resolution * 60 * 1000
         ) {
             return;
@@ -153,13 +192,17 @@ export default class StatsCollector {
             throw new Error('invalid or incomplete /perf/ response');
         }
 
-        //Process performance data
+        //Check if is linear or not (server reset or skipped epoch)
         const islinear = (
             lastSnap
             && now - lastSnap.ts <= cfg.resolution * 60 * 1000 * 4 //resolution time in ms * 4 -- just in case there is some lag
             && lastSnap.mainTickCounter < currPerfData.svMain.count
         );
+
+        //Calculate the tick/time counts since last epoch
         const currPerfDiff = diffPerfs(currPerfData, (islinear) ? lastSnap.perfSrc : false);
+
+        //ForEach thread, individualize tick counts (instead of CumSum) and calculates frequency
         Object.keys(currPerfDiff).forEach((thread) => {
             const bucketsFrequencies = [];
             currPerfDiff[thread].buckets.forEach((b, bIndex) => {
@@ -169,6 +212,8 @@ export default class StatsCollector {
             });
             currPerfDiff[thread].buckets = bucketsFrequencies;
         });
+
+        //Prepare snapshop object
         const currSnapshot = {
             ts: now,
             skipped: !islinear,
@@ -178,11 +223,13 @@ export default class StatsCollector {
             perf: currPerfDiff,
         };
 
-        //Push to cache and save it
+        //Push to cache
         this.perfSeries.push(currSnapshot);
         if (this.perfSeries.length > this.hardConfigs.performance.lengthCap) {
             this.perfSeries.shift();
         }
+
+        //Save perf series do file
         try {
             await fse.outputJSON(this.hardConfigs.heatmapDataFile, this.perfSeries);
             console.verbose.ok(`Collected performance snapshot #${this.perfSeries.length}`);

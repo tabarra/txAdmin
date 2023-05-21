@@ -146,13 +146,13 @@ let loginPageLogo;
 let defaultMasterAccount;
 let deployerDefaults;
 const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
-const isPterodactyl = process.env?.TXADMIN_ENABLE === '1';
+const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
 if (fs.existsSync(zapCfgFile)) {
+    isZapHosting = !isPterodactyl;
     console.log('Loading ZAP-Hosting configuration file.');
     let zapCfgData;
     try {
         zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile, 'utf8'));
-        isZapHosting = !isPterodactyl;
         forceInterface = zapCfgData.interface;
         forceFXServerPort = zapCfgData.fxServerPort;
         txAdminPort = zapCfgData.txAdminPort;

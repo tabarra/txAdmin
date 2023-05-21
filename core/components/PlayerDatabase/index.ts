@@ -451,18 +451,6 @@ export default class PlayerDatabase {
             }, { players: 0, playTime: 0, whitelists: 0 })
             .value();
 
-
-        //Stats only:
-        //FIXME: reevaluate this in the future
-        const databus = (globals.databus as any);
-        databus.txStatsData.playerDBStats = {
-            players: playerStats.players,
-            playTime: playerStats.playTime,
-            whitelists: playerStats.whitelists,
-            bans: actionStats.bans,
-            warns: actionStats.warns,
-        };
-
         return { ...actionStats, ...playerStats }
     }
 

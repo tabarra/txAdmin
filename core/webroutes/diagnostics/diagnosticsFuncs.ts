@@ -11,6 +11,7 @@ import WebServer from '@core/components/WebServer';
 import Logger from '@core/components/Logger';
 import si from 'systeminformation';
 import consoleFactory from '@extras/console';
+import StatisticsManager from '@core/components/StatisticsManager';
 const console = consoleFactory(modulename);
 
 
@@ -248,6 +249,17 @@ export const getHostData = async (): Promise<HostDataReturnType> => {
         console.verbose.dir(error);
         return { error: 'Failed to retrieve host dynamic data. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
+}
+
+
+/**
+ * Gets the Host Static Data from cache.
+ */
+export const getHostStaticData = (): HostStaticDataType => {
+    if (!hostStaticDataCache) {
+        throw new Error(`hostStaticDataCache not yet ready`);
+    }
+    return hostStaticDataCache;
 }
 
 

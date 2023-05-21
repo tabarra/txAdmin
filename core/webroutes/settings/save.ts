@@ -280,6 +280,7 @@ async function handlePlayerDatabase(ctx: Context) {
     }
 
     //Sending output
+    globals.statisticsManager.whitelistCheckTime.clear();
     globals.playerDatabase.refreshConfig();
     ctx.utils.logAction('Changing Player Manager settings.');
     return ctx.send({

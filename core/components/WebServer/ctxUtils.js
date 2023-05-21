@@ -252,11 +252,7 @@ export default async function WebCtxUtils(ctx, next) {
     ctx.utils = {};
     ctx.utils.render = async (view, data) => {
         //Usage stats
-        if (!globals.databus.txStatsData.pageViews[view]) {
-            globals.databus.txStatsData.pageViews[view] = 1;
-        } else {
-            globals.databus.txStatsData.pageViews[view]++;
-        }
+        globals?.statisticsManager.pageViews.count(view);
 
         // Setting up default render data:
         const baseViewData = {

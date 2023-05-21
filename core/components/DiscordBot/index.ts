@@ -49,12 +49,6 @@ export default class DiscordBot {
         //     }
         // }
     }
-    readonly usageStats = {
-        addwl: 0,
-        help: 0,
-        status: 0,
-        txadmin: 0,
-    };
     readonly cooldowns = new Map();
     #client: Client | undefined;
     guild: Discord.Guild | undefined;

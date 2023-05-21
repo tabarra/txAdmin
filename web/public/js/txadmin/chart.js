@@ -112,12 +112,12 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
 
     //Background
     svg.append('rect')
-    .attr('x', margin.left)
-    .attr('y', margin.top)
-    .attr('width', width - margin.right - margin.left)
-    .attr('height', height - margin.top - margin.bottom)
-    .attr('fill', bgColor)
-    .attr('stroke', bgColor)
+        .attr('x', margin.left)
+        .attr('y', margin.top)
+        .attr('width', width - margin.right - margin.left)
+        .attr('height', height - margin.top - margin.bottom)
+        .attr('fill', bgColor)
+        .attr('stroke', bgColor)
 
 
     // Drawing the Heatmap

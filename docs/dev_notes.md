@@ -109,41 +109,34 @@
 - [x] bot should check if it has any dangerous permission
 - [x] improve zap/ptero detection
 - [x] flexibilized ad options
-- [ ] stats: 
-    - [ ] adapt the new runtime specs, separate temp stats from classic stats
-    - [ ] add bot enabled / whitelist back into stats
-    - [ ] add isPterodactyl to stats
-    - [ ] start tracking the ban search duration
-    - [ ] jwe (in header?)
-- [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
-    - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
-- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
+- [x] stats: 
+    - [x] adapt the new runtime specs, separate temp stats from classic stats
+    - [x] add bot enabled / whitelist back into stats
+    - [x] add isPterodactyl to stats
+    - [x] start tracking the ban search duration
+    - [x] jwe
+    - [x] don't forget to reset StatisticsManager's cron func interval
+    - [x] when changing whitelist mode in settings, need to reset the time counter
+- [ ] add mongolian translation
+- [ ] last round of testing everything
+
 
 =======================================================================
 
+Perf charts:
 
-function convertHrtime(hrtime) {
-	const nanoseconds = hrtime;
-	const number = Number(nanoseconds);
-	const milliseconds = number / 1000000;
-	const seconds = number / 1000000000;
-
-	return {
-		seconds,
-		milliseconds,
-		nanoseconds
-	};
-}
-
-const start = process.hrtime.bigint();
-
-for (let i = 0; i < 1000; i++) {
-    process.hrtime.bigint();
-}
-
-const duration = process.hrtime.bigint() - start;
-console.log(`${duration}ns`);
-console.dir(convertHrtime(duration));
+https://media.discordapp.net/attachments/1058975904811991080/1078919282924208238/image.png
+https://media.discordapp.net/attachments/589106731376836608/1108806732991430736/image.png
+https://media.discordapp.net/attachments/885648563105837116/1107449123881365565/image.png
+https://media.discordapp.net/attachments/885648563105837116/1107446997369241600/image.png
+https://cdn.discordapp.com/attachments/885648563105837116/1086875664432508968/image.png
+https://media.discordapp.net/attachments/885648563105837116/1080548734292742214/SPOILER_image.png
+https://media.discordapp.net/attachments/885648563105837116/1080493539374420049/image.png
+https://media.discordapp.net/attachments/885648563105837116/1079422080820453397/image.png
+https://media.discordapp.net/attachments/1044112583201927189/1109100201366528110/saS3WOdi.png
+https://media.discordapp.net/attachments/885648563105837116/1079097577288499420/image.png
+https://media.discordapp.net/attachments/885648563105837116/1059850236421492736/image.png
+https://media.discordapp.net/attachments/881583434802294894/1109145714824597575/image.png
 
 =======================================================================
 > FIXME: chat doesn't build, possibly docker image issue
@@ -184,6 +177,13 @@ tar xvf fx.tar.xz
 
 
 # Next up:
+- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
+- [ ] clean a few of the dead stuff from databus
+- [ ] improve `DiscordBot.resolveMemberRoles()` cache handling
+- [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
+    - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
+- [ ] remove old databus.txStatsData stuff
+- [ ] QuantileArrayOutput for time stuff - use q5/q95 to help me define the buckets
 - [ ] xxxxxx
 
 
@@ -444,7 +444,7 @@ Instance[]:
 - Scheduler
 - PlayerController > PlaylistManager
 - ResourcesManager
-- StatsCollector > StatsManager
+- StatisticsManager
 
 Questions:
 - How to make the database interface (currently in playerController)

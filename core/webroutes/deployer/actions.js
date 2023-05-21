@@ -189,6 +189,7 @@ async function handleSaveConfig(ctx) {
     }
     const serverCFG = ctx.request.body.serverCFG;
     const cfgFilePath = path.join(globals.deployer.deployPath, 'server.cfg');
+    globals.persistentCache.set('deployer:recipe', globals.deployer?.recipe?.name ?? 'unknown');
 
     //Validating config contents + saving file and backup
     try {

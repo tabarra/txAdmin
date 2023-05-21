@@ -45,8 +45,8 @@ export default async function AuthVerify(ctx) {
         };
 
         ctx.utils.logAction(`logged in from ${ctx.ip} via password`);
-        globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
-        globals.databus.txStatsData.login.methods.password++;
+        globals?.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
+        globals?.statisticsManager.loginMethods.count('password');
     } catch (error) {
         console.warn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
         console.verbose.dir(error);

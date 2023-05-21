@@ -120,8 +120,8 @@ export default async function ProviderCallback(ctx) {
         await globals.adminVault.refreshAdminSocialData(admin.name, 'citizenfx', identifier, userInfo);
 
         ctx.utils.logAction(`logged in from ${ctx.ip} via citizenfx`);
-        globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
-        globals.databus.txStatsData.login.methods.citizenfx++;
+        globals?.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
+        globals?.statisticsManager.loginMethods.count('citizenfx');
         const redirectPath = (isValidRedirectPath(ctx.session?.socialLoginRedirect)) ? ctx.session.socialLoginRedirect : '/';
         return ctx.response.redirect(redirectPath);
     } catch (error) {

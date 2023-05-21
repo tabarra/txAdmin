@@ -206,7 +206,7 @@ export default class HealthMonitor {
             this.setCurrentStatus('ONLINE');
             if (this.hasServerStartedYet == false) {
                 this.hasServerStartedYet = true;
-                globals.databus.txStatsData.monitorStats.bootSeconds.push(processUptime);
+                globals.statisticsManager.registerFxserverBoot(processUptime);
             }
             return;
         }
@@ -299,9 +299,6 @@ export default class HealthMonitor {
             || elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
         ) {
             if (anySuccessfulHeartBeat === false) {
-                //if server didn't fully start yet
-                globals.databus.txStatsData.monitorStats.bootSeconds.push(false);
-
                 if (starting.startingElapsedSecs !== null) {
                     //Resource didn't finish starting (if res boot still active)
                     this.restartFXServer(

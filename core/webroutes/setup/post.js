@@ -288,6 +288,7 @@ async function handleSaveLocal(ctx) {
     //Refreshing config
     globals.config = globals.configVault.getScoped('global');
     globals.fxRunner.refreshConfig();
+    globals.persistentCache.set('deployer:recipe', 'none');
 
     //Logging
     ctx.utils.logAction('Changing global/fxserver settings via setup stepper.');

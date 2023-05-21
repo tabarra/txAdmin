@@ -49,7 +49,7 @@ end)
 
 -- vars
 local rejectAllConnections = false
-local hbReturnData = 'no-data'
+local hbReturnData = '{"error": "no data cached in sv_main.lua"}'
 
 
 -- =============================================

@@ -13,6 +13,8 @@ import DiscordBot from '@core/components/DiscordBot';
 import AdminVault from '@core/components/AdminVault';
 import FXRunner from '@core/components/FxRunner';
 import consoleFactory from '@extras/console';
+import { TimeCounter } from '@core/components/StatisticsManager/statsUtils';
+import StatisticsManager from '@core/components/StatisticsManager';
 const console = consoleFactory(modulename);
 const xss = xssInstancer();
 
@@ -70,6 +72,7 @@ type PlayerCheckJoinApiRespType = AllowRespType | DenyRespType | GenericApiError
 export default async function PlayerCheckJoin(ctx: Context) {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+    const statisticsManager = (globals.statisticsManager as StatisticsManager);
     const sendTypedResp = (data: PlayerCheckJoinApiRespType) => ctx.send(data);
 
     //If checking not required at all
@@ -110,25 +113,35 @@ export default async function PlayerCheckJoin(ctx: Context) {
     try {
         // If ban checking enabled
         if (playerDatabase.config.onJoinCheckBan) {
+            const checkTime = new TimeCounter();
             const result = checkBan(validIdsArray, validIdsObject, validHwidsArray);
+            statisticsManager.banCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
         }
 
         //Checking whitelist
         if (playerDatabase.config.whitelistMode === 'adminOnly') {
+            const checkTime = new TimeCounter();
             const result = await checkAdminOnlyMode(validIdsArray, validIdsObject, playerName);
+            statisticsManager.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
 
         } else if (playerDatabase.config.whitelistMode === 'approvedLicense') {
+            const checkTime = new TimeCounter();
             const result = await checkApprovedLicense(validIdsArray, validIdsObject, validHwidsArray, playerName);
+            statisticsManager.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
 
         } else if (playerDatabase.config.whitelistMode === 'guildMember') {
+            const checkTime = new TimeCounter();
             const result = await checkGuildMember(validIdsArray, validIdsObject, playerName);
+            statisticsManager.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
 
         } else if (playerDatabase.config.whitelistMode === 'guildRoles') {
+            const checkTime = new TimeCounter();
             const result = await checkGuildRoles(validIdsArray, validIdsObject, playerName);
+            statisticsManager.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
         }
 

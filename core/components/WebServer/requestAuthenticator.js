@@ -74,8 +74,8 @@ export const requestAuth = (epType) => {
                         // go through authLogic() which sets them up
                     };
                     ctx.utils.logAction('logged in from via NUI iframe');
-                    globals.databus.txStatsData.login.origins.webpipe++;
-                    globals.databus.txStatsData.login.methods.iframe++;
+                    globals?.statisticsManager.loginOrigins.count('webpipe');
+                    globals?.statisticsManager.loginMethods.count('iframe');
                     await next();
                 }
             } else {

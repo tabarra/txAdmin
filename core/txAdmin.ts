@@ -16,7 +16,8 @@ import FxRunner from '@core/components/FxRunner';
 import Logger from '@core/components/Logger';
 import HealthMonitor from '@core/components/HealthMonitor';
 import Scheduler from '@core/components/Scheduler';
-import StatsCollector from '@core/components/StatsCollector';
+import StatisticsManager from '@core/components/StatisticsManager';
+import PerformanceCollector from '@core/components/PerformanceCollector';
 import Translator from '@core/components/Translator';
 import WebServer from '@core/components/WebServer';
 import ResourcesManager from '@core/components/ResourcesManager';
@@ -44,7 +45,8 @@ const globalsInternal: Record<string, any> = {
     dynamicAds: null,
     healthMonitor: null,
     scheduler: null,
-    statsCollector: null,
+    statisticsManager: null,
+    performanceCollector: null,
     translator: null,
     webServer: null,
     resourcesManager: null,
@@ -128,7 +130,8 @@ export default class TxAdmin {
     dynamicAds;
     healthMonitor;
     scheduler;
-    statsCollector;
+    statisticsManager;
+    performanceCollector;
     webServer;
     resourcesManager;
     playerlistManager;
@@ -146,6 +149,11 @@ export default class TxAdmin {
         menuEnabled: boolean,
         menuAlignRight: boolean,
         menuPageKey: string,
+
+        hideDefaultAnnouncement: boolean,
+        hideDefaultDirectMessage: boolean,
+        hideDefaultWarning: boolean,
+        hideDefaultScheduledRestartWarning: boolean,
     }
     
 
@@ -220,8 +228,11 @@ export default class TxAdmin {
             this.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
             globalsInternal.scheduler = this.scheduler;
 
-            this.statsCollector = new StatsCollector();
-            globalsInternal.statsCollector = this.statsCollector;
+            this.statisticsManager = new StatisticsManager(this);
+            globalsInternal.statisticsManager = this.statisticsManager;
+
+            this.performanceCollector = new PerformanceCollector();
+            globalsInternal.performanceCollector = this.performanceCollector;
 
             this.webServer = new WebServer(this, profileConfig.webServer);
             globalsInternal.webServer = this.webServer;

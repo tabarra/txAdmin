@@ -18,9 +18,9 @@ export const getChartData = (threadName) => {
 
     //Process log
     try {
-        //every hour = 12 records
-        const maxDeltaTime = 360; //30*12
-        const outData = globals.statsCollector.perfSeries.slice(-maxDeltaTime).map((s) => {
+        const snapsPerHour = 60 / globals.performanceCollector.hardConfigs.performance.resolution;
+        const maxDeltaTime = 30 * snapsPerHour; //30 hours
+        const outData = globals.performanceCollector.perfSeries.slice(-maxDeltaTime).map((s) => {
             return {
                 ts: s.ts,
                 skipped: s.skipped,
@@ -42,10 +42,12 @@ export const getChartData = (threadName) => {
  * @param {object} ctx
  */
 export default async function chartData(ctx) {
-    if (!Array.isArray(globals.statsCollector.perfSeries)) {
+    if (!Array.isArray(globals.performanceCollector.perfSeries)) {
         return ctx.send({ failReason: 'not_set' });
     }
-    if (globals.statsCollector.perfSeries.length < 12) {
+
+    const snapsPerHour = 60 / globals.performanceCollector.hardConfigs.performance.resolution;
+    if (globals.performanceCollector.perfSeries.length < snapsPerHour) {
         return ctx.send({ failReason: 'not_enough_data' });
     }
 
