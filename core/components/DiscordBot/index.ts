@@ -279,6 +279,7 @@ export default class DiscordBot {
                 }
 
                 this.guild.commands.set(slashCommands);
+                this.#client.application?.commands.set([]); //if previously registered by tx before v6 or other bot
                 console.ok(`Started and logged in as '${this.#client.user.tag}'`);
                 this.updateStatus().catch();
 
