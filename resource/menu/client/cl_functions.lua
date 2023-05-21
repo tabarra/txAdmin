@@ -51,7 +51,7 @@ end
 
 --- Close the menu if pause menu is opened using the default P key
 local function createPauseMenuCheckerThread()
-    debugPrint('Starting gamer tag follower thread')
+    debugPrint('Starting pause menu checker thread')
     CreateThread(function()
         while isMenuVisible do
             if IsPauseMenuActive() then
