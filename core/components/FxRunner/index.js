@@ -193,7 +193,7 @@ export default class FXRunner {
             if (error.message.includes('unreadable')) {
                 console.error('That is the file where you configure your server and start resources.');
                 console.error('You likely moved/deleted your server files or copied the txData folder from another server.');
-                console.error('To fix this issue, open the txAdmin web interface then go to "Settings > FXServer" and fix the "Server Data Folder" and "CFX File Path".');
+                console.error('To fix this issue, open the txAdmin web interface then go to "Settings > FXServer" and fix the "Server Data Folder" and "CFG File Path".');
             }
             return errMsg;
         }

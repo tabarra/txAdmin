@@ -104,7 +104,7 @@ async function handleGlobal(ctx: Context) {
     }
 
     //Sending output
-    globals.func_txAdminRefreshConfig()
+    globals.func_txAdminRefreshConfig();
     globals.translator.refreshConfig();
     ctx.utils.logAction('Changing global settings.');
     return ctx.send({ type: 'success', markdown: true, message: '**Global configuration saved!**' });
@@ -423,7 +423,7 @@ async function handleDiscord(ctx: Context) {
         let extraContext = '';
         if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
             extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
-            - Go to the Dev Portal (https://discord.com/developers/applications)
+            - Go to the Discord Dev Portal (https://discord.com/developers/applications)
             - Navigate to \`Bot > Privileged Gateway Intents\`.
             - Enable the \`GUILD_MEMBERS\` intent.
             - Save on the dev portal.
@@ -514,6 +514,7 @@ async function handleMenu(ctx: Context) {
 
     //Sending output
     globals.config = globals.configVault.getScoped('global');
+    globals.func_txAdminRefreshConfig();
     globals.fxRunner.resetConvars();
     ctx.utils.logAction('Changing menu settings.');
     return ctx.send({

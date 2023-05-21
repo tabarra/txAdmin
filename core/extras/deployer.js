@@ -137,7 +137,6 @@ export const parseValidateRecipe = (rawRecipe) => {
     }
 
     //Output
-    console.verbose.dir(outRecipe);
     return outRecipe;
 };
 

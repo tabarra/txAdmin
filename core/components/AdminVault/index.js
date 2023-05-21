@@ -474,11 +474,12 @@ export default class AdminVault {
         const callError = (reason) => {
             console.error(`Unable to load admins.json: ${reason}`);
             if (reason === 'cannot read file') {
-                console.error('This means the admin file `txData/admins.json` doesn\'t exist or txAdmin doesn\'t have permission to read it.');
+                console.error('This means the file  doesn\'t exist or txAdmin doesn\'t have permission to read it.');
             } else {
                 console.error('This likely means the file got somehow corrupted.');
                 console.error('You can rey restoring it or you can delete it and let txAdmin create a new one.');
             }
+            console.error(`Admin File Path: ${this.adminsFile}`);
             process.exit(1);
         };
 
