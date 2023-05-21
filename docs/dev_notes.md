@@ -117,8 +117,8 @@
     - [x] jwe
     - [x] don't forget to reset StatisticsManager's cron func interval
     - [x] when changing whitelist mode in settings, need to reset the time counter
-- [ ] add mongolian translation + merge bg.json
-- [ ] last round of testing everything
+- [x] add mongolian translation + merge bg.json
+- [x] last round of testing everything
 
 
 =======================================================================
