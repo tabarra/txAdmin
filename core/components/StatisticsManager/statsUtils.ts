@@ -3,8 +3,8 @@ import CircularBuffer from 'mnemonist/circular-buffer';
 import * as d3array from 'd3-array';
 
 //Output types
-type MultipleCounterOutput = Record<string, number>;
-type QuantileArrayOutput = {
+export type MultipleCounterOutput = Record<string, number>;
+export type QuantileArrayOutput = {
     count: number;
     q5: number;
     q25: number;
@@ -85,16 +85,25 @@ export class QuantileArray {
         this.#minSize = minSize;
     }
 
+    /**
+     * Clears the cached data (wipe counts).
+     */
     clear() {
         this.#cache.clear();
     };
 
+    /**
+     * Adds a value to the cache.
+     */
     count(value: number) {
         if (typeof value !== 'number') throw new Error(`value must be a number`);
         this.#cache.push(value);
     };
 
-    toJSON(): QuantileArrayOutput {
+    /**
+     * Processes the cache and returns the count and quantiles, if enough data.
+     */
+    result(): QuantileArrayOutput {
         const cacheSize = this.#cache.size
         if (cacheSize < this.#minSize) {
             return {
@@ -110,11 +119,14 @@ export class QuantileArray {
                 q95: d3array.quantile(this.#cache.values(), 0.95) as number,
             };
         }
+    }
 
+    toJSON() {
+        return this.result();
     }
 
     [inspect.custom]() {
-        return this.toJSON();
+        return this.result();
     }
 }
 
