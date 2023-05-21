@@ -10,7 +10,7 @@
         "partial_hang_warn": "Хэсэгчилсэн саатлын улмаас энэ сервер 1 минутын дараа дахин асах болно. Одоо салгана уу.",
         "partial_hang_warn_discord": "Хэсэгчилсэн саатлын улмаас, **%{servername}** сервер 1 минутын дараа дахин асах болно",
         "schedule_reason": "Ээлжит шинэчлэлт эхлэх хугацаа %{time}",
-        "schedule_warn": "Хотын ээлжит ээлжит шинэчлэлт тун удахгүй эхлэх гэж байна. %{smart_count} минутын дараа.",
+        "schedule_warn": "This server is scheduled to restart in %{smart_count} minute. Please disconnect now. |||| This server is scheduled to restart in %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** серверийн ээлжит шинэчлэлт %{smart_count} минутын дараа болох гэж байна. |||| **%{servername}** хотын ээлжит шинэчлэлт хүртэл %{smart_count} минут дутуу байна."
     },
     "ban_messages": {
