@@ -14,7 +14,7 @@
         "schedule_warn_discord": "**%{servername}** ще се рестартира след %{smart_count} минути. |||| **%{servername}** ще се рестартира след %{smart_count} минути."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Вие бяхте баннат: \"%{reason}\". Твоята забрана ще изтече на: %{expiration}.",
+        "kick_temporary": "(%{author}) Вие бяхте баннат: \"%{reason}\". Твоята забрана ще изтече след: %{expiration}.",
         "kick_permanent": "(%{author}) Вие бяхте перманентно баннат от този сървър с причина: \"%{reason}\".",
         "reject": {
             "title_permanent": "Вие бяхте перманентно баннат от този сървър.",
