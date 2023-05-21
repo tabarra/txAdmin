@@ -14,45 +14,45 @@
         "schedule_warn_discord": "**%{servername}** ще се рестартира след %{smart_count} минути. |||| **%{servername}** ще се рестартира след %{smart_count} минути."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Ти беше забранен: \"%{reason}\". Твоята забрана ще изтече на: %{expiration}.",
-        "kick_permanent": "(%{author}) Ти беше перманентно забранен от този сървър с причина: \"%{reason}\".",
+        "kick_temporary": "(%{author}) Вие бяхте баннат: \"%{reason}\". Твоята забрана ще изтече на: %{expiration}.",
+        "kick_permanent": "(%{author}) Вие бяхте перманентно баннат от този сървър с причина: \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "title_permanent": "Вие бяхте перманентно баннат от този сървър.",
+            "title_temporary": "Вие бяхте временно баннат от този сървър.",
+            "label_expiration": "Твоят бан ще изтече след",
+            "label_date": "Дата на бан",
+            "label_author": "Баннат от",
+            "label_reason": "Причина на бана",
+            "label_id": "Бан ID",
+            "note_multiple_bans": "Забележка: Имате повече от един активен бан на вашите идентификатори.",
+            "note_diff_license": "Забележка: Горния бан е приложен за друг <code>license</code>, което означава че някои от твоите ID-та/HWID-та съответстват на тези, свързани с този бан."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Сървърът е в <strong>Администраторски</strong> режим.",
+            "insufficient_ids": "Вие нямате <code>discord</code> или <code>fivem</code> идентификатори, и поне един от тях трябва да потвърди дали сте txAdmin администратор.",
+            "deny_message": "Вашите идентификатори не са присвоени на нито един администратор на txAdmin."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Сървърът е в <strong>Discord Guild Member Whitelist</strong> режим.",
+            "insufficient_ids": "Вие не разполагате с <code>discord</code> идентификатор, което се изисква за валидиране, ако сте се присъединили към нашия Discord сървър. Моля, отворете десктоп приложението Discord и опитайте отново (уеб приложението няма да работи).",
+            "deny_title": "От вас се изисква да се присъедините към нашия Discord сървър, за да се свържете.",
+            "deny_message": "Моля влезте в discord сървъра %{guildname} и опитайте отново."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Сървърът е в <strong>Discord Role Whitelist</strong> режим.",
+            "insufficient_ids": "Вие не разполагате с <code>discord</code> идентификатор, което се изисква за валидиране, ако сте се присъединили към нашия Discord сървър. Моля, отворете десктоп приложението Discord и опитайте отново (уеб приложението няма да работи).",
+            "deny_notmember_title": "От вас се изисква да се присъедините към нашия Discord сървър, за да се свържете.",
+            "deny_notmember_message": "Моля влезте в %{guildname}, вземете една от необходимите роли, след което опитайте отново.",
+            "deny_noroles_title": "Нямате роля в белия списък, необходима за присъединяване.",
+            "deny_noroles_message": "За да се присъедините към този сървър, трябва да имате поне една от ролите в белия списък в Discord сървъра %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Сървърът е в <strong>License Whitelist</strong> режим.",
+            "insufficient_ids": "Вие не разполагате с <code>license</code> идентификатор, което означава, че сървърът има <code>sv_lan</code> активиран. Ако сте собственик на сървъра, можете да го деактивирате в <code>server.cfg</code> файла.",
+            "deny_title": "Не сте в белия списък за присъединяване към този сървър.",
+            "request_id_label": "ID Заявка"
         }
     },
     "server_actions": {
@@ -71,13 +71,13 @@
         "misc": {
             "help_message": "txAdmin менюто е включено, напиши /tx, за да го отвориш.\nМоже също да го конфигурирате с копче в [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_admin": "Твоите идентификатори не са съвместими с тези, които са регистрирани в txAdmin.\nАко си регистриран в txAdmin, отиди в Admin Manager и се увери, че идентификаторите са запазиени.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
+            "menu_auth_failed": "Удостоверяването на txAdmin менюто е неуспешно по причина: %{reason}",
             "no_perms": "Нямаш правомощията за това.",
             "unknown_error": "Възникна неизвестна грешка..",
             "not_enabled": "txAdmin менюто не е включено! Може да го включиш чрез настройките на txAdmin.",
             "announcement_title": "Сървърно съобщение от %{author}:",
             "dialog_empty_input": "Полето е празно.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "ЛС от администратор %{author}:"
         },
         "frozen": {
             "froze_player": "Ти замрази играч!",
@@ -108,9 +108,9 @@
                     "success": "Безсмъртието е включено."
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Супер скок",
+                    "label": "Превключете режима на супер скок, играчът също ще тича по-бързо",
+                    "success": "Активиран Супер скок"
                 },
                 "normal": {
                     "title": "Нормално",
@@ -168,11 +168,11 @@
                 },
                 "boost": {
                     "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "label": "Boost-нете автомобила, за да постигнете максимално удоволствие (и може би скорост)",
+                    "success": "Автомобила беше boost-нат!",
+                    "already_boosted": "Този автомобил вече е boost-нат.",
+                    "unsupported_class": "Този клас превозно средство не се поддържа.",
+                    "redm_not_mounted": "Можете да boost-вате само когато яздите кон."
                 }
             },
             "heal": {
@@ -242,7 +242,7 @@
                 "info": "Информация",
                 "ids": "ID",
                 "history": "История",
-                "ban": "Забранa"
+                "ban": "Бан"
             },
             "actions": {
                 "title": "Административни опции",
@@ -290,7 +290,7 @@
                         "spectate_failed": "Не успешно наблюдаване! Излизане от наблюдение.",
                         "spectate_yourself": "Не можеш да наблюдаваш себе си.",
                         "freeze_yourself": "Не можеш да замръзиш себе си.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Няма играчи, към които да се движите."
                     }
                 },
                 "troll": {
@@ -307,48 +307,48 @@
                 "session_time": "Игрално време",
                 "play_time": "Цяло игрално Време",
                 "joined": "Влязъл",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
+                "whitelisted_label": "В белия списък",
+                "whitelisted_notyet": "все още не",
+                "btn_wl_add": "ДОБАВИ БС",
+                "btn_wl_remove": "ПРЕМАХНЕТЕ БС",
+                "btn_wl_success": "Състоянието на белия списък е променено.",
                 "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "log_empty": "Няма намерени банове/предупреждения.",
+                "log_ban_count": "%{smart_count} бан |||| %{smart_count} банове",
+                "log_warn_count": "%{smart_count} предупреждение |||| %{smart_count} предупреждения",
+                "log_btn": "ПОДРОБНОСТИ",
+                "notes_changed": "Бележката на играча е променена.",
+                "notes_placeholder": "Бележки за този играч..."
             },
             "history": {
-                "title": "История за Забрани...",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "title": "История на Бановете...",
+                "btn_revoke": "ОТМЕНИ",
+                "revoked_success": "Действието е отменено!",
+                "banned_by": "БАННАТ от %{author}",
+                "warned_by": "ПРЕДУПРЕДЕН от %{author}",
+                "revoked_by": "Отменено от %{author}.",
+                "expired_at": "Изтекъл на %{date}.",
+                "expires_at": "Изтича на %{date}."
             },
             "ban": {
-                "title": "Забрани играч",
+                "title": "Банни играч",
                 "reason_placeholder": "Причина",
                 "duration_placeholder": "Продължителност",
-                "hours": "Часове",
+                "hours": "Часа",
                 "days": "Дни",
                 "weeks": "Седмици",
                 "months": "Месеци",
                 "permanent": "Перманентно",
                 "custom": "Персонализирано",
                 "helper_text": "Моля избери продължителност",
-                "submit": "Приложи забрана",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "submit": "Приложи бан",
+                "reason_required": "Полето Причина е задължително.",
+                "success": "Играчът е баннат!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "Текущи идентификатори",
+                "previous_ids": "Използвани преди това идентификатори",
+                "all_hwids": "Всички хардуерни ID-та"
             }
         }
     }
