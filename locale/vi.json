@@ -172,7 +172,7 @@
                     "success": "Xe đã được nâng cấp",
                     "already_boosted": "Xe này đã được độ.",
                     "unsupported_class": "Loại xe này không được hỗ trợ.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "Bạn chỉ có thể tăng tốc khi được cưỡi trên ngựa."
                 }
             },
             "heal": {
@@ -193,7 +193,7 @@
             },
             "announcement": {
                 "title": "Gửi thông báo",
-                "label": "Send an announcement to all online players.",
+                "label": "Gửi thông báo tới tất cả người chơi.",
                 "dialog_desc": "Gửi thông báo tới tất cả người chơi.",
                 "dialog_placeholder": "Nhập thông báo...",
                 "dialog_success": "Đang gửi thông báo."
@@ -290,7 +290,7 @@
                         "spectate_failed": "Có lỗi khi thực hiện theo dõi, đang thoát chế độ theo dõi.",
                         "spectate_yourself": "Bạn không thể tự theo dõi chính mình.",
                         "freeze_yourself": "Bạn không thể tự đóng băng bản thân!",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Không có người chơi để đạp xe đến."
                     }
                 },
                 "troll": {
