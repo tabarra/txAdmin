@@ -66,7 +66,7 @@ RegisterNetEvent('txsv:req:spectate:cycle', function(currentTargetId, isNextPlay
     nextTargetId = onlinePlayers[1]
     --TODO: the correct thing would be to do a while to find the corect next/rev, based on value and not index
   else
-    if isNext then
+    if isNextPlayer then
       nextTargetId = onlinePlayers[currentTargetServerIndex + 1] or onlinePlayers[1]
     else
       nextTargetId = onlinePlayers[currentTargetServerIndex - 1] or onlinePlayers[#onlinePlayers]
