@@ -14,70 +14,70 @@
         "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Dostal jsi ban, důvod banu je: \"%{reason}\". Ban vyprší za: %{expiration}.",
+        "kick_temporary": "(%{author}) Byl jsi zabanován z důvodu: \"%{reason}\". Tvůj ban vyprší za: %{expiration}.",
         "kick_permanent": "(%{author}) Byl ti permanentně odebrán přístup k serveru a to z důvodu: \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "title_permanent": "Byl jsi permanentně zabanován z tohoto serveru.",
+            "title_temporary": "Byl jsi dočasně zabanován z tohoto serveru.",
+            "label_expiration": "Tvůj ban vyprší za",
+            "label_date": "Datum udělení",
+            "label_author": "Admin, který ti ban udělil",
+            "label_reason": "Důvod banu",
+            "label_id": "ID Banu",
+            "note_multiple_bans": "Poznámka: Tvoje identifiery mají více aktivních banů.",
+            "note_diff_license": "Poznámka: Tento ban byl udělen na herní <code>licenci</code>, což znamená že tvoje IDs/HWIDs se schodují s aktivním banem."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Tento server je v režimu <strong>Pouze pro Adminy</strong>.",
+            "insufficient_ids": "Nemáš žádné <code>discord</code> nebo <code>fivem</code> identifiery, který je potřeba pro ověření, zda jsi txAdmin admin.",
+            "deny_message": "Tvé identifiery se neschodují s žádným identifierem admina."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Tento server je v režimu pro <strong>Discord Členy</strong>.",
+            "insufficient_ids": "Nemáš vhodný <code>discord</code> identifier, který je potřeba pro ověření, zda jsi na našem Discord serveru. Otevři Discord aplikaci a zkus se připojit znovu (Webová verze nebude fungovat).",
+            "deny_title": "Musíš být na našem Discord serveru pro připojení.",
+            "deny_message": "Připoj se prosím na %{guildname} a zkus to znovu."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Tento server je v režimu <strong>Discord Whitelist</strong>.",
+            "insufficient_ids": "Nemáš vhodný <code>discord</code> identifier, který je potřeba pro ověření, zda jsi na našem Discord serveru. Otevři Discord aplikaci a zkus se připojit znovu (Webová verze nebude fungovat).",
+            "deny_notmember_title": "Musíš být na našem Discord serveru.",
+            "deny_notmember_message": "Připoj se prosím na %{guildname}, získej jednu s potřebných rolí a připoj se znova.",
+            "deny_noroles_title": "Nemáš potřebnou  whitelist roli.",
+            "deny_noroles_message": "Pro připojení musíš mít jednu z whitelist rolí na Discord serveru %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Tento server je v režimu <strong>License Whitelist</strong>.",
+            "insufficient_ids": "Nemáš žádný <code>license</code> identifier, což znamená že server má zapnutý <code>sv_lan</code>. Pokud jsi vlastník serveru, můžeš toto vypnout v souboru <code>server.cfg</code>.",
+            "deny_title": "Nejsi oprávněný pro připojení na tento server.",
+            "request_id_label": "ID Žádosti"
         }
     },
     "server_actions": {
         "restarting": "Restartování serveru (%{reason}).",
-        "restarting_discord": "**%{servername}** se restartuje (%{reason}).",
-        "stopping": "Server se vypíná (%{reason}).",
-        "stopping_discord": "**%{servername}** se vypíná (%{reason}).",
+        "restarting_discord": "**%{servername}** se restartuje, z důvodu: %{reason}",
+        "stopping": "Server se vypíná, z důvodu: %{reason}",
+        "stopping_discord": "**%{servername}** se vypíná. Důvod: %{reason}.",
         "spawning_discord": "**%{servername}** se spouští."
     },
     "nui_warning": {
         "title": "VAROVÁNÍ",
-        "warned_by": "Varován od:",
-        "instruction": "Drž [MEZERNÍK] po dobu 10 sekund pro zavření této zprávy."
+        "warned_by": "Admin, který tě varoval:",
+        "instruction": "Podrž [MEZERNÍK] po dobu 10 sekund pro zavření varování."
     },
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menu povoleno, napiš /tx pro otevření.\nmůžeš také nakonfigurovat bind v [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_admin": "Tvé identifiery se neshodují s identifiery žádného administrátora.\nPokud jsi registrovaný v txAdminu, jdi do Admin Manager a ujisti se, že tvé identifiery jsou uložené.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
-            "no_perms": "Na toto nemáš práva.",
+            "menu_not_admin": "Tvé identifiery se neshodují s identifiery žádného administrátora.\nPokud jsi registrovaný v txAdminu, jdi do sekce Admin Manager a ujisti se, že tvé identifiery jsou uložené.",
+            "menu_auth_failed": "txAdmin Menu ověření selhalo, s důvodem: %{reason}",
+            "no_perms": "Na tuto možnost nemáš práva.",
             "unknown_error": "Nastala neznámá chyba.",
-            "not_enabled": "txAdmin menu není povoleno! můžeš ho povolit v txAdmin stránce nastavení.",
+            "not_enabled": "txAdmin menu není povoleno! Můžeš ho povolit v txAdmin nastavení.",
             "announcement_title": "Server oznámení od %{author}:",
-            "dialog_empty_input": "Vsut nemůže být prázdný.",
-            "directmessage_title": "DM from admin %{author}:"
+            "dialog_empty_input": "Políčko nemůže být prázdné.",
+            "directmessage_title": "Soukromá zpráva od admina %{author}:"
         },
         "frozen": {
             "froze_player": "Zmrazil jsi hráče!",
@@ -98,9 +98,9 @@
             "player_mode": {
                 "title": "Režim hráče",
                 "noclip": {
-                    "title": "NoClip",
+                    "title": "No-Clip",
                     "label": "Létání",
-                    "success": "NoClip povolen"
+                    "success": "No-Clip povolen"
                 },
                 "godmode": {
                     "title": "Nesmrtelnost",
@@ -108,9 +108,9 @@
                     "success": "Nesmrtelnost povolena"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Super Skok",
+                    "label": "Zapne režim super skoku, s tímto také můžeš rychleji běhat",
+                    "success": "Super Skok povolen"
                 },
                 "normal": {
                     "title": "Normální",
@@ -158,21 +158,21 @@
                 },
                 "fix": {
                     "title": "Opravit",
-                    "label": "Opravit momentální vozidlo",
+                    "label": "Opraví tvé vozidlo",
                     "success": "Vozidlo opraveno!"
                 },
                 "delete": {
                     "title": "Smazat",
-                    "label": "Smazat momentální vozidlo",
+                    "label": "Smaže tvé vozidlo vozidlo",
                     "success": "Vozidlo smazáno!"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "title": "Vylepšení",
+                    "label": "Vylepší tvé vozidlo pro největší zábavu (a možná rychlost)",
+                    "success": "Vozidlo vylepšeno!",
+                    "already_boosted": "Toto vozidlo již je vylepšeno.",
+                    "unsupported_class": "Typ tohoto vozidla není možný vylepšit.",
+                    "redm_not_mounted": "Vylepšit svého koně můžeš jen tehdy, když na něm sedíš."
                 }
             },
             "heal": {
@@ -186,17 +186,17 @@
                     "success_3": "Hotovo!"
                 },
                 "everyone": {
-                    "title": "Každého",
+                    "title": "Všechny",
                     "label": "Vyléčí a oživý všechny hráče",
                     "success": "Všichni hráči oživeni a vyléčeni."
                 }
             },
             "announcement": {
                 "title": "Odeslat oznámení",
-                "label": "Odeslat oznámení všem on-line hráčům.",
-                "dialog_desc": "Odeslat oznámení všem on-line hráčům.",
+                "label": "Odeslat oznámení všem online hráčům.",
+                "dialog_desc": "Odeslat oznámení všem online hráčům.",
                 "dialog_placeholder": "Tvé oznámení...",
-                "dialog_success": "Odesílám oznámení."
+                "dialog_success": "Odesílání oznámení."
             },
             "clear_area": {
                 "title": "Obnovit oblast",
@@ -214,7 +214,7 @@
         },
         "page_players": {
             "misc": {
-                "online_players": "On-line hráči",
+                "online_players": "Online hráči",
                 "players": "Hráči",
                 "search": "Vyhledat",
                 "zero_players": "Žádní hráči nenalezeni"
@@ -242,7 +242,7 @@
                 "info": "Informace",
                 "ids": "ID",
                 "history": "Historie",
-                "ban": "Ban"
+                "ban": "Zabanovat"
             },
             "actions": {
                 "title": "Akce hráčů",
@@ -290,7 +290,7 @@
                         "spectate_failed": "Nepodařilo se udržet signál pozorování! Vypínám pozorování.",
                         "spectate_yourself": "Nemůžeš pozorovat sebe.",
                         "freeze_yourself": "Nemůžeš zmrazit sebe.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Žádní dostupní hráči, na které by se dalo přepnout."
                     }
                 },
                 "troll": {
@@ -304,31 +304,31 @@
             },
             "info": {
                 "title": "Informace o hráči",
-                "session_time": "Čas relace",
-                "play_time": "Čas hraní",
+                "session_time": "Čas od připojení",
+                "play_time": "Odehraný čas",
                 "joined": "Připojeno",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
+                "whitelisted_label": "Whitelist",
+                "whitelisted_notyet": "nemá",
+                "btn_wl_add": "PŘIDAT WL",
+                "btn_wl_remove": "ODEBRAT WL",
+                "btn_wl_success": "Stav whitelistu byl změněn.",
                 "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "log_empty": "Žádné bany, či varování.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bany",
+                "log_warn_count": "%{smart_count} varování |||| %{smart_count} varování",
+                "log_btn": "PODROBNOSTI",
+                "notes_changed": "Poznámka o hráči změněna.",
+                "notes_placeholder": "Poznámky o tomto hráči..."
             },
             "history": {
                 "title": "Související historie",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "ZRUŠIT",
+                "revoked_success": "Akce zrušena!",
+                "banned_by": "ZABANOVÁN adminem %{author}",
+                "warned_by": "VAROVÁN adminem %{author}",
+                "revoked_by": "Zrušeno adminem %{author}.",
+                "expired_at": "Vypršelo %{date}.",
+                "expires_at": "Vyprší %{date}."
             },
             "ban": {
                 "title": "Zabanovat hráče",
@@ -338,17 +338,17 @@
                 "days": "dny",
                 "weeks": "týdny",
                 "months": "měsíce",
-                "permanent": "Trvalý",
+                "permanent": "Permanentní",
                 "custom": "Vlastní",
-                "helper_text": "Prosím vyber délku trvání",
-                "submit": "Použít ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "helper_text": "Vyber délku banu!",
+                "submit": "Zabanovat",
+                "reason_required": "Důvod nemůže zůstat prázdný.",
+                "success": "Hráč byl zabanován!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "Aktivní identifiery",
+                "previous_ids": "Dříve použité identifiery",
+                "all_hwids": "Všechny ID hardwaru"
             }
         }
     }
