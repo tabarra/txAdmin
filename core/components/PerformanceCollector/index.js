@@ -39,7 +39,7 @@ export default class PerformanceCollector {
             try {
                 await this.collectPerformance();
             } catch (error) {
-                console.verbose.error('Error while collecting fxserver performance data');
+                console.verbose.warn('Error while collecting fxserver performance data');
                 console.verbose.dir(error);
             }
         }, 60 * 1000);

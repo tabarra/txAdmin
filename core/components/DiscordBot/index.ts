@@ -172,7 +172,7 @@ export default class DiscordBot {
                 const oldChannel = await this.#client.channels.fetch(oldChannelId);
                 if (!oldChannel) throw new Error(`oldChannel could not be resolved`);
                 if (oldChannel.type !== ChannelType.GuildText && oldChannel.type !== ChannelType.GuildAnnouncement) {
-                    throw new Error(`oldChannel is not guild text or annoucement channel`);
+                    throw new Error(`oldChannel is not guild text or announcement channel`);
                 }
                 await oldChannel.messages.edit(oldMessageId, generateStatusMessage(this.#txAdmin));
             }

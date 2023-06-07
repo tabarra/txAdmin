@@ -52,10 +52,10 @@ process.stdout.on('error', (data) => { });
 process.stderr.on('error', (data) => { });
 
 //Handle "the unexpected"
+//FIXME: this one literally doesn't work due to how fxserver handles them
 process.on('unhandledRejection', (err: Error) => {
     console.error('Ohh nooooo - unhandledRejection');
-    console.error(err.message);
-    console.dir(err.stack);
+    console.dir(err);
 });
 process.on('uncaughtException', function (err: Error) {
     console.error('Ohh nooooo - uncaughtException');

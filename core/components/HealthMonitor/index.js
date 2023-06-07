@@ -319,7 +319,7 @@ export default class HealthMonitor {
                     );
                 }
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
-                //FIXME: se der hand tanto HB quanto HC, ele ainda sim cai nesse caso
+                //FIXME: se der hang tanto HB quanto HC, ele ainda sim cai nesse caso
                 globals.databus.txStatsData.monitorStats.restartReasons.healthCheck++;
                 this.restartFXServer(
                     'server partial hang detected',

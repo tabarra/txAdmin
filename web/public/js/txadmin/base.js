@@ -172,7 +172,7 @@ const txAdminConfirm = ({content, confirmBtnClass, modalColor, title}) => {
                 cancel: () => {resolve(false);},
                 confirm:  {
                     btnClass: confirmBtnClass || 'btn-red',
-                    keys: ['enter'],
+                    keys: ['Enter', 'NumpadEnter'],
                     action: () => {resolve(true);},
                 },
             },

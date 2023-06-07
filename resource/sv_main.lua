@@ -123,7 +123,8 @@ local function txaReportResources(source, args)
     for i = 0, max do
         local resName = GetResourceByFindIndex(i)
 
-        -- hacky patch
+        -- Hacky patch added because a particular resource from this developer had a broken 
+        -- unicode in the resource description, which caused json.encode to fail.
         local resDesc = GetResourceMetadata(resName, 'description')
         if resDesc ~= nil and string.find(resDesc, "Louis.dll") then
             resDesc = nil

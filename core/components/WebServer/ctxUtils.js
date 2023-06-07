@@ -131,7 +131,7 @@ async function renderLoginView(data, txVars) {
     try {
         out = await loadWebTemplate('standalone/login').then(template => template(data));
     } catch (error) {
-        console.error(error);
+        console.dir(error);
         out = getRenderErrorText('Login', error, data);
     }
 
