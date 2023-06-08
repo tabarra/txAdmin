@@ -348,7 +348,7 @@
             "ids": {
                 "current_ids": "Praegused identifikaatorid",
                 "previous_ids": "Varem kasutatud identifikaatorid",
-                "all_hwids": "All Hardware IDs"
+                "all_hwids": "Kõik Hardware IDd"
             }
         }
     }
