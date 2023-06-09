@@ -171,6 +171,9 @@ function logAction(ctx, action) {
 function hasPermission(ctx, perm) {
     try {
         const sess = ctx.nuiSession ?? ctx.session;
+        if (perm === 'master') {
+            return sess.auth.master === true;
+        }
         return (
             sess.auth.master === true
             || sess.auth.permissions.includes('all_permissions')

@@ -2,8 +2,8 @@
 - [ ] downgrade discord.js to v14.7.1
 - [ ] improve timeout handling of discord bot save
 - [ ] improve the bot with dangerous permissions message
-- [ ] xxxxx
-- [ ] xxxxx
+- [ ] update libs
+- [ ] merge PRs
 - [ ] disable whitelist page when server is not on license whitelist mode
 
 > next up
