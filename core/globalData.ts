@@ -60,6 +60,7 @@ const resourceName = GetCurrentResourceName();
 //4574 = add resource field to PRINT_STRUCTURED_TRACE
 //5894 = CREATE_VEHICLE_SERVER_SETTER
 //6185 = added ScanResourceRoot (not yet in use)
+//6508 = unhandledRejection is now handlable, we need this due to discord.js's bug
 const minFXServerVersion = 5894;
 const fxServerVersion = getBuild(getConvarString('version'));
 if (fxServerVersion === 9999) {

@@ -15,6 +15,10 @@
     "windows-release": {
       "versions": ">4",
       "reason": "inlined to transform it into async"
+    },
+    "@types/node": {
+      "versions": ">16.9.1",
+      "reason": "fixed to fxserver's node version"
     }
   }
 }

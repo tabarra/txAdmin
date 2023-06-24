@@ -52,7 +52,6 @@ process.stdout.on('error', (data) => { });
 process.stderr.on('error', (data) => { });
 
 //Handle "the unexpected"
-//FIXME: this one literally doesn't work due to how fxserver handles them
 process.on('unhandledRejection', (err: Error) => {
     console.error('Ohh nooooo - unhandledRejection');
     console.dir(err);
@@ -68,6 +67,9 @@ process.on('exit', (_code) => {
 Error.stackTraceLimit = 25;
 process.removeAllListeners('warning');
 process.on('warning', (warning) => {
+    //totally ignoring the warning, we know this is bad and shouldn't happen
+    if (warning.name === 'UnhandledPromiseRejectionWarning') return;
+
     if (warning.name !== 'ExperimentalWarning' || convars.isDevMode) {
         console.dir(warning);
     }
