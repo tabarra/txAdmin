@@ -60,7 +60,7 @@ export default class DiscordBot {
         this.#txAdmin = txAdmin;
 
         if (this.config.enabled) {
-            this.startBot().catch(() => { });
+            this.startBot().catch();
         }
 
         //Cron
@@ -197,6 +197,11 @@ export default class DiscordBot {
                 console.error(msg);
                 const e = new Error(msg);
                 Object.assign(e, data);
+                console.warn('Stopping Discord Bot');
+                this.#client?.destroy();
+                setImmediate(() => {
+                    this.#client = undefined;
+                });
                 return reject(e);
             }
 
@@ -272,17 +277,20 @@ export default class DiscordBot {
                     if (!fetchedChannel) {
                         return sendError(`Channel ${this.config.announceChannel} not found.`);
                     } else if (fetchedChannel.type !== ChannelType.GuildText && fetchedChannel.type !== ChannelType.GuildAnnouncement) {
-                        return sendError(`Channel ${this.config.announceChannel} - ${(fetchedChannel as any)?.name} is not a text or annoucement channel.`);
+                        return sendError(`Channel ${this.config.announceChannel} - ${(fetchedChannel as any)?.name} is not a text or announcement channel.`);
                     } else {
                         this.announceChannel = fetchedChannel;
                     }
                 }
 
-                this.guild.commands.set(slashCommands);
-                this.#client.application?.commands.set([]); //if previously registered by tx before v6 or other bot
-                console.ok(`Started and logged in as '${this.#client.user.tag}'`);
+            
+                // if previously registered by tx before v6 or other bot
+                this.guild.commands.set(slashCommands).catch(console.error);
+                this.#client.application?.commands.set([]).catch(console.error);
+
                 this.updateStatus().catch();
 
+                console.ok(`Started and logged in as '${this.#client.user.tag}'`);
                 return resolve();
             });
 

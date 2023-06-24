@@ -98,7 +98,7 @@ export default class WebServer {
         }
 
         //Setting up timeout/error/no-output/413:
-        const timeoutLimit = 15 * 1000;
+        const timeoutLimit = 45 * 1000;
         const jsonLimit = '16MB';
         this.app.use(async (ctx, next) => {
             ctx.set('Server', `txAdmin v${txEnv.txAdminVersion}`);

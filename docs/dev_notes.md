@@ -1,8 +1,7 @@
 # TODO:
-- [ ] downgrade discord.js to v14.7.1
-- [ ] improve timeout handling of discord bot save
+- [x] improve timeout handling of discord bot save
+- [ ] attempt to update mysql2 and got
 - [ ] improve the bot with dangerous permissions message
-- [ ] update libs
 - [ ] merge PRs
 - [ ] disable whitelist page when server is not on license whitelist mode
 
