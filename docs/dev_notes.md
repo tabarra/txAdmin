@@ -1,5 +1,6 @@
 # TODO:
 - [x] improve timeout handling of discord bot save
+- [x] fix handling of disallowed intents
 - [ ] attempt to update mysql2 and got
 - [ ] improve the bot with dangerous permissions message
 - [ ] merge PRs
