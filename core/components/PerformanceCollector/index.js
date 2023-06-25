@@ -165,6 +165,7 @@ export default class PerformanceCollector {
         if (this.perfSeries === null) return;
         if (globals.fxRunner.fxChild === null) return;
         if (globals.playerlistManager === null) return;
+        if (globals.healthMonitor.currentStatus !== 'ONLINE') return;
 
         //Commom vars
         const now = Date.now();

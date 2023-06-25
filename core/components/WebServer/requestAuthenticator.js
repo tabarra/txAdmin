@@ -222,7 +222,7 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
     try {
         const admin = globals.adminVault.getAdminByIdentifiers(identifiers);
         if (!admin) {
-            console.verbose.warn(`NUI Auth Failed: no admin found with identifiers ${JSON.stringify(identifiers)}.`);
+            // console.verbose.warn(`NUI Auth Failed: no admin found with identifiers ${JSON.stringify(identifiers)}.`);
             return { isValidAuth: false, rejectReason: 'admin_not_found' };
         }
         return { isValidAuth: true, admin };

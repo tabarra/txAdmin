@@ -287,8 +287,15 @@ export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin
         txAdmin.persistentCache.set('discord:status:channelId', interaction.channelId);
         txAdmin.persistentCache.set('discord:status:messageId', newMessage.id);
     } catch (error) {
+        let msg: string;
+        if((error as any).code === 50013){
+            msg = `This bot does not have permission to send messages in this channel.
+            Please edit the channel and give this bot the "Send Messages" permission.`
+        }else{
+            msg = (error as Error).message;
+        }
         return await interaction.reply(
-            embedder.warning(`**Failed to send new embed:**\n${(error as Error).message}`, true)
+            embedder.warning(`**Failed to send new embed:**\n${msg}`, true)
         );
     }
 
