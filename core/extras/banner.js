@@ -159,7 +159,7 @@ export const printBanner = async () => {
 
     //Opening page
     if (txEnv.isWindows && adminPinRes.value) {
-        open(`http://localhost:${convars.txAdminPort}/auth#${adminPinRes.value}`).catch();
+        open(`http://localhost:${convars.txAdminPort}/auth#${adminPinRes.value}`).catch((e) => {});
     }
 
     //Starting server

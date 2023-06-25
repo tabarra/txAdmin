@@ -48,7 +48,7 @@ let hostStaticDataCache: HostStaticDataType;
 
 //Pre-calculate static data
 setTimeout(() => {
-    getHostData().catch();
+    getHostData().catch((e) => {});
 }, 10_000);
 
 

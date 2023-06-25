@@ -45,12 +45,12 @@ export default class StatisticsManager {
 
         //Delaying this because host static data takes 10+ seconds to be set
         setTimeout(() => {
-            this.refreshHbData().catch();
+            this.refreshHbData().catch((e) => {});
         }, 15_000);
 
         //Cron function
         setInterval(() => {
-            this.refreshHbData().catch();
+            this.refreshHbData().catch((e) => {});
         }, 60_000);
     }
 
