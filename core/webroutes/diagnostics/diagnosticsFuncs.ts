@@ -128,7 +128,9 @@ export const getFXServerData = async () => {
     const requestOptions = {
         url: `http://${fxRunner.fxServerHost}/info.json`,
         maxRedirects: 0,
-        timeout: healthMonitor.hardConfigs.timeout,
+        timeout: {
+            request: healthMonitor.hardConfigs.timeout
+        },
         retry: { limit: 0 },
     };
 

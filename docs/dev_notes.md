@@ -2,7 +2,7 @@
 - [x] improve timeout handling of discord bot save
 - [x] fix handling of disallowed intents
 - [x] improve the bot with dangerous permissions and missing access messages
-- [ ] attempt to update mysql2 and got
+- [x] attempt to update mysql2 and got
 - [ ] merge PRs
 - [ ] disable whitelist page when server is not on license whitelist mode
 

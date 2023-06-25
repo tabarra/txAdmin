@@ -109,7 +109,12 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     if (options.ref) {
         reference = options.ref;
     } else {
-        const data = await got.get(`https://api.github.com/repos/${repoOwner}/${repoName}`, { timeout: 15e3 }).json();
+        const data = await got.get(
+            `https://api.github.com/repos/${repoOwner}/${repoName}`,
+            {
+                timeout: { request: 15e3 }
+            }
+        ).json();
         if (typeof data !== 'object' || !data.default_branch) {
             throw new Error('reference not set, and wasn ot able to detect using github\'s api');
         }

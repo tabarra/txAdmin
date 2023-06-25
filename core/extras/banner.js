@@ -10,7 +10,9 @@ const console = consoleFactory();
 
 
 const getIPs = async () => {
-    const reqOptions = { timeout: 2500 };
+    const reqOptions = {
+        timeout: { request: 2500 }
+    };
     const allOps = await Promise.allSettled([
         // op.value.ip
         got('https://ip.seeip.org/json', reqOptions).json(),

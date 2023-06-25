@@ -124,9 +124,13 @@ export default class HealthMonitor {
         let dynamicResp;
         const requestOptions = {
             url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
-            timeout: this.hardConfigs.timeout,
             maxRedirects: 0,
-            retry: { limit: 0 },
+            timeout: {
+                request: this.hardConfigs.timeout
+            },
+            retry: {
+                limit: 0
+            },
         };
         try {
             const data = await got.get(requestOptions).json();
