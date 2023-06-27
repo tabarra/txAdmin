@@ -105,6 +105,9 @@ export default async function AdvancedActions(ctx) {
         return ctx.send({ type: 'success', message: JSON.stringify(outData, null, 2) });
     } else if (action == 'getProcessEnv') {
         return ctx.send({ type: 'success', message: JSON.stringify(process.env, null, 2) });
+    } else if (action == 'setHbDataTracking') {
+        globals.tmpSetHbDataTracking = true;
+        return ctx.send({ type: 'success', message: 'done' });
     } else if (action == 'xxxxxx') {
         // const res = globals.playerDatabase.xxxxx();
         // console.dir(res);

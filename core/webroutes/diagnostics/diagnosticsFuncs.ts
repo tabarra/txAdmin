@@ -183,17 +183,28 @@ export const getFXServerData = async () => {
 export const getHostData = async (): Promise<HostDataReturnType> => {
     const healthMonitor = (globals.healthMonitor as HealthMonitor);
 
+    const tmpDurationDebugLog = (msg: string) => {
+        // @ts-expect-error
+        if(globals?.tmpSetHbDataTracking){
+            console.verbose.debug(`refreshHbData: ${msg}`);
+        }
+    }
+
     //Get and cache static information
+    tmpDurationDebugLog('started');
     if (!hostStaticDataCache) {
+        tmpDurationDebugLog('filling host static data cache');
         //This errors out on pterodactyl egg
         let osUsername = 'unknown';
         try {
             const userInfo = os.userInfo();
+            tmpDurationDebugLog('got userInfo');
             osUsername = userInfo.username;
         } catch (error) {}
 
         try {
             const cpuStats = await si.cpu();
+            tmpDurationDebugLog('got cpu');
             const cpuSpeed = cpuStats.speedMin || cpuStats.speed;
 
             //TODO: move this to frontend
@@ -220,6 +231,7 @@ export const getHostData = async (): Promise<HostDataReturnType> => {
                     clockWarning,
                 }
             }
+            tmpDurationDebugLog('finished');
         } catch (error) {
             console.error('Error getting Host static data.');
             console.verbose.dir(error);

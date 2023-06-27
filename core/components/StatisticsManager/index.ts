@@ -107,9 +107,18 @@ export default class StatisticsManager {
             return;
         }
 
+        const tmpDurationDebugLog = (msg: string) => {
+            // @ts-expect-error
+            if(globals?.tmpSetHbDataTracking){
+                console.verbose.debug(`refreshHbData: ${msg}`);
+            }
+        }
+
         //Generate HB data
+        tmpDurationDebugLog('started');
         try {
             const hostData = getHostStaticData();
+            tmpDurationDebugLog('got host static data');
             const playerDbConfig = this.#txAdmin.playerDatabase.config;
             const globalConfig = this.#txAdmin.globalConfig;
 
@@ -155,6 +164,7 @@ export default class StatisticsManager {
                 playerDb: this.#txAdmin.playerDatabase.getDatabaseStats(),
                 perfSummary: this.#txAdmin.performanceCollector.getSummary('svMain'),
             };
+            tmpDurationDebugLog('prepared object');
 
             //Prepare output
             const encodedHbData = new TextEncoder().encode(JSON.stringify(statsData));
@@ -162,6 +172,7 @@ export default class StatisticsManager {
                 .setProtectedHeader(jweHeader)
                 .encrypt(this.#publicKey);
             this.currHbData = JSON.stringify({ '$statsVersion': 9, jwe });
+            tmpDurationDebugLog('finished');
 
         } catch (error) {
             console.verbose.error('Error while updating stats data.');
