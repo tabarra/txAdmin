@@ -25,7 +25,7 @@
             "label_reason": "Причина бана",
             "label_id": "Бан ID",
             "note_multiple_bans": "Примечание: у вас более одного активного запрета на ваши идентификаторы.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_diff_license": "Примечание: вышеуказанный запрет был применен для другой <code>license</code>, это означает, что некоторые из ваших идентификаторов/HWID совпадают с теми, которые связаны с этим запретом."
         }
     },
     "whitelist_messages": {
@@ -36,13 +36,13 @@
         },
         "guild_member": {
             "mode_title": "Этот сервер находится в режиме <strong>Discord Whitelist</strong>.",
-            "insufficient_ids": "У вас нет идентификатора <code>discord</code>, который необходим для подтверждения того, что вы присоединились к нашей гильдии Discord. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "insufficient_ids": "У вас нет идентификатора <code>discord</code>, который необходим для подтверждения того, что вы присоединились к нашей гильдии Discord. Пожалуйста, откройте настольное приложение Discord и повторите попытку (веб-приложение не будет работать).",
             "deny_title": "Вам необходимо вступить в наш гильдию Discord, чтобы подключиться.",
             "deny_message": "Пожалуйста, вступите в гильдию  %{guildname} а затем попробуйте еще раз."
         },
         "guild_roles": {
             "mode_title": "Этот сервер находится в режиме <strong>Discord роль Whitelist</strong>.",
-            "insufficient_ids": "У вас нет идентификатора <code>discord</code>, который необходим для подтверждения того, что вы присоединились к нашей гильдии Discord. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "insufficient_ids": "У вас нет идентификатора <code>discord</code>, который необходим для подтверждения того, что вы присоединились к нашей гильдии Discord. Пожалуйста, откройте настольное приложение Discord и повторите попытку (веб-приложение не будет работать).",
             "deny_notmember_title": "Для подключения вам необходимо вступить в нашу гильдию Discord.",
             "deny_notmember_message": "Пожалуйста, присоединитесь к %{guildname}, получите одну из требуемых ролей, а затем попробуйте еще раз.",
             "deny_noroles_title": "У вас нет роли, внесенной в белый список, необходимой для присоединения.",
@@ -71,7 +71,7 @@
         "misc": {
             "help_message": "txAdmin Меню включено, введите /tx чтобы открыть его.\nВы также можете настроить привязку клавиш используя [Настройки игры > Привязки клавиш > FiveM > Меню: Открыть Главную Страницу].",
             "menu_not_admin": "Ваши идентификаторы не совпадают ни с одним администратором, зарегистрированным в txAdmin.\nЕсли вы зарегистрированы в txAdmin, перейдите в  Admin Manager убедитесь, что ваши идентификаторы сохранены.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
+            "menu_auth_failed": "Ошибка проверки подлинности txAdmin Меню по причине: %{reason}",
             "no_perms": "У вас нет такого разрешения.",
             "unknown_error": "Произошла неизвестная ошибка.",
             "not_enabled": "txAdmin Меню не включено! Вы можете включить его на странице настроек txAdmin.",
@@ -172,7 +172,7 @@
                     "success": "Транспорт ускорен!",
                     "already_boosted": "Этот транспорт уже был ускорен.",
                     "unsupported_class": "Этот класс транспортных средств не поддерживается.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "Вы можете использовать boost только, когда находитесь верхом на лошади."
                 }
             },
             "heal": {
@@ -290,7 +290,7 @@
                         "spectate_failed": "Не удалось найти цель! Выходим из наблюдения.",
                         "spectate_yourself": "Вы не можете наблюдать за самим собой.",
                         "freeze_yourself": "Вы не можете заморозить себя.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Нет игроков, к которым можно переключиться."
                     }
                 },
                 "troll": {
@@ -348,7 +348,7 @@
             "ids": {
                 "current_ids": "Текущие идентификаторы",
                 "previous_ids": "Ранее использовавшиеся идентификаторы",
-                "all_hwids": "All Hardware IDs"
+                "all_hwids": "Все идентификаторы оборудования"
             }
         }
     }
