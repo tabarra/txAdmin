@@ -324,11 +324,11 @@
                 "title": "Susijusi informacija",
                 "btn_revoke": "REVOKE",
                 "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "banned_by": "Užblokuotas %{author}",
+                "warned_by": "Perspėtas %{author}",
+                "revoked_by": "Atimta %{author}.",
+                "expired_at": "Baigė galioti %{date}.",
+                "expires_at": "Baigs galioti %{date}."
             },
             "ban": {
                 "title": "Užblokuoti žaidėją",
