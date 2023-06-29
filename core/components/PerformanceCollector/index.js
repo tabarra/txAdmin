@@ -72,8 +72,8 @@ export default class PerformanceCollector {
                 if (!validatePerfCacheData(heatmapData)) throw new Error('invalid data in cache');
                 this.perfSeries = heatmapData.slice(-this.hardConfigs.performance.lengthCap);
             } catch (error) {
-                console.error(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
-                console.error('Since this is not a critical file, it will be reset.');
+                console.warn(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
+                console.warn('Since this is not a critical file, it will be reset.');
                 await setFile();
             }
         } else {

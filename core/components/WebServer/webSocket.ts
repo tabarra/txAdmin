@@ -48,12 +48,14 @@ const getIP = (socket: SocketWithSessionType) => {
         && socket.request.socket.remoteAddress
     ) ? socket.request.socket.remoteAddress : 'unknown';
 };
-const terminateSession = (socket: SocketWithSessionType, reason: string) => {
+const terminateSession = (socket: SocketWithSessionType, reason: string, shouldLog = true) => {
     // NOTE: doing socket.session.auth = {}; would also erase the web auth
     try {
-        console.verbose.warn('SocketIO', 'dropping new connection:', reason);
         socket.emit('logout', reason);
         socket.disconnect();
+        if(shouldLog) {
+            console.verbose.warn('SocketIO', 'dropping new connection:', reason);
+        }
     } catch (error) { }
 };
 
@@ -100,7 +102,7 @@ export default class WebSocket {
             //Checking for session auth
             const { isValidAuth } = authLogic(socket.session, true, 'SocketIO');
             if (!isValidAuth) {
-                return terminateSession(socket, 'invalid session');
+                return terminateSession(socket, 'invalid session', false);
             }
 
             //Check if joining any room
@@ -120,7 +122,6 @@ export default class WebSocket {
             //For each valid requested room
             for (const requestedRoomName of requestedRooms) {
                 const room = this.#rooms[requestedRoomName as RoomNames];
-                const logPrefix = `SocketIO:${requestedRoomName}`;
 
                 //Checking Perms
                 if (room.permission !== true && !hasPermission(socket, room.permission)) {
@@ -144,7 +145,7 @@ export default class WebSocket {
 
             //General events
             socket.on('disconnect', (reason) => {
-                console.verbose.debug('SocketIO', `Client disconnected with reason: ${reason}`);
+                // console.verbose.debug('SocketIO', `Client disconnected with reason: ${reason}`);
             });
             socket.on('error', (error) => {
                 console.verbose.debug('SocketIO', `Socket error with message: ${error.message}`);
