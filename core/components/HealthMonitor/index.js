@@ -34,7 +34,7 @@ export default class HealthMonitor {
             heartBeat: {
                 failThreshold: 15,
                 failLimit: 60,
-                resStartedCooldown: 30, //wait for HB up to 30 seconds after last resource started
+                resStartedCooldown: 45, //wait for HB up to 45 seconds after last resource started
             },
         };
 
