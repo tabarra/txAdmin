@@ -347,15 +347,16 @@ local function handleConnections(name, setKickReason, d)
         end
 
         --Attempt to validate the user
-        d.update("\n[txAdmin] Checking banlist/whitelist... (0/10)")
+        d.update("\n[txAdmin] Checking banlist/whitelist... (0/5)")
         CreateThread(function()
             local attempts = 0
             local isDone = false;
-            --Do 10 attempts
-            while isDone == false and attempts < 10 do
+            --Do 5 attempts (2.5 mins)
+            while isDone == false and attempts < 5 do
                 attempts = attempts + 1
-                d.update("\n[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
+                d.update("\n[txAdmin] Checking banlist/whitelist... ("..attempts.."/5)")
                 PerformHttpRequest(url, function(httpCode, rawData, resultHeaders)
+                    if isDone then return end
                     -- rawData = nil
                     -- httpCode = 408
 
@@ -368,26 +369,22 @@ local function handleConnections(name, setKickReason, d)
                             logError("Checking banlist/whitelist failed with invalid response: "..respStr)
                         else
                             if respObj.allow == true then
-                                if not isDone then
-                                    d.done()
-                                    isDone = true
-                                end
+                                d.done()
+                                isDone = true
                             else
-                                if not isDone then
-                                    local reason = respObj.reason or "\n[txAdmin] no reason provided"
-                                    d.done("\n"..reason)
-                                    isDone = true
-                                end
+                                local reason = respObj.reason or "\n[txAdmin] no reason provided"
+                                d.done("\n"..reason)
+                                isDone = true
                             end
                         end
                     end
                 end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
-                Wait(2000)
+                Wait(30000) --30s
             end
 
             --Block client if failed
             if not isDone then
-                d.done("\n[txAdmin] Failed to validate your banlist/whitelist status. Try again later.")
+                d.done("\n[txAdmin] Failed to validate your banlist/whitelist status. Try again in a few minutes.")
                 isDone = true
             end
         end)

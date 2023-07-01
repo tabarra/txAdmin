@@ -54,14 +54,15 @@ export default class DiscordBot {
     guild: Discord.Guild | undefined;
     guildName: string | undefined;
     announceChannel: Discord.TextBasedChannel | undefined;
-    lastDisallowedIntentsError: number = 0;
+    #lastDisallowedIntentsError: number = 0; //ms
+    #lastGuildMembersCacheRefresh: number = 0; //ms
 
 
     constructor(txAdmin: TxAdmin, public config: DiscordBotConfigType) {
         this.#txAdmin = txAdmin;
 
         if (this.config.enabled) {
-            this.startBot().catch((e) => {});
+            this.startBot().catch((e) => { });
         }
 
         // FIXME: Hacky solution to fix the issue with disallowed intents
@@ -69,14 +70,14 @@ export default class DiscordBot {
         // https://github.com/discordjs/discord.js/issues/9621
         process.on('unhandledRejection', (error: Error) => {
             if (error.message === 'Used disallowed intents') {
-                this.lastDisallowedIntentsError = Date.now();
+                this.#lastDisallowedIntentsError = Date.now();
             }
         });
 
         //Cron
         setInterval(() => {
             if (this.config.enabled) {
-                this.updateStatus().catch((e) => {});
+                this.updateStatus().catch((e) => { });
             }
         }, 60_000)
     }
@@ -86,6 +87,7 @@ export default class DiscordBot {
      * Refresh discordBot configurations
      */
     async refreshConfig() {
+        this.#lastGuildMembersCacheRefresh = 0;
         this.config = this.#txAdmin.configVault.getScoped('discordBot');
         if (this.#client) {
             console.warn('Stopping Discord Bot');
@@ -230,9 +232,9 @@ export default class DiscordBot {
             this.#client = new Client(this.#clientOptions);
 
             //Setup disallowed intents unhandled rejection watcher
-            const lastKnownDisallowedIntentsError = this.lastDisallowedIntentsError;
+            const lastKnownDisallowedIntentsError = this.#lastDisallowedIntentsError;
             const disallowedIntentsWatcherId = setInterval(() => {
-                if (this.lastDisallowedIntentsError !== lastKnownDisallowedIntentsError) {
+                if (this.#lastDisallowedIntentsError !== lastKnownDisallowedIntentsError) {
                     clearInterval(disallowedIntentsWatcherId);
                     return sendError(
                         `This bot does not have a required privileged intent.`,
@@ -312,7 +314,7 @@ export default class DiscordBot {
                 this.guild.commands.set(slashCommands).catch(console.error);
                 this.#client.application?.commands.set([]).catch(console.error);
 
-                this.updateStatus().catch((e) => {});
+                this.updateStatus().catch((e) => { });
 
                 console.ok(`Started and logged in as '${this.#client.user.tag}'`);
                 return resolve();
@@ -326,7 +328,7 @@ export default class DiscordBot {
             });
             this.#client.on('resume', () => {
                 console.verbose.ok('Connection with Discord API server resumed');
-                this.updateStatus().catch((e) => {});
+                this.updateStatus().catch((e) => { });
             });
             this.#client.on('interactionCreate', interactionCreateHandler.bind(null, this.#txAdmin));
             // this.#client.on('debug', console.verbose.debug);
@@ -340,6 +342,28 @@ export default class DiscordBot {
         });
     }
 
+    /**
+     * Refreshes the bot guild member cache
+     */
+    async refreshMemberCache() {
+        if (!this.config.enabled) throw new Error(`discord bot is disabled`);
+        if (!this.#client?.isReady()) throw new Error(`discord bot not ready yet`);
+        if (!this.guild) throw new Error(`guild not resolved`);
+
+        //Check when the cache was last refreshed
+        const currTs = Date.now();
+        if (currTs - this.#lastGuildMembersCacheRefresh > 60_000) {
+            try {
+                await this.guild.members.fetch();
+                this.#lastGuildMembersCacheRefresh = currTs;
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Return if an ID is a guild member, and their roles
@@ -349,19 +373,20 @@ export default class DiscordBot {
         if (!this.#client?.isReady()) throw new Error(`discord bot not ready yet`);
         if (!this.guild) throw new Error(`guild not resolved`);
 
-        try {
-            const member = this.guild.members.cache.find(m => m.id === uid) ?? await this.guild.members.fetch(uid);
+        //Try to get member from cache or refresh cache then try again
+        let member = this.guild.members.cache.find(m => m.id === uid);
+        if (!member && await this.refreshMemberCache()) {
+            member = this.guild.members.cache.find(m => m.id === uid);
+        }
+
+        //Return result
+        if (member) {
             return {
                 isMember: true,
                 memberRoles: member.roles.cache.map((role) => role.id),
             };
-        } catch (error) {
-            //https://discord.com/developers/docs/topics/opcodes-and-status-codes
-            if ((error as any).code === 10007) {
-                return { isMember: false }
-            } else {
-                throw error;
-            }
+        } else {
+            return { isMember: false }
         }
     }
 
@@ -375,16 +400,23 @@ export default class DiscordBot {
 
         //Check if in guild member
         if (this.guild) {
-            try {
-                const member = this.guild.members.cache.find(m => m.id === uid) ?? await this.guild.members.fetch(uid);
+            //Try to get member from cache or refresh cache then try again
+            let member = this.guild.members.cache.find(m => m.id === uid);
+            if (!member && await this.refreshMemberCache()) {
+                member = this.guild.members.cache.find(m => m.id === uid);
+            }
+
+            if (member) {
                 return {
                     tag: `${member.nickname ?? member.user.username}#${member.user.discriminator}`,
                     avatar: member.displayAvatarURL(avatarOptions) ?? member.user.displayAvatarURL(avatarOptions),
                 };
-            } catch (error) { }
+            }
         }
 
         //Checking if user resolvable
+        //NOTE: this one might still spam the API
+        // https://discord.js.org/#/docs/discord.js/14.11.0/class/UserManager?scrollTo=fetch
         const user = await this.#client.users.fetch(uid);
         if (user) {
             return {
