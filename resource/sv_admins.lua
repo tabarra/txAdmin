@@ -28,6 +28,10 @@ local function handleAuthFail(src, reason)
     reason = reason or "unknown"
     debugPrint("Auth rejected #"..srcString.." ("..reason..")")
     TriggerClientEvent('txcl:setAdmin', src, false, false, reason)
+    TriggerEvent('txAdmin:events:adminAuth', {
+        netid = src,
+        isAdmin = false,
+    })
 end
 
 -- Handle menu auth requests
@@ -78,6 +82,11 @@ RegisterNetEvent('txsv:checkIfAdmin', function()
         }
         sendInitialPlayerlist(src)
         TriggerClientEvent('txcl:setAdmin', src, resp.username, resp.permissions)
+        TriggerEvent('txAdmin:events:adminAuth', {
+            netid = src,
+            isAdmin = true,
+            username = resp.username,
+        })
     end, 'GET', '', headers)
 end)
 
@@ -110,4 +119,10 @@ AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
     for id, _ in pairs(refreshAdminIds) do
         TriggerClientEvent('txcl:reAuth', tonumber(id))
     end
+
+    -- Broadcasting the invalidation of all admins
+    TriggerEvent('txAdmin:events:adminAuth', {
+        netid = -1,
+        isAdmin = false,
+    })
 end)

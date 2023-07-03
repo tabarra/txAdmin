@@ -4,6 +4,7 @@
 - [x] improve the bot with dangerous permissions and missing access messages
 - [x] attempt to update mysql2 and got
 - [x] discord bot: improve handling of checkJoin api fetches
+- [x] add txAdmin:events:adminAuth
 - [ ] merge PRs
 - [ ] disable whitelist page when server is not on license whitelist mode
 

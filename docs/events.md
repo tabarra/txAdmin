@@ -148,3 +148,11 @@ Event Data:
 - `requestId?`: The request ID (eg. `Rxxxx`), except when action is `deniedAll`.
 - `license?`: The license of the player/requester, except when action is `deniedAll`.
 - `adminName?`: Name of the admin that performed the action, except when action is `requested`.
+
+## txAdmin:events:adminAuth (v6.0.1)
+Broadcasted whenever an admin is authenticated in game, or loses the admin permissions.  
+This event is particularly useful for anti-cheats to be able to ignore txAdmin admins.  
+Event Data:
+- `netid` (number): The ID of the player or -1 when revoking the permission of all admins (forced reauth).
+- `isAdmin` (boolean): If the player is an admin or not.
+- `username?` (string): The txAdmin username of the admin that was just authenticated.
