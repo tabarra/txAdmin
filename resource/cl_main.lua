@@ -70,7 +70,7 @@ RegisterNetEvent('txcl:showWarning', function(author, reason)
         while true do
             Wait(100)
             if IsControlPressed(dismissKeyGroup, dismissKey) then
-                count = count +1
+                count = count + 1
                 if count >= countLimit then
                     sendMenuMessage('closeWarning')
                     return
@@ -93,40 +93,45 @@ end)
 -- The suggestion is added after 500ms, so we need to wait more
 CreateThread(function()
     Wait(1000)
-    --Commands
-    TriggerEvent('chat:removeSuggestion', '/txadmin') --too spammy
-    TriggerEvent('chat:removeSuggestion', '/txaPing')
-    TriggerEvent('chat:removeSuggestion', '/txaKickAll')
-    TriggerEvent('chat:removeSuggestion', '/txaEvent')
-    TriggerEvent('chat:removeSuggestion', '/txaReportResources')
-    TriggerEvent('chat:removeSuggestion', '/txaSetDebugMode')
+    local suggestionsToRemove = {
+        --Commands
+        '/txadmin',
+        '/txaPing',
+        '/txaKickAll',
+        '/txaEvent',
+        '/txaReportResources',
+        '/txaSetDebugMode',
 
-    --Keybinds
-    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:noClipToggle')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:openPlayersPage')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:togglePlayerIDs')
+        --Keybinds
+        '/txAdmin:menu:noClipToggle',
+        '/txAdmin:menu:openPlayersPage',
+        '/txAdmin:menu:togglePlayerIDs',
 
-    --Convars
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-version')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-locale')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-localeFile')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-verbose')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-luaComHost')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-luaComToken')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-checkPlayerJoin')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-pipeToken')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-debugMode')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultAnnouncement')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultDirectMessage')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultWarning')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-hideDefaultScheduledRestartWarning')
-    TriggerEvent('chat:removeSuggestion', '/txAdminServerMode')
+        --Convars
+        '/txAdmin-version',
+        '/txAdmin-locale',
+        '/txAdmin-localeFile',
+        '/txAdmin-verbose',
+        '/txAdmin-luaComHost',
+        '/txAdmin-luaComToken',
+        '/txAdmin-checkPlayerJoin',
+        '/txAdmin-pipeToken',
+        '/txAdmin-debugMode',
+        '/txAdmin-hideDefaultAnnouncement',
+        '/txAdmin-hideDefaultDirectMessage',
+        '/txAdmin-hideDefaultWarning',
+        '/txAdmin-hideDefaultScheduledRestartWarning',
+        '/txAdminServerMode',
 
-    --Menu convars
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuEnabled')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuAlignRight')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuPageKey')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-playerIdDistance')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDrunkDuration')
+        --Menu convars
+        '/txAdmin-menuEnabled',
+        '/txAdmin-menuAlignRight',
+        '/txAdmin-menuPageKey',
+        '/txAdmin-menuPlayerIdDistance',
+        '/txAdmin-menuDrunkDuration'
+    }
+
+    for _, suggestion in ipairs(suggestionsToRemove) do
+        TriggerEvent('chat:removeSuggestion', suggestion)
+    end
 end)
-

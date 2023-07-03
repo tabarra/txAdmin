@@ -5,8 +5,8 @@
 - [x] attempt to update mysql2 and got
 - [x] discord bot: improve handling of checkJoin api fetches
 - [x] add txAdmin:events:adminAuth
-- [ ] merge PRs
-- [ ] disable whitelist page when server is not on license whitelist mode
+- [x] merge PRs
+- [ ] add warning to whitelist page when server is not on license whitelist mode
 
 > next up
 - [ ] check if the custom unhandledRejection thing has been added to fxserver

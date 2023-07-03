@@ -138,7 +138,7 @@ local function txaReportResources(source, args)
             description = resDesc,
             path = GetResourcePath(resName)
         }
-        table.insert(resources, currentRes)
+        resources[#resources+1] = currentRes
     end
 
     --Send to txAdmin
@@ -186,10 +186,11 @@ local cvHideAnnouncement = GetConvarBool('txAdmin-hideDefaultAnnouncement')
 local cvHideDirectMessage = GetConvarBool('txAdmin-hideDefaultDirectMessage')
 local cvHideWarning = GetConvarBool('txAdmin-hideDefaultWarning')
 local cvHideScheduledRestartWarning = GetConvarBool('txAdmin-hideDefaultScheduledRestartWarning')
+local txaEventHandlers = {}
 
 --- Handler for announcement events
 --- Broadcast admin message to all players
-local function handleAnnouncementEvent(eventData)
+txaEventHandlers.announcement = function(eventData)
     if not cvHideAnnouncement then
         TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, eventData.author)
     end
@@ -199,7 +200,7 @@ end
 
 --- Handler for scheduled restarts event
 --- Broadcast through an announcement that the server will restart in XX minutes
-local function handleScheduledRestartEvent(eventData)
+txaEventHandlers.scheduledRestart = function(eventData)
     if not cvHideScheduledRestartWarning then
         TriggerClientEvent('txcl:showAnnouncement', -1, eventData.translatedMessage, 'txAdmin')
     end
@@ -209,7 +210,7 @@ end
 
 --- Handler for player DM event
 --- Sends a direct message from an admin to a player
-local function handleDirectMessageEvent(eventData)
+txaEventHandlers.playerDirectMessage = function(eventData)
     if not cvHideDirectMessage then
         TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, eventData.author)
     end
@@ -218,7 +219,7 @@ end
 
 
 --- Handler for player kicked event
-local function handleKickEvent(eventData)
+txaEventHandlers.playerKicked = function(eventData)
     Wait(0) -- give other resources a chance to read player data
     DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
 end
@@ -226,7 +227,7 @@ end
 
 --- Handler for player warned event
 --- Warn specific player via server ID
-local function handleWarnEvent(eventData)
+txaEventHandlers.playerWarned = function(eventData)
     local pName = GetPlayerName(eventData.target)
     if pName ~= nil then
         if not cvHideWarning then
@@ -241,7 +242,7 @@ end
 
 --- Handler for the player banned event
 --- Ban player(s) via netid or identifiers
-local function handleBanEvent(eventData)
+txaEventHandlers.playerBanned = function(eventData)
     Wait(0) -- give other resources a chance to read player data
     local kickCount = 0
     for _, playerID in pairs(GetPlayers()) do
@@ -261,7 +262,6 @@ local function handleBanEvent(eventData)
                     end
                 end
             end
-
         end
     end
 
@@ -273,7 +273,7 @@ end
 
 --- Handler for the imminent shutdown event
 --- Kicks all players and lock joins in preparation for server shutdown
-local function handleShutdownEvent(eventData)
+txaEventHandlers.serverShuttingDown = function(eventData)
     txPrint('Server shutdown imminent. Kicking all players.')
     rejectAllConnections = true
     local players = GetPlayers()
@@ -298,20 +298,8 @@ local function txaEvent(source, args)
     local eventData = json.decode(unDeQuote(args[2]))
     TriggerEvent('txAdmin:events:' .. eventName, eventData)
 
-    if eventName == 'announcement' then 
-        return handleAnnouncementEvent(eventData)
-    elseif eventName == 'playerDirectMessage' then 
-        return handleDirectMessageEvent(eventData)
-    elseif eventName == 'playerKicked' then 
-        return handleKickEvent(eventData)
-    elseif eventName == 'playerWarned' then 
-        return handleWarnEvent(eventData)
-    elseif eventName == 'playerBanned' then 
-        return handleBanEvent(eventData)
-    elseif eventName == 'serverShuttingDown' then 
-        return handleShutdownEvent(eventData)
-    elseif eventName == 'scheduledRestart' then 
-        return handleScheduledRestartEvent(eventData)
+    if txaEventHandlers[eventName] ~= nil then
+        return txaEventHandlers[eventName](eventData)
     end
     CancelEvent()
 end
