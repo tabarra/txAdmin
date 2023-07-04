@@ -40,15 +40,14 @@ export const processActionList = (list: DatabaseActionType[]) => {
             out.message = `${xss(log.author)} WARNED ${actReference}`;
         } else {
             out.color = 'secondary';
-            out.message = `${xss(log.author)} ${log.type.toUpperCase()} ${actReference}`;
+            out.message = `${xss(log.author)} ${(log.type as any)?.toUpperCase()} ${actReference}`;
         }
         if (log.revocation.timestamp) {
             out.color = 'dark';
             out.isRevoked = true;
             const revocationDate = (new Date(log.revocation.timestamp * 1000)).toLocaleString();
             out.footerNote = `Revoked by ${log.revocation.author} on ${revocationDate}.`;
-        }
-        if (typeof log.expiration == 'number') {
+        }else if (typeof log.expiration == 'number') {
             const expirationDate = (new Date(log.expiration * 1000)).toLocaleString();
             out.footerNote = (log.expiration < tsNow) ? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
         }

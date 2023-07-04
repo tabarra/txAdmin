@@ -32,19 +32,16 @@ new TxAdmin(serverProfile);
 setTimeout(() => {
     let hdTimer = Date.now();
     setInterval(() => {
-        let now = Date.now();
+        const now = Date.now();
         if (now - hdTimer > 2000) {
-            let sep = '='.repeat(70);
-            setTimeout(() => {
-                console.error(sep);
-                console.error('Major VPS freeze/lag detected!');
-                console.error('THIS IS NOT AN ERROR CAUSED BY TXADMIN!');
-                console.error(sep);
-            }, 1000);
+            console.majorMultilineError([
+                'Major VPS freeze/lag detected!',
+                'THIS IS NOT AN ERROR CAUSED BY TXADMIN!',
+            ]);
         }
         hdTimer = now;
     }, 500);
-}, 10000);
+}, 10_000);
 
 //Handle any stdio error
 process.stdin.on('error', (data) => { });

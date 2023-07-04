@@ -296,8 +296,8 @@ export default class FXRunner {
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
-            console.verbose.warn(`FD3 decode error: ${data.message}`);
-            globals.databus.txStatsData.lastFD3Error = data.message;
+            //NOTE: this should be verbose warn, but since i've never seen it happen, let's see if someone reports it.
+            console.error(`FD3 decode error: ${data.message}`);
         });
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler, this.currentMutex));
 
@@ -374,7 +374,8 @@ export default class FXRunner {
             });
 
             //Awaiting restart delay
-            await sleep(this.config.shutdownNoticeDelay * 1000);
+            //The 250 is so at least everyone is kicked from the server
+            await sleep(250 + this.config.shutdownNoticeDelay * 1000);
 
             //Stopping server
             if (this.fxChild !== null) {

@@ -32,7 +32,7 @@ export const requestAuth = (epType) => {
             if (sessToken && (sessToken !== headerToken)) {
                 console.verbose.warn(`Invalid CSRF token: ${ctx.path}`, epType);
                 const msg = (headerToken)
-                    ? 'Error: Invalid CSRF token, please report this issue to the txAdmin developers.'
+                    ? 'Error: Invalid CSRF token, please refresh the page or try to login again.'
                     : 'Error: Missing HTTP header \'x-txadmin-csrftoken\'. This likely means your files are not updated or you are using some reverse proxy that is removing this header from the HTTP request.';
                 //to maintain compatibility with all routes
                 return ctx.send({

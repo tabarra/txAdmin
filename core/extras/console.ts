@@ -241,6 +241,16 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
                 defaultConsole.log(prefix, line);
             }
         },
+        majorMultilineError: (text: string | string[]) => {
+            if (!Array.isArray(text)) text = text.split('\n');
+            const prefix = genLogPrefix(currContext, chalk.bgRed);
+            const sep = '='.repeat(60);
+            defaultConsole.log(prefix, sep);
+            for (const line of text) {
+                defaultConsole.log(prefix, line);
+            }
+            defaultConsole.log(prefix, sep);
+        },
 
         verbose: {
             debug: getLogFunc(currContext, chalk.bgMagenta, verboseConsole),
