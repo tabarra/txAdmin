@@ -7,7 +7,7 @@
 - [x] add txAdmin:events:adminAuth
 - [x] merge PRs
 - [x] add warning to whitelist page when server is not on license whitelist mode
-- [ ] clean a few of the dead stuff from databus
+- [x] deprecate globals.databus
 
 > next up
 - [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
@@ -21,6 +21,20 @@
 ScanResourceRoot('E:/FiveM/txData/default.base/', (data: object) => {
     console.dir(data);
 })
+
+
+### Zod error parsing
+if (error instanceof z.ZodError) {
+    const outString = error.issues.map(issue => {
+        return issue.path.length
+            ? `${issue.path.join('.')}: ${issue.message}`
+            : issue.message;
+    }).join('\n');
+    console.error(outString);
+    console.error(error.issues);
+} else {
+    console.dir(error);
+}
 
 
 

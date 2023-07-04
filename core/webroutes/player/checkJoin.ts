@@ -91,16 +91,6 @@ export default async function PlayerCheckJoin(ctx: Context) {
     }
     const { playerName, playerIds, playerHwids } = ctx.request.body;
 
-    //DEBUG: save join log
-    const toLog = {
-        ts: Date.now(),
-        playerName,
-        playerIds,
-        playerHwids,
-    };
-    globals.databus.joinCheckHistory.push(toLog);
-    if (globals.databus.joinCheckHistory.length > 25) globals.databus.joinCheckHistory.shift();
-
     //Validating body data
     if (typeof playerName !== 'string') return sendTypedResp({ error: 'playerName should be an string.' });
     if (!Array.isArray(playerIds)) return sendTypedResp({ error: 'playerIds should be an array.' });

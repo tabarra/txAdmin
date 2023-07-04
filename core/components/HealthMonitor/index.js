@@ -183,8 +183,6 @@ export default class HealthMonitor {
         const currTimestamp = now();
         const elapsedRefreshStatus = currTimestamp - this.lastRefreshStatus;
         if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
-            globals.databus.txStatsData.monitorStats.freezeSeconds.push(elapsedRefreshStatus - 1);
-            if (globals.databus.txStatsData.monitorStats.freezeSeconds.length > 30) globals.databus.txStatsData.monitorStats.freezeSeconds.shift();
             console.error(`FXServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
             console.error('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
@@ -232,7 +230,7 @@ export default class HealthMonitor {
         //Check if fxChild is closed, in this case no need to wait the failure count
         const processStatus = globals.fxRunner.getStatus();
         if (processStatus == 'closed') {
-            globals.databus.txStatsData.monitorStats.restartReasons.close++;
+            globals.statisticsManager.registerFxserverRestart('close');
             this.restartFXServer(
                 'server close detected',
                 globals.translator.t('restarter.crash_detected'),
@@ -324,13 +322,13 @@ export default class HealthMonitor {
                 }
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
                 //FIXME: se der hang tanto HB quanto HC, ele ainda sim cai nesse caso
-                globals.databus.txStatsData.monitorStats.restartReasons.healthCheck++;
+                globals.statisticsManager.registerFxserverRestart('healthCheck');
                 this.restartFXServer(
                     'server partial hang detected',
                     globals.translator.t('restarter.hang_detected'),
                 );
             } else {
-                globals.databus.txStatsData.monitorStats.restartReasons.heartBeat++;
+                globals.statisticsManager.registerFxserverRestart('heartBeat');
                 this.restartFXServer(
                     'server hang detected',
                     globals.translator.t('restarter.hang_detected'),
@@ -349,7 +347,7 @@ export default class HealthMonitor {
                 && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
                 && tsNow - this.lastSuccessfulFD3HeartBeat < 5
             ) {
-                globals.databus.txStatsData.monitorStats.heartBeatStats.httpFailed++;
+                globals.statisticsManager.registerFxserverRestart('http');
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
         } else if (source === 'http') {
@@ -358,7 +356,7 @@ export default class HealthMonitor {
                 && tsNow - this.lastSuccessfulFD3HeartBeat > 15
                 && tsNow - this.lastSuccessfulHTTPHeartBeat < 5
             ) {
-                globals.databus.txStatsData.monitorStats.heartBeatStats.fd3Failed++;
+                globals.statisticsManager.registerFxserverRestart('fd3');
             }
             this.lastSuccessfulHTTPHeartBeat = tsNow;
         }

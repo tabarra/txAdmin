@@ -267,8 +267,8 @@ export default async function WebCtxUtils(ctx, next) {
             uiTheme: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface) ? THEME_DARK : '',
             fxServerVersion: displayFxserverVersion,
             txAdminVersion: txEnv.txAdminVersion,
-            txaOutdated: globals.databus.updateChecker?.txadmin,
-            fxsOutdated: globals.databus.updateChecker?.fxserver,
+            txaOutdated: globals.updateChecker?.txUpdateData,
+            fxsOutdated: globals.updateChecker?.fxsUpdateData,
             jsInjection: getJavascriptConsts({
                 isZapHosting: convars.isZapHosting, //not in use
                 isPterodactyl: convars.isPterodactyl, //not in use

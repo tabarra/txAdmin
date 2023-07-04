@@ -37,10 +37,7 @@ export default async function Intercom(ctx) {
         if (!Array.isArray(postData.resources)) {
             return ctx.utils.error(400, 'Invalid Request');
         }
-        globals.databus.resourcesList = {
-            timestamp: new Date(),
-            data: postData.resources,
-        };
+        globals.resourcesManager.tmpUpdateResourceList(postData.resources);
     } else {
         return ctx.send({
             type: 'danger',

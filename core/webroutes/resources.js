@@ -70,13 +70,13 @@ export default async function Resources(ctx) {
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
             if (
-                globals.databus.resourcesList !== null
-                && (new Date() - globals.databus.resourcesList.timestamp) <= 1000
-                && Array.isArray(globals.databus.resourcesList.data)
+                globals.resourcesManager.resourceReport !== null
+                && (new Date() - globals.resourcesManager.resourceReport.ts) <= 1000
+                && Array.isArray(globals.resourcesManager.resourceReport.resources)
             ) {
                 clearTimeout(tListTimer);
                 clearTimeout(tErrorTimer);
-                const resGroups = processResources(globals.databus.resourcesList.data);
+                const resGroups = processResources(globals.resourcesManager.resourceReport.resources);
                 const renderData = {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),

@@ -24,6 +24,7 @@ const jweHeader = {
 
 /**
  * Responsible for collecting runtime data for statistics
+ * NOTE: the register functions don't throw because we rather break stats than txAdmin itself
  */
 export default class StatisticsManager {
     readonly #txAdmin: TxAdmin;
@@ -39,18 +40,31 @@ export default class StatisticsManager {
     public readonly whitelistCheckTime = new QuantileArray(5000, 50);
     public currHbData: string = '{"error": "not yet initialized in StatisticsManager"}';
 
+    public monitorStats = {
+        healthIssues: {
+            fd3: 0,
+            http: 0,
+        },
+        restartReasons: {
+            close: 0,
+            heartBeat: 0,
+            healthCheck: 0,
+        },
+    };
+
+
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
         this.loadStatsPublicKey();
 
         //Delaying this because host static data takes 10+ seconds to be set
         setTimeout(() => {
-            this.refreshHbData().catch((e) => {});
+            this.refreshHbData().catch((e) => { });
         }, 15_000);
 
         //Cron function
         setInterval(() => {
-            this.refreshHbData().catch((e) => {});
+            this.refreshHbData().catch((e) => { });
         }, 60_000);
     }
 
@@ -70,7 +84,6 @@ export default class StatisticsManager {
 
     /**
      * Called by HealthMonitor to keep track of the last boot time
-     * NOTE: we are not throwing an error because this is not a fundamental part of txAdmin
      */
     registerFxserverBoot(seconds: number) {
         if (!Number.isInteger(seconds) || seconds < 0) {
@@ -78,6 +91,24 @@ export default class StatisticsManager {
         }
         this.#fxServerBootSeconds = seconds;
         console.verbose.debug(`FXServer booted in ${seconds} seconds.`);
+    }
+
+
+    /**
+     * Called by HealthMonitor to keep track of the fxserver restart reasons
+     */
+    registerFxserverRestart(reason: keyof typeof this.monitorStats.restartReasons) {
+        if (!(reason in this.monitorStats.restartReasons)) return;
+        this.monitorStats.restartReasons[reason]++;
+    }
+
+
+    /**
+     * Called by HealthMonitor to keep track of the fxserver HB/HC failures
+     */
+    registerFxserverHealthIssue(type: keyof typeof this.monitorStats.healthIssues) {
+        if (!(type in this.monitorStats.healthIssues)) return;
+        this.monitorStats.healthIssues[type]++;
     }
 
 
@@ -109,7 +140,7 @@ export default class StatisticsManager {
 
         const tmpDurationDebugLog = (msg: string) => {
             // @ts-expect-error
-            if(globals?.tmpSetHbDataTracking){
+            if (globals?.tmpSetHbDataTracking) {
                 console.verbose.debug(`refreshHbData: ${msg}`);
             }
         }

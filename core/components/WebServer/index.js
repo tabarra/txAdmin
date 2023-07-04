@@ -34,6 +34,7 @@ export default class WebServer {
         this.luaComToken = nanoid();
         this.webSocket = null;
         this.isListening = false;
+        this.httpRequestsCounter = 0;
 
         //Generate cookie key
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
@@ -46,14 +47,18 @@ export default class WebServer {
         this.setupWebSocket();
         this.setupServerCallbacks();
 
-        //Cron function
+        //Counting requests per minute
         setInterval(() => {
-            const httpCounter = globals.databus.txStatsData.httpCounter;
-            httpCounter.log.push(httpCounter.current);
-            if (httpCounter.log.length > 10) httpCounter.log.shift();
-            if (httpCounter.current > httpCounter.max) httpCounter.max = httpCounter.current;
-            httpCounter.current = 0;
-        }, 60 * 1000);
+            if(this.httpRequestsCounter > 10_000){
+                const numberFormatter = new Intl.NumberFormat('en-US');
+                console.majorMultilineError([
+                    `txAdmin might be under a DDoS attack!`,
+                    `We detected ${numberFormatter.format(this.httpRequestsCounter)} HTTP requests in the last minute.`,
+                    'Make sure you have a proper firewall setup and/or a reverse proxy with rate limiting.',
+                ]);
+            }
+            this.httpRequestsCounter = 0;
+        }, 60_000);
     }
 
 
@@ -210,7 +215,7 @@ export default class WebServer {
 
         //Calls the appropriate callback
         try {
-            globals.databus.txStatsData.httpCounter.current++;
+            this.httpRequestsCounter++;
             if (req.url.startsWith('/socket.io')) {
                 this.io.engine.handleRequest(req, res);
             } else {
