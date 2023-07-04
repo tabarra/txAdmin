@@ -214,8 +214,6 @@ export default class TxAdmin {
         } catch (error) {
             console.dir(error);
         }
-
-        //TODO: cron to update setTTYTitle
     }
 
     /**
