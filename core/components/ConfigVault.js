@@ -248,7 +248,8 @@ export default class ConfigVault {
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in template
-            cfg.fxRunner.shutdownNoticeDelay = parseInt(cfg.fxRunner.shutdownNoticeDelay) || 5; //not in template
+            const parsedShutdownNoticeDelay = parseInt(cfg.fxRunner.shutdownNoticeDelay);
+            cfg.fxRunner.shutdownNoticeDelay = isNaN(parsedShutdownNoticeDelay) ? 5 : parsedShutdownNoticeDelay; //not in template
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
             console.verbose.dir(error);
