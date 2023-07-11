@@ -6,7 +6,7 @@ The event name will be `txAdmin:events:<name>` and the first (and only) paramete
 
 
 ## txAdmin:events:scheduledRestart (v3.2)
-Broadcasted automatically `[30, 15, 10, 5, 4, 3, 2, 1]` minutes before a scheduled restart, as well as the times configured in the settings page.  
+Broadcasted automatically `[30, 15, 10, 5, 4, 3, 2, 1]` minutes before a scheduled restart.  
 Can be used with the convar `txAdmin-hideDefaultScheduledRestartWarning` to display a custom warning notification.  
 Event Data:
 - `secondsRemaining`: The number of seconds before the scheduled restart.  

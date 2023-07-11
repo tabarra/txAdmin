@@ -1,13 +1,5 @@
 # TODO:
-- [x] improve timeout handling of discord bot save
-- [x] fix handling of disallowed intents
-- [x] improve the bot with dangerous permissions and missing access messages
-- [x] attempt to update mysql2 and got
-- [x] discord bot: improve handling of checkJoin api fetches
-- [x] add txAdmin:events:adminAuth
-- [x] merge PRs
-- [x] add warning to whitelist page when server is not on license whitelist mode
-- [x] deprecate globals.databus
+- [ ] xxx
 
 > next up
 - [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
@@ -173,7 +165,10 @@ CFG Editor:
 
 
 ## New config
-- 2023 acho que os defaults deveriam existir dentro dos components
+- july 2023: consider that some vars will be used in more than one component, so making them live in one or another might not be good
+- the modules should be the ones to decide when they need to refreshConfig, so inside the module constructor maybe subscribe to change of specific variables, (in or outside of module). Maybe use event dispatchers?!
+
+- early 2023: acho que os defaults deveriam existir dentro dos components
 e sempre que outro componente precisar saber uma config, deve passar pelo componente
 - need to have a version and have migration, like the database
 

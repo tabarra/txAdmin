@@ -22,7 +22,6 @@ export default class HealthMonitor {
         //NOTE: done mainly because the timeout/limit was never useful, and makes things more complicated
         this.hardConfigs = {
             timeout: 1500,
-            defaultWarningTimes: [30, 15, 10, 5, 4, 3, 2, 1],
 
             //HTTP GET /dynamic.json from txAdmin to sv_main.lua
             healthCheck: {
