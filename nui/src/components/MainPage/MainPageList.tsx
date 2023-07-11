@@ -141,8 +141,9 @@ export const MainPageList: React.FC = () => {
         // {x: -1; y: 2; z:3}
         // {x = -1.01; y= 2.02; z=3.03}
         // -1, 2, 3
+        // 474.08966064453, -1718.7073974609, 29.329517364502
         let [x, y, z] = Array.from(
-          coords.matchAll(/-?\d{1,4}(?:\.\d{1,9})?/g),
+          coords.matchAll(/-?\d{1,4}(?:\.\d+)?/g),
           (m) => parseFloat(m[0])
         );
         if (typeof x !== 'number' || typeof y !== 'number') {
