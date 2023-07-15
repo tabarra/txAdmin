@@ -4,14 +4,14 @@
         "humanizer_language": "hu"
     },
     "restarter": {
-        "start_timeout": "sikertelen indítás a megadott idő intervallumon belül",
-        "crash_detected": "összeomlás észlelve",
-        "hang_detected": "lefagyás észlelve",
+        "start_timeout": "Sikertelen indítás a megadott idő intervallumon belül",
+        "crash_detected": "Összeomlás észlelve",
+        "hang_detected": "Lefagyás észlelve",
         "partial_hang_warn": "Részleges lefagyás miatt a szerver 1 perc múlva újraindul. Kérjük, lépj ki.",
         "partial_hang_warn_discord": "Részleges lefagyás miatt, a **%{servername}** 1 perc múlva újraindul.",
         "schedule_reason": "Ütemezett újraindítás %{time}",
-        "schedule_warn": "A szerver ütemezett újraindítás miatt, %{smart_count} percen belül újraindul. Kérjük, lépj ki!. |||| A szerver ütemezetten újra indul %{smart_count} perc múlva.",
-        "schedule_warn_discord": "A(z) **%{servername}** ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** ütemezetten újraindul %{smart_count} perc múlva."
+        "schedule_warn": "A szerver ütemezett újraindítása lesz %{smart_count} perc múlva. Kérjük, lépj ki!. |||| A szerver ütemezett újraindítása lesz %{smart_count} perc múlva.",
+        "schedule_warn_discord": "A(z) **%{servername}** ütemezett újraindítása lesz %{smart_count} perc múlva. |||| **%{servername}** ütemezett újraindítása lesz %{smart_count} perc múlva."
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Ki lettél tiltva a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
@@ -25,7 +25,7 @@
             "label_reason": "Kitiltás indoka",
             "label_id": "Ban ID",
             "note_multiple_bans": "Figyelem: Több mint egy aktív kitiltásod van ezen a fiókon.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_diff_license": "Megjegyzés: a kitiltás a <code>license</code> miatt van, ami azt jelenti, hogy a  IDs/HWIDs egyezik a kiltiltásban lévő adatokkal."
         }
     },
     "whitelist_messages": {
@@ -77,7 +77,7 @@
             "not_enabled": "A txAdmin menü nincs engedélyezve! Engedélyezheted a txAdmin beállítások fülön.",
             "announcement_title": "Szerver felhívás %{author}:",
             "dialog_empty_input": "Nem lehet üresen hagyni.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "Privát üzenet admintól %{author}:"
         },
         "frozen": {
             "froze_player": "Lefagyasztottad a játékost!",
@@ -103,14 +103,14 @@
                     "success": "NoClip bekapcsolva"
                 },
                 "godmode": {
-                    "title": "God",
+                    "title": "Isten",
                     "label": "Halhatatlanság",
                     "success": "God mód bekapcsolva"
                 },
                 "superjump": {
-                    "title": "Super Jump",
+                    "title": "Nagy ugrás",
                     "label": "Magas ugrás és gyors futás",
-                    "success": "Super Jump bekapcsolva"
+                    "success": "Nagy ugrás bekapcsolva"
                 },
                 "normal": {
                     "title": "Normál",
@@ -253,7 +253,7 @@
                         "dm": "Privát üzenet",
                         "warn": "Figyelmeztetés",
                         "kick": "Kirúgás",
-                        "set_admin": "Admin adás"
+                        "set_admin": "Admin rang adás"
                     },
                     "dm_dialog": {
                         "title": "Közvetlen üzenet",
@@ -290,7 +290,7 @@
                         "spectate_failed": "Hiba a játékos megfigyelésénél! Kilépés a megfigyelésből.",
                         "spectate_yourself": "Magadat nem figyelheted meg.",
                         "freeze_yourself": "Magadat nem fagyaszthatod le.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Nincs megfigyelhető játékos."
                     }
                 },
                 "troll": {
@@ -307,28 +307,28 @@
                 "session_time": "Szerveren töltött idő",
                 "play_time": "Játékidő",
                 "joined": "Csatlakozva",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "whitelisted_label": "Engedélyezve",
+                "whitelisted_notyet": "Még nem",
+                "btn_wl_add": "Engedélyezés megadása",
+                "btn_wl_remove": "Engedélyezés visszavonása",
+                "btn_wl_success": "Az engedélyezési lista állapota megváltozott.",
+                "log_label": "Napló",
+                "log_empty": "Nem található tiltás/figyelmeztetés.",
+                "log_ban_count": "%{smart_count} kitiltás |||| %{smart_count} kitiltások",
+                "log_warn_count": "%{smart_count} figyelmeztetés |||| %{smart_count} figyelmeztetések",
+                "log_btn": "Részletek",
+                "notes_changed": "Játékos jegyzete változott.",
+                "notes_placeholder": "Megjegyzések ehhez a játékoshoz..."
             },
             "history": {
                 "title": "Kapcsolódó előzmények",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "Visszavonás",
+                "revoked_success": "Művelet visszavonva!",
+                "banned_by": "Kitiltva  %{author} által",
+                "warned_by": "Figyelmeztetve %{author} által",
+                "revoked_by": "Visszavonva %{author} által.",
+                "expired_at": "Lejárat: %{date}.",
+                "expires_at": "Lejárat: %{date}."
             },
             "ban": {
                 "title": "Játékos kitiltása",
@@ -341,14 +341,14 @@
                 "permanent": "Végleges",
                 "custom": "Egyedi",
                 "helper_text": "Kérlek válassz időtartamot",
-                "submit": "Apply ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "submit": "Kitiltás véglegesítése",
+                "reason_required": "Az ok mező kitöltése kötelező.",
+                "success": "Játékos tiltva!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "Jelenlegi azonosítók",
+                "previous_ids": "Előző azonosítók",
+                "all_hwids": "Összes harver ID"
             }
         }
     }
