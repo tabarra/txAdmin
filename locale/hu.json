@@ -318,7 +318,7 @@
                 "log_warn_count": "%{smart_count} figyelmeztetés |||| %{smart_count} figyelmeztetések",
                 "log_btn": "Részletek",
                 "notes_changed": "Játékos jegyzete változott.",
-                "notes_placeholder": "Megjegyzések ehhez a játékoshoz..."
+                "notes_placeholder": "Jegyzetek ehhez a játékoshoz..."
             },
             "history": {
                 "title": "Kapcsolódó előzmények",
@@ -327,8 +327,8 @@
                 "banned_by": "Kitiltva  %{author} által",
                 "warned_by": "Figyelmeztetve %{author} által",
                 "revoked_by": "Visszavonva %{author} által.",
-                "expired_at": "Lejárat: %{date}.",
-                "expires_at": "Lejárat: %{date}."
+                "expired_at": "Lejárat ekkor: %{date}.",
+                "expires_at": "Lejárat ekkor: %{date}."
             },
             "ban": {
                 "title": "Játékos kitiltása",
@@ -342,13 +342,13 @@
                 "custom": "Egyedi",
                 "helper_text": "Kérlek válassz időtartamot",
                 "submit": "Kitiltás véglegesítése",
-                "reason_required": "Az ok mező kitöltése kötelező.",
+                "reason_required": "Az indoklás mező kitöltése kötelező.",
                 "success": "Játékos tiltva!"
             },
             "ids": {
                 "current_ids": "Jelenlegi azonosítók",
                 "previous_ids": "Előző azonosítók",
-                "all_hwids": "Összes harver ID"
+                "all_hwids": "Összes hardver ID"
             }
         }
     }
