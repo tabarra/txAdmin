@@ -58,7 +58,7 @@ export const windowsReleaseAsync = async (release) => {
             stdout = out.stdout || '';
         }
 
-        const year = (stdout.match(/2008|2012|2016|2019/) || [])[0];
+        const year = (stdout.match(/2008|2012|2016|2019|2022/) || [])[0];
 
         if (year) {
             return `Server ${year}`;
