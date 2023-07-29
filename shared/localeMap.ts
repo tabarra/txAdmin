@@ -12,6 +12,7 @@ import lang_et from "@locale/et.json";
 import lang_fa from "@locale/fa.json";
 import lang_fi from "@locale/fi.json";
 import lang_fr from "@locale/fr.json";
+import lang_hr from "@locale/hr.json";
 import lang_hu from "@locale/hu.json";
 import lang_it from "@locale/it.json";
 import lang_lt from "@locale/lt.json";
@@ -49,6 +50,7 @@ const localeMap: LocaleMapType = {
     fa: lang_fa,
     fi: lang_fi,
     fr: lang_fr,
+    hr: lang_hr,
     hu: lang_hu,
     it: lang_it,
     lt: lang_lt,
