@@ -23,9 +23,9 @@
             "label_date": "Kitiltás dátuma",
             "label_author": "Kitiltó neve",
             "label_reason": "Kitiltás indoka",
-            "label_id": "Ban ID",
+            "label_id": "Kitiltás ID",
             "note_multiple_bans": "Figyelem: Több mint egy aktív kitiltásod van ezen a fiókon.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_diff_license": "Megjegyzés: a fenti tiltást egy másik <code>license</code> miatt alkalmazták, ami azt jelenti, hogy néhány azonosítód/HWID-ed megegyezik a tiltáshoz kapcsolódó azonosítókkal."
         }
     },
     "whitelist_messages": {
@@ -77,7 +77,7 @@
             "not_enabled": "A txAdmin menü nincs engedélyezve! Engedélyezheted a txAdmin beállítások fülön.",
             "announcement_title": "Szerver felhívás %{author}:",
             "dialog_empty_input": "Nem lehet üresen hagyni.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM egy admintól %{author}:"
         },
         "frozen": {
             "froze_player": "Lefagyasztottad a játékost!",
@@ -108,9 +108,9 @@
                     "success": "God mód bekapcsolva"
                 },
                 "superjump": {
-                    "title": "Super Jump",
+                    "title": "Szuper Ugrás",
                     "label": "Magas ugrás és gyors futás",
-                    "success": "Super Jump bekapcsolva"
+                    "success": "Szuper Ugrás bekapcsolva"
                 },
                 "normal": {
                     "title": "Normál",
@@ -200,14 +200,14 @@
             },
             "clear_area": {
                 "title": "Terület visszaállítása",
-                "label": "Reset a specified world area to its default state",
+                "label": "Egy megadott terület alapértelmezett állapotba állítása",
                 "dialog_desc": "Állítsd be a sugarát annak a területnek ahol az entitásokat visszaállítanád (0-300). A szerver oldali entitások nem kerülnek visszaállításra",
                 "dialog_success": "Terület visszaállítása %{radius}m sugárban",
                 "dialog_error": "Érvénytelen sugár bevitel. Próbáld újra."
             },
             "player_ids": {
                 "title": "ID mód váltása",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "A játékosok ID (és egyéb információknak) a közeli játékosok feje fölött megjelenítésének bekapcsolása",
                 "alert_show": "Közeli játékosok ID-jének mutatása.",
                 "alert_hide": "Közeli játékosok ID-jének elrejtése."
             }
@@ -307,28 +307,28 @@
                 "session_time": "Szerveren töltött idő",
                 "play_time": "Játékidő",
                 "joined": "Csatlakozva",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "whitelisted_label": "Fehérlistás",
+                "whitelisted_notyet": "még nem",
+                "btn_wl_add": "HOZZÁAD FL",
+                "btn_wl_remove": "ELTÁVOLÍT FL",
+                "btn_wl_success": "Fehérlistás állapota megváltoztatva",
+                "log_label": "Napló",
+                "log_empty": "Nem találtunk tiltásokat/ figyelmeztetéseket.",
+                "log_ban_count": "%{smart_count} kitiltás |||| %{smart_count} kitiltás",
+                "log_warn_count": "%{smart_count} figyelmeztetés |||| %{smart_count} figyelmeztetés",
+                "log_btn": "RÉSZLETEK",
+                "notes_changed": "A játékos megjegyzése változott.",
+                "notes_placeholder": "Megjegyzések erről a játékosról..."
             },
             "history": {
                 "title": "Kapcsolódó előzmények",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "VISSZAVONÁS",
+                "revoked_success": "Művelet visszavonva!",
+                "banned_by": "KITILVA %{author} által",
+                "warned_by": "FIGYELMEZTETVE %{author} által",
+                "revoked_by": "Visszavonva %{author} által.",
+                "expired_at": "Lejárt %{date}.",
+                "expires_at": "Lejár %{date}."
             },
             "ban": {
                 "title": "Játékos kitiltása",
@@ -341,14 +341,14 @@
                 "permanent": "Végleges",
                 "custom": "Egyedi",
                 "helper_text": "Kérlek válassz időtartamot",
-                "submit": "Apply ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "submit": "Tiltás érvényesítése",
+                "reason_required": "Az indok mező szükséges.",
+                "success": "Játékos kitiltva!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "Jelenlegi azonosítók",
+                "previous_ids": "Korábban használt azonosítók",
+                "all_hwids": "Minden hardver azonosító"
             }
         }
     }
