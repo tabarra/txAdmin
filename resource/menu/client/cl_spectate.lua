@@ -316,7 +316,7 @@ RegisterNetEvent('txcl:spectate:start', function(targetServerId, targetCoords)
         Wait(50)
     end
 
-    --If failed to resolve the targer
+    --If failed to resolve the target
     if (resolvedPlayerId <= 0 or resolvedPed <= 0) then
         debugPrint('Failed to resolve target PlayerId or Ped')
         -- reset spectator

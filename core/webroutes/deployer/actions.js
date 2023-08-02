@@ -1,8 +1,8 @@
 const modulename = 'WebServer:DeployerActions';
 import path from 'path';
-import { cloneDeep }  from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import slash from 'slash';
-import mysql from 'mysql2/promise'
+import mysql from 'mysql2/promise';
 import consts from '@core/extras/consts';
 import { txEnv, convars } from '@core/globalData';
 import { validateModifyServerConfig } from '../../extras/fxsConfigHelper';
@@ -113,18 +113,20 @@ async function handleSetVariables(ctx) {
             };
             await mysql.createConnection(mysqlOptions);
         } catch (error) {
-            const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
-            if (error.code == 'ECONNREFUSED') {
+            let outMessage = error?.message ?? 'Unknown error occurred.';
+            if (error?.code === 'ECONNREFUSED') {
                 let specificError = (txEnv.isWindows)
                     ? 'If you do not have a database installed, you can download and run XAMPP.'
                     : 'If you do not have a database installed, you must download and run MySQL or MariaDB.';
                 if (userVars.dbPort !== 3306) {
                     specificError += '<br>\n<b>You are not using the default DB port 3306, make sure it is correct!</b>';
                 }
-                return ctx.send({ type: 'danger', message: `${msgHeader}<br>\n${specificError}` });
-            } else {
-                return ctx.send({ type: 'danger', message: msgHeader });
+                outMessage = `${error?.message}<br>\n${specificError}`;
+            } else if (error.message?.includes('auth_gssapi_client')) {
+                outMessage = `Your database does not accept the required authentication method. Please update your MySQL/MariaDB server and try again.`;
             }
+
+            return ctx.send({ type: 'danger', message: `<b>Database connection failed:</b> ${outMessage}` });
         }
 
         //Setting connection string
