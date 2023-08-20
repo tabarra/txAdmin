@@ -1,0 +1,361 @@
+{
+    "$meta": {
+        "label": "Slovenština",
+        "humanizer_language": "sk"
+    },
+    "restarter": {
+        "start_timeout": "server sa nestihol spustiť v požadovanom čase",
+        "crash_detected": "zával detegovaný",
+        "hang_detected": "prerušenie pripojenia detegované",
+        "partial_hang_warn": "Kvôli čiastočnému prerušeniu pripojenia sa tento server reštartuje o 1 minútu. Prosím, odpojte sa.",
+        "partial_hang_warn_discord": "Kvôli čiastočnému prerušeniu pripojenia sa **%{servername}** reštartuje o 1 minútu.",
+        "schedule_reason": "plánovaný reštart o %{time}",
+        "schedule_warn": "Tento server má naplánovaný reštart o %{smart_count} minútu. Prosím, odpojte sa teraz. |||| Tento server má naplánovaný reštart o %{smart_count} minút.",
+        "schedule_warn_discord": "**%{servername}** má naplánovaný reštart o %{smart_count} minútu. |||| **%{servername}** má naplánovaný reštart o %{smart_count} minút."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Bol si zabanovaný z dôvodu: \"%{reason}\". Tvoj ban vyprší o: %{expiration}.",
+        "kick_permanent": "(%{author}) Bol ti trvalo odobratý prístup na server a to z dôvodu: \"%{reason}\".",
+        "reject": {
+            "title_permanent": "Bol si trvalo zabanovaný z tohto servera.",
+            "title_temporary": "Bol si dočasne zabanovaný z tohto servera.",
+            "label_expiration": "Tvoj ban vyprší o",
+            "label_date": "Dátum udelenia",
+            "label_author": "Admin, ktorý ti ban udelený",
+            "label_reason": "Dôvod banu",
+            "label_id": "ID Banu",
+            "note_multiple_bans": "Poznámka: Tvoje identifikátory majú viac aktívnych banov.",
+            "note_diff_license": "Poznámka: Tento ban bol udelený na hernú <code>licenciu</code>, čo znamená, že tvoje IDs/HWIDs sa zhodujú s aktívnym banom."
+        }
+    },
+    "whitelist_messages": {
+        "admin_only": {
+            "mode_title": "Tento server je v režime <strong>Iba pre Adminov</strong>.",
+            "insufficient_ids": "Nemáš žiadne <code>discord</code> alebo <code>fivem</code> identifikátory, ktoré sú potrebné na overenie, či si txAdmin admin.",
+            "deny_message": "Tvoje identifikátory sa nezhodujú s žiadnym identifikátorom admina."
+        },
+        "guild_member": {
+            "mode_title": "Tento server je v režime pre <strong>Discord Členov</strong>.",
+            "insufficient_ids": "Nemáš vhodný <code>discord</code> identifikátor, ktorý je potrebný na overenie, či si na našom Discord serveri. Otvor Discord aplikáciu a skús sa pripojiť znovu (Webová verzia nebude fungovať).",
+            "deny_title": "Musíš byť na našom Discord serveri pre pripojenie.",
+            "deny_message": "Pripoj sa prosím na %{guildname} a skús to znovu."
+        },
+        "guild_roles": {
+            "mode_title": "Tento server je v režime <strong>Discord Whitelist</strong>.",
+            "insufficient_ids": "Nemáš vhodný <code>discord</code> identifikátor, ktorý je potrebný na overenie, či si na našom Discord serveri. Otvor Discord aplikáciu a skús sa pripojiť znovu (Webová verzia nebude fungovať).",
+            "deny_notmember_title": "Musíš byť na našom Discord serveri.",
+            "deny_notmember_message": "Pripoj sa prosím na %{guildname}, získaj jednu z potrebných rolí a pripoj sa znova.",
+            "deny_noroles_title": "Nemáš potrebnú whitelist rolu.",
+            "deny_noroles_message": "Pre pripojenie musíš mať jednu z whitelist rolí na Discord serveri %{guildname}."
+        },
+        "approved_license": {
+            "mode_title": "Tento server je v režime <strong>License Whitelist</strong>.",
+            "insufficient_ids": "Nemáš žiadny <code>license</code> identifikátor, čo znamená, že server má zapnutý <code>sv_lan</code>. Ak si vlastník servera, môžeš toto vypnúť v súbore <code>server.cfg</code>.",
+            "deny_title": "Nie si oprávnený pre pripojenie na tento server.",
+            "request_id_label": "ID Žiadosti"
+        }
+    },
+    "server_actions": {
+        "restarting": "Reštartovanie servera (%{reason}).",
+        "restarting_discord": "**%{servername}** sa reštartuje, z dôvodu: %{reason}",
+        "stopping": "Server sa vypína, z dôvodu: %{reason}",
+        "stopping_discord": "**%{servername}** sa vypína. Dôvod: %{reason}.",
+        "spawning_discord": "**%{servername}** sa spúšťa."
+    },
+    "nui_warning": {
+        "title": "VAROVANIE",
+        "warned_by": "Admin, ktorý ťa varoval:",
+        "instruction": "Podrž [MEZERNÍK] po dobu 10 sekúnd pre zatvorenie varovania."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin Menu povolené, napíš /tx pre otvorenie.\nMôžeš tiež nakonfigurovať bind v [Herné Nastavenia > Klávesové skratky > FiveM > Menu: Otvoriť Hlavnú Stránku].",
+            "menu_not_admin": "Tvoje identifikátory sa nezhodujú s identifikátormi žiadneho administrátora.\nAk si registrovaný v txAdminu, choď do sekcie Admin Manager a uisti sa, že tvoje identifikátory sú uložené.",
+            "menu_auth_failed": "txAdmin Menu overenie zlyhalo, s dôvodom: %{reason}",
+            "no_perms": "Na túto možnosť nemáš práva.",
+            "unknown_error": "Nastala neznáma chyba.",
+            "not_enabled": "txAdmin menu nie je povolené! Môžeš ho povoliť v txAdmin nastaveniach.",
+            "announcement_title": "Server oznámenie od %{author}:",
+            "dialog_empty_input": "Políčko nemôže byť prázdne.",
+            "directmessage_title": "Súkromná správa od admina %{author}:"
+        },
+        "frozen": {
+            "froze_player": "Zmrazil si hráča!",
+            "unfroze_player": "Odmrazil si hráča!",
+            "was_frozen": "Bol si zmrazený administrátorom servera!"
+        },
+        "common": {
+            "cancel": "Zrušiť",
+            "submit": "Potvrdiť",
+            "error": "Nastala chyba",
+            "copied": "Skopírované do schránky."
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Použi %{key} pre zmenu stránok & šípky pre pohyb v danom menu",
+                "tooltip_2": "Niektoré položky v menu majú ďalšie možnosti, ktoré je možné vybrať pomocou kláves smerom doľava a doprava"
+            },
+            "player_mode": {
+                "title": "Režim hráča",
+                "noclip": {
+                    "title": "No-Clip",
+                    "label": "Letenie",
+                    "success": "No-Clip povolený"
+                },
+                "godmode": {
+                    "title": "Nesmrteľnosť",
+                    "label": "Neporaziteľnosť",
+                    "success": "Nesmrteľnosť povolená"
+                },
+                "superjump": {
+                    "title": "Super Skok",
+                    "label": "Zapne režim super skoku, s týmto tak tiež môžeš rýchlejšie bežať",
+                    "success": "Super Skok povolený"
+                },
+                "normal": {
+                    "title": "Normálny",
+                    "label": "Základný mód",
+                    "success": "Vrátené do základného hráčskeho módu."
+                }
+            },
+            "teleport": {
+                "title": "Teleportovať sa",
+                "generic_success": "Teleportovať sa!",
+                "waypoint": {
+                    "title": "Bod",
+                    "label": "Teleportovať sa na určený bod",
+                    "error": "Nemáš určený žiadny bod."
+                },
+                "coords": {
+                    "title": "Súradnice",
+                    "label": "Teleportovať sa na určité súradnice",
+                    "dialog_title": "Teleportovať sa",
+                    "dialog_desc": "Zadaj súradnice vo formáte x, y, z pre teleportáciu.",
+                    "dialog_error": "Neplatné súradnice. Musia byť v tvare: 111, 222, 33"
+                },
+                "back": {
+                    "title": "Späť",
+                    "label": "Teleportovať sa späť na poslednú lokalitu",
+                    "error": "Nemáš žiadnu poslednú lokalitu pre teleportáciu!"
+                },
+                "copy": {
+                    "title": "Skopírovať súradnice",
+                    "label": "Skopírovať súradnice do schránky."
+                }
+            },
+            "vehicle": {
+                "title": "Vozidlo",
+                "onesync_error": "Táto možnosť vyžaduje, aby bol zapnutý OneSync",
+                "not_in_veh_error": "Momentálne nie si vo vozidle!",
+                "spawn": {
+                    "title": "Vytvoriť",
+                    "label": "vytvoriť vozidlo podľa názvu modelu",
+                    "dialog_title": "Vytvoriť vozidlo",
+                    "dialog_desc": "Vlož názov modelu vozidla pre vytvorenie.",
+                    "dialog_success": "Vozidlo vytvorené!",
+                    "dialog_error": "Názov modelu '%{modelName}' neexistuje!",
+                    "dialog_info": "Pokúšaš sa vytvoriť %{modelName}."
+                },
+                "fix": {
+                    "title": "Opraviť",
+                    "label": "Opraví tvoje vozidlo",
+                    "success": "Vozidlo opravené!"
+                },
+                "delete": {
+                    "title": "Zmazať",
+                    "label": "Zmaže tvoje vozidlo vozidlo",
+                    "success": "Vozidlo zmazané!"
+                },
+                "boost": {
+                    "title": "Vylepšenie",
+                    "label": "Vylepší tvoje vozidlo pre najväčšiu zábavu (a možno rýchlosť)",
+                    "success": "Vozidlo vylepšené!",
+                    "already_boosted": "Toto vozidlo už je vylepšené.",
+                    "unsupported_class": "Typ tohoto vozidla nie je možné vylepšiť.",
+                    "redm_not_mounted": "Vylepšiť svojho koňa môžeš len vtedy, keď na ňom sedíš."
+                }
+            },
+            "heal": {
+                "title": "Vyliečiť",
+                "myself": {
+                    "title": "Seba",
+                    "label": "Obnoví tvoje životy",
+                    "success_0": "Všetko obnovené!",
+                    "success_1": "Teraz by si mal mať lepšie!",
+                    "success_2": "Obnovené späť na maximum!",
+                    "success_3": "Hotovo!"
+                },
+                "everyone": {
+                    "title": "Všetci",
+                    "label": "Vylieči a oživí všetkých hráčov",
+                    "success": "Všetci hráči oživení a vyliečení."
+                }
+            },
+            "announcement": {
+                "title": "Odoslať oznámenie",
+                "label": "Odoslať oznámenie všetkým online hráčom.",
+                "dialog_desc": "Odoslať oznámenie všetkým online hráčom.",
+                "dialog_placeholder": "Tvoje oznámenie...",
+                "dialog_success": "Odosielam oznámenie."
+            },
+            "clear_area": {
+                "title": "Obnoviť oblasť",
+                "label": "Obnoviť určitú oblasť do pôvodného stavu",
+                "dialog_desc": "Prosím vlož oblasť pre obnovenie (0-300). Toto nevytvorí entity vytvorené pomocou servera.",
+                "dialog_success": "Obnovujem oblasť %{radius}m",
+                "dialog_error": "Neplatná oblasť. Skús to prosím znova."
+            },
+            "player_ids": {
+                "title": "Zapnúť ID hráčov",
+                "label": "Zapnúť zobrazovanie ID hráčov (a ďalšie info) nad hlavou hráčov v okolí",
+                "alert_show": "Zobrazujem ID hráčov v okolí.",
+                "alert_hide": "Skryvam ID hráčov v okolí."
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Online hráči",
+                "players": "Hráči",
+                "search": "Vyhľadať",
+                "zero_players": "Žiadni hráči nenájdení"
+            },
+            "sort": {
+                "label": "Zoradiť podľa",
+                "distance": "Vzdialenosti",
+                "id": "ID",
+                "joined_first": "Pripojený ako prvý",
+                "joined_last": "Pripojený ako posledný",
+                "closest": "Najbližší",
+                "farthest": "Najďalej"
+            },
+            "card": {
+                "health": "%{percentHealth}% Životov"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Nastala chyba pri získavaní informácií o hráčovi. Chyba je zobrazená nižšie:",
+                "target_not_found": "Nebolo možné nájsť online hráča s menom/ID: %{target}"
+            },
+            "tabs": {
+                "actions": "Akcie",
+                "info": "Informácie",
+                "ids": "ID",
+                "history": "História",
+                "ban": "Zabanovať"
+            },
+            "actions": {
+                "title": "Akcie hráčov",
+                "command_sent": "Príkaz odoslaný!",
+                "moderation": {
+                    "title": "Moderácia",
+                    "options": {
+                        "dm": "Súkromná správa",
+                        "warn": "Varovať",
+                        "kick": "Vyhodiť",
+                        "set_admin": "Pridať administrátora"
+                    },
+                    "dm_dialog": {
+                        "title": "Súkromná správa",
+                        "description": "Dôvod odosielania súkromnej správy",
+                        "placeholder": "Dôvod...",
+                        "success": "Tvoja súkromná správa bola odoslaná!"
+                    },
+                    "warn_dialog": {
+                        "title": "Varovať",
+                        "description": "Dôvod varovania hráča",
+                        "placeholder": "Dôvod...",
+                        "success": "Hráč bol varovaný!"
+                    },
+                    "kick_dialog": {
+                        "title": "Vyhodiť",
+                        "description": "Dôvod vyhodenia hráča",
+                        "placeholder": "Dôvod...",
+                        "success": "Hráč bol vyhodený!"
+                    }
+                },
+                "interaction": {
+                    "title": "Interakcie",
+                    "options": {
+                        "heal": "Vyliečiť",
+                        "go_to": "Teleportovať sa",
+                        "bring": "Priniesť",
+                        "spectate": "Pozorovať",
+                        "toggle_freeze": "Zmraziť"
+                    },
+                    "notifications": {
+                        "heal_player": "Liecim hráča",
+                        "tp_player": "Teleportujem k hráčovi",
+                        "bring_player": "Prinášam hráča",
+                        "spectate_failed": "Nepodarilo sa udržať signál pozorovania! Vypínam pozorovanie.",
+                        "spectate_yourself": "Nemôžeš pozorovať seba.",
+                        "freeze_yourself": "Nemôžeš zmraziť seba.",
+                        "spectate_cycle_failed": "Žiadni dostupní hráči, na ktorých by sa dalo prepínať."
+                    }
+                },
+                "troll": {
+                    "title": "Troll",
+                    "options": {
+                        "drunk": "Urobiť opilým",
+                        "fire": "Zapáliť",
+                        "wild_attack": "Utok zvieratami"
+                    }
+                }
+            },
+            "info": {
+                "title": "Informácie o hráčovi",
+                "session_time": "Čas od pripojenia",
+                "play_time": "Odohraný čas",
+                "joined": "Pripojený",
+                "whitelisted_label": "Whitelist",
+                "whitelisted_notyet": "nemá",
+                "btn_wl_add": "Pridať WL",
+                "btn_wl_remove": "Odstrániť WL",
+                "btn_wl_success": "Stav whitelistu bol zmenený.",
+                "log_label": "Log",
+                "btn_log_copy": "Kopírovať log",
+                "steam_name_label": "Steam meno",
+                "steam_id_label": "Steam ID",
+                "discord_name_label": "Discord meno",
+                "discord_id_label": "Discord ID",
+                "license_label": "Licencia",
+                "ids": {
+                    "label": "ID",
+                    "steam": "Steam",
+                    "discord": "Discord",
+                    "license": "Licencia"
+                }
+            },
+            "history": {
+                "title": "História hráča",
+                "no_history": "Žiadna história pre tohto hráča."
+            },
+            "ban": {
+                "title": "Zabanovať hráča",
+                "reason": "Dôvod",
+                "note": "Poznámka",
+                "expiration": "Doba platnosti (v minútach)",
+                "success": "Hráč bol zabanovaný!"
+            }
+        },
+        "page_logs": {
+            "misc": {
+                "logs": "Logy",
+                "search": "Vyhľadať",
+                "zero_logs": "Žiadne logy nenájdené"
+            },
+            "filter": {
+                "label": "Filtrovať",
+                "all": "Všetky",
+                "warnings": "Varovania",
+                "kicks": "Vyhodenia",
+                "bans": "Bany"
+            },
+            "actions": {
+                "title": "Akcie",
+                "copy": "Kopírovať",
+                "copy_tooltip": "Kopírovať log do schránky."
+            }
+        }
+    }
+}
