@@ -192,7 +192,7 @@ function checkBan(
             const humanizeOptions = {
                 language,
                 round: true,
-                units: ['d', 'h'] as Unit[],
+                units: ['d', 'h', 'm'] as Unit[],
             };
             const duration = humanizeDuration((ban.expiration - ts) * 1000, humanizeOptions);
             expLine = `<strong>${textKeys.label_expiration}:</strong> ${duration} <br>`;
