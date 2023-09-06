@@ -67,7 +67,7 @@ const Root = styled('div')(({ theme }) => ({
       marginLeft: 50,
     },
     [`& .${classes.largeTypography}`]: {
-      fontSize: '1.8rem',
+      fontSize: '2.4rem',
     },
   },
 }));
