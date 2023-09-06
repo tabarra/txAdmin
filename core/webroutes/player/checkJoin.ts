@@ -191,6 +191,7 @@ function checkBan(
         if (ban.expiration) {
             const humanizeOptions = {
                 language,
+                largest: 2,
                 round: true,
                 units: ['d', 'h', 'm'] as Unit[],
             };
