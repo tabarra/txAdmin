@@ -183,14 +183,7 @@ local keysTable = {
     {'Previous Player', CONTROLS.prev},
     {'Next Player', CONTROLS.next},
 }
-
 local redmInstructionGroup, redmPromptTitle
-RegisterNetEvent('txcl:spectate:start', function()
-    if IS_REDM then
-        redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'Spectate')
-        redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
-    end
-end)
 
 --- Key press checking (fivem)
 local function fivemCheckControls()
@@ -271,6 +264,11 @@ end)
 
 -- Client-side event handler for an authorized spectate request
 RegisterNetEvent('txcl:spectate:start', function(targetServerId, targetCoords)
+    if IS_REDM then
+        redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'Spectate')
+        redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
+    end
+
     if isInTransitionState then
         stopSpectating()
         error('Spectate request received while in transition state')
