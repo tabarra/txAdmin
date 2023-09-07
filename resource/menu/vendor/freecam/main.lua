@@ -80,10 +80,12 @@ local keysTable = {
   {'Fwd/Back', CONTROLS.MOVE_Y},
 }
 local redmInstructionGroup, redmPromptTitle
-if IS_REDM then
-  redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'NoClip')
-  redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
-end
+RegisterNetEvent('txcl:setPlayerMode', function(mode)
+  if mode == 'noclip' and IS_REDM then
+      redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'NoClip')
+      redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
+  end
+end)
 
 
 function StartFreecamThread()
