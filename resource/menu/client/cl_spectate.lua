@@ -185,10 +185,12 @@ local keysTable = {
 }
 
 local redmInstructionGroup, redmPromptTitle
-if IS_REDM then
-    redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'Spectate')
-    redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
-end
+RegisterNetEvent('txcl:spectate:start', function()
+    if IS_REDM then
+        redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'Spectate')
+        redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
+    end
+end)
 
 --- Key press checking (fivem)
 local function fivemCheckControls()
