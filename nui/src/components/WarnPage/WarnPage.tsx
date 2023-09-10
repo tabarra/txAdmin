@@ -154,14 +154,10 @@ export interface SetWarnOpenData {
   warnedBy: string;
 }
 
-export const WarnPage: React.FC = ({ }) => {
-  const pulseSound = useRef<HTMLAudioElement>(
-    new Audio("sounds/warning_pulse.mp3")
-  );
-  const openSound = useRef<HTMLAudioElement>(
-    new Audio("sounds/warning_open.mp3")
-  );
+const pulseSound = new Audio("sounds/warning_pulse.mp3");
+const openSound = new Audio("sounds/warning_open.mp3");
 
+export const WarnPage: React.FC = ({ }) => {
   const [isMiniBounce, setIsMiniBounce] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -170,12 +166,12 @@ export const WarnPage: React.FC = ({ }) => {
   useNuiEvent<SetWarnOpenData>("setWarnOpen", (warnData) => {
     setWarnData(warnData);
     setIsOpen(true);
-    openSound.current.play();
+    openSound.play();
   });
 
   useNuiEvent("pulseWarning", () => {
     setIsMiniBounce(true);
-    pulseSound.current.play();
+    pulseSound.play();
     setTimeout(() => {
       setIsMiniBounce(false);
     }, 500);
@@ -186,7 +182,7 @@ export const WarnPage: React.FC = ({ }) => {
   });
 
   const exitHandler = () => {
-    pulseSound.current.play();
+    pulseSound.play();
   };
 
   return (

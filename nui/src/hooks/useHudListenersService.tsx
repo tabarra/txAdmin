@@ -62,6 +62,9 @@ debugData(
   5000
 );
 
+const announcementSound = new Audio("sounds/announcement.mp3");
+const messageSound = new Audio("sounds/message.mp3");
+
 export const useHudListenersService = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const t = useTranslate();
@@ -72,13 +75,6 @@ export const useHudListenersService = () => {
   const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
   const setPage = useSetPage();
   const notiPos = useAnnounceNotiPosValue();
-
-  const announcementSound = useRef<HTMLAudioElement>(
-    new Audio("sounds/announcement.mp3")
-  );
-  const messageSound = useRef<HTMLAudioElement>(
-    new Audio("sounds/message.mp3")
-  );
 
   const snackFormat = (m: string) => (
     <span style={{ whiteSpace: "pre-wrap" }}>{m}</span>
@@ -172,7 +168,7 @@ export const useHudListenersService = () => {
   });
 
   useNuiEvent<AddAnnounceData>("addAnnounceMessage", ({ message, author }) => {
-    announcementSound.current.play();
+    announcementSound.play();
     enqueueSnackbar(
       <AnnounceMessage
         message={message}
@@ -190,7 +186,7 @@ export const useHudListenersService = () => {
   });
 
   useNuiEvent<AddAnnounceData>("addDirectMessage", ({ message, author }) => {
-    messageSound.current.play();
+    messageSound.play();
     enqueueSnackbar(
       <AnnounceMessage
         message={message}
