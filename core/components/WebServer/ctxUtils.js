@@ -222,8 +222,6 @@ export default async function WebCtxUtils(ctx, next) {
     const host = ctx.request.host || 'none';
     if (host.startsWith('127.0.0.1') || host.startsWith('localhost')) {
         ctx.txVars.hostType = 'localhost';
-    } else if (host.includes('users.cfx.re')) {
-        ctx.txVars.hostType = 'cfxre';
     } else if (/^\d+[\d.:]+\d+$/.test(host)) {
         ctx.txVars.hostType = 'ip';
     } else {

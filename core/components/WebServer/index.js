@@ -18,7 +18,6 @@ import WebSocket from './webSocket';
 import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes';
 
-import { setHttpCallback } from '@citizenfx/http-wrapper';
 import { convars, txEnv } from '@core/globalData';
 import WebCtxUtils from './ctxUtils.js';
 import router from './router';
@@ -229,14 +228,6 @@ export default class WebServer {
     setupServerCallbacks() {
         //Just in case i want to re-execute this function
         this.isListening = false;
-
-        //CitizenFX Callback
-        try {
-            setHttpCallback(this.httpCallbackHandler.bind(this, 'citizenfx'));
-        } catch (error) {
-            console.error('Failed to start Cfx.re Reverse Proxy Callback with error:');
-            console.dir(error);
-        }
 
         //HTTP Server
         try {
