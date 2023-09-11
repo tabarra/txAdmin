@@ -17,7 +17,7 @@
     "typecheck:core": "tsc -p core/tsconfig.json --noEmit",
     "typecheck:shared": "tsc -p shared/tsconfig.json --noEmit",
     "locale:rebase": "node scripts/locale-utils.js rebase",
-    "locale:diff": "node scripts/locale-utils.js diff",
+    "locale:check": "node scripts/locale-utils.js check",
     "lint": "eslint ./core/**",
     "lint:count": "eslint ./core/** -f ./scripts/lint-formatter.js",
     "lint:fix": "eslint ./core/** --fix"

@@ -321,7 +321,7 @@
                 "notes_placeholder": "Notatki dotyczące tego gracza..."
             },
             "history": {
-                "title": "Powiązana historia ",
+                "title": "Powiązana historia",
                 "btn_revoke": "UNIEWAŻNIJ",
                 "revoked_success": "Akcja unieważniona!",
                 "banned_by": "ZBANOWANY przez %{author}",
@@ -340,7 +340,7 @@
                 "months": "miesiące",
                 "permanent": "Permanentny",
                 "custom": "Własny",
-                "helper_text": "Wybierz czas trwania ",
+                "helper_text": "Wybierz czas trwania",
                 "submit": "Nałóż bana",
                 "reason_required": "Wymagany jest powód.",
                 "success": "Gracz został zbanowany!"

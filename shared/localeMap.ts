@@ -1,3 +1,5 @@
+//NOTE: Don't modify the structure of this file without updating the locale:check script.
+
 //Statically requiring languages because of the builders
 import lang_ar from "@locale/ar.json";
 import lang_bg from "@locale/bg.json";

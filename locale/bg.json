@@ -60,7 +60,7 @@
         "restarting_discord": "**%{servername}** се рестартира, (%{reason}).",
         "stopping": "Сървърът е спрян, (%{reason}).",
         "stopping_discord": "**%{servername}** сървърът се спира, (%{reason}).",
-        "spawning_discord": "**%{servername}** е пуснат. "
+        "spawning_discord": "**%{servername}** е пуснат."
     },
     "nui_warning": {
         "title": "ПРЕДУПРЕЖДЕНИЕ",
