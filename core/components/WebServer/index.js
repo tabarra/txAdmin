@@ -242,9 +242,10 @@ export default class WebServer {
         try {
             const listenErrorHandler = (error) => {
                 if (error.code !== 'EADDRINUSE') return;
-                console.error(`Failed to start HTTP server, port ${error.port} already in use.`);
+                console.error(`Failed to start HTTP server, port ${error.port} is already in use.`);
                 console.error('Maybe you already have another txAdmin running in this port.');
-                console.error('If you want to run multiple txAdmin, check the documentation for the port convar.');
+                console.error('If you want to run multiple txAdmin instances, check the documentation for the port convar.');
+                console.error('You can also try restarting the host machine.');
                 process.exit(1);
             };
             this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));

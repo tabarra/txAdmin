@@ -95,7 +95,7 @@ export default class Translator {
 
         } else {
             //If its an invalid language
-            throw new Error('Language not found.');
+            throw new Error(`Language '${lang}' not found.`);
         }
     }
 

@@ -181,6 +181,7 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
         url: '/changePassword',
         data: form,
         success: function (data) {
+            if (checkApiLogoutRefresh(data)) return;
             notify.update('progress', 0);
             notify.update('type', data.type);
             notify.update('message', data.message);

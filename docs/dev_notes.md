@@ -1,18 +1,141 @@
 # TODO:
 - [ ] add `cache-control` and/or `vary` to all pages
-
-> next up
-- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
-- [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
-    - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
-- [ ] Use q5/q95 from QuantileArrayOutput to help me define the buckets, then implement the join check time histogram
+- [ ] nui: show on the UI in red if the playerlist is stale with maybe a button to force refresh it
 - [ ] xxxxxx
 
+### Workspaces
+https://docs.npmjs.com/cli/v9/using-npm/workspaces?v=true
+https://www.youtube.com/watch?v=ZcgmlOaIiN0
+https://turbo.build/repo/docs/getting-started/add-to-project
 
-### Server resource scanner
-ScanResourceRoot('E:/FiveM/txData/default.base/', (data: object) => {
-    console.dir(data);
-})
+### Linter notes
+- Maybe prettier for all files except ts/js which could be in dprint
+- Use the tailwind sorter plugin
+- When running prettier, add ignore to the imported external files
+https://prettier.io/docs/en/integrating-with-linters.html
+https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
+
+
+### Improved scheduler precision
+Talvez mudar a abordagem pra ser uma array e toda vez que a distância até o primeiro item for zero, executar a ação e dar um shift nos valores?
+Exemplo:
+```js
+[
+    {time: "12:00", temp: false, skipped: false},
+    {time: "18:00", temp: false, skipped: false},
+    {time: "22:00", temp: false, skipped: false},
+]
+```
+Se a distância pro [0] for <= 0, executar restart e jogar o 12:00 pro final da array
+
+```js
+function scheduleNextExecution() {
+  const now = new Date();
+  const delay = 60 * 1000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 1000;
+
+  setTimeout(() => {
+    yourFunction(); // replace this with your function
+    scheduleNextExecution();
+  }, delay);
+}
+
+function yourFunction() {
+  console.log('Function fired at', new Date());
+}
+
+scheduleNextExecution();
+
+```
+https://www.npmjs.com/search?q=timer
+https://www.npmjs.com/search?ranking=popularity&q=scheduler
+https://www.npmjs.com/package/node-schedule
+
+
+
+
+### New Menus:
+- Global:
+    - Dashboard (big status + server management)
+    - Players
+    - Whitelist - global pq é difícil colocar por server, e os admins podem deixar 1 server whitelisted e outro publico
+    - Admins
+    - Settings
+    - System (dropdown?)
+        - Diagnostics
+        - Console Log
+        - Action Log
+    - Advanced (hidden)
+- Server:
+    - Live Console
+    - Resources
+    - History (new)
+    - Server Log
+    - CFG Editor
+    - Settings (cog besides name instead of menu item?)
+
+- Changes:
+    - remove master actions:
+        - reset fxserver - becomes server add/remove/edit
+        - clean database - "bulk changes" button at the players page
+        - revoke whitelists - button to whitelist pages
+
+
+### New pages:
+Overview:
+- ???
+
+Players:
+- list of players in a table
+- name + identifiers input
+- auto search with debouncer
+
+History:
+- list of warns/bans in a table
+- search by id OR identifier (single) with select box
+- filter by action type
+- filter by admin, and hotlink it from the admins page
+
+Whitelist:
+- maybe remove the wl pending join table
+- maybe make a "latest whitelists" showing both pending and members (query players + pending and join tables)
+- don't forget to keep the "add approval" button
+
+CFG Editor:
+- multiple cfg editors
+- add backup file to txdata, with the last 100 changes, name of the admin and timestamp
+
+
+
+### New UI stuff
+tentar usar vite
+react-query usar 100%
+procurar alternativas pro react-router (wouter/tanstack-router)
+https://auto-animate.formkit.com
+https://tanstack.com/virtual/v3
+
+jotai
+maybe xtate for complex states like setu/deployer
+
+For the tx ingame menu, replace actions grid with flexbox
+https://youtu.be/3elGSZSWTbM around 12:00
+outro video com template completo, sem  https://youtu.be/YVI-q3idGiM
+https://immerjs.github.io/immer/ maybe?
+
+if tailwind, check https://daisyui.com/docs/themes/
+https://ui.shadcn.com/
+https://huemint.com/website-2/
+https://realtimecolors.com/
+
+https://youtu.be/MnpuK0MK4yo
+
+cfxui colors:
+ext/cfx-ui/src/cfx/apps/mpMenu/styles/themes/fivem-dark.scss
+ext/cfx-ui/src/cfx/styles/_ui.scss
+
+- setup:
+    - don't ask for server data location, list txData subfolders and let the user pick or specify
+    - don't ask for cfg location, asume server.cfg and let the user change
+- instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
 
 
 ### Zod error parsing
@@ -30,11 +153,23 @@ if (error instanceof z.ZodError) {
 
 
 
-txAdmin:events:menuAction
-- player: number
-- action: string
-- data?: object
 
+### Tutorial discord bot:
+- Make tutorial with excalidraw?!
+- Parts:
+    - 
+- sometimes discord just bugs out, maybe kick the bot and invite him again
+- also ctrl+r to reload discord
+- tell them not to fuck up the placeholder
+- tell them the http/https limitation
+
+
+
+
+### Server resource scanner
+ScanResourceRoot('E:/FiveM/txData/default.base/', (data: object) => {
+    console.dir(data);
+})
 
 
 =======================================================================
@@ -93,15 +228,20 @@ teste:
     apertar f1 e ver se aparece a mensagem de perms
 
 # TODO: sooner than later
+- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
+- [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
+    - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
+- [ ] Use q5/q95 from QuantileArrayOutput to help me define the buckets, then implement the join check time histogram
 - [ ] server logger add events/min average
 - [ ] no duplicated id type in bans? preparing for the new db migration
-- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Behare that this is not trivial without also turning missing exec target read error also being error
+- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Beware that this is not trivial without also turning missing exec target read error also being error
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 
 
+
+
+
 =======================================================================
-
-
 
 > Maybe do this on the ban message page template
 ```css
@@ -129,40 +269,6 @@ background-position: right 15px bottom 15px;
 ```
 
 =======================================================================
-
-## New pages:
-Overview:
-- ???
-
-Players:
-- list of players in a table
-- name + identifiers input
-- auto search with debouncer
-
-History:
-- list of warns/bans in a table
-- search by id OR identifier (single) with select box
-- filter by action type
-- filter by admin, and hotlink it from the admins page
-
-Whitelist:
-- maybe remove the wl pending join table
-- maybe make a "latest whitelists" showing both pending and members (query players + pending and join tables)
-- don't forget to keep the "add approval" button
-
-CFG Editor:
-- multiple cfg editors
-- add backup file to txdata, with the last 100 changes, name of the admin and timestamp
-
-
-
-## The Big Things before ts+react rewrite:
-- [x] in-core playerlist state tracking
-- [x] new proxy console util
-- [x] global socket.io connection for playerlist + async responses
-- [ ] new config (prepared for multiserver)
-- [ ] multiserver tx instance (backend only)
-
 
 ## New config
 - july 2023: consider that some vars will be used in more than one component, so making them live in one or another might not be good
@@ -205,7 +311,6 @@ const defaults = {
 - maybe components don't even need to hold a `this.config`? couldn't we just access it directly from the vault?
 - need to keep in mind that many configs are used in the webroutes, so maybe just `txAdmin.config.xxx` and `ServerInstance.config.xxx`?
 - 'convict' was the name of that one lib
-
 
 
 ### old settings refactor note:
@@ -333,24 +438,30 @@ march/2023 insight:
         - say "you cant run two tx on the same txdata, open <url> to visit the other one"
 
 
+### Adaptive cards system
+- Does not require the new ace system or the API
+- Resources can register their adaptive cards interface which will show in the tx nui main tab, or as a player card tab
+- The resources add a `ui_cards` definition to their `fxmanifest.lua` which is scanned by txadmin
+- When an admin clicks on the button added, it will send a event through stdin to the tx resource which will verify caller and then call the resource export with the required context (eg. player id, admin name, etc). The exported function returns an adaptive card which is sent to txAdmin through fd3.
+- This allows for resources to add their own UI to txAdmin, which supports buttons, inputs, etc
+- cfx reference: `ext/cfx-ui/src/cfx/apps/mpMenu/parts/LegacyConnectingModal/AdaptiveCardPresenter/AdaptiveCardPresenter.tsx`
 
-### New UI stuff
-tentar usar vite
-react-query usar 100%
-procurar alternativas pro react-router (wouter)
-https://auto-animate.formkit.com
-https://tanstack.com/virtual/v3
-
-For the tx ingame menu, replace actions grid with flexbox
-https://youtu.be/3elGSZSWTbM around 12:00
-outro video com template completo, sem  https://youtu.be/YVI-q3idGiM
-https://immerjs.github.io/immer/ maybe?
-
-if tailwind, check https://daisyui.com/docs/themes/
-https://ui.shadcn.com/
-https://huemint.com/website-2/
-
-https://youtu.be/MnpuK0MK4yo
+```lua
+ui_cards 'list' {
+    ['playerInfo'] = {
+        title = 'RP Info',
+        type = 'player', --show in player card
+    },
+    ['generalStatsNui'] = {
+        title = 'RP Stats',
+        type = 'mainmenu', --show in nui main menu
+    },
+    ['generalStatsWeb'] = {
+        title = 'RP Stats',
+        type = 'web', --show in the web panel
+    },
+}
+```
 
 
 ### Update Event + Rollout strategy
