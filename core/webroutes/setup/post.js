@@ -111,7 +111,7 @@ async function handleValidateRecipeURL(ctx) {
     try {
         const recipeText = await got.get({
             url: recipeURL,
-            timeout: 4500,
+            timeout: { request: 4500 }
         }).text();
         if (typeof recipeText !== 'string') throw new Error('This URL did not return a string.');
         const recipe = parseValidateRecipe(recipeText);
@@ -330,7 +330,7 @@ async function handleSaveDeployerImport(ctx) {
     try {
         recipeText = await got.get({
             url: recipeURL,
-            timeout: 4500,
+            timeout: { request: 4500 }
         }).text();
         if (typeof recipeText !== 'string') throw new Error('This URL did not return a string.');
     } catch (error) {

@@ -54,7 +54,7 @@ async function handleResetFXServer(ctx: Context) {
 
     if (fxRunner.fxChild !== null) {
         ctx.utils.logCommand('STOP SERVER');
-        fxRunner.killServer('resetting fxserver config', ctx.session.auth.username, false).catch();
+        fxRunner.killServer('resetting fxserver config', ctx.session.auth.username, false).catch((e) => {});
     }
 
     //Making sure the deployer is not running

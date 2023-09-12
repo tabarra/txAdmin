@@ -496,10 +496,26 @@
                                 >
                                     <i class="icon-pencil"></i> Change Config JSON
                                 </button>
-                                <textarea id="frmDiscord-statusEmbedJson" class="d-none"><%= discord.embedJson || '' %></textarea>
-                                <textarea id="frmDiscord-statusEmbedConfigJson" class="d-none"><%= discord.embedConfigJson || '' %></textarea>
-                                <textarea id="frmDiscord-statusEmbedJsonDefault" class="d-none"><%= defaults.discord.embedJson || '' %></textarea>
-                                <textarea id="frmDiscord-statusEmbedConfigJsonDefault" class="d-none"><%= defaults.discord.embedConfigJson || '' %></textarea>
+                                <textarea
+                                    id="frmDiscord-statusEmbedJson"
+                                    class="d-none"
+                                    autocomplete="off"
+                                ><%= discord.embedJson || '' %></textarea>
+                                <textarea
+                                    id="frmDiscord-statusEmbedConfigJson"
+                                    class="d-none"
+                                    autocomplete="off"
+                                ><%= discord.embedConfigJson || '' %></textarea>
+                                <textarea
+                                    id="frmDiscord-statusEmbedJsonDefault"
+                                    class="d-none"
+                                    autocomplete="off"
+                                ><%= defaults.discord.embedJson || '' %></textarea>
+                                <textarea
+                                    id="frmDiscord-statusEmbedConfigJsonDefault"
+                                    class="d-none"
+                                    autocomplete="off"
+                                ><%= defaults.discord.embedConfigJson || '' %></textarea>
                                 <span class="form-text text-muted">
                                     The server status embed is customizable by editing the two JSONs above. <br>
                                     <strong>Note:</strong> Use the command <code>/status add</code> on a channel that the bot has the "Send Message" permission to setup the embed.
@@ -905,15 +921,17 @@
     discEls.saveBtn.addEventListener('click', (e) => {
         if(jsonBeingEdited){
             const editorData = window.CMInstance.getValue();
-            try {
-                const parsed = JSON.parse(editorData);
-            } catch (error) {
-                const notify = $.notify(
-                    {message: `<b>Invalid JSON:</b><br>${error.message}`}, 
-                    {type: 'danger'}
-                );
-                return;
-            }
+            //NOTE: don't need this anymore since we are using jsonrepair on the backend
+            //It would be better to use it on the frontend, but no react, no luck.
+            // try {
+            //     const parsed = JSON.parse(editorData);
+            // } catch (error) {
+            //     const notify = $.notify(
+            //         {message: `<b>Invalid JSON:</b><br>${error.message}`}, 
+            //         {type: 'danger'}
+            //     );
+            //     return;
+            // }
             jsonBeingEdited.value = window.CMInstance.getValue();
             jsonBeingEdited = false;
         }
@@ -947,18 +965,23 @@
         if (data.enabled && (!data.token.length || !data.guild.length || !data.embedJson.length || !data.embedConfigJson.length)) {
             return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
         }
-        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const { notify , progressTimerId } = startHoldingNotify('Saving');
 
         txAdminAPI({
             type: "POST",
             url: '/settings/save/discord',
             data: data,
-            tiemout: REQ_TIMEOUT_LONG,
+            timeout: REQ_TIMEOUT_REALLY_REALLY_LONG,
             success: function (data) {
+                clearInterval(progressTimerId);
                 if (checkApiLogoutRefresh(data)) return;
                 updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {
+                clearInterval(progressTimerId);
+                message = (message === 'timeout')
+                    ? 'The Discord API is taking too much time to respond.'
+                    : `XHR Error: ${message}`;
                 notify.update('progress', 0);
                 notify.update('type', 'danger');
                 notify.update('message', message);

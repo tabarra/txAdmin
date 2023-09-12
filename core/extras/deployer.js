@@ -94,7 +94,6 @@ export const parseValidateRecipe = (rawRecipe) => {
     const outRecipe = {
         raw: rawRecipe.trim(),
         name: toDefault(recipe.name, 'unnamed').trim(),
-        version: toDefault(recipe.version, '').trim(),
         author: toDefault(recipe.author, 'unknown').trim(),
         description: toDefault(recipe.description, '').trim(),
         variables: {},
@@ -260,7 +259,6 @@ export class Deployer {
         contextVariables.serverName = this.serverName;
         contextVariables.recipeName = this.recipe.name;
         contextVariables.recipeAuthor = this.recipe.author;
-        contextVariables.recipeVersion = this.recipe.version;
         contextVariables.recipeDescription = this.recipe.description;
 
         //Run all the tasks

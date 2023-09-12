@@ -36,7 +36,6 @@ export default async function DeployerStepper(ctx) {
         renderData.recipe = {
             isTrustedSource: globals.deployer.isTrustedSource,
             name: globals.deployer.recipe.name,
-            version: globals.deployer.recipe.version,
             author: globals.deployer.recipe.author,
             description: globals.deployer.recipe.description,
             raw: globals.deployer.recipe.raw,

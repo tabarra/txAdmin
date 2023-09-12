@@ -61,22 +61,6 @@ export default async function AdvancedActions(ctx) {
             memory = 'error';
         }
         return ctx.send({ type: 'success', message: memory });
-    } else if (action == 'joinCheckHistory') {
-        let outData;
-        try {
-            const currTime = Date.now();
-            const log = globals.databus.joinCheckHistory.map((e) => {
-                return {
-                    when: humanizeDuration(currTime - e.ts, { round: true }),
-                    playerName: e.playerName,
-                    idArray: e.idArray,
-                };
-            });
-            outData = JSON.stringify(log, null, 2);
-        } catch (error) {
-            outData = error.message;
-        }
-        return ctx.send({ type: 'success', message: outData });
     } else if (action == 'freeze') {
         console.warn('Freezing process for 50 seconds.');
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50 * 1000);
@@ -105,6 +89,9 @@ export default async function AdvancedActions(ctx) {
         return ctx.send({ type: 'success', message: JSON.stringify(outData, null, 2) });
     } else if (action == 'getProcessEnv') {
         return ctx.send({ type: 'success', message: JSON.stringify(process.env, null, 2) });
+    } else if (action == 'setHbDataTracking') {
+        globals.tmpSetHbDataTracking = true;
+        return ctx.send({ type: 'success', message: 'done' });
     } else if (action == 'xxxxxx') {
         // const res = globals.playerDatabase.xxxxx();
         // console.dir(res);

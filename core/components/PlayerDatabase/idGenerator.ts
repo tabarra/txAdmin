@@ -88,7 +88,7 @@ export const genWhitelistRequestID = (storage: IdStorageTypes) => {
         }
     }
 
-    printDiagnostics().catch();
+    printDiagnostics().catch((e) => {});
     throw new Error(noIdErrorMessage);
 };
 
@@ -109,6 +109,6 @@ export const genActionID = (storage: IdStorageTypes, actionType: string) => {
         }
     }
 
-    printDiagnostics().catch();
+    printDiagnostics().catch((e) => {});
     throw new Error(noIdErrorMessage);
 };

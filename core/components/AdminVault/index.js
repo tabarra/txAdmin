@@ -331,7 +331,7 @@ export default class AdminVault {
 
         //Saving admin file
         this.admins.push(admin);
-        this.refreshOnlineAdmins().catch();
+        this.refreshOnlineAdmins().catch((e) => {});
         try {
             return await this.writeAdminsFile();
         } catch (error) {
@@ -388,7 +388,7 @@ export default class AdminVault {
         if (typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch();
+        this.refreshOnlineAdmins().catch((e) => {});
         try {
             await this.writeAdminsFile();
             return (password !== null) ? this.admins[adminIndex].password_hash : true;
@@ -423,7 +423,7 @@ export default class AdminVault {
         this.admins[adminIndex].providers[provider].data = providerData;
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch();
+        this.refreshOnlineAdmins().catch((e) => {});
         try {
             return await this.writeAdminsFile();
         } catch (error) {
@@ -453,7 +453,7 @@ export default class AdminVault {
         if (!found) throw new Error('Admin not found');
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch();
+        this.refreshOnlineAdmins().catch((e) => {});
         try {
             return await this.writeAdminsFile();
         } catch (error) {
@@ -538,7 +538,7 @@ export default class AdminVault {
         }
 
         this.admins = jsonData;
-        this.refreshOnlineAdmins().catch();
+        this.refreshOnlineAdmins().catch((e) => {});
         if (migrated) {
             try {
                 await this.writeAdminsFile();

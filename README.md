@@ -24,7 +24,6 @@
 ## Main Features
 - Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
 - Start/Stop/Restart your server instance or resources
-- Server tick time performance chart ([example](https://i.imgur.com/VG8hpzr.gif))
 - Full-featured in-game admin menu:
 	- Player Mode: NoClip, God, SuperJump
 	- Teleport:  waypoint, coords and back
@@ -36,7 +35,7 @@
 	- Player search/sort by distance, ID, name
 	- Player interactions: Go To, Bring, Spectate, Freeze
 	- Player troll: make drunk, set fire, wild attack
-	- Player ban
+	- Player ban/warn/dm
 - Access control:
 	- Login via Password or CitizenFX
 	- Admin permission system ([more info](docs/permissions.md))
@@ -47,10 +46,10 @@
 	- Command to whitelist players
 	- Command to display player infos
 - Monitoring:
-	- Auto Restart FXServer on crash
+	- Auto Restart FXServer on crash or hang
 	- Server’s CPU/RAM consumption
 	- Live Console (with log file and command history)
-	- Online players chart
+	- Server tick time performance chart with player count ([example](https://i.imgur.com/VG8hpzr.gif))
 	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/custom_serverlog.md))
 - Player Manager:
 	- [Warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E)
@@ -105,4 +104,3 @@ ConVar usage **example** for different port and profile:
 - [Announcement Sound](https://freesound.org/people/IENBA/sounds/545495/) made by IENBA is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
 - [Message Sound](https://freesound.org/people/Divinux/sounds/198414/) made by Divinux is licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/);
 - Special thanks to everyone that contributed to this project, specially the very fine Discord folks that provide support for others;
-- Also thanks to our Discord's `sky{something}` bot, who will hopefully spare us when he becomes self aware and rebels against humanity. 

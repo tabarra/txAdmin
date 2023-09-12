@@ -6,7 +6,7 @@ The event name will be `txAdmin:events:<name>` and the first (and only) paramete
 
 
 ## txAdmin:events:scheduledRestart (v3.2)
-Broadcasted automatically `[30, 15, 10, 5, 4, 3, 2, 1]` minutes before a scheduled restart, as well as the times configured in the settings page.  
+Broadcasted automatically `[30, 15, 10, 5, 4, 3, 2, 1]` minutes before a scheduled restart.  
 Can be used with the convar `txAdmin-hideDefaultScheduledRestartWarning` to display a custom warning notification.  
 Event Data:
 - `secondsRemaining`: The number of seconds before the scheduled restart.  
@@ -148,3 +148,11 @@ Event Data:
 - `requestId?`: The request ID (eg. `Rxxxx`), except when action is `deniedAll`.
 - `license?`: The license of the player/requester, except when action is `deniedAll`.
 - `adminName?`: Name of the admin that performed the action, except when action is `requested`.
+
+## txAdmin:events:adminAuth (v6.0.1)
+Broadcasted whenever an admin is authenticated in game, or loses the admin permissions.  
+This event is particularly useful for anti-cheats to be able to ignore txAdmin admins.  
+Event Data:
+- `netid` (number): The ID of the player or -1 when revoking the permission of all admins (forced reauth).
+- `isAdmin` (boolean): If the player is an admin or not.
+- `username?` (string): The txAdmin username of the admin that was just authenticated.

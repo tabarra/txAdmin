@@ -225,7 +225,6 @@ local function boostVehicleFivem()
     setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5); --testar, o certo é 0~1
 
     playLibrarySound('confirm')
-    SetVehicleNumberPlateText(veh, "TX B00ST")
     SetVehicleCanBreak(veh, false) -- If this is set to false, the vehicle simply can't break
     SetVehicleEngineCanDegrade(veh, false) -- Engine strong
     SetVehicleMod(veh, 15, 3, false) -- Max Suspension

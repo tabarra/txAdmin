@@ -269,17 +269,25 @@ async function txApiFxserverControl(action) {
     if (action !== 'start' && !await txAdminConfirm(confirmOptions)) {
         return;
     }
-    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+    const messageMap = {
+        start: 'Starting server',
+        stop: 'Stopping server',
+        restart: 'Restarting server',
+    }
+    const { notify , progressTimerId } = startHoldingNotify(messageMap[action]);
+
     txAdminAPI({
         url: '/fxserver/controls',
         type: 'POST',
         data: {action},
-        timeout: REQ_TIMEOUT_LONG,
+        timeout: REQ_TIMEOUT_REALLY_REALLY_LONG,
         success: function (data) {
+            clearInterval(progressTimerId);
             if (checkApiLogoutRefresh(data)) return;
             updateMarkdownNotification(data, notify);
         },
         error: function (xmlhttprequest, textstatus, message) {
+            clearInterval(progressTimerId);
             notify.update('progress', 0);
             notify.update('type', 'danger');
             notify.update('message', message);

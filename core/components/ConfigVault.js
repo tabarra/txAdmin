@@ -163,6 +163,7 @@ export default class ConfigVault {
                 onesync: toDefault(cfg.fxRunner.onesync, null),
                 autostart: toDefault(cfg.fxRunner.autostart, null),
                 restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
+                shutdownNoticeDelay: toDefault(cfg.fxRunner.shutdownNoticeDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
 
@@ -246,7 +247,8 @@ export default class ConfigVault {
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
-            cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in template
+            cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 750; //not in template
+            cfg.fxRunner.shutdownNoticeDelay = parseInt(cfg.fxRunner.shutdownNoticeDelay) || 5; //not in template
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
             console.verbose.dir(error);

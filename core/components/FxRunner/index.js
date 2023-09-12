@@ -1,7 +1,7 @@
 const modulename = 'FXRunner';
 import { spawn } from 'child_process';
 import path from 'path';
-import { promisify } from 'util';
+import { setTimeout as sleep } from 'timers/promises';
 import { parseArgsStringToArgv } from 'string-argv';
 import StreamValues from 'stream-json/streamers/StreamValues';
 
@@ -17,7 +17,6 @@ const genMutex = customAlphabet(dict51, 5);
 
 
 //Helpers
-const sleep = promisify((a, f) => setTimeout(f, a));
 const now = () => { return Math.round(Date.now() / 1000); };
 const escape = (x) => { return x.toString().replace(/"/g, '\uff02'); };
 const formatCommand = (cmd, ...params) => {
@@ -42,12 +41,17 @@ const getMutableConvars = (isCmdLine = false) => {
         [`${p}set`, 'txAdmin-hideDefaultScheduledRestartWarning', globals.config.hideDefaultScheduledRestartWarning],
     ];
 };
-const SHUTDOWN_NOTICE_DELAY = 5000;
 
 
 export default class FXRunner {
     constructor(txAdmin, config) {
         this.config = config;
+
+        //Checking config validity
+        if (this.config.shutdownNoticeDelay < 0 || this.config.shutdownNoticeDelay > 30) {
+            throw new Error('The fxRunner.shutdownNoticeDelay setting must be between 0 and 30 seconds.');
+        }
+
         this.spawnVariables = null;
         this.fxChild = null;
         this.restartDelayOverride = 0;
@@ -292,8 +296,8 @@ export default class FXRunner {
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
-            console.verbose.warn(`FD3 decode error: ${data.message}`);
-            globals.databus.txStatsData.lastFD3Error = data.message;
+            //NOTE: this should be verbose warn, but since i've never seen it happen, let's see if someone reports it.
+            console.error(`FD3 decode error: ${data.message}`);
         });
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler, this.currentMutex));
 
@@ -343,7 +347,7 @@ export default class FXRunner {
         try {
             //Prevent concurrent restart request
             const msTimestamp = Date.now();
-            if (msTimestamp - this.lastKillRequest < SHUTDOWN_NOTICE_DELAY) {
+            if (msTimestamp - this.lastKillRequest < this.config.shutdownNoticeDelay * 1000) {
                 return 'Restart already in progress.';
             } else {
                 this.lastKillRequest = msTimestamp;
@@ -357,7 +361,7 @@ export default class FXRunner {
                 reason: reason ?? 'no reason provided',
             };
             this.sendEvent('serverShuttingDown', {
-                delay: SHUTDOWN_NOTICE_DELAY,
+                delay: this.config.shutdownNoticeDelay * 1000,
                 author: author ?? 'txAdmin',
                 message: globals.translator.t(`server_actions.${messageType}`, tOptions),
             });
@@ -370,7 +374,8 @@ export default class FXRunner {
             });
 
             //Awaiting restart delay
-            await sleep(SHUTDOWN_NOTICE_DELAY);
+            //The 250 is so at least everyone is kicked from the server
+            await sleep(250 + this.config.shutdownNoticeDelay * 1000);
 
             //Stopping server
             if (this.fxChild !== null) {

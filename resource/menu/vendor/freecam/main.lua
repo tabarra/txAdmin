@@ -149,7 +149,7 @@ end
 
 -- When the resource is stopped, make sure to return the camera to the player.
 AddEventHandler('onResourceStop', function (resourceName)
-  if resourceName == GetCurrentResourceName() then
+  if resourceName == "monitor" then
     SetFreecamActive(false)
   end
 end)

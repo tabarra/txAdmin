@@ -3,10 +3,11 @@
 //============================================= Settings & Helpers
 //================================================================
 //Settings & constants
-const REQ_TIMEOUT_SHORT = 1500;
-const REQ_TIMEOUT_MEDIUM = 5000;
-const REQ_TIMEOUT_LONG = 9000;
-const REQ_TIMEOUT_REALLY_LONG = 13000;
+const REQ_TIMEOUT_SHORT = 1_500;
+const REQ_TIMEOUT_MEDIUM = 5_000;
+const REQ_TIMEOUT_LONG = 9_000;
+const REQ_TIMEOUT_REALLY_LONG = 15_000;
+const REQ_TIMEOUT_REALLY_REALLY_LONG = 30_000;
 const SPINNER_HTML = '<div class="txSpinner">Loading...</div>';
 
 //Helpers
@@ -139,7 +140,7 @@ const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
     if (anyUndefined(type, url)) return false;
 
     url = TX_BASE_PATH + url;
-    timeout = timeout || REQ_TIMEOUT_MEDIUM;
+    timeout = timeout ?? REQ_TIMEOUT_MEDIUM;
     dataType = dataType || 'json';
     success = success || (() => {});
     error = error || (() => {});
@@ -172,7 +173,7 @@ const txAdminConfirm = ({content, confirmBtnClass, modalColor, title}) => {
                 cancel: () => {resolve(false);},
                 confirm:  {
                     btnClass: confirmBtnClass || 'btn-red',
-                    keys: ['enter'],
+                    keys: ['Enter', 'NumpadEnter'],
                     action: () => {resolve(true);},
                 },
             },
@@ -224,6 +225,25 @@ const txAdminPrompt = ({
         });
     });
 };
+
+//Starts a notify which is expected to take long
+//This notify will keep being updated by adding dots at the end
+const startHoldingNotify = (awaitingMessage) => {
+    const holdingHtml = (secs) => {
+        const extraDots = '.'.repeat(secs);
+        return `<p class="text-center">${awaitingMessage}${extraDots}</p>`;
+    }
+
+    const notify = $.notify({ message: holdingHtml(0) }, {});
+    let waitingSeconds = 0;
+    const progressTimerId = setInterval(() => {
+        waitingSeconds++;
+        notify.update('message', holdingHtml(waitingSeconds));
+        notify.update('progress', 0);
+    }, 1000);
+
+    return {notify, progressTimerId};
+} 
 
 
 //================================================================

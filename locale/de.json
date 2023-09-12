@@ -19,7 +19,7 @@
         "reject": {
             "title_permanent": "Du wurdest permanent von diesem Server gebannt.",
             "title_temporary": "Du wurdest temporär von diesem Server gebannt.",
-            "label_expiration": "Dein Bann läuft aus in",
+            "label_expiration": "Dein Bann läuft ab in",
             "label_date": "Bann-Datum",
             "label_author": "Gebannt von",
             "label_reason": "Grund",
@@ -36,13 +36,13 @@
         },
         "guild_member": {
             "mode_title": "Dieser Server befindet sich im <strong>Discord-Whitelist</strong> Modus.",
-            "insufficient_ids": "Es konnte kein <code>discord</code> Identifier bei dir gefunden werden. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "insufficient_ids": "Es konnte kein <code>discord</code> Identifier bei dir gefunden werden. Bitte öffne die Discord-App und versuche es erneut (Die Web-App wird nicht unterstützt).",
             "deny_title": "Du musst auf unserem Discord-Server sein, um dich verbinden zu können.",
             "deny_message": "Bitte trete unserem Discord %{guildname} bei und versuche es erneut."
         },
         "guild_roles": {
             "mode_title": "Dieser Server befindet sich im <strong>Discord-Rollen-Whitelist</strong> Modus.",
-            "insufficient_ids": "Es konnte kein <code>discord</code> Identifier bei dir gefunden werden. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "insufficient_ids": "Es konnte kein <code>discord</code> Identifier bei dir gefunden werden. Bitte öffne die Discord-App und versuche es erneut (Die Web-App wird nicht unterstützt).",
             "deny_notmember_title": "Du musst auf unserem Discord-Server sein und die nötige Rolle haben, um dich verbinden zu können.",
             "deny_notmember_message": "Bitte trete unserem Discord %{guildname} bei und hole dir die erforderliche(n) Rolle(n). Versuche dich anschließend erneut zu verbinden.",
             "deny_noroles_title": "Du hast nicht die erforderliche(n) Rolle(n), um dich verbinden zu können.",
@@ -71,7 +71,7 @@
         "misc": {
             "help_message": "txAdmin Menü aktiviert, tippe /tx ein, um es zu öffnen.\nDu kannst zusätzlich in den Einstellungen eine Taste zuweisen [Einstellungen > Steuerung > FiveM > txAdmin].",
             "menu_not_admin": "Deine IDs stimmen mit keiner bei txAdmin registrierten überein.\n Wenn du bei txAdmin registriert bist, stelle sicher, dass die richtigen IDs gespeichert sind.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
+            "menu_auth_failed": "Authentifizierung vom txAdmin Menü fehlgeschlagen. Grund: %{reason}.",
             "no_perms": "Dafür hast du keine Berechtigung.",
             "unknown_error": "Ein unbekannter Fehler ist aufgetreten.",
             "not_enabled": "Das txAdmin Menü ist nicht aktiviert. Du kannst es in den txAdmin Einstellungen aktivieren.",
@@ -290,7 +290,7 @@
                         "spectate_failed": "Der Spieler konnte nicht beobachtet werden! Beobachtung abgebrochen.",
                         "spectate_yourself": "Du kannst dich nicht selbst beobachten",
                         "freeze_yourself": "Du kannst dich nicht selbst einfrieren",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Es gibt keine Spieler auf die gewechselt werden kann."
                     }
                 },
                 "troll": {
@@ -327,8 +327,8 @@
                 "banned_by": "GEBANNT von %{author}",
                 "warned_by": "VERWARNT von %{author}",
                 "revoked_by": "RÜCKGÄNGIG GEMACHT von %{author}.",
-                "expired_at": "Ausgelaufen am %{date}.",
-                "expires_at": "Läuft aus am %{date}."
+                "expired_at": "Abgelaufen am %{date}.",
+                "expires_at": "Läuft ab am %{date}."
             },
             "ban": {
                 "title": "Spieler bannen",

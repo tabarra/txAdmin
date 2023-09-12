@@ -22,7 +22,6 @@ export default class HealthMonitor {
         //NOTE: done mainly because the timeout/limit was never useful, and makes things more complicated
         this.hardConfigs = {
             timeout: 1500,
-            defaultWarningTimes: [30, 15, 10, 5, 4, 3, 2, 1],
 
             //HTTP GET /dynamic.json from txAdmin to sv_main.lua
             healthCheck: {
@@ -34,7 +33,7 @@ export default class HealthMonitor {
             heartBeat: {
                 failThreshold: 15,
                 failLimit: 60,
-                resStartedCooldown: 30, //wait for HB up to 30 seconds after last resource started
+                resStartedCooldown: 45, //wait for HB up to 45 seconds after last resource started
             },
         };
 
@@ -90,7 +89,7 @@ export default class HealthMonitor {
     setCurrentStatus(newStatus) {
         if(newStatus !== this.currentStatus){
             this.currentStatus = newStatus;
-            globals.discordBot.updateStatus().catch();
+            globals.discordBot.updateStatus().catch((e) => {});
             globals.webServer?.webSocket.pushRefresh('status');
         }
     }
@@ -124,9 +123,13 @@ export default class HealthMonitor {
         let dynamicResp;
         const requestOptions = {
             url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
-            timeout: this.hardConfigs.timeout,
             maxRedirects: 0,
-            retry: { limit: 0 },
+            timeout: {
+                request: this.hardConfigs.timeout
+            },
+            retry: {
+                limit: 0
+            },
         };
         try {
             const data = await got.get(requestOptions).json();
@@ -179,8 +182,6 @@ export default class HealthMonitor {
         const currTimestamp = now();
         const elapsedRefreshStatus = currTimestamp - this.lastRefreshStatus;
         if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
-            globals.databus.txStatsData.monitorStats.freezeSeconds.push(elapsedRefreshStatus - 1);
-            if (globals.databus.txStatsData.monitorStats.freezeSeconds.length > 30) globals.databus.txStatsData.monitorStats.freezeSeconds.shift();
             console.error(`FXServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
             console.error('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
@@ -228,7 +229,7 @@ export default class HealthMonitor {
         //Check if fxChild is closed, in this case no need to wait the failure count
         const processStatus = globals.fxRunner.getStatus();
         if (processStatus == 'closed') {
-            globals.databus.txStatsData.monitorStats.restartReasons.close++;
+            globals.statisticsManager.registerFxserverRestart('close');
             this.restartFXServer(
                 'server close detected',
                 globals.translator.t('restarter.crash_detected'),
@@ -319,14 +320,14 @@ export default class HealthMonitor {
                     );
                 }
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
-                //FIXME: se der hand tanto HB quanto HC, ele ainda sim cai nesse caso
-                globals.databus.txStatsData.monitorStats.restartReasons.healthCheck++;
+                //FIXME: se der hang tanto HB quanto HC, ele ainda sim cai nesse caso
+                globals.statisticsManager.registerFxserverRestart('healthCheck');
                 this.restartFXServer(
                     'server partial hang detected',
                     globals.translator.t('restarter.hang_detected'),
                 );
             } else {
-                globals.databus.txStatsData.monitorStats.restartReasons.heartBeat++;
+                globals.statisticsManager.registerFxserverRestart('heartBeat');
                 this.restartFXServer(
                     'server hang detected',
                     globals.translator.t('restarter.hang_detected'),
@@ -345,7 +346,7 @@ export default class HealthMonitor {
                 && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
                 && tsNow - this.lastSuccessfulFD3HeartBeat < 5
             ) {
-                globals.databus.txStatsData.monitorStats.heartBeatStats.httpFailed++;
+                globals.statisticsManager.registerFxserverRestart('http');
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
         } else if (source === 'http') {
@@ -354,7 +355,7 @@ export default class HealthMonitor {
                 && tsNow - this.lastSuccessfulFD3HeartBeat > 15
                 && tsNow - this.lastSuccessfulHTTPHeartBeat < 5
             ) {
-                globals.databus.txStatsData.monitorStats.heartBeatStats.fd3Failed++;
+                globals.statisticsManager.registerFxserverRestart('fd3');
             }
             this.lastSuccessfulHTTPHeartBeat = tsNow;
         }

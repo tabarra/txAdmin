@@ -61,7 +61,7 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
         //Get interaction
         const handler = handlers[interaction.commandName as keyof typeof handlers];
         if (!handler) {
-            noHandlerResponse(interaction).catch();
+            noHandlerResponse(interaction).catch((e) => {});
             return;
         }
         txAdmin.statisticsManager.botCommands.count(interaction.commandName);
@@ -79,5 +79,5 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
     }
 
     //Unknown type
-    noHandlerResponse(interaction).catch();
+    noHandlerResponse(interaction).catch((e) => {});
 };

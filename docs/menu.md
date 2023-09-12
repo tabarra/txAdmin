@@ -62,7 +62,7 @@ Convars configured in the settings page should not be set manually.
 - Usage: `+setr txAdmin-debugMode true`
 
 **txAdmin-menuPlayerIdDistance**
-- Description: The distance in which Player IDs become visible, if toggled on.
+- Description: The distance in which Player IDs become visible, if toggled on. Note that the game engine limits to show tags that are only closer than ~300m, so increasing the number above that might be useless. 
 - Default: 150
 - Usage: `+setr txAdmin-menuPlayerIdDistance 100`
 

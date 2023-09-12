@@ -2,9 +2,10 @@ const modulename = 'WebServer:SettingsSave';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import slash from 'slash';
+import { Context } from 'koa';
+import { jsonrepair } from 'jsonrepair';
 import { parseSchedule, anyUndefined } from '@core/extras/helpers';
 import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
-import { Context } from 'koa';
 import ConfigVault from '@core/components/ConfigVault';
 import DiscordBot from '@core/components/DiscordBot';
 import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
@@ -373,19 +374,25 @@ async function handleDiscord(ctx: Context) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
-    //Prepare body input
-    const cfg = {
-        enabled: (ctx.request.body.enabled === 'true'),
-        token: ctx.request.body.token.trim(),
-        guild: ctx.request.body.guild.trim(),
-        announceChannel: ctx.request.body.announceChannel.trim(),
-        embedJson: ctx.request.body.embedJson.trim(),
-        embedConfigJson: ctx.request.body.embedConfigJson.trim(),
-    };
+    //Handle validate/repair JSONS
+    let embedJson, embedConfigJson, whichJson;
+    try {
+        whichJson = 'Embed JSON';
+        embedJson = jsonrepair(ctx.request.body.embedJson.trim());
+
+        whichJson = 'Embed Config JSON';
+        embedConfigJson = jsonrepair(ctx.request.body.embedConfigJson.trim());
+    } catch (error) {
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Invalid ${whichJson}:**\n${(error as Error).message}`,
+        });
+    }
 
     //Validating embed JSONs
     try {
-        generateStatusMessage(globals.txAdmin, cfg.embedJson, cfg.embedConfigJson);
+        generateStatusMessage(globals.txAdmin, embedJson, embedConfigJson);
     } catch (error) {
         return ctx.send({
             type: 'danger',
@@ -393,6 +400,16 @@ async function handleDiscord(ctx: Context) {
             message: `**Embed validation failed:**\n${(error as Error).message}`,
         });
     }
+
+    //Prepare body input
+    const cfg = {
+        enabled: (ctx.request.body.enabled === 'true'),
+        token: ctx.request.body.token.trim(),
+        guild: ctx.request.body.guild.trim(),
+        announceChannel: ctx.request.body.announceChannel.trim(),
+        embedJson,
+        embedConfigJson,
+    };
 
     //Preparing & saving config
     const newConfig = configVault.getScopedStructure('discordBot');
@@ -437,9 +454,12 @@ async function handleDiscord(ctx: Context) {
             - **Bot is not in the guild/server:** you need to [INVITE THE BOT](${inviteUrl}) to join the server.
             - **Wrong bot:** you may be using the token of another discord bot.`;
         } else if (errorCode === 'DangerousPermission') {
-            extraContext = `Please keep in mind that:
+            extraContext = `You need to remove the permissions listed above to be able to enable this bot.
+            This should be done in the Discord Server role configuration page and not in the Dev Portal.
+            Check every single role that the bot has in the server.
+
+            Please keep in mind that:
             - These permissions are dangerous because if the bot token leaks, an attacker can cause permanent damage to your server.
-            - You need to remove the permissions listed above to be able to enable this bot.
             - No bot should have more permissions than strictly needed, specially \`Administrator\`.
             - You should never have multiple bots using the same token, create a new one for each bot.`;
         }

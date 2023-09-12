@@ -7,10 +7,10 @@
         "start_timeout": "não iniciou a tempo",
         "crash_detected": "crash detectado",
         "hang_detected": "congelamento detectado",
-        "partial_hang_warn": "Devido a um congelamento parcial, este servidor será reiniciado em 1 minuto. Por favor se disconecte agora.",
+        "partial_hang_warn": "Devido a um congelamento parcial, este servidor será reiniciado em 1 minuto. Por favor, desconecte-se agora.",
         "partial_hang_warn_discord": "Devido a um congelamento parcial, **%{servername}** será reiniciado em 1 minuto.",
         "schedule_reason": "agendado para %{time}",
-        "schedule_warn": "Este servidor está agendado para reiniciar em %{smart_count} minuto. Por favor se disconecte agora. |||| Este servidor está agendado para reiniciar em %{smart_count} minutos.",
+        "schedule_warn": "Este servidor está agendado para reiniciar em %{smart_count} minuto. Por favor, desconecte-se agora! |||| Este servidor está agendado para reiniciar em %{smart_count} minutos.",
         "schedule_warn_discord": "**%{servername}** está agendado para reiniciar em %{smart_count} minuto. |||| **%{servername}** está agendado para reiniciar em %{smart_count} minutos."
     },
     "ban_messages": {

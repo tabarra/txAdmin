@@ -39,7 +39,7 @@ export default class PerformanceCollector {
             try {
                 await this.collectPerformance();
             } catch (error) {
-                console.verbose.error('Error while collecting fxserver performance data');
+                console.verbose.warn('Error while collecting fxserver performance data');
                 console.verbose.dir(error);
             }
         }, 60 * 1000);
@@ -72,8 +72,8 @@ export default class PerformanceCollector {
                 if (!validatePerfCacheData(heatmapData)) throw new Error('invalid data in cache');
                 this.perfSeries = heatmapData.slice(-this.hardConfigs.performance.lengthCap);
             } catch (error) {
-                console.error(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
-                console.error('Since this is not a critical file, it will be reset.');
+                console.warn(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
+                console.warn('Since this is not a critical file, it will be reset.');
                 await setFile();
             }
         } else {
@@ -165,6 +165,7 @@ export default class PerformanceCollector {
         if (this.perfSeries === null) return;
         if (globals.fxRunner.fxChild === null) return;
         if (globals.playerlistManager === null) return;
+        if (globals.healthMonitor.currentStatus !== 'ONLINE') return;
 
         //Commom vars
         const now = Date.now();

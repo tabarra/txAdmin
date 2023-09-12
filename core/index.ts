@@ -32,19 +32,16 @@ new TxAdmin(serverProfile);
 setTimeout(() => {
     let hdTimer = Date.now();
     setInterval(() => {
-        let now = Date.now();
+        const now = Date.now();
         if (now - hdTimer > 2000) {
-            let sep = '='.repeat(70);
-            setTimeout(() => {
-                console.error(sep);
-                console.error('Major VPS freeze/lag detected!');
-                console.error('THIS IS NOT AN ERROR CAUSED BY TXADMIN!');
-                console.error(sep);
-            }, 1000);
+            console.majorMultilineError([
+                'Major VPS freeze/lag detected!',
+                'THIS IS NOT AN ERROR CAUSED BY TXADMIN!',
+            ]);
         }
         hdTimer = now;
     }, 500);
-}, 10000);
+}, 10_000);
 
 //Handle any stdio error
 process.stdin.on('error', (data) => { });
@@ -53,9 +50,11 @@ process.stderr.on('error', (data) => { });
 
 //Handle "the unexpected"
 process.on('unhandledRejection', (err: Error) => {
+    //We are handling this inside the DiscordBot component
+    if(err.message === 'Used disallowed intents') return;
+
     console.error('Ohh nooooo - unhandledRejection');
-    console.error(err.message);
-    console.dir(err.stack);
+    console.dir(err);
 });
 process.on('uncaughtException', function (err: Error) {
     console.error('Ohh nooooo - uncaughtException');
@@ -68,6 +67,9 @@ process.on('exit', (_code) => {
 Error.stackTraceLimit = 25;
 process.removeAllListeners('warning');
 process.on('warning', (warning) => {
+    //totally ignoring the warning, we know this is bad and shouldn't happen
+    if (warning.name === 'UnhandledPromiseRejectionWarning') return;
+
     if (warning.name !== 'ExperimentalWarning' || convars.isDevMode) {
         console.dir(warning);
     }

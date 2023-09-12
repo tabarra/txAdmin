@@ -25,7 +25,7 @@
             "label_reason": "Užblokavimo priežastis",
             "label_id": "Užblokavimo ID",
             "note_multiple_bans": "P.S. Tu turi daugiau nei vieną užblokavimą ant savo identifikatorių",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_diff_license": "Prierašas: šis užblokavimas skirtas kitai <code>licenzijai</code>, tai reiškią jūsų kai kurie IDs/HWIDs sutampa su esančiais tame užblokavime"
         }
     },
     "whitelist_messages": {
@@ -103,7 +103,7 @@
                     "success": "Skraidymas įjungtas"
                 },
                 "godmode": {
-                    "title": "God",
+                    "title": "Dievo rėžimas",
                     "label": "Nemirtingumas",
                     "success": "Nemirtingumas įjungtas"
                 },
@@ -113,7 +113,7 @@
                     "success": "Super Šuolis įjungtas"
                 },
                 "normal": {
-                    "title": "Normal",
+                    "title": "Normalusis",
                     "label": "Numatytasis rėžimas",
                     "success": "Grįžote į numatytąjį rėžimą."
                 }
@@ -148,7 +148,7 @@
                 "onesync_error": "Šiam pasirinkimui reikalingas įjungtas OneSync, kuris reikalingas objektų valdymui",
                 "not_in_veh_error": "Nesate jokioje tr.priemonėje!",
                 "spawn": {
-                    "title": "Spawn",
+                    "title": "Spawn'inimas",
                     "label": "Spawn'inti tr. priemonę pagal pavadinimą",
                     "dialog_title": "Spawn'inti tr. priemonę",
                     "dialog_desc": "Įveskite tr. priemonės modelio pavadinimą.",
@@ -172,7 +172,7 @@
                     "success": "Tr. priemonė paturbinta",
                     "already_boosted": "Ši tr. priemonė jau yra paturbinta.",
                     "unsupported_class": "Ši tr. priemonių klasė nėra palaikoma.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "Galite greitėti tik jodami ant arklio"
                 }
             },
             "heal": {
@@ -194,20 +194,20 @@
             "announcement": {
                 "title": "Siųsti pranešimą",
                 "label": "Siųsti pranešimą visiems serverio žaidėjams.",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_desc": "Įveskite viešojo pranešimo tekstą",
                 "dialog_placeholder": "Jūsų pranešimas...",
                 "dialog_success": "Siunčiamas pranešimas."
             },
             "clear_area": {
                 "title": "Atstatyti pasaulio aplinką",
-                "label": "Reset a specified world area to its default state",
+                "label": "Atstatyti pasaulio aplinką į numatytąją",
                 "dialog_desc": "Įveskite kokiu spinduliu norėtumėte atstatyti objektus (0-300). Šis pasirinkimas neištrins serverio sukurtų objektų",
                 "dialog_success": "Ištrinami objektai %{radius} metrų spinduliu",
                 "dialog_error": "Netinkamas skaičius."
             },
             "player_ids": {
                 "title": "Žaidėjų ID rodymas",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "Įjungti žaidėjų ID (ir kitos informacijos) rodyma virš jų galvų",
                 "alert_show": "Žaidėjų NetID rodomi.",
                 "alert_hide": "Žaidėjų NetID paslėpti."
             }
@@ -290,11 +290,11 @@
                         "spectate_failed": "Žaidėjas nerastas! Stebėjimas išjungiamas.",
                         "spectate_yourself": "Negalite stebėti savęs.",
                         "freeze_yourself": "Negalite užšaldyti savęs.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Nėra kitų žaidėjų"
                     }
                 },
                 "troll": {
-                    "title": "Troll",
+                    "title": "Trolinimas",
                     "options": {
                         "drunk": "Padaryti girtu",
                         "fire": "Padegti",
@@ -307,28 +307,28 @@
                 "session_time": "Sesijos laikas",
                 "play_time": "Pražaista laiko",
                 "joined": "Prisijungęs",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
+                "whitelisted_label": "Pridėtas prie WL",
+                "whitelisted_notyet": "dar ne",
                 "btn_wl_add": "PRIDĖTI WL",
                 "btn_wl_remove": "PANAIKINTI WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "btn_wl_success": "WL rėžimas pakeistas",
+                "log_label": "Istorija",
+                "log_empty": "Jokiu užblokavimų/perspėjimų nerasta.",
+                "log_ban_count": "%{smart_count} užblokavimas |||| %{smart_count} užblokavimai",
+                "log_warn_count": "%{smart_count} perspėjimas |||| %{smart_count} perspėjimai",
+                "log_btn": "DETALĖS",
+                "notes_changed": "Žaidėjo užrašai pakeisti",
+                "notes_placeholder": "Užrašai apie žaidėją..."
             },
             "history": {
                 "title": "Susijusi informacija",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "ATŠAUKTI",
+                "revoked_success": "Veiksmas atšauktas!",
+                "banned_by": "Užblokuotas %{author}",
+                "warned_by": "Perspėtas %{author}",
+                "revoked_by": "Atimta %{author}.",
+                "expired_at": "Baigė galioti %{date}.",
+                "expires_at": "Baigs galioti %{date}."
             },
             "ban": {
                 "title": "Užblokuoti žaidėją",
@@ -339,7 +339,7 @@
                 "weeks": "savaitės",
                 "months": "mėnesiai",
                 "permanent": "Visam laikui",
-                "custom": "Custom",
+                "custom": "Pasirinktinis",
                 "helper_text": "Pasirinkti laiką",
                 "submit": "Užblokuoti",
                 "reason_required": "Priežasties laukas yra privalomas!",
@@ -348,7 +348,7 @@
             "ids": {
                 "current_ids": "Dabartiniai Identifikatoriai",
                 "previous_ids": "Ankščiau Naudoti Identifikatoriai",
-                "all_hwids": "All Hardware IDs"
+                "all_hwids": "Visi HWID Identifikatoriai"
             }
         }
     }

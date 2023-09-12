@@ -1,124 +1,40 @@
 # TODO:
-- [x] fix diagnostics data error on pterodactyl
-- [x] new console utility + refactoring
-- [x] change dashboard median player message
-- [x] check why the bot cannot use an announcement channel for announcements (isTextBased() issue?)
-- [x] merge translations
-- [x] whitelist "discord no id" message should tell the user to open discord desktop
-- [x] update most packages
-- [x] ConfigVault.saveProfile should probably throw the error up
-- [x] fix: menu > send announcement does not trigger discord msg nor custom event
-- [x] migrate discord announcements to use embeds
-- [x] improve sv_main join check error handling
-- [x] fix "unknown" in playerlist caused by DropPlayer at playerConnecting events
-- [x] global socket.io connection for playerlist
-- [x] fix(bot): use cache when resolving members when possible
-- [x] merge menu performance PRs
-- [X] Resource: fix spectate (merge changes from taso's pr)
-- [x] Resource: fix noclip game crashes
-- [x] Resource: do all files need to check env with `GetConvar` or can i do it only in `shared.lua`?
-- [x] Resource: add `GetConvarBool` and refactor existing `GetConvar` calls
-- [x] Resource: Refactor the debug vars and debugPrint
-    - [x] move the debug code form `menu/sv_base.lua` to somewhere else
-    - [x] by disabling the server stuff, need to make sure none of the global variables set by it are required in non-menu code
-- [x] Resource: Clean the prints from the client (search with `\Wprint\(`)
-- [x] Resource: Clean the print functions on the server (txPrint?)
-- [x] Web: test all pages I added `checkApiLogoutRefresh`
-- [x] Resource: refactor `/txAdmin-reauth` to return the full cause in the snackbar
-- [x] Resource: reorder `sv_main.lua` and add `local` prefix to most if not all functions
-- [x] Resource: rename menu events to `txsv:xxx` and `txcl:xxx`
-- [x] Resource: full redm compatibility
-    - [x] Player Mode
-        - [x] noclip
-            - [x] controls
-            - [x] bug: after exiting, the mouse doesn't move
-            - [x] fix behavior while seated on vehicle or horse
-            - [x] scaleform/prompt
-        - [x] god mode
-        - [x] super jump
-            - [x] fix stamina bug
-        - [x] normal
-        - [x] particles
-    - [x] Teleport
-        - [x] waypoint
-        - [x] coords
-        - [x] back
-        - [x] copy coords
-    - [x] Vehicle
-        - [x] spawn
-        - [x] fix
-        - [x] delete
-        - [x] boost (doesn't work, disable button)
-    - [x] Heal
-        - [x] self
-        - [x] everyone
-    - [x] Announcements
-    - [x] reset world area (doesn't work, disable button)
-    - [x] player ids
-    - [x] logger (death reasons, explosions, etc)
+- [ ] xxx
 
-    - [x] Actions
-        - [x] heal
-        - [x] go to
-        - [x] bring
-        - [x] spectate
-            - [x] copy prompt helper from freecam
-        - [x] freeze
-        - [x] troll: set drunk
-        - [x] troll: set fire
-        - [x] troll: wild attack
+> next up
+- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
+- [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
+    - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
+- [ ] Use q5/q95 from QuantileArrayOutput to help me define the buckets, then implement the join check time histogram
+- [ ] xxxxxx
 
-- [x] Generalize the sound function in `cl_misc.lua` and replace the other `PlaySoundFrontend`
-- [x] Make Z optional in tp to coords feature
-- [x] Vehicle spawn should accept `[horse, cart, boat]` options, maybe add the buttons
-- [x] Find out why the players page doesn't reflect the player health, maybe it is client side only?
-- [x] Deprecate `cl_misc.lua`: move `playLibrarySound` to `cl_functions`, the rest to `cl_base`
 
-- [x] make `recipes/indexv4.json` dropping version and adding tags
-    - drop author field as well?
-    - remove zap esx pack? last update was 6 months ago
-- [x] add `sv_enforceGameBuild 2699` for fivem recipe
-- [x] add redm cfx default recipe (use `sv_enforceGameBuild 1491`)
-- [x] Check again for any added `print()`
-- [x] Update packages... again
-- [x] add hwid token bans (#446)
-    - [x] save player hwids + ban with hwid + check join using hwid as well
-    - [x] rename `action[].identifiers` to `action[].ids`
-    - [x] add settings page option to configure the required hwid matches
-    - [x] add ban message clarification if its from another license
-    - [x] add an option to wipe all hwids from the database
-- [x] add hwids to player modals
-- [x] add vorp recipe
-    - [x] reorganize folder
-    - [x] `server.cfg`:
-        - set steam_webApiKey "{{steam_webApiKey}}"
-        - clean the lines at the end of server.cfg
-        - server.cfg fix exec line 40 [vorp_official_plugins]
-    - [x] find out where that .replxx_history is coming from
-> beta1 release
+### Server resource scanner
+ScanResourceRoot('E:/FiveM/txData/default.base/', (data: object) => {
+    console.dir(data);
+})
 
-- [x] fix system log page font fallback
-- [x] remove debug noclip command
-- [x] fix playerBanned and actionRevoked events playerIds and add playerHwids
-- [x] updated some packages
-- [x] fix adminvault behavior on empty `admins.json` file
-- [x] change `cl_main.lua` RedM detection
-- [x] check/merge redm vehicle boost
-> beta2 release
 
-- [x] bot should check if it has any dangerous permission
-- [x] improve zap/ptero detection
-- [x] flexibilized ad options
-- [x] stats: 
-    - [x] adapt the new runtime specs, separate temp stats from classic stats
-    - [x] add bot enabled / whitelist back into stats
-    - [x] add isPterodactyl to stats
-    - [x] start tracking the ban search duration
-    - [x] jwe
-    - [x] don't forget to reset StatisticsManager's cron func interval
-    - [x] when changing whitelist mode in settings, need to reset the time counter
-- [x] add mongolian translation + merge bg.json
-- [x] last round of testing everything
+### Zod error parsing
+if (error instanceof z.ZodError) {
+    const outString = error.issues.map(issue => {
+        return issue.path.length
+            ? `${issue.path.join('.')}: ${issue.message}`
+            : issue.message;
+    }).join('\n');
+    console.error(outString);
+    console.error(error.issues);
+} else {
+    console.dir(error);
+}
+
+
+
+txAdmin:events:menuAction
+- player: number
+- action: string
+- data?: object
+
 
 
 =======================================================================
@@ -166,35 +82,6 @@ tar xvf fx.tar.xz
 })()
 
 
-=======================================================================
-
-
-## Optional
-- [ ] bot: fix http agent options for localAddress
-- [ ] bot: add rate limit events to diagnostics page
-- [ ] update readme with new features and contributing warning
-
-
-
-# Next up:
-- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
-- [ ] clean a few of the dead stuff from databus
-- [ ] improve `DiscordBot.resolveMemberRoles()` cache handling
-- [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
-    - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
-- [ ] remove old databus.txStatsData stuff
-- [ ] QuantileArrayOutput for time stuff - use q5/q95 to help me define the buckets
-- [ ] xxxxxx
-
-
-
-### Server resource scanner
-ScanResourceRoot('C:/whatever/resources/', data => {
-    const fs = require('fs');
-    fs.writeFileSync('L:/tmp/ugh.json', JSON.stringify(data));
-})
-
-
 
 =======================================================================
 
@@ -212,29 +99,9 @@ teste:
 - [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 
 
-----------------------------------------------------
+=======================================================================
 
 
-> Experiment: other than the color, on the perf chart we could draw likes for q50, q90, q99 tick times, maybe it's easier to understand
-```json
-[
-    0.6303839732888147,
-    0.1353923205342237,
-    0.14006677796327213,
-    0.09365609348914858,
-    0.000333889816360601,
-    0.0001669449081803005,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-]
-```
 
 > Maybe do this on the ban message page template
 ```css
@@ -247,8 +114,8 @@ background-position: right 15px bottom 15px;
 //Resource didn't finish starting (if res boot still active)
 `resource "${starting.startingResName}" failed to start within the [120~600]s time limit`
 
-//Resources started, but no heartbeat whithin limit after that
-`server failed to start within time limit - 30s after last resource started`
+//Resources started, but no heartbeat within limit after that
+`server failed to start within time limit - 45s after last resource started`
 
 //No resource started starting, hb over limit
 `server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`
@@ -261,7 +128,7 @@ background-position: right 15px bottom 15px;
 'server hang detected'
 ```
 
-----------------------------------------------------
+=======================================================================
 
 ## New pages:
 Overview:
@@ -278,14 +145,14 @@ History:
 - filter by action type
 - filter by admin, and hotlink it from the admins page
 
-Whitelist Page/routes:
-- show pre approvals and requests in two tables
-- Routes:
-    - get returns
-        - whitelistRequests[]
-        - whitelistApprovals[]
-    - whitelistApprovals (add/remove)
-    - whitelistRequests (approve/deny)
+Whitelist:
+- maybe remove the wl pending join table
+- maybe make a "latest whitelists" showing both pending and members (query players + pending and join tables)
+- don't forget to keep the "add approval" button
+
+CFG Editor:
+- multiple cfg editors
+- add backup file to txdata, with the last 100 changes, name of the admin and timestamp
 
 
 
@@ -298,7 +165,10 @@ Whitelist Page/routes:
 
 
 ## New config
-- 2023 acho que os defaults deveriam existir dentro dos components
+- july 2023: consider that some vars will be used in more than one component, so making them live in one or another might not be good
+- the modules should be the ones to decide when they need to refreshConfig, so inside the module constructor maybe subscribe to change of specific variables, (in or outside of module). Maybe use event dispatchers?!
+
+- early 2023: acho que os defaults deveriam existir dentro dos components
 e sempre que outro componente precisar saber uma config, deve passar pelo componente
 - need to have a version and have migration, like the database
 
@@ -479,6 +349,8 @@ https://immerjs.github.io/immer/ maybe?
 if tailwind, check https://daisyui.com/docs/themes/
 https://ui.shadcn.com/
 https://huemint.com/website-2/
+
+https://youtu.be/MnpuK0MK4yo
 
 
 ### Update Event + Rollout strategy

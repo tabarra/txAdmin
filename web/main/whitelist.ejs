@@ -36,10 +36,17 @@
     }
 </style>
 
-<!-- <div class="text-center mb-4">
-    <h2>Whitelist</h2>
-</div> -->
-
+<% if (currentWhitelistMode !== 'approvedLicense') { %>
+    <div class="row justify-content-md-center">
+        <div class="col-md-6">
+            <div class="alert alert-warning text-center" role="alert">
+                <strong>Warning: The server is not in the "Approved License" whitelist mode.</strong> <br>
+                This means that any changes made in this page will not reflect in the ability of players to connect to the server while the whitelist is in another mode or disabled. <br>
+                This can be changed in the page <a href="/settings">Settings > Player Manager</a>.
+            </div>
+        </div>
+    </div>
+<% } %>
 
 <div class="row justify-content-md-center">
     <!-- Requests card -->
