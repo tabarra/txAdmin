@@ -198,29 +198,32 @@ const checkCommand = () => {
                 errorsFound.push([key, `${errorType} key`]);
             }
 
-            // Checking specials (placeholders or smart time division)
-            const keysWithDiffSpecials = defaultLocaleKeys.filter((k) => {
-                return xor(defaultLocaleParsed[k].specials, parsedLocale[k].specials).length;
-            });
-            for (const key of keysWithDiffSpecials) {
-                const defaultSpecialsString = JSON.stringify(defaultLocaleParsed[key].specials);
-                errorsFound.push([key, `must contain the placeholders ${defaultSpecialsString}`]);
-            }
+            // Skip the rest of the checks if there are missing/excess keys
+            if (!diffKeys.length) {
+                // Checking specials (placeholders or smart time division)
+                const keysWithDiffSpecials = defaultLocaleKeys.filter((k) => {
+                    return xor(defaultLocaleParsed[k].specials, parsedLocale[k].specials).length;
+                });
+                for (const key of keysWithDiffSpecials) {
+                    const defaultSpecialsString = JSON.stringify(defaultLocaleParsed[key].specials);
+                    errorsFound.push([key, `must contain the placeholders ${defaultSpecialsString}`]);
+                }
 
-            // Check for untrimmed strings
-            const keysWithUntrimmedStrings = parsedLocaleKeys.filter((k) => {
-                return parsedLocale[k].value !== parsedLocale[k].value.trim();
-            });
-            for (const key of keysWithUntrimmedStrings) {
-                errorsFound.push([key, `untrimmed string`]);
-            }
+                // Check for untrimmed strings
+                const keysWithUntrimmedStrings = parsedLocaleKeys.filter((k) => {
+                    return parsedLocale[k].value !== parsedLocale[k].value.trim();
+                });
+                for (const key of keysWithUntrimmedStrings) {
+                    errorsFound.push([key, `untrimmed string`]);
+                }
 
-            // Checking empty strings
-            const keysWithEmptyStrings = parsedLocaleKeys.filter((k) => {
-                return parsedLocale[k].value === '';
-            });
-            for (const key of keysWithEmptyStrings) {
-                errorsFound.push([key, `empty string`]);
+                // Checking empty strings
+                const keysWithEmptyStrings = parsedLocaleKeys.filter((k) => {
+                    return parsedLocale[k].value === '';
+                });
+                for (const key of keysWithEmptyStrings) {
+                    errorsFound.push([key, `empty string`]);
+                }
             }
 
             // Print errors

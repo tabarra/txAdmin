@@ -14,7 +14,9 @@ For that you will need to:
 - Make a custom locale file with the instructions above;
 - Name the file using the language code in [this page](https://www.science.co.il/language/Locale-codes.php);
 - The `$meta.label` must be the language name in English (eg `Spanish` instead of `Español`);
+- If you create a new translation, make sure to add it to `shared/localeMap.ts`, and maintain the alphabetical order;
 - Do a [Pull Request](https://github.com/tabarra/txAdmin/pulls) posting a few screenshots of evidence that you tested what you changed in-game.
+- An automatic check will run, make sure to read the output in case of any errors.
 
 > **Pro Tip:** To quickly test your changes, you can edit the `locale.json` file and then in the settings page click "Save Global Settings" again to see the changes in the game menu without needing to restart txAdmin or the server.
 
