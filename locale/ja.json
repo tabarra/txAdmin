@@ -1,0 +1,355 @@
+{
+    "$meta": {
+        "label": "Japanese",
+        "humanizer_language": "ja"
+    },
+    "restarter": {
+        "start_timeout": "時間内に開始できませんでした",
+        "crash_detected": "クラッシュが検出されました",
+        "hang_detected": "障害が検出された",
+        "partial_hang_warn": "部分的な障害により、このサーバーは1分後に再起動します。今すぐ切断してください。",
+        "partial_hang_warn_discord": "部分的な障害により、**%{servername}**は1分後に再起動します。",
+        "schedule_reason": "%{time}時にリスタート予定",
+        "schedule_warn": "このサーバーは%{smart_count}分後に再起動予定です。今すぐ切断してください。 |||| このサーバーは%{smart_count}分後に再起動予定です。",
+        "schedule_warn_discord": "**%{servername}**サーバーは%{smart_count}分後に再起動予定です。 |||| **%{servername}**サーバーは%{smart_count}分後に再起動予定です。"
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) あなたは次の理由によりBANされました \"%{reason}\" 禁止期間: %{expiration}",
+        "kick_permanent": "(%{author}) あなたは次の理由により永久BANされました \"%{reason}\"",
+        "reject": {
+            "title_permanent": "あなたはこのサーバーから永久BANされています。",
+            "title_temporary": "あなたはこのサーバーから一時的にBANされています。",
+            "label_expiration": "禁止期間:",
+            "label_date": "禁止日",
+            "label_author": "BANした人",
+            "label_reason": "BANされた理由",
+            "label_id": "BAN ID",
+            "note_multiple_bans": "注: あなたのIDには、アクティブなBANが複数記録されています。",
+            "note_diff_license": "注: 上記のBANは別の<code>ライセンス</code>に対して適用されたもので、あなたのID/HWIDの一部がそのBANに関連するものと一致することを意味します。"
+        }
+    },
+    "whitelist_messages": {
+        "admin_only": {
+            "mode_title": "このサーバーは<strong>管理者専用</strong>モードになっています。",
+            "insufficient_ids": "あなたは<code>Discord</code>か<code>Fivem</code>のIDを持っておらず、txAdminの管理者であるかを確認するためには、少なくともどちらかのIDが必要です。",
+            "deny_message": "あなたのIDはどのtxAdmin管理者にも割り当てられていません。"
+        },
+        "guild_member": {
+            "mode_title": "このサーバーは<strong>Discordサーバーメンバーホワイトリスト</strong>モードになっています。",
+            "insufficient_ids": "Discordサーバーに参加しているかを確認するために必要な<code>Discord</code> IDを持っていません。Discordデスクトップアプリを開いて再度お試しください (ウェブ版は使用できません)。",
+            "deny_title": "接続にはDiscordサーバーへの参加が必要です。",
+            "deny_message": "%{guildname}サーバーに参加してから再度お試しください。"
+        },
+        "guild_roles": {
+            "mode_title": "このサーバーは<strong>Discordロールホワイトリスト</strong>モードになっています。",
+            "insufficient_ids": "Discordサーバーに参加しているかを確認するために必要な<code>Discord</code> IDを持っていません。Discordデスクトップアプリを開いて再度お試しください (ウェブ版は使用できません)。",
+            "deny_notmember_title": "接続にはDiscordサーバーへの参加が必要です。",
+            "deny_notmember_message": "%{guildname}サーバーに参加して、必要なロールの1つを取得してから、再度お試しください。",
+            "deny_noroles_title": "参加に必要なロールを持っていません。",
+            "deny_noroles_message": "このサーバーに接続するには、%{guildname}サーバーのホワイトリストに登録されているロールの少なくとも1つを持っている必要があります。"
+        },
+        "approved_license": {
+            "mode_title": "このサーバーは<strong>ライセンスホワイトリスト</strong>モードになっています。",
+            "insufficient_ids": "あなたは<code>ライセンス</code> IDを持っていません、これはサーバーで<code>sv_lan</code>が有効になっていることを意味します。もしあなたがサーバーの所有者なら、<code>server.cfg</code>ファイルで無効にできます。",
+            "deny_title": "あなたはこのサーバーに参加するためのホワイトリストに登録されていません。",
+            "request_id_label": "要求 ID"
+        }
+    },
+    "server_actions": {
+        "restarting": "サーバーを再起動しています (%{reason})。",
+        "restarting_discord": "**%{servername}**を再起動しています (%{reason})。",
+        "stopping": "サーバーを停止しています (%{reason})。",
+        "stopping_discord": "**%{servername}**を再起動しています (%{reason})。",
+        "spawning_discord": "**%{servername}**を開始しています。"
+    },
+    "nui_warning": {
+        "title": "警告",
+        "warned_by": "警告者:",
+        "instruction": "[スペース]を10秒間押し続けると、このメッセージは解除されます。"
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdminメニューが有効になっている場合は、/tx と入力して開いてください。\nまた、[ゲーム設定 > キーバインド > FiveM > メニュー: メインページを開く]でキーバインドを設定することもできます。",
+            "menu_not_admin": "あなたのIDがtxAdminに登録されている管理者と一致しません。\ntxAdminに登録されている場合は、IDが保存されていることを確認してください。",
+            "menu_auth_failed": "txAdminメニューの認証に失敗しました 理由: %{reason}",
+            "no_perms": "権限を持っていません。",
+            "unknown_error": "不明なエラーが発生しました。",
+            "not_enabled": "txAdminメニューが有効になっていません! txAdminの設定ページで有効にできます。",
+            "announcement_title": "%{author}によるサーバーに関するお知らせ:",
+            "directmessage_title": "管理者%{author}からのDM:",
+            "dialog_empty_input": "空の入力はできない。"
+        },
+        "frozen": {
+            "froze_player": "プレイヤーを静止させた!",
+            "unfroze_player": "プレイヤーの静止を解除した!",
+            "was_frozen": "サーバー管理者によって静止されました!"
+        },
+        "common": {
+            "cancel": "キャンセル",
+            "submit": "送信",
+            "error": "エラーが発生しました。",
+            "copied": "クリップボードにコピーしました。"
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "%{key}キーでページを切り替え、矢印キーでメニューを移動する。",
+                "tooltip_2": "一部のメニュー項目には、左右の矢印キーで選択できるサブオプションがあります。"
+            },
+            "player_mode": {
+                "title": "状態",
+                "noclip": {
+                    "title": "ノークリップ",
+                    "label": "ノークリップの切り替えにより、壁や他のオブジェクトを通り抜けることができます。",
+                    "success": "ノークリップが有効化された。"
+                },
+                "godmode": {
+                    "title": "ゴッド",
+                    "label": "無敵状態を切り替え、ダメージを受けないようにする。",
+                    "success": "ゴッドモードが有効化された。"
+                },
+                "superjump": {
+                    "title": "スーパージャンプ",
+                    "label": "スーパージャンプ状態を切り替えると、より速く走ることができる。",
+                    "success": "スーパージャンプが有効化された。"
+                },
+                "normal": {
+                    "title": "デフォルト",
+                    "label": "デフォルト/通常プレイヤー状態に戻る",
+                    "success": "デフォルトのプレイヤー状態に戻りました。"
+                }
+            },
+            "teleport": {
+                "title": "テレポート",
+                "generic_success": "あなたをワームホールに送った!",
+                "waypoint": {
+                    "title": "ウェイポイント",
+                    "label": "地図上に設定されたカスタムウェイポイントにテレポートする。",
+                    "error": "ウェイポイントが設定されていない。"
+                },
+                "coords": {
+                    "title": "座標",
+                    "label": "指定された座標にテレポート",
+                    "dialog_title": "テレポート",
+                    "dialog_desc": "ワームホールを通過するための座標をx、y、zの形式で指定する。",
+                    "dialog_error": "座標が無効です。次の形式でなければなりません: 111, 222, 33"
+                },
+                "back": {
+                    "title": "戻る",
+                    "label": "最後にテレポートした前の場所に戻る。",
+                    "error": "戻る最後の場所がない!"
+                },
+                "copy": {
+                    "title": "座標をコピー",
+                    "label": "現在のワールド座標をクリップボードにコピーする。"
+                }
+            },
+            "vehicle": {
+                "title": "車両",
+                "onesync_error": "このオプションでは、サーバーのエンティティ処理にOneSyncが有効になっている必要があります。",
+                "not_in_veh_error": "あなたは現在車両に乗っていない!",
+                "spawn": {
+                    "title": "生成",
+                    "label": "モデル名から指定された車両を生成する",
+                    "dialog_title": "車両を生成",
+                    "dialog_desc": "生成したい車両のモデル名を入力する。",
+                    "dialog_success": "車両が生成された!",
+                    "dialog_error": "車両モデル名'%{modelName}'が存在しません!",
+                    "dialog_info": "%{modelName}を生成しようとしています。"
+                },
+                "fix": {
+                    "title": "修理",
+                    "label": "車両を最大限の状態まで修理する。",
+                    "success": "車両は修理された!"
+                },
+                "delete": {
+                    "title": "削除",
+                    "label": "プレイヤーが現在乗っている車両を削除する。",
+                    "success": "車両は削除された!"
+                },
+                "boost": {
+                    "title": "強化",
+                    "label": "最大限の楽しさ(と多分スピード)を得るために車両を強化する。",
+                    "success": "車両が強化された!",
+                    "already_boosted": "この車両は既に強化されています。",
+                    "unsupported_class": "この車両クラスはサポートされていません。",
+                    "redm_not_mounted": "強化できるのは馬に乗っているときだけです。"
+                }
+            },
+            "heal": {
+                "title": "回復",
+                "myself": {
+                    "title": "自分自身",
+                    "label": "現在のキャラクターの最大値まで自分を回復させる。",
+                    "success_0": "完治した!",
+                    "success_1": "もう気分は良いはずだ!",
+                    "success_2": "完全回復!",
+                    "success_3": "痛いところが治った!"
+                },
+                "everyone": {
+                    "title": "全員",
+                    "label": "接続している全プレイヤーを回復&復活させる。",
+                    "success": "全プレイヤーを回復&復活した!"
+                }
+            },
+            "announcement": {
+                "title": "アナウンスを送信",
+                "label": "全オンラインプレイヤーにアナウンスを送る。",
+                "dialog_desc": "アナウンスしたいメッセージを入力します。",
+                "dialog_placeholder": "あなたのアナウンスは...",
+                "dialog_success": "アナウンスを送信しています。"
+            },
+            "clear_area": {
+                "title": "ワールドエリアをリセット",
+                "label": "指定したワールドエリアをデフォルト状態に戻す。",
+                "dialog_desc": "エンティティをリセットしたい半径を入力してください(0-300)。サーバーサイドで生成されたエンティティはリセットされません。",
+                "dialog_success": "半径%{radius}mのエリアをリセットしています。",
+                "dialog_error": "無効な半径が入力されました。再度入力してください。"
+            },
+            "player_ids": {
+                "title": "プレイヤーIDの切り替え",
+                "label": "プレイヤーID(およびその他の情報)を、近くにいる全プレイヤーの頭上に表示するかの切り替え。",
+                "alert_show": "近くのプレイヤーのNetIDを表示しています。",
+                "alert_hide": "近くのプレイヤーのNetIDを隠しています。"
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "オンラインプレイヤー",
+                "players": "プレイヤー",
+                "search": "検索",
+                "zero_players": "プレイヤーが見つかりませんでした"
+            },
+            "sort": {
+                "label": "ソート",
+                "distance": "距離",
+                "id": "ID",
+                "joined_first": "最初に参加した時間",
+                "joined_last": "最後に参加した時間",
+                "closest": "最も近い",
+                "farthest": "最も遠い"
+            },
+            "card": {
+                "health": "体力 %{percentHealth}%"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "このユーザーの詳細を取得する際にエラーが発生しました。エラーの内容は次の通りです:",
+                "target_not_found": "IDまたはユーザー名が%{target}のオンラインプレイヤーを見つけることができませんでした。"
+            },
+            "tabs": {
+                "actions": "アクション",
+                "info": "情報",
+                "ids": "IDs",
+                "history": "履歴",
+                "ban": "Ban"
+            },
+            "actions": {
+                "title": "プレイヤーのアクション",
+                "command_sent": "コマンドが送信された!",
+                "moderation": {
+                    "title": "管理",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "警告",
+                        "kick": "キック",
+                        "set_admin": "管理者にする"
+                    },
+                    "dm_dialog": {
+                        "title": "DM",
+                        "description": "このプレイヤーにDMを送信する理由は何ですか?",
+                        "placeholder": "理由...",
+                        "success": "DMが送信された!"
+                    },
+                    "warn_dialog": {
+                        "title": "警告",
+                        "description": "このプレイヤーを警告する理由は何ですか?",
+                        "placeholder": "理由...",
+                        "success": "プレイヤーは警告された!"
+                    },
+                    "kick_dialog": {
+                        "title": "キック",
+                        "description": "このプレイヤーをキックする理由は何ですか?",
+                        "placeholder": "理由...",
+                        "success": "プレイヤーがキックされた!"
+                    }
+                },
+                "interaction": {
+                    "title": "インタラクション",
+                    "options": {
+                        "heal": "回復",
+                        "go_to": "行く",
+                        "bring": "召喚",
+                        "spectate": "観戦",
+                        "toggle_freeze": "静止の切り替え"
+                    },
+                    "notifications": {
+                        "heal_player": "プレイヤーを回復中",
+                        "tp_player": "プレイヤーをテレポート中",
+                        "bring_player": "プレイヤーを召喚中",
+                        "spectate_failed": "ターゲットの解決に失敗しました!観戦を終了します",
+                        "spectate_yourself": "自分自身は観戦できない",
+                        "freeze_yourself": "自分自身を静止することはできない",
+                        "spectate_cycle_failed": "切り替えられる他のプレイヤーがいない"
+                    }
+                },
+                "troll": {
+                    "title": "荒らす",
+                    "options": {
+                        "drunk": "泥酔させる",
+                        "fire": "火をつける",
+                        "wild_attack": "野生動物の襲来"
+                    }
+                }
+            },
+            "info": {
+                "title": "プレイヤー情報",
+                "session_time": "参加時間",
+                "play_time": "プレイ時間",
+                "joined": "参加",
+                "whitelisted_label": "ホワイトリスト",
+                "whitelisted_notyet": "未登録",
+                "btn_wl_add": "ホワイトリストに追加",
+                "btn_wl_remove": "ホワイトリストから削除",
+                "btn_wl_success": "ホワイトリストのステータスが変更されました。",
+                "log_label": "ログ",
+                "log_empty": "BAN/警告が見つかりませんでした。",
+                "log_ban_count": "%{smart_count} BAN |||| %{smart_count} BAN",
+                "log_warn_count": "%{smart_count} 警告 |||| %{smart_count} 警告",
+                "log_btn": "詳細",
+                "notes_placeholder": "このプレイヤーについてのメモ...",
+                "notes_changed": "プレイヤーのメモが変更された。"
+            },
+            "ids": {
+                "current_ids": "現在のID",
+                "previous_ids": "以前のID",
+                "all_hwids": "全てのハードウェアID"
+            },
+            "history": {
+                "title": "関連履歴",
+                "btn_revoke": "取り消し",
+                "revoked_success": "アクションを取り消した!",
+                "banned_by": "%{author}によってBANされた",
+                "warned_by": "%{author}によって警告された",
+                "revoked_by": "%{author}によって取り消された",
+                "expired_at": "%{date}に失効した",
+                "expires_at": "%{date}に失効する"
+            },
+            "ban": {
+                "title": "プレイヤーをBAN",
+                "reason_placeholder": "理由",
+                "reason_required": "理由欄は必須です。",
+                "duration_placeholder": "期間",
+                "success": "プレイヤーがBANされた!",
+                "hours": "時間",
+                "days": "日",
+                "weeks": "週間",
+                "months": "ヶ月",
+                "permanent": "永久",
+                "custom": "カスタム",
+                "helper_text": "期間を選択してください",
+                "submit": "BANを適用"
+            }
+        }
+    }
+}
