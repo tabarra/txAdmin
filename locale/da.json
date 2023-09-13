@@ -100,12 +100,12 @@
                 "noclip": {
                     "title": "NoClip",
                     "label": "Flyv rundt",
-                    "success": "NoClip aktiveretr"
+                    "success": "NoClip aktiveret"
                 },
                 "godmode": {
                     "title": "God",
                     "label": "Invincible",
-                    "success": "God Mode aktiveretr"
+                    "success": "God Mode aktiveret"
                 },
                 "superjump": {
                     "title": "Super Jump",
