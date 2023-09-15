@@ -1,5 +1,5 @@
 const modulename = 'WebServer:DeployerActions';
-import path from 'path';
+import path from 'node:path';
 import { cloneDeep } from 'lodash-es';
 import slash from 'slash';
 import mysql from 'mysql2/promise';

@@ -1,5 +1,5 @@
 const modulename = 'WebServer:SetupPost';
-import path from 'path';
+import path from 'node:path';
 import fse from 'fs-extra';
 import slash from 'slash';
 import { Deployer, validateTargetPath, parseValidateRecipe } from '@core/extras/deployer';

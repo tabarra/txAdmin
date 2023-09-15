@@ -4,8 +4,7 @@
 - [ ] xxxxxx
 
 ### Workspaces
-https://docs.npmjs.com/cli/v9/using-npm/workspaces?v=true
-https://www.youtube.com/watch?v=ZcgmlOaIiN0
+- [ ] find a way to run all dev tasks from a single command
 https://turbo.build/repo/docs/getting-started/add-to-project
 
 ### Linter notes

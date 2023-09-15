@@ -1,5 +1,5 @@
 const modulename = 'WebServer:SetupGet';
-import path from 'path';
+import path from 'node:path';
 import { convars, txEnv } from '@core/globalData';
 import { engineVersion } from '../../extras/deployer';
 import consoleFactory from '@extras/console';

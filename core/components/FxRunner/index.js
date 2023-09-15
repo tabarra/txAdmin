@@ -1,7 +1,7 @@
 const modulename = 'FXRunner';
-import { spawn } from 'child_process';
-import path from 'path';
-import { setTimeout as sleep } from 'timers/promises';
+import { spawn } from 'node:child_process';
+import path from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { parseArgsStringToArgv } from 'string-argv';
 import StreamValues from 'stream-json/streamers/StreamValues';
 

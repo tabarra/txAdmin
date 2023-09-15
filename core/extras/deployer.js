@@ -1,5 +1,5 @@
 const modulename = 'Deployer';
-import path from 'path';
+import path from 'node:path';
 import { cloneDeep }  from 'lodash-es';
 import dateFormat from 'dateformat'
 import fse from 'fs-extra';
