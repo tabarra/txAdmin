@@ -1,21 +1,5 @@
 {
   "ignore": {
-    "open": {
-      "versions": "> 7.1.0",
-      "reason": "Doesn't work when powershell is not in PATH or something like that."
-    },
-    "fs-extra": {
-      "versions": ">9",
-      "reason": "recipe errors on some OSs"
-    },
-    "execa": {
-      "versions": ">5",
-      "reason": "dependency of the hardcoded windows-release"
-    },
-    "windows-release": {
-      "versions": ">4",
-      "reason": "inlined to transform it into async"
-    },
     "@types/node": {
       "versions": ">16.9.1",
       "reason": "fixed to fxserver's node version"
