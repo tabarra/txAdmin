@@ -25,7 +25,7 @@
             "label_reason": "Důvod banu",
             "label_id": "ID Banu",
             "note_multiple_bans": "Poznámka: Tvoje identifiery mají více aktivních banů.",
-            "note_diff_license": "Poznámka: Tento ban byl udělen na herní <code>licenci</code>, což znamená že tvoje IDs/HWIDs se schodují s aktivním banem."
+            "note_diff_license": "Poznámka: Tento ban byl udělen na herní <code>licenci</code>, což znamená že tvoje IDs/HWIDs se shodují s aktivním banem."
         }
     },
     "whitelist_messages": {
