@@ -6,7 +6,7 @@
     "restarter": {
         "start_timeout": "時間内に開始できませんでした",
         "crash_detected": "クラッシュが検出されました",
-        "hang_detected": "障害が検出された",
+        "hang_detected": "障害が検出されました",
         "partial_hang_warn": "部分的な障害により、このサーバーは1分後に再起動します。今すぐ切断してください。",
         "partial_hang_warn_discord": "部分的な障害により、**%{servername}**は1分後に再起動します。",
         "schedule_reason": "%{time}時にリスタート予定",
@@ -14,17 +14,17 @@
         "schedule_warn_discord": "**%{servername}**サーバーは%{smart_count}分後に再起動予定です。 |||| **%{servername}**サーバーは%{smart_count}分後に再起動予定です。"
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) あなたは次の理由によりBANされました \"%{reason}\" 禁止期間: %{expiration}",
+        "kick_temporary": "(%{author}) あなたは次の理由によりBANされました \"%{reason}\" BAN期間: %{expiration}",
         "kick_permanent": "(%{author}) あなたは次の理由により永久BANされました \"%{reason}\"",
         "reject": {
             "title_permanent": "あなたはこのサーバーから永久BANされています。",
             "title_temporary": "あなたはこのサーバーから一時的にBANされています。",
-            "label_expiration": "禁止期間:",
-            "label_date": "禁止日",
+            "label_expiration": "BAN期間:",
+            "label_date": "BANされた日",
             "label_author": "BANした人",
             "label_reason": "BANされた理由",
             "label_id": "BAN ID",
-            "note_multiple_bans": "注: あなたのIDには、アクティブなBANが複数記録されています。",
+            "note_multiple_bans": "注: あなたのIDには、有効なBANが複数記録されています。",
             "note_diff_license": "注: 上記のBANは別の<code>ライセンス</code>に対して適用されたもので、あなたのID/HWIDの一部がそのBANに関連するものと一致することを意味します。"
         }
     },
@@ -59,12 +59,12 @@
         "restarting": "サーバーを再起動しています (%{reason})。",
         "restarting_discord": "**%{servername}**を再起動しています (%{reason})。",
         "stopping": "サーバーを停止しています (%{reason})。",
-        "stopping_discord": "**%{servername}**を再起動しています (%{reason})。",
+        "stopping_discord": "**%{servername}**を停止しています (%{reason})。",
         "spawning_discord": "**%{servername}**を開始しています。"
     },
     "nui_warning": {
         "title": "警告",
-        "warned_by": "警告者:",
+        "warned_by": "警告した人:",
         "instruction": "[スペース]を10秒間押し続けると、このメッセージは解除されます。"
     },
     "nui_menu": {
