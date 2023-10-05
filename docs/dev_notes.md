@@ -1,7 +1,15 @@
 # TODO:
+- [x] menu: add x, y int coords to detailed playerlist
+- [x] menu: `txcl:plist:setDetailed` should remove any player not in the event data
+- [x] menu: `txcl:plist:setDetailed` should request any missing player not in local cache
+
+- [ ] ask framework owners to use `txAdmin-locale`
+- [ ] checar invite NsXGTszYjK
+- [ ] add fxserver version to txDiagnostics
 - [ ] add `cache-control` and/or `vary` to all pages
-- [ ] nui: show on the UI in red if the playerlist is stale with maybe a button to force refresh it
 - [ ] xxxxxx
+
+
 
 ### Workspaces
 - [ ] find a way to run all dev tasks from a single command
