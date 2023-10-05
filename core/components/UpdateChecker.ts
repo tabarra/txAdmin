@@ -4,7 +4,6 @@ import { z } from "zod";
 import got from '@core/extras/got.js';
 import { txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
-import { convars } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 

@@ -16,7 +16,7 @@ export default async function FXServerDownloadLog(ctx) {
 
     let readFile;
     try {
-        //NOTE: thy the fuck are errors from `createReadStream` not being caught? Well, using readFileSync for now...
+        //NOTE: why the fuck are errors from `createReadStream` not being caught? Well, using readFileSync for now...
         // readFile = fs.createReadStream(globals.fxRunner.config.logPath);
         readFile = fs.readFileSync(globals.fxRunner.config.logPath);
     } catch (error) {

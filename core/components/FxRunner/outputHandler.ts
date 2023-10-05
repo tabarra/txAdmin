@@ -67,7 +67,7 @@ export default class OutputHandler {
                 return;
             }
 
-            //Handle bind errors
+            //Handle nucleus auth
             if (channel == 'citizen-server-impl' && data.type == 'nucleus_connected') {
                 if (typeof data.url !== 'string') {
                     console.error(`FD3 nucleus_connected event without URL.`);
