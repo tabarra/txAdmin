@@ -8,6 +8,7 @@ import consts from '@core/extras/consts';
 import { convars, txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import { Context } from 'koa';
+import getReactIndex from './getReactIndex';
 const console = consoleFactory(modulename);
 
 //Types
@@ -33,6 +34,7 @@ export type WebCtx = CtxWithSession & {
         logCommand: (data: string) => void;
         hasPermission: (perm: string) => boolean;
         testPermission: (perm: string, fromCtx: string) => boolean;
+        serveReactIndex: () => Promise<void>;
     };
 };
 
@@ -319,6 +321,21 @@ export default async function WebCtxUtils(ctx: CtxWithSession, next: Function) {
     };
     ctx.utils.testPermission = (perm: string, fromCtx: string) => {
         return testPermission(ctx, perm, fromCtx);
+    };
+
+    ctx.utils.serveReactIndex = async () => {
+        const jsInjection = getJavascriptConsts({
+            isZapHosting: convars.isZapHosting, //not in use
+            isPterodactyl: convars.isPterodactyl, //not in use
+            isWebInterface,
+            csrfToken: (ctx.session?.auth?.csrfToken) ? ctx.session.auth.csrfToken : 'not_set',
+        })
+        ctx.body = await getReactIndex(
+            (isWebInterface) ? '/' : WEBPIPE_PATH,
+            globals.config.serverName || globals.info.serverProfile,
+            jsInjection,
+        );
+        ctx.type = 'text/html';
     };
 
     return next();

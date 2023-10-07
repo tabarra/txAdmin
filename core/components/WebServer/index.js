@@ -48,7 +48,7 @@ export default class WebServer {
 
         //Counting requests per minute
         setInterval(() => {
-            if(this.httpRequestsCounter > 10_000){
+            if (this.httpRequestsCounter > 10_000) {
                 const numberFormatter = new Intl.NumberFormat('en-US');
                 console.majorMultilineError([
                     `txAdmin might be under a DDoS attack!`,
@@ -163,8 +163,13 @@ export default class WebServer {
                 }
             }
         });
+
         //Setting up additional middlewares:
+        const panelPublicPath = convars.isDevMode
+            ? path.join(process.env.TXADMIN_DEV_SRC_PATH, 'panel/public')
+            : path.join(txEnv.txAdminResourcePath, 'panel');
         this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), { index: false, defer: false }));
+        this.app.use(KoaServe(panelPublicPath, { index: false, defer: false, }));
         this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({ jsonLimit }));
 
@@ -174,9 +179,7 @@ export default class WebServer {
         this.app.use(this.router.allowedMethods());
         this.app.use(async (ctx) => {
             if (typeof ctx._matchedRoute === 'undefined') {
-                ctx.status = 404;
-                console.verbose.warn(`Request 404 error: ${ctx.path}`);
-                return ctx.utils.render('standalone/404');
+                return ctx.utils.serveReactIndex();
             }
         });
         this.koaCallback = this.app.callback();

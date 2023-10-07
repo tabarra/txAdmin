@@ -7,7 +7,7 @@ set -e
 TARGET_PATH=$1
 if [ "$TARGET_PATH" == "" ]; then
     echo "Usage: $0 <target fxserver path>";
-    echo "Example: $0 /e/FiveM/builds/5473";
+    echo "Example: $0 /e/FiveM/6683";
     exit 1;
 fi
 

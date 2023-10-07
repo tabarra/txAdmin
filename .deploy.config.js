@@ -1,11 +1,11 @@
 export default {
-    fxserverPath: 'E:\\FiveM\\6683\\fxserver.exe',
     debouncerInterval: 250,
     preReleaseExpirationDays: 21,
+    panelViteUrl: 'http://localhost:40122',
     txAdminArgs: [
         '+set', 'txAdminDevMode', 'true',
         '+set', 'txAdminVerbose', 'true',
-        // '+set', 'txAdminPort', '40121',
+        // '+set', 'txAdminPort', '40125',
         // '--trace-warnings',
         
         //FIXME: broken

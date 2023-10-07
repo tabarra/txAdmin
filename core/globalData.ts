@@ -135,6 +135,13 @@ const isDevMode = getConvarBool('txAdminDevMode');
 const verboseConvar = getConvarBool('txAdminVerbose');
 const debugPlayerlistGenerator = getConvarBool('txDebugPlayerlistGenerator');
 const debugExternalSource = getConvarString('txDebugExternalSource');
+if (isDevMode) {
+    console.warn('Starting txAdmin in DEV mode.');
+    if(!process.env.TXADMIN_DEV_SRC_PATH || !process.env.TXADMIN_DEV_VITE_URL){
+        console.error('Missing TXADMIN_DEV_VITE_URL or TXADMIN_DEV_SRC_PATH env variables.');
+        process.exit(108);
+    }
+}
 
 
 /**
@@ -187,7 +194,7 @@ if (fs.existsSync(zapCfgFile)) {
         if (!isDevMode) fs.unlinkSync(zapCfgFile);
     } catch (error) {
         console.error(`Failed to load with ZAP-Hosting configuration error: ${(error as Error).message}`);
-        process.exit(108);
+        process.exit(109);
     }
 } else {
     isZapHosting = false;
@@ -199,7 +206,7 @@ if (fs.existsSync(zapCfgFile)) {
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
     if (!/^\d+$/.test(txAdminPortConvar)){
         console.error('txAdminPort is not valid.');
-        process.exit(109);
+        process.exit(110);
     }
     txAdminPort = parseInt(txAdminPortConvar);
 
@@ -209,7 +216,7 @@ if (fs.existsSync(zapCfgFile)) {
     } else {
         if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) {
             console.error('txAdminInterface is not valid.');
-            process.exit(110);
+            process.exit(111);
         }
         forceInterface = txAdminInterfaceConvar;
         loopbackInterfaces.push(forceInterface);

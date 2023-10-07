@@ -1,11 +1,10 @@
 import path from 'node:path';
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import tsconfigPaths from 'vite-tsconfig-paths'
-
-import { getFxsPaths } from '../scripts/scripts-utils.js'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { getFxsPaths } from '../scripts/scripts-utils.js';
 import config from '../.deploy.config.js';
-//FIXME: probably better to use .env with deploypath, sv_licensekey, etc
+
 
 const baseConfig = {
     build: {
@@ -16,8 +15,8 @@ const baseConfig = {
         target: 'chrome103',
         sourcemap: false,
 
-        //Doing this because fxserver's cicd doesn't wipe the dist folder
         rollupOptions: {
+            //Doing this because fxserver's cicd doesn't wipe the dist folder
             output: {
                 entryFileNames: `[name].js`,
                 chunkFileNames: `[name].js`,

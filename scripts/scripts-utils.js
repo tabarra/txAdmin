@@ -52,7 +52,7 @@ export const licenseBanner = () => {
  * @returns fxServerRootPath, fxsBinPath, monitorPath
  */
 export const getFxsPaths = (fxserverPath) => {
-    const fxServerRootPath = path.parse(fxserverPath).dir;
+    const fxServerRootPath = path.normalize(fxserverPath);
 
     //Process fxserver path
     const fxsBinPath = path.join(fxServerRootPath, 'FXServer.exe');

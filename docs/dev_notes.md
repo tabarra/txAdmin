@@ -3,6 +3,16 @@
 - [x] menu: `txcl:plist:setDetailed` should remove any player not in the event data
 - [x] menu: `txcl:plist:setDetailed` should request any missing player not in local cache
 
+
+=======================================================================
+- [x] Integrate dev workflow
+- [ ] fine tune `panel/vite.config.ts`
+- [ ] fix the eslint config
+
+
+=======================================================================
+
+
 - [ ] ask framework owners to use `txAdmin-locale`
 - [ ] checar invite NsXGTszYjK
 - [ ] add fxserver version to txDiagnostics

@@ -122,7 +122,7 @@ export default (config) => {
 
     //Index & generic
     router.get('/resources', requestAuth('web'), webRoutes.resources);
-    router.get('/', requestAuth('web'), webRoutes.dashboard);
+    router.get('/dashboard', requestAuth('web'), webRoutes.dashboard);
 
     //NUI specific routes
     router.get('/nui/auth', requestAuth('nui'), webRoutes.auth_nui);
