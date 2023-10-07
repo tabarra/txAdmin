@@ -480,7 +480,7 @@ export default class AdminVault {
                 console.error('You can rey restoring it or you can delete it and let txAdmin create a new one.');
             }
             console.error(`Admin File Path: ${this.adminsFile}`);
-            process.exit(1);
+            process.exit(5300);
         };
 
         try {

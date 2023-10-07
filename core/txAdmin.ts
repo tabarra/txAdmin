@@ -121,7 +121,7 @@ export default class TxAdmin {
                 setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, serverProfile, profilePath);
             } catch (error) {
                 console.error(`Failed to create profile '${serverProfile}' with error: ${(error as Error).message}`);
-                process.exit();
+                process.exit(300);
             }
         }
         this.info = {
@@ -144,7 +144,7 @@ export default class TxAdmin {
         } catch (error) {
             console.error(`Error starting ConfigVault:`);
             console.dir(error);
-            process.exit(1);
+            process.exit(301);
         }
 
         //Start all modules
@@ -205,7 +205,7 @@ export default class TxAdmin {
         } catch (error) {
             console.error(`Error starting main components:`);
             console.dir(error);
-            process.exit(1);
+            process.exit(302);
         }
 
         //Once they all finish loading, the function below will print the banner

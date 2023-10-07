@@ -61,7 +61,7 @@ export default class PerformanceCollector {
                 this.perfSeries = [];
             } catch (error) {
                 console.error(`Unable to create stats_heatmapData_v1 with error: ${error.message}`);
-                process.exit();
+                process.exit(5500);
             }
         };
 

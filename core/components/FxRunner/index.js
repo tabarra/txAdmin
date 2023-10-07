@@ -248,7 +248,7 @@ export default class FXRunner {
         } catch (error) {
             console.error('Failed to start FXServer with the following error:');
             console.dir(error);
-            process.exit(0);
+            process.exit(5400);
         }
 
         //Setting up stream handlers

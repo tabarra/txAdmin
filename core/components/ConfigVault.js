@@ -55,8 +55,8 @@ export default class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             this.setupFolderStructure();
         } catch (error) {
-            console.error(error.message);
-            process.exit(0);
+            console.error(error);
+            process.exit(5100);
         }
     }
 
@@ -276,7 +276,7 @@ export default class ConfigVault {
             }
         } catch (error) {
             console.error(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`);
-            process.exit();
+            process.exit(5101);
         }
     }
 

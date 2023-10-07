@@ -51,7 +51,7 @@ export default class Translator {
             this.#polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
             console.dir(error);
-            if (isFirstTime) process.exit();
+            if (isFirstTime) process.exit(5200);
         }
     }
 

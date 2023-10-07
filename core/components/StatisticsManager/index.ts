@@ -77,7 +77,7 @@ export default class StatisticsManager {
             this.#publicKey = await jose.importSPKI(statsPublicKeyPem, 'RS256');
         } catch (error) {
             console.dir(error);
-            process.exit(1);
+            process.exit(5700);
         }
     }
 

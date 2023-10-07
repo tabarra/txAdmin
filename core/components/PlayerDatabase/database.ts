@@ -116,7 +116,7 @@ export class Database {
                 console.error(`Backup error: '${(errorBackup as Error).message}'`);
                 console.error(`Database path: '${this.dbPath}'`);
                 console.error('If there is a file in that location, you may try to delete or restore it manually.');
-                process.exit();
+                process.exit(5600);
             }
         }
 
@@ -141,7 +141,7 @@ export class Database {
         } catch (error) {
             console.error('Failed to setup database object.');
             console.dir(error);
-            process.exit();
+            process.exit(5601);
         }
     }
 

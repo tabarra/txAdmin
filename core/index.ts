@@ -8,16 +8,14 @@ const console = consoleFactory();
 /**
  * Starting txAdmin (have fun :p)
  */
-const logDie = (x: string) => {
-    console.error(x);
-    process.exit(1);
-};
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
 if (serverProfile.endsWith('.base')) {
-    logDie(`Looks like the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
+    console.error(`Looks like the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
+    process.exit(200);
 }
 if (!serverProfile.length) {
-    logDie('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
+    console.error('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
+    process.exit(201);
 }
 
 setTTYTitle(serverProfile);

@@ -237,7 +237,7 @@ export default class WebServer {
                 console.error('Maybe you already have another txAdmin running in this port.');
                 console.error('If you want to run multiple txAdmin instances, check the documentation for the port convar.');
                 console.error('You can also try restarting the host machine.');
-                process.exit(1);
+                process.exit(5800);
             };
             this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
             this.httpServer.on('error', listenErrorHandler);
@@ -258,7 +258,7 @@ export default class WebServer {
         } catch (error) {
             console.error('Failed to start HTTP server with error:');
             console.dir(error);
-            process.exit();
+            process.exit(5801);
         }
     }
 };

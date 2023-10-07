@@ -16,12 +16,12 @@ export default async (dbo) => {
     }
     if (typeof dbo.data.version !== 'number') {
         console.error('Your players database version is not a number!');
-        process.exit(1);
+        process.exit(5650);
     }
     if (dbo.data.version > DATABASE_VERSION) {
         console.error(`Your players database is on v${dbo.data.version}, and this txAdmin supports up to v${DATABASE_VERSION}.`);
         console.error('This means you likely downgraded your txAdmin version. Please update txAdmin.');
-        process.exit(1);
+        process.exit(5651);
     }
 
     //Migrate database
@@ -142,7 +142,7 @@ export default async (dbo) => {
         console.error(`Your players database is on v${dbo.data.version}, which is different from this version of txAdmin (v${DATABASE_VERSION}).`);
         console.error('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');
         console.error('Please make sure your txAdmin is on the most updated version!');
-        process.exit(1);
+        process.exit(5652);
     }
     console.ok('Database migrated successfully');
     return dbo;
