@@ -6,8 +6,8 @@ import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseActionType, DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
 import { now } from '@core/extras/helpers';
 import { GenericApiError } from '@shared/genericApiTypes';
-import { Context } from 'koa';
 import consoleFactory from '@extras/console';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 
 
@@ -15,7 +15,7 @@ const console = consoleFactory(modulename);
  * Handle all the master actions... actions
  * @param {object} ctx
  */
-export default async function MasterActionsAction(ctx: Context) {
+export default async function MasterActionsAction(ctx: WebCtx) {
     //Sanity check
     if (typeof ctx.params.action !== 'string') {
         return ctx.send({error: 'Invalid Request'});
@@ -47,7 +47,7 @@ export default async function MasterActionsAction(ctx: Context) {
  * Handle FXServer settings reset nad resurn to setup
  * @param {object} ctx
  */
-async function handleResetFXServer(ctx: Context) {
+async function handleResetFXServer(ctx: WebCtx) {
     //Typescript stuff
     const fxRunner = (globals.fxRunner as FXRunner);
     const configVault = (globals.configVault as ConfigVault);
@@ -87,7 +87,7 @@ async function handleResetFXServer(ctx: Context) {
  * Handle clean database request
  * @param {object} ctx
  */
-async function handleCleanDatabase(ctx: Context) {
+async function handleCleanDatabase(ctx: WebCtx) {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     type successResp = {
@@ -210,7 +210,7 @@ async function handleCleanDatabase(ctx: Context) {
  * Handle clean database request
  * @param {object} ctx
  */
-async function handleRevokeWhitelists(ctx: Context) {
+async function handleRevokeWhitelists(ctx: WebCtx) {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     type successResp = {

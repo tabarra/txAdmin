@@ -4,7 +4,6 @@ import ConfigVault from '@core/components/ConfigVault';
 import got from '@core/extras/got';
 import { txEnv } from '@core/globalData';
 import { GenericApiError } from '@shared/genericApiTypes';
-import { Context } from 'koa';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
 import AdminVault from '@core/components/AdminVault';
 import { redactApiKeys } from '@core/extras/helpers';
@@ -13,6 +12,7 @@ import PlayerDatabase from '@core/components/PlayerDatabase';
 import Cache from '@core/extras/dataCache';
 import { getChartData } from '../chartData';
 import consoleFactory, { getLogBuffer } from '@extras/console';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 
 //Consts & Helpers
@@ -34,7 +34,7 @@ type ServerLogType = {
  * Prepares and sends the diagnostics report to txAPI
  * @param {object} ctx
  */
-export default async function SendDiagnosticsReport(ctx: Context) {
+export default async function SendDiagnosticsReport(ctx: WebCtx) {
     const logger = (globals.logger as Logger);
     const configVault = (globals.configVault as ConfigVault);
     const adminVault = (globals.adminVault as AdminVault);

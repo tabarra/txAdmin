@@ -1,8 +1,8 @@
 const modulename = 'WebServer:MasterActions:GetBackup';
 import fsp from 'node:fs/promises';
 import dateFormat from 'dateformat';
-import { Context } from 'koa';
 import consoleFactory from '@extras/console';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 
 
@@ -10,7 +10,7 @@ const console = consoleFactory(modulename);
  * Handles the rendering or delivery of master action resources
  * @param {object} ctx
  */
-export default async function MasterActionsGet(ctx: Context) {
+export default async function MasterActionsGet(ctx: WebCtx) {
     //Check permissions
     if (!ctx.utils.testPermission('master', modulename)) {
         return ctx.utils.render('main/message', {message: 'Only the master account has permission to view/use this page.'});

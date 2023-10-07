@@ -2,7 +2,6 @@ const modulename = 'WebServer:SettingsSave';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import slash from 'slash';
-import { Context } from 'koa';
 import { jsonrepair } from 'jsonrepair';
 import { parseSchedule, anyUndefined } from '@core/extras/helpers';
 import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
@@ -10,6 +9,7 @@ import ConfigVault from '@core/components/ConfigVault';
 import DiscordBot from '@core/components/DiscordBot';
 import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
 import consoleFactory from '@extras/console';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 
 
@@ -20,7 +20,7 @@ const isUndefined = (x: unknown) => (typeof x === 'undefined');
  * Handle all the server control actions
  * @param {object} ctx
  */
-export default async function SettingsSave(ctx: Context) {
+export default async function SettingsSave(ctx: WebCtx) {
     //Sanity check
     if (isUndefined(ctx.params.scope)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -62,7 +62,7 @@ export default async function SettingsSave(ctx: Context) {
  * Handle Global settings
  * @param {object} ctx
  */
-async function handleGlobal(ctx: Context) {
+async function handleGlobal(ctx: WebCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.serverName)
@@ -117,7 +117,7 @@ async function handleGlobal(ctx: Context) {
  * Handle FXServer settings
  * @param {object} ctx
  */
-async function handleFXServer(ctx: Context) {
+async function handleFXServer(ctx: WebCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.serverDataPath)
@@ -202,7 +202,7 @@ async function handleFXServer(ctx: Context) {
  * Handle Player Database settings
  * @param {object} ctx
  */
-async function handlePlayerDatabase(ctx: Context) {
+async function handlePlayerDatabase(ctx: WebCtx) {
     //Sanity check
     if (anyUndefined(
         ctx.request.body,
@@ -298,7 +298,7 @@ async function handlePlayerDatabase(ctx: Context) {
  * Handle Monitor settings
  * @param {object} ctx
  */
-async function handleMonitor(ctx: Context) {
+async function handleMonitor(ctx: WebCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.restarterSchedule),
@@ -359,7 +359,7 @@ async function handleMonitor(ctx: Context) {
  * Handle Discord settings
  * @param {object} ctx
  */
-async function handleDiscord(ctx: Context) {
+async function handleDiscord(ctx: WebCtx) {
     const configVault = (globals.configVault as ConfigVault);
     const discordBot = (globals.discordBot as DiscordBot);
     //Sanity check
@@ -486,7 +486,7 @@ async function handleDiscord(ctx: Context) {
  * NOTE: scoped inside global settings
  * @param {object} ctx
  */
-async function handleMenu(ctx: Context) {
+async function handleMenu(ctx: WebCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.menuEnabled)

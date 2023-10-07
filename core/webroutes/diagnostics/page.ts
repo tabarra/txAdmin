@@ -1,8 +1,8 @@
 const modulename = 'WebServer:Diagnostics';
 import Cache from '../../extras/dataCache';
-import { Context } from 'koa';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
 import consoleFactory from '@extras/console';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 const cache = new Cache(5);
 
@@ -11,7 +11,7 @@ const cache = new Cache(5);
  * Returns the output page containing the full report
  * @param {object} ctx
  */
-export default async function Diagnostics(ctx: Context) {
+export default async function Diagnostics(ctx: WebCtx) {
     const cachedData = cache.get();
     if (cachedData !== false) {
         cachedData.message = 'This page was cached in the last 5 seconds';

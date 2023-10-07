@@ -1,11 +1,11 @@
 const modulename = 'WebServer:WhitelistActions';
-import { Context } from 'koa';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import PlayerDatabase, { DuplicateKeyError } from '@core/components/PlayerDatabase';
 import { now, parsePlayerId } from '@core/extras/helpers';
 import DiscordBot from '@core/components/DiscordBot';
 import { DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
 import FXRunner from '@core/components/FxRunner';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
@@ -17,7 +17,7 @@ const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x 
 /**
  * Returns the output page containing the bans experiment
  */
-export default async function WhitelistActions(ctx: Context) {
+export default async function WhitelistActions(ctx: WebCtx) {
     //Sanity check
     if (anyUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -44,7 +44,7 @@ export default async function WhitelistActions(ctx: Context) {
 /**
  * Handle actions regarding the whitelist approvals table
  */
-async function handleApprovals(ctx: Context, action: any): Promise<GenericApiResp> {
+async function handleApprovals(ctx: WebCtx, action: any): Promise<GenericApiResp> {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const discordBot = (globals.discordBot as DiscordBot);
@@ -118,7 +118,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
 /**
  * Handle actions regarding the whitelist requests table
  */
-async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp> {
+async function handleRequests(ctx: WebCtx, action: any): Promise<GenericApiResp> {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const fxRunner = (globals.fxRunner as FXRunner);

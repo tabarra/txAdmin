@@ -1,22 +1,47 @@
 const modulename = 'WebCtxUtils';
 import path from 'node:path';
-import fse from 'fs-extra';
+import fsp from 'node:fs/promises';
 import ejs from 'ejs';
-import chalk from 'chalk';
 import xssInstancer from '@core/extras/xss.js';
 import * as helpers from '@core/extras/helpers';
 import consts from '@core/extras/consts';
 import { convars, txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
+import { Context } from 'koa';
 const console = consoleFactory(modulename);
+
+//Types
+type CtxWithSession = Context & {
+    session?: {
+        auth?: any;
+    };
+    nuiSession?: {
+        auth?: any;
+    };
+}
+export type WebCtx = CtxWithSession & {
+    txVars: {
+        isWebInterface: boolean;
+        realIP: string;
+        hostType: 'localhost' | 'ip' | 'other';
+    };
+    send: (data: string | object) => void;
+    utils: {
+        render: (view: string, data?: NonNullable<object>) => Promise<void>;
+        error: (httpStatus?: number, message?: string) => void;
+        logAction: (data: string) => void;
+        logCommand: (data: string) => void;
+        hasPermission: (perm: string) => boolean;
+        testPermission: (perm: string, fromCtx: string) => boolean;
+    };
+};
 
 //Helper functions
 const xss = xssInstancer();
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const getRenderErrorText = (view, error, data) => {
+const getRenderErrorText = (view: string, error: Error, data: any) => {
     console.error(`Error rendering ${view}.`);
     console.verbose.dir(error);
-    if (!isUndefined(data.discord) && !isUndefined(data.discord.token)) data.discord.token = '[redacted]';
+    if (data?.discord?.token) data.discord.token = '[redacted]';
     let out = '<pre>\n';
     out += `Error rendering '${view}'.\n`;
     out += `Message: ${error.message}\n`;
@@ -26,11 +51,11 @@ const getRenderErrorText = (view, error, data) => {
     out += '</pre>\n';
     return out;
 };
-const getWebViewPath = (view) => {
+const getWebViewPath = (view: string) => {
     if (view.includes('..')) throw new Error('Path Traversal?');
     return path.join(txEnv.txAdminResourcePath, 'web', view + '.ejs');
 };
-const getJavascriptConsts = (allConsts = []) => {
+const getJavascriptConsts = (allConsts: NonNullable<object> = {}) => {
     return Object.entries(allConsts)
         .map(([name, val]) => `const ${name} = ${JSON.stringify(val)};`)
         .join(' ');
@@ -46,7 +71,7 @@ const DEFAULT_AVATAR = 'img/default_avatar.png';
 const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
 const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
 
-function getEjsOptions(filePath) {
+function getEjsOptions(filePath: string) {
     const webTemplateRoot = path.resolve(txEnv.txAdminResourcePath, 'web');
     const webCacheDir = path.resolve(txEnv.txAdminResourcePath, 'web-cache', filePath);
     return {
@@ -60,24 +85,24 @@ function getEjsOptions(filePath) {
 }
 
 //================================================================
-
 /**
  * Loads re-usable base templates
- * @param {String} name
- * @returns {Promise<void>}
  */
-async function loadWebTemplate(name) {
+async function loadWebTemplate(name: string) {
     if (convars.isDevMode || !templateCache.has(name)) {
         try {
-            const rawTemplate = await fse.readFile(getWebViewPath(name), 'utf-8');
+            const rawTemplate = await fsp.readFile(getWebViewPath(name), 'utf-8');
             const compiled = ejs.compile(rawTemplate, getEjsOptions(name + '.ejs'));
             templateCache.set(name, compiled);
-        } catch (e) {
-            if (e.code == 'ENOENT') {
-                e = new Error(`The '${name}' template was not found:\n` +
-                    `You probably deleted the 'citizen/system_resources/monitor/web/${name}.ejs' file, or the folders above it.`, undefined, e);
+        } catch (error) {
+            if ((error as any).code == 'ENOENT') {
+                throw new Error([
+                    `The '${name}' template was not found:`,
+                    `You probably deleted the 'citizen/system_resources/monitor/web/${name}.ejs' file, or the folders above it.`
+                ].join('\n'));
+            } else {
+                throw error;
             }
-            console.dir(e);
         }
     }
 
@@ -89,10 +114,8 @@ async function loadWebTemplate(name) {
 /**
  * Renders normal views.
  * Footer and header are configured inside the view template itself.
- * @param {string} view
- * @param {string} data
  */
-async function renderView(view, reqSess, data, txVars) {
+async function renderView(view: string, reqSess: any, data: any, txVars: any) {
     data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
@@ -105,7 +128,7 @@ async function renderView(view, reqSess, data, txVars) {
     try {
         out = await loadWebTemplate(view).then(template => template(data));
     } catch (error) {
-        out = getRenderErrorText(view, error, data);
+        out = getRenderErrorText(view, error as Error, data);
     }
 
     return out;
@@ -115,9 +138,8 @@ async function renderView(view, reqSess, data, txVars) {
 //================================================================
 /**
  * Renders the login page.
- * @param {string} message
  */
-async function renderLoginView(data, txVars) {
+async function renderLoginView(data: any, txVars: any) {
     data.logoURL = convars.loginPageLogo || 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
@@ -132,7 +154,7 @@ async function renderLoginView(data, txVars) {
         out = await loadWebTemplate('standalone/login').then(template => template(data));
     } catch (error) {
         console.dir(error);
-        out = getRenderErrorText('Login', error, data);
+        out = getRenderErrorText('Login', error as Error, data);
     }
 
     return out;
@@ -142,42 +164,36 @@ async function renderLoginView(data, txVars) {
 //================================================================
 /**
  * Logs a command to the console and the action logger
- * @param {object} ctx
- * @param {string} data
  */
-function logCommand(ctx, data) {
-    globals.logger.admin.write(ctx.session.auth.username, data, 'command');
+function logCommand(ctx: CtxWithSession, data: string) {
+    globals.logger.admin.write(ctx.session?.auth?.username, data, 'command');
 }
 
 
 //================================================================
 /**
  * Logs an action to the console and the action logger
- * @param {object} ctx
- * @param {string} action
  */
-function logAction(ctx, action) {
+function logAction(ctx: CtxWithSession, action: string) {
     const sess = ctx.nuiSession ?? ctx.session;
-    globals.logger.admin.write(sess.auth.username, action);
+    globals.logger.admin.write(sess?.auth.username, action);
 }
 
 
 //================================================================
 /**
  * Returns if admin has permission or not - no message is printed
- * @param {object} ctx
- * @param {string} perm
  */
-function hasPermission(ctx, perm) {
+function hasPermission(ctx: CtxWithSession, perm: string) {
     try {
         const sess = ctx.nuiSession ?? ctx.session;
         if (perm === 'master') {
-            return sess.auth.master === true;
+            return sess?.auth.master === true;
         }
         return (
-            sess.auth.master === true
-            || sess.auth.permissions.includes('all_permissions')
-            || sess.auth.permissions.includes(perm)
+            sess?.auth.master === true
+            || sess?.auth.permissions.includes('all_permissions')
+            || sess?.auth.permissions.includes(perm)
         );
     } catch (error) {
         console.verbose.warn(`Error validating permission '${perm}' denied.`);
@@ -188,15 +204,12 @@ function hasPermission(ctx, perm) {
 //================================================================
 /**
  * Test for a permission and prints warn if test fails and verbose
- * @param {object} ctx
- * @param {string} perm
- * @param {string} fromCtx
  */
-function testPermission(ctx, perm, fromCtx) {
+function testPermission(ctx: CtxWithSession, perm: string, fromCtx: string) {
     try {
         const sess = ctx.nuiSession ?? ctx.session;
         if (!hasPermission(ctx, perm)) {
-            console.verbose.warn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            console.verbose.warn(`[${sess?.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         } else {
             return true;
@@ -207,10 +220,11 @@ function testPermission(ctx, perm, fromCtx) {
     }
 }
 
+
 //================================================================
 //================================================================
 //================================================================
-export default async function WebCtxUtils(ctx, next) {
+export default async function WebCtxUtils(ctx: CtxWithSession, next: Function) {
     //Prepare variables
     const isWebInterface = (typeof ctx.headers['x-txadmin-token'] !== 'string');
     ctx.txVars = {
@@ -249,9 +263,9 @@ export default async function WebCtxUtils(ctx, next) {
     }
 
     //Functions
-    ctx.send = (data) => { ctx.body = data; };
+    ctx.send = (data: string | object) => { ctx.body = data; };
     ctx.utils = {};
-    ctx.utils.render = async (view, data) => {
+    ctx.utils.render = async (view: string, data?: NonNullable<object> & { headerTitle?: string }) => {
         //Usage stats
         globals?.statisticsManager.pageViews.count(view);
 
@@ -289,21 +303,21 @@ export default async function WebCtxUtils(ctx, next) {
         ctx.status = httpStatus;
         ctx.body = {
             status: 'error',
-            code: parseInt(httpStatus),
+            code: httpStatus,
             message,
         };
     };
 
-    ctx.utils.logAction = async (data) => {
+    ctx.utils.logAction = (data: string) => {
         return logAction(ctx, data);
     };
-    ctx.utils.logCommand = async (data) => {
+    ctx.utils.logCommand = (data: string) => {
         return logCommand(ctx, data);
     };
-    ctx.utils.hasPermission = (perm) => {
+    ctx.utils.hasPermission = (perm: string) => {
         return hasPermission(ctx, perm);
     };
-    ctx.utils.testPermission = (perm, fromCtx) => {
+    ctx.utils.testPermission = (perm: string, fromCtx: string) => {
         return testPermission(ctx, perm, fromCtx);
     };
 

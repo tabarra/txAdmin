@@ -2,9 +2,9 @@ const modulename = 'WebServer:WhitelistList';
 import Fuse from "fuse.js";
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
-import { Context } from 'koa';
 import cleanPlayerName from "@shared/cleanPlayerName";
 import { GenericApiError } from "@core/../shared/genericApiTypes";
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
@@ -12,7 +12,7 @@ const console = consoleFactory(modulename);
 /**
  * Returns the output page containing the action log, and the console log
  */
-export default async function WhitelistList(ctx: Context) {
+export default async function WhitelistList(ctx: WebCtx) {
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const table = ctx.params.table;
 
@@ -30,7 +30,7 @@ export default async function WhitelistList(ctx: Context) {
 /**
  * Handles the search functionality.
  */
-async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
+async function handleRequests(ctx: WebCtx, playerDatabase: PlayerDatabase) {
     type resp = {
         cntTotal: number;
         cntFiltered: number;
@@ -87,7 +87,7 @@ async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
 /**
  * Handles the search functionality.
  */
-async function handleApprovals(ctx: Context, playerDatabase: PlayerDatabase) {
+async function handleApprovals(ctx: WebCtx, playerDatabase: PlayerDatabase) {
     const sendTypedResp = (data: DatabaseWhitelistApprovalsType[]) => ctx.send(data);
 
     const approvals = playerDatabase.getWhitelistApprovals().reverse();

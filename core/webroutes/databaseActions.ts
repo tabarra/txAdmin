@@ -1,11 +1,11 @@
 const modulename = 'WebServer:DatabaseActions';
 import { GenericApiResp } from '@shared/genericApiTypes';
-import { Context } from 'koa';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { calcExpirationFromDuration } from '@core/extras/helpers';
 import consts from '@core/extras/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import consoleFactory from '@extras/console';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -16,7 +16,7 @@ const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x 
  * Returns the resources list
  * @param {object} ctx
  */
-export default async function DatabaseActions(ctx: Context) {
+export default async function DatabaseActions(ctx: WebCtx) {
     //Sanity check
     if (!ctx.params?.action) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -41,7 +41,7 @@ export default async function DatabaseActions(ctx: Context) {
  * This is only called from the players page, where you ban an ID array instead of a PlayerClass
  * Doesn't support HWIDs, only banning player does
  */
-async function handleBandIds(ctx: Context, sess: any): Promise<GenericApiResp> {
+async function handleBandIds(ctx: WebCtx, sess: any): Promise<GenericApiResp> {
     //Checking request & identifiers
     if (
         anyUndefined(
@@ -144,7 +144,7 @@ async function handleBandIds(ctx: Context, sess: any): Promise<GenericApiResp> {
  * Handle revoke database action.
  * This is called from the player modal or the players page.
  */
-async function handleRevokeAction(ctx: Context, sess: any): Promise<GenericApiResp> {
+async function handleRevokeAction(ctx: WebCtx, sess: any): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,

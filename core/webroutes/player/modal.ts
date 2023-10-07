@@ -1,11 +1,11 @@
 const modulename = 'WebServer:PlayerModal';
 import dateFormat from 'dateformat';
 import playerResolver from '@core/playerLogic/playerResolver';
-import { Context } from 'koa';
 import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData, PlayerModalMeta } from '@shared/playerApiTypes';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { ServerPlayer } from '@core/playerLogic/playerClasses';
 import consoleFactory from '@extras/console';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -37,7 +37,7 @@ const processHistoryLog = (hist: DatabaseActionType[]) => {
  *
  * @param {object} ctx
  */
-export default async function PlayerModal(ctx: Context) {
+export default async function PlayerModal(ctx: WebCtx) {
     //Sanity check
     if (typeof ctx.query === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');

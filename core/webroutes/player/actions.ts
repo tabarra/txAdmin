@@ -1,10 +1,10 @@
 const modulename = 'WebServer:PlayerActions';
 import humanizeDuration, { Unit } from 'humanize-duration';
-import { Context } from 'koa';
 import playerResolver from '@core/playerLogic/playerResolver';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { PlayerClass, ServerPlayer } from '@core/playerLogic/playerClasses';
 import { anyUndefined, calcExpirationFromDuration } from '@core/extras/helpers';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
@@ -12,7 +12,7 @@ const console = consoleFactory(modulename);
 /**
  * Actions route for the player modal
  */
-export default async function PlayerActions(ctx: Context) {
+export default async function PlayerActions(ctx: WebCtx) {
     //Sanity check
     if (anyUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -53,7 +53,7 @@ export default async function PlayerActions(ctx: Context) {
 /**
  * Handle Save Note (open to all admins)
  */
-async function handleSaveNote(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
+async function handleSaveNote(ctx: WebCtx, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -76,7 +76,7 @@ async function handleSaveNote(ctx: Context, sess: any, player: PlayerClass): Pro
 /**
  * Handle Send Warning
  */
-async function handleWarning(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
+async function handleWarning(ctx: WebCtx, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -138,7 +138,7 @@ async function handleWarning(ctx: Context, sess: any, player: PlayerClass): Prom
 /**
  * Handle Banning command
  */
-async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
+async function handleBan(ctx: WebCtx, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (
         anyUndefined(
@@ -241,7 +241,7 @@ async function handleBan(ctx: Context, sess: any, player: PlayerClass): Promise<
 /**
  * Handle Player Whitelist Action
  */
-async function handleSetWhitelist(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
+async function handleSetWhitelist(ctx: WebCtx, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -286,7 +286,7 @@ async function handleSetWhitelist(ctx: Context, sess: any, player: PlayerClass):
 /**
  * Handle Direct Message Action
  */
-async function handleMessage(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
+async function handleMessage(ctx: WebCtx, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -332,7 +332,7 @@ async function handleMessage(ctx: Context, sess: any, player: PlayerClass): Prom
 /**
  * Handle Kick Action
  */
-async function handleKick(ctx: Context, sess: any, player: PlayerClass): Promise<GenericApiResp> {
+async function handleKick(ctx: WebCtx, sess: any, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,

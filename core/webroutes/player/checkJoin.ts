@@ -8,13 +8,13 @@ import { anyUndefined, filterPlayerHwids, now, parsePlayerIds, PlayerIdsObjectTy
 import xssInstancer from '@core/extras/xss';
 import playerResolver from '@core/playerLogic/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
-import { Context } from 'koa';
 import DiscordBot from '@core/components/DiscordBot';
 import AdminVault from '@core/components/AdminVault';
 import FXRunner from '@core/components/FxRunner';
 import consoleFactory from '@extras/console';
 import { TimeCounter } from '@core/components/StatisticsManager/statsUtils';
 import StatisticsManager from '@core/components/StatisticsManager';
+import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 const xss = xssInstancer();
 
@@ -69,7 +69,7 @@ type PlayerCheckJoinApiRespType = AllowRespType | DenyRespType | GenericApiError
  * Intercommunications endpoint
  * @param {object} ctx
  */
-export default async function PlayerCheckJoin(ctx: Context) {
+export default async function PlayerCheckJoin(ctx: WebCtx) {
     //Typescript stuff
     const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     const statisticsManager = (globals.statisticsManager as StatisticsManager);
