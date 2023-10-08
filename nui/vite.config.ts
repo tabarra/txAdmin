@@ -44,7 +44,12 @@ export default defineConfig(({ command, mode }) => {
     if (mode === 'development') {
         let devDeplyPath;
         try {
-            const { monitorPath } = getFxsPaths(config.fxserverPath);
+            //Extract paths and validate them
+            if (typeof process.env.TXADMIN_DEV_FXSERVER_PATH !== 'string') {
+                console.error('process.env.TXADMIN_DEV_FXSERVER_PATH is not defined.');
+                process.exit(1);
+            }
+            const { monitorPath } = getFxsPaths(process.env.TXADMIN_DEV_FXSERVER_PATH);
             devDeplyPath = path.join(monitorPath, 'nui');
         } catch (error) {
             console.error('Could not extract/validate the fxserver and monitor paths.');

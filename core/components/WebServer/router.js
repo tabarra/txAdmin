@@ -48,6 +48,18 @@ export default (config) => {
         id: (ctx) => ctx.txVars.realIP,
     });
 
+    //Rendered Pages
+    router.get('/legacy/dashboard', requestAuth('web'), webRoutes.dashboard);
+    router.get('/legacy/resources', requestAuth('web'), webRoutes.resources);
+    router.get('/legacy/adminManager', requestAuth('web'), webRoutes.adminManager_page);
+    router.get('/legacy/cfgEditor', requestAuth('web'), webRoutes.cfgEditor_get);
+    router.get('/legacy/console', requestAuth('web'), webRoutes.liveConsole);
+    router.get('/legacy/serverLog', requestAuth('web'), webRoutes.serverLog);
+    router.get('/legacy/players', requestAuth('web'), webRoutes.player_page);
+    router.get('/legacy/whitelist', requestAuth('web'), webRoutes.whitelist_page);
+    router.get('/legacy/diagnostics', requestAuth('web'), webRoutes.diagnostics_page);
+    router.get('/legacy/systemLog', requestAuth('web'), webRoutes.systemLog);
+
     //Authentication
     router.get('/auth', webRoutes.auth_get);
     router.all('/auth/addMaster/:action', authLimiter, webRoutes.auth_addMaster);
@@ -57,7 +69,6 @@ export default (config) => {
     router.post('/changePassword', requestAuth('api'), webRoutes.auth_changePassword);
 
     //Admin Manager
-    router.get('/adminManager', requestAuth('web'), webRoutes.adminManager_get);
     router.post('/adminManager/getModal/:modalType', requestAuth('web'), webRoutes.adminManager_getModal);
     router.post('/adminManager/:action', requestAuth('api'), webRoutes.adminManager_actions);
 
@@ -82,22 +93,17 @@ export default (config) => {
     router.post('/fxserver/schedule', requestAuth('api'), webRoutes.fxserver_schedule);
 
     //CFG Editor
-    router.get('/cfgEditor', requestAuth('web'), webRoutes.cfgEditor_get);
     router.post('/cfgEditor/save', requestAuth('api'), webRoutes.cfgEditor_save);
 
     //Control routes
-    router.get('/console', requestAuth('web'), webRoutes.liveConsole);
     router.post('/intercom/:scope', requestAuth('intercom'), webRoutes.intercom);
 
     //Diagnostic routes
-    router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics_page);
     router.post('/diagnostics/sendReport', requestAuth('web'), webRoutes.diagnostics_sendReport);
     router.get('/advanced', requestAuth('web'), webRoutes.advanced_get);
     router.post('/advanced', requestAuth('api'), webRoutes.advanced_actions);
 
     //Data routes
-    router.get('/systemLog', requestAuth('web'), webRoutes.systemLog);
-    router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
     router.get('/serverLog/partial', requestAuth('api'), webRoutes.serverLogPartial);
     router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData);
     router.post('/database/:action', requestAuth('api'), webRoutes.databaseActions);
@@ -112,17 +118,11 @@ export default (config) => {
 
     //Player routes
     router.get('/player', requestAuth('api'), webRoutes.player_modal);
-    router.get('/player/list', requestAuth('web'), webRoutes.player_list);
     router.get('/player/search', requestAuth('api'), webRoutes.player_search);
     router.post('/player/checkJoin', requestAuth('intercom'), webRoutes.player_checkJoin);
     router.post('/player/:action', requestAuth('api'), webRoutes.player_actions);
-    router.get('/whitelist', requestAuth('web'), webRoutes.whitelist_page);
     router.get('/whitelist/:table', requestAuth('api'), webRoutes.whitelist_list);
     router.post('/whitelist/:table/:action', requestAuth('api'), webRoutes.whitelist_actions);
-
-    //Index & generic
-    router.get('/resources', requestAuth('web'), webRoutes.resources);
-    router.get('/dashboard', requestAuth('web'), webRoutes.dashboard);
 
     //NUI specific routes
     router.get('/nui/auth', requestAuth('nui'), webRoutes.auth_nui);
@@ -130,11 +130,7 @@ export default (config) => {
     router.post('/nui/player/:action', requestAuth('nui'), webRoutes.player_actions);
     router.post('/nui/database/:action', requestAuth('nui'), webRoutes.databaseActions);
     router.get('/nui/start/:route?', requestAuth('nuiStart'), async (ctx, next) => {
-        if (ctx.params.route === 'adminManager') {
-            return await webRoutes.adminManager_get(ctx, next);
-        } else {
-            return await webRoutes.serverLog(ctx, next);
-        }
+        return ctx.utils.serveReactIndex();
     });
 
     //DevDebug routes - no auth

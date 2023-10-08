@@ -1,19 +1,17 @@
+import path from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import tsconfigPaths from 'vite-tsconfig-paths';
+// import tsconfigPaths from 'vite-tsconfig-paths';
 import config from '../.deploy.config.js';
 
 
 const baseConfig = {
     build: {
         emptyOutDir: true,
-        reportCompressedSize: false,
         outDir: '../dist/panel',
         minify: true,
-        // target: 'chrome103',
-        sourcemap: false,
+        // sourcemap: false,
 
-        
         // generate manifest.json in outDir
         manifest: true,
         rollupOptions: {
@@ -37,7 +35,12 @@ const baseConfig = {
         //     projects: ['./', '../shared']
         // }),
         react()
-    ]
+    ],
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "./src"),
+        },
+    },
 }
 
 // https://vitejs.dev/config/
@@ -45,7 +48,7 @@ export default defineConfig(({ command }) => {
     if (command === 'serve') {
         baseConfig.server.origin = config.panelViteUrl;
         baseConfig.build.rollupOptions.input = './src/main.tsx'; // overwrite default .html entry
-        
+
         return baseConfig;
     } else {
         return baseConfig;

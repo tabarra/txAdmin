@@ -1,4 +1,4 @@
-const modulename = 'WebServer:AdminManagerGet';
+const modulename = 'WebServer:AdminManagerPage';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
@@ -7,7 +7,7 @@ const console = consoleFactory(modulename);
  * Returns the output page containing the admins.
  * @param {object} ctx
  */
-export default async function AdminManagerGet(ctx) {
+export default async function AdminManagerPage(ctx) {
     //Prepare admin array
     const admins = globals.adminVault.getAdminsList().map((admin) => {
         let perms;

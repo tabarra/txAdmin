@@ -16,7 +16,7 @@ export { default as auth_verifyPassword } from './authentication/verifyPassword'
 export { default as auth_changePassword } from './authentication/changePassword';
 export { default as auth_nui } from './authentication/nui';
 
-export { default as adminManager_get } from './adminManager/get';
+export { default as adminManager_page } from './adminManager/page.js';
 export { default as adminManager_getModal } from './adminManager/getModal';
 export { default as adminManager_actions } from './adminManager/actions';
 
@@ -42,7 +42,7 @@ export { default as fxserver_controls } from './fxserver/controls';
 export { default as fxserver_downloadLog } from './fxserver/downloadLog';
 export { default as fxserver_schedule } from './fxserver/schedule';
 
-export { default as player_list } from './player/list';
+export { default as player_page } from './player/page.js';
 export { default as player_search } from './player/search';
 export { default as player_modal } from './player/modal';
 export { default as player_actions } from './player/actions';

@@ -1,4 +1,4 @@
-const modulename = 'WebServer:PlayerList';
+const modulename = 'WebServer:PlayerPage';
 import humanizeDuration from 'humanize-duration';
 import { processActionList, processPlayerList } from './processor';
 import consoleFactory from '@extras/console';
@@ -13,7 +13,7 @@ const console = consoleFactory(modulename);
  *
  * @param {object} ctx
  */
-export default async function PlayerList(ctx) {
+export default async function PlayerPage(ctx) {
     //Prepare dbo
     const dbo = globals.playerDatabase.getDb();
 
