@@ -19,7 +19,8 @@ const rootRoute = new RootRoute({
 const dashboardRoute = new Route({
     getParentRoute: () => rootRoute,
     path: '/',
-    component: Dashboard,
+    // component: Dashboard,
+    component: () => <Iframe legacyUrl="dashboard" />,
 })
 const playersRoute = new Route({
     getParentRoute: () => rootRoute,
@@ -59,7 +60,7 @@ const globalSettingsRoute = new Route({
 
 
 /**
- * Legacy Routes
+ * Server Routes
  */
 const consoleRoute = new Route({
     getParentRoute: () => rootRoute,

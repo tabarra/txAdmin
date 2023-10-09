@@ -44,6 +44,10 @@ function ServerSidebar() {
                 <MenuLink to="/server/server-log">Server Log</MenuLink>
                 <MenuLink to="/server/cfg-editor">CFG Editor</MenuLink>
                 <MenuLink to="/server/config">Config</MenuLink>
+                <hr />
+                {window.txConsts.showAdvanced && (
+                    <MockLink>Manage</MockLink>
+                )}
             </div>
         </div>
     );

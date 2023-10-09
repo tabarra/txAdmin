@@ -48,7 +48,6 @@ export default defineConfig(({ command }) => {
     if (command === 'serve') {
         baseConfig.server.origin = config.panelViteUrl;
         baseConfig.build.rollupOptions.input = './src/main.tsx'; // overwrite default .html entry
-
         return baseConfig;
     } else {
         return baseConfig;

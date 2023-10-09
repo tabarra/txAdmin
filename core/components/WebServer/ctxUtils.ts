@@ -9,6 +9,7 @@ import { convars, txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import { Context } from 'koa';
 import getReactIndex from './getReactIndex';
+import { InjectedTxConsts } from '@shared/InjectedTxConstsType';
 const console = consoleFactory(modulename);
 
 //Types
@@ -324,16 +325,19 @@ export default async function WebCtxUtils(ctx: CtxWithSession, next: Function) {
     };
 
     ctx.utils.serveReactIndex = async () => {
-        const jsInjection = getJavascriptConsts({
+        const injectedConsts: InjectedTxConsts = {
             isZapHosting: convars.isZapHosting, //not in use
             isPterodactyl: convars.isPterodactyl, //not in use
             isWebInterface,
             csrfToken: (ctx.session?.auth?.csrfToken) ? ctx.session.auth.csrfToken : 'not_set',
-        })
+
+            //Temp
+            showAdvanced: (convars.isDevMode || console.isVerbose),
+        }
         ctx.body = await getReactIndex(
             (isWebInterface) ? '/' : WEBPIPE_PATH,
             globals.config.serverName || globals.info.serverProfile,
-            jsInjection,
+            injectedConsts,
         );
         ctx.type = 'text/html';
     };

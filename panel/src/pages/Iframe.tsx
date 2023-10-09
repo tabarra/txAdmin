@@ -7,7 +7,7 @@ export default function Iframe({ legacyUrl }: Props) {
     return (
         <iframe
             src={`./legacy/${legacyUrl}${searchParams}`}
-            className="w-full bg-lime-500"
+            className="w-full"
         ></iframe>
     );
 }

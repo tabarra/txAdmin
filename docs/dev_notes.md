@@ -6,6 +6,13 @@
 
 =======================================================================
 - [x] Integrate dev workflow
+- [ ] link parity of the mock menus with the old menu
+- [ ] remove the menu from the legacy page
+
+## v7 release checklist
+- [ ] dynamic title
+- [ ] dynamic favicon
+- [ ] dynamic theme
 - [ ] fine tune `panel/vite.config.ts`
 - [ ] fix the eslint config
 
@@ -352,7 +359,6 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 
 Up next-ish:
 - [ ] Tooling:
-    - [ ] Inline `.deploy.config.js > copy[]` into `main-builder.js`
     - [ ] Use `dotenv` or something to read FXServer's path from
     - [ ] Adapt `main-builder.js` to accept txAdmin convars
     - [ ] Update `development.md`

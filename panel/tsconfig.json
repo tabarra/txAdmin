@@ -23,7 +23,8 @@
     /* From shadcn docs */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@shared/*": ["../shared/*"],
+      "@/*": ["./src/*"],
     }
   },
   "include": ["src"],

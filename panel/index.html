@@ -14,12 +14,11 @@
     <meta property="og:title" content="{{ogTitle}}">
     <meta property="og:description" content="{{ogDescripttion}}">
     <meta property="og:image" content="https://i.imgur.com/Z3S9q6J.png">
-    <!-- Injected Consts -->
-    <!-- {{jsInjection}} -->
-    <!-- {{devModule}} -->
-    <!-- {{entryPoint}} -->
+    <!-- {{txConstsInjection}} -->
+    <!-- {{devModules}} -->
   </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="./src/main.tsx" data-prod-only></script>
   </body>
 </html>

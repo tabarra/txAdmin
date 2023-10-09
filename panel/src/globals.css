@@ -61,7 +61,7 @@
 @layer base {
     * {
         @apply border-border;
-        @apply dark; //FIXME: remove this
+        @apply dark; /* FIXME: remove this */
     }
     body {
         @apply bg-background text-foreground;

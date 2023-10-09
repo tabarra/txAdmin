@@ -13,6 +13,7 @@
   "scripts": {
     "build": "rimraf dist tmp_core_tsc && npm run build -w nui && npm run build -w panel && npm run build -w core",
     "prepare": "husky install",
+    "test": "bash ./scripts/test_build.sh",
     "typecheck": "npm run typecheck --workspaces",
     "locale:rebase": "node scripts/locale-utils.js rebase",
     "locale:check": "node scripts/locale-utils.js check --color"
