@@ -14,17 +14,16 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.0.13",
     "@fontsource-variable/jetbrains-mono": "^5.0.16",
-    "@tanstack/react-router": "^0.0.1-beta.194",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "lucide-react": "^0.284.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^1.14.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "wouter": "^2.12.0"
   },
   "devDependencies": {
-    "@tanstack/router-devtools": "^0.0.1-beta.194",
     "@types/node": "^20.8.3",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",

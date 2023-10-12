@@ -1,4 +1,4 @@
-const modulename = 'WebServer:SettingsGet';
+const modulename = 'WebServer:SettingsPage';
 import { cloneDeep }  from 'lodash-es';
 import { convars, txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
@@ -12,7 +12,7 @@ const console = consoleFactory(modulename);
  * Returns the output page containing the live console
  * @param {object} ctx
  */
-export default async function SettingsGet(ctx) {
+export default async function SettingsPage(ctx) {
     //Check permissions
     if (!ctx.utils.hasPermission('settings.view')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});

@@ -3,34 +3,170 @@
 - [x] menu: `txcl:plist:setDetailed` should remove any player not in the event data
 - [x] menu: `txcl:plist:setDetailed` should request any missing player not in local cache
 
+=======================================================================
+
+### v7 Menus:
+- Server:
+    - Dashboard
+    - Live Console
+    - Resources
+    - Server Log
+    - CFG Editor
+    - Advanced
+- Global:
+    - Players
+    - History
+    - Whitelist
+    - Admins
+    - Settings
+    - System \/
+        - Master Actions
+        - Diagnostics
+        - Console Log
+        - Action Log
+
 
 =======================================================================
-- [x] Integrate dev workflow
-- [ ] link parity of the mock menus with the old menu
-- [ ] remove the menu from the legacy page
+## v7 RELEASE CHECKLIST
+- [ ][2d] full router + link parity with legacy pages
+    - [x] decide on the links/pages for now
+    - [x] remove tanstack-router
+    - [x] create new routes with wouter
+    - [x] add active state to buttons
+    - [ ] on re-click, page should refresh
+    - [ ] remove menu and footer from main template
+    - [ ] add error boundries (global/shell/page?)
+    - [ ] configure chunking and lazy loading?
+- SHELL:
+    - [ ][5d] fully responsive layout (show/hide sidebars, etc)
+    - [ ][2h] menu buttons with active state and refresh on click
+    - [ ][2h] warning for outdated tx, visible in all pages
+    - [ ][1h] zap hosting advertisement
+    - [ ][1d] socket.io connection for default room
+    - [ ][1h] dynamic title
+    - [ ][1h] dynamic favicon
+    - [ ][1d] server status
+    - [ ][1d] toasts API
+        - [ ] generic toasts
+        - [ ] markdown toasts
+        - [ ] error toasts with discord link
+    - [ ][2h] prompts API
+    - [ ][2h] server controls
+    - [ ][1h] server scheduled restarts (legacy style)
+    - [ ][3d] playerlist
+- [ ][3h] playerlist click opens legacy player modal (`iframe.contentWindow.postMessage("openModal", ???);`)
+- [ ][5d] full auth flow
+    - [ ] password login
+    - [ ] cfx.re login
+    - [ ] error page
+    - [ ] master account pin add page
+    - [ ] master account bkp password page
+    - [ ] disable menu links based on permissions
+    - [ ] flow to refresh the permissions on the client side
+    - [ ] flow to refresh the page if invalidated auth
+- [ ][4h] full setup flow (legacy)
+- [ ][4h] full deployer flow (legacy)
+- [ ][1d] NEW PAGE: Dashboard
+    - [ ] warning for txadmin updates
+    - [ ] warning for fxserver update
+    - [ ] warning for dev builds of txadmin
+    - [ ] warning for top servers
+- [ ][2h] NEW PAGE: Console log
+- [ ][1h] NEW PAGE: Action log
+- [ ][1d] NEW PAGE: Live console
+- [ ][2d] NEW PAGE: Players
+- [ ][1d] NEW PAGE: History
+- [ ][3h] change password modal
+- [ ][1h] change temp password prompt
+- [ ][2d] light/dark theme
+- [ ][1d] adapt legacy styles to somewhat match shadcn
+- [ ][3h] full cleanup of legacy code
+    - [ ] removing the replaced page templates
+    - [ ] remove playerlist code
+    - [ ] remove player modal
+    - [ ] remove password change modal
+    - [ ] disable code for host live status
+- [ ][1d] tutorial stepper for the new UI
+- [ ][2h] fine tune `panel/vite.config.ts`
 
-## v7 release checklist
-- [ ] dynamic title
-- [ ] dynamic favicon
-- [ ] dynamic theme
-- [ ] fine tune `panel/vite.config.ts`
+Quickies
+- [ ] make sure some user input is truncated (server name, player name)
+
+
+=======================================================================
+
+## src
+- assets
+- components
+    - shadcn
+        - ...components installed by shadcn cli - no touchy!
+    - ...shared components
+- pages
+    - login
+        - index.tsx (the actual page component)
+        - ...whatever components are used just in the login page
+    - dashboard
+        - index.tsx (the actual page component)
+        - PerformanceChart.tsx
+        - PlayerChart.tsx
+- layout
+    - MainLayout.tsx
+    - Header.tsx
+    - LeftSidebar.tsx
+    - RightSidebar.tsx
+- hooks
+- lib
+
+
+
+
+### Page Changes:
+Players:
+- list of players in a table
+- name + identifiers input
+- auto search with debouncer
+
+History:
+- list of warns/bans in a table
+- search by id OR identifier (single) with select box
+- filter by action type
+- filter by admin, and hotlink it from the admins page
+
+Whitelist:
+- maybe remove the wl pending join table
+- maybe make a "latest whitelists" showing both pending and members (query players + pending and join tables)
+- don't forget to keep the "add approval" button
+
+CFG Editor:
+- multiple cfg editors
+- add backup file to txdata, with the last 100 changes, name of the admin and timestamp
+
+Setup:
+- don't ask for server data location, list txData subfolders and let the user pick or specify
+- don't ask for cfg location, assume server.cfg and let the user change
+
+Master Actions:
+- reset fxserver - becomes server add/remove/edit
+- clean database - "bulk changes" button at the players page
+- revoke whitelists - button to whitelist pages
+
+
+=======================================================================
+
+## Next Up
+- [ ] xxxx
+- [ ] xxxx
+- [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
 - [ ] fix the eslint config
-
-
-=======================================================================
-
-
-- [ ] ask framework owners to use `txAdmin-locale`
-- [ ] checar invite NsXGTszYjK
 - [ ] add fxserver version to txDiagnostics
 - [ ] add `cache-control` and/or `vary` to all pages
+- [ ] slide gesture to open/close the sidebars on mobile
+- [ ] new restart schedule in status card
+
+- [ ] ask framework owners to use `txAdmin-locale`
+- [ ] check all discord invites (use utm params maybe?)
 - [ ] xxxxxx
 
-
-
-### Workspaces
-- [ ] find a way to run all dev tasks from a single command
-https://turbo.build/repo/docs/getting-started/add-to-project
 
 ### Linter notes
 - Maybe prettier for all files except ts/js which could be in dprint
@@ -77,89 +213,26 @@ https://www.npmjs.com/package/node-schedule
 
 
 
-### New Menus:
-- Global:
-    - Dashboard (big status + server management)
-    - Players
-    - Whitelist - global pq é difícil colocar por server, e os admins podem deixar 1 server whitelisted e outro publico
-    - Admins
-    - Settings
-    - System (dropdown?)
-        - Diagnostics
-        - Console Log
-        - Action Log
-    - Advanced (hidden)
-- Server:
-    - Live Console
-    - Resources
-    - History (new)
-    - Server Log
-    - CFG Editor
-    - Settings (cog besides name instead of menu item?)
-
-- Changes:
-    - remove master actions:
-        - reset fxserver - becomes server add/remove/edit
-        - clean database - "bulk changes" button at the players page
-        - revoke whitelists - button to whitelist pages
-
-
-### New pages:
-Overview:
-- ???
-
-Players:
-- list of players in a table
-- name + identifiers input
-- auto search with debouncer
-
-History:
-- list of warns/bans in a table
-- search by id OR identifier (single) with select box
-- filter by action type
-- filter by admin, and hotlink it from the admins page
-
-Whitelist:
-- maybe remove the wl pending join table
-- maybe make a "latest whitelists" showing both pending and members (query players + pending and join tables)
-- don't forget to keep the "add approval" button
-
-CFG Editor:
-- multiple cfg editors
-- add backup file to txdata, with the last 100 changes, name of the admin and timestamp
-
-
-
 ### New UI stuff
-tentar usar vite
-react-query usar 100%
-procurar alternativas pro react-router (wouter/tanstack-router)
 https://auto-animate.formkit.com
 https://tanstack.com/virtual/v3
 
 jotai
-maybe xtate for complex states like setu/deployer
+maybe xtate for complex states like setup/deployer
 
-For the tx ingame menu, replace actions grid with flexbox
-https://youtu.be/3elGSZSWTbM around 12:00
 outro video com template completo, sem  https://youtu.be/YVI-q3idGiM
 https://immerjs.github.io/immer/ maybe?
 
-if tailwind, check https://daisyui.com/docs/themes/
+Base for themes: https://daisyui.com/docs/themes/
 https://ui.shadcn.com/
 https://huemint.com/website-2/
 https://realtimecolors.com/
 
-https://youtu.be/MnpuK0MK4yo
 
 cfxui colors:
 ext/cfx-ui/src/cfx/apps/mpMenu/styles/themes/fivem-dark.scss
 ext/cfx-ui/src/cfx/styles/_ui.scss
 
-- setup:
-    - don't ask for server data location, list txData subfolders and let the user pick or specify
-    - don't ask for cfg location, asume server.cfg and let the user change
-- instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
 
 
 ### Zod error parsing

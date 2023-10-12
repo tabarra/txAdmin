@@ -20,14 +20,14 @@ export { default as adminManager_page } from './adminManager/page.js';
 export { default as adminManager_getModal } from './adminManager/getModal';
 export { default as adminManager_actions } from './adminManager/actions';
 
-export { default as cfgEditor_get } from './cfgEditor/get';
+export { default as cfgEditor_page } from './cfgEditor/get';
 export { default as cfgEditor_save } from './cfgEditor/save';
 
 export { default as deployer_stepper } from './deployer/stepper';
 export { default as deployer_status } from './deployer/status';
 export { default as deployer_actions } from './deployer/actions';
 
-export { default as settings_get } from './settings/get';
+export { default as settings_page } from './settings/get';
 export { default as settings_save } from './settings/save';
 
 export { default as masterActions_page } from './masterActions/page';
@@ -53,7 +53,7 @@ export { default as whitelist_list } from './whitelist/list';
 export { default as whitelist_actions } from './whitelist/actions';
 
 
-export { default as advanced_get } from './advanced/get';
+export { default as advanced_page } from './advanced/get';
 export { default as advanced_actions } from './advanced/actions';
 
 //FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download

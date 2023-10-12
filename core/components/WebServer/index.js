@@ -51,7 +51,7 @@ export default class WebServer {
             if (this.httpRequestsCounter > 10_000) {
                 const numberFormatter = new Intl.NumberFormat('en-US');
                 console.majorMultilineError([
-                    `txAdmin might be under a DDoS attack!`,
+                    'txAdmin might be under a DDoS attack!',
                     `We detected ${numberFormatter.format(this.httpRequestsCounter)} HTTP requests in the last minute.`,
                     'Make sure you have a proper firewall setup and/or a reverse proxy with rate limiting.',
                 ]);
@@ -169,7 +169,7 @@ export default class WebServer {
             ? path.join(process.env.TXADMIN_DEV_SRC_PATH, 'panel/public')
             : path.join(txEnv.txAdminResourcePath, 'panel');
         this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), { index: false, defer: false }));
-        this.app.use(KoaServe(panelPublicPath, { index: false, defer: false, }));
+        this.app.use(KoaServe(panelPublicPath, { index: false, defer: false }));
         this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({ jsonLimit }));
 
@@ -179,7 +179,13 @@ export default class WebServer {
         this.app.use(this.router.allowedMethods());
         this.app.use(async (ctx) => {
             if (typeof ctx._matchedRoute === 'undefined') {
-                return ctx.utils.serveReactIndex();
+                if (ctx.path.startsWith('/legacy')) {
+                    ctx.status = 404;
+                    console.verbose.warn(`Request 404 error: ${ctx.path}`);
+                    return ctx.utils.render('standalone/404');
+                } else {
+                    return ctx.utils.serveReactIndex();
+                }
             }
         });
         this.koaCallback = this.app.callback();

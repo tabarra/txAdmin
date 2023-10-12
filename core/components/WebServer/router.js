@@ -49,16 +49,19 @@ export default (config) => {
     });
 
     //Rendered Pages
-    router.get('/legacy/dashboard', requestAuth('web'), webRoutes.dashboard);
-    router.get('/legacy/resources', requestAuth('web'), webRoutes.resources);
     router.get('/legacy/adminManager', requestAuth('web'), webRoutes.adminManager_page);
-    router.get('/legacy/cfgEditor', requestAuth('web'), webRoutes.cfgEditor_get);
+    router.get('/legacy/advanced', requestAuth('web'), webRoutes.advanced_page);
+    router.get('/legacy/cfgEditor', requestAuth('web'), webRoutes.cfgEditor_page);
     router.get('/legacy/console', requestAuth('web'), webRoutes.liveConsole);
-    router.get('/legacy/serverLog', requestAuth('web'), webRoutes.serverLog);
-    router.get('/legacy/players', requestAuth('web'), webRoutes.player_page);
-    router.get('/legacy/whitelist', requestAuth('web'), webRoutes.whitelist_page);
+    router.get('/legacy/dashboard', requestAuth('web'), webRoutes.dashboard);
     router.get('/legacy/diagnostics', requestAuth('web'), webRoutes.diagnostics_page);
+    router.get('/legacy/masterActions', requestAuth('web'), webRoutes.masterActions_page);
+    router.get('/legacy/players', requestAuth('web'), webRoutes.player_page);
+    router.get('/legacy/resources', requestAuth('web'), webRoutes.resources);
+    router.get('/legacy/serverLog', requestAuth('web'), webRoutes.serverLog);
+    router.get('/legacy/settings', requestAuth('web'), webRoutes.settings_page);
     router.get('/legacy/systemLog', requestAuth('web'), webRoutes.systemLog);
+    router.get('/legacy/whitelist', requestAuth('web'), webRoutes.whitelist_page);
 
     //Authentication
     router.get('/auth', webRoutes.auth_get);
@@ -78,11 +81,9 @@ export default (config) => {
     router.get('/deployer', requestAuth('web'), webRoutes.deployer_stepper);
     router.get('/deployer/status', requestAuth('api'), webRoutes.deployer_status);
     router.post('/deployer/recipe/:action', requestAuth('api'), webRoutes.deployer_actions);
-    router.get('/settings', requestAuth('web'), webRoutes.settings_get);
     router.post('/settings/save/:scope', requestAuth('api'), webRoutes.settings_save);
 
     //Master Actions
-    router.get('/masterActions', requestAuth('web'), webRoutes.masterActions_page);
     router.get('/masterActions/backupDatabase', requestAuth('web'), webRoutes.masterActions_getBackup);
     router.post('/masterActions/:action', requestAuth('api'), webRoutes.masterActions_actions);
 
@@ -100,7 +101,6 @@ export default (config) => {
 
     //Diagnostic routes
     router.post('/diagnostics/sendReport', requestAuth('web'), webRoutes.diagnostics_sendReport);
-    router.get('/advanced', requestAuth('web'), webRoutes.advanced_get);
     router.post('/advanced', requestAuth('api'), webRoutes.advanced_actions);
 
     //Data routes
