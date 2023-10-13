@@ -48,98 +48,6 @@
 </head>
 
 <body class="c-app <%= uiTheme %>">
-    <!-- Menu -->
-    <div id="sidebar" class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-show c-sidebar-minimized">
-        <% if (isWebInterface) { %>
-            <div class="c-sidebar-brand d-md-down-none">
-                <a href="/">
-                    <img class="c-sidebar-brand-full" src="img/txadmin.png" width="118" alt="txAdmin Logo">
-                    <img class="c-sidebar-brand-minimized" src="img/tx.png" width="30" height="30" alt="txAdmin Logo">
-                </a>
-            </div>
-        <% } %>
-        <ul class="c-sidebar-nav">
-            <li class="c-sidebar-nav-title font-size-larger">
-                Profile: <%= serverProfile %>
-            </li>
-
-            <!-- <li class="c-sidebar-nav-item c-sidebar-nav-dropdown">
-                <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-                    <svg class="c-sidebar-nav-icon">
-                        <use href="img/coreui_icons-full.svg#cil-layers"></use>
-                    </svg> Dropdown example
-                </a>
-                <ul class="c-sidebar-nav-dropdown-items">
-                    <li class="c-sidebar-nav-item">
-                        <a class="c-sidebar-nav-link" href="console">
-                            <svg class="c-sidebar-nav-icon">
-                                <use href="img/coreui_icons.svg#cil-terminal"></use>
-                            </svg> option 1
-                        </a>
-                    </li>
-                </ul>
-            </li> -->
-
-            <!-- <span class="badge badge-info">NEW</span> -->
-
-            <!-- <li class="c-sidebar-nav-item">
-                <a class="c-sidebar-nav-link" href="insights">
-                    <svg class="c-sidebar-nav-icon">
-                        <use href="img/coreui_icons-full.svg#cil-lightbulb"></use>
-                    </svg> Insights
-                </a>
-            </li> -->
-
-            <!-- Sidebar footer -->
-            <% if (isWebInterface) { %>
-                <li class="c-sidebar-nav-divider"></li>
-                <li class="c-sidebar-nav-title mt-auto">Host System Usage</li>
-                <li class="c-sidebar-nav-item px-3 d-compact-none c-d-minimized-none">
-                    <div class="text-uppercase mb-1">
-                        <small>
-                            <b>CPU Usage</b>
-                        </small>
-                    </div>
-                    <div class="progress progress-xs">
-                        <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100" id="hostusage-cpu-bar"></div>
-                    </div>
-                    <small class="text-muted" id="hostusage-cpu-text">loading...</small>
-                </li>
-                <li class="c-sidebar-nav-item px-3 d-compact-none c-d-minimized-none">
-                    <div class="text-uppercase mb-1">
-                        <small>
-                            <b>Memory Usage</b>
-                        </small>
-                    </div>
-                    <div class="progress progress-xs">
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 0%" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100" id="hostusage-memory-bar"></div>
-                    </div>
-                    <small class="text-muted" id="hostusage-memory-text">loading...</small>
-                </li>
-            <% } %>
-
-            <!-- Zap Hosting Ad - Mobile -->
-            <% if (dynamicAd) { %>
-                <li class="c-sidebar-nav-title d-lg-none" style="background-color: rgba(0, 0, 0, 0.178);">
-                    <a class="zapAdContainer" href="<%= dynamicAd.linkMobile %>" target="_blank" rel="noopener noreferrer">
-                        <img class="zapLogo" alt="zap hosting" src="<%= dynamicAd.logoDarkMode %>">
-                        <div class="zapText text-light">
-                            <%- dynamicAd.text %>
-                            <svg class="c-icon zapTextIcon">
-                                <use href="img/coreui_icons.svg#cil-external-link"></use>
-                            </svg>
-                        </div>
-                    </a>
-                </li>
-            <% } %>
-
-        </ul>
-        <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent"
-            data-class="c-sidebar-minimized"></button>
-    </div>
-
     <!-- Player List -->
     <% if (isWebInterface) { %>
         <div class="c-sidebar c-sidebar-md c-sidebar-light c-sidebar-fixed 
@@ -171,29 +79,6 @@
         <!-- Header -->
         <% if (isWebInterface) { %>
             <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
-                <!-- Zap Hosting Ad - Desktop -->
-                <% if (dynamicAd) { %>
-                    <a class="zapAdContainer d-md-down-none" href="<%= dynamicAd.linkDesktop %>" target="_blank" rel="noopener noreferrer">
-                        <img class="zapLogo show-dark-mode" alt="zap hosting" src="<%= dynamicAd.logoDarkMode %>">
-                        <img class="zapLogo show-light-mode" alt="zap hosting" src="<%= dynamicAd.logoLightMode %>">
-                        <div class="zapText attentionText">
-                            <%- dynamicAd.text %>
-                            <svg class="c-icon zapTextIcon">
-                                <use href="img/coreui_icons.svg#cil-external-link"></use>
-                            </svg>
-                        </div>
-                    </a>
-                <% } %>
-
-                <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar"
-                    data-class="c-sidebar-show">
-                    <svg class="c-icon c-icon-lg">
-                        <use href="img/coreui_icons.svg#cil-menu"></use>
-                    </svg>
-                </button>
-                <a class="c-header-brand d-lg-none" href="/">
-                    <img class="c-sidebar-brand-minimized" src="img/tx.png" width="30" height="30" alt="txAdmin Logo">
-                </a>
                 <ul class="c-header-nav ml-auto mr-4">
                     <li class="c-header-nav-item mx-1">
                         <div id="darkToggleArea" title="Have you tried our Dark Mode yet? 😎">

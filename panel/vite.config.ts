@@ -10,7 +10,7 @@ const baseConfig = {
         emptyOutDir: true,
         outDir: '../dist/panel',
         minify: true,
-        // sourcemap: false,
+        sourcemap: undefined, // placeholder
 
         // generate manifest.json in outDir
         manifest: true,
@@ -50,6 +50,7 @@ export default defineConfig(({ command }) => {
         baseConfig.build.rollupOptions.input = './src/main.tsx'; // overwrite default .html entry
         return baseConfig;
     } else {
+        baseConfig.build.sourcemap = true;
         return baseConfig;
     }
 })

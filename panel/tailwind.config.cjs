@@ -27,6 +27,10 @@ module.exports = {
         mono: ["var(--font-mono)", ...fontFamily.mono],
       },
       colors: {
+        discord: {
+          DEFAULT: "#5865F2",
+          active: "#7289DA"
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

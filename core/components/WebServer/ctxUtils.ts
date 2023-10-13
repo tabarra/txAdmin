@@ -326,6 +326,8 @@ export default async function WebCtxUtils(ctx: CtxWithSession, next: Function) {
 
     ctx.utils.serveReactIndex = async () => {
         const injectedConsts: InjectedTxConsts = {
+            fxServerVersion: displayFxserverVersion,
+            txAdminVersion: txEnv.txAdminVersion,
             isZapHosting: convars.isZapHosting, //not in use
             isPterodactyl: convars.isPterodactyl, //not in use
             isWebInterface,

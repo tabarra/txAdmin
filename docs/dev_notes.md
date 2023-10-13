@@ -33,19 +33,20 @@
     - [x] remove tanstack-router
     - [x] create new routes with wouter
     - [x] add active state to buttons
-    - [ ] on re-click, page should refresh
-    - [ ] remove menu and footer from main template
-    - [ ] add error boundries (global/shell/page?)
+    - [x] on re-click, page should refresh
+    - [x] remove menu and footer from main template
+    - [x] add error boundries (global/page)
     - [ ] configure chunking and lazy loading?
 - SHELL:
     - [ ][5d] fully responsive layout (show/hide sidebars, etc)
-    - [ ][2h] menu buttons with active state and refresh on click
+    - [ ][2h] merge new shell design into the `txadmin/panel` codebase
     - [ ][2h] warning for outdated tx, visible in all pages
     - [ ][1h] zap hosting advertisement
     - [ ][1d] socket.io connection for default room
     - [ ][1h] dynamic title
     - [ ][1h] dynamic favicon
     - [ ][1d] server status
+    - [ ][2h] tooltips on everything
     - [ ][1d] toasts API
         - [ ] generic toasts
         - [ ] markdown toasts
@@ -71,9 +72,9 @@
     - [ ] warning for fxserver update
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
-- [ ][2h] NEW PAGE: Console log
+- [ ][4h] NEW PAGE: Console log
 - [ ][1h] NEW PAGE: Action log
-- [ ][1d] NEW PAGE: Live console
+- [ ][2d] NEW PAGE: Live console
 - [ ][2d] NEW PAGE: Players
 - [ ][1d] NEW PAGE: History
 - [ ][3h] change password modal
@@ -91,6 +92,8 @@
 
 Quickies
 - [ ] make sure some user input is truncated (server name, player name)
+- [ ] layout on 4k and ultrawide screens
+- [ ] xxxxxxxx
 
 
 =======================================================================

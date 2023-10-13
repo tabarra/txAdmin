@@ -1,33 +1,24 @@
-import ShellRouter from "./ShellRouter";
-import { Link, useLocation, useRoute } from "wouter";
+import { Link, useRoute } from "wouter";
 import { cn } from "./lib/utils";
+import ShellRouter from "./ShellRouter";
+import { useContentRefresh, pageErrorStatusAtom } from "./hooks/mainPageStatus";
+import { useAtomValue } from "jotai";
 
 
-// function MenuLink(props: React.HTMLProps<HTMLAnchorElement> & { href: string }) {
-//     const [_location, setLocation] = useLocation();
-//     const [isActive] = useRoute(props.href);
-//     const checkOnClick = (e) => {
-//         if(isActive){
-//             alert('double click');
-//             setLocation(props.href);
-//             e.preventDefault();
-//         } else {
-//             props.onClick && props.onClick(e);
-//         }
-//     }
-//     return (
-//         <Link {...props} onClick={checkOnClick}>
-//             <a className={cn(
-//                 "hover:bg-zinc-800 hover:text-white py-1 px-2 rounded-sm",
-//                 isActive && "bg-zinc-800 text-white"
-//             )}>{props.children}</a>
-//         </Link>
-//     );
-// }
 function MenuLink(props: React.HTMLProps<HTMLAnchorElement> & { href: string }) {
+    const isPageInError = useAtomValue(pageErrorStatusAtom);
+    const refreshContent = useContentRefresh();
     const [isActive] = useRoute(props.href);
+    const checkOnClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        if (isActive || isPageInError) {
+            console.log('Page is already active or in error state. Forcing error boundry + router re-render.');
+            refreshContent();
+        }
+        props.onClick && props.onClick(e);
+    }
+
     return (
-        <Link {...props}>
+        <Link {...props} onClick={checkOnClick}>
             <a className={cn(
                 "hover:bg-zinc-800 hover:text-white py-1 px-2 rounded-sm",
                 isActive && "bg-zinc-800 text-white"
@@ -35,6 +26,7 @@ function MenuLink(props: React.HTMLProps<HTMLAnchorElement> & { href: string }) 
         </Link>
     );
 }
+
 function MockLink({ children }: { children: React.ReactNode }) {
     return (
         <div className="hover:bg-zinc-800 text-fuchsia-500 py-1 px-2 rounded-sm cursor-pointer">
@@ -57,8 +49,6 @@ function Header() {
                 <MenuLink href="/system/diagnostics">[sys] Diagnostics</MenuLink>
                 <MenuLink href="/system/console-log">[sys] Console</MenuLink>
                 <MenuLink href="/system/action-log">[sys] Action</MenuLink>
-                
-                <MenuLink href="/idk404">idk404</MenuLink>
             </div>
         </div>
     );
@@ -78,9 +68,7 @@ function ServerSidebar() {
                 )}
                 <br />
                 <span className="text-muted-foreground">Temp Menu:</span>
-                {window.txConsts.showAdvanced && (
-                    <MockLink>Manage</MockLink>
-                )}
+                <MenuLink href="/404">404</MenuLink>
             </div>
         </div>
     );
