@@ -287,8 +287,7 @@ async function handlePlayerDatabase(ctx: WebCtx) {
     return ctx.send({
         type: 'success',
         markdown: true,
-        message: `**Player Manager configuration saved!**
-        You need to restart the server for the changes to take effect.`
+        message: `**Player Manager configuration saved!**`
     });
 }
 

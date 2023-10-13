@@ -18,6 +18,7 @@ module.exports = {
     },
     extends: [],
     parserOptions: {
+        sourceType: 'module',
         ecmaVersion: 2021,
     },
     ignorePatterns: [
