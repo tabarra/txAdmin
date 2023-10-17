@@ -1,15 +1,20 @@
 const modulename = 'WebServer:AdminManagerPage';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 
 /**
  * Returns the output page containing the admins.
- * @param {object} ctx
  */
-export default async function AdminManagerPage(ctx) {
+export default async function AdminManagerPage(ctx: AuthedCtx) {
+    //Check permission
+    if (!ctx.admin.hasPermission('manage.admins')) {
+        return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
+    }
+
     //Prepare admin array
-    const admins = globals.adminVault.getAdminsList().map((admin) => {
+    const admins = ctx.txAdmin.adminVault.getAdminsList().map((admin) => {
         let perms;
         if (admin.master == true) {
             perms = 'master account';
@@ -26,15 +31,10 @@ export default async function AdminManagerPage(ctx) {
             hasDiscord: (admin.providers.includes('discord')),
             name: admin.name,
             perms: perms,
-            disableEdit: !ctx.session.auth.master && admin.master,
-            disableDelete: (admin.master || ctx.session.auth.username.toLowerCase() === admin.name.toLowerCase()),
+            disableEdit: !ctx.admin.isMaster && admin.master,
+            disableDelete: (admin.master || ctx.admin.name.toLowerCase() === admin.name.toLowerCase()),
         };
     });
-
-    //Check permission
-    if (!ctx.utils.hasPermission('manage.admins')) {
-        return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
-    }
 
     //Set render data
     const renderData = {

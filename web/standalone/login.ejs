@@ -246,10 +246,10 @@
 
                                 <div class="input-group mx-auto mb-2" style="max-width: 280px;">
                                     <div class="form-check">
-                                        <input class="form-check-input" name="checkboxAcceptToS" id="checkboxAcceptToS" type="checkbox" required>
-                                        <label class="form-check-label" for="checkboxAcceptToS">
+                                        <input class="form-check-input" name="checkboxAcceptTerms" id="checkboxAcceptTerms" type="checkbox" required>
+                                        <label class="form-check-label" for="checkboxAcceptTerms">
                                             I have read and agree to the
-                                            <a href="https://fivem.net/terms" target="_blank" rel="noopener noreferrer">Cfx.re ToS</a>
+                                            <a href="https://fivem.net/terms" target="_blank" rel="noopener noreferrer">Creator PLA</a>
                                             as well as the
                                             <a href="https://github.com/tabarra/txAdmin/blob/master/LICENSE" target="_blank" rel="noopener noreferrer">txAdmin License</a>.
                                         </label>
@@ -271,10 +271,10 @@
                                 password.onchange = validatePassword;
                                 password2.onkeyup = validatePassword;
 
-                                const checkboxAcceptToS = document.getElementById("checkboxAcceptToS");
+                                const checkboxAcceptTerms = document.getElementById("checkboxAcceptTerms");
                                 const btnCreateMaster = document.getElementById("btnCreateMaster");
-                                checkboxAcceptToS.onchange = () => {
-                                    btnCreateMaster.disabled = !checkboxAcceptToS.checked;
+                                checkboxAcceptTerms.onchange = () => {
+                                    btnCreateMaster.disabled = !checkboxAcceptTerms.checked;
                                 }
                             </script>
                         <% } %>

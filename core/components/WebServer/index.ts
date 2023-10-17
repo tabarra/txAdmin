@@ -5,13 +5,15 @@ import HttpClass from 'node:http';
 
 import Koa from 'koa';
 import KoaBodyParser from 'koa-bodyparser';
+//@ts-ignore
 import KoaServe from 'koa-static';
+//@ts-ignore
 import KoaSession from 'koa-session';
 import KoaSessionMemoryStoreClass from 'koa-session-memory';
 import KoaCors from '@koa/cors';
 
 import { Server as SocketIO } from 'socket.io';
-
+//@ts-ignore
 import SessionIO from 'koa-session-socketio';
 import WebSocket from './webSocket';
 
@@ -19,32 +21,41 @@ import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes';
 
 import { convars, txEnv } from '@core/globalData';
-import WebCtxUtils from './ctxUtils.js';
 import router from './router';
 import consoleFactory from '@extras/console';
+import TxAdmin from '@core/txAdmin';
+import topLevelMw from './middlewares/topLevelMw';
+import setupVarsMw from './middlewares/setupVarsMw';
+import setupUtilsMw from './middlewares/setupUtilsMw.js';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict51, 20);
 
+//Types
+export type WebServerConfigType = {
+    disableNuiSourceCheck: boolean;
+    limiterMinutes: number;
+    limiterAttempts: number;
+}
 
 export default class WebServer {
-    constructor(txAdmin, config) {
-        this.txAdmin = txAdmin;
-        this.config = config;
-        this.luaComToken = nanoid();
-        this.webSocket = null;
-        this.isListening = false;
-        this.httpRequestsCounter = 0;
+    readonly #txAdmin: TxAdmin;
+    public isListening = false;
+    private httpRequestsCounter = 0;
+    private koaSessionKey: string;
+    public luaComToken: string;
+    //setupKoa
+    private app: Koa;
+    private koaSessionMemoryStore: typeof KoaSessionMemoryStoreClass;
+    private sessionInstance: typeof KoaSession;
+    private koaCallback: (req: any, res: any) => Promise<void>;
+    //setupWebSocket
+    private io: SocketIO;
+    private webSocket: WebSocket;
+    //setupServerCallbacks
+    private httpServer?: HttpClass.Server;
 
-        //Generate cookie key
-        const pathHash = crypto.createHash('shake256', { outputLength: 6 })
-            .update(globals.info.serverProfilePath)
-            .digest('hex');
-        this.koaSessionKey = `tx:${globals.info.serverProfile}:${pathHash}`;
-
-        //Setup services
-        this.setupKoa();
-        this.setupWebSocket();
-        this.setupServerCallbacks();
+    constructor(txAdmin: TxAdmin, public config: WebServerConfigType) {
+        this.#txAdmin = txAdmin;
 
         //Counting requests per minute
         setInterval(() => {
@@ -58,12 +69,18 @@ export default class WebServer {
             }
             this.httpRequestsCounter = 0;
         }, 60_000);
-    }
+
+        //Generate cookie key & luaComToken
+        const pathHash = crypto.createHash('shake256', { outputLength: 6 })
+            .update(txAdmin.info.serverProfilePath)
+            .digest('hex');
+        this.koaSessionKey = `tx:${txAdmin.info.serverProfile}:${pathHash}`;
+        this.luaComToken = nanoid();
 
 
-    //================================================================
-    setupKoa() {
-        //Start Koa
+        // ===================
+        // Setting up Koa
+        // ===================
         this.app = new Koa();
         this.app.keys = ['txAdmin' + nanoid()];
 
@@ -80,9 +97,7 @@ export default class WebServer {
             maxAge: 24 * 60 * 60 * 1000, //one day
         }, this.app);
 
-
         //Setting up app
-        this.app.use(WebCtxUtils);
         this.app.on('error', (error, ctx) => {
             if (!(
                 error.code?.startsWith('HPE_')
@@ -101,82 +116,27 @@ export default class WebServer {
             this.app.use(KoaCors());
         }
 
-        //Setting up timeout/error/no-output/413:
-        const timeoutLimit = 35 * 1000; //REQ_TIMEOUT_REALLY_REALLY_LONG is 30s
-        const jsonLimit = '16MB';
-        this.app.use(async (ctx, next) => {
-            ctx.set('Server', `txAdmin v${txEnv.txAdminVersion}`);
-            let timer;
-            const timeout = new Promise((_, reject) => {
-                timer = setTimeout(() => {
-                    ctx.state.timeout = true;
-                    reject(new Error());
-                }, timeoutLimit);
-            });
-            try {
-                await Promise.race([timeout, next()]);
-                clearTimeout(timer);
-                if (typeof ctx.body == 'undefined' || (typeof ctx.body == 'string' && !ctx.body.length)) {
-                    console.verbose.warn(`Route without output: ${ctx.path}`);
-                    return ctx.body = '[no output from route]';
-                }
-            } catch (error) {
-                const prefix = `[txAdmin v${txEnv.txAdminVersion}]`;
-                const reqPath = (ctx.path.length > 100) ? `${ctx.path.slice(0, 97)}...` : ctx.path;
-                const methodName = (error.stack && error.stack[0] && error.stack[0].name) ? error.stack[0].name : 'anonym';
-
-                //NOTE: I couldn't force xss on path message, but just in case I'm forcing it here
-                //but it is overwritten by koa when we set the body to an object, which is fine
-                ctx.type = 'text/plain';
-                ctx.set('X-Content-Type-Options', 'nosniff');
-
-                //NOTE: not using HTTP logger endpoint anymore, FD3 only
-                if (error.type === 'entity.too.large') {
-                    const desc = `Entity too large for: ${reqPath}`;
-                    console.verbose.error(desc, methodName);
-                    ctx.status = 413;
-                    ctx.body = { error: desc };
-                } else if (ctx.state.timeout) {
-                    const desc = `${prefix} Route timed out: ${reqPath}`;
-                    console.error(desc, methodName);
-                    ctx.status = 408;
-                    ctx.body = desc;
-                } else if (error.message === 'Malicious Path' || error.message === 'failed to decode') {
-                    const desc = `${prefix} Malicious Path: ${reqPath}`;
-                    console.verbose.error(desc, methodName);
-                    ctx.status = 406;
-                    ctx.body = desc;
-                } else if (error.message.match(/^Unexpected token .+ in JSON at position \d+$/)) {
-                    const desc = `${prefix} Invalid JSON for: ${reqPath}`;
-                    console.verbose.error(desc, methodName);
-                    ctx.status = 400;
-                    ctx.body = { error: desc };
-                } else {
-                    const desc = `${prefix} Internal Error\n`
-                        + `Message: ${error.message}\n`
-                        + `Route: ${reqPath}\n`
-                        + 'Make sure your txAdmin is updated.';
-                    console.error(desc, methodName);
-                    console.verbose.dir(error);
-                    ctx.status = 500;
-                    ctx.body = desc;
-                }
-            }
-        });
+        //Setting up timeout/error/no-output/413
+        this.app.use(topLevelMw);
 
         //Setting up additional middlewares:
+        const jsonLimit = '16MB';
         const panelPublicPath = convars.isDevMode
-            ? path.join(process.env.TXADMIN_DEV_SRC_PATH, 'panel/public')
+            ? path.join(process.env.TXADMIN_DEV_SRC_PATH as string, 'panel/public')
             : path.join(txEnv.txAdminResourcePath, 'panel');
         this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), { index: false, defer: false }));
         this.app.use(KoaServe(panelPublicPath, { index: false, defer: false }));
         this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({ jsonLimit }));
 
+        //Custom stuff
+        this.app.use(setupVarsMw(txAdmin));
+        this.app.use(setupUtilsMw);
+
         //Setting up routes
-        this.router = router(this.config);
-        this.app.use(this.router.routes());
-        this.app.use(this.router.allowedMethods());
+        const txRouter = router(this.config);
+        this.app.use(txRouter.routes());
+        this.app.use(txRouter.allowedMethods());
         this.app.use(async (ctx) => {
             if (typeof ctx._matchedRoute === 'undefined') {
                 if (ctx.path.startsWith('/legacy')) {
@@ -189,58 +149,53 @@ export default class WebServer {
             }
         });
         this.koaCallback = this.app.callback();
-    }
 
 
-    //================================================================
-    //Resetting lua comms token - called by fxRunner on spawnServer()
-    resetToken() {
-        this.luaComToken = nanoid();
-        console.verbose.log('Resetting luaComToken.');
-    }
-
-
-    //================================================================
-    setupWebSocket() {
-        //Start SocketIO
+        // ===================
+        // Setting up SocketIO
+        // ===================
         this.io = new SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore));
-
-        //Setting up webSocket
-        this.webSocket = new WebSocket(this.txAdmin, this.io);
+        this.webSocket = new WebSocket(this.#txAdmin, this.io);
+        //@ts-ignore
         this.io.on('connection', this.webSocket.handleConnection.bind(this.webSocket));
+
+
+        // ===================
+        // Setting up Callbacks
+        // ===================
+        this.setupServerCallbacks();
     }
 
 
-    //================================================================
-    httpCallbackHandler(source, req, res) {
-        //NOTE: setting the webpipe real ip is being done in WebCtxUtils
-        //Rewrite source IP if it comes from nucleus reverse proxy
-        const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/;
-        if (source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])) {
-            req.connection.remoteAddress = req.headers['x-cfx-source-ip'].split(':')[0];
-        }
-
+    /**
+     * Handler for all HTTP requests
+     */
+    httpCallbackHandler(req: Request, res: Response) {
         //Calls the appropriate callback
         try {
             this.httpRequestsCounter++;
             if (req.url.startsWith('/socket.io')) {
+                //@ts-ignore
                 this.io.engine.handleRequest(req, res);
             } else {
+                //@ts-ignore
                 this.koaCallback(req, res);
             }
         } catch (error) { }
     }
 
 
-    //================================================================
+    /**
+     * Setup the HTTP server callbacks
+     */
     setupServerCallbacks() {
         //Just in case i want to re-execute this function
         this.isListening = false;
 
         //HTTP Server
         try {
-            const listenErrorHandler = (error) => {
+            const listenErrorHandler = (error: any) => {
                 if (error.code !== 'EADDRINUSE') return;
                 console.error(`Failed to start HTTP server, port ${error.port} is already in use.`);
                 console.error('Maybe you already have another txAdmin running in this port.');
@@ -248,10 +203,11 @@ export default class WebServer {
                 console.error('You can also try restarting the host machine.');
                 process.exit(5800);
             };
-            this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
+            //@ts-ignore
+            this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this));
             this.httpServer.on('error', listenErrorHandler);
 
-            let iface;
+            let iface: string;
             if (convars.forceInterface) {
                 console.warn(`Starting with interface ${convars.forceInterface}.`);
                 console.warn('If the HTTP server doesn\'t start, this is probably the reason.');
@@ -269,5 +225,14 @@ export default class WebServer {
             console.dir(error);
             process.exit(5801);
         }
+    }
+
+
+    /**
+     * Resetting lua comms token - called by fxRunner on spawnServer()
+     */
+    resetToken() {
+        this.luaComToken = nanoid();
+        console.verbose.log('Resetting luaComToken.');
     }
 };

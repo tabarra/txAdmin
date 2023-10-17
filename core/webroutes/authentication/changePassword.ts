@@ -1,32 +1,32 @@
 const modulename = 'WebServer:AuthChangePassword';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 /**
  * Returns the output page containing the admins.
  * @param {object} ctx
  */
-export default async function AuthChangePassword(ctx) {
+export default async function AuthChangePassword(ctx: AuthedCtx) {
     //Sanity check
-    if (isUndefined(ctx.request.body.newPassword)) {
+    if (typeof ctx.request?.body?.newPassword !== 'string') {
         return ctx.utils.error(400, 'Invalid Request');
     }
 
     //Check if temp password
-    if (!ctx.session.auth.isTempPassword && isUndefined(ctx.request.body.oldPassword)) {
+    if (!ctx.admin.isTempPassword && typeof ctx.request.body.oldPassword !== 'string') {
         return ctx.send({type: 'danger', message: 'The permanent password was already set.'});
     }
 
     //Validate fields
-    let newPassword = ctx.request.body.newPassword.trim();
-    if (!ctx.session.auth.isTempPassword && !isUndefined(ctx.request.body.oldPassword)) {
-        let admin = globals.adminVault.getAdminByName(ctx.session.auth.username);
-        if (!admin) throw new Error('Wait, what? Where is that admin?');
-        let oldPassword = ctx.request.body.oldPassword.trim();
-        if (!VerifyPasswordHash(oldPassword, admin.password_hash)) {
+    const newPassword = ctx.request.body.newPassword.trim();
+    if (!ctx.admin.isTempPassword && ctx.request.body?.oldPassword !== undefined) {
+        const vaultAdmin = ctx.txAdmin.adminVault.getAdminByName(ctx.admin.name);
+        if (!vaultAdmin) throw new Error('Wait, what? Where is that admin?');
+        const oldPassword = ctx.request.body.oldPassword.trim();
+        if (!VerifyPasswordHash(oldPassword, vaultAdmin.password_hash)) {
             return ctx.send({type: 'danger', message: 'Wrong current password'});
         }
     }
@@ -36,12 +36,11 @@ export default async function AuthChangePassword(ctx) {
 
     //Add admin and give output
     try {
-        let newHash = await globals.adminVault.editAdmin(ctx.session.auth.username, newPassword);
+        const newHash = await ctx.txAdmin.adminVault.editAdmin(ctx.session.auth.username, newPassword);
         if (typeof ctx.session.auth.password_hash == 'string') ctx.session.auth.password_hash = newHash;
-        ctx.utils.logAction('Changing own password.');
-        ctx.session.auth.password = newPassword;
+        ctx.admin.logAction('Changing own password.');
         return ctx.send({type: 'success', message: 'Password changed successfully'});
     } catch (error) {
-        return ctx.send({type: 'danger', message: error.message});
+        return ctx.send({type: 'danger', message: (error as Error).message});
     }
 };

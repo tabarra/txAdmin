@@ -1,36 +1,35 @@
 const modulename = 'WebServer:AdminManagerActions';
 import { customAlphabet } from 'nanoid';
-import dict51 from 'nanoid-dictionary/nolookalikes'
+import dict51 from 'nanoid-dictionary/nolookalikes';
 import got from '@core/extras/got.js';
 import consts from '@core/extras/consts';
 import consoleFactory from '@extras/console';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
-//Helper functions
+//Helpers
 const nanoid = customAlphabet(dict51, 20);
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
 const discordIDRegex = /^\d{17,20}$/;
 const nameRegex = citizenfxIDRegex;
 const nameRegexDesc = 'up to 18 characters containing only letters, numbers and the characters \`_.-\`';
-const dangerousPerms = ['all_permissions', 'manage.admins', 'console.write', 'settings.write'];
 const cfxHttpReqOptions = {
-    timeout: { request: 6000 }
-}
+    timeout: { request: 6000 },
+};
+type ProviderDataType = {id: string, identifier: string};
 
 /**
  * Returns the output page containing the admins.
- * @param {object} ctx
  */
-export default async function AdminManagerActions(ctx) {
+export default async function AdminManagerActions(ctx: AuthedCtx) {
     //Sanity check
-    if (isUndefined(ctx.params.action)) {
+    if (typeof ctx.params?.action !== 'string') {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let action = ctx.params.action;
+    const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.testPermission('manage.admins', modulename)) {
+    if (!ctx.admin.testPermission('manage.admins', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',
@@ -55,26 +54,25 @@ export default async function AdminManagerActions(ctx) {
 
 /**
  * Handle Add
- * @param {object} ctx
  */
-async function handleAdd(ctx) {
+async function handleAdd(ctx: AuthedCtx) {
     //Sanity check
     if (
         typeof ctx.request.body.name !== 'string'
         || typeof ctx.request.body.citizenfxID !== 'string'
         || typeof ctx.request.body.discordID !== 'string'
-        || isUndefined(ctx.request.body.permissions)
+        || ctx.request.body.permissions === undefined
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare and filter variables
-    let name = ctx.request.body.name.trim();
-    let password = nanoid();
-    let citizenfxID = ctx.request.body.citizenfxID.trim();
-    let discordID = ctx.request.body.discordID.trim();
+    const name = ctx.request.body.name.trim();
+    const password = nanoid();
+    const citizenfxID = ctx.request.body.citizenfxID.trim();
+    const discordID = ctx.request.body.discordID.trim();
     let permissions = (Array.isArray(ctx.request.body.permissions)) ? ctx.request.body.permissions : [];
-    permissions = permissions.filter((x) => { return typeof x === 'string';});
+    permissions = permissions.filter((x: unknown) => typeof x === 'string');
     if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
 
@@ -84,7 +82,7 @@ async function handleAdd(ctx) {
     }
 
     //Validate & translate FiveM ID
-    let citizenfxData = false;
+    let citizenfxData: ProviderDataType | undefined;
     if (citizenfxID.length) {
         try {
             if (consts.validIdentifiers.fivem.test(citizenfxID)) {
@@ -110,12 +108,12 @@ async function handleAdd(ctx) {
                 return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID3'});
             }
         } catch (error) {
-            console.error(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
+            console.error(`Failed to resolve CitizenFX ID to game identifier with error: ${(error as Error).message}`);
         }
     }
 
     //Validate Discord ID
-    let discordData = false;
+    let discordData: ProviderDataType | undefined;
     if (discordID.length) {
         if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
         discordData = {
@@ -125,8 +123,8 @@ async function handleAdd(ctx) {
     }
 
     //Check for privilege escalation
-    if (!ctx.session.auth.master && !ctx.session.auth.permissions.includes('all_permissions')) {
-        const deniedPerms = permissions.filter((x) => !ctx.session.auth.permissions.includes(x));
+    if (!ctx.admin.isMaster && !ctx.admin.permissions.includes('all_permissions')) {
+        const deniedPerms = permissions.filter((x: string) => !ctx.admin.permissions.includes(x));
         if (deniedPerms.length) {
             return ctx.send({
                 type: 'danger',
@@ -137,26 +135,25 @@ async function handleAdd(ctx) {
 
     //Add admin and give output
     try {
-        await globals.adminVault.addAdmin(name, citizenfxData, discordData, password, permissions);
-        ctx.utils.logAction(`Adding admin '${name}'.`);
+        await ctx.txAdmin.adminVault.addAdmin(name, citizenfxData, discordData, password, permissions);
+        ctx.admin.logAction(`Adding admin '${name}'.`);
         return ctx.send({type: 'showPassword', password});
     } catch (error) {
-        return ctx.send({type: 'danger', message: error.message});
+        return ctx.send({type: 'danger', message: (error as Error).message});
     }
 }
 
 
 /**
  * Handle Edit
- * @param {object} ctx
  */
-async function handleEdit(ctx) {
+async function handleEdit(ctx: AuthedCtx) {
     //Sanity check
     if (
         typeof ctx.request.body.name !== 'string'
         || typeof ctx.request.body.citizenfxID !== 'string'
         || typeof ctx.request.body.discordID !== 'string'
-        || isUndefined(ctx.request.body.permissions)
+        || ctx.request.body.permissions === undefined
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -165,11 +162,11 @@ async function handleEdit(ctx) {
     const name = ctx.request.body.name.trim();
     const citizenfxID = ctx.request.body.citizenfxID.trim();
     const discordID = ctx.request.body.discordID.trim();
-    const editingSelf = (ctx.session.auth.username.toLowerCase() === name.toLowerCase());
+    const editingSelf = (ctx.admin.name.toLowerCase() === name.toLowerCase());
     let permissions;
     if (!editingSelf) {
         if (Array.isArray(ctx.request.body.permissions)) {
-            permissions = ctx.request.body.permissions.filter((x) => { return typeof x === 'string';});
+            permissions = ctx.request.body.permissions.filter((x: unknown) => typeof x === 'string');
             if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
         } else {
             permissions = [];
@@ -179,7 +176,7 @@ async function handleEdit(ctx) {
     }
 
     //Validate & translate FiveM ID
-    let citizenfxData = false;
+    let citizenfxData: ProviderDataType | undefined;
     if (citizenfxID.length) {
         try {
             if (consts.validIdentifiers.fivem.test(citizenfxID)) {
@@ -205,12 +202,12 @@ async function handleEdit(ctx) {
                 return ctx.send({type: 'danger', message: '(ERR3) Invalid CitizenFX ID'});
             }
         } catch (error) {
-            console.error(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
+            console.error(`Failed to resolve CitizenFX ID to game identifier with error: ${(error as Error).message}`);
         }
     }
 
     //Validate Discord ID
-    let discordData = false;
+    let discordData: ProviderDataType | undefined;
     if (discordID.length) {
         if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
         discordData = {
@@ -220,17 +217,17 @@ async function handleEdit(ctx) {
     }
 
     //Check if admin exists
-    const admin = globals.adminVault.getAdminByName(name);
+    const admin = ctx.txAdmin.adminVault.getAdminByName(name);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
-    if (!ctx.session.auth.master && admin.master) {
+    if (!ctx.admin.isMaster && admin.master) {
         return ctx.send({type: 'danger', message: 'You cannot edit an admin master.'});
     }
 
     //Check for privilege escalation
-    if (permissions && !ctx.session.auth.master && !ctx.session.auth.permissions.includes('all_permissions')) {
-        const deniedPerms = permissions.filter((x) => !ctx.session.auth.permissions.includes(x));
+    if (permissions && !ctx.admin.isMaster && !ctx.admin.permissions.includes('all_permissions')) {
+        const deniedPerms = permissions.filter((x: string) => !ctx.admin.permissions.includes(x));
         if (deniedPerms.length) {
             return ctx.send({
                 type: 'danger',
@@ -241,36 +238,32 @@ async function handleEdit(ctx) {
 
     //Add admin and give output
     try {
-        await globals.adminVault.editAdmin(name, null, citizenfxData, discordData, permissions);
-        ctx.utils.logAction(`Editing user '${name}'.`);
+        await ctx.txAdmin.adminVault.editAdmin(name, null, citizenfxData, discordData, permissions);
+        ctx.admin.logAction(`Editing user '${name}'.`);
         return ctx.send({type: 'success', refresh: true});
     } catch (error) {
-        return ctx.send({type: 'danger', message: error.message});
+        return ctx.send({type: 'danger', message: (error as Error).message});
     }
 }
 
 
 /**
  * Handle Delete
- * @param {object} ctx
  */
-async function handleDelete(ctx) {
+async function handleDelete(ctx: AuthedCtx) {
     //Sanity check
-    if (
-        isUndefined(ctx.request.body.name)
-        || typeof ctx.request.body.name !== 'string'
-    ) {
+    if (typeof ctx.request.body.name !== 'string') {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
-    let name = ctx.request.body.name.trim();
+    const name = ctx.request.body.name.trim();
 
     //Check if editing himself
-    if (ctx.session.auth.username.toLowerCase() === name.toLowerCase()) {
+    if (ctx.admin.name.toLowerCase() === name.toLowerCase()) {
         return ctx.send({type: 'danger', message: "You can't delete yourself."});
     }
 
     //Check if admin exists
-    let admin = globals.adminVault.getAdminByName(name);
+    const admin = ctx.txAdmin.adminVault.getAdminByName(name);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
@@ -280,10 +273,10 @@ async function handleDelete(ctx) {
 
     //Delete admin and give output
     try {
-        await globals.adminVault.deleteAdmin(name);
-        ctx.utils.logAction(`Deleting user '${name}'.`);
+        await ctx.txAdmin.adminVault.deleteAdmin(name);
+        ctx.admin.logAction(`Deleting user '${name}'.`);
         return ctx.send({type: 'success', refresh: true});
     } catch (error) {
-        return ctx.send({type: 'danger', message: error.message});
+        return ctx.send({type: 'danger', message: (error as Error).message});
     }
 }

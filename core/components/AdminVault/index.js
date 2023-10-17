@@ -288,8 +288,8 @@ export default class AdminVault {
      * Add a new admin to the admins file
      * NOTE: I'm fully aware this coud be optimized. Leaving this way to improve readability and error verbosity
      * @param {string} name
-     * @param {object} citizenfxData or false
-     * @param {object} discordData or false
+     * @param {object|undefined} citizenfxData or false
+     * @param {object|undefined} discordData or false
      * @param {string} password
      * @param {array} permissions
      */
@@ -343,10 +343,10 @@ export default class AdminVault {
     /**
      * Edit admin and save to the admins file
      * @param {string} name
-     * @param {string} password
-     * @param {object} citizenfxData or false
-     * @param {object} discordData or false
-     * @param {array} permissions
+     * @param {string|null} password
+     * @param {object|undefined} citizenfxData or false
+     * @param {object|undefined} discordData or false
+     * @param {array|undefined} permissions
      */
     async editAdmin(name, password, citizenfxData, discordData, permissions) {
         if (this.admins == false) throw new Error('Admins not set');

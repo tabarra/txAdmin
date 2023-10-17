@@ -1,11 +1,21 @@
+const modulename = 'WebCtxUtils';
 import fsp from "node:fs/promises";
 import path from "node:path";
 import { InjectedTxConsts } from '@shared/InjectedTxConstsType';
 import { txEnv, convars } from "@core/globalData";
+import { CtxWithVars } from "./ctxTypes";
+import consts from "@extras/consts";
+import consoleFactory from '@extras/console';
+import { AuthedAdminType, normalAuthLogic, nuiAuthLogic } from "./authLogic";
+const console = consoleFactory(modulename);
 
 // NOTE: it's not possible to remove the hardcoded import of the entry point in the index.html file
 // even if you set the entry point manually in the vite config.
 // Therefore, it was necessary to tag it with `data-prod-only` so it can be removed in dev mode.
+
+//Consts
+const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
+const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
 
 //Cache the index.html file unless in dev mode
 let htmlFile: string;
@@ -29,7 +39,7 @@ const devModulesScript = `<!-- Dev scripts required for HMR -->
  * FIXME: add favicon
  * FIXME: add dark mode
  */
-export default async function getReactIndex(basePath: string, serverName: string, injectedConsts: InjectedTxConsts) {
+export default async function getReactIndex(ctx: CtxWithVars) {
     //Read file if not cached
     if (convars.isDevMode || !htmlFile) {
         try {
@@ -39,7 +49,7 @@ export default async function getReactIndex(basePath: string, serverName: string
             const rawHtmlFile = await fsp.readFile(indexPath, 'utf-8');
 
             //Remove tagged lines (eg hardcoded entry point) depending on env
-            if (convars.isDevMode){
+            if (convars.isDevMode) {
                 htmlFile = rawHtmlFile.replaceAll(/.+data-prod-only.+\r?\n/gm, '');
             } else {
                 htmlFile = rawHtmlFile.replaceAll(/.+data-dev-only.+\r?\n/gm, '');
@@ -51,6 +61,40 @@ export default async function getReactIndex(basePath: string, serverName: string
                 return `<h1>⚠ index.html load error:</h1><pre>${(error as Error).message}</pre>`
             }
         }
+    }
+
+    //Checking if already logged in
+    let authedAdmin: AuthedAdminType | false = false;
+    if(ctx.session.isNew !== true){
+        const authResult = ctx.txVars.isWebInterface
+            ? normalAuthLogic(ctx.txAdmin, ctx.session)
+            : nuiAuthLogic(ctx.txAdmin, ctx.ip, ctx.request.headers)
+        if(authResult.success){
+            authedAdmin = authResult.admin;
+        }
+    }
+
+    //Preparing vars
+    const basePath = (ctx.txVars.isWebInterface) ? '/' : consts.nuiWebpipePath;
+    const serverName = ctx.txAdmin.globalConfig.serverName || ctx.txAdmin.info.serverProfile;
+    const injectedConsts: InjectedTxConsts = {
+        //env
+        fxServerVersion: displayFxserverVersion,
+        txAdminVersion: txEnv.txAdminVersion,
+        isZapHosting: convars.isZapHosting, //not in use
+        isPterodactyl: convars.isPterodactyl, //not in use
+        isWebInterface: ctx.txVars.isWebInterface,
+        showAdvanced: (convars.isDevMode || console.isVerbose),
+
+        //auth
+        preAuth: authedAdmin && {
+            name: authedAdmin.name,
+            isMaster: authedAdmin.isMaster,
+            permissions: authedAdmin.permissions,
+            isTempPassword: authedAdmin.isTempPassword,
+            profilePicture: null,
+        },
+        csrfToken: (ctx.session?.auth?.csrfToken) ? ctx.session.auth.csrfToken : 'not_set',
     }
 
     //Prepare placeholders

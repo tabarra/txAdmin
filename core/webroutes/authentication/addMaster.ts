@@ -1,26 +1,25 @@
 const modulename = 'WebServer:AddMaster';
+import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const returnJustMessage = (ctx, errorTitle, errorMessage) => {
+const returnJustMessage = (ctx: InitializedCtx, errorTitle: string, errorMessage?: string) => {
     return ctx.utils.render('login', { template: 'justMessage', errorTitle, errorMessage });
 };
 
 /**
  * Handles the Add Master flow
- * @param {object} ctx
  */
-export default async function AddMaster(ctx) {
+export default async function AddMaster(ctx: InitializedCtx) {
     //Sanity check
-    if (isUndefined(ctx.params.action)) {
+    if (typeof ctx.params?.action !== 'string') {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const action = ctx.params.action;
+    const action = ctx.params.action as string;
 
-    //Check if there are no master admins set up
-    if (globals.adminVault.admins !== false) {
+    //Check if there are already admins set up
+    if (ctx.txAdmin.adminVault.admins !== false) {
         return returnJustMessage(
             ctx,
             'Master account already set.',
@@ -43,23 +42,20 @@ export default async function AddMaster(ctx) {
 };
 
 
-//================================================================
 /**
  * Handle Pin
- * @param {object} ctx
  */
-async function handlePin(ctx) {
+async function handlePin(ctx: InitializedCtx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.pin)
-        || typeof ctx.request.body.pin !== 'string'
+        typeof ctx.request.body?.pin !== 'string'
         || ctx.method != 'POST'
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Checking the PIN
-    if (ctx.request.body.pin !== globals.adminVault.addMasterPin) {
+    if (ctx.request.body.pin !== ctx.txAdmin.adminVault.addMasterPin) {
         console.warn(`Wrong PIN from: ${ctx.ip}`);
         const message = 'Wrong PIN.';
         return ctx.utils.render('login', { template: 'noMaster', message });
@@ -71,24 +67,22 @@ async function handlePin(ctx) {
     //Generate URL
     try {
         const callback = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
-        const url = await globals.adminVault.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
+        const url = ctx.txAdmin.adminVault.providers.citizenfx.getAuthURL(callback, ctx.session.externalKey);
         return ctx.response.redirect(url);
     } catch (error) {
         return returnJustMessage(
             ctx,
             'Failed to generate callback URL with error:',
-            error.message,
+            (error as Error).message,
         );
     }
 }
 
 
-//================================================================
 /**
  * Handle Callback
- * @param {object} ctx
  */
-async function handleCallback(ctx) {
+async function handleCallback(ctx: InitializedCtx) {
     //Sanity check
     if (ctx.method != 'GET') {
         return ctx.utils.error(400, 'Invalid Request');
@@ -106,10 +100,11 @@ async function handleCallback(ctx) {
     let tokenSet;
     try {
         const currentURL = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
-        tokenSet = await globals.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
-    } catch (error) {
+        tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session.externalKey);
+    } catch (e) {
+        const error = e as any; //couldn't really test those errors, but tested in the past and they worked
         console.warn(`Code Exchange error: ${error.message}`);
-        if (!isUndefined(error.tolerance)) {
+        if (error.tolerance !== undefined) {
             return returnJustMessage(
                 ctx,
                 'Please Update/Synchronize your VPS clock.',
@@ -135,13 +130,13 @@ async function handleCallback(ctx) {
     //Get userinfo
     let userInfo;
     try {
-        userInfo = await globals.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
+        userInfo = await ctx.txAdmin.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
-        console.error(`Get UserInfo error: ${error.message}`);
+        console.error(`Get UserInfo error: ${(error as Error).message}`);
         return returnJustMessage(
             ctx,
             'Get UserInfo error:',
-            error.message,
+            (error as Error).message,
         );
     }
 
@@ -157,12 +152,11 @@ async function handleCallback(ctx) {
 }
 
 
-//================================================================
 /**
  * Handle Save
  * @param {object} ctx
  */
-async function handleSave(ctx) {
+async function handleSave(ctx: InitializedCtx) {
     //Sanity check
     if (
         typeof ctx.request.body.password !== 'string'
@@ -182,10 +176,10 @@ async function handleSave(ctx) {
     }
 
     //Checking if ToS/License accepted
-    if (ctx.request.body.checkboxAcceptToS !== 'on') {
+    if (ctx.request.body.checkboxAcceptTerms !== 'on') {
         return returnJustMessage(
             ctx,
-            'You are required to accept the Terms of Service and License to proceed.',
+            'You are required to accept the Rockstar Creator Platform License Agreement and txAdmin License to proceed.',
         );
     }
 
@@ -205,6 +199,7 @@ async function handleSave(ctx) {
     let identifier;
     try {
         const res = /\/user\/(\d{1,8})/.exec(ctx.session.tmpAddMasterUserInfo.nameid);
+        //@ts-expect-error
         identifier = `fivem:${res[1]}`;
     } catch (error) {
         return returnJustMessage(
@@ -220,18 +215,24 @@ async function handleSave(ctx) {
 
     //Creating admins file
     try {
-        globals.adminVault.createAdminsFile(ctx.session.tmpAddMasterUserInfo.name, identifier, ctx.session.tmpAddMasterUserInfo, password, true);
+        ctx.txAdmin.adminVault.createAdminsFile(
+            ctx.session.tmpAddMasterUserInfo.name,
+            identifier,
+            ctx.session.tmpAddMasterUserInfo,
+            password,
+            true
+        );
     } catch (error) {
         return returnJustMessage(
             ctx,
             'Error:',
-            error.message,
+            (error as Error).message,
         );
     }
 
     //Login user
     try {
-        ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(
+        ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSession(
             ctx.session.tmpAddMasterTokenSet,
             ctx.session.tmpAddMasterUserInfo,
             identifier,
@@ -241,14 +242,14 @@ async function handleSave(ctx) {
         delete ctx.session.tmpAddMasterUserInfo;
     } catch (error) {
         ctx.session.auth = {};
-        console.error(`Failed to login: ${error.message}`);
+        console.error(`Failed to login: ${(error as Error).message}`);
         return returnJustMessage(
             ctx,
             'Failed to login:',
-            error.message,
+            (error as Error).message,
         );
     }
 
-    ctx.utils.logAction('created admins file');
+    ctx.txAdmin.logger.admin.write(ctx.session.auth.username, 'created admins file');
     return ctx.response.redirect('/');
 }

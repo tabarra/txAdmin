@@ -2,11 +2,11 @@ const modulename = 'WebServer:ProviderCallback';
 import crypto from 'node:crypto';
 import { isValidRedirectPath } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
+import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const returnJustMessage = (ctx, errorTitle, errorMessage) => {
+const returnJustMessage = (ctx: InitializedCtx, errorTitle: string, errorMessage?: string) => {
     return ctx.utils.render('login', { template: 'justMessage', errorTitle, errorMessage });
 };
 
@@ -14,16 +14,16 @@ const returnJustMessage = (ctx, errorTitle, errorMessage) => {
  * Handles the provider login callbacks
  * @param {object} ctx
  */
-export default async function ProviderCallback(ctx) {
+export default async function ProviderCallback(ctx: InitializedCtx) {
     //Sanity check
     if (
-        isUndefined(ctx.params.provider)
-        || isUndefined(ctx.query.state)
+        typeof ctx.params.provider !== 'string'
+        || typeof ctx.query.state !== 'string'
     ) {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const provider = ctx.params.provider;
-    const reqState = ctx.query.state;
+    const provider = ctx.params.provider as string;
+    const reqState = ctx.query.state as string;
 
     if (provider !== 'citizenfx') {
         return returnJustMessage(ctx, 'Provider not implemented... yet');
@@ -38,9 +38,9 @@ export default async function ProviderCallback(ctx) {
     }
 
     //Check the state changed
-    const stateSeed = `txAdmin:${ctx.session._sessCtx.externalKey}`;
+    const stateSeed = `txAdmin:${ctx.session.externalKey}`;
     const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest('hex');
-    if (reqState != stateExpected) {
+    if (reqState !== stateExpected) {
         return returnJustMessage(
             ctx,
             'This link has expired.',
@@ -52,10 +52,11 @@ export default async function ProviderCallback(ctx) {
     let tokenSet;
     try {
         const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
-        tokenSet = await globals.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
-    } catch (error) {
+        tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session.externalKey);
+    } catch (e) {
+        const error = e as any; //couldn't really test those errors, but tested in the past and they worked
         console.warn(`Code Exchange error: ${error.message}`);
-        if (!isUndefined(error.tolerance)) {
+        if (error.tolerance !== undefined) {
             return returnJustMessage(
                 ctx,
                 'Please Update/Synchronize your VPS clock.',
@@ -81,16 +82,17 @@ export default async function ProviderCallback(ctx) {
     //Get userinfo
     let userInfo;
     try {
-        userInfo = await globals.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
+        userInfo = await ctx.txAdmin.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
-        console.verbose.error(`Get UserInfo error: ${error.message}`);
-        return returnJustMessage(ctx, 'Get UserInfo error:', error.message);
+        console.verbose.error(`Get UserInfo error: ${(error as Error).message}`);
+        return returnJustMessage(ctx, 'Get UserInfo error:', (error as Error).message);
     }
 
     //Getting identifier
     let identifier;
     try {
         const res = /\/user\/(\d{1,8})/.exec(userInfo.nameid);
+        //@ts-expect-error
         identifier = `fivem:${res[1]}`;
     } catch (error) {
         return returnJustMessage(
@@ -102,8 +104,8 @@ export default async function ProviderCallback(ctx) {
 
     //Check & Login user
     try {
-        const admin = globals.adminVault.getAdminByIdentifiers([identifier]);
-        if (!admin) {
+        const vaultAdmin = ctx.txAdmin.adminVault.getAdminByIdentifiers([identifier]);
+        if (!vaultAdmin) {
             ctx.session.auth = {};
             return returnJustMessage(
                 ctx,
@@ -113,20 +115,20 @@ export default async function ProviderCallback(ctx) {
         }
 
         //Setting session
-        ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo, identifier);
-        ctx.session.auth.username = admin.name;
+        ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo, identifier);
+        ctx.session.auth.username = vaultAdmin.name;
 
         //Save the updated provider identifier & data to the admins file
-        await globals.adminVault.refreshAdminSocialData(admin.name, 'citizenfx', identifier, userInfo);
+        await ctx.txAdmin.adminVault.refreshAdminSocialData(vaultAdmin.name, 'citizenfx', identifier, userInfo);
 
-        ctx.utils.logAction(`logged in from ${ctx.ip} via citizenfx`);
-        globals?.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
-        globals?.statisticsManager.loginMethods.count('citizenfx');
+        ctx.txAdmin.logger.admin.write(vaultAdmin.name, `logged in from ${ctx.ip} via cfxre`);
+        ctx.txAdmin.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
+        ctx.txAdmin.statisticsManager.loginMethods.count('citizenfx');
         const redirectPath = (isValidRedirectPath(ctx.session?.socialLoginRedirect)) ? ctx.session.socialLoginRedirect : '/';
         return ctx.response.redirect(redirectPath);
     } catch (error) {
         ctx.session.auth = {};
-        console.verbose.error(`Failed to login: ${error.message}`);
-        return returnJustMessage(ctx, 'Failed to login:', error.message);
+        console.verbose.error(`Failed to login: ${(error as Error).message}`);
+        return returnJustMessage(ctx, 'Failed to login:', (error as Error).message);
     }
 };

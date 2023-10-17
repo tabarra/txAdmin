@@ -1,18 +1,18 @@
 const modulename = 'WebSocket';
 import { Server as SocketIO, Socket } from 'socket.io';
-import { authLogic } from './requestAuthenticator';
 import consoleFactory from '@extras/console';
 import status from './wsRooms/status';
 import playerlist from './wsRooms/playerlist';
 import liveconsole from './wsRooms/liveconsole';
 import serverlog from './wsRooms/serverlog';
 import TxAdmin from '@core/txAdmin';
+import { AuthedAdminType, normalAuthLogic } from './authLogic';
 const console = consoleFactory(modulename);
 
 //Types
 export type RoomCommandHandlerType = {
     permission: string | true;
-    handler: (...args: any) => any
+    handler: (admin: AuthedAdminType, ...args: any) => any
 }
 
 export type RoomType = {
@@ -28,16 +28,10 @@ export type RoomType = {
 const VALID_ROOMS = ['status', 'liveconsole', 'serverlog', 'playerlist'] as const;
 type RoomNames = typeof VALID_ROOMS[number];
 
-//FIXME: move session definition to request authenticator
+//NOTE: this does not go through ctxUtils, and the session schema does not match koa-session's schema
 type SocketWithSessionType = Socket & {
-    session?: {
-        auth?: {
-            username?: string;
-            master?: boolean;
-            permissions?: string[];
-        }
-    }
-}
+    session: unknown;
+};
 
 //Helpers
 const getIP = (socket: SocketWithSessionType) => {
@@ -53,26 +47,11 @@ const terminateSession = (socket: SocketWithSessionType, reason: string, shouldL
     try {
         socket.emit('logout', reason);
         socket.disconnect();
-        if(shouldLog) {
+        if (shouldLog) {
             console.verbose.warn('SocketIO', 'dropping new connection:', reason);
         }
     } catch (error) { }
 };
-
-const hasPermission = (socket: SocketWithSessionType, perm: string) => {
-    try {
-        const sess = socket.session;
-        return (
-            sess?.auth?.master === true
-            || sess?.auth?.permissions?.includes('all_permissions')
-            || sess?.auth?.permissions?.includes(perm)
-        );
-    } catch (error) {
-        console.verbose.warn(`Error validating permission '${perm}' denied.`);
-        console.verbose.dir(error);
-        return false;
-    }
-}
 
 export default class WebSocket {
     readonly #txAdmin: TxAdmin;
@@ -100,10 +79,12 @@ export default class WebSocket {
     handleConnection(socket: SocketWithSessionType) {
         try {
             //Checking for session auth
-            const { isValidAuth } = authLogic(socket.session, true, 'SocketIO');
-            if (!isValidAuth) {
+            const authResult = normalAuthLogic(this.#txAdmin, socket.session);
+            if (!authResult.success) {
                 return terminateSession(socket, 'invalid session', false);
             }
+            const { admin: authedAdmin } = authResult;
+
 
             //Check if joining any room
             if (typeof socket.handshake.query.rooms !== 'string') {
@@ -124,17 +105,17 @@ export default class WebSocket {
                 const room = this.#rooms[requestedRoomName as RoomNames];
 
                 //Checking Perms
-                if (room.permission !== true && !hasPermission(socket, room.permission)) {
-                    return terminateSession(socket, 'missing room permission');
+                if (room.permission !== true && !authedAdmin.hasPermission(room.permission)) {
+                    continue;
                 }
 
                 //Setting up event handlers
                 //NOTE: if the admin permissions is removed after connection, he will
                 // still have access to the command, only refreshing the entire connection
-                // would solve it, since socket.session is also not auto updated
+                // would solve it, since socket.session (therefore authedAdmin) is not auto updated
                 for (const [commandName, commandData] of Object.entries(room.commands ?? [])) {
-                    if (commandData.permission === true || hasPermission(socket, commandData.permission)) {
-                        socket.on(commandName, commandData.handler.bind(null, socket.session));
+                    if (commandData.permission === true || authedAdmin.hasPermission(commandData.permission)) {
+                        socket.on(commandName, commandData.handler.bind(null, authedAdmin));
                     }
                 }
 
@@ -151,7 +132,7 @@ export default class WebSocket {
                 console.verbose.debug('SocketIO', `Socket error with message: ${error.message}`);
             });
 
-            console.verbose.log('SocketIO', `Connected: ${socket.session?.auth?.username} from ${getIP(socket)}`);
+            // console.verbose.log('SocketIO', `Connected: ${authedAdmin.name} from ${getIP(socket)}`);
         } catch (error) {
             console.error('SocketIO', `Error handling new connection: ${(error as Error).message}`);
             socket.disconnect();
@@ -195,7 +176,7 @@ export default class WebSocket {
                 } else {
                     throw new Error(`cumulative buffers can only be arrays or strings`);
                 }
-            } else if(!room.cumulativeBuffer && room.outBuffer !== null){
+            } else if (!room.cumulativeBuffer && room.outBuffer !== null) {
                 this.#io.to(roomName).emit(room.eventName, room.outBuffer);
                 room.outBuffer = null;
             }
