@@ -118,6 +118,21 @@ const validSessAuthSchema = z.discriminatedUnion('type', [
 
 
 /**
+ * Autentication logic used in both websocket and webserver, for both web and nui requests.
+ */
+export const checkRequestAuth = (
+    txAdmin: TxAdmin,
+    reqHeader: { [key: string]: unknown },
+    reqIP: string,
+    sess: any,
+) => {
+    return typeof reqHeader['x-txadmin-token'] === 'string'
+        ? nuiAuthLogic(txAdmin, reqIP, reqHeader)
+        : normalAuthLogic(txAdmin, sess);
+}
+
+
+/**
  * Autentication logic used in both websocket and webserver
  */
 export const normalAuthLogic = (
@@ -203,7 +218,6 @@ export const nuiAuthLogic = (
         // Check identifier array
         const identifiers = reqHeader['x-txadmin-identifiers']
             .split(',')
-            .map((i) => i.trim().toLowerCase())
             .filter((i) => i.length);
         if (!identifiers.length) {
             return failResp('Unauthorized: empty identifier array');

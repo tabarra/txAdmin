@@ -7,7 +7,6 @@ const console = consoleFactory(modulename);
 
 /**
  * Gets the login page and destroys session if /auth?logout is defined
- * @param {object} ctx
  */
 export default async function AuthGet(ctx: InitializedCtx) {
     //shortcut

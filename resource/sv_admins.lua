@@ -50,7 +50,7 @@ RegisterNetEvent('txsv:checkIfAdmin', function()
     local headers = {
         ['Content-Type'] = 'application/json',
         ['X-TxAdmin-Token'] = TX_LUACOMTOKEN,
-        ['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(src), ', ')
+        ['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(src), ',')
     }
 
     -- Making http request

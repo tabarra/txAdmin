@@ -1,7 +1,7 @@
 import TxAdmin from "@core/txAdmin";
 import { ParameterizedContext } from "koa";
-import { CtxTxVars } from "./middlewares/setupVarsMw";
-import { CtxTxUtils } from "./middlewares/setupUtilsMw";
+import { CtxTxVars } from "./middlewares/ctxVarsMw";
+import { CtxTxUtils } from "./middlewares/ctxUtilsMw";
 import { AuthedAdminType } from "./authLogic";
 
 /**

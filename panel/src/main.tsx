@@ -9,6 +9,13 @@ import './globals.css'
 import MockShell from './MockShell.tsx'
 import { AppErrorFallback } from './components/ErrorFallback.tsx';
 
+//If the initial routing is from WebPipe, remove it from the pathname so the router can handle it
+if (window.location.pathname.substring(0, 8) === '/WebPipe') {
+  console.info('Removing WebPipe prefix from the pathname.');
+  const newUrl = window.location.pathname.substring(8) + window.location.search + window.location.hash;
+  window.history.replaceState({}, '', newUrl);
+}
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

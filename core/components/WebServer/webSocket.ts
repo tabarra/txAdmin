@@ -6,7 +6,7 @@ import playerlist from './wsRooms/playerlist';
 import liveconsole from './wsRooms/liveconsole';
 import serverlog from './wsRooms/serverlog';
 import TxAdmin from '@core/txAdmin';
-import { AuthedAdminType, normalAuthLogic } from './authLogic';
+import { AuthedAdminType, checkRequestAuth, normalAuthLogic, nuiAuthLogic } from './authLogic';
 const console = consoleFactory(modulename);
 
 //Types
@@ -79,7 +79,12 @@ export default class WebSocket {
     handleConnection(socket: SocketWithSessionType) {
         try {
             //Checking for session auth
-            const authResult = normalAuthLogic(this.#txAdmin, socket.session);
+            const authResult = checkRequestAuth(
+                this.#txAdmin,
+                socket.request.headers,
+                getIP(socket),
+                socket.session
+            );
             if (!authResult.success) {
                 return terminateSession(socket, 'invalid session', false);
             }

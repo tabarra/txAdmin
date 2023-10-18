@@ -3,10 +3,10 @@ import fsp from "node:fs/promises";
 import path from "node:path";
 import { InjectedTxConsts } from '@shared/InjectedTxConstsType';
 import { txEnv, convars } from "@core/globalData";
-import { CtxWithVars } from "./ctxTypes";
+import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@extras/consts";
 import consoleFactory from '@extras/console';
-import { AuthedAdminType, normalAuthLogic, nuiAuthLogic } from "./authLogic";
+import { AuthedAdminType, checkRequestAuth } from "./authLogic";
 const console = consoleFactory(modulename);
 
 // NOTE: it's not possible to remove the hardcoded import of the entry point in the index.html file
@@ -39,7 +39,7 @@ const devModulesScript = `<!-- Dev scripts required for HMR -->
  * FIXME: add favicon
  * FIXME: add dark mode
  */
-export default async function getReactIndex(ctx: CtxWithVars) {
+export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     //Read file if not cached
     if (convars.isDevMode || !htmlFile) {
         try {
@@ -64,14 +64,15 @@ export default async function getReactIndex(ctx: CtxWithVars) {
     }
 
     //Checking if already logged in
+    const authResult = checkRequestAuth(
+        ctx.txAdmin,
+        ctx.request.headers,
+        ctx.ip,
+        ctx.session
+    );
     let authedAdmin: AuthedAdminType | false = false;
-    if(ctx.session.isNew !== true){
-        const authResult = ctx.txVars.isWebInterface
-            ? normalAuthLogic(ctx.txAdmin, ctx.session)
-            : nuiAuthLogic(ctx.txAdmin, ctx.ip, ctx.request.headers)
-        if(authResult.success){
-            authedAdmin = authResult.admin;
-        }
+    if (authResult.success) {
+        authedAdmin = authResult.admin;
     }
 
     //Preparing vars

@@ -69,6 +69,7 @@ function ServerSidebar() {
                 <br />
                 <span className="text-muted-foreground">Temp Menu:</span>
                 <MenuLink href="/404">404</MenuLink>
+                <MenuLink href="/test">Test</MenuLink>
             </div>
         </div>
     );

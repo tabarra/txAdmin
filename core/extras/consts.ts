@@ -18,4 +18,5 @@ export default {
     regexActionID: new RegExp(`^[${noLookAlikesAlphabet}]{4}-[${noLookAlikesAlphabet}]{4}$`),
     regexWhitelistReqID: new RegExp(`R[${noLookAlikesAlphabet}]{4}`),
     noLookAlikesAlphabet,
+    nuiWebpipePath: 'https://monitor/WebPipe/',
 };

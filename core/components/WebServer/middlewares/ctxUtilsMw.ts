@@ -7,7 +7,7 @@ import * as helpers from '@core/extras/helpers';
 import { convars, txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import getReactIndex from '../getReactIndex';
-import { CtxTxVars } from './setupVarsMw';
+import { CtxTxVars } from './ctxVarsMw';
 import DynamicAds from '../../DynamicAds';
 import { Next } from 'koa';
 import { CtxWithVars } from '../ctxTypes';

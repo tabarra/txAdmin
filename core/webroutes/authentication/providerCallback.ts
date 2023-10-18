@@ -1,4 +1,4 @@
-const modulename = 'WebServer:ProviderCallback';
+const modulename = 'WebServer:AuthProviderCallback';
 import crypto from 'node:crypto';
 import { isValidRedirectPath } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
@@ -12,9 +12,8 @@ const returnJustMessage = (ctx: InitializedCtx, errorTitle: string, errorMessage
 
 /**
  * Handles the provider login callbacks
- * @param {object} ctx
  */
-export default async function ProviderCallback(ctx: InitializedCtx) {
+export default async function AuthProviderCallback(ctx: InitializedCtx) {
     //Sanity check
     if (
         typeof ctx.params.provider !== 'string'
@@ -115,8 +114,9 @@ export default async function ProviderCallback(ctx: InitializedCtx) {
         }
 
         //Setting session
-        ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo, identifier);
+        ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSessionInfo(tokenSet, userInfo, identifier);
         ctx.session.auth.username = vaultAdmin.name;
+        ctx.session.auth.csrfToken = ctx.txAdmin.adminVault.genCsrfToken();
 
         //Save the updated provider identifier & data to the admins file
         await ctx.txAdmin.adminVault.refreshAdminSocialData(vaultAdmin.name, 'citizenfx', identifier, userInfo);

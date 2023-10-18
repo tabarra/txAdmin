@@ -1,4 +1,4 @@
-const modulename = 'WebServer:NUI';
+const modulename = 'WebServer:AuthSelf';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);

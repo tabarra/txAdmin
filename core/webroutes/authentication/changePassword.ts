@@ -7,7 +7,6 @@ const console = consoleFactory(modulename);
 
 /**
  * Returns the output page containing the admins.
- * @param {object} ctx
  */
 export default async function AuthChangePassword(ctx: AuthedCtx) {
     //Sanity check

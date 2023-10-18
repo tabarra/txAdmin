@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AuthMws';
 import consoleFactory from '@extras/console';
-import { normalAuthLogic, nuiAuthLogic } from "../authLogic";
+import { checkRequestAuth } from "../authLogic";
 import { ApiAuthErrorResp, ApiToastResp, GenericApiErrorResp } from "@shared/genericApiTypes";
 import { InitializedCtx } from '../ctxTypes';
 const console = consoleFactory(modulename);
@@ -24,9 +24,14 @@ export const intercomAuthMw = async (ctx: InitializedCtx, next: Function) => {
 /**
  * Used for the legacy web interface.
  */
-export const legacyWebAuthMw = async (ctx: InitializedCtx, next: Function) => {
-    const authResult = normalAuthLogic(ctx.txAdmin, ctx.session);
-
+export const webAuthMw = async (ctx: InitializedCtx, next: Function) => {
+    //Check auth
+    const authResult = checkRequestAuth(
+        ctx.txAdmin,
+        ctx.request.headers,
+        ctx.ip,
+        ctx.session
+    );
     if (!authResult.success) {
         ctx.session.auth = {}; //clearing session
         if (authResult.rejectReason) {
@@ -50,10 +55,13 @@ export const legacyWebAuthMw = async (ctx: InitializedCtx, next: Function) => {
 export const apiAuthMw = async (ctx: InitializedCtx, next: Function) => {
     const sendTypedResp = (data: ApiAuthErrorResp | (ApiToastResp & GenericApiErrorResp)) => ctx.send(data);
 
-    //Check if the source is web or nui
-    const authResult = ctx.txVars.isWebInterface
-        ? normalAuthLogic(ctx.txAdmin, ctx.session)
-        : nuiAuthLogic(ctx.txAdmin, ctx.ip, ctx.request.headers)
+    //Check auth
+    const authResult = checkRequestAuth(
+        ctx.txAdmin,
+        ctx.request.headers,
+        ctx.ip,
+        ctx.session
+    );
     if (!authResult.success) {
         ctx.session.auth = {}; //clearing session
         if (authResult.rejectReason) {
@@ -90,4 +98,3 @@ export const apiAuthMw = async (ctx: InitializedCtx, next: Function) => {
     ctx.admin = authResult.admin;
     await next();
 };
-

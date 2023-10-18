@@ -1,4 +1,4 @@
-const modulename = 'WebServer:AuthVerify';
+const modulename = 'WebServer:AuthVerifyPassword';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 import { isValidRedirectPath } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
@@ -9,9 +9,8 @@ const isUndefined = (x: any) => x === undefined;
 
 /**
  * Verify login
- * @param {object} ctx
  */
-export default async function AuthVerify(ctx: InitializedCtx) {
+export default async function AuthVerifyPassword(ctx: InitializedCtx) {
     if (isUndefined(ctx.request.body.username) || isUndefined(ctx.request.body.password)) {
         return ctx.response.redirect('/');
     }

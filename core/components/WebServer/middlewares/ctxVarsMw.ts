@@ -7,7 +7,6 @@ const console = consoleFactory(modulename);
 import { Next } from "koa";
 import { CtxWithSession } from '../ctxTypes';
 
-//Types
 //The custom tx-related vars set to the ctx
 export type CtxTxVars = {
     isWebInterface: boolean;
@@ -37,8 +36,7 @@ const setupVarsMw = (txAdmin: TxAdmin) => {
         }
 
         //Setting up the user's real ip from the webpipe
-        //NOTE: not used anywhere except rate limiter, and
-        // should be kept this way. When auth changes, delete this shit;
+        //NOTE: not used anywhere except rate limiter, and login logs.
         if (
             typeof ctx.headers['x-txadmin-identifiers'] === 'string'
             && typeof ctx.headers['x-txadmin-token'] === 'string'
@@ -46,10 +44,10 @@ const setupVarsMw = (txAdmin: TxAdmin) => {
             && convars.loopbackInterfaces.includes(ctx.ip)
         ) {
             const ipIdentifier = ctx.headers['x-txadmin-identifiers']
-                .split(', ')
-                .find((i) => i.startsWith('ip:'));
-            if (typeof ipIdentifier === 'string') {
-                const srcIP = ipIdentifier.substr(3);
+                .split(',')
+                .find((i) => i.substring(0, 3) === 'ip:');
+            if (ipIdentifier) {
+                const srcIP = ipIdentifier.substring(3);
                 if (consts.regexValidIP.test(srcIP)) {
                     txVars.realIP = srcIP;
                 }

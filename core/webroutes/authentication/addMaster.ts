@@ -1,4 +1,4 @@
-const modulename = 'WebServer:AddMaster';
+const modulename = 'WebServer:AuthAddMaster';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
@@ -11,7 +11,7 @@ const returnJustMessage = (ctx: InitializedCtx, errorTitle: string, errorMessage
 /**
  * Handles the Add Master flow
  */
-export default async function AddMaster(ctx: InitializedCtx) {
+export default async function AuthAddMaster(ctx: InitializedCtx) {
     //Sanity check
     if (typeof ctx.params?.action !== 'string') {
         return ctx.utils.error(400, 'Invalid Request');
@@ -154,7 +154,6 @@ async function handleCallback(ctx: InitializedCtx) {
 
 /**
  * Handle Save
- * @param {object} ctx
  */
 async function handleSave(ctx: InitializedCtx) {
     //Sanity check
@@ -232,12 +231,13 @@ async function handleSave(ctx: InitializedCtx) {
 
     //Login user
     try {
-        ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSession(
+        ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSessionInfo(
             ctx.session.tmpAddMasterTokenSet,
             ctx.session.tmpAddMasterUserInfo,
             identifier,
         );
         ctx.session.auth.username = ctx.session.tmpAddMasterUserInfo.name;
+        ctx.session.auth.csrfToken = ctx.txAdmin.adminVault.genCsrfToken();
         delete ctx.session.tmpAddMasterTokenSet;
         delete ctx.session.tmpAddMasterUserInfo;
     } catch (error) {

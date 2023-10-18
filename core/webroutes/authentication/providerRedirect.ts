@@ -1,4 +1,4 @@
-const modulename = 'WebServer:ProviderRedirect';
+const modulename = 'WebServer:AuthProviderRedirect';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 import { isValidRedirectPath } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
@@ -11,9 +11,8 @@ const returnJustMessage = (ctx: InitializedCtx, errorTitle: string, errorMessage
 
 /**
  * Generates the provider auth url and redirects the user
- * @param {object} ctx
  */
-export default async function ProviderRedirect(ctx: InitializedCtx) {
+export default async function AuthProviderRedirect(ctx: InitializedCtx) {
     //Sanity check
     if (typeof ctx.params.provider !== 'string') {
         return ctx.utils.error(400, 'Invalid Request');

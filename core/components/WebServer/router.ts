@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import KoaRateLimit from 'koa-ratelimit';
 
 import * as webRoutes from '../../webroutes';
-import { apiAuthMw, intercomAuthMw, legacyWebAuthMw } from './middlewares/authMws';
+import { apiAuthMw, intercomAuthMw, webAuthMw } from './middlewares/authMws';
 import { WebServerConfigType } from '.';
 
 
@@ -50,26 +50,26 @@ export default (config: WebServerConfigType) => {
     });
 
     //Rendered Pages
-    router.get('/legacy/adminManager', legacyWebAuthMw, webRoutes.adminManager_page);
-    router.get('/legacy/advanced', legacyWebAuthMw, webRoutes.advanced_page);
-    router.get('/legacy/cfgEditor', legacyWebAuthMw, webRoutes.cfgEditor_page);
-    router.get('/legacy/console', legacyWebAuthMw, webRoutes.liveConsole);
-    router.get('/legacy/dashboard', legacyWebAuthMw, webRoutes.dashboard);
-    router.get('/legacy/diagnostics', legacyWebAuthMw, webRoutes.diagnostics_page);
-    router.get('/legacy/masterActions', legacyWebAuthMw, webRoutes.masterActions_page);
-    router.get('/legacy/players', legacyWebAuthMw, webRoutes.player_page);
-    router.get('/legacy/resources', legacyWebAuthMw, webRoutes.resources);
-    router.get('/legacy/serverLog', legacyWebAuthMw, webRoutes.serverLog);
-    router.get('/legacy/settings', legacyWebAuthMw, webRoutes.settings_page);
-    router.get('/legacy/systemLog', legacyWebAuthMw, webRoutes.systemLog);
-    router.get('/legacy/whitelist', legacyWebAuthMw, webRoutes.whitelist_page);
+    router.get('/legacy/adminManager', webAuthMw, webRoutes.adminManager_page);
+    router.get('/legacy/advanced', webAuthMw, webRoutes.advanced_page);
+    router.get('/legacy/cfgEditor', webAuthMw, webRoutes.cfgEditor_page);
+    router.get('/legacy/console', webAuthMw, webRoutes.liveConsole);
+    router.get('/legacy/dashboard', webAuthMw, webRoutes.dashboard);
+    router.get('/legacy/diagnostics', webAuthMw, webRoutes.diagnostics_page);
+    router.get('/legacy/masterActions', webAuthMw, webRoutes.masterActions_page);
+    router.get('/legacy/players', webAuthMw, webRoutes.player_page);
+    router.get('/legacy/resources', webAuthMw, webRoutes.resources);
+    router.get('/legacy/serverLog', webAuthMw, webRoutes.serverLog);
+    router.get('/legacy/settings', webAuthMw, webRoutes.settings_page);
+    router.get('/legacy/systemLog', webAuthMw, webRoutes.systemLog);
+    router.get('/legacy/whitelist', webAuthMw, webRoutes.whitelist_page);
     //FIXME: deal with these
-    router.get('/setup', legacyWebAuthMw, webRoutes.setup_get);
-    router.get('/deployer', legacyWebAuthMw, webRoutes.deployer_stepper);
+    router.get('/setup', webAuthMw, webRoutes.setup_get);
+    router.get('/deployer', webAuthMw, webRoutes.deployer_stepper);
+    router.get('/auth', webRoutes.auth_get);
 
     //Authentication
     router.get('/auth/self', apiAuthMw, webRoutes.auth_self);
-    router.get('/auth', webRoutes.auth_get); //FIXME: legacy page
     router.all('/auth/addMaster/:action', authLimiter, webRoutes.auth_addMaster);
     router.get('/auth/:provider/redirect', authLimiter, webRoutes.auth_providerRedirect);
     router.get('/auth/:provider/callback', authLimiter, webRoutes.auth_providerCallback);
@@ -77,7 +77,7 @@ export default (config: WebServerConfigType) => {
     router.post('/changePassword', apiAuthMw, webRoutes.auth_changePassword);
 
     //Admin Manager
-    router.post('/adminManager/getModal/:modalType', legacyWebAuthMw, webRoutes.adminManager_getModal);
+    router.post('/adminManager/getModal/:modalType', webAuthMw, webRoutes.adminManager_getModal);
     router.post('/adminManager/:action', apiAuthMw, webRoutes.adminManager_actions);
 
     //Settings
@@ -87,13 +87,13 @@ export default (config: WebServerConfigType) => {
     router.post('/settings/save/:scope', apiAuthMw, webRoutes.settings_save);
 
     //Master Actions
-    router.get('/masterActions/backupDatabase', legacyWebAuthMw, webRoutes.masterActions_getBackup);
+    router.get('/masterActions/backupDatabase', webAuthMw, webRoutes.masterActions_getBackup);
     router.post('/masterActions/:action', apiAuthMw, webRoutes.masterActions_actions);
 
     //FXServer
     router.post('/fxserver/controls', apiAuthMw, webRoutes.fxserver_controls);
     router.post('/fxserver/commands', apiAuthMw, webRoutes.fxserver_commands);
-    router.get('/fxserver/downloadLog', legacyWebAuthMw, webRoutes.fxserver_downloadLog);
+    router.get('/fxserver/downloadLog', webAuthMw, webRoutes.fxserver_downloadLog);
     router.post('/fxserver/schedule', apiAuthMw, webRoutes.fxserver_schedule);
 
     //CFG Editor
@@ -126,11 +126,6 @@ export default (config: WebServerConfigType) => {
     router.post('/player/:action', apiAuthMw, webRoutes.player_actions);
     router.get('/whitelist/:table', apiAuthMw, webRoutes.whitelist_list);
     router.post('/whitelist/:table/:action', apiAuthMw, webRoutes.whitelist_actions);
-
-    //FIXME: migrate
-    // router.get('/nui/start/:route?', requestAuth('nuiStart'), async (ctx: InitializedCtx, next: Function) => {
-    //     return ctx.utils.serveReactIndex();
-    // });
 
     //DevDebug routes - no auth
     if (convars.isDevMode) {

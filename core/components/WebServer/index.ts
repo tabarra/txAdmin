@@ -25,10 +25,10 @@ import router from './router';
 import consoleFactory from '@extras/console';
 import TxAdmin from '@core/txAdmin';
 import topLevelMw from './middlewares/topLevelMw';
-import setupVarsMw from './middlewares/setupVarsMw';
-import setupUtilsMw from './middlewares/setupUtilsMw.js';
+import ctxVarsMw from './middlewares/ctxVarsMw';
+import ctxUtilsMw from './middlewares/ctxUtilsMw';
 const console = consoleFactory(modulename);
-const nanoid = customAlphabet(dict51, 20);
+const nanoid = customAlphabet(dict51, 32);
 
 //Types
 export type WebServerConfigType = {
@@ -130,8 +130,8 @@ export default class WebServer {
         this.app.use(KoaBodyParser({ jsonLimit }));
 
         //Custom stuff
-        this.app.use(setupVarsMw(txAdmin));
-        this.app.use(setupUtilsMw);
+        this.app.use(ctxVarsMw(txAdmin));
+        this.app.use(ctxUtilsMw);
 
         //Setting up routes
         const txRouter = router(this.config);

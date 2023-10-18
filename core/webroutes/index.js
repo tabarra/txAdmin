@@ -14,7 +14,7 @@ export { default as auth_providerRedirect } from './authentication/providerRedir
 export { default as auth_providerCallback } from './authentication/providerCallback';
 export { default as auth_verifyPassword } from './authentication/verifyPassword';
 export { default as auth_changePassword } from './authentication/changePassword';
-export { default as auth_nui } from './authentication/nui';
+export { default as auth_self } from './authentication/self';
 
 export { default as adminManager_page } from './adminManager/page.js';
 export { default as adminManager_getModal } from './adminManager/getModal';
@@ -62,5 +62,5 @@ export { default as serverLogPartial } from './serverLogPartial.js';
 
 export {
     get as dev_get,
-    post as dev_post
+    post as dev_post,
 } from './devDebug.js';

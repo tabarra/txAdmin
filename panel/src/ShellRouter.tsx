@@ -1,10 +1,12 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { Route, Switch, useLocation } from "wouter";
-import Iframe from "./pages/Iframe"
-import NotFound from "./pages/NotFound"
+import { PageErrorFallback } from "./components/ErrorFallback";
 import { useAtomValue, useSetAtom } from "jotai";
 import { contentRefreshKeyAtom, pageErrorStatusAtom } from "./hooks/mainPageStatus";
-import { PageErrorFallback } from "./components/ErrorFallback";
+
+import Iframe from "./pages/Iframe"
+import NotFound from "./pages/NotFound"
+import TestingPage from "./pages/TestingPage";
 
 
 export default function ShellRouter() {
@@ -47,10 +49,7 @@ export default function ShellRouter() {
                 <Route path="/advanced"><Iframe legacyUrl="advanced" /></Route>
 
                 {/* Other Routes */}
-                <Route path="/WebPipe/nui/start/:page">{params => {
-                    const legacyRoute = params.page === 'adminManager' ? 'adminManager' : 'serverLog';
-                    return <Iframe legacyUrl={legacyRoute} />
-                }}</Route>
+                <Route path="/test"><TestingPage /></Route>
                 <Route path="/:fullPath*" component={NotFound} />
             </Switch>
         </ErrorBoundary>

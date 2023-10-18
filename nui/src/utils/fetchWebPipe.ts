@@ -1,6 +1,6 @@
 import { isBrowserEnv } from "./miscUtils";
 
-const WEBPIPE_PATH = "https://monitor/WebPipe/nui";
+const WEBPIPE_PATH = "https://monitor/WebPipe";
 
 type ValidPath = `/${string}`;
 
@@ -39,7 +39,7 @@ export const fetchWebPipe = async <T = any>(
     signal: abortionController.signal,
   };
   // Bail out of request if possible when browser
-  if (isBrowserEnv() && options.mockData) {
+  if (isBrowserEnv() && options?.mockData) {
     return options.mockData as unknown as T;
   }
 
