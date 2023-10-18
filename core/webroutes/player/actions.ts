@@ -183,7 +183,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
             expiration,
             player.displayName,
             allHwids
-        ); //FIXME: expiration
+        );
     } catch (error) {
         return { error: `Failed to ban player: ${(error as Error).message}` };
     }

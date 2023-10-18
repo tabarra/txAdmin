@@ -87,8 +87,14 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiResp> {
     //Register action
     let actionId;
     try {
-        //FIXME: this type has some issue
-        actionId = ctx.txAdmin.playerDatabase.registerAction(identifiers, 'ban', ctx.admin.name, reason, expiration, false);
+        actionId = ctx.txAdmin.playerDatabase.registerAction(
+            identifiers,
+            'ban',
+            ctx.admin.name,
+            reason,
+            expiration,
+            false
+        );
     } catch (error) {
         return { error: `Failed to ban identifiers: ${(error as Error).message}` };
     }

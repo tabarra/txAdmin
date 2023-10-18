@@ -12,27 +12,13 @@ Processo:
 - [x] aplicar novo tipo e trocar todos os ctx.session e ctx.utils.xxxxx de todas as rotas
 - [x] remove all `globals.` in the webroutes folder from typescript files
 - [x] test and commit all changed files
-- [ ] check `playerDatabase.registerAction` expiration type error
+- [x] check `playerDatabase.registerAction` expiration type error
 - [ ] translation fix the `The player was xxxxx` lines in all files
 - [ ] renomear csrfToken e forumUsername pra snake case, mas no AuthedAdmin pode ficar tudo como camel
     - sim, colocar o csrfToken pra dentro do admin, e tb editar o preAuth
 - [ ] corrigir comportamento dos profile pictures
 - [ ] checar o que fazer com as stats no `core/webroutes/authentication/self.ts`
 - [ ] escrever teste automatizado pros authMiddlewares e authLogic
-
-
-Ainda preciso do shared/sessionTypes.ts ?
-
-
-Retest:
-- auth legacy
-- auth auth intercom
-- auth admin (menu opens?)
-    - razão de não abrir o menu, admin_not_found
-- auth of old menu /nui/ get/action routes (player info, revoke action, ban)
-- menu iframe, iframe start
-- auth socketio
-
 
 
 =======================================================================

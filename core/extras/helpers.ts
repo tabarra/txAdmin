@@ -81,7 +81,7 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
     let expiration;
     let duration;
     if (inputDuration === 'permanent') {
-        expiration = false;
+        expiration = false as const;
     } else {
         const [multiplierInput, unit] = inputDuration.split(/\s+/);
         const multiplier = parseInt(multiplierInput);
