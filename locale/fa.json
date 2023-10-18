@@ -265,13 +265,13 @@
                         "title": "Warn",
                         "description": "What is the reason for direct warning this player?",
                         "placeholder": "Reason...",
-                        "success": "The player was warned!"
+                        "success": "Player warned!"
                     },
                     "kick_dialog": {
                         "title": "Kick",
                         "description": "What is the reason for kicking this player?",
                         "placeholder": "Reason...",
-                        "success": "The player was kicked!"
+                        "success": "Player kicked!"
                     }
                 },
                 "interaction": {

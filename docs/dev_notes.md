@@ -13,7 +13,7 @@ Processo:
 - [x] remove all `globals.` in the webroutes folder from typescript files
 - [x] test and commit all changed files
 - [x] check `playerDatabase.registerAction` expiration type error
-- [ ] translation fix the `The player was xxxxx` lines in all files
+- [x] translation fix the `The player was xxxxx` lines in all files
 - [ ] renomear csrfToken e forumUsername pra snake case, mas no AuthedAdmin pode ficar tudo como camel
     - sim, colocar o csrfToken pra dentro do admin, e tb editar o preAuth
 - [ ] corrigir comportamento dos profile pictures
