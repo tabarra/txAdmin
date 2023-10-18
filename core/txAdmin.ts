@@ -6,7 +6,6 @@ import { txEnv } from '@core/globalData';
 
 import { printBanner } from '@core/extras/banner';
 import setupProfile from '@core/extras/setupProfile';
-import updateChecker from '@core/extras/updateChecker';
 
 import AdminVault from '@core/components/AdminVault';
 import ConfigVault from '@core/components/ConfigVault';
@@ -27,6 +26,7 @@ import PersistentCache from '@core/components/PersistentCache';
 import UpdateChecker from '@core/components/UpdateChecker';
 
 import consoleFactory from '@extras/console';
+import { getHostData } from './webroutes/diagnostics/diagnosticsFuncs';
 const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
 
@@ -53,14 +53,13 @@ const globalsInternal: Record<string, any> = {
     resourcesManager: null,
     playerlistManager: null,
     playerDatabase: null,
-    config: null,
     deployer: null,
     updateChecker: null,
     info: {},
 
     //FIXME: settings:save webroute cannot call txAdmin.refreshConfig for now
     //so this hack allows it to call it
-    func_txAdminRefreshConfig: ()=>{},
+    func_txAdminRefreshConfig: () => { },
 };
 
 //@ts-ignore: yes i know this is wrong
@@ -106,7 +105,7 @@ export default class TxAdmin {
         hideDefaultWarning: boolean,
         hideDefaultScheduledRestartWarning: boolean,
     }
-    
+
 
     constructor(serverProfile: string) {
         console.log(`Profile '${serverProfile}' starting...`);
@@ -164,7 +163,7 @@ export default class TxAdmin {
             this.logger = new Logger(profileConfig.logger);
             globalsInternal.logger = this.logger;
 
-            this.translator = new Translator();
+            this.translator = new Translator(this);
             globalsInternal.translator = this.translator;
 
             this.fxRunner = new FxRunner(this, profileConfig.fxRunner);
@@ -214,6 +213,11 @@ export default class TxAdmin {
         } catch (error) {
             console.dir(error);
         }
+
+        //Pre-calculate static data
+        setTimeout(() => {
+            getHostData(this).catch((e) => { });
+        }, 10_000);
     }
 
     /**
@@ -221,6 +225,5 @@ export default class TxAdmin {
      */
     refreshConfig() {
         this.globalConfig = this.configVault.getScoped('global');
-        globalsInternal.config = this.globalConfig;
     }
 };

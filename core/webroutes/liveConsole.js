@@ -9,15 +9,15 @@ const console = consoleFactory(modulename);
  */
 export default async function LiveConsole(ctx) {
     //Check permissions
-    if (!ctx.utils.hasPermission('console.view')) {
+    if (!ctx.admin.hasPermission('console.view')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
     const renderData = {
         headerTitle: 'Live Console',
-        disableCommand: (ctx.utils.hasPermission('console.write')) ? 'autofocus' : 'disabled',
-        disableAnnouncement: (ctx.utils.hasPermission('players.message')) ? '' : 'disabled',
-        disableRestart: (ctx.utils.hasPermission('control.server')) ? '' : 'disabled',
+        disableCommand: (ctx.admin.hasPermission('console.write')) ? 'autofocus' : 'disabled',
+        disableAnnouncement: (ctx.admin.hasPermission('players.message')) ? '' : 'disabled',
+        disableRestart: (ctx.admin.hasPermission('control.server')) ? '' : 'disabled',
     };
 
     return ctx.utils.render('main/console', renderData);

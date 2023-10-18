@@ -47,7 +47,7 @@ export default async function FXServerCommands(ctx) {
     //DEBUG: Only available in the /advanced page
     if (action == 'profile_monitor') {
         if (!ensurePermission(ctx, 'all_permissions')) return false;
-        ctx.utils.logAction('Profiling txAdmin instance.');
+        ctx.admin.logAction('Profiling txAdmin instance.');
 
         const profSeconds = 5;
         const savePath = `${globals.info.serverProfilePath}/data/txProfile.bin`;
@@ -72,16 +72,16 @@ export default async function FXServerCommands(ctx) {
         // Dispatch `txAdmin:events:announcement`
         const cmdOk = globals.fxRunner.sendEvent('announcement', {
             message,
-            author: ctx.session.auth.username,
+            author: ctx.admin.name,
         });
-        ctx.utils.logAction(`Sending announcement: ${parameter}`);
+        ctx.admin.logAction(`Sending announcement: ${parameter}`);
 
         // Sending discord announcement
         globals.discordBot.sendAnnouncement({
             type: 'info',
             title: {
                 key: 'nui_menu.misc.announcement_title',
-                data: {author: ctx.session.auth.username}
+                data: {author: ctx.admin.name}
             },
             description: message
         });
@@ -100,7 +100,7 @@ export default async function FXServerCommands(ctx) {
         } else {
             cmd = 'txaKickAll "txAdmin Web Panel"';
         }
-        ctx.utils.logCommand(cmd);
+        ctx.admin.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
@@ -108,7 +108,7 @@ export default async function FXServerCommands(ctx) {
     } else if (action == 'restart_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = formatCommand('restart', parameter);
-        ctx.utils.logCommand(cmd);
+        ctx.admin.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
@@ -116,7 +116,7 @@ export default async function FXServerCommands(ctx) {
     } else if (action == 'start_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = formatCommand('start', parameter);
-        ctx.utils.logCommand(cmd);
+        ctx.admin.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
@@ -124,7 +124,7 @@ export default async function FXServerCommands(ctx) {
     } else if (action == 'ensure_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = formatCommand('ensure', parameter);
-        ctx.utils.logCommand(cmd);
+        ctx.admin.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
@@ -132,7 +132,7 @@ export default async function FXServerCommands(ctx) {
     } else if (action == 'stop_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = formatCommand('stop', parameter);
-        ctx.utils.logCommand(cmd);
+        ctx.admin.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
@@ -140,14 +140,14 @@ export default async function FXServerCommands(ctx) {
     } else if (action == 'refresh_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = 'refresh';
-        ctx.utils.logCommand(cmd);
+        ctx.admin.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
     } else if (action == 'check_txaclient') {
         let cmd = 'txaPing';
-        ctx.utils.logCommand(cmd);
+        ctx.admin.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd, 512);
         if (toResp.includes('Pong!')) {
             return ctx.send({
@@ -163,7 +163,7 @@ export default async function FXServerCommands(ctx) {
 
     //==============================================
     } else {
-        ctx.utils.logCommand('Unknown action!');
+        ctx.admin.logCommand('Unknown action!');
         return ctx.send({
             type: 'danger',
             message: 'Unknown Action.',
@@ -195,7 +195,7 @@ async function sendAlertOutput(ctx, toResp) {
  * @param {string} perm
  */
 function ensurePermission(ctx, perm) {
-    if (ctx.utils.testPermission(perm, modulename)) {
+    if (ctx.admin.testPermission(perm, modulename)) {
         return true;
     } else {
         ctx.send({

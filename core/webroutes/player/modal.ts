@@ -5,7 +5,7 @@ import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData, PlayerModalM
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { ServerPlayer } from '@core/playerLogic/playerClasses';
 import consoleFactory from '@extras/console';
-import { WebCtx } from '@core/components/WebServer/ctxUtils';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -32,12 +32,9 @@ const processHistoryLog = (hist: DatabaseActionType[]) => {
 
 /**
  * Returns the data for the player's modal
- *
  * NOTE: sending license instead of id to be able to show data even for offline players
- *
- * @param {object} ctx
  */
-export default async function PlayerModal(ctx: WebCtx) {
+export default async function PlayerModal(ctx: AuthedCtx) {
     //Sanity check
     if (typeof ctx.query === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');
@@ -50,11 +47,11 @@ export default async function PlayerModal(ctx: WebCtx) {
     const metaFields: PlayerModalMeta = {
         //FIXME: this should not come from the route itself, but for now it is required by the web frontend
         tmpPerms: {
-            message: ctx.utils.hasPermission('players.message'),
-            whitelist: ctx.utils.hasPermission('players.whitelist'),
-            warn: ctx.utils.hasPermission('players.warn'),
-            kick: ctx.utils.hasPermission('players.kick'),
-            ban: ctx.utils.hasPermission('players.ban'),
+            message: ctx.admin.hasPermission('players.message'),
+            whitelist: ctx.admin.hasPermission('players.whitelist'),
+            warn: ctx.admin.hasPermission('players.warn'),
+            kick: ctx.admin.hasPermission('players.kick'),
+            ban: ctx.admin.hasPermission('players.ban'),
         },
         serverTime: tsNow,
     };
@@ -62,7 +59,7 @@ export default async function PlayerModal(ctx: WebCtx) {
     //Finding the player
     let player;
     try {
-        const refMutex = (mutex === 'current') ? globals.fxRunner.currentMutex : mutex;
+        const refMutex = (mutex === 'current') ? ctx.txAdmin.fxRunner.currentMutex : mutex;
         player = playerResolver(refMutex, parseInt((netid as string)), license);
     } catch (error) {
         return sendTypedResp({ error: (error as Error).message });

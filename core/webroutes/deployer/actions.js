@@ -25,7 +25,7 @@ export default async function DeployerActions(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.testPermission('master', modulename)) {
+    if (!ctx.admin.testPermission('master', modulename)) {
         return ctx.send({ success: false, refresh: true });
     }
 
@@ -65,7 +65,7 @@ async function handleConfirmRecipe(ctx) {
     const userEditedRecipe = ctx.request.body.recipe;
 
     try {
-        ctx.utils.logAction('Setting recipe.');
+        ctx.admin.logAction('Setting recipe.');
         await globals.deployer.confirmRecipe(userEditedRecipe);
     } catch (error) {
         return ctx.send({ type: 'danger', message: error.message });
@@ -155,12 +155,12 @@ async function handleSetVariables(ctx) {
     }
 
     //Setting identifiers array
-    const admin = globals.adminVault.getAdminByName(ctx.session.auth.username);
+    const admin = globals.adminVault.getAdminByName(ctx.admin.name);
     if (!admin) return ctx.send({ type: 'danger', message: 'Admin not found.' });
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach((providerName) => {
         if (admin.providers[providerName].identifier) {
-            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin #${ctx.session.auth.username}`);
+            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin #${ctx.admin.name}`);
         }
     });
     userVars.addPrincipalsMaster = (addPrincipalLines.length)
@@ -169,7 +169,7 @@ async function handleSetVariables(ctx) {
 
     //Start deployer
     try {
-        ctx.utils.logAction('Running recipe.');
+        ctx.admin.logAction('Running recipe.');
         globals.deployer.start(userVars);
     } catch (error) {
         return ctx.send({ type: 'danger', message: error.message });
@@ -223,7 +223,7 @@ async function handleSaveConfig(ctx) {
     try {
         globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
+        console.warn(`[${ctx.admin.name}] Error changing fxserver settings via deployer.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -233,7 +233,7 @@ async function handleSaveConfig(ctx) {
     }
 
     globals.fxRunner.refreshConfig();
-    ctx.utils.logAction('Completed and committed server deploy.');
+    ctx.admin.logAction('Completed and committed server deploy.');
 
     //Starting server
     const spawnMsg = await globals.fxRunner.spawnServer(false);

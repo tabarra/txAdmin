@@ -11,7 +11,7 @@ const xss = xssInstancer();
  */
 export default async function SystemLog(ctx) {
     //Check permissions
-    if (!ctx.utils.hasPermission('txadmin.log.view')) {
+    if (!ctx.admin.hasPermission('txadmin.log.view')) {
         return ctx.utils.render('main/message', { message: 'You don\'t have permission to view this page.' });
     }
 

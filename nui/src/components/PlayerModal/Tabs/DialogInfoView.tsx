@@ -15,7 +15,7 @@ import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
 import { DialogLoadError } from "./DialogLoadError";
-import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import { GenericApiErrorResp, GenericApiResp } from "@shared/genericApiTypes";
 import humanizeDuration, { Unit } from "humanize-duration";
 import { ButtonXS } from "../../misc/ButtonXS";
 import { tsToLocaleDate } from "@nui/src/utils/miscUtils";
@@ -64,7 +64,7 @@ const DialogInfoView: React.FC = () => {
         });
       } else {
         enqueueSnackbar(
-          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+          (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
           { variant: "error" }
         );
       }
@@ -94,7 +94,7 @@ const DialogInfoView: React.FC = () => {
         });
       } else {
         enqueueSnackbar(
-          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+          (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
           { variant: "error" }
         );
       }

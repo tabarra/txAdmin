@@ -11,7 +11,7 @@ const console = consoleFactory(modulename);
  */
 export default async function DeployerStepper(ctx) {
     //Check permissions
-    if (!ctx.utils.hasPermission('master')) {
+    if (!ctx.admin.hasPermission('master')) {
         return ctx.utils.render('main/message', { message: 'You need to be the admin master to use the deployer.' });
     }
 

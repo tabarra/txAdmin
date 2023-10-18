@@ -9,7 +9,7 @@ import { DialogLoadError } from "./DialogLoadError";
 import { PlayerHistoryItem } from "@shared/playerApiTypes";
 import { useSnackbar } from "notistack";
 import { fetchWebPipe } from "@nui/src/utils/fetchWebPipe";
-import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import { GenericApiErrorResp, GenericApiResp } from "@shared/genericApiTypes";
 import { ButtonXS } from "../../misc/ButtonXS";
 import { tsToLocaleDateTime } from "@nui/src/utils/miscUtils";
 
@@ -159,7 +159,7 @@ const DialogHistoryView: React.FC = () => {
         });
       } else {
         enqueueSnackbar(
-          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+          (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
           { variant: "error" }
         );
       }

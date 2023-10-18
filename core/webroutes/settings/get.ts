@@ -5,16 +5,16 @@ import localeMap from '@shared/localeMap';
 import { redactApiKeys } from '../../extras/helpers';
 import { defaultEmbedConfigJson, defaultEmbedJson } from '@core/components/DiscordBot/defaultJsons';
 import consoleFactory from '@extras/console';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 
 /**
  * Returns the output page containing the live console
- * @param {object} ctx
  */
-export default async function SettingsPage(ctx) {
+export default async function SettingsPage(ctx: AuthedCtx) {
     //Check permissions
-    if (!ctx.utils.hasPermission('settings.view')) {
+    if (!ctx.admin.hasPermission('settings.view')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
@@ -26,12 +26,12 @@ export default async function SettingsPage(ctx) {
     const renderData = {
         headerTitle: 'Settings',
         locales,
-        global: cleanRenderData(globals.configVault.getScopedStructure('global')),
-        fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
-        playerDatabase: cleanRenderData(globals.configVault.getScopedStructure('playerDatabase')),
-        monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
-        discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
-        readOnly: !ctx.utils.hasPermission('settings.write'),
+        global: cleanRenderData(ctx.txAdmin.configVault.getScopedStructure('global')),
+        fxserver: cleanRenderData(ctx.txAdmin.configVault.getScopedStructure('fxRunner')),
+        playerDatabase: cleanRenderData(ctx.txAdmin.configVault.getScopedStructure('playerDatabase')),
+        monitor: cleanRenderData(ctx.txAdmin.configVault.getScopedStructure('monitor')),
+        discord: cleanRenderData(ctx.txAdmin.configVault.getScopedStructure('discordBot')),
+        readOnly: !ctx.admin.hasPermission('settings.write'),
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         activeTab: 'global',
         isZapHosting: convars.isZapHosting,

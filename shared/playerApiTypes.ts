@@ -1,4 +1,4 @@
-import { GenericApiError } from "genericApiTypes";
+import { GenericApiErrorResp } from "genericApiTypes";
 
 //Already compliant with new db specs
 export type PlayerHistoryItem = {
@@ -52,4 +52,4 @@ export type PlayerModalSuccess = {
     meta: PlayerModalMeta
     player: PlayerModalPlayerData,
 }
-export type PlayerModalResp = PlayerModalSuccess | GenericApiError;
+export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;

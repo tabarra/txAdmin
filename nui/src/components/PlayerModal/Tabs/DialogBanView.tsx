@@ -19,7 +19,7 @@ import { usePlayerModalContext } from "../../../provider/PlayerModalProvider";
 import { userHasPerm } from "../../../utils/miscUtils";
 import { usePermissionsValue } from "../../../state/permissions.state";
 import { DialogLoadError } from "./DialogLoadError";
-import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import { GenericApiErrorResp, GenericApiResp } from "@shared/genericApiTypes";
 import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 
 const DialogBanView: React.FC = () => {
@@ -72,7 +72,7 @@ const DialogBanView: React.FC = () => {
           });
         } else {
           enqueueSnackbar(
-            (result as GenericApiError).error ??
+            (result as GenericApiErrorResp).error ??
               t("nui_menu.misc.unknown_error"),
             { variant: "error" }
           );

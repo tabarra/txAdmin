@@ -1,17 +1,16 @@
 const modulename = 'WebServer:Diagnostics';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import Cache from '../../extras/dataCache';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
 import consoleFactory from '@extras/console';
-import { WebCtx } from '@core/components/WebServer/ctxUtils';
 const console = consoleFactory(modulename);
 const cache = new Cache(5);
 
 
 /**
  * Returns the output page containing the full report
- * @param {object} ctx
  */
-export default async function Diagnostics(ctx: WebCtx) {
+export default async function Diagnostics(ctx: AuthedCtx) {
     const cachedData = cache.get();
     if (cachedData !== false) {
         cachedData.message = 'This page was cached in the last 5 seconds';
@@ -24,9 +23,9 @@ export default async function Diagnostics(ctx: WebCtx) {
         message: '',
     };
     [data.host, data.txadmin, data.fxserver, data.proccesses] = await Promise.all([
-        diagnosticsFuncs.getHostData(),
-        diagnosticsFuncs.getTxAdminData(),
-        diagnosticsFuncs.getFXServerData(),
+        diagnosticsFuncs.getHostData(ctx.txAdmin),
+        diagnosticsFuncs.getTxAdminData(ctx.txAdmin),
+        diagnosticsFuncs.getFXServerData(ctx.txAdmin),
         diagnosticsFuncs.getProcessesData(),
     ]);
 

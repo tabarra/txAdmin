@@ -28,11 +28,11 @@ export default async function PlayerPage(ctx) {
         stats: getStats(),
         queryLimits,
         lastActions: await getLastActions(dbo, queryLimits.actions),
-        lastPlayers: await getLastPlayers(dbo, queryLimits.players),
+        lastPlayers: await getLastPlayers(dbo, queryLimits.players, ctx.txAdmin.playerlistManager),
         disableBans: !controllerConfigs.onJoinCheckBan,
         permsDisable: {
-            ban: !ctx.utils.hasPermission('players.ban'),
-            warn: !ctx.utils.hasPermission('players.warn'),
+            ban: !ctx.admin.hasPermission('players.ban'),
+            warn: !ctx.admin.hasPermission('players.warn'),
         },
     };
 
@@ -111,14 +111,17 @@ async function getLastActions(dbo, limit) {
  * @param {number} limit
  * @returns {array} array of processed actions, or [] on error
  */
-async function getLastPlayers(dbo, limit) {
+async function getLastPlayers(dbo, limit, playerlistManager) {
     try {
         const lastPlayers = await dbo.chain.get('players')
             .takeRight(limit)
             .reverse()
             .cloneDeep()
             .value();
-        return await processPlayerList(lastPlayers);
+        const activePlayersLicenses = playerlistManager.getPlayerList()
+            .map((p) => p.license)
+            .filter((l) => typeof l === 'string');
+        return await processPlayerList(lastPlayers, activePlayersLicenses);
     } catch (error) {
         const msg = `getLastPlayers failed with error: ${error.message}`;
         console.verbose.error(msg);

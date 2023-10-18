@@ -9,7 +9,7 @@ const console = consoleFactory(modulename);
  */
 export default async function AdvancedPage(ctx) {
     //Check permissions
-    if (!ctx.utils.hasPermission('all_permisisons')) {
+    if (!ctx.admin.hasPermission('all_permisisons')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 

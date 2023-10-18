@@ -49,7 +49,7 @@ process.stderr.on('error', (data) => { });
 //Handle "the unexpected"
 process.on('unhandledRejection', (err: Error) => {
     //We are handling this inside the DiscordBot component
-    if(err.message === 'Used disallowed intents') return;
+    if (err.message === 'Used disallowed intents') return;
 
     console.error('Ohh nooooo - unhandledRejection');
     console.dir(err);

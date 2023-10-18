@@ -28,7 +28,7 @@ export default async function AdvancedActions(ctx) {
 
 
     //Check permissions
-    if (!ctx.utils.testPermission('all_permissions', modulename)) {
+    if (!ctx.admin.testPermission('all_permissions', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',

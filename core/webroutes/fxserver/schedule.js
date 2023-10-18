@@ -20,7 +20,7 @@ export default async function FXServerSchedule(ctx) {
     const {action, parameter} = ctx.request.body;
 
     //Check permissions
-    if (!ctx.utils.testPermission('control.server', modulename)) {
+    if (!ctx.admin.testPermission('control.server', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',
@@ -30,7 +30,7 @@ export default async function FXServerSchedule(ctx) {
     if (action == 'setNextTempSchedule') {
         try {
             globals.scheduler.setNextTempSchedule(parameter);
-            ctx.utils.logAction(`Scheduling server restart at ${parameter}`);
+            ctx.admin.logAction(`Scheduling server restart at ${parameter}`);
             return ctx.send({
                 type: 'success',
                 message: 'Restart scheduled.',
@@ -47,7 +47,7 @@ export default async function FXServerSchedule(ctx) {
             const enabled = (parameter === 'true');
             globals.scheduler.setNextSkip(enabled);
             const logAct = enabled ? 'Cancelling' : 'Re-enabling';
-            ctx.utils.logAction(`${logAct} next scheduled restart.`);
+            ctx.admin.logAction(`${logAct} next scheduled restart.`);
             return ctx.send({
                 type: 'success',
                 message: 'Schedule changed.',

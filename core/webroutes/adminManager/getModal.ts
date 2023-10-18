@@ -29,7 +29,6 @@ const getPerms = (checkPerms: string[], allPermissions: [string, string][]) => {
 
 /**
  * Returns the output page containing the admins.
- * @param {object} ctx
  */
 export default async function AdminManagerGetModal(ctx: AuthedCtx) {
     //Sanity check

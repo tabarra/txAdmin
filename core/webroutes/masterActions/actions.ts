@@ -5,17 +5,16 @@ import FXRunner from '@core/components/FxRunner';
 import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseActionType, DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
 import { now } from '@core/extras/helpers';
-import { GenericApiError } from '@shared/genericApiTypes';
+import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import consoleFactory from '@extras/console';
-import { WebCtx } from '@core/components/WebServer/ctxUtils';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 
 /**
  * Handle all the master actions... actions
- * @param {object} ctx
  */
-export default async function MasterActionsAction(ctx: WebCtx) {
+export default async function MasterActionsAction(ctx: AuthedCtx) {
     //Sanity check
     if (typeof ctx.params.action !== 'string') {
         return ctx.send({error: 'Invalid Request'});
@@ -23,7 +22,7 @@ export default async function MasterActionsAction(ctx: WebCtx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.testPermission('master', modulename)) {
+    if (!ctx.admin.testPermission('master', modulename)) {
         return ctx.send({error: 'Only the master account has permission to view/use this page.'});
     }
     if (!ctx.txVars.isWebInterface) {
@@ -45,29 +44,25 @@ export default async function MasterActionsAction(ctx: WebCtx) {
 
 /**
  * Handle FXServer settings reset nad resurn to setup
- * @param {object} ctx
  */
-async function handleResetFXServer(ctx: WebCtx) {
-    //Typescript stuff
-    const fxRunner = (globals.fxRunner as FXRunner);
-    const configVault = (globals.configVault as ConfigVault);
+async function handleResetFXServer(ctx: AuthedCtx) {
 
-    if (fxRunner.fxChild !== null) {
-        ctx.utils.logCommand('STOP SERVER');
-        fxRunner.killServer('resetting fxserver config', ctx.session.auth.username, false).catch((e) => {});
+    if (ctx.txAdmin.fxRunner.fxChild !== null) {
+        ctx.admin.logCommand('STOP SERVER');
+        ctx.txAdmin.fxRunner.killServer('resetting fxserver config', ctx.admin.name, false).catch((e) => {});
     }
 
     //Making sure the deployer is not running
     globals.deployer = null;
 
     //Preparing & saving config
-    const newConfig = configVault.getScopedStructure('fxRunner');
+    const newConfig = ctx.txAdmin.configVault.getScopedStructure('fxRunner');
     newConfig.serverDataPath = null;
     newConfig.cfgPath = null;
     try {
-        configVault.saveProfile('fxRunner', newConfig);
+        ctx.txAdmin.configVault.saveProfile('fxRunner', newConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing FXServer settings.`);
+        console.warn(`[${ctx.admin.name}] Error changing FXServer settings.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -77,26 +72,24 @@ async function handleResetFXServer(ctx: WebCtx) {
     }
 
     //Sending output
-    fxRunner.refreshConfig();
-    ctx.utils.logAction('Resetting fxRunner settings.');
+    ctx.txAdmin.fxRunner.refreshConfig();
+    ctx.admin.logAction('Resetting fxRunner settings.');
     return ctx.send({ success: true });
 }
 
 
 /**
  * Handle clean database request
- * @param {object} ctx
  */
-async function handleCleanDatabase(ctx: WebCtx) {
+async function handleCleanDatabase(ctx: AuthedCtx) {
     //Typescript stuff
-    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     type successResp = {
         msElapsed: number;
         playersRemoved: number;
         actionsRemoved: number;
         hwidsRemoved: number;
     }
-    const sendTypedResp = (data: successResp | GenericApiError) => ctx.send(data);
+    const sendTypedResp = (data: successResp | GenericApiErrorResp) => ctx.send(data);
 
     //Sanity check
     if (
@@ -181,21 +174,21 @@ async function handleCleanDatabase(ctx: WebCtx) {
     const tsStart = Date.now();
     let playersRemoved = 0;
     try {
-        playersRemoved = playerDatabase.cleanDatabase('players', playersFilter);
+        playersRemoved = ctx.txAdmin.playerDatabase.cleanDatabase('players', playersFilter);
     } catch (error) {
         return sendTypedResp({error: `<b>Failed to clean players with error:</b><br>${(error as Error).message}`});
     }
 
     let actionsRemoved = 0;
     try {
-        actionsRemoved = playerDatabase.cleanDatabase('actions', actionsFilter);
+        actionsRemoved = ctx.txAdmin.playerDatabase.cleanDatabase('actions', actionsFilter);
     } catch (error) {
         return sendTypedResp({error: `<b>Failed to clean actions with error:</b><br>${(error as Error).message}`});
     }
 
     let hwidsRemoved = 0;
     try {
-        hwidsRemoved = playerDatabase.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
+        hwidsRemoved = ctx.txAdmin.playerDatabase.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
     } catch (error) {
         return sendTypedResp({error: `<b>Failed to clean HWIDs with error:</b><br>${(error as Error).message}`});
     }
@@ -208,16 +201,14 @@ async function handleCleanDatabase(ctx: WebCtx) {
 
 /**
  * Handle clean database request
- * @param {object} ctx
  */
-async function handleRevokeWhitelists(ctx: WebCtx) {
+async function handleRevokeWhitelists(ctx: AuthedCtx) {
     //Typescript stuff
-    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
     type successResp = {
         msElapsed: number;
         cntRemoved: number;
     }
-    const sendTypedResp = (data: successResp | GenericApiError) => ctx.send(data);
+    const sendTypedResp = (data: successResp | GenericApiErrorResp) => ctx.send(data);
 
     //Sanity check
     if (typeof ctx.request.body.filter !== 'string') {
@@ -242,7 +233,7 @@ async function handleRevokeWhitelists(ctx: WebCtx) {
 
     try {
         const tsStart = Date.now();
-        const cntRemoved = playerDatabase.bulkRevokePlayerWhitelist(filterFunc);
+        const cntRemoved = ctx.txAdmin.playerDatabase.bulkRevokePlayerWhitelist(filterFunc);
         const msElapsed = Date.now() - tsStart;
         return sendTypedResp({msElapsed, cntRemoved});
     } catch (error) {

@@ -1,11 +1,17 @@
-export type GenericApiLogout = {
+export type ApiAuthErrorResp = {
+    logout: true;
+    reason: string;
+}
+export type GenericApiSuccessResp = {
     success: true;
 }
-export type GenericApiSuccess = {
-    logout: true;
-}
-export type GenericApiError = {
+export type GenericApiErrorResp = {
     error: string;
 }
+export type GenericApiResp = ApiAuthErrorResp | GenericApiSuccessResp | GenericApiErrorResp;
 
-export type GenericApiResp = GenericApiLogout | GenericApiSuccess | GenericApiError;
+export type ApiToastResp = {
+    type: 'success' | 'info' | 'warning' | 'danger', //based on the notify lib, change when possible
+    markdown?: boolean,
+    message: string,
+}

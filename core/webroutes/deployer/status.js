@@ -9,7 +9,7 @@ const console = consoleFactory(modulename);
  */
 export default async function DeployerStatus(ctx) {
     //Check permissions
-    if (!ctx.utils.hasPermission('all_permissions')) {
+    if (!ctx.admin.hasPermission('all_permissions')) {
         return ctx.send({success: false, refresh: true});
     }
 

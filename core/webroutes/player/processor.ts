@@ -6,8 +6,6 @@ const xss = xssInstancer();
 
 /**
  * Processes an action list and returns a templatization array.
- * @param {array} list
- * @returns {array} array of actions, or throws on error
  */
 export const processActionList = (list: DatabaseActionType[]) => {
     if (!list) return [];
@@ -58,18 +56,9 @@ export const processActionList = (list: DatabaseActionType[]) => {
 
 /**
  * Processes an player list and returns a templatization array.
- * @param {array} list
- * @returns {array} array of players, or throws on error
  */
-export const processPlayerList = (list: DatabasePlayerType[]) => {
-    //Typescript stuff
-    const playerlistManager = (globals.playerlistManager as PlayerlistManager);
-
+export const processPlayerList = (list: DatabasePlayerType[], activeLicenses: string[]) => {
     if (!list) return [];
-
-    const activeLicenses = playerlistManager.getPlayerList()
-        .map((p) => p.license)
-        .filter(l => l);
     return list.map((p) => {
         return {
             name: p.displayName,

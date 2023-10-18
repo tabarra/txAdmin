@@ -15,7 +15,7 @@ export default async function FXServerControls(ctx) {
     const { action } = ctx.request.body;
 
     //Check permissions
-    if (!ctx.utils.testPermission('control.server', modulename)) {
+    if (!ctx.admin.testPermission('control.server', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',
@@ -23,14 +23,14 @@ export default async function FXServerControls(ctx) {
     }
 
     if (action == 'restart') {
-        ctx.utils.logCommand('RESTART SERVER');
+        ctx.admin.logCommand('RESTART SERVER');
         //TODO: delay override message logic should be on fxserver, but for now keep here
         // as it messages with the sync notification on the UI
         if (globals.fxRunner.restartDelayOverride && globals.fxRunner.restartDelayOverride <= 4000) {
-            globals.fxRunner.restartServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username);
+            globals.fxRunner.restartServer(`requested by ${ctx.admin.name}`, ctx.admin.name);
             return ctx.send({ type: 'success', message: `Restarting the fxserver with delay override ${globals.fxRunner.restartDelayOverride}.` });
         } else {
-            const restartMsg = await globals.fxRunner.restartServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username);
+            const restartMsg = await globals.fxRunner.restartServer(`requested by ${ctx.admin.name}`, ctx.admin.name);
             if (restartMsg !== null) {
                 return ctx.send({ type: 'danger', markdown: true, message: restartMsg });
             } else {
@@ -39,16 +39,16 @@ export default async function FXServerControls(ctx) {
         }
     } else if (action == 'stop') {
         if (globals.fxRunner.fxChild === null) {
-            return ctx.send({ type: 'danger', message: 'The server is already stopped.' });
+            return ctx.send({ type: 'success', message: 'The server is already stopped.' });
         }
-        ctx.utils.logCommand('STOP SERVER');
-        await globals.fxRunner.killServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username, false);
-        return ctx.send({ type: 'warning', message: 'Server stopped.' });
+        ctx.admin.logCommand('STOP SERVER');
+        await globals.fxRunner.killServer(`requested by ${ctx.admin.name}`, ctx.admin.name, false);
+        return ctx.send({ type: 'success', message: 'Server stopped.' });
     } else if (action == 'start') {
         if (globals.fxRunner.fxChild !== null) {
             return ctx.send({ type: 'danger', message: 'The server is already running. If it\'s not working, press RESTART.' });
         }
-        ctx.utils.logCommand('START SERVER');
+        ctx.admin.logCommand('START SERVER');
         const spawnMsg = await globals.fxRunner.spawnServer(true);
         if (spawnMsg !== null) {
             return ctx.send({ type: 'danger', markdown: true, message: spawnMsg });

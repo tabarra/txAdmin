@@ -52,10 +52,10 @@ export default async function SetupPost(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.testPermission('all_permissions', modulename)) {
+    if (!ctx.admin.testPermission('all_permissions', modulename)) {
         return ctx.send({
             success: false,
-            message: 'You need to be the admin master to use the setup page.',
+            message: 'You need to be the admin master or have all permissions to use the setup page.',
         });
     }
 
@@ -276,7 +276,7 @@ async function handleSaveLocal(ctx) {
         globals.configVault.saveProfile('global', newGlobalConfig);
         globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
+        console.warn(`[${ctx.admin.name}] Error changing global/fxserver settings via setup stepper.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -291,7 +291,7 @@ async function handleSaveLocal(ctx) {
     globals.persistentCache.set('deployer:recipe', 'none');
 
     //Logging
-    ctx.utils.logAction('Changing global/fxserver settings via setup stepper.');
+    ctx.admin.logAction('Changing global/fxserver settings via setup stepper.');
 
     //Starting server
     const spawnMsg = await globals.fxRunner.spawnServer(false);
@@ -343,7 +343,7 @@ async function handleSaveDeployerImport(ctx) {
     try {
         globals.configVault.saveProfile('global', newGlobalConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -352,7 +352,7 @@ async function handleSaveDeployerImport(ctx) {
         });
     }
     globals.config = globals.configVault.getScoped('global');
-    ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
+    ctx.admin.logAction('Changing global settings via setup stepper and started Deployer.');
 
     //Start deployer (constructor will validate the recipe)
     try {
@@ -388,7 +388,7 @@ async function handleSaveDeployerCustom(ctx) {
     try {
         globals.configVault.saveProfile('global', newGlobalConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -397,11 +397,11 @@ async function handleSaveDeployerCustom(ctx) {
         });
     }
     globals.config = globals.configVault.getScoped('global');
-    ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
+    ctx.admin.logAction('Changing global settings via setup stepper and started Deployer.');
 
     //Start deployer (constructor will create the recipe template)
     const customMetaData = {
-        author: ctx.session.auth.username,
+        author: ctx.admin.name,
         serverName,
     };
     try {

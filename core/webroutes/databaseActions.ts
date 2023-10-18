@@ -5,7 +5,7 @@ import { calcExpirationFromDuration } from '@core/extras/helpers';
 import consts from '@core/extras/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import consoleFactory from '@extras/console';
-import { WebCtx } from '@core/components/WebServer/ctxUtils';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -14,22 +14,20 @@ const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x 
 
 /**
  * Returns the resources list
- * @param {object} ctx
  */
-export default async function DatabaseActions(ctx: WebCtx) {
+export default async function DatabaseActions(ctx: AuthedCtx) {
     //Sanity check
     if (!ctx.params?.action) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const action = ctx.params.action;
-    const sess = ctx.nuiSession ?? ctx.session; //revoke_action can be triggered by the menu player modal
     const sendTypedResp = (data: GenericApiResp) => ctx.send(data);
 
     //Delegate to the specific action handler
     if (action === 'ban_ids') {
-        return sendTypedResp(await handleBandIds(ctx, sess));
+        return sendTypedResp(await handleBandIds(ctx));
     } else if (action === 'revoke_action') {
-        return sendTypedResp(await handleRevokeAction(ctx, sess));
+        return sendTypedResp(await handleRevokeAction(ctx));
     } else {
         return sendTypedResp({ error: 'unknown action' });
     }
@@ -41,7 +39,7 @@ export default async function DatabaseActions(ctx: WebCtx) {
  * This is only called from the players page, where you ban an ID array instead of a PlayerClass
  * Doesn't support HWIDs, only banning player does
  */
-async function handleBandIds(ctx: WebCtx, sess: any): Promise<GenericApiResp> {
+async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiResp> {
     //Checking request & identifiers
     if (
         anyUndefined(
@@ -82,21 +80,22 @@ async function handleBandIds(ctx: WebCtx, sess: any): Promise<GenericApiResp> {
     const { expiration, duration } = calcResults;
 
     //Check permissions
-    if (!ctx.utils.testPermission('players.ban', modulename)) {
+    if (!ctx.admin.testPermission('players.ban', modulename)) {
         return { error: 'You don\'t have permission to execute this action.' }
     }
 
     //Register action
     let actionId;
     try {
-        actionId = globals.playerDatabase.registerAction(identifiers, 'ban', sess.auth.username, reason, expiration, false);
+        //FIXME: this type has some issue
+        actionId = ctx.txAdmin.playerDatabase.registerAction(identifiers, 'ban', ctx.admin.name, reason, expiration, false);
     } catch (error) {
         return { error: `Failed to ban identifiers: ${(error as Error).message}` };
     }
-    ctx.utils.logAction(`Banned <${identifiers.join(';')}>: ${reason}`);
+    ctx.admin.logAction(`Banned <${identifiers.join(';')}>: ${reason}`);
 
     //No need to dispatch events if server is not online
-    if (globals.fxRunner.fxChild === null) {
+    if (ctx.txAdmin.fxRunner.fxChild === null) {
         return { success: true };
     }
 
@@ -104,26 +103,26 @@ async function handleBandIds(ctx: WebCtx, sess: any): Promise<GenericApiResp> {
         //Prepare and send command
         let kickMessage, durationTranslated;
         const tOptions: any = {
-            author: sess.auth.username,
+            author: ctx.admin.name,
             reason: reason,
         };
         if (expiration !== false && duration) {
             const humanizeOptions = {
-                language: globals.translator.t('$meta.humanizer_language'),
+                language: ctx.txAdmin.translator.t('$meta.humanizer_language'),
                 round: true,
                 units: ['d', 'h'] as Unit[],
             };
             durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
             tOptions.expiration = durationTranslated;
-            kickMessage = globals.translator.t('ban_messages.kick_temporary', tOptions);
+            kickMessage = ctx.txAdmin.translator.t('ban_messages.kick_temporary', tOptions);
         } else {
             durationTranslated = null;
-            kickMessage = globals.translator.t('ban_messages.kick_permanent', tOptions);
+            kickMessage = ctx.txAdmin.translator.t('ban_messages.kick_permanent', tOptions);
         }
 
         // Dispatch `txAdmin:events:playerBanned`
-        globals.fxRunner.sendEvent('playerBanned', {
-            author: sess.auth.username,
+        ctx.txAdmin.fxRunner.sendEvent('playerBanned', {
+            author: ctx.admin.name,
             reason,
             actionId,
             expiration,
@@ -144,7 +143,7 @@ async function handleBandIds(ctx: WebCtx, sess: any): Promise<GenericApiResp> {
  * Handle revoke database action.
  * This is called from the player modal or the players page.
  */
-async function handleRevokeAction(ctx: WebCtx, sess: any): Promise<GenericApiResp> {
+async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -156,25 +155,25 @@ async function handleRevokeAction(ctx: WebCtx, sess: any): Promise<GenericApiRes
 
     //Check permissions
     const perms = [];
-    if (ctx.utils.hasPermission('players.ban')) perms.push('ban');
-    if (ctx.utils.hasPermission('players.warn')) perms.push('warn');
+    if (ctx.admin.hasPermission('players.ban')) perms.push('ban');
+    if (ctx.admin.hasPermission('players.warn')) perms.push('warn');
 
     let action;
     try {
-        action = globals.playerDatabase.revokeAction(action_id, sess.auth.username, perms) as DatabaseActionType;
-        ctx.utils.logAction(`Revoked ${action.type} id ${action_id} from ${action.playerName ?? 'identifiers'}`);
+        action = ctx.txAdmin.playerDatabase.revokeAction(action_id, ctx.admin.name, perms) as DatabaseActionType;
+        ctx.admin.logAction(`Revoked ${action.type} id ${action_id} from ${action.playerName ?? 'identifiers'}`);
     } catch (error) {
         return { error: `Failed to revoke action: ${(error as Error).message}` };
     }
 
     //No need to dispatch events if server is not online
-    if (globals.fxRunner.fxChild === null) {
+    if (ctx.txAdmin.fxRunner.fxChild === null) {
         return { success: true };
     }
 
     try {
         // Dispatch `txAdmin:events:actionRevoked`
-        globals.fxRunner.sendEvent('actionRevoked', {
+        ctx.txAdmin.fxRunner.sendEvent('actionRevoked', {
             actionId: action.id,
             actionType: action.type,
             actionReason: action.reason,
@@ -182,7 +181,7 @@ async function handleRevokeAction(ctx: WebCtx, sess: any): Promise<GenericApiRes
             playerName: action.playerName,
             playerIds: action.ids,
             playerHwids: action.hwids ?? [],
-            revokedBy: sess.auth.username,
+            revokedBy: ctx.admin.name,
         });
     } catch (error) { }
     return { success: true };
