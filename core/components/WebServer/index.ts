@@ -45,7 +45,7 @@ export default class WebServer {
     public luaComToken: string;
     //setupKoa
     private app: Koa;
-    private koaSessionMemoryStore: typeof KoaSessionMemoryStoreClass;
+    public koaSessionMemoryStore: typeof KoaSessionMemoryStoreClass;
     private sessionInstance: typeof KoaSession;
     private koaCallback: (req: any, res: any) => Promise<void>;
     //setupWebSocket

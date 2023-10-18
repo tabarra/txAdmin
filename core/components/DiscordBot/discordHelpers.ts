@@ -70,7 +70,7 @@ export const ensurePermission = async (interaction: CommandInteraction, txAdmin:
 
 
 /**
- * Equivalent to ctx.utils.logAction()
+ * Equivalent to ctx.admin.logAction()
  */
 export const logDiscordAdminAction = async (txAdmin: TxAdmin, adminName: string, message: string) => {
     txAdmin.logger.admin.write(adminName, message);

@@ -156,6 +156,16 @@ const runDevTask = async () => {
     //Create txAdmin process runner
     const txInstance = new txAdminRunner(fxServerRootPath, fxsBinPath);
 
+    //Listens on stdin for the key 'r'
+    process.stdin.on('data', (data) => {
+        const cmd = data.toString().toLowerCase().trim();
+        if (cmd === 'r' || cmd === 'rr') {
+            console.log(`[BUILDER] Restarting due to stdin request.`);
+            txInstance.killServer();
+            txInstance.spawnServer();
+        }
+    });
+
     //Transpile & bundle
     //NOTE: "result" is {errors[], warnings[], stop()}
     console.log('[BUILDER] Setting up esbuild.');

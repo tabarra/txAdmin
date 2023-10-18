@@ -468,11 +468,11 @@ export default class FXRunner {
     //================================================================
     /**
      * Handles a live console command input
-     * @param {object} session
+     * @param {import('../WebServer/authLogic').AuthedAdminType} admin
      * @param {string} command
      */
-    liveConsoleCmdHandler(session, command) {
-        globals.logger.admin.write(session.auth.username, command, 'command');
+    liveConsoleCmdHandler(admin, command) {
+        admin.logCommand(command, 'command');
         globals.fxRunner.srvCmd(command);
     }
 

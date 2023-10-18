@@ -8,8 +8,12 @@ Processo:
 - [x] testar rotas websocket
 - [x] corrigir rotas nui iframe
 - [x] deal with the nui auth rate limiting (no more middleware)
-- [ ] pesquisar por `ctx.session.auth`
-- [ ] aplicar novo tipo e trocar todos os ctx.session e ctx.utils.xxxxx de todas as rotas
+- [x] pesquisar por `ctx.session.auth`
+- [x] aplicar novo tipo e trocar todos os ctx.session e ctx.utils.xxxxx de todas as rotas
+- [x] remove all `globals.` in the webroutes folder from typescript files
+- [x] test and commit all changed files
+- [ ] check `playerDatabase.registerAction` expiration type error
+- [ ] translation fix the `The player was xxxxx` lines in all files
 - [ ] renomear csrfToken e forumUsername pra snake case, mas no AuthedAdmin pode ficar tudo como camel
     - sim, colocar o csrfToken pra dentro do admin, e tb editar o preAuth
 - [ ] corrigir comportamento dos profile pictures

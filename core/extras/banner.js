@@ -11,11 +11,11 @@ const console = consoleFactory();
 
 const getIPs = async () => {
     const reqOptions = {
-        timeout: { request: 2500 }
+        timeout: { request: 2500 },
     };
     const allOps = await Promise.allSettled([
         // op.value.ip
-        got('https://ip.seeip.org/json', reqOptions).json(),
+        // got('https://ip.seeip.org/json', reqOptions).json(), //expired cert?
         got('https://api.ipify.org/?format=json', reqOptions).json(),
         got('https://api.myip.com', reqOptions).json(),
 

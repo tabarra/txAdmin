@@ -26,7 +26,7 @@ export default class DynamicAds {
 
         //Set default ads
         let loginAds, mainAds;
-        if(convars.isZapHosting){
+        if (convars.isZapHosting) {
             loginAds = defaultAds.loginZap;
             mainAds = defaultAds.mainZap;
         } else {
@@ -56,7 +56,7 @@ export default class DynamicAds {
         try {
             const res = await got(indexURL).json();
             let loginAds, mainAds;
-            if(convars.isZapHosting){
+            if (convars.isZapHosting) {
                 loginAds = res.loginZap;
                 mainAds = res.mainZap;
             } else {

@@ -17,10 +17,6 @@ module.exports = {
         VerifyPasswordHash: 'readonly',
     },
     extends: [],
-    parserOptions: {
-        sourceType: 'module',
-        ecmaVersion: 2021,
-    },
     ignorePatterns: [
         '*.ignore.*',
     ],

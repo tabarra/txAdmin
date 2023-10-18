@@ -5,8 +5,8 @@
     "main": "index.js",
     "scripts": {
         "build": "vite build --mode production",
-        "dev:browser": "vite dev --port 40121 --strictPort --mode devNuiBrowser",
-        "dev:game": "vite build --watch --mode development",
+        "dev": "vite build --watch --mode development",
+        "browser": "vite dev --port 40121 --strictPort --mode devNuiBrowser",
         "typecheck": "tsc -p tsconfig.json --noEmit"
     },
     "keywords": [],
