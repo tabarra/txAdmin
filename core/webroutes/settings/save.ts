@@ -5,8 +5,6 @@ import slash from 'slash';
 import { jsonrepair } from 'jsonrepair';
 import { parseSchedule, anyUndefined } from '@core/extras/helpers';
 import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
-import ConfigVault from '@core/components/ConfigVault';
-import DiscordBot from '@core/components/DiscordBot';
 import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';

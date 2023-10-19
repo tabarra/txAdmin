@@ -41,7 +41,6 @@ export default async function AuthGet(ctx: InitializedCtx) {
     const renderData = {
         template,
         message: (ctx.query.logout !== undefined) ? 'Logged Out' : '',
-        citizenfxDisabled: !adminVault.providers.citizenfx.ready,
     };
     return ctx.utils.render('login', renderData);
 };

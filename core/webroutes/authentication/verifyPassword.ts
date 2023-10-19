@@ -17,7 +17,6 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
     const renderData = {
         template: 'normal',
         message: '',
-        citizenfxDisabled: !ctx.txAdmin.adminVault.providers.citizenfx.ready,
     };
 
     try {
