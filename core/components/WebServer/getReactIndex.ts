@@ -93,7 +93,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
             isMaster: authedAdmin.isMaster,
             permissions: authedAdmin.permissions,
             isTempPassword: authedAdmin.isTempPassword,
-            profilePicture: null,
+            profilePicture: authedAdmin.profilePicture,
         },
         csrfToken: (ctx.session?.auth?.csrfToken) ? ctx.session.auth.csrfToken : 'not_set',
     }

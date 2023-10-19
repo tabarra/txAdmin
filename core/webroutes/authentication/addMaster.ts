@@ -1,4 +1,5 @@
 const modulename = 'WebServer:AuthAddMaster';
+import { UserInfoType } from '@core/components/AdminVault/providers/CitizenFX';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
@@ -100,7 +101,13 @@ async function handleCallback(ctx: InitializedCtx) {
     let tokenSet;
     try {
         const currentURL = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
-        tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session.externalKey);
+        tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(
+            ctx,
+            currentURL,
+            ctx.session.externalKey
+        );
+        if (!tokenSet) throw new Error('tokenSet is undefined');
+        if (!tokenSet.access_token) throw new Error('tokenSet.access_token is undefined');
     } catch (e) {
         const error = e as any; //couldn't really test those errors, but tested in the past and they worked
         console.warn(`Code Exchange error: ${error.message}`);
@@ -185,7 +192,7 @@ async function handleSave(ctx: InitializedCtx) {
     //Checking if session is still present
     if (
         typeof ctx.session.tmpAddMasterUserInfo === 'undefined'
-        || typeof ctx.session.tmpAddMasterUserInfo.name !== 'string'
+        || typeof ctx.session.tmpAddMasterUserInfo?.name !== 'string'
     ) {
         return returnJustMessage(
             ctx,
@@ -193,31 +200,28 @@ async function handleSave(ctx: InitializedCtx) {
             'You may have restarted txAdmin right before entering this page. Please try again.',
         );
     }
+    const userInfo = ctx.session.tmpAddMasterUserInfo as UserInfoType;
 
     //Getting identifier
     let identifier;
     try {
-        const res = /\/user\/(\d{1,8})/.exec(ctx.session.tmpAddMasterUserInfo.nameid);
+        const res = /\/user\/(\d{1,8})/.exec(userInfo.nameid);
         //@ts-expect-error
         identifier = `fivem:${res[1]}`;
     } catch (error) {
         return returnJustMessage(
             ctx,
             'Invalid nameid identifier.',
-            `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${ctx.session.tmpAddMasterUserInfo.nameid.toString()}`,
+            `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${userInfo.nameid.toString()}`,
         );
-    }
-
-    if (typeof ctx.session.tmpAddMasterUserInfo.picture !== 'string') {
-        ctx.session.tmpAddMasterUserInfo.picture = null;
     }
 
     //Creating admins file
     try {
         ctx.txAdmin.adminVault.createAdminsFile(
-            ctx.session.tmpAddMasterUserInfo.name,
+            userInfo.name,
             identifier,
-            ctx.session.tmpAddMasterUserInfo,
+            userInfo,
             password,
             true
         );
@@ -229,14 +233,22 @@ async function handleSave(ctx: InitializedCtx) {
         );
     }
 
+    //If the user has a picture, save it to the cache
+    if (userInfo.picture) {
+        ctx.txAdmin.persistentCache.set(
+            `admin:picture:${userInfo.name}`,
+            userInfo.picture
+        );
+    }
+
     //Login user
     try {
         ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSessionInfo(
             ctx.session.tmpAddMasterTokenSet,
-            ctx.session.tmpAddMasterUserInfo,
+            userInfo,
             identifier,
         );
-        ctx.session.auth.username = ctx.session.tmpAddMasterUserInfo.name;
+        ctx.session.auth.username = userInfo.name;
         ctx.session.auth.csrfToken = ctx.txAdmin.adminVault.genCsrfToken();
         delete ctx.session.tmpAddMasterTokenSet;
         delete ctx.session.tmpAddMasterUserInfo;

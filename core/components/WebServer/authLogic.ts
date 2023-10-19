@@ -3,7 +3,6 @@ import { z } from "zod";
 import { convars } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import TxAdmin from "@core/txAdmin";
-import AdminLogger from "../Logger/handlers/admin";
 const console = consoleFactory(modulename);
 
 
@@ -15,28 +14,32 @@ export class AuthedAdmin {
     public readonly permissions: string[];
     public readonly isMaster: boolean;
     public readonly isTempPassword: boolean;
-    readonly #adminLogger: AdminLogger;
+    public readonly profilePicture: string | undefined;
+    readonly #txAdmin: TxAdmin;
 
-    constructor(vaultAdmin: any, adminLogger: AdminLogger) {
+    constructor(txAdmin: TxAdmin, vaultAdmin: any) {
+        this.#txAdmin = txAdmin;
         this.name = vaultAdmin.name;
         this.isMaster = vaultAdmin.master;
         this.permissions = vaultAdmin.permissions;
         this.isTempPassword = (typeof vaultAdmin.password_temporary !== 'undefined');
-        this.#adminLogger = adminLogger;
+        
+        const cachedPfp = txAdmin.persistentCache.get(`admin:picture:${vaultAdmin.name}`);
+        this.profilePicture = typeof cachedPfp === 'string' ? cachedPfp : undefined;
     }
 
     /**
      * Logs an action to the console and the action logger
      */
     public logAction(action: string): void {
-        this.#adminLogger.write(this.name, action);
+        this.#txAdmin.logger.admin.write(this.name, action);
     };
 
     /**
      * Logs a command to the console and the action logger
      */
     public logCommand(data: string): void {
-        this.#adminLogger.write(this.name, data, 'command');
+        this.#txAdmin.logger.admin.write(this.name, data, 'command');
     };
 
     /**
@@ -83,9 +86,9 @@ type AuthLogicReturnType = {
     success: false;
     rejectReason?: string;
 };
-const successResp = (vaultAdmin: any, txAdmin: TxAdmin) => ({
+const successResp = (txAdmin: TxAdmin, vaultAdmin: any) => ({
     success: true,
-    admin: new AuthedAdmin(vaultAdmin, txAdmin.logger.admin),
+    admin: new AuthedAdmin(txAdmin, vaultAdmin),
 } as const)
 const failResp = (reason?: string) => ({
     success: false,
@@ -163,7 +166,7 @@ export const normalAuthLogic = (
             if (vaultAdmin.password_hash !== sessAuth.password_hash) {
                 return failResp(`Password hash doesn't match for '${sessAuth.username}'.`);
             }
-            return successResp(vaultAdmin, txAdmin);
+            return successResp(txAdmin, vaultAdmin);
         } else if (sessAuth.type === 'cfxre') {
             if (
                 typeof vaultAdmin.providers.citizenfx !== 'object'
@@ -171,7 +174,7 @@ export const normalAuthLogic = (
             ) {
                 return failResp(`Cfxre identifier doesn't match for '${sessAuth.username}'.`);
             }
-            return successResp(vaultAdmin, txAdmin);
+            return successResp(txAdmin, vaultAdmin);
         } else {
             return failResp('Invalid auth type.');
         }

@@ -71,7 +71,7 @@ export default class AdminVault {
         try {
             this.providers = {
                 discord: false,
-                citizenfx: new CitizenFXProvider(null),
+                citizenfx: new CitizenFXProvider(),
             };
         } catch (error) {
             throw new Error(`Failed to load providers with error: ${error.message}`);

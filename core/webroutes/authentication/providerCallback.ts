@@ -51,7 +51,13 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
     let tokenSet;
     try {
         const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
-        tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session.externalKey);
+        tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(
+            ctx,
+            currentURL,
+            ctx.session.externalKey
+        );
+        if (!tokenSet) throw new Error('tokenSet is undefined');
+        if (!tokenSet.access_token) throw new Error('tokenSet.access_token is undefined');
     } catch (e) {
         const error = e as any; //couldn't really test those errors, but tested in the past and they worked
         console.warn(`Code Exchange error: ${error.message}`);
@@ -120,11 +126,18 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
 
         //Save the updated provider identifier & data to the admins file
         await ctx.txAdmin.adminVault.refreshAdminSocialData(vaultAdmin.name, 'citizenfx', identifier, userInfo);
+        
+        //If the user has a picture, save it to the cache
+        if (userInfo.picture) {
+            ctx.txAdmin.persistentCache.set(`admin:picture:${vaultAdmin.name}`, userInfo.picture);
+        }
 
         ctx.txAdmin.logger.admin.write(vaultAdmin.name, `logged in from ${ctx.ip} via cfxre`);
         ctx.txAdmin.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
         ctx.txAdmin.statisticsManager.loginMethods.count('citizenfx');
-        const redirectPath = (isValidRedirectPath(ctx.session?.socialLoginRedirect)) ? ctx.session.socialLoginRedirect : '/';
+        const redirectPath = (isValidRedirectPath(ctx.session?.socialLoginRedirect))
+            ? ctx.session.socialLoginRedirect as string
+            : '/';
         return ctx.response.redirect(redirectPath);
     } catch (error) {
         ctx.session.auth = {};
