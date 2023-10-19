@@ -36,10 +36,13 @@ const isValidButtonConfig = (btn: any) => {
     );
 }
 
-const validUrlMessage = `Every URL must start with one of (\`http://\`, \`https://\`, \`discord://\`).
+const invalidUrlMessage = `Every URL must start with one of (\`http://\`, \`https://\`, \`discord://\`).
 URLs cannot be empty, if you do not want a URL then remove the URL line.`;
 
-const validEmojiMessage = `All emojis must be one of:
+const invalidPlaceholderMessage = `Your URL starts with \`{{\`, try removing it.
+If you just tried to edit a placeholder like \`{{serverBrowserUrl}}\` or \`{{serverJoinUrl}}\`, remember that those placeholders are replaced automatically by txAdmin, meaning you do not need to edit them at all.`
+
+const invalidEmojiMessage = `All emojis must be one of:
 - UTF-8 emoji ('😄')
 - Valid emoji ID ('1062339910654246964')
 - Discord custom emoji (\`<:name:id>\` or \`<a:name:id>\`).
@@ -143,11 +146,11 @@ export const generateStatusMessage = (
                     ? `Invalid URL \`${processed}\`.`
                     : `Empty URL.`;
                 const badPlaceholderMessage = processed.startsWith('{{')
-                    ? 'Your URL starts with `{{`, try removing it.'
+                    ? invalidPlaceholderMessage
                     : '';
                 throw new Error([
                     messageHead,
-                    validUrlMessage,
+                    invalidUrlMessage,
                     badPlaceholderMessage
                 ].join('\n'));
             }
@@ -193,11 +196,11 @@ export const generateStatusMessage = (
                         ? `Invalid URL \`${processedUrl}\``
                         : `Empty URL`;
                     const badPlaceholderMessage = processedUrl.startsWith('{{')
-                        ? 'Your URL starts with `{{`, try removing it.'
+                        ? invalidPlaceholderMessage
                         : '';
                     throw new Error([
                         `${messageHead} for button \`${cfgButton.label}\`.`,
-                        validUrlMessage,
+                        invalidUrlMessage,
                         badPlaceholderMessage
                     ].join('\n'));
                 }
@@ -208,7 +211,7 @@ export const generateStatusMessage = (
                 });
                 if (cfgButton.emoji !== undefined) {
                     if (!isValidButtonEmoji(cfgButton.emoji)) {
-                        throw new Error(`Invalid emoji for button \`${cfgButton.label}\`.\n${validEmojiMessage}`);
+                        throw new Error(`Invalid emoji for button \`${cfgButton.label}\`.\n${invalidEmojiMessage}`);
                     }
                     btn.setEmoji(cfgButton.emoji);
                 }
