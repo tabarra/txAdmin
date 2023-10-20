@@ -6,27 +6,7 @@ import { AuthedAdminType } from "./authLogic";
 
 /**
  * Session stuff
- * FIXME: move the cfx and password to their respective routes
  */
-export type CommonSessionType = {
-    username: string;
-    picture?: string;
-    csrfToken: string;
-}
-
-export type CfxreSessionType = CommonSessionType & {
-    type: 'cfxre';
-    expires_at: number;
-    provider_uid: string;
-    provider_identifier: string;
-}
-
-export type PasswordSessionType = CommonSessionType & {
-    type: 'password';
-    expires_at: false;
-    password_hash: string;
-}
-
 //From the koa-session docs, the DefinitelyTyped package is wrong.
 export type DefaultCtxSession = Readonly<{
     isNew?: true;

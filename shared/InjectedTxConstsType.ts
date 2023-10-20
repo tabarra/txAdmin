@@ -4,6 +4,7 @@ export type ReactPreauthType = {
     isMaster: boolean;
     isTempPassword: boolean;
     profilePicture: any;
+    csrfToken?: string;
 }
 
 export type InjectedTxConsts = {
@@ -17,5 +18,4 @@ export type InjectedTxConsts = {
 
     //Auth
     preAuth: ReactPreauthType | false;
-    csrfToken: string; //FIXME: probably inside preAuth
 }

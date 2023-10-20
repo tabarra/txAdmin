@@ -76,7 +76,7 @@ export const apiAuthMw = async (ctx: InitializedCtx, next: Function) => {
     //For web routes, we need to check the CSRF token
     //For nui routes, we need to check the luaComToken, which is already done in nuiAuthLogic above
     if (ctx.txVars.isWebInterface) {
-        const sessToken = ctx.session?.auth?.csrfToken; //it should exist because of authLogic
+        const sessToken = authResult.admin?.csrfToken; //it should exist for nui because of authLogic
         const headerToken = ctx.headers['x-txadmin-csrftoken'];
         if (!sessToken || !headerToken || sessToken !== headerToken) {
             console.verbose.warn(`Invalid CSRF token: ${ctx.path}`);

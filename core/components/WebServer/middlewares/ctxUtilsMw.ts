@@ -12,6 +12,7 @@ import DynamicAds from '../../DynamicAds';
 import { Next } from 'koa';
 import { CtxWithVars } from '../ctxTypes';
 import consts from '@extras/consts';
+import { AuthedAdminType } from '../authLogic';
 const console = consoleFactory(modulename);
 
 //Types
@@ -101,11 +102,17 @@ async function loadWebTemplate(name: string) {
  * Renders normal views.
  * Footer and header are configured inside the view template itself.
  */
-async function renderView(view: string, reqSess: any, data: any, txVars: CtxTxVars, dynamicAds: DynamicAds) {
-    data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
-    data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
-    data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
-    data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
+async function renderView(
+    view: string,
+    possiblyAuthedAdmin: AuthedAdminType | undefined,
+    data: any,
+    txVars: CtxTxVars,
+    dynamicAds: DynamicAds
+) {
+    data.adminUsername = possiblyAuthedAdmin?.name ?? 'unknown user';
+    data.adminIsMaster = possiblyAuthedAdmin && possiblyAuthedAdmin.isMaster;
+    data.profilePicture = possiblyAuthedAdmin?.profilePicture ?? DEFAULT_AVATAR;
+    data.isTempPassword = possiblyAuthedAdmin && possiblyAuthedAdmin.isTempPassword;
     data.isLinux = !txEnv.isWindows;
     data.showAdvanced = (convars.isDevMode || console.isVerbose);
     data.dynamicAd = txVars.isWebInterface && dynamicAds.pick('main');
@@ -153,6 +160,9 @@ export default async function setupUtilsMw(ctx: CtxWithVars, next: Next) {
         //Usage stats
         txAdmin.statisticsManager?.pageViews.count(view);
 
+        //Typescript is very annoying 
+        const possiblyAuthedAdmin = ctx.admin as AuthedAdminType | undefined;
+
         // Setting up default render data:
         const baseViewData = {
             isWebInterface,
@@ -169,7 +179,7 @@ export default async function setupUtilsMw(ctx: CtxWithVars, next: Next) {
                 isZapHosting: convars.isZapHosting, //not in use
                 isPterodactyl: convars.isPterodactyl, //not in use
                 isWebInterface: isWebInterface,
-                csrfToken: (ctx.session?.auth?.csrfToken) ? ctx.session.auth.csrfToken : 'not_set',
+                csrfToken: (possiblyAuthedAdmin?.csrfToken) ? possiblyAuthedAdmin.csrfToken : 'not_set',
                 TX_BASE_PATH: (isWebInterface) ? '' : consts.nuiWebpipePath,
                 PAGE_TITLE: data?.headerTitle ?? 'txAdmin',
             }),
@@ -179,7 +189,7 @@ export default async function setupUtilsMw(ctx: CtxWithVars, next: Next) {
         if (view == 'login') {
             ctx.body = await renderLoginView(renderData, ctx.txVars, txAdmin.dynamicAds);
         } else {
-            ctx.body = await renderView(view, ctx.session, renderData, ctx.txVars, txAdmin.dynamicAds);
+            ctx.body = await renderView(view, possiblyAuthedAdmin, renderData, ctx.txVars, txAdmin.dynamicAds);
         }
         ctx.type = 'text/html';
     };

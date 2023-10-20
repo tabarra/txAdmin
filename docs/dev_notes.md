@@ -15,8 +15,7 @@ Processo:
 - [x] check `playerDatabase.registerAction` expiration type error
 - [x] translation fix the `The player was xxxxx` lines in all files
 - [x] corrigir comportamento dos profile pictures
-- [ ] renomear csrfToken e forumUsername pra snake case, mas no AuthedAdmin pode ficar tudo como camel
-    - sim, colocar o csrfToken pra dentro do admin, e tb editar o preAuth
+- [x] normalize the session.auth creation w/ types
 - [ ] checar o que fazer com as stats no `core/webroutes/authentication/self.ts`
 - [ ] escrever teste automatizado pros authMiddlewares e authLogic
 

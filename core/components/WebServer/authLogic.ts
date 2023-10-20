@@ -11,19 +11,21 @@ const console = consoleFactory(modulename);
  */
 export class AuthedAdmin {
     public readonly name: string;
-    public readonly permissions: string[];
     public readonly isMaster: boolean;
+    public readonly permissions: string[];
     public readonly isTempPassword: boolean;
     public readonly profilePicture: string | undefined;
+    public readonly csrfToken?: string;
     readonly #txAdmin: TxAdmin;
 
-    constructor(txAdmin: TxAdmin, vaultAdmin: any) {
+    constructor(txAdmin: TxAdmin, vaultAdmin: any, csrfToken?: string) {
         this.#txAdmin = txAdmin;
         this.name = vaultAdmin.name;
         this.isMaster = vaultAdmin.master;
         this.permissions = vaultAdmin.permissions;
         this.isTempPassword = (typeof vaultAdmin.password_temporary !== 'undefined');
-        
+        this.csrfToken = csrfToken;
+
         const cachedPfp = txAdmin.persistentCache.get(`admin:picture:${vaultAdmin.name}`);
         this.profilePicture = typeof cachedPfp === 'string' ? cachedPfp : undefined;
     }
@@ -86,9 +88,9 @@ type AuthLogicReturnType = {
     success: false;
     rejectReason?: string;
 };
-const successResp = (txAdmin: TxAdmin, vaultAdmin: any) => ({
+const successResp = (txAdmin: TxAdmin, vaultAdmin: any, csrfToken?: string) => ({
     success: true,
-    admin: new AuthedAdmin(txAdmin, vaultAdmin),
+    admin: new AuthedAdmin(txAdmin, vaultAdmin, csrfToken),
 } as const)
 const failResp = (reason?: string) => ({
     success: false,
@@ -103,17 +105,20 @@ const validPassSessAuthSchema = z.object({
     type: z.literal('password'),
     username: z.string(),
     csrfToken: z.string(),
-    expires_at: z.literal(false),
+    expiresAt: z.literal(false),
     password_hash: z.string(),
 });
+export type PassSessAuthType = z.infer<typeof validPassSessAuthSchema>;
+
 const validCfxreSessAuthSchema = z.object({
     type: z.literal('cfxre'),
     username: z.string(),
     csrfToken: z.string(),
-    expires_at: z.number(),
-    forumUsername: z.string(),
+    expiresAt: z.number(),
     identifier: z.string(),
 });
+export type CfxreSessAuthType = z.infer<typeof validCfxreSessAuthSchema>;
+
 const validSessAuthSchema = z.discriminatedUnion('type', [
     validPassSessAuthSchema,
     validCfxreSessAuthSchema
@@ -151,7 +156,7 @@ export const normalAuthLogic = (
         const sessAuth = validationResult.data;
 
         // Checking for expiration
-        if (sessAuth.expires_at !== false && Date.now() > sessAuth.expires_at) {
+        if (sessAuth.expiresAt !== false && Date.now() > sessAuth.expiresAt) {
             return failResp(`Expired session from '${sess.auth.username}'.`);
         }
 
@@ -166,7 +171,7 @@ export const normalAuthLogic = (
             if (vaultAdmin.password_hash !== sessAuth.password_hash) {
                 return failResp(`Password hash doesn't match for '${sessAuth.username}'.`);
             }
-            return successResp(txAdmin, vaultAdmin);
+            return successResp(txAdmin, vaultAdmin, sessAuth.csrfToken);
         } else if (sessAuth.type === 'cfxre') {
             if (
                 typeof vaultAdmin.providers.citizenfx !== 'object'
@@ -174,7 +179,7 @@ export const normalAuthLogic = (
             ) {
                 return failResp(`Cfxre identifier doesn't match for '${sessAuth.username}'.`);
             }
-            return successResp(txAdmin, vaultAdmin);
+            return successResp(txAdmin, vaultAdmin, sessAuth.csrfToken);
         } else {
             return failResp('Invalid auth type.');
         }
@@ -232,7 +237,7 @@ export const nuiAuthLogic = (
             //this one is handled differently in resource/menu/client/cl_base.lua
             return failResp('admin_not_found');
         }
-        return successResp(vaultAdmin, txAdmin);
+        return successResp(txAdmin, vaultAdmin, undefined);
     } catch (error) {
         console.debug(`Error validating session data: ${(error as Error).message}`);
         return failResp('Error validating auth header');

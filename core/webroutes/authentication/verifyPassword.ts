@@ -1,4 +1,5 @@
 const modulename = 'WebServer:AuthVerifyPassword';
+import { PassSessAuthType } from '@core/components/WebServer/authLogic';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 import { isValidRedirectPath } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
@@ -34,15 +35,13 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
         }
 
         //Setting up session
-        const providerWithPicture = Object.values(vaultAdmin.providers).find((provider) => provider.data && provider.data.picture);
         ctx.session.auth = {
             type: 'password',
             username: vaultAdmin.name,
-            picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
             password_hash: vaultAdmin.password_hash,
-            expires_at: false,
+            expiresAt: false,
             csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
-        };
+        } satisfies PassSessAuthType;
 
         ctx.txAdmin.logger.admin.write(vaultAdmin.name, `logged in from ${ctx.ip} via password`);
         ctx.txAdmin.statisticsManager.loginOrigins.count(ctx.txVars.hostType);

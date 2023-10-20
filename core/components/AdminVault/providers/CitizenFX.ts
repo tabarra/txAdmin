@@ -57,7 +57,6 @@ export default class CitizenFXProvider {
 
     /**
      * Processes the callback and returns the tokenSet
-     * @param {object} ctx
      */
     async processCallback(ctx: InitializedCtx, redirectUri: string, stateKern: string) {
         if (!this.client) throw new Error(`${modulename} is not ready`);
@@ -94,25 +93,5 @@ export default class CitizenFXProvider {
         }
 
         return { ...parsed, picture };
-    }
-
-
-    /**
-     * Returns the session auth object
-     * NOTE: increasing session duration to 24 hours since we do not have refresh tokens
-     *
-     * @param {object} tokenSet
-     * @param {object} userInfo
-     * @param {string} identifier
-     */
-    async getUserSessionInfo(tokenSet, userInfo, identifier: string) {
-        return {
-            type: 'cfxre',
-            forumUsername: userInfo.name,
-            identifier: identifier,
-            // expires_at: tokenSet.expires_at * 1000,
-            expires_at: Date.now() + 86_400_000, //24h
-            picture: userInfo.picture,
-        };
     }
 };

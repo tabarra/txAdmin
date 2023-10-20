@@ -1,7 +1,9 @@
 const modulename = 'WebServer:AuthAddMaster';
 import { UserInfoType } from '@core/components/AdminVault/providers/CitizenFX';
+import { CfxreSessAuthType } from '@core/components/WebServer/authLogic';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
+import { TokenSet } from 'openid-client';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -190,9 +192,11 @@ async function handleSave(ctx: InitializedCtx) {
     }
 
     //Checking if session is still present
+    const userInfo = ctx.session.tmpAddMasterUserInfo as UserInfoType;
+    const tokenSet = ctx.session.tmpAddMasterTokenSet as TokenSet;
     if (
-        typeof ctx.session.tmpAddMasterUserInfo === 'undefined'
-        || typeof ctx.session.tmpAddMasterUserInfo?.name !== 'string'
+        typeof userInfo?.name !== 'string'
+        || typeof tokenSet?.access_token !== 'string'
     ) {
         return returnJustMessage(
             ctx,
@@ -200,7 +204,7 @@ async function handleSave(ctx: InitializedCtx) {
             'You may have restarted txAdmin right before entering this page. Please try again.',
         );
     }
-    const userInfo = ctx.session.tmpAddMasterUserInfo as UserInfoType;
+
 
     //Getting identifier
     let identifier;
@@ -243,13 +247,14 @@ async function handleSave(ctx: InitializedCtx) {
 
     //Login user
     try {
-        ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSessionInfo(
-            ctx.session.tmpAddMasterTokenSet,
-            userInfo,
+        ctx.session.auth = {
+            type: 'cfxre',
+            username: userInfo.name,
+            csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
+            expiresAt: Date.now() + 86_400_000, //24h,
             identifier,
-        );
-        ctx.session.auth.username = userInfo.name;
-        ctx.session.auth.csrfToken = ctx.txAdmin.adminVault.genCsrfToken();
+        } satisfies CfxreSessAuthType;
+
         delete ctx.session.tmpAddMasterTokenSet;
         delete ctx.session.tmpAddMasterUserInfo;
     } catch (error) {

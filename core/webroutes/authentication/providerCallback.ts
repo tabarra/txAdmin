@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { isValidRedirectPath } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
+import { CfxreSessAuthType } from '@core/components/WebServer/authLogic';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -120,13 +121,17 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
         }
 
         //Setting session
-        ctx.session.auth = await ctx.txAdmin.adminVault.providers.citizenfx.getUserSessionInfo(tokenSet, userInfo, identifier);
-        ctx.session.auth.username = vaultAdmin.name;
-        ctx.session.auth.csrfToken = ctx.txAdmin.adminVault.genCsrfToken();
+        ctx.session.auth = {
+            type: 'cfxre',
+            username: userInfo.name,
+            csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
+            expiresAt: Date.now() + 86_400_000, //24h,
+            identifier,
+        } satisfies CfxreSessAuthType;
 
         //Save the updated provider identifier & data to the admins file
         await ctx.txAdmin.adminVault.refreshAdminSocialData(vaultAdmin.name, 'citizenfx', identifier, userInfo);
-        
+
         //If the user has a picture, save it to the cache
         if (userInfo.picture) {
             ctx.txAdmin.persistentCache.set(`admin:picture:${vaultAdmin.name}`, userInfo.picture);
