@@ -16,9 +16,7 @@ Processo:
 - [x] translation fix the `The player was xxxxx` lines in all files
 - [x] corrigir comportamento dos profile pictures
 - [x] normalize the session.auth creation w/ types
-- [ ] checar o que fazer com as stats no `core/webroutes/authentication/self.ts`
-- [ ] escrever teste automatizado pros authMiddlewares e authLogic
-
+- [x] checar o que fazer com as stats no `core/webroutes/authentication/self.ts`
 
 =======================================================================
 
@@ -52,7 +50,7 @@ Processo:
     - [x] on re-click, page should refresh
     - [x] remove menu and footer from main template
     - [x] add error boundries (global/page)
-- [ ] refactor auth layer + type koa context
+- [x] refactor auth layer + type koa context
 - [ ] mock new auth ui + auth routing
 - SHELL:
     - [ ][5d] fully responsive layout (show/hide sidebars, etc)
@@ -180,7 +178,7 @@ Master Actions:
 
 ## Next Up
 - [ ] xxxx
-- [ ] xxxx
+- [ ] write some automated tests for the auth logic and middlewares
 - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
 - [ ] fix the eslint config
 - [ ] add fxserver version to txDiagnostics

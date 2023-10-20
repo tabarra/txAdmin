@@ -78,7 +78,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     //Preparing vars
     const basePath = (ctx.txVars.isWebInterface) ? '/' : consts.nuiWebpipePath;
     const serverName = ctx.txAdmin.globalConfig.serverName || ctx.txAdmin.info.serverProfile;
-    const injectedConsts: InjectedTxConsts = {
+    const injectedConsts = {
         //env
         fxServerVersion: displayFxserverVersion,
         txAdminVersion: txEnv.txAdminVersion,
@@ -96,7 +96,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
             profilePicture: authedAdmin.profilePicture,
             csrfToken: authedAdmin.csrfToken, //might not exist
         },
-    }
+    } satisfies InjectedTxConsts;
 
     //Prepare placeholders
     const replacers: { [key: string]: string } = {};

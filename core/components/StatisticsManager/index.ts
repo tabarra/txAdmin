@@ -120,6 +120,9 @@ export default class StatisticsManager {
      * 7: changed web folder paths, which affect txStatsData.pageViews
      * 8: removed discordBotStats and whitelistEnabled
      * 9: totally new format
+     * 9: for tx v7, loginOrigin dropped the 'webpipe' and 'cfxre', 
+     *    and loginMethods dropped 'nui' and 'iframe'
+     *    Did not change the version because its fully compatible.
      * 
      * TODO:
      * Use the average q5 and q95 to find out the buckets.
