@@ -12,36 +12,35 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "^5.0.13",
-    "@fontsource-variable/jetbrains-mono": "^5.0.16",
+    "@fontsource-variable/inter": "^5.0.14",
+    "@fontsource-variable/jetbrains-mono": "^5.0.17",
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-slot": "^1.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "jotai": "^2.4.3",
-    "lucide-react": "^0.284.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.11",
     "react-icons": "^4.11.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
-    "wouter": "^2.12.0"
+    "wouter": "^2.12.1"
   },
   "devDependencies": {
-    "@types/node": "^20.8.3",
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "@vitejs/plugin-react-swc": "^3.3.2",
+    "@types/node": "^20.8.7",
+    "@types/react": "^18.2.30",
+    "@types/react-dom": "^18.2.14",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "@vitejs/plugin-react-swc": "^3.4.0",
     "autoprefixer": "^10.4.16",
-    "eslint": "^8.45.0",
+    "eslint": "^8.51.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.3",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0"
   }
 }

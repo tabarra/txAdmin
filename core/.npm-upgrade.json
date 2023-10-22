@@ -9,8 +9,8 @@
       "reason": "recipe errors on some OSs"
     },
     "execa": {
-      "versions": "^5.1.1",
-      "reason": "dependency of the hardcoded windows-release"
+      "versions": "^5",
+      "reason": "following @sindresorhus/windows-release"
     },
     "windows-release": {
       "versions": "^5.1.1",
