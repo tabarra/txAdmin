@@ -3,6 +3,7 @@ import { z } from "zod";
 import { convars } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import TxAdmin from "@core/txAdmin";
+import { SessToolsType } from "./middlewares/sessionMws";
 const console = consoleFactory(modulename);
 
 
@@ -132,11 +133,11 @@ export const checkRequestAuth = (
     txAdmin: TxAdmin,
     reqHeader: { [key: string]: unknown },
     reqIP: string,
-    sess: any,
+    sessTools: SessToolsType,
 ) => {
     return typeof reqHeader['x-txadmin-token'] === 'string'
         ? nuiAuthLogic(txAdmin, reqIP, reqHeader)
-        : normalAuthLogic(txAdmin, sess);
+        : normalAuthLogic(txAdmin, sessTools);
 }
 
 
@@ -145,9 +146,15 @@ export const checkRequestAuth = (
  */
 export const normalAuthLogic = (
     txAdmin: TxAdmin,
-    sess: any
+    sessTools: SessToolsType
 ): AuthLogicReturnType => {
     try {
+        // Getting session
+        const sess = sessTools.get();
+        if (!sess) {
+            return failResp();
+        }
+
         // Parsing session auth
         const validationResult = validSessAuthSchema.safeParse(sess?.auth);
         if (!validationResult.success) {
@@ -157,7 +164,7 @@ export const normalAuthLogic = (
 
         // Checking for expiration
         if (sessAuth.expiresAt !== false && Date.now() > sessAuth.expiresAt) {
-            return failResp(`Expired session from '${sess.auth.username}'.`);
+            return failResp(`Expired session from '${sess.auth?.username}'.`);
         }
 
         // Searching for admin in AdminVault

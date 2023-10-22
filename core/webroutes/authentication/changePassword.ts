@@ -36,7 +36,18 @@ export default async function AuthChangePassword(ctx: AuthedCtx) {
     //Add admin and give output
     try {
         const newHash = await ctx.txAdmin.adminVault.editAdmin(ctx.admin.name, newPassword);
-        if (typeof ctx.session.auth.password_hash == 'string') ctx.session.auth.password_hash = newHash;
+
+        //Update session hash if logged in via password
+        const currSess = ctx.sessTools.get();
+        if(currSess?.auth?.type === 'password') {
+            ctx.sessTools.set({
+                auth: {
+                    ...currSess.auth,
+                    password_hash: newHash,
+                }
+            });
+        }
+
         ctx.admin.logAction('Changing own password.');
         return ctx.send({type: 'success', message: 'Password changed successfully'});
     } catch (error) {

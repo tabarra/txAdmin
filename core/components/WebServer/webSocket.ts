@@ -7,6 +7,7 @@ import liveconsole from './wsRooms/liveconsole';
 import serverlog from './wsRooms/serverlog';
 import TxAdmin from '@core/txAdmin';
 import { AuthedAdminType, checkRequestAuth, normalAuthLogic, nuiAuthLogic } from './authLogic';
+import { SocketWithSession } from './ctxTypes';
 const console = consoleFactory(modulename);
 
 //Types
@@ -28,22 +29,12 @@ export type RoomType = {
 const VALID_ROOMS = ['status', 'liveconsole', 'serverlog', 'playerlist'] as const;
 type RoomNames = typeof VALID_ROOMS[number];
 
-//NOTE: this does not go through ctxUtils, and the session schema does not match koa-session's schema
-type SocketWithSessionType = Socket & {
-    session: unknown;
-};
 
 //Helpers
-const getIP = (socket: SocketWithSessionType) => {
-    return (
-        socket
-        && socket.request
-        && socket.request.socket
-        && socket.request.socket.remoteAddress
-    ) ? socket.request.socket.remoteAddress : 'unknown';
+const getIP = (socket: SocketWithSession) => {
+    return socket?.request?.socket?.remoteAddress ?? 'unknown';
 };
-const terminateSession = (socket: SocketWithSessionType, reason: string, shouldLog = true) => {
-    // NOTE: doing socket.session.auth = {}; would also erase the web auth
+const terminateSession = (socket: SocketWithSession, reason: string, shouldLog = true) => {
     try {
         socket.emit('logout', reason);
         socket.disconnect();
@@ -76,14 +67,14 @@ export default class WebSocket {
      * Handles incoming connection requests,
      * NOTE: For now the user MUST join a room, needs additional logic for 'web' room
      */
-    handleConnection(socket: SocketWithSessionType) {
+    handleConnection(socket: SocketWithSession) {
         try {
             //Checking for session auth
             const authResult = checkRequestAuth(
                 this.#txAdmin,
                 socket.request.headers,
                 getIP(socket),
-                socket.session
+                socket.sessTools
             );
             if (!authResult.success) {
                 return terminateSession(socket, 'invalid session', false);

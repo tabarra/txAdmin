@@ -7,14 +7,9 @@ import Koa from 'koa';
 import KoaBodyParser from 'koa-bodyparser';
 //@ts-ignore
 import KoaServe from 'koa-static';
-//@ts-ignore
-import KoaSession from 'koa-session';
-import KoaSessionMemoryStoreClass from 'koa-session-memory';
 import KoaCors from '@koa/cors';
 
 import { Server as SocketIO } from 'socket.io';
-//@ts-ignore
-import SessionIO from 'koa-session-socketio';
 import WebSocket from './webSocket';
 
 import { customAlphabet } from 'nanoid';
@@ -27,6 +22,7 @@ import TxAdmin from '@core/txAdmin';
 import topLevelMw from './middlewares/topLevelMw';
 import ctxVarsMw from './middlewares/ctxVarsMw';
 import ctxUtilsMw from './middlewares/ctxUtilsMw';
+import { SessionMemoryStorage, koaSessMw, socketioSessMw } from './middlewares/sessionMws';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict51, 32);
 
@@ -41,12 +37,11 @@ export default class WebServer {
     readonly #txAdmin: TxAdmin;
     public isListening = false;
     private httpRequestsCounter = 0;
-    private koaSessionKey: string;
+    private sessionCookieName: string;
     public luaComToken: string;
     //setupKoa
     private app: Koa;
-    public koaSessionMemoryStore: typeof KoaSessionMemoryStoreClass;
-    private sessionInstance: typeof KoaSession;
+    public sessionStore: SessionMemoryStorage;
     private koaCallback: (req: any, res: any) => Promise<void>;
     //setupWebSocket
     private io: SocketIO;
@@ -74,7 +69,7 @@ export default class WebServer {
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
             .update(txAdmin.info.serverProfilePath)
             .digest('hex');
-        this.koaSessionKey = `tx:${txAdmin.info.serverProfile}:${pathHash}`;
+        this.sessionCookieName = `tx:${txAdmin.info.serverProfile}:${pathHash}`;
         this.luaComToken = nanoid();
 
 
@@ -87,15 +82,6 @@ export default class WebServer {
         // Some people might want to enable it, but we are not guaranteeing XFF security
         // due to the many possible ways you can connect to koa.
         // this.app.proxy = true;
-
-        //Session
-        this.koaSessionMemoryStore = new KoaSessionMemoryStoreClass();
-        this.sessionInstance = KoaSession({
-            store: this.koaSessionMemoryStore,
-            key: this.koaSessionKey,
-            rolling: true,
-            maxAge: 24 * 60 * 60 * 1000, //one day
-        }, this.app);
 
         //Setting up app
         this.app.on('error', (error, ctx) => {
@@ -126,10 +112,11 @@ export default class WebServer {
             : path.join(txEnv.txAdminResourcePath, 'panel');
         this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), { index: false, defer: false }));
         this.app.use(KoaServe(panelPublicPath, { index: false, defer: false }));
-        this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({ jsonLimit }));
 
         //Custom stuff
+        this.sessionStore = new SessionMemoryStorage();
+        this.app.use(koaSessMw(this.sessionCookieName, this.sessionStore));
         this.app.use(ctxVarsMw(txAdmin));
         this.app.use(ctxUtilsMw);
 
@@ -155,7 +142,7 @@ export default class WebServer {
         // Setting up SocketIO
         // ===================
         this.io = new SocketIO(HttpClass.createServer(), { serveClient: false });
-        this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore));
+        this.io.use(socketioSessMw(this.sessionCookieName, this.sessionStore));
         this.webSocket = new WebSocket(this.#txAdmin, this.io);
         //@ts-ignore
         this.io.on('connection', this.webSocket.handleConnection.bind(this.webSocket));
@@ -174,6 +161,7 @@ export default class WebServer {
     httpCallbackHandler(req: Request, res: Response) {
         //Calls the appropriate callback
         try {
+            // console.debug(`HTTP ${req.method} ${req.url}`);
             this.httpRequestsCounter++;
             if (req.url.startsWith('/socket.io')) {
                 //@ts-ignore

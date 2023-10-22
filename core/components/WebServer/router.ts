@@ -71,8 +71,8 @@ export default (config: WebServerConfigType) => {
     //Authentication
     router.get('/auth/self', apiAuthMw, webRoutes.auth_self);
     router.all('/auth/addMaster/:action', authLimiter, webRoutes.auth_addMaster);
-    router.get('/auth/:provider/redirect', authLimiter, webRoutes.auth_providerRedirect);
-    router.get('/auth/:provider/callback', authLimiter, webRoutes.auth_providerCallback);
+    router.get('/auth/cfxre/redirect', authLimiter, webRoutes.auth_providerRedirect);
+    router.get('/auth/cfxre/callback', authLimiter, webRoutes.auth_providerCallback);
     router.post('/auth/password', authLimiter, webRoutes.auth_verifyPassword);
     router.post('/changePassword', apiAuthMw, webRoutes.auth_changePassword);
 

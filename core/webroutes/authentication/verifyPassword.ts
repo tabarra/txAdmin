@@ -35,13 +35,14 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
         }
 
         //Setting up session
-        ctx.session.auth = {
+        const sessData = {
             type: 'password',
             username: vaultAdmin.name,
             password_hash: vaultAdmin.password_hash,
             expiresAt: false,
             csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
         } satisfies PassSessAuthType;
+        ctx.sessTools.set({ auth: sessData });
 
         ctx.txAdmin.logger.admin.write(vaultAdmin.name, `logged in from ${ctx.ip} via password`);
         ctx.txAdmin.statisticsManager.loginOrigins.count(ctx.txVars.hostType);

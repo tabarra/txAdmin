@@ -24,7 +24,9 @@ export default async function AuthGet(ctx: InitializedCtx) {
     }
 
     //Destroy session? And start a new one
-    if (ctx.query.logout !== undefined) ctx.session.auth = {};
+    if (ctx.query.logout !== undefined) {
+        ctx.sessTools.destroy();
+    }
 
     //If admins file was deleted
     //NOTE: this is likely impossible to happen because the admins file is auto recovered

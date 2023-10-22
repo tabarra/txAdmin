@@ -3,25 +3,10 @@ import { ParameterizedContext } from "koa";
 import { CtxTxVars } from "./middlewares/ctxVarsMw";
 import { CtxTxUtils } from "./middlewares/ctxUtilsMw";
 import { AuthedAdminType } from "./authLogic";
+import { SessToolsType } from "./middlewares/sessionMws";
+import { Socket } from "socket.io";
 
-/**
- * Session stuff
- */
-//From the koa-session docs, the DefinitelyTyped package is wrong.
-export type DefaultCtxSession = Readonly<{
-    isNew?: true;
-    maxAge: number;
-    externalKey: string;
-    save: () => void;
-    manuallyCommit: () => void;
-}> & {
-    auth?: any;
-    [key: string]: unknown | undefined;
-};
 
-/**
- * The context types
- */
 //Right as it comes from Koa
 export type RawKoaCtx = ParameterizedContext<
     { [key: string]: unknown }, //state
@@ -31,7 +16,7 @@ export type RawKoaCtx = ParameterizedContext<
 
 //After passing through the libs (session, serve, body parse, etc)
 export type CtxWithSession = RawKoaCtx & {
-    session: DefaultCtxSession;
+    sessTools: SessToolsType;
     request: any;
 }
 
@@ -48,3 +33,8 @@ export type InitializedCtx = CtxWithVars & CtxTxUtils;
 export type AuthedCtx = InitializedCtx & {
     admin: AuthedAdminType;
 }
+
+//The socket.io version of "context"
+export type SocketWithSession = Socket & {
+    sessTools: SessToolsType;
+};

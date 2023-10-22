@@ -18,7 +18,7 @@ export type CtxTxVars = {
 /**
  * Middleware responsible for setting up the ctx.txVars
  */
-const setupVarsMw = (txAdmin: TxAdmin) => {
+const ctxVarsMw = (txAdmin: TxAdmin) => {
     return (ctx: CtxWithSession, next: Next) => {
         //Prepare variables
         const txVars: CtxTxVars = {
@@ -61,4 +61,4 @@ const setupVarsMw = (txAdmin: TxAdmin) => {
     }
 }
 
-export default setupVarsMw;
+export default ctxVarsMw;

@@ -8,7 +8,7 @@ const console = consoleFactory(modulename);
 
 /**
  * Intercom auth middleware
- * This does not set ctx.admin and does not use ctx.session whatsoever.
+ * This does not set ctx.admin and does not use session/cookies whatsoever.
  */
 export const intercomAuthMw = async (ctx: InitializedCtx, next: Function) => {
     if (
@@ -30,10 +30,10 @@ export const webAuthMw = async (ctx: InitializedCtx, next: Function) => {
         ctx.txAdmin,
         ctx.request.headers,
         ctx.ip,
-        ctx.session
+        ctx.sessTools
     );
     if (!authResult.success) {
-        ctx.session.auth = {}; //clearing session
+        ctx.sessTools.destroy();
         if (authResult.rejectReason) {
             console.verbose.warn(`Invalid session auth: ${authResult.rejectReason}`);
         }
@@ -60,10 +60,10 @@ export const apiAuthMw = async (ctx: InitializedCtx, next: Function) => {
         ctx.txAdmin,
         ctx.request.headers,
         ctx.ip,
-        ctx.session
+        ctx.sessTools
     );
     if (!authResult.success) {
-        ctx.session.auth = {}; //clearing session
+        ctx.sessTools.destroy();
         if (authResult.rejectReason) {
             console.verbose.warn(`Invalid session auth: ${authResult.rejectReason}`);
         }

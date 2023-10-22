@@ -15,20 +15,6 @@ const returnJustMessage = (ctx: InitializedCtx, errorTitle: string, errorMessage
  * Handles the provider login callbacks
  */
 export default async function AuthProviderCallback(ctx: InitializedCtx) {
-    //Sanity check
-    if (
-        typeof ctx.params.provider !== 'string'
-        || typeof ctx.query.state !== 'string'
-    ) {
-        return ctx.utils.error(400, 'Invalid Request');
-    }
-    const provider = ctx.params.provider as string;
-    const reqState = ctx.query.state as string;
-
-    if (provider !== 'citizenfx') {
-        return returnJustMessage(ctx, 'Provider not implemented... yet');
-    }
-
     if (typeof ctx.query.error_description === 'string') {
         return returnJustMessage(
             ctx,
@@ -37,30 +23,29 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
         );
     }
 
-    //Check the state changed
-    const stateSeed = `txAdmin:${ctx.session.externalKey}`;
-    const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest('hex');
-    if (reqState !== stateExpected) {
+    //Checking session
+    const inboundSession = ctx.sessTools.get();
+    if(!inboundSession || !inboundSession?.tmpOauthLoginStateKern){
         return returnJustMessage(
             ctx,
-            'This link has expired.',
-            'Please refresh the page and try again.',
+            'Invalid Browser Session.',
+            'You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.',
         );
     }
 
     //Exchange code for access token
     let tokenSet;
     try {
-        const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
+        const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/cfxre/callback`;
         tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(
             ctx,
             currentURL,
-            ctx.session.externalKey
+            inboundSession.tmpOauthLoginStateKern
         );
         if (!tokenSet) throw new Error('tokenSet is undefined');
         if (!tokenSet.access_token) throw new Error('tokenSet.access_token is undefined');
     } catch (e) {
-        const error = e as any; //couldn't really test those errors, but tested in the past and they worked
+        const error = e as any;
         console.warn(`Code Exchange error: ${error.message}`);
         if (error.tolerance !== undefined) {
             return returnJustMessage(
@@ -112,7 +97,7 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
     try {
         const vaultAdmin = ctx.txAdmin.adminVault.getAdminByIdentifiers([identifier]);
         if (!vaultAdmin) {
-            ctx.session.auth = {};
+            ctx.sessTools.destroy();
             return returnJustMessage(
                 ctx,
                 `The Cfx.re account '${userInfo.name}' is not an admin.`,
@@ -121,13 +106,14 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
         }
 
         //Setting session
-        ctx.session.auth = {
+        const sessData = {
             type: 'cfxre',
             username: userInfo.name,
             csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
             expiresAt: Date.now() + 86_400_000, //24h,
             identifier,
         } satisfies CfxreSessAuthType;
+        ctx.sessTools.set({ auth: sessData });
 
         //Save the updated provider identifier & data to the admins file
         await ctx.txAdmin.adminVault.refreshAdminSocialData(vaultAdmin.name, 'citizenfx', identifier, userInfo);
@@ -140,12 +126,12 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
         ctx.txAdmin.logger.admin.write(vaultAdmin.name, `logged in from ${ctx.ip} via cfxre`);
         ctx.txAdmin.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
         ctx.txAdmin.statisticsManager.loginMethods.count('citizenfx');
-        const redirectPath = (isValidRedirectPath(ctx.session?.socialLoginRedirect))
-            ? ctx.session.socialLoginRedirect as string
+        const redirectPath = isValidRedirectPath(inboundSession.tmpOauthLoginPostRedirect)
+            ? inboundSession.tmpOauthLoginPostRedirect as string
             : '/';
         return ctx.response.redirect(redirectPath);
     } catch (error) {
-        ctx.session.auth = {};
+        ctx.sessTools.destroy();
         console.verbose.error(`Failed to login: ${(error as Error).message}`);
         return returnJustMessage(ctx, 'Failed to login:', (error as Error).message);
     }

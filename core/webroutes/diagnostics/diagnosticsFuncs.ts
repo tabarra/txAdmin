@@ -298,7 +298,6 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
         },
         hbFD3Fails: txAdmin.statisticsManager.monitorStats.healthIssues.fd3,
         hbHTTPFails: txAdmin.statisticsManager.monitorStats.healthIssues.http,
-        koaSessions: Object.keys(txAdmin.webServer.koaSessionMemoryStore.sessions).length || '--',
         banCheckTime,
         whitelistCheckTime,
 

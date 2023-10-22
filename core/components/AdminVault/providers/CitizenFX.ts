@@ -14,6 +14,11 @@ const userInfoSchema = z.object({
 });
 export type UserInfoType = z.infer<typeof userInfoSchema> & { picture: string | undefined };
 
+const getOauthState = (stateKern: string) => {
+    const stateSeed = `tx:cfxre:${stateKern}`;
+    return crypto.createHash('SHA1').update(stateSeed).digest('hex');
+};
+
 
 export default class CitizenFXProvider {
     private client?: BaseClient;
@@ -28,7 +33,7 @@ export default class CitizenFXProvider {
             client_secret: 'txadmin_test',
             response_types: ['openid'],
         });
-        this.client[custom.clock_tolerance] = 2 * 60 * 60; //Two hours due to the DST change. Reduce to 300s.
+        this.client[custom.clock_tolerance] = 2 * 60 * 60; //Two hours due to the DST change.
         custom.setHttpOptionsDefaults({
             timeout: 10000,
         });
@@ -42,11 +47,9 @@ export default class CitizenFXProvider {
     getAuthURL(redirectUri: string, stateKern: string) {
         if (!this.client) throw new Error(`${modulename} is not ready`);
 
-        const stateSeed = `txAdmin:${stateKern}`;
-        const state = crypto.createHash('SHA1').update(stateSeed).digest('hex');
         const url = this.client.authorizationUrl({
             redirect_uri: redirectUri,
-            state: state,
+            state: getOauthState(stateKern),
             response_type: 'code',
             scope: 'openid identify',
         });
@@ -65,11 +68,8 @@ export default class CitizenFXProvider {
         const params = this.client.callbackParams(ctx as any); //FIXME: idk why it works, but it does
         if (typeof params.code == 'undefined') throw new Error('code not present');
 
-        //Check the state
-        const stateSeed = `txAdmin:${stateKern}`;
-        const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest('hex');
-
         //Exchange code for token
+        const stateExpected = getOauthState(stateKern);
         const tokenSet = await this.client.callback(redirectUri, params, { state: stateExpected });
         if (typeof tokenSet !== 'object') throw new Error('tokenSet is not an object');
         if (typeof tokenSet.access_token == 'undefined') throw new Error('access_token not present');

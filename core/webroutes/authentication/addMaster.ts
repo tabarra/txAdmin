@@ -2,8 +2,9 @@ const modulename = 'WebServer:AuthAddMaster';
 import { UserInfoType } from '@core/components/AdminVault/providers/CitizenFX';
 import { CfxreSessAuthType } from '@core/components/WebServer/authLogic';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
+import { ValidSessionType } from '@core/components/WebServer/middlewares/sessionMws';
 import consoleFactory from '@extras/console';
-import { TokenSet } from 'openid-client';
+import { randomUUID } from 'node:crypto';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -16,10 +17,10 @@ const returnJustMessage = (ctx: InitializedCtx, errorTitle: string, errorMessage
  */
 export default async function AuthAddMaster(ctx: InitializedCtx) {
     //Sanity check
-    if (typeof ctx.params?.action !== 'string') {
+    if (typeof (ctx.params as any)?.action !== 'string') {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const action = ctx.params.action as string;
+    const action = (ctx.params as any).action as string;
 
     //Check if there are already admins set up
     if (ctx.txAdmin.adminVault.admins !== false) {
@@ -64,13 +65,20 @@ async function handlePin(ctx: InitializedCtx) {
         return ctx.utils.render('login', { template: 'noMaster', message });
     }
 
-    //Make sure the session is initialized
-    ctx.session.startedSocialLogin = Date.now();
+    //Setting up session
+    //NOTE: The session needs to be set up here, otherwise the return state will be invalid
+    const sessData = {
+        tmpOauthLoginStateKern: randomUUID(),
+    } satisfies ValidSessionType;
+    ctx.sessTools.set(sessData);
 
     //Generate URL
     try {
         const callback = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
-        const url = ctx.txAdmin.adminVault.providers.citizenfx.getAuthURL(callback, ctx.session.externalKey);
+        const url = ctx.txAdmin.adminVault.providers.citizenfx.getAuthURL(
+            callback,
+            sessData.tmpOauthLoginStateKern
+        );
         return ctx.response.redirect(url);
     } catch (error) {
         return returnJustMessage(
@@ -99,6 +107,16 @@ async function handleCallback(ctx: InitializedCtx) {
         );
     }
 
+    //Checking session
+    const inboundSession = ctx.sessTools.get();
+    if(!inboundSession || !inboundSession?.tmpOauthLoginStateKern){
+        return returnJustMessage(
+            ctx,
+            'Invalid Browser Session.',
+            'You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.',
+        );
+    }
+
     //Exchange code for access token
     let tokenSet;
     try {
@@ -106,12 +124,12 @@ async function handleCallback(ctx: InitializedCtx) {
         tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(
             ctx,
             currentURL,
-            ctx.session.externalKey
+            inboundSession.tmpOauthLoginStateKern
         );
         if (!tokenSet) throw new Error('tokenSet is undefined');
         if (!tokenSet.access_token) throw new Error('tokenSet.access_token is undefined');
     } catch (e) {
-        const error = e as any; //couldn't really test those errors, but tested in the past and they worked
+        const error = e as any;
         console.warn(`Code Exchange error: ${error.message}`);
         if (error.tolerance !== undefined) {
             return returnJustMessage(
@@ -149,9 +167,10 @@ async function handleCallback(ctx: InitializedCtx) {
         );
     }
 
-    // Setar userinfo na sessão
-    ctx.session.tmpAddMasterTokenSet = tokenSet;
-    ctx.session.tmpAddMasterUserInfo = userInfo;
+    //Setting session
+    ctx.sessTools.set({
+        tmpAddMasterUserInfo: userInfo,
+    });
 
     return ctx.utils.render('login', {
         template: 'callback',
@@ -192,19 +211,15 @@ async function handleSave(ctx: InitializedCtx) {
     }
 
     //Checking if session is still present
-    const userInfo = ctx.session.tmpAddMasterUserInfo as UserInfoType;
-    const tokenSet = ctx.session.tmpAddMasterTokenSet as TokenSet;
-    if (
-        typeof userInfo?.name !== 'string'
-        || typeof tokenSet?.access_token !== 'string'
-    ) {
+    const inboundSession = ctx.sessTools.get();
+    if(!inboundSession || !inboundSession?.tmpAddMasterUserInfo){
         return returnJustMessage(
             ctx,
-            'Invalid Session.',
+            'Invalid Browser Session.',
             'You may have restarted txAdmin right before entering this page. Please try again.',
         );
     }
-
+    const userInfo = inboundSession.tmpAddMasterUserInfo;
 
     //Getting identifier
     let identifier;
@@ -247,18 +262,17 @@ async function handleSave(ctx: InitializedCtx) {
 
     //Login user
     try {
-        ctx.session.auth = {
+        //Setting session
+        const sessData = {
             type: 'cfxre',
             username: userInfo.name,
             csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
             expiresAt: Date.now() + 86_400_000, //24h,
             identifier,
         } satisfies CfxreSessAuthType;
-
-        delete ctx.session.tmpAddMasterTokenSet;
-        delete ctx.session.tmpAddMasterUserInfo;
+        ctx.sessTools.set({ auth: sessData });
     } catch (error) {
-        ctx.session.auth = {};
+        ctx.sessTools.destroy();
         console.error(`Failed to login: ${(error as Error).message}`);
         return returnJustMessage(
             ctx,
@@ -267,6 +281,6 @@ async function handleSave(ctx: InitializedCtx) {
         );
     }
 
-    ctx.txAdmin.logger.admin.write(ctx.session.auth.username, 'created admins file');
+    ctx.txAdmin.logger.admin.write(userInfo.name, 'created admins file');
     return ctx.response.redirect('/');
 }

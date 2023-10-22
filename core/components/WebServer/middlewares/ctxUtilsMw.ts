@@ -150,7 +150,7 @@ async function renderLoginView(data: any, txVars: CtxTxVars, dynamicAds: Dynamic
 /**
  * Middleware that adds some helper functions and data to the koa ctx object
  */
-export default async function setupUtilsMw(ctx: CtxWithVars, next: Next) {
+export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
     //Shortcuts
     const isWebInterface = ctx.txVars.isWebInterface;
     const txAdmin = ctx.txAdmin;

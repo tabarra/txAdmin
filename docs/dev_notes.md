@@ -51,6 +51,7 @@ Processo:
     - [x] remove menu and footer from main template
     - [x] add error boundries (global/page)
 - [x] refactor auth layer + type koa context
+- [x] rewrite the session middlewares
 - [ ] mock new auth ui + auth routing
 - SHELL:
     - [ ][5d] fully responsive layout (show/hide sidebars, etc)
