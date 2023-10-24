@@ -70,7 +70,7 @@ export default async function Resources(ctx) {
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
             if (
-                globals.resourcesManager.resourceReport !== null
+                globals.resourcesManager.resourceReport
                 && (new Date() - globals.resourcesManager.resourceReport.ts) <= 1000
                 && Array.isArray(globals.resourcesManager.resourceReport.resources)
             ) {
