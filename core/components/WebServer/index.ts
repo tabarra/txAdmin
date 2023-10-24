@@ -23,6 +23,7 @@ import topLevelMw from './middlewares/topLevelMw';
 import ctxVarsMw from './middlewares/ctxVarsMw';
 import ctxUtilsMw from './middlewares/ctxUtilsMw';
 import { SessionMemoryStorage, koaSessMw, socketioSessMw } from './middlewares/sessionMws';
+import checkRateLimit from './middlewares/globalRateLimiterMw';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict51, 32);
 
@@ -36,7 +37,6 @@ export type WebServerConfigType = {
 export default class WebServer {
     readonly #txAdmin: TxAdmin;
     public isListening = false;
-    private httpRequestsCounter = 0;
     private sessionCookieName: string;
     public luaComToken: string;
     //setupKoa
@@ -52,18 +52,7 @@ export default class WebServer {
     constructor(txAdmin: TxAdmin, public config: WebServerConfigType) {
         this.#txAdmin = txAdmin;
 
-        //Counting requests per minute
-        setInterval(() => {
-            if (this.httpRequestsCounter > 10_000) {
-                const numberFormatter = new Intl.NumberFormat('en-US');
-                console.majorMultilineError([
-                    'txAdmin might be under a DDoS attack!',
-                    `We detected ${numberFormatter.format(this.httpRequestsCounter)} HTTP requests in the last minute.`,
-                    'Make sure you have a proper firewall setup and/or a reverse proxy with rate limiting.',
-                ]);
-            }
-            this.httpRequestsCounter = 0;
-        }, 60_000);
+
 
         //Generate cookie key & luaComToken
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
@@ -157,17 +146,16 @@ export default class WebServer {
 
     /**
      * Handler for all HTTP requests
+     * Note: i gave up on typing these
      */
-    httpCallbackHandler(req: Request, res: Response) {
+    httpCallbackHandler(req: any, res: any) {
         //Calls the appropriate callback
         try {
             // console.debug(`HTTP ${req.method} ${req.url}`);
-            this.httpRequestsCounter++;
+            if (!checkRateLimit(req?.socket?.remoteAddress)) return;
             if (req.url.startsWith('/socket.io')) {
-                //@ts-ignore
-                this.io.engine.handleRequest(req, res);
+                (this.io.engine as any).handleRequest(req, res);
             } else {
-                //@ts-ignore
                 this.koaCallback(req, res);
             }
         } catch (error) { }

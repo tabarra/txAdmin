@@ -4,6 +4,7 @@ import { convars } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import TxAdmin from "@core/txAdmin";
 import { SessToolsType } from "./middlewares/sessionMws";
+import { isIpAddressLocal } from "@extras/isIpAddressLocal";
 const console = consoleFactory(modulename);
 
 
@@ -132,11 +133,12 @@ const validSessAuthSchema = z.discriminatedUnion('type', [
 export const checkRequestAuth = (
     txAdmin: TxAdmin,
     reqHeader: { [key: string]: unknown },
-    reqIP: string,
+    reqIp: string,
+    isLocalRequest: boolean,
     sessTools: SessToolsType,
 ) => {
     return typeof reqHeader['x-txadmin-token'] === 'string'
-        ? nuiAuthLogic(txAdmin, reqIP, reqHeader)
+        ? nuiAuthLogic(txAdmin, reqIp, isLocalRequest, reqHeader)
         : normalAuthLogic(txAdmin, sessTools);
 }
 
@@ -202,17 +204,18 @@ export const normalAuthLogic = (
  */
 export const nuiAuthLogic = (
     txAdmin: TxAdmin,
-    reqIP: string,
+    reqIp: string,
+    isLocalRequest: boolean,
     reqHeader: { [key: string]: unknown }
 ): AuthLogicReturnType => {
     try {
         // Check sus IPs
         if (
-            !convars.loopbackInterfaces.includes(reqIP)
+            !isLocalRequest
             && !convars.isZapHosting
             && !txAdmin.webServer.config.disableNuiSourceCheck
         ) {
-            console.verbose.warn(`NUI Auth Failed: reqIP "${reqIP}" not in ${JSON.stringify(convars.loopbackInterfaces)}.`);
+            console.verbose.warn(`NUI Auth Failed: reqIp "${reqIp}" not a local or allowed address.`);
             return failResp('Invalid Request: source');
         }
 

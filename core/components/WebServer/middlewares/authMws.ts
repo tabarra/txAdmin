@@ -9,6 +9,7 @@ const console = consoleFactory(modulename);
 /**
  * Intercom auth middleware
  * This does not set ctx.admin and does not use session/cookies whatsoever.
+ * FIXME: add isLocalAddress check?
  */
 export const intercomAuthMw = async (ctx: InitializedCtx, next: Function) => {
     if (
@@ -30,6 +31,7 @@ export const webAuthMw = async (ctx: InitializedCtx, next: Function) => {
         ctx.txAdmin,
         ctx.request.headers,
         ctx.ip,
+        ctx.txVars.isLocalRequest,
         ctx.sessTools
     );
     if (!authResult.success) {
@@ -60,6 +62,7 @@ export const apiAuthMw = async (ctx: InitializedCtx, next: Function) => {
         ctx.txAdmin,
         ctx.request.headers,
         ctx.ip,
+        ctx.txVars.isLocalRequest,
         ctx.sessTools
     );
     if (!authResult.success) {

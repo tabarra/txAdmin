@@ -6,6 +6,7 @@ import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
+import { addLocalIpAddress } from './isIpAddressLocal';
 const console = consoleFactory();
 
 
@@ -126,7 +127,7 @@ export const printBanner = async () => {
         ];
         if (ipRes.value) {
             addrs.push(ipRes.value);
-            convars.loopbackInterfaces.push(ipRes.value);
+            addLocalIpAddress(ipRes.value);
         }
     } else {
         addrs = [convars.forceInterface];

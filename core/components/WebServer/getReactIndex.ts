@@ -68,6 +68,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         ctx.txAdmin,
         ctx.request.headers,
         ctx.ip,
+        ctx.txVars.isLocalRequest,
         ctx.sessTools
     );
     let authedAdmin: AuthedAdminType | false = false;

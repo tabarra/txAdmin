@@ -4,6 +4,7 @@ import path from 'node:path';
 import slash from 'slash';
 
 import consoleFactory, { setConsoleEnvData } from '@extras/console';
+import { addLocalIpAddress } from '@extras/isIpAddressLocal';
 const console = consoleFactory();
 
 
@@ -156,7 +157,6 @@ let txAdminPort: number;
 let loginPageLogo: false | string;
 let defaultMasterAccount: false | { name: string, password_hash: string };
 let deployerDefaults: false | Record<string, string>;
-const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
 if (fs.existsSync(zapCfgFile)) {
     isZapHosting = !isPterodactyl;
@@ -189,8 +189,6 @@ if (fs.existsSync(zapCfgFile)) {
             };
         }
 
-        loopbackInterfaces.push(forceInterface);
-
         if (!isDevMode) fs.unlinkSync(zapCfgFile);
     } catch (error) {
         console.error(`Failed to load with ZAP-Hosting configuration error: ${(error as Error).message}`);
@@ -219,8 +217,10 @@ if (fs.existsSync(zapCfgFile)) {
             process.exit(111);
         }
         forceInterface = txAdminInterfaceConvar;
-        loopbackInterfaces.push(forceInterface);
     }
+}
+if(forceInterface){
+    addLocalIpAddress(forceInterface);
 }
 if (verboseConvar) {
     console.dir({ isPterodactyl, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
@@ -261,5 +261,4 @@ export const convars = Object.freeze({
     loginPageLogo,
     defaultMasterAccount,
     deployerDefaults,
-    loopbackInterfaces,
 });

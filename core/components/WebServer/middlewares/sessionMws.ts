@@ -78,6 +78,10 @@ export class SessionMemoryStorage {
     destroy(key: string) {
         return this.sessions.delete(key);
     }
+
+    get size() {
+        return this.sessions.size;
+    }
 }
 
 

@@ -6,11 +6,13 @@ import consts from '@extras/consts';
 const console = consoleFactory(modulename);
 import { Next } from "koa";
 import { CtxWithSession } from '../ctxTypes';
+import { isIpAddressLocal } from '@extras/isIpAddressLocal';
 
 //The custom tx-related vars set to the ctx
 export type CtxTxVars = {
     isWebInterface: boolean;
     realIP: string;
+    isLocalRequest: boolean;
     hostType: 'localhost' | 'ip' | 'other';
 };
 
@@ -24,12 +26,13 @@ const ctxVarsMw = (txAdmin: TxAdmin) => {
         const txVars: CtxTxVars = {
             isWebInterface: typeof ctx.headers['x-txadmin-token'] !== 'string',
             realIP: ctx.ip,
+            isLocalRequest: isIpAddressLocal(ctx.ip),
             hostType: 'other',
         };
 
         //Setting up the user's host type
         const host = ctx.request.host ?? 'none';
-        if (host.startsWith('localhost') || host.startsWith('127.0.0.1')) {
+        if (host.startsWith('localhost') || host.startsWith('127.')) {
             txVars.hostType = 'localhost';
         } else if (/^\d+\.\d+\.\d+\.\d+(?::\d+)?$/.test(host)) {
             txVars.hostType = 'ip';
@@ -41,7 +44,7 @@ const ctxVarsMw = (txAdmin: TxAdmin) => {
             typeof ctx.headers['x-txadmin-identifiers'] === 'string'
             && typeof ctx.headers['x-txadmin-token'] === 'string'
             && ctx.headers['x-txadmin-token'] === txAdmin.webServer.luaComToken
-            && convars.loopbackInterfaces.includes(ctx.ip)
+            && txVars.isLocalRequest
         ) {
             const ipIdentifier = ctx.headers['x-txadmin-identifiers']
                 .split(',')

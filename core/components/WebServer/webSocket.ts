@@ -6,8 +6,9 @@ import playerlist from './wsRooms/playerlist';
 import liveconsole from './wsRooms/liveconsole';
 import serverlog from './wsRooms/serverlog';
 import TxAdmin from '@core/txAdmin';
-import { AuthedAdminType, checkRequestAuth, normalAuthLogic, nuiAuthLogic } from './authLogic';
+import { AuthedAdminType, checkRequestAuth } from './authLogic';
 import { SocketWithSession } from './ctxTypes';
+import { isIpAddressLocal } from '@extras/isIpAddressLocal';
 const console = consoleFactory(modulename);
 
 //Types
@@ -70,10 +71,12 @@ export default class WebSocket {
     handleConnection(socket: SocketWithSession) {
         try {
             //Checking for session auth
+            const reqIp = getIP(socket);
             const authResult = checkRequestAuth(
                 this.#txAdmin,
                 socket.request.headers,
-                getIP(socket),
+                reqIp,
+                isIpAddressLocal(reqIp),
                 socket.sessTools
             );
             if (!authResult.success) {
