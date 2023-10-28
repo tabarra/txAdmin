@@ -66,14 +66,17 @@ export default (config: WebServerConfigType) => {
     //FIXME: deal with these
     router.get('/setup', webAuthMw, webRoutes.setup_get);
     router.get('/deployer', webAuthMw, webRoutes.deployer_stepper);
-    router.get('/auth', webRoutes.auth_get);
+    router.get('/legacy/auth', webRoutes.auth_get);
 
     //Authentication
     router.get('/auth/self', apiAuthMw, webRoutes.auth_self);
+    router.post('/auth/password', authLimiter, webRoutes.auth_verifyPassword);
+    router.post('/auth/logout', authLimiter, webRoutes.auth_logout);
+
+
     router.all('/auth/addMaster/:action', authLimiter, webRoutes.auth_addMaster);
     router.get('/auth/cfxre/redirect', authLimiter, webRoutes.auth_providerRedirect);
     router.get('/auth/cfxre/callback', authLimiter, webRoutes.auth_providerCallback);
-    router.post('/auth/password', authLimiter, webRoutes.auth_verifyPassword);
     router.post('/changePassword', apiAuthMw, webRoutes.auth_changePassword);
 
     //Admin Manager

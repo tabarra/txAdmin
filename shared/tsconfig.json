@@ -15,5 +15,7 @@
         },
     },
     "include": ["../locale/*.json", "./*"],
-    "references": [] // * Any project that is referenced must itself have a `references` array (which may be empty).
+    "references": [
+        { "path": "../core" }
+    ]
 }

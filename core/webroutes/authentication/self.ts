@@ -1,7 +1,7 @@
 const modulename = 'WebServer:AuthSelf';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
-import { ReactPreauthType } from '@shared/InjectedTxConstsType';
+import { ReactAuthDataType } from '@shared/authApiTypes';
 const console = consoleFactory(modulename);
 
 /**
@@ -9,14 +9,12 @@ const console = consoleFactory(modulename);
  * This is used in the NUI auth and in the sv_admins.lua, as well as in the react web ui.
  */
 export default async function AuthSelf(ctx: AuthedCtx) {
-    const outData = {
+    ctx.send<ReactAuthDataType>({
         name: ctx.admin.name,
         permissions: ctx.admin.isMaster ? ['all_permissions'] : ctx.admin.permissions,
         isMaster: ctx.admin.isMaster,
         isTempPassword: ctx.admin.isTempPassword,
         profilePicture: ctx.admin.profilePicture,
         csrfToken: ctx.admin.csrfToken ?? 'not_set',
-    } satisfies ReactPreauthType;
-
-    ctx.send(outData);
+    });
 };

@@ -87,6 +87,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,
         showAdvanced: (convars.isDevMode || console.isVerbose),
+        hasMasterAccount: (ctx.txAdmin.adminVault.admins !== false),
 
         //auth
         preAuth: authedAdmin && {

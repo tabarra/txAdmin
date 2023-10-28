@@ -1,11 +1,4 @@
-export type ReactPreauthType = {
-    name: string;
-    permissions: string[];
-    isMaster: boolean;
-    isTempPassword: boolean;
-    profilePicture: any;
-    csrfToken?: string;
-}
+import { ReactAuthDataType } from "authApiTypes";
 
 export type InjectedTxConsts = {
     //Env
@@ -15,7 +8,8 @@ export type InjectedTxConsts = {
     isPterodactyl: boolean;
     isWebInterface: boolean;
     showAdvanced: boolean;
+    hasMasterAccount: boolean;
 
     //Auth
-    preAuth: ReactPreauthType | false;
+    preAuth: ReactAuthDataType | false;
 }

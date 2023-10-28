@@ -17,7 +17,7 @@ const console = consoleFactory(modulename);
 
 //Types
 export type CtxTxUtils = {
-    send: (data: string | object) => void;
+    send: <T = string | object>(data: T) => void;
     utils: {
         render: (view: string, data?: { headerTitle?: string, [key: string]: any }) => Promise<void>;
         error: (httpStatus?: number, message?: string) => void;
@@ -215,7 +215,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
         error: errorUtil,
         serveReactIndex,
     };
-    ctx.send = (data: string | object) => {
+    ctx.send = <T = string | object>(data: T) => {
         ctx.body = data;
     };
     return next();

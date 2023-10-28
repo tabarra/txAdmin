@@ -1,37 +1,43 @@
 const modulename = 'WebServer:AuthVerifyPassword';
-import { PassSessAuthType } from '@core/components/WebServer/authLogic';
+import { AuthedAdmin, PassSessAuthType } from '@core/components/WebServer/authLogic';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
-import { isValidRedirectPath } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
+import { ApiVerifyPasswordResp, ReactAuthDataType } from '@shared/authApiTypes';
+import { z } from 'zod';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const isUndefined = (x: any) => x === undefined;
+const bodySchema = z.object({
+    username: z.string().trim(),
+    password: z.string().trim(),
+});
 
 /**
  * Verify login
  */
 export default async function AuthVerifyPassword(ctx: InitializedCtx) {
-    if (isUndefined(ctx.request.body.username) || isUndefined(ctx.request.body.password)) {
-        return ctx.response.redirect('/');
+    const schemaRes = bodySchema.safeParse(ctx.request.body);
+    if(!schemaRes.success){
+        return ctx.send<ApiVerifyPasswordResp>({
+            error: `Invalid request body: ${schemaRes.error.message}`,
+        });
     }
-    const renderData = {
-        template: 'normal',
-        message: '',
-    };
+    const postBody = schemaRes.data;
 
     try {
         //Checking admin
-        const vaultAdmin = ctx.txAdmin.adminVault.getAdminByName(ctx.request.body.username);
+        const vaultAdmin = ctx.txAdmin.adminVault.getAdminByName(postBody.username);
         if (!vaultAdmin) {
             console.warn(`Wrong username from: ${ctx.ip}`);
-            renderData.message = 'Wrong Username!';
-            return ctx.utils.render('login', renderData);
+            return ctx.send<ApiVerifyPasswordResp>({
+                error: 'Wrong username or password!',
+            });
         }
-        if (!VerifyPasswordHash(ctx.request.body.password.trim(), vaultAdmin.password_hash)) {
+        if (!VerifyPasswordHash(postBody.password, vaultAdmin.password_hash)) {
             console.warn(`Wrong password from: ${ctx.ip}`);
-            renderData.message = 'Wrong Password!';
-            return ctx.utils.render('login', renderData);
+            return ctx.send<ApiVerifyPasswordResp>({
+                error: 'Wrong username or password!',
+            });
         }
 
         //Setting up session
@@ -47,13 +53,22 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
         ctx.txAdmin.logger.admin.write(vaultAdmin.name, `logged in from ${ctx.ip} via password`);
         ctx.txAdmin.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
         ctx.txAdmin.statisticsManager.loginMethods.count('password');
-    } catch (error) {
-        console.warn(`Failed to authenticate ${ctx.request.body.username} with error: ${(error as Error).message}`);
-        console.verbose.dir(error);
-        renderData.message = 'Error autenticating admin.';
-        return ctx.utils.render('login', renderData);
-    }
 
-    const redirectPath = (isValidRedirectPath(ctx.query?.r)) ? ctx.query.r as string : '/';
-    return ctx.response.redirect(redirectPath);
+        const authedAdmin = new AuthedAdmin(ctx.txAdmin, vaultAdmin, ctx.txAdmin.adminVault.genCsrfToken())
+        return ctx.send<ReactAuthDataType>({
+            name: authedAdmin.name,
+            permissions: authedAdmin.isMaster ? ['all_permissions'] : authedAdmin.permissions,
+            isMaster: authedAdmin.isMaster,
+            isTempPassword: authedAdmin.isTempPassword,
+            profilePicture: authedAdmin.profilePicture,
+            csrfToken: authedAdmin.csrfToken ?? 'not_set',
+        });
+
+    } catch (error) {
+        console.warn(`Failed to authenticate ${postBody.username} with error: ${(error as Error).message}`);
+        console.verbose.dir(error);
+        return ctx.send<ApiVerifyPasswordResp>({
+            error: 'Error autenticating admin.',
+        });
+    }
 };
