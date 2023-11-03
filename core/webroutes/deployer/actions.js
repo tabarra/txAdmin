@@ -3,7 +3,7 @@ import path from 'node:path';
 import { cloneDeep } from 'lodash-es';
 import slash from 'slash';
 import mysql from 'mysql2/promise';
-import consts from '@core/extras/consts';
+import consts from '@shared/consts';
 import { txEnv, convars } from '@core/globalData';
 import { validateModifyServerConfig } from '../../extras/fxsConfigHelper';
 import consoleFactory from '@extras/console';

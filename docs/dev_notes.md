@@ -52,9 +52,10 @@ Processo:
     - [x] add error boundries (global/page)
 - [x] refactor auth layer + type koa context
 - [x] rewrite the session middlewares
-- [ ] mock new auth ui + auth routing
+- [x] new auth ui + auth routing
+    - [x] enforce new password rule
 - SHELL:
-    - [ ][5d] fully responsive layout (show/hide sidebars, etc)
+    - [ ][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
     - [ ][2h] merge new shell design into the `txadmin/panel` codebase
     - [ ][~3d] implement most shell+status features 
         - [ ][2h] warning for outdated tx, visible in all pages
@@ -100,7 +101,6 @@ Processo:
 - [ ][3h] full cleanup of legacy code
     - [ ] removing the replaced page templates
     - [ ] remove playerlist code
-    - [ ] remove player modal
     - [ ] remove password change modal
     - [ ] disable code for host live status
 - [ ][1d] tutorial stepper for the new UI
@@ -188,6 +188,7 @@ Master Actions:
 
 - [ ] ask framework owners to use `txAdmin-locale`
 - [ ] check all discord invites (use utm params maybe?)
+- [ ] redact discord api webhook urls from reports
 - [ ] xxxxxx
 
 

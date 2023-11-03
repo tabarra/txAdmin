@@ -8,8 +8,9 @@ export { default as chartData } from './chartData.js';
 export { default as systemLog } from './systemLog.js';
 export { default as databaseActions } from './databaseActions';
 
-export { default as auth_get } from './authentication/get';
-export { default as auth_addMaster } from './authentication/addMaster';
+export { default as auth_addMasterPin } from './authentication/addMasterPin.js';
+export { default as auth_addMasterCallback } from './authentication/addMasterCallback.js';
+export { default as auth_addMasterSave } from './authentication/addMasterSave.js';
 export { default as auth_providerRedirect } from './authentication/providerRedirect';
 export { default as auth_providerCallback } from './authentication/providerCallback';
 export { default as auth_verifyPassword } from './authentication/verifyPassword';

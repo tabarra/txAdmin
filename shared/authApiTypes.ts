@@ -1,5 +1,9 @@
 import { ApiAuthErrorResp } from "genericApiTypes";
-import { ApiVerifyPasswordReqSchema } from '../core/webroutes/authentication/verifyPassword';
+import { ApiVerifyPasswordReqSchema } from '@core/webroutes/authentication/verifyPassword';
+import { ApiOauthCallbackReqSchema } from "@core/webroutes/authentication/providerCallback";
+import { ApiAddMasterPinReqSchema } from "@core/webroutes/authentication/addMasterPin";
+import { ApiAddMasterCallbackReqSchema } from "@core/webroutes/authentication/addMasterCallback";
+import { ApiAddMasterSaveReqSchema } from "@core/webroutes/authentication/addMasterSave";
 
 export type ReactAuthDataType = {
     name: string;
@@ -24,29 +28,37 @@ export type ApiVerifyPasswordResp = {
 
 
 export type ApiOauthRedirectResp = {
-    partialAuthUrl: string;
-    state: string;
-}
-
-
-export type ApiOauthCallbackReq = {
-    redirectUri: string;
-}
-export type ApiOauthCallbackResp = {
+    authUrl: string;
+} | {
     error: string;
-} | ReactAuthDataType;
+};
 
 
-export type ApiAddMasterPinReq = {
-    pin: string;
-}
+export type ApiOauthCallbackReq = ApiOauthCallbackReqSchema;
+export type ApiOauthCallbackErrorResp = {
+    errorCode: string;
+    errorContext?: {
+        [key: string]: string;
+    };
+} | {
+    errorTitle: string;
+    errorMessage: string;
+};
+export type ApiOauthCallbackResp = ApiOauthCallbackErrorResp | ReactAuthDataType;
+
+
+export type ApiAddMasterPinReq = ApiAddMasterPinReqSchema;
 export type ApiAddMasterPinResp = ApiOauthRedirectResp;
 
-export type ApiAddMasterCallbackReq = ApiOauthCallbackReq;
-
-export type ApiAddMasterSaveReq = {
-    password: string;
+export type ApiAddMasterCallbackReq = ApiAddMasterCallbackReqSchema;
+export type ApiAddMasterCallbackFivemData = {
+    fivemName: string;
+    fivemId: string;
+    profilePicture?: string;
 }
+export type ApiAddMasterCallbackResp = ApiOauthCallbackErrorResp | ApiAddMasterCallbackFivemData;
+
+export type ApiAddMasterSaveReq = ApiAddMasterSaveReqSchema;
 export type ApiAddMasterSaveResp = {
     error: string;
 } | ReactAuthDataType;

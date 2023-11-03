@@ -1,4 +1,4 @@
-import { InjectedTxConsts } from '@shared/InjectedTxConstsType';
+import { InjectedTxConsts } from '@shared/otherTypes';
 
 export declare global {
     interface Window {

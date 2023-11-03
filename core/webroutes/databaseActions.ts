@@ -2,7 +2,7 @@ const modulename = 'WebServer:DatabaseActions';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { calcExpirationFromDuration } from '@core/extras/helpers';
-import consts from '@core/extras/consts';
+import consts from '@shared/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';

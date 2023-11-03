@@ -2,7 +2,7 @@ const modulename = 'WebServer:AdminManagerActions';
 import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes';
 import got from '@core/extras/got.js';
-import consts from '@core/extras/consts';
+import consts from '@shared/consts';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
@@ -10,7 +10,6 @@ const console = consoleFactory(modulename);
 //Helpers
 const nanoid = customAlphabet(dict51, 20);
 const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
-const discordIDRegex = /^\d{17,20}$/;
 const nameRegex = citizenfxIDRegex;
 const nameRegexDesc = 'up to 18 characters containing only letters, numbers and the characters \`_.-\`';
 const cfxHttpReqOptions = {
@@ -115,7 +114,7 @@ async function handleAdd(ctx: AuthedCtx) {
     //Validate Discord ID
     let discordData: ProviderDataType | undefined;
     if (discordID.length) {
-        if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
+        if (!consts.regexValidDiscordId.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
         discordData = {
             id: discordID,
             identifier: `discord:${discordID}`,
@@ -209,7 +208,7 @@ async function handleEdit(ctx: AuthedCtx) {
     //Validate Discord ID
     let discordData: ProviderDataType | undefined;
     if (discordID.length) {
-        if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
+        if (!consts.regexValidDiscordId.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
         discordData = {
             id: discordID,
             identifier: `discord:${discordID}`,

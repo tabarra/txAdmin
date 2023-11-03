@@ -13,7 +13,7 @@ import { DeepReadonly } from 'utility-types';
 export type ValidSessionType = {
     auth?: PassSessAuthType | CfxreSessAuthType;
     tmpOauthLoginStateKern?: string; //uuid v4
-    tmpOauthLoginPostRedirect?: string;
+    tmpOauthLoginCallbackUri?: string; //the URI provided to the IDMS as a callback
     tmpAddMasterUserInfo?: UserInfoType;
 }
 export type SessToolsType = {

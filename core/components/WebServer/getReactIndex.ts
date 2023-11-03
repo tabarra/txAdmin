@@ -1,10 +1,10 @@
 const modulename = 'WebCtxUtils';
 import fsp from "node:fs/promises";
 import path from "node:path";
-import { InjectedTxConsts } from '@shared/InjectedTxConstsType';
+import { InjectedTxConsts } from '@shared/otherTypes';
 import { txEnv, convars } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
-import consts from "@extras/consts";
+import consts from "@shared/consts";
 import consoleFactory from '@extras/console';
 import { AuthedAdminType, checkRequestAuth } from "./authLogic";
 const console = consoleFactory(modulename);
@@ -90,14 +90,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         hasMasterAccount: (ctx.txAdmin.adminVault.admins !== false),
 
         //auth
-        preAuth: authedAdmin && {
-            name: authedAdmin.name,
-            isMaster: authedAdmin.isMaster,
-            permissions: authedAdmin.permissions,
-            isTempPassword: authedAdmin.isTempPassword,
-            profilePicture: authedAdmin.profilePicture,
-            csrfToken: authedAdmin.csrfToken, //might not exist
-        },
+        preAuth: authedAdmin && authedAdmin.getAuthData(),
     } satisfies InjectedTxConsts;
 
     //Prepare placeholders

@@ -1,6 +1,6 @@
 const modulename = 'WebServer:PlayerListSearch';
 import Fuse from "fuse.js";
-import consts from '@core/extras/consts';
+import consts from '@shared/consts';
 import cleanPlayerName from '@core/../shared/cleanPlayerName';
 import { cloneDeep } from 'lodash-es';
 import { processActionList, processPlayerList } from './processor';

@@ -11,7 +11,7 @@ import { CtxTxVars } from './ctxVarsMw';
 import DynamicAds from '../../DynamicAds';
 import { Next } from 'koa';
 import { CtxWithVars } from '../ctxTypes';
-import consts from '@extras/consts';
+import consts from '@shared/consts';
 import { AuthedAdminType } from '../authLogic';
 const console = consoleFactory(modulename);
 

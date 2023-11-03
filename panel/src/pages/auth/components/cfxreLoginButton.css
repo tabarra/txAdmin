@@ -20,4 +20,10 @@
 .cfxrebtn:hover {
     background-color: #f40552;
 }
-
+.cfxrebtn:disabled {
+    color: lightgray;
+    cursor: wait;
+    background-color: rgb(40, 40, 40);
+    border: solid 2px rgb(89, 89, 89);
+    box-shadow: 0 0 5px 0 rgba(89, 89, 89, 0.75);
+}

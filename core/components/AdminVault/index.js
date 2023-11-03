@@ -123,16 +123,17 @@ export default class AdminVault {
      * @param {object} provider_data
      * @param {string} password backup password
      * @param {boolean} isPlainText
+     * @param {string|undefined} discordId
      * @returns {(boolean)} true or throws an error
      */
-    createAdminsFile(username, identifier, provider_data, password, isPlainText) {
+    createAdminsFile(username, identifier, provider_data, password, isPlainText, discordId) {
         //Sanity check
         if (this.admins !== false && this.admins !== null) throw new Error('Admins file already exists.');
         if (typeof username !== 'string' || username.length < 3) throw new Error('Invalid username parameter.');
         if (typeof password !== 'string' || password.length < 6) throw new Error('Invalid password parameter.');
 
         //Creating admin array
-        let providers = {};
+        const providers = {};
         if (identifier && provider_data) {
             providers.citizenfx = {
                 id: username,
@@ -140,13 +141,21 @@ export default class AdminVault {
                 data: provider_data,
             };
         }
-        this.admins = [{
+        if (discordId) {
+            providers.discord = {
+                id: discordId,
+                identifier: `discord:${discordId}`,
+                data: {},
+            };
+        }
+        const newAdmin = {
             name: username,
             master: true,
             password_hash: (isPlainText) ? GetPasswordHash(password) : password,
             providers,
             permissions: [],
-        }];
+        };
+        this.admins = [newAdmin];
 
         //Saving admin file
         try {
@@ -154,7 +163,7 @@ export default class AdminVault {
             this.adminsFileHash = createHash('sha1').update(jsonData).digest('hex');
             fse.writeFileSync(this.adminsFile, jsonData, { encoding: 'utf8', flag: 'wx' });
             this.setupRefreshRoutine();
-            return true;
+            return newAdmin;
         } catch (error) {
             let message = `Failed to create '${this.adminsFile}' with error: ${error.message}`;
             console.verbose.error(message);
@@ -331,7 +340,7 @@ export default class AdminVault {
 
         //Saving admin file
         this.admins.push(admin);
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
             return await this.writeAdminsFile();
         } catch (error) {
@@ -388,7 +397,7 @@ export default class AdminVault {
         if (typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
             await this.writeAdminsFile();
             return (password !== null) ? this.admins[adminIndex].password_hash : true;
@@ -423,7 +432,7 @@ export default class AdminVault {
         this.admins[adminIndex].providers[provider].data = providerData;
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
             return await this.writeAdminsFile();
         } catch (error) {
@@ -453,7 +462,7 @@ export default class AdminVault {
         if (!found) throw new Error('Admin not found');
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
             return await this.writeAdminsFile();
         } catch (error) {
@@ -538,7 +547,7 @@ export default class AdminVault {
         }
 
         this.admins = jsonData;
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         if (migrated) {
             try {
                 await this.writeAdminsFile();

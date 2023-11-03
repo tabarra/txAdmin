@@ -1,6 +1,7 @@
 const modulename = 'WebServer:AuthChangePassword';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
+import consts from '@shared/consts';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -29,8 +30,8 @@ export default async function AuthChangePassword(ctx: AuthedCtx) {
             return ctx.send({type: 'danger', message: 'Wrong current password'});
         }
     }
-    if (newPassword.length < 6 || newPassword.length > 32) {
-        return ctx.send({type: 'danger', message: 'Invalid new password'});
+    if (newPassword.length < consts.adminPasswordMinLength || newPassword.length > consts.adminPasswordMaxLength) {
+        return ctx.send({type: 'danger', message: 'Invalid new password length.'});
     }
 
     //Add admin and give output

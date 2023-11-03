@@ -11,17 +11,17 @@ export default function AuthShell() {
         <div className="min-h-screen flex items-center justify-center">
             <div className="text-center">
                 <Link
-                    href="/"
+                    href="/login"
                     className="bg-pink-600 hover:bg-pink-500 text-3xl
                     p-1 font-bold tracking-widest rounded"
                 >
                     txAdmin
                 </Link>
 
-                <Card className="mt-8 mb-4 w-96 min-h-[24rem]">
+                <Card className="w-96 min-h-[16rem] mt-8 mb-4 p-4 flex items-center justify-center">
                     <Switch>
                         <Route path="/login"><Login /></Route>
-                        <Route path="/login/cfxre/callback"><CfxreCallback /></Route>
+                        <Route path="/login/callback"><CfxreCallback /></Route>
                         <Route path="/addMaster/pin"><AddMasterPin /></Route>
                         <Route path="/addMaster/callback"><AddMasterCallback /></Route>
                         <Route path="/:fullPath*">
@@ -30,7 +30,7 @@ export default function AuthShell() {
                     </Switch>
                 </Card>
 
-                <div className="flex gap-4 justify-center">
+                <div className="flex gap-4 justify-center mb-2">
                     <Link
                         href="/"
                         className="bg-pink-600 hover:bg-pink-500 text-xl p-1 font-bold tracking-widest rounded w-full"
@@ -43,6 +43,14 @@ export default function AuthShell() {
                     >
                         Discord
                     </Link>
+                </div>
+
+                <div>
+                    <small className="text-muted-foreground text-sm font-light">
+                        tx: <strong>v{window.txConsts.txAdminVersion}</strong>
+                        &nbsp;|
+                        fx: <strong>b{window.txConsts.fxServerVersion}</strong>
+                    </small>
                 </div>
             </div>
         </div>

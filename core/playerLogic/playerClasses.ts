@@ -5,7 +5,7 @@ import { DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@core/compon
 import { cloneDeep, union } from 'lodash-es';
 import { parsePlayerIds, now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
-import consts from '@extras/consts';
+import consts from '@shared/consts';
 const console = consoleFactory(modulename);
 
 

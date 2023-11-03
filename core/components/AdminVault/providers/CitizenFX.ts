@@ -1,10 +1,9 @@
 const modulename = 'AdminVault:CitizenFXProvider';
 import crypto from 'node:crypto';
 import { BaseClient, Issuer, custom } from 'openid-client';
-
+import { URL } from 'node:url';
 import consoleFactory from '@extras/console';
 import { z } from 'zod';
-import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 const userInfoSchema = z.object({
@@ -61,16 +60,28 @@ export default class CitizenFXProvider {
     /**
      * Processes the callback and returns the tokenSet
      */
-    async processCallback(ctx: InitializedCtx, redirectUri: string, stateKern: string) {
+    async processCallback(sessionCallbackUri: string, sessionStateKern: string, callbackUri: string) {
         if (!this.client) throw new Error(`${modulename} is not ready`);
 
         //Process the request
-        const params = this.client.callbackParams(ctx as any); //FIXME: idk why it works, but it does
-        if (typeof params.code == 'undefined') throw new Error('code not present');
+        const parsedUri = new URL(callbackUri);
+        const callback = parsedUri.searchParams;
+        const callbackCode = callback.get('code');
+        const callbackState = callback.get('state');
+        if (typeof callbackCode !== 'string') throw new Error('code not present');
+        if (typeof callbackState !== 'string') throw new Error('state not present');
 
         //Exchange code for token
-        const stateExpected = getOauthState(stateKern);
-        const tokenSet = await this.client.callback(redirectUri, params, { state: stateExpected });
+        const tokenSet = await this.client.callback(
+            sessionCallbackUri,
+            {
+                code: callbackCode,
+                state: callbackState,
+            },
+            {
+                state: getOauthState(sessionStateKern)
+            }
+        );
         if (typeof tokenSet !== 'object') throw new Error('tokenSet is not an object');
         if (typeof tokenSet.access_token == 'undefined') throw new Error('access_token not present');
         if (typeof tokenSet.expires_at == 'undefined') throw new Error('expires_at not present');

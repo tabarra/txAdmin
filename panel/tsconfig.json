@@ -28,6 +28,7 @@
   "include": ["src"],
   "references": [
     { "path": "./tsconfig.node.json" },
-    { "path": "../shared" }
+    { "path": "../core" },
+    { "path": "../shared" },
   ]
 }

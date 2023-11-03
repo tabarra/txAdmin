@@ -5,6 +5,7 @@ import consoleFactory from '@extras/console';
 import TxAdmin from "@core/txAdmin";
 import { SessToolsType } from "./middlewares/sessionMws";
 import { isIpAddressLocal } from "@extras/isIpAddressLocal";
+import { ReactAuthDataType } from "@shared/authApiTypes";
 const console = consoleFactory(modulename);
 
 
@@ -74,6 +75,20 @@ export class AuthedAdmin {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Returns the data used for the frontend or sv_admins.lua
+     */
+    getAuthData(): ReactAuthDataType {
+        return {
+            name: this.name,
+            permissions: this.isMaster ? ['all_permissions'] : this.permissions,
+            isMaster: this.isMaster,
+            isTempPassword: this.isTempPassword,
+            profilePicture: this.profilePicture,
+            csrfToken: this.csrfToken ?? 'not_set',
+        }
     }
 }
 

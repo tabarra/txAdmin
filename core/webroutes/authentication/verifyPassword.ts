@@ -11,13 +11,14 @@ const bodySchema = z.object({
     username: z.string().trim(),
     password: z.string().trim(),
 });
+export type ApiVerifyPasswordReqSchema = z.infer<typeof bodySchema>;
 
 /**
  * Verify login
  */
 export default async function AuthVerifyPassword(ctx: InitializedCtx) {
     const schemaRes = bodySchema.safeParse(ctx.request.body);
-    if(!schemaRes.success){
+    if (!schemaRes.success) {
         return ctx.send<ApiVerifyPasswordResp>({
             error: `Invalid request body: ${schemaRes.error.message}`,
         });
@@ -54,15 +55,8 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
         ctx.txAdmin.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
         ctx.txAdmin.statisticsManager.loginMethods.count('password');
 
-        const authedAdmin = new AuthedAdmin(ctx.txAdmin, vaultAdmin, ctx.txAdmin.adminVault.genCsrfToken())
-        return ctx.send<ReactAuthDataType>({
-            name: authedAdmin.name,
-            permissions: authedAdmin.isMaster ? ['all_permissions'] : authedAdmin.permissions,
-            isMaster: authedAdmin.isMaster,
-            isTempPassword: authedAdmin.isTempPassword,
-            profilePicture: authedAdmin.profilePicture,
-            csrfToken: authedAdmin.csrfToken ?? 'not_set',
-        });
+        const authedAdmin = new AuthedAdmin(ctx.txAdmin, vaultAdmin, sessData.csrfToken)
+        return ctx.send<ReactAuthDataType>(authedAdmin.getAuthData());
 
     } catch (error) {
         console.warn(`Failed to authenticate ${postBody.username} with error: ${(error as Error).message}`);

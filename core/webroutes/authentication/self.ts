@@ -9,12 +9,5 @@ const console = consoleFactory(modulename);
  * This is used in the NUI auth and in the sv_admins.lua, as well as in the react web ui.
  */
 export default async function AuthSelf(ctx: AuthedCtx) {
-    ctx.send<ReactAuthDataType>({
-        name: ctx.admin.name,
-        permissions: ctx.admin.isMaster ? ['all_permissions'] : ctx.admin.permissions,
-        isMaster: ctx.admin.isMaster,
-        isTempPassword: ctx.admin.isTempPassword,
-        profilePicture: ctx.admin.profilePicture,
-        csrfToken: ctx.admin.csrfToken ?? 'not_set',
-    });
+    ctx.send<ReactAuthDataType>(ctx.admin.getAuthData());
 };
