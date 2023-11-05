@@ -163,6 +163,8 @@ const runDevTask = async () => {
             console.log(`[BUILDER] Restarting due to stdin request.`);
             txInstance.killServer();
             txInstance.spawnServer();
+        } else if (cmd === 'cls' || cmd === 'clear') {
+            console.clear();
         }
     });
 

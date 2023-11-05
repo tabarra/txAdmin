@@ -586,7 +586,7 @@ ui_cards 'list' {
 
 ### Update Event + Rollout strategy
 This is not compatible with the update events.
-If patch, show update notification immediately (specially important to quick-fix a bug).
+If patch, show update notification immediately (especially important to quick-fix a bug).
 If minor, randomize a delay between 0~24h.
 If patch, randomize a delay 0~72h.
 

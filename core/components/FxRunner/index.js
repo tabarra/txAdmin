@@ -433,7 +433,7 @@ export default class FXRunner {
                 eventType,
                 JSON.stringify(data),
             );
-            console.verbose.dir({ eventType, data});
+            // console.verbose.dir({ eventType, data});
             return this.srvCmd(eventCommand);
         } catch (error) {
             console.verbose.error(`Error writing firing server event ${eventType}`);

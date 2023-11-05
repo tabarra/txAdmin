@@ -449,7 +449,7 @@ async function handleDiscord(ctx: AuthedCtx) {
 
             Please keep in mind that:
             - These permissions are dangerous because if the bot token leaks, an attacker can cause permanent damage to your server.
-            - No bot should have more permissions than strictly needed, specially \`Administrator\`.
+            - No bot should have more permissions than strictly needed, especially \`Administrator\`.
             - You should never have multiple bots using the same token, create a new one for each bot.`;
         }
         return ctx.send({

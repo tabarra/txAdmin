@@ -92,7 +92,7 @@ ConVar usage **example** for different port and profile:
 ```
 
 ### Contributing & Development
-- All PRs should be based on the develop branch, specially translation PRs.
+- All PRs should be based on the develop branch, including translation PRs.
 - Before putting effort for any significant PR, make sure to join our discord and talk to us, since the change you want to do might not have been done for a reason or there might be some required context.
 - If you want to run it from build & source, please do read [this](docs/development.md).
 
@@ -103,4 +103,4 @@ ConVar usage **example** for different port and profile:
 - Warning Sounds ([1](https://freesound.org/people/Ultranova105/sounds/136756/)/[2](https://freesound.org/people/Ultranova105/sounds/136754/)) made by Ultranova105 are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/);
 - [Announcement Sound](https://freesound.org/people/IENBA/sounds/545495/) made by IENBA is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
 - [Message Sound](https://freesound.org/people/Divinux/sounds/198414/) made by Divinux is licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/);
-- Special thanks to everyone that contributed to this project, specially the very fine Discord folks that provide support for others;
+- Especial thanks to everyone that contributed to this project, especially the very fine Discord folks that provide support for others;
