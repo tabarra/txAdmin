@@ -1,6 +1,6 @@
 import { ApiLogoutResp, ReactAuthDataType } from '@shared/authApiTypes';
 import { useMutation } from '@tanstack/react-query';
-import { atom, useAtom, useAtomValue } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 
 /**
@@ -17,6 +17,16 @@ const isAuthenticatedAtom = atom((get) => !!get(authDataAtom))
 export const useIsAuthenticated = () => {
     return useAtomValue(isAuthenticatedAtom);
 };
+
+//Wipes auth data from the atom, this is triggered when an api pr page call returns a logout notice
+export const useExpireAuthData = () => {
+    const setAuthData = useSetAtom(authDataAtom);
+    return (src = 'unknown') => {
+        console.log(`Logout notice received from '${src}'. Wiping auth data.`);
+        setAuthData(false);
+        window.history.replaceState(null, '', '/login#expired');
+    }
+}
 
 //Generic authentication hook, using it will cause your component to re-render on _any_ auth changes
 export const useAuth = () => {

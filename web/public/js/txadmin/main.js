@@ -219,7 +219,7 @@ const getSocket = (rooms) => {
 
     socket.on('logout', () => {
         console.log('Received logout command from websocket.');
-        window.location = `/auth?logout&r=${encodeURIComponent(window.location.pathname)}`;
+        window.parent.postMessage({ type: 'logoutNotice' });
     });
 
     return socket;

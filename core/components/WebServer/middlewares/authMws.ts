@@ -5,6 +5,33 @@ import { ApiAuthErrorResp, ApiToastResp, GenericApiErrorResp } from "@shared/gen
 import { InitializedCtx } from '../ctxTypes';
 const console = consoleFactory(modulename);
 
+const webLogoutPage = `<style>
+    .notice {
+        font-family: sans-serif;
+        font-size: 1.5em;
+        text-align: center;
+        background-color: #1F1F1F;
+        color: #fff;
+        padding: 2em;
+        border-radius: 0.25em;
+    }
+    .notice a {
+        color: #42428A;
+    }
+</style>
+    <p class="notice">
+        User logged out. <br>
+        Redirecting to <a href="/login#expired" target="_parent">login page</a>...
+    </p>
+<script>
+    // Notify parent window that auth failed
+    window.parent.postMessage({ type: 'logoutNotice' });
+    // If parent redirect didn't work, redirect here
+    setTimeout(function() {
+        window.location.href = '/login#expired';
+    }, 2000);
+</script>`;
+
 
 /**
  * Intercom auth middleware
@@ -39,11 +66,7 @@ export const webAuthMw = async (ctx: InitializedCtx, next: Function) => {
         if (authResult.rejectReason) {
             console.verbose.warn(`Invalid session auth: ${authResult.rejectReason}`);
         }
-        if (ctx.method === 'GET' && ctx.path !== '/') {
-            return ctx.response.redirect(`/auth?logout&r=${encodeURIComponent(ctx.path)}`);
-        } else {
-            return ctx.response.redirect(`/auth?logout`);
-        }
+        return ctx.send(webLogoutPage);
     }
 
     //Adding the admin to the context

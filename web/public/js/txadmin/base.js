@@ -83,7 +83,7 @@ for (let pfp of pfpList) {
 //================================================================
 const checkApiLogoutRefresh = (data) => {
     if (data.logout === true) {
-        window.location = `/auth?logout&r=${encodeURIComponent(window.location.pathname)}`;
+        window.parent.postMessage({ type: 'logoutNotice' });
         return true;
     } else if (data.refresh === true) {
         window.location.reload(true);

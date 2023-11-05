@@ -75,7 +75,12 @@ export default function Login() {
         });
     };
 
-    const logoutMessage = window.location.hash === '#logout' ? 'Logged Out.' : undefined;
+    let logoutMessage;
+    if(window.location.hash === '#logout'){
+        logoutMessage = 'Logged Out.';
+    } else if(window.location.hash === '#expired'){
+        logoutMessage = 'Session Expired.';
+    }
     const displayMessage = errorMessage ?? logoutMessage;
 
     //Prefill username/password if dev pass enabled

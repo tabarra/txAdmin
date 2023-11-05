@@ -1,8 +1,10 @@
+import { useEventListener } from 'usehooks-ts';
 import { Link, useRoute } from "wouter";
 import { cn } from "./lib/utils";
 import ShellRouter from "./ShellRouter";
 import { useContentRefresh, pageErrorStatusAtom } from "./hooks/mainPageStatus";
 import { useAtomValue } from "jotai";
+import { useExpireAuthData } from './hooks/auth';
 
 
 function MenuLink(props: React.HTMLProps<HTMLAnchorElement> & { href: string }) {
@@ -76,6 +78,13 @@ function ServerSidebar() {
 }
 
 export default function MockShell() {
+    const expireSession = useExpireAuthData();
+    useEventListener('message', (e: MessageEventFromIframe) => {
+        if(e.data.type === 'logoutNotice'){
+            expireSession('child iframe');
+        }
+    });
+
     return (
         <div className="h-full min-h-screen">
             <Header />
