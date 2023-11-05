@@ -19,6 +19,7 @@ export const useIsAuthenticated = () => {
 };
 
 //Wipes auth data from the atom, this is triggered when an api pr page call returns a logout notice
+//Since this is triggered by a logout notice, we don't need to bother doing a POST /auth/logout
 export const useExpireAuthData = () => {
     const setAuthData = useSetAtom(authDataAtom);
     return (src = 'unknown') => {

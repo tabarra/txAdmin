@@ -8,6 +8,7 @@ import { convars, txEnv } from '@core/globalData';
 import CitizenFXProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@extras/console';
+import chalk from 'chalk';
 const console = consoleFactory(modulename);
 
 
@@ -156,6 +157,7 @@ export default class AdminVault {
             permissions: [],
         };
         this.admins = [newAdmin];
+        this.addMasterPin = undefined;
 
         //Saving admin file
         try {
@@ -589,9 +591,25 @@ export default class AdminVault {
 
 
     /**
-     * Returns a random token to be used as CSRF Token
+     * Returns a random token to be used as CSRF Token.
      */
     genCsrfToken() {
         return nanoid();
+    }
+
+
+    /**
+     * Checks if there are admins configured or not.
+     * Optionally, prints the master PIN on the console.
+     */
+    hasAdmins(printPin = false) {
+        if (Array.isArray(this.admins) && this.admins.length) {
+            return true;
+        } else {
+            if (printPin) {
+                console.warn('Use this PIN to add a new master account: ' + chalk.inverse(` ${this.addMasterPin} `));
+            }
+            return false;
+        }
     }
 };

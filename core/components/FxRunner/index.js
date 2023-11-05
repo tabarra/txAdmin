@@ -84,7 +84,7 @@ export default class FXRunner {
             return console.warn('Please open txAdmin on the browser to configure your server.');
         }
 
-        if (!globals.adminVault || !globals.adminVault.admins) {
+        if (!globals.adminVault?.hasAdmins()) {
             return console.warn('The server will not auto start because there are no admins configured.');
         }
 

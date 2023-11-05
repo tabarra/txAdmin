@@ -27,7 +27,7 @@ export default async function AuthAddMasterCallback(ctx: InitializedCtx) {
     const { redirectUri } = schemaRes.data;
 
     //Check if there are already admins set up
-    if (ctx.txAdmin.adminVault.admins !== false) {
+    if (ctx.txAdmin.adminVault.hasAdmins()) {
         return ctx.send<ApiAddMasterCallbackResp>({
             errorTitle: `Master account already set.`,
             errorMessage: `Please return to the login page.`,

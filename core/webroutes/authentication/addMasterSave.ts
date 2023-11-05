@@ -28,7 +28,7 @@ export default async function AuthAddMasterSave(ctx: InitializedCtx) {
     const { password, discordId } = schemaRes.data;
 
     //Check if there are already admins set up
-    if (ctx.txAdmin.adminVault.admins !== false) {
+    if (ctx.txAdmin.adminVault.hasAdmins()) {
         return ctx.send<ApiAddMasterSaveResp>({
             error: `Master account already set.`,
         });
