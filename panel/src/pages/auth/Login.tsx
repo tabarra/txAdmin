@@ -13,6 +13,7 @@ import { LuLoader2 } from "react-icons/lu";
 import { ApiOauthRedirectResp, ApiVerifyPasswordReq, ApiVerifyPasswordResp } from '@shared/authApiTypes';
 import { useAuth } from '@/hooks/auth';
 import './components/cfxreLoginButton.css';
+import { useLocation } from "wouter";
 
 
 export default function Login() {
@@ -20,12 +21,22 @@ export default function Login() {
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
+    const setLocation = useLocation()[1];
 
     const onError = (error: Error) => {
         if (error.message.startsWith('NetworkError')) {
             setErrorMessage('Network error. If you closed txAdmin, please restart it and try again.');
         } else {
             setErrorMessage(error.message);
+        }
+    }
+
+    const onErrorResponse = (error: string) => {
+        if(error === 'no_admins_setup'){
+            setErrorMessage('No admins set up. Redirecting...');
+            setLocation('/addMaster/pin');
+        } else {
+            setErrorMessage(error);
         }
     }
 
@@ -38,7 +49,7 @@ export default function Login() {
         onError,
         onSuccess: (data) => {
             if ('error' in data) {
-                setErrorMessage(data.error);
+                onErrorResponse(data.error);
             } else {
                 console.log('Redirecting to', data.authUrl);
                 window.location.href = data.authUrl;
@@ -60,7 +71,7 @@ export default function Login() {
         onError,
         onSuccess: (data) => {
             if ('error' in data) {
-                setErrorMessage(data.error);
+                onErrorResponse(data.error);
             } else {
                 setAuthData(data);
             }

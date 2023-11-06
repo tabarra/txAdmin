@@ -25,6 +25,13 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
     }
     const postBody = schemaRes.data;
 
+    //Check if there are already admins set up
+    if (!ctx.txAdmin.adminVault.hasAdmins()) {
+        return ctx.send<ApiVerifyPasswordResp>({
+            error: `no_admins_setup`,
+        });
+    }
+
     try {
         //Checking admin
         const vaultAdmin = ctx.txAdmin.adminVault.getAdminByName(postBody.username);

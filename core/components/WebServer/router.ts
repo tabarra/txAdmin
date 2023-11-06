@@ -17,24 +17,12 @@ export default (config: WebServerConfigType) => {
         driver: 'memory',
         db: new Map(),
         duration: config.limiterMinutes * 60 * 1000, // 15 minutes
-        errorMessage: `<html>
-                <head>
-                    <title>txAdmin Rate Limit</title>
-                    <style>
-                        body {
-                            background-color: #171718;
-                            color: orangered;
-                            text-align: center; 
-                            margin-top: 6em; 
-                            font-family: monospace;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>Too many authentication attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.</h1>
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/otCpCn0l4Wo?start=15" frameborder="0" allow="accelerometer; autoplay="1"; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </body>
-            </html>`,
+        errorMessage: JSON.stringify({
+            //Duplicated to maintain compatibility with all auth api routes
+            error: `Too many attempts. Blocked for ${config.limiterMinutes} minutes.`,
+            errorTitle: 'Too many attempts.',
+            errorMessage: `Blocked for ${config.limiterMinutes} minutes.`,
+        }),
         max: config.limiterAttempts,
         disableHeader: true,
         id: (ctx: any) => ctx.txVars.realIP,

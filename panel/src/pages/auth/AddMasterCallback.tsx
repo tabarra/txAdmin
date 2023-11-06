@@ -179,6 +179,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
 
 
 export default function AddMasterCallback() {
+    const hasPendingMutation = useRef(false); //due to strict mode re-rendering
     const [fivemData, setFivemData] = useState<ApiAddMasterCallbackFivemData | undefined>();
     const [errorData, setErrorData] = useState<ApiOauthCallbackErrorResp | undefined>();
 
@@ -217,7 +218,8 @@ export default function AddMasterCallback() {
 
     //Auto submit callback to get the fivemData
     useEffect(() => {
-        if (fivemData) return;
+        if (fivemData || hasPendingMutation.current) return;
+        hasPendingMutation.current = true;
         callbackMutation.mutate({
             redirectUri: window.location.href
         });
