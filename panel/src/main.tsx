@@ -6,12 +6,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './globals.css'
 
-import MockShell from './MockShell.tsx'
+import MainShell from './layout/MainShell.tsx'
 import { AppErrorFallback } from './components/ErrorFallback.tsx';
 import { useIsAuthenticated } from './hooks/auth.ts';
-import AuthShell from './AuthShell.tsx';
+import AuthShell from './layout/AuthShell.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { isValidRedirectPath } from './lib/utils.ts';
+
 
 //If the initial routing is from WebPipe, remove it from the pathname so the router can handle it
 if (window.location.pathname.substring(0, 8) === '/WebPipe') {
@@ -43,7 +44,7 @@ export function AuthContextSwitch() {
             window.history.replaceState(null, '', '/');
         }
 
-        return <MockShell />;
+        return <MainShell />;
     } else {
         //Unless the user is already in the auth pages, redirect to the login page
         console.log('User is not authenticated. Redirecting to login page.');

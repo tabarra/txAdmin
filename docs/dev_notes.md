@@ -39,6 +39,11 @@ Processo:
         - Diagnostics
         - Console Log
         - Action Log
+=======================================================================
+
+
+
+
 
 =======================================================================
 ## v7 RELEASE CHECKLIST
@@ -56,7 +61,7 @@ Processo:
     - [x] enforce new password rule
 - SHELL:
     - [ ][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
-    - [ ][2h] merge new shell design into the `txadmin/panel` codebase
+    - [x][2h] merge new shell design into the `txadmin/panel` codebase
     - [ ][~3d] implement most shell+status features 
         - [ ][2h] warning for outdated tx, visible in all pages
         - [ ][1h] zap hosting advertisement

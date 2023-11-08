@@ -1,15 +1,15 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { Route, Switch, useLocation } from "wouter";
-import { PageErrorFallback } from "./components/ErrorFallback";
+import { PageErrorFallback } from "../components/ErrorFallback";
 import { useAtomValue, useSetAtom } from "jotai";
-import { contentRefreshKeyAtom, pageErrorStatusAtom } from "./hooks/mainPageStatus";
+import { contentRefreshKeyAtom, pageErrorStatusAtom } from "../hooks/mainPageStatus";
 
-import Iframe from "./pages/Iframe"
-import NotFound from "./pages/NotFound"
-import TestingPage from "./pages/TestingPage";
+import Iframe from "../pages/Iframe"
+import NotFound from "../pages/NotFound"
+import TestingPage from "../pages/TestingPage";
 
 
-export default function ShellRouter() {
+export default function MainRouter() {
     const setPageErrorStatus = useSetAtom(pageErrorStatusAtom);
     const contentRefreshKey = useAtomValue(contentRefreshKeyAtom);
     const setLocation = useLocation()[1];

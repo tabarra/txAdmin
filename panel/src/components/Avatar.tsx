@@ -49,7 +49,12 @@ type Props = {
     className?: string;
 };
 export default function Avatar({ username, profilePicture, className }: Props) {
-    return <ShadcnAvatar className={cn('bg-zinc-200 dark:bg-zinc-800 transition-colors text-zinc-200', className)} >
+    return <ShadcnAvatar
+        className={cn(
+            'bg-zinc-200 dark:bg-zinc-800 transition-colors text-zinc-200',
+            className
+        )}
+    >
         {
             profilePicture &&
             <AvatarImage
@@ -58,6 +63,7 @@ export default function Avatar({ username, profilePicture, className }: Props) {
             />
         }
         <AvatarFallback
+            className={className}
             style={{ backgroundColor: getUsernameColor(username) }}
             delayMs={profilePicture ? 1000 : undefined}
         >

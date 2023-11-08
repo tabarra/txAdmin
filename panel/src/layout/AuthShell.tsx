@@ -1,9 +1,9 @@
 import { Link, Route, Switch } from "wouter";
-import Login from "./pages/auth/Login";
-import CfxreCallback from "./pages/auth/CfxreCallback";
-import AddMasterPin from "./pages/auth/AddMasterPin";
-import AddMasterCallback from "./pages/auth/AddMasterCallback";
-import { Card } from "./components/ui/card";
+import Login from "../pages/auth/Login";
+import CfxreCallback from "../pages/auth/CfxreCallback";
+import AddMasterPin from "../pages/auth/AddMasterPin";
+import AddMasterCallback from "../pages/auth/AddMasterCallback";
+import { Card } from "../components/ui/card";
 
 
 export default function AuthShell() {

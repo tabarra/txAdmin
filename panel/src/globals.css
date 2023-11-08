@@ -61,10 +61,8 @@
 @layer base {
     * {
         @apply border-border;
-        @apply dark; /* FIXME: remove this */
     }
     body {
-        @apply bg-background text-foreground;
-        @apply antialiased
+        @apply bg-background text-foreground antialiased;
     }
 }

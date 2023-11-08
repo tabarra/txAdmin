@@ -19,6 +19,9 @@ module.exports = {
       },
     },
     extend: {
+      spacing: {
+        sidebar: "16rem", //256px
+      },
       screens: {
         xs: "480px",
       },
