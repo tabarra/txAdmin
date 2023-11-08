@@ -102,7 +102,7 @@ Processo:
 - [ ][3h] change password modal
 - [ ][1h] change temp password prompt
 - [ ][2d] light/dark theme
-- [ ][1d] adapt legacy styles to somewhat match shadcn
+- [x][1d] adapt legacy styles to somewhat match shadcn
 - [ ][3h] full cleanup of legacy code
     - [ ] removing the replaced page templates
     - [ ] remove playerlist code
