@@ -1,7 +1,7 @@
 const modulename = 'WebCtxUtils';
 import fsp from "node:fs/promises";
 import path from "node:path";
-import { InjectedTxConsts } from '@shared/otherTypes';
+import { InjectedTxConsts, ThemeType } from '@shared/otherTypes';
 import { txEnv, convars } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
@@ -34,10 +34,42 @@ const devModulesScript = `<!-- Dev scripts required for HMR -->
     <script type="module" src="${viteOrigin}/src/main.tsx"></script>`;
 
 
+//Custom themes placeholder
+export const tmpDefaultTheme = 'dark';
+export const tmpDefaultThemes = ['dark', 'light'];
+export const tmpCustomThemes: ThemeType[] = [
+    // {
+    //     name: 'deep-purple',
+    //     isDark: true,
+    //     style: {
+    //         "background": "274 93% 39%",
+    //         "foreground": "269 9% 100%",
+    //         "card": "274 79% 53%",
+    //         "card-foreground": "270 48% 99%",
+    //         "popover": "240 10% 3.9%",
+    //         "popover-foreground": "270 48% 99%",
+    //         "primary": "270 48% 99%",
+    //         "primary-foreground": "240 5.9% 10%",
+    //         "secondary": "240 3.7% 15.9%",
+    //         "secondary-foreground": "270 48% 99%",
+    //         "muted": "240 3.7% 15.9%",
+    //         "muted-foreground": "240 5% 64.9%",
+    //         "accent": "240 3.7% 15.9%",
+    //         "accent-foreground": "270 48% 99%",
+    //         "destructive": "0 62.8% 30.6%",
+    //         "destructive-foreground": "270 48% 99%",
+    //         "border": "273 79%, 53%",
+    //         "input": "240 3.7% 15.9%",
+    //         "ring": "240 4.9% 83.9%",
+    //     }
+    // }
+];
+
+
+
 /**
  * Returns the react index.html file with placeholders replaced
  * FIXME: add favicon
- * FIXME: add dark mode
  */
 export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     //Read file if not cached
@@ -88,6 +120,8 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         isWebInterface: ctx.txVars.isWebInterface,
         showAdvanced: (convars.isDevMode || console.isVerbose),
         hasMasterAccount: ctx.txAdmin.adminVault.hasAdmins(true),
+        defaultTheme: tmpDefaultTheme,
+        customThemes: tmpCustomThemes.map(({ name, isDark }) => ({ name, isDark })),
 
         //auth
         preAuth: authedAdmin && authedAdmin.getAuthData(),
@@ -103,6 +137,39 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
             window.txConsts = ${JSON.stringify(injectedConsts)};
         </script>`;
     replacers.devModules = convars.isDevMode ? devModulesScript : '';
+
+    //Prepare custom themes style tag
+    if (tmpCustomThemes.length) {
+        const cssThemes = [];
+        for (const theme of tmpCustomThemes) {
+            const cssVars = [];
+            for (const [name, value] of Object.entries(theme.style)) {
+                cssVars.push(`--${name}: ${value};`);
+            }
+            cssThemes.push(`.theme-${theme.name} { ${cssVars.join(' ')} }`);
+        }
+        replacers.customThemesStyle = `<style>${cssThemes.join('\n')}</style>`;
+    } else {
+        replacers.customThemesStyle = '';
+    }
+
+    //Setting the theme class from the cookie
+    const themeCookie = ctx.cookies.get('txAdmin-theme');
+    if(themeCookie){
+        if(tmpDefaultThemes.includes(themeCookie)){
+            replacers.htmlClasses = themeCookie;
+        } else {
+            const selectedCustomTheme = tmpCustomThemes.find((theme) => theme.name === themeCookie);
+            if(!selectedCustomTheme){
+                replacers.htmlClasses = tmpDefaultTheme;
+            } else {
+                const lightDarkSelector = selectedCustomTheme.isDark ? 'dark' : 'light';
+                replacers.htmlClasses = `${lightDarkSelector} theme-${selectedCustomTheme.name}`;
+            }
+        }
+    } else {
+        replacers.htmlClasses = tmpDefaultTheme;
+    }
 
     //Replace
     let htmlOut = htmlFile;

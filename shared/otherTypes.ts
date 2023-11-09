@@ -1,5 +1,11 @@
 import { ReactAuthDataType } from "./authApiTypes";
 
+export type ThemeType = {
+    name: string;
+    isDark: boolean;
+    style: {[key: string]: string};
+};
+
 export type InjectedTxConsts = {
     //Env
     fxServerVersion: string;
@@ -9,6 +15,8 @@ export type InjectedTxConsts = {
     isWebInterface: boolean;
     showAdvanced: boolean;
     hasMasterAccount: boolean;
+    defaultTheme: string;
+    customThemes: Omit<ThemeType, 'style'>[];
 
     //Auth
     preAuth: ReactAuthDataType | false;

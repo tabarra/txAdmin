@@ -1,4 +1,4 @@
-import { ModeToggleSimple } from "./ModeToggleSimple";
+import { SimpleThemeToggle } from "./SimpleThemeToggle";
 
 export default function BreakpointDebugger() {
     return <div className="sticky bottom-4 w-full flex flex-row justify-center">
@@ -9,7 +9,7 @@ export default function BreakpointDebugger() {
             <h1 className="px-2 text-2xl bg-red-500 lg:bg-green-500">lg</h1>
             <h1 className="px-2 text-2xl bg-red-500 xl:bg-green-500">xl</h1>
             <h1 className="px-2 text-2xl bg-red-500 2xl:bg-green-500">2xl</h1>
-            <ModeToggleSimple />
+            <SimpleThemeToggle />
         </div>
     </div>;
 }

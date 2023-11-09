@@ -5,7 +5,7 @@ type Props = {
 export default function Iframe({ legacyUrl }: Props) {
     const searchParams = location.search ?? '';
     return (
-        <iframe
+        <iframe id="legacyPageiframe"
             src={`./legacy/${legacyUrl}${searchParams}`}
             className="w-full"
         ></iframe>

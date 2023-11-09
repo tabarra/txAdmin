@@ -6,7 +6,7 @@ import xssInstancer from '@core/extras/xss.js';
 import * as helpers from '@core/extras/helpers';
 import { convars, txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
-import getReactIndex from '../getReactIndex';
+import getReactIndex, { tmpCustomThemes } from '../getReactIndex';
 import { CtxTxVars } from './ctxVarsMw';
 import DynamicAds from '../../DynamicAds';
 import { Next } from 'koa';
@@ -66,8 +66,6 @@ function getEjsOptions(filePath: string) {
 //Consts
 const templateCache = new Map();
 const RESOURCE_PATH = 'nui://monitor/web/public/';
-const THEME_DARK = 'theme--dark';
-const DEFAULT_AVATAR = 'img/default_avatar.png';
 
 const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
 const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
@@ -111,7 +109,7 @@ async function renderView(
 ) {
     data.adminUsername = possiblyAuthedAdmin?.name ?? 'unknown user';
     data.adminIsMaster = possiblyAuthedAdmin && possiblyAuthedAdmin.isMaster;
-    data.profilePicture = possiblyAuthedAdmin?.profilePicture ?? DEFAULT_AVATAR;
+    data.profilePicture = possiblyAuthedAdmin?.profilePicture ?? 'img/default_avatar.png';
     data.isTempPassword = possiblyAuthedAdmin && possiblyAuthedAdmin.isTempPassword;
     data.isLinux = !txEnv.isWindows;
     data.showAdvanced = (convars.isDevMode || console.isVerbose);
@@ -163,6 +161,18 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
         //Typescript is very annoying 
         const possiblyAuthedAdmin = ctx.admin as AuthedAdminType | undefined;
 
+        //Setting up legacy theme
+        let legacyTheme = '';
+        const themeCookie = ctx.cookies.get('txAdmin-theme');
+        if(!themeCookie || themeCookie === 'dark' || !isWebInterface){
+            legacyTheme = 'theme--dark';
+        } else {
+            const selectorTheme = tmpCustomThemes.find((theme) => theme.name === themeCookie);
+            if(selectorTheme?.isDark){
+                legacyTheme = 'theme--dark';
+            }
+        }
+
         // Setting up default render data:
         const baseViewData = {
             isWebInterface,
@@ -170,7 +180,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
             serverProfile: txAdmin.info.serverProfile,
             serverName: txAdmin.globalConfig.serverName || txAdmin.info.serverProfile,
-            uiTheme: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface) ? THEME_DARK : '',
+            uiTheme: legacyTheme,
             fxServerVersion: displayFxserverVersion,
             txAdminVersion: txEnv.txAdminVersion,
             txaOutdated: txAdmin.updateChecker?.txUpdateData,

@@ -20,11 +20,6 @@
  *        / / ``   w w
  *       w w
  */
-#darkToggleDark, #darkToggleLight {
-  max-width: 22px !important;
-  cursor: pointer;
-}
-
 body.theme--dark {
   /*************************
    * CORE UI MODIFICATIONS

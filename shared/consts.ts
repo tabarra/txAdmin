@@ -27,4 +27,5 @@ export default {
     regexValidIP: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
     noLookAlikesAlphabet,
     nuiWebpipePath: 'https://monitor/WebPipe/',
+    regexCustomThemeName: /^[a-z0-9]+(-[a-z0-9]+)*$/
 } as const;

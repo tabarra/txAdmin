@@ -2,7 +2,6 @@
 import 'vite/modulepreload-polyfill'
 
 import { ErrorBoundary } from "react-error-boundary";
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './globals.css'
 
@@ -12,6 +11,8 @@ import { useIsAuthenticated } from './hooks/auth.ts';
 import AuthShell from './layout/AuthShell.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { isValidRedirectPath } from './lib/utils.ts';
+import ThemeProvider from './components/ThemeProvider.tsx';
+import { StrictMode } from 'react';
 
 
 //If the initial routing is from WebPipe, remove it from the pathname so the router can handle it
@@ -68,11 +69,13 @@ const queryClient = new QueryClient()
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
+    <StrictMode>
         <ErrorBoundary FallbackComponent={AppErrorFallback}>
             <QueryClientProvider client={queryClient}>
-                <AuthContextSwitch />
+                <ThemeProvider>
+                    <AuthContextSwitch />
+                </ThemeProvider>
             </QueryClientProvider>
         </ErrorBoundary>
-    </React.StrictMode>,
+    </StrictMode>,
 )
