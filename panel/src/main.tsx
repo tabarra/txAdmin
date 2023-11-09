@@ -48,11 +48,11 @@ export function AuthContextSwitch() {
         return <MainShell />;
     } else {
         //Unless the user is already in the auth pages, redirect to the login page
-        console.log('User is not authenticated. Redirecting to login page.');
         if (!window.txConsts.hasMasterAccount && !window.location.pathname.startsWith('/addMaster')) {
-            console.log(window.location.pathname);
+            console.log('No master account detected. Redirecting to addMaster page.');
             window.history.replaceState(null, '', '/addMaster/pin');
         } else if (!isAuthRoute(window.location.pathname)) {
+            console.log('User is not authenticated. Redirecting to login page.');
             const suffix = window.location.pathname + window.location.search + window.location.hash;
             const newSuffix = suffix === '/'
                 ? `/login`

@@ -152,7 +152,7 @@ export default function Login() {
                         <Input
                             id="frm-login" type="text" ref={usernameRef}
                             placeholder="username"
-                            required
+                            autoCapitalize='off' autoComplete='off' required
                         />
                     </div>
                     <div className="grid gap-2">
@@ -160,7 +160,7 @@ export default function Login() {
                         <Input
                             id="frm-password" type="password" ref={passwordRef}
                             placeholder='password'
-                            required
+                            autoCapitalize='off' autoComplete='off' required
                         />
                     </div>
                 </div>

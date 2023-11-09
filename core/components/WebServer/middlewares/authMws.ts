@@ -28,7 +28,7 @@ const webLogoutPage = `<style>
     window.parent.postMessage({ type: 'logoutNotice' });
     // If parent redirect didn't work, redirect here
     setTimeout(function() {
-        window.location.href = '/login#expired';
+        window.parent.location.href = '/login#expired';
     }, 2000);
 </script>`;
 

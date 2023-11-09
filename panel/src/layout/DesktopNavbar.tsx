@@ -21,7 +21,7 @@ type HeaderMenuLinkProps = {
 function HeaderMenuLink(props: HeaderMenuLinkProps) {
     const [isActive] = useRoute(props.href);
     return (
-        <NavigationMenuItem asChild>
+        <NavigationMenuItem>
             <NavigationMenuLink asChild active={isActive}>
                 <MainPageLink
                     href={props.href}

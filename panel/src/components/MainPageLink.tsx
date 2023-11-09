@@ -1,5 +1,6 @@
 import { pageErrorStatusAtom, useContentRefresh } from "@/hooks/mainPageStatus";
 import { useAtomValue } from "jotai";
+import { forwardRef } from "react";
 import { Link } from "wouter";
 
 type MainPageLinkProps = {
@@ -8,11 +9,14 @@ type MainPageLinkProps = {
     children: React.ReactNode;
     className?: string;
 };
-export default function MainPageLink({ href, children, className, isActive }: MainPageLinkProps) {
+function MainPageLinkInner(
+    props: MainPageLinkProps,
+    ref: React.ForwardedRef<HTMLAnchorElement>
+) {
     const isPageInError = useAtomValue(pageErrorStatusAtom);
     const refreshContent = useContentRefresh();
     const checkOnClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-        if (isActive || isPageInError) {
+        if (props.isActive || isPageInError) {
             console.log('Page is already active or in error state. Forcing error boundry + router re-render.');
             refreshContent();
             e.preventDefault();
@@ -20,8 +24,17 @@ export default function MainPageLink({ href, children, className, isActive }: Ma
     }
 
     return (
-        <Link href={href} onClick={checkOnClick} className={className}>
-            {children}
+        <Link
+            // @ts-ignore - idk why this errors
+            ref={ref}
+            href={props.href}
+            onClick={checkOnClick}
+            className={props.className}
+        >
+            {props.children}
         </Link>
     );
 }
+
+const MainPageLink = forwardRef(MainPageLinkInner);
+export default MainPageLink;

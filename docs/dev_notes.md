@@ -80,10 +80,10 @@ Processo:
     - [ ][3d] playerlist
 - [ ][3h] playerlist click opens legacy player modal (`iframe.contentWindow.postMessage("openModal", ???);`)
 - [ ][5d] full auth flow
-    - [ ] password login
-    - [ ] cfx.re login
-    - [ ] error page
-    - [ ] master account pin add page
+    - [x] password login
+    - [x] cfx.re login
+    - [x] error page
+    - [x] master account pin add page
     - [ ] master account bkp password page
     - [ ] disable menu links based on permissions
     - [ ] flow to refresh the permissions on the client side
@@ -119,6 +119,7 @@ Quickies
     - [ ] add `maxage` to `koa-static` config
     - [ ] add `cache-control` and/or `vary` to all pages
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
+- [ ] remove testing page
 - [ ] xxxxxxxx
 
 

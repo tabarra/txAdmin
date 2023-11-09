@@ -22,8 +22,7 @@ let htmlFile: string;
 
 // NOTE: https://vitejs.dev/guide/backend-integration.html
 const viteOrigin = process.env.TXADMIN_DEV_VITE_URL!;
-const devModulesScript = `<!-- Dev scripts required for HMR -->
-    <script type="module">
+const devModulesScript = `<script type="module">
         import { injectIntoGlobalHook } from "${viteOrigin}/@react-refresh";
         injectIntoGlobalHook(window);
         window.$RefreshReg$ = () => {};
@@ -132,10 +131,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     replacers.basePath = `<base href="${basePath}">`;
     replacers.ogTitle = `txAdmin - ${serverName}`;
     replacers.ogDescripttion = `Manage & Monitor your FiveM/RedM Server with txAdmin v${txEnv.txAdminVersion} atop FXServer ${txEnv.fxServerVersion}`;
-    replacers.txConstsInjection = `<!-- Injected Consts -->
-        <script>
-            window.txConsts = ${JSON.stringify(injectedConsts)};
-        </script>`;
+    replacers.txConstsInjection = `<script>window.txConsts = ${JSON.stringify(injectedConsts)};</script>`;
     replacers.devModules = convars.isDevMode ? devModulesScript : '';
 
     //Prepare custom themes style tag

@@ -103,7 +103,6 @@ export const koaSessMw = (cookieName: string, store: SessionMemoryStorage) => {
         path: '/',
         maxAge: store.maxAgeMs,
         httpOnly: true,
-        sameSite: 'none',
         secure: false,
         overwrite: true,
         signed: false,

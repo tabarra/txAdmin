@@ -65,6 +65,9 @@ export function ServerSidebar() {
                             <LuDna className="mr-2 h-4 w-4" />Advanced
                         </ServerMenuLink>
                     )}
+                    <ServerMenuLink href="/test" className='text-yellow-700 dark:text-yellow-200'>
+                        <LuDna className="mr-2 h-4 w-4" />Test
+                    </ServerMenuLink>
                 </div>
             </div>
             <div className="flex justify-center items-center h-[246px]
