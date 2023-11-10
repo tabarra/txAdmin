@@ -1,14 +1,15 @@
 import { useAuth } from "@/hooks/auth";
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackReq, ApiOauthCallbackResp } from "@shared/authApiTypes";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import OauthErrors from "./components/OauthErrors";
 import GenericSpinner from "@/components/GenericSpinner";
 
 
 export default function CfxreCallback() {
-    const { setAuthData } = useAuth();
+    const { authData, setAuthData } = useAuth();
     const [errorData, setErrorData] = useState<ApiOauthCallbackErrorResp | undefined>();
+    const hasPendingMutation = useRef(false); //due to strict mode re-rendering"
 
     const submitMutation = useMutation<
         ApiOauthCallbackResp,
@@ -44,6 +45,8 @@ export default function CfxreCallback() {
     });
 
     useEffect(() => {
+        if (authData || hasPendingMutation.current) return;
+        hasPendingMutation.current = true;
         submitMutation.mutate({
             redirectUri: window.location.href
         });
