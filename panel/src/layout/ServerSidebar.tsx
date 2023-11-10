@@ -1,7 +1,7 @@
 import MainPageLink from '@/components/MainPageLink';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { LuBox, LuChevronRightSquare, LuDna, LuEye, LuFileEdit, LuLayoutDashboard } from 'react-icons/lu';
+import { Box, ChevronRightSquare, Dna, Eye, FileEdit, LayoutDashboard } from 'lucide-react';
 import { useRoute } from 'wouter';
 
 //Separate component to prevent re-render of the entire menu
@@ -46,27 +46,27 @@ export function ServerSidebar() {
                 </h2>
                 <div className="space-y-1">
                     <ServerMenuLink href="/">
-                        <LuLayoutDashboard className="mr-2 h-4 w-4" />Dashboard
+                        <LayoutDashboard className="mr-2 h-4 w-4" />Dashboard
                     </ServerMenuLink>
                     <ServerMenuLink href="/server/console">
-                        <LuChevronRightSquare className="mr-2 h-4 w-4" />Live Console
+                        <ChevronRightSquare className="mr-2 h-4 w-4" />Live Console
                     </ServerMenuLink>
                     <ServerMenuLink href="/server/resources">
-                        <LuBox className="mr-2 h-4 w-4" />Resources
+                        <Box className="mr-2 h-4 w-4" />Resources
                     </ServerMenuLink>
                     <ServerMenuLink href="/server/server-log">
-                        <LuEye className="mr-2 h-4 w-4" />Server Log
+                        <Eye className="mr-2 h-4 w-4" />Server Log
                     </ServerMenuLink>
                     <ServerMenuLink href="/server/cfg-editor">
-                        <LuFileEdit className="mr-2 h-4 w-4" />CFG Editor
+                        <FileEdit className="mr-2 h-4 w-4" />CFG Editor
                     </ServerMenuLink>
                     {window.txConsts.showAdvanced && (
                         <ServerMenuLink href="/advanced" className='text-yellow-700 dark:text-yellow-200'>
-                            <LuDna className="mr-2 h-4 w-4" />Advanced
+                            <Dna className="mr-2 h-4 w-4" />Advanced
                         </ServerMenuLink>
                     )}
                     <ServerMenuLink href="/test" className='text-yellow-700 dark:text-yellow-200'>
-                        <LuDna className="mr-2 h-4 w-4" />Test
+                        <Dna className="mr-2 h-4 w-4" />Test
                     </ServerMenuLink>
                 </div>
             </div>

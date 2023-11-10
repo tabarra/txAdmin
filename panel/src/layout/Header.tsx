@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { LuMenu, LuMonitor, LuPersonStanding } from "react-icons/lu";
+import { Menu, Monitor, PersonStanding } from "lucide-react";
 import DesktopHeader from "./DesktopNavbar";
 import Avatar from "@/components/Avatar";
 import { useAuth } from "@/hooks/auth";
@@ -46,10 +46,8 @@ function ButtonToggleServerSheet({ className }: NavButtonProps) {
             title="Server Menu"
             onClick={() => setShowServer((show: boolean) => !show)}
         >
-            <i className="h-6 sm:h-4 flex items-center">
-                <LuMonitor size="24" />
-            </i>
-            <div className="hidden sm:flex flex-row min-w-max">
+            <Monitor className="h-6 w-6 sm:h-5 sm:w-5" />
+            <div className="hidden sm:flex flex-row min-w-max align-middle">
                 Server
             </div>
         </button>
@@ -59,9 +57,7 @@ function ButtonToggleServerSheet({ className }: NavButtonProps) {
 function ButtonToggleGlobalMenu({ className }: NavButtonProps) {
     return (
         <button className={cn(navButtonClasses, className)} title="Global Menu">
-            <i className="h-6 sm:h-4 flex items-center">
-                <LuMenu size="24" />
-            </i>
+            <Menu className="h-6 w-6 sm:h-5 sm:w-5" />
             <div className="hidden sm:flex flex-row min-w-max">
                 Menu
             </div>
@@ -75,9 +71,7 @@ function ButtonTogglePlayerlistSheet({ className }: NavButtonProps) {
 
     return (
         <button className={cn(navButtonClasses, className)} title="Playerlist">
-            <i className="h-6 sm:h-4 flex items-center">
-                <LuPersonStanding size="24" />
-            </i>
+            <PersonStanding className="h-6 w-6 sm:h-5 sm:w-5" />
             <div className="hidden sm:flex flex-row min-w-max">
                 Players
                 <span className="hidden lg:inline-block font-mono">: {playerCount}</span>

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { ApiAddMasterPinReq, ApiAddMasterPinResp } from "@shared/authApiTypes";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { LuLoader2 } from "react-icons/lu";
+import { Loader2 } from "lucide-react";
 
 export default function AddMasterPin() {
     const [isRedirecting, setIsRedirecting] = useState(false);
@@ -95,7 +95,7 @@ export default function AddMasterPin() {
             </CardContent>
             <CardFooter>
                 <Button className="w-full" disabled={disableInput}>
-                    {disableInput && <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {disableInput && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Link Account
                 </Button>
             </CardFooter>

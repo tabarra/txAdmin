@@ -1,7 +1,7 @@
 import { stripIndent } from '@/lib/utils';
 import Markdown, { Components } from 'react-markdown';
 import InlineCode from './InlineCode';
-import { LuExternalLink } from 'react-icons/lu';
+import { ExternalLink } from 'lucide-react';
 import { useLocation } from 'wouter';
 
 function CustomAnchor({ href, children }: { href?: string, children: React.ReactNode }) {
@@ -16,7 +16,7 @@ function CustomAnchor({ href, children }: { href?: string, children: React.React
     }
     return <button onClick={onClick} className="text-pink-600 no-underline hover:underline">
         {children}
-        {isExternal && <LuExternalLink className="inline ml-1 mb-1" />}
+        {isExternal && <ExternalLink className="inline ml-1 mb-1" />}
     </button>
 }
 

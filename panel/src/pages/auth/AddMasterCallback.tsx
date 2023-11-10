@@ -8,7 +8,7 @@ import { Label } from "@radix-ui/react-label";
 import { ApiAddMasterCallbackFivemData, ApiAddMasterCallbackReq, ApiAddMasterCallbackResp, ApiAddMasterSaveReq, ApiAddMasterSaveResp, ApiOauthCallbackErrorResp } from "@shared/authApiTypes";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { LuLoader2 } from "react-icons/lu";
+import { Loader2 } from "lucide-react";
 import OauthErrors from "./components/OauthErrors";
 import GenericSpinner from "@/components/GenericSpinner";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
@@ -170,7 +170,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
                 {errorMessage}
             </span>
             <Button className="w-full" disabled={submitMutation.isPending}>
-                {submitMutation.isPending && <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {submitMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Register
             </Button>
         </CardFooter>

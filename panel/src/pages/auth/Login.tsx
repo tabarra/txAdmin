@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMutation } from '@tanstack/react-query';
-import { LuLoader2 } from "react-icons/lu";
+import { Loader2 } from "lucide-react";
 import { ApiOauthRedirectResp, ApiVerifyPasswordReq, ApiVerifyPasswordResp } from '@shared/authApiTypes';
 import { useAuth } from '@/hooks/auth';
 import './components/cfxreLoginButton.css';
@@ -124,7 +124,7 @@ export default function Login() {
                     >
                         {redirectMutation.isPending
                             ? <div className='w-[6rem]'>
-                                <LuLoader2 className="mx-auto h-5 w-5 animate-spin" />
+                                <Loader2 className="mx-auto h-5 w-5 animate-spin" />
                             </div>
                             : <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -167,7 +167,7 @@ export default function Login() {
             </CardContent>
             <CardFooter className='flex-col pb-0'>
                 <Button className="w-full" disabled={submitMutation.isPending}>
-                    {submitMutation.isPending && <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {submitMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Login
                 </Button>
                 <div className="text-red-500 mt-2">
