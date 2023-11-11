@@ -1,12 +1,18 @@
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator, DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Menu, Monitor, PersonStanding } from "lucide-react";
+import { KeyRoundIcon, LogOutIcon, Menu, Monitor, MoonIcon, PersonStanding, SunIcon } from "lucide-react";
 import DesktopHeader from "./DesktopNavbar";
 import Avatar from "@/components/Avatar";
 import { useAuth } from "@/hooks/auth";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ServerSidebar } from "./ServerSidebar";
 import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/interface";
+import { useTheme } from "@/hooks/useTheme";
+
 
 function ServerTitle() {
     // FIXME: make data dynamic
@@ -94,22 +100,60 @@ function ButtonTogglePlayerlistSheet({ className }: NavButtonProps) {
 
 //Segmenting this into a component prevents full header rerenders
 function AuthedHeaderFragment() {
-    const { authData } = useAuth();
+    const { authData, logout } = useAuth();
     if (!authData) return null;
+    const { theme, setTheme } = useTheme();
+    const switchTheme = () => {
+        if (theme === 'light') {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+    }
+    const openChangePasswordModal = () => {
+        alert('TODO: open change password modal');
+    }
+    const doLogout = () => {
+        logout.mutate();
+    }
 
-    //FIXME: make this a dropdown
-    return <>
-        <a href="#" className="hidden xl:block text-muted-foreground">
-            {authData.name}
-        </a>
-        <Avatar
-            className="w-11 h-11 sm:w-10 sm:h-10 rounded-md text-2xl 
-                transition-all focus-visible:outline-none
-                hover:border-zinc-500 hover:border"
-            username={authData.name}
-            profilePicture={authData.profilePicture}
-        />
-    </>
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger className="flex flex-row items-center gap-2 sm:gap-3">
+                <span className="hidden xl:block text-muted-foreground">{authData.name}</span>
+                <Avatar
+                    className="w-11 h-11 sm:w-10 sm:h-10 rounded-md text-2xl 
+                        transition-all focus-visible:outline-none
+                        hover:border-zinc-500 hover:border"
+                    username={authData.name}
+                    profilePicture={authData.profilePicture}
+                />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem className="cursor-pointer" onClick={switchTheme}>
+                    <span className="hidden dark:flex items-center">
+                        <SunIcon className="mr-2 h-4 w-4" />
+                        Light Mode
+                    </span>
+                    <span className="flex dark:hidden items-center">
+                        <MoonIcon className="mr-2 h-4 w-4" />
+                        Dark Mode
+                    </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={openChangePasswordModal}>
+                    <KeyRoundIcon className="mr-2 h-4 w-4" />
+                    Change Password
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={doLogout}>
+                    <LogOutIcon className="mr-2 h-4 w-4" />
+                    Logout
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
 }
 
 export function Header() {

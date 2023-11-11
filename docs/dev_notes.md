@@ -78,6 +78,7 @@ Processo:
     - [ ][2h] server controls
     - [ ][1h] server scheduled restarts (legacy style)
     - [ ][3d] playerlist
+    - [ ][1d] add the new logos to shell+auth pages
 - [ ][3h] playerlist click opens legacy player modal (`iframe.contentWindow.postMessage("openModal", ???);`)
 - [ ][5d] full auth flow
     - [x] password login
