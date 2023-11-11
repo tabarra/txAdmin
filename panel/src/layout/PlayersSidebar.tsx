@@ -1,12 +1,16 @@
 import { cn } from '@/lib/utils';
 
-export function PlayersSidebar() {
+type PlayerSidebarProps = {
+    isSheet?: boolean;
+};
+export function PlayersSidebar({ isSheet }: PlayerSidebarProps) {
     return (
         <aside
             className={cn(
-                "self-start sticky top-[calc(4.5rem+1px)] z-0 w-sidebar flex-col gap-4",
-                // showPlayerlist ? 'block' : 'hidden xl:flex',
-                'hidden xl:flex',
+                'flex flex-col gap-4',
+                isSheet
+                    ? 'mr-4'
+                    : "self-start sticky top-[calc(4.5rem+1px)] z-0 w-sidebar shrink-0 hidden xl:flex",
             )}
         >
             <div className="flex justify-center items-center h-[211px]

@@ -3,6 +3,10 @@ import { Menu, Monitor, PersonStanding } from "lucide-react";
 import DesktopHeader from "./DesktopNavbar";
 import Avatar from "@/components/Avatar";
 import { useAuth } from "@/hooks/auth";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ServerSidebar } from "./ServerSidebar";
+import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/interface";
 
 function ServerTitle() {
     // FIXME: make data dynamic
@@ -37,14 +41,12 @@ const navButtonClasses = `h-11 w-11 sm:h-10 sm:min-w-max sm:px-2 lg:px-3
 `;
 
 function ButtonToggleServerSheet({ className }: NavButtonProps) {
-    // const { setShowServer } = useAppData();
-    const setShowServer = (x: any) => { }//FIXME:
-
+    const { setIsSheetOpen } = useServerSheet();
     return (
         <button
             className={cn(navButtonClasses, className)}
             title="Server Menu"
-            onClick={() => setShowServer((show: boolean) => !show)}
+            onClick={() => setIsSheetOpen(true)}
         >
             <Monitor className="h-6 w-6 sm:h-5 sm:w-5" />
             <div className="hidden sm:flex flex-row min-w-max align-middle">
@@ -55,8 +57,13 @@ function ButtonToggleServerSheet({ className }: NavButtonProps) {
 }
 
 function ButtonToggleGlobalMenu({ className }: NavButtonProps) {
+    const { setIsSheetOpen } = useGlobalMenuSheet();
     return (
-        <button className={cn(navButtonClasses, className)} title="Global Menu">
+        <button
+            className={cn(navButtonClasses, className)}
+            title="Global Menu"
+            onClick={() => setIsSheetOpen(true)}
+        >
             <Menu className="h-6 w-6 sm:h-5 sm:w-5" />
             <div className="hidden sm:flex flex-row min-w-max">
                 Menu
@@ -66,11 +73,16 @@ function ButtonToggleGlobalMenu({ className }: NavButtonProps) {
 }
 
 function ButtonTogglePlayerlistSheet({ className }: NavButtonProps) {
+    const { setIsSheetOpen } = usePlayerlistSheet();
     // const [playerCount] = usePlayerCount();
     const playerCount = 1234; //FIXME:
 
     return (
-        <button className={cn(navButtonClasses, className)} title="Playerlist">
+        <button
+            className={cn(navButtonClasses, className)}
+            title="Global Menu"
+            onClick={() => setIsSheetOpen(true)}
+        >
             <PersonStanding className="h-6 w-6 sm:h-5 sm:w-5" />
             <div className="hidden sm:flex flex-row min-w-max">
                 Players
@@ -105,10 +117,7 @@ export function Header() {
         <header className="sticky top-0 z-10 flex flex-col items-center justify-center
             border-b bg-card text-card-foreground border-card-background">
             <div className="h-14 lg:px-3 px-2 w-full max-w-[1920px] flex flex-row justify-between transition-all">
-                <div
-                    id="navbarLeft"
-                    className="flex flex-row items-center flex-grow gap-5 mr-5"
-                >
+                <div className="flex flex-row items-center flex-grow gap-5 mr-5">
                     <div className="w-sidebar hidden xl:flex justify-center">
                         <span className="h-7 w-36 bg-fuchsia-400 text-center">FULL LOGO</span>
                     </div>
@@ -123,7 +132,7 @@ export function Header() {
                     </nav>
                 </div>
 
-                <div id="navbarRight" className="flex flex-row items-center gap-2 sm:gap-3">
+                <div className="flex flex-row items-center gap-2 sm:gap-3">
                     <ButtonToggleServerSheet className="lg:hidden" />
                     <ButtonToggleGlobalMenu className="lg:hidden" />
                     <ButtonTogglePlayerlistSheet className="xl:hidden" />

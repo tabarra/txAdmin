@@ -4,7 +4,8 @@ import { useExpireAuthData } from '../hooks/auth';
 import BreakpointDebugger from '@/components/BreakpointDebugger';
 import { Header } from './Header';
 import { ServerSidebar } from './ServerSidebar';
-import { PlayersSidebar } from './PlayerSidebar';
+import { PlayersSidebar } from './PlayersSidebar';
+import MainSheets from './MainSheets';
 
 
 export default function MainShell() {
@@ -24,6 +25,7 @@ export default function MainShell() {
             </main>
             <PlayersSidebar />
         </div>
+        <MainSheets />
         {/* DEBUG Breakpoint */}
         {/* <BreakpointDebugger /> */}
     </>;

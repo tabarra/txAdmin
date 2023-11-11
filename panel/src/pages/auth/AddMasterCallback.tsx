@@ -108,7 +108,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
 
     return <form onSubmit={handleSubmit} className='w-full text-left'>
         <CardContent className="flex flex-col gap-4">
-            <div className="">
+            <div>
                 Cfx.re account
                 <div className="rounded-md border bg-zinc-100 dark:bg-zinc-900 p-2 mt-2 flex flex-row justify-start items-center">
                     <Avatar

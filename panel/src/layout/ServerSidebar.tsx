@@ -1,8 +1,6 @@
-import MainPageLink from '@/components/MainPageLink';
-import { Button } from '@/components/ui/button';
+import { MenuNavLink } from '@/components/MainPageLink';
 import { cn } from '@/lib/utils';
 import { Box, ChevronRightSquare, Dna, Eye, FileEdit, LayoutDashboard } from 'lucide-react';
-import { useRoute } from 'wouter';
 
 //Separate component to prevent re-render of the entire menu
 function ServerName() {
@@ -11,63 +9,52 @@ function ServerName() {
     return serverName;
 }
 
-type ServerMenuLinkProps = {
-    href: string;
-    children: React.ReactNode;
-    className?: string;
-};
-function ServerMenuLink({ href, children, className }: ServerMenuLinkProps) {
-    const [isActive] = useRoute(href);
-    return (
-        <Button variant={isActive ? 'secondary' : 'ghost'} className="w-full justify-start py-1" asChild={true}>
-            <MainPageLink
-                href={href}
-                isActive={isActive}
-                className={className}
-            >
-                {children}
-            </MainPageLink>
-        </Button>
-    );
-}
 
-export function ServerSidebar() {
+type ServerSidebarProps = {
+    isSheet?: boolean;
+};
+export function ServerSidebar({ isSheet }: ServerSidebarProps) {
     return (
         <aside
             className={cn(
-                "self-start sticky top-[calc(4.5rem+1px)] z-0 w-sidebar flex-col gap-4",
-                // showServer ? 'block' : 'hidden lg:flex', //FIXME:
-                'hidden lg:flex',
+                'flex flex-col gap-4',
+                isSheet
+                    ? 'mr-4'
+                    : "self-start sticky top-[calc(4.5rem+1px)] z-0 w-sidebar shrink-0 hidden lg:flex",
             )}
         >
-            <div className='rounded-xl border border-border bg-card text-card-foreground shadow-sm p-4'>
+            <div
+                className={cn(
+                    !isSheet && 'rounded-xl border border-border bg-card text-card-foreground shadow-sm p-4',
+                )}
+            >
                 <h2 className="mb-1.5 text-lg font-semibold tracking-tight overflow-hidden text-ellipsis">
                     <ServerName />
                 </h2>
                 <div className="space-y-1">
-                    <ServerMenuLink href="/">
+                    <MenuNavLink href="/">
                         <LayoutDashboard className="mr-2 h-4 w-4" />Dashboard
-                    </ServerMenuLink>
-                    <ServerMenuLink href="/server/console">
+                    </MenuNavLink>
+                    <MenuNavLink href="/server/console">
                         <ChevronRightSquare className="mr-2 h-4 w-4" />Live Console
-                    </ServerMenuLink>
-                    <ServerMenuLink href="/server/resources">
+                    </MenuNavLink>
+                    <MenuNavLink href="/server/resources">
                         <Box className="mr-2 h-4 w-4" />Resources
-                    </ServerMenuLink>
-                    <ServerMenuLink href="/server/server-log">
+                    </MenuNavLink>
+                    <MenuNavLink href="/server/server-log">
                         <Eye className="mr-2 h-4 w-4" />Server Log
-                    </ServerMenuLink>
-                    <ServerMenuLink href="/server/cfg-editor">
+                    </MenuNavLink>
+                    <MenuNavLink href="/server/cfg-editor">
                         <FileEdit className="mr-2 h-4 w-4" />CFG Editor
-                    </ServerMenuLink>
+                    </MenuNavLink>
                     {window.txConsts.showAdvanced && (
-                        <ServerMenuLink href="/advanced" className='text-yellow-700 dark:text-yellow-200'>
+                        <MenuNavLink href="/advanced" className='text-yellow-700 dark:text-yellow-200'>
                             <Dna className="mr-2 h-4 w-4" />Advanced
-                        </ServerMenuLink>
+                        </MenuNavLink>
                     )}
-                    <ServerMenuLink href="/test" className='text-yellow-700 dark:text-yellow-200'>
+                    <MenuNavLink href="/test" className='text-yellow-700 dark:text-yellow-200'>
                         <Dna className="mr-2 h-4 w-4" />Test
-                    </ServerMenuLink>
+                    </MenuNavLink>
                 </div>
             </div>
             <div className="flex justify-center items-center h-[246px]

@@ -9,7 +9,7 @@ import { Card } from "../components/ui/card";
 export default function AuthShell() {
     return (
         <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
+            <div className="text-center m-4 w-full xs:w-96 min-w-[300px]">
                 <Link
                     href="/login"
                     className="bg-pink-600 hover:bg-pink-500 text-3xl
@@ -18,7 +18,7 @@ export default function AuthShell() {
                     txAdmin
                 </Link>
 
-                <Card className="w-96 min-h-[16rem] mt-8 mb-4 p-4 flex items-center justify-center">
+                <Card className="min-h-[16rem] mt-8 mb-4 p-4 flex items-center justify-center">
                     <Switch>
                         <Route path="/login"><Login /></Route>
                         <Route path="/login/callback"><CfxreCallback /></Route>

@@ -60,7 +60,7 @@ Processo:
 - [x] new auth ui + auth routing
     - [x] enforce new password rule
 - SHELL:
-    - [ ][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
+    - [x][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
     - [x][2h] merge new shell design into the `txadmin/panel` codebase
     - [ ][~3d] implement most shell+status features 
         - [ ][2h] warning for outdated tx, visible in all pages
