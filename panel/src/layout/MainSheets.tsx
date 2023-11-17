@@ -13,14 +13,14 @@ export function GlobalMenuSheet() {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent side='left' className="flex flex-col gap-6 w-full xs:w-3/4">
                 <SheetHeader>
-                    <SheetTitle><span className="h-7 w-36 bg-fuchsia-400 text-center">FULL LOGO</span></SheetTitle>
+                    <SheetTitle><span className="h-7 w-36 bg-accent text-accent-foreground rounded text-center p-0.5 font-bold tracking-widest">FULL LOGO</span></SheetTitle>
                 </SheetHeader>
 
                 <div>
                     <h2 className="mb-1.5 text-lg font-semibold tracking-tight">
                         System Update
                     </h2>
-                    <div className="text-fuchsia-400">
+                    <div className="text-accent">
                         FIXME: get update data from backend
                     </div>
                 </div>
@@ -33,7 +33,7 @@ export function GlobalMenuSheet() {
                         <MenuNavLink href="/players">
                             <UsersIcon className="mr-2 h-4 w-4" />Players
                         </MenuNavLink>
-                        <MenuNavLink href="/history" className="text-fuchsia-400">
+                        <MenuNavLink href="/history" className="text-accent">
                             <ScrollIcon className="mr-2 h-4 w-4" />History
                         </MenuNavLink>
                         <MenuNavLink href="/whitelist">

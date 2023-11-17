@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
+    .root-og {
         --background: 0 0% 100%;
         --foreground: 240 10% 3.9%;
         --card: 0 0% 100%;
@@ -32,7 +32,61 @@
         --font-mono: "JetBrains Mono Variable";
     }
 
-    .dark {
+    :root {
+        /* Default background color of <body />...etc */
+        --background: 224 33.3% 97.1%;
+        --foreground: 224 10.2% 9.6%;
+
+        /* Background color for <Card /> */
+        --card: 224 16.1% 95%;
+        --card-foreground: 224 10.2% 9.6%;
+
+        /* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
+        --popover: 224 33.3% 97.1%;
+        --popover-foreground: 224 10.2% 9.6%;
+
+        /* Primary colors for <Button /> */
+        --primary: 224 10.2% 9.6%;
+        --primary-foreground: 224 10% 96.1%;
+
+        /* Secondary colors for <Button /> */
+        --secondary: 224 7% 86.1%;
+        --secondary-foreground: 224 10.2% 9.6%;
+
+        /* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
+        --muted: 224 5.4% 85.5%;
+        --muted-foreground: 224 4.7% 25.1%;
+
+        /* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
+        --accent: 341 92.3% 49%;
+        --accent-foreground: 0 0% 100%;
+
+        /* Default border color */
+        --border: 224 3.2% 81.4%;
+
+        /* Border color for inputs such as <Input />, <Select />, <Textarea /> */
+        --input: 224 7% 86.1%;
+
+        /* Used for focus ring */
+        --ring: 224 10.2% 9.6%;
+
+        /* Semantic colors used for button variants and maybe more */
+        --destructive: 0 84.5% 59.6%;
+        --destructive-foreground: 0 0% 100%;
+        --warning: 47.1 77.5% 56.5%;
+        --warning-foreground: 48.9 77.1% 6.9%;
+        --success: 136.6 77.6% 56.3%;
+        --success-foreground: 137.5 80% 5.9%;
+        --info: 191.1 77.6% 56.3%;
+        --info-foreground: 195 66.7% 1.2%;
+
+        /* Other stuff */
+        --font-sans: "Inter Variable";
+        --font-mono: "JetBrains Mono Variable";
+        --radius: 0.5rem;
+    }
+
+    .dark-og {
         --background: 240 10% 3.9%;
         --foreground: 0 0% 98%;
         --card: 240 10% 3.9%;
@@ -53,6 +107,60 @@
         --input: 240 3.7% 15.9%;
         --ring: 240 4.9% 83.9%;
 
+        /* Other stuff */
+        --font-sans: "Inter Variable";
+        --font-mono: "JetBrains Mono Variable";
+    }
+
+    .dark {
+        /* Default background color of <body />...etc */
+        --background: 224 5.7% 10.4%;
+        --foreground: 224 6.7% 97.1%;
+
+        /* Background color for <Card /> */
+        --card: 224 5.6% 14.1%;
+        --card-foreground: 224 6.7% 97.1%;
+
+        /* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
+        --popover: 224 5.7% 10.4%;
+        --popover-foreground: 224 6.7% 97.1%;
+
+        /* Primary colors for <Button /> */
+        --primary: 224 6.7% 97.1%;
+        --primary-foreground: 224 7.1% 11%;
+
+        /* Secondary colors for <Button /> */
+        --secondary: 224 5.3% 26.1%;
+        --secondary-foreground: 224 6.7% 97.1%;
+
+        /* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
+        --muted: 224 5% 15.7%;
+        --muted-foreground: 224 4.9% 72%;
+
+        /* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
+        --accent: 341 92.3% 49%;
+        --accent-foreground: 0 0% 100%;
+
+        /* Default border color */
+        --border: 224 5.6% 21.2%;
+
+        /* Border color for inputs such as <Input />, <Select />, <Textarea /> */
+        --input: 224 5.3% 26.1%;
+
+        /* Used for focus ring */
+        --ring: 224 6.7% 97.1%;
+
+        /* Semantic colors used for button variants and maybe more */
+        --destructive: 0 91.3% 68.4%;
+        --destructive-foreground: 0 0% 100%;
+        --warning: 47.2 75.9% 62.5%;
+        --warning-foreground: 48.9 77.1% 6.9%;
+        --success: 136.7 73.1% 60.6%;
+        --success-foreground: 136.2 72.2% 7.1%;
+        --info: 191.1 69.2% 61.8%;
+        --info-foreground: 197.1 63.6% 2.2%;
+
+        /* Other stuff */
         --font-sans: "Inter Variable";
         --font-mono: "JetBrains Mono Variable";
     }

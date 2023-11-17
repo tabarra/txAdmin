@@ -5,13 +5,24 @@ import {
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
-    navigationMenuTriggerStyle,
+    NavigationMenuTrigger
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/lib/utils';
 import { useRoute } from 'wouter';
 import MainPageLink from '@/components/MainPageLink';
+import { cva } from 'class-variance-authority';
 
+const buttonVariants = cva(
+    `group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 ring-offset-background  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`,
+    {
+        variants: {
+            variant: {
+                default: "hover:bg-primary hover:text-primary-foreground",
+                secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+            },
+        },
+    }
+);
 
 type HeaderMenuLinkProps = {
     href: string;
@@ -27,7 +38,7 @@ function HeaderMenuLink(props: HeaderMenuLinkProps) {
                     href={props.href}
                     isActive={isActive}
                     className={cn(
-                        navigationMenuTriggerStyle(),
+                        buttonVariants({ variant: isActive ? 'secondary' : 'default' }),
                         props.className,
                     )}
                 >
@@ -46,7 +57,7 @@ export default function DesktopHeader() {
             <NavigationMenu>
                 <NavigationMenuList>
                     <HeaderMenuLink href="/players">Players</HeaderMenuLink>
-                    <HeaderMenuLink href="/history" className='text-fuchsia-400'>History</HeaderMenuLink>
+                    <HeaderMenuLink href="/history" className='text-accent'>History</HeaderMenuLink>
                     <HeaderMenuLink href="/whitelist">Whitelist</HeaderMenuLink>
                     <HeaderMenuLink href="/admins">Admins</HeaderMenuLink>
                     <HeaderMenuLink href="/settings">Settings</HeaderMenuLink>
@@ -56,9 +67,11 @@ export default function DesktopHeader() {
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger>System</NavigationMenuTrigger>
+                        <NavigationMenuTrigger>
+                            System
+                        </NavigationMenuTrigger>
                         <NavigationMenuContent asChild={true}>
-                            <div className="flex flex-col gap-2 p-4">
+                            <div className="flex flex-col gap-2 p-4 list-none">
                                 <HeaderMenuLink
                                     className="w-36 justify-start"
                                     href="/system/master-actions"

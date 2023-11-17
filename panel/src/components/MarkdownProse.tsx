@@ -14,7 +14,7 @@ function CustomAnchor({ href, children }: { href?: string, children: React.React
             setLocation(href ?? '/');
         }
     }
-    return <button onClick={onClick} className="text-pink-600 no-underline hover:underline">
+    return <button onClick={onClick} className="text-accent no-underline hover:underline">
         {children}
         {isExternal && <ExternalLink className="inline ml-1 mb-1" />}
     </button>

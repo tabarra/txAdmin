@@ -163,9 +163,9 @@ export function Header() {
             <div className="h-14 lg:px-3 px-2 w-full max-w-[1920px] flex flex-row justify-between transition-all">
                 <div className="flex flex-row items-center flex-grow gap-5 mr-5">
                     <div className="w-sidebar hidden xl:flex justify-center">
-                        <span className="h-7 w-36 bg-fuchsia-400 text-center">FULL LOGO</span>
+                        <span className="h-7 w-36 bg-accent text-accent-foreground rounded text-center p-0.5 font-bold tracking-widest">FULL LOGO</span>
                     </div>
-                    <div className="h-8 w-8 lg:h-10 lg:w-10 hidden sm:max-xl:block bg-fuchsia-400 text-center">
+                    <div className="h-8 w-8 lg:h-10 lg:w-10 rounded hidden sm:max-xl:block bg-accent text-accent-foreground text-center">
                         TX
                     </div>
                     <div className="lg:hidden">

@@ -48,11 +48,11 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
                         <FileEdit className="mr-2 h-4 w-4" />CFG Editor
                     </MenuNavLink>
                     {window.txConsts.showAdvanced && (
-                        <MenuNavLink href="/advanced" className='text-yellow-700 dark:text-yellow-200'>
+                        <MenuNavLink href="/advanced" className='text-accent'>
                             <Dna className="mr-2 h-4 w-4" />Advanced
                         </MenuNavLink>
                     )}
-                    <MenuNavLink href="/test" className='text-yellow-700 dark:text-yellow-200'>
+                    <MenuNavLink href="/test" className='text-accent'>
                         <Dna className="mr-2 h-4 w-4" />Test
                     </MenuNavLink>
                 </div>

@@ -14,7 +14,7 @@ export default function NotFound({ params }: Props) {
                 <p className="mt-2">
                     The page <InlineCode>/{params.fullPath}</InlineCode> does not seem to be correct.
                 </p>
-                <Link href="/" className="text-pink-600 hover:underline">Return to Dashboard?</Link>
+                <Link href="/" className="text-accent hover:underline">Return to Dashboard?</Link>
             </div>
         </div>
     );
