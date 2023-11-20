@@ -74,7 +74,7 @@ export default function AddMasterPin() {
             <CardContent className="grid gap-2">
                 <span className={cn(
                     'text-center',
-                    isMessageError ? 'text-red-500' : 'text-green-500',
+                    isMessageError ? 'text-destructive' : 'text-success',
                 )}>
                     {messageText ?? <>&nbsp;</>}
                 </span>
@@ -82,8 +82,8 @@ export default function AddMasterPin() {
                     className={cn(
                         'text-2xl text-center font-mono tracking-[0.25em] p-2',
                         messageText && (isMessageError
-                            ? 'border-red-500 text-red-500'
-                            : 'border-green-500 text-green-500'
+                            ? 'border-acctext-destructive text-destructive'
+                            : 'border-succtext-success text-success'
                         ),
                     )}
                     id="frm-pin" type="text" ref={pinRef}

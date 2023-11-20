@@ -121,7 +121,7 @@ Quickies
     - [ ] add `cache-control` and/or `vary` to all pages
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
 - [ ] remove testing page
-- [ ] xxxxxxxx
+- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 
 
 =======================================================================
@@ -245,24 +245,31 @@ https://www.npmjs.com/package/node-schedule
 
 
 ### New UI stuff
+https://www.tremor.so/blocks/landing-zone <<< boa inspiração de componentes
 https://auto-animate.formkit.com
 https://tanstack.com/virtual/v3
 
-jotai
 maybe xtate for complex states like setup/deployer
 
 outro video com template completo, sem  https://youtu.be/YVI-q3idGiM
 https://immerjs.github.io/immer/ maybe?
 
-Base for themes: https://daisyui.com/docs/themes/
-https://ui.shadcn.com/
-https://huemint.com/website-2/
+
+
+#### Theming stuff:
+https://palettte.app/
+https://uicolors.app/create
+https://www.tailwindshades.com/
+https://contrast.tools/?tab=apca
+https://atmos.style/contrast-checker
 https://realtimecolors.com/
-
-
+https://www.learnui.design/blog/color-in-ui-design-a-practical-framework.html
+https://www.refactoringui.com/previews/building-your-color-palette
+https://www.smashingmagazine.com/2021/07/hsl-colors-css/
+Base for themes: https://daisyui.com/docs/themes/
 cfxui colors:
-ext/cfx-ui/src/cfx/apps/mpMenu/styles/themes/fivem-dark.scss
-ext/cfx-ui/src/cfx/styles/_ui.scss
+- ext/cfx-ui/src/cfx/apps/mpMenu/styles/themes/fivem-dark.scss
+- ext/cfx-ui/src/cfx/styles/_ui.scss
 
 
 

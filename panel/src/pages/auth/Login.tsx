@@ -170,7 +170,7 @@ export default function Login() {
                     {submitMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Login
                 </Button>
-                <div className="text-red-500 mt-2">
+                <div className="text-destructive mt-2">
                     {displayMessage ?? <>&nbsp;</>}
                 </div>
             </CardFooter>

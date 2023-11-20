@@ -1,5 +1,5 @@
-$txadmin-dark-900: #29292A;
-$txadmin-dark-950: darken($txadmin-dark-900, 11%);
+$txadmin-dark-900: #222326;
+$txadmin-dark-950: #222326;
 $txadmin-dark-800: lighten($txadmin-dark-900, 8%);
 $txadmin-dark-700: lighten($txadmin-dark-800, 8%);
 $txadmin-dark-600: lighten($txadmin-dark-700, 8%);
@@ -29,13 +29,14 @@ $radius: 0.5rem;
 $radius-lg: $radius;
 $radius-md: calc($radius - 2px);
 $radius-sm: calc($radius - 4px);
-$border-color: hsl(240, 3.7%, 15.9%);
+$border-color: hsl(224 5.6% 21.2%);
 
 
 .card:first-child,
 .card-header:first-child,
 .card-body {
     border-radius: $radius-lg;
+    background-color: #F0F1F4;
 }
 
 

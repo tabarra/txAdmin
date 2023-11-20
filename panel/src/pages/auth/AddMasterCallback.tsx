@@ -161,12 +161,12 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
                     htmlFor="terms"
                     className="text-sm font-medium leading-4 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                    I have read and agree to the <a href="https://fivem.net/terms" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Creator PLA</a> as well as the <a href="https://github.com/tabarra/txAdmin/blob/master/LICENSE" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">txAdmin License</a>.
+                    I have read and agree to the <a href="https://fivem.net/terms" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Creator PLA</a> as well as the <a href="https://github.com/tabarra/txAdmin/blob/master/LICENSE" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">txAdmin License</a>.
                 </label>
             </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-            <span className="text-center text-red-500 whitespace-pre-wrap">
+            <span className="text-center text-destructive whitespace-pre-wrap">
                 {errorMessage}
             </span>
             <Button className="w-full" disabled={submitMutation.isPending}>

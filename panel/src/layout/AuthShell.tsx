@@ -12,7 +12,7 @@ export default function AuthShell() {
             <div className="text-center m-4 w-full xs:w-96 min-w-[300px]">
                 <Link
                     href="/login"
-                    className="bg-pink-600 hover:bg-pink-500 text-3xl
+                    className="bg-accent hover:bg-accent/75 text-3xl
                     p-1 font-bold tracking-widest rounded"
                 >
                     txAdmin
@@ -33,13 +33,13 @@ export default function AuthShell() {
                 <div className="flex gap-4 justify-center mb-2">
                     <Link
                         href="/"
-                        className="bg-pink-600 hover:bg-pink-500 text-xl p-1 font-bold tracking-widest rounded w-full"
+                        className="bg-accent hover:bg-accent/75 text-xl p-1 font-bold tracking-widest rounded w-full"
                     >
                         ZAP
                     </Link>
                     <Link
                         href="/"
-                        className="bg-pink-600 hover:bg-pink-500 text-xl p-1 font-bold tracking-widest rounded w-full"
+                        className="bg-accent hover:bg-accent/75 text-xl p-1 font-bold tracking-widest rounded w-full"
                     >
                         Discord
                     </Link>
