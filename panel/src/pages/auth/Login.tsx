@@ -97,7 +97,7 @@ export default function Login() {
     //Prefill username/password if dev pass enabled
     useEffect(() => {
         try {
-            const rawLocalStorageStr = localStorage.getItem('txAdminDevPassAutofill');
+            const rawLocalStorageStr = localStorage.getItem('authCredsAutofill');
             if (rawLocalStorageStr) {
                 const [user, pass] = JSON.parse(rawLocalStorageStr);
                 usernameRef.current!.value = user ?? '';

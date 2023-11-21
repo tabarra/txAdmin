@@ -12,6 +12,7 @@ import Avatar from "@/components/Avatar";
 import { useAuth } from "@/hooks/auth";
 import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/interface";
 import { useTheme } from "@/hooks/useTheme";
+import { FaDiscord } from "react-icons/fa";
 
 
 function ServerTitle() {
@@ -113,6 +114,9 @@ function AuthedHeaderFragment() {
     const openChangePasswordModal = () => {
         alert('TODO: open change password modal');
     }
+    const gotoSupportDiscord = () => {
+        window.open('https://discord.gg/uAmsGa2', '_blank');
+    }
     const doLogout = () => {
         logout.mutate();
     }
@@ -146,6 +150,10 @@ function AuthedHeaderFragment() {
                 <DropdownMenuItem className="cursor-pointer" onClick={openChangePasswordModal}>
                     <KeyRoundIcon className="mr-2 h-4 w-4" />
                     Change Password
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={gotoSupportDiscord}>
+                    <FaDiscord size="14" className="mr-2" />
+                    Support
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer" onClick={doLogout}>
                     <LogOutIcon className="mr-2 h-4 w-4" />

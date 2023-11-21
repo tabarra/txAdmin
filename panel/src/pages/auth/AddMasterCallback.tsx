@@ -95,7 +95,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
     //Prefill password if dev pass enabled
     useEffect(() => {
         try {
-            const rawLocalStorageStr = localStorage.getItem('txAdminDevPassAutofill');
+            const rawLocalStorageStr = localStorage.getItem('authCredsAutofill');
             if (rawLocalStorageStr) {
                 const [user, pass] = JSON.parse(rawLocalStorageStr);
                 passwordRef.current!.value = pass ?? '';

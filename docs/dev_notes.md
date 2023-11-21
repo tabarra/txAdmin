@@ -63,9 +63,9 @@ Processo:
     - [x][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
     - [x][2h] merge new shell design into the `txadmin/panel` codebase
     - [ ][~3d] implement most shell+status features 
-        - [ ][2h] warning for outdated tx, visible in all pages
-        - [ ][1h] zap hosting advertisement
         - [ ][1d] socket.io connection for default room
+        - [x][2h] warning for outdated tx, visible in all pages
+        - [ ][1h] zap hosting advertisement
         - [ ][1h] dynamic title
         - [ ][1h] dynamic favicon
         - [ ][1d] server status
@@ -120,7 +120,8 @@ Quickies
     - [ ] add `maxage` to `koa-static` config
     - [ ] add `cache-control` and/or `vary` to all pages
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
-- [ ] remove testing page
+- [ ] disable testing page in prod build
+- [ ] check if strick mode is indeed disabled in prod build
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 
 

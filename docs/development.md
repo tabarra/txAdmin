@@ -21,7 +21,7 @@ Before starting, please make sure you are familiar with the basics of NodeJS & e
 
 
 ## Preparing the environment
-1. First, clone the txAdmin repository;
+1. First, clone the txAdmin repository into a folder outside the fxserver directory;
 ```sh
 git clone https://github.com/tabarra/txAdmin
 ```
