@@ -1,11 +1,12 @@
 import { useEventListener } from 'usehooks-ts';
 import MainRouter from "./MainRouter";
 import { useExpireAuthData } from '../hooks/auth';
-import BreakpointDebugger from '@/components/BreakpointDebugger';
 import { Header } from './Header';
 import { ServerSidebar } from './ServerSidebar';
 import { PlayersSidebar } from './PlayersSidebar';
 import MainSheets from './MainSheets';
+import WarningBar from './WarningBar';
+import BreakpointDebugger from '@/components/BreakpointDebugger';
 
 
 export default function MainShell() {
@@ -25,8 +26,9 @@ export default function MainShell() {
             </main>
             <PlayersSidebar />
         </div>
+
         <MainSheets />
-        {/* DEBUG Breakpoint */}
+        <WarningBar />
         {/* <BreakpointDebugger /> */}
     </>;
 }

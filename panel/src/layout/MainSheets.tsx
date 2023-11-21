@@ -18,15 +18,6 @@ export function GlobalMenuSheet() {
 
                 <div>
                     <h2 className="mb-1.5 text-lg font-semibold tracking-tight">
-                        System Update
-                    </h2>
-                    <div className="text-accent">
-                        FIXME: get update data from backend
-                    </div>
-                </div>
-
-                <div>
-                    <h2 className="mb-1.5 text-lg font-semibold tracking-tight">
                         Global Menu
                     </h2>
                     <div className="grid grid-cols-2 gap-4">
