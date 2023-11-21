@@ -6,7 +6,7 @@ import { contentRefreshKeyAtom, pageErrorStatusAtom } from "../hooks/mainPageSta
 
 import Iframe from "../pages/Iframe"
 import NotFound from "../pages/NotFound"
-import TestingPage from "../pages/TestingPage";
+import TestingPage from "../pages/testing/TestingPage";
 
 
 export default function MainRouter() {
