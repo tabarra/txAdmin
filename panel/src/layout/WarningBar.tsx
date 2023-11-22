@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useWarningBarData } from "@/hooks/interface";
+import useWarningBar from "@/hooks/useWarningBar";
 import { cn } from "@/lib/utils";
 import { BellOffIcon, CloudOffIcon, DownloadCloudIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -99,7 +99,7 @@ export function InnerWarningBar({ titleIcon, title, description, isImportant, ca
 
 
 export default function WarningBar() {
-    const { isSocketOffline, txUpdateData, fxUpdateData } = useWarningBarData();
+    const { isSocketOffline, txUpdateData, fxUpdateData } = useWarningBar();
 
     if (isSocketOffline) {
         return <InnerWarningBar

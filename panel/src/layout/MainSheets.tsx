@@ -1,7 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ServerSidebar } from "./ServerSidebar";
-import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/interface";
+import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/sheets";
 import { MenuNavLink } from "@/components/MainPageLink";
 import { ClipboardCheckIcon, ListIcon, PieChartIcon, ScrollIcon, SettingsIcon, UserSquare2Icon, UsersIcon, ZapIcon } from 'lucide-react';
 import { PlayersSidebar } from "./PlayersSidebar";

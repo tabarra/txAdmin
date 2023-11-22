@@ -10,7 +10,7 @@ import { KeyRoundIcon, LogOutIcon, Menu, Monitor, MoonIcon, PersonStanding, SunI
 import DesktopHeader from "./DesktopNavbar";
 import Avatar from "@/components/Avatar";
 import { useAuth } from "@/hooks/auth";
-import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/interface";
+import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/sheets";
 import { useTheme } from "@/hooks/useTheme";
 import { FaDiscord } from "react-icons/fa";
 

@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useWarningBarData } from "@/hooks/interface";
+import useWarningBar from "@/hooks/useWarningBar";
 
-export default function TmpUpdateState() {
+export default function TmpWarningBarState() {
     const {
         isSocketOffline, setIsSocketOffline,
         txUpdateData, setTxUpdateData,
         fxUpdateData, setFxUpdateData,
-    } = useWarningBarData();
+    } = useWarningBar();
 
     return (
         <Card className="w-min">
@@ -36,14 +36,14 @@ export default function TmpUpdateState() {
                     </pre>
                     <div className="flex justify-start gap-3 border-t pt-2">
                         <Button size="sm" onClick={() => setTxUpdateData({
-                            ver: 'v7.0.1',
-                            isMajor: false,
+                            version: 'v7.0.1',
+                            isImportant: false,
                         })}>
                             txa Minor Update
                         </Button>
                         <Button size="sm" onClick={() => setTxUpdateData({
-                            ver: 'v8.0.0',
-                            isMajor: true,
+                            version: 'v8.0.0',
+                            isImportant: true,
                         })}>
                             txa Major Update
                         </Button>
@@ -59,14 +59,14 @@ export default function TmpUpdateState() {
                     </pre>
                     <div className="flex justify-start gap-3 border-t pt-2">
                         <Button size="sm" onClick={() => setFxUpdateData({
-                            ver: 'v7.0.1',
-                            isMajor: false,
+                            version: 'v7.0.1',
+                            isImportant: false,
                         })}>
                             fxs Minor Update
                         </Button>
                         <Button size="sm" onClick={() => setFxUpdateData({
-                            ver: 'v8.0.0',
-                            isMajor: true,
+                            version: 'v8.0.0',
+                            isImportant: true,
                         })}>
                             fxs Major Update
                         </Button>
