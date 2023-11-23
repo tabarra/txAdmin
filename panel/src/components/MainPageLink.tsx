@@ -1,5 +1,5 @@
 import { useSheets } from "@/hooks/sheets";
-import { pageErrorStatusAtom, useContentRefresh } from "@/hooks/mainPageStatus";
+import { pageErrorStatusAtom, useContentRefresh } from "@/hooks/pages";
 import { useAtomValue } from "jotai";
 import { forwardRef } from "react";
 import { Link, useRoute } from "wouter";

@@ -10,9 +10,13 @@ import BreakpointDebugger from '@/components/BreakpointDebugger';
 import { useEffect, useRef } from 'react';
 import { getSocket, useSetGlobalStatus } from '@/hooks/socketio';
 import { useSetOfflineWarning } from '@/hooks/useWarningBar';
+import { pageTitleWatcher } from '@/hooks/pages';
+import { useAtomValue } from 'jotai';
+
 
 
 export default function MainShell() {
+    useAtomValue(pageTitleWatcher);
     const expireSession = useExpireAuthData();
     useEventListener('message', (e: MessageEventFromIframe) => {
         if (e.data.type === 'logoutNotice') {

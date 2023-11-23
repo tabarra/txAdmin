@@ -63,13 +63,14 @@ Processo:
     - [x][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
     - [x][2h] merge new shell design into the `txadmin/panel` codebase
     - [ ][~3d] implement most shell+status features 
-        - [ ][1d] socket.io connection for default room
+        - [x][1d] socket.io connection for default room
         - [x][2h] warning for outdated tx, visible in all pages
-        - [ ][1h] zap hosting advertisement
-        - [ ][1h] dynamic title
-        - [ ][1h] dynamic favicon
+        - [x][1h] dynamic title
+        - [x][1h] dynamic favicon
         - [ ][1d] server status
+        - [ ][4h] update notices via socket.io
         - [ ][2h] tooltips on everything
+        - [ ][1h] zap hosting advertisement
     - [ ][1d] toasts API
         - [ ] generic toasts
         - [ ] markdown toasts
@@ -89,8 +90,8 @@ Processo:
     - [ ] disable menu links based on permissions
     - [ ] flow to refresh the permissions on the client side
     - [ ] flow to refresh the page if invalidated auth
-- [ ][4h] full setup flow (legacy)
-- [ ][4h] full deployer flow (legacy)
+- [ ][2d] full setup flow (legacy)
+- [ ][1d] full deployer flow (legacy)
 - [ ][1d] NEW PAGE: Dashboard
     - [ ] warning for txadmin updates
     - [ ] warning for fxserver update

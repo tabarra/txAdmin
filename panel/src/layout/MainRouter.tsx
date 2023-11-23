@@ -1,12 +1,107 @@
 import { ErrorBoundary } from "react-error-boundary";
-import { Route, Switch, useLocation } from "wouter";
+import { Route as WouterRoute, Switch, useLocation } from "wouter";
 import { PageErrorFallback } from "../components/ErrorFallback";
 import { useAtomValue, useSetAtom } from "jotai";
-import { contentRefreshKeyAtom, pageErrorStatusAtom } from "../hooks/mainPageStatus";
+import { contentRefreshKeyAtom, pageErrorStatusAtom, useSetPageTitle } from "../hooks/pages";
 
 import Iframe from "../pages/Iframe"
 import NotFound from "../pages/NotFound"
 import TestingPage from "../pages/testing/TestingPage";
+
+
+type RouteType = {
+    path: string;
+    title: string;
+    children: JSX.Element;
+};
+
+const allRoutes: RouteType[] = [
+    //Global Routes
+    {
+        path: '/players',
+        title: 'Players',
+        children: <Iframe legacyUrl="players" />
+    },
+    // {
+    //     path: '/history',
+    //     title: 'History',
+    //     children: <>TODO:</>
+    // },
+    {
+        path: '/whitelist',
+        title: 'Whitelist',
+        children: <Iframe legacyUrl="whitelist" />
+    },
+    {
+        path: '/admins',
+        title: 'Admins',
+        children: <Iframe legacyUrl="adminManager" />
+    },
+    {
+        path: '/settings',
+        title: 'Settings',
+        children: <Iframe legacyUrl="settings" />
+    },
+    {
+        path: '/system/master-actions',
+        title: 'Master Actions',
+        children: <Iframe legacyUrl="masterActions" />
+    },
+    {
+        path: '/system/diagnostics',
+        title: 'Diagnostics',
+        children: <Iframe legacyUrl="diagnostics" />
+    },
+    {
+        path: '/system/console-log',
+        title: 'Console Log',
+        children: <Iframe legacyUrl="systemLog#nav-console" />
+    },
+    {
+        path: '/system/action-log',
+        title: 'Action Log',
+        children: <Iframe legacyUrl="systemLog#nav-actions" />
+    },
+
+    //Server Routes
+    {
+        path: '/',
+        title: 'Dashboard',
+        children: <Iframe legacyUrl="dashboard" />
+    },
+    {
+        path: '/server/console',
+        title: 'Live Console',
+        children: <Iframe legacyUrl="console" />
+    },
+    {
+        path: '/server/resources',
+        title: 'Resources',
+        children: <Iframe legacyUrl="resources" />
+    },
+    {
+        path: '/server/server-log',
+        title: 'Server Log',
+        children: <Iframe legacyUrl="serverLog" />
+    },
+    {
+        path: '/server/cfg-editor',
+        title: 'CFG Editor',
+        children: <Iframe legacyUrl="cfgEditor" />
+    },
+    {
+        path: '/advanced',
+        title: 'Advanced',
+        children: <Iframe legacyUrl="advanced" />
+    },
+];
+
+
+function Route(props: RouteType){
+    const setPageTitle = useSetPageTitle();
+    setPageTitle(props.title);
+    return <WouterRoute path={props.path}>{props.children}</WouterRoute>
+}
 
 
 export default function MainRouter() {
@@ -29,28 +124,15 @@ export default function MainRouter() {
             }}
         >
             <Switch>
-                {/* Global Routes */}
-                <Route path="/players"><Iframe legacyUrl="players" /></Route>
-                {/* TODO: history */}
-                <Route path="/whitelist"><Iframe legacyUrl="whitelist" /></Route>
-                <Route path="/admins"><Iframe legacyUrl="adminManager" /></Route>
-                <Route path="/settings"><Iframe legacyUrl="settings" /></Route>
-                <Route path="/system/master-actions"><Iframe legacyUrl="masterActions" /></Route>
-                <Route path="/system/diagnostics"><Iframe legacyUrl="diagnostics" /></Route>
-                <Route path="/system/console-log"><Iframe legacyUrl="systemLog#nav-console" /></Route>
-                <Route path="/system/action-log"><Iframe legacyUrl="systemLog#nav-actions" /></Route>
+                {allRoutes.map((route) => (
+                    <Route key={route.path} path={route.path} title={route.title}>
+                        {route.children}
+                    </Route>
+                ))}
 
-                {/* Server Routes */}
-                <Route path="/"><Iframe legacyUrl="dashboard" /></Route>
-                <Route path="/server/console"><Iframe legacyUrl="console" /></Route>
-                <Route path="/server/resources"><Iframe legacyUrl="resources" /></Route>
-                <Route path="/server/server-log"><Iframe legacyUrl="serverLog" /></Route>
-                <Route path="/server/cfg-editor"><Iframe legacyUrl="cfgEditor" /></Route>
-                <Route path="/advanced"><Iframe legacyUrl="advanced" /></Route>
-
-                {/* Other Routes */}
-                <Route path="/test"><TestingPage /></Route>
-                <Route path="/:fullPath*" component={NotFound} />
+                {/* Other Routes - they need to set the title manuually */}
+                <WouterRoute path="/test"><TestingPage /></WouterRoute>
+                <WouterRoute path="/:fullPath*" component={NotFound} />
             </Switch>
         </ErrorBoundary>
     );

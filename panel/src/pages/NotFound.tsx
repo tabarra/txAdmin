@@ -1,4 +1,5 @@
 import InlineCode from "@/components/InlineCode";
+import { useSetPageTitle } from "@/hooks/pages";
 import { Link } from "wouter";
 
 type Props = {
@@ -7,6 +8,8 @@ type Props = {
     };
 };
 export default function NotFound({ params }: Props) {
+    const setPageTitle = useSetPageTitle();
+    setPageTitle('Not Found');
     return (
         <div className="w-full flex items-center justify-center">
             <div className="text-center">
