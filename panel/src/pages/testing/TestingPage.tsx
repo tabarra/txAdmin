@@ -1,17 +1,18 @@
-
-
-import { useSocketio } from "@/hooks/socketio";
+import { useSetAtom } from "jotai";
 import TmpAuthState from "./TmpAuthState";
 import TmpColors from "./TmpColors";
 import TmpMarkdown from "./TmpMarkdown";
 import TmpTerminal from "./TmpTerminal";
 import TmpWarningBarState from "./TmpWarningBarState";
+import { useSetPageTitle } from "@/hooks/pages";
+import TmpSocket from "./TmpSocket";
 
 
 export default function TestingPage() {
     useSocketio();
     return <div className="flex flex-col gap-4 w-full m-4">
-        <TmpWarningBarState />
+        <TmpSocket />
+        {/* <TmpWarningBarState /> */}
         {/* <TmpAuthState /> */}
         {/* <TmpTerminal /> */}
         {/* <TmpMarkdown /> */}

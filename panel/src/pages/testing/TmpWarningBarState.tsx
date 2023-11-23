@@ -5,7 +5,7 @@ import useWarningBar from "@/hooks/useWarningBar";
 
 export default function TmpWarningBarState() {
     const {
-        isSocketOffline, setIsSocketOffline,
+        offlineWarning, setOfflineWarning,
         txUpdateData, setTxUpdateData,
         fxUpdateData, setFxUpdateData,
     } = useWarningBar();
@@ -18,13 +18,13 @@ export default function TmpWarningBarState() {
             <CardContent className="space-y-4">
                 <div className="space-y-2 rounded border p-2">
                     <pre className="bg-muted p-2">
-                        {JSON.stringify(isSocketOffline, null, 2)}
+                        {JSON.stringify(offlineWarning, null, 2)}
                     </pre>
                     <div className="flex justify-start gap-3 border-t pt-2">
-                        <Button size="sm" onClick={() => setIsSocketOffline(false)}>
+                        <Button size="sm" onClick={() => setOfflineWarning(false)}>
                             Socket On
                         </Button>
-                        <Button size="sm" onClick={() => setIsSocketOffline(true)}>
+                        <Button size="sm" onClick={() => setOfflineWarning(true)}>
                             Socket Off
                         </Button>
                     </div>

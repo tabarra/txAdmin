@@ -1,10 +1,10 @@
 const modulename = 'WebSocket';
 import { Server as SocketIO, Socket } from 'socket.io';
 import consoleFactory from '@extras/console';
-import status from './wsRooms/status';
-import playerlist from './wsRooms/playerlist';
-import liveconsole from './wsRooms/liveconsole';
-import serverlog from './wsRooms/serverlog';
+import statusRoom from './wsRooms/status';
+import playerlistRoom from './wsRooms/playerlist';
+import liveconsoleRoom from './wsRooms/liveconsole';
+import serverlogRoom from './wsRooms/serverlog';
 import TxAdmin from '@core/txAdmin';
 import { AuthedAdminType, checkRequestAuth } from './authLogic';
 import { SocketWithSession } from './ctxTypes';
@@ -54,10 +54,10 @@ export default class WebSocket {
         this.#txAdmin = txAdmin;
         this.#io = io;
         this.#rooms = {
-            status: status(txAdmin),
-            playerlist: playerlist(txAdmin),
-            liveconsole: liveconsole(txAdmin),
-            serverlog: serverlog(txAdmin),
+            status: statusRoom(txAdmin),
+            playerlist: playerlistRoom(txAdmin),
+            liveconsole: liveconsoleRoom(txAdmin),
+            serverlog: serverlogRoom(txAdmin),
         };
 
         setInterval(this.flushBuffers.bind(this), 250);

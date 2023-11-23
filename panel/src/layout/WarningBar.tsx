@@ -99,9 +99,9 @@ export function InnerWarningBar({ titleIcon, title, description, isImportant, ca
 
 
 export default function WarningBar() {
-    const { isSocketOffline, txUpdateData, fxUpdateData } = useWarningBar();
+    const { offlineWarning, txUpdateData, fxUpdateData } = useWarningBar();
 
-    if (isSocketOffline) {
+    if (offlineWarning) {
         return <InnerWarningBar
             titleIcon={<CloudOffIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
             title="Socket connection lost."
