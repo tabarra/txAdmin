@@ -226,6 +226,7 @@ const getSocket = (rooms) => {
 }
 
 const startMainSocket = () => {
+    return;
     const rooms = isWebInterface ? ['status', 'playerlist'] : ['status'];
     const socket = getSocket(rooms);
     socket.on('error', (error) => {

@@ -87,7 +87,7 @@ export default class HealthMonitor {
 
     //================================================================
     setCurrentStatus(newStatus) {
-        if(newStatus !== this.currentStatus){
+        if (newStatus !== this.currentStatus) {
             this.currentStatus = newStatus;
             globals.discordBot.updateStatus().catch((e) => {});
             globals.webServer?.webSocket.pushRefresh('status');
