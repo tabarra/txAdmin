@@ -9,7 +9,7 @@ import GenericSpinner from "@/components/GenericSpinner";
 export default function CfxreCallback() {
     const { authData, setAuthData } = useAuth();
     const [errorData, setErrorData] = useState<ApiOauthCallbackErrorResp | undefined>();
-    const hasPendingMutation = useRef(false); //due to strict mode re-rendering"
+    const hasPendingMutation = useRef(false); //due to strict mode re-rendering
 
     const submitMutation = useMutation<
         ApiOauthCallbackResp,
