@@ -24,7 +24,7 @@ export default function MainShell() {
         }
     });
 
-
+    const socketStateChangeCounter = useRef(0);
     const setIsSocketOffline = useSetOfflineWarning();
     const setGlobalStatus = useSetGlobalStatus();
 
@@ -37,7 +37,15 @@ export default function MainShell() {
         });
         socket.on('disconnect', (message) => {
             console.log("Main Socket.IO Disonnected:", message);
-            setIsSocketOffline(true);
+            //Grace period of 500ms to allow for quick reconnects
+            //Tracking the state change ID for the timeout not to overwrite a reconnection
+            const newId = socketStateChangeCounter.current + 1;
+            socketStateChangeCounter.current = newId;
+            setTimeout(() => {
+                if(socketStateChangeCounter.current === newId){
+                    setIsSocketOffline(true);
+                }
+            }, 500);
         });
         socket.on('error', (error) => {
             console.log('Main Socket.IO', error);
