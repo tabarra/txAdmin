@@ -13,12 +13,14 @@ import { useAuth } from "@/hooks/auth";
 import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/sheets";
 import { useTheme } from "@/hooks/useTheme";
 import { FaDiscord } from "react-icons/fa";
+import { useAtomValue } from "jotai";
+import { serverNameAtom } from "@/hooks/status";
+import { playerCountAtom } from "@/hooks/playerlist";
 
 
 function ServerTitle() {
-    // FIXME: make data dynamic
-    const playerCount = 1234;
-    const serverName = '{{serverName}}';
+    const playerCount = useAtomValue(playerCountAtom);
+    const serverName = useAtomValue(serverNameAtom);
 
     return (
         <div className="flex justify-start">

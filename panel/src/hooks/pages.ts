@@ -1,10 +1,11 @@
-import { atom, useSetAtom } from 'jotai';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect'
 import faviconDefault from '/favicon_default.svg';
 import faviconOnline from '/favicon_online.svg';
 import faviconPartial from '/favicon_partial.svg';
 import faviconOffline from '/favicon_offline.svg';
-import { globalStatusAtom } from './socketio';
+import { globalStatusAtom } from './status';
+import { playerCountAtom } from './playerlist';
 
 /**
  * This atom is used to change the key of the main page error boundry, which also resets the router 
@@ -43,6 +44,7 @@ export const pageTitleWatcher = atomEffect((get, set) => {
     if (!window.txConsts.isWebInterface) return;
     const pageTitle = get(pageTitleAtom);
     const globalStatus = get(globalStatusAtom);
+    const playerCount = get(playerCountAtom);
 
     if (!globalStatus) {
         faviconEl.href = faviconDefault;
@@ -55,7 +57,7 @@ export const pageTitleWatcher = atomEffect((get, set) => {
         } else {
             faviconEl.href = faviconOffline;
         }
-        document.title = `(${globalStatus.server.players}) ${globalStatus.server.name} · ${pageTitle}`;
+        document.title = `(${playerCount}) ${globalStatus.server.name} · ${pageTitle}`;
     }
 
     return () => {

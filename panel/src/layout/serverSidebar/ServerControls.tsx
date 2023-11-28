@@ -1,5 +1,5 @@
 import KickAllIcon from '@/components/KickAllIcon';
-import { processInstantiatedAtom } from '@/hooks/socketio';
+import { processInstantiatedAtom } from '@/hooks/status';
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
 import { useAtomValue } from 'jotai';

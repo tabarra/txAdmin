@@ -1,5 +1,5 @@
 import { MenuNavLink } from '@/components/MainPageLink';
-import { serverNameAtom } from '@/hooks/socketio';
+import { serverNameAtom } from '@/hooks/status';
 import { useAtomValue } from 'jotai';
 import { Box, ChevronRightSquare, Dna, Eye, FileEdit, LayoutDashboard } from 'lucide-react';
 

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { getSocket } from "@/hooks/socketio";
+import { getSocket } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 

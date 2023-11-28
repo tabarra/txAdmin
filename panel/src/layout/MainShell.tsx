@@ -8,10 +8,11 @@ import MainSheets from './MainSheets';
 import WarningBar from './WarningBar';
 import BreakpointDebugger from '@/components/BreakpointDebugger';
 import { useEffect, useRef } from 'react';
-import { getSocket, useSetGlobalStatus } from '@/hooks/socketio';
+import { useSetGlobalStatus } from '@/hooks/status';
 import { useSetOfflineWarning } from '@/hooks/useWarningBar';
 import { pageTitleWatcher } from '@/hooks/pages';
 import { useAtomValue } from 'jotai';
+import { getSocket } from '@/lib/utils';
 
 
 
@@ -54,7 +55,6 @@ export default function MainShell() {
             expireSession('main socketio');
         });
         socket.on('status', function (status) {
-            console.log('status', status);
             setGlobalStatus(status);
         });
         socket.on('playerlist', function (playerlistData) {
@@ -73,7 +73,7 @@ export default function MainShell() {
 
     return <>
         <Header />
-        <div className="px-3 py-4 w-full max-w-[1920px] flex flex-row gap-2">
+        <div className="px-3 py-4 w-full max-w-[1920px] mx-auto flex flex-row gap-2">
             <ServerSidebar />
             <main className="flex flex-1 min-h-[calc(100vh-5.5rem-1px)]">
                 <MainRouter />

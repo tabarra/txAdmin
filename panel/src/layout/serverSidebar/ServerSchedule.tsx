@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useGlobalStatus } from '@/hooks/socketio';
+import { useGlobalStatus } from '@/hooks/status';
 import { cn, msToDuration } from '@/lib/utils';
 import { PenLineIcon, PlayCircleIcon, PlusCircleIcon, XCircleIcon } from 'lucide-react';
 

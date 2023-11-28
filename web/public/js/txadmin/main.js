@@ -40,7 +40,7 @@ const setNextRestartTimeClass = (cssClass) => {
     }
 };
 
-const updateStatusCard = (discordData, serverData) => {
+const updateStatusCard = (discordData, serverData, schedulerData) => {
     if(!statusCard.self) return;
 
     setBadgeColor(statusCard.discord, discordData.statusClass);
@@ -49,13 +49,13 @@ const updateStatusCard = (discordData, serverData) => {
     statusCard.server.textContent = serverData.status;
     statusCard.serverProcess.textContent = serverData.process;
 
-    if (typeof serverData.scheduler.nextRelativeMs !== 'number') {
+    if (typeof schedulerData.nextRelativeMs !== 'number') {
         setNextRestartTimeClass('font-weight-light');
         statusCard.nextRestartTime.textContent = 'not scheduled';
     } else {
-        const tempFlag = (serverData.scheduler.nextIsTemp)? '(tmp)' : '';
-        const relativeTime = msToDuration(serverData.scheduler.nextRelativeMs, {units: ['h', 'm']});
-        const isLessThanMinute = serverData.scheduler.nextRelativeMs < 60_000;
+        const tempFlag = (schedulerData.nextIsTemp)? '(tmp)' : '';
+        const relativeTime = msToDuration(schedulerData.nextRelativeMs, {units: ['h', 'm']});
+        const isLessThanMinute = schedulerData.nextRelativeMs < 60_000;
         if(isLessThanMinute){
             statusCard.nextRestartTime.textContent = `right now ${tempFlag}`;
             statusCard.nextRestartBtnCancel.classList.add('d-none');
@@ -64,7 +64,7 @@ const updateStatusCard = (discordData, serverData) => {
             statusCard.nextRestartTime.textContent = `in ${relativeTime} ${tempFlag}`;
         }
 
-        if (serverData.scheduler.nextSkip) {
+        if (schedulerData.nextSkip) {
             setNextRestartTimeClass('text-muted');
             if(!isLessThanMinute) {
                 statusCard.nextRestartBtnCancel.classList.add('d-none');
@@ -107,11 +107,11 @@ const updateHostStats = (hostData) => {
 };
 
 function updateStatus(data) {
-    updateStatusCard(data.discord, data.server);
-    if (isWebInterface) {
-        updatePageTitle(data.server.statusClass, data.server.name, data.server.players);
-        updateHostStats(data.host);
-    }
+    updateStatusCard(data.discord, data.server, data.scheduler);
+    // if (isWebInterface) {
+    //     updatePageTitle(data.server.statusClass, data.server.name, data.server.players);
+    //     updateHostStats(data.host);
+    // }
 }
 function updateStatusOffline() {
     if (statusCard.self) {
@@ -226,7 +226,7 @@ const getSocket = (rooms) => {
 }
 
 const startMainSocket = () => {
-    return;
+    // return;
     const rooms = isWebInterface ? ['status', 'playerlist'] : ['status'];
     const socket = getSocket(rooms);
     socket.on('error', (error) => {

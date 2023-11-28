@@ -1,4 +1,4 @@
-import { useGlobalStatus } from '@/hooks/socketio';
+import { useGlobalStatus } from '@/hooks/status';
 import { VariantProps, cva } from 'class-variance-authority';
 import {
     Tooltip,

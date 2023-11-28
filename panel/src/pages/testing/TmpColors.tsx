@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { PersonStandingIcon } from "lucide-react";
-import TmpHexHslConverter from "./tmpHexHslConverter";
+import TmpHexHslConverter from "./TmpHexHslConverter";
 
 export default function TmpColors() {
     return <>
