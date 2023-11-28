@@ -41,6 +41,7 @@ export default class Scheduler {
         //Cron Function 
         setInterval(() => {
             this.checkSchedule();
+            globals.webServer?.webSocket.pushRefresh('status');
         }, 60 * 1000);
     }
 
@@ -53,6 +54,7 @@ export default class Scheduler {
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.checkSchedule();
+        globals.webServer?.webSocket.pushRefresh('status');
     }
 
     /**
@@ -107,6 +109,9 @@ export default class Scheduler {
 
         //This is needed to refresh this.calculatedNextRestartMinuteFloorTs
         this.checkSchedule();
+
+        //Refresh UI
+        globals.webServer?.webSocket.pushRefresh('status');
     }
 
 
@@ -148,6 +153,9 @@ export default class Scheduler {
 
         //This is needed to refresh this.calculatedNextRestartMinuteFloorTs
         this.checkSchedule();
+
+        //Refresh UI
+        globals.webServer?.webSocket.pushRefresh('status');
     }
 
 

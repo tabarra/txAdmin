@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import humanizeDuration from '@/lib/humanizeDuration';
 
 
 /**
@@ -33,3 +34,25 @@ export const stripIndent = (src: string) => {
     const indentRemoverRegex = new RegExp(`^[ \\t]{${minIndent}}`, 'gm');
     return src.replace(indentRemoverRegex, '');
 };
+
+
+/**
+ * Converts a number of milliseconds to english words
+ * Accepts a humanizeDuration config object
+ * eg: msToDuration(ms, { units: ['h', 'm'] });
+ */
+export const msToDuration = humanizeDuration.humanizer({
+    round: true,
+});
+
+
+/**
+ * Converts a number of milliseconds to short english words
+ * Accepts a humanizeDuration config object
+ * eg: msToDuration(ms, { units: ['h', 'm'] });
+ */
+export const msToShortDuration = humanizeDuration.humanizer({
+    round: true,
+    spacer: '',
+    language: 'shortEn',
+});

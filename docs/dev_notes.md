@@ -67,9 +67,9 @@ Processo:
         - [x][2h] warning for outdated tx, visible in all pages
         - [x][1h] dynamic title
         - [x][1h] dynamic favicon
-        - [ ][1d] server status
+        - [x][1d] server status
         - [ ][4h] update notices via socket.io
-        - [ ][2h] tooltips on everything
+        - [x][2h] tooltips on everything
         - [ ][1h] zap hosting advertisement
     - [ ][1d] toasts API
         - [ ] generic toasts
@@ -86,7 +86,7 @@ Processo:
     - [x] cfx.re login
     - [x] error page
     - [x] master account pin add page
-    - [ ] master account bkp password page
+    - [x] master account bkp password page
     - [ ] disable menu links based on permissions
     - [ ] flow to refresh the permissions on the client side
     - [ ] flow to refresh the page if invalidated auth
@@ -124,6 +124,9 @@ Quickies
 - [ ] disable testing page in prod build
 - [ ] check if strick mode is indeed disabled in prod build
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+
+Bugs
+- [ ] when you open the server sheet, the control tooltip shows automatically
 
 
 =======================================================================

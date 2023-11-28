@@ -1,11 +1,12 @@
 export type GlobalStatusType = {
-    discord: false | string;
+    discord: false | number;
     server: {
         mutex: string | null;
         status: string;
         process: string;
+        instantiated: boolean;
         name: string;
-        players: number;
+        whitelist: "disabled" | "adminOnly" | "guildMember" | "guildRoles" | "approvedLicense";
     };
     scheduler: {
         nextRelativeMs: number;

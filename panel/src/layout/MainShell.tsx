@@ -2,7 +2,7 @@ import { useEventListener } from 'usehooks-ts';
 import MainRouter from "./MainRouter";
 import { useExpireAuthData } from '../hooks/auth';
 import { Header } from './Header';
-import { ServerSidebar } from './ServerSidebar';
+import { ServerSidebar } from './serverSidebar/ServerSidebar';
 import { PlayersSidebar } from './PlayersSidebar';
 import MainSheets from './MainSheets';
 import WarningBar from './WarningBar';

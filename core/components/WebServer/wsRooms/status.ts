@@ -17,11 +17,12 @@ const getinitialData = (txAdmin: TxAdmin): GlobalStatusType => {
             mutex: txAdmin.fxRunner?.currentMutex,
             status: txAdmin.healthMonitor.currentStatus || '??',
             process: txAdmin.fxRunner.getStatus(),
+            instantiated: !!txAdmin.fxRunner.fxChild, //used to disable the control buttons
             name: txAdmin.globalConfig.serverName,
-            players: txAdmin.playerlistManager.onlineCount,
-            // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
-            scheduler: txAdmin.scheduler.getStatus(), //no push events, only passively updated
+            whitelist: txAdmin.playerDatabase.config.whitelistMode,
         },
+        // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
+        scheduler: txAdmin.scheduler.getStatus(), //no push events, only passively updated
     }
 }
 

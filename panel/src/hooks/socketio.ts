@@ -21,7 +21,9 @@ export const getSocket = (rooms: string[] | string) => {
  * Consts
  */
 export const globalStatusAtom = atom<GlobalStatusType | null>(null);
-export const serverNameAtom = atom((get) => get(globalStatusAtom)?.server.name ?? 'unconfigured')
+export const serverNameAtom = atom((get) => get(globalStatusAtom)?.server.name ?? 'unconfigured');
+export const processInstantiatedAtom = atom((get) => get(globalStatusAtom)?.server.instantiated ?? false);
+export const serverMutexAtom = atom((get) => get(globalStatusAtom)?.server.mutex);
 
 
 /**
