@@ -1,6 +1,7 @@
 const modulename = 'WebServer:AuthVerifyPassword';
 import { AuthedAdmin, PassSessAuthType } from '@core/components/WebServer/authLogic';
 import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
+import { txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import { ApiVerifyPasswordResp, ReactAuthDataType } from '@shared/authApiTypes';
 import { z } from 'zod';
@@ -17,6 +18,15 @@ export type ApiVerifyPasswordReqSchema = z.infer<typeof bodySchema>;
  * Verify login
  */
 export default async function AuthVerifyPassword(ctx: InitializedCtx) {
+    //Check UI version
+    const { uiVersion } = ctx.request.query;
+    if(uiVersion && uiVersion !== txEnv.txAdminVersion){
+        return ctx.send<ApiVerifyPasswordResp>({
+            error: `refreshToUpdate`,
+        });
+    }
+
+    //Checking body
     const schemaRes = bodySchema.safeParse(ctx.request.body);
     if (!schemaRes.success) {
         return ctx.send<ApiVerifyPasswordResp>({

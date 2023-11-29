@@ -32,7 +32,7 @@ export default function Login() {
     }
 
     const onErrorResponse = (error: string) => {
-        if(error === 'no_admins_setup'){
+        if (error === 'no_admins_setup') {
             setErrorMessage('No admins set up. Redirecting...');
             setLocation('/addMaster/pin');
         } else {
@@ -63,7 +63,7 @@ export default function Login() {
         ApiVerifyPasswordReq
     >({
         mutationKey: ['auth'],
-        mutationFn: ({ username, password }) => fetch('/auth/password', {
+        mutationFn: ({ username, password }) => fetch(`/auth/password?uiVersion=${encodeURIComponent(window.txConsts.txaVersion)}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -71,7 +71,12 @@ export default function Login() {
         onError,
         onSuccess: (data) => {
             if ('error' in data) {
-                onErrorResponse(data.error);
+                if (data.error === 'refreshToUpdate') {
+                    window.location.href = '/login#updated';
+                    window.location.reload();
+                } else {
+                    onErrorResponse(data.error);
+                }
             } else {
                 setAuthData(data);
             }
@@ -87,10 +92,12 @@ export default function Login() {
     };
 
     let logoutMessage;
-    if(window.location.hash === '#logout'){
+    if (window.location.hash === '#logout') {
         logoutMessage = 'Logged Out.';
-    } else if(window.location.hash === '#expired'){
+    } else if (window.location.hash === '#expired') {
         logoutMessage = 'Session Expired.';
+    } else if (window.location.hash === '#updated') {
+        logoutMessage = 'txAdmin updated, please login again.';
     }
     const displayMessage = errorMessage ?? logoutMessage;
 

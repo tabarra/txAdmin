@@ -9,6 +9,7 @@ import TxAdmin from '@core/txAdmin';
 import { AuthedAdminType, checkRequestAuth } from './authLogic';
 import { SocketWithSession } from './ctxTypes';
 import { isIpAddressLocal } from '@extras/isIpAddressLocal';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 //Types
@@ -44,11 +45,18 @@ const terminateSession = (socket: SocketWithSession, reason: string, shouldLog =
         }
     } catch (error) { }
 };
+const forceUiReload = (socket: SocketWithSession) => {
+    try {
+        socket.emit('refreshToUpdate');
+        socket.disconnect();
+    } catch (error) { }
+};
 
 export default class WebSocket {
     readonly #txAdmin: TxAdmin;
     readonly #io: SocketIO;
     readonly #rooms: Record<RoomNames, RoomType>;
+    #eventBuffer: { name: string, data: any }[] = [];
 
     constructor(txAdmin: TxAdmin, io: SocketIO) {
         this.#txAdmin = txAdmin;
@@ -69,6 +77,11 @@ export default class WebSocket {
      * NOTE: For now the user MUST join a room, needs additional logic for 'web' room
      */
     handleConnection(socket: SocketWithSession) {
+        //Check the UI version
+        if (socket.handshake.query.uiVersion !== txEnv.txAdminVersion) {
+            return forceUiReload(socket);
+        }
+        
         try {
             //Checking for session auth
             const reqIp = getIP(socket);
@@ -140,7 +153,7 @@ export default class WebSocket {
 
 
     /**
-     * Adds data to the buffer
+     * Adds data to the a room buffer
      */
     buffer<T>(roomName: RoomNames, data: T) {
         const room = this.#rooms[roomName];
@@ -165,6 +178,7 @@ export default class WebSocket {
      * NOTE: this will also send data to users that no longer have permissions
      */
     flushBuffers() {
+        //Sending room data
         for (const [roomName, room] of Object.entries(this.#rooms)) {
             if (room.cumulativeBuffer && room.outBuffer.length) {
                 this.#io.to(roomName).emit(room.eventName, room.outBuffer);
@@ -180,6 +194,12 @@ export default class WebSocket {
                 room.outBuffer = null;
             }
         }
+
+        //Sending events
+        for (const event of this.#eventBuffer) {
+            this.#io.emit(event.name, event.data);
+        }
+        this.#eventBuffer = [];
     }
 
 
@@ -195,5 +215,15 @@ export default class WebSocket {
         setImmediate(() => {
             room.outBuffer = room.initialData();
         });
+    }
+
+
+    /**
+     * Broadcasts an event to all connected clients
+     * This is used for data syncs that are not related to a specific room
+     * eg: update available
+     */
+    pushEvent<T>(name: string, data: T) {
+        this.#eventBuffer.push({ name, data });
     }
 };

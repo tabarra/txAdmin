@@ -68,7 +68,7 @@ Processo:
         - [x][1h] dynamic title
         - [x][1h] dynamic favicon
         - [x][1d] server status
-        - [ ][4h] update notices via socket.io
+        - [x][4h] update notices via socket.io
         - [x][2h] tooltips on everything
         - [ ][1h] zap hosting advertisement
     - [ ][1d] toasts API

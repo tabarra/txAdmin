@@ -1,3 +1,5 @@
+import { UpdateDataType } from "otherTypes";
+
 /**
  * Status channel
  */
@@ -20,6 +22,7 @@ export type GlobalStatusType = {
         nextIsTemp: false;
     };
 }
+
 
 /**
  * Playerlist channel
@@ -52,3 +55,12 @@ export type PlayerJoiningEventType = {
 
 
 export type PlayerlistEventType = FullPlayerlistEventType | PlayerDroppedEventType | PlayerJoiningEventType;
+
+
+/**
+ * Standalone events (no room)
+ */
+export type UpdateAvailableEventType = {
+    fxserver?: UpdateDataType;
+    txadmin?: UpdateDataType;
+}

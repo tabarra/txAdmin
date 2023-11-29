@@ -112,8 +112,10 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     const serverName = ctx.txAdmin.globalConfig.serverName || ctx.txAdmin.info.serverProfile;
     const injectedConsts = {
         //env
-        fxServerVersion: displayFxserverVersion,
-        txAdminVersion: txEnv.txAdminVersion,
+        fxsVersion: displayFxserverVersion,
+        fxsOutdated: ctx.txAdmin.updateChecker.fxsUpdateData,
+        txaVersion: txEnv.txAdminVersion,
+        txaOutdated: ctx.txAdmin.updateChecker.txaUpdateData,
         isZapHosting: convars.isZapHosting, //not in use
         isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,

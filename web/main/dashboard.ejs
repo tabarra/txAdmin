@@ -108,36 +108,6 @@
 </style>
 
 <!-- Title & outdated message: -->
-<% if (txaOutdated) { %>
-    <div class="row justify-content-md-center">
-        <div class="col-md-6 text-center">
-            <div class="alert alert-<%= txaOutdated.color %>" role="alert">
-                <h5 style="margin-bottom: 0px;">
-                    <svg class="alert-title-icon" width="22" height="22">
-                        <use href="img/coreui_icons.svg#cil-cloud-download"></use>
-                    </svg>
-                    <% if (txaOutdated.semverDiff === 'patch') { %>
-                        A patch (bug fix) update is available for txAdmin.
-                    <% } else{ %> 
-                        This version of txAdmin is outdated.
-                    <% } %>
-                </h5>
-                <% if (txaOutdated.semverDiff === 'patch') { %>
-                    If you are experiencing any kind of issue, please update to v<%= txaOutdated.latest %>.
-                <% } else{ %> 
-                    Version <%= txaOutdated.latest %> has been released bringing new features, bug fixes and improvements. <br>
-                    <div class="event-footer">
-                        Please update now. Support Discord:
-                        <a href="https://discord.gg/uAmsGa2" target="_blank" >
-                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
-                        </a>
-                    </div>
-                <% } %>
-                
-            </div>
-        </div>
-    </div>
-<% } %>
 
 <% if (discordEvent) { %>
     <div class="row justify-content-md-center">
@@ -259,13 +229,6 @@
             🏆 With <span id="tsMedianPlayerCount">?</span> median players, your server may be in the worldwide Top 1000 servers. <br>
             Join <strong><a href="https://discord.gg/qmMq79D59T" target="_blank">discord.gg/txAdmin</a></strong> and use the <code>/server</code> command to check the rank see if you are eligible for the <i>TOP SERVER</i> role (Top 500 only).
         </div>
-        <% if (fxsOutdated) { %>
-            <div class="alert alert-<%= fxsOutdated.color %> border-<%= fxsOutdated.color %>" role="alert">
-                <a href="<%= fxsOutdated.downloadLink %>" target="_blank" class="alert-link"><%= fxsOutdated.message %></a>
-                <br>
-                <i><%= fxsOutdated.subtext %></i>
-            </div>
-        <% } %>
         <% if (txAdminVersion.includes('-')) { %>
             <span class="text-danger font-weight-bold">
                 You are using a pre-release version of txAdmin destined for developers and beta testers only! <br>

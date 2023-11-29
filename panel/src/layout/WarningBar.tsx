@@ -75,7 +75,7 @@ export function InnerWarningBar({ titleIcon, title, description, isImportant, ca
                             size="xs"
                             variant="outline"
                             onClick={() => postponeUpdate()}
-                            className={isImportant ? "text-foreground border-foreground" : 'border-primary-foreground hover:border-primary'}
+                            className={isImportant ? "text-foreground border-foreground" : 'dark:border-primary-foreground dark:hover:border-primary'}
                         >
                             <BellOffIcon className="h-[0.9rem] mr-1" /> Postpone
                         </Button>}
@@ -84,7 +84,7 @@ export function InnerWarningBar({ titleIcon, title, description, isImportant, ca
                             size="xs"
                             variant="outline"
                             asChild
-                            className={isImportant ? "text-foreground border-foreground" : 'border-primary-foreground hover:border-primary'}
+                            className={isImportant ? "text-foreground border-foreground" : 'dark:border-primary-foreground dark:hover:border-primary'}
                         >
                             <a href="https://discord.gg/uAmsGa2" target="_blank">
                                 <FaDiscord size="14" className="mr-1" /> Support
@@ -128,11 +128,9 @@ export default function WarningBar() {
         return <InnerWarningBar
             titleIcon={<DownloadCloudIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
             title={fxUpdateData.isImportant
-                ? 'This version of txAdmin is outdated.'
-                : 'A patch (bug fix) update is available for txAdmin.'}
-            description={fxUpdateData.isImportant
-                ? `Version v${fxUpdateData.version} has been released bringing new features, bug fixes and improvements.`
-                : `If you are experiencing any kind of issue, please update to v${fxUpdateData.version}.`}
+                ? 'This version of FXServer is outdated.'
+                : 'An update is available for FXServer.'}
+            description={`Please update FXServer to artifact ${fxUpdateData.version}.`}
             isImportant={fxUpdateData.isImportant}
             canPostpone={true}
         />

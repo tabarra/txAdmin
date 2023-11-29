@@ -9,7 +9,7 @@ import WarningBar from './WarningBar';
 import BreakpointDebugger from '@/components/BreakpointDebugger';
 import { useEffect, useRef } from 'react';
 import { useSetGlobalStatus } from '@/hooks/status';
-import { useSetOfflineWarning } from '@/hooks/useWarningBar';
+import { useProcessUpdateAvailableEvent, useSetOfflineWarning } from '@/hooks/useWarningBar';
 import { pageTitleWatcher } from '@/hooks/pages';
 import { useAtomValue } from 'jotai';
 import { getSocket } from '@/lib/utils';
@@ -30,6 +30,7 @@ export default function MainShell() {
     const setIsSocketOffline = useSetOfflineWarning();
     const setGlobalStatus = useSetGlobalStatus();
     const processPlayerlistEvents = useProcessPlayerlistEvents();
+    const processUpdateAvailableEvent = useProcessUpdateAvailableEvent();
 
     useEffect(() => {
         const rooms = window.txConsts.isWebInterface ? ['status', 'playerlist'] : ['status'];
@@ -56,12 +57,18 @@ export default function MainShell() {
         socket.on('logout', function () {
             expireSession('main socketio');
         });
+        socket.on('refreshToUpdate', function () {
+            window.location.href = '/login#updated';
+        });
         socket.on('status', function (status) {
             setGlobalStatus(status);
         });
         socket.on('playerlist', function (playerlistData) {
             if (!window.txConsts.isWebInterface) return;
             processPlayerlistEvents(playerlistData);
+        });
+        socket.on('updateAvailable', function (data) {
+            processUpdateAvailableEvent(data);
         });
 
         return () => {

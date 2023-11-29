@@ -69,7 +69,7 @@ export function GenericErrorBoundaryCard(props: GenericErrorBoundaryCardProps) {
                 <p>
                     Versions:&nbsp;
                     <code className="text-muted-foreground">
-                        txAdmin v{window.txConsts.txAdminVersion} atop FXServer b{window.txConsts.fxServerVersion}
+                        txAdmin v{window.txConsts.txaVersion} atop FXServer b{window.txConsts.fxsVersion}
                     </code>
                 </p>
                 <p>

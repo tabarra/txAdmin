@@ -1,5 +1,11 @@
 import { ReactAuthDataType } from "./authApiTypes";
 
+
+export type UpdateDataType = {
+    version: string;
+    isImportant: boolean;
+} | undefined;
+
 export type ThemeType = {
     name: string;
     isDark: boolean;
@@ -8,8 +14,11 @@ export type ThemeType = {
 
 export type InjectedTxConsts = {
     //Env
-    fxServerVersion: string;
-    txAdminVersion: string;
+    fxsVersion: string;
+    fxsOutdated: UpdateDataType,
+    txaVersion: string;
+    txaOutdated: UpdateDataType,
+
     isZapHosting: boolean;
     isPterodactyl: boolean;
     isWebInterface: boolean;

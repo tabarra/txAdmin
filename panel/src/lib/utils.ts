@@ -64,9 +64,12 @@ export const msToShortDuration = humanizeDuration.humanizer({
  */
 export const getSocket = (rooms: string[] | string) => {
     const socketOpts = {
-        transports: ['polling'], 
+        transports: ['polling'],
         upgrade: false,
-        query: { rooms }
+        query: {
+            rooms,
+            uiVersion: window.txConsts.txaVersion,
+        }
     };
 
     const socket = window.txConsts.isWebInterface

@@ -199,7 +199,7 @@ export default class TxAdmin {
             this.persistentCache = new PersistentCache(this);
             globalsInternal.persistentCache = this.persistentCache;
 
-            this.updateChecker = new UpdateChecker();
+            this.updateChecker = new UpdateChecker(this);
             globalsInternal.updateChecker = this.updateChecker;
         } catch (error) {
             console.error(`Error starting main components:`);
