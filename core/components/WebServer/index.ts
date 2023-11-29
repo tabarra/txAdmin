@@ -45,7 +45,7 @@ export default class WebServer {
     private koaCallback: (req: any, res: any) => Promise<void>;
     //setupWebSocket
     private io: SocketIO;
-    private webSocket: WebSocket;
+    public webSocket: WebSocket;
     //setupServerCallbacks
     private httpServer?: HttpClass.Server;
 

@@ -4,6 +4,7 @@ import TxAdmin from '@core/txAdmin.js';
 import { ServerPlayer } from '@core/playerLogic/playerClasses.js';
 import { DatabasePlayerType } from '../PlayerDatabase/databaseTypes';
 import consoleFactory from '@extras/console';
+import { PlayerDroppedEventType, PlayerJoiningEventType } from '@shared/socketioTypes';
 const console = consoleFactory(modulename);
 
 
@@ -106,7 +107,7 @@ export default class PlayerlistManager {
      * Returns a specifc ServerPlayer or undefined.
      * NOTE: this returns the actual object and not a deep clone!
      */
-     getOnlinePlayersByLicense(searchLicense: string) {
+    getOnlinePlayersByLicense(searchLicense: string) {
         return this.#playerlist.filter(p => p && p.license === searchLicense && p.isConnected) as ServerPlayer[];
     }
 
@@ -129,7 +130,7 @@ export default class PlayerlistManager {
                     ts: Date.now(),
                     data: { ids: this.#playerlist[payload.id]!.ids }
                 }], mutex);
-                this.#txAdmin.webServer.webSocket!.buffer('playerlist', {
+                this.#txAdmin.webServer.webSocket.buffer<PlayerJoiningEventType>('playerlist', {
                     mutex,
                     type: 'playerJoining',
                     netid: svPlayer.netid,
@@ -153,7 +154,7 @@ export default class PlayerlistManager {
                     ts: Date.now(),
                     data: { reason: payload.reason }
                 }], mutex);
-                this.#txAdmin.webServer.webSocket!.buffer('playerlist', {
+                this.#txAdmin.webServer.webSocket.buffer<PlayerDroppedEventType>('playerlist', {
                     mutex,
                     type: 'playerDropped',
                     netid: this.#playerlist[payload.id]!.netid,

@@ -13,6 +13,7 @@ import { useSetOfflineWarning } from '@/hooks/useWarningBar';
 import { pageTitleWatcher } from '@/hooks/pages';
 import { useAtomValue } from 'jotai';
 import { getSocket } from '@/lib/utils';
+import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
 
 
 
@@ -28,6 +29,7 @@ export default function MainShell() {
     const socketStateChangeCounter = useRef(0);
     const setIsSocketOffline = useSetOfflineWarning();
     const setGlobalStatus = useSetGlobalStatus();
+    const processPlayerlistEvents = useProcessPlayerlistEvents();
 
     useEffect(() => {
         const rooms = window.txConsts.isWebInterface ? ['status', 'playerlist'] : ['status'];
@@ -43,7 +45,7 @@ export default function MainShell() {
             const newId = socketStateChangeCounter.current + 1;
             socketStateChangeCounter.current = newId;
             setTimeout(() => {
-                if(socketStateChangeCounter.current === newId){
+                if (socketStateChangeCounter.current === newId) {
                     setIsSocketOffline(true);
                 }
             }, 500);
@@ -59,8 +61,7 @@ export default function MainShell() {
         });
         socket.on('playerlist', function (playerlistData) {
             if (!window.txConsts.isWebInterface) return;
-            console.log('playerlist', playerlistData);
-            // processPlayerlistEvents(playerlistData);
+            processPlayerlistEvents(playerlistData);
         });
 
         return () => {
@@ -78,7 +79,7 @@ export default function MainShell() {
             <main className="flex flex-1 min-h-[calc(100vh-5.5rem-1px)]">
                 <MainRouter />
             </main>
-            <PlayersSidebar />
+            {window.txConsts.isWebInterface && <PlayersSidebar />}
         </div>
 
         <MainSheets />

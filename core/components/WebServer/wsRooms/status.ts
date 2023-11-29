@@ -14,7 +14,6 @@ const getinitialData = (txAdmin: TxAdmin): GlobalStatusType => {
         // @ts-ignore simplifying the status enum to a string
         discord: txAdmin.discordBot.wsStatus, //no push events, only passively updated
         server: {
-            mutex: txAdmin.fxRunner?.currentMutex,
             status: txAdmin.healthMonitor.currentStatus || '??',
             process: txAdmin.fxRunner.getStatus(),
             instantiated: !!txAdmin.fxRunner.fxChild, //used to disable the control buttons

@@ -142,7 +142,7 @@ export default class WebSocket {
     /**
      * Adds data to the buffer
      */
-    buffer(roomName: RoomNames, data: any) {
+    buffer<T>(roomName: RoomNames, data: T) {
         const room = this.#rooms[roomName];
         if (!room) throw new Error('Room not found');
 
