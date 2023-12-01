@@ -75,7 +75,7 @@ Processo:
         - [ ] generic toasts
         - [ ] markdown toasts
         - [ ] error toasts with discord link
-    - [ ][2h] prompts API
+    - [x][2h] prompts API
     - [ ][2h] server controls
     - [ ][1h] server scheduled restarts (legacy style)
     - [ ][3d] playerlist

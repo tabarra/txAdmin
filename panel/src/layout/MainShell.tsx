@@ -14,7 +14,8 @@ import { pageTitleWatcher } from '@/hooks/pages';
 import { useAtomValue } from 'jotai';
 import { getSocket } from '@/lib/utils';
 import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
-
+import ConfirmDialog from '@/components/ConfirmDialog';
+import PromptDialog from '@/components/PromptDialog';
 
 
 export default function MainShell() {
@@ -91,6 +92,8 @@ export default function MainShell() {
 
         <MainSheets />
         <WarningBar />
+        <ConfirmDialog />
+        <PromptDialog />
         {/* <BreakpointDebugger /> */}
     </>;
 }

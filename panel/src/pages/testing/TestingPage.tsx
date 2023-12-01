@@ -13,7 +13,7 @@ export default function TestingPage() {
     setPageTitle();
 
     return <div className="flex flex-col gap-4 w-full m-4">
-        <TmpSocket />
+        {/* <TmpSocket /> */}
         {/* <TmpWarningBarState /> */}
         {/* <TmpAuthState /> */}
         {/* <TmpTerminal /> */}
