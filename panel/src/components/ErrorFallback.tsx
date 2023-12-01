@@ -90,7 +90,7 @@ export function GenericErrorBoundaryCard(props: GenericErrorBoundaryCardProps) {
                 <Button
                     asChild
                     variant="outline"
-                    className="bg-discord hover:bg-discord-active animate-pulse"
+                    className="bg-discord hover:bg-discord-active animate-pulse hover:animate-none"
                 >
                     <a href="http://discord.gg/txAdmin" target="_blank" rel="noopener noreferrer">
                         Support Discord

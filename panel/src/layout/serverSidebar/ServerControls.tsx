@@ -10,6 +10,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useOpenConfirmDialog, useOpenPromptDialog } from '@/hooks/dialogs';
 
 
 const tooltipDelay = 300;
@@ -38,17 +39,34 @@ const controlButtonsVariants = cva(
 
 export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
     const processInstantiated = useAtomValue(processInstantiatedAtom);
+    const openConfirmDialog = useOpenConfirmDialog();
+    const openPromptDialog = useOpenPromptDialog();
 
     const handleStartStop = () => {
         alert('FIXME: Start/stop');
     }
     const handleRestart = () => {
         if (!processInstantiated) return;
-        alert('FIXME: Restart');
+        openConfirmDialog({
+            title: 'Restart Server',
+            message: 'Are you sure you want to restart the server?',
+            onConfirm: () => {
+                // alert('FIXME: restart');
+            },
+        });
     }
     const handleAnnounce = () => {
         if (!processInstantiated) return;
-        alert('FIXME: Announce');
+        openPromptDialog({
+            title: 'Send Announcement',
+            message: 'Type the message to be broadcasted to all players.',
+            placeholder: 'the event will start in xxx minutes!',
+            submitLabel: 'Send',
+            required: true,
+            onSubmit: (input) => {
+                alert(`Announcement: ${input}`);
+            }
+        });
     }
     const handleKickAll = () => {
         if (!processInstantiated) return;
@@ -63,7 +81,7 @@ export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
                         {processInstantiated
                             ? <button
                                 onClick={handleStartStop}
-                                className={cn(controlButtonsVariants({ type: 'destructive' }))}
+                                className={controlButtonsVariants({ type: 'destructive' })}
                             >
                                 <PowerOffIcon className='h-5' />
                             </button>
@@ -100,7 +118,7 @@ export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
                     <TooltipTrigger asChild>
                         <button
                             onClick={handleAnnounce}
-                            className={cn(controlButtonsVariants())}
+                            className={controlButtonsVariants()}
                             disabled={!processInstantiated}
                         >
                             <MegaphoneIcon className='h-5' />
