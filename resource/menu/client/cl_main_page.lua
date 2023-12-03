@@ -250,3 +250,8 @@ RegisterNetEvent('txcl:clearArea', function(radius)
     -- after found nativedb info. Maybe needs research lmao?
     ClearAreaLeaveVehicleHealth(curCoords.x, curCoords.y, curCoords.z, radiusToFloat, false, false, false, false, false)
 end)
+
+-- Teleport to the current waypoint via command for key mapping
+RegisterCommand('txAdmin:menu:tpToWaypoint', function()
+    TriggerServerEvent('txsv:req:tpToWaypoint')
+end)

@@ -83,6 +83,7 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
     RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
     RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
+    RegisterKeyMapping('txAdmin:menu:tpToWaypoint', 'Menu: Teleport to waypoint', 'KEYBOARD', '')
   else
     noMenuReason = tostring(rejectReason)
     debugPrint("^3[AUTH] rejected (" .. noMenuReason .. ")")
