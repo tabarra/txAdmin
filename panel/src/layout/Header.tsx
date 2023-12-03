@@ -5,7 +5,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn, openExternalLink } from "@/lib/utils";
 import { KeyRoundIcon, LogOutIcon, Menu, Monitor, MoonIcon, PersonStanding, SunIcon } from "lucide-react";
 import DesktopHeader from "./DesktopNavbar";
 import Avatar from "@/components/Avatar";
@@ -117,7 +117,7 @@ function AuthedHeaderFragment() {
         alert('TODO: open change password modal');
     }
     const gotoSupportDiscord = () => {
-        window.open('https://discord.gg/uAmsGa2', '_blank');
+        openExternalLink('https://discord.gg/uAmsGa2');
     }
     const doLogout = () => {
         logout.mutate();

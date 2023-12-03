@@ -1,4 +1,4 @@
-import { stripIndent } from '@/lib/utils';
+import { openExternalLink, stripIndent } from '@/lib/utils';
 import Markdown, { Components } from 'react-markdown';
 import InlineCode from './InlineCode';
 import { ExternalLink } from 'lucide-react';
@@ -8,8 +8,9 @@ function CustomAnchor({ href, children }: { href?: string, children: React.React
     const setLocation = useLocation()[1];
     const isExternal = href?.startsWith('http');
     const onClick = () => {
+        if (!href) return;
         if (isExternal) {
-            window.open(href, '_blank');
+            openExternalLink(href);
         } else {
             setLocation(href ?? '/');
         }

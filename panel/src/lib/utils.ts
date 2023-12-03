@@ -78,3 +78,31 @@ export const getSocket = (rooms: string[] | string) => {
 
     return socket;
 }
+
+
+/**
+ * Opens a link in a new tab, or calls the native function to open a link in the default browser
+ */
+export const openExternalLink = (url: string) => {
+    if (!url) return;
+    if (window.invokeNative) {
+        window.invokeNative('openUrl', url);
+    } else {
+        window.open(url, '_blank');
+    }
+}
+
+/**
+ * Overwrites the href behavior in NUI to open external links
+ */
+export const handleExternalLinkClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    if (window.txConsts.isWebInterface) return;
+    const target = event.target as HTMLElement;
+    const anchorElement = target.closest('a');
+    if (!anchorElement) return;
+    const href = anchorElement.getAttribute('href');
+    if (!href) return;
+
+    event.preventDefault();
+    openExternalLink(href);
+}
