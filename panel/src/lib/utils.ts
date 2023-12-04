@@ -92,15 +92,16 @@ export const openExternalLink = (url: string) => {
     }
 }
 
+
 /**
  * Overwrites the href behavior in NUI to open external links
  */
 export const handleExternalLinkClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (window.txConsts.isWebInterface) return;
     const target = event.target as HTMLElement;
-    const anchorElement = target.closest('a');
-    if (!anchorElement) return;
-    const href = anchorElement.getAttribute('href');
+    const anchor = target.closest('a');
+    if (!anchor) return;
+    const href = anchor.getAttribute('href');
     if (!href) return;
 
     event.preventDefault();

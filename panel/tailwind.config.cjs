@@ -124,6 +124,9 @@ module.exports = {
       },
     },
   },
+  safelist: [
+    'text-yellow-600', //server status - temp schedule - light mode  
+  ],
   plugins: [
     require("tailwindcss-animate"),
     require('@tailwindcss/typography'),

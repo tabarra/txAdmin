@@ -39,7 +39,7 @@ export default function ServerSchedule() {
                 showEnableBtn = true;
             }
         } else {
-            nextScheduledClasses = 'text-warning';
+            nextScheduledClasses = 'text-yellow-600 dark:text-warning';
             if (!isLessThanMinute) {
                 showCancelBtn = true;
             }

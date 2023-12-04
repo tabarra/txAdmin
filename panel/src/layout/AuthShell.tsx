@@ -9,7 +9,7 @@ import { Card } from "../components/ui/card";
 export default function AuthShell() {
     return (
         <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center m-4 w-full xs:w-96 min-w-[300px]">
+            <div className="text-center m-4 w-full xs:w-[25rem] min-w-[20rem]">
                 <Link
                     href="/login"
                     className="bg-accent hover:bg-accent/75 text-3xl
@@ -18,7 +18,7 @@ export default function AuthShell() {
                     txAdmin
                 </Link>
 
-                <Card className="min-h-[16rem] mt-8 mb-4 p-4 flex items-center justify-center">
+                <Card className="min-h-64 mt-8 mb-4 p-4 flex items-center justify-center">
                     <Switch>
                         <Route path="/login"><Login /></Route>
                         <Route path="/login/callback"><CfxreCallback /></Route>
@@ -30,16 +30,16 @@ export default function AuthShell() {
                     </Switch>
                 </Card>
 
-                <div className="flex gap-4 justify-center mb-2">
+                <div className="mx-auto flex flex-wrap gap-4 justify-center mb-2">
                     <Link
                         href="/"
-                        className="bg-accent hover:bg-accent/75 text-xl p-1 font-bold tracking-widest rounded w-full"
+                        className="h-16 w-48 bg-accent hover:bg-accent/75 text-xl p-1 font-bold tracking-widest rounded-lg flex justify-center items-center"
                     >
                         ZAP
                     </Link>
                     <Link
                         href="/"
-                        className="bg-accent hover:bg-accent/75 text-xl p-1 font-bold tracking-widest rounded w-full"
+                        className="h-16 w-48 bg-accent hover:bg-accent/75 text-xl p-1 font-bold tracking-widest rounded-lg flex justify-center items-center"
                     >
                         Discord
                     </Link>

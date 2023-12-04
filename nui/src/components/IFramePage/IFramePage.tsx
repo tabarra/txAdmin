@@ -44,7 +44,7 @@ export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
   }, [handleChildPost]);
 
   return (
-    <StyledRoot mt={2} mb={10} display={visible ? "initial" : "none"}>
+    <StyledRoot mt={2} mb={9} display={visible ? "initial" : "none"}>
       {visible && <StyledIFrame src={trueFrameSource} />}
     </StyledRoot>
   );
