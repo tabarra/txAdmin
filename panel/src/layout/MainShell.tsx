@@ -16,6 +16,7 @@ import { getSocket } from '@/lib/utils';
 import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import PromptDialog from '@/components/PromptDialog';
+import TxToaster from '../components/TxToaster';
 
 
 export default function MainShell() {
@@ -94,6 +95,7 @@ export default function MainShell() {
         <WarningBar />
         <ConfirmDialog />
         <PromptDialog />
+        <TxToaster />
         {/* <BreakpointDebugger /> */}
     </>;
 }

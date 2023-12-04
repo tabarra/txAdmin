@@ -71,14 +71,19 @@
         --ring: 224 10.2% 9.6%;
 
         /* Semantic colors used for button variants and maybe more */
+        /* hint generated with the 50 variant of the color - https://uicolors.app/create */
         --destructive: 0 84.5% 59.6%;
         --destructive-foreground: 0 0% 100%;
+        --destructive-hint: 0 85.7% 97.3%;
         --warning: 47.1 77.5% 56.5%;
         --warning-foreground: 48.9 77.1% 6.9%;
+        --warning-hint: 53.3 75% 95.3%;
         --success: 136.6 77.6% 56.3%;
         --success-foreground: 137.5 80% 5.9%;
+        --success-hint: 136 88.2% 96.7%;
         --info: 191.1 77.6% 56.3%;
         --info-foreground: 195 66.7% 1.2%;
+        --info-hint: 187.1 89.5% 96.3%;
 
         /* Other stuff */
         --font-sans: "Inter Variable";
@@ -151,14 +156,19 @@
         --ring: 224 6.7% 97.1%;
 
         /* Semantic colors used for button variants and maybe more */
+        /* hint generated with the 950 variant of the color - https://uicolors.app/create */
         --destructive: 0 91.3% 68.4%;
         --destructive-foreground: 0 0% 100%;
+        --destructive-hint: 0 74.7% 15.5%;
         --warning: 47.2 75.9% 62.5%;
         --warning-foreground: 48.9 77.1% 6.9%;
+        --warning-hint: 21.9 72.2% 14.1%;
         --success: 136.7 73.1% 60.6%;
         --success-foreground: 136.2 72.2% 7.1%;
+        --success-hint: 139.5 84.3% 10%;
         --info: 191.1 69.2% 61.8%;
         --info-foreground: 197.1 63.6% 2.2%;
+        --info-hint: 200.5 57.9% 14.9%;
 
         /* Other stuff */
         --font-sans: "Inter Variable";

@@ -1,5 +1,5 @@
 /* eslint-disable */
-const { fontFamily } = require("tailwindcss/defaultTheme")
+const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   theme: {
     container: {
       center: true,
@@ -50,18 +50,22 @@ module.exports = {
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          hint: "hsl(var(--destructive-hint))",
         },
         warning: {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
+          hint: "hsl(var(--warning-hint))",
         },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
+          hint: "hsl(var(--success-hint))",
         },
         info: {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
+          hint: "hsl(var(--info-hint))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -86,6 +90,7 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        //Animation for the accordion - default from shadcn
         "accordion-down": {
           from: { height: 0 },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -94,10 +99,28 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+
+        //Animation for the toastbar copied from react-hot-toast, except for the icon animation
+        //https://github.com/timolins/react-hot-toast/blob/main/site/tailwind.config.js
+        "toastbar-icon": {
+          '0%': { transform: 'scale(0.5)', opacity: 0 },
+          '100%': { transform: 'scale(1)', opacity: 1 },
+        },
+        "toastbar-enter": {
+          '0%': { transform: 'scale(0.9)', opacity: 0 },
+          '100%': { transform: 'scale(1)', opacity: 1 },
+        },
+        "toastbar-leave": {
+          '0%': { transform: 'scale(1)', opacity: 1 },
+          '100%': { transform: 'scale(0.9)', opacity: 0 },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "toastbar-icon": 'toastbar-icon 350ms ease-out',
+        "toastbar-enter": 'toastbar-enter 200ms ease-out',
+        "toastbar-leave": 'toastbar-leave 150ms ease-in forwards',
       },
     },
   },
@@ -105,4 +128,4 @@ module.exports = {
     require("tailwindcss-animate"),
     require('@tailwindcss/typography'),
   ],
-}
+};

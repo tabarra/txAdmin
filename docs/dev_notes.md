@@ -71,10 +71,10 @@ Processo:
         - [x][4h] update notices via socket.io
         - [x][2h] tooltips on everything
         - [ ][1h] zap hosting advertisement
-    - [ ][1d] toasts API
-        - [ ] generic toasts
-        - [ ] markdown toasts
-        - [ ] error toasts with discord link
+    - [x][1d] toasts API
+        - [x] generic toasts
+        - [x] markdown toasts
+        - [x] error toasts with discord link
     - [x][2h] prompts API
     - [ ][2h] server controls
     - [ ][1h] server scheduled restarts (legacy style)
