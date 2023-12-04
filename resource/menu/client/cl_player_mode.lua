@@ -36,14 +36,23 @@ local function toggleSuperJump(enabled)
     end
 end
 
-
+local ped
 local function toggleGodMode(enabled)
     if enabled then
         sendPersistentAlert('godModeEnabled', 'info', 'nui_menu.page_main.player_mode.godmode.success', true)
     else
         clearPersistentAlert('godModeEnabled')
     end
-    SetEntityInvincible(PlayerPedId(), enabled)
+    ped = PlayerPedId()
+    SetEntityInvincible(ped, enabled)
+    SetPlayerInvincible(PlayerId(), enabled)
+    SetPedCanRagdoll(ped, not enabled)
+    ClearPedBloodDamage(ped)
+    ResetPedVisibleDamage(ped)
+    ClearPedLastWeaponDamage(ped)
+    SetEntityProofs(ped, enabled, enabled, enabled, enabled, enabled, enabled, enabled, enabled)
+    SetEntityOnlyDamagedByPlayer(ped, not enabled)
+    SetEntityCanBeDamaged(ped, not enabled)
 end
 
 local freecamVeh = 0
