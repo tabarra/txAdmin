@@ -1,4 +1,4 @@
-import { openExternalLink, stripIndent } from '@/lib/utils';
+import { cn, openExternalLink, stripIndent } from '@/lib/utils';
 import Markdown, { Components } from 'react-markdown';
 import InlineCode from './InlineCode';
 import { ExternalLink } from 'lucide-react';
@@ -15,9 +15,9 @@ function CustomAnchor({ href, children }: { href?: string, children: React.React
             setLocation(href ?? '/');
         }
     }
-    return <button onClick={onClick} className="text-accent no-underline hover:underline">
+    return <button onClick={onClick} className="text-accent no-underline hover:underline m-0">
         {children}
-        {isExternal && <ExternalLink className="inline ml-1 mb-1" />}
+        {isExternal && <ExternalLink className="inline ml-1 mb-1 h-5 [.prose-sm_&]:h-4 [.prose-sm_&]:ml-0" />}
     </button>
 }
 
@@ -33,10 +33,19 @@ const customComponents: Components = {
 
 type Props = {
     md: string;
+    isSmall?: boolean;
+    isTitle?: boolean;
 };
-export default function MarkdownProse({ md }: Props) {
+export default function MarkdownProse({ md, isSmall, isTitle }: Props) {
     return (
-        <Markdown components={customComponents} className="prose dark:prose-invert">
+        <Markdown
+        components={customComponents}
+        className={cn(
+            'prose prose-zinc dark:prose-invert',
+            isSmall && 'prose-sm',
+            isTitle && 'tracking-wide',
+        )}
+        >
             {stripIndent(md.replace(/\n/g, '  \n'))}
         </Markdown>
     );
