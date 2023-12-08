@@ -83,8 +83,7 @@ function ButtonToggleGlobalMenu({ className }: NavButtonProps) {
 
 function ButtonTogglePlayerlistSheet({ className }: NavButtonProps) {
     const { setIsSheetOpen } = usePlayerlistSheet();
-    // const [playerCount] = usePlayerCount();
-    const playerCount = 1234; //FIXME:
+    const playerCount = useAtomValue(playerCountAtom);
 
     return (
         <button

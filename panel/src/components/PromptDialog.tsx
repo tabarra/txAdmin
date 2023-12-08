@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useClosePromptDialog, usePromptDialogState } from "@/hooks/dialogs";
 import { useRef } from "react";
+import { cn } from "@/lib/utils";
 
 
 export default function PromptDialog() {
@@ -41,7 +42,7 @@ export default function PromptDialog() {
 
     return (
         <Dialog open={dialogState.isOpen} onOpenChange={handleOpenClose}>
-            <DialogContent>
+            <DialogContent className={cn(dialogState.isWide && "md:max-w-2xl")}>
                 <form onSubmit={handleForm} className="grid gap-4">
                     <DialogHeader>
                         <DialogTitle>{dialogState.title}</DialogTitle>
@@ -55,11 +56,12 @@ export default function PromptDialog() {
                         id="userInput"
                         ref={inputRef}
                         placeholder={dialogState.placeholder}
+                        autoComplete="off"
                         className="placeholder:opacity-50"
                         required={dialogState.required}
                     />
                     <DialogFooter className="gap-2 flex-col">
-                        <div className="flex flex-col-reversex flex-col sm:flex-row sm:justify-start gap-2 w-full flex-wrap">
+                        <div className="flex flex-col sm:flex-row sm:justify-start gap-2 w-full flex-wrap">
                             {dialogState.suggestions && dialogState.suggestions.map((suggestion, index) => (
                                 <Button
                                     key={index}

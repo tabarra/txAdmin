@@ -1,144 +1,5 @@
 /* eslint-disable no-unused-vars */
 //================================================================
-//================================================= Helper funcs
-//================================================================
-const msToDuration = humanizeDuration.humanizer({
-    round: true,
-});
-const msToShortDuration = humanizeDuration.humanizer({
-    round: true,
-    spacer: '',
-    language: 'shortEn',
-});
-
-//================================================================
-//============================================== Dynamic Stats
-//================================================================
-const faviconEl = document.getElementById('favicon');
-const statusCard = {
-    self: document.getElementById('status-card'),
-    discord: document.getElementById('status-discord'),
-    server: document.getElementById('status-server'),
-    serverProcess: document.getElementById('status-serverProcess'),
-    nextRestartTime: document.getElementById('status-nextRestartTime'),
-    nextRestartBtnCancel: document.getElementById('status-nextRestartBtnCancel'),
-    nextRestartBtnEnable: document.getElementById('status-nextRestartBtnEnable'),
-};
-
-const setBadgeColor = (el, color) => {
-    const targetColorClass = `badge-${color}`;
-    if (!el.classList.contains(targetColorClass)) {
-        el.classList.remove('badge-primary', 'badge-secondary', 'badge-success', 'badge-danger', 'badge-warning', 'badge-info', 'badge-light', 'badge-dark');
-        el.classList.add(targetColorClass);
-    }
-};
-const setNextRestartTimeClass = (cssClass) => {
-    const el = statusCard.nextRestartTime;
-    if (!el.classList.contains(cssClass)) {
-        el.classList.remove('font-weight-light', 'text-warning', 'text-muted');
-        el.classList.add(cssClass);
-    }
-};
-
-const updateStatusCard = (discordData, serverData, schedulerData) => {
-    if(!statusCard.self) return;
-
-    setBadgeColor(statusCard.discord, discordData.statusClass);
-    statusCard.discord.textContent = discordData.status;
-    setBadgeColor(statusCard.server, serverData.statusClass);
-    statusCard.server.textContent = serverData.status;
-    statusCard.serverProcess.textContent = serverData.process;
-
-    if (typeof schedulerData.nextRelativeMs !== 'number') {
-        setNextRestartTimeClass('font-weight-light');
-        statusCard.nextRestartTime.textContent = 'not scheduled';
-    } else {
-        const tempFlag = (schedulerData.nextIsTemp)? '(tmp)' : '';
-        const relativeTime = msToDuration(schedulerData.nextRelativeMs, {units: ['h', 'm']});
-        const isLessThanMinute = schedulerData.nextRelativeMs < 60_000;
-        if(isLessThanMinute){
-            statusCard.nextRestartTime.textContent = `right now ${tempFlag}`;
-            statusCard.nextRestartBtnCancel.classList.add('d-none');
-            statusCard.nextRestartBtnEnable.classList.add('d-none');
-        }else{
-            statusCard.nextRestartTime.textContent = `in ${relativeTime} ${tempFlag}`;
-        }
-
-        if (schedulerData.nextSkip) {
-            setNextRestartTimeClass('text-muted');
-            if(!isLessThanMinute) {
-                statusCard.nextRestartBtnCancel.classList.add('d-none');
-                statusCard.nextRestartBtnEnable.classList.remove('d-none');
-            }
-        } else {
-            setNextRestartTimeClass('text-warning');
-            if(!isLessThanMinute) {
-                statusCard.nextRestartBtnCancel.classList.remove('d-none');
-                statusCard.nextRestartBtnEnable.classList.add('d-none');
-            }
-        }
-    }
-};
-
-const updatePageTitle = (serverStatusClass, serverName, playerCount) => {
-    if(!isWebInterface) return;
-    
-    const pageName = PAGE_TITLE || 'txAdmin';
-    document.title = `(${playerCount}) ${serverName} | ${pageName}`;
-
-    let iconType = 'default';
-    if (serverStatusClass === 'success') {
-        iconType = 'online';
-    } else if (serverStatusClass === 'warning') {
-        iconType = 'partial';
-    } else if (serverStatusClass === 'danger') {
-        iconType = 'offline';
-    }
-    faviconEl.href = `img/favicon_${iconType}.png`;
-};
-
-const updateHostStats = (hostData) => {
-    if(!isWebInterface) return;
-    
-    $('#hostusage-cpu-bar').attr('aria-valuenow', hostData.cpu.pct).css('width', hostData.cpu.pct + '%');
-    $('#hostusage-cpu-text').html(hostData.cpu.text);
-    $('#hostusage-memory-bar').attr('aria-valuenow', hostData.memory.pct).css('width', hostData.memory.pct + '%');
-    $('#hostusage-memory-text').html(hostData.memory.text);
-};
-
-function updateStatus(data) {
-    updateStatusCard(data.discord, data.server, data.scheduler);
-    // if (isWebInterface) {
-    //     updatePageTitle(data.server.statusClass, data.server.name, data.server.players);
-    //     updateHostStats(data.host);
-    // }
-}
-function updateStatusOffline() {
-    if (statusCard.self) {
-        setBadgeColor(statusCard.discord, 'light');
-        statusCard.discord.textContent = '--';
-        setBadgeColor(statusCard.server, 'light');
-        statusCard.server.textContent = '--';
-        statusCard.serverProcess.textContent = '--';
-        setNextRestartTimeClass('text-muted');
-        statusCard.nextRestartTime.textContent = '--';
-        statusCard.nextRestartBtnCancel.classList.add('d-none');
-        statusCard.nextRestartBtnEnable.classList.add('d-none');
-    }
-    if (isWebInterface) {
-        $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
-        $('#hostusage-cpu-text').html('error');
-        $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
-        $('#hostusage-memory-text').html('error');
-        document.title = 'ERROR - txAdmin';
-        faviconEl.href = `img/favicon_offline.png`;
-        setPlayerlistMessage('Page Disconnected 😓');
-    }
-}
-
-
-
-//================================================================
 //========================================== Change Password Modal
 //================================================================
 function changeOwnPasswordModal() {
@@ -226,21 +87,13 @@ const getSocket = (rooms) => {
 }
 
 const startMainSocket = () => {
-    // return;
-    const rooms = isWebInterface ? ['status', 'playerlist'] : ['status'];
-    const socket = getSocket(rooms);
-    socket.on('error', (error) => {
-        console.log('Main Socket.IO', error);
-    });
-    socket.on('connect', () => {
-        console.log("Main Socket.IO Connected.");
-    });
+    if(!isWebInterface) return;
+    const socket = getSocket(['playerlist']);
     socket.on('disconnect', (message) => {
         console.log("Main Socket.IO Disonnected:", message);
-        updateStatusOffline();
-    });
-    socket.on('status', function (status) {
-        updateStatus(status);
+        if (isWebInterface) {
+            setPlayerlistMessage('Page Disconnected 😓');
+        }
     });
     socket.on('playerlist', function (playerlistData) {
         if(!isWebInterface) return;
@@ -249,10 +102,6 @@ const startMainSocket = () => {
 }
 
 document.addEventListener('DOMContentLoaded', function (event) {
-    //Setting up status refresh
-    // refreshData();
-    // setInterval(refreshData, STATUS_REFRESH_INTERVAL);
-
     //Starting status/playerlist socket.io
     startMainSocket();
 
@@ -261,38 +110,3 @@ document.addEventListener('DOMContentLoaded', function (event) {
         $('#modChangePassword').modal('show');
     }
 });
-
-
-//================================================================
-//=================================== Globally Available API Funcs
-//================================================================
-async function txApiFxserverControl(action) {
-    const confirmOptions = { content: `Are you sure you would like to <b>${action.toUpperCase()}</b> the server?` };
-    if (action !== 'start' && !await txAdminConfirm(confirmOptions)) {
-        return;
-    }
-    const messageMap = {
-        start: 'Starting server',
-        stop: 'Stopping server',
-        restart: 'Restarting server',
-    }
-    const { notify , progressTimerId } = startHoldingNotify(messageMap[action]);
-
-    txAdminAPI({
-        url: '/fxserver/controls',
-        type: 'POST',
-        data: {action},
-        timeout: REQ_TIMEOUT_REALLY_REALLY_LONG,
-        success: function (data) {
-            clearInterval(progressTimerId);
-            if (checkApiLogoutRefresh(data)) return;
-            updateMarkdownNotification(data, notify);
-        },
-        error: function (xmlhttprequest, textstatus, message) {
-            clearInterval(progressTimerId);
-            notify.update('progress', 0);
-            notify.update('type', 'danger');
-            notify.update('message', message);
-        },
-    });
-}

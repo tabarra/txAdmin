@@ -108,8 +108,7 @@ Processo:
 - [ ][2d] NEW PAGE: Live console
 - [ ][2d] NEW PAGE: Players
 - [ ][1d] NEW PAGE: History
-- [ ][3h] change password modal
-- [ ][1h] change temp password prompt
+
 - [x][2d] light/dark theme
 - [x][1d] adapt legacy styles to somewhat match shadcn
 - [ ][3h] full cleanup of legacy code
@@ -134,10 +133,10 @@ Quickies
 
 Bugs
 - [ ] when you open the server sheet, the control tooltip shows automatically
-- [ ] nui iframe scroll on 1080p screen
+- [x] nui iframe scroll on 1080p screen
     - should not scroll even with 7 server menu items
     - possible solution would be to hide the zap ad if !isWebInterface
-- [ ] no `target="_blank"` will work in NUI (zap ad + support), so either hide the buttons or find a way to open links
+- [x] no `target="_blank"` will work in NUI (zap ad + support), so either hide the buttons or find a way to open links
 
 
 =======================================================================
