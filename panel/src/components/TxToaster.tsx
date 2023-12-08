@@ -4,27 +4,24 @@ import { cva } from "class-variance-authority";
 import { AlertCircleIcon, AlertOctagonIcon, CheckCircleIcon, ChevronRightCircle, InfoIcon, Loader2Icon, XIcon } from "lucide-react";
 import toast, { Toast, Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { ApiToastResp } from "@shared/genericApiTypes";
+
 
 /**
  * Types
  */
-type TxToastType = 'default' | 'loading' | 'info' | 'success' | 'warning' | 'error';
+export const validToastTypes = ['default', 'loading', 'info', 'success', 'warning', 'error'] as const;
+type TxToastType = typeof validToastTypes[number];
 
 type TxToastData = string | {
     title?: string;
-    message: string;
-    md?: true
+    md?: boolean
+    msg: string;
 }
 
 type TxToastOptions = {
     id?: string;
     duration?: number;
-}
-
-type CustomToastProps = {
-    t: Toast,
-    type: TxToastType,
-    data: TxToastData,
 }
 
 
@@ -61,6 +58,12 @@ const toastIconMap = {
     warning: <AlertCircleIcon className="stroke-warning animate-toastbar-icon" />,
     error: <AlertOctagonIcon className="stroke-destructive animate-toastbar-icon" />,
 } as const;
+
+type CustomToastProps = {
+    t: Toast,
+    type: TxToastType,
+    data: TxToastData,
+}
 
 export const CustomToast = ({ t, type, data }: CustomToastProps) => {
     const [elapsedTime, setElapsedTime] = useState(0);
@@ -100,12 +103,12 @@ export const CustomToast = ({ t, type, data }: CustomToastProps) => {
                 ) : data.md ? (
                     <>
                         <MarkdownProse md={`**${data.title}**`} isSmall isTitle />
-                        <MarkdownProse md={data.message} isSmall />
+                        <MarkdownProse md={data.msg} isSmall />
                     </>
                 ) : (
                     <>
                         <span className="font-semibold mb-1">{data.title}</span>
-                        <span className="block whitespace-pre-line">{data.message}</span>
+                        <span className="block whitespace-pre-line">{data.msg}</span>
                     </>
                 )}
                 {type === 'error' && (
@@ -156,8 +159,12 @@ const callToast = (type: TxToastType, data: TxToastData, options: TxToastOptions
     }, options);
 }
 
-//Exported functions
-export const txToast = {
+//Public interface
+const genericToast = (data: ApiToastResp & { title?: string }, options?: TxToastOptions) => {
+    return callToast(data.type, data, options);
+}
+
+export const txToast = Object.assign(genericToast, {
     default: (data: TxToastData, options?: TxToastOptions) => callToast('default', data, options),
     loading: (data: TxToastData, options?: TxToastOptions) => callToast('loading', data, options),
     info: (data: TxToastData, options?: TxToastOptions) => callToast('info', data, options),
@@ -166,4 +173,4 @@ export const txToast = {
     error: (data: TxToastData, options?: TxToastOptions) => callToast('error', data, options),
     dismiss: toast.dismiss,
     remove: toast.remove,
-}
+});

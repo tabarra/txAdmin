@@ -17,11 +17,11 @@ export default function TmpToasts() {
         txToast.default('Simple text\nLine Break');
         txToast.default({
             title: 'Object message',
-            message: 'Simple message **without** markdown\nbut auto line break.',
+            msg: 'Simple message **without** markdown\nbut auto line break.',
         });
         txToast.error({
             title: 'Error: The bot requires the \`GUILD_MEMBERS\` intent:',
-            message: `- Go to the [Discord Dev Portal](https://discord.com/developers/applications)
+            msg: `- Go to the [Discord Dev Portal](https://discord.com/developers/applications)
             - Navigate to \`Bot > Privileged Gateway Intents\`.
             - Enable the \`GUILD_MEMBERS\` intent.
             - Save on the dev portal.
@@ -36,6 +36,16 @@ export default function TmpToasts() {
             // txToast.dismiss(toastId);
             txToast.success('Bla bla bla!', { id: toastId });
         }, 2500);
+    }
+
+    const openApiResp = () => {
+        //NOTE: the ApiToastResp type allows for a `title` property
+        const exampleApiResp = {
+            type: 'error',
+            md: true,
+            msg: 'This is a **markdown** message',
+        } as const;
+        txToast({ title: 'Error saving whatever', ...exampleApiResp });
     }
 
     return <>
@@ -67,6 +77,13 @@ export default function TmpToasts() {
                 onClick={openUpdatable}
             >
                 Updatable
+            </Button>
+            <Button
+                size={'lg'}
+                variant="default"
+                onClick={openApiResp}
+            >
+                API Resp
             </Button>
         </div>
     </>;

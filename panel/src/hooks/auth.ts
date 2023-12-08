@@ -8,6 +8,10 @@ import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
  */
 const authDataAtom = atom<ReactAuthDataType | false>(window.txConsts.preAuth);
 const isAuthenticatedAtom = atom((get) => !!get(authDataAtom))
+const csrfTokenAtom = atom((get) => {
+    const authData = get(authDataAtom);
+    return authData ? authData.csrfToken : undefined;
+});
 
 
 /**
@@ -16,6 +20,11 @@ const isAuthenticatedAtom = atom((get) => !!get(authDataAtom))
 //Authentication hook, only re-renders on login/logout
 export const useIsAuthenticated = () => {
     return useAtomValue(isAuthenticatedAtom);
+};
+
+//CSRF hook, only re-renders on login/logout
+export const useCsrfToken = () => {
+    return useAtomValue(csrfTokenAtom);
 };
 
 //Wipes auth data from the atom, this is triggered when an api pr page call returns a logout notice

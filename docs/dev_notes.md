@@ -76,6 +76,7 @@ Processo:
         - [x] markdown toasts
         - [x] error toasts with discord link
     - [x][2h] prompts API
+    - [x][2d] useBackendApi hook - wrapper around fetch with optional toast management
     - [ ][2h] server controls
     - [ ][1h] server scheduled restarts (legacy style)
     - [ ][3d] playerlist

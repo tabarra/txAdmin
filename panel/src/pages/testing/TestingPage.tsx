@@ -7,6 +7,7 @@ import TmpWarningBarState from "./TmpWarningBarState";
 import { useSetPageTitle } from "@/hooks/pages";
 import TmpSocket from "./TmpSocket";
 import TmpToasts from "./TmpToasts";
+import TmpApi from "./TmpApi";
 
 
 export default function TestingPage() {
@@ -14,6 +15,7 @@ export default function TestingPage() {
     setPageTitle();
 
     return <div className="flex flex-col gap-4 w-full m-4">
+        {/* <TmpApi /> */}
         {/* <TmpToasts /> */}
         {/* <TmpSocket /> */}
         {/* <TmpWarningBarState /> */}

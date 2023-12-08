@@ -11,7 +11,8 @@ export type GenericApiErrorResp = {
 export type GenericApiResp = ApiAuthErrorResp | GenericApiSuccessResp | GenericApiErrorResp;
 
 export type ApiToastResp = {
-    type: 'success' | 'info' | 'warning' | 'danger', //based on the notify lib, change when possible
-    markdown?: boolean,
-    message: string,
+    type: 'default' | 'info' | 'success' | 'warning' | 'error',
+    title?: string,
+    msg: string,
+    md?: boolean,
 }

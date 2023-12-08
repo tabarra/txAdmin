@@ -113,8 +113,8 @@ export const apiAuthMw = async (ctx: InitializedCtx, next: Function) => {
             //Doing ApiAuthErrorResp & GenericApiErrorResp to maintain compatibility with all routes
             //"error" is used by diagnostic, masterActions, playerlist, whitelist and possibly more
             return sendTypedResp({
-                type: 'danger',
-                message: msg,
+                type: 'error',
+                msg: msg,
                 error: msg
             });
         }
