@@ -11,6 +11,13 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useOpenConfirmDialog, useOpenPromptDialog } from '@/hooks/dialogs';
+import { useMutation } from '@tanstack/react-query';
+import { ApiAuthErrorResp, ApiToastResp } from '@shared/genericApiTypes';
+import { useCsrfToken, useExpireAuthData } from '@/hooks/auth';
+import { txToast } from '@/components/TxToaster';
+import { useRef, useState } from 'react';
+import { useBackendApi } from '@/hooks/useBackendApi';
+import { useCloseAllSheets } from '@/hooks/sheets';
 
 
 const tooltipDelay = 300;
@@ -41,36 +48,81 @@ export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
     const processInstantiated = useAtomValue(processInstantiatedAtom);
     const openConfirmDialog = useOpenConfirmDialog();
     const openPromptDialog = useOpenPromptDialog();
+    const closeAllSheets = useCloseAllSheets();
+    const fxsControlApi = useBackendApi({
+        method: 'POST',
+        path: '/fxserver/controls'
+    });
+    const fxsCommandsApi = useBackendApi({
+        method: 'POST',
+        path: '/fxserver/commands'
+    });
 
+    const handleServerControl = (action: 'start' | 'stop' | 'restart') => {
+        const messageMap = {
+            start: 'Starting server',
+            stop: 'Stopping server',
+            restart: 'Restarting server',
+        }
+        const toastLoadingMessage = `${messageMap[action]}...`;
+        const callApi = () => {
+            closeAllSheets();
+            fxsControlApi({
+                data: { action },
+                toastLoadingMessage,
+            });
+        }
+        if (action === 'start') {
+            callApi();
+        } else {
+            openConfirmDialog({
+                title: messageMap[action],
+                message: `Are you sure you want to ${action} the server?`,
+                onConfirm: callApi,
+            });
+        }
+    }
     const handleStartStop = () => {
-        alert('FIXME: Start/stop');
+        handleServerControl(processInstantiated ? 'stop' : 'start');
     }
     const handleRestart = () => {
         if (!processInstantiated) return;
-        openConfirmDialog({
-            title: 'Restart Server',
-            message: 'Are you sure you want to restart the server?',
-            onConfirm: () => {
-                // alert('FIXME: restart');
-            },
-        });
+        handleServerControl('restart');
     }
+
     const handleAnnounce = () => {
         if (!processInstantiated) return;
         openPromptDialog({
             title: 'Send Announcement',
             message: 'Type the message to be broadcasted to all players.',
-            placeholder: 'the event will start in xxx minutes!',
+            placeholder: 'announcement message',
             submitLabel: 'Send',
             required: true,
             onSubmit: (input) => {
-                alert(`Announcement: ${input}`);
+                closeAllSheets();
+                fxsCommandsApi({
+                    data: { action: 'admin_broadcast', parameter: input },
+                    toastLoadingMessage: 'Sending announcement...',
+                });
             }
         });
     }
+
     const handleKickAll = () => {
         if (!processInstantiated) return;
-        alert('FIXME: KickAll');
+        openPromptDialog({
+            title: 'Kick All Players',
+            message: 'Type the kick reason or leave it blank (press enter)',
+            placeholder: 'kick reason',
+            submitLabel: 'Send',
+            onSubmit: (input) => {
+                closeAllSheets();
+                fxsCommandsApi({
+                    data: { action: 'kick_all', parameter: input },
+                    toastLoadingMessage: 'Kicking players...',
+                });
+            }
+        });
     }
 
     return (
@@ -85,7 +137,7 @@ export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
                             >
                                 <PowerOffIcon className='h-5' />
                             </button>
-                            : <div className="relative flex flex-grow h-8">
+                            : <div className="relative flex flex-grow inset-0">
                                 <div className='absolute inset-0 bg-success animate-pulse rounded blur-sm'></div>
                                 <button
                                     onClick={handleStartStop}
@@ -117,20 +169,6 @@ export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <button
-                            onClick={handleAnnounce}
-                            className={controlButtonsVariants()}
-                            disabled={!processInstantiated}
-                        >
-                            <MegaphoneIcon className='h-5' />
-                        </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Send Announcement</p>
-                    </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <button
                             onClick={handleKickAll}
                             className={controlButtonsVariants()}
                             disabled={!processInstantiated}
@@ -140,6 +178,20 @@ export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>Kick All Players</p>
+                    </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <button
+                            onClick={handleAnnounce}
+                            className={controlButtonsVariants()}
+                            disabled={!processInstantiated}
+                        >
+                            <MegaphoneIcon className='h-5' />
+                        </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Send Announcement</p>
                     </TooltipContent>
                 </Tooltip>
             </div>

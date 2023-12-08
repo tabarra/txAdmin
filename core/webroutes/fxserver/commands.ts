@@ -1,12 +1,12 @@
 const modulename = 'WebServer:FXServerCommands';
-import xssInstancer from '@core/extras/xss.js';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
+import { ApiToastResp } from '@shared/genericApiTypes';
 const console = consoleFactory(modulename);
-const xss = xssInstancer();
 
 //Helper functions
-const escape = (x) => {return x.replace(/"/g, '\uff02');};
-const formatCommand = (cmd, ...params) => {
+const escape = (x: string) => {return x.replace(/"/g, '\uff02');};
+const formatCommand = (cmd: string, ...params: string[]) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
 
@@ -15,30 +15,34 @@ const formatCommand = (cmd, ...params) => {
  * Handle all the server commands
  * @param {object} ctx
  */
-export default async function FXServerCommands(ctx) {
+export default async function FXServerCommands(ctx: AuthedCtx) {
     if (
         typeof ctx.request.body.action === 'undefined'
         || typeof ctx.request.body.parameter === 'undefined'
     ) {
-        return sendAlertOutput(ctx, 'Invalid request!');
+        return ctx.send<ApiToastResp>({
+            type: 'error',
+            msg: 'Invalid request.',
+        });
     }
     const action = ctx.request.body.action;
     const parameter = ctx.request.body.parameter;
+    const fxRunner = ctx.txAdmin.fxRunner;
 
     //Ignore commands when the server is offline
-    if (globals.fxRunner.fxChild === null) {
-        return ctx.send({
-            type: 'danger',
-            message: '<b>Cannot execute this action with the server offline.</b>',
+    if (fxRunner.fxChild === null) {
+        return ctx.send<ApiToastResp>({
+            type: 'error',
+            msg: 'Cannot execute this action with the server offline.',
         });
     }
 
     //Block starting/restarting the 'runcode' resource
     const unsafeActions = ['restart_res', 'start_res', 'ensure_res'];
     if (unsafeActions.includes(action) && parameter.includes('runcode')) {
-        return ctx.send({
-            type: 'danger',
-            message: '<b>Error:</b> The resource "runcode" might be unsafe. <br> If you know what you are doing, run it via the Live Console.',
+        return ctx.send<ApiToastResp>({
+            type: 'error',
+            msg: 'The resource "runcode" might be unsafe. <br> If you know what you are doing, run it via the Live Console.',
         });
     }
 
@@ -49,8 +53,8 @@ export default async function FXServerCommands(ctx) {
         if (!ensurePermission(ctx, 'all_permissions')) return false;
         ctx.admin.logAction('Profiling txAdmin instance.');
 
-        const profSeconds = 5;
-        const savePath = `${globals.info.serverProfilePath}/data/txProfile.bin`;
+        const profileDuration = 5;
+        const savePath = `${ctx.txAdmin.info.serverProfilePath}/data/txProfile.bin`;
         ExecuteCommand('profiler record start');
         setTimeout(async () => {
             ExecuteCommand('profiler record stop');
@@ -58,11 +62,14 @@ export default async function FXServerCommands(ctx) {
                 ExecuteCommand(`profiler save "${escape(savePath)}"`);
                 setTimeout(async () => {
                     console.ok(`Profile saved to: ${savePath}`);
-                    globals.fxRunner.srvCmd(`profiler view "${escape(savePath)}"`);
+                    fxRunner.srvCmd(`profiler view "${escape(savePath)}"`);
                 }, 150);
             }, 150);
-        }, profSeconds * 1000);
-        return sendAlertOutput(ctx, 'Check your live console in a few seconds.');
+        }, profileDuration * 1000);
+        return ctx.send<ApiToastResp>({
+            type: 'success',
+            msg: 'Check your live console in a few seconds.',
+        });
 
     //==============================================
     } else if (action == 'admin_broadcast') {
@@ -70,14 +77,14 @@ export default async function FXServerCommands(ctx) {
         const message = (parameter ?? '').trim();
 
         // Dispatch `txAdmin:events:announcement`
-        const cmdOk = globals.fxRunner.sendEvent('announcement', {
+        fxRunner.sendEvent('announcement', {
             message,
             author: ctx.admin.name,
         });
         ctx.admin.logAction(`Sending announcement: ${parameter}`);
 
         // Sending discord announcement
-        globals.discordBot.sendAnnouncement({
+        ctx.txAdmin.discordBot.sendAnnouncement({
             type: 'info',
             title: {
                 key: 'nui_menu.misc.announcement_title',
@@ -86,9 +93,9 @@ export default async function FXServerCommands(ctx) {
             description: message
         });
 
-        return ctx.send({
-            type: cmdOk ? 'success' : 'danger',
-            message: 'Announcement sent!',
+        return ctx.send<ApiToastResp>({
+            type: 'success',
+            msg: 'Announcement command sent.',
         });
 
     //==============================================
@@ -101,106 +108,105 @@ export default async function FXServerCommands(ctx) {
             cmd = 'txaKickAll "txAdmin Web Panel"';
         }
         ctx.admin.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
+        await fxRunner.srvCmdBuffer(cmd);
+        return ctx.send<ApiToastResp>({
+            type: 'warning',
+            msg: 'Kick All command sent.',
+        });
 
     //==============================================
     } else if (action == 'restart_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
-        let cmd = formatCommand('restart', parameter);
+        const cmd = formatCommand('restart', parameter);
         ctx.admin.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
+        await fxRunner.srvCmdBuffer(cmd);
+        return ctx.send<ApiToastResp>({
+            type: 'warning',
+            msg: 'Resource restart command sent.',
+        });
 
     //==============================================
     } else if (action == 'start_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
-        let cmd = formatCommand('start', parameter);
+        const cmd = formatCommand('start', parameter);
         ctx.admin.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
+        await fxRunner.srvCmdBuffer(cmd);
+        return ctx.send<ApiToastResp>({
+            type: 'warning',
+            msg: 'Resource start command sent.',
+        });
 
     //==============================================
     } else if (action == 'ensure_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
-        let cmd = formatCommand('ensure', parameter);
+        const cmd = formatCommand('ensure', parameter);
         ctx.admin.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
+        await fxRunner.srvCmdBuffer(cmd);
+        return ctx.send<ApiToastResp>({
+            type: 'warning',
+            msg: 'Resource ensure command sent.',
+        });
 
     //==============================================
     } else if (action == 'stop_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
-        let cmd = formatCommand('stop', parameter);
+        const cmd = formatCommand('stop', parameter);
         ctx.admin.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
+        await fxRunner.srvCmdBuffer(cmd);
+        return ctx.send<ApiToastResp>({
+            type: 'warning',
+            msg: 'Resource stop command sent.',
+        });
 
     //==============================================
     } else if (action == 'refresh_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
-        let cmd = 'refresh';
+        const cmd = 'refresh';
         ctx.admin.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
+        await fxRunner.srvCmdBuffer(cmd);
+        return ctx.send<ApiToastResp>({
+            type: 'warning',
+            msg: 'Refresh command sent.',
+        });
 
     //==============================================
     } else if (action == 'check_txaclient') {
-        let cmd = 'txaPing';
+        const cmd = 'txaPing';
         ctx.admin.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd, 512);
-        if (toResp.includes('Pong!')) {
-            return ctx.send({
+        const buffer = await fxRunner.srvCmdBuffer(cmd, 512);
+        if (buffer.includes('Pong!')) {
+            return ctx.send<ApiToastResp>({
                 type: 'success',
-                message: `<b>txAdminClient is running!</b><br> <pre>${xss(toResp)}</pre>`,
+                msg: 'txAdminClient is running!',
             });
         } else {
-            return ctx.send({
-                type: 'danger',
-                message: `<b>txAdminClient is not running!</b><br> <pre>${xss(toResp)}</pre>`,
+            return ctx.send<ApiToastResp>({
+                type: 'error',
+                msg: 'txAdminClient is not running!',
             });
         }
 
     //==============================================
     } else {
-        ctx.admin.logCommand('Unknown action!');
-        return ctx.send({
-            type: 'danger',
-            message: 'Unknown Action.',
+        return ctx.send<ApiToastResp>({
+            type: 'error',
+            msg: 'Unknown Action.',
         });
     }
 };
 
 
-
-//================================================================
-/**
- * Wrapper function to send the output to be shown inside an alert
- * @param {object} ctx
- * @param {string} msg
- */
-async function sendAlertOutput(ctx, toResp) {
-    toResp = (toResp.length) ? xss(toResp) : 'no output';
-    return ctx.send({
-        type: 'warning',
-        message: `<b>Output:</b><br> <pre>${toResp}</pre>`,
-    });
-}
-
-
 //================================================================
 /**
  * Wrapper function to check permission and give output if denied
- * @param {object} ctx
- * @param {string} perm
  */
-function ensurePermission(ctx, perm) {
+function ensurePermission(ctx: AuthedCtx, perm: string) {
     if (ctx.admin.testPermission(perm, modulename)) {
         return true;
     } else {
-        ctx.send({
-            type: 'danger',
-            message: 'You don\'t have permission to execute this action.',
+        ctx.send<ApiToastResp>({
+            type: 'error',
+            msg: 'You don\'t have permission to execute this action.',
         });
         return false;
     }

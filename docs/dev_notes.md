@@ -77,7 +77,7 @@ Processo:
         - [x] error toasts with discord link
     - [x][2h] prompts API
     - [x][2d] useBackendApi hook - wrapper around fetch with optional toast management
-    - [ ][2h] server controls
+    - [x][2h] server controls
     - [ ][1h] server scheduled restarts (legacy style)
     - [ ][3d] "my account" modal
         - if isTempPassword change message and disallows closing before changing the password
