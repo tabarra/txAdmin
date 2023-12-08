@@ -1,10 +1,76 @@
+import InlineCode from '@/components/InlineCode';
+import { txToast } from '@/components/TxToaster';
 import { Button } from '@/components/ui/button';
+import { useOpenPromptDialog } from '@/hooks/dialogs';
+import { useCloseAllSheets } from '@/hooks/sheets';
 import { useGlobalStatus } from '@/hooks/status';
+import { useBackendApi } from '@/hooks/useBackendApi';
 import { cn, msToDuration } from '@/lib/utils';
 import { PenLineIcon, PlayCircleIcon, PlusCircleIcon, XCircleIcon } from 'lucide-react';
 
+//Prompt props
+const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const timezoneDiffMessage = (
+    <p className='text-destructive'>
+        Server's timezone: <b>{window.txConsts.serverTimezone}</b> <br />
+        Your timezone: <b>{browserTimezone}</b> <br />
+        Either use relative times, or make sure the scheduled is based on the server timezone.
+    </p>
+)
+const promptCommonProps = {
+    suggestions: ['+5', '+10', '+15', '+30'],
+    title: 'When should the server restart?',
+    message: (<>
+        <p>
+            Possible formats: <br />
+            <ul className='list-disc ml-4'>
+                <li>
+                    <InlineCode>+MM</InlineCode> relative time in minutes
+                    (example: <InlineCode>+15</InlineCode> for 15 minutes from now.)
+                </li>
+                <li>
+                    <InlineCode>HH:MM</InlineCode> absolute 24-hour time
+                    (example: <InlineCode>23:30</InlineCode> for 11:30 PM.)
+                </li>
+            </ul>
+            {/* Type in the time for the server to restart in relative format (<InlineCode>+MM</InlineCode>) or the 24-hour format <InlineCode>HH:MM</InlineCode>. <br />
+            Example: <InlineCode>+15</InlineCode> for 15 minutes from now., and <InlineCode>23:30</InlineCode> for 11:30 PM. <br /> */}
+        </p>
+        {browserTimezone !== window.txConsts.serverTimezone && timezoneDiffMessage}
+    </>),
+    placeholder: '+15',
+    required: true,
+    isWide: true,
+};
+
+//Validate schedule time input for 24h format or relative time
+const validateSchedule = (input: string) => {
+    if (input.startsWith('+')) {
+        const minutes = parseInt(input.substring(1));
+        if (isNaN(minutes) || minutes < 1 || minutes >= 1440) {
+            return false;
+        }
+    } else {
+        const [hours, minutes] = input.split(':', 2).map(x => parseInt(x));
+        if (
+            typeof hours === 'undefined' || isNaN(hours) || hours < 0 || hours > 23
+            || typeof minutes === 'undefined' || isNaN(minutes) || minutes < 0 || minutes > 59
+        ) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 export default function ServerSchedule() {
+    const closeAllSheets = useCloseAllSheets();
+    const openPromptDialog = useOpenPromptDialog();
+    const schedulerApi = useBackendApi({
+        method: 'POST',
+        path: '/fxserver/schedule'
+    });
+
     const globalStatus = useGlobalStatus();
     if (!globalStatus) {
         return <div>
@@ -15,6 +81,7 @@ export default function ServerSchedule() {
         </div>
     }
 
+    //Processing status
     const { scheduler } = globalStatus;
     let nextScheduledText = 'nothing scheduled';
     let nextScheduledClasses = 'text-muted-foreground italic';
@@ -34,7 +101,7 @@ export default function ServerSchedule() {
         }
 
         if (scheduler.nextSkip) {
-            nextScheduledClasses = 'text-muted-foreground';
+            nextScheduledClasses = 'text-muted-foreground line-through';
             if (!isLessThanMinute) {
                 showEnableBtn = true;
             }
@@ -46,17 +113,46 @@ export default function ServerSchedule() {
         }
     }
 
+
+    //Handlers
+    const onScheduleSubmit = (input: string) => {
+        closeAllSheets();
+        if (!validateSchedule(input)) {
+            txToast.error(`Invalid schedule time: ${input}`)
+            return;
+        }
+        schedulerApi({
+            data: { action: 'setNextTempSchedule', parameter: input },
+            toastLoadingMessage: 'Scheduling server restart...',
+        });
+    }
     const handleEdit = () => {
-        alert('FIXME: Edit');
+        openPromptDialog({
+            ...promptCommonProps,
+            onSubmit: onScheduleSubmit,
+            submitLabel: 'Edit',
+        });
     }
     const handleAddSchedule = () => {
-        alert('FIXME: Add Schedule');
+        openPromptDialog({
+            ...promptCommonProps,
+            onSubmit: onScheduleSubmit,
+            submitLabel: 'Schedule',
+        });
     }
     const handleCancel = () => {
-        alert('FIXME: Cancel');
+        closeAllSheets();
+        schedulerApi({
+            data: { action: 'setNextSkip', parameter: true },
+            toastLoadingMessage: 'Cancelling next server restart...',
+        });
     }
     const handleEnable = () => {
-        alert('FIXME: Enable');
+        closeAllSheets();
+        schedulerApi({
+            data: { action: 'setNextSkip', parameter: false },
+            toastLoadingMessage: 'Enabling next server restart...',
+        });
     }
 
     return <div>

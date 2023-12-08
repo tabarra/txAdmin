@@ -16,6 +16,7 @@ const console = consoleFactory(modulename);
 //Consts
 const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
 const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
+const serverTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 //Cache the index.html file unless in dev mode
 let htmlFile: string;
@@ -116,6 +117,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         fxsOutdated: ctx.txAdmin.updateChecker.fxsUpdateData,
         txaVersion: txEnv.txAdminVersion,
         txaOutdated: ctx.txAdmin.updateChecker.txaUpdateData,
+        serverTimezone,
         isZapHosting: convars.isZapHosting, //not in use
         isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,

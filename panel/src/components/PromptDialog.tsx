@@ -20,8 +20,8 @@ export default function PromptDialog() {
     const handleSubmit = () => {
         if (!dialogState.isOpen) return;
         closeDialog();
-        dialogState.onSubmit(inputRef.current?.value ?? '');
-
+        const input = inputRef.current?.value ?? '';
+        dialogState.onSubmit(input.trim());
     }
 
     const handleForm = (e: React.FormEvent<HTMLFormElement>) => {

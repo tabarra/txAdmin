@@ -62,6 +62,7 @@ type PromptDialogType = {
     placeholder?: string;
     required?: boolean;
     suggestions?: string[];
+    isWide?: boolean;
     cancelLabel?: string;
     submitLabel?: string;
     submitBtnVariant?: VariantProps<typeof buttonVariants>['variant'];

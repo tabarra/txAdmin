@@ -19,6 +19,7 @@ export type InjectedTxConsts = {
     txaVersion: string;
     txaOutdated: UpdateDataType,
 
+    serverTimezone: string;
     isZapHosting: boolean;
     isPterodactyl: boolean;
     isWebInterface: boolean;
