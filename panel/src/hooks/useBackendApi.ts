@@ -2,6 +2,8 @@ import { txToast, validToastTypes } from "@/components/TxToaster";
 import { useCsrfToken, useExpireAuthData } from "@/hooks/auth";
 import { useEffect, useRef } from "react";
 
+const WEBPIPE_PATH = "https://monitor/WebPipe";
+
 export enum ApiTimeout {
     DEFAULT = 7_500,
     LONG = 15_000,
@@ -67,13 +69,16 @@ export const useBackendApi = <
 
     return async (opts: ApiCallOpts<RespType, ReqType>) => {
         //Processing URL
-        let fetchUrl = hookOpts.path;
+        if (!hookOpts.path.startsWith('/')) {
+            throw new Error(`[useBackendApi] hookOpts.path must start with a slash (/)`);
+        }
+        let fetchUrl = window.txConsts.isWebInterface ? hookOpts.path : WEBPIPE_PATH + hookOpts.path;
         if (opts.pathParams) {
             for (const [key, val] of Object.entries(opts.pathParams)) {
                 fetchUrl = fetchUrl.replace(`/:${key}/`, `/${val.toString()}/`);
             }
         }
-        if(opts.queryParams){
+        if (opts.queryParams) {
             const params = new URLSearchParams();
             for (const [key, val] of Object.entries(opts.queryParams)) {
                 params.append(key, val.toString());
@@ -81,7 +86,7 @@ export const useBackendApi = <
             fetchUrl += `?${params.toString()}`;
         }
         const apiCallDesc = `${hookOpts.method} ${hookOpts.path}`;
-        
+
         //Error handler
         const handleError = (title: string, msg: string) => {
             if (currentToastId.current) {
@@ -97,7 +102,7 @@ export const useBackendApi = <
                 throw new BackendApiError(title, msg);
             }
         }
-        
+
         //Setting up toast
         if (opts.toastId && opts.toastLoadingMessage) {
             throw new Error(`[useBackendApi] toastId and toastLoadingMessage are mutually exclusive.`);
@@ -109,7 +114,7 @@ export const useBackendApi = <
             //cleaning last toast id
             currentToastId.current = undefined;
         }
-        
+
         //Starting timeout
         abortController.current = new AbortController();
         const timeoutId = setTimeout(() => {
