@@ -16,7 +16,7 @@ import { getSocket } from '@/lib/utils';
 import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import PromptDialog from '@/components/PromptDialog';
-import TxToaster from '../components/TxToaster';
+import TxToaster, { txToast } from '../components/TxToaster';
 
 
 export default function MainShell() {
@@ -34,7 +34,11 @@ export default function MainShell() {
     const processPlayerlistEvents = useProcessPlayerlistEvents();
     const processUpdateAvailableEvent = useProcessUpdateAvailableEvent();
 
+    //Runing on mount only
     useEffect(() => {
+        txToast.dismiss(); //making sure we don't have any pending toasts
+
+        //SocketIO
         const rooms = window.txConsts.isWebInterface ? ['status', 'playerlist'] : ['status'];
         const socket = getSocket(rooms);
         socket.on('connect', () => {

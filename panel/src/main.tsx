@@ -65,7 +65,7 @@ export function AuthContextSwitch() {
 }
 
 //Creating a global query client
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

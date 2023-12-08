@@ -14,7 +14,7 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
             className={cn(
                 'flex flex-col gap-4',
                 isSheet
-                    ? 'mr-4'
+                    ? 'mr-4 pl-2'
                     : "self-start sticky top-[calc(4.5rem+1px)] z-0 w-sidebar shrink-0 hidden lg:flex",
             )}
         >

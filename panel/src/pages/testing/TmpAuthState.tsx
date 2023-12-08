@@ -11,7 +11,14 @@ export default function TmpAuthState() {
         setAuthData({
             ...authData,
             isMaster: !authData.isMaster,
-        })
+        });
+    }
+    const changeCsrfToken = () => {
+        if(!authData) return;
+        setAuthData({
+            ...authData,
+            csrfToken: Math.random().toString(36).substring(2),
+        });
     }
 
     return (
@@ -27,6 +34,9 @@ export default function TmpAuthState() {
             <CardFooter className="flex justify-center gap-3">
                 <Button size="sm" onClick={() => toggleIsMaster()}>
                     Toggle isMaster
+                </Button>
+                <Button size="sm" onClick={() => changeCsrfToken()}>
+                    Change CSRF Token
                 </Button>
                 <Button size="sm" onClick={() => setAuthData(false)}>
                     Erase Auth

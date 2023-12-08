@@ -7,7 +7,7 @@ import { RawKoaCtx } from '../ctxTypes';
 
 
 //Consts
-const timeoutLimit = 35 * 1000; //REQ_TIMEOUT_REALLY_REALLY_LONG is 30s
+const timeoutLimit = 47 * 1000; //REQ_TIMEOUT_REALLY_REALLY_LONG is 45s
 
 /**
  * Middleware responsible for timeout/error/no-output/413

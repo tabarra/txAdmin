@@ -1,4 +1,4 @@
-import { useSheets } from "@/hooks/sheets";
+import { useCloseAllSheets } from "@/hooks/sheets";
 import { pageErrorStatusAtom, useContentRefresh } from "@/hooks/pages";
 import { useAtomValue } from "jotai";
 import { forwardRef } from "react";
@@ -17,7 +17,7 @@ function MainPageLinkInner(
 ) {
     const isPageInError = useAtomValue(pageErrorStatusAtom);
     const refreshContent = useContentRefresh();
-    const { closeAllSheets } = useSheets();
+    const closeAllSheets = useCloseAllSheets();
     const checkOnClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         closeAllSheets();
         if (props.isActive || isPageInError) {

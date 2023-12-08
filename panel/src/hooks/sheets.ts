@@ -27,16 +27,14 @@ export const usePlayerlistSheet = () => {
     return { isSheetOpen, setIsSheetOpen };
 };
 
-export const useSheets = () => {
+export const useCloseAllSheets = () => {
     const setIsGlobalMenuSheetOpen = useSetAtom(isGlobalMenuSheetOpenAtom);
     const setIsServerSheetOpen = useSetAtom(isServerSheetOpenAtom);
     const setIsPlayerlistSheetOpen = useSetAtom(isPlayerlistSheetOpenAtom);
 
-    const closeAllSheets = () => {
+    return () => {
         setIsGlobalMenuSheetOpen(false);
         setIsServerSheetOpen(false);
         setIsPlayerlistSheetOpen(false);
     }
-
-    return { closeAllSheets }
 }
