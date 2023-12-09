@@ -64,7 +64,6 @@ export default async function AdminManagerGetModal(ctx: AuthedCtx) {
         const [permsGeneral, permsMenu] = getPerms([], allPermissions);
         const renderData = {
             isNewAdmin: true,
-            editingSelf: false,
             username: '',
             citizenfx_id: '',
             discord_id: '',
@@ -98,7 +97,6 @@ export default async function AdminManagerGetModal(ctx: AuthedCtx) {
         username: admin.name,
         citizenfx_id: (admin.providers.citizenfx) ? admin.providers.citizenfx.id : '',
         discord_id: (admin.providers.discord) ? admin.providers.discord.id : '',
-        editingSelf: (ctx.admin.name.toLowerCase() === name.toLowerCase()),
         permsGeneral,
         permsMenu,
     };

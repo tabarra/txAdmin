@@ -21,6 +21,15 @@ export const useAccountModal = () => {
     }
 }
 
+export const useOpenAccountModal = () => {
+    const setAccountModalOpen = useSetAtom(accountModalOpenAtom);
+    const setAccountModalTab = useSetAtom(accountModalTabAtom);
+    return (tab?: string) => {
+        setAccountModalOpen(true);
+        if (tab) setAccountModalTab(tab);
+    }
+}
+
 
 
 /**

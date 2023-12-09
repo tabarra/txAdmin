@@ -82,8 +82,8 @@ Processo:
     - [ ][3d] "your account" modal
         - [x] if isTempPassword change message and disallows closing before changing the password
         - [ ] give the chance to change modifiers
-        - [ ] remove legacy header + change password code
-        - [ ] admin manager should open "my account" when trying to edit self
+        - [x] remove legacy header + change password code
+        - [x] admin manager should open "my account" when trying to edit self
         - [ ] maybe separate the backend routes
     - [ ][3d] playerlist
     - [ ][1d] add the new logos to shell+auth pages

@@ -76,43 +76,6 @@
 
     <!-- Center Content -->
     <div class="c-wrapper c-fixed-components">
-        <!-- Header -->
-        <% if (isWebInterface) { %>
-            <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
-                <ul class="c-header-nav ml-auto mr-4">
-                    <li class="c-header-nav-item dropdown">
-                        <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                            aria-expanded="false">
-                            <span class="d-md-down-none pr-2"><%= adminUsername %> </span>
-                            <div class="c-avatar">
-                                <img class="c-avatar-img profile-pic" src="<%= profilePicture %>" alt="<%= adminUsername %>">
-                            </div>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right pt-0">
-                            <div class="dropdown-header py-2">
-                                <strong>Account</strong>
-                            </div>
-                            <a class="dropdown-item" href="" onclick="changeOwnPasswordModal(); return false;">
-                                <svg class="c-icon mr-2">
-                                    <use href="img/coreui_icons.svg#cil-lock-locked"></use>
-                                </svg> Change password
-                            </a>
-                            <a class="dropdown-item" href="auth?logout">
-                                <svg class="c-icon mr-2">
-                                    <use href="img/coreui_icons.svg#cil-account-logout"></use>
-                                </svg> Logout
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-                <button class="c-header-toggler c-class-toggler d-xl-none" type="button" data-target="#plist"
-                    data-class="playerlist-sidebar-max">
-                    <svg class="c-icon c-icon-lg">
-                        <use href="img/coreui_icons.svg#cil-menu"></use>
-                    </svg>
-                </button>
-            </header>
-        <% } %> <%# end if(isWebInterface) %>
 
         <!-- Actual Body -->
         <div class="c-body">

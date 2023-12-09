@@ -18,14 +18,18 @@ import ConfirmDialog from '@/components/ConfirmDialog';
 import PromptDialog from '@/components/PromptDialog';
 import TxToaster, { txToast } from '../components/TxToaster';
 import AccountDialog from '@/components/AccountDialog';
+import { useOpenAccountModal } from '@/hooks/dialogs';
 
 
 export default function MainShell() {
     useAtomValue(pageTitleWatcher);
     const expireSession = useExpireAuthData();
+    const openAccountModal = useOpenAccountModal();
     useEventListener('message', (e: MessageEventFromIframe) => {
         if (e.data.type === 'logoutNotice') {
             expireSession('child iframe');
+        } else if (e.data.type === 'openYourAccountModal') {
+            openAccountModal();
         }
     });
 

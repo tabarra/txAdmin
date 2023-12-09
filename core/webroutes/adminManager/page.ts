@@ -25,14 +25,16 @@ export default async function AdminManagerPage(ctx: AuthedCtx) {
         } else {
             perms = '1 permission';
         }
+        const isSelf = ctx.admin.name.toLowerCase() === admin.name.toLowerCase();
 
         return {
             hasCitizenFX: (admin.providers.includes('citizenfx')),
             hasDiscord: (admin.providers.includes('discord')),
             name: admin.name,
             perms: perms,
+            isSelf,
             disableEdit: !ctx.admin.isMaster && admin.master,
-            disableDelete: (admin.master || ctx.admin.name.toLowerCase() === admin.name.toLowerCase()),
+            disableDelete: (admin.master || isSelf),
         };
     });
 

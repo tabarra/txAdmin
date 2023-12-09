@@ -137,8 +137,8 @@ function AuthedHeaderFragment() {
                 />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                {/* <DropdownMenuLabel>Your Account</DropdownMenuLabel>
+                <DropdownMenuSeparator /> */}
 
                 <DropdownMenuItem className="cursor-pointer" onClick={switchTheme}>
                     <span className="hidden dark:flex items-center">
@@ -175,8 +175,8 @@ export function Header() {
                 <div className="flex flex-row items-center flex-grow gap-5 mr-5">
                     <div className="w-sidebar hidden xl:flex justify-center">
                         <span
-                        className="h-7 w-36 bg-accent text-accent-foreground rounded text-center p-0.5 font-bold tracking-widest"
-                        title={`tx: v${window.txConsts.txaVersion} | fx: b${window.txConsts.fxsVersion}`}
+                            className="h-7 w-36 bg-accent text-accent-foreground rounded text-center p-0.5 font-bold tracking-widest"
+                            title={`tx: v${window.txConsts.txaVersion} | fx: b${window.txConsts.fxsVersion}`}
                         >FULL LOGO</span>
                     </div>
                     <div className="h-8 w-8 lg:h-10 lg:w-10 rounded hidden sm:max-xl:block bg-accent text-accent-foreground text-center">

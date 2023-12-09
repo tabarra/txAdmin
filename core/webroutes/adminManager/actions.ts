@@ -161,17 +161,19 @@ async function handleEdit(ctx: AuthedCtx) {
     const name = ctx.request.body.name.trim();
     const citizenfxID = ctx.request.body.citizenfxID.trim();
     const discordID = ctx.request.body.discordID.trim();
-    const editingSelf = (ctx.admin.name.toLowerCase() === name.toLowerCase());
+
+    //Check if editing himself
+    if (ctx.admin.name.toLowerCase() === name.toLowerCase()) {
+        return ctx.send({type: 'danger', message: '(ERR0) You cannot edit yourself.'});
+    }
+
+    //Validate & translate permissions
     let permissions;
-    if (!editingSelf) {
-        if (Array.isArray(ctx.request.body.permissions)) {
-            permissions = ctx.request.body.permissions.filter((x: unknown) => typeof x === 'string');
-            if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
-        } else {
-            permissions = [];
-        }
+    if (Array.isArray(ctx.request.body.permissions)) {
+        permissions = ctx.request.body.permissions.filter((x: unknown) => typeof x === 'string');
+        if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
     } else {
-        permissions = undefined;
+        permissions = [];
     }
 
     //Validate & translate FiveM ID
@@ -256,7 +258,7 @@ async function handleDelete(ctx: AuthedCtx) {
     }
     const name = ctx.request.body.name.trim();
 
-    //Check if editing himself
+    //Check if deleting himself
     if (ctx.admin.name.toLowerCase() === name.toLowerCase()) {
         return ctx.send({type: 'danger', message: "You can't delete yourself."});
     }

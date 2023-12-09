@@ -85,26 +85,33 @@
                                 </td>
                                 <td><%= admin.perms %></td>
                                 <td class="tableActions">
-                                    <% if (admin.disableEdit) { %>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>
-                                            <i class="icon-pencil"></i> Edit
-                                        </button>
-                                    <% } else { %>
+                                    <% if (admin.isSelf) { %>
                                         <button class="btn btn-sm btn-outline-primary"
-                                            onclick="getAdminModal('<%= admin.name %>')">
-                                            <i class="icon-pencil"></i> Edit
-                                        </button>
-                                    <% } %>
-                                    &nbsp;
-                                    <% if (admin.disableDelete) { %>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>
-                                            <i class="icon-trash"></i> Delete
+                                            onclick="openYourAccountModal()">
+                                            <i class="icon-pencil"></i> Your Account
                                         </button>
                                     <% } else { %>
-                                        <button class="btn btn-sm btn-outline-danger"
-                                            onclick="deleteAdmin('<%= admin.name %>')">
-                                            <i class="icon-trash"></i> Delete
-                                        </button>
+                                        <% if (admin.disableEdit) { %>
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                <i class="icon-pencil"></i> Edit
+                                            </button>
+                                        <% } else { %>
+                                            <button class="btn btn-sm btn-outline-primary"
+                                                onclick="getAdminModal('<%= admin.name %>')">
+                                                <i class="icon-pencil"></i> Edit
+                                            </button>
+                                        <% } %>
+                                        &nbsp;
+                                        <% if (admin.disableDelete) { %>
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                <i class="icon-trash"></i> Delete
+                                            </button>
+                                        <% } else { %>
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                onclick="deleteAdmin('<%= admin.name %>')">
+                                                <i class="icon-trash"></i> Delete
+                                            </button>
+                                        <% } %>
                                     <% } %>
                                 </td>
                             </tr>
@@ -194,6 +201,11 @@
     }
 
     
+    //============================================== Show Your Account Modal
+    function openYourAccountModal() {
+        window.parent.postMessage({ type: 'openYourAccountModal' });
+    }
+
     //============================================== Show Admin Modal
     function getAdminModal(name){
         let modalType, data;
