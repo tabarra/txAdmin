@@ -2,45 +2,57 @@ const modulename = 'WebServer:AuthChangePassword';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 import consts from '@shared/consts';
+import { GenericApiResp } from '@shared/genericApiTypes';
+import { z } from 'zod';
 const console = consoleFactory(modulename);
 
 //Helper functions
+const bodySchema = z.object({
+    oldPassword: z.string().optional(),
+    newPassword: z.string(),
+});
+export type ApiChangePasswordReqSchema = z.infer<typeof bodySchema>;
+
 
 /**
  * Returns the output page containing the admins.
  */
 export default async function AuthChangePassword(ctx: AuthedCtx) {
     //Sanity check
-    if (typeof ctx.request?.body?.newPassword !== 'string') {
-        return ctx.utils.error(400, 'Invalid Request');
+    const schemaRes = bodySchema.safeParse(ctx.request.body);
+    if (!schemaRes.success) {
+        return ctx.send<GenericApiResp>({
+            error: `Invalid request body: ${schemaRes.error.message}`,
+        });
     }
+    const { newPassword, oldPassword } = schemaRes.data;
 
-    //Check if temp password
-    if (!ctx.admin.isTempPassword && typeof ctx.request.body.oldPassword !== 'string') {
-        return ctx.send({type: 'danger', message: 'The permanent password was already set.'});
-    }
-
-    //Validate fields
-    const newPassword = ctx.request.body.newPassword.trim();
-    if (!ctx.admin.isTempPassword && ctx.request.body?.oldPassword !== undefined) {
-        const vaultAdmin = ctx.txAdmin.adminVault.getAdminByName(ctx.admin.name);
-        if (!vaultAdmin) throw new Error('Wait, what? Where is that admin?');
-        const oldPassword = ctx.request.body.oldPassword.trim();
-        if (!VerifyPasswordHash(oldPassword, vaultAdmin.password_hash)) {
-            return ctx.send({type: 'danger', message: 'Wrong current password'});
-        }
+    //Validate new password
+    if (newPassword.trim() !== newPassword) {
+        return ctx.send<GenericApiResp>({
+            error: 'Your password either starts or ends with a space, which was likely an accident. Please remove it and try again.',
+        });
     }
     if (newPassword.length < consts.adminPasswordMinLength || newPassword.length > consts.adminPasswordMaxLength) {
-        return ctx.send({type: 'danger', message: 'Invalid new password length.'});
+        return ctx.send<GenericApiResp>({ error: 'Invalid new password length.' });
     }
 
-    //Add admin and give output
+    //Get vault admin
+    const vaultAdmin = ctx.txAdmin.adminVault.getAdminByName(ctx.admin.name);
+    if (!vaultAdmin) throw new Error('Wait, what? Where is that admin?');
+    if (!ctx.admin.isTempPassword) {
+        if (!oldPassword || !VerifyPasswordHash(oldPassword, vaultAdmin.password_hash)) {
+            return ctx.send<GenericApiResp>({ error: 'Wrong current password.' });
+        }
+    }
+
+    //Edit admin and give output
     try {
         const newHash = await ctx.txAdmin.adminVault.editAdmin(ctx.admin.name, newPassword);
 
         //Update session hash if logged in via password
         const currSess = ctx.sessTools.get();
-        if(currSess?.auth?.type === 'password') {
+        if (currSess?.auth?.type === 'password') {
             ctx.sessTools.set({
                 auth: {
                     ...currSess.auth,
@@ -50,8 +62,8 @@ export default async function AuthChangePassword(ctx: AuthedCtx) {
         }
 
         ctx.admin.logAction('Changing own password.');
-        return ctx.send({type: 'success', message: 'Password changed successfully'});
+        return ctx.send<GenericApiResp>({ success: true });
     } catch (error) {
-        return ctx.send({type: 'danger', message: (error as Error).message});
+        return ctx.send<GenericApiResp>({ error: (error as Error).message });
     }
 };

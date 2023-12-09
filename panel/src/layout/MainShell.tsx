@@ -17,6 +17,7 @@ import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import PromptDialog from '@/components/PromptDialog';
 import TxToaster, { txToast } from '../components/TxToaster';
+import AccountDialog from '@/components/AccountDialog';
 
 
 export default function MainShell() {
@@ -100,6 +101,7 @@ export default function MainShell() {
         <ConfirmDialog />
         <PromptDialog />
         <TxToaster />
+        <AccountDialog />
         {/* <BreakpointDebugger /> */}
     </>;
 }

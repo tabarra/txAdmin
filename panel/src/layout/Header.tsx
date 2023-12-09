@@ -16,6 +16,7 @@ import { FaDiscord } from "react-icons/fa";
 import { useAtomValue } from "jotai";
 import { serverNameAtom } from "@/hooks/status";
 import { playerCountAtom } from "@/hooks/playerlist";
+import { useAccountModal } from "@/hooks/dialogs";
 
 
 function ServerTitle() {
@@ -103,8 +104,9 @@ function ButtonTogglePlayerlistSheet({ className }: NavButtonProps) {
 //Segmenting this into a component prevents full header rerenders
 function AuthedHeaderFragment() {
     const { authData, logout } = useAuth();
-    if (!authData) return null;
     const { theme, setTheme } = useTheme();
+    const { setAccountModalOpen } = useAccountModal();
+    if (!authData) return null;
     const switchTheme = () => {
         if (theme === 'light') {
             setTheme('dark');
@@ -112,8 +114,8 @@ function AuthedHeaderFragment() {
             setTheme('light');
         }
     }
-    const openChangePasswordModal = () => {
-        alert('TODO: open change password modal');
+    const openAccountModal = () => {
+        setAccountModalOpen(true);
     }
     const gotoSupportDiscord = () => {
         openExternalLink('https://discord.gg/uAmsGa2');
@@ -148,9 +150,9 @@ function AuthedHeaderFragment() {
                         Dark Mode
                     </span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={openChangePasswordModal}>
+                <DropdownMenuItem className="cursor-pointer" onClick={openAccountModal}>
                     <KeyRoundIcon className="mr-2 h-4 w-4" />
-                    Change Password
+                    Your Account
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer" onClick={gotoSupportDiscord}>
                     <FaDiscord size="14" className="mr-2" />

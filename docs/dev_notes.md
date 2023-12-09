@@ -79,12 +79,12 @@ Processo:
     - [x][2d] useBackendApi hook - wrapper around fetch with optional toast management
     - [x][2h] server controls
     - [x][1h] server scheduled restarts (legacy style)
-    - [ ][3d] "my account" modal
-        - if isTempPassword change message and disallows closing before changing the password
-        - give the chance to change modifiers
-        - remove legacy header + change password code
-        - admin manager should open "my account" when trying to edit self
-        - maybe separate the backend routes
+    - [ ][3d] "your account" modal
+        - [x] if isTempPassword change message and disallows closing before changing the password
+        - [ ] give the chance to change modifiers
+        - [ ] remove legacy header + change password code
+        - [ ] admin manager should open "my account" when trying to edit self
+        - [ ] maybe separate the backend routes
     - [ ][3d] playerlist
     - [ ][1d] add the new logos to shell+auth pages
 - [ ][3h] playerlist click opens legacy player modal (`iframe.contentWindow.postMessage("openModal", ???);`)
