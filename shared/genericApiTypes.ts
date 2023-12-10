@@ -9,6 +9,7 @@ export type GenericApiErrorResp = {
     error: string;
 }
 export type GenericApiResp = ApiAuthErrorResp | GenericApiSuccessResp | GenericApiErrorResp;
+export type GenericApiOkResp = GenericApiSuccessResp | GenericApiErrorResp;
 
 export type ApiToastResp = {
     type: 'default' | 'info' | 'success' | 'warning' | 'error',

@@ -7,26 +7,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/auth";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { TabsTrigger, TabsList, TabsContent, Tabs } from "@/components/ui/tabs";
-import { ApiChangePasswordReq } from "@shared/authApiTypes";
-import { useAccountModal } from "@/hooks/dialogs";
-import { GenericApiResp } from "@shared/genericApiTypes";
-import { useBackendApi } from "@/hooks/useBackendApi";
+import { ApiChangeIdentifiersReq, ApiChangePasswordReq } from "@shared/authApiTypes";
+import { useAccountModal, useCloseAccountModal } from "@/hooks/dialogs";
+import { ApiAuthErrorResp, GenericApiOkResp, GenericApiResp } from "@shared/genericApiTypes";
+import { fetchWithTimeout, useAuthedFetcher, useBackendApi } from "@/hooks/fetch";
 import consts from "@shared/consts";
 import { txToast } from "./TxToaster";
-
+import { useQuery } from "@tanstack/react-query";
+import TxAnchor from "./TxAnchor";
 
 
 /**
  * Change Password tab
  */
-function ChangePasswordTab() {
+const ChangePasswordTab = memo(function () {
     const { authData, setAuthData } = useAuth();
-    const { setAccountModalOpen, setAccountModalTab } = useAccountModal();
-    const changePasswordApi = useBackendApi<GenericApiResp, ApiChangePasswordReq>({
+    const { setAccountModalTab } = useAccountModal();
+    const closeAccountModal = useCloseAccountModal();
+    const changePasswordApi = useBackendApi<GenericApiOkResp, ApiChangePasswordReq>({
         method: 'POST',
-        path: '/changePassword'
+        path: '/auth/changePassword'
     });
 
     const [oldPassword, setOldPassword] = useState('');
@@ -60,7 +62,6 @@ function ChangePasswordTab() {
             },
             success: (data) => {
                 setIsSaving(false);
-                if ('logout' in data) return;
                 if ('success' in data) {
                     if (authData.isTempPassword) {
                         setAccountModalTab('identifiers');
@@ -70,7 +71,7 @@ function ChangePasswordTab() {
                         });
                     } else {
                         txToast.success('Password changed successfully!');
-                        setAccountModalOpen(false);
+                        closeAccountModal();
                     }
                 } else {
                     setError(data.error)
@@ -89,7 +90,7 @@ function ChangePasswordTab() {
                 </p>) : (<p className="text-sm text-muted-foreground">
                     You can use your password to login to the txAdmin inferface even without using the Cfx.re login button.
                 </p>)}
-                <div className="space-y-2 pt-2 pb-6">
+                <div className="space-y-3 pt-2 pb-6">
                     {!authData.isTempPassword && (
                         <div className="space-y-1">
                             <Label htmlFor="current-password">Current Password</Label>
@@ -150,16 +151,159 @@ function ChangePasswordTab() {
             </form>
         </TabsContent>
     );
-}
+})
 
 
 /**
  * Change Identifiers tab
  */
 function ChangeIdentifiersTab() {
+    const authedFetcher = useAuthedFetcher();
+    const [cfxreId, setCfxreId] = useState('');
+    const [discordId, setDiscordId] = useState('');
+    const [error, setError] = useState('');
+    const [isConvertingFivemId, setIsConvertingFivemId] = useState(false);
+    const closeAccountModal = useCloseAccountModal();
+    const [isSaving, setIsSaving] = useState(false);
+
+    const { isPending: queryIsPending, error: queryError, data: queryData } = useQuery<ApiChangeIdentifiersReq>({
+        queryKey: ['getIdentifiers'],
+        gcTime: 30_000,
+        queryFn: () => authedFetcher('/auth/getIdentifiers'),
+    });
+
+    const changeIdentifiersApi = useBackendApi<GenericApiOkResp, ApiChangeIdentifiersReq>({
+        method: 'POST',
+        path: '/auth/changeIdentifiers'
+    });
+
+    useEffect(() => {
+        if (!queryData) return;
+        setCfxreId(queryData.cfxreId);
+        setDiscordId(queryData.discordId);
+    }, [queryData]);
+
+    useEffect(() => {
+        setError(queryError ? queryError.message : '');
+    }, [queryError]);
+
+    const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
+        event?.preventDefault();
+        setError('');
+        setIsSaving(true);
+        changeIdentifiersApi({
+            data: { cfxreId, discordId },
+            error: (error) => {
+                setError(error);
+            },
+            success: (data) => {
+                setIsSaving(false);
+                if ('success' in data) {
+                    txToast.success('Identifiers changed successfully!');
+                    closeAccountModal();
+                } else {
+                    setError(data.error)
+                }
+            }
+        });
+    };
+
+    const handleCfxreIdBlur = async () => {
+        if (!cfxreId) return;
+        const trimmed = cfxreId.trim();
+        if (/^\d+$/.test(trimmed)) {
+            setCfxreId(`fivem:${trimmed}`);
+        } else if (!trimmed.startsWith('fivem:')) {
+            try {
+                setIsConvertingFivemId(true);
+                const forumData = await fetchWithTimeout(`https://forum.cfx.re/u/${trimmed}.json`);
+                if (forumData.user && typeof forumData.user.id === 'number') {
+                    setCfxreId(`fivem:${forumData.user.id}`);
+                } else {
+                    setError('Could not find the user in the forum. Make sure you typed the username correctly.');
+                }
+            } catch (error) {
+                setError('Failed to check the identifiers on the forum API.');
+            }
+            setIsConvertingFivemId(false);
+        } else if (cfxreId !== trimmed) {
+            setCfxreId(trimmed);
+        }
+    }
+
+    const handleDiscordIdBlur = () => {
+        if (!discordId) return;
+        const trimmed = discordId.trim();
+        if (/^\d+$/.test(trimmed)) {
+            setDiscordId(`discord:${trimmed}`);
+        } else if (discordId !== trimmed) {
+            setDiscordId(trimmed);
+        }
+    }
+
     return (
         <TabsContent value="identifiers" tabIndex={undefined}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            <form onSubmit={handleSubmit}>
+                <p className="text-sm text-muted-foreground">
+                    The identifiers are optional for accessing the <strong>Web Panel</strong> but required for you to be able to use the <strong>In Game Menu</strong> and the <strong>Discord Bot</strong>. <br />
+                    <strong>It is recommended that you configure at least one.</strong>
+                </p>
+                <div className="space-y-3 pt-2 pb-6">
+                    <div className="space-y-1">
+                        <Label htmlFor="cfxreId">FiveM identifier <span className="text-sm opacity-75 text-info">(optional)</span></Label>
+                        <Input
+                            id="cfxreId"
+                            autoCapitalize="none"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            placeholder="fivem:000000"
+                            value={queryIsPending || isConvertingFivemId ? 'loading...' : cfxreId}
+                            disabled={queryIsPending || isConvertingFivemId}
+                            autoFocus
+                            onBlur={handleCfxreIdBlur}
+                            onChange={(e) => {
+                                setCfxreId(e.target.value);
+                                setError('');
+                            }}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                            Your identifier can be found by clicking in your name in the playerlist and going to the IDs page. <br />
+                            You can also type in your <TxAnchor href="https://forum.cfx.re/">forum.cfx.re</TxAnchor> username and it will be converted automatically. <br />
+                            This is required if you want to login using the Cfx.re button.
+                        </p>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="discordId">Discord identifier <span className="text-sm opacity-75 text-info">(optional)</span></Label>
+                        <Input
+                            id="discordId"
+                            autoCapitalize="none"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            placeholder="discord:000000000000000000"
+                            value={queryIsPending ? 'loading...' : discordId}
+                            disabled={queryIsPending}
+                            onBlur={handleDiscordIdBlur}
+                            onChange={(e) => {
+                                setDiscordId(e.target.value);
+                                setError('');
+                            }}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                            You can get your Discord User ID by following <TxAnchor href="https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID">this guide</TxAnchor>. <br />
+                            This is required if you want to use the Discord Bot slash commands.
+                        </p>
+                    </div>
+                </div>
+
+                {error && <p className="text-destructive text-center -mt-2 mb-4">{error}</p>}
+                <Button
+                    className="w-full"
+                    type="submit"
+                    disabled={!queryData || isSaving}
+                >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                </Button>
+            </form>
         </TabsContent>
     );
 }
@@ -204,7 +348,6 @@ export default function AccountDialog() {
                         {authData.isTempPassword ? 'Welcome to txAdmin!' : `Your Account - ${authData.name}`}
                     </DialogTitle>
                 </DialogHeader>
-
                 <Tabs
                     defaultValue="password"
                     value={accountModalTab}

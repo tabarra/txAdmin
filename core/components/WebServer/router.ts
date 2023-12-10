@@ -64,7 +64,9 @@ export default (config: WebServerConfigType) => {
     router.post('/auth/addMaster/save', authLimiter, webRoutes.auth_addMasterSave);
     router.get('/auth/cfxre/redirect', authLimiter, webRoutes.auth_providerRedirect);
     router.post('/auth/cfxre/callback', authLimiter, webRoutes.auth_providerCallback);
-    router.post('/changePassword', apiAuthMw, webRoutes.auth_changePassword);
+    router.post('/auth/changePassword', apiAuthMw, webRoutes.auth_changePassword);
+    router.get('/auth/getIdentifiers', apiAuthMw, webRoutes.auth_getIdentifiers);
+    router.post('/auth/changeIdentifiers', apiAuthMw, webRoutes.auth_changeIdentifiers);
 
     //Admin Manager
     router.post('/adminManager/getModal/:modalType', webAuthMw, webRoutes.adminManager_getModal);

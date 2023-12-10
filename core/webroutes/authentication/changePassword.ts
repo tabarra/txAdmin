@@ -15,7 +15,7 @@ export type ApiChangePasswordReqSchema = z.infer<typeof bodySchema>;
 
 
 /**
- * Returns the output page containing the admins.
+ * Route to change your own password
  */
 export default async function AuthChangePassword(ctx: AuthedCtx) {
     //Sanity check

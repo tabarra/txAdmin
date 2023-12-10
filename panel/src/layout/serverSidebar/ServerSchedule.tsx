@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useOpenPromptDialog } from '@/hooks/dialogs';
 import { useCloseAllSheets } from '@/hooks/sheets';
 import { useGlobalStatus } from '@/hooks/status';
-import { useBackendApi } from '@/hooks/useBackendApi';
+import { useBackendApi } from '@/hooks/fetch';
 import { cn, msToDuration } from '@/lib/utils';
 import { PenLineIcon, PlayCircleIcon, PlusCircleIcon, XCircleIcon } from 'lucide-react';
 

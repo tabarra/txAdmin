@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { txToast } from "@/components/TxToaster";
-import { BackendApiError, useBackendApi } from "@/hooks/useBackendApi";
+import { BackendApiError, useBackendApi } from "@/hooks/fetch";
 import { ApiToastResp } from "@shared/genericApiTypes";
 
 

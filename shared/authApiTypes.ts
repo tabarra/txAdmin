@@ -5,6 +5,7 @@ import { ApiAddMasterPinReqSchema } from "@core/webroutes/authentication/addMast
 import { ApiAddMasterCallbackReqSchema } from "@core/webroutes/authentication/addMasterCallback";
 import { ApiAddMasterSaveReqSchema } from "@core/webroutes/authentication/addMasterSave";
 import { ApiChangePasswordReqSchema } from "@core/webroutes/authentication/changePassword";
+import { ApiChangeIdentifiersReqSchema } from "@core/webroutes/authentication/changeIdentifiers";
 
 export type ReactAuthDataType = {
     name: string;
@@ -66,3 +67,4 @@ export type ApiAddMasterSaveResp = {
 
 
 export type ApiChangePasswordReq = ApiChangePasswordReqSchema;
+export type ApiChangeIdentifiersReq = ApiChangeIdentifiersReqSchema;

@@ -17,6 +17,8 @@ export { default as auth_verifyPassword } from './authentication/verifyPassword'
 export { default as auth_changePassword } from './authentication/changePassword';
 export { default as auth_self } from './authentication/self';
 export { default as auth_logout } from './authentication/logout';
+export { default as auth_getIdentifiers } from './authentication/getIdentifiers';
+export { default as auth_changeIdentifiers } from './authentication/changeIdentifiers';
 
 export { default as adminManager_page } from './adminManager/page.js';
 export { default as adminManager_getModal } from './adminManager/getModal';

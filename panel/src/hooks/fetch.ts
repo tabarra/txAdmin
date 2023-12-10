@@ -3,6 +3,12 @@ import { useCsrfToken, useExpireAuthData } from "@/hooks/auth";
 import { useEffect, useRef } from "react";
 
 const WEBPIPE_PATH = "https://monitor/WebPipe";
+const headeruserAgent = `txAdminPanel/v${window.txConsts.txaVersion} (atop FXServer/b${window.txConsts.fxsVersion})`;
+const defaultHeaders = {
+    'User-Agent': headeruserAgent,
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Accept': 'application/json',
+}
 
 export enum ApiTimeout {
     DEFAULT = 7_500,
@@ -22,6 +28,74 @@ export class BackendApiError extends Error {
     }
 }
 
+
+/**
+ * Returns a function to make authenticated fetch requests
+ */
+type FetcherOpts = {
+    method?: 'GET' | 'POST';
+    body?: any;
+}
+
+export const useAuthedFetcher = () => {
+    const csrfToken = useCsrfToken();
+    const expireSess = useExpireAuthData();
+
+    return async (fetchUrl: string, fetchOpts: FetcherOpts = {}, abortController?: AbortController) => {
+        if (!csrfToken) throw new Error('CSRF token not set');
+        if (!fetchUrl.startsWith('/')) {
+            throw new Error(`[useAuthedFetcher] fetchUrl must start with a slash.`);
+        }
+
+        fetchOpts.method ??= 'GET';
+        const resp = await fetch(fetchUrl, {
+            method: fetchOpts.method,
+            headers: {
+                ...defaultHeaders,
+                'X-TxAdmin-CsrfToken': csrfToken,
+            },
+            body: fetchOpts.body ? JSON.stringify(fetchOpts.body) : undefined,
+            signal: abortController?.signal,
+        });
+        const data = await resp.json();
+        if (data?.logout) {
+            expireSess('api');
+            throw new Error('Session expired');
+        }
+        return data;
+    }
+}
+
+
+/**
+ * Simple unauthed fetch with timeout
+ */
+type SimpleFetchOpts = FetcherOpts & { timeout?: number };
+
+export const fetchWithTimeout = async <T = any>(url: string, fetchOpts: SimpleFetchOpts = {}) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+    }, fetchOpts.timeout ?? ApiTimeout.DEFAULT);
+    fetchOpts.method ??= 'GET';
+
+    try {
+        const response = await fetch(url, {
+            ...defaultHeaders,
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        return await response.json() as T;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+    }
+};
+
+
+/**
+ * Hook that provides a function to call the txAdmin API
+ */
 type HookOpts = {
     //I'm pretty sure the webpipe supports only GET and POST
     method: 'GET' | 'POST';
@@ -44,18 +118,13 @@ type ApiCallOpts<RespType, ReqType> = {
     error?: (message: string, toastId?: string) => void;
 }
 
-
-/**
- * Hook that provides a function to call the txAdmin API
- */
 export const useBackendApi = <
     RespType = any,
     ReqType = NonNullable<Object>,
 >(hookOpts: HookOpts) => {
     const abortController = useRef<AbortController | undefined>(undefined);
     const currentToastId = useRef<string | undefined>(undefined);
-    const expireSess = useExpireAuthData();
-    const csrfToken = useCsrfToken();
+    const authedFetcher = useAuthedFetcher();
     hookOpts.abortOnUnmount ??= false;
     useEffect(() => {
         return () => {
@@ -69,9 +138,6 @@ export const useBackendApi = <
 
     return async (opts: ApiCallOpts<RespType, ReqType>) => {
         //Processing URL
-        if (!hookOpts.path.startsWith('/')) {
-            throw new Error(`[useBackendApi] hookOpts.path must start with a slash (/)`);
-        }
         let fetchUrl = window.txConsts.isWebInterface ? hookOpts.path : WEBPIPE_PATH + hookOpts.path;
         if (opts.pathParams) {
             for (const [key, val] of Object.entries(opts.pathParams)) {
@@ -126,25 +192,14 @@ export const useBackendApi = <
 
         try {
             //Make request
-            if (!csrfToken) throw new Error('CSRF token not set');
             console.log('[>>]', apiCallDesc);
-            const resp = await fetch(fetchUrl, {
+            const data = await authedFetcher(fetchUrl, {
                 method: hookOpts.method,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8',
-                    'Accept': 'application/json',
-                    'X-TxAdmin-CsrfToken': csrfToken,
-                },
-                body: opts.data ? JSON.stringify(opts.data) : undefined,
-                signal: abortController.current?.signal,
-            });
+                body: opts.data,
+            }, abortController.current);
             clearTimeout(timeoutId);
             if (abortController.current?.signal.aborted) return;
-            const data = await resp.json();
-            if (data?.logout) {
-                expireSess('api');
-                throw new Error('Session expired');
-            }
+
 
             //Success
             if (

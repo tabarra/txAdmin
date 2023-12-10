@@ -30,6 +30,12 @@ export const useOpenAccountModal = () => {
     }
 }
 
+export const useCloseAccountModal = () => {
+    const setAccountModalOpen = useSetAtom(accountModalOpenAtom);
+    return () => {
+        setAccountModalOpen(false);
+    }
+}
 
 
 /**
