@@ -57,7 +57,6 @@ export default function PromptDialog() {
                         ref={inputRef}
                         placeholder={dialogState.placeholder}
                         autoComplete="off"
-                        className="placeholder:opacity-50"
                         required={dialogState.required}
                     />
                     <DialogFooter className="gap-2 flex-col">

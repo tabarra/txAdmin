@@ -79,12 +79,12 @@ Processo:
     - [x][2d] useBackendApi hook - wrapper around fetch with optional toast management
     - [x][2h] server controls
     - [x][1h] server scheduled restarts (legacy style)
-    - [ ][3d] "your account" modal
+    - [x][3d] "your account" modal
         - [x] if isTempPassword change message and disallows closing before changing the password
-        - [ ] give the chance to change modifiers
+        - [x] give the chance to change modifiers
         - [x] remove legacy header + change password code
         - [x] admin manager should open "my account" when trying to edit self
-        - [ ] maybe separate the backend routes
+        - [x] maybe separate the backend routes
     - [ ][3d] playerlist
     - [ ][1d] add the new logos to shell+auth pages
 - [ ][3h] playerlist click opens legacy player modal (`iframe.contentWindow.postMessage("openModal", ???);`)
@@ -99,14 +99,14 @@ Processo:
     - [ ] flow to refresh the page if invalidated auth
 - [ ][2d] full setup flow (legacy)
 - [ ][1d] full deployer flow (legacy)
-- [ ][1d] NEW PAGE: Dashboard
+- [ ][3d] NEW PAGE: Dashboard
     - [ ] warning for txadmin updates
     - [ ] warning for fxserver update
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
 - [ ][1d] NEW PAGEs: Console log + Action log
-- [ ][2d] NEW PAGE: Live console
-- [ ][2d] NEW PAGE: Players
+- [ ][3d] NEW PAGE: Live console
+- [ ][3d] NEW PAGE: Players
 - [ ][1d] NEW PAGE: History
 
 - [x][2d] light/dark theme
@@ -261,8 +261,8 @@ https://www.npmjs.com/package/node-schedule
 
 ### New UI stuff
 https://www.tremor.so/blocks/landing-zone <<< boa inspiração de componentes
+https://stacksorted.com/
 https://auto-animate.formkit.com
-https://tanstack.com/virtual/v3
 
 maybe xtate for complex states like setup/deployer
 
@@ -709,6 +709,8 @@ ps.: need to also include the external events reporting thing
 
 
 ### Admin ACE sync:
+NOTE: Dec/2023 - why even bother?! Current system works, and we can exports the player permissions via state bags or whatever
+
 On server start, or admins permission change:
 - write a `txData/<profile>/txAcePerms.cfg` with:
     - remove_ace/remove_principal to wipe old permissions (would need something like `remove_ace identifier.xxx:xx txadmin.* any`)
