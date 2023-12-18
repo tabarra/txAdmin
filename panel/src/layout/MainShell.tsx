@@ -3,7 +3,7 @@ import MainRouter from "./MainRouter";
 import { useExpireAuthData } from '../hooks/auth';
 import { Header } from './Header';
 import { ServerSidebar } from './serverSidebar/ServerSidebar';
-import { PlayersSidebar } from './PlayersSidebar';
+import { PlayerlistSidebar } from './playerlistSidebar/PlayerlistSidebar';
 import MainSheets from './MainSheets';
 import WarningBar from './WarningBar';
 import BreakpointDebugger from '@/components/BreakpointDebugger';
@@ -97,7 +97,7 @@ export default function MainShell() {
             <main className="flex flex-1 min-h-[calc(100vh-5.5rem-1px)]">
                 <MainRouter />
             </main>
-            {window.txConsts.isWebInterface && <PlayersSidebar />}
+            {window.txConsts.isWebInterface && <PlayerlistSidebar />}
         </div>
 
         <MainSheets />

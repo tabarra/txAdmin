@@ -118,7 +118,7 @@ export const CustomToast = ({ t, type, data }: CustomToastProps) => {
                             href="http://discord.gg/txAdmin"
                             target="_blank"
                             onClick={handleExternalLinkClick}
-                            className="text-destructive-foregroundx font-semibold no-underline hover:underline m-0"
+                            className="font-semibold no-underline hover:underline m-0"
                         >
                             discord.gg/txAdmin
                         </a>.
@@ -139,9 +139,8 @@ export const CustomToast = ({ t, type, data }: CustomToastProps) => {
 export default function TxToaster() {
     return <Toaster
         reverseOrder={true}
-        containerClassName="top-[calc(4.5rem+1px)]"
         containerStyle={{
-            top: 'calc(4.5rem+1px)',
+            top: 'calc(4.5rem + 1px)',
             zIndex: 40,
         }}
     />

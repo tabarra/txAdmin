@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, handleExternalLinkClick } from '@/lib/utils';
 import ServerMenu from './ServerMenu';
 import ServerControls from './ServerControls';
 import ServerStatus from './ServerStatus';
@@ -13,9 +13,7 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
         <aside
             className={cn(
                 'flex flex-col gap-4',
-                isSheet
-                    ? 'mr-4 pl-2'
-                    : "self-start sticky top-[calc(4.5rem+1px)] z-0 w-sidebar shrink-0 hidden lg:flex",
+                isSheet ? 'mr-4 pl-2' : 'tx-sidebar hidden lg:flex',
             )}
         >
             <div className={cn(
@@ -33,12 +31,30 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
                 <ServerSchedule />
             </div>
             <hr className={isSheet ? 'block' : 'hidden'} />
-            <div className="flex justify-center items-center h-[80px]
-                text-3xl font-extralight text-center tracking-wider
-                rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+
+            {/* Ad Placeholder */}
+            <a
+                href='http://zap-hosting.com/txAdmin5'
+                onClick={handleExternalLinkClick}
+                target='_blank'
+                className='h-[80px] p-4 flex justify-center items-center gap-2
+                rounded-xl border shadow-sm
+                bg-gradient-to-r from-yellow-200 via-green-200 to-green-300
+                dark:brightness-90 dark:hover:brightness-100
+                relative group'
             >
-                ZAP AD
-            </div>
+                <div className='scale-0 group-hover:scale-100 transition-transform
+                absolute inset-0 animate-pulse blur-md -z-10
+                bg-black
+                dark:bg-gradient-to-r dark:from-yellow-200 dark:via-green-200 dark:to-green-300' />
+                <img
+                    className='h-8'
+                    src="img/zap256_black.png"
+                />
+                <p className='text-xs text-zinc-900 text-center tracking-wide'>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+                </p>
+            </a>
         </aside>
     );
 }

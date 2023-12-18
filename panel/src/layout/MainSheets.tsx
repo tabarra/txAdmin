@@ -4,7 +4,7 @@ import { ServerSidebar } from "./serverSidebar/ServerSidebar";
 import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/sheets";
 import { MenuNavLink } from "@/components/MainPageLink";
 import { ClipboardCheckIcon, ListIcon, PieChartIcon, ScrollIcon, SettingsIcon, UserSquare2Icon, UsersIcon, ZapIcon } from 'lucide-react';
-import { PlayersSidebar } from "./PlayersSidebar";
+import { PlayerlistSidebar } from "./playerlistSidebar/PlayerlistSidebar";
 
 
 export function GlobalMenuSheet() {
@@ -81,7 +81,7 @@ export function PlayersSidebarSheet() {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent side='right' className="w-full xs:w-3/4">
                 <ScrollArea className="h-full">
-                    <PlayersSidebar isSheet />
+                    <PlayerlistSidebar isSheet />
                 </ScrollArea>
             </SheetContent>
         </Sheet>

@@ -183,4 +183,10 @@
     body {
         @apply bg-background text-foreground antialiased;
     }
+
+    .tx-sidebar {
+        @apply self-start sticky shrink-0 w-sidebar z-0;
+        /* 3.5rem + 1px + 1rem = header + border + padding */
+        top: calc(4.5rem + 1px);
+    }
 }
