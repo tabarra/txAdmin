@@ -189,4 +189,29 @@
         /* 3.5rem + 1px + 1rem = header + border + padding */
         top: calc(4.5rem + 1px);
     }
+
+    /* Since this is going to be repeated a lot, better to externalize the style */
+    .tx-playerlist {
+        & > .player {
+            @apply absolute top-0 left-0 w-full px-2 py-1 overflow-clip;
+            @apply cursor-pointer text-sm whitespace-nowrap text-ellipsis;
+            @apply hover:bg-secondary hover:text-secondary-foreground transition-colors duration-75;
+    
+            & > .pid-block {
+                @apply inline-block text-right;
+    
+                & > .pid-badge {
+                    @apply px-1 pt-0.5 ml-auto border rounded-[0.35rem];
+                    @apply font-mono tracking-wider;
+                    @apply dark:text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900;
+                    @apply text-zinc-500 border-zinc-300 bg-zinc-100;
+                }
+            }
+    
+            & > .pname {
+                @apply ml-2 font-semibold
+            }
+        }
+    }
+    
 }

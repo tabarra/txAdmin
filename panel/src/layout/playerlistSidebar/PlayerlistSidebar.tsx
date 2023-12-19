@@ -1,111 +1,38 @@
-import { playerCountAtom } from '@/hooks/playerlist';
 import { cn } from '@/lib/utils';
-import { useAtomValue } from 'jotai';
+import PlayerlistSummary from './PlayerlistSummary';
+import Playerlist from './Playerlist';
+
 
 type PlayerSidebarProps = {
     isSheet?: boolean;
 };
 export function PlayerlistSidebar({ isSheet }: PlayerSidebarProps) {
-    const playerCount = useAtomValue(playerCountAtom);
     return (
         <aside
             className={cn(
                 'flex flex-col gap-4',
-                isSheet ? 'mr-4 pl-2' : 'tx-sidebar hidden xl:flex',
+                isSheet ? 'w-full pr-2' : 'tx-sidebar hidden xl:flex',
             )}
-
             style={{
-                //3.5rem-1px-2rem = header - border - y-padding
-                height: isSheet ? 'unset' : 'calc(100vh - 3.5rem - 1px - 2rem)',
+                height: isSheet
+                    //1.5rem*2 = y-padding
+                    ? 'calc(100vh - 3rem)'
+                    //3.5rem-1px-2rem = header - border - y-padding
+                    : 'calc(100vh - 3.5rem - 1px - 2rem)',
             }}
         >
-            <div className="flex justify-center items-center h-[211px]
-            text-3xl font-extralight text-center tracking-wider
-            rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+            <div
+                className="rounded-xl border border-border bg-card text-card-foreground shadow-sm shrink-0"
             >
-                PLAYERS: {playerCount}
+                <PlayerlistSummary />
             </div>
-            <div className={cn(
-                !isSheet && 'rounded-xl border border-border bg-card text-card-foreground shadow-sm p-4',
-                'flex flex-col gap-4',
-                'flex-growx overflow-y-scroll h-[500px]x max-h-screen'
-            )}>
-                Lorem ipsum dolor si
-                t amet, consectetu
-                r adipiscing elit,
-                sed do eiusmod te
-                mpor incididunt ut
-                labore et dolore
-                magna aliqua. Ut
-                enim ad minim veniam, quis
-                nostrud exercitat
-                ion ullamco labor
-                is nisi ut aliquip
-                ex ea commodo consequat.
-                PLAYERLIST
-                Lorem ipsum dolor si
-                t amet, consectetu
-                r adipiscing elit,
-                sed do eiusmod te
-                mpor incididunt ut
-                labore et dolore
-                magna aliqua. Ut
-                enim ad minim veniam, quis
-                nostrud exercitat
-                ion ullamco labor
-                is nisi ut aliquip
-                ex ea commodo consequat.
-                PLAYERLIST
-                Lorem ipsum dolor si
-                t amet, consectetu
-                r adipiscing elit,
-                sed do eiusmod te
-                mpor incididunt ut
-                labore et dolore
-                magna aliqua. Ut
-                enim ad minim veniam, quis
-                nostrud exercitat
-                ion ullamco labor
-                is nisi ut aliquip
-                ex ea commodo consequat.
-                Lorem ipsum dolor si
-                t amet, consectetu
-                r adipiscing elit,
-                sed do eiusmod te
-                mpor incididunt ut
-                labore et dolore
-                magna aliqua. Ut
-                enim ad minim veniam, quis
-                nostrud exercitat
-                ion ullamco labor
-                is nisi ut aliquip
-                ex ea commodo consequat.
-                PLAYERLIST
-                Lorem ipsum dolor si
-                t amet, consectetu
-                r adipiscing elit,
-                sed do eiusmod te
-                mpor incididunt ut
-                labore et dolore
-                magna aliqua. Ut
-                enim ad minim veniam, quis
-                nostrud exercitat
-                ion ullamco labor
-                is nisi ut aliquip
-                ex ea commodo consequat.
-                PLAYERLIST
-                Lorem ipsum dolor si
-                t amet, consectetu
-                r adipiscing elit,
-                sed do eiusmod te
-                mpor incididunt ut
-                labore et dolore
-                magna aliqua. Ut
-                enim ad minim veniam, quis
-                nostrud exercitat
-                ion ullamco labor
-                is nisi ut aliquip
-                ex ea commodo consequat.
+            <div
+                className={cn(
+                    !isSheet && 'rounded-xl border border-border bg-card text-card-foreground shadow-sm',
+                    'flex flex-col gap-2 flex-grow overflow-hidden',
+                )}
+            >
+                <Playerlist />
             </div>
         </aside>
     );

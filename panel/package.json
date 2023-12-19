@@ -27,6 +27,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tailwindcss/typography": "^0.5.10",
     "@tanstack/react-query": "^5.0.5",
+    "@tanstack/react-virtual": "^3.0.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "jotai": "^2.5.1",
