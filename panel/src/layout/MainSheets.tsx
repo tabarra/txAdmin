@@ -11,7 +11,11 @@ export function GlobalMenuSheet() {
     const { isSheetOpen, setIsSheetOpen } = useGlobalMenuSheet();
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent side='left' className="flex flex-col gap-6 w-full xs:w-3/4">
+            <SheetContent
+                side='left'
+                className="flex flex-col gap-6 w-full xs:w-3/4"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+            >
                 <SheetHeader>
                     <SheetTitle><span className="h-7 w-36 bg-accent text-accent-foreground rounded text-center p-0.5 font-bold tracking-widest">FULL LOGO</span></SheetTitle>
                 </SheetHeader>
@@ -66,7 +70,11 @@ export function ServerSidebarSheet() {
     const { isSheetOpen, setIsSheetOpen } = useServerSheet();
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent side='left' className="w-full xs:w-3/4">
+            <SheetContent
+                side='left'
+                className="w-full xs:w-3/4"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+            >
                 <ScrollArea className="h-full">
                     <ServerSidebar isSheet />
                 </ScrollArea>
@@ -79,7 +87,11 @@ export function PlayersSidebarSheet() {
     const { isSheetOpen, setIsSheetOpen } = usePlayerlistSheet();
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent side='right' className="w-full xs:w-3/4">
+            <SheetContent
+                side='right'
+                className="w-full xs:w-3/4"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+            >
                 <ScrollArea className="h-full">
                     <PlayerlistSidebar isSheet />
                 </ScrollArea>
