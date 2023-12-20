@@ -1,9 +1,7 @@
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator, DropdownMenuTrigger
+    DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { cn, openExternalLink } from "@/lib/utils";
 import { KeyRoundIcon, LogOutIcon, Menu, Monitor, MoonIcon, PersonStanding, SunIcon } from "lucide-react";
@@ -126,7 +124,7 @@ function AuthedHeaderFragment() {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex flex-row items-center gap-2 sm:gap-3">
+            <DropdownMenuTrigger className="flex flex-row items-center gap-2 sm:gap-3 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg">
                 <span className="hidden xl:block text-muted-foreground">{authData.name}</span>
                 <Avatar
                     className="w-11 h-11 sm:w-10 sm:h-10 rounded-md text-2xl 
@@ -158,6 +156,7 @@ function AuthedHeaderFragment() {
                     <FaDiscord size="14" className="mr-2" />
                     Support
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer" onClick={doLogout}>
                     <LogOutIcon className="mr-2 h-4 w-4" />
                     Logout

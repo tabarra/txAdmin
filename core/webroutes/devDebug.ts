@@ -24,8 +24,6 @@ export const get = async (ctx: AuthedCtx) => {
     console.warn(devWarningMessage);
     const { scope } = schemaRes.data;
 
-
-
     return ctx.send({
         rand: Math.random()
     });

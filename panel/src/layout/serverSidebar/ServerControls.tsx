@@ -11,11 +11,6 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useOpenConfirmDialog, useOpenPromptDialog } from '@/hooks/dialogs';
-import { useMutation } from '@tanstack/react-query';
-import { ApiAuthErrorResp, ApiToastResp } from '@shared/genericApiTypes';
-import { useCsrfToken, useExpireAuthData } from '@/hooks/auth';
-import { txToast } from '@/components/TxToaster';
-import { useRef, useState } from 'react';
 import { useBackendApi } from '@/hooks/fetch';
 import { useCloseAllSheets } from '@/hooks/sheets';
 
@@ -25,7 +20,7 @@ const tooltipDelay = 300;
 const controlButtonsVariants = cva(
     `h-10 sm:h-8 rounded-md transition-colors
     flex flex-grow items-center justify-center flex-shrink-0
-    border bg-muted shadow-md
+    border bg-muted shadow-sm
 
     focus:outline-none disabled:pointer-events-none disabled:opacity-50 ring-offset-background  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`,
     {
