@@ -28,6 +28,7 @@ export function PlayerlistSidebar({ isSheet }: PlayerSidebarProps) {
             </div>
             <div
                 className={cn(
+                    'min-h-[480px]',
                     !isSheet && 'rounded-xl border border-border bg-card text-card-foreground shadow-sm',
                     'flex flex-col gap-2 flex-grow overflow-hidden',
                 )}

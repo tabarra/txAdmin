@@ -2,13 +2,133 @@ import { playerlistAtom } from "@/hooks/playerlist";
 import cleanPlayerName from "@shared/cleanPlayerName";
 import { useAtomValue } from "jotai";
 import { VirtualItem, useVirtualizer } from '@tanstack/react-virtual';
-import { useMemo, useRef, useState } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import { PlayerlistPlayerType } from "@shared/socketioTypes";
 import { Input } from "@/components/ui/input";
-import { ArrowDownWideNarrowIcon, XIcon } from "lucide-react";
+import { FilterXIcon, SlidersHorizontalIcon, XIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator, DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+
+
+//NOTE: Move the styles (except color) to global.css since this component is rendered often
+function TagColor({ color }: { color: string }) {
+    return <div
+        className="outline-none focus:outline-none"
+        style={{
+            display: 'inline-block',
+            backgroundColor: color,
+            width: '0.375rem',
+            borderRadius: '2px',
+        }}
+    >&nbsp;</div>;
+}
+
+
+type PlayerlistFilterProps = {
+    filterString: string;
+    setFilterString: (s: string) => void;
+};
+function PlayerlistFilter({ filterString, setFilterString }: PlayerlistFilterProps) {
+    return (
+        <div className="pt-2 px-2 flex gap-2">
+            <div className="relative w-full">
+                <Input
+                    className="h-8"
+                    placeholder="Filter by Name or ID"
+                    value={filterString}
+                    onChange={(e) => setFilterString(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                            setFilterString('');
+                        }
+                    }}
+                />
+                {filterString && <button
+                    className="absolute right-2 top-0 bottom-0 text-zinc-500 dark:text-zinc-400 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
+                    onClick={() => setFilterString('')}
+                >
+                    <XIcon />
+                </button>}
+            </div>
+            {/* <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <button
+                        className={cn(
+                            'h-8 w-8 inline-flex justify-center items-center rounded-md shrink-0',
+                            'ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                            'border bg-muted shadow-sm',
+                            'hover:bg-primary hover:text-primary-foreground hover:border-primary',
+                        )}
+                    >
+                        <SlidersHorizontalIcon className="h-5" />
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuLabel>Filter by Tag</DropdownMenuLabel>
+                    <DropdownMenuCheckboxItem
+                        checked={true}
+                        className="cursor-pointer hover:!bg-secondary hover:!text-current focus:!bg-secondary focus:!text-current"
+                    >
+                        <div className="flex justify-around min-w-full">
+                            <span className="grow pr-4">Admin</span>
+                            <TagColor color="#EF4444" />
+                        </div>
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                        checked={true}
+                        className="cursor-pointer hover:!bg-secondary hover:!text-current focus:!bg-secondary focus:!text-current"
+                    >
+                        <div className="flex justify-around min-w-full">
+                            <span className="grow pr-4">Newcomer</span>
+                            <TagColor color="#A3E635" />
+                        </div>
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                        checked={false}
+                        className="cursor-pointer hover:!bg-secondary hover:!text-current focus:!bg-secondary focus:!text-current"
+                    >
+                        <div className="flex justify-around min-w-full">
+                            <span className="grow pr-4">Watch List</span>
+                            <TagColor color="#FB923C" />
+                        </div>
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuItem
+                        onClick={undefined}
+                        className="cursor-pointer hover:!bg-secondary hover:!text-current focus:!bg-secondary focus:!text-current"
+                    >
+                        <FilterXIcon className="mr-2 h-4 w-4" />
+                        Clear Filter
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                    <DropdownMenuRadioGroup value="id">
+                        <DropdownMenuRadioItem
+                            value="id"
+                            className="cursor-pointer hover:!bg-secondary hover:!text-current focus:!bg-secondary focus:!text-current"
+                        >Join Order</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem
+                            value="tag"
+                            className="cursor-pointer hover:!bg-secondary hover:!text-current focus:!bg-secondary focus:!text-current"
+                        >Tag Priority</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+            </DropdownMenu> */}
+        </div>
+    );
+};
+const PlayerlistFilterMemo = memo(PlayerlistFilter);
 
 
 //NOTE: the styles have been added to global.css since this component is rendered A LOT
@@ -35,7 +155,7 @@ export default function Playerlist() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [filterString, setFilterString] = useState('');
 
-    //FIXME: temporary logic, use fuse.js or something like that
+    //TODO: temporary logic, use fuse.js or something like that
     const filteredPlayerlist = useMemo(() => {
         const pureFilter = cleanPlayerName(filterString).pureName;
         if (pureFilter !== 'emptyname') {
@@ -67,32 +187,7 @@ export default function Playerlist() {
 
     return (
         <>
-            {/* FIXME: With the filter/sorting dropdown, this will become an expensive component, memoize it! */}
-            <div className="pt-4 px-2 flex gap-2">
-                <div className="relative w-full">
-                    <Input
-                        className="h-8"
-                        placeholder="Filter by Name or ID"
-                        value={filterString}
-                        onChange={(e) => setFilterString(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Escape') {
-                                setFilterString('');
-                            }
-                        }}
-                    />
-                    {filterString && <button
-                        className="absolute right-2 top-0 bottom-0 text-slate-600"
-                        onClick={() => setFilterString('')}
-                    >
-                        <XIcon />
-                    </button>}
-                </div>
-                <Button
-                    variant="default"
-                    className="h-8 w-8"
-                ><ArrowDownWideNarrowIcon /></Button>
-            </div>
+            <PlayerlistFilterMemo filterString={filterString} setFilterString={setFilterString} />
 
             <div
                 className={cn(

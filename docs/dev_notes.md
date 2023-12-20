@@ -62,7 +62,7 @@ Processo:
 - SHELL:
     - [x][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
     - [x][2h] merge new shell design into the `txadmin/panel` codebase
-    - [ ][~3d] implement most shell+status features 
+    - [x][~3d] implement most shell+status features 
         - [x][1d] socket.io connection for default room
         - [x][2h] warning for outdated tx, visible in all pages
         - [x][1h] dynamic title
@@ -70,7 +70,6 @@ Processo:
         - [x][1d] server status
         - [x][4h] update notices via socket.io
         - [x][2h] tooltips on everything
-        - [ ][1h] zap hosting advertisement
     - [x][1d] toasts API
         - [x] generic toasts
         - [x] markdown toasts
@@ -85,8 +84,7 @@ Processo:
         - [x] remove legacy header + change password code
         - [x] admin manager should open "my account" when trying to edit self
         - [x] maybe separate the backend routes
-    - [ ][3d] playerlist
-    - [ ][1d] add the new logos to shell+auth pages
+    - [x][3d] playerlist
 - [ ][3h] playerlist click opens legacy player modal (`iframe.contentWindow.postMessage("openModal", ???);`)
 - [ ][5d] full auth flow
     - [x] password login
@@ -108,6 +106,8 @@ Processo:
 - [ ][3d] NEW PAGE: Live console
 - [ ][3d] NEW PAGE: Players
 - [ ][1d] NEW PAGE: History
+- [ ][1h] zap hosting advertisement
+- [ ][1d] add the new logos to shell+auth pages
 
 - [x][2d] light/dark theme
 - [x][1d] adapt legacy styles to somewhat match shadcn
@@ -132,11 +132,7 @@ Quickies
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 
 Bugs
-- [ ] when you open the server sheet, the control tooltip shows automatically
-- [x] nui iframe scroll on 1080p screen
-    - should not scroll even with 7 server menu items
-    - possible solution would be to hide the zap ad if !isWebInterface
-- [x] no `target="_blank"` will work in NUI (zap ad + support), so either hide the buttons or find a way to open links
+- [ ] make sure the playerlist scroll works if the playergen is stopped (therefore, not re-rendering the component)
 
 
 =======================================================================
@@ -200,7 +196,12 @@ Master Actions:
 =======================================================================
 
 ## Next Up
-- [ ] xxxx
+- [ ] Playerlist: implement basic tag system with filters, sorting and Fuse.js
+    - the filter dropdown is written already, check `panel/src/layout/playerlistSidebar/Playerlist.tsx`
+    - when filterString is present, disable the filter/sort drowdown, as it will show all results sorted by fuse.js
+    - might be worth to debounce the search
+
+
 - [ ] write some automated tests for the auth logic and middlewares
 - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
 - [ ] fix the eslint config
