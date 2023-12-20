@@ -1,5 +1,18 @@
 /* eslint-disable no-unused-vars */
 //================================================================
+//================================================= Helper funcs
+//================================================================
+const msToDuration = humanizeDuration.humanizer({
+    round: true,
+});
+const msToShortDuration = humanizeDuration.humanizer({
+    round: true,
+    spacer: '',
+    language: 'shortEn',
+});
+
+
+//================================================================
 //=================================================== On Page Load
 //================================================================
 const getSocket = (rooms) => {

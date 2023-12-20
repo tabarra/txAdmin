@@ -149,9 +149,9 @@
                         <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" 
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="chartThreadSelectBtn">svMain</button>
                         <div class="dropdown-menu threadSelectDropdown bg-secondary" data-popper-placement="bottom-start">
-                            <a class="dropdown-item bg-secondary text-dark" href="#" id="chartThreadSelectBtn-svMain">svMain</a>
-                            <a class="dropdown-item bg-secondary text-dark" href="#" id="chartThreadSelectBtn-svSync">svSync</a>
-                            <a class="dropdown-item bg-secondary text-dark" href="#" id="chartThreadSelectBtn-svNetwork">svNetwork</a>
+                            <button class="dropdown-item bg-secondary text-dark" id="chartThreadSelectBtn-svMain">svMain</button>
+                            <button class="dropdown-item bg-secondary text-dark" id="chartThreadSelectBtn-svSync">svSync</button>
+                            <button class="dropdown-item bg-secondary text-dark" id="chartThreadSelectBtn-svNetwork">svNetwork</button>
                         </div>
                     </div>
                 </div>
@@ -215,7 +215,6 @@
 
     //Sets the chart data
     const setChartThread = async (thread) => {
-        console.log(`Fetching data for ${thread}`);
         chartThreadSelectBtn.textContent = thread;
         perfData = false;
         try {
@@ -248,9 +247,15 @@
         }
     }
     setChartThread('svMain');
-    document.getElementById('chartThreadSelectBtn-svMain').addEventListener('click', () => setChartThread('svMain'), false);
-    document.getElementById('chartThreadSelectBtn-svSync').addEventListener('click', () => setChartThread('svSync'), false);
-    document.getElementById('chartThreadSelectBtn-svNetwork').addEventListener('click', () => setChartThread('svNetwork'), false);
+    document.getElementById('chartThreadSelectBtn-svMain').addEventListener('click', () => {
+        setChartThread('svMain');
+    }, false);
+    document.getElementById('chartThreadSelectBtn-svSync').addEventListener('click', () => {
+        setChartThread('svSync')
+    }, false);
+    document.getElementById('chartThreadSelectBtn-svNetwork').addEventListener('click', () => {
+        setChartThread('svNetwork')
+    }, false);
 
     //Every 2.5 minutes
     setInterval(() => {
