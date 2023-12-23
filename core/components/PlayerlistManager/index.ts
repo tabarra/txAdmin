@@ -10,10 +10,16 @@ const console = consoleFactory(modulename);
 
 /**
  * The PlayerlistManager will store a ServerPlayer instance for all players that connected to the server.
- * This class will also keep an array of ['mutex#id', license], to be used for searches from server log clicks.
+ * 
+ * NOTE: licenseCache will keep an array of ['mutex#id', license], to be used for searches from server log clicks.
  * The licenseCache will contain only the licenses from last 50k disconnected players, which should be one entire
  *  session for the q99.9 servers out there and weight around 4mb.
  * The idea is: all players with license will be in the database, so storing only license is enough to find them.
+ * 
+ * NOTE: #playerlist keeps all players in this session, a heap snapshot revealed that an 
+ *  average player (no actions) will weight about 520 bytes, and the q9999 of max netid is ~22k, 
+ *  meaning that for 99.99 of the servers, the list will be under 11mb.
+ * A list with 50k connected players will weight around 26mb, meaning no optimization is required there.
  */
 export default class PlayerlistManager {
     readonly #txAdmin: TxAdmin;

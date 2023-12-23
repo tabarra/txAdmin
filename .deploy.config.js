@@ -12,6 +12,8 @@ export default {
         '+set', 'txAdminVerbose', 'true',
         // '+set', 'txAdminPort', '40125',
         // '--trace-warnings',
+        // '--inspect',
+        // '--max-old-space-size=4096',
         
         //FIXME: broken
         // '+set', 'txDebugPlayerlistGenerator', 'true',

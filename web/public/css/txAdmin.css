@@ -404,6 +404,7 @@ mark {background-color: #ffeaa7;}
     /* 56+50 = 106 +4 */
     position: relative;
     height: calc(100vh - 110px);
+    padding-top: unset;
 }
 
 .thin-scroll {

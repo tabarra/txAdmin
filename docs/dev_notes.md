@@ -42,6 +42,47 @@ Processo:
 =======================================================================
 
 
+```patch
+diff --git a/resource/menu/client/cl_player_ids.lua b/resource/menu/client/cl_player_ids.lua
+--- a/resource/menu/client/cl_player_ids.lua
++++ b/resource/menu/client/cl_player_ids.lua
+@@ -126,4 +126,8 @@
+         -- If we have not yet indexed this player or their tag has somehow dissapeared (pause, etc)
+-        if not playerGamerTags[pid] or not IsMpGamerTagActive(playerGamerTags[pid].gamerTag) then
++        if
++            not playerGamerTags[pid]
++            or playerGamerTags[pid].ped ~= targetPed --ped can change if it leaves the networked area and back
++            or not IsMpGamerTagActive(playerGamerTags[pid].gamerTag)
++        then
+             local playerName = string.sub(GetPlayerName(pid) or "unknown", 1, 75)
+             local playerStr = '[' .. GetPlayerServerId(pid) .. ']' .. ' ' .. playerName
+```
+
+
+```patch
+diff --git a/resource/menu/client/cl_player_mode.lua b/resource/menu/client/cl_player_mode.lua
+--- a/resource/menu/client/cl_player_mode.lua
++++ b/resource/menu/client/cl_player_mode.lua
+@@ -224,12 +224,15 @@
+     end
+ 
++    --NOTE: always do the toggleX(true) at the bottom to prevent
++    --conflict with some other native like toggleGodMode(false) after toggleFreecam(true)
++    --which disables the SetEntityInvincible(true)
+     if mode == 'godmode' then
+         toggleFreecam(false)
+-        toggleGodMode(true)
+         toggleSuperJump(false)
++        toggleGodMode(true)
+     elseif mode == 'noclip' then
+-        toggleFreecam(true)
+         toggleGodMode(false)
+         toggleSuperJump(false)
++        toggleFreecam(true)
+     elseif mode == 'superjump' then
+         toggleFreecam(false)
+
+```
 
 
 
@@ -85,7 +126,10 @@ Processo:
         - [x] admin manager should open "my account" when trying to edit self
         - [x] maybe separate the backend routes
     - [x][3d] playerlist
-- [ ][3h] playerlist click opens legacy player modal (`iframe.contentWindow.postMessage("openModal", ???);`)
+    - [ ][2d] implement new player modal
+        - [x] legacy pages should open the new modal
+        - [ ] clean legacy modal and playerlist code
+        - [ ] make sure it is responsive
 - [ ][5d] full auth flow
     - [x] password login
     - [x] cfx.re login
@@ -98,8 +142,7 @@ Processo:
 - [ ][2d] full setup flow (legacy)
 - [ ][1d] full deployer flow (legacy)
 - [ ][3d] NEW PAGE: Dashboard
-    - [ ] warning for txadmin updates
-    - [ ] warning for fxserver update
+    - [ ] number callouts from legacy players page
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
 - [ ][1d] NEW PAGEs: Console log + Action log
@@ -120,6 +163,7 @@ Processo:
 - [ ][2h] fine tune `panel/vite.config.ts`
 
 Quickies
+- [ ] commit the fixes for the player ids and god mode issues
 - [ ] make sure some user input is truncated (server name, player name)
 - [ ] layout on 4k and ultrawide screens
 - [ ] check again for the need of lazy loading
@@ -128,7 +172,7 @@ Quickies
     - [ ] add `cache-control` and/or `vary` to all pages
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
 - [ ] disable testing page in prod build
-- [ ] check if strick mode is indeed disabled in prod build
+- [ ] check if strict mode is indeed disabled in prod build
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 
 Bugs
@@ -201,6 +245,8 @@ Master Actions:
     - when filterString is present, disable the filter/sort drowdown, as it will show all results sorted by fuse.js
     - might be worth to debounce the search
 
+- [ ] Hotkey navigation and controls?
+    - at least hotkey to jump to the playerlist filter, and 
 
 - [ ] write some automated tests for the auth logic and middlewares
 - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page

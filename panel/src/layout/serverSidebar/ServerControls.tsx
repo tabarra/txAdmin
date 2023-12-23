@@ -1,4 +1,4 @@
-import KickAllIcon from '@/components/KickAllIcon';
+import { KickAllIcon } from '@/components/KickIcons';
 import { processInstantiatedAtom } from '@/hooks/status';
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
