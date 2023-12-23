@@ -258,9 +258,11 @@ function tsToLocaleDate(ts) {
 // Open Modal
 function showPlayerByMutexNetid(mutexNetid) {
     const [mutex, netid] = mutexNetid.split(/[_#]/, 2);
+    return window.parent.postMessage({ type: 'openPlayerModal', ref: { mutex, netid } });
     return showPlayer({ mutex, netid });
 }
 function showPlayerByLicense(license) {
+    return window.parent.postMessage({ type: 'openPlayerModal', ref: { license } });
     return showPlayer({ license });
 }
 function showPlayer(playerRef, keepTabSelection = false) {

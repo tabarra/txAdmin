@@ -6,7 +6,6 @@ import { ServerSidebar } from './serverSidebar/ServerSidebar';
 import { PlayerlistSidebar } from './playerlistSidebar/PlayerlistSidebar';
 import MainSheets from './MainSheets';
 import WarningBar from './WarningBar';
-import BreakpointDebugger from '@/components/BreakpointDebugger';
 import { useEffect, useRef } from 'react';
 import { useSetGlobalStatus } from '@/hooks/status';
 import { useProcessUpdateAvailableEvent, useSetOfflineWarning } from '@/hooks/useWarningBar';
@@ -19,17 +18,23 @@ import PromptDialog from '@/components/PromptDialog';
 import TxToaster, { txToast } from '../components/TxToaster';
 import AccountDialog from '@/components/AccountDialog';
 import { useOpenAccountModal } from '@/hooks/dialogs';
+import PlayerModal from './playerModal/PlayerModal';
+import { useOpenPlayerModal } from '@/hooks/playerModal';
 
 
 export default function MainShell() {
     useAtomValue(pageTitleWatcher);
     const expireSession = useExpireAuthData();
     const openAccountModal = useOpenAccountModal();
+    const openPlayerModal = useOpenPlayerModal();
+
     useEventListener('message', (e: MessageEventFromIframe) => {
         if (e.data.type === 'logoutNotice') {
             expireSession('child iframe');
-        } else if (e.data.type === 'openYourAccountModal') {
+        } else if (e.data.type === 'openAccountModal') {
             openAccountModal();
+        } else if (e.data.type === 'openPlayerModal') {
+            openPlayerModal(e.data.ref);
         }
     });
 
@@ -106,6 +111,7 @@ export default function MainShell() {
         <PromptDialog />
         <TxToaster />
         <AccountDialog />
+        <PlayerModal />
         {/* <BreakpointDebugger /> */}
     </>;
 }

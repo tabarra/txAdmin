@@ -1,4 +1,4 @@
-import { playerlistAtom } from "@/hooks/playerlist";
+import { playerlistAtom, serverMutexAtom } from "@/hooks/playerlist";
 import cleanPlayerName from "@shared/cleanPlayerName";
 import { useAtomValue } from "jotai";
 import { VirtualItem, useVirtualizer } from '@tanstack/react-virtual';
@@ -18,6 +18,7 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { useOpenPlayerModal } from "@/hooks/playerModal";
 
 
 //NOTE: Move the styles (except color) to global.css since this component is rendered often
@@ -131,8 +132,13 @@ function PlayerlistFilter({ filterString, setFilterString }: PlayerlistFilterPro
 const PlayerlistFilterMemo = memo(PlayerlistFilter);
 
 
+type PlayerlistPlayerProps = { 
+    virtualItem: VirtualItem, 
+    player: PlayerlistPlayerType,
+    modalOpener: (netid: number) => void,
+}
 //NOTE: the styles have been added to global.css since this component is rendered A LOT
-function PlayerlistPlayer({ virtualItem, player }: { virtualItem: VirtualItem, player: PlayerlistPlayerType }) {
+function PlayerlistPlayer({ virtualItem, player, modalOpener }: PlayerlistPlayerProps) {
     return (
         <div
             className="player"
@@ -140,6 +146,7 @@ function PlayerlistPlayer({ virtualItem, player }: { virtualItem: VirtualItem, p
                 height: `${virtualItem.size}px`,
                 transform: `translateY(${virtualItem.start}px)`,
             }}
+            onClick={() => modalOpener(player.netid)}
         >
             <div className="pid-block">
                 <span className="pid-badge">{player.netid}</span>
@@ -152,6 +159,8 @@ function PlayerlistPlayer({ virtualItem, player }: { virtualItem: VirtualItem, p
 
 export default function Playerlist() {
     const playerlist = useAtomValue(playerlistAtom);
+    const serverMutex = useAtomValue(serverMutexAtom);
+    const openPlayerModal = useOpenPlayerModal();
     const scrollRef = useRef<HTMLDivElement>(null);
     const [filterString, setFilterString] = useState('');
 
@@ -185,6 +194,11 @@ export default function Playerlist() {
     });
     const virtualItems = rowVirtualizer.getVirtualItems();
 
+    const modalOpener = (netid: number) => {
+        if(!serverMutex) return;
+        openPlayerModal({mutex: serverMutex, netid});
+    }
+
     return (
         <>
             <PlayerlistFilterMemo filterString={filterString} setFilterString={setFilterString} />
@@ -217,7 +231,7 @@ export default function Playerlist() {
             </div>
 
             <style>{injectedStyle}</style>
-            <ScrollArea className="h-full" ref={scrollRef}>
+            <ScrollArea className="h-full select-none" ref={scrollRef}>
                 <div
                     className="tx-playerlist"
                     style={{
@@ -231,6 +245,7 @@ export default function Playerlist() {
                             key={virtualItem.key}
                             virtualItem={virtualItem}
                             player={filteredPlayerlist[virtualItem.index]}
+                            modalOpener={modalOpener}
                         />
                     ))}
                 </div>

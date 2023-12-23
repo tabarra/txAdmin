@@ -87,7 +87,7 @@
                                 <td class="tableActions">
                                     <% if (admin.isSelf) { %>
                                         <button class="btn btn-sm btn-outline-primary"
-                                            onclick="openYourAccountModal()">
+                                            onclick="openAccountModal()">
                                             <i class="icon-pencil"></i> Your Account
                                         </button>
                                     <% } else { %>
@@ -202,8 +202,8 @@
 
     
     //============================================== Show Your Account Modal
-    function openYourAccountModal() {
-        window.parent.postMessage({ type: 'openYourAccountModal' });
+    function openAccountModal() {
+        window.parent.postMessage({ type: 'openAccountModal' });
     }
 
     //============================================== Show Admin Modal

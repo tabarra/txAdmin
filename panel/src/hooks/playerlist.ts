@@ -1,5 +1,5 @@
 import { PlayerlistEventType, PlayerlistPlayerType } from "@shared/socketioTypes";
-import { atom, useAtomValue, useSetAtom } from "jotai";
+import { atom, useSetAtom } from "jotai";
 
 
 /**
@@ -7,9 +7,7 @@ import { atom, useAtomValue, useSetAtom } from "jotai";
  */
 export const playerlistAtom = atom<PlayerlistPlayerType[]>([]);
 export const playerCountAtom = atom((get) => get(playerlistAtom).length);
-
-//NOTE: In the old UI, we didn't store the mutex separately, but as a prop of players
-// export const serverMutexAtom = atom<string | null>(null);
+export const serverMutexAtom = atom<string | null>(null);
 
 
 /**
@@ -17,6 +15,7 @@ export const playerCountAtom = atom((get) => get(playerlistAtom).length);
  */
 export const useProcessPlayerlistEvents = () => {
     const setPlayerlist = useSetAtom(playerlistAtom);
+    const setServerMutex = useSetAtom(serverMutexAtom);
 
     return (events: PlayerlistEventType[]) => {
         //If there is a fullPlayerlist, skip everything before it
@@ -27,6 +26,7 @@ export const useProcessPlayerlistEvents = () => {
         for (const event of events) {
             if (event.type === 'fullPlayerlist') {
                 setPlayerlist(event.playerlist);
+                setServerMutex(event.mutex);
             } else if (event.type === 'playerJoining') {
                 setPlayerlist((oldList) => [...oldList, event]);
             } else if (event.type === 'playerDropped') {
@@ -37,3 +37,10 @@ export const useProcessPlayerlistEvents = () => {
         }
     }
 };
+
+//Getter for the server mutex
+// const getCurrentMutex = useAtomCallback(
+//     useCallback((get) => {
+//         return get(serverMutexAtom)
+//     }, []),
+// );
