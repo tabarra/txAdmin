@@ -101,6 +101,7 @@ export default function TmpHexHslConverter() {
                     <div className="w-20 h-10" style={{ backgroundColor: `#${hex}` }}></div>
                     <div className="w-20 h-10" style={{ backgroundColor: `hsl(${hexToHsl(hex)})` }}></div>
                 </div>
+                <small>NOTE: This calculation is not reliable, if the bar above is striped, it means that the hex and hsl differs, in that case please use <a href="https://products.aspose.app/svg/color-converter/rgb-to-hsl" target="_blank" rel="noopener noreferrer" className="text-accent">this page.</a></small>
             </div>
         </div>
     );

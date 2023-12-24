@@ -51,21 +51,25 @@ module.exports = {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
           hint: "hsl(var(--destructive-hint))",
+          inline: "hsl(var(--destructive-inline))",
         },
         warning: {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
           hint: "hsl(var(--warning-hint))",
+          inline: "hsl(var(--warning-inline))",
         },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
           hint: "hsl(var(--success-hint))",
+          inline: "hsl(var(--success-inline))",
         },
         info: {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
           hint: "hsl(var(--info-hint))",
+          inline: "hsl(var(--info-inline))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",

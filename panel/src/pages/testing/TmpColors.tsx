@@ -16,6 +16,16 @@ export default function TmpColors() {
                 <div className="w-full p-1 bg-success text-success-foreground">success</div>
                 <div className="w-full p-1 bg-info text-info-foreground">info</div>
             </div>
+            <div className="space-y-2 w-48">
+                <div className="w-full p-1 border text-destructive-inline">destructive</div>
+                <div className="w-full p-1 border text-warning-inline">warning</div>
+                <div className="w-full p-1 border text-success-inline">success</div>
+                <div className="w-full p-1 border text-info-inline">info</div>
+                <div className="w-full p-1 bg-card text-destructive-inline">destructive</div>
+                <div className="w-full p-1 bg-card text-warning-inline">warning</div>
+                <div className="w-full p-1 bg-card text-success-inline">success</div>
+                <div className="w-full p-1 bg-card text-info-inline">info</div>
+            </div>
             <div className="border-l-2 border-border"></div>
             <div className="space-y-2 flex flex-col items-center">
                 <Button size="sm" variant="default">default</Button>

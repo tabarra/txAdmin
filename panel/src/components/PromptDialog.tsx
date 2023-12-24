@@ -58,7 +58,7 @@ export default function PromptDialog() {
                         placeholder={dialogState.placeholder}
                         autoComplete="off"
                         required={dialogState.required}
-                        className="bg-black/40"
+                        className="bg-black/10 dark:bg-black/40"
                     />
                     <DialogFooter className="gap-2 flex-col">
                         <div className="flex flex-col sm:flex-row sm:justify-start gap-2 w-full flex-wrap">

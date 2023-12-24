@@ -84,7 +84,7 @@ const ChangePasswordTab = memo(function () {
     return (
         <TabsContent value="password" tabIndex={undefined}>
             <form onSubmit={handleSubmit}>
-                {authData.isTempPassword ? (<p className="text-sm text-warning">
+                {authData.isTempPassword ? (<p className="text-sm text-warning-inline">
                     Your account has a temporary password that needs to be changed before you can use this web panel. <br />
                     <strong>Make sure to take note of your new password before saving.</strong>
                 </p>) : (<p className="text-sm text-muted-foreground">

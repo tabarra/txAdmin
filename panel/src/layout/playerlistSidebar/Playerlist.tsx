@@ -205,7 +205,7 @@ export default function Playerlist() {
 
             <div
                 className={cn(
-                    'text-center m-1 text-warning tracking-wider italic text-xs',
+                    'text-center m-1 text-warning-inline tracking-wider italic text-xs',
                     filteredPlayerlist.length !== playerlist.length && virtualItems.length ? 'block' : 'hidden'
                 )}
             >
