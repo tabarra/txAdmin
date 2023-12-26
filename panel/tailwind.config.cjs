@@ -19,6 +19,9 @@ module.exports = {
       },
     },
     extend: {
+      fontSize: {
+        xxs: '0.625rem', // 10px
+      },
       spacing: {
         sidebar: "16rem", //256px
       },
