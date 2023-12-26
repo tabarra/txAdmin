@@ -84,6 +84,53 @@ diff --git a/resource/menu/client/cl_player_mode.lua b/resource/menu/client/cl_p
 
 ```
 
+```js
+import bytes from 'bytes';
+import fs from 'node:fs';
+const srcDb = 'E:\\FiveM\\txData\\default\\data\\playersDB.json';
+const destFile = 'E:\\TMP\\deletar-referencias-tx\\playersDB.json'
+const currRss = () => bytes(process.memoryUsage().rss);
+import stream from 'stream';
+
+import Chain from 'stream-chain';
+import Disassembler from 'stream-json/Disassembler.js';
+import Stringer from 'stream-json/Stringer.js';
+
+export const saveToFileStreaming = (hugeArrayOfObjects: any) => {
+    new Chain([
+        stream.Readable.from(hugeArrayOfObjects, { objectMode: true }),
+        new Disassembler(),
+        new Stringer(),
+        fs.createWriteStream(destFile)
+    ])
+}
+
+setInterval(() => {
+    console.log('.');
+}, 100);
+
+
+console.log('RSS before read:', currRss());
+const dbo = JSON.parse(fs.readFileSync(srcDb, 'utf8'));
+console.log('RSS after read:', currRss());
+console.log('DB Players:', dbo.players.length);
+
+
+console.log('Awaiting 30s...');
+setTimeout(() => {
+    console.log('RSS before write:', currRss());
+    console.time('stringify+write');
+    const dboString = JSON.stringify([dbo]);
+    fs.writeFileSync(destFile, dboString);
+    // saveToFileStreaming([dbo]);
+    console.timeEnd('stringify+write');
+    console.log('RSS after write:', currRss());
+}, 30*1000);
+
+//normal 202 -> 714mb, em 450ms
+//lib 202 -> weird 1gb peak
+```
+
 
 
 =======================================================================
@@ -100,6 +147,8 @@ diff --git a/resource/menu/client/cl_player_mode.lua b/resource/menu/client/cl_p
 - [x] rewrite the session middlewares
 - [x] new auth ui + auth routing
     - [x] enforce new password rule
+- [x][2d] light/dark theme
+- [x][1d] adapt legacy styles to somewhat match shadcn
 - SHELL:
     - [x][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
     - [x][2h] merge new shell design into the `txadmin/panel` codebase
@@ -128,8 +177,11 @@ diff --git a/resource/menu/client/cl_player_mode.lua b/resource/menu/client/cl_p
     - [x][3d] playerlist
     - [ ][2d] implement new player modal
         - [x] legacy pages should open the new modal
+        - [ ] write tsx + handling of data
+        - [ ] all actions
         - [ ] clean legacy modal and playerlist code
         - [ ] make sure it is responsive
+        - [ ] check behavior on error (invalid player, 500, etc)
 - [ ][5d] full auth flow
     - [x] password login
     - [x] cfx.re login
@@ -137,10 +189,19 @@ diff --git a/resource/menu/client/cl_player_mode.lua b/resource/menu/client/cl_p
     - [x] master account pin add page
     - [x] master account bkp password page
     - [ ] disable menu links based on permissions
+    - [ ] disable player modal buttons based on permissions
     - [ ] flow to refresh the permissions on the client side
     - [ ] flow to refresh the page if invalidated auth
 - [ ][2d] full setup flow (legacy)
 - [ ][1d] full deployer flow (legacy)
+- [ ][1d] add the new logos to shell+auth pages
+- [ ][3h] full cleanup of legacy code
+    - [ ] removing the replaced page templates
+    - [ ] remove playerlist code
+    - [ ] remove password change modal
+    - [ ] disable code for host live status
+> BETA RELEASE
+
 - [ ][3d] NEW PAGE: Dashboard
     - [ ] number callouts from legacy players page
     - [ ] warning for dev builds of txadmin
@@ -150,20 +211,18 @@ diff --git a/resource/menu/client/cl_player_mode.lua b/resource/menu/client/cl_p
 - [ ][3d] NEW PAGE: Players
 - [ ][1d] NEW PAGE: History
 - [ ][1h] zap hosting advertisement
-- [ ][1d] add the new logos to shell+auth pages
-
-- [x][2d] light/dark theme
-- [x][1d] adapt legacy styles to somewhat match shadcn
-- [ ][3h] full cleanup of legacy code
-    - [ ] removing the replaced page templates
-    - [ ] remove playerlist code
-    - [ ] remove password change modal
-    - [ ] disable code for host live status
 - [ ][1d] tutorial stepper for the new UI
 - [ ][2h] fine tune `panel/vite.config.ts`
 
 Quickies
+- [ ] fix the tsc build
 - [ ] commit the fixes for the player ids and god mode issues
+- [ ] disable testing page in prod build
+- [ ] check if strict mode is indeed disabled in prod build
+- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
+
+- [ ] when logging out, create a neffect to close all sheets and dialogs
+- [ ] talk to r* and make sure the new build process wipes the old cache
 - [ ] make sure some user input is truncated (server name, player name)
 - [ ] layout on 4k and ultrawide screens
 - [ ] check again for the need of lazy loading
@@ -171,8 +230,6 @@ Quickies
     - [ ] add `maxage` to `koa-static` config
     - [ ] add `cache-control` and/or `vary` to all pages
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
-- [ ] disable testing page in prod build
-- [ ] check if strict mode is indeed disabled in prod build
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 
 Bugs
@@ -247,6 +304,10 @@ Master Actions:
 
 - [ ] Hotkey navigation and controls?
     - at least hotkey to jump to the playerlist filter, and 
+
+- [ ] Anonymous admin actions (issue #893)
+    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
+- [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so i can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
 
 - [ ] write some automated tests for the auth logic and middlewares
 - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
@@ -329,6 +390,10 @@ https://www.learnui.design/blog/color-in-ui-design-a-practical-framework.html
 https://www.refactoringui.com/previews/building-your-color-palette
 https://www.smashingmagazine.com/2021/07/hsl-colors-css/
 Base for themes: https://daisyui.com/docs/themes/
+Custom theme creator stuff:
+- https://labs.mapbox.com/react-colorpickr/
+- https://react-spectrum.adobe.com/react-spectrum/ColorSlider.html#creating-a-color-picker
+- https://www.peko-step.com/en/tool/hslrgb_en.html
 cfxui colors:
 - ext/cfx-ui/src/cfx/apps/mpMenu/styles/themes/fivem-dark.scss
 - ext/cfx-ui/src/cfx/styles/_ui.scss

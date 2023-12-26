@@ -5,9 +5,9 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useClosePromptDialog, usePromptDialogState } from "@/hooks/dialogs";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";

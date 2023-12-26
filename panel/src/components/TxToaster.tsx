@@ -141,7 +141,7 @@ export default function TxToaster() {
         reverseOrder={true}
         containerStyle={{
             top: 'calc(4.5rem + 1px)',
-            zIndex: 40,
+            zIndex: 60,
         }}
     />
 }

@@ -361,7 +361,7 @@ function showPlayer(playerRef, keepTabSelection = false) {
                     { units: ['d', 'h', 'm'] }
                 );
                 if (!player.isConnected) {
-                    modPlayer.Main.lastConnectionText.innerText = tsToLocaleDate(player.tsLastConnection);;
+                    modPlayer.Main.lastConnectionText.innerText = tsToLocaleDate(player.tsLastConnection);
                     modPlayer.Main.lastConnectionDiv.classList.remove('d-none');
                 }
 
