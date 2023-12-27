@@ -205,6 +205,13 @@ export default class FXRunner {
         //Reseting monitor stats
         globals.healthMonitor.resetMonitorStats();
 
+        //Resetting frontend playerlist
+        globals.webServer.webSocket.buffer('playerlist', {
+            mutex: this.currentMutex,
+            type: 'fullPlayerlist',
+            playerlist: [],
+        });
+
         //Announcing
         if (announce === 'true' || announce === true) {
             globals.discordBot.sendAnnouncement({

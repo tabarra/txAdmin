@@ -3,13 +3,13 @@ import { cn } from "@/lib/utils";
 import { PlayerHistoryItem, PlayerModalSuccess } from "@shared/playerApiTypes";
 
 
-
 type HistoryItemProps = {
     action: PlayerHistoryItem,
     permsDisableWarn: boolean,
     permsDisableBan: boolean,
     serverTime: number,
 }
+
 function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime }: HistoryItemProps) {
     const isRevokeDisabled = (
         !!action.revokedBy ||
@@ -36,7 +36,7 @@ function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime }: 
     }
 
     return (
-        <div className={cn('pl-2 border-l-4 hover:bg-muted', borderColorClass)}>
+        <div className={cn('pl-2 border-l-4 hover:bg-muted rounded-r-sm', borderColorClass)}>
             <div className="flex w-full justify-between">
                 <strong className="text-sm text-muted-foreground">{actionMessage}</strong>
                 <small className="text-right text-xxs space-x-1">
@@ -57,10 +57,16 @@ function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime }: 
 }
 
 
-export default function HistoryTab() {
-    return <div className="flex flex-col gap-1">
-        {exampleData.player.actionHistory.map((action) => (
-            <HistoryItem action={action} permsDisableWarn={false} permsDisableBan={false} serverTime={0} />
-        ))}
-    </div>;
+export default function HistoryTab({ actionHistory }: { actionHistory: PlayerHistoryItem[] }) {
+    if (!actionHistory.length) {
+        return <div className="flex items-center justify-center min-h-[16.5rem] p-1">
+            <span className="text-xl text-muted-foreground">No bans/warns found.</span>
+        </div>;
+    } else {
+        return <div className="flex flex-col gap-1 p-1">
+            {actionHistory.map((action) => (
+                <HistoryItem key={action.id} action={action} permsDisableWarn={false} permsDisableBan={false} serverTime={0} />
+            ))}
+        </div>;
+    }
 }

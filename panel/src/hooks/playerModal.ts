@@ -5,7 +5,7 @@ import { atomWithReset } from 'jotai/utils';
 /**
  * Prompt Dialog Stuff
  */
-type PlayerModalRefType = {
+export type PlayerModalRefType = {
     mutex: string;
     netid: number;
 } | {

@@ -2,11 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PlayerModalRefType } from "@/hooks/playerModal";
 import { Loader2Icon } from "lucide-react";
 import { useRef, useState } from "react";
 
 
-export default function BanTab() {
+export default function BanTab({ playerRef }: { playerRef: Exclude<PlayerModalRefType, undefined> }) {
     const reasonRef = useRef<HTMLInputElement>(null);
     const [currentDuration, setCurrentDuration] = useState('2 days');
     const [customMultiplier, setCustomMultipler] = useState('2');
@@ -21,6 +22,7 @@ export default function BanTab() {
         console.log('Duration:', currentDuration);
         console.log('Custom Multiplier:', customMultiplier);
         console.log('Custom Units:', customUnits);
+        console.log('Player:', playerRef);
         console.groupEnd();
         setTimeout(() => {
             setIsSaving(false);

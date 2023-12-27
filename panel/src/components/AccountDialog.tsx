@@ -11,7 +11,7 @@ import { memo, useEffect, useState } from "react";
 import { TabsTrigger, TabsList, TabsContent, Tabs } from "@/components/ui/tabs";
 import { ApiChangeIdentifiersReq, ApiChangePasswordReq } from "@shared/authApiTypes";
 import { useAccountModal, useCloseAccountModal } from "@/hooks/dialogs";
-import { ApiAuthErrorResp, GenericApiOkResp, GenericApiResp } from "@shared/genericApiTypes";
+import { GenericApiOkResp } from "@shared/genericApiTypes";
 import { fetchWithTimeout, useAuthedFetcher, useBackendApi } from "@/hooks/fetch";
 import consts from "@shared/consts";
 import { txToast } from "./TxToaster";

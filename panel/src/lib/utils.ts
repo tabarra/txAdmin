@@ -60,6 +60,18 @@ export const msToShortDuration = humanizeDuration.humanizer({
 
 
 /**
+ * Converts a timestamp to a locale date string
+ */
+export const tsToLocaleDate = (ts: number) => {
+    return new Date(ts * 1000)
+        .toLocaleDateString(
+            navigator.language,
+            { dateStyle: 'long' }
+        );
+}
+
+
+/**
  * Returns a socket.io client instance
  */
 export const getSocket = (rooms: string[] | string) => {
