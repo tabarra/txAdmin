@@ -2,9 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAdminPerms } from "@/hooks/auth";
 import { PlayerModalRefType } from "@/hooks/playerModal";
 import { Loader2Icon } from "lucide-react";
 import { useRef, useState } from "react";
+import { PlayerModalMidMessage } from "./PlayerModal";
 
 
 export default function BanTab({ playerRef }: { playerRef: Exclude<PlayerModalRefType, undefined> }) {
@@ -13,6 +15,13 @@ export default function BanTab({ playerRef }: { playerRef: Exclude<PlayerModalRe
     const [customMultiplier, setCustomMultipler] = useState('2');
     const [customUnits, setCustomUnits] = useState('days');
     const [isSaving, setIsSaving] = useState(false);
+    const { hasPerm } = useAdminPerms();
+    if(!hasPerm('players.ban')) {
+        return <PlayerModalMidMessage>
+            You don't have permission to ban players.
+        </PlayerModalMidMessage>;
+    }
+
 
     const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
         event?.preventDefault();

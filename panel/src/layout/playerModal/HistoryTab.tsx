@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useAdminPerms } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { PlayerHistoryItem, PlayerModalSuccess } from "@shared/playerApiTypes";
+import { PlayerModalMidMessage } from "./PlayerModal";
 
 
 type HistoryItemProps = {
@@ -13,8 +15,8 @@ type HistoryItemProps = {
 function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime }: HistoryItemProps) {
     const isRevokeDisabled = (
         !!action.revokedBy ||
-        (action.type == 'warn' && permsDisableWarn) ||
-        (action.type == 'ban' && permsDisableBan)
+        (action.type === 'warn' && permsDisableWarn) ||
+        (action.type === 'ban' && permsDisableBan)
     );
     const actionDate = (new Date(action.ts * 1000)).toLocaleString();
 
@@ -57,15 +59,30 @@ function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime }: 
 }
 
 
-export default function HistoryTab({ actionHistory }: { actionHistory: PlayerHistoryItem[] }) {
+type HistoryTabProps = {
+    actionHistory: PlayerHistoryItem[],
+    serverTime: number,
+}
+
+export default function HistoryTab({ actionHistory, serverTime }: HistoryTabProps) {
+    const { hasPerm } = useAdminPerms();
+    const hasWarnPerm = hasPerm('players.warn');
+    const hasBanPerm = hasPerm('players.ban');
+
     if (!actionHistory.length) {
-        return <div className="flex items-center justify-center min-h-[16.5rem] p-1">
-            <span className="text-xl text-muted-foreground">No bans/warns found.</span>
-        </div>;
+        return <PlayerModalMidMessage>
+            No bans/warns found.
+        </PlayerModalMidMessage>;
     } else {
         return <div className="flex flex-col gap-1 p-1">
             {actionHistory.map((action) => (
-                <HistoryItem key={action.id} action={action} permsDisableWarn={false} permsDisableBan={false} serverTime={0} />
+                <HistoryItem
+                    key={action.id}
+                    action={action}
+                    permsDisableWarn={!hasWarnPerm}
+                    permsDisableBan={!hasBanPerm}
+                    serverTime={serverTime}
+                />
             ))}
         </div>;
     }

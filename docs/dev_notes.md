@@ -177,7 +177,7 @@ setTimeout(() => {
     - [x][3d] playerlist
     - [ ][2d] implement new player modal
         - [x] legacy pages should open the new modal
-        - [ ] write tsx + handling of data
+        - [x] write tsx + handling of data
         - [ ] all actions
         - [ ] clean legacy modal and playerlist code
         - [ ] make sure it is responsive
@@ -307,6 +307,8 @@ Master Actions:
 
 - [ ] Anonymous admin actions (issue #893)
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
+- [ ] Change the kick all to require the `control.server` permission (issue #379)
+
 - [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so i can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
 
 - [ ] write some automated tests for the auth logic and middlewares

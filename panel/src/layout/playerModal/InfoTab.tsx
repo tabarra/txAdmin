@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useAdminPerms } from "@/hooks/auth";
 import { cn, msToDuration, tsToLocaleDate } from "@/lib/utils";
 import { PlayerModalPlayerData } from "@shared/playerApiTypes";
 import { useRef, useState } from "react";
@@ -67,6 +68,8 @@ type InfoTabProps = {
 }
 
 export default function InfoTab({ player, setSelectedTab }: InfoTabProps) {
+    const { hasPerm } = useAdminPerms();
+
     const sessionTimeText = player.sessionTime ? msToDuration(
         player.sessionTime * 60_000,
         { units: ['h', 'm'] }
@@ -111,7 +114,7 @@ export default function InfoTab({ player, setSelectedTab }: InfoTabProps) {
                         size='inline'
                         style={{ minWidth: '8.25ch' }}
                         onClick={() => { }} //FIXME:
-                        disabled={false} //FIXME:
+                        disabled={!hasPerm('players.whitelist')}
                     >
                         {player.tsWhitelisted ? 'Remove' : 'Add WL'}
                     </Button>

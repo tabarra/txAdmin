@@ -18,15 +18,27 @@ import GenericSpinner from "@/components/GenericSpinner";
 import { cn } from "@/lib/utils";
 import { useBackendApi } from "@/hooks/fetch";
 import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
+import { useAdminPerms } from "@/hooks/auth";
+
+
+export function PlayerModalMidMessage({children}: {children: React.ReactNode}) {
+    return (
+        <div className="flex items-center justify-center min-h-[16.5rem] text-xl p1 text-muted-foreground">
+            {children}
+        </div>
+    )
+}
 
 
 function PlayerModalFooter() {
+    const { hasPerm } = useAdminPerms();
+
     return (
         <DialogFooter className="max-w-2xl gap-2 p-2 md:p-4 border-t grid grid-cols-2 sm:flex">
             <Button
                 variant='outline'
                 size='sm'
-                disabled={false} //FIXME:
+                disabled={!hasPerm('manage.admins')}
                 onClick={() => { }} //FIXME:
                 className="pl-2 sm:mr-auto"
             >
@@ -35,7 +47,7 @@ function PlayerModalFooter() {
             <Button
                 variant='outline'
                 size='sm'
-                disabled={false} //FIXME:
+                disabled={!hasPerm('players.message')}
                 onClick={() => { }} //FIXME:
                 className="pl-2"
             >
@@ -44,7 +56,7 @@ function PlayerModalFooter() {
             <Button
                 variant='outline'
                 size='sm'
-                disabled={false} //FIXME:
+                disabled={!hasPerm('players.kick')}
                 onClick={() => { }} //FIXME:
                 className="pl-2"
             >
@@ -58,7 +70,7 @@ function PlayerModalFooter() {
             <Button
                 variant='outline'
                 size='sm'
-                disabled={false} //FIXME:
+                disabled={!hasPerm('players.warn')}
                 onClick={() => { }} //FIXME:
                 className="pl-2"
             >
@@ -140,7 +152,7 @@ export default function PlayerModal() {
     let pageTitle: JSX.Element;
     if (modalData) {
         pageTitle = <>
-            <span className="text-muted-foreground">[{modalData.player.netid || 'OFFLINE'}]</span> {modalData.player.displayName}
+            <span className="text-muted-foreground font-mono">[{modalData.player.netid || 'OFFLINE'}]</span> {modalData.player.displayName}
         </>;
     } else if (modalError) {
         pageTitle = <span className="text-destructive-inline">Error!</span>;
@@ -179,25 +191,34 @@ export default function PlayerModal() {
                     {/* NOTE: consistent height: sm:h-[16.5rem] */}
                     <ScrollArea className="w-full max-h-[calc(100vh-3.125rem-4rem-5rem)] min-h-[16.5rem] px-4 py-2 md:py-0">
                         {!modalData ? (
-                            <div className="flex items-center justify-center min-h-[16.5rem]">
+                            <PlayerModalMidMessage>
                                 {modalError ? (
-                                    <span className="text-xl text-destructive-inline">Error: {modalError}</span>
+                                    <span className="text-destructive-inline">Error: {modalError}</span>
                                 ) : (
                                     <GenericSpinner msg="Loading..." />
                                 )}
-                            </div>
+                            </PlayerModalMidMessage>
                         ) : (
                             <>
-                                {selectedTab === 'Info' && <InfoTab player={modalData.player} setSelectedTab={setSelectedTab} />}
-                                {selectedTab === 'History' && <HistoryTab actionHistory={modalData.player.actionHistory} />}
-                                {selectedTab === 'IDs' && <IdsTab player={modalData.player} />}
-                                {selectedTab === 'Ban' && <BanTab playerRef={playerRef!} />}
+                                {selectedTab === 'Info' && <InfoTab
+                                    player={modalData.player}
+                                    setSelectedTab={setSelectedTab}
+                                />}
+                                {selectedTab === 'History' && <HistoryTab
+                                    actionHistory={modalData.player.actionHistory}
+                                    serverTime={modalData.meta.serverTime}
+                                />}
+                                {selectedTab === 'IDs' && <IdsTab
+                                    player={modalData.player}
+                                />}
+                                {selectedTab === 'Ban' && <BanTab
+                                    playerRef={playerRef!}
+                                />}
                             </>
                         )}
                     </ScrollArea>
                 </div>
-
-                <PlayerModalFooter /> {/* FIXME: */}
+                <PlayerModalFooter />
             </DialogContent>
         </Dialog>
     );
