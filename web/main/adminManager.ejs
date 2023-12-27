@@ -191,10 +191,11 @@
     let autofill = false;
     if(typeof location.search === 'string' && location.search.startsWith('?autofill')){
         const params = new URLSearchParams(location.search);
+        const discordValue = params.get('discord');
         autofill = {
             name: params.get('name'),
             citizenfxID: params.get('citizenfx'),
-            discordID: params.get('discord').split(':')[1],
+            discordID: discordValue && discordValue.includes(':') ? discordValue.split(':')[1] : '',
         }
         window.history.pushState(null, 'txAdmin', 'adminManager?');
         getAdminModal();
