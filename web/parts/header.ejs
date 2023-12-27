@@ -48,32 +48,6 @@
 </head>
 
 <body class="c-app <%= uiTheme %>">
-    <!-- Player List -->
-    <% if (isWebInterface) { %>
-        <div class="c-sidebar c-sidebar-md c-sidebar-light c-sidebar-fixed 
-            c-sidebar-right c-sidebar-xl-show playerlist-sidebar" id="plist">
-            <div class="tab-pane" role="tabpanel">
-                <div class="list-group list-group-accent">
-                    <div class="list-group-item list-group-item-accent-secondary playerlist-header plheader">
-                        <span class="plheader-label font-weight-bold text-muted text-uppercase">
-                            Players:
-                        </span>
-                        <span class="plheader-bignum float-right" id="plist-count">--</span>
-                    </div>
-                    <div class="list-group-item list-group-item-accent-secondary playerlist-search">
-                        <input class="form-control form-control-sm text-center" type="text"
-                            placeholder="Search" id="plist-search">
-                    </div>
-                    <div class="playerlist thin-scroll" id="playerlist">
-                      <div class="list-group-item text-center p-3 font-weight-bold" id="playerlist-message">
-                        loading...
-                      </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <% } %>
-
     <!-- Center Content -->
     <div class="c-wrapper c-fixed-components">
 

@@ -141,7 +141,7 @@ export default function PlayerModal() {
                         ))}
                     </div>
                     {/* NOTE: consistent height: sm:h-[16.5rem] */}
-                    <ScrollArea className="w-full max-h-[calc(100vh-3.125rem-4rem-5rem)] min-h-[16.5rem] px-4 py-2 md:py-0">
+                    <ScrollArea className="w-full max-h-[calc(100vh-3.125rem-4rem-5rem)] min-h-[16.5rem] md:max-h-[50vh] px-4 py-2 md:py-0">
                         {!modalData ? (
                             <PlayerModalMidMessage>
                                 {modalError ? (

@@ -175,13 +175,13 @@ setTimeout(() => {
         - [x] admin manager should open "my account" when trying to edit self
         - [x] maybe separate the backend routes
     - [x][3d] playerlist
-    - [ ][2d] implement new player modal
+    - [x][2d] implement new player modal
         - [x] legacy pages should open the new modal
         - [x] write tsx + handling of data
-        - [ ] all actions
-        - [ ] clean legacy modal and playerlist code
-        - [ ] make sure it is responsive
-        - [ ] check behavior on error (invalid player, 500, etc)
+        - [x] all actions
+        - [x] make sure it is responsive
+        - [x] check behavior on error (invalid player, 500, etc)
+        - [x] clean legacy modal and playerlist code
 - [ ][5d] full auth flow
     - [x] password login
     - [x] cfx.re login

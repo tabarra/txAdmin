@@ -13,7 +13,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { isValidRedirectPath } from './lib/utils.ts';
 import ThemeProvider from './components/ThemeProvider.tsx';
 import { StrictMode } from 'react';
+import { isMobile } from 'is-mobile';
 
+//Detecting if the user is on a mobile device
+try {
+    window.txIsMobile = isMobile({ tablet: true });
+} catch (error) {
+    window.txIsMobile = false;
+}
 
 //If the initial routing is from WebPipe, remove it from the pathname so the router can handle it
 if (window.location.pathname.substring(0, 8) === '/WebPipe') {

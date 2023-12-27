@@ -38,23 +38,27 @@ function PlayerNotesBox({ playerRef, player }: { playerRef: PlayerModalRefType, 
         path: `/player/save_note`,
     });
 
+    const doSaveNotes = () => {
+        setNotesLogText('Saving...');
+        playerNotesApi({
+            queryParams: playerRef,
+            data: {
+                note: textAreaRef.current?.value.trim(),
+            },
+            success: (data) => {
+                if ('error' in data) {
+                    setNotesLogText(data.error);
+                } else {
+                    setNotesLogText('Saved!');
+                }
+            },
+        });
+    }
+
     const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
+        if (event.key === 'Enter' && !event.shiftKey && !window.txIsMobile) {
             event.preventDefault();
-            setNotesLogText('Saving...');
-            playerNotesApi({
-                queryParams: playerRef,
-                data: {
-                    note: textAreaRef.current?.value.trim(),
-                },
-                success: (data) => {
-                    if('error' in data){
-                        setNotesLogText(data.error);
-                    }else{
-                        setNotesLogText('Saved!');
-                    }
-                },
-            });
+            doSaveNotes();
         }
     }
 
@@ -74,6 +78,15 @@ function PlayerNotesBox({ playerRef, player }: { playerRef: PlayerModalRefType, 
                 ? 'Type your notes about the player.'
                 : 'Cannot set notes for players that are not registered.'}
         />
+        {window.txIsMobile && <div className="mt-2 w-full">
+            <Button
+                variant="outline"
+                size='xs'
+                onClick={doSaveNotes}
+                disabled={!player.isRegistered}
+                className="w-full"
+            >Save Note</Button>
+        </div>}
     </>
 }
 
@@ -119,7 +132,7 @@ export default function InfoTab({ playerRef, player, setSelectedTab, refreshModa
                 successMsg: 'Whitelist changed.',
             },
             success: (data, toastId) => {
-                if('success' in data){
+                if ('success' in data) {
                     refreshModalData();
                 }
             },

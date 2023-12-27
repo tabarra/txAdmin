@@ -13,6 +13,54 @@ const msToShortDuration = humanizeDuration.humanizer({
 
 
 //================================================================
+//===================================== Ports from old players.js
+//================================================================
+// Open Modal
+function showPlayerByMutexNetid(mutexNetid) {
+    const [mutex, netid] = mutexNetid.split(/[_#]/, 2);
+    return window.parent.postMessage({ type: 'openPlayerModal', ref: { mutex, netid } });
+}
+function showPlayerByLicense(license) {
+    return window.parent.postMessage({ type: 'openPlayerModal', ref: { license } });
+}
+
+// Revokes an action
+function revokeAction(actionId, isModal = false) {
+    if (!actionId) {
+        return $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
+    }
+
+    const notify = $.notify({ message: '<p class="text-center">Revoking...</p>' }, {});
+    txAdminAPI({
+        type: "POST",
+        url: '/database/revoke_action',
+        timeout: REQ_TIMEOUT_LONG,
+        data: { actionId },
+        success: function (data) {
+            notify.update('progress', 0);
+            if (data.success === true) {
+                notify.update('type', 'success');
+                notify.update('message', 'Action revoked.');
+                if (isModal) {
+                    showPlayer(modPlayer.currPlayerRef, true);
+                } else {
+                    window.location.reload(true);
+                }
+            } else {
+                notify.update('type', 'danger');
+                notify.update('message', data.error || 'unknown error');
+            }
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        }
+    });
+}
+
+
+//================================================================
 //=================================================== On Page Load
 //================================================================
 const getSocket = (rooms) => {
@@ -33,23 +81,3 @@ const getSocket = (rooms) => {
 
     return socket;
 }
-
-const startMainSocket = () => {
-    if(!isWebInterface) return;
-    const socket = getSocket(['playerlist']);
-    socket.on('disconnect', (message) => {
-        console.log("Main Socket.IO Disonnected:", message);
-        if (isWebInterface) {
-            setPlayerlistMessage('Page Disconnected 😓');
-        }
-    });
-    socket.on('playerlist', function (playerlistData) {
-        if(!isWebInterface) return;
-        processPlayerlistEvents(playerlistData);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function (event) {
-    //Starting status/playerlist socket.io
-    startMainSocket();
-});

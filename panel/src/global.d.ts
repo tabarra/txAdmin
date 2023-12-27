@@ -7,6 +7,7 @@ type OpenPlayerModalMessage = { type: 'openPlayerModal', ref: PlayerModalRefType
 export declare global {
     interface Window {
         txConsts: InjectedTxConsts;
+        txIsMobile: boolean;
         invokeNative?: (nativeName: string, ...args: any[]) => void;
     }
     type MessageEventFromIframe = MessageEvent<LogoutNoticeMessage>

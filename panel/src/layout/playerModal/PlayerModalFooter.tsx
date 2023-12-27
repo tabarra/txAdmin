@@ -47,7 +47,7 @@ export default function PlayerModalFooter({ playerRef, player }: PlayerModalFoot
     }
 
     const handleGiveAdmin = () => {
-        if(!player) return;
+        if (!player) return;
         const params = new URLSearchParams();
         params.set("autofill", "true");
         params.set("name", player.pureName);
@@ -68,7 +68,7 @@ export default function PlayerModalFooter({ playerRef, player }: PlayerModalFoot
     }
 
     const handleDm = () => {
-        if(!player) return;
+        if (!player) return;
         openPromptDialog({
             title: `Direct Message ${player.displayName}`,
             message: 'Type direct message below',
@@ -88,7 +88,7 @@ export default function PlayerModalFooter({ playerRef, player }: PlayerModalFoot
     }
 
     const handleKick = () => {
-        if(!player) return;
+        if (!player) return;
         openPromptDialog({
             title: `Kick ${player.displayName}`,
             message: 'Type the kick reason or leave it blank (press enter)',
@@ -107,7 +107,7 @@ export default function PlayerModalFooter({ playerRef, player }: PlayerModalFoot
     }
 
     const handleWarn = () => {
-        if(!player) return;
+        if (!player) return;
         openPromptDialog({
             title: `Warn ${player.displayName}`,
             message: 'Type the warn reason.',

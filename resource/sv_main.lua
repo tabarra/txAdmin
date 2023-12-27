@@ -235,7 +235,7 @@ txaEventHandlers.playerWarned = function(eventData)
         end
         txPrint('Warning '..pName..' with reason: '..eventData.reason)
     else
-        logError('handleWarnEvent: player not found')
+        txPrint('handleWarnEvent: player not found')
     end
 end
 

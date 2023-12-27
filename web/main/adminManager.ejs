@@ -194,7 +194,7 @@
         const discordValue = params.get('discord');
         autofill = {
             name: params.get('name'),
-            citizenfxID: params.get('citizenfx'),
+            citizenfxID: params.get('citizenfx') ?? '',
             discordID: discordValue && discordValue.includes(':') ? discordValue.split(':')[1] : '',
         }
         window.history.pushState(null, 'txAdmin', 'adminManager?');

@@ -34,6 +34,8 @@ function IdsBlock({ title, emptyMessage, currIds, allIds, isSmaller }: IdsBlockP
             {hasCopiedIds ? (
                 <span className="text-sm text-success-inline">Copied!</span>
             ) : (
+                // TODO: a button to erase the ids from the database can be added here,
+                // requires tooltip and confirm modal though
                 <button onClick={handleCopyIds}>
                     <CopyIcon className="h-4 text-secondary hover:text-primary" />
                 </button>

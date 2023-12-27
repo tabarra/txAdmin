@@ -32,6 +32,7 @@
     "@tanstack/react-virtual": "^3.0.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "is-mobile": "^4.0.0",
     "jotai": "^2.5.1",
     "jotai-effect": "^0.2.3",
     "lucide-react": "^0.300.0",

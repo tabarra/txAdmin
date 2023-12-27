@@ -21,9 +21,7 @@ export function PlayerlistSidebar({ isSheet }: PlayerSidebarProps) {
                     : 'calc(100vh - 3.5rem - 1px - 2rem)',
             }}
         >
-            <div
-                className="rounded-xl border border-border bg-card text-card-foreground shadow-sm shrink-0"
-            >
+            <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm shrink-0">
                 <PlayerlistSummary />
             </div>
             <div
