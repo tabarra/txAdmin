@@ -10,9 +10,9 @@ export type PlayerModalRefType = {
     netid: number;
 } | {
     license: string;
-} | undefined;
+};
 export const playerModalOpenAtom = atomWithReset(false);
-export const playerModalRefAtom = atomWithReset<PlayerModalRefType>(undefined);
+export const playerModalRefAtom = atomWithReset<PlayerModalRefType | undefined>(undefined);
 
 //Hook to open the player modal
 export const useOpenPlayerModal = () => {
@@ -21,6 +21,14 @@ export const useOpenPlayerModal = () => {
     return (data: Exclude<PlayerModalRefType, undefined>) => {
         setModalRef(data);
         setModalOpen(true);
+    }
+};
+
+//Hook to close the player modal
+export const useClosePlayerModal = () => {
+    const setModalOpen = useSetAtom(playerModalOpenAtom);
+    return () => {
+        setModalOpen(false);
     }
 };
 

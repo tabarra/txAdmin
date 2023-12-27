@@ -9,6 +9,7 @@ export type PlayerHistoryItem = {
     ts: number;
     exp?: number;
     revokedBy?: string;
+    revokedAt?: number;
 }
 
 export type PlayerModalMeta = {

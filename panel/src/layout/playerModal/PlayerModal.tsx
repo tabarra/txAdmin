@@ -1,13 +1,11 @@
 import {
     Dialog,
-    DialogContent, DialogFooter,
-    DialogHeader,
+    DialogContent, DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { usePlayerModalStateValue } from "@/hooks/playerModal";
-import { AlertTriangleIcon, MailIcon, ShieldCheckIcon, InfoIcon, ListIcon, HistoryIcon, BanIcon } from "lucide-react";
-import { KickOneIcon } from '@/components/KickIcons';
+import { InfoIcon, ListIcon, HistoryIcon, BanIcon } from "lucide-react";
 import InfoTab from "./InfoTab";
 import { useEffect, useState } from "react";
 import IdsTab from "./IdsTab";
@@ -18,65 +16,14 @@ import GenericSpinner from "@/components/GenericSpinner";
 import { cn } from "@/lib/utils";
 import { useBackendApi } from "@/hooks/fetch";
 import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
-import { useAdminPerms } from "@/hooks/auth";
+import PlayerModalFooter from "./PlayerModalFooter";
 
 
-export function PlayerModalMidMessage({children}: {children: React.ReactNode}) {
+export function PlayerModalMidMessage({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex items-center justify-center min-h-[16.5rem] text-xl p1 text-muted-foreground">
             {children}
         </div>
-    )
-}
-
-
-function PlayerModalFooter() {
-    const { hasPerm } = useAdminPerms();
-
-    return (
-        <DialogFooter className="max-w-2xl gap-2 p-2 md:p-4 border-t grid grid-cols-2 sm:flex">
-            <Button
-                variant='outline'
-                size='sm'
-                disabled={!hasPerm('manage.admins')}
-                onClick={() => { }} //FIXME:
-                className="pl-2 sm:mr-auto"
-            >
-                <ShieldCheckIcon className="h-5 mr-1" /> Give Admin
-            </Button>
-            <Button
-                variant='outline'
-                size='sm'
-                disabled={!hasPerm('players.message')}
-                onClick={() => { }} //FIXME:
-                className="pl-2"
-            >
-                <MailIcon className="h-5 mr-1" /> DM
-            </Button>
-            <Button
-                variant='outline'
-                size='sm'
-                disabled={!hasPerm('players.kick')}
-                onClick={() => { }} //FIXME:
-                className="pl-2"
-            >
-                <KickOneIcon style={{
-                    height: '1.25rem',
-                    width: '1.75rem',
-                    marginRight: '0.25rem',
-                    fill: 'currentcolor'
-                }} /> Kick
-            </Button>
-            <Button
-                variant='outline'
-                size='sm'
-                disabled={!hasPerm('players.warn')}
-                onClick={() => { }} //FIXME:
-                className="pl-2"
-            >
-                <AlertTriangleIcon className="h-5 mr-1" /> Warn
-            </Button>
-        </DialogFooter>
     )
 }
 
@@ -105,14 +52,19 @@ const modalTabs = [
 export default function PlayerModal() {
     const { isModalOpen, closeModal, playerRef } = usePlayerModalStateValue();
     const [selectedTab, setSelectedTab] = useState(modalTabs[0].title);
+    const [currRefreshKey, setCurrRefreshKey] = useState(0);
     const [modalData, setModalData] = useState<PlayerModalSuccess | undefined>(undefined);
     const [modalError, setModalError] = useState('');
-
     const playerQueryApi = useBackendApi<PlayerModalResp>({
         method: 'GET',
         path: `/player`,
         abortOnUnmount: true,
     });
+
+    //Helper for tabs to be able to refresh the modal data
+    const refreshModalData = () => {
+        setCurrRefreshKey(currRefreshKey + 1);
+    };
 
     //Querying player data when reference is available
     useEffect(() => {
@@ -132,7 +84,7 @@ export default function PlayerModal() {
                 setModalError(error);
             },
         });
-    }, [playerRef]);
+    }, [playerRef, currRefreshKey]);
 
     //Resetting selected tab when modal is closed
     useEffect(() => {
@@ -201,12 +153,15 @@ export default function PlayerModal() {
                         ) : (
                             <>
                                 {selectedTab === 'Info' && <InfoTab
+                                    playerRef={playerRef!}
                                     player={modalData.player}
                                     setSelectedTab={setSelectedTab}
+                                    refreshModalData={refreshModalData}
                                 />}
                                 {selectedTab === 'History' && <HistoryTab
                                     actionHistory={modalData.player.actionHistory}
                                     serverTime={modalData.meta.serverTime}
+                                    refreshModalData={refreshModalData}
                                 />}
                                 {selectedTab === 'IDs' && <IdsTab
                                     player={modalData.player}
@@ -218,7 +173,10 @@ export default function PlayerModal() {
                         )}
                     </ScrollArea>
                 </div>
-                <PlayerModalFooter />
+                <PlayerModalFooter
+                    playerRef={playerRef!}
+                    player={modalData?.player}
+                />
             </DialogContent>
         </Dialog>
     );

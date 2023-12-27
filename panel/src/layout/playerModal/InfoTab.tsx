@@ -2,7 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAdminPerms } from "@/hooks/auth";
+import { useBackendApi } from "@/hooks/fetch";
+import { PlayerModalRefType } from "@/hooks/playerModal";
 import { cn, msToDuration, tsToLocaleDate } from "@/lib/utils";
+import { GenericApiOkResp } from "@shared/genericApiTypes";
 import { PlayerModalPlayerData } from "@shared/playerApiTypes";
 import { useRef, useState } from "react";
 
@@ -27,19 +30,31 @@ function LogActionCounter({ type, count }: { type: 'Ban' | 'Warn', count: number
 }
 
 
-function PlayerNotesBox({ player }: { player: PlayerModalPlayerData }) {
+function PlayerNotesBox({ playerRef, player }: { playerRef: PlayerModalRefType, player: PlayerModalPlayerData }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [notesLogText, setNotesLogText] = useState(player.notesLog ?? '');
+    const playerNotesApi = useBackendApi<GenericApiOkResp>({
+        method: 'POST',
+        path: `/player/save_note`,
+    });
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
             setNotesLogText('Saving...');
-            // FIXME: send request to save notes
-            setTimeout(() => {
-                setNotesLogText('Saved!');
-            }, 2000);
-            console.log(textAreaRef.current?.value)
+            playerNotesApi({
+                queryParams: playerRef,
+                data: {
+                    note: textAreaRef.current?.value.trim(),
+                },
+                success: (data) => {
+                    if('error' in data){
+                        setNotesLogText(data.error);
+                    }else{
+                        setNotesLogText('Saved!');
+                    }
+                },
+            });
         }
     }
 
@@ -62,13 +77,20 @@ function PlayerNotesBox({ player }: { player: PlayerModalPlayerData }) {
     </>
 }
 
+
 type InfoTabProps = {
-    player: PlayerModalPlayerData,
-    setSelectedTab: (t: string) => void,
+    playerRef: PlayerModalRefType;
+    player: PlayerModalPlayerData;
+    setSelectedTab: (t: string) => void;
+    refreshModalData: () => void;
 }
 
-export default function InfoTab({ player, setSelectedTab }: InfoTabProps) {
+export default function InfoTab({ playerRef, player, setSelectedTab, refreshModalData }: InfoTabProps) {
     const { hasPerm } = useAdminPerms();
+    const playerWhitelistApi = useBackendApi<GenericApiOkResp>({
+        method: 'POST',
+        path: `/player/whitelist`,
+    });
 
     const sessionTimeText = player.sessionTime ? msToDuration(
         player.sessionTime * 60_000,
@@ -85,6 +107,24 @@ export default function InfoTab({ player, setSelectedTab }: InfoTabProps) {
     const whitelistedText = player.tsWhitelisted ? tsToLocaleDate(player.tsWhitelisted) : 'not yet';
     const banCount = player.actionHistory.filter((a) => a.type === 'ban').length;
     const warnCount = player.actionHistory.filter((a) => a.type === 'warn').length;
+
+    const handleWhitelistClick = () => {
+        playerWhitelistApi({
+            queryParams: playerRef,
+            data: {
+                status: !player.tsWhitelisted
+            },
+            toastLoadingMessage: 'Updating whitelist...',
+            genericHandler: {
+                successMsg: 'Whitelist changed.',
+            },
+            success: (data, toastId) => {
+                if('success' in data){
+                    refreshModalData();
+                }
+            },
+        });
+    }
 
     return <div className="p-1">
         <dl className="pb-2">
@@ -106,14 +146,14 @@ export default function InfoTab({ player, setSelectedTab }: InfoTabProps) {
             </div>}
 
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
-                <dt className="text-sm font-medium leading-6 text-muted-foreground">Whitelisted</dt>
+                <dt className="text-sm font-medium leading-6 text-muted-foreground">ID Whitelisted</dt>
                 <dd className="text-sm leading-6 mt-0">{whitelistedText}</dd>
                 <dd className="text-right">
                     <Button
                         variant="outline"
                         size='inline'
                         style={{ minWidth: '8.25ch' }}
-                        onClick={() => { }} //FIXME:
+                        onClick={handleWhitelistClick}
                         disabled={!hasPerm('players.whitelist')}
                     >
                         {player.tsWhitelisted ? 'Remove' : 'Add WL'}
@@ -131,12 +171,12 @@ export default function InfoTab({ player, setSelectedTab }: InfoTabProps) {
                         variant="outline"
                         size='inline'
                         style={{ minWidth: '8.25ch' }}
-                        onClick={() => {setSelectedTab('History')}}
+                        onClick={() => { setSelectedTab('History') }}
                     >View</Button>
                 </dd>
             </div>
         </dl>
 
-        <PlayerNotesBox player={player} />
+        <PlayerNotesBox player={player} playerRef={playerRef} />
     </div>;
 }

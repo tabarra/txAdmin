@@ -153,11 +153,11 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
-        ctx.request.body.action_id,
+        ctx.request.body.actionId,
     )) {
         return { error: 'Invalid request.' };
     }
-    const action_id = ctx.request.body.action_id.trim();
+    const { actionId } = ctx.request.body;
 
     //Check permissions
     const perms = [];
@@ -166,8 +166,8 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiResp> {
 
     let action;
     try {
-        action = ctx.txAdmin.playerDatabase.revokeAction(action_id, ctx.admin.name, perms) as DatabaseActionType;
-        ctx.admin.logAction(`Revoked ${action.type} id ${action_id} from ${action.playerName ?? 'identifiers'}`);
+        action = ctx.txAdmin.playerDatabase.revokeAction(actionId, ctx.admin.name, perms) as DatabaseActionType;
+        ctx.admin.logAction(`Revoked ${action.type} id ${actionId} from ${action.playerName ?? 'identifiers'}`);
     } catch (error) {
         return { error: `Failed to revoke action: ${(error as Error).message}` };
     }

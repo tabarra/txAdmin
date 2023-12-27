@@ -62,11 +62,29 @@ export const msToShortDuration = humanizeDuration.humanizer({
 /**
  * Converts a timestamp to a locale date string
  */
-export const tsToLocaleDate = (ts: number) => {
+export const tsToLocaleDate = (
+    ts: number,
+    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
+) => {
     return new Date(ts * 1000)
         .toLocaleDateString(
             navigator.language,
-            { dateStyle: 'long' }
+            { dateStyle }
+        );
+}
+
+/**
+ * Translates a timestamp into a localized date time string
+ */
+export const tsToLocaleDateTime = (
+    ts: number,
+    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
+    timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
+) => {
+    return new Date(ts * 1000)
+        .toLocaleString(
+            navigator.language,
+            { dateStyle, timeStyle }
         );
 }
 

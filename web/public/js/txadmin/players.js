@@ -625,8 +625,8 @@ function banPlayer() {
  * Revoke action
  * NOTE: also used in the players page
  */
-function revokeAction(action_id, isModal = false) {
-    if (!action_id) {
+function revokeAction(actionId, isModal = false) {
+    if (!actionId) {
         return $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
     }
 
@@ -635,7 +635,7 @@ function revokeAction(action_id, isModal = false) {
         type: "POST",
         url: '/database/revoke_action',
         timeout: REQ_TIMEOUT_LONG,
-        data: { action_id },
+        data: { actionId },
         success: function (data) {
             notify.update('progress', 0);
             if (data.success === true) {

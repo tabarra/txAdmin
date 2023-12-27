@@ -41,7 +41,7 @@ function IdsBlock({ title, emptyMessage, currIds, allIds, isSmaller }: IdsBlockP
         </div>
         <p className={cn(
             "font-mono break-all whitespace-pre-wrap border rounded divide-y divide-border/50 text-muted-foreground",
-            isSmaller ? "text-xxs leading-5 font-extralight tracking-widest opacity-75" : "text-xs leading-6 tracking-wider"
+            isSmaller ? "text-2xs leading-5 font-extralight tracking-widest" : "text-xs leading-6 tracking-wider"
         )}>
             {displayCurrIds.length === 0 && <span className="block px-1 opacity-50 italic">{emptyMessage}</span>}
             {displayCurrIds.map((id) => (

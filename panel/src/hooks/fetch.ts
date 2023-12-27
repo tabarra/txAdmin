@@ -95,6 +95,7 @@ export const fetchWithTimeout = async <T = any>(url: string, fetchOpts: SimpleFe
 
 /**
  * Hook that provides a function to call the txAdmin API
+ * This provides auto handlers for GenericApiOkResp and ApiToastResp
  */
 type HookOpts = {
     //I'm pretty sure the webpipe supports only GET and POST
@@ -114,6 +115,10 @@ type ApiCallOpts<RespType, ReqType> = {
     data?: ReqType;
     toastId?: string;
     toastLoadingMessage?: string;
+    genericHandler?: {
+        errorTitle?: string,
+        successMsg: string,
+    }
     success?: (data: RespType, toastId?: string) => void;
     error?: (message: string, toastId?: string) => void;
 }
@@ -201,7 +206,19 @@ export const useBackendApi = <
             if (abortController.current?.signal.aborted) return;
 
 
-            //Success
+            //Auto handler for GenericApiOkResp genericHandler
+            if (opts.genericHandler && currentToastId.current) {
+                if('error' in data) {
+                    txToast.error({
+                        title: opts.genericHandler.errorTitle,
+                        msg: data.error,
+                    }, { id: currentToastId.current });
+                }else{
+                    txToast.success(opts.genericHandler.successMsg, { id: currentToastId.current });
+                }
+            }
+
+            //Auto handler for ApiToastResp
             if (
                 currentToastId.current
                 && typeof data?.type === 'string'
@@ -211,6 +228,8 @@ export const useBackendApi = <
             ) {
                 txToast[data.type as keyof typeof txToast](data, { id: currentToastId.current });
             }
+
+            //Custom success handler
             if (opts.success) {
                 try {
                     opts.success(data, currentToastId.current);
@@ -222,6 +241,7 @@ export const useBackendApi = <
 
         } catch (e) {
             if (abortController.current?.signal.aborted) return;
+            clearTimeout(timeoutId);
             let errorMessage = 'unknown error';
             const error = e as any;
             if (typeof error.message !== 'string') {

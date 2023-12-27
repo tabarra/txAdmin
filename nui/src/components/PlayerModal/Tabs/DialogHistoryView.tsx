@@ -149,7 +149,7 @@ const DialogHistoryView: React.FC = () => {
         `/database/revoke_action`,
         {
           method: "POST",
-          data: { action_id: actionId },
+          data: { actionId },
         }
       );
       if ("success" in result && result.success === true) {
