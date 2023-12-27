@@ -15,28 +15,26 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import HistoryTab from "./HistoryTab";
 import BanTab from "./BanTab";
 import GenericSpinner from "@/components/GenericSpinner";
+import { cn } from "@/lib/utils";
 
 
 const modalTabs = [
     {
         title: 'Info',
         icon: <InfoIcon className="mr-2 h-5 w-5 hidden xs:block" />,
-        content: <InfoTab />
-    },
-    {
-        title: 'IDs',
-        icon: <ListIcon className="mr-2 h-5 w-5 hidden xs:block" />,
-        content: 'ids ids ids'
     },
     {
         title: 'History',
         icon: <HistoryIcon className="mr-2 h-5 w-5 hidden xs:block" />,
-        content: 'history history history'
+    },
+    {
+        title: 'IDs',
+        icon: <ListIcon className="mr-2 h-5 w-5 hidden xs:block" />,
     },
     {
         title: 'Ban',
         icon: <BanIcon className="mr-2 h-5 w-5 hidden xs:block" />,
-        content: 'ban ban ban'
+        className: 'hover:bg-destructive hover:text-destructive-foreground',
     }
 ]
 
@@ -78,26 +76,29 @@ export default function PlayerModal() {
                             <Button
                                 key={tab.title}
                                 variant={selectedTab === tab.title ? "secondary" : "ghost"}
-                                className={`w-full tracking-wider justify-center md:justify-start
-                                    h-7 rounded-sm px-2 text-sm
-                                    md:h-10 md:text-base`}
+                                className={cn(
+                                    'w-full tracking-wider justify-center md:justify-start',
+                                    'h-7 rounded-sm px-2 text-sm',
+                                    'md:h-10 md:text-base',
+                                    tab.className,
+                                )}
                                 onClick={() => setSelectedTab(tab.title)}
                             >
                                 {tab.icon} {tab.title}
                             </Button>
                         ))}
                     </div>
-                    {/* NOTE: consistent height: sm:h-[19rem] */}
-                    <ScrollArea className="w-full max-h-[calc(100vh-3.125rem-4rem-5rem)] px-4 py-2 md:py-0">
+                    {/* NOTE: consistent height: sm:h-[16rem] */}
+                    <ScrollArea className="w-full max-h-[calc(100vh-3.125rem-4rem-5rem)] min-h-[16rem] px-4 py-2 md:py-0">
                         {!modalData ? (
-                            <div className="flex items-center justify-center min-h-[18.5rem]">
+                            <div className="flex items-center justify-center min-h-[16rem]">
                                 <GenericSpinner msg="Loading..." />
                             </div>
                         ) : (
                             <>
                                 {selectedTab === 'Info' && <InfoTab />}
-                                {selectedTab === 'IDs' && <IdsTab />}
                                 {selectedTab === 'History' && <HistoryTab />}
+                                {selectedTab === 'IDs' && <IdsTab />}
                                 {selectedTab === 'Ban' && <BanTab />}
                             </>
                         )}

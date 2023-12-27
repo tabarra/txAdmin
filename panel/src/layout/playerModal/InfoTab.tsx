@@ -40,8 +40,6 @@ function PlayerNotesBox() {
 
 export default function InfoTab() {
     return <div>
-        <h3 className="text-xl pb-2">Player Information</h3>
-
         <dl className="pb-2">
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                 <dt className="text-sm font-medium leading-6 text-muted-foreground">Session Time</dt>
@@ -64,7 +62,7 @@ export default function InfoTab() {
                     <Button
                         variant="outline"
                         size='inline'
-                        style={{minWidth: '8ch'}}
+                        style={{ minWidth: '8ch' }}
                         onClick={() => { }}
                     >Add WL</Button>
                 </dd>
@@ -79,7 +77,7 @@ export default function InfoTab() {
                     <Button
                         variant="outline"
                         size='inline'
-                        style={{minWidth: '8ch'}}
+                        style={{ minWidth: '8ch' }}
                         onClick={() => { }}
                     >View</Button>
                 </dd>

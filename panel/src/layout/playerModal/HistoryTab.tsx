@@ -35,11 +35,10 @@ function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime }: 
         footerNote = (action.exp < serverTime) ? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
     }
 
-
     return (
-        <div className={cn('pl-2 border-l-4', borderColorClass)}>
+        <div className={cn('pl-2 border-l-4 hover:bg-muted', borderColorClass)}>
             <div className="flex w-full justify-between">
-                <strong className="text-sm">{actionMessage}</strong>
+                <strong className="text-sm text-muted-foreground">{actionMessage}</strong>
                 <small className="text-right text-xxs space-x-1">
                     <span className="font-mono">({action.id})</span>
                     <span className="opacity-75">{actionDate}</span>
