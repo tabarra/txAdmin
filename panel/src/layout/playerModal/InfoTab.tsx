@@ -31,9 +31,9 @@ function PlayerNotesBox() {
             <span className="text-muted-foreground">Last modified by <InlineCode>tabarra</InlineCode> in October 18, 2003.</span>
         </Label>
         <Textarea
-            placeholder="Type your notes about the player."
             id="playerNotes"
-            className="w-full mt-1 bg-black/10 dark:bg-black/40"
+            placeholder="Type your notes about the player."
+            className="w-full mt-1"
         />
     </>
 }
