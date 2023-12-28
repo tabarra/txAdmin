@@ -182,24 +182,20 @@ setTimeout(() => {
         - [x] make sure it is responsive
         - [x] check behavior on error (invalid player, 500, etc)
         - [x] clean legacy modal and playerlist code
-- [ ][5d] full auth flow
+- [ ][5d] fauth stuff
     - [x] password login
     - [x] cfx.re login
     - [x] error page
     - [x] master account pin add page
     - [x] master account bkp password page
+    - [x] disable player modal buttons based on permissions
+    - [x] flow to refresh the page if invalidated auth
     - [ ] disable menu links based on permissions
-    - [ ] disable player modal buttons based on permissions
     - [ ] flow to refresh the permissions on the client side
-    - [ ] flow to refresh the page if invalidated auth
-- [ ][2d] full setup flow (legacy)
+    - [x] when logging out, create an effect to close all sheets and dialogs
+- [ ][2d] full setup flow (legacy) - fazer isso no mainrouter?
 - [ ][1d] full deployer flow (legacy)
 - [ ][1d] add the new logos to shell+auth pages
-- [ ][3h] full cleanup of legacy code
-    - [ ] removing the replaced page templates
-    - [ ] remove playerlist code
-    - [ ] remove password change modal
-    - [ ] disable code for host live status
 > BETA RELEASE
 
 - [ ][3d] NEW PAGE: Dashboard
@@ -215,15 +211,16 @@ setTimeout(() => {
 - [ ][2h] fine tune `panel/vite.config.ts`
 
 Quickies
-- [ ] fix the tsc build
+- [ ] fix the console bg on light mode
 - [ ] commit the fixes for the player ids and god mode issues
+- [ ] fix the tsc build
 - [ ] disable testing page in prod build
 - [ ] check if strict mode is indeed disabled in prod build
-- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
+> BETA RELEASE
 
-- [ ] when logging out, create a neffect to close all sheets and dialogs
+- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 - [ ] talk to r* and make sure the new build process wipes the old cache
-- [ ] make sure some user input is truncated (server name, player name)
+- [ ] make sure some user input based fields are truncated (server name, player name)
 - [ ] layout on 4k and ultrawide screens
 - [ ] check again for the need of lazy loading
 - [ ] Cache stuff:
@@ -231,8 +228,6 @@ Quickies
     - [ ] add `cache-control` and/or `vary` to all pages
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-
-Bugs
 - [ ] make sure the playerlist scroll works if the playergen is stopped (therefore, not re-rendering the component)
 
 

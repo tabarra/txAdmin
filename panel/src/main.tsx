@@ -7,13 +7,15 @@ import './globals.css'
 
 import MainShell from './layout/MainShell.tsx'
 import { AppErrorFallback } from './components/ErrorFallback.tsx';
-import { useIsAuthenticated } from './hooks/auth.ts';
+import { logoutWatcher, useIsAuthenticated } from './hooks/auth.ts';
 import AuthShell from './layout/AuthShell.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { isValidRedirectPath } from './lib/utils.ts';
 import ThemeProvider from './components/ThemeProvider.tsx';
 import { StrictMode } from 'react';
 import { isMobile } from 'is-mobile';
+import { useAtomValue } from 'jotai';
+import { pageTitleWatcher } from './hooks/pages.ts';
 
 //Detecting if the user is on a mobile device
 try {
@@ -36,6 +38,8 @@ const isAuthRoute = (pathname: string) => {
 }
 
 export function AuthContextSwitch() {
+    useAtomValue(logoutWatcher);
+    useAtomValue(pageTitleWatcher);
     const isAuthenticated = useIsAuthenticated();
 
     if (isAuthenticated) {

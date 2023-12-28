@@ -4,9 +4,9 @@ import { atom, useAtom, useSetAtom } from 'jotai';
 /**
  * Atoms
  */
-const isGlobalMenuSheetOpenAtom = atom(false);
-const isServerSheetOpenAtom = atom(false);
-const isPlayerlistSheetOpenAtom = atom(false);
+export const isGlobalMenuSheetOpenAtom = atom(false);
+export const isServerSheetOpenAtom = atom(false);
+export const isPlayerlistSheetOpenAtom = atom(false);
 
 
 /**

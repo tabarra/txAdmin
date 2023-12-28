@@ -14,7 +14,6 @@ import { ApiOauthRedirectResp, ApiVerifyPasswordReq, ApiVerifyPasswordResp } fro
 import { useAuth } from '@/hooks/auth';
 import './components/cfxreLoginButton.css';
 import { useLocation } from "wouter";
-import { useSetPageTitle } from '@/hooks/pages';
 
 
 export default function Login() {
@@ -23,7 +22,6 @@ export default function Login() {
     const passwordRef = useRef<HTMLInputElement>(null);
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
     const setLocation = useLocation()[1];
-    const setPageTitle = useSetPageTitle();
 
     const onError = (error: Error) => {
         if (error.message.startsWith('NetworkError')) {
@@ -105,7 +103,6 @@ export default function Login() {
 
     //Prefill username/password if dev pass enabled
     useEffect(() => {
-        setPageTitle();
         try {
             const rawLocalStorageStr = localStorage.getItem('authCredsAutofill');
             if (rawLocalStorageStr) {

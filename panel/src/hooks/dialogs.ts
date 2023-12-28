@@ -8,7 +8,7 @@ import { ReactElement } from "react";
 /**
  * Account Modal Stuff
  */
-const accountModalOpenAtom = atom(false);
+export const accountModalOpenAtom = atom(false);
 const accountModalTabAtom = atom<undefined | string>(undefined);
 
 export const useAccountModal = () => {
@@ -52,7 +52,7 @@ type ConfirmDialogType = {
     onCancel?: () => void;
 }
 
-const confirmDialogOpenAtom = atom(false);
+export const confirmDialogOpenAtom = atom(false);
 const confirmDialogDataAtom = atomWithReset<ConfirmDialogType>({
     title: '',
     onConfirm: () => { },
@@ -103,7 +103,7 @@ type PromptDialogType = {
     onSubmit: (input: string) => void;
     onCancel?: () => void;
 }
-const promptDialogOpenAtom = atom(false);
+export const promptDialogOpenAtom = atom(false);
 const promptDialogDataAtom = atomWithReset<PromptDialogType>({
     title: '',
     onSubmit: () => { },

@@ -1,6 +1,11 @@
 import { ApiLogoutResp, ReactAuthDataType } from '@shared/authApiTypes';
 import { useMutation } from '@tanstack/react-query';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { atomEffect } from 'jotai-effect';
+import { accountModalOpenAtom, confirmDialogOpenAtom, promptDialogOpenAtom } from './dialogs';
+import { isGlobalMenuSheetOpenAtom, isPlayerlistSheetOpenAtom, isServerSheetOpenAtom } from './sheets';
+import { playerModalOpenAtom } from './playerModal';
+import { globalStatusAtom } from './status';
 
 
 /**
@@ -14,7 +19,7 @@ const csrfTokenAtom = atom((get) => {
 });
 const adminPermissionsAtom = atom((get) => {
     const authData = get(authDataAtom);
-    if(!authData) return undefined;
+    if (!authData) return undefined;
     return {
         permissions: authData.permissions,
         isMaster: authData.isMaster,
@@ -41,7 +46,7 @@ export const useAdminPerms = () => {
     const permsData = useAtomValue(adminPermissionsAtom);
 
     const hasPerm = (perm: string) => {
-        if(!permsData) return false;
+        if (!permsData) return false;
         try {
             if (perm === 'master') {
                 return permsData.isMaster;
@@ -100,3 +105,21 @@ export const useAuth = () => {
         }
     }
 };
+
+//Effect to on logout, automagically close all dialogs/modals and reset globalState
+export const logoutWatcher = atomEffect((get, set) => {
+    const isAuthenticated = get(isAuthenticatedAtom);
+    if (isAuthenticated) return;
+
+    console.info('[logoutWatcher] Logout Detected, closing all dialogs and modals.');
+    set(accountModalOpenAtom, false);
+    set(confirmDialogOpenAtom, false);
+    set(promptDialogOpenAtom, false);
+    set(isGlobalMenuSheetOpenAtom, false);
+    set(isServerSheetOpenAtom, false);
+    set(isPlayerlistSheetOpenAtom, false);
+    set(playerModalOpenAtom, false);
+    set(globalStatusAtom, null);
+
+    //TODO: maybe also erase playerlist/mutex?
+});

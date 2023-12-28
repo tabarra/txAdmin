@@ -9,8 +9,6 @@ import WarningBar from './WarningBar';
 import { useEffect, useRef } from 'react';
 import { useSetGlobalStatus } from '@/hooks/status';
 import { useProcessUpdateAvailableEvent, useSetOfflineWarning } from '@/hooks/useWarningBar';
-import { pageTitleWatcher } from '@/hooks/pages';
-import { useAtomValue } from 'jotai';
 import { getSocket } from '@/lib/utils';
 import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
 import ConfirmDialog from '@/components/ConfirmDialog';
@@ -23,7 +21,6 @@ import { useOpenPlayerModal } from '@/hooks/playerModal';
 
 
 export default function MainShell() {
-    useAtomValue(pageTitleWatcher);
     const expireSession = useExpireAuthData();
     const openAccountModal = useOpenAccountModal();
     const openPlayerModal = useOpenPlayerModal();
