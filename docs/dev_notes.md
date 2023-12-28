@@ -190,9 +190,9 @@ setTimeout(() => {
     - [x] master account bkp password page
     - [x] disable player modal buttons based on permissions
     - [x] flow to refresh the page if invalidated auth
-    - [ ] disable menu links based on permissions
-    - [ ] flow to refresh the permissions on the client side
     - [x] when logging out, create an effect to close all sheets and dialogs
+    - [x] disable menu links based on permissions
+    - [ ] flow to refresh the permissions on the client side
 - [ ][2d] full setup flow (legacy) - fazer isso no mainrouter?
 - [ ][1d] full deployer flow (legacy)
 - [ ][1d] add the new logos to shell+auth pages

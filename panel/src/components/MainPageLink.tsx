@@ -3,14 +3,19 @@ import { pageErrorStatusAtom, useContentRefresh } from "@/hooks/pages";
 import { useAtomValue } from "jotai";
 import { forwardRef } from "react";
 import { Link, useRoute } from "wouter";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
+import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+
 
 type MainPageLinkProps = {
     isActive?: boolean;
     href: string;
     children: React.ReactNode;
     className?: string;
+    disabled?: boolean;
 };
+
 function MainPageLinkInner(
     props: MainPageLinkProps,
     ref: React.ForwardedRef<HTMLAnchorElement>
@@ -19,6 +24,10 @@ function MainPageLinkInner(
     const refreshContent = useContentRefresh();
     const closeAllSheets = useCloseAllSheets();
     const checkOnClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        if (props.disabled) {
+            e.preventDefault();
+            return;
+        }
         closeAllSheets();
         if (props.isActive || isPageInError) {
             console.log('Page is already active or in error state. Forcing error boundry + router re-render.');
@@ -48,18 +57,38 @@ type MenuNavProps = {
     href: string;
     children: React.ReactNode;
     className?: string;
+    disabled?: boolean;
 };
-export function MenuNavLink({ href, children, className }: MenuNavProps) {
+
+export function MenuNavLink({ href, children, className, disabled }: MenuNavProps) {
     const [isActive] = useRoute(href);
-    return (
-        <Button variant={isActive ? 'secondary' : 'ghost'} className="w-full justify-start py-1" asChild={true}>
+    if (disabled) {
+        return (
+            <Tooltip>
+                <TooltipTrigger className="cursor-help">
+                    <Button variant='ghost' className="w-full justify-start py-1" disabled>
+                        {children}
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="text-destructive-inline text-center">
+                    You do not have permission <br />
+                    to access this page.
+                </TooltipContent>
+            </Tooltip>
+        )
+    } else {
+        return (
             <MainPageLink
                 href={href}
                 isActive={isActive}
-                className={className}
+                className={cn(
+                    buttonVariants({ variant: isActive ? 'secondary' : 'ghost' }),
+                    'w-full justify-start py-1',
+                    className,
+                )}
             >
                 {children}
             </MainPageLink>
-        </Button>
-    );
+        )
+    }
 }

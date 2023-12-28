@@ -16,6 +16,7 @@ import { StrictMode } from 'react';
 import { isMobile } from 'is-mobile';
 import { useAtomValue } from 'jotai';
 import { pageTitleWatcher } from './hooks/pages.ts';
+import { TooltipProvider } from './components/ui/tooltip.tsx';
 
 //Detecting if the user is on a mobile device
 try {
@@ -84,7 +85,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ErrorBoundary FallbackComponent={AppErrorFallback}>
             <QueryClientProvider client={queryClient}>
                 <ThemeProvider>
-                    <AuthContextSwitch />
+                    <TooltipProvider delayDuration={300} disableHoverableContent={true}>
+                        <AuthContextSwitch />
+                    </TooltipProvider>
                 </ThemeProvider>
             </QueryClientProvider>
         </ErrorBoundary>

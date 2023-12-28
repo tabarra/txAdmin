@@ -1,14 +1,7 @@
 import { useGlobalStatus } from '@/hooks/status';
 import { VariantProps, cva } from 'class-variance-authority';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-
-const tooltipDelay = 300;
 
 const statusBadgeVariants = cva(
     `rounded-sm text-xs font-semibold px-1 py-[0.125rem] tracking-widest text-center cursor-help`,
@@ -129,7 +122,7 @@ export default function ServerStatus() {
         }
     }
 
-    return <TooltipProvider delayDuration={tooltipDelay}>
+    return (
         <div className="flex flex-col gap-[0.375rem]">
             <div className="flex justify-between items-center text-muted-foreground text-sm gap-1.5">
                 Server:
@@ -159,5 +152,5 @@ export default function ServerStatus() {
                 >{discordStatusText}</StatusBadge>
             </div>
         </div>
-    </TooltipProvider>
+    )
 }

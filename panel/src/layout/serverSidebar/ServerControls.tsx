@@ -4,18 +4,11 @@ import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
 import { useAtomValue } from 'jotai';
 import { MegaphoneIcon, PowerIcon, PowerOffIcon, RotateCcwIcon } from 'lucide-react';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useOpenConfirmDialog, useOpenPromptDialog } from '@/hooks/dialogs';
 import { useBackendApi } from '@/hooks/fetch';
 import { useCloseAllSheets } from '@/hooks/sheets';
 
-
-const tooltipDelay = 300;
 
 const controlButtonsVariants = cva(
     `h-10 sm:h-8 rounded-md transition-colors
@@ -121,75 +114,73 @@ export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
     }
 
     return (
-        <TooltipProvider delayDuration={tooltipDelay} disableHoverableContent={true} >
-            <div className="flex flex-row justify-between gap-2">
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        {processInstantiated
-                            ? <button
+        <div className="flex flex-row justify-between gap-2">
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    {processInstantiated
+                        ? <button
+                            onClick={handleStartStop}
+                            className={controlButtonsVariants({ type: 'destructive' })}
+                        >
+                            <PowerOffIcon className='h-5' />
+                        </button>
+                        : <div className="relative flex flex-grow inset-0">
+                            <div className='absolute inset-0 bg-success animate-pulse rounded blur-sm'></div>
+                            <button
                                 onClick={handleStartStop}
-                                className={controlButtonsVariants({ type: 'destructive' })}
+                                className={cn(controlButtonsVariants({ type: 'success' }), 'relative')}
                             >
-                                <PowerOffIcon className='h-5' />
+                                <PowerIcon className='h-5' />
                             </button>
-                            : <div className="relative flex flex-grow inset-0">
-                                <div className='absolute inset-0 bg-success animate-pulse rounded blur-sm'></div>
-                                <button
-                                    onClick={handleStartStop}
-                                    className={cn(controlButtonsVariants({ type: 'success' }), 'relative')}
-                                >
-                                    <PowerIcon className='h-5' />
-                                </button>
-                            </div>
-                        }
-                    </TooltipTrigger>
-                    <TooltipContent className='max-w-md flex-wrap'>
-                        <p>{processInstantiated ? 'Stop the server' : 'Start the server! 🚀'}</p>
-                    </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <button
-                            onClick={handleRestart}
-                            className={cn(controlButtonsVariants({ type: 'warning' }))}
-                            disabled={!processInstantiated}
-                        >
-                            <RotateCcwIcon className='h-5' />
-                        </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Restart Server</p>
-                    </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <button
-                            onClick={handleKickAll}
-                            className={controlButtonsVariants()}
-                            disabled={!processInstantiated}
-                        >
-                            <KickAllIcon style={{ height: '1.25rem', width: '1.5rem', fill: 'currentcolor' }} />
-                        </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Kick All Players</p>
-                    </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <button
-                            onClick={handleAnnounce}
-                            className={controlButtonsVariants()}
-                            disabled={!processInstantiated}
-                        >
-                            <MegaphoneIcon className='h-5' />
-                        </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Send Announcement</p>
-                    </TooltipContent>
-                </Tooltip>
-            </div>
-        </TooltipProvider>
+                        </div>
+                    }
+                </TooltipTrigger>
+                <TooltipContent className='max-w-md flex-wrap'>
+                    <p>{processInstantiated ? 'Stop the server' : 'Start the server! 🚀'}</p>
+                </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <button
+                        onClick={handleRestart}
+                        className={cn(controlButtonsVariants({ type: 'warning' }))}
+                        disabled={!processInstantiated}
+                    >
+                        <RotateCcwIcon className='h-5' />
+                    </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Restart Server</p>
+                </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <button
+                        onClick={handleKickAll}
+                        className={controlButtonsVariants()}
+                        disabled={!processInstantiated}
+                    >
+                        <KickAllIcon style={{ height: '1.25rem', width: '1.5rem', fill: 'currentcolor' }} />
+                    </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Kick All Players</p>
+                </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <button
+                        onClick={handleAnnounce}
+                        className={controlButtonsVariants()}
+                        disabled={!processInstantiated}
+                    >
+                        <MegaphoneIcon className='h-5' />
+                    </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Send Announcement</p>
+                </TooltipContent>
+            </Tooltip>
+        </div>
     );
 }

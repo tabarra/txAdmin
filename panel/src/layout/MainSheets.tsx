@@ -5,15 +5,18 @@ import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/
 import { MenuNavLink } from "@/components/MainPageLink";
 import { ClipboardCheckIcon, ListIcon, PieChartIcon, ScrollIcon, SettingsIcon, UserSquare2Icon, UsersIcon, ZapIcon } from 'lucide-react';
 import { PlayerlistSidebar } from "./playerlistSidebar/PlayerlistSidebar";
+import { useAdminPerms } from "@/hooks/auth";
 
 
 export function GlobalMenuSheet() {
     const { isSheetOpen, setIsSheetOpen } = useGlobalMenuSheet();
+    const { hasPerm } = useAdminPerms();
+
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent
                 side='left'
-                className="flex flex-col gap-6 w-full xs:w-3/4"
+                className="flex flex-col gap-6 w-full xs:w-3/4 select-none"
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <SheetHeader>
@@ -34,10 +37,10 @@ export function GlobalMenuSheet() {
                         <MenuNavLink href="/whitelist">
                             <ClipboardCheckIcon className="mr-2 h-4 w-4" />Whitelist
                         </MenuNavLink>
-                        <MenuNavLink href="/admins">
+                        <MenuNavLink href="/admins" disabled={!hasPerm('manage.admins')}>
                             <UserSquare2Icon className="mr-2 h-4 w-4" />Admins
                         </MenuNavLink>
-                        <MenuNavLink href="/settings">
+                        <MenuNavLink href="/settings" disabled={!hasPerm('settings.view')}>
                             <SettingsIcon className="mr-2 h-4 w-4" />Settings
                         </MenuNavLink>
                     </div>
@@ -53,10 +56,10 @@ export function GlobalMenuSheet() {
                         <MenuNavLink href="/system/diagnostics">
                             <PieChartIcon className="mr-2 h-4 w-4" />Diagnostics
                         </MenuNavLink>
-                        <MenuNavLink href="/system/console-log">
+                        <MenuNavLink href="/system/console-log" disabled={!hasPerm('txadmin.log.view')}>
                             <ListIcon className="mr-2 h-4 w-4" />Console Log
                         </MenuNavLink>
-                        <MenuNavLink href="/system/action-log">
+                        <MenuNavLink href="/system/action-log" disabled={!hasPerm('txadmin.log.view')}>
                             <ListIcon className="mr-2 h-4 w-4" />Action Log
                         </MenuNavLink>
                     </div>
