@@ -233,7 +233,7 @@
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if(data.success == true){
-                        window.location = '/setup';
+                        navigateParentTo('/server/setup');
                         return;
                     }else{
                         updateMarkdownNotification(data, notify);

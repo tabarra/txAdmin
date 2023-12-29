@@ -1,7 +1,6 @@
 import { playerCountAtom } from "@/hooks/playerlist";
 import { useAtomValue } from "jotai";
 import { UsersIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
 
 
 export default function PlayerlistSummary() {

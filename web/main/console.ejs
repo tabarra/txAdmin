@@ -89,9 +89,6 @@
                         <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
                             Clear Console
                         </button>
-                        <button type="button" id="announcementBtn" class="btn btn-outline-warning btn-sm mb-2" <%= disableAnnouncement %>>
-                            Announcement
-                        </button>
                     </div>
                 </form>
             </div>
@@ -124,7 +121,6 @@
         const historyDiv = document.getElementById('cmdHistoryDiv');
         const historyElement = document.getElementById('cmdHistory');
         const autoScrollBtn = document.getElementById("autoScrollBtn");
-        const announcementBtn = document.getElementById("announcementBtn");
         let commandHistory = [];
         let commandCache = [];
         let autoScroll = true;
@@ -273,42 +269,6 @@
         });
 
         //Buttons
-        announcementBtn.addEventListener("click", async (event) => {
-            const message = await txAdminPrompt({
-                modalColor: 'orange',
-                confirmBtnClass: 'btn-warning',
-                title: 'Announcement',
-                description: 'Type the message to be broadcasted to all players.', 
-                placeholder: 'the server will restart in xxx minutes...'
-            });
-
-            if(message == false) return;
-            if(message.length <= 6){
-                $.notify({ message: 'This message is too short!'}, {type: 'danger'});
-                return;
-            }
-
-            const notify = $.notify({ message: 'Executing Command...' }, {});
-            txAdminAPI({
-                type: "POST",
-                url: '/fxserver/commands',
-                data: {
-                    action: 'admin_broadcast',
-                    parameter: message
-                },
-                success: function (data) {
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                },
-                error: function (xmlhttprequest, textstatus, message) {
-                    notify.update('progress', 0);
-                    notify.update('type', 'danger');
-                    notify.update('message', message);
-                }
-            });
-        });
-
         autoScrollBtn.addEventListener("click", (event) => {
             event.preventDefault();
             autoscrollToggle(true);

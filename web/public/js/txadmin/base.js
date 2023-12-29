@@ -30,6 +30,11 @@ const convertMarkdown = (input, inline = false) => {
         .replaceAll('&amp;gt;', '&gt;');
 };
 
+//Navigates parent without refreshing the page
+const navigateParentTo = (href) => {
+    return window.parent.postMessage({ type: 'navigateToPage', href});
+};
+
 //================================================================
 //================================================= Event Handlers
 //================================================================

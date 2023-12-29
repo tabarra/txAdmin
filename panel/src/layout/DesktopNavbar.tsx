@@ -82,9 +82,9 @@ export default function DesktopHeader() {
                     <HeaderMenuLink href="/players">
                         Players
                     </HeaderMenuLink>
-                    <HeaderMenuLink href="/history" className='text-accent'>
+                    {/* <HeaderMenuLink href="/history" className='text-accent'>
                         History
-                    </HeaderMenuLink>
+                    </HeaderMenuLink> */}
                     <HeaderMenuLink href="/whitelist">
                         Whitelist
                     </HeaderMenuLink>
@@ -100,7 +100,15 @@ export default function DesktopHeader() {
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger>
+                        <NavigationMenuTrigger
+                            onClick={(e) => {
+                                //To prevent very annoying behavior where you go click on the menu 
+                                //item and it will close the menu because it just opened on hover
+                                if(e.currentTarget.dataset['state'] === 'open') { 
+                                    e.preventDefault();
+                                }
+                            }}
+                        >
                             System
                         </NavigationMenuTrigger>
                         <NavigationMenuContent asChild={true}>

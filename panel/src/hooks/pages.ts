@@ -40,7 +40,6 @@ const pageTitleAtom = atom(DEFAULT_TITLE);
 export const useSetPageTitle = () => {
     const setPageTitle = useSetAtom(pageTitleAtom);
     return (title?: string) => {
-        console.log('setPageTitle', title);
         if (title) {
             setPageTitle(title);
         } else {

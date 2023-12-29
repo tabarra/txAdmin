@@ -137,3 +137,12 @@ export const handleExternalLinkClick = (event: React.MouseEvent<HTMLElement, Mou
     event.preventDefault();
     openExternalLink(href);
 }
+
+
+/**
+ * Returns a random hsl() color - useful for testing react rendering stuff
+ */
+export const createRandomHslColor = () => {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 90%, 65%)`;
+}

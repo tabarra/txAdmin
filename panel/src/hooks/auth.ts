@@ -6,6 +6,7 @@ import { accountModalOpenAtom, confirmDialogOpenAtom, promptDialogOpenAtom } fro
 import { isGlobalMenuSheetOpenAtom, isPlayerlistSheetOpenAtom, isServerSheetOpenAtom } from './sheets';
 import { playerModalOpenAtom } from './playerModal';
 import { globalStatusAtom } from './status';
+import { txToast } from '@/components/TxToaster';
 
 
 /**
@@ -125,6 +126,7 @@ export const logoutWatcher = atomEffect((get, set) => {
     set(isPlayerlistSheetOpenAtom, false);
     set(playerModalOpenAtom, false);
     set(globalStatusAtom, null);
+    txToast.dismiss(); //making sure we don't have any pending toasts
 
     //TODO: maybe also erase playerlist/mutex?
 });

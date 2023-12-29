@@ -193,7 +193,7 @@ setTimeout(() => {
     - [x] when logging out, create an effect to close all sheets and dialogs
     - [x] disable menu links based on permissions
     - [x] flow to refresh the permissions on the client side
-- [ ][2d] full setup flow (legacy) - fazer isso no mainrouter?
+- [ ][2d] full setup flow (legacy)
 - [ ][1d] full deployer flow (legacy)
 - [ ][1d] add the new logos to shell+auth pages
 > BETA RELEASE
@@ -211,6 +211,9 @@ setTimeout(() => {
 - [ ][2h] fine tune `panel/vite.config.ts`
 
 Quickies
+- [ ] move the socket.io stuff from mainshell to a dedicated component child of mainshell
+- [ ] fix: /server/[setup/deployer] opens another tx inside iframe
+- [ ] desabilitar controles com sv não configurado
 - [ ] fix the console bg on light mode
 - [ ] commit the fixes for the player ids and god mode issues
 - [ ] fix the tsc build

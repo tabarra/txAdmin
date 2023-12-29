@@ -7,7 +7,7 @@ import { FaDiscord } from "react-icons/fa";
 
 const LOCALSTORAGE_KEY = 'tsUpdateDismissed';
 const MAJOR_DISMISSAL_TIME = 12 * 60 * 60 * 1000;
-const MINOR_DISMISSAL_TIME = 24 * 60 * 60 * 1000;
+const MINOR_DISMISSAL_TIME = 48 * 60 * 60 * 1000;
 
 const getTsUpdateDismissed = () => {
     const stored = localStorage.getItem(LOCALSTORAGE_KEY);

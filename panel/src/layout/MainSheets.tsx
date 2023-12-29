@@ -31,9 +31,9 @@ export function GlobalMenuSheet() {
                         <MenuNavLink href="/players">
                             <UsersIcon className="mr-2 h-4 w-4" />Players
                         </MenuNavLink>
-                        <MenuNavLink href="/history" className="text-accent">
+                        {/* <MenuNavLink href="/history" className="text-accent">
                             <ScrollIcon className="mr-2 h-4 w-4" />History
-                        </MenuNavLink>
+                        </MenuNavLink> */}
                         <MenuNavLink href="/whitelist">
                             <ClipboardCheckIcon className="mr-2 h-4 w-4" />Whitelist
                         </MenuNavLink>

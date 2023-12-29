@@ -13,11 +13,12 @@ import { getSocket } from '@/lib/utils';
 import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import PromptDialog from '@/components/PromptDialog';
-import TxToaster, { txToast } from '../components/TxToaster';
+import TxToaster from '@/components/TxToaster';
 import AccountDialog from '@/components/AccountDialog';
 import { useOpenAccountModal } from '@/hooks/dialogs';
 import PlayerModal from './playerModal/PlayerModal';
 import { useOpenPlayerModal } from '@/hooks/playerModal';
+import { navigate as setLocation } from 'wouter/use-location';
 
 
 export default function MainShell() {
@@ -33,6 +34,8 @@ export default function MainShell() {
             openAccountModal();
         } else if (e.data.type === 'openPlayerModal') {
             openPlayerModal(e.data.ref);
+        } else if (e.data.type === 'navigateToPage') {
+            setLocation(e.data.href);
         }
     });
 
@@ -44,8 +47,6 @@ export default function MainShell() {
 
     //Runing on mount only
     useEffect(() => {
-        txToast.dismiss(); //making sure we don't have any pending toasts
-
         //SocketIO
         const rooms = window.txConsts.isWebInterface ? ['status', 'playerlist'] : ['status'];
         const socket = getSocket(rooms);

@@ -26,7 +26,7 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
                 !isSheet && 'rounded-xl border border-border bg-card text-card-foreground shadow-sm p-4',
                 'flex flex-col gap-4'
             )}>
-                <ServerControls isSheet />
+                <ServerControls />
                 <ServerStatus />
                 <ServerSchedule />
             </div>

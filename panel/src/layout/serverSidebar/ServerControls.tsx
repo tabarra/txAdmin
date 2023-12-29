@@ -32,7 +32,7 @@ const controlButtonsVariants = cva(
     }
 );
 
-export default function ServerControls({ isSheet }: { isSheet?: boolean }) {
+export default function ServerControls() {
     const processInstantiated = useAtomValue(processInstantiatedAtom);
     const openConfirmDialog = useOpenConfirmDialog();
     const openPromptDialog = useOpenPromptDialog();

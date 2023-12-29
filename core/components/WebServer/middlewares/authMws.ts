@@ -6,18 +6,22 @@ import { InitializedCtx } from '../ctxTypes';
 const console = consoleFactory(modulename);
 
 const webLogoutPage = `<style>
-    .notice {
-        font-family: sans-serif;
-        font-size: 1.5em;
-        text-align: center;
-        background-color: #1F1F1F;
-        color: #fff;
-        padding: 2em;
-        border-radius: 0.25em;
-    }
-    .notice a {
-        color: #42428A;
-    }
+body {
+    margin: 0;
+}
+.notice {
+    font-family: sans-serif;
+    font-size: 1.5em;
+    text-align: center;
+    background-color: #222326;
+    color: #F7F7F8;
+    padding: 2em;
+    border: 1px solid #333539;
+    border-radius: 0.5em;
+}
+.notice a {
+    color: #F00A53;
+}
 </style>
     <p class="notice">
         User logged out. <br>

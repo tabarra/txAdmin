@@ -131,14 +131,8 @@
     <script><%- jsInjection %></script>
 </head>
 
-<body class="c-app flex-row align-items-center <%= uiTheme %>">
-
+<body class="c-app flex-row <%= uiTheme %>">
     <div class="container">
-
-        <!-- Logo Row -->
-        <div class="row justify-content-center pt-4 mb-4">
-            <img src="img/txadmin.png" alt="txAdmin Logo">
-        </div>
 
         <!-- Stepper Row -->
         <div class="row justify-content-center">
@@ -396,25 +390,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Info Row -->
-        <div class="row justify-content-center">
-            <div class="col-md-4 ">
-                <div class="alert alert-secondary text-center small" style="min-width: 280px;" role="alert">
-                    <strong>Server profile:</strong> <%= serverProfile %> <br>
-                    <strong>txAdmin version:</strong> <%= txAdminVersion %> <br>
-                    <strong>FXServer build:</strong> <%= fxServerVersion %>
-                    <div class="hrsep hrsep-small">//</div>
-                    <h5 class="text-muted">
-                        <strong>txAdmin</strong> Official Discord: <br>
-                        <a href="https://discord.gg/uAmsGa2" target="_blank">
-                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
-                        </a>
-                    </h5>
-                </div>
-            </div>
-        </div>
-
 
     </div>
     <!-- CoreUI and necessary plugins-->
@@ -920,7 +895,7 @@
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location = (selectedDeploymentType == 'local')? '/console' : '/deployer';
+                        navigateParentTo((selectedDeploymentType === 'local') ? '/server/console' : '/server/deployer');
                     }else{
                         saveError.innerHTML = convertMarkdown(`${data.message}\nPlease refresh the page and start again.`, true);
                         saveError.classList.remove('d-none');
