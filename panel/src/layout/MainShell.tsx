@@ -1,6 +1,6 @@
 import { useEventListener } from 'usehooks-ts';
 import MainRouter from "./MainRouter";
-import { useExpireAuthData } from '../hooks/auth';
+import { useExpireAuthData, useSetAuthData } from '../hooks/auth';
 import { Header } from './Header';
 import { ServerSidebar } from './serverSidebar/ServerSidebar';
 import { PlayerlistSidebar } from './playerlistSidebar/PlayerlistSidebar';
@@ -24,10 +24,11 @@ export default function MainShell() {
     const expireSession = useExpireAuthData();
     const openAccountModal = useOpenAccountModal();
     const openPlayerModal = useOpenPlayerModal();
+    const setAuthData = useSetAuthData();
 
     useEventListener('message', (e: MessageEventFromIframe) => {
         if (e.data.type === 'logoutNotice') {
-            expireSession('child iframe');
+            expireSession('child iframe', 'got logoutNotice');
         } else if (e.data.type === 'openAccountModal') {
             openAccountModal();
         } else if (e.data.type === 'openPlayerModal') {
@@ -67,8 +68,8 @@ export default function MainShell() {
         socket.on('error', (error) => {
             console.log('Main Socket.IO', error);
         });
-        socket.on('logout', function () {
-            expireSession('main socketio');
+        socket.on('logout', function (reason) {
+            expireSession('main socketio', reason);
         });
         socket.on('refreshToUpdate', function () {
             window.location.href = '/login#updated';
@@ -82,6 +83,10 @@ export default function MainShell() {
         });
         socket.on('updateAvailable', function (data) {
             processUpdateAvailableEvent(data);
+        });
+        socket.on('updateAuthData', function (authData) {
+            console.warn('Got updateAuthData from websocket', authData);
+            setAuthData(authData);
         });
 
         return () => {

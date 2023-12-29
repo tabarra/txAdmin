@@ -4,7 +4,6 @@ import { convars } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import TxAdmin from "@core/txAdmin";
 import { SessToolsType } from "./middlewares/sessionMws";
-import { isIpAddressLocal } from "@extras/isIpAddressLocal";
 import { ReactAuthDataType } from "@shared/authApiTypes";
 const console = consoleFactory(modulename);
 

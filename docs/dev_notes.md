@@ -182,7 +182,7 @@ setTimeout(() => {
         - [x] make sure it is responsive
         - [x] check behavior on error (invalid player, 500, etc)
         - [x] clean legacy modal and playerlist code
-- [ ][5d] fauth stuff
+- [x][5d] auth stuff
     - [x] password login
     - [x] cfx.re login
     - [x] error page
@@ -192,7 +192,7 @@ setTimeout(() => {
     - [x] flow to refresh the page if invalidated auth
     - [x] when logging out, create an effect to close all sheets and dialogs
     - [x] disable menu links based on permissions
-    - [ ] flow to refresh the permissions on the client side
+    - [x] flow to refresh the permissions on the client side
 - [ ][2d] full setup flow (legacy) - fazer isso no mainrouter?
 - [ ][1d] full deployer flow (legacy)
 - [ ][1d] add the new logos to shell+auth pages
@@ -218,6 +218,7 @@ Quickies
 - [ ] check if strict mode is indeed disabled in prod build
 > BETA RELEASE
 
+- [ ] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 - [ ] talk to r* and make sure the new build process wipes the old cache
 - [ ] make sure some user input based fields are truncated (server name, player name)

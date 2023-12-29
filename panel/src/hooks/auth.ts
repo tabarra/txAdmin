@@ -40,6 +40,11 @@ export const useCsrfToken = () => {
     return useAtomValue(csrfTokenAtom);
 };
 
+//Simple setter for auth data
+export const useSetAuthData = () => {
+    return useSetAtom(authDataAtom)
+};
+
 //Admin permissions hook, only re-renders on perms change or login/logout
 //Perms logic from core/components/WebServer/authLogic.ts
 export const useAdminPerms = () => {
@@ -74,8 +79,8 @@ export const useAdminPerms = () => {
 //Since this is triggered by a logout notice, we don't need to bother doing a POST /auth/logout
 export const useExpireAuthData = () => {
     const setAuthData = useSetAtom(authDataAtom);
-    return (src = 'unknown') => {
-        console.log(`Logout notice received from '${src}'. Wiping auth data.`);
+    return (src = 'unknown', reason = 'unknown') => {
+        console.log(`Logout notice received from '${src}' for reason '${reason}'. Wiping auth data.`);
         setAuthData(false);
         window.history.replaceState(null, '', '/login#expired');
     }

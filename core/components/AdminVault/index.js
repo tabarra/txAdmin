@@ -567,8 +567,11 @@ export default class AdminVault {
      * Notify game server about admin changes
      */
     async refreshOnlineAdmins() {
-        if (globals.playerlistManager === null) return;
+        //Refresh auth of all admins connected to socket.io
+        globals.webServer.webSocket.reCheckAdminAuths().catch((e) => { });
 
+        //Refresh in-game auth of all admins connected to the server
+        if (globals.playerlistManager === null) return;
         try {
             //Getting all admin identifiers
             const adminIDs = this.admins.reduce((ids, adm) => {
@@ -582,7 +585,7 @@ export default class AdminVault {
                 return p.ids.some((i) => adminIDs.includes(i));
             }).map((p) => p.netid);
 
-            return globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
+            globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
         } catch (error) {
             console.verbose.error('Failed to refreshOnlineAdmins() with error:');
             console.verbose.dir(error);

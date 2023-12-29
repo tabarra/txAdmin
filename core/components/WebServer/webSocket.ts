@@ -1,5 +1,5 @@
 const modulename = 'WebSocket';
-import { Server as SocketIO, Socket } from 'socket.io';
+import { Server as SocketIO, Socket, RemoteSocket } from 'socket.io';
 import consoleFactory from '@extras/console';
 import statusRoom from './wsRooms/status';
 import playerlistRoom from './wsRooms/playerlist';
@@ -71,6 +71,46 @@ export default class WebSocket {
         setInterval(this.flushBuffers.bind(this), 250);
     }
 
+    /**
+     * Refreshes the auth data for all connected admins
+     * If an admin is not authed anymore, they will be disconnected
+     * If an admin lost permission to a room, they will be kicked out of it
+     * This is called from AdminVault.refreshOnlineAdmins()
+     */
+    async reCheckAdminAuths() {
+        const sockets = await this.#io.fetchSockets();
+        console.verbose.warn(`SocketIO`, `AdminVault changed, refreshing auth for ${sockets.length} sockets.`);
+        for (const socket of sockets) {
+            //@ts-ignore
+            const reqIp = getIP(socket);
+            const authResult = checkRequestAuth(
+                this.#txAdmin,
+                socket.handshake.headers,
+                reqIp,
+                isIpAddressLocal(reqIp),
+                //@ts-ignore
+                socket.sessTools
+            );
+            if (!authResult.success) {
+                //@ts-ignore
+                return terminateSession(socket, 'session invalidated by websocket.reCheckAdminAuths()', true);
+            }
+
+            //Sending auth data update - even if nothing changed
+            const { admin: authedAdmin } = authResult;
+            socket.emit('updateAuthData', authedAdmin.getAuthData());
+
+            //Checking permission of all joined rooms
+            for (const roomName of socket.rooms) {
+                if (roomName === socket.id) continue;
+                const roomData = this.#rooms[roomName as RoomNames];
+                if (roomData.permission !== true && !authedAdmin.hasPermission(roomData.permission)) {
+                    socket.leave(roomName);
+                }
+            }
+        }
+    }
+
 
     /**
      * Handles incoming connection requests,
@@ -81,13 +121,13 @@ export default class WebSocket {
         if (socket.handshake.query.uiVersion && socket.handshake.query.uiVersion !== txEnv.txAdminVersion) {
             return forceUiReload(socket);
         }
-        
+
         try {
             //Checking for session auth
             const reqIp = getIP(socket);
             const authResult = checkRequestAuth(
                 this.#txAdmin,
-                socket.request.headers,
+                socket.handshake.headers,
                 reqIp,
                 isIpAddressLocal(reqIp),
                 socket.sessTools
@@ -122,12 +162,16 @@ export default class WebSocket {
                 }
 
                 //Setting up event handlers
-                //NOTE: if the admin permissions is removed after connection, he will
-                // still have access to the command, only refreshing the entire connection
-                // would solve it, since socket.session (therefore authedAdmin) is not auto updated
                 for (const [commandName, commandData] of Object.entries(room.commands ?? [])) {
                     if (commandData.permission === true || authedAdmin.hasPermission(commandData.permission)) {
-                        socket.on(commandName, commandData.handler.bind(null, authedAdmin));
+                        socket.on(commandName, (...args) => {
+                            //Checking if admin is still in the room - perms change can make them be kicked out of room
+                            if (socket.rooms.has(requestedRoomName)) {
+                                commandData.handler(authedAdmin, ...args);
+                            } else {
+                                console.verbose.debug('SocketIO', `Command '${requestedRoomName}#${commandName}' was ignored due to admin not being in the room.`);
+                            }
+                        });
                     }
                 }
 
