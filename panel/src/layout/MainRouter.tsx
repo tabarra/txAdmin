@@ -90,6 +90,16 @@ const allRoutes: RouteType[] = [
         children: <Iframe legacyUrl="cfgEditor" />
     },
     {
+        path: '/server/setup',
+        title: 'Server Setup',
+        children: <Iframe legacyUrl="setup" />
+    },
+    {
+        path: '/server/deployer',
+        title: 'Server Deployer',
+        children: <Iframe legacyUrl="deployer" />
+    },
+    {
         path: '/advanced',
         title: 'Advanced',
         children: <Iframe legacyUrl="advanced" />

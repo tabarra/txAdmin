@@ -51,9 +51,8 @@ export default (config: WebServerConfigType) => {
     router.get('/legacy/settings', webAuthMw, webRoutes.settings_page);
     router.get('/legacy/systemLog', webAuthMw, webRoutes.systemLog);
     router.get('/legacy/whitelist', webAuthMw, webRoutes.whitelist_page);
-    //FIXME: deal with these
-    router.get('/setup', webAuthMw, webRoutes.setup_get);
-    router.get('/deployer', webAuthMw, webRoutes.deployer_stepper);
+    router.get('/legacy/setup', webAuthMw, webRoutes.setup_get);
+    router.get('/legacy/deployer', webAuthMw, webRoutes.deployer_stepper);
 
     //Authentication
     router.get('/auth/self', apiAuthMw, webRoutes.auth_self);

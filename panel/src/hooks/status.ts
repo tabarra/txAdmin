@@ -7,6 +7,7 @@ import { atom, useAtomValue, useSetAtom } from "jotai";
  */
 export const globalStatusAtom = atom<GlobalStatusType | null>(null);
 export const serverNameAtom = atom((get) => get(globalStatusAtom)?.server.name ?? 'unconfigured');
+export const serverConfigPendingStepAtom = atom((get) => get(globalStatusAtom)?.server.configPendingStep);
 export const processInstantiatedAtom = atom((get) => get(globalStatusAtom)?.server.instantiated ?? false);
 
 

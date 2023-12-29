@@ -71,6 +71,9 @@ async function handleResetFXServer(ctx: AuthedCtx) {
         });
     }
 
+    //technically not required, but faster than fxRunner.killServer()
+    globals.webServer?.webSocket.pushRefresh('status'); 
+
     //Sending output
     ctx.txAdmin.fxRunner.refreshConfig();
     ctx.admin.logAction('Resetting fxRunner settings.');

@@ -211,9 +211,9 @@ setTimeout(() => {
 - [ ][2h] fine tune `panel/vite.config.ts`
 
 Quickies
+- [ ] mudar todos os cfx.response.redirect das rotas de dashboard, setup, deployer e talvez mais alguma que faça redirect quando o sv não está configurado
+- [ ] ver se da pra melhorar o visual da setup e deployer, o upelo menos deixar mais largo
 - [ ] move the socket.io stuff from mainshell to a dedicated component child of mainshell
-- [ ] fix: /server/[setup/deployer] opens another tx inside iframe
-- [ ] desabilitar controles com sv não configurado
 - [ ] fix the console bg on light mode
 - [ ] commit the fixes for the player ids and god mode issues
 - [ ] fix the tsc build

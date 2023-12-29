@@ -245,6 +245,7 @@ async function handleSaveConfig(ctx) {
         });
     } else {
         globals.deployer = null;
+        globals.webServer?.webSocket.pushRefresh('status');
         return ctx.send({ success: true });
     }
 }
@@ -257,5 +258,6 @@ async function handleSaveConfig(ctx) {
  */
 async function handleCancel(ctx) {
     globals.deployer = null;
+    globals.webServer?.webSocket.pushRefresh('status');
     return ctx.send({ success: true });
 }

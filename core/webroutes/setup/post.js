@@ -357,6 +357,7 @@ async function handleSaveDeployerImport(ctx) {
     //Start deployer (constructor will validate the recipe)
     try {
         globals.deployer = new Deployer(recipeText, deploymentID, targetPath, isTrustedSource, {serverName});
+        globals.webServer?.webSocket.pushRefresh('status');
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }
@@ -406,6 +407,7 @@ async function handleSaveDeployerCustom(ctx) {
     };
     try {
         globals.deployer = new Deployer(false, deploymentID, targetPath, false, customMetaData);
+        globals.webServer?.webSocket.pushRefresh('status');
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }

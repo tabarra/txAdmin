@@ -1,5 +1,5 @@
 import { KickAllIcon } from '@/components/KickIcons';
-import { processInstantiatedAtom } from '@/hooks/status';
+import { processInstantiatedAtom, serverConfigPendingStepAtom } from '@/hooks/status';
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
 import { useAtomValue } from 'jotai';
@@ -33,6 +33,7 @@ const controlButtonsVariants = cva(
 );
 
 export default function ServerControls() {
+    const serverConfigPendingStep = useAtomValue(serverConfigPendingStepAtom);
     const processInstantiated = useAtomValue(processInstantiatedAtom);
     const openConfirmDialog = useOpenConfirmDialog();
     const openPromptDialog = useOpenPromptDialog();
@@ -113,6 +114,13 @@ export default function ServerControls() {
         });
     }
 
+    if (serverConfigPendingStep) {
+        return (
+            <div className='w-full h-8 text-center tracking-wider font-light opacity-75'>
+                Server not configured.
+            </div>
+        )
+    }
     return (
         <div className="flex flex-row justify-between gap-2">
             <Tooltip>

@@ -3,9 +3,11 @@ import { UpdateDataType } from "otherTypes";
 /**
  * Status channel
  */
+export type ServerConfigPendingStepType = 'setup' | 'deployer' | undefined;
 export type GlobalStatusType = {
     discord: false | number;
     server: {
+        configPendingStep: ServerConfigPendingStepType;
         status: string;
         process: string;
         instantiated: boolean;
