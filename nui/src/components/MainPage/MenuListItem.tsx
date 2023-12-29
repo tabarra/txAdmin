@@ -92,7 +92,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
 
     useEffect(() => {
       if (selected && divRef) {
-        divRef.current.scrollIntoView({
+        divRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "nearest",
           inline: "start",
@@ -176,7 +176,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     useEffect(() => {
       if (selected && divRef) {
-        divRef.current.scrollIntoView({
+        divRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "nearest",
           inline: "start",

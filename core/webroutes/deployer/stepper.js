@@ -17,8 +17,10 @@ export default async function DeployerStepper(ctx) {
 
     //Check if this is the correct state for the deployer
     if (globals.deployer == null) {
-        const redirPath = (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath) ? '/setup' : '/';
-        return ctx.response.redirect(redirPath);
+        const redirPath = (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath)
+            ? '/server/setup'
+            : '/';
+        return ctx.utils.legacyNavigateToPage(redirPath);
     }
 
     //Prepare Output

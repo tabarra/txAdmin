@@ -3,16 +3,7 @@ import { PlayerModalSuccess } from "@shared/playerApiTypes";
 // export const MockedPlayerDetails: PlayerModalSuccess = {"meta":{"tmpPerms":{"message":true,"whitelist":true,"warn":true,"kick":true,"ban":true},"serverTime":1668030674},"player":{"displayName":"nobody","pureName":"nobody","isRegistered":false,"isConnected":true,"license":null,"ids":[],"actionHistory":[],"netid":101,"sessionTime":1}};
 
 export const MockedPlayerDetails: PlayerModalSuccess = {
-    "meta": {
-        "tmpPerms": {
-            "message": true,
-            "whitelist": true,
-            "warn": true,
-            "kick": true,
-            "ban": true
-        },
-        "serverTime": 1667712061
-    },
+    "serverTime": 1667712061,
     "player": {
         "displayName": "tabby",
         "pureName": "tabby",

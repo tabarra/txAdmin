@@ -394,7 +394,7 @@ RegisterCommand("txaSetDebugMode", txaSetDebugMode, true)
 AddEventHandler('playerConnecting', handleConnections)
 SetHttpHandler(handleHttp)
 
--- Heartbeat functions are separated in case one hangs
+-- HeartBeat functions are separated in case one hangs
 CreateThread(function()
     while true do
         HTTPHeartBeat()

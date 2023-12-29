@@ -1,16 +1,11 @@
 import { useEventListener } from 'usehooks-ts';
 import MainRouter from "./MainRouter";
-import { useExpireAuthData, useSetAuthData } from '../hooks/auth';
+import { useExpireAuthData } from '../hooks/auth';
 import { Header } from './Header';
 import { ServerSidebar } from './serverSidebar/ServerSidebar';
 import { PlayerlistSidebar } from './playerlistSidebar/PlayerlistSidebar';
 import MainSheets from './MainSheets';
 import WarningBar from './WarningBar';
-import { useEffect, useRef } from 'react';
-import { useSetGlobalStatus } from '@/hooks/status';
-import { useProcessUpdateAvailableEvent, useSetOfflineWarning } from '@/hooks/useWarningBar';
-import { getSocket } from '@/lib/utils';
-import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import PromptDialog from '@/components/PromptDialog';
 import TxToaster from '@/components/TxToaster';
@@ -19,14 +14,16 @@ import { useOpenAccountModal } from '@/hooks/dialogs';
 import PlayerModal from './playerModal/PlayerModal';
 import { useOpenPlayerModal } from '@/hooks/playerModal';
 import { navigate as setLocation } from 'wouter/use-location';
+import MainSocket from './MainSocket';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 
 export default function MainShell() {
     const expireSession = useExpireAuthData();
     const openAccountModal = useOpenAccountModal();
     const openPlayerModal = useOpenPlayerModal();
-    const setAuthData = useSetAuthData();
 
+    //Listener for messages from child iframes (legacy routes)
     useEventListener('message', (e: MessageEventFromIframe) => {
         if (e.data.type === 'logoutNotice') {
             expireSession('child iframe', 'got logoutNotice');
@@ -39,82 +36,26 @@ export default function MainShell() {
         }
     });
 
-    const socketStateChangeCounter = useRef(0);
-    const setIsSocketOffline = useSetOfflineWarning();
-    const setGlobalStatus = useSetGlobalStatus();
-    const processPlayerlistEvents = useProcessPlayerlistEvents();
-    const processUpdateAvailableEvent = useProcessUpdateAvailableEvent();
-
-    //Runing on mount only
-    useEffect(() => {
-        //SocketIO
-        const rooms = window.txConsts.isWebInterface ? ['status', 'playerlist'] : ['status'];
-        const socket = getSocket(rooms);
-        socket.on('connect', () => {
-            console.log("Main Socket.IO Connected.");
-            setIsSocketOffline(false);
-        });
-        socket.on('disconnect', (message) => {
-            console.log("Main Socket.IO Disonnected:", message);
-            //Grace period of 500ms to allow for quick reconnects
-            //Tracking the state change ID for the timeout not to overwrite a reconnection
-            const newId = socketStateChangeCounter.current + 1;
-            socketStateChangeCounter.current = newId;
-            setTimeout(() => {
-                if (socketStateChangeCounter.current === newId) {
-                    setIsSocketOffline(true);
-                }
-            }, 500);
-        });
-        socket.on('error', (error) => {
-            console.log('Main Socket.IO', error);
-        });
-        socket.on('logout', function (reason) {
-            expireSession('main socketio', reason);
-        });
-        socket.on('refreshToUpdate', function () {
-            window.location.href = '/login#updated';
-        });
-        socket.on('status', function (status) {
-            setGlobalStatus(status);
-        });
-        socket.on('playerlist', function (playerlistData) {
-            if (!window.txConsts.isWebInterface) return;
-            processPlayerlistEvents(playerlistData);
-        });
-        socket.on('updateAvailable', function (data) {
-            processUpdateAvailableEvent(data);
-        });
-        socket.on('updateAuthData', function (authData) {
-            console.warn('Got updateAuthData from websocket', authData);
-            setAuthData(authData);
-        });
-
-        return () => {
-            socket.removeAllListeners();
-            socket.disconnect();
-            setGlobalStatus(null);
-        }
-    }, []);
-
-
     return <>
-        <Header />
-        <div className="px-3 py-4 w-full max-w-[1920px] mx-auto flex flex-row gap-2">
-            <ServerSidebar />
-            <main className="flex flex-1 min-h-[calc(100vh-5.5rem-1px)]">
-                <MainRouter />
-            </main>
-            {window.txConsts.isWebInterface && <PlayerlistSidebar />}
-        </div>
+        <TooltipProvider delayDuration={300} disableHoverableContent={true}>
+            <Header />
+            <div className="px-3 py-4 w-full max-w-[1920px] mx-auto flex flex-row gap-2">
+                <ServerSidebar />
+                <main className="flex flex-1 min-h-[calc(100vh-5.5rem-1px)]">
+                    <MainRouter />
+                </main>
+                {window.txConsts.isWebInterface && <PlayerlistSidebar />}
+            </div>
 
-        <MainSheets />
-        <WarningBar />
-        <ConfirmDialog />
-        <PromptDialog />
-        <TxToaster />
-        <AccountDialog />
-        <PlayerModal />
-        {/* <BreakpointDebugger /> */}
+            <MainSheets />
+            <WarningBar />
+            <ConfirmDialog />
+            <PromptDialog />
+            <TxToaster />
+            <AccountDialog />
+            <PlayerModal />
+            <MainSocket />
+            {/* <BreakpointDebugger /> */}
+        </TooltipProvider>
     </>;
 }

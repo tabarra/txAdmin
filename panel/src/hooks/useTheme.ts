@@ -5,7 +5,7 @@ import { atom, useAtom } from 'jotai';
  * Helpers
  */
 const setThemeCookieValue = (value: string) => {
-    document.cookie = `txAdmin-theme=${value};path=/;max-age=31536000;`;
+    document.cookie = `txAdmin-theme=${value};path=/;SameSite=Lax;max-age=31536000;`;
 }
 
 

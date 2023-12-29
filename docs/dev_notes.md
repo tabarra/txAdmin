@@ -193,8 +193,8 @@ setTimeout(() => {
     - [x] when logging out, create an effect to close all sheets and dialogs
     - [x] disable menu links based on permissions
     - [x] flow to refresh the permissions on the client side
-- [ ][2d] full setup flow (legacy)
-- [ ][1d] full deployer flow (legacy)
+- [x][2d] full setup flow (legacy)
+- [x][1d] full deployer flow (legacy)
 - [ ][1d] add the new logos to shell+auth pages
 > BETA RELEASE
 
@@ -211,14 +211,13 @@ setTimeout(() => {
 - [ ][2h] fine tune `panel/vite.config.ts`
 
 Quickies
-- [ ] mudar todos os cfx.response.redirect das rotas de dashboard, setup, deployer e talvez mais alguma que faça redirect quando o sv não está configurado
-- [ ] ver se da pra melhorar o visual da setup e deployer, o upelo menos deixar mais largo
-- [ ] move the socket.io stuff from mainshell to a dedicated component child of mainshell
-- [ ] fix the console bg on light mode
+- [x] fix all legacy cfx.response.redirect (dashboard, setup, deployer, maybe more)
+- [x] move the socket.io stuff from mainshell to a dedicated component child of mainshell
+- [x] disable testing page in prod build
+- [x] check if strict mode is indeed disabled in prod build
+- [ ] fix the console bg on light mode + command input
 - [ ] commit the fixes for the player ids and god mode issues
 - [ ] fix the tsc build
-- [ ] disable testing page in prod build
-- [ ] check if strict mode is indeed disabled in prod build
 > BETA RELEASE
 
 - [ ] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?

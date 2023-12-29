@@ -156,11 +156,17 @@ function AuthedHeaderFragment() {
                     <FaDiscord size="14" className="mr-2" />
                     Support
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={doLogout}>
-                    <LogOutIcon className="mr-2 h-4 w-4" />
-                    Logout
-                </DropdownMenuItem>
+
+                {/* Don't show logout if on NUI */}
+                {window.txConsts.isWebInterface && (
+                    <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="cursor-pointer" onClick={doLogout}>
+                            <LogOutIcon className="mr-2 h-4 w-4" />
+                            Logout
+                        </DropdownMenuItem>
+                    </>
+                )}
             </DropdownMenuContent>
         </DropdownMenu>
     )

@@ -99,9 +99,11 @@ export default function ServerMenu() {
                         <DnaIcon className="mr-2 h-4 w-4" />Advanced
                     </MenuNavLink>
                 )}
-                <MenuNavLink href="/test" className='text-accent'>
-                    <DnaIcon className="mr-2 h-4 w-4" />Test
-                </MenuNavLink>
+                {import.meta.env.DEV && (
+                    <MenuNavLink href="/test" className='text-accent'>
+                        <DnaIcon className="mr-2 h-4 w-4" />Test
+                    </MenuNavLink>
+                )}
             </div>
         </div>
     </div>

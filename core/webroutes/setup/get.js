@@ -18,10 +18,10 @@ export default async function SetupGet(ctx) {
 
     // Check if this is the correct state for the setup page
     if (globals.deployer !== null) {
-        return ctx.response.redirect('/deployer');
+        return ctx.utils.legacyNavigateToPage('/server/deployer');
     }
     if (globals.fxRunner.config.serverDataPath && globals.fxRunner.config.cfgPath) {
-        return ctx.response.redirect('/');
+        return ctx.utils.legacyNavigateToPage('/');
     }
 
     const globalConfig = globals.configVault.getScopedStructure('global');

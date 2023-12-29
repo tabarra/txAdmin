@@ -104,42 +104,40 @@ export default function DesktopHeader() {
                             onClick={(e) => {
                                 //To prevent very annoying behavior where you go click on the menu 
                                 //item and it will close the menu because it just opened on hover
-                                if(e.currentTarget.dataset['state'] === 'open') { 
+                                if (e.currentTarget.dataset['state'] === 'open') {
                                     e.preventDefault();
                                 }
                             }}
                         >
                             System
                         </NavigationMenuTrigger>
-                        <NavigationMenuContent asChild={true}>
-                            <div className="flex flex-col gap-2 p-4 list-none">
-                                <HeaderMenuLink
-                                    className="w-36 justify-start"
-                                    href="/system/master-actions"
-                                >
-                                    Master Actions
-                                </HeaderMenuLink>
-                                <HeaderMenuLink
-                                    className="w-36 justify-start"
-                                    href="/system/diagnostics"
-                                >
-                                    Diagnostics
-                                </HeaderMenuLink>
-                                <HeaderMenuLink
-                                    className="w-36 justify-start"
-                                    href="/system/console-log"
-                                    disabled={!hasPerm('txadmin.log.view')}
-                                >
-                                    Console Log
-                                </HeaderMenuLink>
-                                <HeaderMenuLink
-                                    className="w-36 justify-start"
-                                    href="/system/action-log"
-                                    disabled={!hasPerm('txadmin.log.view')}
-                                >
-                                    Action Log
-                                </HeaderMenuLink>
-                            </div>
+                        <NavigationMenuContent className="flex flex-col gap-2 p-4 list-none">
+                            <HeaderMenuLink
+                                className="w-36 justify-start"
+                                href="/system/master-actions"
+                            >
+                                Master Actions
+                            </HeaderMenuLink>
+                            <HeaderMenuLink
+                                className="w-36 justify-start"
+                                href="/system/diagnostics"
+                            >
+                                Diagnostics
+                            </HeaderMenuLink>
+                            <HeaderMenuLink
+                                className="w-36 justify-start"
+                                href="/system/console-log"
+                                disabled={!hasPerm('txadmin.log.view')}
+                            >
+                                Console Log
+                            </HeaderMenuLink>
+                            <HeaderMenuLink
+                                className="w-36 justify-start"
+                                href="/system/action-log"
+                                disabled={!hasPerm('txadmin.log.view')}
+                            >
+                                Action Log
+                            </HeaderMenuLink>
                         </NavigationMenuContent>
                     </NavigationMenuItem>
                 </NavigationMenuList>

@@ -1,7 +1,7 @@
 const modulename = 'WebServer:PlayerModal';
 import dateFormat from 'dateformat';
 import playerResolver from '@core/playerLogic/playerResolver';
-import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData, PlayerModalMeta } from '@shared/playerApiTypes';
+import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData } from '@shared/playerApiTypes';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { ServerPlayer } from '@core/playerLogic/playerClasses';
 import consoleFactory from '@extras/console';
@@ -42,20 +42,6 @@ export default async function PlayerModal(ctx: AuthedCtx) {
     }
     const { mutex, netid, license } = ctx.query;
     const sendTypedResp = (data: PlayerModalResp) => ctx.send(data);
-
-    //Prepping meta fields
-    const tsNow = now();
-    const metaFields: PlayerModalMeta = {
-        //FIXME: this should not come from the route itself, but for now it is required by the web frontend
-        tmpPerms: {
-            message: ctx.admin.hasPermission('players.message'),
-            whitelist: ctx.admin.hasPermission('players.whitelist'),
-            warn: ctx.admin.hasPermission('players.warn'),
-            kick: ctx.admin.hasPermission('players.kick'),
-            ban: ctx.admin.hasPermission('players.ban'),
-        },
-        serverTime: tsNow,
-    };
 
     //Finding the player
     let player;
@@ -103,7 +89,7 @@ export default async function PlayerModal(ctx: AuthedCtx) {
     // console.dir(metaFields);
     // console.dir(playerData);
     return sendTypedResp({
-        meta: metaFields,
+        serverTime: now(),
         player: playerData
     });
 };

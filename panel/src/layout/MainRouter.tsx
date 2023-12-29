@@ -1,11 +1,12 @@
 import { ErrorBoundary } from "react-error-boundary";
-import { Route as WouterRoute, Switch, useLocation } from "wouter";
+import { Route as WouterRoute, Switch } from "wouter";
 import { PageErrorFallback } from "../components/ErrorFallback";
 import { useAtomValue, useSetAtom } from "jotai";
 import { contentRefreshKeyAtom, pageErrorStatusAtom, useSetPageTitle } from "../hooks/pages";
+import { navigate as setLocation } from 'wouter/use-location';
 
-import Iframe from "../pages/Iframe"
-import NotFound from "../pages/NotFound"
+import Iframe from "../pages/Iframe";
+import NotFound from "../pages/NotFound";
 import TestingPage from "../pages/testing/TestingPage";
 
 
@@ -107,7 +108,7 @@ const allRoutes: RouteType[] = [
 ];
 
 
-function Route(props: RouteType){
+function Route(props: RouteType) {
     const setPageTitle = useSetPageTitle();
     setPageTitle(props.title);
     return <WouterRoute path={props.path}>{props.children}</WouterRoute>
@@ -117,7 +118,6 @@ function Route(props: RouteType){
 export default function MainRouter() {
     const setPageErrorStatus = useSetAtom(pageErrorStatusAtom);
     const contentRefreshKey = useAtomValue(contentRefreshKeyAtom);
-    const setLocation = useLocation()[1];
 
     return (
         <ErrorBoundary
@@ -141,7 +141,10 @@ export default function MainRouter() {
                 ))}
 
                 {/* Other Routes - they need to set the title manuually */}
-                <WouterRoute path="/test"><TestingPage /></WouterRoute>
+                {/* <WouterRoute path="/test"><TestingPage /></WouterRoute> */}
+                {import.meta.env.DEV && (
+                    <WouterRoute path="/test"><TestingPage /></WouterRoute>
+                )}
                 <WouterRoute path="/:fullPath*" component={NotFound} />
             </Switch>
         </ErrorBoundary>

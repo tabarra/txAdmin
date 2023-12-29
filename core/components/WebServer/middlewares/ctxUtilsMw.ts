@@ -22,6 +22,7 @@ export type CtxTxUtils = {
         render: (view: string, data?: { headerTitle?: string, [key: string]: any }) => Promise<void>;
         error: (httpStatus?: number, message?: string) => void;
         serveReactIndex: () => Promise<void>;
+        legacyNavigateToPage: (href: string) => void;
     };
 }
 
@@ -69,6 +70,36 @@ const RESOURCE_PATH = 'nui://monitor/web/public/';
 
 const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
 const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
+
+const legaciNavigateHtmlTemplate = `<style>
+body {
+    margin: 0;
+}
+.notice {
+    font-family: sans-serif;
+    font-size: 1.5em;
+    text-align: center;
+    background-color: #222326;
+    color: #F7F7F8;
+    padding: 2em;
+    border: 1px solid #333539;
+    border-radius: 0.5em;
+}
+.notice a {
+    color: #F00A53;
+}
+</style>
+    <p class="notice">
+        Redirecting to <a href="{{href}}" target="_parent">{{href}}</a>...
+    </p>
+<script>
+    // Notify parent window that auth failed
+    window.parent.postMessage({ type: 'navigateToPage', href: '{{href}}'});
+    // If parent redirect didn't work, redirect here
+    setTimeout(function() {
+        window.parent.location.href = '{{href}}';
+    }, 2000);
+</script>`
 
 
 /**
@@ -164,11 +195,11 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
         //Setting up legacy theme
         let legacyTheme = '';
         const themeCookie = ctx.cookies.get('txAdmin-theme');
-        if(!themeCookie || themeCookie === 'dark' || !isWebInterface){
+        if (!themeCookie || themeCookie === 'dark' || !isWebInterface) {
             legacyTheme = 'theme--dark';
         } else {
             const selectorTheme = tmpCustomThemes.find((theme) => theme.name === themeCookie);
-            if(selectorTheme?.isDark){
+            if (selectorTheme?.isDark) {
                 legacyTheme = 'theme--dark';
             }
         }
@@ -211,6 +242,12 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
         };
     };
 
+    //Legacy page util to navigate parent (react) to some page
+    const legacyNavigateToPage = (href: string) => {
+        ctx.body = legaciNavigateHtmlTemplate.replace(/{{href}}/g, href);
+        ctx.type = 'text/html';
+    }
+
     const serveReactIndex = async () => {
         //FIXME: no cache, even in prod mode
         ctx.body = await getReactIndex(ctx);
@@ -222,6 +259,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
         render: renderUtil,
         error: errorUtil,
         serveReactIndex,
+        legacyNavigateToPage,
     };
     ctx.send = <T = string | object>(data: T) => {
         ctx.body = data;

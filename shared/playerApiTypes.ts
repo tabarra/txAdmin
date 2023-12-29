@@ -12,17 +12,6 @@ export type PlayerHistoryItem = {
     revokedAt?: number;
 }
 
-export type PlayerModalMeta = {
-    serverTime: number; //required to calculate if bans have expired on frontend
-    tmpPerms: {
-        message: boolean;
-        whitelist: boolean;
-        warn: boolean;
-        kick: boolean;
-        ban: boolean;
-    };
-}
-
 export type PlayerModalPlayerData = {
     //common
     displayName: string;
@@ -50,7 +39,7 @@ export type PlayerModalPlayerData = {
 }
 
 export type PlayerModalSuccess = {
-    meta: PlayerModalMeta
-    player: PlayerModalPlayerData,
+    serverTime: number; //required to calculate if bans have expired on frontend
+    player: PlayerModalPlayerData;
 }
 export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;

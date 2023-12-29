@@ -1,11 +1,11 @@
 // Required for the core webserver integration to work
-import 'vite/modulepreload-polyfill'
+import 'vite/modulepreload-polyfill';
 
 import { ErrorBoundary } from "react-error-boundary";
-import ReactDOM from 'react-dom/client'
-import './globals.css'
+import ReactDOM from 'react-dom/client';
+import './globals.css';
 
-import MainShell from './layout/MainShell.tsx'
+import MainShell from './layout/MainShell.tsx';
 import { AppErrorFallback } from './components/ErrorFallback.tsx';
 import { logoutWatcher, useIsAuthenticated } from './hooks/auth.ts';
 import AuthShell from './layout/AuthShell.tsx';
@@ -16,7 +16,6 @@ import { StrictMode } from 'react';
 import { isMobile } from 'is-mobile';
 import { useAtomValue } from 'jotai';
 import { pageTitleWatcher } from './hooks/pages.ts';
-import { TooltipProvider } from './components/ui/tooltip.tsx';
 
 //Detecting if the user is on a mobile device
 try {
@@ -85,9 +84,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ErrorBoundary FallbackComponent={AppErrorFallback}>
             <QueryClientProvider client={queryClient}>
                 <ThemeProvider>
-                    <TooltipProvider delayDuration={300} disableHoverableContent={true}>
-                        <AuthContextSwitch />
-                    </TooltipProvider>
+                    <AuthContextSwitch />
                 </ThemeProvider>
             </QueryClientProvider>
         </ErrorBoundary>

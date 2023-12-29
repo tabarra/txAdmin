@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 40122 --strictPort --host",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

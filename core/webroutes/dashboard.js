@@ -9,10 +9,10 @@ const console = consoleFactory(modulename);
 export default async function Dashboard(ctx) {
     // Check if the deployer is running or setup is pending
     if (globals.deployer !== null) {
-        return ctx.response.redirect('/deployer');
+        return ctx.utils.legacyNavigateToPage('/server/deployer');
     }
     if (!globals.fxRunner.config.serverDataPath || !globals.fxRunner.config.cfgPath) {
-        return ctx.response.redirect('/setup');
+        return ctx.utils.legacyNavigateToPage('/server/setup');
     }
 
     //Shortcut function

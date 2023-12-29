@@ -44,6 +44,7 @@ function PlayerlistFilter({ filterString, setFilterString }: PlayerlistFilterPro
         <div className="pt-2 px-2 flex gap-2">
             <div className="relative w-full">
                 <Input
+                    id="playerlistFilter"
                     className="h-8"
                     placeholder="Filter by Name or ID"
                     value={filterString}

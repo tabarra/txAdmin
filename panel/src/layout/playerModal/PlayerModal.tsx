@@ -160,7 +160,7 @@ export default function PlayerModal() {
                                 />}
                                 {selectedTab === 'History' && <HistoryTab
                                     actionHistory={modalData.player.actionHistory}
-                                    serverTime={modalData.meta.serverTime}
+                                    serverTime={modalData.serverTime}
                                     refreshModalData={refreshModalData}
                                 />}
                                 {selectedTab === 'IDs' && <IdsTab

@@ -87,6 +87,7 @@ export default function TmpTerminal() {
                     <path d="m9 18 6-6-6-6" />
                 </svg>
                 <Input
+                    id="terminal-input"
                     className="flex-grow ml-2 bg-transparent text-white placeholder-white placeholder-opacity-50 focus:ring-0 border-0"
                     placeholder="Type a command..."
                     type="text"
