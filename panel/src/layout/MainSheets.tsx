@@ -2,10 +2,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ServerSidebar } from "./serverSidebar/ServerSidebar";
 import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/sheets";
-import { MenuNavLink } from "@/components/MainPageLink";
-import { ClipboardCheckIcon, ListIcon, PieChartIcon, ScrollIcon, SettingsIcon, UserSquare2Icon, UsersIcon, ZapIcon } from 'lucide-react';
+import { MenuNavLink, NavLink } from "@/components/MainPageLink";
+import { ClipboardCheckIcon, ListIcon, PieChartIcon, SettingsIcon, UserSquare2Icon, UsersIcon, ZapIcon } from 'lucide-react';
 import { PlayerlistSidebar } from "./playerlistSidebar/PlayerlistSidebar";
 import { useAdminPerms } from "@/hooks/auth";
+import { LogoFullSquareGreen } from "@/components/Logos";
 
 
 export function GlobalMenuSheet() {
@@ -20,7 +21,11 @@ export function GlobalMenuSheet() {
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <SheetHeader>
-                    <SheetTitle><span className="h-7 w-36 bg-accent text-accent-foreground rounded text-center p-0.5 font-bold tracking-widest">FULL LOGO</span></SheetTitle>
+                    <SheetTitle>
+                        <NavLink href="/">
+                            <LogoFullSquareGreen className="h-9 hover:scale-105" />
+                        </NavLink>
+                    </SheetTitle>
                 </SheetHeader>
 
                 <div>

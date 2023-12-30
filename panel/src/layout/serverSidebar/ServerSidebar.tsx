@@ -33,15 +33,16 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
             <hr className={isSheet ? 'block' : 'hidden'} />
 
             {/* Ad Placeholder */}
+            {/* FIXME: add it back */}
             <a
                 href='http://zap-hosting.com/txAdmin5'
                 onClick={handleExternalLinkClick}
                 target='_blank'
-                className='h-[80px] p-4 flex justify-center items-center gap-2
+                className='h-[80px] p-4 DEBUGflex justify-center items-center gap-2
                 rounded-xl border shadow-sm
                 bg-gradient-to-r from-yellow-200 via-green-200 to-green-300
                 dark:brightness-90 dark:hover:brightness-100
-                relative group'
+                relative group hidden'
             >
                 <div className='scale-0 group-hover:scale-100 transition-transform
                 absolute inset-0 animate-pulse blur-md -z-10

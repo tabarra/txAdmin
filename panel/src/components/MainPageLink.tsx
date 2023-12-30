@@ -92,3 +92,21 @@ export function MenuNavLink({ href, children, className, disabled }: MenuNavProp
         )
     }
 }
+
+type NavLinkProps = {
+    href: string;
+    children: React.ReactNode;
+};
+
+export function NavLink({ href, children }: NavLinkProps) {
+    const [isActive] = useRoute(href);
+
+    return (
+        <MainPageLink
+            href={href}
+            isActive={isActive}
+        >
+            <a>{children}</a>
+        </MainPageLink>
+    )
+}

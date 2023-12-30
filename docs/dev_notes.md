@@ -195,7 +195,7 @@ setTimeout(() => {
     - [x] flow to refresh the permissions on the client side
 - [x][2d] full setup flow (legacy)
 - [x][1d] full deployer flow (legacy)
-- [ ][1d] add the new logos to shell+auth pages
+- [x][1d] add the new logos to shell+auth pages
 > BETA RELEASE
 
 - [ ][3d] NEW PAGE: Dashboard
@@ -215,7 +215,7 @@ Quickies
 - [x] move the socket.io stuff from mainshell to a dedicated component child of mainshell
 - [x] disable testing page in prod build
 - [x] check if strict mode is indeed disabled in prod build
-- [ ] fix the console bg on light mode + command input
+- [x] fix the console bg on light mode + command input
 - [ ] commit the fixes for the player ids and god mode issues
 - [ ] fix the tsc build
 > BETA RELEASE

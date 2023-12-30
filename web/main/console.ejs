@@ -65,7 +65,7 @@
 
 
 <div class="card bg-dark">
-    <div class="card-body p-3" style="position: relative">
+    <div class="p-3" style="position: relative">
         <pre id="console" class="thin-scroll console-content text-white <%= (isWebInterface ? '' : 'nui-height') %>"></pre>
         <div id="autoScrollDiv">
             <a id="autoScrollBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
@@ -75,21 +75,20 @@
         <div class="row">
             <div class="col-xl-6 col-lg-12">
                 <form class="form-inline container-fluid text-center" id="frmConsole">
-                    <div class="mx-auto">
-                        <div class="form-group">
-                            <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
-                                   placeholder="Press enter to send. Up/Down arrows to navigate commands."
-                                   autocomplete="off" autocorrect="off" autocapitalize="off"
-                                   spellcheck="false" <%= disableCommand %>>
-                        </div>
-                        <a href="fxserver/downloadLog" target="_blank" 
-                            class="btn btn-outline-light btn-sm mb-2 <%= (isWebInterface ? '' : 'disabled') %>">
-                            Download Log
-                        </a>
-                        <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
-                            Clear Console
-                        </button>
-                    </div>
+                    <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
+                        placeholder="Press enter to send. Up/Down arrows to navigate commands."
+                        autocomplete="off" autocorrect="off" autocapitalize="off"
+                        spellcheck="false" style="width: 100%" <%= disableCommand %>
+                    />
+                    &nbsp;
+                    <a href="fxserver/downloadLog" target="_blank" 
+                        class="btn btn-outline-light btn-sm mb-2 <%= (isWebInterface ? '' : 'disabled') %>">
+                        Download Log
+                    </a>
+                    &nbsp;
+                    <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
+                        Clear Console
+                    </button>
                 </form>
             </div>
             <div class="col-xl-6 col-lg-12" id="cmdHistoryDiv">
