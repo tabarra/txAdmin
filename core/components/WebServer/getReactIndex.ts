@@ -178,5 +178,12 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         htmlOut = htmlOut.replaceAll(replacerRegex, value);
     }
 
+    //If in prod mode and NUI, replace the entry point with the local one
+    //This is required because of how badly the WebPipe handles "large" files
+    if (!ctx.txVars.isWebInterface && !convars.isDevMode){
+        htmlOut = htmlOut.replace(/src="\.\/index.js"/, 'src="nui://monitor/panel/index.js"');
+        htmlOut = htmlOut.replace(/href="\.\/index.css"/, 'href="nui://monitor/panel/index.css"');
+    }
+
     return htmlOut;
 }

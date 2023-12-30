@@ -59,10 +59,20 @@ const allRoutes: RouteType[] = [
         children: <Iframe legacyUrl="systemLog#nav-console" />
     },
     {
-        path: '/system/action-log',
-        title: 'Action Log',
-        children: <Iframe legacyUrl="systemLog#nav-actions" />
+        path: '/system/system-logs',
+        title: 'System Logs',
+        children: <Iframe legacyUrl="systemLog" />
     },
+    // {
+    //     path: '/system/console-log',
+    //     title: 'Console Log',
+    //     children: <Iframe legacyUrl="systemLog#nav-console" />
+    // },
+    // {
+    //     path: '/system/action-log',
+    //     title: 'Action Log',
+    //     children: <Iframe legacyUrl="systemLog#nav-actions" />
+    // },
 
     //Server Routes
     {
