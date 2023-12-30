@@ -1,5 +1,5 @@
 import { txToast } from "@/components/TxToaster";
-import { cn } from "@/lib/utils";
+import { cn, copyToClipboard } from "@/lib/utils";
 import { PlayerModalPlayerData } from "@shared/playerApiTypes";
 import { CopyIcon } from "lucide-react";
 import { useState } from "react";
@@ -18,20 +18,26 @@ function IdsBlock({ title, emptyMessage, currIds, allIds, isSmaller }: IdsBlockP
     const displayOldIds = allIds.filter((id) => !currIds.includes(id)).sort((a, b) => a.localeCompare(b));
 
     const handleCopyIds = () => {
-        try {
-            //Just to guarantee the correct visual order
-            const arrToCopy = [...displayCurrIds, ...displayOldIds];
-            navigator.clipboard.writeText(arrToCopy.join('\n'));
-            setHasCopiedIds(true);
-        } catch (error) {
-            txToast.error('Failed to copy to clipboard :(');
-        }
+        //Just to guarantee the correct visual order
+        const arrToCopy = [...displayCurrIds, ...displayOldIds];
+        copyToClipboard(arrToCopy.join('\n')).then((res) => {
+            if (res !== false) {
+                setHasCopiedIds(true);
+            } else {
+                txToast.error('Failed to copy to clipboard :(');
+            }
+        }).catch((error) => {
+            txToast.error({
+                title: 'Failed to copy to clipboard:',
+                msg: error.message,
+            });
+        });
     }
 
     return <div>
         <div className="flex justify-between items-center pb-1">
             <h3 className="text-xl">{title}</h3>
-            {hasCopiedIds ? (
+            {/* {hasCopiedIds ? (
                 <span className="text-sm text-success-inline">Copied!</span>
             ) : (
                 // TODO: a button to erase the ids from the database can be added here,
@@ -39,7 +45,7 @@ function IdsBlock({ title, emptyMessage, currIds, allIds, isSmaller }: IdsBlockP
                 <button onClick={handleCopyIds}>
                     <CopyIcon className="h-4 text-secondary hover:text-primary" />
                 </button>
-            )}
+            )} */}
         </div>
         <p className={cn(
             "font-mono break-all whitespace-pre-wrap border rounded divide-y divide-border/50 text-muted-foreground",

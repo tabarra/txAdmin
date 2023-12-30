@@ -146,3 +146,24 @@ export const createRandomHslColor = () => {
     const hue = Math.floor(Math.random() * 360);
     return `hsl(${hue}, 90%, 65%)`;
 }
+
+
+/**
+ * Copy text to clipboard.
+ * Because we don't have access to Clipboard API in FiveM's CEF, as well as on
+ * non-localhost origins without https, we need to use the old school method.
+ * FIXME: literally not working
+ */
+export const copyToClipboard = async (value: string) => {
+    if (navigator?.clipboard) { 
+        return navigator.clipboard.writeText(value);
+    } else {
+        const clipElem = document.createElement("textarea");
+        clipElem.value = value;
+        document.body.appendChild(clipElem);
+        clipElem.select();
+        const result = document.execCommand("copy");
+        document.body.removeChild(clipElem);
+        return result;
+    }
+}
