@@ -88,47 +88,6 @@ await (async () => {
 ```
 
 
-```patch
-diff --git a/resource/menu/client/cl_player_ids.lua b/resource/menu/client/cl_player_ids.lua
---- a/resource/menu/client/cl_player_ids.lua
-+++ b/resource/menu/client/cl_player_ids.lua
-@@ -126,4 +126,8 @@
-         -- If we have not yet indexed this player or their tag has somehow dissapeared (pause, etc)
--        if not playerGamerTags[pid] or not IsMpGamerTagActive(playerGamerTags[pid].gamerTag) then
-+        if
-+            not playerGamerTags[pid]
-+            or playerGamerTags[pid].ped ~= targetPed --ped can change if it leaves the networked area and back
-+            or not IsMpGamerTagActive(playerGamerTags[pid].gamerTag)
-+        then
-             local playerName = string.sub(GetPlayerName(pid) or "unknown", 1, 75)
-             local playerStr = '[' .. GetPlayerServerId(pid) .. ']' .. ' ' .. playerName
-```
-
-
-```patch
-diff --git a/resource/menu/client/cl_player_mode.lua b/resource/menu/client/cl_player_mode.lua
---- a/resource/menu/client/cl_player_mode.lua
-+++ b/resource/menu/client/cl_player_mode.lua
-@@ -224,12 +224,15 @@
-     end
- 
-+    --NOTE: always do the toggleX(true) at the bottom to prevent
-+    --conflict with some other native like toggleGodMode(false) after toggleFreecam(true)
-+    --which disables the SetEntityInvincible(true)
-     if mode == 'godmode' then
-         toggleFreecam(false)
--        toggleGodMode(true)
-         toggleSuperJump(false)
-+        toggleGodMode(true)
-     elseif mode == 'noclip' then
--        toggleFreecam(true)
-         toggleGodMode(false)
-         toggleSuperJump(false)
-+        toggleFreecam(true)
-     elseif mode == 'superjump' then
-         toggleFreecam(false)
-
-```
 
 ```js
 import bytes from 'bytes';
@@ -155,12 +114,10 @@ setInterval(() => {
     console.log('.');
 }, 100);
 
-
 console.log('RSS before read:', currRss());
 const dbo = JSON.parse(fs.readFileSync(srcDb, 'utf8'));
 console.log('RSS after read:', currRss());
 console.log('DB Players:', dbo.players.length);
-
 
 console.log('Awaiting 30s...');
 setTimeout(() => {
@@ -262,10 +219,10 @@ Quickies
 - [x] disable testing page in prod build
 - [x] check if strict mode is indeed disabled in prod build
 - [x] fix the console bg on light mode + command input
-- [ ] commit the fixes for the player ids and god mode issues
-- [ ] fix the tsc build
+- [x] commit the fixes for the player ids and god mode issues
 > BETA RELEASE
 
+- [ ] fix the tsc build
 - [ ] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 - [ ] talk to r* and make sure the new build process wipes the old cache

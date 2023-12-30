@@ -108,7 +108,7 @@ local function retryAuthentication()
   TriggerServerEvent('txsv:checkIfAdmin')
 end
 RegisterNetEvent('txcl:reAuth', retryAuthentication)
-RegisterCommand('txAdmin-reauth', function ()
+RegisterCommand('txAdmin-reauth', function()
   sendSnackbarMessage('info', 'Retrying menu authentication.', false)
   awaitingReauth = true
   retryAuthentication()
@@ -193,16 +193,16 @@ RegisterNetEvent('txcl:heal', function()
   local pos = GetEntityCoords(ped)
   local heading = GetEntityHeading(ped)
   if IsEntityDead(ped) then
-      NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false)
+    NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false)
   end
   ResurrectPed(ped)
   SetEntityHealth(ped, GetEntityMaxHealth(ped))
   ClearPedBloodDamage(ped)
   RestorePlayerStamina(PlayerId(), 100.0)
   if IS_REDM then
-      Citizen.InvokeNative(0xC6258F41D86676E0, ped, 0, 100) -- SetAttributeCoreValue
-      Citizen.InvokeNative(0xC6258F41D86676E0, ped, 1, 100) -- SetAttributeCoreValue
-      Citizen.InvokeNative(0xC6258F41D86676E0, ped, 2, 100) -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 0, 100)   -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 1, 100)   -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 2, 100)   -- SetAttributeCoreValue
   end
 end)
 
@@ -210,6 +210,6 @@ end)
 AddEventHandler('playerSpawned', function()
   Wait(15000)
   if menuIsAccessible then
-      sendMenuMessage('showMenuHelpInfo', {})
+    sendMenuMessage('showMenuHelpInfo', {})
   end
 end)
