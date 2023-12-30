@@ -43,8 +43,12 @@ export const useAuthedFetcher = () => {
 
     return async (fetchUrl: string, fetchOpts: FetcherOpts = {}, abortController?: AbortController) => {
         if (!csrfToken) throw new Error('CSRF token not set');
-        if (!fetchUrl.startsWith('/')) {
-            throw new Error(`[useAuthedFetcher] fetchUrl must start with a slash.`);
+        const obligatoryPrefix = window.txConsts.isWebInterface ? '/' : WEBPIPE_PATH;
+        if (!fetchUrl.startsWith(obligatoryPrefix)) {
+            throw new Error(`[useAuthedFetcher] fetchUrl MUST start with '${obligatoryPrefix}', got '${fetchUrl}'.`);
+        }
+        if (fetchUrl.startsWith('//')) {
+            throw new Error(`[useAuthedFetcher] fetchUrl MUST NOT start with '//', got '${fetchUrl}'.`);
         }
 
         fetchOpts.method ??= 'GET';

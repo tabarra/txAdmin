@@ -41,6 +41,52 @@ Processo:
         - Action Log
 =======================================================================
 
+This worked, no time to check which. 
+Note it's in the core root and not in the `types` folder, also it has an `export` before the declaration.
+```js
+//file: core/global.d.ts
+export declare global {
+    const globals: any;
+    namespace globalThis {
+        interface Console {
+            xxxx: any
+        }
+    }
+    namespace NodeJS {
+        interface Global {
+            xxxx: any
+        }
+    }
+    interface Console {
+        exampleProperty: string;
+    }
+}
+```
+
+Nui events testing stuff
+```lua
+RegisterRawNuiCallback('abc', function(req, cb)
+    print('abc', json.encode(req), cb)
+    cb({
+        status = 200,
+        body = json.encode({ success = true }),
+    })
+end)
+```
+```js
+await (async () => {
+  const options = {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+    },
+    body: JSON.stringify({}),
+  }
+  const resp = await fetch(`https://monitor/abc?token`, options);
+  return await resp.json();
+})()
+```
+
 
 ```patch
 diff --git a/resource/menu/client/cl_player_ids.lua b/resource/menu/client/cl_player_ids.lua
