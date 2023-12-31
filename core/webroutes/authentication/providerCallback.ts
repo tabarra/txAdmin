@@ -61,7 +61,7 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
         //Setting session
         const sessData = {
             type: 'cfxre',
-            username: userInfo.name,
+            username: vaultAdmin.name,
             csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
             expiresAt: Date.now() + 86_400_000, //24h,
             identifier: fivemIdentifier,
