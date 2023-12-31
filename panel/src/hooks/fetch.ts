@@ -43,12 +43,12 @@ export const useAuthedFetcher = () => {
 
     return async (fetchUrl: string, fetchOpts: FetcherOpts = {}, abortController?: AbortController) => {
         if (!csrfToken) throw new Error('CSRF token not set');
-        const obligatoryPrefix = window.txConsts.isWebInterface ? '/' : WEBPIPE_PATH;
-        if (!fetchUrl.startsWith(obligatoryPrefix)) {
-            throw new Error(`[useAuthedFetcher] fetchUrl MUST start with '${obligatoryPrefix}', got '${fetchUrl}'.`);
+        //Enforce single slash at the start of the path to prevent CSRF token leak
+        if (fetchUrl[0] !== '/' || fetchUrl[1] === '/') {
+            throw new Error(`[useAuthedFetcher] fetchUrl MUST start with a single '/', got '${fetchUrl}'.`);
         }
-        if (fetchUrl.startsWith('//')) {
-            throw new Error(`[useAuthedFetcher] fetchUrl MUST NOT start with '//', got '${fetchUrl}'.`);
+        if(!window.txConsts.isWebInterface){
+            fetchUrl = WEBPIPE_PATH + fetchUrl;
         }
 
         fetchOpts.method ??= 'GET';
@@ -147,7 +147,7 @@ export const useBackendApi = <
 
     return async (opts: ApiCallOpts<RespType, ReqType>) => {
         //Processing URL
-        let fetchUrl = window.txConsts.isWebInterface ? hookOpts.path : WEBPIPE_PATH + hookOpts.path;
+        let fetchUrl = hookOpts.path;
         if (opts.pathParams) {
             for (const [key, val] of Object.entries(opts.pathParams)) {
                 fetchUrl = fetchUrl.replace(`/:${key}/`, `/${val.toString()}/`);

@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 align: 'center',
             },
             offset: {
-                y: 64,
+                y: 8,
             },
         });
     }

@@ -182,11 +182,11 @@ export function Header() {
                 <div className="flex flex-row items-center flex-grow gap-5 mr-5">
                     <div className="w-sidebar hidden xl:flex justify-center">
                         <NavLink href="/">
-                            <LogoFullSquareGreen className="h-9 hover:scale-105" />
+                            <LogoFullSquareGreen className="h-9 hover:scale-105 hover:brightness-110" />
                         </NavLink>
                     </div>
                     <NavLink href="/">
-                        <LogoSquareGreen className="h-8 w-8 lg:h-10 lg:w-10 hidden sm:max-xl:block hover:scale-105" />
+                        <LogoSquareGreen className="h-8 w-8 lg:h-10 lg:w-10 hidden sm:max-xl:block hover:scale-105 hover:brightness-110" />
                     </NavLink>
 
                     <div className="lg:hidden">

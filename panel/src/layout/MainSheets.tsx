@@ -23,7 +23,7 @@ export function GlobalMenuSheet() {
                 <SheetHeader>
                     <SheetTitle>
                         <NavLink href="/">
-                            <LogoFullSquareGreen className="h-9 hover:scale-105" />
+                            <LogoFullSquareGreen className="h-9 hover:scale-105 hover:brightness-110" />
                         </NavLink>
                     </SheetTitle>
                 </SheetHeader>

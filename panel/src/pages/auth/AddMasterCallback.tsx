@@ -39,7 +39,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
                 setErrorMessage(data.error);
             } else {
                 //Hacky override to prevent logout from rendering this page again
-                window.txConsts.hasMasterAccount = true; 
+                window.txConsts.hasMasterAccount = true;
                 setAuthData(data);
             }
         },
@@ -122,6 +122,8 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
                     </div>
                 </div>
             </div>
+            {/* This is so password managers save the username */}
+            <input type="text" name="frm-username" className="hidden" value={fivemName} readOnly />
             <div className="grid gap-2">
                 <div className="flex flex-row justify-between items-center">
                     <Label htmlFor="frm-discord">Discord ID</Label>

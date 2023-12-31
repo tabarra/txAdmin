@@ -224,7 +224,7 @@ Quickies
 
 - [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
 - [ ] fix the tsc build
-- [ ] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
+- [x] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 - [ ] talk to r* and make sure the new build process wipes the old cache
 - [ ] make sure some user input based fields are truncated (server name, player name)
