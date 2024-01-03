@@ -1,6 +1,6 @@
 <%- await include('parts/header.ejs', locals) %>
 
-<link href="<%= resourcePath %>xtermjs/xterm.min.css" rel="stylesheet">
+<link href="<%= resourcePath %>xtermjs/xterm.min.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
 <style>
     .pre-log-content{
         height: calc(100vh - 252px);
@@ -34,10 +34,10 @@
 
 
 <%- await include('parts/footer.ejs', locals) %>
-<script src="<%= resourcePath %>xtermjs/xterm.min.js"></script>
-<script src="<%= resourcePath %>xtermjs/xterm-addon-fit.min.js"></script>
-<script src="<%= resourcePath %>xtermjs/xterm-addon-search.js"></script>
-<script src="<%= resourcePath %>xtermjs/xterm-addon-search-bar.min.js"></script>
+<script src="<%= resourcePath %>xtermjs/xterm.min.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>xtermjs/xterm-addon-fit.min.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>xtermjs/xterm-addon-search.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>xtermjs/xterm-addon-search-bar.min.js?txVer=<%= txAdminVersion %>"></script>
 <script>
     // From MDN - atob doesn't support utf8 strings
     // https://developer.mozilla.org/en-US/docs/Glossary/Base64

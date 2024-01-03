@@ -9,18 +9,18 @@
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
     <title>Server Deployer</title>
-    <link href="css/simple-line-icons.css" rel="stylesheet">
-    <link href="css/coreui.min.css" rel="stylesheet">
-    <link href="css/dark.css" rel="stylesheet">
+    <link href="css/simple-line-icons.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
+    <link href="css/coreui.min.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
+    <link href="css/dark.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
-    <link rel="stylesheet" href="css/txAdmin.css">
+    <link rel="stylesheet" href="css/txAdmin.css?txVer=<%= txAdminVersion %>">
 
     <!-- Page CSS -->
     <!-- <link rel="stylesheet" href="css/codemirror.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css" 
         integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" 
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="css/codemirror_lucario.css">
+    <link rel="stylesheet" href="css/codemirror_lucario.css?txVer=<%= txAdminVersion %>">
     <style>
         .inline-code{
             color: #321fdb!important;
@@ -319,18 +319,18 @@
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" 
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.16/lib/marked.umd.min.js"></script>
-    <script src="js/coreui.bundle.min.js"></script>
-    <script src="js/bootstrap-notify.min.js"></script>
-    <script src="js/txadmin/base.js"></script>
+    <script src="js/coreui.bundle.min.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/bootstrap-notify.min.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/txadmin/base.js?txVer=<%= txAdminVersion %>"></script>
 
     <!-- JS -->
-    <!-- <script src="js/codeEditor/codemirror.js"></script> -->
+    <!-- <script src="js/codeEditor/codemirror.js?txVer=<%= txAdminVersion %>"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js" 
         integrity="sha512-ZTpbCvmiv7Zt4rK0ltotRJVRaSBKFQHQTrwfs6DoYlBYzO1MA6Oz2WguC+LkV8pGiHraYLEpo7Paa+hoVbCfKw==" 
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="js/codeEditor/mode/simple.js"></script>
-    <script src="js/codeEditor/mode/fivem-cfg.js"></script>
-    <script src="js/codeEditor/mode/yaml.js"></script>
+    <script src="js/codeEditor/mode/simple.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/codeEditor/mode/fivem-cfg.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/codeEditor/mode/yaml.js?txVer=<%= txAdminVersion %>"></script>
     <script>
         //============================================== CodeMirror & Page Setup
         const currentStep = '<%= step %>';

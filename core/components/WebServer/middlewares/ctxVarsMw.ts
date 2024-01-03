@@ -1,5 +1,4 @@
 const modulename = 'WebServer:SetupVarsMw';
-import { convars } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import consoleFactory from '@extras/console';
 import consts from '@shared/consts';

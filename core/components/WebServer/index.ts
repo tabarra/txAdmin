@@ -24,6 +24,7 @@ import ctxVarsMw from './middlewares/ctxVarsMw';
 import ctxUtilsMw from './middlewares/ctxUtilsMw';
 import { SessionMemoryStorage, koaSessMw, socketioSessMw } from './middlewares/sessionMws';
 import checkRateLimit from './middlewares/globalRateLimiterMw';
+import cacheControlMw from './middlewares/cacheControlMw';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict51, 32);
 
@@ -33,6 +34,14 @@ export type WebServerConfigType = {
     limiterMinutes: number;
     limiterAttempts: number;
 }
+
+const koaServeOptions = {
+    index: false,
+    defer: false,
+    //The resource URLs should already coontain txVer as a query param to bust cache
+    //so setting to 30m should be fine, except in dev mode
+    maxage: !convars.isDevMode ? 30 * 60 * 1000 : 0,
+};
 
 export default class WebServer {
     readonly #txAdmin: TxAdmin;
@@ -51,8 +60,6 @@ export default class WebServer {
 
     constructor(txAdmin: TxAdmin, public config: WebServerConfigType) {
         this.#txAdmin = txAdmin;
-
-
 
         //Generate cookie key & luaComToken
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
@@ -99,12 +106,13 @@ export default class WebServer {
         const panelPublicPath = convars.isDevMode
             ? path.join(process.env.TXADMIN_DEV_SRC_PATH as string, 'panel/public')
             : path.join(txEnv.txAdminResourcePath, 'panel');
-        this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), { index: false, defer: false }));
-        this.app.use(KoaServe(panelPublicPath, { index: false, defer: false }));
+        this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), koaServeOptions));
+        this.app.use(KoaServe(panelPublicPath, koaServeOptions));
         this.app.use(KoaBodyParser({ jsonLimit }));
 
         //Custom stuff
         this.sessionStore = new SessionMemoryStorage();
+        this.app.use(cacheControlMw);
         this.app.use(koaSessMw(this.sessionCookieName, this.sessionStore));
         this.app.use(ctxVarsMw(txAdmin));
         this.app.use(ctxUtilsMw);
@@ -119,7 +127,7 @@ export default class WebServer {
                     ctx.status = 404;
                     console.verbose.warn(`Request 404 error: ${ctx.path}`);
                     return ctx.utils.render('standalone/404');
-                }else if (ctx.path.endsWith('.map')){
+                } else if (ctx.path.endsWith('.map')) {
                     ctx.status = 404;
                     return ctx.send('Not found');
                 } else {

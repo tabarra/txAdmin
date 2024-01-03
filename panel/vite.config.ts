@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 // import tsconfigPaths from 'vite-tsconfig-paths';
 import config from '../.deploy.config.js';
-
+import { licenseBanner } from '../scripts/scripts-utils.js';
 
 const baseConfig = {
     build: {
@@ -17,11 +17,12 @@ const baseConfig = {
         rollupOptions: {
             input: undefined, //placeholder
 
-            //Doing this because fxserver's cicd doesn't wipe the dist folder
             output: {
-                entryFileNames: `[name].js`,
-                chunkFileNames: `[name].js`,
-                assetFileNames: '[name].[ext]',
+                banner: licenseBanner('..'),
+                //Adding hash to help with cache busting
+                entryFileNames: `[name]-[hash].js`,
+                chunkFileNames: `[name]-[hash].js`,
+                assetFileNames: '[name]-[hash].[ext]',
             }
         },
     },

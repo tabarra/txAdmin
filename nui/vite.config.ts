@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { getFxsPaths } from '../scripts/scripts-utils.js';
 import config from '../.deploy.config.js';
+import { licenseBanner } from '../scripts/scripts-utils.js';
 
 
 const baseConfig = {
@@ -16,8 +17,9 @@ const baseConfig = {
         sourcemap: false,
 
         rollupOptions: {
-            //Doing this because fxserver's cicd doesn't wipe the dist folder
             output: {
+                banner: licenseBanner('..'),
+                //Doing this because fxserver's cicd doesn't wipe the dist folder
                 entryFileNames: `[name].js`,
                 chunkFileNames: `[name].js`,
                 assetFileNames: '[name].[ext]',

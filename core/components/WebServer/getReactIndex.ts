@@ -180,9 +180,10 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //If in prod mode and NUI, replace the entry point with the local one
     //This is required because of how badly the WebPipe handles "large" files
-    if (!ctx.txVars.isWebInterface && !convars.isDevMode){
-        htmlOut = htmlOut.replace(/src="\.\/index.js"/, 'src="nui://monitor/panel/index.js"');
-        htmlOut = htmlOut.replace(/href="\.\/index.css"/, 'href="nui://monitor/panel/index.css"');
+    if (!convars.isDevMode){
+        const base = ctx.txVars.isWebInterface ? `./` : `nui://monitor/panel/`;
+        htmlOut = htmlOut.replace(/src="\.\/index-(\w+)\.js"/, `src="${base}index-$1.js"`);
+        htmlOut = htmlOut.replace(/href="\.\/index-(\w+)\.css"/, `href="${base}index-$1.css"`);
     }
 
     return htmlOut;

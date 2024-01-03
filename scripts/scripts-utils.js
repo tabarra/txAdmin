@@ -24,8 +24,8 @@ export const txAdminASCII = () => {
  * txAdmin + license banner for bundled files
  * @returns {String}
  */
-export const licenseBanner = () => {
-    const licensePath = path.join('.', 'LICENSE');
+export const licenseBanner = (baseDir = '.') => {
+    const licensePath = path.join(baseDir, 'LICENSE');
     const lineSep = '%'.repeat(80);
     const logoPad = ' '.repeat(18);
     const contentLines = [
@@ -35,6 +35,7 @@ export const licenseBanner = () => {
         lineSep,
         'Author: André Tabarra (https://github.com/tabarra)',
         'Repository: https://github.com/tabarra/txAdmin',
+        'This bundled file includes third party libraries under their respective licenses.',
         'txAdmin is a free open source software provided under the license below.',
         lineSep,
         ...fs.readFileSync(licensePath, 'utf8').trim().split('\n'),

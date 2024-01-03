@@ -1,22 +1,30 @@
 # TODO:
-- [x] menu: add x, y int coords to detailed playerlist
-- [x] menu: `txcl:plist:setDetailed` should remove any player not in the event data
-- [x] menu: `txcl:plist:setDetailed` should request any missing player not in local cache
+- [ ][3d] NEW PAGE: Dashboard
+    - [ ] number callouts from legacy players page
+    - [ ] warning for dev builds of txadmin
+    - [ ] warning for top servers
+- [ ][1d] NEW PAGEs: Console log + Action log
+- [ ][3d] NEW PAGE: Live console
+- [ ][3d] NEW PAGE: Players
+- [ ][1d] NEW PAGE: History
+- [ ][1h] zap hosting advertisement
+- [ ][1d] tutorial stepper for the new UI
+- [ ][2h] fine tune `panel/vite.config.ts`
 
-Processo:
-- [x] testar o básico do legacy e api auth
-- [x] testar rotas websocket
-- [x] corrigir rotas nui iframe
-- [x] deal with the nui auth rate limiting (no more middleware)
-- [x] pesquisar por `ctx.session.auth`
-- [x] aplicar novo tipo e trocar todos os ctx.session e ctx.utils.xxxxx de todas as rotas
-- [x] remove all `globals.` in the webroutes folder from typescript files
-- [x] test and commit all changed files
-- [x] check `playerDatabase.registerAction` expiration type error
-- [x] translation fix the `The player was xxxxx` lines in all files
-- [x] corrigir comportamento dos profile pictures
-- [x] normalize the session.auth creation w/ types
-- [x] checar o que fazer com as stats no `core/webroutes/authentication/self.ts`
+
+Quickies
+- [x] apply cache control policies
+- [x] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
+- [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
+- [ ] fix the tsc build
+- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
+- [ ] talk to r* and make sure the new build process wipes the old cache
+- [ ] make sure some user input based fields are truncated (server name, player name)
+- [ ] layout on 4k and ultrawide screens
+- [ ] check again for the need of lazy loading
+- [ ] deprecate StatisticsManager.pageViews as its now untrackable?
+- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+- [ ] make sure the playerlist scroll works if the playergen is stopped (therefore, not re-rendering the component)
 
 =======================================================================
 
@@ -87,8 +95,6 @@ await (async () => {
 })()
 ```
 
-
-
 ```js
 import bytes from 'bytes';
 import fs from 'node:fs';
@@ -134,110 +140,6 @@ setTimeout(() => {
 //lib 202 -> weird 1gb peak
 ```
 
-
-
-=======================================================================
-## v7 RELEASE CHECKLIST
-- [x][2d] full router + link parity with legacy pages
-    - [x] decide on the links/pages for now
-    - [x] remove tanstack-router
-    - [x] create new routes with wouter
-    - [x] add active state to buttons
-    - [x] on re-click, page should refresh
-    - [x] remove menu and footer from main template
-    - [x] add error boundries (global/page)
-- [x] refactor auth layer + type koa context
-- [x] rewrite the session middlewares
-- [x] new auth ui + auth routing
-    - [x] enforce new password rule
-- [x][2d] light/dark theme
-- [x][1d] adapt legacy styles to somewhat match shadcn
-- SHELL:
-    - [x][5d] fully responsive layout (show/hide sidebars, login, addMaster, etc)
-    - [x][2h] merge new shell design into the `txadmin/panel` codebase
-    - [x][~3d] implement most shell+status features 
-        - [x][1d] socket.io connection for default room
-        - [x][2h] warning for outdated tx, visible in all pages
-        - [x][1h] dynamic title
-        - [x][1h] dynamic favicon
-        - [x][1d] server status
-        - [x][4h] update notices via socket.io
-        - [x][2h] tooltips on everything
-    - [x][1d] toasts API
-        - [x] generic toasts
-        - [x] markdown toasts
-        - [x] error toasts with discord link
-    - [x][2h] prompts API
-    - [x][2d] useBackendApi hook - wrapper around fetch with optional toast management
-    - [x][2h] server controls
-    - [x][1h] server scheduled restarts (legacy style)
-    - [x][3d] "your account" modal
-        - [x] if isTempPassword change message and disallows closing before changing the password
-        - [x] give the chance to change modifiers
-        - [x] remove legacy header + change password code
-        - [x] admin manager should open "my account" when trying to edit self
-        - [x] maybe separate the backend routes
-    - [x][3d] playerlist
-    - [x][2d] implement new player modal
-        - [x] legacy pages should open the new modal
-        - [x] write tsx + handling of data
-        - [x] all actions
-        - [x] make sure it is responsive
-        - [x] check behavior on error (invalid player, 500, etc)
-        - [x] clean legacy modal and playerlist code
-- [x][5d] auth stuff
-    - [x] password login
-    - [x] cfx.re login
-    - [x] error page
-    - [x] master account pin add page
-    - [x] master account bkp password page
-    - [x] disable player modal buttons based on permissions
-    - [x] flow to refresh the page if invalidated auth
-    - [x] when logging out, create an effect to close all sheets and dialogs
-    - [x] disable menu links based on permissions
-    - [x] flow to refresh the permissions on the client side
-- [x][2d] full setup flow (legacy)
-- [x][1d] full deployer flow (legacy)
-- [x][1d] add the new logos to shell+auth pages
-> BETA RELEASE
-
-- [ ][3d] NEW PAGE: Dashboard
-    - [ ] number callouts from legacy players page
-    - [ ] warning for dev builds of txadmin
-    - [ ] warning for top servers
-- [ ][1d] NEW PAGEs: Console log + Action log
-- [ ][3d] NEW PAGE: Live console
-- [ ][3d] NEW PAGE: Players
-- [ ][1d] NEW PAGE: History
-- [ ][1h] zap hosting advertisement
-- [ ][1d] tutorial stepper for the new UI
-- [ ][2h] fine tune `panel/vite.config.ts`
-
-Quickies
-- [x] fix all legacy cfx.response.redirect (dashboard, setup, deployer, maybe more)
-- [x] move the socket.io stuff from mainshell to a dedicated component child of mainshell
-- [x] disable testing page in prod build
-- [x] check if strict mode is indeed disabled in prod build
-- [x] fix the console bg on light mode + command input
-- [x] commit the fixes for the player ids and god mode issues
-> BETA RELEASE
-
-- [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
-- [ ] fix the tsc build
-- [x] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
-- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
-- [ ] talk to r* and make sure the new build process wipes the old cache
-- [ ] make sure some user input based fields are truncated (server name, player name)
-- [ ] layout on 4k and ultrawide screens
-- [ ] check again for the need of lazy loading
-- [ ] Cache stuff:
-    - [ ] add `maxage` to `koa-static` config
-    - [ ] add `cache-control` and/or `vary` to all pages
-- [ ] deprecate StatisticsManager.pageViews as its now untrackable?
-- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] make sure the playerlist scroll works if the playergen is stopped (therefore, not re-rendering the component)
-
-
 =======================================================================
 
 ## src
@@ -261,7 +163,6 @@ Quickies
     - RightSidebar.tsx
 - hooks
 - lib
-
 
 
 
@@ -310,8 +211,9 @@ Master Actions:
 - [ ] Anonymous admin actions (issue #893)
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
 - [ ] Change the kick all to require the `control.server` permission (issue #379)
+- [ ] create new "Remove Player Data" permission which would allow to delete bans/warns, players and player identifiers
 
-- [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so i can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
+- [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so I can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
 
 - [ ] write some automated tests for the auth logic and middlewares
 - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page

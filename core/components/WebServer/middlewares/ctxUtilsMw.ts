@@ -249,7 +249,6 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
     }
 
     const serveReactIndex = async () => {
-        //FIXME: no cache, even in prod mode
         ctx.body = await getReactIndex(ctx);
         ctx.type = 'text/html';
     };
