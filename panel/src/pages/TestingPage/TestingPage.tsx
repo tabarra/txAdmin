@@ -2,7 +2,6 @@ import { useSetPageTitle } from "@/hooks/pages";
 import TmpAuthState from "./TmpAuthState";
 import TmpColors from "./TmpColors";
 import TmpMarkdown from "./TmpMarkdown";
-import TmpTerminal from "./TmpTerminal";
 import TmpWarningBarState from "./TmpWarningBarState";
 import TmpSocket from "./TmpSocket";
 import TmpToasts from "./TmpToasts";
@@ -21,7 +20,6 @@ export default function TestingPage() {
         {/* <TmpSocket /> */}
         {/* <TmpWarningBarState /> */}
         {/* <TmpAuthState /> */}
-        {/* <TmpTerminal /> */}
         {/* <TmpMarkdown /> */}
         {/* <TmpColors /> */}
     </div>;

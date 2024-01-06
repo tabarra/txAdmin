@@ -1,13 +1,14 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { Route as WouterRoute, Switch } from "wouter";
-import { PageErrorFallback } from "../components/ErrorFallback";
+import { PageErrorFallback } from "@/components/ErrorFallback";
 import { useAtomValue, useSetAtom } from "jotai";
-import { contentRefreshKeyAtom, pageErrorStatusAtom, useSetPageTitle } from "../hooks/pages";
+import { contentRefreshKeyAtom, pageErrorStatusAtom, useSetPageTitle } from "@/hooks/pages";
 import { navigate as setLocation } from 'wouter/use-location';
 
-import Iframe from "../pages/Iframe";
-import NotFound from "../pages/NotFound";
-import TestingPage from "../pages/testing/TestingPage";
+import Iframe from "@/pages/Iframe";
+import NotFound from "@/pages/NotFound";
+import TestingPage from "@/pages/TestingPage/TestingPage";
+import LiveConsole from "@/pages/LiveConsole/LiveConsole";
 
 
 type RouteType = {
@@ -83,6 +84,11 @@ const allRoutes: RouteType[] = [
     {
         path: '/server/console',
         title: 'Live Console',
+        children: <LiveConsole />
+    },
+    {
+        path: '/server/console/old',
+        title: 'Old Live Console',
         children: <Iframe legacyUrl="console" />
     },
     {
@@ -151,7 +157,6 @@ export default function MainRouter() {
                 ))}
 
                 {/* Other Routes - they need to set the title manuually */}
-                {/* <WouterRoute path="/test"><TestingPage /></WouterRoute> */}
                 {import.meta.env.DEV && (
                     <WouterRoute path="/test"><TestingPage /></WouterRoute>
                 )}

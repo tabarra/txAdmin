@@ -85,6 +85,9 @@ export default function ServerMenu() {
                 <MenuNavLink href="/server/console" disabled={!hasPerm('console.view')}>
                     <ChevronRightSquareIcon className="mr-2 h-4 w-4" />Live Console
                 </MenuNavLink>
+                <MenuNavLink href="/server/console/old" disabled={!hasPerm('console.view')}>
+                    <ChevronRightSquareIcon className="mr-2 h-4 w-4" />Old Live Console
+                </MenuNavLink>
                 <MenuNavLink href="/server/resources">
                     <BoxIcon className="mr-2 h-4 w-4" />Resources
                 </MenuNavLink>

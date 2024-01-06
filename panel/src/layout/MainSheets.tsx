@@ -1,10 +1,10 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ServerSidebar } from "./serverSidebar/ServerSidebar";
+import { ServerSidebar } from "./ServerSidebar/ServerSidebar";
 import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/sheets";
 import { MenuNavLink, NavLink } from "@/components/MainPageLink";
 import { ClipboardCheckIcon, ListIcon, PieChartIcon, SettingsIcon, UserSquare2Icon, UsersIcon, ZapIcon } from 'lucide-react';
-import { PlayerlistSidebar } from "./playerlistSidebar/PlayerlistSidebar";
+import { PlayerlistSidebar } from "./PlayerlistSidebar/PlayerlistSidebar";
 import { useAdminPerms } from "@/hooks/auth";
 import { LogoFullSquareGreen } from "@/components/Logos";
 
