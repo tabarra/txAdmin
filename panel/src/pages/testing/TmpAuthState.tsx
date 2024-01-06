@@ -13,6 +13,13 @@ export default function TmpAuthState() {
             isMaster: !authData.isMaster,
         });
     }
+    const toggleIsTmpPassword = () => {
+        if(!authData) return;
+        setAuthData({
+            ...authData,
+            isTempPassword: !authData.isTempPassword,
+        });
+    }
     const changeCsrfToken = () => {
         if(!authData) return;
         setAuthData({
@@ -34,6 +41,9 @@ export default function TmpAuthState() {
             <CardFooter className="flex justify-center gap-3">
                 <Button size="sm" onClick={() => toggleIsMaster()}>
                     Toggle isMaster
+                </Button>
+                <Button size="sm" onClick={() => toggleIsTmpPassword()}>
+                    Toggle isTempPassword
                 </Button>
                 <Button size="sm" onClick={() => changeCsrfToken()}>
                     Change CSRF Token

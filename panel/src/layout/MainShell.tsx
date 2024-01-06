@@ -16,12 +16,15 @@ import { useOpenPlayerModal } from '@/hooks/playerModal';
 import { navigate as setLocation } from 'wouter/use-location';
 import MainSocket from './MainSocket';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { useToggleTheme } from '@/hooks/useTheme';
+import BreakpointDebugger from '@/components/BreakpointDebugger';
 
 
 export default function MainShell() {
     const expireSession = useExpireAuthData();
     const openAccountModal = useOpenAccountModal();
     const openPlayerModal = useOpenPlayerModal();
+    const toggleTheme = useToggleTheme();
 
     //Listener for messages from child iframes (legacy routes)
     useEventListener('message', (e: MessageEventFromIframe) => {
@@ -36,12 +39,28 @@ export default function MainShell() {
         }
     });
 
+    //Listens to hotkeys - DEBUG only for now
+    //NOTE: WILL NOT WORK IF THE FOCUS IS ON THE IFRAME
+    useEventListener('keydown', (e: KeyboardEvent) => {
+        if (!window.txConsts.showAdvanced) return;
+        if (e.ctrlKey && e.key === 'k') {
+            const el = document.getElementById('playerlistFilter');
+            if (el) {
+                el.focus();
+                e.preventDefault();
+            }
+        } else if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'l') {
+            toggleTheme();
+            e.preventDefault();
+        }
+    });
+
     return <>
         <TooltipProvider delayDuration={300} disableHoverableContent={true}>
             <Header />
-            <div className="px-3 py-4 w-full max-w-[1920px] mx-auto flex flex-row gap-2">
+            <div className="md:px-3 min-h-full pt-2 md:py-4 w-full max-w-[1920px] mx-auto flex flex-row gap-4">
                 <ServerSidebar />
-                <main className="flex flex-1 min-h-[calc(100vh-5.5rem-1px)]">
+                <main className="flex flex-1 min-h-[calc(100vh-4rem-1px)] md:min-h-[calc(100vh-5.5rem-1px)]">
                     <MainRouter />
                 </main>
                 {window.txConsts.isWebInterface && <PlayerlistSidebar />}

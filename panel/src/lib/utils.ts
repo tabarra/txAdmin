@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import humanizeDuration from '@/lib/humanizeDuration';
 import { io } from "socket.io-client";
+import type { HumanizerOptions } from "humanize-duration";
 
 
 /**
@@ -44,7 +45,7 @@ export const stripIndent = (src: string) => {
  */
 export const msToDuration = humanizeDuration.humanizer({
     round: true,
-});
+} satisfies HumanizerOptions);
 
 
 /**
@@ -56,7 +57,7 @@ export const msToShortDuration = humanizeDuration.humanizer({
     round: true,
     spacer: '',
     language: 'shortEn',
-});
+} satisfies HumanizerOptions);
 
 
 /**

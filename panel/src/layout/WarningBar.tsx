@@ -106,8 +106,8 @@ export default function WarningBar() {
             titleIcon={<CloudOffIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
             title="Socket connection lost."
             description={<>
-                The connection to the backend socket has been lost. <br />
-                If you closed fxserver, please restart it.
+                The connection to the txAdmin server has been lost. <br />
+                If you closed FXServer, please restart it.
             </>}
             isImportant={true}
             canPostpone={false}

@@ -13,7 +13,7 @@ function TerminalSheetBackdrop({ isOpen, closeSheet }: TerminalSheetProps) {
     return (
         <div
             className={cn(
-                'absolute inset-0 z-10 md:rounded-xl',
+                'absolute inset-0 z-10 md:rounded-t-xl',
                 'bg-black/40 duration-300',
                 'data-[state=open]:pointer-events-auto data-[state=closed]:pointer-events-none',
                 'data-[state=open]:opacity-100 data-[state=open]:backdrop-blur-sm',
@@ -43,8 +43,8 @@ function TerminalSheet({ isOpen, closeSheet }: TerminalSheetProps) {
         <div
             data-state={isOpen ? 'open' : 'closed'}
             className={cn(
-                'absolute z-20 inset-y-0 w-full sm:max-w-xl',
-                'bg-background p-4 shadow-lg md:rounded-r-xl border-l',
+                'absolute z-20 inset-y-0 w-full md:max-w-2xl',
+                'bg-background px-4 py-6 shadow-lg md:rounded-r-xl border-l',
                 'data-[state=open]:pointer-events-auto data-[state=closed]:pointer-events-none',
                 'transition-all duration-300 ease-in-out',
                 isOpen ? 'right-0 opacity-100' : '-right-full opacity-0',
