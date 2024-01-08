@@ -100,7 +100,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
 
     //==============================================
     } else if (action == 'kick_all') {
-        if (!ensurePermission(ctx, 'players.kick')) return false;
+        if (!ensurePermission(ctx, 'control.server')) return false;
         let cmd;
         if (parameter.length) {
             cmd = formatCommand('txaKickAll', parameter);
@@ -110,7 +110,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         ctx.admin.logCommand(cmd);
         await fxRunner.srvCmdBuffer(cmd);
         return ctx.send<ApiToastResp>({
-            type: 'warning',
+            type: 'success',
             msg: 'Kick All command sent.',
         });
 
