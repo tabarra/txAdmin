@@ -1,100 +1,170 @@
-import { Input } from "@/components/ui/input";
-import { BookMarkedIcon, FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
-import LiveConsoleSaveSheet from "./LiveConsoleSaveSheet";
+import { useEffect, useMemo, useRef, useState } from "react";
+// import LiveConsoleSaveSheet from "./LiveConsoleSaveSheet";
 import { useSetPageTitle } from "@/hooks/pages";
+import LiveConsoleFooter from "./LiveConsoleFooter";
+import LiveConsoleHeader from "./LiveConsoleHeader";
+import { ChevronsDownIcon } from "lucide-react";
+import type { ITerminalInitOnlyOptions, ITerminalOptions, ITheme } from 'xterm';
+import { Terminal } from '@xterm/xterm';
+import { CanvasAddon } from '@xterm/addon-canvas';
+import { FitAddon } from '@xterm/addon-fit';
+import { useEventListener } from 'usehooks-ts';
+import debounce from 'debounce';
+import '@xterm/xterm/css/xterm.css';
 
 
-type ConsoleFooterButtonProps = {
-    icon: React.ElementType;
-    title: string;
-    onClick: () => void;
-}
+//From legacy systemLog.ejs, based on the ANSI-UP colors
+const baseTheme: ITheme = {
+    background: '#222326', //card bg
+    foreground: '#F8F8F8',
+    black: '#000000',
+    brightBlack: '#555555',
+    red: '#D62341',
+    brightRed: '#FF5370',
+    green: '#9ECE58',
+    brightGreen: '#C3E88D',
+    yellow: '#FAED70',
+    brightYellow: '#FFCB6B',
+    blue: '#396FE2',
+    brightBlue: '#82AAFF',
+    magenta: '#BB80B3',
+    brightMagenta: '#C792EA',
+    cyan: '#2DDAFD',
+    brightCyan: '#89DDFF',
+    white: '#D0D0D0',
+    brightWhite: '#FFFFFF',
+};
 
-function ConsoleFooterButton({ icon: Icon, title, onClick }: ConsoleFooterButtonProps) {
-    return (
-        <div
-            className="group bg-secondary xs:bg-transparent 2xl:hover:bg-secondary w-full rounded-lg px-1.5 py-2 cursor-pointer flex items-center justify-center"
-            onClick={onClick}
-        >
-            <Icon className="w-6 h-6 2xl:w-5 2xl:h-5 text-muted-foreground group-hover:scale-110 group-hover:text-secondary-foreground inline" />
-            <span className="hidden 2xl:inline ml-1 align-middle">
-                {title}
-            </span>
-        </div>
-    )
-}
+const terminalOptions: ITerminalOptions | ITerminalInitOnlyOptions = {
+    theme: baseTheme,
+    convertEol: true,
+    cursorBlink: true,
+    cursorStyle: 'bar',
+    disableStdin: true,
+    drawBoldTextInBrightColors: false,
+    fontFamily: "JetBrains Mono Variable, monospace",
+    fontSize: 13,
+    fontWeight: "300",
+    letterSpacing: 0.8,
+    scrollback: 5000,
+    // scrollback: 2500, //more or less equivalent to the legacy 250kb limit
+    // allowProposedApi: true,
+    // allowTransparency: true,
+};
+
 
 export default function LiveConsole() {
+    const jumpBottomBtnRef = useRef<HTMLButtonElement>(null);
+    // const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
     const setPageTitle = useSetPageTitle();
-    const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
     setPageTitle('Live Console');
 
+
+    /**
+     * xterm stuff
+     */
+    const containerRef = useRef<HTMLDivElement>(null);
+    const termElRef = useRef<HTMLDivElement>(null);
+    const term = useMemo(() => new Terminal(terminalOptions), []);
+    const fitAddon = useMemo(() => new FitAddon(), []);
+
+    const refitTerminal = () => {
+        if (containerRef.current && term.element && fitAddon) {
+            //fitAddon does not get the correct height, so we have to calculate it ourselves
+            const charMeasureElement = document.querySelector('.xterm-char-measure-element');
+            const charHeight = charMeasureElement?.getBoundingClientRect().height;
+            const parentElementStyle = window.getComputedStyle(containerRef.current);
+            const parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'));
+            const elementStyle = window.getComputedStyle(term.element.parentElement!);
+            const insetYSize = parseInt(elementStyle.getPropertyValue('top'));
+            const availableHeight = parentElementHeight - (insetYSize);
+            const newRows = Math.max(4, Math.floor(availableHeight / charHeight!));
+
+            const proposed = fitAddon.proposeDimensions();
+            term.resize(proposed!.cols, newRows);
+        } else {
+            console.log('refitTerminal: no containerRef.current or term.element or fitAddon');
+        }
+    }
+    useEventListener('resize', debounce(refitTerminal, 100));
+
+    useEffect(() => {
+        if (containerRef.current && termElRef.current && !term.element) {
+            console.log('terminal init', Math.random().toString(36).substring(2, 15));
+            termElRef.current.innerHTML = ''; //due to HMR, the terminal element might still be there
+            term.loadAddon(fitAddon);
+            term.loadAddon(new CanvasAddon());
+            term.open(termElRef.current);
+            refitTerminal();
+            term.write('\x1b[?25l'); //hide cursor
+            term.writeln('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo. \u001b[1m\u001b[33m CanvasAddon');
+            for (let i = 0; i < 40; i++) {
+                term.writeln(Math.random().toString(36).substring(2, 15))
+            }
+        }
+    }, [term]);
+
+    //DEBUG
+    useEffect(() => {
+        let cnt = 0;
+        const interval = setInterval(function LoLoLoLoLoLoL() {
+            cnt++;
+            const mod = cnt % 60;
+            term.writeln(
+                cnt.toString().padStart(6, '0') + ' ' +
+                '\u001b[1m\u001b[31m=\u001b[0m'.repeat(mod) +
+                '\u001b[1m\u001b[33m.\u001b[0m'.repeat(60 - mod)
+            );
+        }, 150);
+        return () => clearInterval(interval);
+    }, []);
+
+
+    /**
+     * Action Handlers
+     */
+    const consoleWrite = (data: string) => {
+        //
+    }
+    const consoleClear = () => {
+        term.clear();
+    }
+    const toggleSearchBar = () => {
+        //
+    }
     const toggleSaveSheet = () => {
-        setIsSaveSheetOpen(!isSaveSheetOpen);
+        // setIsSaveSheetOpen(!isSaveSheetOpen);
     }
 
-    return (
-        <div className="dark text-primary flex flex-col h-full bg-card border md:rounded-xl overflow-clip">
-            <div className="flex flex-row flex-grow relative">
-                <LiveConsoleSaveSheet isOpen={isSaveSheetOpen} closeSheet={() => setIsSaveSheetOpen(false)} />
 
-                <div className="flex flex-col flex-grow p-4 space-y-4" id='sdfsdfsfd'>
-                    <div className="flex items-center space-x-2">
-                        <svg
-                            className="w-4 h-4 text-green-500"
-                            fill="none"
-                            height="24"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <polyline points="4 17 10 11 4 5" />
-                            <line x1="12" x2="20" y1="19" y2="19" />
-                        </svg>
-                        <p className="font-mono text-sm">Terminal</p>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                        <p className="font-mono text-sm">{`> command 1`}</p>
-                        <p className="font-mono text-sm">{`> command 2`}</p>
-                        <p className="font-mono text-sm">{`> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`}</p>
-                    </div>
+    return (
+        <div className="dark text-primary flex flex-col h-full w-full bg-card border md:rounded-xl overflow-clip">
+            <LiveConsoleHeader />
+
+            <div className="flex flex-col relative grow">
+                {/* <LiveConsoleSaveSheet isOpen={isSaveSheetOpen} closeSheet={() => setIsSaveSheetOpen(false)} /> */}
+
+                <div ref={containerRef} className='w-full h-full relative overflow-hidden bg-pink-500'>
+                    <div ref={termElRef} className='absolute inset-x-2 top-1' />
                 </div>
+
+                <button
+                    ref={jumpBottomBtnRef}
+                    className='absolute bottom-0 right-6 z-50 opacity-75'
+                    onClick={() => { term.scrollToBottom() }}
+                >
+                    <ChevronsDownIcon className='w-20 h-20 animate-pulse hover:animate-none hover:scale-105' />
+                </button>
             </div>
-            <div className="flex flex-col xs:flex-row xs:items-center gap-2 px-1 sm:px-4 py-2 border-t justify-center">
-                <div className="flex items-center grow">
-                    <svg
-                        className="hidden sm:block w-4 h-4 mr-2 text-warning-inline shrink-0"
-                        fill="none"
-                        height="24"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path d="m9 18 6-6-6-6" />
-                    </svg>
-                    <Input
-                        id="consoleInput"
-                        className="w-full"
-                        placeholder="Type a command..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex flex-row justify-evenly gap-3 2xl:gap-1 select-none">
-                    <ConsoleFooterButton icon={BookMarkedIcon} title="Saved" onClick={toggleSaveSheet} />
-                    <ConsoleFooterButton icon={SearchIcon} title="Search" onClick={() => { }} />
-                    <ConsoleFooterButton icon={Trash2Icon} title="Clear" onClick={() => { }} />
-                    <ConsoleFooterButton icon={FileDownIcon} title="Download" onClick={() => { }} />
-                </div>
-            </div>
+
+            <LiveConsoleFooter
+                isConnected={isConnected}
+                consoleWrite={consoleWrite}
+                consoleClear={consoleClear}
+                toggleSaveSheet={toggleSaveSheet}
+                toggleSearchBar={toggleSearchBar}
+            />
         </div>
     )
 }

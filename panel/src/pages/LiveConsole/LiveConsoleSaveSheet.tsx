@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { PencilIcon, StarIcon, StarOffIcon, XIcon } from "lucide-react";
+import { PlusCircleIcon, PlusIcon, StarIcon, StarOffIcon, XIcon } from "lucide-react";
 
 
 type SheetProps = {
@@ -40,104 +40,120 @@ function SheetCloseButton({ closeSheet }: Omit<SheetProps, 'isOpen'>) {
 
 
 const exampleCommandList = [
-    "npm install",
-    "npm start",
-    "git clone <repository-url>",
-    "git add .",
-    "git commit -m 'Initial commit'",
-    "git push origin master",
-    "ls",
-    "cd <directory>",
-    "mkdir <directory-name>",
-    "rm <file>",
-    "touch <file>",
-    "python script.py",
-    "node script.js",
+    "docker-compose up -d",
+    "grep 'pattern' <file>",
+    "terraform apply -var-file=vars.tfvars",
+    "date",
+    "chmod +x <file>",
+    "git pull origin master && npm install && npm run build",
+    "mv <source> <destination>",
+    "open <file>",
     "docker build -t <image-name> .",
+    "start <file>",
+    "npm install",
+    "git clone <repository-url>",
     "docker run -p <port>:<port> <image-name>",
+    "clear",
+    "git add .",
+    "node script.js",
+    "cd <directory>",
+    "rm <file>",
+    "git push origin master",
+    "echo 'Hello, World!'",
+    "mkdir <directory-name>",
+    "traceroute <host>",
+    "python script.py",
+    "npm start",
+    "mvn clean install -DskipTests",
+    "ssh user@example.com",
+    "java -jar myapp.jar --config=config.properties",
+    "kubectl create deployment my-deployment --image=my-image:latest --replicas=3 --port=8080",
+    "curl https://api.example.com",
+    "npm run build && npm run deploy",
+    "whoami",
+    "ping <host>",
+    "cat <file>",
+    "ls",
+    "shutdown",
+    "sudo apt-get install <package>",
+    "touch <file>",
+    "git commit -m 'Initial commit'",
 ];
+
+const saveListToLocalStorage = (list: string[]) => {
+    localStorage.setItem('savedCommands', JSON.stringify(list));
+}
 
 
 function SheetCommand({ cmd, type }: { cmd: string, type: 'history' | 'saved' }) {
     return (
         <div
             onClick={() => { console.log('clicked') }}
-            className="px-2 flex justify-between items-center rounded-lg bg-card hover:bg-secondary cursor-pointer group"
+            className="px-2 py-1 flex justify-between items-center rounded-lg bg-card hover:bg-muted cursor-pointer group"
         >
-            <div className="w-full line-clamp-1 text-sm font-mono text-muted-foreground group-hover:text-primary group-hover:line-clamp-none py-1">
-                {cmd}
-            </div>
-            <div className="min-w-max">
-                {type === 'history' ? (
-                    <Button size="icon" variant="ghost">
-                        <StarIcon className="w-5 h-5" />
-                        <span className="sr-only">Remove</span>
-                    </Button>
-                ) : (<>
-                    <Button size="icon" variant="ghost">
-                        <PencilIcon className="w-5 h-5" />
-                        <span className="sr-only">Edit</span>
-                    </Button>
-                    <Button size="icon" variant="ghost">
-                        <StarOffIcon className="w-5 h-5" />
-                        <span className="sr-only">Remove</span>
-                    </Button>
-                </>)}
-
-            </div>
-        </div>
-    )
-}
-
-
-function SheetCommand2({ cmd, type }: { cmd: string, type: 'history' | 'saved' }) {
-    return (
-        <div
-            onClick={() => { console.log('clicked') }}
-            className="px-2 flex justify-between items-center cursor-pointer group min-h-[1.75rem] relative"
-        >
-            <span className="w-full line-clamp-1x text-sm font-mono px-1 font-semibold group-hover:line-clamp-none">
+            <span className="py-1 line-clamp-1 break-all text-sm font-mono tracking-wide text-muted-foreground group-hover:text-primary group-hover:line-clamp-none group-hover:break-normal">
                 {cmd}
             </span>
-            <div className="min-w-max items-center hidden group-hover:flex absolute inset-y-0 right-0 bg-background">
+            <div className="min-w-max">
                 {type === 'history' ? (
-                    <button className="">
-                        <StarIcon className="w-4 h-4" />
+                    <button className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-primary hover:text-primary-foreground invisible group-hover:visible">
+                        <StarIcon className="w-5 h-5" />
+                        <span className="sr-only">Save</span>
+                    </button>
+                ) : (<>
+                    <button className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-primary hover:text-primary-foreground invisible group-hover:visible">
+                        <StarOffIcon className="w-5 h-5" />
                         <span className="sr-only">Remove</span>
                     </button>
-                ) : (
-                    <button className="p-1 hover:brightness-125 hover:scale-125">
-                        <StarOffIcon className="w-4 h-4" />
-                        <span className="sr-only">Remove</span>
-                    </button>
-                )}
+                </>)}
             </div>
         </div>
     )
 }
+
+
 
 
 function SheetContent() {
     return (
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row gap-4 max-h-full">
             <div className="flex flex-col flex-grow gap-2">
                 <h2 className="text-xl font-bold">History</h2>
-                <div className="space-y-2">
-                    {exampleCommandList.map((cmd, index) => (
-                        <SheetCommand key={index} cmd={cmd} type='history' />
-                    ))}
-                </div>
+                <ScrollArea className="max-h-full w-full pr-3">
+                    <div className="space-y-2 line-clamp-1 break-all text-sm font-mono tracking-wide text-muted-foreground pb-4">
+                        <button
+                            onClick={() => { console.log('clicked') }}
+                            className="w-full py-2 rounded-lg bg-card hover:bg-primary hover:text-primary-foreground font-sans tracking-wider"
+                        >
+                            <div className="flex items-center justify-center gap-2">
+                                <XIcon className="w-4 h-4 inline" />
+                                Clear History
+                            </div>
+                        </button>
+                        {exampleCommandList.map((cmd, index) => (
+                            <SheetCommand key={index} cmd={cmd} type='history' />
+                        ))}
+                    </div>
+                </ScrollArea>
             </div>
             <div className="flex flex-col flex-grow gap-2">
                 <h2 className="text-xl font-bold">Saved</h2>
-                <p className={cn(
-                    "font-mono break-all whitespace-pre-wrap border rounded divide-y divide-border/50 text-muted-foreground",
-                    "text-sm leading-6 tracking-wider"
-                )}>
-                    {exampleCommandList.map((cmd, index) => (
-                        <SheetCommand2 key={index} cmd={cmd} type='saved' />
-                    ))}
-                </p>
+                <ScrollArea className="max-h-full w-full pr-3">
+                    <div className="space-y-2 line-clamp-1 break-all text-sm font-mono tracking-wide text-muted-foreground pb-4">
+                        <button
+                            onClick={() => { console.log('clicked') }}
+                            className="w-full py-2 rounded-lg bg-card hover:bg-primary hover:text-primary-foreground font-sans tracking-wider"
+                        >
+                            <div className="flex items-center justify-center gap-2">
+                                <PlusIcon className="w-4 h-4 inline" />
+                                Add New
+                            </div>
+                        </button>
+                        {exampleCommandList.map((cmd, index) => (
+                            <SheetCommand key={index} cmd={cmd} type='saved' />
+                        ))}
+                    </div>
+                </ScrollArea>
             </div>
         </div>
     )
@@ -151,7 +167,7 @@ export default function LiveConsoleSaveSheet({ isOpen, closeSheet }: SheetProps)
             data-state={isOpen ? 'open' : 'closed'}
             className={cn(
                 'absolute z-20 inset-y-0 w-full md:max-w-2xl',
-                'bg-background px-4 py-6 shadow-lg md:rounded-r-xl border-l',
+                'bg-background px-4 pt-6 shadow-lg border-l',
                 'data-[state=open]:pointer-events-auto data-[state=closed]:pointer-events-none',
                 'transition-all duration-300 ease-in-out',
                 isOpen ? 'right-0 opacity-100' : '-right-full opacity-0',
@@ -159,9 +175,6 @@ export default function LiveConsoleSaveSheet({ isOpen, closeSheet }: SheetProps)
         >
             <SheetCloseButton closeSheet={closeSheet} />
             <SheetContent />
-            {/* <div className="flex flex-col h-full justify-center items-center">
-                <p className="text-2xl font-bold">Wow Sheet is open :o</p>
-            </div> */}
         </div>
     </>;
 }
