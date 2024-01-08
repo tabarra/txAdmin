@@ -7,6 +7,7 @@ import { useGlobalStatus } from '@/hooks/status';
 import { useBackendApi } from '@/hooks/fetch';
 import { cn, msToDuration } from '@/lib/utils';
 import { PenLineIcon, PlayCircleIcon, PlusCircleIcon, XCircleIcon } from 'lucide-react';
+import { useAdminPerms } from '@/hooks/auth';
 
 //Prompt props
 const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -66,6 +67,7 @@ const validateSchedule = (input: string) => {
 export default function ServerSchedule() {
     const closeAllSheets = useCloseAllSheets();
     const openPromptDialog = useOpenPromptDialog();
+    const { hasPerm } = useAdminPerms();
     const schedulerApi = useBackendApi({
         method: 'POST',
         path: '/fxserver/schedule'
@@ -155,6 +157,8 @@ export default function ServerSchedule() {
         });
     }
 
+    const hasSchedulePerms = hasPerm('control.server');
+
     return <div>
         <h2 className="mb-1 text-lg font-semibold tracking-tight">
             Next Restart:
@@ -166,7 +170,7 @@ export default function ServerSchedule() {
                     size='xs'
                     variant='ghost'
                     className='flex-grow bg-muted border shadow'
-                    disabled={disableAddEditBtn}
+                    disabled={!hasSchedulePerms || disableAddEditBtn}
                     onClick={handleEdit}
                 >
                     <PenLineIcon className='h-4 w-4 mr-1' /> Edit
@@ -176,7 +180,7 @@ export default function ServerSchedule() {
                     size='xs'
                     variant='ghost'
                     className='flex-grow bg-muted border shadow'
-                    disabled={disableAddEditBtn}
+                    disabled={!hasSchedulePerms || disableAddEditBtn}
                     onClick={handleAddSchedule}
                 >
                     <PlusCircleIcon className='h-4 w-4 mr-1' /> Schedule Restart
@@ -188,6 +192,7 @@ export default function ServerSchedule() {
                     variant='ghost'
                     className='flex-grow bg-muted border shadow'
                     onClick={handleCancel}
+                    disabled={!hasSchedulePerms}
                 >
                     <XCircleIcon className='h-4 w-4 mr-1' /> Cancel
                 </Button>
@@ -198,6 +203,7 @@ export default function ServerSchedule() {
                     variant='ghost'
                     className='flex-grow bg-muted border'
                     onClick={handleEnable}
+                    disabled={!hasSchedulePerms}
                 >
                     <PlayCircleIcon className='h-4 w-4 mr-1' /> Enable
                 </Button>

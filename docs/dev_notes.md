@@ -1,30 +1,53 @@
-# TODO:
-- [ ][3d] NEW PAGE: Dashboard
+# TODO: v7.0.0-beta2
+- [x] apply cache control policies
+- [x] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
+- [x] tweak(panel/modal): notes change should invalidate the data and auto resize
+- [x] Change the kick all to require the `control.server` permission (issue #379)
+- [x] Disable the buttons in the server status card based on permission
+- [ ] NEW PAGE: Live console
+    - [x] terminal layout + jsx
+    - [x] basic xterm.js (canvas mode)
+    - [x] auto re-fit
+    - [ ] scroll to bottom button
+    - [ ] search addon + search bar
+    - [ ] custom event handler for f5, esc/ctrl+f (search), and ctrl+c
+    - [ ] command history (arrows only) without local storage
+    - [ ] socket.io connection
+    - [ ] tidy up the code
+- [ ] Update packages for all workspaces
+- [ ] Check layout on 4k and ultrawide screens
+- [ ] global hotkey to go to the player filter
+    - careful to also handle child iframe and terminal canvas
+- [ ] FIXME: check if we need or can do something to prevent NUI CSRF
+
+# TODO: v7.0.0 Release
+- [ ] talk to r* and make sure the new build process wipes the old cache
+- [ ] make sure some user input based fields are truncated (server name, player name)
+- [ ] deprecate StatisticsManager.pageViews as its now untrackable?
+- [ ] zap hosting advertisement
+- [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
+- [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851) 
+
+- [ ] check all discord invites (use utm params maybe?)
+- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+- [ ] tutorial stepper for the new UI?
+- [ ] update docs on development?
+
+# TODO: v7.1+
+- [ ] Remove old live console
+- [ ] fix the tsc build
+
+- [ ] NEW PAGE: Dashboard
     - [ ] number callouts from legacy players page
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
-- [ ][1d] NEW PAGEs: Console log + Action log
-- [ ][3d] NEW PAGE: Live console
-- [ ][3d] NEW PAGE: Players
-- [ ][1d] NEW PAGE: History
-- [ ][1h] zap hosting advertisement
-- [ ][1d] tutorial stepper for the new UI
-- [ ][2h] fine tune `panel/vite.config.ts`
+- [ ] NEW PAGEs: Console log + Action log
+- [ ] NEW PAGE: Players
+- [ ] NEW PAGE: History
 
-
-Quickies
-- [x] apply cache control policies
-- [x] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
-- [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
-- [ ] fix the tsc build
-- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
-- [ ] talk to r* and make sure the new build process wipes the old cache
-- [ ] make sure some user input based fields are truncated (server name, player name)
-- [ ] layout on 4k and ultrawide screens
 - [ ] check again for the need of lazy loading
-- [ ] deprecate StatisticsManager.pageViews as its now untrackable?
-- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] make sure the playerlist scroll works if the playergen is stopped (therefore, not re-rendering the component)
+- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
+
 
 =======================================================================
 
@@ -176,7 +199,7 @@ History:
 - list of warns/bans in a table
 - search by id OR identifier (single) with select box
 - filter by action type
-- filter by admin, and hotlink it from the admins page
+- filter by admin ("self" must be an option), and hotlink it from the admins page
 
 Whitelist:
 - maybe remove the wl pending join table
@@ -205,12 +228,9 @@ Master Actions:
     - when filterString is present, disable the filter/sort drowdown, as it will show all results sorted by fuse.js
     - might be worth to debounce the search
 
-- [ ] Hotkey navigation and controls?
-    - at least hotkey to jump to the playerlist filter, and 
-
 - [ ] Anonymous admin actions (issue #893)
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
-- [ ] Change the kick all to require the `control.server` permission (issue #379)
+
 - [ ] create new "Remove Player Data" permission which would allow to delete bans/warns, players and player identifiers
 
 - [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so I can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
@@ -223,7 +243,7 @@ Master Actions:
 - [ ] new restart schedule in status card
 
 - [ ] ask framework owners to use `txAdmin-locale`
-- [ ] check all discord invites (use utm params maybe?)
+
 - [ ] redact discord api webhook urls from reports
 - [ ] xxxxxx
 
