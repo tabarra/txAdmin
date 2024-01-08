@@ -29,10 +29,22 @@ function LogActionCounter({ type, count }: { type: 'Ban' | 'Warn', count: number
     }
 }
 
+type PlayerNotesBoxProps = {
+    playerRef: PlayerModalRefType;
+    player: PlayerModalPlayerData;
+    refreshModalData: () => void;
+}
 
-function PlayerNotesBox({ playerRef, player }: { playerRef: PlayerModalRefType, player: PlayerModalPlayerData }) {
+const calcTextAreaLines = (text?: string) => {
+    if (!text) return 3;
+    const lines = text.trim().split('\n').length + 1;
+    return Math.min(Math.max(lines, 3), 16);
+}
+
+function PlayerNotesBox({ playerRef, player, refreshModalData }: PlayerNotesBoxProps) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [notesLogText, setNotesLogText] = useState(player.notesLog ?? '');
+    const [textAreaLines, setTextAreaLines] = useState(calcTextAreaLines(player.notes));
     const playerNotesApi = useBackendApi<GenericApiOkResp>({
         method: 'POST',
         path: `/player/save_note`,
@@ -49,7 +61,7 @@ function PlayerNotesBox({ playerRef, player }: { playerRef: PlayerModalRefType, 
                 if ('error' in data) {
                     setNotesLogText(data.error);
                 } else {
-                    setNotesLogText('Saved!');
+                    refreshModalData();
                 }
             },
         });
@@ -59,6 +71,8 @@ function PlayerNotesBox({ playerRef, player }: { playerRef: PlayerModalRefType, 
         if (event.key === 'Enter' && !event.shiftKey && !window.txIsMobile) {
             event.preventDefault();
             doSaveNotes();
+        } else {
+            setTextAreaLines(calcTextAreaLines(event.currentTarget.value));
         }
     }
 
@@ -74,6 +88,8 @@ function PlayerNotesBox({ playerRef, player }: { playerRef: PlayerModalRefType, 
             defaultValue={player.notes}
             onChange={() => setNotesLogText('Press enter to save.')}
             onKeyDown={handleKeyDown}
+            //1rem of padding + 1.25rem per line
+            style={{ height: `${1 + 1.25 * textAreaLines}rem` }}
             placeholder={player.isRegistered
                 ? 'Type your notes about the player.'
                 : 'Cannot set notes for players that are not registered.'}
@@ -190,6 +206,6 @@ export default function InfoTab({ playerRef, player, setSelectedTab, refreshModa
             </div>
         </dl>
 
-        <PlayerNotesBox player={player} playerRef={playerRef} />
+        <PlayerNotesBox player={player} playerRef={playerRef} refreshModalData={refreshModalData} />
     </div>;
 }
