@@ -4,13 +4,14 @@ import { useSetPageTitle } from "@/hooks/pages";
 import LiveConsoleFooter from "./LiveConsoleFooter";
 import LiveConsoleHeader from "./LiveConsoleHeader";
 import { ChevronsDownIcon } from "lucide-react";
-import type { ITerminalInitOnlyOptions, ITerminalOptions, ITheme } from 'xterm';
+import type { ITerminalInitOnlyOptions, ITerminalOptions, ITheme } from '@xterm/xterm';
 import { Terminal } from '@xterm/xterm';
 import { CanvasAddon } from '@xterm/addon-canvas';
 import { FitAddon } from '@xterm/addon-fit';
 import { useEventListener } from 'usehooks-ts';
 import debounce from 'debounce';
 import '@xterm/xterm/css/xterm.css';
+import ScrollDownAddon from "./ScrollDownAddon";
 
 
 //From legacy systemLog.ejs, based on the ANSI-UP colors
@@ -54,7 +55,6 @@ const terminalOptions: ITerminalOptions | ITerminalInitOnlyOptions = {
 
 
 export default function LiveConsole() {
-    const jumpBottomBtnRef = useRef<HTMLButtonElement>(null);
     // const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const setPageTitle = useSetPageTitle();
@@ -64,6 +64,7 @@ export default function LiveConsole() {
     /**
      * xterm stuff
      */
+    const jumpBottomBtnRef = useRef<HTMLButtonElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const termElRef = useRef<HTMLDivElement>(null);
     const term = useMemo(() => new Terminal(terminalOptions), []);
@@ -91,10 +92,11 @@ export default function LiveConsole() {
 
     useEffect(() => {
         if (containerRef.current && termElRef.current && !term.element) {
-            console.log('terminal init', Math.random().toString(36).substring(2, 15));
+            console.log('live console xterm init');
             termElRef.current.innerHTML = ''; //due to HMR, the terminal element might still be there
             term.loadAddon(fitAddon);
             term.loadAddon(new CanvasAddon());
+            term.loadAddon(new ScrollDownAddon(jumpBottomBtnRef));
             term.open(termElRef.current);
             refitTerminal();
             term.write('\x1b[?25l'); //hide cursor
@@ -145,16 +147,16 @@ export default function LiveConsole() {
             <div className="flex flex-col relative grow">
                 {/* <LiveConsoleSaveSheet isOpen={isSaveSheetOpen} closeSheet={() => setIsSaveSheetOpen(false)} /> */}
 
-                <div ref={containerRef} className='w-full h-full relative overflow-hidden bg-pink-500'>
+                <div ref={containerRef} className='w-full h-full relative overflow-hidden'>
                     <div ref={termElRef} className='absolute inset-x-2 top-1' />
                 </div>
 
                 <button
                     ref={jumpBottomBtnRef}
-                    className='absolute bottom-0 right-6 z-50 opacity-75'
+                    className='absolute bottom-0 right-6 z-50 hidden opacity-75'
                     onClick={() => { term.scrollToBottom() }}
                 >
-                    <ChevronsDownIcon className='w-20 h-20 animate-pulse hover:animate-none hover:scale-105' />
+                    <ChevronsDownIcon className='w-20 h-20 animate-pulse hover:animate-none hover:scale-110' />
                 </button>
             </div>
 

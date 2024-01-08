@@ -8,7 +8,7 @@
     - [x] terminal layout + jsx
     - [x] basic xterm.js (canvas mode)
     - [x] auto re-fit
-    - [ ] scroll to bottom button
+    - [x] scroll to bottom button
     - [ ] search addon + search bar
     - [ ] custom event handler for f5, esc/ctrl+f (search), and ctrl+c
     - [ ] command history (arrows only) without local storage
