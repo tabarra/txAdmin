@@ -27,7 +27,7 @@ export default function MainShell() {
     const toggleTheme = useToggleTheme();
 
     //Listener for messages from child iframes (legacy routes)
-    useEventListener('message', (e: MessageEventFromIframe) => {
+    useEventListener('message', (e: TxMessageEvent) => {
         if (e.data.type === 'logoutNotice') {
             expireSession('child iframe', 'got logoutNotice');
         } else if (e.data.type === 'openAccountModal') {

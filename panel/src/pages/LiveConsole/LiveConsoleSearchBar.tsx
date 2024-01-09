@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import type { ISearchDecorationOptions, ISearchOptions, SearchAddon } from "@xterm/addon-search";
 import { ArrowDownIcon, ArrowUpIcon, CaseSensitiveIcon, RegexIcon, WholeWordIcon, XIcon } from "lucide-react";
 import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEventListener } from "usehooks-ts";
 
 
 type ButtonProps = {
@@ -92,27 +93,26 @@ export default function LiveConsoleSearchBar({ show, setShow, searchAddon }: Liv
 
     //Handlers
     const handlePrevious = () => {
-        if (!inputRef.current) return;
+        if (!inputRef.current || !inputRef.current.value) return;
         console.log('backward search for', inputRef.current.value);
         searchAddon.findPrevious(inputRef.current.value, getSearchOptions());
     }
     const handleNext = () => {
-        if (!inputRef.current) return;
+        if (!inputRef.current || !inputRef.current.value) return;
         console.log('forward search for', inputRef.current.value);
         searchAddon.findNext(inputRef.current.value, getSearchOptions());
     }
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!inputRef.current) return;
-        if ((e.key === 'Enter' || e.key === 'F3') && !e.shiftKey) {
-            handleNext();
+        console.log('search input keydown', e.code);
+        if (e.code === 'Enter') {
+            if (e.shiftKey) {
+                handlePrevious();
+            } else {
+                handleNext();
+            }
             e.preventDefault();
-        } else if ((e.key === 'Enter' || e.key === 'F3') && e.shiftKey) {
-            handlePrevious();
-            e.preventDefault();
-        } else if (e.key === 'Escape') {
-            setShow(false);
-            clearSearchState(labelNoResults);
         }
     }
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,6 +138,18 @@ export default function LiveConsoleSearchBar({ show, setShow, searchAddon }: Liv
         clearSearchState();
         searchAddon.findNext(inputRef.current.value, getSearchOptions({ regex: !regex }));
     }
+
+    //This is required so hotkeys in the page also apply in here
+    useEventListener('message', (e: TxMessageEvent) => {
+        if (e.data.type !== 'liveConsoleSearchHotkey') return;
+        if (e.data.action === 'previous') {
+            handlePrevious();
+        } else if (e.data.action === 'next') {
+            handleNext();
+        } else if (e.data.action === 'focus') {
+            inputRef.current?.focus();
+        }
+    });
 
     if (!show) return null;
     return (

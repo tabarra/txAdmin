@@ -4,8 +4,8 @@ import { FitAddon } from '@xterm/addon-fit';
 import { SearchAddon } from '@xterm/addon-search';
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useEventListener } from 'usehooks-ts';
-import { useSetPageTitle } from "@/hooks/pages";
-import debounce from 'debounce';
+import { useContentRefresh, useSetPageTitle } from "@/hooks/pages";
+import { debounce, throttle } from 'throttle-debounce';
 
 import { ChevronsDownIcon } from "lucide-react";
 import LiveConsoleFooter from "./LiveConsoleFooter";
@@ -19,11 +19,14 @@ import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
 
 
+const keyDebounceTime = 150; //ms
+
 export default function LiveConsole() {
     // const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
-    const [setshowSearchBar, setShowSearchBar] = useState(false);
+    const [showSearchBar, setShowSearchBar] = useState(false);
     const setPageTitle = useSetPageTitle();
+    const refreshPage = useContentRefresh();
     setPageTitle('Live Console');
 
 
@@ -36,6 +39,13 @@ export default function LiveConsole() {
     const term = useMemo(() => new Terminal(terminalOptions), []);
     const fitAddon = useMemo(() => new FitAddon(), []);
     const searchAddon = useMemo(() => new SearchAddon(), []);
+
+    const sendSearchKeyEvent = throttle(keyDebounceTime, (action: string) => {
+        window.postMessage({
+            type: 'liveConsoleSearchHotkey',
+            action,
+        });
+    }, { noTrailing: true });
 
     const refitTerminal = () => {
         if (containerRef.current && term.element && fitAddon) {
@@ -55,7 +65,7 @@ export default function LiveConsole() {
             console.log('refitTerminal: no containerRef.current or term.element or fitAddon');
         }
     }
-    useEventListener('resize', debounce(refitTerminal, 100));
+    useEventListener('resize', debounce(100, refitTerminal));
 
     useEffect(() => {
         if (containerRef.current && termElRef.current && !term.element) {
@@ -69,6 +79,52 @@ export default function LiveConsole() {
             refitTerminal();
             term.write('\x1b[?25l'); //hide cursor
 
+            const scrollPageUp = throttle(keyDebounceTime, () => {
+                term.scrollLines(Math.min(1, 2 - term.rows));
+            }, { noTrailing: true });
+            const scrollPageDown = throttle(keyDebounceTime, () => {
+                term.scrollLines(Math.max(1, term.rows - 2));
+            }, { noTrailing: true });
+            const scrollTop = throttle(keyDebounceTime, () => {
+                term.scrollToTop();
+            }, { noTrailing: true });
+            const scrollBottom = throttle(keyDebounceTime, () => {
+                term.scrollToBottom();
+            }, { noTrailing: true });
+
+            term.attachCustomKeyEventHandler((e: KeyboardEvent) => {
+                if (e.code === 'F5') {
+                    // let live console handle it
+                    return false;
+                } else if (e.code === 'Escape') {
+                    // let live console handle it
+                    return false;
+                } else if (e.code === 'KeyF' && (e.ctrlKey || e.metaKey)) {
+                    // let live console handle it
+                    return false;
+                } else if (e.code === 'F3') {
+                    // let live console handle it
+                    return false;
+                } else if (e.code === 'KeyC' && (e.ctrlKey || e.metaKey)) {
+                    document.execCommand('copy');
+                    term.clearSelection();
+                    return false;
+                } else if (e.code === 'PageUp') {
+                    scrollPageUp();
+                    return false;
+                } else if (e.code === 'PageDown') {
+                    scrollPageDown();
+                    return false;
+                } else if (e.code === 'Home') {
+                    scrollTop();
+                    return false;
+                } else if (e.code === 'End') {
+                    scrollBottom();
+                    return false;
+                }
+                return true;
+            });
+
             //DEBUG
             term.writeln('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo. \u001b[1m\u001b[33m CanvasAddon');
             for (let i = 0; i < 40; i++) {
@@ -76,6 +132,27 @@ export default function LiveConsole() {
             }
         }
     }, [term]);
+
+    useEventListener('keydown', (e: KeyboardEvent) => {
+        console.log('live console keydown', e.code);
+        if (e.code === 'F5') {
+            refreshPage();
+            e.preventDefault();
+        } else if (e.code === 'Escape') {
+            searchAddon.clearDecorations();
+            setShowSearchBar(false);
+        } else if (e.code === 'KeyF' && (e.ctrlKey || e.metaKey)) {
+            if (showSearchBar) {
+                sendSearchKeyEvent('focus');
+            } else {
+                setShowSearchBar(true);
+            }
+            e.preventDefault();
+        } else if (e.code === 'F3') {
+            sendSearchKeyEvent(e.shiftKey ? 'previous' : 'next');
+            e.preventDefault();
+        }
+    });
 
     //DEBUG
     useEffect(() => {
@@ -88,7 +165,7 @@ export default function LiveConsole() {
                 '\u001b[1m\u001b[31m=\u001b[0m'.repeat(mod) +
                 '\u001b[1m\u001b[33m.\u001b[0m'.repeat(60 - mod)
             );
-        }, 150);
+        }, 100);
         return () => clearInterval(interval);
     }, []);
 
@@ -103,7 +180,7 @@ export default function LiveConsole() {
         term.clear();
     }
     const toggleSearchBar = () => {
-        setShowSearchBar(!setshowSearchBar);
+        setShowSearchBar(!showSearchBar);
     }
     const toggleSaveSheet = () => {
         // setIsSaveSheetOpen(!isSaveSheetOpen);
@@ -122,7 +199,7 @@ export default function LiveConsole() {
                 </div>
 
                 <LiveConsoleSearchBar
-                    show={setshowSearchBar}
+                    show={showSearchBar}
                     setShow={setShowSearchBar}
                     searchAddon={searchAddon}
                 />
