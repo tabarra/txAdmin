@@ -176,13 +176,14 @@
                             </label>
                             <div class="col-sm-9">
                                 <select id="revokewl-filter" name="filter" class="form-control" required>
-                                    <option value="30d" selected>player that haven't joined in the last 30 days</option>
-                                    <option value="15d">player that haven't joined in the last 15 days</option>
-                                    <option value="7d">player that haven't joined in the last 7 days</option>
+                                    <option value="30d" selected>players that haven't joined in the last 30 days</option>
+                                    <option value="15d">players that haven't joined in the last 15 days</option>
+                                    <option value="7d">players that haven't joined in the last 7 days</option>
                                     <option value="all" class="font-weight-bold text-danger">REVOKE ALL WHITELISTS</option>
                                 </select>
                                 <span class="form-text text-muted">
-                                    Revoke whitelist from players that have not joined the server the last X days.
+                                    Revoke whitelist from players that have not joined the server the last X days. <br>
+                                    <strong>Note:</strong> This only applies to license whitelist, and not Discord member or Discord role whitelist.
                                 </span>
                             </div>
                         </div>

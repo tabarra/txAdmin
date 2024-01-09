@@ -890,7 +890,7 @@
             txAdminAPI({
                 type: "POST",
                 url: '/setup/save',
-                timeout: REQ_TIMEOUT_LONG,
+                timeout: REQ_TIMEOUT_REALLY_LONG,
                 data: outData,
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
