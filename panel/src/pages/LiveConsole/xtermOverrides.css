@@ -1,0 +1,23 @@
+.xterm-decoration-overview-ruler {
+    right: 8px;
+}
+
+.xterm-viewport {
+    scrollbar-width: thin; /* Firefox Only */
+    scrollbar-color: hsl(var(--secondary)) hsl(var(--card));
+    padding-right: 8px;
+}
+
+.xterm-viewport::-webkit-scrollbar {
+    width: 8px;
+}
+
+.xterm-viewport::-webkit-scrollbar-track {
+    background: hsl(var(--card));
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--secondary));
+    border-radius: 8px;
+    border: 0px none hsl(var(--card));
+}

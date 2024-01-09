@@ -10,9 +10,13 @@
     - [x] auto re-fit
     - [x] scroll to bottom button
     - [ ] search addon + search bar
+        - find next: f3, enter
+        - find previous: shift+f3, shift+enter
+        - hotkeys should work on terminal, page and input
     - [ ] custom event handler for f5, esc/ctrl+f (search), and ctrl+c
     - [ ] command history (arrows only) without local storage
     - [ ] socket.io connection
+    - [ ] fix z-order, cant click postpone/support on the warning bar
     - [ ] tidy up the code
 - [ ] Update packages for all workspaces
 - [ ] Check layout on 4k and ultrawide screens
