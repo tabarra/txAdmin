@@ -2,21 +2,25 @@ import React, { useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { Input } from "@/components/ui/input";
-import { openExternalLink } from "@/lib/utils";
+import { cn, openExternalLink } from "@/lib/utils";
 import { FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
 
 
 type ConsoleFooterButtonProps = {
     icon: React.ElementType;
     title: string;
+    disabled?: boolean;
     onClick: () => void;
 }
 
-function ConsoleFooterButton({ icon: Icon, title, onClick }: ConsoleFooterButtonProps) {
+function ConsoleFooterButton({ icon: Icon, title, disabled, onClick }: ConsoleFooterButtonProps) {
     return (
         <div
-            className="group bg-secondary xs:bg-transparent 2xl:hover:bg-secondary w-full rounded-lg px-1.5 py-2 cursor-pointer flex items-center justify-center"
-            onClick={onClick}
+            className={cn(
+                "group bg-secondary xs:bg-transparent 2xl:hover:bg-secondary w-full rounded-lg px-1.5 py-2 cursor-pointer flex items-center justify-center",
+                disabled && 'opacity-50 pointer-events-none'
+            )}
+            onClick={() => !disabled && onClick()}
         >
             <Icon className="w-6 h-6 2xl:w-5 2xl:h-5 text-muted-foreground group-hover:scale-110 group-hover:text-secondary-foreground inline" />
             <span className="hidden 2xl:inline ml-1 align-middle">
@@ -80,13 +84,14 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
         if (currentInput) {
             const newHistory = history.filter((cmd) => cmd !== currentInput);
             newHistory.unshift(currentInput);
-            if(newHistory.length > historyMaxLength) newHistory.pop();
+            if (newHistory.length > historyMaxLength) newHistory.pop();
             setHistory(newHistory);
             props.consoleWrite(currentInput);
         }
     };
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!props.isConnected) return;
         if (e.key === 'ArrowUp') {
             handleArrowUp();
             e.preventDefault();
@@ -121,16 +126,31 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
                     className="w-full"
                     placeholder="Type a command..."
                     type="text"
+                    disabled={!props.isConnected}
                     onKeyDown={handleInputKeyDown}
                 />
             </div>
             <div className="flex flex-row justify-evenly gap-3 2xl:gap-1 select-none">
                 {/* <ConsoleFooterButton icon={BookMarkedIcon} title="Saved" onClick={props.toggleSaveSheet} /> */}
-                <ConsoleFooterButton icon={SearchIcon} title="Search" onClick={props.toggleSearchBar} />
-                <ConsoleFooterButton icon={Trash2Icon} title="Clear" onClick={props.consoleClear} />
-                <ConsoleFooterButton icon={FileDownIcon} title="Download" onClick={() => {
-                    openExternalLink('/fxserver/downloadLog');
-                }} />
+                <ConsoleFooterButton
+                    icon={SearchIcon}
+                    title="Search"
+                    disabled={!props.isConnected}
+                    onClick={props.toggleSearchBar}
+                />
+                <ConsoleFooterButton
+                    icon={Trash2Icon}
+                    title="Clear"
+                    disabled={!props.isConnected}
+                    onClick={props.consoleClear}
+                />
+                <ConsoleFooterButton
+                    icon={FileDownIcon}
+                    title="Download"
+                    disabled={!props.isConnected}
+                    onClick={() => {
+                        openExternalLink('/fxserver/downloadLog');
+                    }} />
             </div>
         </div>
     );

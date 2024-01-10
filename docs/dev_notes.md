@@ -15,7 +15,8 @@
     - [x] custom event handler for f5, esc/ctrl+f (search), and ctrl+c
         - hotkeys should work on terminal, page and input
     - [x] command history (arrows only) with local storage
-    - [ ] socket.io connection
+    - [x] socket.io connection
+    - [ ] deal with the console markers - maybe custom decorators?
     - [ ] fix z-order, cant click postpone/support on the warning bar
     - [ ] tidy up the code
 - [ ] Update packages for all workspaces

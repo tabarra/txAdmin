@@ -7,7 +7,7 @@ import { useEventListener } from 'usehooks-ts';
 import { useContentRefresh, useSetPageTitle } from "@/hooks/pages";
 import { debounce, throttle } from 'throttle-debounce';
 
-import { ChevronsDownIcon } from "lucide-react";
+import { ChevronsDownIcon, Loader2Icon } from "lucide-react";
 import LiveConsoleFooter from "./LiveConsoleFooter";
 import LiveConsoleHeader from "./LiveConsoleHeader";
 import LiveConsoleSearchBar from "./LiveConsoleSearchBar";
@@ -17,6 +17,8 @@ import ScrollDownAddon from "./ScrollDownAddon";
 import terminalOptions from "./xtermOptions";
 import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
+import { getSocket } from '@/lib/utils';
+import { Socket } from 'socket.io-client';
 
 
 const keyDebounceTime = 150; //ms
@@ -124,17 +126,10 @@ export default function LiveConsole() {
                 }
                 return true;
             });
-
-            //DEBUG
-            term.writeln('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo. \u001b[1m\u001b[33m CanvasAddon');
-            for (let i = 0; i < 40; i++) {
-                term.writeln(Math.random().toString(36).substring(2, 15))
-            }
         }
     }, [term]);
 
     useEventListener('keydown', (e: KeyboardEvent) => {
-        console.log('live console keydown', e.code);
         if (e.code === 'F5') {
             refreshPage();
             e.preventDefault();
@@ -155,27 +150,67 @@ export default function LiveConsole() {
     });
 
     //DEBUG
+    // useEffect(() => {
+    //     let cnt = 0;
+    //     const interval = setInterval(function LoLoLoLoLoLoL() {
+    //         cnt++;
+    //         const mod = cnt % 60;
+    //         term.writeln(
+    //             cnt.toString().padStart(6, '0') + ' ' +
+    //             '\u001b[1m\u001b[31m=\u001b[0m'.repeat(mod) +
+    //             '\u001b[1m\u001b[33m.\u001b[0m'.repeat(60 - mod)
+    //         );
+    //     }, 100);
+    //     return () => clearInterval(interval);
+    // }, []);
+
+
+    /**
+     * SocketIO stuff
+     */
+    const socketStateChangeCounter = useRef(0);
+    const pageSocket = useRef<ReturnType<typeof getSocket> | null>(null);
+
+    //Runing on mount only
     useEffect(() => {
-        let cnt = 0;
-        const interval = setInterval(function LoLoLoLoLoLoL() {
-            cnt++;
-            const mod = cnt % 60;
-            term.writeln(
-                cnt.toString().padStart(6, '0') + ' ' +
-                '\u001b[1m\u001b[31m=\u001b[0m'.repeat(mod) +
-                '\u001b[1m\u001b[33m.\u001b[0m'.repeat(60 - mod)
-            );
-        }, 100);
-        return () => clearInterval(interval);
+        console.log('live console socket init');
+        pageSocket.current = getSocket(['liveconsole']);
+        pageSocket.current.on('connect', () => {
+            console.log("Live Console Socket.IO Connected.");
+            setIsConnected(true);
+        });
+        pageSocket.current.on('disconnect', (message) => {
+            console.log("Live Console Socket.IO Disonnected:", message);
+            //Grace period of 500ms to allow for quick reconnects
+            //Tracking the state change ID for the timeout not to overwrite a reconnection
+            const newId = socketStateChangeCounter.current + 1;
+            socketStateChangeCounter.current = newId;
+            setTimeout(() => {
+                if (socketStateChangeCounter.current === newId) {
+                    setIsConnected(false);
+                }
+            }, 500);
+        });
+        pageSocket.current.on('error', (error) => {
+            console.log('Live Console Socket.IO', error);
+        });
+        pageSocket.current.on('consoleData', function (data) {
+            term.write(data);
+        });
+
+        return () => {
+            pageSocket.current?.removeAllListeners();
+            pageSocket.current?.disconnect();
+        }
     }, []);
 
 
     /**
      * Action Handlers
      */
-    const consoleWrite = (data: string) => {
-        //FIXME:
-        term.writeln(data);
+    const consoleWrite = (cmd: string) => {
+        if (!isConnected || !pageSocket.current) return;
+        pageSocket.current.emit('consoleCommand', cmd);
     }
     const consoleClear = () => {
         term.clear();
@@ -184,6 +219,7 @@ export default function LiveConsole() {
         setShowSearchBar(!showSearchBar);
     }
     const toggleSaveSheet = () => {
+        //TODO: implement
         // setIsSaveSheetOpen(!isSaveSheetOpen);
     }
 
@@ -193,18 +229,33 @@ export default function LiveConsole() {
             <LiveConsoleHeader />
 
             <div className="flex flex-col relative grow bg-card">
+                {/* Connecting overlay */}
+                {!isConnected ? (
+                    <div className='absolute inset-0 z-10 md:rounded-t-xl bg-black/40 backdrop-blur-sm flex items-center justify-center'>
+                        <div className='flex flex-col gap-6 items-center justify-center text-muted-foreground select-none'>
+                            <Loader2Icon className='w-16 h-16 animate-spin' />
+                            <h2 className='text-3xl tracking-wider font-light animate-pulse'>
+                                &nbsp;&nbsp;&nbsp;Connecting...
+                            </h2>
+                        </div>
+                    </div>
+                ) : null}
+
                 {/* <LiveConsoleSaveSheet isOpen={isSaveSheetOpen} closeSheet={() => setIsSaveSheetOpen(false)} /> */}
 
+                {/* Terminal container */}
                 <div ref={containerRef} className='w-full h-full relative overflow-hidden'>
                     <div ref={termElRef} className='absolute inset-x-2x left-1 right-0 top-1' />
                 </div>
 
+                {/* Search bar */}
                 <LiveConsoleSearchBar
                     show={showSearchBar}
                     setShow={setShowSearchBar}
                     searchAddon={searchAddon}
                 />
 
+                {/* Scroll to bottom */}
                 <button
                     ref={jumpBottomBtnRef}
                     className='absolute bottom-0 right-2 z-50 hidden opacity-75'
