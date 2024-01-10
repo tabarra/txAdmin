@@ -174,7 +174,8 @@ export default function LiveConsole() {
      * Action Handlers
      */
     const consoleWrite = (data: string) => {
-        //
+        //FIXME:
+        term.writeln(data);
     }
     const consoleClear = () => {
         term.clear();

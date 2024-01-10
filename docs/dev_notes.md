@@ -14,7 +14,7 @@
         - find previous: shift+f3, shift+enter
     - [x] custom event handler for f5, esc/ctrl+f (search), and ctrl+c
         - hotkeys should work on terminal, page and input
-    - [ ] command history (arrows only) without local storage
+    - [x] command history (arrows only) with local storage
     - [ ] socket.io connection
     - [ ] fix z-order, cant click postpone/support on the warning bar
     - [ ] tidy up the code
@@ -22,7 +22,23 @@
 - [ ] Check layout on 4k and ultrawide screens
 - [ ] global hotkey to go to the player filter
     - careful to also handle child iframe and terminal canvas
+    - add util function that gets a KeyboardEvent and returns the name of the hotkey pressed, then apply it to child iframe, global keydown handler, and xterm
+- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] FIXME: check if we need or can do something to prevent NUI CSRF
+
+
+
+=======================================================================
+
+
+
+
+
+
+
+=======================================================================
+
+
 
 # TODO: v7.0.0 Release
 - [ ] talk to r* and make sure the new build process wipes the old cache

@@ -1,6 +1,9 @@
+import React, { useRef, useState } from 'react';
+import { useAtom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { Input } from "@/components/ui/input";
 import { openExternalLink } from "@/lib/utils";
-import { BookMarkedIcon, FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
+import { FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
 
 
 type ConsoleFooterButtonProps = {
@@ -23,6 +26,10 @@ function ConsoleFooterButton({ icon: Icon, title, onClick }: ConsoleFooterButton
     )
 }
 
+// Create the history atom outside of the component
+export const historyAtom = atomWithStorage<string[]>('liveConsoleCommandHistory', []);
+const historyMaxLength = 100;
+
 type LiveConsoleFooterProps = {
     isConnected: boolean;
     consoleWrite: (data: string) => void;
@@ -32,11 +39,63 @@ type LiveConsoleFooterProps = {
 }
 
 export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
+    const [history, setHistory] = useAtom(historyAtom);
+    const [histIndex, setHistIndex] = useState(-1);
+    const savedInput = useRef('');
+    const termInputRef = useRef<HTMLInputElement>(null);
+
+    const handleArrowUp = () => {
+        if (!termInputRef.current) return;
+        if (histIndex === -1) {
+            savedInput.current = termInputRef.current.value ?? '';
+        }
+        const nextHistId = histIndex + 1;
+        if (history[nextHistId]) {
+            termInputRef.current.value = history[nextHistId];
+            setHistIndex(nextHistId);
+        }
+    };
+
+    const handleArrowDown = () => {
+        if (!termInputRef.current) return;
+        const prevHistId = histIndex - 1;
+        if (prevHistId === -1) {
+            termInputRef.current.value = savedInput.current;
+            setHistIndex(prevHistId);
+        } else if (history[prevHistId]) {
+            termInputRef.current.value = history[prevHistId];
+            setHistIndex(prevHistId);
+        }
+    };
+
+    const handleEnter = () => {
+        if (!termInputRef.current) return;
+        const currentInput = termInputRef.current.value.trim();
+
+        //reset state
+        setHistIndex(-1);
+        termInputRef.current.value = '';
+        savedInput.current = '';
+
+        if (currentInput) {
+            const newHistory = history.filter((cmd) => cmd !== currentInput);
+            newHistory.unshift(currentInput);
+            if(newHistory.length > historyMaxLength) newHistory.pop();
+            setHistory(newHistory);
+            props.consoleWrite(currentInput);
+        }
+    };
+
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            const input = e.currentTarget.value;
-            props.consoleWrite(input);
-            e.currentTarget.value = '';
+        if (e.key === 'ArrowUp') {
+            handleArrowUp();
+            e.preventDefault();
+        } else if (e.key === 'ArrowDown') {
+            handleArrowDown();
+            e.preventDefault();
+        } else if (e.key === 'Enter') {
+            handleEnter();
+            e.preventDefault();
         }
     }
 
@@ -58,7 +117,7 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
                     <path d="m9 18 6-6-6-6" />
                 </svg>
                 <Input
-                    id="consoleInput"
+                    ref={termInputRef}
                     className="w-full"
                     placeholder="Type a command..."
                     type="text"

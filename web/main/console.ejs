@@ -100,6 +100,15 @@
     </div>
 </div>
 
+<!-- continuity warning -->
+<div class="row justify-content-md-center">
+    <div class="col-md-6 text-center">
+        <span class="text-warning font-weight-bold">
+            This legacy Live Console page is only still available during this Beta2 phase in case something breaks in the new one. It will be removed for the txAdmin v7.0.0 release.
+        </span>
+    </div>
+</div>
+
 
 <%- await include('parts/footer.ejs', locals) %>
 
@@ -161,14 +170,14 @@
             scrollBottom();
         }
 
-        //Load command history from local storage
-        if(typeof window.localStorage.liveConsoleCommandHistory !== 'undefined'){
+        // Load command history from local storage
+        if(typeof window.localStorage.liveConsoleCommandHistoryOld !== 'undefined'){
             try {
-                const fromStorage = JSON.parse(window.localStorage.liveConsoleCommandHistory);
+                const fromStorage = JSON.parse(window.localStorage.liveConsoleCommandHistoryOld);
                 commandHistory = fromStorage.slice(0 - commandHistoryLimit);
                 commandHistory.forEach(addCommandHistoryEntry);
             } catch (error) {
-                console.error('Failed to process window.localStorage.liveConsoleCommandHistory');
+                console.error('Failed to process window.localStorage.liveConsoleCommandHistoryOld');
             }
         }
 
@@ -236,7 +245,7 @@
                     element.remove();
                     commandHistory.shift();
                 }
-                window.localStorage.liveConsoleCommandHistory = JSON.stringify(commandHistory);
+                window.localStorage.liveConsoleCommandHistoryOld = JSON.stringify(commandHistory);
             }
         });
 
