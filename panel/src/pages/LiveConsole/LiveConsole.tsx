@@ -2,6 +2,7 @@ import { Terminal } from '@xterm/xterm';
 import { CanvasAddon } from '@xterm/addon-canvas';
 import { FitAddon } from '@xterm/addon-fit';
 import { SearchAddon } from '@xterm/addon-search';
+import { WebLinksAddon } from '@xterm/addon-web-links';
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useEventListener } from 'usehooks-ts';
 import { useContentRefresh, useSetPageTitle } from "@/hooks/pages";
@@ -17,7 +18,7 @@ import ScrollDownAddon from "./ScrollDownAddon";
 import terminalOptions from "./xtermOptions";
 import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
-import { getSocket } from '@/lib/utils';
+import { getSocket, openExternalLink } from '@/lib/utils';
 import { Socket } from 'socket.io-client';
 
 
@@ -41,6 +42,10 @@ export default function LiveConsole() {
     const term = useMemo(() => new Terminal(terminalOptions), []);
     const fitAddon = useMemo(() => new FitAddon(), []);
     const searchAddon = useMemo(() => new SearchAddon(), []);
+    const termLinkHandler = (event: MouseEvent, uri: string) => {
+        openExternalLink(uri);
+    };
+    const webLinksAddon = useMemo(() => new WebLinksAddon(termLinkHandler), []);
 
     const sendSearchKeyEvent = throttle(keyDebounceTime, (action: string) => {
         window.postMessage({
@@ -75,6 +80,7 @@ export default function LiveConsole() {
             termElRef.current.innerHTML = ''; //due to HMR, the terminal element might still be there
             term.loadAddon(fitAddon);
             term.loadAddon(searchAddon);
+            term.loadAddon(webLinksAddon);
             term.loadAddon(new CanvasAddon());
             term.loadAddon(new ScrollDownAddon(jumpBottomBtnRef));
             term.open(termElRef.current);
