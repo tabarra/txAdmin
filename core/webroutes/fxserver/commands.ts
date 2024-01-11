@@ -62,7 +62,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
                 ExecuteCommand(`profiler save "${escape(savePath)}"`);
                 setTimeout(async () => {
                     console.ok(`Profile saved to: ${savePath}`);
-                    fxRunner.srvCmd(`profiler view "${escape(savePath)}"`);
+                    fxRunner.srvCmd(`profiler view "${escape(savePath)}"`, ctx.admin.name);
                 }, 150);
             }, 150);
         }, profileDuration * 1000);
@@ -108,7 +108,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
             cmd = 'txaKickAll "txAdmin Web Panel"';
         }
         ctx.admin.logCommand(cmd);
-        await fxRunner.srvCmdBuffer(cmd);
+        fxRunner.srvCmd(cmd, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'success',
             msg: 'Kick All command sent.',
@@ -119,7 +119,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         const cmd = formatCommand('restart', parameter);
         ctx.admin.logCommand(cmd);
-        await fxRunner.srvCmdBuffer(cmd);
+        fxRunner.srvCmd(cmd, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'warning',
             msg: 'Resource restart command sent.',
@@ -130,7 +130,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         const cmd = formatCommand('start', parameter);
         ctx.admin.logCommand(cmd);
-        await fxRunner.srvCmdBuffer(cmd);
+        fxRunner.srvCmd(cmd, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'warning',
             msg: 'Resource start command sent.',
@@ -141,7 +141,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         const cmd = formatCommand('ensure', parameter);
         ctx.admin.logCommand(cmd);
-        await fxRunner.srvCmdBuffer(cmd);
+        fxRunner.srvCmd(cmd, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'warning',
             msg: 'Resource ensure command sent.',
@@ -152,7 +152,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         const cmd = formatCommand('stop', parameter);
         ctx.admin.logCommand(cmd);
-        await fxRunner.srvCmdBuffer(cmd);
+        fxRunner.srvCmd(cmd, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'warning',
             msg: 'Resource stop command sent.',
@@ -163,28 +163,11 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
         const cmd = 'refresh';
         ctx.admin.logCommand(cmd);
-        await fxRunner.srvCmdBuffer(cmd);
+        fxRunner.srvCmd(cmd, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'warning',
             msg: 'Refresh command sent.',
         });
-
-    //==============================================
-    } else if (action == 'check_txaclient') {
-        const cmd = 'txaPing';
-        ctx.admin.logCommand(cmd);
-        const buffer = await fxRunner.srvCmdBuffer(cmd, 512);
-        if (buffer.includes('Pong!')) {
-            return ctx.send<ApiToastResp>({
-                type: 'success',
-                msg: 'txAdminClient is running!',
-            });
-        } else {
-            return ctx.send<ApiToastResp>({
-                type: 'error',
-                msg: 'txAdminClient is not running!',
-            });
-        }
 
     //==============================================
     } else {

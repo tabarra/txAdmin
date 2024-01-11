@@ -19,7 +19,6 @@ import terminalOptions from "./xtermOptions";
 import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
 import { getSocket, openExternalLink } from '@/lib/utils';
-import { Socket } from 'socket.io-client';
 
 
 const keyDebounceTime = 150; //ms

@@ -30,7 +30,6 @@ const terminalOptions: ITerminalOptions | ITerminalInitOnlyOptions = {
     cursorBlink: true,
     cursorStyle: 'bar',
     disableStdin: true,
-    drawBoldTextInBrightColors: false,
     fontFamily: "JetBrains Mono Variable, monospace",
     fontSize: 13,
     fontWeight: "300",

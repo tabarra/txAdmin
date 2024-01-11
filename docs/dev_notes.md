@@ -17,7 +17,7 @@
     - [x] command history (arrows only) with local storage
     - [x] socket.io connection
     - [x] open web links
-    - [ ] deal with the console markers - maybe custom decorators?
+    - [x] deal with the console markers - ~~maybe custom decorators?~~
     - [ ] fix z-order, cant click postpone/support on the warning bar
     - [ ] tidy up the code
 - [ ] Update packages for all workspaces
