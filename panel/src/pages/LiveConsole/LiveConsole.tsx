@@ -83,8 +83,8 @@ export default function LiveConsole() {
             term.loadAddon(new CanvasAddon());
             term.loadAddon(new ScrollDownAddon(jumpBottomBtnRef));
             term.open(termElRef.current);
-            refitTerminal();
             term.write('\x1b[?25l'); //hide cursor
+            refitTerminal();
 
             const scrollPageUp = throttle(keyDebounceTime, () => {
                 term.scrollLines(Math.min(1, 2 - term.rows));
@@ -236,7 +236,7 @@ export default function LiveConsole() {
             <div className="flex flex-col relative grow bg-card">
                 {/* Connecting overlay */}
                 {!isConnected ? (
-                    <div className='absolute inset-0 z-10 md:rounded-t-xl bg-black/40 backdrop-blur-sm flex items-center justify-center'>
+                    <div className='absolute inset-0 z-20 bg-black/40 backdrop-blur-sm flex items-center justify-center'>
                         <div className='flex flex-col gap-6 items-center justify-center text-muted-foreground select-none'>
                             <Loader2Icon className='w-16 h-16 animate-spin' />
                             <h2 className='text-3xl tracking-wider font-light animate-pulse'>
@@ -263,7 +263,7 @@ export default function LiveConsole() {
                 {/* Scroll to bottom */}
                 <button
                     ref={jumpBottomBtnRef}
-                    className='absolute bottom-0 right-2 z-50 hidden opacity-75'
+                    className='absolute bottom-0 right-2 z-10 hidden opacity-75'
                     onClick={() => { term.scrollToBottom() }}
                 >
                     <ChevronsDownIcon className='w-20 h-20 animate-pulse hover:animate-none hover:scale-110' />

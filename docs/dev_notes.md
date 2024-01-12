@@ -4,7 +4,7 @@
 - [x] tweak(panel/modal): notes change should invalidate the data and auto resize
 - [x] Change the kick all to require the `control.server` permission (issue #379)
 - [x] Disable the buttons in the server status card based on permission
-- [ ] NEW PAGE: Live console
+- [x] NEW PAGE: Live console
     - [x] terminal layout + jsx
     - [x] basic xterm.js (canvas mode)
     - [x] auto re-fit
@@ -18,14 +18,15 @@
     - [x] socket.io connection
     - [x] open web links
     - [x] deal with the console markers - ~~maybe custom decorators?~~
-    - [ ] fix z-order, cant click postpone/support on the warning bar
-    - [ ] tidy up the code
-- [ ] Update packages for all workspaces
+    - [x] when page open, focus input
+    - [x] tidy up the code
+    - [x] fix z-order, cant click postpone/support on the warning bar
+- [x] Update packages for all workspaces + root
+- [x] FIXME: deployer "show db advanced options" has broken css and causes tx inception
 - [ ] Check layout on 4k and ultrawide screens
 - [ ] global hotkey to go to the player filter
     - careful to also handle child iframe and terminal canvas
     - add util function that gets a KeyboardEvent and returns the name of the hotkey pressed, then apply it to child iframe, global keydown handler, and xterm
-- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] FIXME: check if we need or can do something to prevent NUI CSRF
 
 
@@ -48,15 +49,18 @@
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
 - [ ] zap hosting advertisement
 - [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
-- [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851) 
+- [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
+- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
+- [ ] Remove old live console menu links
 
+- [ ] onesync should be legacy by default
 - [ ] check all discord invites (use utm params maybe?)
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 - [ ] tutorial stepper for the new UI?
 - [ ] update docs on development?
 
 # TODO: v7.1+
-- [ ] Remove old live console
+- [ ] Remove old live console legacy code
 - [ ] fix the tsc build
 
 - [ ] NEW PAGE: Dashboard
@@ -67,6 +71,8 @@
 - [ ] NEW PAGE: Players
 - [ ] NEW PAGE: History
 
+- [ ] console nav button to jump to server start or errors?
+- [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 
@@ -209,7 +215,29 @@ setTimeout(() => {
 - hooks
 - lib
 
+### panel z-order
+z-10    UI: Header
+z-10    shadcn: NavigationMenu
 
+z-10    Terminal: LiveConsoleSearchBar
+z-10    Terminal "scroll to bottom" button
+z-20    Terminal: "connecting" overlay
+
+z-20    Terminal: LiveConsoleSaveSheet > SheetBackdrop
+z-20    Terminal: LiveConsoleSaveSheet
+--------------------------------------------
+z-40    UI: WarningBar
+z-40    UI: CustomToaster
+
+z-50    shadcn: AlertDialogOverlay
+z-50    shadcn: AlertDialogContent
+z-50    shadcn: DialogOverlay
+z-50    shadcn: DialogContent
+z-50    shadcn: DropdownMenuContent
+z-50    shadcn: SelectContent
+z-50    shadcn: SheetOverlay
+z-50    shadcn: SheetContent
+z-50    shadcn: TooltipContent
 
 ### Page Changes:
 Players:
@@ -258,6 +286,7 @@ Master Actions:
 - [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so I can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
 
 - [ ] write some automated tests for the auth logic and middlewares
+    - https://youtu.be/bzXtYVH4WOg
 - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
 - [ ] fix the eslint config
 - [ ] add fxserver version to txDiagnostics

@@ -23,19 +23,19 @@ const regexConsole = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F\x80-\x9F]/g;
 const regexCsi = /(\u001b\[|\u009B)[\d;]+[@-K]/g;
 const regexColors = /\u001b[^m]*?m/g;
 
-
 const markLines = (msg, type, prefix = '') => {
     let colorFunc = (x) => x;
     if (type === 'cmd') {
-        colorFunc = chalk.bgYellowBright.black;
+        colorFunc = chalk.bgYellowBright.bold.black;
     } else if (type === 'error') {
-        colorFunc = chalk.bgRedBright.black;
+        colorFunc = chalk.bgRedBright.bold.black;
     } else if (type === 'info') {
-        colorFunc = chalk.bgBlueBright.black;
+        colorFunc = chalk.bgBlueBright.bold.black;
     } else if (type === 'ok') {
-        colorFunc = chalk.bgGreenBright.black;
+        colorFunc = chalk.bgGreenBright.bold.black;
     }
-    const taggedPrefix = prefix ? `[${prefix}] ` : '';
+    const paddedPrefix = prefix.padStart(20, ' ');
+    const taggedPrefix = prefix ? `[${paddedPrefix}] ` : ' ';
     return msg.trim()
         .split('\n')
         .map((l) => colorFunc(`${taggedPrefix}${l}`))
@@ -98,7 +98,7 @@ export default class FXServerLogger extends LoggerBase {
             if (!globals.fxRunner.config.quiet) {
                 process.stdout.write(`\n${chalk.bgBlue(msg)}\n`);
             }
-            const coloredMarkData = `\n\n${markLines(msg, 'info', 'SYSTEM')}\n`;
+            const coloredMarkData = `\n\n${markLines(msg, 'info', 'TXADMIN')}\n`;
             globals.webServer.webSocket.buffer('liveconsole', coloredMarkData);
             this.appendRecent(coloredMarkData);
         } else if (type === 'command') {

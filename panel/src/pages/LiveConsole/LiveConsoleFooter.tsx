@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { Input } from "@/components/ui/input";
 import { cn, openExternalLink } from "@/lib/utils";
-import { FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
+import { BookMarkedIcon, FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
 
 
 type ConsoleFooterButtonProps = {
@@ -30,7 +30,9 @@ function ConsoleFooterButton({ icon: Icon, title, disabled, onClick }: ConsoleFo
     )
 }
 
+
 // Create the history atom outside of the component
+// TODO: move this to hooks?
 export const historyAtom = atomWithStorage<string[]>('liveConsoleCommandHistory', []);
 const historyMaxLength = 100;
 
@@ -47,6 +49,13 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
     const [histIndex, setHistIndex] = useState(-1);
     const savedInput = useRef('');
     const termInputRef = useRef<HTMLInputElement>(null);
+
+    //autofocus on input when connected
+    useEffect(() => {
+        if (props.isConnected && termInputRef.current) {
+            termInputRef.current.focus();
+        }
+    }, [props.isConnected]);
 
     const handleArrowUp = () => {
         if (!termInputRef.current) return;
@@ -75,8 +84,6 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
     const handleEnter = () => {
         if (!termInputRef.current) return;
         const currentInput = termInputRef.current.value.trim();
-
-        //reset state
         setHistIndex(-1);
         termInputRef.current.value = '';
         savedInput.current = '';
@@ -128,6 +135,7 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
                     type="text"
                     disabled={!props.isConnected}
                     onKeyDown={handleInputKeyDown}
+                    autoCapitalize='none'
                 />
             </div>
             <div className="flex flex-row justify-evenly gap-3 2xl:gap-1 select-none">

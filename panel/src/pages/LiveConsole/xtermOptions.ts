@@ -30,9 +30,11 @@ const terminalOptions: ITerminalOptions | ITerminalInitOnlyOptions = {
     cursorBlink: true,
     cursorStyle: 'bar',
     disableStdin: true,
+    drawBoldTextInBrightColors: false,
     fontFamily: "JetBrains Mono Variable, monospace",
     fontSize: 13,
     fontWeight: "300",
+    fontWeightBold: "600",
     letterSpacing: 0.8,
     scrollback: 5000,
     // scrollback: 2500, //more or less equivalent to the legacy 250kb limit

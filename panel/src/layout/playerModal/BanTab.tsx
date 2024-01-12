@@ -6,9 +6,9 @@ import { useAdminPerms } from "@/hooks/auth";
 import { PlayerModalRefType, useClosePlayerModal } from "@/hooks/playerModal";
 import { Loader2Icon } from "lucide-react";
 import { useRef, useState } from "react";
-import { PlayerModalMidMessage } from "./PlayerModal";
 import { useBackendApi } from "@/hooks/fetch";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
+import PlayerModalMidMessage from "./PlayerModalMidMessage";
 
 
 export default function BanTab({ playerRef }: { playerRef: PlayerModalRefType }) {

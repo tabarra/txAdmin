@@ -102,7 +102,6 @@ export default function LiveConsoleSearchBar({ show, setShow, searchAddon }: Liv
         console.log('forward search for', inputRef.current.value);
         searchAddon.findNext(inputRef.current.value, getSearchOptions());
     }
-
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!inputRef.current) return;
         console.log('search input keydown', e.code);

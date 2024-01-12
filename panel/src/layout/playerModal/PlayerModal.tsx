@@ -17,15 +17,7 @@ import { cn } from "@/lib/utils";
 import { useBackendApi } from "@/hooks/fetch";
 import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
 import PlayerModalFooter from "./PlayerModalFooter";
-
-
-export function PlayerModalMidMessage({ children }: { children: React.ReactNode }) {
-    return (
-        <div className="flex items-center justify-center min-h-[16.5rem] text-xl p1 text-muted-foreground">
-            {children}
-        </div>
-    )
-}
+import PlayerModalMidMessage from "./PlayerModalMidMessage";
 
 
 const modalTabs = [

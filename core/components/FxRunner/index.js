@@ -456,13 +456,13 @@ export default class FXRunner {
      * TODO: make this method accept an array and apply the formatCommand() logic
      * @param {string} command
      */
-    srvCmd(command) {
+    srvCmd(command, src = 'TXADMIN') {
         if (typeof command !== 'string') throw new Error('Expected String!');
         if (this.fxChild === null) return false;
         const sanitized = command.replaceAll(/\n/g, ' ');
         try {
             const success = this.fxChild.stdin.write(sanitized + '\n');
-            globals.logger.fxserver.writeMarker('command', sanitized);
+            globals.logger.fxserver.writeMarker('command', sanitized, src);
             return success;
         } catch (error) {
             console.verbose.error('Error writing to fxChild.stdin');
@@ -480,32 +480,7 @@ export default class FXRunner {
      */
     liveConsoleCmdHandler(admin, command) {
         admin.logCommand(command, 'command');
-        globals.fxRunner.srvCmd(command);
-    }
-
-
-    //================================================================
-    /**
-     * Pipe a string into FXServer's stdin (aka executes a cfx's command) and returns the stdout output.
-     * NOTE: used only in webroutes\fxserver\commands.js and webroutes\player\actions.js
-     * FIXME: deprecate this with a promise that resolves or rejects.
-     * we can create a promise with settimeout to reject, and create a function that resolves it
-     * and set this function in a map with the cmd id, and the resolve function as value
-     * the internal functions should fd3 {id, message?} and outputhandler do Map.get(id)(message)
-     * @param {*} command
-     * @param {*} bufferTime the size of the buffer in milliseconds
-     * @returns {string} buffer
-     */
-    async srvCmdBuffer(command, bufferTime = 1500) {
-        if (typeof command !== 'string') throw new Error('Expected String!');
-        if (this.fxChild === null) return false;
-        this.outputHandler.cmdBuffer = '';
-        this.outputHandler.enableCmdBuffer = true;
-        const result = this.srvCmd(command);
-        if (!result) return false;
-        await sleep(bufferTime);
-        this.outputHandler.enableCmdBuffer = false;
-        return this.outputHandler.cmdBuffer.replace(/\x1b\[\d+(;\d)?m/g, '');
+        globals.fxRunner.srvCmd(command, admin.name);
     }
 
 

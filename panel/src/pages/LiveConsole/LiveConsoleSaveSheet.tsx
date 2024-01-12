@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { PlusCircleIcon, PlusIcon, StarIcon, StarOffIcon, XIcon } from "lucide-react";
+import { PlusIcon, StarIcon, StarOffIcon, XIcon } from "lucide-react";
 
 
 type SheetProps = {
@@ -8,12 +8,11 @@ type SheetProps = {
     closeSheet: () => void;
 }
 
-
 function SheetBackdrop({ isOpen, closeSheet }: SheetProps) {
     return (
         <div
             className={cn(
-                'absolute inset-0 z-10 md:rounded-t-xl',
+                'absolute inset-0 z-20 md:rounded-t-xl',
                 'bg-black/40 duration-300',
                 'data-[state=open]:pointer-events-auto data-[state=closed]:pointer-events-none',
                 'data-[state=open]:opacity-100 data-[state=open]:backdrop-blur-sm',
@@ -80,10 +79,6 @@ const exampleCommandList = [
     "git commit -m 'Initial commit'",
 ];
 
-const saveListToLocalStorage = (list: string[]) => {
-    localStorage.setItem('savedCommands', JSON.stringify(list));
-}
-
 
 function SheetCommand({ cmd, type }: { cmd: string, type: 'history' | 'saved' }) {
     return (
@@ -110,8 +105,6 @@ function SheetCommand({ cmd, type }: { cmd: string, type: 'history' | 'saved' })
         </div>
     )
 }
-
-
 
 
 function SheetContent() {

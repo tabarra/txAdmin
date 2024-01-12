@@ -1,3 +1,4 @@
+/* Overrides the browser default ugly scroll bar */
 .xterm-decoration-overview-ruler {
     right: 8px;
 }

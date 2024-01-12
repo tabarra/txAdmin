@@ -92,6 +92,9 @@ export default async function AdvancedActions(ctx) {
     } else if (action == 'setHbDataTracking') {
         globals.tmpSetHbDataTracking = true;
         return ctx.send({ type: 'success', message: 'done' });
+    } else if (action == 'snap') {
+        if (Citizen && Citizen.snap) Citizen.snap();
+        return ctx.send({ type: 'success', message: 'terminal' });
     } else if (action == 'xxxxxx') {
         // const res = globals.playerDatabase.xxxxx();
         // console.dir(res);

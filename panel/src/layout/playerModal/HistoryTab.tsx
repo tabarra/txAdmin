@@ -2,10 +2,10 @@ import { Button } from "@/components/ui/button";
 import { useAdminPerms } from "@/hooks/auth";
 import { cn, tsToLocaleDateTime } from "@/lib/utils";
 import { PlayerHistoryItem } from "@shared/playerApiTypes";
-import { PlayerModalMidMessage } from "./PlayerModal";
 import { useBackendApi } from "@/hooks/fetch";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import InlineCode from "@/components/InlineCode";
+import PlayerModalMidMessage from "./PlayerModalMidMessage";
 
 
 type HistoryItemProps = {
