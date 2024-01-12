@@ -30,19 +30,19 @@
   "homepage": "https://txadmin.gg/",
   "dependencies": {
     "chalk": "^5.3.0",
-    "humanize-duration": "^3.30.0",
+    "humanize-duration": "^3.31.0",
     "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@types/node": "^16.9.1",
-    "esbuild": "~0.19.3",
-    "eslint": "^8.49.0",
-    "typescript": "^5.2.2",
+    "esbuild": "~0.19.11",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
     "husky": "^8.0.3",
-    "@types/humanize-duration": "^3.27.1",
-    "@commitlint/cli": "^17.7.1",
-    "@commitlint/config-conventional": "^17.7.0",
-    "@types/lodash-es": "^4.17.9",
-    "rimraf": "^5.0.1"
+    "@types/humanize-duration": "^3.27.4",
+    "@commitlint/cli": "^18.4.4",
+    "@commitlint/config-conventional": "^18.4.4",
+    "@types/lodash-es": "^4.17.12",
+    "rimraf": "^5.0.5"
   }
 }
