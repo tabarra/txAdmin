@@ -19,6 +19,18 @@
     "nanoid": {
       "versions": ">4",
       "reason": "dropped support for node 16"
+    },
+    "got": {
+      "versions": ">13",
+      "reason": "dropped support for node 16"
+    },
+    "jose": {
+      "versions": ">4",
+      "reason": "dropped support for node 16"
+    },
+    "lowdb": {
+      "versions": ">6",
+      "reason": "dropped support for node 16"
     }
   }
 }

@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { usePlayerModalStateValue } from "@/hooks/playerModal";
-import { InfoIcon, ListIcon, HistoryIcon, BanIcon } from "lucide-react";
+import { InfoIcon, ListIcon, HistoryIcon, GavelIcon } from "lucide-react";
 import InfoTab from "./InfoTab";
 import { useEffect, useState } from "react";
 import IdsTab from "./IdsTab";
@@ -43,7 +43,7 @@ const modalTabs = [
     },
     {
         title: 'Ban',
-        icon: <BanIcon className="mr-2 h-5 w-5 hidden xs:block" />,
+        icon: <GavelIcon className="mr-2 h-5 w-5 hidden xs:block" />,
         className: 'hover:bg-destructive hover:text-destructive-foreground',
     }
 ]
