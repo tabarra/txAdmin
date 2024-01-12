@@ -19,6 +19,8 @@ import {
     DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useOpenPlayerModal } from "@/hooks/playerModal";
+import InlineCode from "@/components/InlineCode";
+import { useEventListener } from "usehooks-ts";
 
 
 //NOTE: Move the styles (except color) to global.css since this component is rendered often
@@ -40,11 +42,18 @@ type PlayerlistFilterProps = {
     setFilterString: (s: string) => void;
 };
 function PlayerlistFilter({ filterString, setFilterString }: PlayerlistFilterProps) {
+    const inputRef = useRef<HTMLInputElement>(null);
+    useEventListener('message', (e: TxMessageEvent) => {
+        if (e.data.type === 'globalHotkey' && e.data.action === 'focusPlayerlistFilter') {
+            inputRef.current?.focus();
+        }
+    });
+
     return (
         <div className="pt-2 px-2 flex gap-2">
             <div className="relative w-full">
                 <Input
-                    id="playerlistFilter"
+                    ref={inputRef}
                     className="h-8"
                     placeholder="Filter by Name or ID"
                     value={filterString}
@@ -55,12 +64,18 @@ function PlayerlistFilter({ filterString, setFilterString }: PlayerlistFilterPro
                         }
                     }}
                 />
-                {filterString && <button
-                    className="absolute right-2 top-0 bottom-0 text-zinc-500 dark:text-zinc-400 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
-                    onClick={() => setFilterString('')}
-                >
-                    <XIcon />
-                </button>}
+                {filterString ? (
+                    <button
+                        className="absolute right-2 inset-y-0 text-zinc-500 dark:text-zinc-400 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
+                        onClick={() => setFilterString('')}
+                    >
+                        <XIcon />
+                    </button>
+                ) : (
+                    <div className="absolute right-2 inset-y-0 flex items-center text-zinc-500 dark:text-zinc-400">
+                        <InlineCode className="text-xs tracking-wide select-none">ctrl+k</InlineCode>
+                    </div>
+                )}
             </div>
             {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -133,8 +148,8 @@ function PlayerlistFilter({ filterString, setFilterString }: PlayerlistFilterPro
 const PlayerlistFilterMemo = memo(PlayerlistFilter);
 
 
-type PlayerlistPlayerProps = { 
-    virtualItem: VirtualItem, 
+type PlayerlistPlayerProps = {
+    virtualItem: VirtualItem,
     player: PlayerlistPlayerType,
     modalOpener: (netid: number) => void,
 }
@@ -196,8 +211,8 @@ export default function Playerlist() {
     const virtualItems = rowVirtualizer.getVirtualItems();
 
     const modalOpener = (netid: number) => {
-        if(!serverMutex) return;
-        openPlayerModal({mutex: serverMutex, netid});
+        if (!serverMutex) return;
+        openPlayerModal({ mutex: serverMutex, netid });
     }
 
     return (

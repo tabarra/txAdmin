@@ -19,6 +19,7 @@ import terminalOptions from "./xtermOptions";
 import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
 import { getSocket, openExternalLink } from '@/lib/utils';
+import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 
 
 const keyDebounceTime = 150; //ms
@@ -127,6 +128,8 @@ export default function LiveConsole() {
                     return false;
                 } else if (e.code === 'End') {
                     scrollBottom();
+                    return false;
+                } else if (handleHotkeyEvent(e)) {
                     return false;
                 }
                 return true;

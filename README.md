@@ -48,7 +48,7 @@
 - Monitoring:
 	- Auto Restart FXServer on crash or hang
 	- Server’s CPU/RAM consumption
-	- Live Console (with log file and command history)
+	- Live Console (with log file, command history and search)
 	- Server tick time performance chart with player count ([example](https://i.imgur.com/VG8hpzr.gif))
 	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/custom_serverlog.md))
 - Player Manager:
@@ -63,7 +63,7 @@
 - Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
 - Translation Support ([more info](docs/translation.md))
 - FiveM's Server CFG editor & validator
-- Responsive(ish) web interface with Dark Mode 😎
+- Responsive web interface with Dark Mode 😎
 
 Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 

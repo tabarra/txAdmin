@@ -156,7 +156,6 @@ export default function LiveConsoleSearchBar({ show, setShow, searchAddon }: Liv
             <div className="relative">
                 <Input
                     ref={inputRef}
-                    id="playerlistFilter"
                     className="h-8"
                     placeholder="Search string"
                     onKeyDown={handleInputKeyDown}

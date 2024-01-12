@@ -23,8 +23,8 @@
     - [x] fix z-order, cant click postpone/support on the warning bar
 - [x] Update packages for all workspaces + root
 - [x] FIXME: deployer "show db advanced options" has broken css and causes tx inception
-- [ ] Check layout on 4k and ultrawide screens
-- [ ] global hotkey to go to the player filter
+- [x] Check layout on 4k and ultrawide screens
+- [x] global hotkey to go to the player filter
     - careful to also handle child iframe and terminal canvas
     - add util function that gets a KeyboardEvent and returns the name of the hotkey pressed, then apply it to child iframe, global keydown handler, and xterm
 - [ ] FIXME: check if we need or can do something to prevent NUI CSRF
@@ -52,6 +52,7 @@
 - [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
 - [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] Remove old live console menu links
+- [ ] Add clear copyright/license notice at the bottom of the server sidebar?
 
 - [ ] onesync should be legacy by default
 - [ ] check all discord invites (use utm params maybe?)

@@ -17,6 +17,7 @@ import { navigate as setLocation } from 'wouter/use-location';
 import MainSocket from './MainSocket';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useToggleTheme } from '@/hooks/useTheme';
+import { hotkeyEventListener } from '@/lib/hotkeyEventListener';
 import BreakpointDebugger from '@/components/BreakpointDebugger';
 
 
@@ -26,7 +27,7 @@ export default function MainShell() {
     const openPlayerModal = useOpenPlayerModal();
     const toggleTheme = useToggleTheme();
 
-    //Listener for messages from child iframes (legacy routes)
+    //Listener for messages from child iframes (legacy routes) or other sources
     useEventListener('message', (e: TxMessageEvent) => {
         if (e.data.type === 'logoutNotice') {
             expireSession('child iframe', 'got logoutNotice');
@@ -36,24 +37,14 @@ export default function MainShell() {
             openPlayerModal(e.data.ref);
         } else if (e.data.type === 'navigateToPage') {
             setLocation(e.data.href);
+        } else if (e.data.type === 'globalHotkey' && e.data.action === 'toggleLightMode') {
+            toggleTheme();
         }
     });
 
-    //Listens to hotkeys - DEBUG only for now
+    //Listens to hotkeys
     //NOTE: WILL NOT WORK IF THE FOCUS IS ON THE IFRAME
-    useEventListener('keydown', (e: KeyboardEvent) => {
-        if (!window.txConsts.showAdvanced) return;
-        if (e.ctrlKey && e.key === 'k') {
-            const el = document.getElementById('playerlistFilter');
-            if (el) {
-                el.focus();
-                e.preventDefault();
-            }
-        } else if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'l') {
-            toggleTheme();
-            e.preventDefault();
-        }
-    });
+    useEventListener('keydown', hotkeyEventListener);
 
     return <>
         <TooltipProvider delayDuration={300} disableHoverableContent={true}>

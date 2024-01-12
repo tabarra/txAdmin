@@ -49,7 +49,7 @@ const applyNewTheme = (oldTheme: string, newTheme: string) => {
     }
 
     //Changing iframe theme
-    const iframeBody = (document.getElementById('legacyPageiframe') as HTMLObjectElement)?.contentDocument?.body;
+    const iframeBody = (document.getElementById('legacyPageIframe') as HTMLObjectElement)?.contentDocument?.body;
     if (iframeBody) {
         if (iframeTheme === 'dark') {
             iframeBody.classList.add('theme--dark');
