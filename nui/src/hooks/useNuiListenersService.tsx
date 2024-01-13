@@ -27,6 +27,6 @@ export const useNuiListenerService = () => {
   useNuiEvent<ServerCtx>("setServerCtx", setServerCtxState);
   useNuiEvent<txAdminMenuPage>("setMenuPage", setMenuPage);
   useNuiEvent("resetSession", ()=>{
-    fetchWebPipe<string>("/resetSession").catch();
+    fetchWebPipe<string>("/nui/resetSession").catch();
   });
 };

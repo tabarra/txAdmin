@@ -176,6 +176,7 @@ RegisterSecureNuiCallback('closeMenu', function(_, cb)
   debugPrint('Releasing all NUI Focus')
   SetNuiFocus(false)
   SetNuiFocusKeepInput(false)
+  playLibrarySound('enter')
   cb({})
 end)
 
@@ -200,9 +201,9 @@ RegisterNetEvent('txcl:heal', function()
   ClearPedBloodDamage(ped)
   RestorePlayerStamina(PlayerId(), 100.0)
   if IS_REDM then
-    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 0, 100)   -- SetAttributeCoreValue
-    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 1, 100)   -- SetAttributeCoreValue
-    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 2, 100)   -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 0, 100) -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 1, 100) -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 2, 100) -- SetAttributeCoreValue
   end
 end)
 

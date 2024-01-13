@@ -47,6 +47,7 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
     end
 
     -- Cookie wiper to prevent sticky cookie sessions after reauth
+    -- FIXME: deprecate this path?!
     if path == '/nui/resetSession' then
         if type(headers['Cookie']) ~= 'string' then
             return cb({
@@ -55,8 +56,8 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
             })
         else
             local cookies = {}
-            for cookie in headers['Cookie']:gmatch('(tx:[^=]+)') do 
-                cookies[#cookies +1] = cookie.."=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly; SameSite=None; Secure"
+            for cookie in headers['Cookie']:gmatch('(tx:[^=]+)') do
+                cookies[#cookies + 1] = cookie .. "=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly; SameSite=None; Secure"
             end
             return cb({
                 status = 200,
