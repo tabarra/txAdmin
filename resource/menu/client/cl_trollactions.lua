@@ -150,17 +150,17 @@ end)
 
 
 --[[ NUI Callbacks ]]
-RegisterNUICallback('drunkEffectPlayer', function(data, cb)
+RegisterSecureNuiCallback('drunkEffectPlayer', function(data, cb)
     TriggerServerEvent('txsv:req:troll:setDrunk', tonumber(data.id))
     cb({})
 end)
 
-RegisterNUICallback('setOnFire', function(data, cb)
+RegisterSecureNuiCallback('setOnFire', function(data, cb)
     TriggerServerEvent('txsv:req:troll:setOnFire', tonumber(data.id))
     cb({})
 end)
 
-RegisterNUICallback('wildAttack', function(data, cb)
+RegisterSecureNuiCallback('wildAttack', function(data, cb)
     TriggerServerEvent('txsv:req:troll:wildAttack', tonumber(data.id))
     cb({})
 end)

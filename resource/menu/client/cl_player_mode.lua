@@ -212,7 +212,7 @@ RegisterCommand('txAdmin:menu:noClipToggle', function()
 end)
 
 -- Menu callback to change the player mode
-RegisterNUICallback('playerModeChanged', function(mode, cb)
+RegisterSecureNuiCallback('playerModeChanged', function(mode, cb)
     askChangePlayerMode(mode)
     cb({})
 end)

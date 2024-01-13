@@ -184,7 +184,7 @@ end)
 
 
 -- Triggered when the "player" tab opens in the menu, and every 5s after that
-RegisterNUICallback('signalPlayersPageOpen', function(_, cb)
+RegisterSecureNuiCallback('signalPlayersPageOpen', function(_, cb)
     TriggerServerEvent('txsv:req:plist:getDetailed', requirePlayerNames)
     requirePlayerNames = false
     cb({})

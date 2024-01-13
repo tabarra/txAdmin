@@ -142,7 +142,7 @@ end)
 
 --[[ NUI Callbacks ]]
 -- Triggered whenever we require full focus, cursor and keyboard
-RegisterNUICallback('focusInputs', function(shouldFocus, cb)
+RegisterSecureNuiCallback('focusInputs', function(shouldFocus, cb)
   debugPrint('NUI Focus + Keep Input ' .. tostring(shouldFocus))
   -- Will prevent mouse focus on initial menu mount as the useEffect emits there
   if not isMenuVisible then
@@ -154,7 +154,7 @@ RegisterNUICallback('focusInputs', function(shouldFocus, cb)
 end)
 
 
-RegisterNUICallback('reactLoaded', function(_, cb)
+RegisterSecureNuiCallback('reactLoaded', function(_, cb)
   debugPrint("React loaded, requesting ServerCtx.")
 
   CreateThread(function()
@@ -171,7 +171,7 @@ RegisterNUICallback('reactLoaded', function(_, cb)
 end)
 
 -- When the escape key is pressed in menu
-RegisterNUICallback('closeMenu', function(_, cb)
+RegisterSecureNuiCallback('closeMenu', function(_, cb)
   isMenuVisible = false
   debugPrint('Releasing all NUI Focus')
   SetNuiFocus(false)
@@ -181,7 +181,7 @@ end)
 
 
 -- Audio play callback
-RegisterNUICallback('playSound', function(sound, cb)
+RegisterSecureNuiCallback('playSound', function(sound, cb)
   playLibrarySound(sound)
   cb({})
 end)

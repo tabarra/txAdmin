@@ -9,23 +9,23 @@ if not TX_MENU_ENABLED then return end
 --[[ NUI CALLBACKS ]]
 
 -- Data is a object with x, y, z
-RegisterNUICallback('tpToCoords', function(data, cb)
+RegisterSecureNuiCallback('tpToCoords', function(data, cb)
     debugPrint(json.encode(data))
     TriggerServerEvent('txsv:req:tpToCoords', data.x + 0.0, data.y + 0.0, data.z + 0.0)
     cb({})
 end)
 
-RegisterNUICallback('tpToWaypoint', function(_, cb)
+RegisterSecureNuiCallback('tpToWaypoint', function(_, cb)
     TriggerServerEvent('txsv:req:tpToWaypoint')
     cb({})
 end)
 
-RegisterNUICallback('tpToPlayer', function(data, cb)
+RegisterSecureNuiCallback('tpToPlayer', function(data, cb)
     TriggerServerEvent('txsv:req:tpToPlayer', tonumber(data.id))
     cb({})
 end)
 
-RegisterNUICallback('tpBack', function(_, cb)
+RegisterSecureNuiCallback('tpBack', function(_, cb)
     if lastTpCoords then
         TriggerServerEvent('txsv:req:tpToCoords', lastTpCoords.x, lastTpCoords.y, lastTpCoords.z)
         cb({})
@@ -34,12 +34,12 @@ RegisterNUICallback('tpBack', function(_, cb)
     end
 end)
 
-RegisterNUICallback('summonPlayer', function(data, cb)
+RegisterSecureNuiCallback('summonPlayer', function(data, cb)
     TriggerServerEvent('txsv:req:bringPlayer', tonumber(data.id))
     cb({})
 end)
 
-RegisterNUICallback('copyCurrentCoords', function(_, cb)
+RegisterSecureNuiCallback('copyCurrentCoords', function(_, cb)
     local ped = PlayerPedId()
     local curCoords = GetEntityCoords(ped)
     local currHeading = GetEntityHeading(ped)
@@ -48,37 +48,36 @@ RegisterNUICallback('copyCurrentCoords', function(_, cb)
     cb({ coords = stringCoords })
 end)
 
-RegisterNUICallback('clearArea', function(radius, cb)
+RegisterSecureNuiCallback('clearArea', function(radius, cb)
     TriggerServerEvent('txsv:req:clearArea', radius)
     cb({})
 end)
 
 -- [[ Spawn weapon (only in dev, for now) ]]
-RegisterNUICallback('spawnWeapon', function(weapon, cb)
+RegisterSecureNuiCallback('spawnWeapon', function(weapon, cb)
     if not TX_DEBUG_MODE then return end
     debugPrint("Spawning weapon: " .. weapon)
     GiveWeaponToPed(PlayerPedId(), weapon, 500, false, true)
     cb({})
 end)
 
-RegisterNUICallback('healPlayer', function(data, cb)
+RegisterSecureNuiCallback('healPlayer', function(data, cb)
     TriggerServerEvent('txsv:req:healPlayer', tonumber(data.id))
     cb({})
 end)
 
-RegisterNUICallback('healMyself', function(_, cb)
+RegisterSecureNuiCallback('healMyself', function(_, cb)
     TriggerServerEvent('txsv:req:healMyself')
     cb({})
 end)
 
-RegisterNUICallback('healAllPlayers', function(_, cb)
+RegisterSecureNuiCallback('healAllPlayers', function(_, cb)
     TriggerServerEvent('txsv:req:healEveryone')
     cb({})
 end)
 
 -- Data will be an object with a message attribute
-RegisterNUICallback('sendAnnouncement', function(data, cb)
-    debugPrint(data.message)
+RegisterSecureNuiCallback('sendAnnouncement', function(data, cb)
     TriggerServerEvent('txsv:req:sendAnnouncement', data.message)
     cb({})
 end)

@@ -251,7 +251,7 @@ end
 
 
 -- Register NUI callback
-RegisterNUICallback('spectatePlayer', function(data, cb)
+RegisterSecureNuiCallback('spectatePlayer', function(data, cb)
     TriggerServerEvent('txsv:req:spectate:start', tonumber(data.id))
     cb({})
 end)

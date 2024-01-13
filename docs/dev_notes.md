@@ -27,15 +27,7 @@
 - [x] global hotkey to go to the player filter
     - careful to also handle child iframe and terminal canvas
     - add util function that gets a KeyboardEvent and returns the name of the hotkey pressed, then apply it to child iframe, global keydown handler, and xterm
-- [ ] FIXME: check if we need or can do something to prevent NUI CSRF
-
-
-
-=======================================================================
-
-
-
-
+- [x] FIXME: check if we need or can do something to prevent NUI CSRF
 
 
 
@@ -63,6 +55,7 @@
 # TODO: v7.1+
 - [ ] Remove old live console legacy code
 - [ ] fix the tsc build
+- [ ] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
 
 - [ ] NEW PAGE: Dashboard
     - [ ] number callouts from legacy players page

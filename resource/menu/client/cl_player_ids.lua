@@ -195,7 +195,7 @@ local function togglePlayerIDsHandler()
     TriggerServerEvent('txsv:req:showPlayerIDs', not isPlayerIdsEnabled)
 end
 
-RegisterNUICallback('togglePlayerIDs', function(_, cb)
+RegisterSecureNuiCallback('togglePlayerIDs', function(_, cb)
     togglePlayerIDsHandler()
     cb({})
 end)

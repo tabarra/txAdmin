@@ -23,8 +23,18 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
     local headers = req.headers
     local body = req.body
     local method = req.method
-
     debugPrint(("^3WebPipe[^1%d^3]^0 ^2%s ^4%s^0"):format(pipeCallbackCounter, method, path))
+
+    -- Check for CSRF attempt
+    if not IsNuiRequestOriginValid(headers) then
+        debugPrint(("^3WebPipe[^1%d^3]^0 ^1invalid origin^0"):format(pipeCallbackCounter))
+        return cb({
+            status = 403,
+            body = '{}',
+        })
+    end
+
+    -- Check if the request is cached
     if staticCacheData[path] ~= nil then
         debugPrint(("^3WebPipe[^1%d^3]^0 ^2answered from cache!"):format(pipeCallbackCounter))
         local cacheEntry = staticCacheData[path]

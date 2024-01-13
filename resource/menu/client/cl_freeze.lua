@@ -13,7 +13,7 @@ local function sendFreezeAlert(isFrozen)
   end
 end
 
-RegisterNUICallback('togglePlayerFreeze', function(data, cb)
+RegisterSecureNuiCallback('togglePlayerFreeze', function(data, cb)
   local targetPlayerId = tonumber(data.id)
   if targetPlayerId == GetPlayerServerId(PlayerId()) then
       return sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.notifications.freeze_yourself', true)
