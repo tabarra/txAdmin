@@ -9,36 +9,53 @@ import type { Terminal, ITerminalAddon, IDisposable } from '@xterm/xterm';
  * http://xtermjs.org/docs/api/terminal/interfaces/ibuffer/#basey
  */
 export default class ScrollDownAddon implements ITerminalAddon {
-    private btnRef: React.RefObject<HTMLButtonElement>;
+    private btnRef: HTMLButtonElement;
+    private containerRef: HTMLDivElement;
     private _disposables: IDisposable[] = [];
 
-    constructor(btnRef: React.RefObject<HTMLButtonElement>) {
+    constructor(
+        btnRef: HTMLButtonElement,
+        containerRef: HTMLDivElement
+    ) {
         this.btnRef = btnRef;
+        this.containerRef = containerRef;
     }
 
     activate(terminal: Terminal): void {
-        const isAtBottom = () => {
-            // console.log({
-            //     viewportY: terminal.buffer.active.viewportY,
-            //     baseY: terminal.buffer.active.baseY,
-            //     rows: terminal.rows,
-            // });
-            return terminal.buffer.active.viewportY === terminal.buffer.active.baseY;
-        };
+        //FIXME: hack to get wheel events
+        if (!this.containerRef) {
+            throw new Error(`containerRef is null`);
+        }
+        this.containerRef.addEventListener('wheel', (e) => {
+            this.checkViewportY(terminal);
+        });
 
+        //FIXME: broken, delete the hack above when this is fixed
+        // https://github.com/xtermjs/xterm.js/issues/3864
         const onScrollDisposable = terminal.onScroll(() => {
-            if (this.btnRef.current && isAtBottom()) {
-                this.btnRef.current.classList.add('hidden');
-            }
+            this.checkViewportY(terminal);
         });
         this._disposables.push(onScrollDisposable);
 
         const onLineFeedDisposable = terminal.onLineFeed(() => {
-            if (this.btnRef.current && !isAtBottom()) {
-                this.btnRef.current.classList.remove('hidden');
-            }
+            this.checkViewportY(terminal);
         });
         this._disposables.push(onLineFeedDisposable);
+    }
+
+    checkViewportY(terminal: Terminal) {
+        //If the viewportY is at the bottom, hide the button
+        if (terminal.buffer.active.viewportY === terminal.buffer.active.baseY) {
+            this.btnRef.classList.add('hidden');
+        } else {
+            this.btnRef.classList.remove('hidden');
+        }
+
+        // console.log({
+        //     viewportY: terminal.buffer.active.viewportY,
+        //     baseY: terminal.buffer.active.baseY,
+        //     rows: terminal.rows,
+        // });
     }
 
     dispose(): void {

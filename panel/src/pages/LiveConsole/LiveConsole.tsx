@@ -75,14 +75,14 @@ export default function LiveConsole() {
     useEventListener('resize', debounce(100, refitTerminal));
 
     useEffect(() => {
-        if (containerRef.current && termElRef.current && !term.element) {
+        if (containerRef.current && termElRef.current && jumpBottomBtnRef.current && !term.element) {
             console.log('live console xterm init');
             termElRef.current.innerHTML = ''; //due to HMR, the terminal element might still be there
             term.loadAddon(fitAddon);
             term.loadAddon(searchAddon);
             term.loadAddon(webLinksAddon);
             term.loadAddon(new CanvasAddon());
-            term.loadAddon(new ScrollDownAddon(jumpBottomBtnRef));
+            term.loadAddon(new ScrollDownAddon(jumpBottomBtnRef.current, containerRef.current));
             term.open(termElRef.current);
             term.write('\x1b[?25l'); //hide cursor
             refitTerminal();
