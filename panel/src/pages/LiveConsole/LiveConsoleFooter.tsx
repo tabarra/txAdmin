@@ -4,6 +4,7 @@ import { atomWithStorage } from 'jotai/utils';
 import { Input } from "@/components/ui/input";
 import { cn, openExternalLink } from "@/lib/utils";
 import { BookMarkedIcon, FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
+import { useAdminPerms } from '@/hooks/auth';
 
 
 type ConsoleFooterButtonProps = {
@@ -49,6 +50,8 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
     const [histIndex, setHistIndex] = useState(-1);
     const savedInput = useRef('');
     const termInputRef = useRef<HTMLInputElement>(null);
+    const { hasPerm } = useAdminPerms();
+    const hasWritePerm = hasPerm('console.write');
 
     //autofocus on input when connected
     useEffect(() => {
@@ -133,9 +136,11 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
                     className="w-full"
                     placeholder="Type a command..."
                     type="text"
-                    disabled={!props.isConnected}
+                    disabled={!props.isConnected || !hasWritePerm}
                     onKeyDown={handleInputKeyDown}
                     autoCapitalize='none'
+                    autoComplete='off'
+                    autoCorrect='off'
                 />
             </div>
             <div className="flex flex-row justify-evenly gap-3 2xl:gap-1 select-none">
