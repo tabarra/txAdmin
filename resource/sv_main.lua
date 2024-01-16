@@ -123,11 +123,22 @@ local function txaReportResources(source, args)
     for i = 0, max do
         local resName = GetResourceByFindIndex(i)
 
-        -- Hacky patch added because a particular resource from this developer had a broken 
-        -- unicode in the resource description, which caused json.encode to fail.
         local resDesc = GetResourceMetadata(resName, 'description')
-        if resDesc ~= nil and string.find(resDesc, "Louis.dll") then
-            resDesc = nil
+
+        -- This checks for both if the resDesc is crashing json.encode and if json.encode returns false/nil
+        -- pcall is lua native and retuns a boolean if the passed function ran without an error or not 
+        if not pcall(function()
+            -- encode a table containing the resDesc, if it fails/crashes pcall returns false
+             local resDescJson = json.encode({v= resDesc})
+
+            -- check if the json.encode returned a string, if not its an error and resDesc should be nil
+            if ( type(resDescJson) ~= 'string' ) then
+                resDesc = nil
+            end
+        end)
+        then
+            -- if pcall fails -> resDesc crashes json.encode -> set resDesc nil
+            resDesc = nil;
         end
 
         local currentRes = {
