@@ -127,9 +127,9 @@ local function txaReportResources(source, args)
 
         -- This checks for both if the resDesc is crashing json.encode and if json.encode returns false/nil
         -- pcall is lua native and retuns a boolean if the passed function ran without an error or not 
-        if not pcall(function()
+        if resDesc ~= nil and not pcall(function()
             -- encode a table containing the resDesc, if it fails/crashes pcall returns false
-             local resDescJson = json.encode({v= resDesc})
+             local resDescJson = json.encode({v = resDesc})
 
             -- check if the json.encode returned a string, if not its an error and resDesc should be nil
             if ( type(resDescJson) ~= 'string' ) then
