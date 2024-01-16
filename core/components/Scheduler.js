@@ -217,7 +217,7 @@ export default class Scheduler {
         } else if (scheduleWarnings.includes(nextDistMins)) {
             const tOptions = {
                 smart_count: nextDistMins,
-                servername: globals.config.serverName,
+                servername: globals.txAdmin.globalConfig.serverName,
             };
 
             //Send discord warning

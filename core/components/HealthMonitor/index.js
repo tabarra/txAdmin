@@ -254,7 +254,7 @@ export default class HealthMonitor {
         ) {
             globals.discordBot.sendAnnouncement(globals.translator.t(
                 'restarter.partial_hang_warn_discord',
-                { servername: globals.config.serverName },
+                { servername: globals.txAdmin.globalConfig.serverName },
             ));
             // Dispatch `txAdmin:events:announcement`
             const _cmdOk = globals.fxRunner.sendEvent('announcement', {

@@ -136,7 +136,6 @@ export default class TxAdmin {
             globalsInternal.configVault = this.configVault;
             profileConfig = globalsInternal.configVault.getAll();
             this.globalConfig = profileConfig.global;
-            globalsInternal.config = this.globalConfig;
 
             //FIXME: hacky fix for settings:save to be able to update this
             globalsInternal.func_txAdminRefreshConfig = this.refreshConfig.bind(this);

@@ -33,12 +33,12 @@ const getMutableConvars = (isCmdLine = false) => {
         [`${p}set`, 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
         [`${p}setr`, 'txAdmin-verbose', console.isVerbose],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
-        [`${p}set`, 'txAdmin-menuAlignRight', globals.config.menuAlignRight],
-        [`${p}set`, 'txAdmin-menuPageKey', globals.config.menuPageKey],
-        [`${p}set`, 'txAdmin-hideDefaultAnnouncement', globals.config.hideDefaultAnnouncement],
-        [`${p}set`, 'txAdmin-hideDefaultDirectMessage', globals.config.hideDefaultDirectMessage],
-        [`${p}set`, 'txAdmin-hideDefaultWarning', globals.config.hideDefaultWarning],
-        [`${p}set`, 'txAdmin-hideDefaultScheduledRestartWarning', globals.config.hideDefaultScheduledRestartWarning],
+        [`${p}set`, 'txAdmin-menuAlignRight', globals.txAdmin.globalConfig.menuAlignRight],
+        [`${p}set`, 'txAdmin-menuPageKey', globals.txAdmin.globalConfig.menuPageKey],
+        [`${p}set`, 'txAdmin-hideDefaultAnnouncement', globals.txAdmin.globalConfig.hideDefaultAnnouncement],
+        [`${p}set`, 'txAdmin-hideDefaultDirectMessage', globals.txAdmin.globalConfig.hideDefaultDirectMessage],
+        [`${p}set`, 'txAdmin-hideDefaultWarning', globals.txAdmin.globalConfig.hideDefaultWarning],
+        [`${p}set`, 'txAdmin-hideDefaultScheduledRestartWarning', globals.txAdmin.globalConfig.hideDefaultScheduledRestartWarning],
     ];
 };
 
@@ -112,7 +112,7 @@ export default class FXRunner {
             extraArgs,
             '+set', 'onesync', this.config.onesync,
             '+sets', 'txAdmin-version', txEnv.txAdminVersion,
-            '+setr', 'txAdmin-menuEnabled', globals.config.menuEnabled,
+            '+setr', 'txAdmin-menuEnabled', globals.txAdmin.globalConfig.menuEnabled,
             '+set', 'txAdmin-luaComHost', txAdminInterface,
             '+set', 'txAdmin-luaComToken', globals.webServer.luaComToken,
             '+set', 'txAdminServerMode', 'true', //Can't change this one due to fxserver code compatibility
@@ -218,7 +218,7 @@ export default class FXRunner {
                 type: 'success',
                 description: {
                     key: 'server_actions.spawning_discord',
-                    data: { servername: globals.config.serverName }
+                    data: { servername: globals.txAdmin.globalConfig.serverName }
                 }
             });
         }
@@ -364,7 +364,7 @@ export default class FXRunner {
             const messageType = isRestarting ? 'restarting' : 'stopping';
             const messageColor = isRestarting ? 'warning' : 'danger';
             const tOptions = {
-                servername: globals.config.serverName,
+                servername: globals.txAdmin.globalConfig.serverName,
                 reason: reason ?? 'no reason provided',
             };
             this.sendEvent('serverShuttingDown', {

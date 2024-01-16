@@ -286,7 +286,7 @@ async function handleSaveLocal(ctx) {
     }
 
     //Refreshing config
-    globals.config = globals.configVault.getScoped('global');
+    globals.txAdmin.refreshConfig();
     globals.fxRunner.refreshConfig();
     globals.persistentCache.set('deployer:recipe', 'none');
 
@@ -351,7 +351,7 @@ async function handleSaveDeployerImport(ctx) {
             message: `**Error saving the configuration file:** ${error.message}`
         });
     }
-    globals.config = globals.configVault.getScoped('global');
+    globals.txAdmin.refreshConfig();
     ctx.admin.logAction('Changing global settings via setup stepper and started Deployer.');
 
     //Start deployer (constructor will validate the recipe)
@@ -397,7 +397,7 @@ async function handleSaveDeployerCustom(ctx) {
             message: `**Error saving the configuration file:** ${error.message}`
         });
     }
-    globals.config = globals.configVault.getScoped('global');
+    globals.txAdmin.refreshConfig();
     ctx.admin.logAction('Changing global settings via setup stepper and started Deployer.');
 
     //Start deployer (constructor will create the recipe template)

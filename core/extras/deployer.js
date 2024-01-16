@@ -161,7 +161,7 @@ export class Deployer {
         this.originalRecipe = originalRecipe;
         this.deploymentID = deploymentID;
         this.progress = 0;
-        this.serverName = customMetaData.serverName || globals.config.serverName || '';
+        this.serverName = customMetaData.serverName || globals.txAdmin.globalConfig.serverName || '';
         this.logLines = [];
 
         //Load recipe

@@ -1,61 +1,45 @@
-# TODO: v7.0.0-beta2
-- [x] apply cache control policies
-- [x] do i need to add a input type hidden with the username in the add master and account modal so vaults can save it both?
-- [x] tweak(panel/modal): notes change should invalidate the data and auto resize
-- [x] Change the kick all to require the `control.server` permission (issue #379)
-- [x] Disable the buttons in the server status card based on permission
-- [x] NEW PAGE: Live console
-    - [x] terminal layout + jsx
-    - [x] basic xterm.js (canvas mode)
-    - [x] auto re-fit
-    - [x] scroll to bottom button
-    - [x] search addon + search bar
-        - find next: f3, enter
-        - find previous: shift+f3, shift+enter
-    - [x] custom event handler for f5, esc/ctrl+f (search), and ctrl+c
-        - hotkeys should work on terminal, page and input
-    - [x] command history (arrows only) with local storage
-    - [x] socket.io connection
-    - [x] open web links
-    - [x] deal with the console markers - ~~maybe custom decorators?~~
-    - [x] when page open, focus input
-    - [x] tidy up the code
-    - [x] fix z-order, cant click postpone/support on the warning bar
-- [x] Update packages for all workspaces + root
-- [x] FIXME: deployer "show db advanced options" has broken css and causes tx inception
-- [x] Check layout on 4k and ultrawide screens
-- [x] global hotkey to go to the player filter
-    - careful to also handle child iframe and terminal canvas
-    - add util function that gets a KeyboardEvent and returns the name of the hotkey pressed, then apply it to child iframe, global keydown handler, and xterm
-- [x] FIXME: check if we need or can do something to prevent NUI CSRF
+# TODO: v7.0.0 Release
+- [x] terminal: fix scroll to bottom not detecting scroll events
+- [x] ~~make sure some user input based fields are truncated (admin/server/player name)~~ good enough
+- [x] FIXME: console disable input if no write perms
+    - do we need to check for view perms in the page itself or just the menu is enough?
+- [x] FIXME: global settings not updating everywhere when saving settings
+    - this means deprecating globals.config  in favor of globals.txAdmin.globalConfig
+- [ ] Remove old live console menu links
+- [ ] zap hosting advertisement + discord link on login page
+- [ ] Add clear copyright/license notice at the bottom of the server sidebar?
+- [ ] talk to r* and make sure the new build process wipes the old cache
+
+- [ ] deprecate StatisticsManager.pageViews as its now untrackable?
+- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
+- [ ] check all discord invites (use utm params maybe?)
+- [ ] onesync should be legacy by default
+
+- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+- [ ] tutorial stepper for the new UI?
+- [ ] update docs on development?
+
+=======================================================================
+
+
+- 2x restart rapido ou deixa loading forever, ou da undefined error
+
+
+
+wget $(curl -s https://api.github.com/repos/tabarra/txadmin/releases/latest | grep "browser_download_url.*monitor.zip" | cut -d '"' -f 4)
+
+wget $(curl -s https://api.github.com/repos/tabarra/txadmin/releases/latest | jq -r '.assets[] | select(.name == "monitor.zip") | .browser_download_url')
 
 
 
 =======================================================================
 
-
-
-# TODO: v7.0.0 Release
-- [ ] talk to r* and make sure the new build process wipes the old cache
-- [ ] make sure some user input based fields are truncated (server name, player name)
-- [ ] deprecate StatisticsManager.pageViews as its now untrackable?
-- [ ] zap hosting advertisement
+# TODO: v7.1+
 - [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
 - [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
-- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
-- [ ] Remove old live console menu links
-- [ ] Add clear copyright/license notice at the bottom of the server sidebar?
-
-- [ ] onesync should be legacy by default
-- [ ] check all discord invites (use utm params maybe?)
-- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] tutorial stepper for the new UI?
-- [ ] update docs on development?
-
-# TODO: v7.1+
 - [ ] Remove old live console legacy code
-- [ ] fix the tsc build
 - [ ] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
+- [ ] fix the tsc build
 
 - [ ] NEW PAGE: Dashboard
     - [ ] number callouts from legacy players page
@@ -114,30 +98,6 @@ export declare global {
         exampleProperty: string;
     }
 }
-```
-
-Nui events testing stuff
-```lua
-RegisterRawNuiCallback('abc', function(req, cb)
-    print('abc', json.encode(req), cb)
-    cb({
-        status = 200,
-        body = json.encode({ success = true }),
-    })
-end)
-```
-```js
-await (async () => {
-  const options = {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json; charset=UTF-8",
-    },
-    body: JSON.stringify({}),
-  }
-  const resp = await fetch(`https://monitor/abc?token`, options);
-  return await resp.json();
-})()
 ```
 
 ```js
@@ -231,7 +191,7 @@ z-50    shadcn: DropdownMenuContent
 z-50    shadcn: SelectContent
 z-50    shadcn: SheetOverlay
 z-50    shadcn: SheetContent
-z-50    shadcn: TooltipContent
+z-50    shadcn: TooltipContent - doesnt go over the terminal?!
 
 ### Page Changes:
 Players:
