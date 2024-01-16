@@ -10,7 +10,7 @@ export function PlayerlistSidebar({ isSheet }: PlayerSidebarProps) {
     return (
         <aside
             className={cn(
-                'flex flex-col gap-4',
+                'flex flex-col gap-4 z-10',
                 isSheet ? 'w-full pr-2' : 'tx-sidebar hidden xl:flex',
             )}
             style={{

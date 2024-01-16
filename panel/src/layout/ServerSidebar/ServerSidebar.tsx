@@ -12,7 +12,7 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
     return (
         <aside
             className={cn(
-                'flex flex-col gap-4',
+                'flex flex-col gap-4 z-10',
                 isSheet ? 'mr-4 pl-2' : 'tx-sidebar hidden lg:flex',
             )}
         >

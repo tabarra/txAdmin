@@ -111,7 +111,7 @@ export default function PlayerModal() {
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <DialogHeader className="p-4 border-b">
-                    <DialogTitle className="tracking-wide">{pageTitle}</DialogTitle>
+                    <DialogTitle className="tracking-wide line-clamp-1 break-all mr-6">{pageTitle}</DialogTitle>
                 </DialogHeader>
 
                 <div className="flex flex-col md:flex-row md:px-4 h-full">

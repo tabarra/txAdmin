@@ -12,7 +12,7 @@ function SheetBackdrop({ isOpen, closeSheet }: SheetProps) {
     return (
         <div
             className={cn(
-                'absolute inset-0 z-20 md:rounded-t-xl',
+                'absolute inset-0 z-20',
                 'bg-black/40 duration-300',
                 'data-[state=open]:pointer-events-auto data-[state=closed]:pointer-events-none',
                 'data-[state=open]:opacity-100 data-[state=open]:backdrop-blur-sm',

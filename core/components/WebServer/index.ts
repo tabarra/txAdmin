@@ -38,7 +38,7 @@ export type WebServerConfigType = {
 const koaServeOptions = {
     index: false,
     defer: false,
-    //The resource URLs should already coontain txVer as a query param to bust cache
+    //The resource URLs should already contain txVer as a query param to bust cache
     //so setting to 30m should be fine, except in dev mode
     maxage: !convars.isDevMode ? 30 * 60 * 1000 : 0,
 };

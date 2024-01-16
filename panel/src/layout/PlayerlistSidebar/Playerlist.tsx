@@ -164,7 +164,7 @@ function PlayerlistPlayer({ virtualItem, player, modalOpener }: PlayerlistPlayer
             }}
             onClick={() => modalOpener(player.netid)}
         >
-            <div className="pid-block">
+            <div className="pid-block leading-[1.7]">
                 <span className="pid-badge">{player.netid}</span>
             </div>
             <span className="pname">{player.displayName}</span>

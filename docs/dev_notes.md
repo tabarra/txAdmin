@@ -5,16 +5,21 @@
     - do we need to check for view perms in the page itself or just the menu is enough?
 - [x] FIXME: global settings not updating everywhere when saving settings
     - this means deprecating globals.config  in favor of globals.txAdmin.globalConfig
-- [ ] Remove old live console menu links
+- [x] Remove old live console menu links
+- [x] FIXME: server sidebar tooltips are under the terminal
+- [ ] FIXME: terminal not fitting correctly when zoom is not 100% and font size is not the default 16px
+- [ ] FIXME: toasts going forever or with undefined error if you run them fast
+    - specifically can happen to the server restart button
+
 - [ ] zap hosting advertisement + discord link on login page
 - [ ] Add clear copyright/license notice at the bottom of the server sidebar?
 - [ ] talk to r* and make sure the new build process wipes the old cache
 
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
-- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] check all discord invites (use utm params maybe?)
 - [ ] onesync should be legacy by default
 
+- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 - [ ] tutorial stepper for the new UI?
 - [ ] update docs on development?
@@ -22,7 +27,6 @@
 =======================================================================
 
 
-- 2x restart rapido ou deixa loading forever, ou da undefined error
 
 
 
@@ -170,7 +174,7 @@ setTimeout(() => {
 - lib
 
 ### panel z-order
-z-10    UI: Header
+z-10    UI: Header, and asides
 z-10    shadcn: NavigationMenu
 
 z-10    Terminal: LiveConsoleSearchBar
