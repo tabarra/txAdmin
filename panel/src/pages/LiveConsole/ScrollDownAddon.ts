@@ -10,23 +10,23 @@ import type { Terminal, ITerminalAddon, IDisposable } from '@xterm/xterm';
  */
 export default class ScrollDownAddon implements ITerminalAddon {
     private btnRef: HTMLButtonElement;
-    private containerRef: HTMLDivElement;
+    private containerElement: HTMLDivElement;
     private _disposables: IDisposable[] = [];
 
     constructor(
         btnRef: HTMLButtonElement,
-        containerRef: HTMLDivElement
+        containerElement: HTMLDivElement
     ) {
         this.btnRef = btnRef;
-        this.containerRef = containerRef;
+        this.containerElement = containerElement;
     }
 
     activate(terminal: Terminal): void {
         //FIXME: hack to get wheel events
-        if (!this.containerRef) {
-            throw new Error(`containerRef is null`);
+        if (!this.containerElement) {
+            throw new Error(`containerElement is null`);
         }
-        this.containerRef.addEventListener('wheel', (e) => {
+        this.containerElement.addEventListener('wheel', (e) => {
             this.checkViewportY(terminal);
         });
 

@@ -20,6 +20,8 @@ import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
 import { getSocket, openExternalLink } from '@/lib/utils';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
+import { useAdminPerms } from '@/hooks/auth';
+import LiveConsoleSaveSheet from './LiveConsoleSaveSheet';
 
 
 const keyDebounceTime = 150; //ms
@@ -38,7 +40,6 @@ export default function LiveConsole() {
      */
     const jumpBottomBtnRef = useRef<HTMLButtonElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const termElRef = useRef<HTMLDivElement>(null);
     const term = useMemo(() => new Terminal(terminalOptions), []);
     const fitAddon = useMemo(() => new FitAddon(), []);
     const searchAddon = useMemo(() => new SearchAddon(), []);
@@ -55,35 +56,55 @@ export default function LiveConsole() {
     }, { noTrailing: true });
 
     const refitTerminal = () => {
-        if (containerRef.current && term.element && fitAddon) {
-            //fitAddon does not get the correct height, so we have to calculate it ourselves
-            const charMeasureElement = document.querySelector('.xterm-char-measure-element');
-            const charHeight = charMeasureElement?.getBoundingClientRect().height;
-            const parentElementStyle = window.getComputedStyle(containerRef.current);
-            const parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'));
-            const elementStyle = window.getComputedStyle(term.element.parentElement!);
-            const insetYSize = parseInt(elementStyle.getPropertyValue('top'));
-            const availableHeight = parentElementHeight - (insetYSize);
-            const newRows = Math.max(4, Math.floor(availableHeight / charHeight!));
-
-            const proposed = fitAddon.proposeDimensions();
-            term.resize(proposed!.cols, newRows);
-        } else {
+        if (!containerRef.current || !term.element || !fitAddon) {
             console.log('refitTerminal: no containerRef.current or term.element or fitAddon');
+            return;
         }
+
+        const proposed = fitAddon.proposeDimensions();
+        if (proposed) {
+            term.resize(proposed.cols, proposed.rows);
+        } else {
+            console.log('refitTerminal: no proposed dimensions');
+        }
+
+        //Somehow the resize didn't work for rows so I wrote the custom code below - now unrequired
+        // const containerStyle = window.getComputedStyle(containerRef.current);
+        // const containerHeight = Math.floor(parseFloat(containerStyle.getPropertyValue('height')));
+        // const termHeight = term.element.getBoundingClientRect().height;
+        // const calculatedPrevLineHeight = termHeight / term.rows;
+        // const calculatedDesiredRows = Math.max(6, Math.floor(containerHeight / calculatedPrevLineHeight));
+
+        // const proposed = fitAddon.proposeDimensions();
+        // term.resize(proposed!.cols, calculatedDesiredRows);
+        // term.scrollToBottom();
+
+        // console.log('PRE:', {
+        //     containerHeight,
+        //     calculatedPrevLineHeight,
+        //     calculatedDesiredRows,
+        //     expectedTermHeight: calculatedDesiredRows * calculatedPrevLineHeight,
+        // });
+        // const postTermHeight = term.element.getBoundingClientRect().height;
+        // console.log('POST', {
+        //     doesOverflow: postTermHeight > containerHeight,
+        //     measuredTermHeight: postTermHeight,
+        //     measuredFinalLineHeight: containerHeight / calculatedDesiredRows,
+        //     calculatedFinalLineHeight: postTermHeight / calculatedDesiredRows,
+        // });
     }
     useEventListener('resize', debounce(100, refitTerminal));
 
     useEffect(() => {
-        if (containerRef.current && termElRef.current && jumpBottomBtnRef.current && !term.element) {
+        if (containerRef.current && jumpBottomBtnRef.current && !term.element) {
             console.log('live console xterm init');
-            termElRef.current.innerHTML = ''; //due to HMR, the terminal element might still be there
+            containerRef.current.innerHTML = ''; //due to HMR, the terminal element might still be there
             term.loadAddon(fitAddon);
             term.loadAddon(searchAddon);
             term.loadAddon(webLinksAddon);
             term.loadAddon(new CanvasAddon());
             term.loadAddon(new ScrollDownAddon(jumpBottomBtnRef.current, containerRef.current));
-            term.open(termElRef.current);
+            term.open(containerRef.current);
             term.write('\x1b[?25l'); //hide cursor
             refitTerminal();
 
@@ -101,17 +122,14 @@ export default function LiveConsole() {
             }, { noTrailing: true });
 
             term.attachCustomKeyEventHandler((e: KeyboardEvent) => {
+                // Some are handled by the live console element
                 if (e.code === 'F5') {
-                    // let live console handle it
                     return false;
                 } else if (e.code === 'Escape') {
-                    // let live console handle it
                     return false;
                 } else if (e.code === 'KeyF' && (e.ctrlKey || e.metaKey)) {
-                    // let live console handle it
                     return false;
                 } else if (e.code === 'F3') {
-                    // let live console handle it
                     return false;
                 } else if (e.code === 'KeyC' && (e.ctrlKey || e.metaKey)) {
                     document.execCommand('copy');
@@ -236,7 +254,7 @@ export default function LiveConsole() {
         <div className="dark text-primary flex flex-col h-full w-full bg-card border md:rounded-xl overflow-clip">
             <LiveConsoleHeader />
 
-            <div className="flex flex-col relative grow bg-card">
+            <div className="flex flex-col relative grow overflow-hidden">
                 {/* Connecting overlay */}
                 {!isConnected ? (
                     <div className='absolute inset-0 z-20 bg-black/40 backdrop-blur-sm flex items-center justify-center'>
@@ -252,9 +270,7 @@ export default function LiveConsole() {
                 {/* <LiveConsoleSaveSheet isOpen={isSaveSheetOpen} closeSheet={() => setIsSaveSheetOpen(false)} /> */}
 
                 {/* Terminal container */}
-                <div ref={containerRef} className='w-full h-full relative overflow-hidden'>
-                    <div ref={termElRef} className='absolute inset-x-2x left-1 right-0 top-1' />
-                </div>
+                <div ref={containerRef} className='absolute top-1 left-2 right-0 bottom-0' />
 
                 {/* Search bar */}
                 <LiveConsoleSearchBar
