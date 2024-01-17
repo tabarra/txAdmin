@@ -8,7 +8,7 @@
 - [x] Remove old live console menu links
 - [x] FIXME: server sidebar tooltips are under the terminal
 - [x] FIXME: terminal not fitting correctly when zoom is not 100% and font size is not the default 16px
-- [ ] FIXME: toasts going forever or with undefined error if you run them fast
+- [x] FIXME: toasts going forever or with undefined error if you run them fast
     - specifically can happen to the server restart button
 
 - [ ] zap hosting advertisement + discord link on login page

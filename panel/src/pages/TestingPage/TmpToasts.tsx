@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { txToast } from "@/components/TxToaster";
+import { useBackendApi } from "@/hooks/fetch";
 
 
 export default function TmpToasts() {
@@ -48,6 +49,18 @@ export default function TmpToasts() {
         txToast({ title: 'Error saving whatever', ...exampleApiResp });
     }
 
+    const fxsControlApi = useBackendApi({
+        method: 'POST',
+        path: '/fxserver/controls'
+    });
+
+    const testPendingBug = () => {
+        fxsControlApi({
+            data: { action: 'bug' },
+            toastLoadingMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        });
+    }
+
     return <>
         <div className="mx-auto mt-auto flex gap-4 group">
             <Button
@@ -84,6 +97,16 @@ export default function TmpToasts() {
                 onClick={openApiResp}
             >
                 API Resp
+            </Button>
+            <Button
+                size={'lg'}
+                variant="default"
+                onClick={testPendingBug}
+            >
+                <p>
+                    Pending Bug <br />
+                    <small>(click twice)</small>
+                </p>
             </Button>
         </div>
     </>;

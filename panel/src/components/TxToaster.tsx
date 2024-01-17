@@ -97,12 +97,12 @@ export const CustomToast = ({ t, type, data }: CustomToastProps) => {
                     </div>
                 ) : toastIconMap[type]}
             </div>
-            <p className="flex-grow">
+            <div className="flex-grow">
                 {typeof data === "string" ? (
                     <span className="block whitespace-pre-line">{data}</span>
                 ) : data.md ? (
                     <>
-                        <MarkdownProse md={`**${data.title}**`} isSmall isTitle />
+                        {data.title ? <MarkdownProse md={`**${data.title}**`} isSmall isTitle /> : null}
                         <MarkdownProse md={data.msg} isSmall />
                     </>
                 ) : (
@@ -124,7 +124,7 @@ export const CustomToast = ({ t, type, data }: CustomToastProps) => {
                         </a>.
                     </small>
                 )}
-            </p>
+            </div>
 
             <button onClick={() => toast.dismiss(t.id)} className="absolute right-4 top-4 opacity-70">
                 <XIcon className="h-6 sm:w-6 md:h-5 md:w-5" />

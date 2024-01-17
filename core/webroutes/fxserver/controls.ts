@@ -23,7 +23,6 @@ export default async function FXServerControls(ctx: AuthedCtx) {
             msg: 'You don\'t have permission to execute this action.',
         });
     }
-    
 
     if (action == 'restart') {
         ctx.admin.logCommand('RESTART SERVER');

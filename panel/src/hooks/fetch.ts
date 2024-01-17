@@ -47,7 +47,7 @@ export const useAuthedFetcher = () => {
         if (fetchUrl[0] !== '/' || fetchUrl[1] === '/') {
             throw new Error(`[useAuthedFetcher] fetchUrl MUST start with a single '/', got '${fetchUrl}'.`);
         }
-        if(!window.txConsts.isWebInterface){
+        if (!window.txConsts.isWebInterface) {
             fetchUrl = WEBPIPE_PATH + fetchUrl;
         }
 
@@ -79,7 +79,7 @@ type SimpleFetchOpts = FetcherOpts & { timeout?: number };
 export const fetchWithTimeout = async <T = any>(url: string, fetchOpts: SimpleFetchOpts = {}) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
-        controller.abort();
+        controller.abort('timeout');
     }, fetchOpts.timeout ?? ApiTimeout.DEFAULT);
     fetchOpts.method ??= 'GET';
 
@@ -138,7 +138,7 @@ export const useBackendApi = <
     useEffect(() => {
         return () => {
             if (!hookOpts.abortOnUnmount) return
-            abortController.current?.abort();
+            abortController.current?.abort('unmount');
             if (currentToastId.current) {
                 txToast.dismiss(currentToastId.current);
             }
@@ -146,6 +146,14 @@ export const useBackendApi = <
     }, []);
 
     return async (opts: ApiCallOpts<RespType, ReqType>) => {
+        //Clearing any previous lingering toast
+        if (currentToastId.current) {
+            txToast.dismiss(currentToastId.current);
+            currentToastId.current = undefined;
+        }
+        //The abort controller is not aborted, just forgotten
+        abortController.current = new AbortController();
+        
         //Processing URL
         let fetchUrl = hookOpts.path;
         if (opts.pathParams) {
@@ -178,24 +186,20 @@ export const useBackendApi = <
             }
         }
 
-        //Setting up toast
+        //Setting up new toast
         if (opts.toastId && opts.toastLoadingMessage) {
             throw new Error(`[useBackendApi] toastId and toastLoadingMessage are mutually exclusive.`);
         } else if (opts.toastLoadingMessage) {
             currentToastId.current = txToast.loading(opts.toastLoadingMessage);
         } else if (opts.toastId) {
             currentToastId.current = opts.toastId;
-        } else {
-            //cleaning last toast id
-            currentToastId.current = undefined;
         }
 
-        //Starting timeout
-        abortController.current = new AbortController();
+        //Starting request timeout
         const timeoutId = setTimeout(() => {
             if (abortController.current?.signal.aborted) return;
             console.log('[TIMEOUT]', apiCallDesc);
-            abortController.current?.abort();
+            abortController.current?.abort('timeout');
             handleError('Request Timeout', 'If you closed txAdmin, please restart it and try again.');
         }, opts.timeout ?? ApiTimeout.DEFAULT);
 
@@ -212,12 +216,12 @@ export const useBackendApi = <
 
             //Auto handler for GenericApiOkResp genericHandler
             if (opts.genericHandler && currentToastId.current) {
-                if('error' in data) {
+                if ('error' in data) {
                     txToast.error({
                         title: opts.genericHandler.errorTitle,
                         msg: data.error,
                     }, { id: currentToastId.current });
-                }else{
+                } else {
                     txToast.success(opts.genericHandler.successMsg, { id: currentToastId.current });
                 }
             }
