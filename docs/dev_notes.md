@@ -15,9 +15,9 @@
 - [x] Add clear copyright/license notice at the bottom of the server sidebar?
 - [ ] talk to r* and make sure the new build process wipes the old cache
 
-- [ ] deprecate StatisticsManager.pageViews as its now untrackable?
-- [ ] check all discord invites (use utm params maybe?)
-- [ ] onesync should be legacy by default
+- [x] deprecate StatisticsManager.pageViews as its now untrackable?
+- [x] check all discord invites (use utm params maybe?)
+- [x] onesync should be legacy by default
 
 - [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
@@ -174,8 +174,9 @@ setTimeout(() => {
 - lib
 
 ### panel z-order
-z-10    UI: Header, and asides
+z-10    UI: server/playerlist asides
 z-10    shadcn: NavigationMenu
+z-20    UI: Header
 
 z-10    Terminal: LiveConsoleSearchBar
 z-10    Terminal "scroll to bottom" button

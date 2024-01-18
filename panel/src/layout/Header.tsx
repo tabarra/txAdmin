@@ -176,7 +176,7 @@ function AuthedHeaderFragment() {
 
 export function Header() {
     return (
-        <header className="sticky top-0 z-10 flex flex-col items-center justify-center
+        <header className="sticky top-0 z-20 flex flex-col items-center justify-center
             border-b bg-card text-card-foreground border-card-background">
             <div className="h-14 lg:px-3 px-2 w-full max-w-[1920px] flex flex-row justify-between transition-all">
                 <div className="flex flex-row items-center flex-grow gap-5 mr-5">

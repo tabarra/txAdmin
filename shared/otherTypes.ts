@@ -9,7 +9,7 @@ export type UpdateDataType = {
 export type ThemeType = {
     name: string;
     isDark: boolean;
-    style: {[key: string]: string};
+    style: { [key: string]: string };
 };
 
 export type AdsDataType = {

@@ -72,8 +72,8 @@ function PlayerlistFilter({ filterString, setFilterString }: PlayerlistFilterPro
                         <XIcon />
                     </button>
                 ) : (
-                    <div className="absolute right-2 inset-y-0 flex items-center text-zinc-500 dark:text-zinc-400">
-                        <InlineCode className="text-xs tracking-wide select-none">ctrl+k</InlineCode>
+                    <div className="absolute right-2 inset-y-0 flex items-center text-zinc-500 dark:text-zinc-400 select-none pointer-events-none">
+                        <InlineCode className="text-xs tracking-wide">ctrl+k</InlineCode>
                     </div>
                 )}
             </div>

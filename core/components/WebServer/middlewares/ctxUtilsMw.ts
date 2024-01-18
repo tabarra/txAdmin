@@ -160,9 +160,6 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
 
     //Functions
     const renderUtil = async (view: string, data?: { headerTitle?: string, [key: string]: any }) => {
-        //Usage stats
-        txAdmin.statisticsManager?.pageViews.count(view);
-
         //Typescript is very annoying 
         const possiblyAuthedAdmin = ctx.admin as AuthedAdminType | undefined;
 
