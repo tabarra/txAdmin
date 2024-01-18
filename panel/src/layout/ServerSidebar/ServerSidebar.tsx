@@ -50,21 +50,23 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
                 </a>
             ) : null}
 
-            <div className='flex flex-col items-center justify-center gap-1 text-sm font-light opacity-85 hover:opacity-100'>
-                <span className="text-muted-foreground text-smx">
-                    tx: <strong>v{window.txConsts.txaVersion}</strong>
-                    &nbsp;|
-                    fx: <strong>b{window.txConsts.fxsVersion}</strong>
-                </span>
-                <a
-                    href="https://github.com/tabarra/txAdmin/blob/master/LICENSE"
-                    onClick={handleExternalLinkClick}
-                    target="_blank"
-                    className='text-muted-foreground hover:text-accent'
-                >
-                    &copy; 2019-{(new Date).getUTCFullYear()} Tabarra
-                </a>
-            </div>
+            {window.txConsts.isWebInterface ? (
+                <div className='flex flex-col items-center justify-center gap-1 text-sm font-light opacity-85 hover:opacity-100'>
+                    <span className="text-muted-foreground text-smx">
+                        tx: <strong>v{window.txConsts.txaVersion}</strong>
+                        &nbsp;|
+                        fx: <strong>b{window.txConsts.fxsVersion}</strong>
+                    </span>
+                    <a
+                        href="https://github.com/tabarra/txAdmin/blob/master/LICENSE"
+                        onClick={handleExternalLinkClick}
+                        target="_blank"
+                        className='text-muted-foreground hover:text-accent'
+                    >
+                        &copy; 2019-{(new Date).getUTCFullYear()} Tabarra
+                    </a>
+                </div>
+            ) : null}
         </aside>
     );
 }
