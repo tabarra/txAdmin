@@ -178,8 +178,8 @@
                             <label for="frmFXServer-onesync" class="col-sm-3 col-form-label">OneSync</label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmFXServer-onesync" <%= readOnly ? 'disabled' : '' %>>
-                                    <option value="off" <%= fxserver.onesync === 'off' ? 'selected' : '' %>>Off (default)</option>
-                                    <option value="legacy" <%= fxserver.onesync === 'legacy' ? 'selected' : '' %>>Legacy (without infinity)</option>
+                                    <option value="off" <%= fxserver.onesync === 'off' ? 'selected' : '' %>>Off</option>
+                                    <option value="legacy" <%= fxserver.onesync === 'legacy' ? 'selected' : '' %>>Legacy (default)</option>
                                     <option value="on" <%= fxserver.onesync === 'on' ? 'selected' : '' %>>On (with infinity)</option>
                                 </select>
                                 <span class="form-text text-muted">
