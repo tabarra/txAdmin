@@ -1,7 +1,7 @@
 const modulename = 'WebCtxUtils';
 import fsp from "node:fs/promises";
 import path from "node:path";
-import { InjectedTxConsts, ThemeType } from '@shared/otherTypes';
+import { AdsDataType, InjectedTxConsts, ThemeType } from '@shared/otherTypes';
 import { txEnv, convars } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
@@ -125,6 +125,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         hasMasterAccount: ctx.txAdmin.adminVault.hasAdmins(true),
         defaultTheme: tmpDefaultTheme,
         customThemes: tmpCustomThemes.map(({ name, isDark }) => ({ name, isDark })),
+        adsData: ctx.txAdmin.dynamicAds.adData as AdsDataType,
 
         //auth
         preAuth: authedAdmin && authedAdmin.getAuthData(),

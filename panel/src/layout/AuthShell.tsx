@@ -5,6 +5,8 @@ import AddMasterPin from "../pages/auth/AddMasterPin";
 import AddMasterCallback from "../pages/auth/AddMasterCallback";
 import { Card } from "../components/ui/card";
 import { LogoFullSquareGreen } from "@/components/Logos";
+import { useTheme } from "@/hooks/useTheme";
+import { handleExternalLinkClick } from "@/lib/utils";
 
 
 export default function AuthShell() {
@@ -25,20 +27,39 @@ export default function AuthShell() {
                     </Switch>
                 </Card>
 
-                {/* FIXME: add back the links */}
-                <div className="mx-auto DEBUGflex hidden flex-wrap gap-4 justify-center mb-2">
-                    <Link
-                        href="/"
-                        className="h-16 w-48 bg-accent hover:bg-accent/75 text-xl p-1 font-bold tracking-widest rounded-lg flex justify-center items-center"
+                <div className="mx-auto flex flex-wrap gap-4 justify-center mb-2">
+                    {window.txConsts.adsData.login ? (
+                        <a
+                            href={window.txConsts.adsData.login.url}
+                            onClick={handleExternalLinkClick}
+                            target='_blank'
+                            className='w-48 h-16 relative group shadow-sm opacity-90 hover:opacity-100
+                            dark:brightness-90 dark:hover:brightness-110'
+                        >
+                            <div className='absolute inset-0 -z-10 animate-pulse blur 
+                            scale-0 group-hover:scale-100 transition-transform bg-black
+                            dark:bg-gradient-to-r dark:from-[#18E889] dark:to-[#01FFFF]' />
+                            <img
+                                className='rounded-lg max-w-48 max-h-16 m-auto'
+                                src={window.txConsts.adsData.login.img}
+                            />
+                        </a>
+                    ) : null}
+                    <a
+                        href='https://discord.gg/uAmsGa2'
+                        onClick={handleExternalLinkClick}
+                        target='_blank'
+                        className='w-48 h-16 relative group shadow-sm opacity-90 hover:opacity-100 brightness-110
+                        dark:brightness-95 dark:hover:brightness-110'
                     >
-                        ZAP
-                    </Link>
-                    <Link
-                        href="/"
-                        className="h-16 w-48 bg-accent hover:bg-accent/75 text-xl p-1 font-bold tracking-widest rounded-lg flex justify-center items-center"
-                    >
-                        Discord
-                    </Link>
+                        <div className='absolute inset-0 -z-10 animate-pulse blur 
+                        scale-0 group-hover:scale-100 transition-transform bg-black
+                        dark:bg-gradient-to-t dark:from-[#8567EC] dark:to-[#BD5CBF]' />
+                        <img
+                            className='rounded-lg max-w-48 max-h-16 m-auto'
+                            src="img/discord.png"
+                        />
+                    </a>
                 </div>
 
                 <div>

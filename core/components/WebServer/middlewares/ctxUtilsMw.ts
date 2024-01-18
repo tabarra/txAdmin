@@ -3,12 +3,10 @@ import path from 'node:path';
 import fsp from 'node:fs/promises';
 import ejs from 'ejs';
 import xssInstancer from '@core/extras/xss.js';
-import * as helpers from '@core/extras/helpers';
 import { convars, txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import getReactIndex, { tmpCustomThemes } from '../getReactIndex';
 import { CtxTxVars } from './ctxVarsMw';
-import DynamicAds from '../../DynamicAds';
 import { Next } from 'koa';
 import { CtxWithVars } from '../ctxTypes';
 import consts from '@shared/consts';
@@ -136,7 +134,6 @@ async function renderView(
     possiblyAuthedAdmin: AuthedAdminType | undefined,
     data: any,
     txVars: CtxTxVars,
-    dynamicAds: DynamicAds
 ) {
     data.adminUsername = possiblyAuthedAdmin?.name ?? 'unknown user';
     data.adminIsMaster = possiblyAuthedAdmin && possiblyAuthedAdmin.isMaster;
@@ -144,7 +141,6 @@ async function renderView(
     data.isTempPassword = possiblyAuthedAdmin && possiblyAuthedAdmin.isTempPassword;
     data.isLinux = !txEnv.isWindows;
     data.showAdvanced = (convars.isDevMode || console.isVerbose);
-    data.dynamicAd = txVars.isWebInterface && dynamicAds.pick('main');
 
     try {
         return await loadWebTemplate(view).then(template => template(data));
@@ -203,7 +199,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
         };
 
         const renderData = Object.assign(baseViewData, data);
-        ctx.body = await renderView(view, possiblyAuthedAdmin, renderData, ctx.txVars, txAdmin.dynamicAds);
+        ctx.body = await renderView(view, possiblyAuthedAdmin, renderData, ctx.txVars);
         ctx.type = 'text/html';
     };
 

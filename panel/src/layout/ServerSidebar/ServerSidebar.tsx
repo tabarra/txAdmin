@@ -32,30 +32,39 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
             </div>
             <hr className={isSheet ? 'block' : 'hidden'} />
 
-            {/* Ad Placeholder */}
-            {/* FIXME: add it back */}
-            <a
-                href='http://zap-hosting.com/txAdmin5'
-                onClick={handleExternalLinkClick}
-                target='_blank'
-                className='h-[80px] p-4 DEBUGflex justify-center items-center gap-2
-                rounded-xl border shadow-sm
-                bg-gradient-to-r from-yellow-200 via-green-200 to-green-300
-                dark:brightness-90 dark:hover:brightness-100
-                relative group hidden'
-            >
-                <div className='scale-0 group-hover:scale-100 transition-transform
-                absolute inset-0 animate-pulse blur-md -z-10
-                bg-black
-                dark:bg-gradient-to-r dark:from-yellow-200 dark:via-green-200 dark:to-green-300' />
-                <img
-                    className='h-8'
-                    src="img/zap256_black.png"
-                />
-                <p className='text-xs text-zinc-900 text-center tracking-wide'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
-                </p>
-            </a>
+            {window.txConsts.adsData.main ? (
+                <a
+                    href={window.txConsts.adsData.main.url}
+                    onClick={handleExternalLinkClick}
+                    target='_blank'
+                    className='w-sidebar h-[80px] relative self-center group shadow-sm opacity-80 hover:opacity-100
+                    dark:brightness-90 dark:hover:brightness-100'
+                >
+                    <div className='absolute inset-0 -z-10 animate-pulse blur 
+                    scale-0 group-hover:scale-100 transition-transform bg-black
+                    dark:bg-gradient-to-r dark:from-[#18E889] dark:to-[#01FFFF]' />
+                    <img
+                        className='rounded-xl max-w-sidebar max-h-[80px] m-auto'
+                        src={window.txConsts.adsData.main.img}
+                    />
+                </a>
+            ) : null}
+
+            <div className='flex flex-col items-center justify-center gap-1 text-sm font-light opacity-85 hover:opacity-100'>
+                <span className="text-muted-foreground text-smx">
+                    tx: <strong>v{window.txConsts.txaVersion}</strong>
+                    &nbsp;|
+                    fx: <strong>b{window.txConsts.fxsVersion}</strong>
+                </span>
+                <a
+                    href="https://github.com/tabarra/txAdmin/blob/master/LICENSE"
+                    onClick={handleExternalLinkClick}
+                    target="_blank"
+                    className='text-muted-foreground hover:text-accent'
+                >
+                    &copy; 2019-{(new Date).getUTCFullYear()} Tabarra
+                </a>
+            </div>
         </aside>
     );
 }

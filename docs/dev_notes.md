@@ -11,8 +11,8 @@
 - [x] FIXME: toasts going forever or with undefined error if you run them fast
     - specifically can happen to the server restart button
 
-- [ ] zap hosting advertisement + discord link on login page
-- [ ] Add clear copyright/license notice at the bottom of the server sidebar?
+- [x] zap hosting advertisement + discord link on login page
+- [x] Add clear copyright/license notice at the bottom of the server sidebar?
 - [ ] talk to r* and make sure the new build process wipes the old cache
 
 - [ ] deprecate StatisticsManager.pageViews as its now untrackable?
