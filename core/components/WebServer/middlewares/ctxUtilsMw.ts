@@ -155,28 +155,6 @@ async function renderView(
 
 
 /**
- * Renders the login page.
- */
-async function renderLoginView(data: any, txVars: CtxTxVars, dynamicAds: DynamicAds) {
-    data.logoURL = convars.loginPageLogo || 'img/txadmin.png';
-    data.isMatrix = (Math.random() <= 0.05);
-    data.ascii = helpers.txAdminASCII();
-    data.message = data.message || '';
-    data.errorTitle = data.errorTitle || 'Warning:';
-    data.errorMessage = data.errorMessage || '';
-    data.template = data.template || 'normal';
-    data.dynamicAd = txVars.isWebInterface && dynamicAds.pick('login');
-
-    try {
-        return await loadWebTemplate('standalone/login').then(template => template(data));
-    } catch (error) {
-        console.dir(error);
-        return getRenderErrorText('Login', error as Error, data);
-    }
-}
-
-
-/**
  * Middleware that adds some helper functions and data to the koa ctx object
  */
 export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
@@ -225,11 +203,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
         };
 
         const renderData = Object.assign(baseViewData, data);
-        if (view == 'login') {
-            ctx.body = await renderLoginView(renderData, ctx.txVars, txAdmin.dynamicAds);
-        } else {
-            ctx.body = await renderView(view, possiblyAuthedAdmin, renderData, ctx.txVars, txAdmin.dynamicAds);
-        }
+        ctx.body = await renderView(view, possiblyAuthedAdmin, renderData, ctx.txVars, txAdmin.dynamicAds);
         ctx.type = 'text/html';
     };
 
