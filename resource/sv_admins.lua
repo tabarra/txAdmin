@@ -18,7 +18,6 @@ end
 -- Variables & Consts
 local failedAuths = {}
 local attemptCooldown = 15000
-local isLan = GetConvarInt("sv_lan", 0) == 1
 
 -- Handle auth failures
 local function handleAuthFail(src, reason)
@@ -39,7 +38,8 @@ RegisterNetEvent('txsv:checkIfAdmin', function()
     local src = source
     local srcString = tostring(source)
     debugPrint('Handling authentication request from player #'..srcString)
-
+    
+    local isLan = GetConvarInt("sv_lan", 0) == 1
     if isLan then
         return handleAuthFail(source, "sv_lan is enabled, please remove it from your server.cfg")
     end
