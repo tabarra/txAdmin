@@ -1,11 +1,14 @@
-name: "CodeQL"
+name: "Static Security Tests"
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches: master
+  push:
+    branches: master
 
 jobs:
-  analyze:
-    name: Analyze
+  sast:
+    name: Run CodeQL
     runs-on: 'ubuntu-latest'
     permissions:
       security-events: write
