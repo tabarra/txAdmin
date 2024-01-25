@@ -110,6 +110,32 @@ local fivemDeathHashTable = {
     [`WEAPON_ELECTRIC_FENCE`] = 'Electric Fence',
     [`WEAPON_EXHAUSTION`] = 'Exhaustion',
     [`WEAPON_FALL`] = 'Falling',
+    [`WEAPON_RAYPISTOL`] = 'Ray Pistol',
+    [`WEAPON_RAYCARBINE`] = 'Ray Carbine',
+    [`WEAPON_RAYMINIGUN`] = 'Ray Minigun',
+    [`WEAPON_STONE_HATCHET`] = 'Stone Hatchet',
+    -- MPHEIST3 DLC (v 1868)
+    [`WEAPON_CERAMICPISTOL`] = 'Ceramic Pistol',
+    [`WEAPON_NAVYREVOLVER`] = 'Navy Revolver',
+    [`WEAPON_HAZARDCAN`] = 'Hazard Can',
+    -- MPHEIST4 DLC (v 2189)
+    [`WEAPON_GADGETPISTOL`] = 'Gadget Pistol',
+    [`WEAPON_MILITARYRIFLE`] = 'Military Rifle',
+    [`WEAPON_COMBATSHOTGUN`] = 'Combat Shotgun',
+    -- MPSECURITY DLC (v 2545)
+    [`WEAPON_EMPLAUNCHER`] = 'EMP Launcher',
+    [`WEAPON_HEAVYRIFLE`] = 'Heavy Rifle',
+    [`WEAPON_FERTILIZERCAN`] = 'Fertilizer Can',
+    [`WEAPON_STUNGUN_MP`] = 'Stungun MP',
+    -- MPSUM2 DLC (V 2699)
+    [`WEAPON_TACTICALRIFLE`] = 'Tactical Rifle',
+    [`WEAPON_PRECISIONRIFLE`] = 'Precision Rifle',
+    -- MPCHRISTMAS3 DLC (V 2802)
+    [`WEAPON_PISTOLXM3`] = 'Pistol XM3',
+    [`WEAPON_CANDYCANE`] = 'Candy Cane',
+    [`WEAPON_RAILGUNXM3`] = 'Railgun XM3',
+    -- MP2023_01 DLC (V 2944)
+    [`WEAPON_TECPISTOL`] = 'Tec Pistol',
 
 }
 
