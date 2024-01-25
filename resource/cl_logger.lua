@@ -136,7 +136,10 @@ local fivemDeathHashTable = {
     [`WEAPON_RAILGUNXM3`] = 'Railgun XM3',
     -- MP2023_01 DLC (V 2944)
     [`WEAPON_TECPISTOL`] = 'Tec Pistol',
-
+    -- MP2023_02 DLC (V 3095)
+    [`WEAPON_BATTLERIFLE`] = 'Battle Rifle',
+    [`WEAPON_SNOWLAUNCHER`] = 'Snow Launcher',
+    [`WEAPON_HACKINGDEVICE`] = 'Hacking Device',
 }
 
 -- https://github.com/femga/rdr3_discoveries/blob/master/weapons/weapons.lua
