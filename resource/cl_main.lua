@@ -165,7 +165,7 @@ function IsNuiRequestOriginValid(headers)
 
     -- warn admin of possible csrf attempt
     if menuIsAccessible and sendPersistentAlert then
-        local msg = ('ATTENTION! txAdmin received a NUI message from the origin "%s" which is not approved. This likely means that that resource is vulnerable to XSS which has been exploited to inject txAdmin commands. It is recommended that you fix the vulnerability or remove that resource completely. For more information: discord.gg/txAdmin.')            :format(headers['Origin'])
+        local msg = ('ATTENTION! txAdmin received a NUI message from the origin "%s" which is not approved. This likely means that that resource is vulnerable to XSS which has been exploited to inject txAdmin commands. It is recommended that you fix the vulnerability or remove that resource completely. For more information: discord.gg/txAdmin.'):format(headers['Origin'])
         sendPersistentAlert('csrfWarning', 'error', msg, false)
     end
 

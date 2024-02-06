@@ -34,8 +34,6 @@ const promptCommonProps = {
                     (example: <InlineCode>23:30</InlineCode> for 11:30 PM.)
                 </li>
             </ul>
-            {/* Type in the time for the server to restart in relative format (<InlineCode>+MM</InlineCode>) or the 24-hour format <InlineCode>HH:MM</InlineCode>. <br />
-            Example: <InlineCode>+15</InlineCode> for 15 minutes from now., and <InlineCode>23:30</InlineCode> for 11:30 PM. <br /> */}
         </p>
         {browserTimezone !== window.txConsts.serverTimezone && timezoneDiffMessage}
     </>),

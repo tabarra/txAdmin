@@ -88,7 +88,6 @@ export default class WebServer {
                 || error.code === 'ECANCELED'
             )) {
                 console.error(`Probably harmless error on ${ctx.path}`);
-                console.error('Please be kind and send a screenshot of this error to the txAdmin developer.');
                 console.dir(error);
             }
         });
