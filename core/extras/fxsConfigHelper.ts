@@ -458,7 +458,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 );
                 continue;
             }
-            if (convars.forceInterface && iface !== convars.forceInterface) {
+            if (convars.isZapHosting && convars.forceInterface && iface !== convars.forceInterface) {
                 errors.add(
                     cmd.file,
                     cmd.line,
