@@ -292,8 +292,7 @@ export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin
     } catch (error) {
         let msg: string;
         if((error as any).code === 50013){
-            msg = `This bot does not have permission to send messages in this channel.
-            Please edit the channel and give this bot the "Send Messages" permission.`
+            msg = "The bot does not have the permissions required. Please make sure the bot has the `Embed Links` and `Send Messages` permissions for this channel."
         }else{
             msg = (error as Error).message;
         }
