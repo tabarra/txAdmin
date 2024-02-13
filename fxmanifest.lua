@@ -3,9 +3,9 @@
 -- Official discord server: https://discord.gg/txAdmin
 
 author 'Tabarra'
-description 'Remotely Manage & Monitor your GTA5 FiveM Server'
+description 'The official FiveM/RedM server web/in-game management platform.'
 repository 'https://github.com/tabarra/txAdmin'
-version '7.0.0'
+version '7.1.0-tbd'
 ui_label 'txAdmin'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
