@@ -415,40 +415,6 @@ export default class AdminVault {
 
 
     /**
-     * Refreshes admin's social login data
-     * TODO: this should be stored on PersistentCache instead of admins.json
-     *       otherwise it refreshes the admins connected
-     * @param {string} name
-     * @param {string} provider
-     * @param {string} identifier
-     * @param {object} providerData
-     */
-    async refreshAdminSocialData(name, provider, identifier, providerData) {
-        if (this.admins == false) throw new Error('Admins not set');
-
-        //Find admin index
-        const username = name.toLowerCase();
-        const adminIndex = this.admins.findIndex((user) => {
-            return (username === user.name.toLowerCase());
-        });
-        if (adminIndex == -1) throw new Error('Admin not found');
-
-        //Refresh admin data
-        if (!this.admins[adminIndex].providers[provider]) throw new Error('Provider not available for this admin');
-        this.admins[adminIndex].providers[provider].identifier = identifier;
-        this.admins[adminIndex].providers[provider].data = providerData;
-
-        //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => { });
-        try {
-            return await this.writeAdminsFile();
-        } catch (error) {
-            throw new Error(`Failed to save admins.json with error: ${error.message}`);
-        }
-    }
-
-
-    /**
      * Delete admin and save to the admins file
      * @param {string} name
      */
