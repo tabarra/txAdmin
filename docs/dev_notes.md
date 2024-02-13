@@ -4,6 +4,7 @@
     - [x] reduce bodyparser limit - double check
     - [x] fix the timer issue that keeps requests in memory for longer than needed
     - [x] implement rps/heap watcher
+- [x] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] merge prs
     - [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
     - [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
@@ -22,7 +23,6 @@ seems like it just refreshes the page
 - live console bookmarks
 
 - [ ] build: generate fxmanifest files list dynamically
-- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 - [ ] update docs on development?
 

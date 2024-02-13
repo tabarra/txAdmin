@@ -398,8 +398,13 @@ export default class AdminVault {
         }
         if (typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
+        //Prevent race condition, will allow the session to be updated before refreshing socket.io
+        //sessions which will cause reauth and closing of the temp password modal on first access
+        setTimeout(() => {
+            this.refreshOnlineAdmins().catch((e) => { });
+        }, 250);
+
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => { });
         try {
             await this.writeAdminsFile();
             return (password !== null) ? this.admins[adminIndex].password_hash : true;
@@ -549,7 +554,8 @@ export default class AdminVault {
         }
 
         this.admins = jsonData;
-        this.refreshOnlineAdmins().catch((e) => { });
+        //NOTE: since this runs only at the start, nobody is online yet
+        // this.refreshOnlineAdmins().catch((e) => { });
         if (migrated) {
             try {
                 await this.writeAdminsFile();
