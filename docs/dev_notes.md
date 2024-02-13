@@ -1,48 +1,77 @@
-# TODO: v7.0.0 Release
-- [x] terminal: fix scroll to bottom not detecting scroll events
-- [x] ~~make sure some user input based fields are truncated (admin/server/player name)~~ good enough
-- [x] FIXME: console disable input if no write perms
-    - do we need to check for view perms in the page itself or just the menu is enough?
-- [x] FIXME: global settings not updating everywhere when saving settings
-    - this means deprecating globals.config  in favor of globals.txAdmin.globalConfig
-- [x] Remove old live console menu links
-- [x] FIXME: server sidebar tooltips are under the terminal
-- [x] FIXME: terminal not fitting correctly when zoom is not 100% and font size is not the default 16px
-- [x] FIXME: toasts going forever or with undefined error if you run them fast
-    - specifically can happen to the server restart button
+# TODO: v7.1.0 Release
+- [x] feat(core): implement ddos protection measures
+    - [x] throttle koa errors to prevent spam
+    - [x] reduce bodyparser limit - double check
+    - [x] fix the timer issue that keeps requests in memory for longer than needed
+    - [x] implement rps/heap watcher
+- [ ] merge prs
+    - [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
+    - [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
+    - [ ] translations
 
-- [x] zap hosting advertisement + discord link on login page
-- [x] Add clear copyright/license notice at the bottom of the server sidebar?
-- [ ] talk to r* and make sure the new build process wipes the old cache
+- assorted changes
+    - [ ] FIXME: apparently pressing enter on the text form of the license key when setting up the server using tx doenst work?
+seems like it just refreshes the page
+    - [ ] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
+    - add txadmin v8 heap to diagnostics
+    - add snapshot and gc to advanced actions
 
-- [x] deprecate StatisticsManager.pageViews as its now untrackable?
-- [x] check all discord invites (use utm params maybe?)
-- [x] onesync should be legacy by default
+- follow up recipe maintainers regarding fxmanifest description
+- fix(core/playerlistmanager): dont wipe license cache on restart
+- rtl issue
+- live console bookmarks
 
+- [ ] build: generate fxmanifest files list dynamically
 - [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] tutorial stepper for the new UI?
 - [ ] update docs on development?
 
-=======================================================================
-
-
-
-
-
-wget $(curl -s https://api.github.com/repos/tabarra/txadmin/releases/latest | grep "browser_download_url.*monitor.zip" | cut -d '"' -f 4)
-
-wget $(curl -s https://api.github.com/repos/tabarra/txadmin/releases/latest | jq -r '.assets[] | select(.name == "monitor.zip") | .browser_download_url')
-
-
+- [ ] FIXME: I am scrolled up, and each time a new row appears in live console, the highlighted part moves down a row to some random 3 characters. 
 
 =======================================================================
 
-# TODO: v7.1+
-- [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
-- [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
+
+# default
+25 resources
+6.44KB
+6595/25 = 264b/res
+
+# qbcore
+103 resources
+19.81KB -> 23.56KB
+20285/103 = 197b/res
+24125/103 = 234b/res
+
+# esx
+76 resources
+15.77KB -> 16.08KB
+16148/76 = 212b/res
+16465/76 = 216b/res
+
+# vorp
+70 resources
+13.54KB
+13865/70 = 198b/res
+
+# calculations
+300b*1000 = 293kb
+400b*1000 = 391kb
+500b*1000 = 488kb
+
+512kb/200b = 2621 resources
+512kb/300b = 1747 resources
+512kb/500b = 1049 resources
+
+768kb/200b = 3932 resources
+768kb/300b = 2621 resources
+768kb/500b = 1572 resources
+
+
+
+=======================================================================
+
+# TODO: v7.2+
 - [ ] Remove old live console legacy code
-- [ ] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
 - [ ] fix the tsc build
 
 - [ ] NEW PAGE: Dashboard
@@ -907,6 +936,9 @@ nui_devtoold mpMenu
 console.log('hanging the thread for 60s');
 Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60 * 1000);
 console.log('done');
+
+# stress http post
+seq 50000 | parallel --max-args 0 --jobs 10000 "curl -s http://xxxxxxxxxxx:40120/ -d @braces768kb.json --header \"Content-Type: application/json\" > /dev/null"
 
 # check external chart
 cdt
