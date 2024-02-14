@@ -6,6 +6,9 @@
     - [x] implement rps/heap watcher
 - [x] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
 - [x] fix(core): game admin reauth in every cfx.re login
+- [x] fix(core/playerlistmanager): dont wipe license cache on restart
+    - core/components/PlayerlistManager/index.ts -> handleServerStop
+    - repro: connect + disconnect, restart twice, and the id wont be on the list anymore
 - [ ] merge prs
     - [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
     - [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
@@ -20,7 +23,6 @@ seems like it just refreshes the page
     - fix disallowed intents message
 
 - follow up recipe maintainers regarding fxmanifest description
-- fix(core/playerlistmanager): dont wipe license cache on restart
 - rtl issue
 - live console bookmarks
 
