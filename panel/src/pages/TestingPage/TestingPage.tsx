@@ -21,6 +21,6 @@ export default function TestingPage() {
         {/* <TmpWarningBarState /> */}
         {/* <TmpAuthState /> */}
         {/* <TmpMarkdown /> */}
-        {/* <TmpColors /> */}
+        <TmpColors />
     </div>;
 }
