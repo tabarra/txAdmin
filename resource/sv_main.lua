@@ -122,20 +122,12 @@ local function txaReportResources(source, args)
     local max = GetNumResources() - 1
     for i = 0, max do
         local resName = GetResourceByFindIndex(i)
-
-        -- Hacky patch added because a particular resource from this developer had a broken 
-        -- unicode in the resource description, which caused json.encode to fail.
-        local resDesc = GetResourceMetadata(resName, 'description')
-        if resDesc ~= nil and string.find(resDesc, "Louis.dll") then
-            resDesc = nil
-        end
-
         local currentRes = {
             name = resName,
             status = GetResourceState(resName),
             author = GetResourceMetadata(resName, 'author'),
             version = GetResourceMetadata(resName, 'version'),
-            description = resDesc,
+            description = GetResourceMetadata(resName, 'description'),
             path = GetResourcePath(resName)
         }
         resources[#resources+1] = currentRes
