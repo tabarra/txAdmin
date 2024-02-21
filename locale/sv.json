@@ -21,7 +21,7 @@
             "title_temporary": "Du har blivit temorärt bannlyst.",
             "label_expiration": "Din bannlysning går ut inom",
             "label_date": "bannlysning datum",
-            "label_author": "Bannlyst av ",
+            "label_author": "Bannlyst av",
             "label_reason": "Bannlysnings anledning",
             "label_id": "Bannlysnings ID",
             "note_multiple_bans": "OBS Du kan vara bannlyst på flera identifikationer.",
@@ -195,7 +195,7 @@
                 "title": "Skicka ut medelande",
                 "label": "Skicka ett meddelande till alla spelare inne på servern",
                 "dialog_desc": "Skriv in meddelandet du vill skicka till alla spelare.",
-                "dialog_placeholder": "Ditt Medelande... ",
+                "dialog_placeholder": "Ditt Medelande...",
                 "dialog_success": "Ditt medelande är utsickat."
             },
             "clear_area": {
@@ -246,18 +246,18 @@
             },
             "actions": {
                 "title": "Spelare alternativ",
-                "command_sent": "Kommando skickat ",
+                "command_sent": "Kommando skickat",
                 "moderation": {
                     "title": "Moderation",
                     "options": {
                         "dm": "Direktmeddelande",
                         "warn": "Varna",
                         "kick": "Sparka",
-                        "set_admin": "Ge administratör "
+                        "set_admin": "Ge administratör"
                     },
                     "dm_dialog": {
                         "title": "Direktmeddelande",
-                        "description": "Vad vill du skriva i ditt direktmeddelande till spelaren ",
+                        "description": "Vad vill du skriva i ditt direktmeddelande till spelaren",
                         "placeholder": "Anledning",
                         "success": "Ditt direktmeddelande har skickats"
                     },

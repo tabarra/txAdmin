@@ -1,0 +1,36 @@
+{
+  "ignore": {
+    "open": {
+      "versions": "> 7.1.0",
+      "reason": "Doesn't work when powershell is not in PATH or something like that."
+    },
+    "fs-extra": {
+      "versions": ">9",
+      "reason": "recipe errors on some OSs"
+    },
+    "execa": {
+      "versions": "^5",
+      "reason": "following @sindresorhus/windows-release"
+    },
+    "windows-release": {
+      "versions": "^5.1.1",
+      "reason": "inlined to transform it into async"
+    },
+    "nanoid": {
+      "versions": ">4",
+      "reason": "dropped support for node 16"
+    },
+    "got": {
+      "versions": ">13",
+      "reason": "dropped support for node 16"
+    },
+    "jose": {
+      "versions": ">4",
+      "reason": "dropped support for node 16"
+    },
+    "lowdb": {
+      "versions": ">6",
+      "reason": "dropped support for node 16"
+    }
+  }
+}

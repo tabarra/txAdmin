@@ -2,94 +2,35 @@ const modulename = 'SocketRoom:Status';
 import TxAdmin from "@core/txAdmin";
 import { RoomType } from "../webSocket";
 import consoleFactory from '@extras/console';
+import { GlobalStatusType, ServerConfigPendingStepType } from "@shared/socketioTypes";
 const console = consoleFactory(modulename);
-
-
-/**
- * Returns the Discord Bot data
- */
-const prepareDiscordStatus = (txAdmin: TxAdmin) => {
-    const wsStatus = txAdmin.discordBot.wsStatus;
-    const statusCodes = [
-        ['READY', 'success'],
-        ['CONNECTING', 'warning'],
-        ['RECONNECTING', 'warning'],
-        ['IDLE', 'warning'],
-        ['NEARLY', 'warning'],
-        ['DISCONNECTED', 'danger'],
-        ['WAITING_FOR_GUILDS', 'warning'],
-        ['IDENTIFYING', 'warning'],
-        ['RESUMING', 'warning'],
-    ];
-
-    if (wsStatus === false) {
-        return {
-            status: 'DISABLED',
-            statusClass: 'secondary',
-        };
-    } else if (statusCodes[wsStatus]) {
-        return {
-            status: statusCodes[wsStatus][0],
-            statusClass: statusCodes[wsStatus][1],
-        };
-    } else {
-        return {
-            status: 'UNKNOWN',
-            statusClass: 'danger',
-        };
-    }
-}
 
 
 /**
  * Returns the fxserver's data
  */
-const prepareServerStatus = (txAdmin: TxAdmin) => {
-    const out = {
-        mutex: txAdmin.fxRunner?.currentMutex,
-        status: txAdmin.healthMonitor.currentStatus || '??',
-        process: txAdmin.fxRunner.getStatus(),
-        name: txAdmin.globalConfig.serverName,
-        players: txAdmin.playerlistManager.onlineCount,
-        scheduler: txAdmin.scheduler.getStatus(),
-        statusClass: 'dark',
-    };
-
-    if (out.status == 'ONLINE') {
-        out.statusClass = 'success';
-    } else if (out.status == 'PARTIAL') {
-        out.statusClass = 'warning';
-    } else if (out.status == 'OFFLINE') {
-        out.statusClass = 'danger';
-    } else {
-        out.statusClass = 'dark';
+const getinitialData = (txAdmin: TxAdmin): GlobalStatusType => {
+    // Check if the deployer is running or setup is pending
+    let configPendingStep: ServerConfigPendingStepType;
+    if (globals.deployer !== null) {
+        configPendingStep = 'deployer';
+    } else if (!globals.fxRunner.config.serverDataPath || !globals.fxRunner.config.cfgPath) {
+        configPendingStep = 'setup';
     }
 
-    return out;
-}
-
-
-/**
- * Returns the host's usage
- */
-const prepareHostData = (txAdmin: TxAdmin) => {
-    const stats = txAdmin.healthMonitor.hostStats;
-    if (!stats) {
-        return {
-            memory: { pct: 0, text: 'not available' },
-            cpu: { pct: 0, text: 'not available' },
-        };
-    } else {
-        return {
-            memory: {
-                pct: stats.memory.usage,
-                text: `${stats.memory.usage}% (${stats.memory.used.toFixed(2)}/${stats.memory.total.toFixed(2)} GB)`,
-            },
-            cpu: {
-                pct: stats.cpu.usage,
-                text: `${stats.cpu.usage}% of ${stats.cpu.count}x ${stats.cpu.speed} MHz`,
-            },
-        };
+    return {
+        // @ts-ignore simplifying the status enum to a string
+        discord: txAdmin.discordBot.wsStatus, //no push events, only passively updated
+        server: {
+            configPendingStep,
+            status: txAdmin.healthMonitor.currentStatus || '??',
+            process: txAdmin.fxRunner.getStatus(),
+            instantiated: !!txAdmin.fxRunner.fxChild, //used to disable the control buttons
+            name: txAdmin.globalConfig.serverName,
+            whitelist: txAdmin.playerDatabase.config.whitelistMode,
+        },
+        // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
+        scheduler: txAdmin.scheduler.getStatus(), //no push events, only passively updated
     }
 }
 
@@ -109,10 +50,6 @@ export default (txAdmin: TxAdmin): RoomType => ({
     cumulativeBuffer: false,
     outBuffer: null,
     initialData: () => {
-        return {
-            discord: prepareDiscordStatus(txAdmin), //passive update when HostData updates
-            host: prepareHostData(txAdmin), //push
-            server: prepareServerStatus(txAdmin),
-        };
+        return getinitialData(txAdmin);
     },
 })

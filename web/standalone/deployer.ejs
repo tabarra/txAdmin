@@ -9,18 +9,18 @@
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
     <title>Server Deployer</title>
-    <link href="css/simple-line-icons.css" rel="stylesheet">
-    <link href="css/coreui.min.css" rel="stylesheet">
-    <link href="css/dark.css" rel="stylesheet">
+    <link href="css/simple-line-icons.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
+    <link href="css/coreui.min.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
+    <link href="css/dark.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
-    <link rel="stylesheet" href="css/txAdmin.css">
+    <link rel="stylesheet" href="css/txAdmin.css?txVer=<%= txAdminVersion %>">
 
     <!-- Page CSS -->
     <!-- <link rel="stylesheet" href="css/codemirror.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css" 
         integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" 
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="css/codemirror_lucario.css">
+    <link rel="stylesheet" href="css/codemirror_lucario.css?txVer=<%= txAdminVersion %>">
     <style>
         .inline-code{
             color: #321fdb!important;
@@ -46,18 +46,12 @@
     <script><%- jsInjection %></script>
 </head>
 
-<body class="c-app flex-row align-items-center <%= uiTheme %>">
-
+<body class="c-app flex-row <%= uiTheme %>">
     <div class="container">
-
-        <!-- Logo Row -->
-        <div class="row justify-content-center pt-4 mb-4">
-            <img src="img/txadmin.png" alt="txAdmin Logo">
-        </div>
 
         <!-- Stepper Row -->
         <div class="row justify-content-center">
-            <div class="col-md-9">
+            <div class="col-12">
                 <div class="card fade-in deployer-stepper">
                     <% if (step === 'review') { %>
                         <style>
@@ -100,7 +94,7 @@
                                     onclick="cancelAction()">Cancel and Return to Setup</button>
                                 &nbsp; &nbsp;
                                 <button class="btn btn-info" type="button" 
-                                    onclick="step1Action();">Next</button>
+                                    onclick="step1Action();" autofocus>Next</button>
                             </div>
                         </div>
                         <div class="card-footer text-muted">Step 2: Input Parameters</div>
@@ -137,9 +131,6 @@
                                 <% if (requireDBConfig) { %>
                                 <div class="row justify-content-center m-2">
                                     <a class="btn btn-small btn-outline-secondary" data-toggle="collapse" href="#collapseDbOptions" aria-expanded="true"  aria-controls="collapseDbOptions">
-                                        <svg class="c-sidebar-nav-icon ml-1" id="darkToggleLight">
-                                            <use href="img/coreui_icons.svg#cil-settings"></use>
-                                        </svg>
                                         Show/Hide Database options (advanced)
                                     </a>
                                 </div>
@@ -319,52 +310,24 @@
             </div>
         </div>
 
-        <!-- Info Row -->
-        <div class="row justify-content-center">
-            <div class="col-md-4 ">
-                <div class="alert alert-secondary text-center small" style="min-width: 280px;" role="alert">
-                    <strong>Server profile:</strong> <%= serverProfile %> <br>
-                    <strong>txAdmin version:</strong> <%= txAdminVersion %> <br>
-                    <strong>FXServer build:</strong> <%= fxServerVersion %> 
-                    <div class="hrsep hrsep-small">//</div>
-                    <h5 class="text-muted">
-                        <strong>txAdmin</strong> Official Discord: <br>
-                        <a href="https://discord.gg/uAmsGa2" target="_blank">
-                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
-                        </a>
-                    </h5>
-                </div>
-
-                <div style="text-align: center" class="pb-3">
-                    <svg class="c-sidebar-nav-icon d-none" id="darkToggleLight">
-                        <use href="img/coreui_icons.svg#cil-sun"></use>
-                    </svg>
-                    <svg class="c-sidebar-nav-icon" id="darkToggleDark">
-                        <use href="img/coreui_icons.svg#cil-moon"></use>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-
     </div>
     <!-- CoreUI and necessary plugins-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" 
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" 
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.16/lib/marked.umd.min.js"></script>
-    <script src="js/coreui.bundle.min.js"></script>
-    <script src="js/bootstrap-notify.min.js"></script>
-    <script src="js/txadmin/base.js"></script>
+    <script src="js/coreui.bundle.min.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/bootstrap-notify.min.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/txadmin/base.js?txVer=<%= txAdminVersion %>"></script>
 
     <!-- JS -->
-    <!-- <script src="js/codeEditor/codemirror.js"></script> -->
+    <!-- <script src="js/codeEditor/codemirror.js?txVer=<%= txAdminVersion %>"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js" 
         integrity="sha512-ZTpbCvmiv7Zt4rK0ltotRJVRaSBKFQHQTrwfs6DoYlBYzO1MA6Oz2WguC+LkV8pGiHraYLEpo7Paa+hoVbCfKw==" 
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="js/codeEditor/mode/simple.js"></script>
-    <script src="js/codeEditor/mode/fivem-cfg.js"></script>
-    <script src="js/codeEditor/mode/yaml.js"></script>
+    <script src="js/codeEditor/mode/simple.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/codeEditor/mode/fivem-cfg.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/codeEditor/mode/yaml.js?txVer=<%= txAdminVersion %>"></script>
     <script>
         //============================================== CodeMirror & Page Setup
         const currentStep = '<%= step %>';
@@ -567,7 +530,7 @@
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location = '/console';
+                        navigateParentTo('/server/console');
                     }else{
                         updateMarkdownNotification(data, notify);
                     }
@@ -590,7 +553,7 @@
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location = '/setup';
+                        navigateParentTo('/server/setup');
                     }else{
                         notify.update('progress', 0);
                         notify.update('type', data.type);

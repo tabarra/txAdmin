@@ -11,14 +11,16 @@ const console = consoleFactory(modulename);
  */
 export default async function DeployerStepper(ctx) {
     //Check permissions
-    if (!ctx.utils.hasPermission('master')) {
+    if (!ctx.admin.hasPermission('master')) {
         return ctx.utils.render('main/message', { message: 'You need to be the admin master to use the deployer.' });
     }
 
     //Check if this is the correct state for the deployer
     if (globals.deployer == null) {
-        const redirPath = (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath) ? '/setup' : '/';
-        return ctx.response.redirect(redirPath);
+        const redirPath = (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath)
+            ? '/server/setup'
+            : '/';
+        return ctx.utils.legacyNavigateToPage(redirPath);
     }
 
     //Prepare Output

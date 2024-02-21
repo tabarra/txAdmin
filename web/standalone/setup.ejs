@@ -9,11 +9,11 @@
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
     <title><%= headerTitle %></title>
-    <link href="css/simple-line-icons.css" rel="stylesheet">
-    <link href="css/coreui.min.css" rel="stylesheet">
-    <link href="css/dark.css" rel="stylesheet">
+    <link href="css/simple-line-icons.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
+    <link href="css/coreui.min.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
+    <link href="css/dark.css?txVer=<%= txAdminVersion %>" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
-    <link rel="stylesheet" href="css/txAdmin.css">
+    <link rel="stylesheet" href="css/txAdmin.css?txVer=<%= txAdminVersion %>">
 
     <!-- Page CSS -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -131,14 +131,8 @@
     <script><%- jsInjection %></script>
 </head>
 
-<body class="c-app flex-row align-items-center <%= uiTheme %>">
-
+<body class="c-app flex-row <%= uiTheme %>">
     <div class="container">
-
-        <!-- Logo Row -->
-        <div class="row justify-content-center pt-4 mb-4">
-            <img src="img/txadmin.png" alt="txAdmin Logo">
-        </div>
 
         <!-- Stepper Row -->
         <div class="row justify-content-center">
@@ -345,7 +339,7 @@
                                             <button class="btn btn-pill btn-secondary previous-step"
                                                 type="button">Back</button>
                                             <button class="btn btn-pill btn-info next-step" type="button"
-                                                data-feedback="validateLocalDeployPath" id="s5DeployerTargetSubmitBtn">Save</button>
+                                                data-feedback="validateLocalDeployPath" id="s5DeployerTargetSubmitBtn" autofocus>Save</button>
                                         </div>
                                     </div>
 
@@ -397,43 +391,15 @@
             </div>
         </div>
 
-        <!-- Info Row -->
-        <div class="row justify-content-center">
-            <div class="col-md-4 ">
-                <div class="alert alert-secondary text-center small" style="min-width: 280px;" role="alert">
-                    <strong>Server profile:</strong> <%= serverProfile %> <br>
-                    <strong>txAdmin version:</strong> <%= txAdminVersion %> <br>
-                    <strong>FXServer build:</strong> <%= fxServerVersion %>
-                    <div class="hrsep hrsep-small">//</div>
-                    <h5 class="text-muted">
-                        <strong>txAdmin</strong> Official Discord: <br>
-                        <a href="https://discord.gg/uAmsGa2" target="_blank">
-                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
-                        </a>
-                    </h5>
-                </div>
-
-                <div style="text-align: center" class="pb-3">
-                    <svg class="c-sidebar-nav-icon d-none" id="darkToggleLight">
-                        <use href="img/coreui_icons.svg#cil-sun"></use>
-                    </svg>
-                    <svg class="c-sidebar-nav-icon" id="darkToggleDark">
-                        <use href="img/coreui_icons.svg#cil-moon"></use>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-
     </div>
     <!-- CoreUI and necessary plugins-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" 
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" 
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.16/lib/marked.umd.min.js"></script>
-    <script src="js/coreui.bundle.min.js"></script>
-    <script src="js/bootstrap-notify.min.js"></script>
-    <script src="js/txadmin/base.js"></script>
+    <script src="js/coreui.bundle.min.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/bootstrap-notify.min.js?txVer=<%= txAdminVersion %>"></script>
+    <script src="js/txadmin/base.js?txVer=<%= txAdminVersion %>"></script>
 
     <!-- JS -->
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
@@ -924,12 +890,12 @@
             txAdminAPI({
                 type: "POST",
                 url: '/setup/save',
-                timeout: REQ_TIMEOUT_LONG,
+                timeout: REQ_TIMEOUT_REALLY_LONG,
                 data: outData,
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location = (selectedDeploymentType == 'local')? '/console' : '/deployer';
+                        navigateParentTo((selectedDeploymentType === 'local') ? '/server/console' : '/server/deployer');
                     }else{
                         saveError.innerHTML = convertMarkdown(`${data.message}\nPlease refresh the page and start again.`, true);
                         saveError.classList.remove('d-none');

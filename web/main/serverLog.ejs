@@ -64,21 +64,18 @@
     @media (min-width: 1250px) and (max-width: 1450px)  {
         .override-bootstrap {
             flex: 0 0 auto !important;
-            max-width: 65% !important;
         }
     }
 
 
 </style>
 
-<div class="text-center" style="margin-bottom: 15px">
-    <h3>Server Log</h3>
-</div>
+
 <div class="row">
-    <div class="col-xl-3 col-lg-12 card-containers" style="min-width: 235px;">
-        <div class="card border-primary" >
+    <div class="col-lg-3 col-md-12 card-containers" style="min-width: 235px;">
+        <div class="card" >
             <div class="card-body text-center">
-                <div id="cardstatus" class="d-nonex">
+                <div id="cardstatus">
                     <h4>Mode: <span class="text-success" id="modeLabel">LIVE</span></h4>
                     <p>
                         <strong>From:</strong> <span id="histLogStart">--</span> <br>
@@ -104,7 +101,7 @@
                 <div class='section-title'>
                     <button
                       style='margin-left: 10px;'
-                      class='btn btn-info filter-show-toggle rounded'
+                      class='btn btn-outline-info filter-show-toggle rounded'
                       data-toggle='collapse'
                       href="#filter-control-container"
                       role='button'
@@ -192,8 +189,8 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-9 col-lg-12 card-containers override-bootstrap">
-        <div class="card border-primary">
+    <div class="col-lg-9 col-md-12 card-containers override-bootstrap">
+        <div class="card">
             <div class="card-body p-3" style="position: relative">
                 <pre id="logContainer" class="thin-scroll pre-log-content <%= isWebInterface ? '' : 'nui-height' %>"></pre>
                 <div id="autoScrollDiv">

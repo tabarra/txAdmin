@@ -1,0 +1,275 @@
+[
+  {
+    "paletteName": "dark semantic",
+    "swatches": [
+      {
+        "name": "accent",
+        "color": "F50551"
+      },
+      {
+        "name": "danger",
+        "color": "F86565"
+      },
+      {
+        "name": "warning",
+        "color": "E8C957"
+      },
+      {
+        "name": "success",
+        "color": "51E47A"
+      },
+      {
+        "name": "info",
+        "color": "5AC8E1"
+      }
+    ]
+  },
+  {
+    "paletteName": "dark backgrounds",
+    "swatches": [
+      {
+        "name": "new background",
+        "color": "171516"
+      },
+      {
+        "name": "DELETAR",
+        "color": "171516"
+      },
+      {
+        "name": "DELETAR2",
+        "color": "171516"
+      },
+      {
+        "name": "card",
+        "color": "1F1C1E"
+      },
+      {
+        "name": "border",
+        "color": "322D31"
+      },
+      {
+        "name": "muted",
+        "color": "2A2629"
+      },
+      {
+        "name": "secondary",
+        "color": "463F44"
+      },
+      {
+        "name": "primary",
+        "color": "F9F3F8"
+      }
+    ]
+  },
+  {
+    "paletteName": "light backgrounds",
+    "swatches": [
+      {
+        "name": "new background",
+        "color": "F9F4F8"
+      },
+      {
+        "name": "DELETAR",
+        "color": "F9F4F8"
+      },
+      {
+        "name": "DELETAR2",
+        "color": "F9F4F8"
+      },
+      {
+        "name": "card",
+        "color": "EFEAEE"
+      },
+      {
+        "name": "border",
+        "color": "D6D2D5"
+      },
+      {
+        "name": "muted",
+        "color": "DCD8DB"
+      },
+      {
+        "name": "secondary",
+        "color": "B7B3B6"
+      },
+      {
+        "name": "primary",
+        "color": "1B161A"
+      }
+    ]
+  },
+  {
+    "paletteName": "fivem light",
+    "swatches": [
+      {
+        "name": "bg",
+        "color": "EAE8E8"
+      },
+      {
+        "name": "card",
+        "color": "E4E4E5"
+      },
+      {
+        "name": "button",
+        "color": "F5F6F6"
+      },
+      {
+        "name": "secondary",
+        "color": "969DA6"
+      },
+      {
+        "name": "primary",
+        "color": "F50551"
+      }
+    ]
+  },
+  {
+    "paletteName": "fivem dark",
+    "swatches": [
+      {
+        "name": "bg",
+        "color": "484B53"
+      },
+      {
+        "name": "card",
+        "color": "32343D"
+      },
+      {
+        "name": "button",
+        "color": "252830"
+      },
+      {
+        "name": "secondary",
+        "color": "43494F"
+      },
+      {
+        "name": "primary",
+        "color": "C30440"
+      }
+    ]
+  },
+  {
+    "paletteName": "dark v2",
+    "swatches": [
+      {
+        "name": "og background",
+        "color": "171516"
+      },
+      {
+        "name": "fivem dark",
+        "color": "484B53"
+      },
+      {
+        "name": "new bg",
+        "color": "19191C"
+      },
+      {
+        "name": "card",
+        "color": "222326"
+      },
+      {
+        "name": "border",
+        "color": "333539"
+      },
+      {
+        "name": "muted",
+        "color": "26272A"
+      },
+      {
+        "name": "secondary",
+        "color": "3F4146"
+      },
+      {
+        "name": "primary",
+        "color": "F3F5F9"
+      }
+    ]
+  },
+  {
+    "paletteName": "light v2",
+    "swatches": [
+      {
+        "name": "og background",
+        "color": "F9F4F8"
+      },
+      {
+        "name": "fivem light",
+        "color": "EAE8E8"
+      },
+      {
+        "name": "new background",
+        "color": "F5F6FA"
+      },
+      {
+        "name": "card",
+        "color": "EDEFF2"
+      },
+      {
+        "name": "border",
+        "color": "CECFD1"
+      },
+      {
+        "name": "muted",
+        "color": "D5D6D9"
+      },
+      {
+        "name": "secondary",
+        "color": "D9DADE"
+      },
+      {
+        "name": "primary",
+        "color": "16171B"
+      }
+    ]
+  },
+  {
+    "paletteName": "fivem semantic",
+    "swatches": [
+      {
+        "name": "primary",
+        "color": "F50551"
+      },
+      {
+        "name": "error",
+        "color": "FF2600"
+      },
+      {
+        "name": "warning",
+        "color": "FFAE00"
+      },
+      {
+        "name": "success",
+        "color": "01A370"
+      },
+      {
+        "name": "info",
+        "color": "007892"
+      }
+    ]
+  },
+  {
+    "paletteName": "light semantic",
+    "swatches": [
+      {
+        "name": "accent",
+        "color": "F50551"
+      },
+      {
+        "name": "danger",
+        "color": "EF4141"
+      },
+      {
+        "name": "warning",
+        "color": "E6C13A"
+      },
+      {
+        "name": "success",
+        "color": "39E669"
+      },
+      {
+        "name": "info",
+        "color": "39C6E6"
+      }
+    ]
+  }
+]

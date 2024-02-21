@@ -2,6 +2,7 @@ const modulename = 'SocketRoom:Playerlist';
 import TxAdmin from "@core/txAdmin";
 import { RoomType } from "../webSocket";
 import consoleFactory from '@extras/console';
+import { FullPlayerlistEventType } from "@shared/socketioTypes";
 const console = consoleFactory(modulename);
 
 
@@ -18,6 +19,6 @@ export default (txAdmin: TxAdmin): RoomType => ({
             mutex: txAdmin.fxRunner.currentMutex,
             type: 'fullPlayerlist',
             playerlist: txAdmin.playerlistManager.getPlayerList(),
-        }];
+        } satisfies FullPlayerlistEventType];
     },
 })

@@ -93,7 +93,7 @@
         "page_main": {
             "tooltips": {
                 "tooltip_1": "Uporabi %{key} da izbiraš med stranmi in puščične tipke za krmarjenje po elementih menija",
-                "tooltip_2": "Nekateri elementi menija imajo podmožnosti, ki jih je mogoče izbrati z levo in desno puščično tipko "
+                "tooltip_2": "Nekateri elementi menija imajo podmožnosti, ki jih je mogoče izbrati z levo in desno puščično tipko"
             },
             "player_mode": {
                 "title": "Tvoje možnosti",
@@ -135,7 +135,7 @@
                 },
                 "back": {
                     "title": "Nazaj",
-                    "label": "Vrneš se na lokacijo pred zadnjo teleportacijo ",
+                    "label": "Vrneš se na lokacijo pred zadnjo teleportacijo",
                     "error": "Nimaš zadnje lokacije, kamor bi se lahko vrnil!"
                 },
                 "copy": {

@@ -2,14 +2,12 @@ const modulename = 'WebServer:SettingsSave';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import slash from 'slash';
-import { Context } from 'koa';
 import { jsonrepair } from 'jsonrepair';
 import { parseSchedule, anyUndefined } from '@core/extras/helpers';
 import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
-import ConfigVault from '@core/components/ConfigVault';
-import DiscordBot from '@core/components/DiscordBot';
 import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
 import consoleFactory from '@extras/console';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 
@@ -18,9 +16,8 @@ const isUndefined = (x: unknown) => (typeof x === 'undefined');
 
 /**
  * Handle all the server control actions
- * @param {object} ctx
  */
-export default async function SettingsSave(ctx: Context) {
+export default async function SettingsSave(ctx: AuthedCtx) {
     //Sanity check
     if (isUndefined(ctx.params.scope)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -28,7 +25,7 @@ export default async function SettingsSave(ctx: Context) {
     let scope = ctx.params.scope;
 
     //Check permissions
-    if (!ctx.utils.testPermission('settings.write', modulename)) {
+    if (!ctx.admin.testPermission('settings.write', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',
@@ -60,9 +57,8 @@ export default async function SettingsSave(ctx: Context) {
 //================================================================
 /**
  * Handle Global settings
- * @param {object} ctx
  */
-async function handleGlobal(ctx: Context) {
+async function handleGlobal(ctx: AuthedCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.serverName)
@@ -79,7 +75,7 @@ async function handleGlobal(ctx: Context) {
 
     //Trying to load language file
     try {
-        globals.translator.getLanguagePhrases(cfg.language);
+        ctx.txAdmin.translator.getLanguagePhrases(cfg.language);
     } catch (error) {
         return ctx.send({
             type: 'danger',
@@ -89,13 +85,13 @@ async function handleGlobal(ctx: Context) {
     }
 
     //Preparing & saving config
-    const newConfig = globals.configVault.getScopedStructure('global');
+    const newConfig = ctx.txAdmin.configVault.getScopedStructure('global');
     newConfig.serverName = cfg.serverName;
     newConfig.language = cfg.language;
     try {
-        globals.configVault.saveProfile('global', newConfig);
+        ctx.txAdmin.configVault.saveProfile('global', newConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing global settings.`);
+        console.warn(`[${ctx.admin.name}] Error changing global settings.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -105,9 +101,9 @@ async function handleGlobal(ctx: Context) {
     }
 
     //Sending output
-    globals.func_txAdminRefreshConfig();
-    globals.translator.refreshConfig();
-    ctx.utils.logAction('Changing global settings.');
+    ctx.txAdmin.refreshConfig();
+    ctx.txAdmin.translator.refreshConfig();
+    ctx.admin.logAction('Changing global settings.');
     return ctx.send({ type: 'success', markdown: true, message: '**Global configuration saved!**' });
 }
 
@@ -115,9 +111,8 @@ async function handleGlobal(ctx: Context) {
 //================================================================
 /**
  * Handle FXServer settings
- * @param {object} ctx
  */
-async function handleFXServer(ctx: Context) {
+async function handleFXServer(ctx: AuthedCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.serverDataPath)
@@ -166,7 +161,7 @@ async function handleFXServer(ctx: Context) {
     }
 
     //Preparing & saving config
-    const newConfig = globals.configVault.getScopedStructure('fxRunner');
+    const newConfig = ctx.txAdmin.configVault.getScopedStructure('fxRunner');
     newConfig.serverDataPath = cfg.serverDataPath;
     newConfig.cfgPath = cfg.cfgPath;
     newConfig.onesync = cfg.onesync;
@@ -174,9 +169,9 @@ async function handleFXServer(ctx: Context) {
     newConfig.quiet = cfg.quiet;
     newConfig.commandLine = cfg.commandLine;
     try {
-        globals.configVault.saveProfile('fxRunner', newConfig);
+        ctx.txAdmin.configVault.saveProfile('fxRunner', newConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing FXServer settings.`);
+        console.warn(`[${ctx.admin.name}] Error changing FXServer settings.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -186,8 +181,8 @@ async function handleFXServer(ctx: Context) {
     }
 
     //Sending output
-    globals.fxRunner.refreshConfig();
-    ctx.utils.logAction('Changing fxRunner settings.');
+    ctx.txAdmin.fxRunner.refreshConfig();
+    ctx.admin.logAction('Changing fxRunner settings.');
     return ctx.send({
         type: 'success',
         markdown: true,
@@ -200,9 +195,8 @@ async function handleFXServer(ctx: Context) {
 //================================================================
 /**
  * Handle Player Database settings
- * @param {object} ctx
  */
-async function handlePlayerDatabase(ctx: Context) {
+async function handlePlayerDatabase(ctx: AuthedCtx) {
     //Sanity check
     if (anyUndefined(
         ctx.request.body,
@@ -261,7 +255,7 @@ async function handlePlayerDatabase(ctx: Context) {
     }
 
     //Preparing & saving config
-    const newConfig = globals.configVault.getScopedStructure('playerDatabase');
+    const newConfig = ctx.txAdmin.configVault.getScopedStructure('playerDatabase');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
     newConfig.whitelistMode = cfg.whitelistMode;
     newConfig.whitelistedDiscordRoles = cfg.whitelistedDiscordRoles;
@@ -269,9 +263,9 @@ async function handlePlayerDatabase(ctx: Context) {
     newConfig.requiredBanHwidMatches = cfg.requiredBanHwidMatches;
     newConfig.banRejectionMessage = cfg.banRejectionMessage;
     try {
-        globals.configVault.saveProfile('playerDatabase', newConfig);
+        ctx.txAdmin.configVault.saveProfile('playerDatabase', newConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing Player Manager settings.`);
+        console.warn(`[${ctx.admin.name}] Error changing Player Manager settings.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -281,14 +275,13 @@ async function handlePlayerDatabase(ctx: Context) {
     }
 
     //Sending output
-    globals.statisticsManager.whitelistCheckTime.clear();
-    globals.playerDatabase.refreshConfig();
-    ctx.utils.logAction('Changing Player Manager settings.');
+    ctx.txAdmin.statisticsManager.whitelistCheckTime.clear();
+    ctx.txAdmin.playerDatabase.refreshConfig();
+    ctx.admin.logAction('Changing Player Manager settings.');
     return ctx.send({
         type: 'success',
         markdown: true,
-        message: `**Player Manager configuration saved!**
-        You need to restart the server for the changes to take effect.`
+        message: `**Player Manager configuration saved!**`
     });
 }
 
@@ -296,9 +289,8 @@ async function handlePlayerDatabase(ctx: Context) {
 //================================================================
 /**
  * Handle Monitor settings
- * @param {object} ctx
  */
-async function handleMonitor(ctx: Context) {
+async function handleMonitor(ctx: AuthedCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.restarterSchedule),
@@ -327,13 +319,13 @@ async function handleMonitor(ctx: Context) {
     }
 
     //Preparing & saving config
-    const newConfig = globals.configVault.getScopedStructure('monitor');
+    const newConfig = ctx.txAdmin.configVault.getScopedStructure('monitor');
     newConfig.restarterSchedule = validRestartTimes.map(t => t.string);
     newConfig.resourceStartingTolerance = cfg.resourceStartingTolerance;
     try {
-        globals.configVault.saveProfile('monitor', newConfig);
+        ctx.txAdmin.configVault.saveProfile('monitor', newConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing Restarter settings.`);
+        console.warn(`[${ctx.admin.name}] Error changing Restarter settings.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -343,9 +335,9 @@ async function handleMonitor(ctx: Context) {
     }
 
     //Sending output
-    globals.healthMonitor.refreshConfig();
-    globals.scheduler.refreshConfig();
-    ctx.utils.logAction('Changing monitor settings.');
+    ctx.txAdmin.healthMonitor.refreshConfig();
+    ctx.txAdmin.scheduler.refreshConfig();
+    ctx.admin.logAction('Changing monitor settings.');
     return ctx.send({
         type: 'success',
         markdown: true,
@@ -357,11 +349,8 @@ async function handleMonitor(ctx: Context) {
 //================================================================
 /**
  * Handle Discord settings
- * @param {object} ctx
  */
-async function handleDiscord(ctx: Context) {
-    const configVault = (globals.configVault as ConfigVault);
-    const discordBot = (globals.discordBot as DiscordBot);
+async function handleDiscord(ctx: AuthedCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.enabled)
@@ -392,7 +381,7 @@ async function handleDiscord(ctx: Context) {
 
     //Validating embed JSONs
     try {
-        generateStatusMessage(globals.txAdmin, embedJson, embedConfigJson);
+        generateStatusMessage(ctx.txAdmin, embedJson, embedConfigJson);
     } catch (error) {
         return ctx.send({
             type: 'danger',
@@ -412,7 +401,7 @@ async function handleDiscord(ctx: Context) {
     };
 
     //Preparing & saving config
-    const newConfig = configVault.getScopedStructure('discordBot');
+    const newConfig = ctx.txAdmin.configVault.getScopedStructure('discordBot');
     newConfig.enabled = cfg.enabled;
     newConfig.token = cfg.token;
     newConfig.guild = (cfg.guild.length) ? cfg.guild : false;
@@ -420,9 +409,9 @@ async function handleDiscord(ctx: Context) {
     newConfig.embedJson = cfg.embedJson;
     newConfig.embedConfigJson = cfg.embedConfigJson;
     try {
-        globals.configVault.saveProfile('discordBot', newConfig);
+        ctx.txAdmin.configVault.saveProfile('discordBot', newConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing Discord settings.`);
+        console.warn(`[${ctx.admin.name}] Error changing Discord settings.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -432,9 +421,9 @@ async function handleDiscord(ctx: Context) {
     }
 
     //Restarting discord bot
-    ctx.utils.logAction('Changing discordBot settings.');
+    ctx.admin.logAction('Changing discordBot settings.');
     try {
-        await discordBot.refreshConfig();
+        await ctx.txAdmin.discordBot.refreshConfig();
     } catch (error) {
         const errorCode = (error as any).code;
         let extraContext = '';
@@ -460,7 +449,7 @@ async function handleDiscord(ctx: Context) {
 
             Please keep in mind that:
             - These permissions are dangerous because if the bot token leaks, an attacker can cause permanent damage to your server.
-            - No bot should have more permissions than strictly needed, specially \`Administrator\`.
+            - No bot should have more permissions than strictly needed, especially \`Administrator\`.
             - You should never have multiple bots using the same token, create a new one for each bot.`;
         }
         return ctx.send({
@@ -484,9 +473,8 @@ async function handleDiscord(ctx: Context) {
 /**
  * Handle Menu settings
  * NOTE: scoped inside global settings
- * @param {object} ctx
  */
-async function handleMenu(ctx: Context) {
+async function handleMenu(ctx: AuthedCtx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.menuEnabled)
@@ -512,7 +500,7 @@ async function handleMenu(ctx: Context) {
     };
 
     //Preparing & saving config
-    const newConfig = globals.configVault.getScopedStructure('global');
+    const newConfig = ctx.txAdmin.configVault.getScopedStructure('global');
     newConfig.menuEnabled = cfg.menuEnabled;
     newConfig.menuAlignRight = cfg.menuAlignRight;
     newConfig.menuPageKey = cfg.menuPageKey;
@@ -521,9 +509,9 @@ async function handleMenu(ctx: Context) {
     newConfig.hideDefaultWarning = cfg.hideDefaultWarning;
     newConfig.hideDefaultScheduledRestartWarning = cfg.hideDefaultScheduledRestartWarning;
     try {
-        globals.configVault.saveProfile('global', newConfig);
+        ctx.txAdmin.configVault.saveProfile('global', newConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing Global settings.`);
+        console.warn(`[${ctx.admin.name}] Error changing Global settings.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -533,10 +521,9 @@ async function handleMenu(ctx: Context) {
     }
 
     //Sending output
-    globals.config = globals.configVault.getScoped('global');
-    globals.func_txAdminRefreshConfig();
-    globals.fxRunner.resetConvars();
-    ctx.utils.logAction('Changing menu settings.');
+    ctx.txAdmin.refreshConfig();
+    ctx.txAdmin.fxRunner.resetConvars();
+    ctx.admin.logAction('Changing menu settings.');
     return ctx.send({
         type: 'success',
         markdown: true,

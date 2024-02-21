@@ -48,7 +48,7 @@
 - Monitoring:
 	- Auto Restart FXServer on crash or hang
 	- Server’s CPU/RAM consumption
-	- Live Console (with log file and command history)
+	- Live Console (with log file, command history and search)
 	- Server tick time performance chart with player count ([example](https://i.imgur.com/VG8hpzr.gif))
 	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/custom_serverlog.md))
 - Player Manager:
@@ -63,7 +63,7 @@
 - Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
 - Translation Support ([more info](docs/translation.md))
 - FiveM's Server CFG editor & validator
-- Responsive(ish) web interface with Dark Mode 😎
+- Responsive web interface with Dark Mode 😎
 
 Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 
@@ -92,15 +92,15 @@ ConVar usage **example** for different port and profile:
 ```
 
 ### Contributing & Development
-- All PRs should be based on the develop branch, specially translation PRs.
+- All PRs should be based on the develop branch, including translation PRs.
 - Before putting effort for any significant PR, make sure to join our discord and talk to us, since the change you want to do might not have been done for a reason or there might be some required context.
 - If you want to run it from build & source, please do read [this](docs/development.md).
 
 
 ## License, Credits and Thanks
 - This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE);
-- [Favicons](https://www.flaticon.com/free-icon/support_1545728?term=gear%20wrench&page=2&position=11) made by Freepik from [www.flaticon.com](https://www.flaticon.com) are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/);
-- Warning Sounds ([1](https://freesound.org/people/Ultranova105/sounds/136756/)/[2](https://freesound.org/people/Ultranova105/sounds/136754/)) made by Ultranova105 are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/);
-- [Announcement Sound](https://freesound.org/people/IENBA/sounds/545495/) made by IENBA is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
-- [Message Sound](https://freesound.org/people/Divinux/sounds/198414/) made by Divinux is licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/);
-- Special thanks to everyone that contributed to this project, specially the very fine Discord folks that provide support for others;
+- ["Kick" button icons](https://www.flaticon.com/free-icon/users-avatar_8188385) made by __SeyfDesigner__ from [www.flaticon.com](https://www.flaticon.com);
+- Warning Sounds ([1](https://freesound.org/people/Ultranova105/sounds/136756/)/[2](https://freesound.org/people/Ultranova105/sounds/136754/)) made by __Ultranova105__ are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/);
+- [Announcement Sound](https://freesound.org/people/IENBA/sounds/545495/) made by __IENBA__ is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
+- [Message Sound](https://freesound.org/people/Divinux/sounds/198414/) made by __Divinux__ is licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/);
+- Especial thanks to everyone that contributed to this project, especially the very fine Discord folks that provide support for others;

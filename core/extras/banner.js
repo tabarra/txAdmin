@@ -6,16 +6,17 @@ import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
+import { addLocalIpAddress } from './isIpAddressLocal';
 const console = consoleFactory();
 
 
 const getIPs = async () => {
     const reqOptions = {
-        timeout: { request: 2500 }
+        timeout: { request: 2500 },
     };
     const allOps = await Promise.allSettled([
         // op.value.ip
-        got('https://ip.seeip.org/json', reqOptions).json(),
+        // got('https://ip.seeip.org/json', reqOptions).json(), //expired cert?
         got('https://api.ipify.org/?format=json', reqOptions).json(),
         got('https://api.myip.com', reqOptions).json(),
 
@@ -126,7 +127,7 @@ export const printBanner = async () => {
         ];
         if (ipRes.value) {
             addrs.push(ipRes.value);
-            convars.loopbackInterfaces.push(ipRes.value);
+            addLocalIpAddress(ipRes.value);
         }
     } else {
         addrs = [convars.forceInterface];
@@ -161,7 +162,7 @@ export const printBanner = async () => {
 
     //Opening page
     if (txEnv.isWindows && adminPinRes.value) {
-        open(`http://localhost:${convars.txAdminPort}/auth#${adminPinRes.value}`).catch((e) => {});
+        open(`http://localhost:${convars.txAdminPort}/addMaster/pin#${adminPinRes.value}`).catch((e) => {});
     }
 
     //Starting server

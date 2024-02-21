@@ -9,9 +9,10 @@ import { DialogLoadError } from "./DialogLoadError";
 import { PlayerHistoryItem } from "@shared/playerApiTypes";
 import { useSnackbar } from "notistack";
 import { fetchWebPipe } from "@nui/src/utils/fetchWebPipe";
-import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import { GenericApiErrorResp, GenericApiResp } from "@shared/genericApiTypes";
 import { ButtonXS } from "../../misc/ButtonXS";
-import { tsToLocaleDateTime } from "@nui/src/utils/miscUtils";
+import { tsToLocaleDateTime, userHasPerm } from "@nui/src/utils/miscUtils";
+import { usePermissionsValue } from "@nui/src/state/permissions.state";
 
 // TODO: Make the styling on this nicer
 const NoHistoryBox = () => (
@@ -73,11 +74,11 @@ const ActionCard: React.FC<ActionCardProps> = ({
     footerNote =
       action.exp < serverTime
         ? t("nui_menu.player_modal.history.expired_at", {
-            date: expirationDate,
-          })
+          date: expirationDate,
+        })
         : t("nui_menu.player_modal.history.expires_at", {
-            date: expirationDate,
-          });
+          date: expirationDate,
+        });
   }
 
   return (
@@ -134,10 +135,10 @@ const DialogHistoryView: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const playerDetails = usePlayerDetailsValue();
   const forceRefresh = useForcePlayerRefresh();
+  const userPerms = usePermissionsValue();
   const t = useTranslate();
   if ("error" in playerDetails) return <DialogLoadError />;
 
-  const meta = playerDetails.meta;
   //slice is required to clone the array
   const playerActionHistory = playerDetails.player.actionHistory
     .slice()
@@ -149,7 +150,7 @@ const DialogHistoryView: React.FC = () => {
         `/database/revoke_action`,
         {
           method: "POST",
-          data: { action_id: actionId },
+          data: { actionId },
         }
       );
       if ("success" in result && result.success === true) {
@@ -159,7 +160,7 @@ const DialogHistoryView: React.FC = () => {
         });
       } else {
         enqueueSnackbar(
-          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+          (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
           { variant: "error" }
         );
       }
@@ -167,6 +168,9 @@ const DialogHistoryView: React.FC = () => {
       enqueueSnackbar((error as Error).message, { variant: "error" });
     }
   };
+
+  const hasWarnPerm = userHasPerm('players.warn', userPerms);
+  const hasBanPerm = userHasPerm('players.ban', userPerms);
 
   return (
     <Box p={2} height="100%" display="flex" flexDirection="column">
@@ -181,9 +185,9 @@ const DialogHistoryView: React.FC = () => {
             <ActionCard
               key={action.id}
               action={action}
-              permsDisableWarn={!meta.tmpPerms.warn}
-              permsDisableBan={!meta.tmpPerms.ban}
-              serverTime={meta.serverTime}
+              permsDisableWarn={!hasWarnPerm}
+              permsDisableBan={!hasBanPerm}
+              serverTime={playerDetails.serverTime}
               btnAction={() => {
                 handleRevoke(action.id);
               }}

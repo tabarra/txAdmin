@@ -4,6 +4,7 @@ import path from 'node:path';
 import slash from 'slash';
 
 import consoleFactory, { setConsoleEnvData } from '@extras/console';
+import { addLocalIpAddress } from '@extras/isIpAddressLocal';
 const console = consoleFactory();
 
 
@@ -11,10 +12,6 @@ const console = consoleFactory();
  * Helpers
  */
 const cleanPath = (x: string) => { return slash(path.normalize(x)); };
-const logDie = (x: string) => {
-    console.error(x);
-    process.exit(1);
-};
 const getBuild = (ver: any) => {
     try {
         const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
@@ -47,7 +44,8 @@ if (osTypeVar == 'Windows_NT') {
     osType = 'linux';
     isWindows = false;
 } else {
-    logDie(`OS type not supported: ${osTypeVar}`);
+    console.error(`OS type not supported: ${osTypeVar}`);
+    process.exit(100);
 }
 
 //Get resource name
@@ -67,22 +65,26 @@ if (fxServerVersion === 9999) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
 } else if (!fxServerVersion) {
-    logDie(`This version of FXServer is NOT compatible with txAdmin. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
+    console.error(`This version of FXServer is NOT compatible with txAdmin. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
+    process.exit(101);
 } else if (fxServerVersion < minFXServerVersion) {
-    logDie(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
+    console.error(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
+    process.exit(102);
 }
 
 //Getting txAdmin version
 const txAdminVersion = GetResourceMetadata(resourceName, 'version', 0);
 if (typeof txAdminVersion !== 'string' || txAdminVersion == 'null') {
-    logDie('txAdmin version not set or in the wrong format');
+    console.error('txAdmin version not set or in the wrong format');
+    process.exit(103);
 }
 
 //Get txAdmin Resource Path
-let txAdminResourcePath;
+let txAdminResourcePath: string;
 const txAdminResourcePathConvar = GetResourcePath(resourceName);
 if (typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null') {
-    logDie('Could not resolve txAdmin resource path');
+    console.error('Could not resolve txAdmin resource path');
+    process.exit(104);
 } else {
     txAdminResourcePath = cleanPath(txAdminResourcePathConvar);
 }
@@ -90,7 +92,8 @@ if (typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar =
 //Get citizen Root
 const citizenRootConvar = getConvarString('citizen_root');
 if (!citizenRootConvar) {
-    logDie('citizen_root convar not set');
+    console.error('citizen_root convar not set');
+    process.exit(105);
 }
 const fxServerPath = cleanPath(citizenRootConvar as string);
 
@@ -106,7 +109,8 @@ if (!txDataPathConvar) {
 try {
     if (!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
 } catch (error) {
-    logDie(`Failed to check or create '${dataPath}' with error: ${(error as Error).message}`);
+    console.error(`Failed to check or create '${dataPath}' with error: ${(error as Error).message}`);
+    process.exit(106);
 }
 
 //Check paths for non-ASCII characters
@@ -121,7 +125,7 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
     console.error(`If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxServerVersion}/".`);
     console.log(`FXServer path: ${fxServerPath}`);
     console.log(`txData path: ${dataPath}`);
-    process.exit(1);
+    process.exit(107);
 }
 
 
@@ -132,6 +136,13 @@ const isDevMode = getConvarBool('txAdminDevMode');
 const verboseConvar = getConvarBool('txAdminVerbose');
 const debugPlayerlistGenerator = getConvarBool('txDebugPlayerlistGenerator');
 const debugExternalSource = getConvarString('txDebugExternalSource');
+if (isDevMode) {
+    console.warn('Starting txAdmin in DEV mode.');
+    if(!process.env.TXADMIN_DEV_SRC_PATH || !process.env.TXADMIN_DEV_VITE_URL){
+        console.error('Missing TXADMIN_DEV_VITE_URL or TXADMIN_DEV_SRC_PATH env variables.');
+        process.exit(108);
+    }
+}
 
 
 /**
@@ -140,13 +151,12 @@ const debugExternalSource = getConvarString('txDebugExternalSource');
 //Checking for ZAP Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
 let isZapHosting: boolean;
-let forceInterface;
-let forceFXServerPort;
-let txAdminPort;
-let loginPageLogo;
-let defaultMasterAccount;
-let deployerDefaults;
-const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
+let forceInterface: false | string;
+let forceFXServerPort: false | number ;
+let txAdminPort: number;
+let loginPageLogo: false | string;
+let defaultMasterAccount: false | { name: string, password_hash: string };
+let deployerDefaults: false | Record<string, string>;
 const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
 if (fs.existsSync(zapCfgFile)) {
     isZapHosting = !isPterodactyl;
@@ -179,11 +189,10 @@ if (fs.existsSync(zapCfgFile)) {
             };
         }
 
-        loopbackInterfaces.push(forceInterface);
-
         if (!isDevMode) fs.unlinkSync(zapCfgFile);
     } catch (error) {
-        logDie(`Failed to load with ZAP-Hosting configuration error: ${(error as Error).message}`);
+        console.error(`Failed to load with ZAP-Hosting configuration error: ${(error as Error).message}`);
+        process.exit(109);
     }
 } else {
     isZapHosting = false;
@@ -193,17 +202,25 @@ if (fs.existsSync(zapCfgFile)) {
     deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
-    if (!/^\d+$/.test(txAdminPortConvar)) logDie('txAdminPort is not valid.');
+    if (!/^\d+$/.test(txAdminPortConvar)){
+        console.error('txAdminPort is not valid.');
+        process.exit(110);
+    }
     txAdminPort = parseInt(txAdminPortConvar);
 
     const txAdminInterfaceConvar = getConvarString('txAdminInterface');
     if (!txAdminInterfaceConvar) {
         forceInterface = false;
     } else {
-        if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) logDie('txAdminInterface is not valid.');
+        if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) {
+            console.error('txAdminInterface is not valid.');
+            process.exit(111);
+        }
         forceInterface = txAdminInterfaceConvar;
-        loopbackInterfaces.push(forceInterface);
     }
+}
+if(forceInterface){
+    addLocalIpAddress(forceInterface);
 }
 if (verboseConvar) {
     console.dir({ isPterodactyl, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
@@ -212,7 +229,7 @@ if (verboseConvar) {
 //Setting the variables in console without it having to importing from here (cyclical dependency)
 setConsoleEnvData(
     txAdminVersion,
-    txAdminResourcePath as string,
+    txAdminResourcePath,
     isDevMode,
     verboseConvar
 );
@@ -244,5 +261,4 @@ export const convars = Object.freeze({
     loginPageLogo,
     defaultMasterAccount,
     deployerDefaults,
-    loopbackInterfaces,
 });

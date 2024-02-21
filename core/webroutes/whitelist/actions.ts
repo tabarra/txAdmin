@@ -1,5 +1,4 @@
 const modulename = 'WebServer:WhitelistActions';
-import { Context } from 'koa';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import PlayerDatabase, { DuplicateKeyError } from '@core/components/PlayerDatabase';
 import { now, parsePlayerId } from '@core/extras/helpers';
@@ -7,6 +6,7 @@ import DiscordBot from '@core/components/DiscordBot';
 import { DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
 import FXRunner from '@core/components/FxRunner';
 import consoleFactory from '@extras/console';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -17,7 +17,7 @@ const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x 
 /**
  * Returns the output page containing the bans experiment
  */
-export default async function WhitelistActions(ctx: Context) {
+export default async function WhitelistActions(ctx: AuthedCtx) {
     //Sanity check
     if (anyUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -26,7 +26,7 @@ export default async function WhitelistActions(ctx: Context) {
     const sendTypedResp = (data: GenericApiResp) => ctx.send(data);
 
     //Check permissions
-    if (!ctx.utils.testPermission('players.whitelist')) {
+    if (!ctx.admin.testPermission('players.whitelist', modulename)) {
         return sendTypedResp({ error: 'You don\'t have permission to execute this action.' });
     }
 
@@ -44,12 +44,7 @@ export default async function WhitelistActions(ctx: Context) {
 /**
  * Handle actions regarding the whitelist approvals table
  */
-async function handleApprovals(ctx: Context, action: any): Promise<GenericApiResp> {
-    //Typescript stuff
-    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
-    const discordBot = (globals.discordBot as DiscordBot);
-    const fxRunner = (globals.fxRunner as FXRunner);
-
+async function handleApprovals(ctx: AuthedCtx, action: any): Promise<GenericApiResp> {
     //Input validation
     if (typeof ctx.request.body?.identifier !== 'string') {
         return { error: 'identifier not specified' };
@@ -68,7 +63,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
             : `${idType}:${idValue}`;
         if (idType === 'discord') {
             try {
-                const { tag, avatar } = await discordBot.resolveMemberProfile(idValue);
+                const { tag, avatar } = await ctx.txAdmin.discordBot.resolveMemberProfile(idValue);
                 playerName = tag;
                 playerAvatar = avatar;
             } catch (error) { }
@@ -76,37 +71,37 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
 
         //Registering approval
         try {
-            playerDatabase.registerWhitelistApprovals({
+            ctx.txAdmin.playerDatabase.registerWhitelistApprovals({
                 identifier: idlowerCased,
                 playerName,
                 playerAvatar,
                 tsApproved: now(),
-                approvedBy: ctx.session.auth.username,
+                approvedBy: ctx.admin.name,
             });
-            fxRunner.sendEvent('whitelistPreApproval', {
+            ctx.txAdmin.fxRunner.sendEvent('whitelistPreApproval', {
                 action: 'added',
                 identifier: idlowerCased,
                 playerName,
-                adminName: ctx.session.auth.username,
+                adminName: ctx.admin.name,
             });
         } catch (error) {
             return { error: `Failed to save wl approval: ${(error as Error).message}` };
         }
-        ctx.utils.logAction(`Added whitelist approval for ${playerName}.`);
+        ctx.admin.logAction(`Added whitelist approval for ${playerName}.`);
         return { success: true };
 
     } else if (action === 'remove') {
         try {
-            playerDatabase.removeWhitelistApprovals({ identifier: idlowerCased });
-            fxRunner.sendEvent('whitelistPreApproval', {
+            ctx.txAdmin.playerDatabase.removeWhitelistApprovals({ identifier: idlowerCased });
+            ctx.txAdmin.fxRunner.sendEvent('whitelistPreApproval', {
                 action: 'removed',
                 identifier: idlowerCased,
-                adminName: ctx.session.auth.username,
+                adminName: ctx.admin.name,
             });
         } catch (error) {
             return { error: `Failed to remove wl approval: ${(error as Error).message}` };
         }
-        ctx.utils.logAction(`Removed whitelist approval from ${idlowerCased}.`);
+        ctx.admin.logAction(`Removed whitelist approval from ${idlowerCased}.`);
         return { success: true };
 
     } else {
@@ -118,11 +113,7 @@ async function handleApprovals(ctx: Context, action: any): Promise<GenericApiRes
 /**
  * Handle actions regarding the whitelist requests table
  */
-async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp> {
-    //Typescript stuff
-    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
-    const fxRunner = (globals.fxRunner as FXRunner);
-
+async function handleRequests(ctx: AuthedCtx, action: any): Promise<GenericApiResp> {
     //Checkinf for the deny all action, the others need reqId
     if (action === 'deny_all') {
         const cutoff = parseInt(ctx.request.body?.newestVisible);
@@ -132,15 +123,15 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
 
         try {
             const filter = (req: DatabaseWhitelistRequestsType) => req.tsLastAttempt <= cutoff;
-            playerDatabase.removeWhitelistRequests(filter);
-            fxRunner.sendEvent('whitelistRequest', {
+            ctx.txAdmin.playerDatabase.removeWhitelistRequests(filter);
+            ctx.txAdmin.fxRunner.sendEvent('whitelistRequest', {
                 action: 'deniedAll',
-                adminName: ctx.session.auth.username,
+                adminName: ctx.admin.name,
             });
         } catch (error) {
             return { error: `Failed to remove all wl request: ${(error as Error).message}` };
         }
-        ctx.utils.logAction('Denied all whitelist requests.');
+        ctx.admin.logAction('Denied all whitelist requests.');
         return { success: true };
     }
 
@@ -152,7 +143,7 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
 
     if (action === 'approve') {
         //Find request
-        const requests = playerDatabase.getWhitelistRequests({ id: reqId });
+        const requests = ctx.txAdmin.playerDatabase.getWhitelistRequests({ id: reqId });
         if (!requests.length) {
             return { error: `Whitelist request ID ${reqId} not found.` };
         }
@@ -162,30 +153,30 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
         const playerName = req.discordTag ?? req.playerDisplayName;
         const identifier = `license:${req.license}`;
         try {
-            playerDatabase.registerWhitelistApprovals({
+            ctx.txAdmin.playerDatabase.registerWhitelistApprovals({
                 identifier,
                 playerName,
                 playerAvatar: (req.discordAvatar) ? req.discordAvatar : null,
                 tsApproved: now(),
-                approvedBy: ctx.session.auth.username,
+                approvedBy: ctx.admin.name,
             });
-            fxRunner.sendEvent('whitelistRequest', {
+            ctx.txAdmin.fxRunner.sendEvent('whitelistRequest', {
                 action: 'approved',
                 playerName,
                 requestId: req.id,
                 license: req.license,
-                adminName: ctx.session.auth.username,
+                adminName: ctx.admin.name,
             });
         } catch (error) {
             if (!(error instanceof DuplicateKeyError)) {
                 return { error: `Failed to save wl approval: ${(error as Error).message}` };
             }
         }
-        ctx.utils.logAction(`Approved whitelist request from ${playerName}.`);
+        ctx.admin.logAction(`Approved whitelist request from ${playerName}.`);
 
         //Remove record from whitelistRequests
         try {
-            playerDatabase.removeWhitelistRequests({ id: reqId });
+            ctx.txAdmin.playerDatabase.removeWhitelistRequests({ id: reqId });
         } catch (error) {
             return { error: `Failed to remove wl request: ${(error as Error).message}` };
         }
@@ -193,21 +184,21 @@ async function handleRequests(ctx: Context, action: any): Promise<GenericApiResp
 
     } else if (action === 'deny') {
         try {
-            const requests = playerDatabase.removeWhitelistRequests({ id: reqId });
+            const requests = ctx.txAdmin.playerDatabase.removeWhitelistRequests({ id: reqId });
             if(requests.length){
                 const req = requests[0]; //just getting the first
-                fxRunner.sendEvent('whitelistRequest', {
+                ctx.txAdmin.fxRunner.sendEvent('whitelistRequest', {
                     action: 'denied',
                     playerName: req.playerDisplayName,
                     requestId: req.id,
                     license: req.license,
-                    adminName: ctx.session.auth.username,
+                    adminName: ctx.admin.name,
                 });
             }
         } catch (error) {
             return { error: `Failed to remove wl request: ${(error as Error).message}` };
         }
-        ctx.utils.logAction(`Denied whitelist request ${reqId}.`);
+        ctx.admin.logAction(`Denied whitelist request ${reqId}.`);
         return { success: true };
 
     } else {

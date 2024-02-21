@@ -7,7 +7,7 @@ try {
     if (!IsDuplicityVersion()) throw new Error();
 } catch (error) {
     console.log('txAdmin must be run inside FXServer in monitor mode!');
-    process.exit();
+    process.exit(999);
 }
 
 //Checking monitor mode and starting

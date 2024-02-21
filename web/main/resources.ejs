@@ -1,12 +1,8 @@
 <%- await include('parts/header.ejs', locals) %>
 
-<div class="text-center mb-4">
-    <h2>Resources List</h2>
-</div>
-
 
 <div class="row justify-content-center">
-    <div class="col-md-7 mw-col6">
+    <div class="col-md-8 mw-col6">
         <div class="card card-accent-info">
             <div class="card-header float-left">
                 <span class="h5">All Resources</span>
@@ -39,7 +35,7 @@
     </div>
 </div>
 <div class="row justify-content-center">
-    <div class="col-sm-12 col-lg-7 mw-col8">
+    <div class="col-sm-12 col-lg-8 mw-col8">
         <div class="card card-accent-info table-responsive-sm">
             <table class="table table-hover table-outline mb-0">
                 <% for (const resGroup of resGroups) { %>
@@ -147,6 +143,8 @@
         "yarn",
     ]
 
+    const convErrorType = (x) => x === 'error' ? 'danger' : x;
+
 
     //============================================== Refresh List
     $('#btnRefresh').click(() => {
@@ -157,12 +155,12 @@
             timeout: REQ_TIMEOUT_LONG,
             data: { action: 'refresh_res', parameter: '' },
             success: function (data) {
-                if(data.type !== 'danger'){
+                if(data.type !== 'error'){
                     window.location.reload(true);
                 }else{
                     notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
+                    notify.update('type', convErrorType(data.type));
+                    notify.update('message', data.msg);
                 }
             },
             error: function (xmlhttprequest, textstatus, message) {
@@ -182,12 +180,12 @@
             url: '/fxserver/commands',
             data: { action, parameter },
             success: function (data) {
-                if(data.type !== 'danger'){
+                if(data.type !== 'error'){
                     window.location.reload(true);
                 }else{
                     notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
+                    notify.update('type', convErrorType(data.type));
+                    notify.update('message', data.msg);
                 }
             },
             error: function (xmlhttprequest, textstatus, message) {

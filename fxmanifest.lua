@@ -3,9 +3,9 @@
 -- Official discord server: https://discord.gg/txAdmin
 
 author 'Tabarra'
-description 'Remotely Manage & Monitor your GTA5 FiveM Server'
+description 'The official FiveM/RedM server web/in-game management platform.'
 repository 'https://github.com/tabarra/txAdmin'
-version '6.0.2'
+version '7.1.0-tbd'
 ui_label 'txAdmin'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
@@ -65,21 +65,6 @@ files {
     'nui/**/*',
 
     -- WebPipe optimization:
-    'web/public/css/coreui.min.css',
-    'web/public/css/jquery-confirm.min.css',
-    'web/public/css/txAdmin.css',
-    'web/public/css/dark.css',
-    'web/public/js/coreui.bundle.min.js',
-    'web/public/js/bootstrap-notify.min.js',
-    'web/public/js/jquery-confirm.min.js',
-    'web/public/js/socket.io.min.js',
-    'web/public/js/humanizeDuration.min.js',
-    'web/public/js/txadmin/base.js',
-    'web/public/js/txadmin/main.js',
-    'web/public/js/txadmin/players.js',
-    'web/public/xtermjs/xterm.min.css',
-    'web/public/xtermjs/xterm.min.js',
-    'web/public/xtermjs/xterm-addon-fit.min.js',
-    'web/public/xtermjs/xterm-addon-search.js',
-    'web/public/xtermjs/xterm-addon-search-bar.min.js',
+    'panel/**/*',
+    'web/public/**/*',
 }

@@ -23,9 +23,9 @@
             "label_date": "Kitiltás dátuma",
             "label_author": "Kitiltó neve",
             "label_reason": "Kitiltás indoka",
-            "label_id": "Ban ID",
+            "label_id": "Kitiltás ID",
             "note_multiple_bans": "Figyelem: Több mint egy aktív kitiltásod van ezen a fiókon.",
-            "note_diff_license": "Megjegyzés: a kitiltás a <code>license</code> miatt van, ami azt jelenti, hogy a  IDs/HWIDs egyezik a kiltiltásban lévő adatokkal."
+            "note_diff_license": "Megjegyzés: a kitiltás a <code>license</code> miatt van, ami azt jelenti, hogy néhány azonosítód/hardver azonosítód egyezik a kiltiltásban lévő adatokkal."
         }
     },
     "whitelist_messages": {
@@ -36,13 +36,13 @@
         },
         "guild_member": {
             "mode_title": "Ez a szerver <strong>Discord szerver tag whitelist</strong> módban van.",
-            "insufficient_ids": "A <code>discord</code> azonosítód nem elérhető, ami szükséges annak az ellenőrzéséhez, hogy fent vagy-e a szerveren. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "insufficient_ids": "A <code>discord</code> azonosítód nem elérhető, ami szükséges annak az ellenőrzéséhez, hogy fent vagy-e a szerveren. Kérlek nyisd meg a Discord asztali alkalmazást, és próbáld újra (a webalkalmazás nem fog működni).",
             "deny_title": "Kérlek lépj be a szerverünkre a csatlakozáshoz",
             "deny_message": "Kérlek csatlakozz ide %{guildname}, és próbáld újra."
         },
         "guild_roles": {
             "mode_title": "Ez a szerver <strong>Discord whitelist rang</strong> módban van.",
-            "insufficient_ids": "A <code>discord</code> azonosítód nem elérhető, ami szükséges annak az ellenőrzéséhez, hogy fent vagy-e a szerveren. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "insufficient_ids": "A <code>discord</code> azonosítód nem elérhető, ami szükséges annak az ellenőrzéséhez, hogy fent vagy-e a szerveren. Kérlek nyisd meg a Discord asztali alkalmazást, és próbáld újra (a webalkalmazás nem fog működni).",
             "deny_notmember_title": "Kérlek lépj be a szerverünkre a csatlakozáshoz",
             "deny_notmember_message": "Kérlek csatlakozz ide %{guildname}, szerezd meg a szükséges rangot és próbáld újra.",
             "deny_noroles_title": "Nem vagy engedélyezve a Discord szerveren (Nincs meg a megfelelő rang).",
@@ -71,7 +71,7 @@
         "misc": {
             "help_message": "A txAdmin rendelkezik játékon belüli menüvel!\nGyorsgomb [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] Próbáld ki!",
             "menu_not_admin": "Az azonosítód nem egyezik a txAdminban található admin azonosítókkal.\nHa regisztrálva vagy txAdminban, bizonyosodj meg róla hogy el van mentve az Admin Managerben.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
+            "menu_auth_failed": "A txAdmin menü hitelesítés meghiúsult ezzel az okkal: %{reason}",
             "no_perms": "Ehhez nincs engedélyed.",
             "unknown_error": "Ismeretlen hiba lépett fel.",
             "not_enabled": "A txAdmin menü nincs engedélyezve! Engedélyezheted a txAdmin beállítások fülön.",
@@ -93,7 +93,7 @@
         "page_main": {
             "tooltips": {
                 "tooltip_1": "%{key} a lapozáshoz és [NYILAK] a menüben való navigáláshoz",
-                "tooltip_2": "Néhány menü rendelkezik al-opcióval  melyek a bal és jobb nyíllal választható"
+                "tooltip_2": "Néhány menü rendelkezik al-opcióval melyek a bal és jobb nyíllal választhatók"
             },
             "player_mode": {
                 "title": "Játékos mód",
@@ -172,7 +172,7 @@
                     "success": "Jármű boostolva!",
                     "already_boosted": "Ezt a járművet már boostoltad.",
                     "unsupported_class": "Ez a járműtípus nem támogatott.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "Csak lóra ülve tudsz boostolni."
                 }
             },
             "heal": {
@@ -194,20 +194,20 @@
             "announcement": {
                 "title": "Felhívás küldése",
                 "label": "Felhívás küldése minden elérhető játékosnak.",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_desc": "Írd be az üzenetet, amelyet el szeretnél küldeni minden játékosnak.",
                 "dialog_placeholder": "Felhívás...",
                 "dialog_success": "Felhívás elküldve."
             },
             "clear_area": {
                 "title": "Terület visszaállítása",
-                "label": "Reset a specified world area to its default state",
+                "label": "Egy adott terület visszaállítása az alapértelmezett állapotba",
                 "dialog_desc": "Állítsd be a sugarát annak a területnek ahol az entitásokat visszaállítanád (0-300). A szerver oldali entitások nem kerülnek visszaállításra",
                 "dialog_success": "Terület visszaállítása %{radius}m sugárban",
                 "dialog_error": "Érvénytelen sugár bevitel. Próbáld újra."
             },
             "player_ids": {
                 "title": "ID mód váltása",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "Közeli játékosok ID (és egyéb infó) megjelenítése a fejük fölött",
                 "alert_show": "Közeli játékosok ID-jének mutatása.",
                 "alert_hide": "Közeli játékosok ID-jének elrejtése."
             }

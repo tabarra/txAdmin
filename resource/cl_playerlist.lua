@@ -12,6 +12,7 @@ local floor = math.floor
 
 -- Variables & Consts
 LOCAL_PLAYERLIST = {} -- available globally in tx
+local requirePlayerNames = false
 local vTypeMap = {
     ["0"] = "walking",
     ["1"] = "driving", --automobile
@@ -72,11 +73,10 @@ end)
 
 -- Triggered on the return of "getDetailedPlayerlist"
 --  > run through inbound playerlist updating existing data
---  > try to get the dist from all players (susceptible to area culling, but that's fine)
---  > TODO: decide what to do in case of missing or extra ids (missed updatePlayer?)
+--  > try to get the dist from all players (onesync only)
 RegisterNetEvent('txcl:plist:setDetailed', function(players, admins)
     -- print("========== EVENT setDetailedPlayerlist")
-    -- print(json.encode(players)) -- [[id, health, vType]]
+    -- print(json.encode(players)) -- [[id, health, vType, xCoord, yCoord, name]]
     -- print("------------------------------------")
     local myID = GetPlayerServerId(PlayerId())
     local myPed = PlayerPedId()
@@ -84,44 +84,66 @@ RegisterNetEvent('txcl:plist:setDetailed', function(players, admins)
 
     for _, playerData in pairs(players) do
         local pid = playerData[1]
-        local pids = tostring(playerData[1])
-        local localPlayer = LOCAL_PLAYERLIST[pids]
+        local pidStr = tostring(playerData[1])
+        local localPlayer = LOCAL_PLAYERLIST[pidStr]
         -- Set inbound data
         if localPlayer == nil then
-            debugPrint("Playerlist: received detailed info for player "..pids.." not present in local playerlist")
-            LOCAL_PLAYERLIST[pids] = {
+            debugPrint("Playerlist: received detailed info for player "..pidStr.." not present in local playerlist")
+            requirePlayerNames = true
+            LOCAL_PLAYERLIST[pidStr] = {
                 name = "unknown",
                 health = playerData[2],
                 vType = vTypeMap[tostring(playerData[3])] or "unknown",
                 admin = false
             }
         else
-            LOCAL_PLAYERLIST[pids].health = playerData[2]
-            LOCAL_PLAYERLIST[pids].vType = vTypeMap[tostring(playerData[3])] or "unknown"
+            LOCAL_PLAYERLIST[pidStr].health = playerData[2]
+            LOCAL_PLAYERLIST[pidStr].vType = vTypeMap[tostring(playerData[3])] or "unknown"
+            -- Set the player name if available - used when the playerJoining (txcl:plist:updatePlayer) was missed
+            if playerData[6] then
+                LOCAL_PLAYERLIST[pidStr].name = playerData[6]
+            end
         end
 
-        -- Getting distance
+        --Mark as updated
+        LOCAL_PLAYERLIST[pidStr].inLastUpdate = true
+
+        -- Getting distance + health for RedM
         -- NOTE: RedM doesn't save ped health data on server, so need to get locally
         if pid == myID then
-            LOCAL_PLAYERLIST[pids].dist = 0
+            LOCAL_PLAYERLIST[pidStr].dist = 0
             if IS_REDM then
-                LOCAL_PLAYERLIST[pids].health = GetPedHealthPercent(myPed)
+                LOCAL_PLAYERLIST[pidStr].health = GetPedHealthPercent(myPed)
             end
         else
-            local remotePlayer = GetPlayerFromServerId(pid)
-            if remotePlayer == -1 then
-                LOCAL_PLAYERLIST[pids].dist = -1
-                if IS_REDM then
-                    LOCAL_PLAYERLIST[pids].health = -1
-                end
+            --calc distance (onesync only, 2d only)
+            if playerData[4] == nil or playerData[5] == nil then
+                LOCAL_PLAYERLIST[pidStr].dist = -1
             else
-                local remotePed = GetPlayerPed(remotePlayer)
-                local remoteCoords = GetEntityCoords(remotePed)
-                LOCAL_PLAYERLIST[pids].dist = floor(#(myCoords - remoteCoords))
-                if IS_REDM then
-                    LOCAL_PLAYERLIST[pids].health = GetPedHealthPercent(remotePed)
+                local remoteCoords = vector3(playerData[4], playerData[5], myCoords.z)
+                LOCAL_PLAYERLIST[pidStr].dist = floor(#(myCoords - remoteCoords))
+            end
+
+            --get health locally
+            if IS_REDM then
+                local remotePlayer = GetPlayerFromServerId(pid)
+                if remotePlayer == -1 then
+                    LOCAL_PLAYERLIST[pidStr].health = -1
+                else
+                    local remotePed = GetPlayerPed(remotePlayer)
+                    LOCAL_PLAYERLIST[pidStr].health = GetPedHealthPercent(remotePed)
                 end
             end
+        end
+    end
+
+    --Check if player disconnected and the playerDropped (txcl:plist:updatePlayer) was missed
+    for playerID, playerData in pairs(LOCAL_PLAYERLIST) do
+        if playerData.inLastUpdate == true then
+            playerData.inLastUpdate = false
+        else
+            debugPrint("Playerlist: did not receive detailed info for player "..playerID.." present in local playerlist")
+            LOCAL_PLAYERLIST[playerID] = nil
         end
     end
 
@@ -162,8 +184,9 @@ end)
 
 
 -- Triggered when the "player" tab opens in the menu, and every 5s after that
-RegisterNUICallback('signalPlayersPageOpen', function(_, cb)
-    TriggerServerEvent('txsv:req:plist:getDetailed') --request latest from server
+RegisterSecureNuiCallback('signalPlayersPageOpen', function(_, cb)
+    TriggerServerEvent('txsv:req:plist:getDetailed', requirePlayerNames)
+    requirePlayerNames = false
     cb({})
 end)
 

@@ -4,12 +4,11 @@ import child_process from 'node:child_process';
 import chokidar from 'chokidar';
 import debounce from 'lodash/debounce.js';
 import esbuild from 'esbuild';
-
 import { licenseBanner, getFxsPaths } from './scripts-utils.js';
+import config from '../.deploy.config.js';
+
 const txLicenseBanner = licenseBanner();
 
-//FIXME: probably better to use .env with deploypath, sv_licensekey, etc
-import config from '../.deploy.config.js';
 
 /**
  * Gets the pre-release expiration const to be defined by esbuild.
@@ -28,6 +27,7 @@ const getPreReleaseExpirationString = () => {
  * Sync the files from local path to target path.
  * This function tried to remove the files before copying new ones,
  * therefore, first make sure the path is correct.
+ * NOTE: each change, it resets the entire target path.
  * @param {String} targetPath
  * @param {String} eventName
  */
@@ -72,7 +72,13 @@ class txAdminRunner {
                 {
                     // stdio: "inherit",
                     cwd: this.fxServerRootPath,
-                    env: { ...process.env, TERM: 'xterm-256color', FORCE_COLOR: 3 },
+                    env: {
+                        ...process.env,
+                        TERM: 'xterm-256color',
+                        FORCE_COLOR: 3,
+                        TXADMIN_DEV_SRC_PATH: process.cwd(),
+                        TXADMIN_DEV_VITE_URL: config.panelViteUrl,
+                    },
                 },
             );
         } catch (error) {
@@ -119,13 +125,13 @@ class txAdminRunner {
  */
 const runDevTask = async () => {
     //Extract paths and validate them
-    if (typeof config.fxserverPath !== 'string') {
-        console.error('config.fxserverPath not configured.');
+    if (typeof process.env.TXADMIN_DEV_FXSERVER_PATH !== 'string') {
+        console.error('process.env.TXADMIN_DEV_FXSERVER_PATH is not defined.');
         process.exit(1);
     }
     let fxServerRootPath, fxsBinPath, monitorPath;
     try {
-        ({ fxServerRootPath, fxsBinPath, monitorPath } = getFxsPaths(config.fxserverPath));
+        ({ fxServerRootPath, fxsBinPath, monitorPath } = getFxsPaths(process.env.TXADMIN_DEV_FXSERVER_PATH));
     } catch (error) {
         console.error('[BUILDER] Could not extract/validate the fxserver and monitor paths.');
         console.error(error);
@@ -137,18 +143,30 @@ const runDevTask = async () => {
     //We don't really care about the path, just remove everything and copy again
     copyStaticFiles(monitorPath, 'init');
     const debouncedCopier = debounce(copyStaticFiles, config.debouncerInterval);
-    const watcher = chokidar.watch(config.copy, {
+    const staticWatcher = chokidar.watch(config.copy, {
         // awaitWriteFinish: true,
         persistent: true,
         ignoreInitial: true,
     });
-    watcher.on('add', () => { debouncedCopier(monitorPath, 'add'); });
-    watcher.on('change', () => { debouncedCopier(monitorPath, 'change'); });
-    watcher.on('unlink', () => { debouncedCopier(monitorPath, 'unlink'); });
+    staticWatcher.on('add', () => { debouncedCopier(monitorPath, 'add'); });
+    staticWatcher.on('change', () => { debouncedCopier(monitorPath, 'change'); });
+    staticWatcher.on('unlink', () => { debouncedCopier(monitorPath, 'unlink'); });
     fs.writeFileSync(path.join(monitorPath, 'package.json'), '{"type":"commonjs"}');
 
     //Create txAdmin process runner
     const txInstance = new txAdminRunner(fxServerRootPath, fxsBinPath);
+
+    //Listens on stdin for the key 'r'
+    process.stdin.on('data', (data) => {
+        const cmd = data.toString().toLowerCase().trim();
+        if (cmd === 'r' || cmd === 'rr') {
+            console.log(`[BUILDER] Restarting due to stdin request.`);
+            txInstance.killServer();
+            txInstance.spawnServer();
+        } else if (cmd === 'cls' || cmd === 'clear') {
+            console.clear();
+        }
+    });
 
     //Transpile & bundle
     //NOTE: "result" is {errors[], warnings[], stop()}

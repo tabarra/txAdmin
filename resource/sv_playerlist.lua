@@ -23,6 +23,7 @@ local pairs = pairs
 
 
 -- Variables & Consts
+-- https://www.desmos.com/calculator/dx9f5ko2ge
 local refreshMinDelay = 1500
 local refreshMaxDelay = 5000
 local maxPlayersDelayCeil = 300 --at this number, the delay won't increase more
@@ -51,15 +52,20 @@ CreateThread(function()
             -- NOTE: after testing this seem not to need any error handling
             local health = -1
             local vType = -1
+            local xCoord = nil
+            local yCoord = nil
             if onesyncEnabled == true then
                 local ped = GetPlayerPed(serverID)
+                health = GetPedHealthPercent(ped)
                 local veh = GetVehiclePedIsIn(ped)
                 if veh ~= 0 then
                     vType = vTypeMap[tostring(GetVehicleType(veh))]
                 else
                     vType = vTypeMap["walking"]
                 end
-                health = GetPedHealthPercent(ped)
+                local coords = GetEntityCoords(ped)
+                xCoord = math.floor(coords.x)
+                yCoord = math.floor(coords.y)
             end
 
             -- Updating TX_PLAYERLIST
@@ -68,10 +74,14 @@ CreateThread(function()
                     name = sub(GetPlayerName(serverID) or "unknown", 1, 75),
                     health = health,
                     vType = vType,
+                    xCoord = xCoord,
+                    yCoord = yCoord,
                 }
             else
                 TX_PLAYERLIST[serverID].health = health
                 TX_PLAYERLIST[serverID].vType = vType
+                TX_PLAYERLIST[serverID].xCoord = xCoord
+                TX_PLAYERLIST[serverID].yCoord = yCoord
             end
 
             -- Mark as refreshed
@@ -100,7 +110,7 @@ CreateThread(function()
 
         -- Refresh interval with linear function
         local hDiff = refreshMaxDelay - refreshMinDelay
-        local calcDelay = (hDiff/maxPlayersDelayCeil) * (#players) + refreshMinDelay
+        local calcDelay = (hDiff / maxPlayersDelayCeil) * (#players) + refreshMinDelay
         local delay = floor(min(calcDelay, refreshMaxDelay))
         Wait(delay)
     end --end while true
@@ -111,14 +121,14 @@ end)
 AddEventHandler('playerJoining', function(srcString, _oldID)
     -- sanity checking source
     if source <= 0 then
-        logError('playerJoining event with source '..json.encode(source))
+        logError('playerJoining event with source ' .. json.encode(source))
         return
     end
 
     -- checking if the player was not already dropped
     local playerDetectedName = GetPlayerName(source)
     if type(playerDetectedName) ~= 'string' then
-        logError('Received a playerJoining for a player that was already dropped. There is some resource dropping the player at the playerJoining event handler without first waiting for a tick.')
+        logError('Received a playerJoining for a player that was already dropped. There is some resource dropping the player at the playerJoining event handler without first waiting for the next tick.')
         return
     end
 
@@ -142,8 +152,8 @@ end)
 
 AddEventHandler('playerDropped', function(reason)
     -- sanity checking source
-    if source <= 0 then 
-        logError('playerDropped event with source '..json.encode(source))
+    if source <= 0 then
+        logError('playerDropped event with source ' .. json.encode(source))
         return
     end
 
@@ -177,7 +187,7 @@ end)
 -- for serverID=1, 500 do
 --     fake_playerlist[serverID] = getFakePlayer()
 -- end
-RegisterNetEvent('txsv:req:plist:getDetailed', function()
+RegisterNetEvent('txsv:req:plist:getDetailed', function(getPlayerNames)
     if TX_ADMINS[tostring(source)] == nil then
         debugPrint('Ignoring unauthenticated getDetailedPlayerlist() by ' .. source)
         return
@@ -186,7 +196,16 @@ RegisterNetEvent('txsv:req:plist:getDetailed', function()
     local players = {}
     --DEBUG replace TX_PLAYERLIST with fake_playerlist and playerData.health with math.random(150)
     for playerID, playerData in pairs(TX_PLAYERLIST) do
-        players[#players + 1] = {tonumber(playerID), playerData.health, playerData.vType}
+        players[#players + 1] = {
+            tonumber(playerID),
+            playerData.health,
+            playerData.vType,
+            playerData.xCoord,
+            playerData.yCoord,
+        }
+        if getPlayerNames then
+            players[#players][6] = playerData.name
+        end
     end
     local admins = {}
     for adminID, _ in pairs(TX_ADMINS) do
@@ -203,7 +222,7 @@ function sendInitialPlayerlist(adminID)
     local payload = {}
     --DEBUG replace TX_PLAYERLIST with fake_playerlist
     for playerID, playerData in pairs(TX_PLAYERLIST) do
-        payload[#payload + 1] = {tonumber(playerID), playerData.name}
+        payload[#payload + 1] = { tonumber(playerID), playerData.name }
     end
     --DEBUG
     -- debugPrint("====================================")

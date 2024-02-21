@@ -1,6 +1,6 @@
 const modulename = 'WebServer:PlayerListSearch';
 import Fuse from "fuse.js";
-import consts from '@core/extras/consts';
+import consts from '@shared/consts';
 import cleanPlayerName from '@core/../shared/cleanPlayerName';
 import { cloneDeep } from 'lodash-es';
 import { processActionList, processPlayerList } from './processor';
@@ -40,6 +40,11 @@ export default async function PlayerListSearch(ctx) {
     const addPlural = (x) => { return (x == 0 || x > 1) ? 's' : ''; };
 
     try {
+        //Getting the list of active players, for use in proccessPlayerList
+        const activePlayersLicenses = ctx.txAdmin.playerlistManager.getPlayerList()
+            .map((p) => p.license)
+            .filter((l) => typeof l === 'string');
+
         //Getting valid identifiers
         const idsArray = [...searchString.matchAll(idsRegex)]
             .map((x) => x[0])
@@ -61,7 +66,7 @@ export default async function PlayerListSearch(ctx) {
                 .take(512)
                 .cloneDeep()
                 .value();
-            outData.resPlayers = await processPlayerList(players);
+            outData.resPlayers = await processPlayerList(players, activePlayersLicenses);
             outData.message = `Searching by identifiers found ${players.length} player${addPlural(players.length)} and ${actions.length} action${addPlural(actions.length)}.`;
 
         //IF searching for an action ID
@@ -80,7 +85,7 @@ export default async function PlayerListSearch(ctx) {
                     .take(512)
                     .cloneDeep()
                     .value();
-                outData.resPlayers = await processPlayerList(players);
+                outData.resPlayers = await processPlayerList(players, activePlayersLicenses);
                 outData.message = `Searching by Action ID found ${outData.resPlayers.length} related player${addPlural(outData.resPlayers.length)}.`;
             }
 
@@ -94,7 +99,7 @@ export default async function PlayerListSearch(ctx) {
             });
             const filtered = cloneDeep(fuse.search(pureName, {limit: 128}).map(x => x.item));
 
-            outData.resPlayers = await processPlayerList(filtered);
+            outData.resPlayers = await processPlayerList(filtered, activePlayersLicenses);
             //TODO: if player found, search for all actions from them
             outData.message = `Searching by name found ${filtered.length} player${addPlural(filtered.length)}.`;
         }

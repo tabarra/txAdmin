@@ -10,7 +10,7 @@ const clientsToMargin = (maxClients) => {
 const yLabels = ['5 ms', '10 ms', '25 ms', '50 ms', '75 ms', '100 ms', '250 ms', '500 ms', '750 ms', '1.0 s', '2.5 s', '5.0 s', '7.5 s', '10 s', '+Inf'];
 
 
-const drawHeatmap = (d3Container, perfData, options = {}) => {
+export const drawHeatmap = (d3Container, perfData, options = {}) => {
     //Dynamic label interval size
     // got the points manually, plotted to https://www.geogebra.org/graphing
     // then made a function with a slider to help me match the best fitting one
@@ -46,37 +46,37 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
             snapTimes.push({
                 x: snapIndex,
                 t: `${hours}:${minutes}`
-            })
+            });
         }
 
         //Process buckets
         for (let bucketIndex = 0; bucketIndex < 15; bucketIndex++) {
-            const freq = (typeof snap.buckets[bucketIndex] == 'number') ? snap.buckets[bucketIndex] : 0
+            const freq = (typeof snap.buckets[bucketIndex] == 'number') ? snap.buckets[bucketIndex] : 0;
             snapBuckets.push({
                 x: snapIndex,
                 y: bucketIndex,
                 freq: freq
-            })
+            });
         }
     }
     const maxClients = d3.max(snapClients.map(t => t.c));
 
     //Options
-    if (typeof options.margin == 'undefined') options.margin = {}
+    if (typeof options.margin == 'undefined') options.margin = {};
     const margin = {
         top: options.margin.top || 5,
         right: options.margin.right || 45,
         bottom: options.margin.bottom || 20,
         left: options.margin.left || clientsToMargin(maxClients)
     };
-    const height = options.height || 340;
+    const height = options.height || 500;
     const colorScheme = options.colorScheme || d3.interpolateViridis;
 
 
     //Macro drawing stuff
     const width = d3Container.offsetWidth;
     const color = d3.scaleSequential(colorScheme)
-        .domain([0, 1])
+        .domain([0, 1]);
     const svg = d3.create("svg")
         .attr("viewBox", [0, 0, width, height]);
     const bgColor = options.bgColor || d3.color(color(0)).darker(1.35);
@@ -85,10 +85,10 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
     // X Axis - Time
     const timeScale = d3.scaleBand()
         .domain(d3.range(perfData.length))
-        .range([margin.left, width - margin.right])
+        .range([margin.left, width - margin.right]);
     const timeAxis = d3.axisBottom(timeScale)
         .tickValues(snapTimes.map(t => t.x))
-        .tickFormat((d, i) => snapTimes[i].t)
+        .tickFormat((d, i) => snapTimes[i].t);
     svg.append('g')
         .attr("id", "timeAxis")
         .attr("transform", translate(0, height - margin.bottom))
@@ -100,9 +100,9 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
     // Y Axis - Tick Times
     const tickBucketsScale = d3.scaleBand()
         .domain(d3.range(yLabels.length))
-        .range([height - margin.bottom, margin.top])
+        .range([height - margin.bottom, margin.top]);
     const tickBucketsAxis = d3.axisRight(tickBucketsScale)
-        .tickFormat((d, i) => `${yLabels[i]}`)
+        .tickFormat((d, i) => `${yLabels[i]}`);
     svg.append("g")
         .attr("id", "tickBucketsAxis")
         .attr("class", "axis")
@@ -117,7 +117,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .attr('width', width - margin.right - margin.left)
         .attr('height', height - margin.top - margin.bottom)
         .attr('fill', bgColor)
-        .attr('stroke', bgColor)
+        .attr('stroke', bgColor);
 
 
     // Drawing the Heatmap
@@ -133,7 +133,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .attr('width', timeScale.bandwidth())
         .attr('height', tickBucketsScale.bandwidth())
         .attr('fill', d => color(d.freq))
-        .attr('stroke', d => color(d.freq))
+        .attr('stroke', d => color(d.freq));
 
 
     // Y2 Axis - Player count
@@ -144,7 +144,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
 
     const clientsAxis = d3.axisLeft(clientsScale)
         .tickFormat(t => t)
-        .tickValues((maxClients > 7)? null : d3.range(maxClients+1))
+        .tickValues((maxClients > 7) ? null : d3.range(maxClients + 1));
     svg.append("g")
         .attr("id", "clientAxis")
         .attr("class", "axis")
@@ -154,7 +154,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
     const clientsLine = d3.line()
         .defined(d => !isNaN(d.c))
         .x(d => timeScale(d.x) + 2) // very small offset
-        .y(d => clientsScale(d.c))
+        .y(d => clientsScale(d.c));
     const playerLineGroup = svg.append("g")
         .attr("id", "clientsLine");
 
@@ -196,14 +196,11 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .attr("stroke-dasharray", 6)
         .attr("x1", (d) => timeScale(d))
         .attr("x2", (d) => timeScale(d))
-        .attr("y1", height - margin.bottom) 
+        .attr("y1", height - margin.bottom)
         .attr("y2", margin.top);
 
     d3Container.innerHTML = '';
     d3Container.append(svg.node());
 
     return heatmap._groups[0].length + 1;
-}
-
-
-export { drawHeatmap };
+};

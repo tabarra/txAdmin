@@ -1,5 +1,5 @@
 const modulename = 'SetupProfile';
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import chalk from 'chalk';
 import consoleFactory from '@extras/console';
@@ -39,7 +39,7 @@ export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePat
     //Sanity check presence of profile
     if (fs.existsSync(profilePath)) {
         console.error(`There is already a profile named '${serverProfile}'.`);
-        process.exit();
+        process.exit(500);
     }
 
     //Create new profile folder
@@ -53,7 +53,7 @@ export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePat
     } catch (error) {
         console.error(`Failed to set up folder structure in '${profilePath}' with error:`);
         console.dir(error);
-        process.exit();
+        process.exit(501);
     }
     console.ok(`Server profile was saved in '${profilePath}'`);
 
@@ -61,12 +61,14 @@ export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePat
     //Saving start.bat
     if (osType == 'windows') {
         try {
-            const batData = `@echo off
-"${fxServerPath}/FXServer.exe" +set serverProfile "${serverProfile}"
-pause`;
+            const batLines = [
+                `@echo off`,
+                `"${fxServerPath}/FXServer.exe" +set serverProfile "${serverProfile}"`,
+                `pause`
+            ];
             const batFolder = path.resolve(fxServerPath, '..');
-            const batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
-            fs.writeFileSync(batPath, batData);
+            const batPath = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
+            fs.writeFileSync(batPath, batLines.join('\r\n'));
             console.ok(`You can use ${chalk.inverse(batPath)} to start this profile.`);
         } catch (error) {
             console.warn(`Failed to create 'start_${fxServerVersion}_${serverProfile}.bat' with error:`);

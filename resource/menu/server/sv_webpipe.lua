@@ -80,13 +80,9 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
     return
   end
 
-  -- Adding auth information for NUI routes
-  if path:sub(1, 5) == '/nui/' then
-    headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
-    headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ', ')
-  else
-    headers['X-TxAdmin-Token'] = 'not_required' -- so it's easy to detect webpipes
-  end
+  -- Adding admin identifiers for auth middleware to deal with
+  headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
+  headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ',')
 
   
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))

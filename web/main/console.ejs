@@ -64,11 +64,8 @@
 </style>
 
 
-<div class="text-center">
-    <h3><%= serverName %> Console</h3>
-</div>
 <div class="card bg-dark">
-    <div class="card-body p-3" style="position: relative">
+    <div class="p-3" style="position: relative">
         <pre id="console" class="thin-scroll console-content text-white <%= (isWebInterface ? '' : 'nui-height') %>"></pre>
         <div id="autoScrollDiv">
             <a id="autoScrollBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
@@ -78,28 +75,20 @@
         <div class="row">
             <div class="col-xl-6 col-lg-12">
                 <form class="form-inline container-fluid text-center" id="frmConsole">
-                    <div class="mx-auto">
-                        <div class="form-group">
-                            <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
-                                   placeholder="Press enter to send. Up/Down arrows to navigate commands."
-                                   autocomplete="off" autocorrect="off" autocapitalize="off"
-                                   spellcheck="false" <%= disableCommand %>>
-                        </div>
-                        <a href="fxserver/downloadLog" target="_blank" 
-                            class="btn btn-outline-light btn-sm mb-2 <%= (isWebInterface ? '' : 'disabled') %>">
-                            Download Log
-                        </a>
-                        <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
-                            Clear Console
-                        </button>
-                        <button type="button" id="announcementBtn" class="btn btn-outline-warning btn-sm mb-2" <%= disableAnnouncement %>>
-                            Announcement
-                        </button>
-                        <button type="button" id="ctrl-restart" class="btn btn-outline-danger btn-sm mb-2" 
-                            onclick="txApiFxserverControl('restart')" <%= disableRestart %>>
-                                RESTART
-                        </button>
-                    </div>
+                    <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
+                        placeholder="Press enter to send. Up/Down arrows to navigate commands."
+                        autocomplete="off" autocorrect="off" autocapitalize="off"
+                        spellcheck="false" style="width: 100%" <%= disableCommand %>
+                    />
+                    &nbsp;
+                    <a href="fxserver/downloadLog" target="_blank" 
+                        class="btn btn-outline-light btn-sm mb-2 <%= (isWebInterface ? '' : 'disabled') %>">
+                        Download Log
+                    </a>
+                    &nbsp;
+                    <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
+                        Clear Console
+                    </button>
                 </form>
             </div>
             <div class="col-xl-6 col-lg-12" id="cmdHistoryDiv">
@@ -111,11 +100,20 @@
     </div>
 </div>
 
+<!-- continuity warning -->
+<div class="row justify-content-md-center">
+    <div class="col-md-6 text-center">
+        <span class="text-warning font-weight-bold">
+            This legacy Live Console page is only still available during this Beta2 phase in case something breaks in the new one. It will be removed for the txAdmin v7.0.0 release.
+        </span>
+    </div>
+</div>
+
 
 <%- await include('parts/footer.ejs', locals) %>
 
 
-<script src="js/ansi_up.js"></script>
+<script src="js/ansi_up.js?txVer=<%= txAdminVersion %>"></script>
 <script>
     //============================================== Live Console stuff
     (function () {
@@ -131,7 +129,6 @@
         const historyDiv = document.getElementById('cmdHistoryDiv');
         const historyElement = document.getElementById('cmdHistory');
         const autoScrollBtn = document.getElementById("autoScrollBtn");
-        const announcementBtn = document.getElementById("announcementBtn");
         let commandHistory = [];
         let commandCache = [];
         let autoScroll = true;
@@ -173,14 +170,14 @@
             scrollBottom();
         }
 
-        //Load command history from local storage
-        if(typeof window.localStorage.liveConsoleCommandHistory !== 'undefined'){
+        // Load command history from local storage
+        if(typeof window.localStorage.liveConsoleCommandHistoryOld !== 'undefined'){
             try {
-                const fromStorage = JSON.parse(window.localStorage.liveConsoleCommandHistory);
+                const fromStorage = JSON.parse(window.localStorage.liveConsoleCommandHistoryOld);
                 commandHistory = fromStorage.slice(0 - commandHistoryLimit);
                 commandHistory.forEach(addCommandHistoryEntry);
             } catch (error) {
-                console.error('Failed to process window.localStorage.liveConsoleCommandHistory');
+                console.error('Failed to process window.localStorage.liveConsoleCommandHistoryOld');
             }
         }
 
@@ -248,7 +245,7 @@
                     element.remove();
                     commandHistory.shift();
                 }
-                window.localStorage.liveConsoleCommandHistory = JSON.stringify(commandHistory);
+                window.localStorage.liveConsoleCommandHistoryOld = JSON.stringify(commandHistory);
             }
         });
 
@@ -280,42 +277,6 @@
         });
 
         //Buttons
-        announcementBtn.addEventListener("click", async (event) => {
-            const message = await txAdminPrompt({
-                modalColor: 'orange',
-                confirmBtnClass: 'btn-warning',
-                title: 'Announcement',
-                description: 'Type the message to be broadcasted to all players.', 
-                placeholder: 'the server will restart in xxx minutes...'
-            });
-
-            if(message == false) return;
-            if(message.length <= 6){
-                $.notify({ message: 'This message is too short!'}, {type: 'danger'});
-                return;
-            }
-
-            const notify = $.notify({ message: 'Executing Command...' }, {});
-            txAdminAPI({
-                type: "POST",
-                url: '/fxserver/commands',
-                data: {
-                    action: 'admin_broadcast',
-                    parameter: message
-                },
-                success: function (data) {
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                },
-                error: function (xmlhttprequest, textstatus, message) {
-                    notify.update('progress', 0);
-                    notify.update('type', 'danger');
-                    notify.update('message', message);
-                }
-            });
-        });
-
         autoScrollBtn.addEventListener("click", (event) => {
             event.preventDefault();
             autoscrollToggle(true);

@@ -15,7 +15,7 @@
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Teid on sellest serverist ajutiselt keelustatud \"%{reason}\" tõttu. Teie keelustamine aegub: %{expiration}.",
-        "kick_permanent": " (%{author}) Teid on sellest serverist igavesti keelustatud \"%{reason}\" tõttu. Teie keelustamine ei aegugi.",
+        "kick_permanent": "(%{author}) Teid on sellest serverist igavesti keelustatud \"%{reason}\" tõttu. Teie keelustamine ei aegugi.",
         "reject": {
             "title_permanent": "Teid on sellest serverist igavesti keelustatud.",
             "title_temporary": "Teid on sellest serverist ajutiselt keelustatud.",

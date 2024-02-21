@@ -31,7 +31,6 @@ export default class StatisticsManager {
     #publicKey: jose.KeyLike | undefined;
 
     #fxServerBootSeconds: number | false = false;
-    public readonly pageViews = new MultipleCounter();
     public readonly loginOrigins = new MultipleCounter();
     public readonly loginMethods = new MultipleCounter();
     public readonly botCommands = new MultipleCounter();
@@ -77,7 +76,7 @@ export default class StatisticsManager {
             this.#publicKey = await jose.importSPKI(statsPublicKeyPem, 'RS256');
         } catch (error) {
             console.dir(error);
-            process.exit(1);
+            process.exit(5700);
         }
     }
 
@@ -120,6 +119,10 @@ export default class StatisticsManager {
      * 7: changed web folder paths, which affect txStatsData.pageViews
      * 8: removed discordBotStats and whitelistEnabled
      * 9: totally new format
+     * 9: for tx v7, loginOrigin dropped the 'webpipe' and 'cfxre', 
+     *    and loginMethods dropped 'nui' and 'iframe'
+     *    Did not change the version because its fully compatible.
+     * 10: deprecated pageViews because of the react migration
      * 
      * TODO:
      * Use the average q5 and q95 to find out the buckets.
@@ -163,7 +166,6 @@ export default class StatisticsManager {
 
                 //Passive runtime data
                 fxServerBootSeconds: this.#fxServerBootSeconds,
-                pageViews: this.pageViews,
                 loginOrigins: this.loginOrigins,
                 loginMethods: this.loginMethods,
                 botCommands: this.#txAdmin.discordBot.config.enabled
@@ -202,7 +204,7 @@ export default class StatisticsManager {
             const jwe = await new jose.CompactEncrypt(encodedHbData)
                 .setProtectedHeader(jweHeader)
                 .encrypt(this.#publicKey);
-            this.currHbData = JSON.stringify({ '$statsVersion': 9, jwe });
+            this.currHbData = JSON.stringify({ '$statsVersion': 10, jwe });
             tmpDurationDebugLog('finished');
 
         } catch (error) {

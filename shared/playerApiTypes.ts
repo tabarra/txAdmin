@@ -1,4 +1,4 @@
-import { GenericApiError } from "genericApiTypes";
+import { GenericApiErrorResp } from "genericApiTypes";
 
 //Already compliant with new db specs
 export type PlayerHistoryItem = {
@@ -9,17 +9,7 @@ export type PlayerHistoryItem = {
     ts: number;
     exp?: number;
     revokedBy?: string;
-}
-
-export type PlayerModalMeta = {
-    serverTime: number; //required to calculate if bans have expired on frontend
-    tmpPerms: {
-        message: boolean;
-        whitelist: boolean;
-        warn: boolean;
-        kick: boolean;
-        ban: boolean;
-    };
+    revokedAt?: number;
 }
 
 export type PlayerModalPlayerData = {
@@ -49,7 +39,7 @@ export type PlayerModalPlayerData = {
 }
 
 export type PlayerModalSuccess = {
-    meta: PlayerModalMeta
-    player: PlayerModalPlayerData,
+    serverTime: number; //required to calculate if bans have expired on frontend
+    player: PlayerModalPlayerData;
 }
-export type PlayerModalResp = PlayerModalSuccess | GenericApiError;
+export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;

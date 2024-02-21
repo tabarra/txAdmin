@@ -28,8 +28,6 @@ type StructuredTraceType = {
  */
 export default class OutputHandler {
     readonly #txAdmin: TxAdmin;
-    enableCmdBuffer = false;
-    cmdBuffer = '';
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
@@ -67,7 +65,7 @@ export default class OutputHandler {
                 return;
             }
 
-            //Handle bind errors
+            //Handle nucleus auth
             if (channel == 'citizen-server-impl' && data.type == 'nucleus_connected') {
                 if (typeof data.url !== 'string') {
                     console.error(`FD3 nucleus_connected event without URL.`);
@@ -165,8 +163,5 @@ export default class OutputHandler {
     write(source: string, mutex: string, data: string | Buffer) {
         data = data.toString();
         this.#txAdmin.logger.fxserver.writeStdIO(source, data);
-
-        //FIXME: deprecate this whenever
-        if (this.enableCmdBuffer) this.cmdBuffer += data.replace(/\u001b[^m]*?m/g, '');
     }
 };

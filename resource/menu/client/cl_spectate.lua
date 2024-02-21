@@ -183,12 +183,7 @@ local keysTable = {
     {'Previous Player', CONTROLS.prev},
     {'Next Player', CONTROLS.next},
 }
-
 local redmInstructionGroup, redmPromptTitle
-if IS_REDM then
-    redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'Spectate')
-    redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
-end
 
 --- Key press checking (fivem)
 local function fivemCheckControls()
@@ -256,7 +251,7 @@ end
 
 
 -- Register NUI callback
-RegisterNUICallback('spectatePlayer', function(data, cb)
+RegisterSecureNuiCallback('spectatePlayer', function(data, cb)
     TriggerServerEvent('txsv:req:spectate:start', tonumber(data.id))
     cb({})
 end)
@@ -269,6 +264,11 @@ end)
 
 -- Client-side event handler for an authorized spectate request
 RegisterNetEvent('txcl:spectate:start', function(targetServerId, targetCoords)
+    if IS_REDM then
+        redmPromptTitle = CreateVarString(10, 'LITERAL_STRING', 'Spectate')
+        redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
+    end
+
     if isInTransitionState then
         stopSpectating()
         error('Spectate request received while in transition state')
@@ -316,7 +316,7 @@ RegisterNetEvent('txcl:spectate:start', function(targetServerId, targetCoords)
         Wait(50)
     end
 
-    --If failed to resolve the targer
+    --If failed to resolve the target
     if (resolvedPlayerId <= 0 or resolvedPed <= 0) then
         debugPrint('Failed to resolve target PlayerId or Ped')
         -- reset spectator

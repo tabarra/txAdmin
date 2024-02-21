@@ -22,9 +22,9 @@ import { userHasPerm } from "../../../utils/miscUtils";
 import { useTranslate } from "react-polyglot";
 import { usePermissionsValue } from "../../../state/permissions.state";
 import { DialogLoadError } from "./DialogLoadError";
-import { useServerCtxValue } from "../../../state/server.state";
-import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
-import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
+mport { useServerCtxValue } from "../../../state/server.state";
+import { GenericApiErrorResp, GenericApiResp } from "@shared/genericApiTypes";
+mport { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 
 const PREFIX = "DialogActionView";
 
@@ -80,7 +80,7 @@ const DialogActionView: React.FC = () => {
       });
     } else {
       enqueueSnackbar(
-        (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+        (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
         { variant: "error" }
       );
     }
@@ -198,7 +198,7 @@ const DialogActionView: React.FC = () => {
     }
 
     // TODO: Change iFrame Src through Provider?
-    goToFramePage(`/nui/start/adminManager?${params}`);
+    goToFramePage(`/admins?${params}`);
     setModalOpen(false);
   };
 

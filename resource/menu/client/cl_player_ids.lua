@@ -94,11 +94,11 @@ end
 local function setGamerTagRedm(targetTag, pid)
     Citizen.InvokeNative(0x93171DDDAB274EB8, targetTag, redmGamerTagCompsEnum.complex) --SetMpGamerTagVisibility
     if MumbleIsPlayerTalking(pid) then
-        Citizen.InvokeNative(0x95384C6CE1526EFF, targetTag, redmSpeakerIconHash) --SetMpGamerTagSecondaryIcon
-        Citizen.InvokeNative(0x84BD27DDF9575816, targetTag, redmColorYellowHash) --SetMpGamerTagColour
+        Citizen.InvokeNative(0x95384C6CE1526EFF, targetTag, redmSpeakerIconHash)       --SetMpGamerTagSecondaryIcon
+        Citizen.InvokeNative(0x84BD27DDF9575816, targetTag, redmColorYellowHash)       --SetMpGamerTagColour
     else
-        Citizen.InvokeNative(0x95384C6CE1526EFF, targetTag, nil) --SetMpGamerTagSecondaryIcon
-        Citizen.InvokeNative(0x84BD27DDF9575816, targetTag, 0) --SetMpGamerTagColour
+        Citizen.InvokeNative(0x95384C6CE1526EFF, targetTag, nil)                       --SetMpGamerTagSecondaryIcon
+        Citizen.InvokeNative(0x84BD27DDF9575816, targetTag, 0)                         --SetMpGamerTagColour
     end
 end
 
@@ -124,7 +124,11 @@ local function showGamerTags()
         local targetPed = GetPlayerPed(pid)
 
         -- If we have not yet indexed this player or their tag has somehow dissapeared (pause, etc)
-        if not playerGamerTags[pid] or not IsMpGamerTagActive(playerGamerTags[pid].gamerTag) then
+        if
+            not playerGamerTags[pid]
+            or playerGamerTags[pid].ped ~= targetPed --ped can change if it leaves the networked area and back
+            or not IsMpGamerTagActive(playerGamerTags[pid].gamerTag)
+        then
             local playerName = string.sub(GetPlayerName(pid) or "unknown", 1, 75)
             local playerStr = '[' .. GetPlayerServerId(pid) .. ']' .. ' ' .. playerName
             playerGamerTags[pid] = {
@@ -145,7 +149,7 @@ local function showGamerTags()
 end
 
 --- Starts the gamer tag thread
---- Increasing/decreasing the delay realistically only reflects on the 
+--- Increasing/decreasing the delay realistically only reflects on the
 --- delay for the VOIP indicator icon, 250 is fine
 local function createGamerTagThread()
     debugPrint('Starting gamer tag thread')
@@ -180,7 +184,6 @@ function toggleShowPlayerIDs(enabled, showNotification)
     debugPrint('Show Player IDs Status: ' .. tostring(isPlayerIdsEnabled))
 end
 
-
 --- Receives the return from the server and toggles player ids on/off
 RegisterNetEvent('txcl:showPlayerIDs', function(enabled)
     debugPrint('Received showPlayerIDs event')
@@ -192,7 +195,7 @@ local function togglePlayerIDsHandler()
     TriggerServerEvent('txsv:req:showPlayerIDs', not isPlayerIdsEnabled)
 end
 
-RegisterNUICallback('togglePlayerIDs', function(_, cb)
+RegisterSecureNuiCallback('togglePlayerIDs', function(_, cb)
     togglePlayerIDsHandler()
     cb({})
 end)

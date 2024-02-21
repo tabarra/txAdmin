@@ -36,11 +36,6 @@
 </svg>
 
 
-<div class="text-center mb-4">
-    <h2>Admin Manager</h2>
-</div>
-
-
 <div class="row justify-content-md-center">
     <div class="col-md-7 mw-col8">
 
@@ -90,26 +85,33 @@
                                 </td>
                                 <td><%= admin.perms %></td>
                                 <td class="tableActions">
-                                    <% if (admin.disableEdit) { %>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>
-                                            <i class="icon-pencil"></i> Edit
-                                        </button>
-                                    <% } else { %>
+                                    <% if (admin.isSelf) { %>
                                         <button class="btn btn-sm btn-outline-primary"
-                                            onclick="getAdminModal('<%= admin.name %>')">
-                                            <i class="icon-pencil"></i> Edit
-                                        </button>
-                                    <% } %>
-                                    &nbsp;
-                                    <% if (admin.disableDelete) { %>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>
-                                            <i class="icon-trash"></i> Delete
+                                            onclick="openAccountModal()">
+                                            <i class="icon-pencil"></i> Your Account
                                         </button>
                                     <% } else { %>
-                                        <button class="btn btn-sm btn-outline-danger"
-                                            onclick="deleteAdmin('<%= admin.name %>')">
-                                            <i class="icon-trash"></i> Delete
-                                        </button>
+                                        <% if (admin.disableEdit) { %>
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                <i class="icon-pencil"></i> Edit
+                                            </button>
+                                        <% } else { %>
+                                            <button class="btn btn-sm btn-outline-primary"
+                                                onclick="getAdminModal('<%= admin.name %>')">
+                                                <i class="icon-pencil"></i> Edit
+                                            </button>
+                                        <% } %>
+                                        &nbsp;
+                                        <% if (admin.disableDelete) { %>
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                <i class="icon-trash"></i> Delete
+                                            </button>
+                                        <% } else { %>
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                onclick="deleteAdmin('<%= admin.name %>')">
+                                                <i class="icon-trash"></i> Delete
+                                            </button>
+                                        <% } %>
                                     <% } %>
                                 </td>
                             </tr>
@@ -189,16 +191,22 @@
     let autofill = false;
     if(typeof location.search === 'string' && location.search.startsWith('?autofill')){
         const params = new URLSearchParams(location.search);
+        const discordValue = params.get('discord');
         autofill = {
             name: params.get('name'),
-            citizenfxID: params.get('citizenfx'),
-            discordID: params.get('discord').split(':')[1],
+            citizenfxID: params.get('citizenfx') ?? '',
+            discordID: discordValue && discordValue.includes(':') ? discordValue.split(':')[1] : '',
         }
-        window.history.pushState(null, 'txAdmin', 'adminManager?');
+        window.history.pushState(null, 'txAdmin', 'legacy/adminManager?');
         getAdminModal();
     }
 
     
+    //============================================== Show Your Account Modal
+    function openAccountModal() {
+        window.parent.postMessage({ type: 'openAccountModal' });
+    }
+
     //============================================== Show Admin Modal
     function getAdminModal(name){
         let modalType, data;

@@ -1,4 +1,5 @@
-import consts from "./consts";
+import { PlayerIdsObjectType } from "@shared/otherTypes";
+import consts from "../../shared/consts";
 
 /**
  * txAdmin in ASCII
@@ -81,7 +82,7 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
     let expiration;
     let duration;
     if (inputDuration === 'permanent') {
-        expiration = false;
+        expiration = false as const;
     } else {
         const [multiplierInput, unit] = inputDuration.split(/\s+/);
         const multiplier = parseInt(multiplierInput);
@@ -156,6 +157,7 @@ export const parsePlayerIds = (ids: string[]) => {
     return { invalidIdsArray, validIdsArray, validIdsObject };
 }
 
+
 /**
  * Get valid and invalid player HWIDs
  */
@@ -176,21 +178,16 @@ export const filterPlayerHwids = (hwids: string[]) => {
 }
 
 
-//Maybe extract to some shared folder
-export type PlayerIdsObjectType = {
-    discord: string | null;
-    fivem: string | null;
-    license: string | null;
-    license2: string | null;
-    live: string | null;
-    steam: string | null;
-    xbl: string | null;
-};
-
-
 /**
- * Validates if a redirect path is valid or not.
- * To prevent open redirect, we need to make sure the first char is / and the second is not,
- * otherwise //example.com would be a valid redirect to <proto>://example.com
+ * Extracts the fivem:xxxxxx identifier from the nameid field from the userInfo oauth response.
+ * Example: https://forum.cfx.re/internal/user/271816 -> fivem:271816
  */
-export const isValidRedirectPath = (redirPath: unknown) => typeof redirPath === 'string' && /^\/\w/.test(redirPath);
+export const getIdFromOauthNameid = (nameid: string) => {
+    try {
+        const res = /\/user\/(\d{1,8})/.exec(nameid);
+        //@ts-expect-error
+        return `fivem:${res[1]}`;
+    } catch (error) {
+        return false;
+    }
+}

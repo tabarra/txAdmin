@@ -1,9 +1,9 @@
 const modulename = 'WebServer:DeployerActions';
-import path from 'path';
-import { cloneDeep }  from 'lodash-es';
+import path from 'node:path';
+import { cloneDeep } from 'lodash-es';
 import slash from 'slash';
-import mysql from 'mysql2/promise'
-import consts from '@core/extras/consts';
+import mysql from 'mysql2/promise';
+import consts from '@shared/consts';
 import { txEnv, convars } from '@core/globalData';
 import { validateModifyServerConfig } from '../../extras/fxsConfigHelper';
 import consoleFactory from '@extras/console';
@@ -25,7 +25,7 @@ export default async function DeployerActions(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.testPermission('master', modulename)) {
+    if (!ctx.admin.testPermission('master', modulename)) {
         return ctx.send({ success: false, refresh: true });
     }
 
@@ -65,7 +65,7 @@ async function handleConfirmRecipe(ctx) {
     const userEditedRecipe = ctx.request.body.recipe;
 
     try {
-        ctx.utils.logAction('Setting recipe.');
+        ctx.admin.logAction('Setting recipe.');
         await globals.deployer.confirmRecipe(userEditedRecipe);
     } catch (error) {
         return ctx.send({ type: 'danger', message: error.message });
@@ -113,18 +113,20 @@ async function handleSetVariables(ctx) {
             };
             await mysql.createConnection(mysqlOptions);
         } catch (error) {
-            const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
-            if (error.code == 'ECONNREFUSED') {
+            let outMessage = error?.message ?? 'Unknown error occurred.';
+            if (error?.code === 'ECONNREFUSED') {
                 let specificError = (txEnv.isWindows)
                     ? 'If you do not have a database installed, you can download and run XAMPP.'
                     : 'If you do not have a database installed, you must download and run MySQL or MariaDB.';
                 if (userVars.dbPort !== 3306) {
                     specificError += '<br>\n<b>You are not using the default DB port 3306, make sure it is correct!</b>';
                 }
-                return ctx.send({ type: 'danger', message: `${msgHeader}<br>\n${specificError}` });
-            } else {
-                return ctx.send({ type: 'danger', message: msgHeader });
+                outMessage = `${error?.message}<br>\n${specificError}`;
+            } else if (error.message?.includes('auth_gssapi_client')) {
+                outMessage = `Your database does not accept the required authentication method. Please update your MySQL/MariaDB server and try again.`;
             }
+
+            return ctx.send({ type: 'danger', message: `<b>Database connection failed:</b> ${outMessage}` });
         }
 
         //Setting connection string
@@ -153,12 +155,12 @@ async function handleSetVariables(ctx) {
     }
 
     //Setting identifiers array
-    const admin = globals.adminVault.getAdminByName(ctx.session.auth.username);
+    const admin = globals.adminVault.getAdminByName(ctx.admin.name);
     if (!admin) return ctx.send({ type: 'danger', message: 'Admin not found.' });
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach((providerName) => {
         if (admin.providers[providerName].identifier) {
-            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin #${ctx.session.auth.username}`);
+            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin #${ctx.admin.name}`);
         }
     });
     userVars.addPrincipalsMaster = (addPrincipalLines.length)
@@ -167,7 +169,7 @@ async function handleSetVariables(ctx) {
 
     //Start deployer
     try {
-        ctx.utils.logAction('Running recipe.');
+        ctx.admin.logAction('Running recipe.');
         globals.deployer.start(userVars);
     } catch (error) {
         return ctx.send({ type: 'danger', message: error.message });
@@ -221,7 +223,7 @@ async function handleSaveConfig(ctx) {
     try {
         globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
     } catch (error) {
-        console.warn(`[${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
+        console.warn(`[${ctx.admin.name}] Error changing fxserver settings via deployer.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
@@ -231,7 +233,7 @@ async function handleSaveConfig(ctx) {
     }
 
     globals.fxRunner.refreshConfig();
-    ctx.utils.logAction('Completed and committed server deploy.');
+    ctx.admin.logAction('Completed and committed server deploy.');
 
     //Starting server
     const spawnMsg = await globals.fxRunner.spawnServer(false);
@@ -243,6 +245,7 @@ async function handleSaveConfig(ctx) {
         });
     } else {
         globals.deployer = null;
+        globals.webServer?.webSocket.pushRefresh('status');
         return ctx.send({ success: true });
     }
 }
@@ -255,5 +258,6 @@ async function handleSaveConfig(ctx) {
  */
 async function handleCancel(ctx) {
     globals.deployer = null;
+    globals.webServer?.webSocket.pushRefresh('status');
     return ctx.send({ success: true });
 }

@@ -1,11 +1,11 @@
 import path from 'node:path';
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
-
-import { getFxsPaths } from '../scripts/scripts-utils.js'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { getFxsPaths } from '../scripts/scripts-utils.js';
 import config from '../.deploy.config.js';
-//FIXME: probably better to use .env with deploypath, sv_licensekey, etc
+import { licenseBanner } from '../scripts/scripts-utils.js';
+
 
 const baseConfig = {
     build: {
@@ -16,9 +16,10 @@ const baseConfig = {
         target: 'chrome103',
         sourcemap: false,
 
-        //Doing this because fxserver's cicd doesn't wipe the dist folder
         rollupOptions: {
             output: {
+                banner: licenseBanner('..'),
+                //Doing this because fxserver's cicd doesn't wipe the dist folder
                 entryFileNames: `[name].js`,
                 chunkFileNames: `[name].js`,
                 assetFileNames: '[name].[ext]',
@@ -45,7 +46,12 @@ export default defineConfig(({ command, mode }) => {
     if (mode === 'development') {
         let devDeplyPath;
         try {
-            const { monitorPath } = getFxsPaths(config.fxserverPath);
+            //Extract paths and validate them
+            if (typeof process.env.TXADMIN_DEV_FXSERVER_PATH !== 'string') {
+                console.error('process.env.TXADMIN_DEV_FXSERVER_PATH is not defined.');
+                process.exit(1);
+            }
+            const { monitorPath } = getFxsPaths(process.env.TXADMIN_DEV_FXSERVER_PATH);
             devDeplyPath = path.join(monitorPath, 'nui');
         } catch (error) {
             console.error('Could not extract/validate the fxserver and monitor paths.');

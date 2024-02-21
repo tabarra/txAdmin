@@ -1,4 +1,5 @@
 const modulename = 'WebServer:AdvancedActions';
+import v8 from 'node:v8';
 import bytes from 'bytes';
 import humanizeDuration from 'humanize-duration';
 import got from '@core/extras/got.js';
@@ -28,7 +29,7 @@ export default async function AdvancedActions(ctx) {
 
 
     //Check permissions
-    if (!ctx.utils.testPermission('all_permissions', modulename)) {
+    if (!ctx.admin.testPermission('all_permissions', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',
@@ -92,6 +93,20 @@ export default async function AdvancedActions(ctx) {
     } else if (action == 'setHbDataTracking') {
         globals.tmpSetHbDataTracking = true;
         return ctx.send({ type: 'success', message: 'done' });
+    } else if (action == 'snap') {
+        setTimeout(() => {
+            // if (Citizen && Citizen.snap) Citizen.snap();
+            const snapFile = v8.writeHeapSnapshot();
+            console.warn(`Heap snapshot written to: ${snapFile}`);
+        }, 50);
+        return ctx.send({ type: 'success', message: 'terminal' });
+    } else if (action == 'gc') {
+        if (typeof global.gc === 'function') {
+            global.gc();
+            return ctx.send({ type: 'success', message: 'done' });
+        } else {
+            return ctx.send({ type: 'danger', message: 'GC is not exposed' });
+        }
     } else if (action == 'xxxxxx') {
         // const res = globals.playerDatabase.xxxxx();
         // console.dir(res);

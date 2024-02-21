@@ -7,22 +7,39 @@ const console = consoleFactory(modulename);
 
 
 //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
+//NOTE: There used to be a rule for the TM symbol (\u2122), but removed because probably not needed
+//NOTE: There used to be a rule "\x7F-\x9F", but removed (except \x7F) because probably not needed
 //This is neccessary for the terminal to have color, but beware of side effects.
 //This regex was done in the first place to prevent fxserver output to be interpreted as txAdmin output by the host terminal
 //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
-// \x00-\x08 control chars
+// \x00-\x08 Control characters in the ASCII table.
 // allow \r and \t
-// \x0B-\x1A control chars
-// allow \e (escape for colors)
-// \x1C-\x1F control chars
+// \x0B-\x1A Vertical tab and control characters from shift out to substitute.
+// allow \x1B (escape for colors n stuff)
+// \x1C-\x1F Control characters (file separator, group separator, record separator, unit separator).
 // allow all printable
-// \x7F-\x9F ??????
-// \u2122 trademark symbol
-const regexConsole = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g;
-const regexEscape = /\u001b[^m]*?m/g;
+// \x7F Delete character.
+const regexConsole = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F\x80-\x9F]/g;
+const regexCsi = /(\u001b\[|\u009B)[\d;]+[@-K]/g;
+const regexColors = /\u001b[^m]*?m/g;
 
-const markLines = (msg, type) => {
-    return msg.trim().split('\n').map((l) => `{txMarker-${type}}${l}{/txMarker}`).join('\n') + '\n';
+const markLines = (msg, type, prefix = '') => {
+    let colorFunc = (x) => x;
+    if (type === 'cmd') {
+        colorFunc = chalk.bgYellowBright.bold.black;
+    } else if (type === 'error') {
+        colorFunc = chalk.bgRedBright.bold.black;
+    } else if (type === 'info') {
+        colorFunc = chalk.bgBlueBright.bold.black;
+    } else if (type === 'ok') {
+        colorFunc = chalk.bgGreenBright.bold.black;
+    }
+    const paddedPrefix = prefix.padStart(20, ' ');
+    const taggedPrefix = prefix ? `[${paddedPrefix}] ` : ' ';
+    return msg.trim()
+        .split('\n')
+        .map((l) => colorFunc(`${taggedPrefix}${l}`))
+        .join('\n') + '\n';
 };
 
 
@@ -72,21 +89,21 @@ export default class FXServerLogger extends LoggerBase {
      * Writes a marker text to the logger (file, websocket, buffer, stdout)
      * @param {String} type
      * @param {String} data
+     * @param {String} src
      */
-    writeMarker(type, data) {
+    writeMarker(type, data, src) {
         if (type === 'starting') {
             const msg = separator('FXServer Starting');
             this.lrStream.write(`\n${msg}\n`);
             if (!globals.fxRunner.config.quiet) {
                 process.stdout.write(`\n${chalk.bgBlue(msg)}\n`);
             }
-            const coloredMarkData = `\n\n${markLines(msg, 'info')}\n`;
+            const coloredMarkData = `\n\n${markLines(msg, 'info', 'TXADMIN')}\n`;
             globals.webServer.webSocket.buffer('liveconsole', coloredMarkData);
             this.appendRecent(coloredMarkData);
         } else if (type === 'command') {
-            const msg = `> ${data}`;
-            this.lrStream.write(`${msg}\n`);
-            const coloredMarkData = markLines(msg, 'cmd');
+            this.lrStream.write(`> ${data}\n`);
+            const coloredMarkData = markLines(data, 'cmd', src);
             globals.webServer.webSocket.buffer('liveconsole', coloredMarkData);
             this.appendRecent(coloredMarkData);
         } else {
@@ -104,12 +121,12 @@ export default class FXServerLogger extends LoggerBase {
      */
     writeStdIO(type, data) {
         //To file
-        this.lrStream.write(data.replace(regexEscape, ''));
+        this.lrStream.write(data.replace(regexColors, ''));
 
-        //Clean data
+        //Removing console-breaking chars
         const consoleData = data
-            .replace(regexConsole, '') //removing console-breaking chars
-            .replace(/txMarker/g, 'tx\u200BMarker'); //just to prevent resources from injecting markers
+            .replace(regexConsole, '')
+            .replace(regexCsi, '');
 
         //For the terminal
         if (!globals.fxRunner.config.quiet) {
@@ -118,7 +135,7 @@ export default class FXServerLogger extends LoggerBase {
         }
 
         //For the live console
-        const coloredMarkData = (type === 'stdout') ? consoleData : markLines(consoleData, 'error');
+        const coloredMarkData = (type === 'stdout') ? consoleData : markLines(consoleData, 'error', 'STDERR');
         globals.webServer.webSocket.buffer('liveconsole', coloredMarkData);
         this.appendRecent(coloredMarkData);
     }

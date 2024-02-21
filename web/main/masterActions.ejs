@@ -1,12 +1,9 @@
 <%- await include('parts/header.ejs', locals) %>
 
 
-<div class="text-center mb-4">
-    <h2>Master Actions</h2>
-</div>
 <div class="row justify-content-md-center">
     <div class="col-lg-6 col-md-8 col-sm-12">
-        <% if (!adminIsMaster) { %>
+        <% if (!isMasterAdmin) { %>
             <div class="alert alert-warning text-center" role="alert">
                 <strong>Warning:</strong> You MUST be the Master Admin to be able to use the options below.
             </div>
@@ -179,13 +176,14 @@
                             </label>
                             <div class="col-sm-9">
                                 <select id="revokewl-filter" name="filter" class="form-control" required>
-                                    <option value="30d" selected>player that haven't joined in the last 30 days</option>
-                                    <option value="15d">player that haven't joined in the last 15 days</option>
-                                    <option value="7d">player that haven't joined in the last 7 days</option>
+                                    <option value="30d" selected>players that haven't joined in the last 30 days</option>
+                                    <option value="15d">players that haven't joined in the last 15 days</option>
+                                    <option value="7d">players that haven't joined in the last 7 days</option>
                                     <option value="all" class="font-weight-bold text-danger">REVOKE ALL WHITELISTS</option>
                                 </select>
                                 <span class="form-text text-muted">
-                                    Revoke whitelist from players that have not joined the server the last X days.
+                                    Revoke whitelist from players that have not joined the server the last X days. <br>
+                                    <strong>Note:</strong> This only applies to license whitelist, and not Discord member or Discord role whitelist.
                                 </span>
                             </div>
                         </div>
@@ -236,7 +234,7 @@
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if(data.success == true){
-                        window.location = '/setup';
+                        navigateParentTo('/server/setup');
                         return;
                     }else{
                         updateMarkdownNotification(data, notify);

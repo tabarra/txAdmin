@@ -122,20 +122,12 @@ local function txaReportResources(source, args)
     local max = GetNumResources() - 1
     for i = 0, max do
         local resName = GetResourceByFindIndex(i)
-
-        -- Hacky patch added because a particular resource from this developer had a broken 
-        -- unicode in the resource description, which caused json.encode to fail.
-        local resDesc = GetResourceMetadata(resName, 'description')
-        if resDesc ~= nil and string.find(resDesc, "Louis.dll") then
-            resDesc = nil
-        end
-
         local currentRes = {
             name = resName,
             status = GetResourceState(resName),
             author = GetResourceMetadata(resName, 'author'),
             version = GetResourceMetadata(resName, 'version'),
-            description = resDesc,
+            description = GetResourceMetadata(resName, 'description'),
             path = GetResourcePath(resName)
         }
         resources[#resources+1] = currentRes
@@ -235,7 +227,7 @@ txaEventHandlers.playerWarned = function(eventData)
         end
         txPrint('Warning '..pName..' with reason: '..eventData.reason)
     else
-        logError('handleWarnEvent: player not found')
+        txPrint('handleWarnEvent: player not found')
     end
 end
 
@@ -394,7 +386,7 @@ RegisterCommand("txaSetDebugMode", txaSetDebugMode, true)
 AddEventHandler('playerConnecting', handleConnections)
 SetHttpHandler(handleHttp)
 
--- Heartbeat functions are separated in case one hangs
+-- HeartBeat functions are separated in case one hangs
 CreateThread(function()
     while true do
         HTTPHeartBeat()

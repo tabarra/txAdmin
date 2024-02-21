@@ -4,11 +4,18 @@
 set -e
 
 # testing target folder
-TARGET_PATH=$1
-if [ "$TARGET_PATH" == "" ]; then
-    echo "Usage: $0 <target fxserver path>";
-    echo "Example: $0 /e/FiveM/builds/5473";
-    exit 1;
+if [ -z "$TXADMIN_DEV_FXSERVER_PATH" ]; then
+  TARGET_PATH=$1
+else
+  TARGET_PATH=$TXADMIN_DEV_FXSERVER_PATH
+fi
+
+echo "Target path: ${TARGET_PATH}"
+
+if [ -z "$TARGET_PATH" ]; then
+  echo "Usage: $0 <target fxserver path>";
+  echo "Example: $0 /e/FiveM/6683";
+  exit 1;
 fi
 
 if [ -d "$TARGET_PATH" ]; then

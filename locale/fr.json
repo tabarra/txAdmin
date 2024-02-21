@@ -306,7 +306,7 @@
                 "title": "Informations du joueur",
                 "session_time": "Durée de la session",
                 "play_time": "Temps de jeu",
-                "joined": "Connecté le ",
+                "joined": "Connecté le",
                 "whitelisted_label": "whitelisté",
                 "whitelisted_notyet": "pas encore",
                 "btn_wl_add": "AJOUTER WL",

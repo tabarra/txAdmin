@@ -1,18 +1,21 @@
 const modulename = 'WebSocket';
-import { Server as SocketIO, Socket } from 'socket.io';
-import { authLogic } from './requestAuthenticator';
+import { Server as SocketIO, Socket, RemoteSocket } from 'socket.io';
 import consoleFactory from '@extras/console';
-import status from './wsRooms/status';
-import playerlist from './wsRooms/playerlist';
-import liveconsole from './wsRooms/liveconsole';
-import serverlog from './wsRooms/serverlog';
+import statusRoom from './wsRooms/status';
+import playerlistRoom from './wsRooms/playerlist';
+import liveconsoleRoom from './wsRooms/liveconsole';
+import serverlogRoom from './wsRooms/serverlog';
 import TxAdmin from '@core/txAdmin';
+import { AuthedAdminType, checkRequestAuth } from './authLogic';
+import { SocketWithSession } from './ctxTypes';
+import { isIpAddressLocal } from '@extras/isIpAddressLocal';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 //Types
 export type RoomCommandHandlerType = {
     permission: string | true;
-    handler: (...args: any) => any
+    handler: (admin: AuthedAdminType, ...args: any) => any
 }
 
 export type RoomType = {
@@ -28,68 +31,84 @@ export type RoomType = {
 const VALID_ROOMS = ['status', 'liveconsole', 'serverlog', 'playerlist'] as const;
 type RoomNames = typeof VALID_ROOMS[number];
 
-//FIXME: move session definition to request authenticator
-type SocketWithSessionType = Socket & {
-    session?: {
-        auth?: {
-            username?: string;
-            master?: boolean;
-            permissions?: string[];
-        }
-    }
-}
 
 //Helpers
-const getIP = (socket: SocketWithSessionType) => {
-    return (
-        socket
-        && socket.request
-        && socket.request.socket
-        && socket.request.socket.remoteAddress
-    ) ? socket.request.socket.remoteAddress : 'unknown';
+const getIP = (socket: SocketWithSession) => {
+    return socket?.request?.socket?.remoteAddress ?? 'unknown';
 };
-const terminateSession = (socket: SocketWithSessionType, reason: string, shouldLog = true) => {
-    // NOTE: doing socket.session.auth = {}; would also erase the web auth
+const terminateSession = (socket: SocketWithSession, reason: string, shouldLog = true) => {
     try {
         socket.emit('logout', reason);
         socket.disconnect();
-        if(shouldLog) {
+        if (shouldLog) {
             console.verbose.warn('SocketIO', 'dropping new connection:', reason);
         }
     } catch (error) { }
 };
-
-const hasPermission = (socket: SocketWithSessionType, perm: string) => {
+const forceUiReload = (socket: SocketWithSession) => {
     try {
-        const sess = socket.session;
-        return (
-            sess?.auth?.master === true
-            || sess?.auth?.permissions?.includes('all_permissions')
-            || sess?.auth?.permissions?.includes(perm)
-        );
-    } catch (error) {
-        console.verbose.warn(`Error validating permission '${perm}' denied.`);
-        console.verbose.dir(error);
-        return false;
-    }
-}
+        socket.emit('refreshToUpdate');
+        socket.disconnect();
+    } catch (error) { }
+};
 
 export default class WebSocket {
     readonly #txAdmin: TxAdmin;
     readonly #io: SocketIO;
     readonly #rooms: Record<RoomNames, RoomType>;
+    #eventBuffer: { name: string, data: any }[] = [];
 
     constructor(txAdmin: TxAdmin, io: SocketIO) {
         this.#txAdmin = txAdmin;
         this.#io = io;
         this.#rooms = {
-            status: status(txAdmin),
-            playerlist: playerlist(txAdmin),
-            liveconsole: liveconsole(txAdmin),
-            serverlog: serverlog(txAdmin),
+            status: statusRoom(txAdmin),
+            playerlist: playerlistRoom(txAdmin),
+            liveconsole: liveconsoleRoom(txAdmin),
+            serverlog: serverlogRoom(txAdmin),
         };
 
         setInterval(this.flushBuffers.bind(this), 250);
+    }
+
+    /**
+     * Refreshes the auth data for all connected admins
+     * If an admin is not authed anymore, they will be disconnected
+     * If an admin lost permission to a room, they will be kicked out of it
+     * This is called from AdminVault.refreshOnlineAdmins()
+     */
+    async reCheckAdminAuths() {
+        const sockets = await this.#io.fetchSockets();
+        console.verbose.warn(`SocketIO`, `AdminVault changed, refreshing auth for ${sockets.length} sockets.`);
+        for (const socket of sockets) {
+            //@ts-ignore
+            const reqIp = getIP(socket);
+            const authResult = checkRequestAuth(
+                this.#txAdmin,
+                socket.handshake.headers,
+                reqIp,
+                isIpAddressLocal(reqIp),
+                //@ts-ignore
+                socket.sessTools
+            );
+            if (!authResult.success) {
+                //@ts-ignore
+                return terminateSession(socket, 'session invalidated by websocket.reCheckAdminAuths()', true);
+            }
+
+            //Sending auth data update - even if nothing changed
+            const { admin: authedAdmin } = authResult;
+            socket.emit('updateAuthData', authedAdmin.getAuthData());
+
+            //Checking permission of all joined rooms
+            for (const roomName of socket.rooms) {
+                if (roomName === socket.id) continue;
+                const roomData = this.#rooms[roomName as RoomNames];
+                if (roomData.permission !== true && !authedAdmin.hasPermission(roomData.permission)) {
+                    socket.leave(roomName);
+                }
+            }
+        }
     }
 
 
@@ -97,13 +116,27 @@ export default class WebSocket {
      * Handles incoming connection requests,
      * NOTE: For now the user MUST join a room, needs additional logic for 'web' room
      */
-    handleConnection(socket: SocketWithSessionType) {
+    handleConnection(socket: SocketWithSession) {
+        //Check the UI version
+        if (socket.handshake.query.uiVersion && socket.handshake.query.uiVersion !== txEnv.txAdminVersion) {
+            return forceUiReload(socket);
+        }
+
         try {
             //Checking for session auth
-            const { isValidAuth } = authLogic(socket.session, true, 'SocketIO');
-            if (!isValidAuth) {
+            const reqIp = getIP(socket);
+            const authResult = checkRequestAuth(
+                this.#txAdmin,
+                socket.handshake.headers,
+                reqIp,
+                isIpAddressLocal(reqIp),
+                socket.sessTools
+            );
+            if (!authResult.success) {
                 return terminateSession(socket, 'invalid session', false);
             }
+            const { admin: authedAdmin } = authResult;
+
 
             //Check if joining any room
             if (typeof socket.handshake.query.rooms !== 'string') {
@@ -124,17 +157,21 @@ export default class WebSocket {
                 const room = this.#rooms[requestedRoomName as RoomNames];
 
                 //Checking Perms
-                if (room.permission !== true && !hasPermission(socket, room.permission)) {
-                    return terminateSession(socket, 'missing room permission');
+                if (room.permission !== true && !authedAdmin.hasPermission(room.permission)) {
+                    continue;
                 }
 
                 //Setting up event handlers
-                //NOTE: if the admin permissions is removed after connection, he will
-                // still have access to the command, only refreshing the entire connection
-                // would solve it, since socket.session is also not auto updated
                 for (const [commandName, commandData] of Object.entries(room.commands ?? [])) {
-                    if (commandData.permission === true || hasPermission(socket, commandData.permission)) {
-                        socket.on(commandName, commandData.handler.bind(null, socket.session));
+                    if (commandData.permission === true || authedAdmin.hasPermission(commandData.permission)) {
+                        socket.on(commandName, (...args) => {
+                            //Checking if admin is still in the room - perms change can make them be kicked out of room
+                            if (socket.rooms.has(requestedRoomName)) {
+                                commandData.handler(authedAdmin, ...args);
+                            } else {
+                                console.verbose.debug('SocketIO', `Command '${requestedRoomName}#${commandName}' was ignored due to admin not being in the room.`);
+                            }
+                        });
                     }
                 }
 
@@ -151,7 +188,7 @@ export default class WebSocket {
                 console.verbose.debug('SocketIO', `Socket error with message: ${error.message}`);
             });
 
-            console.verbose.log('SocketIO', `Connected: ${socket.session?.auth?.username} from ${getIP(socket)}`);
+            // console.verbose.log('SocketIO', `Connected: ${authedAdmin.name} from ${getIP(socket)}`);
         } catch (error) {
             console.error('SocketIO', `Error handling new connection: ${(error as Error).message}`);
             socket.disconnect();
@@ -160,9 +197,9 @@ export default class WebSocket {
 
 
     /**
-     * Adds data to the buffer
+     * Adds data to the a room buffer
      */
-    buffer(roomName: RoomNames, data: any) {
+    buffer<T>(roomName: RoomNames, data: T) {
         const room = this.#rooms[roomName];
         if (!room) throw new Error('Room not found');
 
@@ -185,6 +222,7 @@ export default class WebSocket {
      * NOTE: this will also send data to users that no longer have permissions
      */
     flushBuffers() {
+        //Sending room data
         for (const [roomName, room] of Object.entries(this.#rooms)) {
             if (room.cumulativeBuffer && room.outBuffer.length) {
                 this.#io.to(roomName).emit(room.eventName, room.outBuffer);
@@ -195,11 +233,17 @@ export default class WebSocket {
                 } else {
                     throw new Error(`cumulative buffers can only be arrays or strings`);
                 }
-            } else if(!room.cumulativeBuffer && room.outBuffer !== null){
+            } else if (!room.cumulativeBuffer && room.outBuffer !== null) {
                 this.#io.to(roomName).emit(room.eventName, room.outBuffer);
                 room.outBuffer = null;
             }
         }
+
+        //Sending events
+        for (const event of this.#eventBuffer) {
+            this.#io.emit(event.name, event.data);
+        }
+        this.#eventBuffer = [];
     }
 
 
@@ -215,5 +259,15 @@ export default class WebSocket {
         setImmediate(() => {
             room.outBuffer = room.initialData();
         });
+    }
+
+
+    /**
+     * Broadcasts an event to all connected clients
+     * This is used for data syncs that are not related to a specific room
+     * eg: update available
+     */
+    pushEvent<T>(name: string, data: T) {
+        this.#eventBuffer.push({ name, data });
     }
 };

@@ -1,11 +1,11 @@
 const modulename = 'WebServer:PlayerModal';
 import dateFormat from 'dateformat';
 import playerResolver from '@core/playerLogic/playerResolver';
-import { Context } from 'koa';
-import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData, PlayerModalMeta } from '@shared/playerApiTypes';
+import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData } from '@shared/playerApiTypes';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { ServerPlayer } from '@core/playerLogic/playerClasses';
 import consoleFactory from '@extras/console';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -21,6 +21,7 @@ const processHistoryLog = (hist: DatabaseActionType[]) => {
                 ts: log.timestamp,
                 exp: log.expiration ? log.expiration : undefined,
                 revokedBy: log.revocation.author ? log.revocation.author : undefined,
+                revokedAt: log.revocation.timestamp ? log.revocation.timestamp : undefined,
             };
         });
     } catch (error) {
@@ -32,12 +33,9 @@ const processHistoryLog = (hist: DatabaseActionType[]) => {
 
 /**
  * Returns the data for the player's modal
- *
  * NOTE: sending license instead of id to be able to show data even for offline players
- *
- * @param {object} ctx
  */
-export default async function PlayerModal(ctx: Context) {
+export default async function PlayerModal(ctx: AuthedCtx) {
     //Sanity check
     if (typeof ctx.query === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');
@@ -45,24 +43,10 @@ export default async function PlayerModal(ctx: Context) {
     const { mutex, netid, license } = ctx.query;
     const sendTypedResp = (data: PlayerModalResp) => ctx.send(data);
 
-    //Prepping meta fields
-    const tsNow = now();
-    const metaFields: PlayerModalMeta = {
-        //FIXME: this should not come from the route itself, but for now it is required by the web frontend
-        tmpPerms: {
-            message: ctx.utils.hasPermission('players.message'),
-            whitelist: ctx.utils.hasPermission('players.whitelist'),
-            warn: ctx.utils.hasPermission('players.warn'),
-            kick: ctx.utils.hasPermission('players.kick'),
-            ban: ctx.utils.hasPermission('players.ban'),
-        },
-        serverTime: tsNow,
-    };
-
     //Finding the player
     let player;
     try {
-        const refMutex = (mutex === 'current') ? globals.fxRunner.currentMutex : mutex;
+        const refMutex = (mutex === 'current') ? ctx.txAdmin.fxRunner.currentMutex : mutex;
         player = playerResolver(refMutex, parseInt((netid as string)), license);
     } catch (error) {
         return sendTypedResp({ error: (error as Error).message });
@@ -105,7 +89,7 @@ export default async function PlayerModal(ctx: Context) {
     // console.dir(metaFields);
     // console.dir(playerData);
     return sendTypedResp({
-        meta: metaFields,
+        serverTime: now(),
         player: playerData
     });
 };

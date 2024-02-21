@@ -14,45 +14,54 @@ Before starting, please make sure you are familiar with the basics of NodeJS & e
 - `core`: Node Backend & Components. This part is transpiled by `tsc` and then bundled with `esbuild`;
 - `resource`: The in-game resource that runs under the `monitor` name. These files will be synchronized with the deploy path when running the `dev:main` npm script;
 - `menu`: React source code for txAdmin's NUI Menu. It is transpiled & built using Vite;
-- `web`: SSR templates & static assets used for the txAdmin's web panel. Right now this uses EJS as templating engine, which should change soon to also be React with Vite;
-- `scripts`: The scripts used for development only.
+- `web`: Legacy SSR templates & static assets used for the txAdmin's web panel. It uses EJS as templating engine, and will soon be deprecated in favor of `panel`;
+- `panel`: The new UI built with React and Vite;
+- `scripts`: The scripts used for development only;
+- `shared`: Stuff used across multiple workspaces like small functions and type definitions.
 
 
 ## Preparing the environment
-1. First, clone the txAdmin repository;
+1. First, clone the txAdmin repository into a folder outside the fxserver directory;
 ```sh
 git clone https://github.com/tabarra/txAdmin
 ```
 2. Install dependencies & prepare commit hook;
 ```sh
+# for each workspace (core/nui/panel/shared) + root
 npm install
 npm run prepare
 ```
-3. Edit `.deploy.config.js > fxserverPath` to the path of your `FXServer.exe` file.
+3. Add a environment variable `TXADMIN_DEV_FXSERVER_PATH` with the path to your FXServer folder (eg. `E:\\FiveM\\6683\\`).
 
 
 ## Development Workflows
 
-### Core/Resource
+### Core/Panel/Resource
 This workflow is controlled by `main-builder.js`, which is responsible for:
 - Watching and copying static files (resource, docs, license, entry file, etc) to the deploy path;
 - Watching and re-transpiling the core files, and then bundling and deploying it;
 - Run FXServer (in the same terminal), and restarting it when the core is modified (like `nodemon`, but fancy).
-
-Although the code is somewhat complex, to run it simply:
+  
+In dev mode, core will redirect the panel `index.html` to use Vite, so you first need to start it, and only then start the `main-builder.js`:
 ```sh
-npm run dev:main
-```
+# run vite
+cd panel
+npm run dev
 
+# In a new terminal - run main-builder.js
+cd core
+npm run dev
+```
+  
 ### NUI Menu
-To run Vite on browser dev mode:
 ```sh
-npm run dev:menu:browser
-```
+cd nui
 
-To run Vite on game dev mode:
-```sh
-npm run dev:menu:game
+#To run Vite on game dev mode:
+npm run dev
+
+#To run Vite on browser dev mode:
+npm run browser
 ```
 Keep in mind that for every change you will need to restart the `monitor` resource, and unless you started the server with `+setr txAdmin-debugMode true` txAdmin will detect that as a crash and restart your server.  
 Also, when running in game mode, it takes between 10 and 30 seconds for the vite builder to finish for you to be able to restart the `monitor` resource ingame.
@@ -76,7 +85,7 @@ npm run build
 
 ## Note regarding the Web UI
 
-**⚠Warning: Soon we will rewrite the entire Web UI in react, so don't put any effort in the Web UI right now.**
+**⚠Warning: The /web/ ui is considered legacy and will be migrated to /panel/.**
 
 **DO NOT** Modify `css/coreui.css`. Either do a patch in the `custom.css` or modify the SCSS variables.  
 This doc is a reference if you are trying to re-build the `css/coreui.css` from the SCSS source.  

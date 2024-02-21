@@ -8,6 +8,7 @@ import { convars, txEnv } from '@core/globalData';
 import CitizenFXProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@extras/console';
+import chalk from 'chalk';
 const console = consoleFactory(modulename);
 
 
@@ -45,7 +46,7 @@ export default class AdminVault {
             'control.server': 'Start/Stop Server + Scheduler',
             'commands.resources': 'Start/Stop Resources',
             'server.cfg.editor': 'Read/Write server.cfg',
-            'txadmin.log.view': 'View txAdmin Log',
+            'txadmin.log.view': 'View System Logs', //FIXME: rename to system.log.view
 
             'menu.vehicle': 'Spawn / Fix Vehicles',
             'menu.clear_area': 'Reset world area',
@@ -71,7 +72,7 @@ export default class AdminVault {
         try {
             this.providers = {
                 discord: false,
-                citizenfx: new CitizenFXProvider(null),
+                citizenfx: new CitizenFXProvider(),
             };
         } catch (error) {
             throw new Error(`Failed to load providers with error: ${error.message}`);
@@ -123,16 +124,17 @@ export default class AdminVault {
      * @param {object} provider_data
      * @param {string} password backup password
      * @param {boolean} isPlainText
+     * @param {string|undefined} discordId
      * @returns {(boolean)} true or throws an error
      */
-    createAdminsFile(username, identifier, provider_data, password, isPlainText) {
+    createAdminsFile(username, identifier, provider_data, password, isPlainText, discordId) {
         //Sanity check
         if (this.admins !== false && this.admins !== null) throw new Error('Admins file already exists.');
         if (typeof username !== 'string' || username.length < 3) throw new Error('Invalid username parameter.');
         if (typeof password !== 'string' || password.length < 6) throw new Error('Invalid password parameter.');
 
         //Creating admin array
-        let providers = {};
+        const providers = {};
         if (identifier && provider_data) {
             providers.citizenfx = {
                 id: username,
@@ -140,13 +142,22 @@ export default class AdminVault {
                 data: provider_data,
             };
         }
-        this.admins = [{
+        if (discordId) {
+            providers.discord = {
+                id: discordId,
+                identifier: `discord:${discordId}`,
+                data: {},
+            };
+        }
+        const newAdmin = {
             name: username,
             master: true,
             password_hash: (isPlainText) ? GetPasswordHash(password) : password,
             providers,
             permissions: [],
-        }];
+        };
+        this.admins = [newAdmin];
+        this.addMasterPin = undefined;
 
         //Saving admin file
         try {
@@ -154,7 +165,7 @@ export default class AdminVault {
             this.adminsFileHash = createHash('sha1').update(jsonData).digest('hex');
             fse.writeFileSync(this.adminsFile, jsonData, { encoding: 'utf8', flag: 'wx' });
             this.setupRefreshRoutine();
-            return true;
+            return newAdmin;
         } catch (error) {
             let message = `Failed to create '${this.adminsFile}' with error: ${error.message}`;
             console.verbose.error(message);
@@ -288,8 +299,8 @@ export default class AdminVault {
      * Add a new admin to the admins file
      * NOTE: I'm fully aware this coud be optimized. Leaving this way to improve readability and error verbosity
      * @param {string} name
-     * @param {object} citizenfxData or false
-     * @param {object} discordData or false
+     * @param {object|undefined} citizenfxData or false
+     * @param {object|undefined} discordData or false
      * @param {string} password
      * @param {array} permissions
      */
@@ -331,7 +342,7 @@ export default class AdminVault {
 
         //Saving admin file
         this.admins.push(admin);
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
             return await this.writeAdminsFile();
         } catch (error) {
@@ -343,10 +354,10 @@ export default class AdminVault {
     /**
      * Edit admin and save to the admins file
      * @param {string} name
-     * @param {string} password
-     * @param {object} citizenfxData or false
-     * @param {object} discordData or false
-     * @param {array} permissions
+     * @param {string|null} password
+     * @param {object|undefined} citizenfxData or false
+     * @param {object|undefined} discordData or false
+     * @param {array|undefined} permissions
      */
     async editAdmin(name, password, citizenfxData, discordData, permissions) {
         if (this.admins == false) throw new Error('Admins not set');
@@ -387,45 +398,16 @@ export default class AdminVault {
         }
         if (typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
+        //Prevent race condition, will allow the session to be updated before refreshing socket.io
+        //sessions which will cause reauth and closing of the temp password modal on first access
+        setTimeout(() => {
+            this.refreshOnlineAdmins().catch((e) => { });
+        }, 250);
+
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
         try {
             await this.writeAdminsFile();
             return (password !== null) ? this.admins[adminIndex].password_hash : true;
-        } catch (error) {
-            throw new Error(`Failed to save admins.json with error: ${error.message}`);
-        }
-    }
-
-
-    /**
-     * Refreshes admin's social login data
-     * TODO: this should be stored on PersistentCache instead of admins.json
-     *       otherwise it refreshes the admins connected
-     * @param {string} name
-     * @param {string} provider
-     * @param {string} identifier
-     * @param {object} providerData
-     */
-    async refreshAdminSocialData(name, provider, identifier, providerData) {
-        if (this.admins == false) throw new Error('Admins not set');
-
-        //Find admin index
-        const username = name.toLowerCase();
-        const adminIndex = this.admins.findIndex((user) => {
-            return (username === user.name.toLowerCase());
-        });
-        if (adminIndex == -1) throw new Error('Admin not found');
-
-        //Refresh admin data
-        if (!this.admins[adminIndex].providers[provider]) throw new Error('Provider not available for this admin');
-        this.admins[adminIndex].providers[provider].identifier = identifier;
-        this.admins[adminIndex].providers[provider].data = providerData;
-
-        //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
-        try {
-            return await this.writeAdminsFile();
         } catch (error) {
             throw new Error(`Failed to save admins.json with error: ${error.message}`);
         }
@@ -453,7 +435,7 @@ export default class AdminVault {
         if (!found) throw new Error('Admin not found');
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
             return await this.writeAdminsFile();
         } catch (error) {
@@ -477,10 +459,10 @@ export default class AdminVault {
                 console.error('This means the file  doesn\'t exist or txAdmin doesn\'t have permission to read it.');
             } else {
                 console.error('This likely means the file got somehow corrupted.');
-                console.error('You can rey restoring it or you can delete it and let txAdmin create a new one.');
+                console.error('You can try restoring it or you can delete it and let txAdmin create a new one.');
             }
             console.error(`Admin File Path: ${this.adminsFile}`);
-            process.exit(1);
+            process.exit(5300);
         };
 
         try {
@@ -538,7 +520,8 @@ export default class AdminVault {
         }
 
         this.admins = jsonData;
-        this.refreshOnlineAdmins().catch((e) => {});
+        //NOTE: since this runs only at the start, nobody is online yet
+        // this.refreshOnlineAdmins().catch((e) => { });
         if (migrated) {
             try {
                 await this.writeAdminsFile();
@@ -556,8 +539,11 @@ export default class AdminVault {
      * Notify game server about admin changes
      */
     async refreshOnlineAdmins() {
-        if (globals.playerlistManager === null) return;
+        //Refresh auth of all admins connected to socket.io
+        globals.webServer.webSocket.reCheckAdminAuths().catch((e) => { });
 
+        //Refresh in-game auth of all admins connected to the server
+        if (globals.playerlistManager === null) return;
         try {
             //Getting all admin identifiers
             const adminIDs = this.admins.reduce((ids, adm) => {
@@ -571,7 +557,7 @@ export default class AdminVault {
                 return p.ids.some((i) => adminIDs.includes(i));
             }).map((p) => p.netid);
 
-            return globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
+            globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
         } catch (error) {
             console.verbose.error('Failed to refreshOnlineAdmins() with error:');
             console.verbose.dir(error);
@@ -580,9 +566,25 @@ export default class AdminVault {
 
 
     /**
-     * Returns a random token to be used as CSRF Token
+     * Returns a random token to be used as CSRF Token.
      */
     genCsrfToken() {
         return nanoid();
+    }
+
+
+    /**
+     * Checks if there are admins configured or not.
+     * Optionally, prints the master PIN on the console.
+     */
+    hasAdmins(printPin = false) {
+        if (Array.isArray(this.admins) && this.admins.length) {
+            return true;
+        } else {
+            if (printPin) {
+                console.warn('Use this PIN to add a new master account: ' + chalk.inverse(` ${this.addMasterPin} `));
+            }
+            return false;
+        }
     }
 };

@@ -5,7 +5,7 @@ import path from 'node:path';
 import chalk, { ChalkInstance } from 'chalk';
 import slash from 'slash';
 import ErrorStackParser from 'error-stack-parser';
-import sourceMapSupport from 'source-map-support'
+import sourceMapSupport from 'source-map-support';
 
 
 //Buffer handler
@@ -266,6 +266,11 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
 };
 export default consoleFactory;
 
+
+/**
+ * Replaces the global console with the new one
+ */
+global.console = consoleFactory('Global');
 
 
 /**

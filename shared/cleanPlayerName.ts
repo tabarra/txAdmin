@@ -25,7 +25,7 @@ export default (original: string) => {
         .replace(/\s+/g, '')
         .toLocaleLowerCase()
         .trim();
-    if (!pureName.length) pureName = 'empty name';
+    if (!pureName.length) pureName = 'emptyname';
 
     return {displayName, pureName};
 };

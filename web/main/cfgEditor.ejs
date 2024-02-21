@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css" 
     integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" 
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="css/codemirror_lucario.css">
+<link rel="stylesheet" href="<%= resourcePath %>css/codemirror_lucario.css?txVer=<%= txAdminVersion %>">
 <style>
     .cm-s-lucario{
         font-size: 1.05rem !important;
@@ -50,11 +50,6 @@
     <style>.CodeMirror{height: calc(100vh - 150px);}</style>
 <% } %>
 
-<!-- Title -->
-<div class="text-center mb-4">
-    <h3>Server Config File Editor</h3>
-</div>
-
 <!-- CFG Editor -->
 <div class="row justify-content-md-center">
     <div class="col-lg-12 col-xl-11 mw-col8">
@@ -64,10 +59,6 @@
 </div>
 <div class="row justify-content-md-center" style="margin-top: 1em;">
     <div class="mx-auto">
-        <button type="button" id="ctrl-restart" class="btn btn-outline-danger btn-sm mb-2"
-            onclick="txApiFxserverControl('restart')" <%=disableRestart %> >
-            RESTART SERVER (CTRL+R)
-        </button>
         <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">
             Save File (CTRL+S)
         </button>
@@ -82,12 +73,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js" 
     integrity="sha512-ZTpbCvmiv7Zt4rK0ltotRJVRaSBKFQHQTrwfs6DoYlBYzO1MA6Oz2WguC+LkV8pGiHraYLEpo7Paa+hoVbCfKw==" 
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="js/codeEditor/mode/simple.js"></script>
-<script src="js/codeEditor/mode/fivem-cfg.js"></script>
-<script src="js/codeEditor/comment.js"></script>
-<script src="js/codeEditor/searchcursor.js"></script>
-<script src="js/codeEditor/dialog.js"></script>
-<script src="js/codeEditor/search.js"></script>
+<script src="<%= resourcePath %>js/codeEditor/mode/simple.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/mode/fivem-cfg.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/comment.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/searchcursor.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/dialog.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/search.js?txVer=<%= txAdminVersion %>"></script>
 
 <script>
     //============================================== CodeMirror & Hook Setup
@@ -106,9 +97,6 @@
             if (event.ctrlKey && event.key == 's') {
                 event.preventDefault();
                 saveButton.click();
-            } else if (event.ctrlKey && event.key == 'r') {
-                txApiFxserverControl('restart')
-                event.preventDefault();
             } else if (event.ctrlKey && event.key == ';') {
                 window.CMInstance.toggleComment({lineComment: "#"})
                 event.preventDefault();
