@@ -77,7 +77,8 @@
             "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
             "announcement_title": "Server Announcement by %{author}:",
             "dialog_empty_input": "You cannot have an empty input.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM from admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "You have frozen the player!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Vehicle",
-                "onesync_error": "This option requires that OneSync be on for server entity handling",
                 "not_in_veh_error": "You are not currently in a vehicle!",
                 "spawn": {
                     "title": "Spawn",

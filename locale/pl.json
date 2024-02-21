@@ -77,7 +77,8 @@
             "not_enabled": "Menu txAdmin nie jest uruchomione! Możesz je włączyć z poziomu ustawień txAdmin.",
             "announcement_title": "Ogłoszenie nadane przez %{author}:",
             "dialog_empty_input": "Nie możesz pozostawić pustego pola tekstowego.",
-            "directmessage_title": "Wiadomość od %{author}:"
+            "directmessage_title": "Wiadomość od %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Zamroziłeś gracza!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Pojazd",
-                "onesync_error": "Ta opcja wymaga, aby OneSync był włączony do obsługi bytów stworzonych przez serwer",
                 "not_in_veh_error": "Nie jesteś w żadnym pojeździe!",
                 "spawn": {
                     "title": "Stwórz",

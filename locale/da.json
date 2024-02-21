@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin-menuen er ikke aktiveret! Det kan du fra txAdmin-panelet.",
             "announcement_title": "Servermeddelelse sendt af %{author}:",
             "directmessage_title": "DM from admin %{author}:",
-            "dialog_empty_input": "der mangler input."
+            "dialog_empty_input": "der mangler input.",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Du har frosset spilleren fast!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Køretøj",
-                "onesync_error": "Denne mulighed kræver, at OneSync er slået til for håndtering af OneSync",
                 "not_in_veh_error": "Du mangler et køretøj!",
                 "spawn": {
                     "title": "Spawn",
@@ -320,7 +320,7 @@
                 "notes_placeholder": "noter omkring spilleren...",
                 "notes_changed": "Spiller notat tilføjet."
             },
-             "ids": {
+            "ids": {
                 "current_ids": "Nuværende Identifikatorer",
                 "previous_ids": "Tidligere Brugte Identifikatorer",
                 "all_hwids": "Alle Hardware-identifikatorer"

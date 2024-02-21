@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin 菜单未启用！您可以在 txAdmin 设置页面中启用它。",
             "announcement_title": "公告%{author}：",
             "dialog_empty_input": "提交内客不能为空，请重新输入。",
-            "directmessage_title": "来自管理员 %{author} 的消息:"
+            "directmessage_title": "来自管理员 %{author} 的消息:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "你冻结了玩家！",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "载具选项",
-                "onesync_error": "此选项要求服务器启用OneSync",
                 "not_in_veh_error": "您不在载具内！",
                 "spawn": {
                     "title": "生成",

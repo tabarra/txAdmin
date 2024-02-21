@@ -77,7 +77,8 @@
             "not_enabled": "Das txAdmin Menü ist nicht aktiviert. Du kannst es in den txAdmin Einstellungen aktivieren.",
             "announcement_title": "Serverweite Ankündigung von %{author}:",
             "dialog_empty_input": "Du kannst keine leere Eingabe senden.",
-            "directmessage_title": "DM von Admin %{author}:"
+            "directmessage_title": "DM von Admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Du hast den Spieler eingefroren.",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Fahrzeug",
-                "onesync_error": "Diese Option erfordert, dass OneSync für die Verarbeitung von Server Objekten aktiviert ist",
                 "not_in_veh_error": "Du befindest dich in keinem Fahrzeug!",
                 "spawn": {
                     "title": "Spawn",

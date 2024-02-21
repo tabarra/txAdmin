@@ -77,7 +77,8 @@
             "not_enabled": "txAdmini menüü pole lubatud! Saate selle lubada txAdmini seadete lehel.",
             "announcement_title": "Serveri teadaanne %{author}:",
             "dialog_empty_input": "See ei saa olla tühi sisend.",
-            "directmessage_title": "DM administraatorilt %{author}:"
+            "directmessage_title": "DM administraatorilt %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Olete mängija külmutanud!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Sõidukid",
-                "onesync_error": "See suvand nõuab, et OneSync oleks serveris sisse lülitatud",
                 "not_in_veh_error": "Te ei ole praegu sõidukis!",
                 "spawn": {
                     "title": "Loo",

@@ -77,7 +77,8 @@
             "not_enabled": ".txAdmin يمكنك تمكينه في صفحة إعدادات !txAdmin لم يتم تمكين قائمة",
             "announcement_title": ":%{author} رسالة من سيرفر مهم من",
             "dialog_empty_input": ".لا يمكن أن يكون لديك إدخال فارغ",
-            "directmessage_title": ":%{author} رسالة مباشرة من المشرف"
+            "directmessage_title": ":%{author} رسالة مباشرة من المشرف",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "!لقد جمدت اللاعب",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "المركبات",
-                "onesync_error": "لمعالجة مع الخادم OneSync يتطلب هذا الخيار تشغيل",
                 "not_in_veh_error": "!أنت لست في سيارة حاليا",
                 "spawn": {
                     "title": "انشاء",

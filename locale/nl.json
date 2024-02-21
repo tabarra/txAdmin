@@ -77,7 +77,8 @@
             "not_enabled": "Het txAdmin Menu is uitgeschakeld! Je kan hem inschakelen bij de txAdmin instellingen pagina.",
             "announcement_title": "Server Mededeling door %{author}:",
             "dialog_empty_input": "Je moet iets invullen.",
-            "directmessage_title": "Privé Bericht van %{author}:"
+            "directmessage_title": "Privé Bericht van %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Je hebt de speler gefreezed!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Voertuig",
-                "onesync_error": "Om deze optie te gebruiken, moet OneSync aan staan",
                 "not_in_veh_error": "Je zit niet in een voertuig!",
                 "spawn": {
                     "title": "Spawn",

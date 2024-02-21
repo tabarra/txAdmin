@@ -77,7 +77,8 @@
             "not_enabled": "Meniul txAdmin nu este activat! Puteți să o activați din pagina de setări txAdmin.",
             "announcement_title": "Anunț de la %{author}:",
             "dialog_empty_input": "Nu poți avea un input gol.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM from admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Ai înghețat jucătorul!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Vehicul",
-                "onesync_error": "Această opțiune necesită ca OneSync să fie activat pentru gestionarea entităților serverului",
                 "not_in_veh_error": "Nu te aflii într-un vehicul!",
                 "spawn": {
                     "title": "Spawn",

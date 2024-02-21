@@ -77,7 +77,8 @@
             "not_enabled": "txAdminメニューが有効になっていません! txAdminの設定ページで有効にできます。",
             "announcement_title": "%{author}によるサーバーに関するお知らせ:",
             "directmessage_title": "管理者%{author}からのDM:",
-            "dialog_empty_input": "空の入力はできない。"
+            "dialog_empty_input": "空の入力はできない。",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "プレイヤーを静止させた!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "車両",
-                "onesync_error": "このオプションでは、サーバーのエンティティ処理にOneSyncが有効になっている必要があります。",
                 "not_in_veh_error": "あなたは現在車両に乗っていない!",
                 "spawn": {
                     "title": "生成",
