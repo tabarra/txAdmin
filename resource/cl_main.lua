@@ -106,6 +106,7 @@ CreateThread(function()
         '/txAdmin:menu:noClipToggle',
         '/txAdmin:menu:openPlayersPage',
         '/txAdmin:menu:togglePlayerIDs',
+        '/txAdmin:menu:tpToWaypoint',
 
         --Convars
         '/txAdmin-version',
