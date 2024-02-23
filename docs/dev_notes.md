@@ -9,10 +9,9 @@
 - [x] fix(core/playerlistmanager): dont wipe license cache on restart
     - core/components/PlayerlistManager/index.ts -> handleServerStop
     - repro: connect + disconnect, restart twice, and the id wont be on the list anymore
-- [ ] merge prs
-    - [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
-    - [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
-    - [ ] translations
+- [x] merge prs (7 merged, 4 closed)
+- [x] follow up recipe maintainers regarding fxmanifest description
+- [x] live console bookmarks
 
 - assorted changes
     - [ ] FIXME: apparently pressing enter on the text form of the license key when setting up the server using tx doenst work?
@@ -22,9 +21,7 @@ seems like it just refreshes the page
     - add snapshot and gc to advanced actions
     - fix disallowed intents message
 
-- follow up recipe maintainers regarding fxmanifest description
 - rtl issue
-- live console bookmarks
 
 - [ ] build: generate fxmanifest files list dynamically
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
