@@ -14,11 +14,11 @@
 - [x] live console bookmarks
 
 - assorted changes
-    - [ ] FIXME: apparently pressing enter on the text form of the license key when setting up the server using tx doenst work?
+    - [x] add snapshot and gc to advanced actions
+    - [x] FIXME: apparently pressing enter on the text form of the license key when setting up the server using tx doenst work?
 seems like it just refreshes the page
-    - [ ] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
+    - [x] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
     - add txadmin v8 heap to diagnostics
-    - add snapshot and gc to advanced actions
     - fix disallowed intents message
 
 - rtl issue

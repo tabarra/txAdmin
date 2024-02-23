@@ -104,7 +104,6 @@ local function retryAuthentication()
   debugPrint("^5[AUTH] Retrying menu authentication.")
   menuIsAccessible = false
   menuPermissions = {}
-  sendMenuMessage('resetSession')
   sendMenuMessage('setPermissions', menuPermissions)
   TriggerServerEvent('txsv:checkIfAdmin')
 end
