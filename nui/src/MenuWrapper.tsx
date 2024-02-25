@@ -74,7 +74,7 @@ const MenuWrapper: React.FC = () => {
   const localeSelected = useLocale();
   //Inform Lua that we are ready to get all variables (server ctx, permissions, debug, etc)
   useEffect(() => {
-    fetchNui("reactLoaded").catch(() => {});
+    fetchNui("reactLoaded").catch(() => { });
   }, []);
 
   useListenerForSomething();
@@ -86,24 +86,26 @@ const MenuWrapper: React.FC = () => {
         messages={localeSelected}
         allowMissing={false}
       >
-        <IFrameProvider>
-          <DialogProvider>
-            <PlayerModalProvider>
-              <TooltipProvider>
-                <Box
-                  id="menu-root"
-                  className="App"
-                  sx={{
-                    opacity: visible ? 1 : 0,
-                  }}
-                >
-                  <MenuRoot />
-                </Box>
-              </TooltipProvider>
-            </PlayerModalProvider>
-          </DialogProvider>
+        <>
+          <IFrameProvider>
+            <DialogProvider>
+              <PlayerModalProvider>
+                <TooltipProvider>
+                  <Box
+                    id="menu-root"
+                    className="App"
+                    sx={{
+                      opacity: visible ? 1 : 0,
+                    }}
+                  >
+                    <MenuRoot />
+                  </Box>
+                </TooltipProvider>
+              </PlayerModalProvider>
+            </DialogProvider>
+          </IFrameProvider>
           <WarnPage />
-        </IFrameProvider>
+        </>
       </I18n>
     </TopLevelErrorBoundary>
   );

@@ -12,7 +12,8 @@ function updateServerCtx()
         TriggerServerEvent('txsv:req:serverCtx')
     else
         ServerCtx = stateBagServerCtx
-        debugPrint('^2ServerCtx updated from global state')
+        debugPrint('^2ServerCtx updated from global state.')
+        sendMenuMessage('setServerCtx', ServerCtx)
     end
 end
 

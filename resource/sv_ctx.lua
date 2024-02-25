@@ -1,7 +1,8 @@
 -- Prevent running in monitor mode
 if not TX_SERVER_MODE then return end
--- Prevent running if menu is disabled
-if not TX_MENU_ENABLED then return end
+
+--NOTE: although quite a lot of this is used on the menu, this must run even if the menu is disabled
+--because the locale applies to warns and notifications, as well as notification position
 
 local ServerCtxObj = {
   oneSync = {
