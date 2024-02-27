@@ -156,8 +156,10 @@ export default function LiveConsole() {
 
     useEventListener('keydown', (e: KeyboardEvent) => {
         if (e.code === 'F5') {
-            refreshPage();
-            e.preventDefault();
+            if(isConnected){
+                refreshPage();
+                e.preventDefault();
+            }
         } else if (e.code === 'Escape') {
             searchAddon.clearDecorations();
             setShowSearchBar(false);

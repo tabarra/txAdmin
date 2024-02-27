@@ -60,7 +60,7 @@ function SheetCommand({ cmd, type, onClick, onFavAction }: SheetCommandProps) {
             onClick={onClick}
             className="px-2 py-1 flex justify-between items-center rounded-lg bg-card hover:bg-muted cursor-pointer group"
         >
-            <span className="py-1 font-mono group-hover:text-primary">
+            <span className="py-1 line-clamp-4 font-mono group-hover:text-primary">
                 {cmd}
             </span>
             <div className="min-w-max">
@@ -86,11 +86,6 @@ function SheetContent({ toTermInput }: Pick<SheetProps, 'toTermInput'>) {
     const { history, wipeHistory } = useLiveConsoleHistory();
     const { bookmarks, addBookmark, removeBookmark } = useLiveConsoleBookmarks();
     const openPromptDialog = useOpenPromptDialog();
-
-    //NOTE: Not really efficient, but probably fine
-    const truncateCommand = (cmd: string) => {
-        return cmd.length > 113 ? cmd.slice(0, 113) + '...' : cmd;
-    }
 
     const handleWipeHistory = () => {
         txToast.success('History cleared');
@@ -124,7 +119,7 @@ function SheetContent({ toTermInput }: Pick<SheetProps, 'toTermInput'>) {
                         {history.map((cmd, index) => (
                             <SheetCommand
                                 key={index}
-                                cmd={truncateCommand(cmd)}
+                                cmd={cmd}
                                 type='history'
                                 onClick={() => toTermInput(cmd)}
                                 onFavAction={() => addBookmark(cmd)}
@@ -154,7 +149,7 @@ function SheetContent({ toTermInput }: Pick<SheetProps, 'toTermInput'>) {
                         {bookmarks.map((cmd, index) => (
                             <SheetCommand
                                 key={index}
-                                cmd={truncateCommand(cmd)}
+                                cmd={cmd}
                                 type='saved'
                                 onClick={() => toTermInput(cmd)}
                                 onFavAction={() => removeBookmark(cmd)}

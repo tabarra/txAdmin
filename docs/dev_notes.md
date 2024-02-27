@@ -29,44 +29,52 @@ seems like it just refreshes the page
 
 - [ ] FIXME: I am scrolled up, and each time a new row appears in live console, the highlighted part moves down a row to some random 3 characters. 
 
+- [ ] Use q5/q95 from QuantileArrayOutput to help me define the buckets, then implement the join check time histogram
+
+## Client game print issue
+https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
+https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
+- [ ] after menu client messages rework, add lua54
+
 =======================================================================
 
 
-# default
-25 resources
-6.44KB
-6595/25 = 264b/res
+### Page Changes:
+Players:
+- list of players in a table
+- filters:
+    - name (fuzzy on pureName, ignore "empty") 
+    - identifiers
+    - whitelisted (probably not)
+    - banned (probably not)
+    - tags (in the future)
+- columns
+    - name
+    - join date (DSC default)
+    - play time
+    - last connection
+- auto search with debouncer
+- possibly auto scroll (fuck pagination!)
+- "more actions" dropdown to:
+    - add legacy ban
+    - prune players (from master actions -> clean database)
+    - bulk remove HWIDs
 
-# qbcore
-103 resources
-19.81KB -> 23.56KB
-20285/103 = 197b/res
-24125/103 = 234b/res
+History:
+- list of warns/bans in a table
+- search by id OR identifiers or reason
+- filter by action type
+- filter by admin (self must be the first option), and hotlink it from the admins page
+- bulk actions button
+    - bulk remove
+    - bulk revoke
 
-# esx
-76 resources
-15.77KB -> 16.08KB
-16148/76 = 212b/res
-16465/76 = 216b/res
-
-# vorp
-70 resources
-13.54KB
-13865/70 = 198b/res
-
-# calculations
-300b*1000 = 293kb
-400b*1000 = 391kb
-500b*1000 = 488kb
-
-512kb/200b = 2621 resources
-512kb/300b = 1747 resources
-512kb/500b = 1049 resources
-
-768kb/200b = 3932 resources
-768kb/300b = 2621 resources
-768kb/500b = 1572 resources
-
+Whitelist:
+- remove the wl pending join table
+- add a "latest whitelists" showing both pending and members (query players + pending and join tables)
+- don't forget to keep the "add approval" button
+- bulk actions button
+    - bulk revoke whitelist
 
 
 =======================================================================
@@ -181,28 +189,6 @@ setTimeout(() => {
 
 =======================================================================
 
-## src
-- assets
-- components
-    - shadcn
-        - ...components installed by shadcn cli - no touchy!
-    - ...shared components
-- pages
-    - login
-        - index.tsx (the actual page component)
-        - ...whatever components are used just in the login page
-    - dashboard
-        - index.tsx (the actual page component)
-        - PerformanceChart.tsx
-        - PlayerChart.tsx
-- layout
-    - MainLayout.tsx
-    - Header.tsx
-    - LeftSidebar.tsx
-    - RightSidebar.tsx
-- hooks
-- lib
-
 ### panel z-order
 z-10    UI: server/playerlist asides
 z-10    shadcn: NavigationMenu
@@ -228,23 +214,7 @@ z-50    shadcn: SheetOverlay
 z-50    shadcn: SheetContent
 z-50    shadcn: TooltipContent - doesnt go over the terminal?!
 
-### Page Changes:
-Players:
-- list of players in a table
-- name + identifiers input
-- auto search with debouncer
-
-History:
-- list of warns/bans in a table
-- search by id OR identifier (single) with select box
-- filter by action type
-- filter by admin ("self" must be an option), and hotlink it from the admins page
-
-Whitelist:
-- maybe remove the wl pending join table
-- maybe make a "latest whitelists" showing both pending and members (query players + pending and join tables)
-- don't forget to keep the "add approval" button
-
+### Next Page Changes:
 CFG Editor:
 - multiple cfg editors
 - add backup file to txdata, with the last 100 changes, name of the admin and timestamp
@@ -254,7 +224,7 @@ Setup:
 - don't ask for cfg location, assume server.cfg and let the user change
 
 Master Actions:
-- reset fxserver - becomes server add/remove/edit
+- reset fxserver - becomes server add/remove/edit, or just an option in settings -> fxserver
 - clean database - "bulk changes" button at the players page
 - revoke whitelists - button to whitelist pages
 
@@ -273,6 +243,7 @@ Master Actions:
 - [ ] create new "Remove Player Data" permission which would allow to delete bans/warns, players and player identifiers
 
 - [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so I can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
+    - even better: clients2.google.com/time/1/current
 
 - [ ] write some automated tests for the auth logic and middlewares
     - https://youtu.be/bzXtYVH4WOg
@@ -459,7 +430,6 @@ teste:
 - [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
     - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
-- [ ] Use q5/q95 from QuantileArrayOutput to help me define the buckets, then implement the join check time histogram
 - [ ] server logger add events/min average
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Beware that this is not trivial without also turning missing exec target read error also being error
@@ -554,14 +524,7 @@ https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
 
 
 
-NOTE: https://github.com/sindresorhus/typescript-definition-style-guide
-
-## Client game print issue
-https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
-https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
-
-
-Up next-ish:
+Somewhen:
 - [ ] Tooling:
     - [ ] Use `dotenv` or something to read FXServer's path from
     - [ ] Adapt `main-builder.js` to accept txAdmin convars
@@ -573,8 +536,6 @@ Up next-ish:
 - [ ] replace all fxRunner.srvCmd* and only expose:
     - sync fxRunner.srvRawCmd(string) - to be used by live console
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
-- [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
-- [ ] after menu client messages rework, add lua54
 - [ ] add an fxserver changelog page
 - [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
 - [ ] maybe remove the sv_maxclients enforcement in the cfg file
