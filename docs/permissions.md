@@ -19,10 +19,10 @@ The permissions are saved in the `txData/admins.json` file and can be edited thr
 - `players.whitelist`: Whitelist player;
 - `players.warn`: Warn player;
 - `players.kick`: Kick player;
-- `players.ban`: Ban player;
+- `players.ban`: Ban / Unban player;
 - `players.heal`: Heal self or everyone;
-- `players.playermode`: NoClip / God Mode;
+- `players.playermode`: NoClip / God Mode / Superjump;
 - `players.spectate`: Spectate player;
 - `players.teleport`: Teleport self or player;
-- `players.trollmenu`: Troll Menu (*not yet available*);
+- `players.trollmenu`: Troll Menu;
 - `players.freeze`: Freeze a players ped;
