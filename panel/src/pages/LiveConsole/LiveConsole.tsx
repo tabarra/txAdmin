@@ -156,7 +156,7 @@ export default function LiveConsole() {
 
     useEventListener('keydown', (e: KeyboardEvent) => {
         if (e.code === 'F5') {
-            if(isConnected){
+            if (isConnected) {
                 refreshPage();
                 e.preventDefault();
             }
@@ -175,6 +175,14 @@ export default function LiveConsole() {
             e.preventDefault();
         }
     });
+
+    //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/4994
+    const writeToTerminal = (data: string) => {
+        const lines = data.split(/\r?\n/);
+        for (const line of lines) {
+            term.writeln(line);
+        }
+    }
 
     //DEBUG
     // useEffect(() => {
@@ -222,7 +230,7 @@ export default function LiveConsole() {
             console.log('Live Console Socket.IO', error);
         });
         pageSocket.current.on('consoleData', function (data) {
-            term.write(data);
+            writeToTerminal(data);
         });
 
         return () => {

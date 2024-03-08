@@ -12,6 +12,7 @@
 - [x] merge prs (7 merged, 4 closed)
 - [x] follow up recipe maintainers regarding fxmanifest description
 - [x] live console bookmarks
+- [x] fix(terminal): fixed out-of-sync search on multiline write
 
 - assorted changes
     - [x] add snapshot and gc to advanced actions
@@ -27,7 +28,6 @@ seems like it just refreshes the page
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 - [ ] update docs on development?
 
-- [ ] FIXME: I am scrolled up, and each time a new row appears in live console, the highlighted part moves down a row to some random 3 characters. 
 
 - [ ] Use q5/q95 from QuantileArrayOutput to help me define the buckets, then implement the join check time histogram
 
@@ -566,7 +566,9 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
     - apparently this can be done in scheduler quite easily by modifying the definition of `TriggerClientEvent`
 - http requests (grouped by resource, grouped by root domain or both?)
 - performance chart with ram usage
-- player count (loger window, maybe with some other data)
+- player count (longer window, maybe with some other data)
+- histogram of session time
+- new players per day
 - top players? 
 - map heatmap?!
 - player disconnect reasons
