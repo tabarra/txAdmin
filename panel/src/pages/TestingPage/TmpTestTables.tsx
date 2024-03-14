@@ -21,6 +21,7 @@ import {
     DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import InlineCode from '@/components/InlineCode';
+import PageCalloutRow, { PageCalloutProps } from '@/components/PageCalloutRow';
 
 
 
@@ -266,47 +267,37 @@ function PlayerSearchBox() {
 const PlayerSearchBoxMemo = memo(PlayerSearchBox);
 
 
+const callouts: PageCalloutProps[] = [
+    {
+        label: 'Total Players',
+        value: 123456,
+        // value: false,
+        icon: <UsersIcon />,
+        prefix: ''
+    },
+    {
+        label: 'Players Today',
+        value: 1234,
+        icon: <CalendarPlusIcon />,
+        prefix: ''
+    },
+    {
+        label: 'New Players Today',
+        value: 1234,
+        icon: <UserRoundPlusIcon />,
+        prefix: '+'
+    },
+    {
+        label: 'New Players This Week',
+        value: 12345,
+        icon: <UserRoundPlusIcon />,
+        prefix: '+'
+    }
+]
+
 function PlayerStats() {
     return (
-        // <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4 md:mb-6">
-        <div className="grid px-2 md:px-0 gap-2 xs:gap-4 grid-cols-2 lg:grid-cols-4 mb-4 md:mb-6">
-            <div className="py-2 px-4 rounded-lg border shadow-sm">
-                <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
-                    <h3 className="tracking-tight text-sm font-medium line-clamp-1">Total Players</h3>
-                    <UsersIcon className='hidden xs:block' />
-                </div>
-                <div className="text-xl xs:text-2xl font-bold">
-                    123,456
-                </div>
-            </div>
-            <div className="py-2 px-4 rounded-lg border shadow-sm">
-                <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
-                    <h3 className="tracking-tight text-sm font-medium line-clamp-1">Players Today</h3>
-                    <CalendarPlusIcon className='hidden xs:block' />
-                </div>
-                <div className="text-xl xs:text-2xl font-bold">
-                    1,234
-                </div>
-            </div>
-            <div className="py-2 px-4 rounded-lg border shadow-sm">
-                <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
-                    <h3 className="tracking-tight text-sm font-medium line-clamp-1">New Players Today</h3>
-                    <UserRoundPlusIcon className='hidden xs:block' />
-                </div>
-                <div className="text-xl xs:text-2xl font-bold">
-                    +1,234
-                </div>
-            </div>
-            <div className="py-2 px-4 rounded-lg border shadow-sm">
-                <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
-                    <h3 className="tracking-tight text-sm font-medium line-clamp-1">New Players This Week</h3>
-                    <UserRoundPlusIcon className='hidden xs:block' />
-                </div>
-                <div className="text-xl xs:text-2xl font-bold">
-                    +12,345
-                </div>
-            </div>
-        </div>
+        <PageCalloutRow callouts={callouts} />
     )
 }
 
@@ -416,17 +407,6 @@ export default function TmpTestTables() {
         className='flex flex-col min-w-96 2xl:mx-8'
         style={{ height: 'calc(100vh - 3.5rem - 1px - 2rem)' }}
     >
-        {/* <div className="flex gap-3 items-center ">
-            <Button onClick={() => rowVirtualizer.scrollToIndex(0)}>Scroll to top</Button>
-            <Button onClick={() => fetchNextPage()}>fetchNextPage()</Button>
-            <Button onClick={() => setPlayers([])}>Wipe</Button>
-        </div> */}
-
-
-        {/* <h2 className='px-2 md:px-0 mb-4 md:mb-6 text-lg md:text-2xl'>
-            Players: {players.length}/{dbPlayerCount}
-            <span className='text-fuchsia-600 pl-3'>({virtualItems.length - 1} rendered)</span>
-        </h2> */}
         <PlayerStatsMemo />
 
         <PlayerSearchBoxMemo />
