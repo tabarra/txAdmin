@@ -144,7 +144,7 @@ function PlayerlistFilter({ filterString, setFilterString }: PlayerlistFilterPro
             </DropdownMenu> */}
         </div>
     );
-};
+}
 const PlayerlistFilterMemo = memo(PlayerlistFilter);
 
 

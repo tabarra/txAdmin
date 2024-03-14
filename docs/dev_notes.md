@@ -23,13 +23,12 @@ seems like it just refreshes the page
     - fix disallowed intents message
 
 - rtl issue
-
+- [ ] fix all imgur links
 - [ ] build: generate fxmanifest files list dynamically
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 - [ ] update docs on development?
 
 
-- [ ] Use q5/q95 from QuantileArrayOutput to help me define the buckets, then implement the join check time histogram
 
 ## Client game print issue
 https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
@@ -897,9 +896,14 @@ con_miniconChannels script:runcode
 nui_devtoold mpMenu
 
 # hang fxserver (runcode)
-console.log('hanging the thread for 60s');
-Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60 * 1000);
+const duration = 60_000;
+console.log(`hanging the thread for ${duration}ms`);
+Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, duration);
 console.log('done');
+
+setInterval(() => {
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 2);
+}, 0);
 
 # stress http post
 seq 50000 | parallel --max-args 0 --jobs 10000 "curl -s http://xxxxxxxxxxx:40120/ -d @braces768kb.json --header \"Content-Type: application/json\" > /dev/null"
