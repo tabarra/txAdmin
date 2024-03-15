@@ -35,7 +35,7 @@ const rejectMessageTemplate = (title: string, content: string) => {
         <p style="font-size: 1.25rem; padding: 0px">
             ${content}
         </p>
-        <img src="https://i.imgur.com/5bFhvBv.png" style="
+        <img src="https://forum-cfx-re.akamaized.net/original/5X/c/3/8/e/c38e8346a39c6483385c0727bee5c2abc705156a.png" style="
             position: absolute;
             right: 15px;
             bottom: 15px;
