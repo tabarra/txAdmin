@@ -46,8 +46,9 @@ export { default as fxserver_controls } from './fxserver/controls';
 export { default as fxserver_downloadLog } from './fxserver/downloadLog';
 export { default as fxserver_schedule } from './fxserver/schedule';
 
-export { default as player_page } from './player/page.js';
-export { default as player_search } from './player/search';
+export { default as player_stats } from './player/stats';
+export { default as player_pageOld } from './player/pageOld.js';
+export { default as player_searchOld } from './player/searchOld';
 export { default as player_modal } from './player/modal';
 export { default as player_actions } from './player/actions';
 export { default as player_checkJoin } from './player/checkJoin';

@@ -45,7 +45,7 @@ export default (config: WebServerConfigType) => {
     router.get('/legacy/dashboard', webAuthMw, webRoutes.dashboard);
     router.get('/legacy/diagnostics', webAuthMw, webRoutes.diagnostics_page);
     router.get('/legacy/masterActions', webAuthMw, webRoutes.masterActions_page);
-    router.get('/legacy/players', webAuthMw, webRoutes.player_page);
+    router.get('/legacy/players', webAuthMw, webRoutes.player_pageOld);
     router.get('/legacy/resources', webAuthMw, webRoutes.resources);
     router.get('/legacy/serverLog', webAuthMw, webRoutes.serverLog);
     router.get('/legacy/settings', webAuthMw, webRoutes.settings_page);
@@ -112,7 +112,8 @@ export default (config: WebServerConfigType) => {
 
     //Player routes
     router.get('/player', apiAuthMw, webRoutes.player_modal);
-    router.get('/player/search', apiAuthMw, webRoutes.player_search);
+    router.get('/player/stats', apiAuthMw, webRoutes.player_stats);
+    router.get('/player/search/old', apiAuthMw, webRoutes.player_searchOld);
     router.post('/player/checkJoin', intercomAuthMw, webRoutes.player_checkJoin);
     router.post('/player/:action', apiAuthMw, webRoutes.player_actions);
     router.get('/whitelist/:table', apiAuthMw, webRoutes.whitelist_list);

@@ -426,7 +426,36 @@ export default class PlayerDatabase {
 
 
     /**
+     * Returns players stats for the database (for Players page callouts)
+     */
+    getPlayersStats() {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+
+        const oneDayAgo = now() - (24 * 60 * 60);
+        const sevenDaysAgo = now() - (7 * 24 * 60 * 60);
+        const startingValue = {
+            total: 0,
+            playedLast24h: 0,
+            joinedLast24h: 0,
+            joinedLast7d: 0,
+        };
+        const playerStats = this.#db.obj.chain.get('players')
+            .reduce((acc, p, ind) => {
+                acc.total++;
+                if(p.tsLastConnection > oneDayAgo) acc.playedLast24h++;
+                if(p.tsJoined > oneDayAgo) acc.joinedLast24h++;
+                if(p.tsJoined > sevenDaysAgo) acc.joinedLast7d++;
+                return acc;
+            }, startingValue)
+            .value();
+
+        return playerStats;
+    }
+
+
+    /**
      * Returns actions/players stats for the database
+     * FIXME: deprecate, used by the old players page
      */
     getDatabaseStats() {
         if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);

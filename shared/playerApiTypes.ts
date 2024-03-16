@@ -69,3 +69,10 @@ export type PlayersTableReqType = {
         license: string;
     }
 };
+
+export type PlayersStatsResp = {
+    total: number;
+    playedLast24h: number;
+    joinedLast24h: number;
+    joinedLast7d: number;
+}
