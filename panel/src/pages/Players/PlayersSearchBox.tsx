@@ -1,7 +1,6 @@
 import { throttle } from "throttle-debounce";
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { createRandomHslColor } from '@/lib/utils';
 import { ChevronsUpDownIcon, FilterXIcon, XIcon, ChevronDownIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
@@ -78,12 +77,13 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
     const [currSearchType, setCurrSearchType] = useState<string>(initialState.search?.type || 'playerName');
     const [selectedFilters, setSelectedFilters] = useState<string[]>(initialState.filters);
     const [hasSearchText, setHasSearchText] = useState(!!initialState.search?.value);
+    const [inputErrorMsg, setInputErrorMsg] = useState('');
 
     const updateSearch = () => {
         if (!inputRef.current) return;
         const searchValue = inputRef.current.value.trim();
-        if(searchValue.length){
-            doSearch({value: searchValue, type: currSearchType}, selectedFilters);
+        if (searchValue.length) {
+            doSearch({ value: searchValue, type: currSearchType }, selectedFilters);
         } else {
             doSearch(null, selectedFilters);
         }
@@ -95,7 +95,7 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
     }, [inputRef, currSearchType, selectedFilters]);
 
     //Input handlers
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             throttleFunc.cancel({ upcomingOnly: true });
             updateSearch();
@@ -124,6 +124,7 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
         }
     }
 
+    //It's render time! 🎉
     const selectedSearchType = availableSearchTypes.find((type) => type.value === currSearchType);
     if (!selectedSearchType) throw new Error(`Invalid search type: ${currSearchType}`);
     const filterBtnMessage = selectedFilters.length ? `${selectedFilters.length} Filters` : 'No filters';
@@ -138,7 +139,7 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                         autoCorrect='off'
                         ref={inputRef}
                         placeholder={selectedSearchType.placeholder}
-                        onKeyDown={handleKeyDown}
+                        onKeyDown={handleInputKeyDown}
                     />
                     {hasSearchText ? (
                         <button

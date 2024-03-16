@@ -64,7 +64,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
                 discordInput = discordInput.substring(8);
                 discordRef.current!.value = discordInput;
             }
-            if (!consts.regexValidDiscordId.test(discordInput)) {
+            if (!consts.validIdentifierParts.discord.test(discordInput)) {
                 setErrorMessage('The Discord ID needs to be the numeric "User ID" instead of the username.\n You can also leave it blank.');
                 return;
             }

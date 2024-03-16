@@ -1,4 +1,4 @@
-import { PlayerIdsObjectType } from "@shared/otherTypes";
+import type { PlayerIdsObjectType } from "@shared/otherTypes";
 import consts from "../../shared/consts";
 
 /**

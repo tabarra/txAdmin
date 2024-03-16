@@ -1,7 +1,6 @@
 const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ'; //i,o removed
 export default {
     //Identifier stuff
-    regexValidDiscordId: /^\d{17,20}$/,
     regexValidHwidToken: /^[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{64}$/,
     validIdentifiers: {
         // https://github.com/discordjs/discord.js/pull/9144
@@ -13,6 +12,15 @@ export default {
         live: /^live:\d{14,20}$/,
         steam: /^steam:1100001[0-9A-Fa-f]{8}$/,
         xbl: /^xbl:\d{14,20}$/,
+    },
+    validIdentifierParts: {
+        discord: /^\d{17,20}$/,
+        fivem: /^\d{1,8}$/,
+        license: /^[0-9A-Fa-f]{40}$/,
+        license2: /^[0-9A-Fa-f]{40}$/,
+        live: /^\d{14,20}$/,
+        steam: /^1100001[0-9A-Fa-f]{8}$/,
+        xbl: /^\d{14,20}$/,
     },
 
     // Database stuff
