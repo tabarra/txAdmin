@@ -156,3 +156,4 @@ Event Data:
 - `netid` (number): The ID of the player or -1 when revoking the permission of all admins (forced reauth).
 - `isAdmin` (boolean): If the player is an admin or not.
 - `username?` (string): The txAdmin username of the admin that was just authenticated.
+- `permissions?` (string[]): The permissions of the admin that was just authenticated.
