@@ -43,3 +43,29 @@ export type PlayerModalSuccess = {
     player: PlayerModalPlayerData;
 }
 export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;
+
+
+/**
+ * Used in the players page
+ */
+export type PlayersTableSearchType = null | {
+    value: string;
+    type: string;
+}
+export type PlayersTableFiltersType = string[];
+export type PlayersTableSortingType = {
+    key: 'playTime' | 'tsJoined' | 'tsLastConnection';
+    desc: boolean;
+};
+
+export type PlayersTableReqType = {
+    search: PlayersTableSearchType;
+    filters: PlayersTableFiltersType;
+    sorting: PlayersTableSortingType;
+    //NOTE: the query needs to be prevOffset inclusive, but ignore prevLicense
+    // therefore, optimistically always limit to x + 1
+    offset?: {
+        param: number;
+        license: string;
+    }
+};

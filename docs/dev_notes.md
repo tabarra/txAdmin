@@ -23,6 +23,7 @@ seems like it just refreshes the page
     - fix disallowed intents message
 
 - rtl issue
+- [ ] `2xl:mx-8` for all pages? (change on MainShell)
 - [ ] fix all imgur links
 - [ ] build: generate fxmanifest files list dynamically
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
@@ -58,6 +59,14 @@ Players:
     - add legacy ban
     - prune players (from master actions -> clean database)
     - bulk remove HWIDs
+
+Don't forget:
+- [ ] before search, parse the ids to `xxx` -> `type:xxx`, except if array
+- [ ] code button to wipe the filter
+- [ ] code the hotkey
+- [ ] search box state in url
+- [ ] Write `estimateSize` function to calculate size dynamically?
+
 
 History:
 - list of warns/bans in a table

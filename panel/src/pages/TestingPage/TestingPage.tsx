@@ -7,7 +7,6 @@ import TmpSocket from "./TmpSocket";
 import TmpToasts from "./TmpToasts";
 import TmpApi from "./TmpApi";
 import TmpFiller from "./TmpFiller";
-import TmpTestTables from "./TmpTestTables";
 
 
 export default function TestingPage() {
@@ -15,7 +14,7 @@ export default function TestingPage() {
     setPageTitle();
 
     return <div className="flex flex-col gap-4 w-full">
-        <TmpTestTables />
+        {/* <TmpTestTables /> */}
         {/* <TmpFiller /> */}
         {/* <TmpApi /> */}
         {/* <TmpToasts /> */}
@@ -23,6 +22,6 @@ export default function TestingPage() {
         {/* <TmpWarningBarState /> */}
         {/* <TmpAuthState /> */}
         {/* <TmpMarkdown /> */}
-        {/* <TmpColors /> */}
+        <TmpColors />
     </div>;
 }

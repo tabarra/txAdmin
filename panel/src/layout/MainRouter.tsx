@@ -9,6 +9,7 @@ import Iframe from "@/pages/Iframe";
 import NotFound from "@/pages/NotFound";
 import TestingPage from "@/pages/TestingPage/TestingPage";
 import LiveConsole from "@/pages/LiveConsole/LiveConsole";
+import PlayersPage from "@/pages/Players/PlayersPage";
 
 
 type RouteType = {
@@ -20,9 +21,15 @@ type RouteType = {
 const allRoutes: RouteType[] = [
     //Global Routes
     {
-        path: '/players',
+        //FIXME: deprecate
+        path: '/players/old',
         title: 'Players',
         children: <Iframe legacyUrl="players" />
+    },
+    {
+        path: '/players',
+        title: 'Players',
+        children: <PlayersPage />
     },
     // {
     //     path: '/history',
@@ -87,6 +94,7 @@ const allRoutes: RouteType[] = [
         children: <LiveConsole />
     },
     {
+        //FIXME: deprecate
         path: '/server/console/old',
         title: 'Old Live Console',
         children: <Iframe legacyUrl="console" />
