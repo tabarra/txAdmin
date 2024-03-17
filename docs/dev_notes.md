@@ -26,6 +26,7 @@
     - [x] temporarily, dropdown redirects:
         - Legacy Ban -> old players page
         - prune players/hwids (from master actions -> clean database)
+- [x] open master actions in the correct tab
 - [ ] NEW PAGE: History
 - [ ] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
 - [ ] fix disallowed intents message
@@ -41,9 +42,43 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 
 =======================================================================
 
+export type DatabaseActionType = {
+id: string;
+type: 'ban' | 'warn';
+    ids: string[];
+    hwids?: string[]; //used only in bans
+playerName: string | false;
+reason: string;
+author: string;
+timestamp: number;
+    expiration: number | false;
+    revocation: {
+        timestamp: number | null;
+        author: string | null;
+    };
+};
+
+
+
 
 ### Page Changes:
 History:
+- Columns:
+    - ID <justify-between> (DUR ban/warn)
+    - playerName
+    - reason
+    - author
+    - timestamp
+    - STATUS
+        - WARN
+            - active: --
+            - revoked: revoked by XXX at YYY
+        - BAN
+            - active perma: permanent ban
+            - active temp: expires in XXX
+            - revoked: revoked by XXX at YYY
+            - expired: expired on XXX
+
 - list of warns/bans in a table
 - search by id OR identifiers or reason
 - filter by action type

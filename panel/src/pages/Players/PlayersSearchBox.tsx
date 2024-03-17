@@ -253,7 +253,7 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
-                                <Link href="/system/master-actions" className="cursor-pointer">
+                                <Link href="/system/master-actions#cleandb" className="cursor-pointer">
                                     <ExternalLinkIcon className="inline mr-1 h-4" />
                                     Prune Players/HWIDs
                                 </Link>

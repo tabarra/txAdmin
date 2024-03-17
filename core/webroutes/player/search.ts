@@ -19,7 +19,7 @@ const SIMPLE_FILTERS = ['isAdmin', 'isOnline', 'isWhitelisted', 'hasNote'];
 /**
  * Returns the players stats for the Players page table
  */
-export default async function PlayerModal(ctx: AuthedCtx) {
+export default async function PlayerSearch(ctx: AuthedCtx) {
     //Sanity check
     if (typeof ctx.query === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');
