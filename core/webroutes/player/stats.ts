@@ -10,7 +10,7 @@ const console = consoleFactory(modulename);
  *  Returns the players stats for the Players page callouts
  */
 export default async function PlayersStats(ctx: AuthedCtx) {
-    const sendTypedResp = (data: PlayersStatsResp | GenericApiErrorResp) => ctx.send(data);
+    const sendTypedResp = (data: PlayersStatsResp) => ctx.send(data);
     try {
         const stats = ctx.txAdmin.playerDatabase.getPlayersStats();
         return sendTypedResp(stats);

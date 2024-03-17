@@ -137,7 +137,7 @@ export const useBackendApi = <
     hookOpts.abortOnUnmount ??= false;
     useEffect(() => {
         return () => {
-            if (!hookOpts.abortOnUnmount) return
+            if (!hookOpts.abortOnUnmount) return;
             abortController.current?.abort('unmount');
             if (currentToastId.current) {
                 txToast.dismiss(currentToastId.current);
