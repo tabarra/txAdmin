@@ -217,6 +217,20 @@ export default class AdminVault {
 
 
     /**
+     * Returns an array with all identifiers of the admins (fivem/discord)
+     */
+    getAdminsIdentifiers() {
+        if (this.admins === false) return [];
+        const ids = [];
+        for (const admin of this.admins) {
+            admin.providers.citizenfx && ids.push(admin.providers.citizenfx.identifier);
+            admin.providers.discord && ids.push(admin.providers.discord.identifier);
+        }
+        return ids;
+    }
+
+
+    /**
      * Returns all data from an admin by their name, or false
      * @param {string} uname
      */

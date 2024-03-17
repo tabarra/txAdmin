@@ -179,6 +179,54 @@ export const filterPlayerHwids = (hwids: string[]) => {
 
 
 /**
+ * Attempts to parse a user-provided string into an array of valid identifiers.
+ * This function is lenient and will attempt to parse any string into an array of valid identifiers.
+ * For non-prefixed ids, it will attempt to parse it as discord, fivem, steam, or license.
+ * Returns an array of valid ids/hwids, and array of invalid identifiers.
+ * 
+ * Stricter version of this function is parsePlayerIds
+ */
+export const parseLaxIdsArrayInput = (fullInput: string) => {
+    const validIds: string[] = [];
+    const validHwids: string[] = [];
+    const invalidIds: string[] = [];
+
+    if (typeof fullInput !== 'string') {
+        return { validIds, validHwids, invalidIds };
+    }
+    const inputs = fullInput.toLowerCase().split(/[,;\s]+/g).filter(Boolean);
+
+    for (const input of inputs) {
+        if (input.includes(':')) {
+            if (consts.regexValidHwidToken.test(input)) {
+                validHwids.push(input)
+            } else {
+                const [type, value] = input.split(':', 1);
+                if (consts.validIdentifierParts[type as keyof typeof consts.validIdentifierParts]?.test(value)) {
+                    validIds.push(input);
+                } else {
+                    invalidIds.push(input);
+                }
+            }
+        } else if (consts.validIdentifierParts.discord.test(input)) {
+            validIds.push(`discord:${input}`);
+        } else if (consts.validIdentifierParts.fivem.test(input)) {
+            validIds.push(`fivem:${input}`);
+        } else if (consts.validIdentifierParts.license.test(input)) {
+            validIds.push(`license:${input}`);
+        } else if (consts.validIdentifierParts.steam.test(input)) {
+            validIds.push(`steam:${input}`);
+        } else {
+            invalidIds.push(input);
+        }
+    }
+
+    return { validIds, validHwids, invalidIds };
+}
+
+
+
+/**
  * Extracts the fivem:xxxxxx identifier from the nameid field from the userInfo oauth response.
  * Example: https://forum.cfx.re/internal/user/271816 -> fivem:271816
  */

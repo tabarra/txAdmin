@@ -113,6 +113,7 @@ export default (config: WebServerConfigType) => {
     //Player routes
     router.get('/player', apiAuthMw, webRoutes.player_modal);
     router.get('/player/stats', apiAuthMw, webRoutes.player_stats);
+    router.get('/player/search', apiAuthMw, webRoutes.player_search);
     router.get('/player/search/old', apiAuthMw, webRoutes.player_searchOld);
     router.post('/player/checkJoin', intercomAuthMw, webRoutes.player_checkJoin);
     router.post('/player/:action', apiAuthMw, webRoutes.player_actions);

@@ -52,7 +52,9 @@ export type PlayersTableSearchType = null | {
     value: string;
     type: string;
 }
+
 export type PlayersTableFiltersType = string[];
+
 export type PlayersTableSortingType = {
     key: 'playTime' | 'tsJoined' | 'tsLastConnection';
     desc: boolean;
@@ -75,4 +77,25 @@ export type PlayersStatsResp = {
     playedLast24h: number;
     joinedLast24h: number;
     joinedLast7d: number;
+} | GenericApiErrorResp;
+
+export type PlayersTablePlayerType = {
+    license: string;
+    displayName: string;
+    playTime: number;
+    tsJoined: number;
+    tsLastConnection: number;
+    notes?: string;
+
+    isAdmin: boolean;
+    isOnline: boolean;
+    isWhitelisted: boolean;
+    // isBanned: boolean;
+    // warnCount: number;
+    // banCount: number;
 }
+
+export type PlayersTableSearchResp = {
+    players: PlayersTablePlayerType[];
+    hasReachedEnd: boolean;
+} | GenericApiErrorResp;

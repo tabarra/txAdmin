@@ -44,8 +44,8 @@ const availableSearchTypes = [
 const availableFilters = [
     { label: 'Is Admin', value: 'isAdmin' },
     { label: 'Is Online', value: 'isOnline' },
-    { label: 'Is Banned', value: 'isBanned' },
-    { label: 'Has Previous Ban', value: 'hasPreviousBan' },
+    // { label: 'Is Banned', value: 'isBanned' },
+    // { label: 'Has Previous Ban', value: 'hasPreviousBan' },
     { label: 'Has Whitelisted ID', value: 'isWhitelisted' },
     { label: 'Has Profile Notes', value: 'hasNote' },
 ] as const;
@@ -57,14 +57,15 @@ export const throttleFunc = throttle(1250, (func: any) => {
 }, { noLeading: true });
 
 
+
+/**
+ * Component
+ */
 export type PlayersSearchBoxReturnStateType = {
     search: PlayersTableSearchType;
     filters: PlayersTableFiltersType;
 }
 
-/**
- * Component
- */
 type PlayerSearchBoxProps = {
     doSearch: (search: PlayersTableSearchType, filters: PlayersTableFiltersType) => void;
     initialState: PlayersSearchBoxReturnStateType;
@@ -77,7 +78,6 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
     const [currSearchType, setCurrSearchType] = useState<string>(initialState.search?.type || 'playerName');
     const [selectedFilters, setSelectedFilters] = useState<string[]>(initialState.filters);
     const [hasSearchText, setHasSearchText] = useState(!!initialState.search?.value);
-    const [inputErrorMsg, setInputErrorMsg] = useState('');
 
     const updateSearch = () => {
         if (!inputRef.current) return;

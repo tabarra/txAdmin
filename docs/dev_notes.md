@@ -13,22 +13,24 @@
 - [x] follow up recipe maintainers regarding fxmanifest description
 - [x] live console bookmarks
 - [x] fix(terminal): fixed out-of-sync search on multiline write
-
 - assorted changes
     - [x] add snapshot and gc to advanced actions
-    - [x] FIXME: apparently pressing enter on the text form of the license key when setting up the server using tx doenst work?
-seems like it just refreshes the page
+    - [x] pressing enter on the license input text in setup page refreshes the page
     - [x] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
-    - add txadmin v8 heap to diagnostics
-    - fix disallowed intents message
+- [ ] NEW PAGE: Players
+    - [ ] test everything
+    - [ ] show online/notes/admin
+    - [ ] temporarily, dropdown redirects:
+        - Legacy Ban -> old players page
+        - prune players/hwids (from master actions -> clean database)
+    - [ ] code the hotkey
+    - [ ] make sure it is not spamming search requests at the start (remove debug print on the route)
+    - [ ] Write `estimateSize` function to calculate size dynamically?
+- [ ] NEW PAGE: History
+- [ ] fix disallowed intents message
 
-- rtl issue
-- [ ] `2xl:mx-8` for all pages? (change on MainShell)
-- [ ] fix all imgur links
-- [ ] build: generate fxmanifest files list dynamically
-- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] update docs on development?
-
+> ????
+- [ ] rtl issue
 
 
 ## Client game print issue
@@ -40,34 +42,6 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 
 
 ### Page Changes:
-Players:
-- list of players in a table
-- filters:
-    - name (fuzzy on pureName, ignore "empty") 
-    - identifiers
-    - whitelisted (probably not)
-    - banned (probably not)
-    - tags (in the future)
-- columns
-    - name
-    - join date (DSC default)
-    - play time
-    - last connection
-- auto search with debouncer
-- possibly auto scroll (fuck pagination!)
-- "more actions" dropdown to:
-    - add legacy ban
-    - prune players (from master actions -> clean database)
-    - bulk remove HWIDs
-
-Don't forget:
-- [ ] before search, parse the ids to `xxx` -> `type:xxx`, except if array
-- [ ] code button to wipe the filter
-- [ ] code the hotkey
-- [ ] search box state in url
-- [ ] Write `estimateSize` function to calculate size dynamically?
-
-
 History:
 - list of warns/bans in a table
 - search by id OR identifiers or reason
@@ -88,16 +62,29 @@ Whitelist:
 =======================================================================
 
 # TODO: v7.2+
+- [ ] update wouter and add search/filters state to URL of the players/history pages 
 - [ ] Remove old live console legacy code
 - [ ] fix the tsc build
 
+- [ ] NEW PAGE: Whitelist
 - [ ] NEW PAGE: Dashboard
+    - [ ] new performance chart
     - [ ] number callouts from legacy players page
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
 - [ ] NEW PAGEs: Console log + Action log
-- [ ] NEW PAGE: Players
-- [ ] NEW PAGE: History
+
+- [ ] add txadmin v8 heap to diagnostics
+- [ ] `2xl:mx-8` for all pages? (change on MainShell)
+- [ ] fix remaining imgur links
+- [ ] build: generate fxmanifest files list dynamically
+- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+- [ ] update docs on development?
+
+- Players page dropdown options:
+    - add legacy ban
+    - prune players (from master actions -> clean database)
+    - bulk remove HWIDs
 
 - [ ] console nav button to jump to server start or errors?
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
@@ -244,6 +231,7 @@ Master Actions:
     - the filter dropdown is written already, check `panel/src/layout/playerlistSidebar/Playerlist.tsx`
     - when filterString is present, disable the filter/sort drowdown, as it will show all results sorted by fuse.js
     - might be worth to debounce the search
+    - add tags to the players page search box (separate dropdown?)
 
 - [ ] Anonymous admin actions (issue #893)
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)

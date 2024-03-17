@@ -116,6 +116,13 @@ export default class PlayerlistManager {
         return this.#playerlist.filter(p => p && p.license === searchLicense && p.isConnected) as ServerPlayer[];
     }
 
+    /**
+     * Returns a set of all online players' licenses.
+     */
+    getOnlinePlayersLicenses() {
+        return new Set(this.#playerlist.filter(p => p && p.isConnected).map(p => p!.license));
+    }
+
 
     /**
      * Handler for all txAdminPlayerlistEvent structured trace events

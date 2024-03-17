@@ -2,19 +2,22 @@ import { useEffect, useRef, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import TxAnchor from '@/components/TxAnchor';
-import { PlayerType, mockBackendApi } from '../TestingPage/mockPlayersApi';
 import { cn, createRandomHslColor, msToShortDuration, tsToLocaleDateTime } from '@/lib/utils';
 import { TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2Icon } from 'lucide-react';
 import { useOpenPlayerModal } from "@/hooks/playerModal";
-import { PlayersTableFiltersType, PlayersTableSearchType, PlayersTableSortingType } from '@shared/playerApiTypes';
+import { PlayersTableSearchResp, PlayersTableFiltersType, PlayersTableSearchType, PlayersTableSortingType, PlayersTablePlayerType } from '@shared/playerApiTypes';
+import { useBackendApi } from '@/hooks/fetch';
 
 
 /**
  * Player row
  */
+const convertRowDateTime = (ts: number) => {
+    return tsToLocaleDateTime(ts, 'medium', 'medium');
+}
 type PlayerRowProps = {
-    rowData: PlayerType;
+    rowData: PlayersTablePlayerType;
     modalOpener: ReturnType<typeof useOpenPlayerModal>;
 }
 
@@ -25,10 +28,16 @@ function PlayerRow({ rowData, modalOpener }: PlayerRowProps) {
     //border-r whitespace-nowrap text-ellipsis overflow-hidden
     return (
         <TableRow onClick={openModal} className='cursor-pointer'>
-            <TableCell className='px-4 py-2 border-r'>{rowData.displayName}</TableCell>
+            <TableCell
+                className={cn(
+                    'px-4 py-2 border-r',
+                    rowData.isOnline && 'text-success-inline'
+                )}
+            >{rowData.displayName}</TableCell>
+            <TableCell className='px-4 py-2 border-r'>ligma</TableCell>
             <TableCell className='px-4 py-2 border-r'>{msToShortDuration(rowData.playTime * 60_000)}</TableCell>
-            <TableCell className='px-4 py-2 border-r'>{tsToLocaleDateTime(rowData.tsJoined / 1000)}</TableCell>
-            <TableCell className='px-4 py-2'>{tsToLocaleDateTime(rowData.tsLastConnection / 1000)}</TableCell>
+            <TableCell className='px-4 py-2 border-r'>{convertRowDateTime(rowData.tsJoined)}</TableCell>
+            <TableCell className='px-4 py-2'>{convertRowDateTime(rowData.tsLastConnection)}</TableCell>
         </TableRow>
     )
 }
@@ -37,20 +46,26 @@ function PlayerRow({ rowData, modalOpener }: PlayerRowProps) {
  * Last row
  */
 type LastRowProps = {
+    playersCount: number;
     hasReachedEnd: boolean;
     loadError: string | null;
     isFetching: boolean;
     retryFetch: (_reset?: boolean) => Promise<void>;
 }
 
-function LastRow({ hasReachedEnd, isFetching, loadError, retryFetch }: LastRowProps) {
+function LastRow({ playersCount, hasReachedEnd, isFetching, loadError, retryFetch }: LastRowProps) {
     let content: React.ReactNode;
     if (hasReachedEnd) {
-        content = <span className='font-bold text-muted-foreground'>You have reached the end of the list.</span>
+        content = <span className='font-bold text-muted-foreground'>
+            {playersCount ? 'You have reached the end of the list.' : 'No players found.'}
+        </span>
     } else if (isFetching) {
         content = <Loader2Icon className="mx-auto animate-spin" />
     } else if (loadError) {
-        content = <span>Error: {loadError}. <button onClick={() => retryFetch()}>Try again?</button></span>
+        content = <>
+            <span className='text-destructive-inline'>Error: {loadError}.</span><br />
+            <button className='underline' onClick={() => retryFetch()}>Try again?</button>
+        </>
     } else {
         content = <span>
             You've found the end of the rainbow, but there's no pot of gold here. <br />
@@ -60,7 +75,7 @@ function LastRow({ hasReachedEnd, isFetching, loadError, retryFetch }: LastRowPr
 
     return (
         <TableRow>
-            <TableCell colSpan={4} className='px-4 py-2 text-center'>
+            <TableCell colSpan={5} className='px-4 py-2 text-center'>
                 {content}
             </TableCell>
         </TableRow>
@@ -114,51 +129,70 @@ type PlayersTableProps = {
 
 export default function PlayersTable({ search, filters }: PlayersTableProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [players, setPlayers] = useState<PlayerType[]>([]);
+    const [players, setPlayers] = useState<PlayersTablePlayerType[]>([]);
     const [hasReachedEnd, setHasReachedEnd] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [loadError, setLoadError] = useState<string | null>(null);
     const [sorting, setSorting] = useState<PlayersTableSortingType>({ key: 'tsJoined', desc: true });
-    const [dbPlayerCount, setDbPlayerCount] = useState(0);
     const [isResetting, setIsResetting] = useState(false);
     const openPlayerModal = useOpenPlayerModal();
 
-    const fetchNextPage = async (reset?: boolean) => {
+    const playerListingApi = useBackendApi<PlayersTableSearchResp>({
+        method: 'GET',
+        path: '/player/search',
+        abortOnUnmount: true,
+    });
+
+    const fetchNextPage = async (resetOffset?: boolean) => {
         setIsFetching(true);
         setLoadError(null);
-        if (reset) {
+        if (resetOffset) {
             setIsResetting(true);
         }
+        const handleError = (error: string) => {
+            setLoadError(error);
+            if (resetOffset) {
+                setPlayers([]);
+            }
+        }
         try {
-            const offset = !reset && players.length ? {
-                param: players[players.length - 1][sorting.key],
-                license: players[players.length - 1].license
-            } : undefined;
-            const {
-                players: newPlayers,
-                hasReachedEnd,
-                dbPlayerCount
-            } = await mockBackendApi({
-                offset,
-                search,
-                filters,
-                sorting: {
-                    key: sorting.key,
-                    desc: sorting.desc
-                },
-            });
-            setDbPlayerCount(dbPlayerCount);
-            setHasReachedEnd(hasReachedEnd);
+            const queryParams: { [key: string]: string | number | boolean } = {
+                sortingKey: sorting.key,
+                sortingDesc: sorting.desc,
+            };
+            if (search) {
+                queryParams.searchValue = search.value;
+                queryParams.searchType = search.type;
+            }
+            if (filters.length) {
+                queryParams.filters = filters.join(',');
+            }
+            if (!resetOffset && players.length) {
+                queryParams.offsetParam = players[players.length - 1][sorting.key];
+                queryParams.offsetLicense = players[players.length - 1].license;
+            }
+            const resp = await playerListingApi({ queryParams });
+
+            //Dealing with errors
+            if (resp === undefined) {
+                return handleError(`Request failed.`);
+            } else if ('error' in resp) {
+                return handleError(`Request failed: ${resp.error}`);
+            }
+
+            //Setting the states
+            setHasReachedEnd(resp.hasReachedEnd);
             setIsResetting(false);
-            if (newPlayers.length) {
-                setPlayers((prev) => reset ? newPlayers : [...prev, ...newPlayers]);
+            if (resp.players.length) {
+                setPlayers((prev) => resetOffset ? resp.players : [...prev, ...resp.players]);
             } else {
                 setPlayers([]);
             }
         } catch (error) {
-            setLoadError(`Failed to fetch more data: ${(error as Error).message}`);
+            handleError(`Failed to fetch more data: ${(error as Error).message}`);
         } finally {
             setIsFetching(false);
+            setIsResetting(false);
         }
     };
 
@@ -168,7 +202,7 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
         count: players.length + 1,
         getScrollElement: () => (scrollRef.current as HTMLDivElement)?.getElementsByTagName('div')[0],
         estimateSize: () => 38, // border-b
-        overscan: 10,
+        overscan: 25,
     });
     const virtualItems = rowVirtualizer.getVirtualItems();
     const virtualizerTotalSize = rowVirtualizer.getTotalSize();
@@ -225,6 +259,9 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
                             <th className='w-[50%]x py-2 px-4 font-light tracking-wider text-left text-muted-foreground'>
                                 Display Name
                             </th>
+                            <th className='py-2 px-4 font-light tracking-wider text-left text-muted-foreground'>
+                                Status
+                            </th>
                             <SortableTableHeader
                                 label='Play Time'
                                 sortKey='playTime'
@@ -252,6 +289,7 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
                             return isLastRow ? (
                                 <LastRow
                                     key={virtualItem.key}
+                                    playersCount={players.length}
                                     hasReachedEnd={hasReachedEnd}
                                     loadError={loadError}
                                     isFetching={isFetching}
