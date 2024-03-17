@@ -1,7 +1,7 @@
 import { throttle } from "throttle-debounce";
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronsUpDownIcon, FilterXIcon, XIcon, ChevronDownIcon } from 'lucide-react';
+import { ChevronsUpDownIcon, FilterXIcon, XIcon, ChevronDownIcon, ExternalLinkIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
     DropdownMenu,
@@ -16,6 +16,7 @@ import {
 import InlineCode from '@/components/InlineCode';
 import { PlayersTableFiltersType, PlayersTableSearchType } from "@shared/playerApiTypes";
 import { useEventListener } from "usehooks-ts";
+import { Link } from "wouter";
 
 
 /**
@@ -237,15 +238,28 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                         </DropdownMenu>
                     </div>
 
-                    <div>
-                        <Button
-                            variant="outline"
-                            className="flex-grow"
-                        >
-                            More
-                            <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger className="">
+                            <Button variant="outline" className="flex-growx">
+                                More
+                                <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
+                                <Link href="/players/old" className="cursor-pointer">
+                                    <ExternalLinkIcon className="inline mr-1 h-4" />
+                                    Old Page
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
+                                <Link href="/system/master-actions" className="cursor-pointer">
+                                    <ExternalLinkIcon className="inline mr-1 h-4" />
+                                    Prune Players/HWIDs
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
             <div className="text-xs text-muted-foreground mt-1 px-1">

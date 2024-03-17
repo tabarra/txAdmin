@@ -17,17 +17,17 @@
     - [x] add snapshot and gc to advanced actions
     - [x] pressing enter on the license input text in setup page refreshes the page
     - [x] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
-- [ ] NEW PAGE: Players
+- [x] NEW PAGE: Players
     - [X] make sure it is not spamming search requests at the start (remove debug print on the route)
     - [x] show online/notes/admin
     - [x] test everything
     - [x] ~~Write `estimateSize` function to calculate size dynamically?~~ made it no-wrap
     - [x] code the hotkey
-    - [ ] temporarily, dropdown redirects:
+    - [x] temporarily, dropdown redirects:
         - Legacy Ban -> old players page
         - prune players/hwids (from master actions -> clean database)
-    - [ ] track search duration in StatsManager just like we do for join checks
 - [ ] NEW PAGE: History
+- [ ] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
 - [ ] fix disallowed intents message
 
 > ????
