@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import InlineCode from '@/components/InlineCode';
 import { PlayersTableFiltersType, PlayersTableSearchType } from "@shared/playerApiTypes";
+import { useEventListener } from "usehooks-ts";
 
 
 /**
@@ -92,7 +93,7 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
     //Call onSearch when params change
     useEffect(() => {
         updateSearch();
-    }, [inputRef, currSearchType, selectedFilters]);
+    }, [currSearchType, selectedFilters]);
 
     //Input handlers
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -123,6 +124,14 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
             setSelectedFilters((prev) => prev.filter((f) => f !== filter));
         }
     }
+
+    //Search hotkey
+    useEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.code === 'KeyF' && (e.ctrlKey || e.metaKey)) {
+            inputRef.current?.focus();
+            e.preventDefault();
+        }
+    });
 
     //It's render time! 🎉
     const selectedSearchType = availableSearchTypes.find((type) => type.value === currSearchType);

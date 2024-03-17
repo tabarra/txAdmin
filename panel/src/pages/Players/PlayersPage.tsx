@@ -15,10 +15,7 @@ const PageCalloutRowMemo = memo(PageCalloutRow);
 
 export default function PlayersPage() {
     const [calloutData, setCalloutData] = useState<PlayersStatsResp|undefined>(undefined);
-    const [searchBoxReturn, setSearchBoxReturn] = useState<PlayersSearchBoxReturnStateType>({
-        search: null,
-        filters: [],
-    });
+    const [searchBoxReturn, setSearchBoxReturn] = useState<PlayersSearchBoxReturnStateType|undefined>(undefined);
     const statsApi = useBackendApi<PlayersStatsResp>({
         method: 'GET',
         path: '/player/stats',
@@ -46,8 +43,9 @@ export default function PlayersPage() {
     }, []);
 
 
+    const hasCalloutData = calloutData && !('error' in calloutData);
     return (<div
-        className='flex flex-col min-w-96'
+        className='flex flex-col min-w-96 w-full'
         style={{ height: 'calc(100vh - 3.5rem - 1px - 2rem)' }}
     >
         {/* <div
@@ -60,25 +58,25 @@ export default function PlayersPage() {
             callouts={[
                 {
                     label: 'Total Players',
-                    value: calloutData?.total ?? false,
+                    value: hasCalloutData ? calloutData.total : false,
                     icon: <UsersIcon />,
                     prefix: ''
                 },
                 {
                     label: 'Players Today',
-                    value: calloutData?.playedLast24h ?? false,
+                    value: hasCalloutData ? calloutData.playedLast24h : false,
                     icon: <CalendarPlusIcon />,
                     prefix: ''
                 },
                 {
                     label: 'New Players Today',
-                    value: calloutData?.joinedLast24h ?? false,
+                    value: hasCalloutData ? calloutData.joinedLast24h : false,
                     icon: <UserRoundPlusIcon />,
                     prefix: '+'
                 },
                 {
                     label: 'New Players This Week',
-                    value: calloutData?.joinedLast7d ?? false,
+                    value: hasCalloutData ? calloutData.joinedLast7d : false,
                     icon: <UserRoundPlusIcon />,
                     prefix: '+'
                 }
@@ -88,9 +86,11 @@ export default function PlayersPage() {
             doSearch={doSearch}
             initialState={initialState}
         />
-        <PlayersTableMemo
-            search={searchBoxReturn.search}
-            filters={searchBoxReturn.filters}
-        />
+        {searchBoxReturn ? (
+            <PlayersTableMemo
+                search={searchBoxReturn.search}
+                filters={searchBoxReturn.filters}
+            />
+        ) : null}
     </div>);
 }

@@ -199,7 +199,9 @@ export const parseLaxIdsArrayInput = (fullInput: string) => {
     for (const input of inputs) {
         if (input.includes(':')) {
             if (consts.regexValidHwidToken.test(input)) {
-                validHwids.push(input)
+                validHwids.push(input);
+            }else if (Object.values(consts.validIdentifiers).some((regex) => regex.test(input))){
+                validIds.push(input);
             } else {
                 const [type, value] = input.split(':', 1);
                 if (consts.validIdentifierParts[type as keyof typeof consts.validIdentifierParts]?.test(value)) {

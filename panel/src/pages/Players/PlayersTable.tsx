@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import TxAnchor from '@/components/TxAnchor';
-import { cn, createRandomHslColor, msToShortDuration, tsToLocaleDateTime } from '@/lib/utils';
+import { cn, msToShortDuration, tsToLocaleDateTime } from '@/lib/utils';
 import { TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2Icon } from 'lucide-react';
+import { Loader2Icon, ShieldCheckIcon, ActivitySquareIcon, FileTextIcon } from 'lucide-react';
 import { useOpenPlayerModal } from "@/hooks/playerModal";
 import { PlayersTableSearchResp, PlayersTableFiltersType, PlayersTableSearchType, PlayersTableSortingType, PlayersTablePlayerType } from '@shared/playerApiTypes';
 import { useBackendApi } from '@/hooks/fetch';
@@ -28,13 +28,20 @@ function PlayerRow({ rowData, modalOpener }: PlayerRowProps) {
     //border-r whitespace-nowrap text-ellipsis overflow-hidden
     return (
         <TableRow onClick={openModal} className='cursor-pointer'>
-            <TableCell
-                className={cn(
-                    'px-4 py-2 border-r',
-                    rowData.isOnline && 'text-success-inline'
-                )}
-            >{rowData.displayName}</TableCell>
-            <TableCell className='px-4 py-2 border-r'>ligma</TableCell>
+            <TableCell className={'px-4 py-2 flex justify-between border-r'}>
+                <span className='text-ellipsis overflow-hidden line-clamp-1 break-all'>{rowData.displayName}</span>
+                <div className='inline-flex items-center gap-1'>
+                    <ActivitySquareIcon className={cn('h-5',
+                        rowData.isOnline ? 'text-success-inline animate-pulse' : 'text-muted'
+                    )} />
+                    <ShieldCheckIcon className={cn('h-5',
+                        rowData.isAdmin ? 'text-warning-inline' : 'text-muted'
+                    )} />
+                    <FileTextIcon className={cn('h-5',
+                        rowData.notes ? 'text-secondary-foreground' : 'text-muted'
+                    )} />
+                </div>
+            </TableCell>
             <TableCell className='px-4 py-2 border-r'>{msToShortDuration(rowData.playTime * 60_000)}</TableCell>
             <TableCell className='px-4 py-2 border-r'>{convertRowDateTime(rowData.tsJoined)}</TableCell>
             <TableCell className='px-4 py-2'>{convertRowDateTime(rowData.tsLastConnection)}</TableCell>
@@ -55,17 +62,17 @@ type LastRowProps = {
 
 function LastRow({ playersCount, hasReachedEnd, isFetching, loadError, retryFetch }: LastRowProps) {
     let content: React.ReactNode;
-    if (hasReachedEnd) {
-        content = <span className='font-bold text-muted-foreground'>
-            {playersCount ? 'You have reached the end of the list.' : 'No players found.'}
-        </span>
-    } else if (isFetching) {
+    if (isFetching) {
         content = <Loader2Icon className="mx-auto animate-spin" />
     } else if (loadError) {
         content = <>
             <span className='text-destructive-inline'>Error: {loadError}.</span><br />
             <button className='underline' onClick={() => retryFetch()}>Try again?</button>
         </>
+    } else if (hasReachedEnd) {
+        content = <span className='font-bold text-muted-foreground'>
+            {playersCount ? 'You have reached the end of the list.' : 'No players found.'}
+        </span>
     } else {
         content = <span>
             You've found the end of the rainbow, but there's no pot of gold here. <br />
@@ -75,7 +82,7 @@ function LastRow({ playersCount, hasReachedEnd, isFetching, loadError, retryFetc
 
     return (
         <TableRow>
-            <TableCell colSpan={5} className='px-4 py-2 text-center'>
+            <TableCell colSpan={4} className='px-4 py-2 text-center'>
                 {content}
             </TableCell>
         </TableRow>
@@ -91,9 +98,10 @@ type SortableTableHeaderProps = {
     sortKey: 'playTime' | 'tsJoined' | 'tsLastConnection';
     sortingState: PlayersTableSortingType;
     setSorting: (newState: PlayersTableSortingType) => void;
+    className?: string;
 }
 
-function SortableTableHeader({ label, sortKey, sortingState, setSorting }: SortableTableHeaderProps) {
+function SortableTableHeader({ label, sortKey, sortingState, setSorting, className }: SortableTableHeaderProps) {
     const isSorted = sortingState.key === sortKey;
     const isDesc = sortingState.desc;
     const sortIcon = isSorted ? (isDesc ? '▼' : '▲') : <></>;
@@ -108,8 +116,9 @@ function SortableTableHeader({ label, sortKey, sortingState, setSorting }: Sorta
         <th
             onClick={onClick}
             className={cn(
-                'py-2 px-4 text-left font-light tracking-wider cursor-pointer hover:font-medium hover:dark:bg-zinc-600',
+                'py-2 px-4 text-left font-light tracking-wider cursor-pointer hover:bg-zinc-300 hover:dark:bg-zinc-600',
                 isSorted && 'font-medium dark:bg-zinc-700',
+                className,
             )}
         >
             {label}
@@ -231,12 +240,7 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
         }
     }, [players, virtualItems, hasReachedEnd, isFetching]);
 
-    //fetch the first page automatically
-    useEffect(() => {
-        if (!players.length) fetchNextPage(true);
-    }, []);
-
-    //on sorting change, reset the list
+    //on state change, reset the list
     useEffect(() => {
         rowVirtualizer.scrollToIndex(0);
         fetchNextPage(true);
@@ -253,14 +257,11 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
                 style={{ color: createRandomHslColor() }}
             >{JSON.stringify({ search, filters, sorting })}</div> */}
             <ScrollArea className="h-full" ref={scrollRef}>
-                <table className='w-full caption-bottom text-sm table-fixed select-none'>
+                <table className='w-full caption-bottom text-sm select-none'>
                     <TableHeader>
                         <tr className='sticky top-0 z-10 bg-zinc-200 dark:bg-muted text-secondary-foreground text-base shadow-md transition-colors'>
-                            <th className='w-[50%]x py-2 px-4 font-light tracking-wider text-left text-muted-foreground'>
-                                Display Name
-                            </th>
                             <th className='py-2 px-4 font-light tracking-wider text-left text-muted-foreground'>
-                                Status
+                                Display Name
                             </th>
                             <SortableTableHeader
                                 label='Play Time'
@@ -282,7 +283,7 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
                             />
                         </tr>
                     </TableHeader>
-                    <TableBody className={cn(isResetting && 'opacity-25')}>
+                    <TableBody className={cn('whitespace-nowrap', isResetting && 'opacity-25')}>
                         {TopRowPad}
                         {virtualItems.map((virtualItem) => {
                             const isLastRow = virtualItem.index > players.length - 1;

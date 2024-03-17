@@ -39,8 +39,6 @@ export default async function PlayerModal(ctx: AuthedCtx) {
     const dbo = ctx.txAdmin.playerDatabase.getDb();
     let chain = dbo.chain.get('players');
 
-    console.dir(ctx.query); //DEBUG
-
     /*
         In order:
         - [X] sort the players by the sortingKey/sortingDesc
@@ -109,6 +107,7 @@ export default async function PlayerModal(ctx: AuthedCtx) {
         }
 
         if (searchType === 'playerName') {
+            //Searching by player name
             const { pureName } = cleanPlayerName(searchValue);
             if (pureName === 'emptyname') {
                 return sendTypedResp({ error: 'This player name is unsearchable (pureName is empty).' });
@@ -122,6 +121,7 @@ export default async function PlayerModal(ctx: AuthedCtx) {
             const filtered = fuse.search(pureName).map(x => x.item);
             chain = createChain(filtered);
         } else if (searchType === 'playerNotes') {
+            //Searching by player notes
             const players = chain.value();
             const fuse = new Fuse(players, {
                 keys: ['notes.text'],
@@ -130,6 +130,7 @@ export default async function PlayerModal(ctx: AuthedCtx) {
             const filtered = fuse.search(searchValue).map(x => x.item);
             chain = createChain(filtered);
         } else if (searchType === 'playerIds') {
+            //Searching by player identifiers
             const { validIds, validHwids, invalidIds } = parseLaxIdsArrayInput(searchValue);
             if (invalidIds.length) {
                 return sendTypedResp({ error: `Invalid identifiers (${invalidIds.join(',')}). Prefix any identifier with their type, like 'fivem:123456' instead of just '123456'.` });
