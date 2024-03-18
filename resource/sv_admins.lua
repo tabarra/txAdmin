@@ -89,6 +89,7 @@ RegisterNetEvent('txsv:checkIfAdmin', function()
             netid = src,
             isAdmin = true,
             username = resp.name,
+            permissions = resp.permissions,
         })
     end, 'GET', '', headers)
 end)
