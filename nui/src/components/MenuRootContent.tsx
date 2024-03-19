@@ -10,13 +10,33 @@ interface TxAdminLogoProps {
   themeName: string;
 }
 
+const StyledImage = styled('img')({
+  width: '100%',
+  maxWidth: '200px', 
+  '@media (min-height: 2160px)': {
+    maxWidth: '300px', 
+  },
+});
+
+const StyledTypography = styled(Typography)({
+  fontWeight: 500,
+  marginTop: -20,
+  textAlign: "right",
+  fontSize: 12,
+  '@media (min-height: 2160px)': {
+    fontSize: 20, 
+    marginTop: -32,
+    marginRight: 65,
+  },
+});
+
 const TxAdminLogo: React.FC<TxAdminLogoProps> = ({ themeName }) => {
   const imgName = themeName === 'fivem' ? 'txadmin.png' : 'txadmin-redm.png';
   return (
     <Box my={1} display="flex" justifyContent="center">
-      <img src={`images/${imgName}`} alt="txAdmin logo" />
+      <StyledImage src={`images/${imgName}`} alt="txAdmin logo" />
     </Box>
-  )
+  );
 };
 
 const StyledRoot = styled(Box)(({ theme }) => ({
@@ -27,6 +47,10 @@ const StyledRoot = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   userSelect: "none",
+  '@media (min-height: 2160px)': {
+    width: 750,
+    borderRadius: 30,
+  },
 }));
 
 export const MenuRootContent: React.FC = React.memo(() => {
@@ -45,18 +69,10 @@ export const MenuRootContent: React.FC = React.memo(() => {
   return (
     <StyledRoot p={2} pb={1}>
       <TxAdminLogo themeName={theme.name}/>
-      <Typography
-        color="textSecondary"
-        style={{
-          fontWeight: 500,
-          marginTop: -20,
-          textAlign: "right",
-          fontSize: 12,
-        }}
-      >
+      <StyledTypography color="textSecondary">
         v{serverCtx.txAdminVersion}
         {versionPad}
-      </Typography>
+      </StyledTypography>
       <PageTabs />
       <Collapse
         in={debouncedCurPage === txAdminMenuPage.Main}

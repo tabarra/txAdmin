@@ -13,11 +13,23 @@ const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
     borderRadius: 10,
     padding: 10,
     transformOrigin: "bottom",
+    '@media (min-height: 2160px)': {
+      minWidth: '700px !important',
+      padding: 15,
+    },
+
   },
   [`& .${tooltipClasses.arrow}`]: {
     color: theme.palette.background.default,
   },
 }));
+
+const StyledTypography = styled(Typography)({
+  fontSize: '1rem',
+  '@media (min-height: 2160px)': {
+    fontSize: '2rem',
+  },
+});
 
 interface HelpTooltipProps {
   children: ReactNode;
@@ -30,9 +42,9 @@ export const HelpTooltip: React.FC<HelpTooltipProps> = ({ children }) => {
     <StyledTooltip
       open={tooltipOpen}
       title={
-        <Typography variant="caption" align="center">
+        <StyledTypography variant="caption" align="center">
           {tooltipText}
-        </Typography>
+        </StyledTypography>
       }
       //FIXME: is it needed? it was there in Taso's version
       // PopperProps={{
