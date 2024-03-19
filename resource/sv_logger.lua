@@ -209,6 +209,10 @@ RegisterNetEvent('txaLogger:CommandExecuted', function(data)
     logger(source, 'CommandExecuted', data)
 end)
 
+RegisterServerEvent('txaLogger:server:commandExecuted', function(source, data)
+    logger(source, 'CommandExecuted', data)
+end)
+
 --FIXME: didn't migrate to keep compatibility with external calls
 RegisterNetEvent('txaLogger:DebugMessage', function(data)
     logger(source, 'DebugMessage', data)
