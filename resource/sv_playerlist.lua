@@ -56,17 +56,21 @@ CreateThread(function()
             local yCoord = nil
             if onesyncEnabled == true then
                 local ped = GetPlayerPed(serverID)
-                health = GetPedHealthPercent(ped)
-                local veh = GetVehiclePedIsIn(ped)
-                if veh ~= 0 then
-                    vType = vTypeMap[tostring(GetVehicleType(veh))]
-                else
-                    vType = vTypeMap["walking"]
+                if not ped or not DoesEntityExist(ped) then 
+                    break -- to break the loop for this player somehow GetPlayerPed fails
                 end
-                local coords = GetEntityCoords(ped)
-                xCoord = math.floor(coords.x)
-                yCoord = math.floor(coords.y)
-            end
+                    health = GetPedHealthPercent(ped)
+                    local veh = GetVehiclePedIsIn(ped)
+                    if veh ~= 0 then
+                       vType = vTypeMap[tostring(GetVehicleType(veh))]
+                    else
+                       vType = vTypeMap["walking"]
+                    end
+                    local coords = GetEntityCoords(ped)
+                    xCoord = math.floor(coords.x)
+                    yCoord = math.floor(coords.y)
+                end
+            
 
             -- Updating TX_PLAYERLIST
             if type(TX_PLAYERLIST[serverID]) ~= 'table' then
