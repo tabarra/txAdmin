@@ -59,7 +59,7 @@ RegisterCommand('txAdmin:menu:openPlayersPage', function()
   sendMenuMessage('setMenuPage', 1)
   toggleMenuVisibility(true)
   SetNuiFocus(true, true)
-end)
+end,false)
 
 
 
@@ -176,7 +176,7 @@ end)
 RegisterSecureNuiCallback('closeMenu', function(_, cb)
   isMenuVisible = false
   debugPrint('Releasing all NUI Focus')
-  SetNuiFocus(false)
+  SetNuiFocus(false,false)
   SetNuiFocusKeepInput(false)
   playLibrarySound('enter')
   cb({})
@@ -196,10 +196,10 @@ RegisterNetEvent('txcl:heal', function()
   local pos = GetEntityCoords(ped)
   local heading = GetEntityHeading(ped)
   if IsEntityDead(ped) then
-    NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false)
+       NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, 0, false,false,false)
   end
   ResurrectPed(ped)
-  SetEntityHealth(ped, GetEntityMaxHealth(ped))
+  SetEntityHealth(ped, GetEntityMaxHealth(ped),0)
   ClearPedBloodDamage(ped)
   RestorePlayerStamina(PlayerId(), 100.0)
   if IS_REDM then
