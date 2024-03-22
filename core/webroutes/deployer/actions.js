@@ -165,7 +165,7 @@ async function handleSetVariables(ctx) {
     });
     userVars.addPrincipalsMaster = (addPrincipalLines.length)
         ? addPrincipalLines.join('\n')
-        : '# Deployer Note: this admin master has no identifiers to be automatically added.\n# add_principal identifier.discord.111111111111111111 group.admin #example';
+        : '# Deployer Note: this admin master has no identifiers to be automatically added.\n# add_principal identifier.discord:111111111111111111 group.admin #example';
 
     //Start deployer
     try {
