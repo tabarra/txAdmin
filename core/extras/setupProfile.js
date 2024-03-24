@@ -63,7 +63,7 @@ export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePat
         try {
             const batLines = [
                 `@echo off`,
-                `"${fxServerPath}/FXServer.exe" +set serverProfile "${serverProfile}"`,
+                `"${fxServerPath}/VMPServer.exe" +set serverProfile "${serverProfile}"`,
                 `pause`
             ];
             const batFolder = path.resolve(fxServerPath, '..');

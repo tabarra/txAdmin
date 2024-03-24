@@ -122,7 +122,7 @@ export default class FXRunner {
         // Configure spawn parameters according to the environment
         if (txEnv.isWindows) {
             this.spawnVariables = {
-                command: `${txEnv.fxServerPath}/FXServer.exe`,
+                command: `${txEnv.fxServerPath}/VMPServer.exe`,
                 args: cmdArgs,
             };
         } else {

@@ -56,7 +56,7 @@ export const getFxsPaths = (fxserverPath) => {
     const fxServerRootPath = path.normalize(fxserverPath);
 
     //Process fxserver path
-    const fxsBinPath = path.join(fxServerRootPath, 'FXServer.exe');
+    const fxsBinPath = path.join(fxServerRootPath, 'VMPServer.exe');
     const fxsBinPathStat = fs.statSync(fxsBinPath);
     if (!fxsBinPathStat.isFile()) {
         throw new Error(`${fxsBinPath} is not a file.`);

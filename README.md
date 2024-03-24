@@ -70,10 +70,10 @@ Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features 
 ## Running (Windows/Linux)
 **txAdmin is included in all FXServer builds** above 2524, so to run it for the first time simply do the following:
 - Update FXServer to the latest artifact/build (2524 or superior)
-- If Windows, run FXServer.exe | If Linux, run `screen ./run.sh`
+- If Windows, run VMPServer.exe | If Linux, run `screen ./run.sh`
 - Open one of the URLs shown and configure txAdmin
 
-txAdmin requires to be launched from *inside* FXServer in monitor mode, to do that, just execute the `run.sh` or `FXServer.exe` without **any** `+exec` arguments.  
+txAdmin requires to be launched from *inside* FXServer in monitor mode, to do that, just execute the `run.sh` or `VMPServer.exe` without **any** `+exec` arguments.  
   
 ### ConVars
 - **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder. The default is `default`.
@@ -85,7 +85,7 @@ txAdmin requires to be launched from *inside* FXServer in monitor mode, to do th
 ConVar usage **example** for different port and profile:  
 ```bash
 # Windows
-./FXServer.exe +set serverProfile dev_server +set txAdminPort 40121
+./VMPServer.exe +set serverProfile dev_server +set txAdminPort 40121
 
 # Linux
 ./run.sh +set serverProfile dev_server +set txAdminPort 40121
