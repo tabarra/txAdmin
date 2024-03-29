@@ -96,7 +96,7 @@ const ChangePasswordTab = memo(function () {
                             <Label htmlFor="current-password">Current Password</Label>
                             <Input
                                 id="current-password"
-                                placeholder="Enter new password"
+                                placeholder="Enter current password"
                                 type="password"
                                 value={oldPassword}
                                 autoFocus

@@ -77,7 +77,8 @@
             "not_enabled": "ไม่ได้เปิดใช้งานเมนู txAdmin คุณสามารถเปิดใช้งานได้ในหน้า การตั้งค่าของ txAdmin",
             "announcement_title": "ประกาศจากเซิร์ฟเวอร์โดย %{author}:",
             "dialog_empty_input": "คุณไม่สามารถป้อนข้อมูลว่างได้",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM from admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "คุณได้ถูกระงับผู้เล่นแล้ว",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "ยานพาหนะ",
-                "onesync_error": "ตัวเลือกนี้กำหนดให้ต้องเปิด OneSync เพื่อสำหรับการจัดการเอนทิตีในเซิร์ฟเวอร์",
                 "not_in_veh_error": "คุณไม่ได้อยู่ในยานพาหนะในขณะนี้",
                 "spawn": {
                     "title": "Spawn",

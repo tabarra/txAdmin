@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin Menüsü etkin değil! Bunu txAdmin ayarları sayfasından etkinleştirebilirsiniz.",
             "announcement_title": "%{author} tarafından Sunucu Duyurusu:",
             "dialog_empty_input": "Boş bir girdiniz olamaz.",
-            "directmessage_title": "%{author} yöneticisinden DM:"
+            "directmessage_title": "%{author} yöneticisinden DM:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Oyuncuyu dondurdunuz!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Araç",
-                "onesync_error": "Bu seçenek, sunucu varlığı işleme için OneSync'in açık olmasını gerektirir",
                 "not_in_veh_error": "Şu anda bir araçta değilsiniz!",
                 "spawn": {
                     "title": "Spawn",

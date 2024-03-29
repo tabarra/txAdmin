@@ -1,6 +1,6 @@
 # Custom Discord Status Embed
 
-![example discord embed](https://i.imgur.com/KwnArOL.png)
+![example discord embed](https://forum-cfx-re.akamaized.net/original/5X/b/c/e/b/bceb61b4b506f0bfcc7429695e3e4c1699845605.png)
 
 Starting in v5.1, **txAdmin** now has a Discord Persistent Status Embed feature.  
 This is a Discord embed that txAdmin will update every minute, and you can configure it to display server status, and any other random thing that you can normally do with a Discord embed.  
@@ -63,10 +63,10 @@ On the JSON, you don't need to set `color` or `footer` as txAdmin will replace t
         }
     ],
     "image": {
-        "url": "https://i.imgur.com/ZZRp4pj.png"
+        "url": "https://forum-cfx-re.akamaized.net/original/5X/e/e/c/b/eecb4664ee03d39e34fcd82a075a18c24add91ed.png"
     },
     "thumbnail": {
-        "url": "https://i.imgur.com/9i9lvOp.png"
+        "url": "https://forum-cfx-re.akamaized.net/original/5X/9/b/d/7/9bd744dc2b21804e18c3bb331e8902c930624e44.png"
     }
 }
 ```

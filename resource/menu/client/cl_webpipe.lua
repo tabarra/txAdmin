@@ -46,31 +46,6 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
         return
     end
 
-    -- Cookie wiper to prevent sticky cookie sessions after reauth
-    -- FIXME: deprecate this path?!
-    if path == '/nui/resetSession' then
-        if type(headers['Cookie']) ~= 'string' then
-            return cb({
-                status = 200,
-                body = '{}',
-            })
-        else
-            local cookies = {}
-            for cookie in headers['Cookie']:gmatch('(tx:[^=]+)') do
-                cookies[#cookies + 1] = cookie .. "=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly; SameSite=None; Secure"
-            end
-            return cb({
-                status = 200,
-                body = '{}',
-                headers = {
-                    ['Connection'] = "close",
-                    ['Content-Type'] = "text/plain",
-                    ['Set-Cookie'] = cookies
-                }
-            })
-        end
-    end
-
     local id = pipeCallbackCounter
     pipeReturnCallbacks[id] = { cb = cb, path = path }
     pipeCallbackCounter = pipeCallbackCounter + 1

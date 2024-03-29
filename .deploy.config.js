@@ -13,7 +13,8 @@ export default {
         // '+set', 'txAdminPort', '40125',
         // '--trace-warnings',
         // '--inspect',
-        // '--max-old-space-size=4096',
+        // '--trace-gc',
+        // '--max-old-space-size=4096', //doesn't work
         
         //FIXME: broken
         // '+set', 'txDebugPlayerlistGenerator', 'true',

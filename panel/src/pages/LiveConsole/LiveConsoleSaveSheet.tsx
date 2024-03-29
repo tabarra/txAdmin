@@ -1,4 +1,7 @@
+import { txToast } from "@/components/TxToaster";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useOpenPromptDialog } from "@/hooks/dialogs";
+import { useLiveConsoleBookmarks, useLiveConsoleHistory } from "@/hooks/liveConsole";
 import { cn } from "@/lib/utils";
 import { PlusIcon, StarIcon, StarOffIcon, XIcon } from "lucide-react";
 
@@ -6,9 +9,10 @@ import { PlusIcon, StarIcon, StarOffIcon, XIcon } from "lucide-react";
 type SheetProps = {
     isOpen: boolean;
     closeSheet: () => void;
+    toTermInput: (_cmd: string) => void;
 }
 
-function SheetBackdrop({ isOpen, closeSheet }: SheetProps) {
+function SheetBackdrop({ isOpen, closeSheet }: Omit<SheetProps, 'toTermInput'>) {
     return (
         <div
             className={cn(
@@ -25,7 +29,7 @@ function SheetBackdrop({ isOpen, closeSheet }: SheetProps) {
 }
 
 
-function SheetCloseButton({ closeSheet }: Omit<SheetProps, 'isOpen'>) {
+function SheetCloseButton({ closeSheet }: Pick<SheetProps, 'closeSheet'>) {
     return (
         <button
             className="absolute right-4 top-4 rounded-sm opacity-70 ring-0 transition-opacity hover:opacity-100 focus:outline-none cursor-pointer"
@@ -38,114 +42,126 @@ function SheetCloseButton({ closeSheet }: Omit<SheetProps, 'isOpen'>) {
 }
 
 
-const exampleCommandList = [
-    "docker-compose up -d",
-    "grep 'pattern' <file>",
-    "terraform apply -var-file=vars.tfvars",
-    "date",
-    "chmod +x <file>",
-    "git pull origin master && npm install && npm run build",
-    "mv <source> <destination>",
-    "open <file>",
-    "docker build -t <image-name> .",
-    "start <file>",
-    "npm install",
-    "git clone <repository-url>",
-    "docker run -p <port>:<port> <image-name>",
-    "clear",
-    "git add .",
-    "node script.js",
-    "cd <directory>",
-    "rm <file>",
-    "git push origin master",
-    "echo 'Hello, World!'",
-    "mkdir <directory-name>",
-    "traceroute <host>",
-    "python script.py",
-    "npm start",
-    "mvn clean install -DskipTests",
-    "ssh user@example.com",
-    "java -jar myapp.jar --config=config.properties",
-    "kubectl create deployment my-deployment --image=my-image:latest --replicas=3 --port=8080",
-    "curl https://api.example.com",
-    "npm run build && npm run deploy",
-    "whoami",
-    "ping <host>",
-    "cat <file>",
-    "ls",
-    "shutdown",
-    "sudo apt-get install <package>",
-    "touch <file>",
-    "git commit -m 'Initial commit'",
-];
+type SheetCommandProps = {
+    cmd: string;
+    type: 'history' | 'saved';
+    onClick: () => void;
+    onFavAction: () => void;
+}
 
+function SheetCommand({ cmd, type, onClick, onFavAction }: SheetCommandProps) {
+    const handleFavAction = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        onFavAction();
+    };
 
-function SheetCommand({ cmd, type }: { cmd: string, type: 'history' | 'saved' }) {
     return (
         <div
-            onClick={() => { console.log('clicked') }}
+            onClick={onClick}
             className="px-2 py-1 flex justify-between items-center rounded-lg bg-card hover:bg-muted cursor-pointer group"
         >
-            <span className="py-1 line-clamp-1 break-all text-sm font-mono tracking-wide text-muted-foreground group-hover:text-primary group-hover:line-clamp-none group-hover:break-normal">
+            <span className="py-1 line-clamp-4 font-mono group-hover:text-primary">
                 {cmd}
             </span>
             <div className="min-w-max">
-                {type === 'history' ? (
-                    <button className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-primary hover:text-primary-foreground invisible group-hover:visible">
-                        <StarIcon className="w-5 h-5" />
+                <button
+                    className="size-7 rounded-lg flex items-center justify-center hover:bg-primary hover:text-primary-foreground invisible group-hover:visible"
+                    onClick={handleFavAction}
+                >
+                    {type === 'history' ? (<>
+                        <StarIcon className="size-5" />
                         <span className="sr-only">Save</span>
-                    </button>
-                ) : (<>
-                    <button className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-primary hover:text-primary-foreground invisible group-hover:visible">
-                        <StarOffIcon className="w-5 h-5" />
+                    </>) : (<>
+                        <StarOffIcon className="size-5" />
                         <span className="sr-only">Remove</span>
-                    </button>
-                </>)}
+                    </>)}
+                </button>
             </div>
-        </div>
+        </div >
     )
 }
 
 
-function SheetContent() {
+function SheetContent({ toTermInput }: Pick<SheetProps, 'toTermInput'>) {
+    const { history, wipeHistory } = useLiveConsoleHistory();
+    const { bookmarks, addBookmark, removeBookmark } = useLiveConsoleBookmarks();
+    const openPromptDialog = useOpenPromptDialog();
+
+    const handleWipeHistory = () => {
+        txToast.success('History cleared');
+        wipeHistory();
+    }
+    const handleSaveCommand = () => {
+        openPromptDialog({
+            title: 'Save Command',
+            message: 'Enter the command to save:',
+            submitLabel: 'Save',
+            onSubmit: (cmd) => {
+                if (cmd) addBookmark(cmd);
+            }
+        })
+    }
     return (
         <div className="flex flex-row gap-4 max-h-full">
-            <div className="flex flex-col flex-grow gap-2">
+            <div className="flex flex-col flex-grow gap-2 w-1/2">
                 <h2 className="text-xl font-bold">History</h2>
-                <ScrollArea className="max-h-full w-full pr-3">
-                    <div className="space-y-2 line-clamp-1 break-all text-sm font-mono tracking-wide text-muted-foreground pb-4">
-                        <button
-                            onClick={() => { console.log('clicked') }}
-                            className="w-full py-2 rounded-lg bg-card hover:bg-primary hover:text-primary-foreground font-sans tracking-wider"
-                        >
-                            <div className="flex items-center justify-center gap-2">
-                                <XIcon className="w-4 h-4 inline" />
-                                Clear History
-                            </div>
-                        </button>
-                        {exampleCommandList.map((cmd, index) => (
-                            <SheetCommand key={index} cmd={cmd} type='history' />
+                <ScrollArea className="max-h-full w-full pr-3 text-sm text-muted-foreground" style={{ wordBreak: 'break-word' }}>
+                    <button
+                        onClick={handleWipeHistory}
+                        className="w-full py-2 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground font-sans tracking-wider mb-2"
+                    >
+                        <div className="flex items-center justify-center gap-2">
+                            <XIcon className="w-4 h-4 inline" />
+                            Clear History
+                        </div>
+                    </button>
+                    <div className="space-y-2 line-clamp-1 text-sm font-mono tracking-wide  pb-4">
+                        {history.map((cmd, index) => (
+                            <SheetCommand
+                                key={index}
+                                cmd={cmd}
+                                type='history'
+                                onClick={() => toTermInput(cmd)}
+                                onFavAction={() => addBookmark(cmd)}
+                            />
                         ))}
                     </div>
+                    {history.length === 0 && (
+                        <div className="w-full h-auto text-center italic tracking-wider">
+                            The command history is empty.
+                        </div>
+                    )}
                 </ScrollArea>
             </div>
-            <div className="flex flex-col flex-grow gap-2">
+            <div className="flex flex-col flex-grow gap-2 w-1/2">
                 <h2 className="text-xl font-bold">Saved</h2>
-                <ScrollArea className="max-h-full w-full pr-3">
-                    <div className="space-y-2 line-clamp-1 break-all text-sm font-mono tracking-wide text-muted-foreground pb-4">
-                        <button
-                            onClick={() => { console.log('clicked') }}
-                            className="w-full py-2 rounded-lg bg-card hover:bg-primary hover:text-primary-foreground font-sans tracking-wider"
-                        >
-                            <div className="flex items-center justify-center gap-2">
-                                <PlusIcon className="w-4 h-4 inline" />
-                                Add New
-                            </div>
-                        </button>
-                        {exampleCommandList.map((cmd, index) => (
-                            <SheetCommand key={index} cmd={cmd} type='saved' />
+                <ScrollArea className="max-h-full w-full pr-3 text-sm text-muted-foreground" style={{ wordBreak: 'break-word' }}>
+                    <button
+                        onClick={handleSaveCommand}
+                        className="w-full py-2 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground font-sans tracking-wider mb-2"
+                    >
+                        <div className="flex items-center justify-center gap-2">
+                            <PlusIcon className="w-4 h-4 inline" />
+                            Add New
+                        </div>
+                    </button>
+                    <div className="space-y-2 line-clamp-1 text-sm font-mono tracking-wide  pb-4">
+                        {bookmarks.map((cmd, index) => (
+                            <SheetCommand
+                                key={index}
+                                cmd={cmd}
+                                type='saved'
+                                onClick={() => toTermInput(cmd)}
+                                onFavAction={() => removeBookmark(cmd)}
+                            />
                         ))}
                     </div>
+                    {bookmarks.length === 0 && (
+                        <div className="w-full h-auto text-center italic tracking-wider">
+                            There are no saved commands. <br />
+                            To save a command, click the star icon next to it.
+                        </div>
+                    )}
                 </ScrollArea>
             </div>
         </div>
@@ -153,7 +169,7 @@ function SheetContent() {
 }
 
 
-export default function LiveConsoleSaveSheet({ isOpen, closeSheet }: SheetProps) {
+export default function LiveConsoleSaveSheet({ isOpen, closeSheet, toTermInput }: SheetProps) {
     return <>
         <SheetBackdrop isOpen={isOpen} closeSheet={closeSheet} />
         <div
@@ -167,7 +183,7 @@ export default function LiveConsoleSaveSheet({ isOpen, closeSheet }: SheetProps)
             )}
         >
             <SheetCloseButton closeSheet={closeSheet} />
-            <SheetContent />
+            <SheetContent toTermInput={toTermInput} />
         </div>
     </>;
 }

@@ -1,7 +1,7 @@
 {
   "name": "txadmin",
   "version": "1.0.0",
-  "description": "The official FiveM server management platform used by tens of thousands of servers.",
+  "description": "The official FiveM/RedM server management platform used by tens of thousands of servers.",
   "module": "./core/index.js",
   "type": "module",
   "workspaces": [

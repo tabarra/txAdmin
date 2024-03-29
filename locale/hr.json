@@ -77,7 +77,8 @@
             "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
             "announcement_title": "Server obavještenje od %{author}:",
             "dialog_empty_input": "Ne možete imati prazan unos.",
-            "directmessage_title": "DM od admina %{author}:"
+            "directmessage_title": "DM od admina %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Zaledio si igrača!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Auto",
-                "onesync_error": "Ova opcija zahtjeva da je OneSync upaljen",
                 "not_in_veh_error": "Trenutno nisi u vozilu!",
                 "spawn": {
                     "title": "Stvori",

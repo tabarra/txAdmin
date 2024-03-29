@@ -64,8 +64,8 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
                 discordInput = discordInput.substring(8);
                 discordRef.current!.value = discordInput;
             }
-            if (!consts.regexValidDiscordId.test(discordInput)) {
-                setErrorMessage('Invalid Discord ID.');
+            if (!consts.validIdentifierParts.discord.test(discordInput)) {
+                setErrorMessage('The Discord ID needs to be the numeric "User ID" instead of the username.\n You can also leave it blank.');
                 return;
             }
             discordId = discordInput;
@@ -81,7 +81,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
         const password = passwordRef.current?.value || '';
         const password2 = password2Ref.current?.value || '';
         if (password.length < consts.adminPasswordMinLength || password.length > consts.adminPasswordMaxLength) {
-            setErrorMessage(`The password must be between ${consts.adminPasswordMinLength} and ${consts.adminPasswordMaxLength} digits long.`);
+            setErrorMessage(`The password must be between ${consts.adminPasswordMinLength} and ${consts.adminPasswordMaxLength} characters long.`);
             return;
         } else if (password !== password2) {
             setErrorMessage('The passwords do not match.');

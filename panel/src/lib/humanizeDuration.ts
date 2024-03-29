@@ -1,3 +1,4 @@
+/* eslint-disable */
 //@ts-nocheck
 // HumanizeDuration.js - https://git.io/j0HgmQ
 // NOTE: removed all locales except en, and added shortEn

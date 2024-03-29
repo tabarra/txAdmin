@@ -34,8 +34,6 @@ const promptCommonProps = {
                     (example: <InlineCode>23:30</InlineCode> for 11:30 PM.)
                 </li>
             </ul>
-            {/* Type in the time for the server to restart in relative format (<InlineCode>+MM</InlineCode>) or the 24-hour format <InlineCode>HH:MM</InlineCode>. <br />
-            Example: <InlineCode>+15</InlineCode> for 15 minutes from now., and <InlineCode>23:30</InlineCode> for 11:30 PM. <br /> */}
         </p>
         {browserTimezone !== window.txConsts.serverTimezone && timezoneDiffMessage}
     </>),
@@ -119,6 +117,13 @@ export default function ServerSchedule() {
     //Handlers
     const onScheduleSubmit = (input: string) => {
         closeAllSheets();
+        if (input.includes(',')) {
+            txToast.error({
+                title: 'Invalid scheduled restart time.',
+                msg: 'It looks like you are trying to schedule multiple restart times, which can only be done the Settings page.\nThis input is for just the next (not persistent) restart.',
+            }, { duration: 10000 });
+            return;
+        }
         if (!validateSchedule(input)) {
             txToast.error(`Invalid schedule time: ${input}`)
             return;

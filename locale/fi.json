@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin Menu ei ole käytössä! Voit ottaa sen käyttöön txAdminin asetuksista.",
             "announcement_title": "Palvelinilmoitus henkilöltä %{author}:",
             "dialog_empty_input": "Tekstikenttä ei voi olla tyhjä.",
-            "directmessage_title": "Yksityisviesti ylläpitäjältä %{author}:"
+            "directmessage_title": "Yksityisviesti ylläpitäjältä %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Pelaaja jäädytety!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Ajoneuvo",
-                "onesync_error": "Tämä asetus vaatii OneSync:in päälle",
                 "not_in_veh_error": "Et ole ajoneuvossa!",
                 "spawn": {
                     "title": "Luo",

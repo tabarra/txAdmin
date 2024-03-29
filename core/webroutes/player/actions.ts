@@ -129,7 +129,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     if (cmdOk) {
         return { success: true };
     } else {
-        return { error: `Failed to warn player (stdin error).` };
+        return { error: `Warn saved, but likely failed to send the warn in game (stdin error).` };
     }
 }
 
@@ -232,7 +232,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     if (cmdOk) {
         return { success: true };
     } else {
-        return { error: `Failed to ban player (stdin error).` };
+        return { error: `Player banned, but likely failed to kick player (stdin error).` };
     }
 }
 

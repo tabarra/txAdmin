@@ -77,7 +77,8 @@
             "not_enabled": "¡Menú txAdmin no está activado! Puedes activarlo en la página de ajustes de txAdmin.",
             "announcement_title": "Anuncio del servidor de %{author}:",
             "dialog_empty_input": "La entrada no puede estar vacía.",
-            "directmessage_title": "MD de admin %{author}:"
+            "directmessage_title": "MD de admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "¡Has congelado al jugador!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Vehículo",
-                "onesync_error": "Esta opción requiere OneSync On para gestionar las entidades desde el servidor",
                 "not_in_veh_error": "¡No estás en ningún vehículo!",
                 "spawn": {
                     "title": "Generar",

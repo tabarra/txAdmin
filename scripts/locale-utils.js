@@ -43,7 +43,7 @@ const loadedLocales = langFiles.map((fName) => {
  */
 const rebaseCommand = () => {
     console.log("Rebasing language files on 'en.json' for missing keys");
-    for (const { name, path, data } of object) {
+    for (const { name, path, data } of loadedLocales) {
         const synced = defaultsDeep(data, defaultLang);
         try {
             // synced.ban_messages.reject_temporary = undefined;
@@ -69,7 +69,7 @@ const rebaseCommand = () => {
  * This is just a quick way to do some stuff without having to open all files
  */
 const processStuff = () => {
-    for (const { name, path, data } of object) {
+    for (const { name, path, data } of loadedLocales) {
         // add stuff
         // data.nui_menu.player_modal.ids.all_hwids = 'All Hardware IDs';
 

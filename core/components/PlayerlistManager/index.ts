@@ -40,12 +40,11 @@ export default class PlayerlistManager {
 
 
     /**
-     * Handler for server restart - it will kill all players and reset the licenseCache
+     * Handler for server restart - it will kill all players
      * We MUST do .disconnect() for all players to clear the timers.
      * NOTE: it's ok for us to overfill before slicing the licenseCache because it's at most ~4mb
      */
     handleServerStop(oldMutex: string) {
-        this.licenseCache = [];
         for (const player of this.#playerlist) {
             if (player) {
                 player.disconnect();
@@ -115,6 +114,13 @@ export default class PlayerlistManager {
      */
     getOnlinePlayersByLicense(searchLicense: string) {
         return this.#playerlist.filter(p => p && p.license === searchLicense && p.isConnected) as ServerPlayer[];
+    }
+
+    /**
+     * Returns a set of all online players' licenses.
+     */
+    getOnlinePlayersLicenses() {
+        return new Set(this.#playerlist.filter(p => p && p.isConnected).map(p => p!.license));
     }
 
 

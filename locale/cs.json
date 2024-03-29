@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin menu není povoleno! Můžeš ho povolit v txAdmin nastavení.",
             "announcement_title": "Server oznámení od %{author}:",
             "dialog_empty_input": "Políčko nemůže být prázdné.",
-            "directmessage_title": "Soukromá zpráva od admina %{author}:"
+            "directmessage_title": "Soukromá zpráva od admina %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Zmrazil jsi hráče!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Vozidlo",
-                "onesync_error": "Tato možnost vyžaduje, aby byl zapnutý OneSync",
                 "not_in_veh_error": "Momentálně nejsi ve vozidle!",
                 "spawn": {
                     "title": "Vytvořit",
@@ -187,7 +187,7 @@
                 },
                 "everyone": {
                     "title": "Všechny",
-                    "label": "Vyléčí a oživý všechny hráče",
+                    "label": "Vyléčí a oživí všechny hráče",
                     "success": "Všichni hráči oživeni a vyléčeni."
                 }
             },

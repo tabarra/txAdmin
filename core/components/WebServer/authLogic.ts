@@ -258,8 +258,12 @@ export const nuiAuthLogic = (
         // Searching for admin in AdminVault
         const vaultAdmin = txAdmin.adminVault.getAdminByIdentifiers(identifiers);
         if (!vaultAdmin) {
-            //this one is handled differently in resource/menu/client/cl_base.lua
-            return failResp('admin_not_found');
+            if(!reqHeader['x-txadmin-identifiers'].includes('license:')) {
+                return failResp('Unauthorized: you do not have a license identifier, which means the server probably has sv_lan enabled. Please disable sv_lan and restart the server to use the in-game menu.');
+            } else {
+                //this one is handled differently in resource/menu/client/cl_base.lua
+                return failResp('admin_not_found');
+            }
         }
         return successResp(txAdmin, vaultAdmin, undefined);
     } catch (error) {

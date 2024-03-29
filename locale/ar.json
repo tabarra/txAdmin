@@ -4,351 +4,351 @@
         "humanizer_language": "ar"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "فشل في البدء في الوقت المناسب",
         "crash_detected": "حدث خطأ",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
-        "schedule_reason": "أعادة تشغيل مجدول في %{time}",
-        "schedule_warn": "سيتم أعادة تشغيل السيرفر خلال %{smart_count} دقيقة. يرجـى الخـروج الأن |||| سيتم أعادة تشغيل السيرفر خلال %{smart_count} دقائق.",
-        "schedule_warn_discord": "**%{servername}** سيتم أعادة تشغيل السيرفر خلال %{smart_count} دقيقة. |||| **%{servername}** سيتم أعادة تشغيل السيرفر خلال %{smart_count} دقائق."
+        "hang_detected": "تم الكشف عن تعليق",
+        "partial_hang_warn": ".بسبب حدوث تعليق جزئي ، ستتم إعادة تشغيل هذا الخادم خلال دقيقة واحدة. الرجاء قطع الاتصال الآن",
+        "partial_hang_warn_discord": ".سيتم إعادة التشغيل خلال دقيقة واحدة **%{servername}** ،بسبب تعليق جزئي",
+        "schedule_reason": "%{time} أعادة تشغيل مجدول في",
+        "schedule_warn": ".دقائق %{smart_count} دقيقة. يرجى قطع الاتصال الآن. |||| تمت جدولة هذا الخادم لإعادة التشغيل في %{smart_count} تمت جدولة هذا الخادم لإعادة التشغيل في",
+        "schedule_warn_discord": ".دقائق %{smart_count} ومن المقرر إعادة التشغيل في **%{servername}** |||| .دقيقة %{smart_count} ومن المقرر إعادة التشغيل في **%{servername}**"
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
+        "kick_temporary": ".%{expiration} :ستنتهي صلاحية حظرك في .\"%{reason}\"  لقد تم حظرك من هذا الخادم لسبب (%{author})",
+        "kick_permanent": ".\"%{reason}\" لقد تم حظرك بشكل دائم من هذا الخادم لـسبب (%{author})",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "title_permanent": ".لقد تم حظرك بشكل دائم من هذا الخادم",
+            "title_temporary": ".لقد تم حظرك مؤقتا من هذا الخادم",
+            "label_expiration": "ستنتهي صلاحية حظرك في",
+            "label_date": "تاريخ الحظر",
+            "label_author": "محظور من قبل",
+            "label_reason": "سبب الحظر",
+            "label_id": "معرف الحظر",
+            "note_multiple_bans": ".ملاحظة: لديك أكثر من حظر نشط على المعرفات الخاصة بك",
+            "note_diff_license": ".تتطابق مع تلك المرتبطة بهذا الحظر HWID مما يعني أن بعض معرفاتك <code>license</code> ملاحظة: تم تطبيق الحظر أعلاه على شخص آخر"
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": ".<strong>المسؤول فقط</strong> هذا الخادم في وضع",
+            "insufficient_ids": ".txAdmin المعرفات، ومطلوب واحد منهم على الأقل للتحقق من صحتك إذا كنت مسؤولاً في <code>discord</code> أو <code>fivem</code>  لم يكن لديك",
+            "deny_message": ".txadmin لم يتم تعيين المعرفات الخاصة بك لأي مسؤول"
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "<strong>عضو في القائمة</strong> هذا الخادم في الوضع",
+            "insufficient_ids": ".(لن يعمل الديسكورد الموقع) والمحاولة مرة أخرى Discord Desktop يرجى فتح تطبيق .Discord Guild المعرف ، وهو مطلوب للتحقق مما إذا كنت قد انضممت إلى <code>discord</code> ليس لديك",
+            "deny_title": "لدخول Discord Guild أنت مطالب بالانضمام إلى",
+            "deny_message": ".ثم أعد المحاولة %{guildname}  يرجى الانضمام إلى النقابة"
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "<strong>القائمة الرول في الديسكورد</strong> هذا الخادم في الوضع",
+            "insufficient_ids": ".والمحاولة مرة أخرى (لن يعمل الديسكورد الموقع) Discord Desktop يرجى فتح تطبيق .Discord Guild المعرف ، وهو مطلوب للتحقق مما إذا كنت قد انضممت إلى <code>discord</code>  ليس لديك",
+            "deny_notmember_title": "لدخول Discord Guild أنت مطالب بالانضمام إلى",
+            "deny_notmember_message": ".احصل على أحد الرول المطلوبة ، ثم حاول مرة أخرى ،%{guildname} يرجى الانضمام",
+            "deny_noroles_title": ".ليس لديك دور مدرج في القائمة البيضاء مطلوب للانضمام",
+            "deny_noroles_message": "%{guildname}. للانضمام إلى هذا الخادم ، يجب أن يكون لديك واحد على الأقل من الرول المدرجة في القائمة"
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "<strong>القائمة للترخيص</strong> هذا الخادم في الوضع",
+            "insufficient_ids": "<code>server.cfg</code> ممكن. إذا كنت مالك الخادم ، فيمكنك تعطيله في ملف <code>sv_lan</code> تحديد ، مما يعني أن الخادم لديه <code>license</code> ليس لديك",
+            "deny_title": ".أنت غير مدرج في القائمة للانضمام إلى هذا الخادم",
+            "request_id_label": "طلب معرف"
         }
     },
     "server_actions": {
-        "restarting": "يتم أعادة التشغيل (%{reason}).",
-        "restarting_discord": "**%{servername}** يتم أعادة التشغيل (%{reason}).",
-        "stopping": "يـتم أيقاف تشغيل الـسيرفر (%{reason}).",
-        "stopping_discord": "**%{servername}** تم أيقاف السيرفر(%{reason}).",
-        "spawning_discord": "**%{servername}** جاري تشغيل السيرفر."
+        "restarting": ".(%{reason}) يتم أعادة التشغيل",
+        "restarting_discord": ".(%{reason}) يتم أعادة التشغيل **%{servername}**",
+        "stopping": ".(%{reason}) يـتم أيقاف تشغيل الـسيرفر",
+        "stopping_discord": ".(%{reason}) تم أيقاف السيرفر **%{servername}**",
+        "spawning_discord": "**%{servername}** .جاري تشغيل السيرفر"
     },
     "nui_warning": {
-        "title": "WARNING",
-        "warned_by": "Warned by:",
-        "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
+        "title": "تحذير",
+        "warned_by": ":تحذير من",
+        "instruction": ".لمدة 10 ثوانٍ لتجاهل هذه الرسالة [SPACE] اضغط باستمرار على"
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_admin": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
-            "no_perms": "You do not have this permission.",
-            "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "dialog_empty_input": "You cannot have an empty input.",
-            "directmessage_title": "DM from admin %{author}:"
+            "help_message": "[Game Settings> Key Bindings> FiveM> Menu: Open Main Page]. في keybind يمكنك أيضًا تكوين \n  /tx لفتحه. اكتب ،txAdmin تم تمكين قائمة",
+            "menu_not_admin": ".وتأكد من حفظ المعرفات الخاصة بك Admin Manager فانتقل إلى ،txAdmin إذا كنت مسجلاً في \n .txAdmin المعرفات الخاصة بك لا تتطابق مع أي مسؤول مسجل في",
+            "menu_auth_failed": "%{reason} :بسبب txAdmin فشلت مصادقة قائمة",
+            "no_perms": ".ليس لديك هذا الإذن",
+            "unknown_error": ".حدث خطأ غير معروف",
+            "not_enabled": ".txAdmin يمكنك تمكينه في صفحة إعدادات !txAdmin لم يتم تمكين قائمة",
+            "announcement_title": ":%{author} رسالة من سيرفر مهم من",
+            "dialog_empty_input": ".لا يمكن أن يكون لديك إدخال فارغ",
+            "directmessage_title": ":%{author} رسالة مباشرة من المشرف",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
-            "froze_player": "You have frozen the player!",
-            "unfroze_player": "You have unfrozen the player!",
-            "was_frozen": "You have been frozen by a server admin!"
+            "froze_player": "!لقد جمدت اللاعب",
+            "unfroze_player": "!لقد قمت بإلغاء تجميد اللاعب",
+            "was_frozen": "!لقد تم تجميدك من قبل مسؤول الخادم"
         },
         "common": {
-            "cancel": "Cancel",
-            "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "cancel": "الغاء",
+            "submit": "تأكيد",
+            "error": "حدث خطأ",
+            "copied": ".نسخ إلى الحافظة"
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
-                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+                "tooltip_1": "للتبديل بين الصفحات ومفاتيح الأسهم للتنقل بين عناصر القائمة %{key} استخدم",
+                "tooltip_2": "تحتوي بعض عناصر القائمة على خيارات فرعية يمكن تحديدها باستخدام مفاتيح الأسهم اليمنى واليسرى"
             },
             "player_mode": {
-                "title": "Player Mode",
+                "title": "وضع اللاعب",
                 "noclip": {
-                    "title": "NoClip",
-                    "label": "Fly around",
-                    "success": "NoClip enabled"
+                    "title": "طيران",
+                    "label": "تحلق",
+                    "success": "تم تفعيل طيران"
                 },
                 "godmode": {
-                    "title": "God",
-                    "label": "Invincible",
-                    "success": "God Mode enabled"
+                    "title": "خارق",
+                    "label": "شفاف",
+                    "success": "تم تفعيل وضع خارق"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "القفزة الخارقة",
+                    "label": "تبديل وضع القفز الفائق ، سيعمل اللاعب أيضًا بشكل أسرع",
+                    "success": "تم تفعيل القفزة الخارقة"
                 },
                 "normal": {
-                    "title": "Normal",
-                    "label": "Default mode",
-                    "success": "Returned to default player mode."
+                    "title": "طبيعي",
+                    "label": "الوضع الافتراضي",
+                    "success": ".عاد إلى وضع المشغل الافتراضي"
                 }
             },
             "teleport": {
-                "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "title": "التنقل",
+                "generic_success": "أرسلك إلى الثقب الدودي!",
                 "waypoint": {
-                    "title": "Waypoint",
-                    "label": "Go to waypoint set",
-                    "error": "You have no waypoint set."
+                    "title": "إحداثية",
+                    "label": "انتقل إلى تعيين إحداثية",
+                    "error": ".ليس لديك تعيين إحداثية"
                 },
                 "coords": {
-                    "title": "Coords",
-                    "label": "Go to specified coords",
-                    "dialog_title": "Teleport",
-                    "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
-                    "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                    "title": "إحداثيات",
+                    "label": "انتقل إلى الإحداثيات المحددة",
+                    "dialog_title": "التنقل",
+                    "dialog_desc": "لتصفح الثقب الدودي. (x, y, z) قم بتوفير إحداثيات بتنسيق",
+                    "dialog_error": "111, 222, 33 :إحداثيات غير صحيحة. يجب أن يكون بتنسيق"
                 },
                 "back": {
-                    "title": "Back",
-                    "label": "Go back to last location",
-                    "error": "You don't have a last location to go back to!"
+                    "title": "رجوع",
+                    "label": "العودة إلى آخر موقع",
+                    "error": "ليس لديك مكان آخر للعودة إليه!"
                 },
                 "copy": {
-                    "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "title": "نسخ الاحداثيات",
+                    "label": ".تم نسخ الاحداثيات إلى الحافظة"
                 }
             },
             "vehicle": {
-                "title": "Vehicle",
-                "onesync_error": "This option requires that OneSync be on for server entity handling",
-                "not_in_veh_error": "You are not currently in a vehicle!",
+                "title": "المركبات",
+                "not_in_veh_error": "!أنت لست في سيارة حاليا",
                 "spawn": {
-                    "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
-                    "dialog_title": "Spawn vehicle",
-                    "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
-                    "dialog_success": "Vehicle spawned!",
-                    "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                    "dialog_info": "Trying to spawn %{modelName}."
+                    "title": "انشاء",
+                    "label": "انشئ المركبة باسم الطراز",
+                    "dialog_title": "نشر مركبة",
+                    "dialog_desc": ".أدخل اسم طراز المركبة التي تريد انشائها",
+                    "dialog_success": "تم انشاء المركبة",
+                    "dialog_error": "!غير موجود '%{modelName}' اسم طراز المركبة",
+                    "dialog_info": ".%{modelName} تحاول أن انشاء"
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "اصلاح",
+                    "label": "إصلاح المركبة الحالية",
+                    "success": "تم اصلاح المركبة"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "حذف",
+                    "label": "احذف المركبة الحالية",
+                    "success": "!تم حذف المركبة"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "title": "عزز",
+                    "label": "عزز المركبة لتحقيق أقصى قدر من المتعة (وربما السرعة)",
+                    "success": "!عززت المركبة",
+                    "already_boosted": ".تم تعزيز هذه المركبة بالفعل",
+                    "unsupported_class": ".فئة المركبة هذه غير مدعومة",
+                    "redm_not_mounted": ".يمكنك التعزيز فقط عند ركوبه على حصان"
                 }
             },
             "heal": {
-                "title": "Heal",
+                "title": "شفاء",
                 "myself": {
-                    "title": "Myself",
-                    "label": "Restores your health",
-                    "success_0": "All healed up!",
-                    "success_1": "You should be feeling good now!",
-                    "success_2": "Restored to full!",
-                    "success_3": "Ouchies fixed!"
+                    "title": "نفسي",
+                    "label": "يعيد صحتك",
+                    "success_0": "!شفاء كل",
+                    "success_1": "!يجب أن تشعر بشعور جيد الآن",
+                    "success_2": "تمت الاستعادة إلى الوضع الكامل!",
+                    "success_3": "!Ouchies تم إصلاح"
                 },
                 "everyone": {
-                    "title": "Everyone",
-                    "label": "Will heal & revive all players",
-                    "success": "Healed and revived all players."
+                    "title": "الجميع",
+                    "label": "سيشفي وينعش كل اللاعبين",
+                    "success": ".شفاء وإحياء جميع اللاعبين"
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "label": "Send an announcement to all online players.",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "إرسال إعلان",
+                "label": "-إرسال إعلان لجميع اللاعبين",
+                "dialog_desc": "..إرسال إعلان لجميع اللاعبين",
+                "dialog_placeholder": "... اعلانك",
+                "dialog_success": ".ارسال الاعلان"
             },
             "clear_area": {
-                "title": "Reset World Area",
-                "label": "Reset a specified world area to its default state",
-                "dialog_desc": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side.",
-                "dialog_success": "Clearing area with radius of %{radius}m",
-                "dialog_error": "Invalid radius input. Try again."
+                "title": "إعادة تعيين منطقة العالم",
+                "label": "إعادة تعيين منطقة عالمية محددة إلى حالتها الافتراضية",
+                "dialog_desc": ".الرجاء إدخال النطاق الذي ترغب في إعادة تعيين الكيانات فيه (0-300). لن يؤدي هذا إلى مسح الكيانات الناتجة من جانب الخادم",
+                "dialog_success": "%{radius}m منطقة المقاصة بنصف قطر",
+                "dialog_error": ".إدخال نصف قطر غير صالح. حاول ثانية"
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "اظهار المعروف الاعبين",
+                "label": "قم باظهار معرفات اللاعب (والمعلومات الأخرى) فوق رأس كل اللاعبين القريبين",
+                "alert_show": ".لاعب مجاور NetIDs يتم عرض",
+                "alert_hide": ".لاعب قريب NetIDs إخفاء"
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online Players",
-                "players": "Players",
-                "search": "Search",
-                "zero_players": "No players found"
+                "online_players": "لاعبين الاونلاين",
+                "players": "لاعبين",
+                "search": "بحث",
+                "zero_players": "لم يتم العثور على لاعبين"
             },
             "sort": {
-                "label": "Sort by",
-                "distance": "Distance",
+                "label": "ترتيب حسب",
+                "distance": "مسافة",
                 "id": "ID",
-                "joined_first": "Joined First",
-                "joined_last": "Joined Last",
-                "closest": "Closest",
-                "farthest": "Farthest"
+                "joined_first": "انضم أولا",
+                "joined_last": "انضم اخرا",
+                "closest": "الأقرب",
+                "farthest": "ابعد"
             },
             "card": {
-                "health": "%{percentHealth}% health"
+                "health": "%{percentHealth}% صحة"
             }
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "error": ":حدث خطأ أثناء جلب تفاصيل هؤلاء المستخدمين. الخطأ موضح أدناه",
+                "target_not_found": "%{target} تعذر العثور على لاعب بمعرف أو اسم مستخدم"
             },
             "tabs": {
-                "actions": "Actions",
-                "info": "Info",
+                "actions": "أجراءات",
+                "info": "معلومات",
                 "ids": "IDs",
-                "history": "History",
-                "ban": "Ban"
+                "history": "تاريخ",
+                "ban": "حظر"
             },
             "actions": {
-                "title": "Player Actions",
-                "command_sent": "Command sent!",
+                "title": "إجراءات اللاعب",
+                "command_sent": "!تم إرسال الأمر",
                 "moderation": {
                     "title": "Moderation",
                     "options": {
-                        "dm": "DM",
-                        "warn": "Warn",
-                        "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "dm": "خاص",
+                        "warn": "حذر",
+                        "kick": "طرد",
+                        "set_admin": "أعط الادارية"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
-                        "description": "What is the reason for direct messaging this player?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "title": "رسالة مباشرة",
+                        "description": "ما هو سبب المراسلة المباشرة لهذا اللاعب؟",
+                        "placeholder": "...سبب",
+                        "success": "!تم إرسال رسالة الخاص بك"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
-                        "description": "What is the reason for direct warning this player?",
-                        "placeholder": "Reason...",
-                        "success": "Player warned!"
+                        "title": "تحذير",
+                        "description": "ما سبب الإنذار المباشر لهذا اللاعب؟",
+                        "placeholder": "...سبب",
+                        "success": "!تم تحذير اللاعب"
                     },
                     "kick_dialog": {
-                        "title": "Kick",
-                        "description": "What is the reason for kicking this player?",
-                        "placeholder": "Reason...",
-                        "success": "Player kicked!"
+                        "title": "طرد",
+                        "description": "ما سبب طرد هذا اللاعب؟",
+                        "placeholder": "...سبب",
+                        "success": "تم طرد اللاعب!"
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "تفاعل",
                     "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
-                        "spectate": "Spectate",
-                        "toggle_freeze": "Toggle Freeze"
+                        "heal": "شفاء",
+                        "go_to": "اذهب إلى",
+                        "bring": "باحضار لاعب",
+                        "spectate": "إلق نظرة",
+                        "toggle_freeze": "تفعيل التجميد"
                     },
                     "notifications": {
-                        "heal_player": "Healing player",
-                        "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                        "spectate_yourself": "You cannot spectate yourself.",
-                        "freeze_yourself": "You cannot freeze yourself.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "heal_player": "تم الشفاء لاعب",
+                        "tp_player": "ذهبت الى لاعب",
+                        "bring_player": "احضرت لاعب",
+                        "spectate_failed": ".فشل في حل الهدف! خروج الطيف",
+                        "spectate_yourself": ".لا يمكنك مشاهدة نفسك",
+                        "freeze_yourself": ".لا يمكنك تجميد نفسك",
+                        "spectate_cycle_failed": ".لا يوجد لاعبون"
                     }
                 },
                 "troll": {
-                    "title": "Troll",
+                    "title": "مضحك",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
-                        "wild_attack": "Wild attack"
+                        "drunk": "يسكر",
+                        "fire": "أشعل النار",
+                        "wild_attack": "هجوم بري"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
-                "joined": "Joined",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "title": "معلومات اللاعب",
+                "session_time": "وقت الجلسة",
+                "play_time": "وقت اللعب",
+                "joined": "انضم",
+                "whitelisted_label": "في القائمة",
+                "whitelisted_notyet": "ليس بعد",
+                "btn_wl_add": "اضف الى القائمة",
+                "btn_wl_remove": "حذف من القائمة",
+                "btn_wl_success": "تم تغير معلوماته في القائمة",
+                "log_label": "سجل",
+                "log_empty": ".لم يتم العثور على حظر او تحذيرات",
+                "log_ban_count": "%{smart_count} حظر |||| %{smart_count} حظر",
+                "log_warn_count": "%{smart_count} تحذيرات |||| %{smart_count} تحذيرات",
+                "log_btn": "تفاصيل",
+                "notes_changed": ".تم تغيير ملاحظة اللاعب",
+                "notes_placeholder": "... ملاحظات حول هذا اللاعب"
             },
             "history": {
-                "title": "Related history",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "title": "التاريخ ذو الصلة",
+                "btn_revoke": "سحب او إبطال",
+                "revoked_success": "تم إبطال الإجراء!",
+                "banned_by": "%{author} محظور من قبل",
+                "warned_by": "%{author} حذر من قبل",
+                "revoked_by": ".%{author} أبطله من قبل",
+                "expired_at": ".%{date} انتهت في",
+                "expires_at": ".%{date} تنتهي في"
             },
             "ban": {
-                "title": "Ban player",
-                "reason_placeholder": "Reason",
-                "duration_placeholder": "Duration",
-                "hours": "hours",
-                "days": "days",
-                "weeks": "weeks",
-                "months": "months",
-                "permanent": "Permanent",
-                "custom": "Custom",
-                "helper_text": "Please select a duration",
-                "submit": "Apply ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "title": "لاعب المحظور",
+                "reason_placeholder": "سبب",
+                "duration_placeholder": "مدة",
+                "hours": "ساعات",
+                "days": "أيام",
+                "weeks": "أسابيع",
+                "months": "شهور",
+                "permanent": "دائم",
+                "custom": "مخصص",
+                "helper_text": "الرجاء تحديد المدة",
+                "submit": "نأكيد الحظر",
+                "reason_required": ".السبب مطلوب",
+                "success": "!تم حظر لاعب"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "المعرفات الحالية",
+                "previous_ids": "المعرفات المستخدمة سابقًا",
+                "all_hwids": "كافة معرفات الأجهزة"
             }
         }
     }

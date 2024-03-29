@@ -29,10 +29,10 @@ export const defaultEmbedJson = JSON.stringify({
         }
     ],
     "image": {
-        "url": "https://i.imgur.com/ZZRp4pj.png"
+        "url": "https://forum-cfx-re.akamaized.net/original/5X/e/e/c/b/eecb4664ee03d39e34fcd82a075a18c24add91ed.png"
     },
     "thumbnail": {
-        "url": "https://i.imgur.com/9i9lvOp.png"
+        "url": "https://forum-cfx-re.akamaized.net/original/5X/9/b/d/7/9bd744dc2b21804e18c3bb331e8902c930624e44.png"
     }
 }, null, 2);
 

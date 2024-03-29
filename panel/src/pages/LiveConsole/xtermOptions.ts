@@ -44,4 +44,13 @@ const terminalOptions: ITerminalOptions | ITerminalInitOnlyOptions = {
     overviewRulerWidth: 15,
 };
 
+/*
+    NOTE: When implementing a stored options dropdown, add the following options:
+    - fontSize
+    - lineHeight
+    - scrollback
+    - RTL fixes
+    - light mode?
+    - whether clicking on a saved command copies it to the input or executes it directly
+*/
 export default terminalOptions;
