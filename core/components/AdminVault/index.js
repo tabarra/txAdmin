@@ -46,7 +46,7 @@ export default class AdminVault {
             'control.server': 'Start/Stop Server + Scheduler',
             'commands.resources': 'Start/Stop Resources',
             'server.cfg.editor': 'Read/Write server.cfg',
-            'txadmin.log.view': 'View txAdmin Log',
+            'txadmin.log.view': 'View System Logs', //FIXME: rename to system.log.view
 
             'menu.vehicle': 'Spawn / Fix Vehicles',
             'menu.clear_area': 'Reset world area',
@@ -213,6 +213,20 @@ export default class AdminVault {
             });
         });
         return (admin) ? cloneDeep(admin) : false;
+    }
+
+
+    /**
+     * Returns an array with all identifiers of the admins (fivem/discord)
+     */
+    getAdminsIdentifiers() {
+        if (this.admins === false) return [];
+        const ids = [];
+        for (const admin of this.admins) {
+            admin.providers.citizenfx && ids.push(admin.providers.citizenfx.identifier);
+            admin.providers.discord && ids.push(admin.providers.discord.identifier);
+        }
+        return ids;
     }
 
 
@@ -398,45 +412,16 @@ export default class AdminVault {
         }
         if (typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
+        //Prevent race condition, will allow the session to be updated before refreshing socket.io
+        //sessions which will cause reauth and closing of the temp password modal on first access
+        setTimeout(() => {
+            this.refreshOnlineAdmins().catch((e) => { });
+        }, 250);
+
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => { });
         try {
             await this.writeAdminsFile();
             return (password !== null) ? this.admins[adminIndex].password_hash : true;
-        } catch (error) {
-            throw new Error(`Failed to save admins.json with error: ${error.message}`);
-        }
-    }
-
-
-    /**
-     * Refreshes admin's social login data
-     * TODO: this should be stored on PersistentCache instead of admins.json
-     *       otherwise it refreshes the admins connected
-     * @param {string} name
-     * @param {string} provider
-     * @param {string} identifier
-     * @param {object} providerData
-     */
-    async refreshAdminSocialData(name, provider, identifier, providerData) {
-        if (this.admins == false) throw new Error('Admins not set');
-
-        //Find admin index
-        const username = name.toLowerCase();
-        const adminIndex = this.admins.findIndex((user) => {
-            return (username === user.name.toLowerCase());
-        });
-        if (adminIndex == -1) throw new Error('Admin not found');
-
-        //Refresh admin data
-        if (!this.admins[adminIndex].providers[provider]) throw new Error('Provider not available for this admin');
-        this.admins[adminIndex].providers[provider].identifier = identifier;
-        this.admins[adminIndex].providers[provider].data = providerData;
-
-        //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => { });
-        try {
-            return await this.writeAdminsFile();
         } catch (error) {
             throw new Error(`Failed to save admins.json with error: ${error.message}`);
         }
@@ -549,7 +534,8 @@ export default class AdminVault {
         }
 
         this.admins = jsonData;
-        this.refreshOnlineAdmins().catch((e) => { });
+        //NOTE: since this runs only at the start, nobody is online yet
+        // this.refreshOnlineAdmins().catch((e) => { });
         if (migrated) {
             try {
                 await this.writeAdminsFile();

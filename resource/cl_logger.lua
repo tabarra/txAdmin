@@ -110,6 +110,36 @@ local fivemDeathHashTable = {
     [GetHashKey('WEAPON_ELECTRIC_FENCE')] = 'Electric Fence',
     [GetHashKey('WEAPON_EXHAUSTION')] = 'Exhaustion',
     [GetHashKey('WEAPON_FALL')] = 'Falling',
+    [GetHashKey('WEAPON_RAYPISTOL')] = 'Ray Pistol',
+    [GetHashKey('WEAPON_RAYCARBINE')] = 'Ray Carbine',
+    [GetHashKey('WEAPON_RAYMINIGUN')] = 'Ray Minigun',
+    [GetHashKey('WEAPON_STONE_HATCHET')] = 'Stone Hatchet',
+    -- MPHEIST3 DLC (v 1868)
+    [GetHashKey('WEAPON_CERAMICPISTOL')] = 'Ceramic Pistol',
+    [GetHashKey('WEAPON_NAVYREVOLVER')] = 'Navy Revolver',
+    [GetHashKey('WEAPON_HAZARDCAN')] = 'Hazard Can',
+    -- MPHEIST4 DLC (v 2189)
+    [GetHashKey('WEAPON_GADGETPISTOL')] = 'Gadget Pistol',
+    [GetHashKey('WEAPON_MILITARYRIFLE')] = 'Military Rifle',
+    [GetHashKey('WEAPON_COMBATSHOTGUN')] = 'Combat Shotgun',
+    -- MPSECURITY DLC (v 2545)
+    [GetHashKey('WEAPON_EMPLAUNCHER')] = 'EMP Launcher',
+    [GetHashKey('WEAPON_HEAVYRIFLE')] = 'Heavy Rifle',
+    [GetHashKey('WEAPON_FERTILIZERCAN')] = 'Fertilizer Can',
+    [GetHashKey('WEAPON_STUNGUN_MP')] = 'Stungun MP',
+    -- MPSUM2 DLC (V 2699)
+    [GetHashKey('WEAPON_TACTICALRIFLE')] = 'Tactical Rifle',
+    [GetHashKey('WEAPON_PRECISIONRIFLE')] = 'Precision Rifle',
+    -- MPCHRISTMAS3 DLC (V 2802)
+    [GetHashKey('WEAPON_PISTOLXM3')] = 'Pistol XM3',
+    [GetHashKey('WEAPON_CANDYCANE')] = 'Candy Cane',
+    [GetHashKey('WEAPON_RAILGUNXM3')] = 'Railgun XM3',
+    -- MP2023_01 DLC (V 2944)
+    [GetHashKey('WEAPON_TECPISTOL')] = 'Tec Pistol',
+    -- MP2023_02 DLC (V 3095)
+    [GetHashKey('WEAPON_BATTLERIFLE')] = 'Battle Rifle',
+    [GetHashKey('WEAPON_SNOWLAUNCHER')] = 'Snow Launcher',
+    [GetHashKey('WEAPON_HACKINGDEVICE')] = 'Hacking Device',
 }
 
 -- https://github.com/femga/rdr3_discoveries/blob/master/weapons/weapons.lua

@@ -77,7 +77,8 @@
             "not_enabled": "Txadmin menyn är inte aktiverad! Du kan aktivera den på Txadmin panelen.",
             "announcement_title": "Server meddelande skickat av %{author}:",
             "dialog_empty_input": "Du kan inte ha ett tomt fält.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM from admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Du har frusit spelaren",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Fordon",
-                "onesync_error": "Detta alternativ kräver OneSync för fordon hantering",
                 "not_in_veh_error": "Du är för tillfället inte i fordonet!",
                 "spawn": {
                     "title": "Ta fram",

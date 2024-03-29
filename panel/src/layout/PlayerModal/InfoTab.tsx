@@ -134,8 +134,8 @@ export default function InfoTab({ playerRef, player, setSelectedTab, refreshModa
     ) : '--';
     const joinDateText = player.tsJoined ? tsToLocaleDate(player.tsJoined) : '--';
     const whitelistedText = player.tsWhitelisted ? tsToLocaleDate(player.tsWhitelisted) : 'not yet';
-    const banCount = player.actionHistory.filter((a) => a.type === 'ban').length;
-    const warnCount = player.actionHistory.filter((a) => a.type === 'warn').length;
+    const banCount = player.actionHistory.filter((a) => a.type === 'ban' && !a.revokedAt).length;
+    const warnCount = player.actionHistory.filter((a) => a.type === 'warn' && !a.revokedAt).length;
 
     const handleWhitelistClick = () => {
         playerWhitelistApi({

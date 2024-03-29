@@ -9,7 +9,7 @@
         "hang_detected": "障害が検出されました",
         "partial_hang_warn": "部分的な障害により、このサーバーは1分後に再起動します。今すぐ切断してください。",
         "partial_hang_warn_discord": "部分的な障害により、**%{servername}**は1分後に再起動します。",
-        "schedule_reason": "%{time}時にリスタート予定",
+        "schedule_reason": "%{time}にリスタート予定",
         "schedule_warn": "このサーバーは%{smart_count}分後に再起動予定です。今すぐ切断してください。 |||| このサーバーは%{smart_count}分後に再起動予定です。",
         "schedule_warn_discord": "**%{servername}**サーバーは%{smart_count}分後に再起動予定です。 |||| **%{servername}**サーバーは%{smart_count}分後に再起動予定です。"
     },
@@ -77,7 +77,8 @@
             "not_enabled": "txAdminメニューが有効になっていません! txAdminの設定ページで有効にできます。",
             "announcement_title": "%{author}によるサーバーに関するお知らせ:",
             "directmessage_title": "管理者%{author}からのDM:",
-            "dialog_empty_input": "空の入力はできない。"
+            "dialog_empty_input": "空の入力はできない。",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "プレイヤーを静止させた!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "車両",
-                "onesync_error": "このオプションでは、サーバーのエンティティ処理にOneSyncが有効になっている必要があります。",
                 "not_in_veh_error": "あなたは現在車両に乗っていない!",
                 "spawn": {
                     "title": "生成",

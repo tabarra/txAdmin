@@ -12,7 +12,7 @@ import { ChevronsDownIcon, Loader2Icon } from "lucide-react";
 import LiveConsoleFooter from "./LiveConsoleFooter";
 import LiveConsoleHeader from "./LiveConsoleHeader";
 import LiveConsoleSearchBar from "./LiveConsoleSearchBar";
-// import LiveConsoleSaveSheet from "./LiveConsoleSaveSheet";
+import LiveConsoleSaveSheet from "./LiveConsoleSaveSheet";
 
 import ScrollDownAddon from "./ScrollDownAddon";
 import terminalOptions from "./xtermOptions";
@@ -20,16 +20,15 @@ import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
 import { getSocket, openExternalLink } from '@/lib/utils';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
-import { useAdminPerms } from '@/hooks/auth';
-import LiveConsoleSaveSheet from './LiveConsoleSaveSheet';
 
 
 const keyDebounceTime = 150; //ms
 
 export default function LiveConsole() {
-    // const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
+    const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
+    const termInputRef = useRef<HTMLInputElement>(null);
     const setPageTitle = useSetPageTitle();
     const refreshPage = useContentRefresh();
     setPageTitle('Live Console');
@@ -157,8 +156,10 @@ export default function LiveConsole() {
 
     useEventListener('keydown', (e: KeyboardEvent) => {
         if (e.code === 'F5') {
-            refreshPage();
-            e.preventDefault();
+            if (isConnected) {
+                refreshPage();
+                e.preventDefault();
+            }
         } else if (e.code === 'Escape') {
             searchAddon.clearDecorations();
             setShowSearchBar(false);
@@ -174,6 +175,14 @@ export default function LiveConsole() {
             e.preventDefault();
         }
     });
+
+    //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/4994
+    const writeToTerminal = (data: string) => {
+        const lines = data.split(/\r?\n/);
+        for (const line of lines) {
+            term.writeln(line);
+        }
+    }
 
     //DEBUG
     // useEffect(() => {
@@ -221,7 +230,7 @@ export default function LiveConsole() {
             console.log('Live Console Socket.IO', error);
         });
         pageSocket.current.on('consoleData', function (data) {
-            term.write(data);
+            writeToTerminal(data);
         });
 
         return () => {
@@ -245,8 +254,14 @@ export default function LiveConsole() {
         setShowSearchBar(!showSearchBar);
     }
     const toggleSaveSheet = () => {
-        //TODO: implement
-        // setIsSaveSheetOpen(!isSaveSheetOpen);
+        setIsSaveSheetOpen(!isSaveSheetOpen);
+    }
+    const inputSuggestions = (cmd: string) => {
+        if (termInputRef.current) {
+            termInputRef.current.value = cmd;
+            termInputRef.current.focus();
+        }
+        setIsSaveSheetOpen(false);
     }
 
 
@@ -267,7 +282,11 @@ export default function LiveConsole() {
                     </div>
                 ) : null}
 
-                {/* <LiveConsoleSaveSheet isOpen={isSaveSheetOpen} closeSheet={() => setIsSaveSheetOpen(false)} /> */}
+                <LiveConsoleSaveSheet
+                    isOpen={isSaveSheetOpen}
+                    closeSheet={() => setIsSaveSheetOpen(false)}
+                    toTermInput={(cmd) => inputSuggestions(cmd)}
+                />
 
                 {/* Terminal container */}
                 <div ref={containerRef} className='absolute top-1 left-2 right-0 bottom-0' />
@@ -290,6 +309,7 @@ export default function LiveConsole() {
             </div>
 
             <LiveConsoleFooter
+                termInputRef={termInputRef}
                 isConnected={isConnected}
                 consoleWrite={consoleWrite}
                 consoleClear={consoleClear}

@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin цэс идэвхжээгүй байна! Та үүнийг txAdmin тохиргооны хуудаснаас идэвхжүүлж болно.",
             "announcement_title": "Зарлал - %{author}:",
             "directmessage_title": "Нууц шивнээ %{author}:",
-            "dialog_empty_input": "Та хоосон бичигтэй байж болохгүй."
+            "dialog_empty_input": "Та хоосон бичигтэй байж болохгүй.",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Та тоглогчийг царцаасан байна!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Тээврийн хэрэгсэл",
-                "onesync_error": "Энэ сонголт нь OneSync-г сервертэй ажиллахад асаалттай байхыг шаарддаг",
                 "not_in_veh_error": "Та одоогоор тээврийн хэрэгсэлд суугаагүй байна!",
                 "spawn": {
                     "title": "Гаргаж ирэх",

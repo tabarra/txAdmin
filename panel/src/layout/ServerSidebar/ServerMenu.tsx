@@ -53,7 +53,7 @@ function PendingServerConfigure({ pendingStep }: PendingServerConfigureProps) {
         <div className='absolute inset-0 flex flex-col items-center justify-center gap-4'>
             <HourglassIcon className='h-12 w-12 opacity-75 animate-pulse' />
             <p className='text-center text-lg tracking-wider font-light opacity-75'>
-                You need to configure your server to be able to start your server.
+                You need to configure your server to be able to start it.
             </p>
             {linkHref ? (
                 <TxAnchor href={linkHref} className='animate-toastbar-enter'>

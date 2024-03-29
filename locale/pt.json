@@ -77,7 +77,8 @@
             "not_enabled": "O menu do txAdmin não está habilitado! Você pode habilita-lo na página de configurações do txAdmin web.",
             "announcement_title": "Aviso ao servidor por %{author}:",
             "dialog_empty_input": "Você precisa digitar alguma coisa.",
-            "directmessage_title": "DM do admin %{author}:"
+            "directmessage_title": "DM do admin %{author}:",
+            "onesync_error": "Esta ação requer que o OneSync esteja habilitado."
         },
         "frozen": {
             "froze_player": "Jogador congelado!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Veículo",
-                "onesync_error": "Esta opção requer que OneSync esteja habilitado para sincronizar as entidades no servidor.",
                 "not_in_veh_error": "Você não está em um veículo",
                 "spawn": {
                     "title": "Criar",

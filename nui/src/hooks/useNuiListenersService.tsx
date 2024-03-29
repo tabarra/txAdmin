@@ -26,7 +26,4 @@ export const useNuiListenerService = () => {
   useNuiEvent<ResolvablePermission[]>("setPermissions", setPermsState);
   useNuiEvent<ServerCtx>("setServerCtx", setServerCtxState);
   useNuiEvent<txAdminMenuPage>("setMenuPage", setMenuPage);
-  useNuiEvent("resetSession", ()=>{
-    fetchWebPipe<string>("/nui/resetSession").catch();
-  });
 };
