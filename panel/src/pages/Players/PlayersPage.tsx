@@ -60,22 +60,20 @@ export default function PlayersPage() {
                     label: 'Total Players',
                     value: hasCalloutData ? calloutData.total : false,
                     icon: <UsersIcon />,
-                    prefix: ''
                 },
                 {
-                    label: 'Players Today',
+                    label: 'Players Last 24h',
                     value: hasCalloutData ? calloutData.playedLast24h : false,
                     icon: <CalendarPlusIcon />,
-                    prefix: ''
                 },
                 {
-                    label: 'New Players Today',
+                    label: 'New Players Last 24h',
                     value: hasCalloutData ? calloutData.joinedLast24h : false,
                     icon: <UserRoundPlusIcon />,
                     prefix: '+'
                 },
                 {
-                    label: 'New Players This Week',
+                    label: 'New Players Last 7d',
                     value: hasCalloutData ? calloutData.joinedLast7d : false,
                     icon: <UserRoundPlusIcon />,
                     prefix: '+'

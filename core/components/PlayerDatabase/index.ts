@@ -442,9 +442,9 @@ export default class PlayerDatabase {
         const playerStats = this.#db.obj.chain.get('players')
             .reduce((acc, p, ind) => {
                 acc.total++;
-                if(p.tsLastConnection > oneDayAgo) acc.playedLast24h++;
-                if(p.tsJoined > oneDayAgo) acc.joinedLast24h++;
-                if(p.tsJoined > sevenDaysAgo) acc.joinedLast7d++;
+                if (p.tsLastConnection > oneDayAgo) acc.playedLast24h++;
+                if (p.tsJoined > oneDayAgo) acc.joinedLast24h++;
+                if (p.tsJoined > sevenDaysAgo) acc.joinedLast7d++;
                 return acc;
             }, startingValue)
             .value();

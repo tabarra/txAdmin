@@ -48,7 +48,7 @@ type: 'ban' | 'warn';
     ids: string[];
     hwids?: string[]; //used only in bans
 playerName: string | false;
-reason: string;
+    reason: string;
 author: string;
 timestamp: number;
     expiration: number | false;
@@ -59,16 +59,32 @@ timestamp: number;
 };
 
 
-
-
 ### Page Changes:
-History:
-- Columns:
-    - ID <justify-between> (DUR ban/warn)
-    - playerName
-    - reason
+Tabela mínima:
+- [ban/warn] ID (expired/revoked)
+- playername
+- reason
+- author
+- timestamp
+
+Dados pra tabela:
+- id
+- type
+- playerName
+- playerLicense?
+- reason
+- author
+- ts: log.timestamp,
+- exp: log.expiration ? log.expiration : undefined,
+- revokedBy: log.revocation.author ? log.revocation.author : undefined,
+- revokedAt: log.revocation.timestamp ? log.revocation.timestamp : undefined,
+
+
+Modal title: [BAN] BXXX-XXX
+- info tab
+    - date
     - author
-    - timestamp
+    - player (name or link?)
     - STATUS
         - WARN
             - active: --
@@ -78,16 +94,49 @@ History:
             - active temp: expires in XXX
             - revoked: revoked by XXX at YYY
             - expired: expired on XXX
+    - reason
+- IDs tab (same from players)
+- Edit tab
+    - for non-expired, non-revoked bans:
+        - same input as ban players modal
+        - button to "expire now"
+    - for non-viewed, non-revoked, offline warns
+        - change the reason
 
-- list of warns/bans in a table
-- search by id OR identifiers or reason
-- filter by action type
-- filter by admin (self must be the first option), and hotlink it from the admins page
-- bulk actions button
-    - bulk remove
-    - bulk revoke
+- Actions: revoke, remove (tbd)
 
-Whitelist:
+- feat requests:
+    - be able to delete bans/warns (new permission)
+    - offline warning (show when rejoin and IS_PED_WALKING)
+    - top server asked for the option to edit ban duration (expire now / change)
+    - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
+    - Thought: need to add an edit log like the one we have for player notes
+
+
+
+- Stats:
+    - Total Warns
+    - New Warns This Week
+    - Total Bans
+    - New Bans This Week
+- Search type:
+    - ID
+    - Identifiers
+    - Reason
+- Action type: (both pre selected?)
+    - warn
+    - ban
+- Author:
+    - searchable list of admins
+    - "self" is the first option
+    - hotlink it from the admins page (#author-xxxxxxx)
+- Dropdown
+    - bulk remove -> master actions
+
+
+
+
+#### Whitelist:
 - remove the wl pending join table
 - add a "latest whitelists" showing both pending and members (query players + pending and join tables)
 - don't forget to keep the "add approval" button
@@ -116,11 +165,6 @@ Whitelist:
 - [ ] build: generate fxmanifest files list dynamically
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 - [ ] update docs on development?
-
-- Players page dropdown options:
-    - add legacy ban
-    - prune players (from master actions -> clean database)
-    - bulk remove HWIDs
 
 - [ ] console nav button to jump to server start or errors?
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
@@ -387,8 +431,6 @@ if (error instanceof z.ZodError) {
 
 ### Tutorial discord bot:
 - Make tutorial with excalidraw?!
-- Parts:
-    - 
 - sometimes discord just bugs out, maybe kick the bot and invite him again
 - also ctrl+r to reload discord
 - tell them not to fuck up the placeholder

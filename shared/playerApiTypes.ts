@@ -48,6 +48,14 @@ export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;
 /**
  * Used in the players page
  */
+export type PlayersStatsResp = {
+    total: number;
+    playedLast24h: number;
+    joinedLast24h: number;
+    joinedLast7d: number;
+} | GenericApiErrorResp;
+
+
 export type PlayersTableSearchType = null | {
     value: string;
     type: string;
@@ -71,13 +79,6 @@ export type PlayersTableReqType = {
         license: string;
     }
 };
-
-export type PlayersStatsResp = {
-    total: number;
-    playedLast24h: number;
-    joinedLast24h: number;
-    joinedLast7d: number;
-} | GenericApiErrorResp;
 
 export type PlayersTablePlayerType = {
     license: string;

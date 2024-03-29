@@ -14,7 +14,7 @@ import { useBackendApi } from '@/hooks/fetch';
  * Player row
  */
 const convertRowDateTime = (ts: number) => {
-    return tsToLocaleDateTime(ts, 'medium', 'medium');
+    return tsToLocaleDateTime(ts, 'medium', 'short');
 }
 type PlayerRowProps = {
     rowData: PlayersTablePlayerType;
@@ -25,7 +25,7 @@ function PlayerRow({ rowData, modalOpener }: PlayerRowProps) {
     const openModal = () => {
         modalOpener({ license: rowData.license });
     }
-    //border-r whitespace-nowrap text-ellipsis overflow-hidden
+
     return (
         <TableRow onClick={openModal} className='cursor-pointer'>
             <TableCell className={'px-4 py-2 flex justify-between border-r'}>

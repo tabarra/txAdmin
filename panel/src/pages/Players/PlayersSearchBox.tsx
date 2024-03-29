@@ -37,7 +37,7 @@ const availableSearchTypes = [
     },
     {
         value: 'playerIds',
-        label: 'Identifiers',
+        label: 'Player IDs',
         placeholder: 'License, Discord, Steam, etc.',
         description: 'Search players by their IDs separated by a comma.'
     },
