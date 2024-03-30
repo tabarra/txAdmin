@@ -38,7 +38,6 @@ export default async function PlayerSearch(ctx: AuthedCtx) {
     const onlinePlayersLicenses = ctx.txAdmin.playerlistManager.getOnlinePlayersLicenses();
     const dbo = ctx.txAdmin.playerDatabase.getDb();
     let chain = dbo.chain.get('players');
-
     /*
         In order:
         - [X] sort the players by the sortingKey/sortingDesc
@@ -131,9 +130,9 @@ export default async function PlayerSearch(ctx: AuthedCtx) {
             chain = createChain(filtered);
         } else if (searchType === 'playerIds') {
             //Searching by player identifiers
-            const { validIds, validHwids, invalidIds } = parseLaxIdsArrayInput(searchValue);
-            if (invalidIds.length) {
-                return sendTypedResp({ error: `Invalid identifiers (${invalidIds.join(',')}). Prefix any identifier with their type, like 'fivem:123456' instead of just '123456'.` });
+            const { validIds, validHwids, invalids } = parseLaxIdsArrayInput(searchValue);
+            if (invalids.length) {
+                return sendTypedResp({ error: `Invalid identifiers (${invalids.join(',')}). Prefix any identifier with their type, like 'fivem:123456' instead of just '123456'.` });
             }
             if (!validIds.length && !validHwids.length) {
                 return sendTypedResp({ error: `No valid identifiers found.` });

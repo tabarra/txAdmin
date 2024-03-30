@@ -7,6 +7,7 @@ import { DatabaseActionType, DatabaseDataType, DatabasePlayerType, DatabaseWhite
 import { cloneDeep } from 'lodash-es';
 import { now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
+import { MultipleCounter } from '../StatisticsManager/statsUtils';
 const console = consoleFactory(modulename);
 
 
@@ -450,6 +451,41 @@ export default class PlayerDatabase {
             .value();
 
         return playerStats;
+    }
+
+
+    /**
+     * Returns players stats for the database (for Players page callouts)
+     */
+    getActionStats() {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+
+        const sevenDaysAgo = now() - (7 * 24 * 60 * 60);
+        const startingValue = {
+            totalWarns: 0,
+            warnsLast7d: 0,
+            totalBans: 0,
+            bansLast7d: 0,
+            groupedByAdmins: new MultipleCounter(),
+        };
+        const actionStats = this.#db.obj.chain.get('actions')
+            .reduce((acc, action, ind) => {
+                if (action.type == 'ban') {
+                    acc.totalBans++;
+                    if (action.timestamp > sevenDaysAgo) acc.bansLast7d++;
+                } else if (action.type == 'warn') {
+                    acc.totalWarns++;
+                    if (action.timestamp > sevenDaysAgo) acc.warnsLast7d++;
+                }
+                acc.groupedByAdmins.count(action.author);
+                return acc;
+            }, startingValue)
+            .value();
+
+        return {
+            ...actionStats,
+            groupedByAdmins: actionStats.groupedByAdmins.toJSON(),
+        };
     }
 
 

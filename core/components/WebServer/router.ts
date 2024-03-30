@@ -110,6 +110,10 @@ export default (config: WebServerConfigType) => {
         /logs/:log/download - WEB
     */
 
+    //History routes
+    router.get('/history/stats', apiAuthMw, webRoutes.history_stats);
+    router.get('/history/search', apiAuthMw, webRoutes.history_search);
+
     //Player routes
     router.get('/player', apiAuthMw, webRoutes.player_modal);
     router.get('/player/stats', apiAuthMw, webRoutes.player_stats);

@@ -46,6 +46,9 @@ export { default as fxserver_controls } from './fxserver/controls';
 export { default as fxserver_downloadLog } from './fxserver/downloadLog';
 export { default as fxserver_schedule } from './fxserver/schedule';
 
+export { default as history_stats } from './history/stats';
+export { default as history_search } from './history/search';
+
 export { default as player_stats } from './player/stats';
 export { default as player_search } from './player/search';
 export { default as player_pageOld } from './player/pageOld.js'; //FIXME: DEPRECATED

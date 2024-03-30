@@ -10,6 +10,7 @@ import NotFound from "@/pages/NotFound";
 import TestingPage from "@/pages/TestingPage/TestingPage";
 import LiveConsole from "@/pages/LiveConsole/LiveConsole";
 import PlayersPage from "@/pages/Players/PlayersPage";
+import HistoryPage from "@/pages/History/HistoryPage";
 
 
 type RouteType = {
@@ -31,11 +32,11 @@ const allRoutes: RouteType[] = [
         title: 'Players',
         children: <PlayersPage />
     },
-    // {
-    //     path: '/history',
-    //     title: 'History',
-    //     children: <>TODO:</>
-    // },
+    {
+        path: '/history',
+        title: 'History',
+        children: <HistoryPage />
+    },
     {
         path: '/whitelist',
         title: 'Whitelist',

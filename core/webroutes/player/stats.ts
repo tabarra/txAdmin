@@ -2,7 +2,6 @@ const modulename = 'WebServer:PlayersStats';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import { PlayersStatsResp } from '@shared/playerApiTypes';
-import { GenericApiErrorResp } from '@shared/genericApiTypes';
 const console = consoleFactory(modulename);
 
 

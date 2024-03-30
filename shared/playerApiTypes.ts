@@ -72,7 +72,7 @@ export type PlayersTableReqType = {
     search: PlayersTableSearchType;
     filters: PlayersTableFiltersType;
     sorting: PlayersTableSortingType;
-    //NOTE: the query needs to be prevOffset inclusive, but ignore prevLicense
+    //NOTE: the query needs to be offset.param inclusive, but ignore offset.license
     // therefore, optimistically always limit to x + 1
     offset?: {
         param: number;

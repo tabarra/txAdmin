@@ -189,10 +189,10 @@ export const filterPlayerHwids = (hwids: string[]) => {
 export const parseLaxIdsArrayInput = (fullInput: string) => {
     const validIds: string[] = [];
     const validHwids: string[] = [];
-    const invalidIds: string[] = [];
+    const invalids: string[] = [];
 
     if (typeof fullInput !== 'string') {
-        return { validIds, validHwids, invalidIds };
+        return { validIds, validHwids, invalids };
     }
     const inputs = fullInput.toLowerCase().split(/[,;\s]+/g).filter(Boolean);
 
@@ -207,7 +207,7 @@ export const parseLaxIdsArrayInput = (fullInput: string) => {
                 if (consts.validIdentifierParts[type as keyof typeof consts.validIdentifierParts]?.test(value)) {
                     validIds.push(input);
                 } else {
-                    invalidIds.push(input);
+                    invalids.push(input);
                 }
             }
         } else if (consts.validIdentifierParts.discord.test(input)) {
@@ -219,11 +219,11 @@ export const parseLaxIdsArrayInput = (fullInput: string) => {
         } else if (consts.validIdentifierParts.steam.test(input)) {
             validIds.push(`steam:${input}`);
         } else {
-            invalidIds.push(input);
+            invalids.push(input);
         }
     }
 
-    return { validIds, validHwids, invalidIds };
+    return { validIds, validHwids, invalids };
 }
 
 
