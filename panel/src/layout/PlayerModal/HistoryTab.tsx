@@ -5,7 +5,7 @@ import { PlayerHistoryItem } from "@shared/playerApiTypes";
 import { useBackendApi } from "@/hooks/fetch";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import InlineCode from "@/components/InlineCode";
-import PlayerModalMidMessage from "./PlayerModalMidMessage";
+import ModalCentralMessage from "@/components/ModalCentralMessage";
 
 
 type HistoryItemProps = {

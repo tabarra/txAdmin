@@ -107,14 +107,14 @@ function PlayerNotesBox({ playerRef, player, refreshModalData }: PlayerNotesBoxP
 }
 
 
-type InfoTabProps = {
+type PlayerInfoTabProps = {
     playerRef: PlayerModalRefType;
     player: PlayerModalPlayerData;
     setSelectedTab: (t: string) => void;
     refreshModalData: () => void;
 }
 
-export default function InfoTab({ playerRef, player, setSelectedTab, refreshModalData }: InfoTabProps) {
+export default function PlayerInfoTab({ playerRef, player, setSelectedTab, refreshModalData }: PlayerInfoTabProps) {
     const { hasPerm } = useAdminPerms();
     const playerWhitelistApi = useBackendApi<GenericApiOkResp>({
         method: 'POST',

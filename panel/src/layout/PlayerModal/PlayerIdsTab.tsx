@@ -63,7 +63,7 @@ function IdsBlock({ title, emptyMessage, currIds, allIds, isSmaller }: IdsBlockP
 }
 
 
-export default function IdsTab({ player }: { player: PlayerModalPlayerData }) {
+export default function PlayerIdsTab({ player }: { player: PlayerModalPlayerData }) {
     return <div className="flex flex-col gap-4 p-1">
         <IdsBlock
             title="Player Identifiers"
@@ -74,8 +74,9 @@ export default function IdsTab({ player }: { player: PlayerModalPlayerData }) {
         <IdsBlock
             title="Player Hardware IDs"
             emptyMessage="This player has no hardware IDs."
-            currIds={player.hwids} isSmaller
+            currIds={player.hwids}
             allIds={player?.oldHwids ?? []}
+            isSmaller
         />
     </div>;
 }

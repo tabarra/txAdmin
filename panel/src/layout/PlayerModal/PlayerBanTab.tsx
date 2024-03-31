@@ -11,7 +11,7 @@ import { GenericApiOkResp } from "@shared/genericApiTypes";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
 
 
-export default function BanTab({ playerRef }: { playerRef: PlayerModalRefType }) {
+export default function PlayerBanTab({ playerRef }: { playerRef: PlayerModalRefType }) {
     const reasonRef = useRef<HTMLInputElement>(null);
     const customMultiplierRef = useRef<HTMLInputElement>(null);
     const [currentDuration, setCurrentDuration] = useState('2 days');

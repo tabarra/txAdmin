@@ -6,12 +6,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { usePlayerModalStateValue } from "@/hooks/playerModal";
 import { InfoIcon, ListIcon, HistoryIcon, GavelIcon } from "lucide-react";
-import InfoTab from "./InfoTab";
+import PlayerInfoTab from "./PlayerInfoTab";
 import { useEffect, useState } from "react";
-import IdsTab from "./IdsTab";
+import PlayerIdsTab from "./PlayerIdsTab";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import HistoryTab from "./HistoryTab";
-import BanTab from "./BanTab";
+import PlayerBanTab from "./PlayerBanTab";
 import GenericSpinner from "@/components/GenericSpinner";
 import { cn } from "@/lib/utils";
 import { useBackendApi } from "@/hooks/fetch";
@@ -153,7 +153,7 @@ export default function PlayerModal() {
                             </ModalCentralMessage>
                         ) : (
                             <>
-                                {selectedTab === 'Info' && <InfoTab
+                                {selectedTab === 'Info' && <PlayerInfoTab
                                     playerRef={playerRef!}
                                     player={modalData.player}
                                     setSelectedTab={setSelectedTab}
@@ -164,10 +164,10 @@ export default function PlayerModal() {
                                     serverTime={modalData.serverTime}
                                     refreshModalData={refreshModalData}
                                 />}
-                                {selectedTab === 'IDs' && <IdsTab
+                                {selectedTab === 'IDs' && <PlayerIdsTab
                                     player={modalData.player}
                                 />}
-                                {selectedTab === 'Ban' && <BanTab
+                                {selectedTab === 'Ban' && <PlayerBanTab
                                     playerRef={playerRef!}
                                 />}
                             </>
