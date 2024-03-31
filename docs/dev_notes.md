@@ -27,7 +27,8 @@
         - Legacy Ban -> old players page
         - prune players/hwids (from master actions -> clean database)
 - [x] open master actions in the correct tab
-- [ ] NEW PAGE: History
+- [x] NEW PAGE: History
+- [ ] Create modal for history actions with full details
 - [ ] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
 - [ ] fix disallowed intents message
 
@@ -42,44 +43,7 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 
 =======================================================================
 
-export type DatabaseActionType = {
-id: string;
-type: 'ban' | 'warn';
-    ids: string[];
-    hwids?: string[]; //used only in bans
-playerName: string | false;
-    reason: string;
-author: string;
-timestamp: number;
-    expiration: number | false;
-    revocation: {
-        timestamp: number | null;
-        author: string | null;
-    };
-};
-
-
-### Page Changes:
-Tabela mínima:
-- [ban/warn] ID (expired/revoked)
-- playername
-- reason
-- author
-- timestamp
-
-Dados pra tabela:
-- id
-- type
-- playerName
-- playerLicense?
-- reason
-- author
-- ts: log.timestamp,
-- exp: log.expiration ? log.expiration : undefined,
-- revokedBy: log.revocation.author ? log.revocation.author : undefined,
-- revokedAt: log.revocation.timestamp ? log.revocation.timestamp : undefined,
-
-
+### Action Modal:
 Modal title: [BAN] BXXX-XXX
 - info tab
     - date
@@ -106,33 +70,12 @@ Modal title: [BAN] BXXX-XXX
 - Actions: revoke, remove (tbd)
 
 - feat requests:
-    - be able to delete bans/warns (new permission)
-    - offline warning (show when rejoin and IS_PED_WALKING)
+    - be able to delete bans/warns with new permission (Issue #910)
+    - offline warning - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
     - top server asked for the option to edit ban duration (expire now / change)
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
     - Thought: need to add an edit log like the one we have for player notes
-
-
-
-- Stats:
-    - Total Warns
-    - New Warns This Week
-    - Total Bans
-    - New Bans This Week
-- Search type:
-    - ID
-    - Identifiers
-    - Reason
-- Action type: (both pre selected?)
-    - warn
-    - ban
-- Author:
-    - searchable list of admins
-    - "self" is the first option
-    - hotlink it from the admins page (#author-xxxxxxx)
-- Dropdown
-    - bulk remove -> master actions
-
+    - Thought: maybe we could use some dedicated icons for Expired, Edited, Revoked
 
 
 
@@ -317,6 +260,7 @@ Master Actions:
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
 
 - [ ] create new "Remove Player Data" permission which would allow to delete bans/warns, players and player identifiers
+    - Ref: https://github.com/tabarra/txAdmin/issues/751
 
 - [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so I can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
     - even better: clients2.google.com/time/1/current

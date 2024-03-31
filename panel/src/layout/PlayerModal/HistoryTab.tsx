@@ -83,9 +83,9 @@ export default function HistoryTab({ actionHistory, serverTime, refreshModalData
     });
 
     if (!actionHistory.length) {
-        return <PlayerModalMidMessage>
+        return <ModalCentralMessage>
             No bans/warns found.
-        </PlayerModalMidMessage>;
+        </ModalCentralMessage>;
     }
 
     const doRevokeAction = (actionId: string) => {

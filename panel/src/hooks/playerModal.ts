@@ -3,7 +3,7 @@ import { atomWithReset } from 'jotai/utils';
 
 
 /**
- * Prompt Dialog Stuff
+ * Player Modal Stuff
  */
 export type PlayerModalRefType = {
     mutex: string;

@@ -4,20 +4,16 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { usePlayerModalStateValue } from "@/hooks/playerModal";
+import { useActionModalStateValue } from "@/hooks/actionModal";
 import { InfoIcon, ListIcon, HistoryIcon, GavelIcon } from "lucide-react";
-import InfoTab from "./InfoTab";
 import { useEffect, useState } from "react";
-import IdsTab from "./IdsTab";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import HistoryTab from "./HistoryTab";
-import BanTab from "./BanTab";
 import GenericSpinner from "@/components/GenericSpinner";
 import { cn } from "@/lib/utils";
 import { useBackendApi } from "@/hooks/fetch";
-import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
-import PlayerModalFooter from "./PlayerModalFooter";
+import ActionModalFooter from "./ActionModalFooter";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
+import { HistoryActionModalResp, HistoryActionModalSuccess } from "@shared/historyApiTypes";
 
 
 const modalTabs = [
@@ -41,15 +37,15 @@ const modalTabs = [
 ]
 
 
-export default function PlayerModal() {
-    const { isModalOpen, closeModal, playerRef } = usePlayerModalStateValue();
+export default function ActionModal() {
+    const { isModalOpen, closeModal, actionRef } = useActionModalStateValue();
     const [selectedTab, setSelectedTab] = useState(modalTabs[0].title);
     const [currRefreshKey, setCurrRefreshKey] = useState(0);
-    const [modalData, setModalData] = useState<PlayerModalSuccess | undefined>(undefined);
+    const [modalData, setModalData] = useState<HistoryActionModalSuccess | undefined>(undefined);
     const [modalError, setModalError] = useState('');
-    const playerQueryApi = useBackendApi<PlayerModalResp>({
+    const historyGetActionApi = useBackendApi<HistoryActionModalResp>({
         method: 'GET',
-        path: `/player`,
+        path: `/history/action`,
         abortOnUnmount: true,
     });
 
@@ -58,13 +54,13 @@ export default function PlayerModal() {
         setCurrRefreshKey(currRefreshKey + 1);
     };
 
-    //Querying player data when reference is available
+    //Querying Action data when reference is available
     useEffect(() => {
-        if (!playerRef) return;
+        if (!actionRef) return;
         setModalData(undefined);
         setModalError('');
-        playerQueryApi({
-            queryParams: playerRef,
+        historyGetActionApi({
+            queryParams: { id: actionRef },
             success: (resp) => {
                 if ('error' in resp) {
                     setModalError(resp.error);
@@ -76,7 +72,7 @@ export default function PlayerModal() {
                 setModalError(error);
             },
         });
-    }, [playerRef, currRefreshKey]);
+    }, [actionRef, currRefreshKey]);
 
     //Resetting selected tab when modal is closed
     useEffect(() => {
@@ -95,9 +91,20 @@ export default function PlayerModal() {
 
     let pageTitle: JSX.Element;
     if (modalData) {
-        pageTitle = <>
-            <span className="text-muted-foreground font-mono">[{modalData.player.netid || 'OFFLINE'}]</span> {modalData.player.displayName}
-        </>;
+        if (modalData.action.type === 'ban') {
+            pageTitle = <>
+                <span className="text-destructive-inline font-mono mr-2">[BAN]</span>
+                {modalData.action.id}
+            </>;
+        } else if (modalData.action.type === 'warn') {
+            pageTitle = <>
+                <span className="text-warning-inline font-mono mr-2">[WARN]</span>
+                {modalData.action.id}
+            </>;
+
+        } else {
+            throw new Error(`Unknown action type: ${modalData.action.type}`);
+        }
     } else if (modalError) {
         pageTitle = <span className="text-destructive-inline">Error!</span>;
     } else {
@@ -144,8 +151,8 @@ export default function PlayerModal() {
                             </ModalCentralMessage>
                         ) : (
                             <>
-                                {selectedTab === 'Info' && <InfoTab
-                                    playerRef={playerRef!}
+                                {/* {selectedTab === 'Info' && <InfoTab
+                                    actionRef={actionRef!}
                                     player={modalData.player}
                                     setSelectedTab={setSelectedTab}
                                     refreshModalData={refreshModalData}
@@ -159,15 +166,15 @@ export default function PlayerModal() {
                                     player={modalData.player}
                                 />}
                                 {selectedTab === 'Ban' && <BanTab
-                                    playerRef={playerRef!}
-                                />}
+                                    actionRef={actionRef!}
+                                />} */}
                             </>
                         )}
                     </ScrollArea>
                 </div>
-                <PlayerModalFooter
-                    playerRef={playerRef!}
-                    player={modalData?.player}
+                <ActionModalFooter
+                    actionRef={actionRef!}
+                    action={modalData?.action}
                 />
             </DialogContent>
         </Dialog>

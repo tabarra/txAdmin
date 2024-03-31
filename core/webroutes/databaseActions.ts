@@ -13,7 +13,7 @@ const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x 
 
 
 /**
- * Returns the resources list
+ * Endpoint to interact with the actions database.
  */
 export default async function DatabaseActions(ctx: AuthedCtx) {
     //Sanity check

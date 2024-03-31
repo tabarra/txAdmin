@@ -8,6 +8,7 @@ import { Loader2Icon, GavelIcon, AlertTriangleIcon, Undo2Icon, AlarmClockCheckIc
 import { useOpenPlayerModal } from "@/hooks/playerModal";
 import { useBackendApi } from '@/hooks/fetch';
 import { HistoryTableActionType, HistoryTableSearchResp, HistoryTableSearchType, HistoryTableSortingType } from '@shared/historyApiTypes';
+import { useOpenActionModal } from '@/hooks/actionModal';
 
 
 /**
@@ -18,12 +19,12 @@ const convertRowDateTime = (ts: number) => {
 }
 type HistoryRowProps = {
     action: HistoryTableActionType;
-    modalOpener: ReturnType<typeof useOpenPlayerModal>;
+    modalOpener: ReturnType<typeof useOpenActionModal>;
 }
 
 function HistoryRow({ action, modalOpener }: HistoryRowProps) {
     const openModal = () => {
-        //FIXME: modalOpener(action.id);
+        modalOpener(action.id);
     }
 
     // Type indicator
@@ -198,6 +199,7 @@ export default function HistoryTable({ search, filterbyType, filterbyAdmin }: Hi
     const [loadError, setLoadError] = useState<string | null>(null);
     const [sorting, setSorting] = useState<HistoryTableSortingType>({ key: 'timestamp', desc: true });
     const [isResetting, setIsResetting] = useState(false);
+    const openActionModal = useOpenActionModal();
 
     const historyListingApi = useBackendApi<HistoryTableSearchResp>({
         method: 'GET',
@@ -346,7 +348,7 @@ export default function HistoryTable({ search, filterbyType, filterbyAdmin }: Hi
                                 <HistoryRow
                                     key={virtualItem.key}
                                     action={history[virtualItem.index]}
-                                    modalOpener={() => { /* FIXME: write cooooode */ }}
+                                    modalOpener={openActionModal}
                                 />
                             )
                         })}

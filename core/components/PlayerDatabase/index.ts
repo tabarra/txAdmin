@@ -178,6 +178,22 @@ export default class PlayerDatabase {
 
 
     /**
+     * Searches for an action in the database by the id, returns action or null if not found
+     */
+    getActionData(actionId: string): DatabaseActionType | null {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (typeof actionId !== 'string' || !actionId.length) throw new Error('Invalid actionId.');
+
+        //Performing search
+        const a = this.#db.obj.chain.get('actions')
+            .find({ id: actionId })
+            .cloneDeep()
+            .value();
+        return (typeof a === 'undefined') ? null : a;
+    }
+
+
+    /**
      * Searches for any registered action in the database by a list of identifiers and optional filters
      * Usage example: getRegisteredActions(['license:xxx'], undefined, {type: 'ban', revocation.timestamp: null})
      */

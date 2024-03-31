@@ -1,3 +1,4 @@
+import { DatabaseActionType } from "@core/components/PlayerDatabase/databaseTypes";
 import { GenericApiErrorResp } from "genericApiTypes";
 
 export type HistoryStatsResp = {
@@ -50,3 +51,10 @@ export type HistoryTableSearchResp = {
     history: HistoryTableActionType[];
     hasReachedEnd: boolean;
 } | GenericApiErrorResp;
+
+
+export type HistoryActionModalSuccess = {
+    serverTime: number; //required to calculate if bans have expired on frontend
+    action: DatabaseActionType;
+}
+export type HistoryActionModalResp = HistoryActionModalSuccess | GenericApiErrorResp;
