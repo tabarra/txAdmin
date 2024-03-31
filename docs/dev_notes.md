@@ -30,6 +30,7 @@
 - [x] NEW PAGE: History
 - [ ] Create modal for history actions with full details
     - [] modify HistoryTab -> HistoryItem to open the action modal on item click, remove revoke/perms logic
+- [ ] Migrate `/database/` routes to `/history` (update panel, nui, web!)
 - [ ] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
 - [ ] fix disallowed intents message
 
@@ -247,6 +248,13 @@ Master Actions:
 - clean database - "bulk changes" button at the players page
 - revoke whitelists - button to whitelist pages
 
+Admin manager:
+- stats on admins
+    - total count of bans/warns
+    - counts of bans/warns in the last 7, 14, 28d
+    - revocation %
+    - bans/warns %
+
 
 =======================================================================
 
@@ -446,13 +454,11 @@ teste:
     apertar f1 e ver se aparece a mensagem de perms
 
 # TODO: sooner than later
-- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
     - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
 - [ ] server logger add events/min average
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Beware that this is not trivial without also turning missing exec target read error also being error
-- [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 
 
 
@@ -678,18 +684,6 @@ This is not compatible with the update events.
 If patch, show update notification immediately (especially important to quick-fix a bug).
 If minor, randomize a delay between 0~24h.
 If patch, randomize a delay 0~72h.
-
-Update event idea (not yet greenlit):
-- A box similar to the fxserver update one;
-- The major/minor updates will have a discord stage event, patches won't;
-- Will get the next event date + type (major/minor) through some api (maybe a regex-able string in the GH releases page);
-- The pre-event notifications will have a live "in xx time" type countdown
-- 2 days before it will show a yellow warning;
-- 1 hour before it will become a glowing green box;
-- 1 hour after the event start it will become a red update box with generic message, or blue if it's just a patch;
-- Note: regarding the changelog part, bubble asked me to ignore for now (may/13) but will talk again somewhen;
-
-
 
 ### TP:
 https://freesound.org/search/?q=teleport&page=6#sound

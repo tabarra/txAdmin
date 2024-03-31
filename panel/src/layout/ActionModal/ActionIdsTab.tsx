@@ -15,7 +15,7 @@ function IdsBlock({ title, emptyMessage, ids, isSmaller }: IdsBlockProps) {
     const [hasCopiedIds, setHasCopiedIds] = useState(false);
 
     const handleCopyIds = () => {
-        if(!ids) return;
+        if (!ids) return;
         copyToClipboard(ids.join('\n')).then((res) => {
             if (res !== false) {
                 setHasCopiedIds(true);
@@ -29,6 +29,7 @@ function IdsBlock({ title, emptyMessage, ids, isSmaller }: IdsBlockProps) {
             });
         });
     }
+    const hasIdsAvailable = Array.isArray(ids) && ids.length;
 
     return <div>
         <div className="flex justify-between items-center pb-1">
@@ -45,12 +46,13 @@ function IdsBlock({ title, emptyMessage, ids, isSmaller }: IdsBlockProps) {
         </div>
         <p className={cn(
             "font-mono break-all whitespace-pre-wrap border rounded divide-y divide-border/50 text-muted-foreground",
-            isSmaller ? "text-2xs leading-5 font-extralight tracking-widest" : "text-xs leading-6 tracking-wider"
+            hasIdsAvailable && isSmaller ? "text-2xs leading-5 font-extralight tracking-widest" : "text-xs leading-6 tracking-wider"
         )}>
-            {!Array.isArray(ids) || ids.length === 0 && <span className="block px-1 opacity-50 italic">{emptyMessage}</span>}
-            {ids!.map((id) => (
+            {hasIdsAvailable ? ids.map((id) => (
                 <span key={id} className="block px-1 font-semibold">{id}</span>
-            ))}
+            )) : (
+                <span className="block px-1 opacity-50 italic">{emptyMessage}</span>
+            )}
         </p>
     </div>
 }

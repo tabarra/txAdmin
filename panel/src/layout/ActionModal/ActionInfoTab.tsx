@@ -19,12 +19,12 @@ function ActionReasonBox({ actionReason }: { actionReason: string }) {
     const [textAreaLines, setTextAreaLines] = useState(calcTextAreaLines(actionReason));
 
     return <>
-        <Label htmlFor="playerNotes">
+        <Label htmlFor="actionReason">
             Reason:
         </Label>
         <Textarea
             ref={textAreaRef}
-            id="playerNotes"
+            id="actionReason"
             className="w-full mt-1"
             readOnly={true}
             value={actionReason}
@@ -82,7 +82,6 @@ export default function ActionInfoTab({ actionId, action, setSelectedTab, refres
                 <dt className="text-sm font-medium leading-6 text-muted-foreground">Status</dt>
                 <dd className="text-sm leading-6 col-span-2 mt-0">FIXME:</dd>
             </div>
-
         </dl>
 
         <ActionReasonBox actionReason={action.reason} />

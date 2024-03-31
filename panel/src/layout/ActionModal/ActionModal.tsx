@@ -5,17 +5,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useActionModalStateValue } from "@/hooks/actionModal";
-import { InfoIcon, ListIcon, HistoryIcon, GavelIcon, PenLineIcon } from "lucide-react";
+import { InfoIcon, ListIcon, Undo2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import GenericSpinner from "@/components/GenericSpinner";
 import { cn } from "@/lib/utils";
 import { useBackendApi } from "@/hooks/fetch";
-import ActionModalFooter from "./ActionModalFooter";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
 import { HistoryActionModalResp, HistoryActionModalSuccess } from "@shared/historyApiTypes";
 import ActionIdsTab from "./ActionIdsTab";
 import ActionInfoTab from "./ActionInfoTab";
+import ActionModifyTab from "./ActionModifyTab";
 
 
 const modalTabs = [
@@ -23,20 +23,18 @@ const modalTabs = [
         title: 'Info',
         icon: <InfoIcon className="mr-2 h-5 w-5 hidden xs:block" />,
     },
-    //Maybe in the future for logs of changes?
-    // {
-    //     title: 'History',
-    //     icon: <HistoryIcon className="mr-2 h-5 w-5 hidden xs:block" />,
-    // },
     {
         title: 'IDs',
         icon: <ListIcon className="mr-2 h-5 w-5 hidden xs:block" />,
     },
-    // {
-    //     title: 'Edit',
-    //     icon: <PenLineIcon className="mr-2 h-5 w-5 hidden xs:block" />,
-    //     // className: 'hover:bg-destructive hover:text-destructive-foreground',
-    // }
+    {
+        //In the future, when adding "edit" and "remove" to the modal, join with "revoke" in a tab bellow
+        // title: 'Modify',
+        // icon: <EraserIcon className="mr-2 h-5 w-5 hidden xs:block" />,
+        title: 'Revoke',
+        icon: <Undo2Icon className="mr-2 h-5 w-5 hidden xs:block" />,
+        className: 'hover:bg-destructive hover:text-destructive-foreground',
+    },
 ]
 
 
@@ -164,14 +162,14 @@ export default function ActionModal() {
                                 {selectedTab === 'IDs' && <ActionIdsTab
                                     action={modalData.action}
                                 />}
+                                {selectedTab === 'Revoke' && <ActionModifyTab
+                                    action={modalData.action}
+                                    refreshModalData={refreshModalData}
+                                />}
                             </>
                         )}
                     </ScrollArea>
                 </div>
-                <ActionModalFooter
-                    actionRef={actionRef!}
-                    action={modalData?.action}
-                />
             </DialogContent>
         </Dialog>
     );

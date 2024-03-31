@@ -5,6 +5,7 @@ import { PlayerHistoryItem } from "@shared/playerApiTypes";
 import { useBackendApi } from "@/hooks/fetch";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import InlineCode from "@/components/InlineCode";
+import { useOpenActionModal } from "@/hooks/actionModal";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
 
 
@@ -67,16 +68,17 @@ function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime, do
 }
 
 
-type HistoryTabProps = {
+type PlayerHistoryTabProps = {
     actionHistory: PlayerHistoryItem[],
     serverTime: number,
     refreshModalData: () => void,
 }
 
-export default function HistoryTab({ actionHistory, serverTime, refreshModalData }: HistoryTabProps) {
+export default function PlayerHistoryTab({ actionHistory, serverTime, refreshModalData }: PlayerHistoryTabProps) {
     const { hasPerm } = useAdminPerms();
     const hasWarnPerm = hasPerm('players.warn');
     const hasBanPerm = hasPerm('players.ban');
+    const openActionModal = useOpenActionModal();
     const revokeActionApi = useBackendApi<GenericApiOkResp>({
         method: 'POST',
         path: `/database/revoke_action`,
@@ -89,18 +91,19 @@ export default function HistoryTab({ actionHistory, serverTime, refreshModalData
     }
 
     const doRevokeAction = (actionId: string) => {
-        revokeActionApi({
-            data: { actionId },
-            toastLoadingMessage: 'Revoking action...',
-            genericHandler: {
-                successMsg: 'Action revoked.',
-            },
-            success: (data) => {
-                if ('success' in data) {
-                    refreshModalData();
-                }
-            },
-        });
+        openActionModal(actionId);
+        // revokeActionApi({
+        //     data: { actionId },
+        //     toastLoadingMessage: 'Revoking action...',
+        //     genericHandler: {
+        //         successMsg: 'Action revoked.',
+        //     },
+        //     success: (data) => {
+        //         if ('success' in data) {
+        //             refreshModalData();
+        //         }
+        //     },
+        // });
     }
 
     const reversedActionHistory = [...actionHistory].reverse();

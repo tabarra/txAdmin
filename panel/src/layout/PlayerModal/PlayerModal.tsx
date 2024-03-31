@@ -10,7 +10,7 @@ import PlayerInfoTab from "./PlayerInfoTab";
 import { useEffect, useState } from "react";
 import PlayerIdsTab from "./PlayerIdsTab";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import HistoryTab from "./HistoryTab";
+import PlayerHistoryTab from "./PlayerHistoryTab";
 import PlayerBanTab from "./PlayerBanTab";
 import GenericSpinner from "@/components/GenericSpinner";
 import { cn } from "@/lib/utils";
@@ -159,7 +159,7 @@ export default function PlayerModal() {
                                     setSelectedTab={setSelectedTab}
                                     refreshModalData={refreshModalData}
                                 />}
-                                {selectedTab === 'History' && <HistoryTab
+                                {selectedTab === 'History' && <PlayerHistoryTab
                                     actionHistory={modalData.player.actionHistory}
                                     serverTime={modalData.serverTime}
                                     refreshModalData={refreshModalData}

@@ -190,7 +190,7 @@ export default function PlayerInfoTab({ playerRef, player, setSelectedTab, refre
                 </dd>
             </div>
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
-                <dt className="text-sm font-medium leading-6 text-muted-foreground">Log</dt>
+                <dt className="text-sm font-medium leading-6 text-muted-foreground">Sanctions</dt>
                 <dd className="text-sm leading-6 mt-0 space-x-2">
                     <LogActionCounter type="Ban" count={banCount} />
                     <LogActionCounter type="Warn" count={warnCount} />
