@@ -29,6 +29,7 @@
 - [x] open master actions in the correct tab
 - [x] NEW PAGE: History
 - [ ] Create modal for history actions with full details
+    - [] modify HistoryTab -> HistoryItem to open the action modal on item click, remove revoke/perms logic
 - [ ] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
 - [ ] fix disallowed intents message
 

@@ -137,7 +137,9 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
     //It's render time! 🎉
     const selectedSearchType = availableSearchTypes.find((type) => type.value === currSearchType);
     if (!selectedSearchType) throw new Error(`Invalid search type: ${currSearchType}`);
-    const filterBtnMessage = selectedFilters.length ? `${selectedFilters.length} Filters` : 'No filters';
+    const filterBtnMessage = selectedFilters.length
+        ? `${selectedFilters.length} Filter${selectedFilters.length > 1 ? 's' : ''}`
+        : 'No filters';
     return (
         <div className="p-4 mb-2 md:mb-4 md:rounded-xl border border-border bg-card text-card-foreground shadow-sm">
             <div className="flex flex-wrap-reverse gap-2">
@@ -174,13 +176,13 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                                     role="combobox"
                                     aria-expanded={isSearchTypeDropdownOpen}
                                     onClick={() => setSearchTypeDropdownOpen(!isSearchTypeDropdownOpen)}
-                                    className="grow xs:w-36 justify-between border-input bg-black/5 dark:bg-black/30 hover:dark:bg-primary"
+                                    className="grow xs:w-38 justify-between border-input bg-black/5 dark:bg-black/30 hover:dark:bg-primary"
                                 >
-                                    {selectedSearchType.label}
+                                    Search by {selectedSearchType.label}
                                     <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className='w-36'>
+                            <DropdownMenuContent className='w-38'>
                                 <DropdownMenuLabel>Search Type</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuRadioGroup value={currSearchType} onValueChange={setCurrSearchType}>

@@ -95,9 +95,18 @@ export default function PlayerModal() {
 
     let pageTitle: JSX.Element;
     if (modalData) {
-        pageTitle = <>
-            <span className="text-muted-foreground font-mono">[{modalData.player.netid || 'OFFLINE'}]</span> {modalData.player.displayName}
-        </>;
+        if (modalData.player.netid) {
+            pageTitle = <>
+                <span className="text-success-inline font-mono mr-2">[{modalData.player.netid}]</span>
+                {modalData.player.displayName}
+            </>;
+        } else {
+            pageTitle = <>
+                <span className="text-destructive-inline font-mono mr-2">[OFF]</span>
+                {modalData.player.displayName}
+            </>;
+
+        }
     } else if (modalError) {
         pageTitle = <span className="text-destructive-inline">Error!</span>;
     } else {
