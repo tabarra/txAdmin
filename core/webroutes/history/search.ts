@@ -7,6 +7,7 @@ import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
 import { now, parseLaxIdsArrayInput } from '@extras/helpers';
 import { HistoryTableActionType, HistoryTableSearchResp } from '@shared/historyApiTypes';
+import { TimeCounter } from '@core/components/StatisticsManager/statsUtils';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -33,6 +34,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
         offsetActionId
     } = ctx.query;
     const sendTypedResp = (data: HistoryTableSearchResp) => ctx.send(data);
+    const searchTime = new TimeCounter();
     const dbo = ctx.txAdmin.playerDatabase.getDb();
     let chain = dbo.chain.get('actions');
 
@@ -154,6 +156,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
         } satisfies HistoryTableActionType;
     });
 
+    ctx.txAdmin.statisticsManager.historyTableSearchTime.count(searchTime.stop().milliseconds);
     return sendTypedResp({
         history: processedActions,
         hasReachedEnd,

@@ -35,7 +35,7 @@
     - [x] modify HistoryTab -> HistoryItem to open the action modal on item click, remove revoke/perms logic
 - [x] fix(console): remove extra line break on term.write
 - [x] Migrate `/database/` routes to `/history` (update panel, nui, web!)
-- [ ] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
+- [x] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
 - [ ] fix disallowed intents message
 
 > ????
