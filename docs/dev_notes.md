@@ -36,7 +36,7 @@
 - [x] fix(console): remove extra line break on term.write
 - [x] Migrate `/database/` routes to `/history` (update panel, nui, web!)
 - [x] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
-- [ ] fix disallowed intents message
+- [x] fix disallowed intents message
 
 > ????
 - [ ] rtl issue
@@ -50,31 +50,6 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 =======================================================================
 
 ### Action Modal:
-Modal title: [BAN] BXXX-XXX
-- info tab
-    - date
-    - author
-    - player (name or link?)
-    - STATUS
-        - WARN
-            - active: --
-            - revoked: revoked by XXX at YYY
-        - BAN
-            - active perma: permanent ban
-            - active temp: expires in XXX
-            - revoked: revoked by XXX at YYY
-            - expired: expired on XXX
-    - reason
-- IDs tab (same from players)
-- Edit tab
-    - for non-expired, non-revoked bans:
-        - same input as ban players modal
-        - button to "expire now"
-    - for non-viewed, non-revoked, offline warns
-        - change the reason
-
-- Actions: revoke, remove (tbd)
-
 - feat requests:
     - be able to delete bans/warns with new permission (Issue #910)
     - offline warning - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
@@ -82,7 +57,6 @@ Modal title: [BAN] BXXX-XXX
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
     - Thought: need to add an edit log like the one we have for player notes
     - Thought: maybe we could use some dedicated icons for Expired, Edited, Revoked
-
 
 
 #### Whitelist:
