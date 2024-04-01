@@ -179,6 +179,12 @@ export default function LiveConsole() {
     //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/4994
     const writeToTerminal = (data: string) => {
         const lines = data.split(/\r?\n/);
+        //check if last line isn't empty
+        //NOTE: i'm not trimming because having multiple \n at the end is valid
+        if (lines.length && !lines[lines.length - 1]) {
+            lines.pop();
+        }
+        //print each line
         for (const line of lines) {
             term.writeln(line);
         }
