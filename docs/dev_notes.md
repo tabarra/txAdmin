@@ -37,9 +37,7 @@
 - [x] Migrate `/database/` routes to `/history` (update panel, nui, web!)
 - [x] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
 - [x] fix disallowed intents message
-
-> ????
-- [ ] rtl issue
+- [x] fix(console): implemented hacky patch to rtl issue
 
 
 ## Client game print issue

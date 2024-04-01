@@ -135,10 +135,10 @@ export default async function HistorySearch(ctx: AuthedCtx) {
     const currTs = now();
     const processedActions = actions.slice(0, DEFAULT_LIMIT).map((a) => {
         let banExpiration;
-        if (a.type === 'ban'){
-            if(a.expiration === false){
+        if (a.type === 'ban') {
+            if (a.expiration === false) {
                 banExpiration = 'permanent' as const;
-            } else if (typeof a.expiration === 'number' && a.expiration < currTs){
+            } else if (typeof a.expiration === 'number' && a.expiration < currTs) {
                 banExpiration = 'expired' as const;
             } else {
                 banExpiration = 'active' as const;

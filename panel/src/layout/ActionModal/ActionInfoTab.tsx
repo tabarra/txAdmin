@@ -70,7 +70,7 @@ export default function ActionInfoTab({ action, serverTime, tsFetch }: ActionInf
         revokedText = <span className="text-warning-inline">
             By {action.revocation.author} on <DateTimeCorrected
                 isDateOnly
-                className="opacity-75 cursor-help"
+                className="cursor-help"
                 serverTime={serverTime}
                 tsObject={action.revocation.timestamp}
                 tsFetch={tsFetch}

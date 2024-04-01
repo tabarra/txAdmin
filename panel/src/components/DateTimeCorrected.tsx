@@ -9,9 +9,11 @@ type Props = {
     serverTime: number;
     className?: string;
     isDateOnly?: boolean;
+    dateStyle?: 'full' | 'long' | 'medium' | 'short';
+    timeStyle?: 'full' | 'long' | 'medium' | 'short';
 };
 
-export default function DateTimeCorrected({ tsFetch, tsObject, serverTime, className, isDateOnly }: Props) {
+export default function DateTimeCorrected({ tsFetch, tsObject, serverTime, className, isDateOnly, dateStyle, timeStyle }: Props) {
     const serverClockDrift = serverTime - tsFetch; //be positive if server is ahead
     const howFarInThePast = serverTime - tsObject;
     const localTime = tsFetch - howFarInThePast;
@@ -20,8 +22,8 @@ export default function DateTimeCorrected({ tsFetch, tsObject, serverTime, class
         txToast.warning(`This means that the server clock is ${Math.abs(serverClockDrift)} seconds ${serverClockDrift > 0 ? 'ahead' : 'behind'} your computer time. Make sure both your computer and the server have their clocks synchronized.`);
     }
     const displayTime = isDateOnly
-        ? tsToLocaleDate(localTime, 'short')
-        : tsToLocaleDateTime(localTime, 'medium', 'short')
+        ? tsToLocaleDate(localTime, dateStyle ?? 'medium')
+        : tsToLocaleDateTime(localTime, dateStyle ?? 'medium', timeStyle ?? 'short')
     return <span
         className={className}
         title={tsToLocaleDateTime(localTime, 'long', 'long')}

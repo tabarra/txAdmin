@@ -47,6 +47,7 @@ export default function PlayerModal() {
     const [currRefreshKey, setCurrRefreshKey] = useState(0);
     const [modalData, setModalData] = useState<PlayerModalSuccess | undefined>(undefined);
     const [modalError, setModalError] = useState('');
+    const [tsFetch, setTsFetch] = useState(0);
     const playerQueryApi = useBackendApi<PlayerModalResp>({
         method: 'GET',
         path: `/player`,
@@ -70,6 +71,7 @@ export default function PlayerModal() {
                     setModalError(resp.error);
                 } else {
                     setModalData(resp);
+                    setTsFetch(Math.round(Date.now() / 1000));
                 }
             },
             error: (error) => {
@@ -134,7 +136,7 @@ export default function PlayerModal() {
         <Dialog open={isModalOpen} onOpenChange={handleOpenClose}>
             <DialogContent
                 className="max-w-2xl h-full sm:h-auto max-h-full p-0 gap-1 sm:gap-4 flex flex-col"
-                // onOpenAutoFocus={(e) => e.preventDefault()}
+            // onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <DialogHeader className="p-4 border-b">
                     <DialogTitle className="tracking-wide line-clamp-1 break-all mr-6">{pageTitle}</DialogTitle>
@@ -175,6 +177,8 @@ export default function PlayerModal() {
                                 {selectedTab === 'Info' && <PlayerInfoTab
                                     playerRef={playerRef!}
                                     player={modalData.player}
+                                    serverTime={modalData.serverTime}
+                                    tsFetch={tsFetch}
                                     setSelectedTab={setSelectedTab}
                                     refreshModalData={refreshModalData}
                                 />}

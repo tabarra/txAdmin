@@ -1,3 +1,4 @@
+import DateTimeCorrected from "@/components/DateTimeCorrected";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -110,30 +111,48 @@ function PlayerNotesBox({ playerRef, player, refreshModalData }: PlayerNotesBoxP
 type PlayerInfoTabProps = {
     playerRef: PlayerModalRefType;
     player: PlayerModalPlayerData;
+    serverTime: number;
+    tsFetch: number;
     setSelectedTab: (t: string) => void;
     refreshModalData: () => void;
 }
 
-export default function PlayerInfoTab({ playerRef, player, setSelectedTab, refreshModalData }: PlayerInfoTabProps) {
+export default function PlayerInfoTab({ playerRef, player, serverTime, tsFetch, setSelectedTab, refreshModalData }: PlayerInfoTabProps) {
     const { hasPerm } = useAdminPerms();
     const playerWhitelistApi = useBackendApi<GenericApiOkResp>({
         method: 'POST',
         path: `/player/whitelist`,
     });
 
-    const sessionTimeText = player.sessionTime ? msToDuration(
+    const sessionTimeText = !player.sessionTime ? '--' : msToDuration(
         player.sessionTime * 60_000,
         { units: ['h', 'm'] }
-    ) : '--';
-    const lastConnectionText = player.tsLastConnection
-        ? tsToLocaleDate(player.tsLastConnection)
-        : '--';
-    const playTimeText = player.playTime ? msToDuration(
+    );
+    const lastConnectionText = !player.tsLastConnection ? '--' : <DateTimeCorrected
+        className="opacity-75 cursor-help"
+        serverTime={serverTime}
+        tsObject={player.tsLastConnection}
+        tsFetch={tsFetch}
+        isDateOnly
+    />;
+    const playTimeText = !player.playTime ? '--' : msToDuration(
         player.playTime * 60_000,
         { units: ['d', 'h', 'm'] }
-    ) : '--';
-    const joinDateText = player.tsJoined ? tsToLocaleDate(player.tsJoined) : '--';
-    const whitelistedText = player.tsWhitelisted ? tsToLocaleDate(player.tsWhitelisted) : 'not yet';
+    )
+    const joinDateText = !player.tsJoined ? '--' : <DateTimeCorrected
+        className="opacity-75 cursor-help"
+        serverTime={serverTime}
+        tsObject={player.tsJoined}
+        tsFetch={tsFetch}
+        isDateOnly
+    />;
+    const whitelistedText = !player.tsWhitelisted ? 'not yet' : <DateTimeCorrected
+        className="opacity-75 cursor-help"
+        serverTime={serverTime}
+        tsObject={player.tsWhitelisted}
+        tsFetch={tsFetch}
+        isDateOnly
+    />;
     const banCount = player.actionHistory.filter((a) => a.type === 'ban' && !a.revokedAt).length;
     const warnCount = player.actionHistory.filter((a) => a.type === 'warn' && !a.revokedAt).length;
 

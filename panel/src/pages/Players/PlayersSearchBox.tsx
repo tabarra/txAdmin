@@ -167,101 +167,101 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                     )}
                 </div>
 
-                <div className="grow flex justify-between">
-                    <div className='space-x-2 flex-nowrap'>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={isSearchTypeDropdownOpen}
-                                    onClick={() => setSearchTypeDropdownOpen(!isSearchTypeDropdownOpen)}
-                                    className="grow xs:w-38 justify-between border-input bg-black/5 dark:bg-black/30 hover:dark:bg-primary"
-                                >
-                                    Search by {selectedSearchType.label}
-                                    <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className='w-38'>
-                                <DropdownMenuLabel>Search Type</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuRadioGroup value={currSearchType} onValueChange={setCurrSearchType}>
-                                    {availableSearchTypes.map((searchType) => (
-                                        <DropdownMenuRadioItem
-                                            key={searchType.value}
-                                            value={searchType.value}
-                                            className='cursor-pointer'
-                                        >
-                                            {searchType.label}
-                                        </DropdownMenuRadioItem>
-                                    ))}
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={isFilterDropdownOpen}
-                                    onClick={() => setFilterDropdownOpen(!isFilterDropdownOpen)}
-                                    className="grow xs:w-44 justify-between border-input bg-black/5 dark:bg-black/30 hover:dark:bg-primary"
-                                >
-                                    {filterBtnMessage}
-                                    <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className='w-44'>
-                                <DropdownMenuLabel>Search Filters</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                {availableFilters.map((filter) => (
-                                    <DropdownMenuCheckboxItem
-                                        key={filter.value}
-                                        checked={selectedFilters.includes(filter.value)}
-                                        className="cursor-pointer"
-                                        onCheckedChange={(checked) => {
-                                            filterSelectChange(filter.value, checked);
-                                        }}
-
+                <div className="grow flex content-start gap-2 flex-wrap">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={isSearchTypeDropdownOpen}
+                                onClick={() => setSearchTypeDropdownOpen(!isSearchTypeDropdownOpen)}
+                                className="xs:w-40 justify-between border-input bg-black/5 dark:bg-black/30 hover:dark:bg-primary grow md:grow-0"
+                            >
+                                Search by {selectedSearchType.label}
+                                <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className='w-40'>
+                            <DropdownMenuLabel>Search Type</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={currSearchType} onValueChange={setCurrSearchType}>
+                                {availableSearchTypes.map((searchType) => (
+                                    <DropdownMenuRadioItem
+                                        key={searchType.value}
+                                        value={searchType.value}
+                                        className='cursor-pointer'
                                     >
-                                        {filter.label}
-                                    </DropdownMenuCheckboxItem>
+                                        {searchType.label}
+                                    </DropdownMenuRadioItem>
                                 ))}
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={isFilterDropdownOpen}
+                                onClick={() => setFilterDropdownOpen(!isFilterDropdownOpen)}
+                                className="xs:w-44 justify-between border-input bg-black/5 dark:bg-black/30 hover:dark:bg-primary grow md:grow-0"
+                            >
+                                {filterBtnMessage}
+                                <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className='w-44'>
+                            <DropdownMenuLabel>Search Filters</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            {availableFilters.map((filter) => (
+                                <DropdownMenuCheckboxItem
+                                    key={filter.value}
+                                    checked={selectedFilters.includes(filter.value)}
                                     className="cursor-pointer"
-                                    onClick={() => setSelectedFilters([])}
+                                    onCheckedChange={(checked) => {
+                                        filterSelectChange(filter.value, checked);
+                                    }}
+
                                 >
-                                    <FilterXIcon className="mr-2 h-4 w-4" />
-                                    Clear Filters
+                                    {filter.label}
+                                </DropdownMenuCheckboxItem>
+                            ))}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                onClick={() => setSelectedFilters([])}
+                            >
+                                <FilterXIcon className="mr-2 h-4 w-4" />
+                                Clear Filters
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <div className="flex justify-end flex-grow">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="">
+                                <Button variant="outline" className="grow md:grow-0">
+                                    More
+                                    <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
+                                    <Link href="/players/old" className="cursor-pointer">
+                                        <ExternalLinkIcon className="inline mr-1 h-4" />
+                                        Old Page
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
+                                    <Link href="/system/master-actions#cleandb" className="cursor-pointer">
+                                        <ExternalLinkIcon className="inline mr-1 h-4" />
+                                        Prune Players/HWIDs
+                                    </Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger className="">
-                            <Button variant="outline" className="flex-growx">
-                                More
-                                <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
-                                <Link href="/players/old" className="cursor-pointer">
-                                    <ExternalLinkIcon className="inline mr-1 h-4" />
-                                    Old Page
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
-                                <Link href="/system/master-actions#cleandb" className="cursor-pointer">
-                                    <ExternalLinkIcon className="inline mr-1 h-4" />
-                                    Prune Players/HWIDs
-                                </Link>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
             </div>
             <div className="text-xs text-muted-foreground mt-1 px-1">
