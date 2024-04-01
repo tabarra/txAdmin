@@ -44,6 +44,7 @@ export default function ActionModal() {
     const [currRefreshKey, setCurrRefreshKey] = useState(0);
     const [modalData, setModalData] = useState<HistoryActionModalSuccess | undefined>(undefined);
     const [modalError, setModalError] = useState('');
+    const [tsFetch, setTsFetch] = useState(0);
     const historyGetActionApi = useBackendApi<HistoryActionModalResp>({
         method: 'GET',
         path: `/history/action`,
@@ -67,6 +68,7 @@ export default function ActionModal() {
                     setModalError(resp.error);
                 } else {
                     setModalData(resp);
+                    setTsFetch(Math.round(Date.now() / 1000));
                 }
             },
             error: (error) => {
@@ -92,17 +94,19 @@ export default function ActionModal() {
 
     let pageTitle: JSX.Element;
     if (modalData) {
+        const displayName = modalData.action.playerName !== false
+            ? <span>{modalData.action.playerName}</span>
+            : <span className="italic opacity-75">unknown player</span>;
         if (modalData.action.type === 'ban') {
             pageTitle = <>
-                <span className="text-destructive-inline font-mono mr-2">[BAN]</span>
-                {modalData.action.id}
+                <span className="text-destructive-inline font-mono mr-2">[{modalData.action.id}]</span>
+                Banned {displayName}
             </>;
         } else if (modalData.action.type === 'warn') {
             pageTitle = <>
-                <span className="text-warning-inline font-mono mr-2">[WARN]</span>
-                {modalData.action.id}
+                <span className="text-warning-inline font-mono mr-2">[{modalData.action.id}]</span>
+                Warned {displayName}
             </>;
-
         } else {
             throw new Error(`Unknown action type: ${modalData.action.type}`);
         }
@@ -119,13 +123,16 @@ export default function ActionModal() {
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <DialogHeader className="p-4 border-b">
-                    <DialogTitle className="tracking-wide line-clamp-1 break-all mr-6">{pageTitle}</DialogTitle>
+                    <DialogTitle className="tracking-wide line-clamp-1 break-all mr-6">
+                        {pageTitle}
+                    </DialogTitle>
                 </DialogHeader>
 
                 <div className="flex flex-col md:flex-row md:px-4 h-full">
                     <div className="flex flex-row md:flex-col gap-1 bg-muted md:bg-transparent p-1 md:p-0 mx-2 md:mx-0 rounded-md">
                         {modalTabs.map((tab) => (
                             <Button
+                                id={`action-modal-tab-${tab.title}`}
                                 key={tab.title}
                                 variant={selectedTab === tab.title ? "secondary" : "ghost"}
                                 className={cn(
@@ -136,6 +143,7 @@ export default function ActionModal() {
                                     tab.className,
                                 )}
                                 onClick={() => setSelectedTab(tab.title)}
+                                onKeyDown={handleTabButtonKeyDown}
                             >
                                 {tab.icon} {tab.title}
                             </Button>
@@ -154,10 +162,9 @@ export default function ActionModal() {
                         ) : (
                             <>
                                 {selectedTab === 'Info' && <ActionInfoTab
-                                    actionId={actionRef!}
                                     action={modalData.action}
-                                    setSelectedTab={setSelectedTab}
-                                    refreshModalData={refreshModalData}
+                                    serverTime={modalData.serverTime}
+                                    tsFetch={tsFetch}
                                 />}
                                 {selectedTab === 'IDs' && <ActionIdsTab
                                     action={modalData.action}

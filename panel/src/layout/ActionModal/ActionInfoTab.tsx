@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { tsToLocaleDateTime } from "@/lib/utils";
+import { msToDuration, tsToLocaleDateTime } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { DatabaseActionType } from "../../../../core/components/PlayerDatabase/databaseTypes";
 import { useOpenPlayerModal } from "@/hooks/playerModal";
+import DateTimeCorrected from "@/components/DateTimeCorrected";
 
 
 
@@ -36,16 +37,53 @@ function ActionReasonBox({ actionReason }: { actionReason: string }) {
 
 
 type ActionInfoTabProps = {
-    actionId: string;
     action: DatabaseActionType;
-    setSelectedTab: (t: string) => void;
-    refreshModalData: () => void;
+    serverTime: number;
+    tsFetch: number;
 }
 
-export default function ActionInfoTab({ actionId, action, setSelectedTab, refreshModalData }: ActionInfoTabProps) {
-    const actionDateTimeText = tsToLocaleDateTime(action.timestamp);
+export default function ActionInfoTab({ action, serverTime, tsFetch }: ActionInfoTabProps) {
     const openPlayerModal = useOpenPlayerModal();
 
+    let banExpirationText: React.ReactNode;
+    if (action.type === 'ban') {
+        if (action.expiration === false) {
+            banExpirationText = <span className="text-destructive-inline">Never</span>;
+        } else if (action.expiration > serverTime) {
+            const distance = msToDuration(
+                (serverTime - action.expiration) * 1000,
+                { units: ['mo', 'w', 'd', 'h', 'm'] }
+            )
+            banExpirationText = <span className="text-warning-inline">In {distance}</span>;
+        } else {
+            banExpirationText = <DateTimeCorrected
+                className="opacity-75 cursor-help"
+                serverTime={serverTime}
+                tsObject={action.expiration}
+                tsFetch={tsFetch}
+            />;
+        }
+    }
+
+    let revokedText: React.ReactNode;
+    if (action.revocation.timestamp) {
+        revokedText = <span className="text-warning-inline">
+            By {action.revocation.author} on <DateTimeCorrected
+                isDateOnly
+                className="opacity-75 cursor-help"
+                serverTime={serverTime}
+                tsObject={action.revocation.timestamp}
+                tsFetch={tsFetch}
+            />
+        </span>;
+    } else {
+        revokedText = <span className="opacity-75">No</span>;
+    }
+
+    //Player stuff
+    const playerDisplayName = action.playerName !== false
+        ? <span>{action.playerName}</span>
+        : <span className="italic opacity-75">unknown player</span>;
     const targetLicenses = action.ids.filter(id => id.startsWith('license:'));
     const linkedPlayer = targetLicenses.length === 1 ? targetLicenses[0].split(':')[1] : false;
     const handleViewPlayerClick = () => {
@@ -57,15 +95,33 @@ export default function ActionInfoTab({ actionId, action, setSelectedTab, refres
         <dl className="pb-2">
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                 <dt className="text-sm font-medium leading-6 text-muted-foreground">Date/Time</dt>
-                <dd className="text-sm leading-6 col-span-2 mt-0">{actionDateTimeText}</dd>
+                <dd className="text-sm leading-6 col-span-2 mt-0">
+                    <DateTimeCorrected
+                        className="opacity-75 cursor-help"
+                        serverTime={serverTime}
+                        tsObject={action.timestamp}
+                        tsFetch={tsFetch}
+                    />
+                </dd>
             </div>
+            {action.type === 'ban' && (
+                <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
+                    <dt className="text-sm font-medium leading-6 text-muted-foreground">Expiration</dt>
+                    <dd className="text-sm leading-6 col-span-2 mt-0">{banExpirationText}</dd>
+                </div>
+            )}
+            <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
+                <dt className="text-sm font-medium leading-6 text-muted-foreground">Revoked</dt>
+                <dd className="text-sm leading-6 col-span-2 mt-0">{revokedText}</dd>
+            </div>
+
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                 <dt className="text-sm font-medium leading-6 text-muted-foreground">Admin</dt>
                 <dd className="text-sm leading-6 col-span-2 mt-0">{action.author}</dd>
             </div>
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                 <dt className="text-sm font-medium leading-6 text-muted-foreground">Player</dt>
-                <dd className="text-sm leading-6 col-span-2x mt-0">{action.playerName}</dd>
+                <dd className="text-sm leading-6 col-span-2x mt-0">{playerDisplayName}</dd>
                 <dd className="text-right">
                     <Button
                         variant="outline"
@@ -73,14 +129,8 @@ export default function ActionInfoTab({ actionId, action, setSelectedTab, refres
                         style={{ minWidth: '8.25ch' }}
                         onClick={handleViewPlayerClick}
                         disabled={!linkedPlayer}
-                    >
-                        View
-                    </Button>
+                    >View</Button>
                 </dd>
-            </div>
-            <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
-                <dt className="text-sm font-medium leading-6 text-muted-foreground">Status</dt>
-                <dd className="text-sm leading-6 col-span-2 mt-0">FIXME:</dd>
             </div>
         </dl>
 
