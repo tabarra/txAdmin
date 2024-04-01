@@ -93,6 +93,23 @@ export default function PlayerModal() {
         }
     };
 
+    //Move to tab up or down
+    const handleTabButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            const currentIndex = modalTabs.findIndex((tab) => tab.title === selectedTab);
+            const nextIndex = e.key === 'ArrowUp' ? currentIndex - 1 : currentIndex + 1;
+            const nextTab = modalTabs[nextIndex];
+            if (nextTab) {
+                setSelectedTab(nextTab.title);
+                const nextButton = document.getElementById(`player-modal-tab-${nextTab.title}`);
+                if (nextButton) {
+                    nextButton.focus();
+                }
+            }
+        }
+    }
+
     let pageTitle: JSX.Element;
     if (modalData) {
         if (modalData.player.netid) {
@@ -117,7 +134,7 @@ export default function PlayerModal() {
         <Dialog open={isModalOpen} onOpenChange={handleOpenClose}>
             <DialogContent
                 className="max-w-2xl h-full sm:h-auto max-h-full p-0 gap-1 sm:gap-4 flex flex-col"
-                onOpenAutoFocus={(e) => e.preventDefault()}
+                // onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <DialogHeader className="p-4 border-b">
                     <DialogTitle className="tracking-wide line-clamp-1 break-all mr-6">{pageTitle}</DialogTitle>
@@ -127,6 +144,7 @@ export default function PlayerModal() {
                     <div className="flex flex-row md:flex-col gap-1 bg-muted md:bg-transparent p-1 md:p-0 mx-2 md:mx-0 rounded-md">
                         {modalTabs.map((tab) => (
                             <Button
+                                id={`player-modal-tab-${tab.title}`}
                                 key={tab.title}
                                 variant={selectedTab === tab.title ? "secondary" : "ghost"}
                                 className={cn(
@@ -136,6 +154,7 @@ export default function PlayerModal() {
                                     tab.className,
                                 )}
                                 onClick={() => setSelectedTab(tab.title)}
+                                onKeyDown={handleTabButtonKeyDown}
                             >
                                 {tab.icon} {tab.title}
                             </Button>

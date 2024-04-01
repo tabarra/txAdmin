@@ -5,7 +5,6 @@ import TxAnchor from '@/components/TxAnchor';
 import { cn, tsToLocaleDateTime } from '@/lib/utils';
 import { TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2Icon, GavelIcon, AlertTriangleIcon, Undo2Icon, AlarmClockCheckIcon } from 'lucide-react';
-import { useOpenPlayerModal } from "@/hooks/playerModal";
 import { useBackendApi } from '@/hooks/fetch';
 import { HistoryTableActionType, HistoryTableSearchResp, HistoryTableSearchType, HistoryTableSortingType } from '@shared/historyApiTypes';
 import { useOpenActionModal } from '@/hooks/actionModal';

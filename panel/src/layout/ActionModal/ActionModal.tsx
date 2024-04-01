@@ -92,6 +92,23 @@ export default function ActionModal() {
         }
     };
 
+    //move to tab up or down
+    const handleTabButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            const currentIndex = modalTabs.findIndex((tab) => tab.title === selectedTab);
+            const nextIndex = e.key === 'ArrowUp' ? currentIndex - 1 : currentIndex + 1;
+            const nextTab = modalTabs[nextIndex];
+            if (nextTab) {
+                setSelectedTab(nextTab.title);
+                const nextButton = document.getElementById(`action-modal-tab-${nextTab.title}`);
+                if (nextButton) {
+                    nextButton.focus();
+                }
+            }
+        }
+    }
+
     let pageTitle: JSX.Element;
     if (modalData) {
         const displayName = modalData.action.playerName !== false
@@ -120,7 +137,7 @@ export default function ActionModal() {
         <Dialog open={isModalOpen} onOpenChange={handleOpenClose}>
             <DialogContent
                 className="max-w-2xl h-full sm:h-auto max-h-full p-0 gap-1 sm:gap-4 flex flex-col"
-                onOpenAutoFocus={(e) => e.preventDefault()}
+                // onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <DialogHeader className="p-4 border-b">
                     <DialogTitle className="tracking-wide line-clamp-1 break-all mr-6">

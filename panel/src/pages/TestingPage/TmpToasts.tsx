@@ -21,7 +21,7 @@ export default function TmpToasts() {
             msg: 'Simple message **without** markdown\nbut auto line break.',
         });
         txToast.error({
-            title: 'Error: The bot requires the \`GUILD_MEMBERS\` intent:',
+            title: 'Error: The bot requires the `GUILD_MEMBERS` intent:',
             msg: `- Go to the [Discord Dev Portal](https://discord.com/developers/applications)
             - Navigate to \`Bot > Privileged Gateway Intents\`.
             - Enable the \`GUILD_MEMBERS\` intent.
