@@ -1,3 +1,4 @@
+/* eslint-disable no-control-regex */
 import { Terminal } from '@xterm/xterm';
 import { CanvasAddon } from '@xterm/addon-canvas';
 import { FitAddon } from '@xterm/addon-fit';
@@ -20,9 +21,24 @@ import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
 import { getSocket, openExternalLink } from '@/lib/utils';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
+import { txToast } from '@/components/TxToaster';
 
-
+//Helpers
 const keyDebounceTime = 150; //ms
+
+//Yoinked from the internet, no good source
+const rtlRangeRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]{3,}/; //ignoring anything less than 3 characters
+
+//Yoinked from core/components/Logger/handlers/fxserver.js
+const regexConsole = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F\x80-\x9F]/g;
+const regexCsi = /(\u001b\[|\u009B)[\d;]+[@-K]/g;
+const regexColors = /\u001b[^m]*?m/g;
+const cleanTermOutput = (data: string) => {
+    return data
+        .replace(regexConsole, '')
+        .replace(regexCsi, '')
+        .replace(regexColors, '');
+}
 
 export default function LiveConsole() {
     const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
@@ -176,6 +192,25 @@ export default function LiveConsole() {
         }
     });
 
+    //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/701
+    const registerBidiMarker = (fullLine: string) => {
+        const marker = term.registerMarker(0)
+        const decoration = term.registerDecoration({ marker });
+        decoration && decoration.onRender(element => {
+            element.classList.add('cursor-pointer');
+            element.innerText = '🔠';
+            element.onclick = () => {
+                txToast.info({
+                    title: 'Bidirectional Text Detected:',
+                    msg: fullLine,
+                });
+            }
+            // element.innerHTML = `<div class="bg-info text-info-foreground rounded px-2 py-1 mt-[-0.25rem] z-10">RTL</div>`
+            // element.style.height = '';
+            // element.style.width = '';
+        });
+    }
+
     //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/4994
     const writeToTerminal = (data: string) => {
         const lines = data.split(/\r?\n/);
@@ -186,6 +221,9 @@ export default function LiveConsole() {
         }
         //print each line
         for (const line of lines) {
+            if(rtlRangeRegex.test(line)) {
+                registerBidiMarker(cleanTermOutput(line));
+            }
             term.writeln(line);
         }
     }
