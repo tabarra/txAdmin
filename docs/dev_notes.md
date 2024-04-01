@@ -28,11 +28,11 @@
         - prune players/hwids (from master actions -> clean database)
 - [x] open master actions in the correct tab
 - [x] NEW PAGE: History
-- [ ] Create modal for history actions with full details
+- [x] Create modal for history actions with full details
     - [x] finish up modal info tab
     - [x] try to add player name to title
     - [x] fix modal padding (good enough)
-    - [ ] modify HistoryTab -> HistoryItem to open the action modal on item click, remove revoke/perms logic
+    - [x] modify HistoryTab -> HistoryItem to open the action modal on item click, remove revoke/perms logic
 - [ ] fix(console): fix extra line break on term.write
 - [ ] Migrate `/database/` routes to `/history` (update panel, nui, web!)
 - [ ] Add StatisticsManager tracking for players/actions search duration (QuantileArray)

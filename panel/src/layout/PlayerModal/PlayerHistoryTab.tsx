@@ -1,9 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { useAdminPerms } from "@/hooks/auth";
 import { cn, tsToLocaleDateTime } from "@/lib/utils";
 import { PlayerHistoryItem } from "@shared/playerApiTypes";
-import { useBackendApi } from "@/hooks/fetch";
-import { GenericApiOkResp } from "@shared/genericApiTypes";
 import InlineCode from "@/components/InlineCode";
 import { useOpenActionModal } from "@/hooks/actionModal";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
@@ -11,19 +7,11 @@ import ModalCentralMessage from "@/components/ModalCentralMessage";
 
 type HistoryItemProps = {
     action: PlayerHistoryItem,
-    permsDisableWarn: boolean,
-    permsDisableBan: boolean,
     serverTime: number,
-    doRevokeAction: (actionId: string) => void,
+    modalOpener: (actionId: string) => void,
 }
 
-function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime, doRevokeAction }: HistoryItemProps) {
-    const isRevokeDisabled = (
-        !!action.revokedBy ||
-        (action.type === 'warn' && permsDisableWarn) ||
-        (action.type === 'ban' && permsDisableBan)
-    );
-
+function HistoryItem({ action, serverTime, modalOpener }: HistoryItemProps) {
     let footerNote, borderColorClass, actionMessage;
     if (action.type === 'ban') {
         borderColorClass = 'border-destructive';
@@ -42,7 +30,13 @@ function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime, do
     }
 
     return (
-        <div className={cn('pl-2 border-l-4 hover:bg-muted rounded-r-sm bg-muted/30', borderColorClass)}>
+        <div
+            onClick={() => { modalOpener(action.id) }}
+            className={cn(
+                'pl-2 border-l-4 hover:bg-muted rounded-r-sm bg-muted/30 cursor-pointer',
+                borderColorClass
+            )}
+        >
             <div className="flex w-full justify-between">
                 <strong className="text-sm text-muted-foreground">{actionMessage}</strong>
                 <small className="text-right text-2xs space-x-1">
@@ -53,12 +47,6 @@ function HistoryItem({ action, permsDisableWarn, permsDisableBan, serverTime, do
                     >
                         {tsToLocaleDateTime(action.ts, 'medium', 'short')}
                     </span>
-                    <Button
-                        variant="outline"
-                        size='inline'
-                        disabled={isRevokeDisabled}
-                        onClick={() => { doRevokeAction(action.id) }}
-                    >Revoke</Button>
                 </small>
             </div>
             <span className="text-sm">{action.reason}</span>
@@ -75,14 +63,7 @@ type PlayerHistoryTabProps = {
 }
 
 export default function PlayerHistoryTab({ actionHistory, serverTime, refreshModalData }: PlayerHistoryTabProps) {
-    const { hasPerm } = useAdminPerms();
-    const hasWarnPerm = hasPerm('players.warn');
-    const hasBanPerm = hasPerm('players.ban');
     const openActionModal = useOpenActionModal();
-    const revokeActionApi = useBackendApi<GenericApiOkResp>({
-        method: 'POST',
-        path: `/database/revoke_action`,
-    });
 
     if (!actionHistory.length) {
         return <ModalCentralMessage>
@@ -90,20 +71,8 @@ export default function PlayerHistoryTab({ actionHistory, serverTime, refreshMod
         </ModalCentralMessage>;
     }
 
-    const doRevokeAction = (actionId: string) => {
+    const doOpenActionModal = (actionId: string) => {
         openActionModal(actionId);
-        // revokeActionApi({
-        //     data: { actionId },
-        //     toastLoadingMessage: 'Revoking action...',
-        //     genericHandler: {
-        //         successMsg: 'Action revoked.',
-        //     },
-        //     success: (data) => {
-        //         if ('success' in data) {
-        //             refreshModalData();
-        //         }
-        //     },
-        // });
     }
 
     const reversedActionHistory = [...actionHistory].reverse();
@@ -112,10 +81,8 @@ export default function PlayerHistoryTab({ actionHistory, serverTime, refreshMod
             <HistoryItem
                 key={action.id}
                 action={action}
-                permsDisableWarn={!hasWarnPerm}
-                permsDisableBan={!hasBanPerm}
                 serverTime={serverTime}
-                doRevokeAction={doRevokeAction}
+                modalOpener={doOpenActionModal}
             />
         ))}
     </div>;

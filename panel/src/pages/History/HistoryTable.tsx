@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import TxAnchor from '@/components/TxAnchor';
 import { cn, tsToLocaleDateTime } from '@/lib/utils';
 import { TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2Icon, GavelIcon, AlertTriangleIcon, Undo2Icon, AlarmClockCheckIcon } from 'lucide-react';
+import { Loader2Icon, GavelIcon, AlertTriangleIcon, Undo2Icon, AlarmClockCheckIcon, TimerOffIcon, TimerIcon } from 'lucide-react';
 import { useBackendApi } from '@/hooks/fetch';
 import { HistoryTableActionType, HistoryTableSearchResp, HistoryTableSearchType, HistoryTableSortingType } from '@shared/historyApiTypes';
 import { useOpenActionModal } from '@/hooks/actionModal';
@@ -47,8 +47,12 @@ function HistoryRow({ action, modalOpener }: HistoryRowProps) {
     let statusIcon: React.ReactNode;
     if (action.isRevoked) {
         statusIcon = <Undo2Icon className='size-4' />;
-    } else if (action.isExpired) {
-        statusIcon = <AlarmClockCheckIcon className='size-4' />;
+    } else if (action.banExpiration) {
+        if (action.banExpiration === 'permanent') {
+            statusIcon = <TimerOffIcon className='size-4' />;
+        } else if (action.banExpiration === 'active') {
+            statusIcon = <TimerIcon className='size-4' />;
+        }
     }
 
     return (

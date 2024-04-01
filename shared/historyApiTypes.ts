@@ -43,8 +43,8 @@ export type HistoryTableActionType = {
     author: string;
     reason: string;
     timestamp: number;
-    isExpired: boolean;
     isRevoked: boolean;
+    banExpiration?: 'expired' | 'active' | 'permanent';
 }
 
 export type HistoryTableSearchResp = {

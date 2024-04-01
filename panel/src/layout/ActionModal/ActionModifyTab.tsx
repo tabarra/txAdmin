@@ -46,7 +46,7 @@ export default function ActionModifyTab({ action, refreshModalData }: ActionModi
             ? `Revoke ${upperCasedType}`
             : 'Revoke (no permission)';
     return (
-        <div className="flex flex-col gap-4 p-1 mb-1 md:mb-4">
+        <div className="flex flex-col gap-4 mb-1 md:mb-4">
             <div className="space-y-2">
                 <h3 className="text-xl">Revoke {upperCasedType}</h3>
                 <p className="text-muted-foreground text-sm">
