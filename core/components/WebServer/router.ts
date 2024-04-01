@@ -113,7 +113,7 @@ export default (config: WebServerConfigType) => {
     router.get('/history/stats', apiAuthMw, webRoutes.history_stats);
     router.get('/history/search', apiAuthMw, webRoutes.history_search);
     router.get('/history/action', apiAuthMw, webRoutes.history_actionModal);
-    router.post('/database/:action', apiAuthMw, webRoutes.databaseActions); //FIXME: convert those to /history/:action
+    router.post('/history/:action', apiAuthMw, webRoutes.history_actions);
 
     //Player routes
     router.get('/player', apiAuthMw, webRoutes.player_modal);

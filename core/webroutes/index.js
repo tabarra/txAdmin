@@ -48,7 +48,7 @@ export { default as fxserver_schedule } from './fxserver/schedule';
 export { default as history_stats } from './history/stats';
 export { default as history_search } from './history/search';
 export { default as history_actionModal } from './history/actionModal';
-export { default as databaseActions } from './databaseActions'; //FIXME: convert into history
+export { default as history_actions } from './history/actions.js';
 
 export { default as player_stats } from './player/stats';
 export { default as player_search } from './player/search';

@@ -1,4 +1,4 @@
-const modulename = 'WebServer:DatabaseActions';
+const modulename = 'WebServer:HistoryActions';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { calcExpirationFromDuration } from '@core/extras/helpers';
@@ -15,7 +15,7 @@ const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x 
 /**
  * Endpoint to interact with the actions database.
  */
-export default async function DatabaseActions(ctx: AuthedCtx) {
+export default async function HistoryActions(ctx: AuthedCtx) {
     //Sanity check
     if (!ctx.params?.action) {
         return ctx.utils.error(400, 'Invalid Request');

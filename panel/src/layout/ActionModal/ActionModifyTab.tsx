@@ -17,7 +17,7 @@ export default function ActionModifyTab({ action, refreshModalData }: ActionModi
     const { hasPerm } = useAdminPerms();
     const revokeActionApi = useBackendApi<GenericApiOkResp>({
         method: 'POST',
-        path: `/database/revoke_action`,
+        path: `/history/revoke_action`,
     });
 
     const upperCasedType = action.type.charAt(0).toUpperCase() + action.type.slice(1);
