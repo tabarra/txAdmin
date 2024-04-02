@@ -26,6 +26,9 @@ jobs:
         uses: actions/github-script@v6.4.1
         with:
           script: |
+            console.warn('This is bugged and doesn't work, skip this step for now!');
+            process.exit(0);
+
             console.log(JSON.stringify(context.payload.pull_request));
             const { repo, owner } = context.repo;
 
