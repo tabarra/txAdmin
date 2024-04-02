@@ -13,6 +13,7 @@ type globalHotkeyMessage = {
 
 export declare global {
     interface Window {
+        nuiSystemLanguages?: string | string[];
         txConsts: InjectedTxConsts;
         txIsMobile: boolean;
         invokeNative?: (nativeName: string, ...args: any[]) => void;

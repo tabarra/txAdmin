@@ -64,6 +64,11 @@ const topLevelMw = async (ctx: RawKoaCtx, next: Next) => {
             ctx.status = 413;
             ctx.body = { error: desc };
             if (consumePrintToken()) console.verbose.error(desc, methodName);
+        } else if (error.type === 'stream.not.readable') {
+            const desc = `Stream Not Readable: ${reqPath}`;
+            ctx.status = 422; //"Unprocessable Entity" kinda matches
+            ctx.body = { error: desc };
+            if (consumePrintToken()) console.verbose.warn(desc, methodName);
         } else if (error.message === 'route_timed_out') {
             const desc = `${prefix} Route timed out: ${reqPath}`;
             ctx.status = 408;

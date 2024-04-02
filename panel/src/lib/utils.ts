@@ -4,6 +4,9 @@ import humanizeDuration from '@/lib/humanizeDuration';
 import { io } from "socket.io-client";
 import type { HumanizerOptions } from "humanize-duration";
 
+//Statically caching the current year
+const currentYear = new Date().getFullYear();
+
 
 /**
  * clsx then tailwind-merge
@@ -69,10 +72,11 @@ export const tsToLocaleDate = (
 ) => {
     return new Date(ts * 1000)
         .toLocaleDateString(
-            navigator.language,
+            window?.nuiSystemLanguages ?? navigator.language,
             { dateStyle }
         );
 }
+
 
 /**
  * Translates a timestamp into a localized date time string
@@ -84,9 +88,28 @@ export const tsToLocaleDateTime = (
 ) => {
     return new Date(ts * 1000)
         .toLocaleString(
-            navigator.language,
+            window?.nuiSystemLanguages ?? navigator.language,
             { dateStyle, timeStyle }
         );
+}
+
+
+/**
+ * Converts a timestamp to a locale time string, considering the current year, shortest unambiguous as possible
+ */
+export const convertRowDateTime = (ts: number) => {
+    const date = new Date(ts * 1000);
+    const isAnotheryear = date.getFullYear() !== currentYear;
+    return date.toLocaleString(
+        window?.nuiSystemLanguages ?? navigator.language,
+        {
+            year: isAnotheryear ? 'numeric' : undefined,
+            month: isAnotheryear ? 'numeric' : 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        }
+    );
 }
 
 

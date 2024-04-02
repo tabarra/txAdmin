@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { AlertTriangleIcon, GavelIcon } from 'lucide-react';
-import PageCalloutRow from '@/components/PageCalloutRow';
+import PageCalloutRow, { PageCalloutProps } from '@/components/PageCalloutRow';
 import { HistorySearchBox, HistorySearchBoxReturnStateType } from './HistorySearchBox';
 import HistoryTable from './HistoryTable';
 import { HistoryStatsResp, HistoryTableSearchType } from '@shared/historyApiTypes';
@@ -48,8 +48,34 @@ export default function HistoryPage() {
         } satisfies HistorySearchBoxReturnStateType;
     }, []);
 
+    const calloutRowData = useMemo(() => {
+        const hasCalloutData = calloutData && !('error' in calloutData);
+        return [
+            {
+                label: 'Total Warns',
+                value: hasCalloutData ? calloutData.totalWarns : false,
+                icon: <AlertTriangleIcon />,
+            },
+            {
+                label: 'New Warns Last 7d',
+                value: hasCalloutData ? calloutData.warnsLast7d : false,
+                icon: <AlertTriangleIcon />,
+                prefix: '+'
+            },
+            {
+                label: 'Total Bans',
+                value: hasCalloutData ? calloutData.totalBans : false,
+                icon: <GavelIcon />,
+            },
+            {
+                label: 'New Bans Last 7d',
+                value: hasCalloutData ? calloutData.bansLast7d : false,
+                icon: <GavelIcon />,
+                prefix: '+'
+            }
+        ] satisfies PageCalloutProps[];
+    }, [calloutData]);
 
-    const hasCalloutData = calloutData && !('error' in calloutData);
     return (<div
         className='flex flex-col min-w-96 w-full'
         style={{ height: 'calc(100vh - 3.5rem - 1px - 2rem)' }}
@@ -60,34 +86,9 @@ export default function HistoryPage() {
             style={{ color: createRandomHslColor() }}
         >{JSON.stringify(searchBoxReturn)}</div> */}
 
-        <PageCalloutRowMemo
-            callouts={[
-                {
-                    label: 'Total Warns',
-                    value: hasCalloutData ? calloutData.totalWarns : false,
-                    icon: <AlertTriangleIcon />,
-                },
-                {
-                    label: 'New Warns Last 7d',
-                    value: hasCalloutData ? calloutData.warnsLast7d : false,
-                    icon: <AlertTriangleIcon />,
-                    prefix: '+'
-                },
-                {
-                    label: 'Total Bans',
-                    value: hasCalloutData ? calloutData.totalBans : false,
-                    icon: <GavelIcon />,
-                },
-                {
-                    label: 'New Bans Last 7d',
-                    value: hasCalloutData ? calloutData.bansLast7d : false,
-                    icon: <GavelIcon />,
-                    prefix: '+'
-                }
-            ]}
-        />
+        <PageCalloutRowMemo callouts={calloutRowData} />
 
-        {hasCalloutData ? (
+        {calloutData && !('error' in calloutData) ? (
             <HistorySearchBoxMemo
                 doSearch={doSearch}
                 initialState={initialState}

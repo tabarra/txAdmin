@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import TxAnchor from '@/components/TxAnchor';
-import { cn, msToShortDuration, tsToLocaleDateTime } from '@/lib/utils';
+import { cn, convertRowDateTime, msToShortDuration } from '@/lib/utils';
 import { TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2Icon, ShieldCheckIcon, ActivitySquareIcon, FileTextIcon } from 'lucide-react';
 import { useOpenPlayerModal } from "@/hooks/playerModal";
@@ -13,9 +13,6 @@ import { useBackendApi } from '@/hooks/fetch';
 /**
  * Player row
  */
-const convertRowDateTime = (ts: number) => {
-    return tsToLocaleDateTime(ts, 'medium', 'short');
-}
 type PlayerRowProps = {
     rowData: PlayersTablePlayerType;
     modalOpener: ReturnType<typeof useOpenPlayerModal>;
@@ -29,8 +26,10 @@ function PlayerRow({ rowData, modalOpener }: PlayerRowProps) {
     return (
         <TableRow onClick={openModal} className='cursor-pointer'>
             <TableCell className={'px-4 py-2 flex justify-between border-r'}>
-                <span className='text-ellipsis overflow-hidden line-clamp-1 break-all'>{rowData.displayName}</span>
-                <div className='inline-flex items-center gap-1'>
+                <span className='text-ellipsis overflow-hidden line-clamp-1 break-all'>
+                    {rowData.displayName}
+                </span>
+                <div className='hidden md:inline-flex items-center gap-1'>
                     <ActivitySquareIcon className={cn('h-5',
                         rowData.isOnline ? 'text-success-inline animate-pulse' : 'text-muted'
                     )} />
@@ -42,9 +41,9 @@ function PlayerRow({ rowData, modalOpener }: PlayerRowProps) {
                     )} />
                 </div>
             </TableCell>
-            <TableCell className='px-4 py-2 border-r'>{msToShortDuration(rowData.playTime * 60_000)}</TableCell>
-            <TableCell className='px-4 py-2 border-r'>{convertRowDateTime(rowData.tsJoined)}</TableCell>
-            <TableCell className='px-4 py-2'>{convertRowDateTime(rowData.tsLastConnection)}</TableCell>
+            <TableCell className='min-w-[8rem] px-4 py-2 border-r'>{msToShortDuration(rowData.playTime * 60_000)}</TableCell>
+            <TableCell className='min-w-[10rem] px-4 py-2 border-r'>{convertRowDateTime(rowData.tsJoined)}</TableCell>
+            <TableCell className='min-w-[10rem] px-4 py-2'>{convertRowDateTime(rowData.tsLastConnection)}</TableCell>
         </TableRow>
     )
 }
@@ -284,7 +283,7 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
                             />
                         </tr>
                     </TableHeader>
-                    <TableBody className={cn('whitespace-nowrap', isResetting && 'opacity-25')}>
+                    <TableBody className={cn(isResetting && 'opacity-25')}>
                         {TopRowPad}
                         {virtualItems.map((virtualItem) => {
                             const isLastRow = virtualItem.index > players.length - 1;
