@@ -25,7 +25,7 @@
 
 ## Chores + refactor
 - [x] update packages
-- [ ] remove pending DynamicNewBadge
+- [x] remove pending DynamicNewBadge
 - [ ] add new modal (page?) for adding legacy ban
     - could plan this in a way that fits some other configs/tools that is not exactly settings page?
 - [ ] Remove old live console legacy code

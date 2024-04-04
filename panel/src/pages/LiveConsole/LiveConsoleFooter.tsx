@@ -4,7 +4,6 @@ import { cn, openExternalLink } from "@/lib/utils";
 import { BookMarkedIcon, FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useAdminPerms } from '@/hooks/auth';
 import { useLiveConsoleHistory } from '@/hooks/liveConsole';
-import DynamicNewBadge from '@/components/DynamicNewBadge';
 
 
 type ConsoleFooterButtonProps = {
@@ -30,8 +29,6 @@ function ConsoleFooterButton({ icon: Icon, title, disabled, onClick }: ConsoleFo
             <span className="hidden 2xl:inline ml-1 align-middle">
                 {title}
             </span>
-            {/* FIXME: remove */}
-            {title === 'Saved' && <DynamicNewBadge featName='liveConsoleBookmarks' />}
         </div>
     )
 }
