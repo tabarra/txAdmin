@@ -1,43 +1,46 @@
-# TODO: v7.1.0 Release
-- [x] feat(core): implement ddos protection measures
-    - [x] throttle koa errors to prevent spam
-    - [x] reduce bodyparser limit - double check
-    - [x] fix the timer issue that keeps requests in memory for longer than needed
-    - [x] implement rps/heap watcher
-- [x] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
-- [x] fix(core): game admin reauth in every cfx.re login
-- [x] fix(core/playerlistmanager): dont wipe license cache on restart
-    - core/components/PlayerlistManager/index.ts -> handleServerStop
-    - repro: connect + disconnect, restart twice, and the id wont be on the list anymore
-- [x] merge prs (7 merged, 4 closed)
-- [x] follow up recipe maintainers regarding fxmanifest description
-- [x] live console bookmarks
-- [x] fix(terminal): fixed out-of-sync search on multiline write
-- assorted changes
-    - [x] add snapshot and gc to advanced actions
-    - [x] pressing enter on the license input text in setup page refreshes the page
-    - [x] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
-- [x] NEW PAGE: Players
-    - [X] make sure it is not spamming search requests at the start (remove debug print on the route)
-    - [x] show online/notes/admin
-    - [x] test everything
-    - [x] ~~Write `estimateSize` function to calculate size dynamically?~~ made it no-wrap
-    - [x] code the hotkey
-    - [x] temporarily, dropdown redirects:
-        - Legacy Ban -> old players page
-        - prune players/hwids (from master actions -> clean database)
-- [x] open master actions in the correct tab
-- [x] NEW PAGE: History
-- [x] Create modal for history actions with full details
-    - [x] finish up modal info tab
-    - [x] try to add player name to title
-    - [x] fix modal padding (good enough)
-    - [x] modify HistoryTab -> HistoryItem to open the action modal on item click, remove revoke/perms logic
-- [x] fix(console): remove extra line break on term.write
-- [x] Migrate `/database/` routes to `/history` (update panel, nui, web!)
-- [x] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
-- [x] fix disallowed intents message
-- [x] fix(console): implemented hacky patch to rtl issue
+# TODO: v7.2.0 Release
+
+## v7.1.0 bugs
+- [ ] "Search by Player IDs" filter on players page is overflowing
+- [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
+- [ ] history action modal needs py-1 because of the reason field outline
+
+## Highlights
+- [ ] Anonymous admin actions (issue #893)
+    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
+- [ ] NEW PAGE: Dashboard
+    - [ ] new performance chart
+    - [ ] number callouts from legacy players page
+    - [ ] warning for dev builds of txadmin
+    - [ ] warning for top servers
+- [ ] MAYBE: bring back hw stats to stats card
+    - put them in a progress bar, on hover/click open popover with detailed info
+    - other than cpu & memory, add server v8 heap - or not worth bringign it back at all
+
+## Small feat
+- [ ] update wouter and add search/filters state to URL of the players/history pages 
+- [ ] add txadmin v8 heap to diagnostics
+- [ ] add fxserver version to txDiagnostics
+- [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
+
+## Chores + refactor
+- [x] update packages
+- [ ] remove pending DynamicNewBadge
+- [ ] add new modal (page?) for adding legacy ban
+    - could plan this in a way that fits some other configs/tools that is not exactly settings page?
+- [ ] Remove old live console legacy code
+- [ ] Remove players page legacy code
+- [ ] fix remaining imgur links
+- [ ] build: generate fxmanifest files list dynamically
+- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+- [ ] update docs on development?
+- [ ] redact discord api webhook urls from reports
+- [ ] fix the eslint config + tailwind sort
+
+
+
+
+
 
 
 ## Client game print issue
@@ -67,26 +70,9 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 
 =======================================================================
 
-# TODO: v7.2+
-- [ ] update wouter and add search/filters state to URL of the players/history pages 
-- [ ] Remove old live console legacy code
-- [ ] fix the tsc build
-
+# TODO: v7.3+
 - [ ] NEW PAGE: Whitelist
-- [ ] NEW PAGE: Dashboard
-    - [ ] new performance chart
-    - [ ] number callouts from legacy players page
-    - [ ] warning for dev builds of txadmin
-    - [ ] warning for top servers
-- [ ] NEW PAGEs: Console log + Action log
-
-- [ ] add txadmin v8 heap to diagnostics
 - [ ] `2xl:mx-8` for all pages? (change on MainShell)
-- [ ] fix remaining imgur links
-- [ ] build: generate fxmanifest files list dynamically
-- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] update docs on development?
-
 - [ ] console nav button to jump to server start or errors?
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
@@ -241,9 +227,6 @@ Admin manager:
     - might be worth to debounce the search
     - add tags to the players page search box (separate dropdown?)
 
-- [ ] Anonymous admin actions (issue #893)
-    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
-
 - [ ] create new "Remove Player Data" permission which would allow to delete bans/warns, players and player identifiers
     - Ref: https://github.com/tabarra/txAdmin/issues/751
 
@@ -252,15 +235,10 @@ Admin manager:
 
 - [ ] write some automated tests for the auth logic and middlewares
     - https://youtu.be/bzXtYVH4WOg
-- [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
-- [ ] fix the eslint config
-- [ ] add fxserver version to txDiagnostics
+
 - [ ] slide gesture to open/close the sidebars on mobile
 - [ ] new restart schedule in status card
-
 - [ ] ask framework owners to use `txAdmin-locale`
-
-- [ ] redact discord api webhook urls from reports
 - [ ] xxxxxx
 
 

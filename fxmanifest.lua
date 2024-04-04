@@ -5,7 +5,7 @@
 author 'Tabarra'
 description 'The official FiveM/RedM server web/in-game management platform.'
 repository 'https://github.com/tabarra/txAdmin'
-version '7.1.0'
+version '7.2.0-tbd'
 ui_label 'txAdmin'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
