@@ -17,6 +17,7 @@ import InlineCode from '@/components/InlineCode';
 import { PlayersTableFiltersType, PlayersTableSearchType } from "@shared/playerApiTypes";
 import { useEventListener } from "usehooks-ts";
 import { Link } from "wouter";
+import { defaultSearch } from "./PlayersPageConsts";
 
 
 /**
@@ -52,9 +53,7 @@ const availableFilters = [
     { label: 'Has Profile Notes', value: 'hasNote' },
 ] as const;
 
-//FIXME: this doesn't require exporting, but HMR doesn't work without it
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, react-refresh/only-export-components
-export const throttleFunc = throttle(1250, (func: any) => {
+const throttleFunc = throttle(1250, (func: any) => {
     func();
 }, { noLeading: true });
 
@@ -77,13 +76,14 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
     const inputRef = useRef<HTMLInputElement>(null);
     const [isSearchTypeDropdownOpen, setSearchTypeDropdownOpen] = useState(false);
     const [isFilterDropdownOpen, setFilterDropdownOpen] = useState(false);
-    const [currSearchType, setCurrSearchType] = useState<string>(initialState.search?.type || 'playerName');
+    const [currSearchType, setCurrSearchType] = useState<string>(initialState.search?.type || defaultSearch.type);
     const [selectedFilters, setSelectedFilters] = useState<string[]>(initialState.filters);
-    const [hasSearchText, setHasSearchText] = useState(!!initialState.search?.value);
+    const [searchText, setSearchText] = useState(initialState.search?.value || defaultSearch.value);
+    const prevSearch = useRef(searchText);
+    const hasSearchText = !!searchText;
 
     const updateSearch = () => {
-        if (!inputRef.current) return;
-        const searchValue = inputRef.current.value.trim();
+        const searchValue = searchText.trim();
         if (searchValue.length) {
             doSearch({ value: searchValue, type: currSearchType }, selectedFilters);
         } else {
@@ -91,10 +91,31 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
         }
     }
 
-    //Call onSearch when params change
+    //Call onSearch when params change or when search is cleared
+    //but debounce on text changes
     useEffect(() => {
-        updateSearch();
-    }, [currSearchType, selectedFilters]);
+        if (prevSearch.current == searchText || searchText == '') { // If cleared or the search string is the same
+            updateSearch();
+        } else {
+            throttleFunc(updateSearch);
+        }
+    }, [searchText, currSearchType, selectedFilters]);
+    useEffect(() => {prevSearch.current = searchText},[searchText]); // This needs to be after the updateSearch useEffect
+
+    // Update search params
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('q');
+        url.searchParams.delete('type');
+        url.searchParams.delete('filters');
+
+        if (searchText) url.searchParams.set('q', searchText);
+        if (currSearchType != defaultSearch.type) url.searchParams.set('type', currSearchType);
+        if (selectedFilters.length) url.searchParams.set('filters', selectedFilters.join(','));
+        
+        
+        window.history.replaceState(null, "", url);
+    }, [searchText, currSearchType, selectedFilters]);
 
     //Input handlers
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -102,20 +123,14 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
             throttleFunc.cancel({ upcomingOnly: true });
             updateSearch();
         } else if (e.key === 'Escape') {
-            inputRef.current!.value = '';
-            throttleFunc(updateSearch);
-            setHasSearchText(false);
-        } else {
-            throttleFunc(updateSearch);
-            setHasSearchText(true);
+            throttleFunc.cancel({ upcomingOnly: true });
+            setSearchText('');
         }
     };
 
     const clearSearchBtn = () => {
-        inputRef.current!.value = '';
         throttleFunc.cancel({ upcomingOnly: true });
-        updateSearch();
-        setHasSearchText(false);
+        setSearchText('');
     };
 
     const filterSelectChange = (filter: string, checked: boolean) => {
@@ -150,6 +165,8 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                         autoCapitalize='off'
                         autoCorrect='off'
                         ref={inputRef}
+                        value={searchText}
+                        onChange={(evt) => setSearchText(evt.target.value)}
                         placeholder={selectedSearchType.placeholder}
                         onKeyDown={handleInputKeyDown}
                     />

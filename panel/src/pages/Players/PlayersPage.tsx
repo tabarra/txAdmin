@@ -5,6 +5,7 @@ import { PlayerSearchBox, PlayersSearchBoxReturnStateType } from './PlayersSearc
 import PlayersTable from './PlayersTable';
 import { PlayersStatsResp, PlayersTableFiltersType, PlayersTableSearchType } from '@shared/playerApiTypes';
 import { useBackendApi } from '@/hooks/fetch';
+import { defaultFilters, defaultSearch } from './PlayersPageConsts';
 
 
 //Memoized components
@@ -35,10 +36,21 @@ export default function PlayersPage() {
     const doSearch = useCallback((search: PlayersTableSearchType, filters: PlayersTableFiltersType) => {
         setSearchBoxReturn({ search, filters });
     }, []);
+
+    
     const initialState = useMemo(() => {
+        const url = new URL(window.location.href);
+        const query = url.searchParams.get('q');
+        const type = url.searchParams.get('type');
+        const filters = url.searchParams.get('filters');
+        const search: PlayersTableSearchType = {
+            value: query ?? defaultSearch.value,
+            type: type ?? defaultSearch.type,
+        }
+
         return {
-            search: null,
-            filters: [],
+            search: (query || type) ? search : null,
+            filters: filters ? filters.split(',') : defaultFilters,
         } satisfies PlayersSearchBoxReturnStateType;
     }, []);
 
