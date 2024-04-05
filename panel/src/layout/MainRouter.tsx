@@ -3,7 +3,7 @@ import { Route as WouterRoute, Switch } from "wouter";
 import { PageErrorFallback } from "@/components/ErrorFallback";
 import { useAtomValue, useSetAtom } from "jotai";
 import { contentRefreshKeyAtom, pageErrorStatusAtom, useSetPageTitle } from "@/hooks/pages";
-import { navigate as setLocation } from 'wouter/use-location';
+import { useLocation } from 'wouter';
 
 import Iframe from "@/pages/Iframe";
 import NotFound from "@/pages/NotFound";
@@ -141,6 +141,7 @@ function Route(props: RouteType) {
 
 
 export default function MainRouter() {
+    const [, setLocation] = useLocation();
     const setPageErrorStatus = useSetAtom(pageErrorStatusAtom);
     const contentRefreshKey = useAtomValue(contentRefreshKeyAtom);
 

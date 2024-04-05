@@ -13,7 +13,7 @@ import AccountDialog from '@/components/AccountDialog';
 import { useOpenAccountModal } from '@/hooks/dialogs';
 import PlayerModal from './PlayerModal/PlayerModal';
 import { useOpenPlayerModal } from '@/hooks/playerModal';
-import { navigate as setLocation } from 'wouter/use-location';
+import { useLocation } from 'wouter';
 import MainSocket from './MainSocket';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useToggleTheme } from '@/hooks/useTheme';
@@ -23,6 +23,7 @@ import ActionModal from './ActionModal/ActionModal';
 
 
 export default function MainShell() {
+    const [, setLocation] = useLocation();
     const expireSession = useExpireAuthData();
     const openAccountModal = useOpenAccountModal();
     const openPlayerModal = useOpenPlayerModal();

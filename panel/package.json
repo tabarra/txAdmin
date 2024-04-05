@@ -54,7 +54,7 @@
     "tailwindcss-animate": "^1.0.7",
     "throttle-debounce": "^5.0.0",
     "usehooks-ts": "^2.9.2",
-    "wouter": "^2.12.1"
+    "wouter": "^3.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
