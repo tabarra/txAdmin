@@ -25,6 +25,7 @@ import {
     SelectValue
 } from "@/components/ui/select"
 import { HistoryTableSearchType } from "@shared/historyApiTypes";
+import { SEARCH_ANY_STRING, defaultSearch } from "./HistoryPageConsts";
 
 
 /**
@@ -51,11 +52,8 @@ const availableSearchTypes = [
     },
 ] as const;
 
-const SEARCH_ANY_STRING = '!any';
 
-//FIXME: this doesn't require exporting, but HMR doesn't work without it
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, react-refresh/only-export-components
-export const throttleFunc = throttle(1250, (func: any) => {
+const throttleFunc = throttle(1250, (func: any) => {
     func();
 }, { noLeading: true });
 
@@ -83,14 +81,15 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
     const { authData } = useAuth();
     const inputRef = useRef<HTMLInputElement>(null);
     const [isSearchTypeDropdownOpen, setSearchTypeDropdownOpen] = useState(false);
-    const [currSearchType, setCurrSearchType] = useState<string>(initialState.search?.type || 'actionId');
-    const [hasSearchText, setHasSearchText] = useState(!!initialState.search?.value);
+    const [currSearchType, setCurrSearchType] = useState<string>(initialState.search?.type || defaultSearch.type);
     const [typeFilter, setTypeFilter] = useState(initialState.filterbyType ?? SEARCH_ANY_STRING);
     const [adminNameFilter, setAdminNameFilter] = useState(initialState.filterbyAdmin ?? SEARCH_ANY_STRING);
+    const [searchText, setSearchText] = useState(initialState.search?.value || defaultSearch.value);
+    const prevSearch = useRef(searchText);
+    const hasSearchText = !!searchText;
 
     const updateSearch = () => {
-        if (!inputRef.current) return;
-        const searchValue = inputRef.current.value.trim();
+        const searchValue = searchText.trim();
         const effectiveTypeFilter = typeFilter !== SEARCH_ANY_STRING ? typeFilter : undefined;
         const effectiveAdminNameFilter = adminNameFilter !== SEARCH_ANY_STRING ? adminNameFilter : undefined;
         if (searchValue.length) {
@@ -108,10 +107,32 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
         }
     }
 
-    //Call onSearch when params change
+    //Call onSearch when params change or when search is cleared
+    //but debounce on text changes
     useEffect(() => {
-        updateSearch();
-    }, [currSearchType, typeFilter, adminNameFilter]);
+        if (prevSearch.current == searchText || searchText == '') { // If cleared or the search string is the same
+            updateSearch();
+        } else {
+            throttleFunc(updateSearch);
+        }
+    }, [searchText, currSearchType, typeFilter, adminNameFilter]);
+    useEffect(() => {prevSearch.current = searchText},[searchText]); // This needs to be after the updateSearch useEffect
+
+    // Update search params
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('q');
+        url.searchParams.delete('type');
+        url.searchParams.delete('actionType');
+        url.searchParams.delete('byAdmin');
+
+        if (searchText) url.searchParams.set('q', searchText);
+        if (currSearchType && currSearchType != defaultSearch.type) url.searchParams.set('type', currSearchType);
+        if (typeFilter && typeFilter != SEARCH_ANY_STRING) url.searchParams.set('actionType', typeFilter);
+        if (adminNameFilter && adminNameFilter != SEARCH_ANY_STRING) url.searchParams.set('byAdmin', adminNameFilter);
+        
+        window.history.replaceState(null, "", url);
+    }, [searchText, currSearchType, typeFilter, adminNameFilter]);
 
     //Input handlers
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -119,20 +140,14 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
             throttleFunc.cancel({ upcomingOnly: true });
             updateSearch();
         } else if (e.key === 'Escape') {
-            inputRef.current!.value = '';
+            setSearchText('');
             throttleFunc(updateSearch);
-            setHasSearchText(false);
-        } else {
-            throttleFunc(updateSearch);
-            setHasSearchText(true);
         }
     };
 
     const clearSearchBtn = () => {
-        inputRef.current!.value = '';
+        setSearchText('');
         throttleFunc.cancel({ upcomingOnly: true });
-        updateSearch();
-        setHasSearchText(false);
     };
 
     //Search hotkey
@@ -163,6 +178,8 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
                         autoCapitalize='off'
                         autoCorrect='off'
                         ref={inputRef}
+                        value={searchText}
+                        onChange={(evt) => setSearchText(evt.target.value)}
                         placeholder={selectedSearchType.placeholder}
                         onKeyDown={handleInputKeyDown}
                     />

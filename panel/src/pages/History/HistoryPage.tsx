@@ -6,6 +6,7 @@ import HistoryTable from './HistoryTable';
 import { HistoryStatsResp, HistoryTableSearchType } from '@shared/historyApiTypes';
 import { useBackendApi } from '@/hooks/fetch';
 import { createRandomHslColor } from '@/lib/utils';
+import { defaultSearch } from './HistoryPageConsts';
 
 
 //Memoized components
@@ -41,10 +42,20 @@ export default function HistoryPage() {
         setSearchBoxReturn({ search, filterbyType, filterbyAdmin });
     }, []);
     const initialState = useMemo(() => {
+        const url = new URL(window.location.href);
+        const query = url.searchParams.get('q');
+        const type = url.searchParams.get('type');
+        const actionType = url.searchParams.get('actionType');
+        const admin = url.searchParams.get('byAdmin');
+        const search: HistoryTableSearchType = {
+            value: query ?? defaultSearch.value,
+            type: type ?? defaultSearch.type,
+        }
+
         return {
-            search: null,
-            filterbyType: undefined,
-            filterbyAdmin: undefined,
+            search: (query || type) ? search : null,
+            filterbyType: actionType ?? undefined,
+            filterbyAdmin: admin ?? undefined,
         } satisfies HistorySearchBoxReturnStateType;
     }, []);
 
