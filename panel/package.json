@@ -10,7 +10,8 @@
     "build": "vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "license_report": "npx license-report > ../license_report/panel.html"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.0.17",

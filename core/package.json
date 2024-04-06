@@ -10,7 +10,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint ./**",
     "lint:count": "eslint ./** -f ../scripts/lint-formatter.js",
-    "lint:fix": "eslint ./** --fix"
+    "lint:fix": "eslint ./** --fix",
+    "license_report": "npx license-report > ../license_report/core.html"
   },
   "keywords": [],
   "author": "André Tabarra",

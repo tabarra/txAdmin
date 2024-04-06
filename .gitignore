@@ -2,6 +2,7 @@
 db/*
 cache/*
 dist/*
+license_report/*
 tmp_core_tsc/*
 *.ignore.*
 /start_*.bat

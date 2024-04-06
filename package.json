@@ -16,7 +16,8 @@
     "test": "bash ./scripts/test_build.sh",
     "typecheck": "npm run typecheck --workspaces",
     "locale:rebase": "node scripts/locale-utils.js rebase",
-    "locale:check": "node scripts/locale-utils.js check --color"
+    "locale:check": "node scripts/locale-utils.js check --color",
+    "license_report": "rimraf license_report && mkdir license_report && npm run license_report --workspaces"
   },
   "repository": {
     "type": "git",

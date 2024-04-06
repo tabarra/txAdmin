@@ -1,0 +1,11 @@
+{
+    "output": "html",
+    "fields": [
+        "name",
+        "licenseType",
+        "link",
+        "installedVersion",
+        "definedVersion",
+        "author"
+    ]
+}
