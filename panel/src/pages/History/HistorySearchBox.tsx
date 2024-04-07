@@ -140,8 +140,8 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
             throttleFunc.cancel({ upcomingOnly: true });
             updateSearch();
         } else if (e.key === 'Escape') {
+            throttleFunc.cancel({ upcomingOnly: true });
             setSearchText('');
-            throttleFunc(updateSearch);
         }
     };
 
