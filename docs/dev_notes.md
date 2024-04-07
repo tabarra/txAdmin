@@ -1,13 +1,20 @@
 # TODO: v7.2.0 Release
+- [x] chore: update most packages
+- [x] chore: remove pending DynamicNewBadge
+- [x] chore: added dependencies license report generator
+- [x] tweak: improved invisible characters detection on player names
+- [x] chore: replaced coreui bundled file
 
 ## v7.1.0 bugs
 - [ ] "Search by Player IDs" filter on players page is overflowing
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
+    - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
 - [ ] history action modal needs py-1 because of the reason field outline
 
 ## Highlights
 - [ ] Anonymous admin actions (issue #893)
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
+- [ ] pre-configured ban/warn reasons with new perm to lock admins to only use them?
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page
@@ -28,6 +35,7 @@
 - [x] remove pending DynamicNewBadge
 - [ ] add new modal (page?) for adding legacy ban
     - could plan this in a way that fits some other configs/tools that is not exactly settings page?
+    - some servers mightt be doing multiple ans manually, and having a modal that closes might be too annoying
 - [ ] Remove old live console legacy code
 - [ ] Remove players page legacy code
 - [ ] fix remaining imgur links
@@ -37,8 +45,11 @@
 - [ ] redact discord api webhook urls from reports
 - [ ] fix the eslint config + tailwind sort
 
+## Quick notes:
 
+In this case, if the player modal showed clearly "this player is banned until: xxxxxxx" it would probably have prevented this issue, what do you think?
 
+player name history? (not searchable)
 
 
 
@@ -49,6 +60,33 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 - [ ] after menu client messages rework, add lua54
 
 =======================================================================
+
+
+# React Migration Roadmap
+- [ ] Setup
+- [ ] Deployer
+
+- [x] Players
+- [x] History
+- [ ] Whitelist
+- [ ] Admins
+- [ ] Settings
+- [ ] Maste Actions
+- [ ] Diagnostics (TODO:)
+- [ ] System Logs (TODO:)
+
+- [ ] Dashboard (TODO:)
+- [x] Live Console
+- [ ] Resources
+- [ ] Server Log
+- [ ] CFG Editor
+- [ ] Advanced (TODO:)
+
+
+
+
+
+
 
 ### Action Modal:
 - feat requests:
@@ -79,27 +117,6 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 
 
-=======================================================================
-
-### v7 Menus:
-- Server:
-    - Dashboard
-    - Live Console
-    - Resources
-    - Server Log
-    - CFG Editor
-    - Advanced
-- Global:
-    - Players
-    - History
-    - Whitelist
-    - Admins
-    - Settings
-    - System \/
-        - Master Actions
-        - Diagnostics
-        - Console Log
-        - Action Log
 =======================================================================
 
 This worked, no time to check which. 

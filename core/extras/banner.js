@@ -22,7 +22,7 @@ const getIPs = async () => {
 
         // op.value.query
         // got(`http://ip-api.com/json/`, reqOptions).json(),
-        // got(`https://extreme-ip-lookup.com/json/`, reqOptions).json(),
+        // got(`https://extreme-ip-lookup.com/json/`, reqOptions).json(), //requires API key
     ]);
     for (let i = 0; i < allOps.length; i++) {
         const op = allOps[i];
