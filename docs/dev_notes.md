@@ -12,17 +12,13 @@
 - [ ] history action modal needs py-1 because of the reason field outline
 
 ## Highlights
-- [ ] Anonymous admin actions (issue #893)
-    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
 - [ ] pre-configured ban/warn reasons with new perm to lock admins to only use them?
+    - [ ] FIXME: check light mode
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
-- [ ] MAYBE: bring back hw stats to stats card
-    - put them in a progress bar, on hover/click open popover with detailed info
-    - other than cpu & memory, add server v8 heap - or not worth bringign it back at all
 
 ## Small feat
 - [ ] update wouter and add search/filters state to URL of the players/history pages 
@@ -109,6 +105,11 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 =======================================================================
 
 # TODO: v7.3+
+- [ ] Anonymous admin actions (issue #893)
+    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
+- [ ] MAYBE: bring back hw stats to stats card
+    - put them in a progress bar, on hover/click open popover with detailed info
+    - other than cpu & memory, add server v8 heap - or not worth bringign it back at all
 - [ ] NEW PAGE: Whitelist
 - [ ] `2xl:mx-8` for all pages? (change on MainShell)
 - [ ] console nav button to jump to server start or errors?

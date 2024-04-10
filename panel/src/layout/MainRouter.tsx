@@ -11,6 +11,7 @@ import TestingPage from "@/pages/TestingPage/TestingPage";
 import LiveConsole from "@/pages/LiveConsole/LiveConsole";
 import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
+import PresetReasons from "@/pages/PresetReasons";
 
 
 type RouteType = {
@@ -51,6 +52,11 @@ const allRoutes: RouteType[] = [
         path: '/settings',
         title: 'Settings',
         children: <Iframe legacyUrl="settings" />
+    },
+    {
+        path: '/settings/preset-reasons',
+        title: 'Preset Reasons',
+        children: <PresetReasons />
     },
     {
         path: '/system/master-actions',
