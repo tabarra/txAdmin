@@ -106,31 +106,6 @@
     }
 </style>
 
-<!-- Title & outdated message: -->
-
-<% if (discordEvent) { %>
-    <br>
-    <div class="row justify-content-md-center">
-        <div class="col-md-6 text-center">
-            <div class="alert <%= (discordEvent.isLive ? 'alert-success border-success' : 'alert-warning border-warning') %> event-live-glow" role="alert">
-                <h5 style="margin-bottom: 0px;">
-                    <svg class="alert-title-icon" width="22" height="22">
-                        <use href="img/coreui_icons.svg#discord-event"></use>
-                    </svg>
-                    <%= (discordEvent.isLive ? 'The Discord Live Event started' : 'A Discord Live Event will start in') %>:
-                    <span class="event-time" title="<%= (new Date(discordEvent.timestamp)).toString() %>"><%= discordEvent.time %></span>
-                </h5>
-                <i><%= discordEvent.description %></i>
-                <div class="event-footer">
-                    Join now:
-                    <a href="<%= discordEvent.joinLink %>" target="_blank" >
-                        <img src="<%= discordEvent.imgSrc %>"></img>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-<% } %>
 
 <!-- Chart stuff -->
 <div class="row justify-content-center">
