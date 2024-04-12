@@ -13,7 +13,13 @@
 
 ## Highlights
 - [ ] pre-configured ban/warn reasons with new perm to lock admins to only use them?
-    - [ ] FIXME: check light mode
+    - [ ] apply new ban scheme to the web player modal
+    - [ ] apply new ban scheme to the NUI
+    - [ ] maybe this should be named Ban Templates?
+    - [ ] checklist:
+        - [ ] light mode
+        - [ ] multiline
+        - [ ] mobile
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page

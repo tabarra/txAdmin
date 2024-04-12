@@ -11,7 +11,7 @@ import TestingPage from "@/pages/TestingPage/TestingPage";
 import LiveConsole from "@/pages/LiveConsole/LiveConsole";
 import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
-import PresetReasons from "@/pages/PresetReasons";
+import PresetReasons from "@/pages/PresetReasons/PresetReasonsPage";
 
 
 type RouteType = {

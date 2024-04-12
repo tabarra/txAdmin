@@ -49,3 +49,9 @@ export type PlayerIdsObjectType = {
     steam: string | null;
     xbl: string | null;
 };
+
+//Used in the player modal, preset ban reasons, and legacy bans
+export type BanDurationType = 'permanent' | {
+    value: number;
+    unit: 'hours' | 'days' | 'weeks' | 'months';
+};

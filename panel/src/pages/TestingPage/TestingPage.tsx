@@ -7,6 +7,7 @@ import TmpSocket from "./TmpSocket";
 import TmpToasts from "./TmpToasts";
 import TmpApi from "./TmpApi";
 import TmpFiller from "./TmpFiller";
+import PresetReasons from "../PresetReasons/PresetReasonsPage";
 
 
 export default function TestingPage() {
@@ -22,6 +23,7 @@ export default function TestingPage() {
         {/* <TmpWarningBarState /> */}
         {/* <TmpAuthState /> */}
         {/* <TmpMarkdown /> */}
-        <TmpColors />
+        {/* <TmpColors /> */}
+        <PresetReasons />
     </div>;
 }
