@@ -10,6 +10,8 @@
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
 - [ ] history action modal needs py-1 because of the reason field outline
+- [ ] make the new page searches case insensitive (history->reason and maybe more)
+- [ ] remove all "blur" as that is slow as hell for browsers with hw acceleration disabled
 
 ## Highlights
 - [ ] pre-configured ban/warn reasons with new perm to lock admins to only use them?
@@ -53,7 +55,9 @@ In this case, if the player modal showed clearly "this player is banned until: x
 
 player name history? (not searchable)
 
+web/main/playerList.ejs ainda é usado? ele tá segurando o cil-magnifying-glass * tem mais coisa
 
+break down the discord /info command in /info and /admininfo?
 
 
 ## Client game print issue
@@ -250,6 +254,7 @@ Admin manager:
     - when filterString is present, disable the filter/sort drowdown, as it will show all results sorted by fuse.js
     - might be worth to debounce the search
     - add tags to the players page search box (separate dropdown?)
+    - maybe https://shadcnui-expansions.typeart.cc/docs/multiple-selector
 
 - [ ] create new "Remove Player Data" permission which would allow to delete bans/warns, players and player identifiers
     - Ref: https://github.com/tabarra/txAdmin/issues/751
@@ -307,6 +312,10 @@ scheduleNextExecution();
 https://www.npmjs.com/search?q=timer
 https://www.npmjs.com/search?ranking=popularity&q=scheduler
 https://www.npmjs.com/package/node-schedule
+
+> user report
+> canceled 18:00 for a 20:00 restart and it wont let me change to 20:00
+problema: as vezes querem adiar um restart das settings, mas não é possível
 
 
 

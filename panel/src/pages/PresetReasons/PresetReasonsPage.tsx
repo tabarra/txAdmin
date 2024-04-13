@@ -96,10 +96,33 @@ export default function PresetReasons() {
         setIsDialogOpen(true);
     }
 
+
+    //Status display
+    const isFetching = false;
+    // const loadError = true;
+    const loadError = 'Lorem ipsum dolor sit amet consectetur adipiscing.';
+    const saveSuccessfull = false;
+    let statusNode: React.ReactNode;
+    if (isFetching) {
+        statusNode = <span className="text-success-inline animate-pulse">
+            Saving...
+        </span>
+    } else if (loadError) {
+        statusNode = <div className="inline-flex flex-wrap gap-1">
+            <span className='text-destructive-inline'>Error saving: {loadError}</span><br />
+            <button className='underline hover:text-accent' onClick={() => { }}>Try again?</button>
+        </div>
+    } else if (saveSuccessfull) {
+        statusNode = <span className="text-success-inline">
+            Saved.
+        </span>
+    }
+
+    //Rendering
     const canEdit = hasPerm('settings.write');
     return <>
-        <div className="space-y-4 w-fullx w-[1000px] mx-auto">
-            <div>
+        <div className="space-y-4 w-fullx w-[1000px] DEBUG mx-auto">
+            <div className="px-2 md:px-0">
                 <h1 className="text-3xl mb-2">Preset Ban Reasons</h1>
                 <p>
                     Here you can configure ban reasons and durations that will appear as dropdown options when banning a player. <br />
@@ -116,18 +139,24 @@ export default function PresetReasons() {
                     )}
                 </p>
             </div>
-            <ol className="space-y-2 border p-2 rounded-lg">
-                {savedReasons.map((item) => (
-                    <PresetReasonListItem
-                        key={item.id}
-                        {...item}
-                        onEdit={handleEditItem}
-                        onRemove={handleRemoveItem}
-                        disabled={!canEdit}
-                    />
-                ))}
-                <PresetReasonListAddButton onClick={handleAddNewItem} disabled={!canEdit} />
-            </ol>
+            <div className="space-y-2">
+                <div className="flex flex-wrap justify-between text-muted-foreground px-2 md:px-0">
+                    <span className="shrink-0">Configured reasons: {savedReasons.length}</span>
+                    {statusNode}
+                </div>
+                <ol className="space-y-2 border p-2 rounded-lg">
+                    {savedReasons.map((item) => (
+                        <PresetReasonListItem
+                            key={item.id}
+                            {...item}
+                            onEdit={handleEditItem}
+                            onRemove={handleRemoveItem}
+                            disabled={!canEdit}
+                        />
+                    ))}
+                    <PresetReasonListAddButton onClick={handleAddNewItem} disabled={!canEdit} />
+                </ol>
+            </div>
         </div>
         <PresetReasonInputDialog
             key={reasonInputDialogData?.id}
