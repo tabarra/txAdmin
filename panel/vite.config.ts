@@ -1,3 +1,4 @@
+import { visualizer } from "rollup-plugin-visualizer";
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
@@ -35,7 +36,11 @@ const baseConfig = {
         // tsconfigPaths({
         //     projects: ['./', '../shared']
         // }),
-        react()
+        react(),
+        visualizer({
+            // template: 'flamegraph',
+            filename: 'bundle_size_report.html',
+        }),
     ],
     resolve: {
         alias: {

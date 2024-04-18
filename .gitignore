@@ -7,6 +7,7 @@ tmp_core_tsc/*
 *.ignore.*
 /start_*.bat
 monitor-*.zip
+bundle_size_report.html
 
 # IDE Specific
 .idea

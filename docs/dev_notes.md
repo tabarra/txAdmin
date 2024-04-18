@@ -12,6 +12,7 @@
 - [ ] history action modal needs py-1 because of the reason field outline
 - [ ] make the new page searches case insensitive (history->reason and maybe more)
 - [ ] remove all "blur" as that is slow as hell for browsers with hw acceleration disabled
+- [ ] unrenderable legacy 404 page
 
 ## Highlights
 - [ ] pre-configured ban/warn reasons with new perm to lock admins to only use them?
@@ -37,6 +38,7 @@
 ## Chores + refactor
 - [x] update packages
 - [x] remove pending DynamicNewBadge
+- [ ] rename to de-capitalize components files that have multiple exports 
 - [ ] add new modal (page?) for adding legacy ban
     - could plan this in a way that fits some other configs/tools that is not exactly settings page?
     - some servers mightt be doing multiple ans manually, and having a modal that closes might be too annoying
@@ -58,6 +60,33 @@ player name history? (not searchable)
 web/main/playerList.ejs ainda é usado? ele tá segurando o cil-magnifying-glass * tem mais coisa
 
 break down the discord /info command in /info and /admininfo?
+
+
+
+# @formkit/auto-animate
+> 2.9kb
+só animação automática
+
+# framer-motion
+> 43.6kb
+animações, reorder, trigger area
+
+# @dnd-kit/core + @dnd-kit/sortable
+> 13.9kb + 3.7kb
+não sei se faz animação
+
+# @hello-pangea/dnd
+> 30.3kb - dependencias como redux
+its.. ok
+
+
+
+1,151 kb - no page
+1,152 kb - page
+
+1,261 kb - framer
+1,198 kb - dnd-kit
+1,206 kb - dnd-kit + auto-animate
 
 
 ## Client game print issue
