@@ -21,18 +21,19 @@ import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 type DndSortableItemProps = {
     id: string;
-    children: React.ReactNode;
     disabled?: boolean;
+    className?: string;
+    children: React.ReactNode;
 }
 
-export function DndSortableItem({ id, disabled, children }: DndSortableItemProps) {
+export function DndSortableItem({ id, disabled, className, children }: DndSortableItemProps) {
     const {
         attributes,
         listeners,
         setNodeRef,
         transform,
         transition,
-    } = useSortable({ id });
+    } = useSortable({ id, disabled });
 
     attributes.role = 'listitem'; //Override role due to having a drag handle
     const style: React.CSSProperties = {
@@ -43,14 +44,19 @@ export function DndSortableItem({ id, disabled, children }: DndSortableItemProps
     return (
         <li
             ref={setNodeRef} style={style} {...attributes}
-            className="bg-card rounded-lg border px-2 py-3 flex gap-3 relative aria-pressed:z-50 aria-pressed:opacity-85"
+            className={cn(
+                "bg-card rounded-lg border px-2 py-3 flex gap-3 relative aria-pressed:z-50 aria-pressed:opacity-85",
+                className
+            )}
         >
             <div
                 {...listeners}
                 title="Drag to reorder"
                 className={cn(
-                    "text-muted-foreground cursor-grab hover:text-primary hover:scale-110",
-                    disabled ? "cursor-not-allowed" : ""
+                    "text-muted-foreground",
+                    disabled
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-grab hover:text-primary hover:scale-110"
                 )}
             >
                 <GripVerticalIcon className="size-6" />

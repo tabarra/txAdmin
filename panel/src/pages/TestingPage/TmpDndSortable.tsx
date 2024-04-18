@@ -8,15 +8,12 @@ import { DndSortableGroup, DndSortableItem } from "@/components/dndSortable";
 
 type BanTemplateLineProps = {
     text: string;
-    duration: string;
     disabled: boolean;
     onEdit: () => void;
     onRemove: () => void;
 }
 
-function BanTemplateLine({ text, duration, disabled, onEdit, onRemove }: BanTemplateLineProps) {
-    const banDurationToString = (x: string) => x;
-
+function BanTemplateLine({ text, disabled, onEdit, onRemove }: BanTemplateLineProps) {
     return (<>
         <div className="grow flex items-center justify-items-start gap-2">
             <span className="line-clamp-1">
@@ -120,7 +117,6 @@ export default function TmpDndSortable() {
                     <DndSortableItem key={item} id={item} disabled={false}>
                         <BanTemplateLine
                             text={item}
-                            duration='permanent'
                             disabled={false}
                             onEdit={() => alert(`Editing ${item}`)}
                             onRemove={() => handleRemoveItem(item)}

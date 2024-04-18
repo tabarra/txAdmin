@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { BanDurationType } from "@shared/otherTypes";
-import { GripVerticalIcon, Settings2Icon, XIcon } from "lucide-react";
+import { Settings2Icon, XIcon } from "lucide-react";
 import { banDurationToString } from "./PresetReasonsPage";
 
 
@@ -14,50 +14,39 @@ type PresetReasonListItemProps = {
 }
 
 export default function PresetReasonListItem({ id, reason, duration, onEdit, onRemove, disabled }: PresetReasonListItemProps) {
-    return (
-        <li className="bg-card rounded-lg border px-2 py-3 flex gap-3">
-            <div
-                title="Drag to reorder"
+    return (<>
+        <div className="grow flex items-center justify-items-start gap-2">
+            <span className="line-clamp-1">
+                {reason}
+            </span>
+            <div className={cn(
+                "bg-black/50 opacity-75 px-2 py-0.5 text-sm rounded shrink-0 uppercase",
+                duration === 'permanent' ? 'text-red-500' : 'text-primary'
+            )}>
+                {banDurationToString(duration)}
+            </div>
+        </div>
+        <div className="flex gap-2">
+            <button
                 className={cn(
                     "text-muted-foreground",
-                    disabled ? "cursor-not-allowed" : "cursor-grab hover:text-primary hover:scale-110"
+                    disabled ? "opacity-50 cursor-not-allowed" : "hover:text-primary hover:scale-110"
                 )}
+                onClick={() => onEdit(id)}
+                disabled={disabled}
             >
-                <GripVerticalIcon className="size-6" />
-            </div>
-            <div className="grow flex items-center justify-items-start gap-2">
-                <span className="line-clamp-1">
-                    {reason}
-                </span>
-                <div className={cn(
-                    "bg-black/50 opacity-75 px-2 py-0.5 text-sm rounded shrink-0 uppercase",
-                    duration === 'permanent' ? 'text-red-500' : 'text-primary'
-                )}>
-                    {banDurationToString(duration)}
-                </div>
-            </div>
-            <div className="flex gap-2">
-                <button
-                    className={cn(
-                        "text-muted-foreground",
-                        disabled ? "opacity-50 cursor-not-allowed" : "hover:text-primary hover:scale-110"
-                    )}
-                    onClick={() => onEdit(id)}
-                    disabled={disabled}
-                >
-                    <Settings2Icon className="size-6" />
-                </button>
-                <button
-                    className={cn(
-                        "text-muted-foreground",
-                        disabled ? "opacity-50 cursor-not-allowed" : "hover:text-destructive hover:scale-110"
-                    )}
-                    onClick={() => onRemove(id)}
-                    disabled={disabled}
-                >
-                    <XIcon className="size-6" />
-                </button>
-            </div>
-        </li>
-    )
+                <Settings2Icon className="size-6" />
+            </button>
+            <button
+                className={cn(
+                    "text-muted-foreground",
+                    disabled ? "opacity-50 cursor-not-allowed" : "hover:text-destructive hover:scale-110"
+                )}
+                onClick={() => onRemove(id)}
+                disabled={disabled}
+            >
+                <XIcon className="size-6" />
+            </button>
+        </div>
+    </>)
 }

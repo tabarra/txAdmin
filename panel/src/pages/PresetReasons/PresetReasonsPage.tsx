@@ -6,6 +6,9 @@ import PresetReasonInputDialog from "./PresetReasonInputDialog";
 import PresetReasonListItem from "./PresetReasonListItem";
 import PresetReasonListAddButton from "./PresetReasonListAddButton";
 import { BanDurationType } from "@shared/otherTypes";
+import { DndSortableGroup, DndSortableItem } from "@/components/dndSortable";
+import { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
 
 type PresetReason = {
@@ -50,6 +53,19 @@ export default function PresetReasons() {
     const [savedReasons, setSavedReasons] = useState(tmpInitialState);
     const openConfirmDialog = useOpenConfirmDialog();
     const { hasPerm } = useAdminPerms();
+
+    //Drag and drop
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (over && active.id !== over.id) {
+            setSavedReasons((items) => {
+                const oldIndex = items.findIndex(x => x.id === active.id);
+                const newIndex = items.findIndex(x => x.id === over.id);
+
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+    }
 
     const handleOnSave = ({ id, reason, duration }: PresetReasonInputData) => {
         console.log('Save item', id, reason, duration);
@@ -144,18 +160,23 @@ export default function PresetReasons() {
                     <span className="shrink-0">Configured reasons: {savedReasons.length}</span>
                     {statusNode}
                 </div>
-                <ol className="space-y-2 border p-2 rounded-lg">
+                <DndSortableGroup
+                    className="space-y-2 border p-2 rounded-lg"
+                    ids={savedReasons.map((item) => item.id)}
+                    onDragEnd={handleDragEnd}
+                >
                     {savedReasons.map((item) => (
-                        <PresetReasonListItem
-                            key={item.id}
-                            {...item}
-                            onEdit={handleEditItem}
-                            onRemove={handleRemoveItem}
-                            disabled={!canEdit}
-                        />
+                        <DndSortableItem key={item.id} id={item.id} disabled={!canEdit}>
+                            <PresetReasonListItem
+                                onEdit={handleEditItem}
+                                onRemove={handleRemoveItem}
+                                disabled={!canEdit}
+                                {...item}
+                            />
+                        </DndSortableItem>
                     ))}
                     <PresetReasonListAddButton onClick={handleAddNewItem} disabled={!canEdit} />
-                </ol>
+                </DndSortableGroup>
             </div>
         </div>
         <PresetReasonInputDialog
