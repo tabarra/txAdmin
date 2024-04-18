@@ -8,6 +8,8 @@ import TmpToasts from "./TmpToasts";
 import TmpApi from "./TmpApi";
 import TmpFiller from "./TmpFiller";
 import PresetReasons from "../PresetReasons/PresetReasonsPage";
+import TmpSortable from "./TmpSortable";
+import TmpDndSortable from "./TmpDndSortable";
 
 
 export default function TestingPage() {
@@ -25,5 +27,6 @@ export default function TestingPage() {
         {/* <TmpMarkdown /> */}
         {/* <TmpColors /> */}
         <PresetReasons />
+        <TmpDndSortable />
     </div>;
 }
