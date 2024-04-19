@@ -73,7 +73,7 @@ export default function PlayerBanTab({ playerRef }: { playerRef: PlayerModalRefT
                 <Label htmlFor="durationSelect" className="col-span-4 xs:col-auto">
                     Duration
                 </Label>
-                <div className="col-span-full xs:col-span-3 space-y-1 ">
+                <div className="col-span-full xs:col-span-3 space-y-1">
                     <Select
                         onValueChange={setCurrentDuration}
                         defaultValue={currentDuration}

@@ -7,10 +7,10 @@
 
 ## v7.1.0 bugs
 - [x] unrenderable legacy 404 page
-- [ ] "Search by Player IDs" filter on players page is overflowing
+- [x] "Search by Player IDs" filter on players page is overflowing
+- [x] history action modal needs py-1 because of the reason field outline
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
-- [ ] history action modal needs py-1 because of the reason field outline
 - [ ] make the new page searches case insensitive (history->reason and maybe more)
 - [ ] remove all "blur" as that is slow as hell for browsers with hw acceleration disabled
 
