@@ -49,7 +49,7 @@
 	- Auto Restart FXServer on crash or hang
 	- Server’s CPU/RAM consumption
 	- Live Console (with log file, command history and search)
-	- Server tick time performance chart with player count ([example](https://i.imgur.com/VG8hpzr.gif))
+	- Server threads performance chart with player count
 	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/custom_serverlog.md))
 - Player Manager:
 	- [Warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E)

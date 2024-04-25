@@ -20,6 +20,10 @@ RegisterSecureNuiCallback('tpToWaypoint', function(_, cb)
     cb({})
 end)
 
+RegisterCommand('txAdmin:menu:tpToWaypoint', function()
+    TriggerServerEvent('txsv:req:tpToWaypoint')
+end)
+
 RegisterSecureNuiCallback('tpToPlayer', function(data, cb)
     TriggerServerEvent('txsv:req:tpToPlayer', tonumber(data.id))
     cb({})

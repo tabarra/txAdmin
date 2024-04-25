@@ -7,6 +7,7 @@ import { DatabaseActionType, DatabaseDataType, DatabasePlayerType, DatabaseWhite
 import { cloneDeep } from 'lodash-es';
 import { now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
+import { MultipleCounter } from '../StatisticsManager/statsUtils';
 const console = consoleFactory(modulename);
 
 
@@ -173,6 +174,22 @@ export default class PlayerDatabase {
 
         this.#db.writeFlag(SAVE_PRIORITY_HIGH);
         return cntChanged;
+    }
+
+
+    /**
+     * Searches for an action in the database by the id, returns action or null if not found
+     */
+    getActionData(actionId: string): DatabaseActionType | null {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (typeof actionId !== 'string' || !actionId.length) throw new Error('Invalid actionId.');
+
+        //Performing search
+        const a = this.#db.obj.chain.get('actions')
+            .find({ id: actionId })
+            .cloneDeep()
+            .value();
+        return (typeof a === 'undefined') ? null : a;
     }
 
 
@@ -426,7 +443,71 @@ export default class PlayerDatabase {
 
 
     /**
+     * Returns players stats for the database (for Players page callouts)
+     */
+    getPlayersStats() {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+
+        const oneDayAgo = now() - (24 * 60 * 60);
+        const sevenDaysAgo = now() - (7 * 24 * 60 * 60);
+        const startingValue = {
+            total: 0,
+            playedLast24h: 0,
+            joinedLast24h: 0,
+            joinedLast7d: 0,
+        };
+        const playerStats = this.#db.obj.chain.get('players')
+            .reduce((acc, p, ind) => {
+                acc.total++;
+                if (p.tsLastConnection > oneDayAgo) acc.playedLast24h++;
+                if (p.tsJoined > oneDayAgo) acc.joinedLast24h++;
+                if (p.tsJoined > sevenDaysAgo) acc.joinedLast7d++;
+                return acc;
+            }, startingValue)
+            .value();
+
+        return playerStats;
+    }
+
+
+    /**
+     * Returns players stats for the database (for Players page callouts)
+     */
+    getActionStats() {
+        if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);
+
+        const sevenDaysAgo = now() - (7 * 24 * 60 * 60);
+        const startingValue = {
+            totalWarns: 0,
+            warnsLast7d: 0,
+            totalBans: 0,
+            bansLast7d: 0,
+            groupedByAdmins: new MultipleCounter(),
+        };
+        const actionStats = this.#db.obj.chain.get('actions')
+            .reduce((acc, action, ind) => {
+                if (action.type == 'ban') {
+                    acc.totalBans++;
+                    if (action.timestamp > sevenDaysAgo) acc.bansLast7d++;
+                } else if (action.type == 'warn') {
+                    acc.totalWarns++;
+                    if (action.timestamp > sevenDaysAgo) acc.warnsLast7d++;
+                }
+                acc.groupedByAdmins.count(action.author);
+                return acc;
+            }, startingValue)
+            .value();
+
+        return {
+            ...actionStats,
+            groupedByAdmins: actionStats.groupedByAdmins.toJSON(),
+        };
+    }
+
+
+    /**
      * Returns actions/players stats for the database
+     * FIXME: deprecate, used by the old players page
      */
     getDatabaseStats() {
         if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);

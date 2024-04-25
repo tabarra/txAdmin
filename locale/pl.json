@@ -71,13 +71,14 @@
         "misc": {
             "help_message": "Menu txAdmin jest włączone, wpisz /tx aby je otworzyć.\nMożesz również skonfigurować inny bind w [Ustawienia/Przypisane klawisze/FiveM/Menu: Open Main Page]",
             "menu_not_admin": "Twoje identyfikatory nie są zgodne z żadnym administratorem zarejestrowanym w txAdmin, udaj się do menadżera administratorów i upewnij się, że Twoje identyfikatory są przypisane do utworzonego konta.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
+            "menu_auth_failed": "Uwierzytelnianie Menu txAdmin nie powiodło się przez: %{reason}",
             "no_perms": "Nie posiadasz tego uprawnienia.",
             "unknown_error": "Wystąpił nieznany błąd.",
             "not_enabled": "Menu txAdmin nie jest uruchomione! Możesz je włączyć z poziomu ustawień txAdmin.",
             "announcement_title": "Ogłoszenie nadane przez %{author}:",
             "dialog_empty_input": "Nie możesz pozostawić pustego pola tekstowego.",
-            "directmessage_title": "Wiadomość od %{author}:"
+            "directmessage_title": "Wiadomość od %{author}:",
+            "onesync_error": "Ta czynność wymaga włączenia OneSync."
         },
         "frozen": {
             "froze_player": "Zamroziłeś gracza!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Pojazd",
-                "onesync_error": "Ta opcja wymaga, aby OneSync był włączony do obsługi bytów stworzonych przez serwer",
                 "not_in_veh_error": "Nie jesteś w żadnym pojeździe!",
                 "spawn": {
                     "title": "Stwórz",

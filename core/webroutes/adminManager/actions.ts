@@ -114,7 +114,9 @@ async function handleAdd(ctx: AuthedCtx) {
     //Validate Discord ID
     let discordData: ProviderDataType | undefined;
     if (discordID.length) {
-        if (!consts.regexValidDiscordId.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
+        if (!consts.validIdentifierParts.discord.test(discordID)) {
+            return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
+        }
         discordData = {
             id: discordID,
             identifier: `discord:${discordID}`,
@@ -210,7 +212,9 @@ async function handleEdit(ctx: AuthedCtx) {
     //Validate Discord ID
     let discordData: ProviderDataType | undefined;
     if (discordID.length) {
-        if (!consts.regexValidDiscordId.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
+        if (!consts.validIdentifierParts.discord.test(discordID)) {
+            return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
+        }
         discordData = {
             id: discordID,
             identifier: `discord:${discordID}`,

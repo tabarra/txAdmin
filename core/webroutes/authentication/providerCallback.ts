@@ -68,9 +68,6 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
         } satisfies CfxreSessAuthType;
         ctx.sessTools.set({ auth: sessData });
 
-        //Save the updated provider identifier & data to the admins file
-        ctx.txAdmin.adminVault.refreshAdminSocialData(vaultAdmin.name, 'citizenfx', fivemIdentifier, userInfo).catch(() => {});
-
         //If the user has a picture, save it to the cache
         if (userInfo.picture) {
             ctx.txAdmin.persistentCache.set(`admin:picture:${vaultAdmin.name}`, userInfo.picture);

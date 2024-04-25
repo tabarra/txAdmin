@@ -1,3 +1,4 @@
+/* eslint-disable no-control-regex */
 import { Terminal } from '@xterm/xterm';
 import { CanvasAddon } from '@xterm/addon-canvas';
 import { FitAddon } from '@xterm/addon-fit';
@@ -12,7 +13,7 @@ import { ChevronsDownIcon, Loader2Icon } from "lucide-react";
 import LiveConsoleFooter from "./LiveConsoleFooter";
 import LiveConsoleHeader from "./LiveConsoleHeader";
 import LiveConsoleSearchBar from "./LiveConsoleSearchBar";
-// import LiveConsoleSaveSheet from "./LiveConsoleSaveSheet";
+import LiveConsoleSaveSheet from "./LiveConsoleSaveSheet";
 
 import ScrollDownAddon from "./ScrollDownAddon";
 import terminalOptions from "./xtermOptions";
@@ -20,16 +21,30 @@ import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
 import { getSocket, openExternalLink } from '@/lib/utils';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
-import { useAdminPerms } from '@/hooks/auth';
-import LiveConsoleSaveSheet from './LiveConsoleSaveSheet';
+import { txToast } from '@/components/TxToaster';
 
-
+//Helpers
 const keyDebounceTime = 150; //ms
 
+//Yoinked from the internet, no good source
+const rtlRangeRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]{3,}/; //ignoring anything less than 3 characters
+
+//Yoinked from core/components/Logger/handlers/fxserver.js
+const regexConsole = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F\x80-\x9F]/g;
+const regexCsi = /(\u001b\[|\u009B)[\d;]+[@-K]/g;
+const regexColors = /\u001b[^m]*?m/g;
+const cleanTermOutput = (data: string) => {
+    return data
+        .replace(regexConsole, '')
+        .replace(regexCsi, '')
+        .replace(regexColors, '');
+}
+
 export default function LiveConsole() {
-    // const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
+    const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
+    const termInputRef = useRef<HTMLInputElement>(null);
     const setPageTitle = useSetPageTitle();
     const refreshPage = useContentRefresh();
     setPageTitle('Live Console');
@@ -157,8 +172,10 @@ export default function LiveConsole() {
 
     useEventListener('keydown', (e: KeyboardEvent) => {
         if (e.code === 'F5') {
-            refreshPage();
-            e.preventDefault();
+            if (isConnected) {
+                refreshPage();
+                e.preventDefault();
+            }
         } else if (e.code === 'Escape') {
             searchAddon.clearDecorations();
             setShowSearchBar(false);
@@ -174,6 +191,42 @@ export default function LiveConsole() {
             e.preventDefault();
         }
     });
+
+    //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/701
+    const registerBidiMarker = (fullLine: string) => {
+        const marker = term.registerMarker(0)
+        const decoration = term.registerDecoration({ marker });
+        decoration && decoration.onRender(element => {
+            element.classList.add('cursor-pointer');
+            element.innerText = '🔠';
+            element.onclick = () => {
+                txToast.info({
+                    title: 'Bidirectional Text Detected:',
+                    msg: fullLine,
+                });
+            }
+            // element.innerHTML = `<div class="bg-info text-info-foreground rounded px-2 py-1 mt-[-0.25rem] z-10">RTL</div>`
+            // element.style.height = '';
+            // element.style.width = '';
+        });
+    }
+
+    //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/4994
+    const writeToTerminal = (data: string) => {
+        const lines = data.split(/\r?\n/);
+        //check if last line isn't empty
+        //NOTE: i'm not trimming because having multiple \n at the end is valid
+        if (lines.length && !lines[lines.length - 1]) {
+            lines.pop();
+        }
+        //print each line
+        for (const line of lines) {
+            if(rtlRangeRegex.test(line)) {
+                registerBidiMarker(cleanTermOutput(line));
+            }
+            term.writeln(line);
+        }
+    }
 
     //DEBUG
     // useEffect(() => {
@@ -221,7 +274,7 @@ export default function LiveConsole() {
             console.log('Live Console Socket.IO', error);
         });
         pageSocket.current.on('consoleData', function (data) {
-            term.write(data);
+            writeToTerminal(data);
         });
 
         return () => {
@@ -245,8 +298,14 @@ export default function LiveConsole() {
         setShowSearchBar(!showSearchBar);
     }
     const toggleSaveSheet = () => {
-        //TODO: implement
-        // setIsSaveSheetOpen(!isSaveSheetOpen);
+        setIsSaveSheetOpen(!isSaveSheetOpen);
+    }
+    const inputSuggestions = (cmd: string) => {
+        if (termInputRef.current) {
+            termInputRef.current.value = cmd;
+            termInputRef.current.focus();
+        }
+        setIsSaveSheetOpen(false);
     }
 
 
@@ -267,7 +326,11 @@ export default function LiveConsole() {
                     </div>
                 ) : null}
 
-                {/* <LiveConsoleSaveSheet isOpen={isSaveSheetOpen} closeSheet={() => setIsSaveSheetOpen(false)} /> */}
+                <LiveConsoleSaveSheet
+                    isOpen={isSaveSheetOpen}
+                    closeSheet={() => setIsSaveSheetOpen(false)}
+                    toTermInput={(cmd) => inputSuggestions(cmd)}
+                />
 
                 {/* Terminal container */}
                 <div ref={containerRef} className='absolute top-1 left-2 right-0 bottom-0' />
@@ -290,6 +353,7 @@ export default function LiveConsole() {
             </div>
 
             <LiveConsoleFooter
+                termInputRef={termInputRef}
                 isConnected={isConnected}
                 consoleWrite={consoleWrite}
                 consoleClear={consoleClear}

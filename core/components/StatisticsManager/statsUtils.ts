@@ -57,6 +57,10 @@ export class MultipleCounter {
         }
     };
 
+    toArray(): [string, number][] {
+        return [...this.#data];
+    }
+
     toJSON(): MultipleCounterOutput {
         return Object.fromEntries(this.#data);
     }

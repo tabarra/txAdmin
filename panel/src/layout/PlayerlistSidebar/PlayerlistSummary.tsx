@@ -8,7 +8,7 @@ export default function PlayerlistSummary() {
     const playerCountFormatted = playerCount.toLocaleString("en-US");
 
     return (
-        <div className="w-full flex justify-between items-center p-4">
+        <div className="w-full flex justify-between items-center">
             <div className="w-16 h-16 dark:bg-zinc-600/50 bg-zinc-300/75 rounded-full flex items-center justify-center">
                 <UsersIcon className="w-10 h-10 dark:text-zinc-400 text-zinc-500 text-opacity-80 stroke-1" />
             </div>

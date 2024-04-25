@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin meniu nėra įjungtas! Tai galite padaryti per txAdmin nustatymų (settings) puslapį.",
             "announcement_title": "Serverio pranešimas nuo: %{author}:",
             "dialog_empty_input": "Turite užpildyti įvesties laukelius.",
-            "directmessage_title": "PŽ. iš administratoriaus %{author}:"
+            "directmessage_title": "PŽ. iš administratoriaus %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Užšaldėte žaidėją!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Tr. priemonė",
-                "onesync_error": "Šiam pasirinkimui reikalingas įjungtas OneSync, kuris reikalingas objektų valdymui",
                 "not_in_veh_error": "Nesate jokioje tr.priemonėje!",
                 "spawn": {
                     "title": "Spawn'inimas",

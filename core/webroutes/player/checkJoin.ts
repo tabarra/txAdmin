@@ -2,7 +2,8 @@ const modulename = 'WebServer:PlayerCheckJoin';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import { DatabaseActionType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
-import { anyUndefined, filterPlayerHwids, now, parsePlayerIds, PlayerIdsObjectType } from '@core/extras/helpers';
+import { anyUndefined, filterPlayerHwids, now, parsePlayerIds } from '@core/extras/helpers';
+import type { PlayerIdsObjectType } from "@shared/otherTypes";
 import xssInstancer from '@core/extras/xss';
 import playerResolver from '@core/playerLogic/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
@@ -35,7 +36,7 @@ const rejectMessageTemplate = (title: string, content: string) => {
         <p style="font-size: 1.25rem; padding: 0px">
             ${content}
         </p>
-        <img src="https://i.imgur.com/5bFhvBv.png" style="
+        <img src="https://forum-cfx-re.akamaized.net/original/5X/c/3/8/e/c38e8346a39c6483385c0727bee5c2abc705156a.png" style="
             position: absolute;
             right: 15px;
             bottom: 15px;

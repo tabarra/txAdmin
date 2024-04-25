@@ -8,10 +8,10 @@ import { Loader2Icon } from "lucide-react";
 import { useRef, useState } from "react";
 import { useBackendApi } from "@/hooks/fetch";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
-import PlayerModalMidMessage from "./PlayerModalMidMessage";
+import ModalCentralMessage from "@/components/ModalCentralMessage";
 
 
-export default function BanTab({ playerRef }: { playerRef: PlayerModalRefType }) {
+export default function PlayerBanTab({ playerRef }: { playerRef: PlayerModalRefType }) {
     const reasonRef = useRef<HTMLInputElement>(null);
     const customMultiplierRef = useRef<HTMLInputElement>(null);
     const [currentDuration, setCurrentDuration] = useState('2 days');
@@ -25,9 +25,9 @@ export default function BanTab({ playerRef }: { playerRef: PlayerModalRefType })
     });
 
     if (!hasPerm('players.ban')) {
-        return <PlayerModalMidMessage>
+        return <ModalCentralMessage>
             You don't have permission to ban players.
-        </PlayerModalMidMessage>;
+        </ModalCentralMessage>;
     }
 
     const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {

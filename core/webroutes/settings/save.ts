@@ -432,7 +432,7 @@ async function handleDiscord(ctx: AuthedCtx) {
             - Go to the Discord Dev Portal (https://discord.com/developers/applications)
             - Navigate to \`Bot > Privileged Gateway Intents\`.
             - Enable the \`GUILD_MEMBERS\` intent.
-            - Save on the dev portal.
+            - Press save on the developer portal.
             - Go to the \`txAdmin > Settings > Discord Bot\` and press save.`;
         } else if (errorCode === 'CustomNoGuild') {
             const inviteUrl = ('clientId' in (error as any))

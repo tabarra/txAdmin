@@ -35,7 +35,7 @@ export default async function AuthAddMasterSave(ctx: InitializedCtx) {
     }
 
     //Checking the discordId
-    if (typeof discordId === 'string' && !consts.regexValidDiscordId.test(discordId)) {
+    if (typeof discordId === 'string' && !consts.validIdentifierParts.discord.test(discordId)) {
         return ctx.send<ApiAddMasterSaveResp>({
             error: `Invalid Discord ID.`,
         });

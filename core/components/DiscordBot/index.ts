@@ -336,8 +336,17 @@ export default class DiscordBot {
             //Start bot
             this.#client.login(this.config.token).catch((error) => {
                 clearInterval(disallowedIntentsWatcherId);
+
+                //for some reason, this is not throwing unhandled rejection anymore /shrug
+                if (error.message === 'Used disallowed intents') {
+                    return sendError(
+                        `This bot does not have a required privileged intent.`,
+                        { code: 'DisallowedIntents' }
+                    );
+                }
+
                 //if no message, create one
-                if (!('message' in error) || !error.message){
+                if (!('message' in error) || !error.message) {
                     error.message = 'no reason available - ' + JSON.stringify(error);
                 }
                 console.error(`Discord login failed with error: ${error.message}`);

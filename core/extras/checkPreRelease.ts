@@ -28,6 +28,7 @@ const cronCheckExpiration = () => {
     if (timeUntilExpiration < 0) {
         console.error('This pre-release version has expired, please update your txAdmin.');
         console.error('For more information: https://discord.gg/txAdmin.');
+        console.error('Bye bye 👋');
         process.exit(400);
     } else if (timeUntilExpiration < 24 * 60 * 60 * 1000) {
         printExpirationBanner(timeUntilExpiration);

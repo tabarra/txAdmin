@@ -273,7 +273,7 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
         units: ['d', 'h', 'm'],
     };
 
-    const joinTimesToString = (res: QuantileArrayOutput) => {
+    const formatQuantileTimes = (res: QuantileArrayOutput) => {
         let output = 'not enough data available';
         if (!('notEnoughData' in res)){
             const quantileTimes = [res.count.toString()];
@@ -285,8 +285,10 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
         }
         return output;
     }
-    const banCheckTime = joinTimesToString(txAdmin.statisticsManager.banCheckTime.result());
-    const whitelistCheckTime = joinTimesToString(txAdmin.statisticsManager.whitelistCheckTime.result());
+    const banCheckTime = formatQuantileTimes(txAdmin.statisticsManager.banCheckTime.result());
+    const whitelistCheckTime = formatQuantileTimes(txAdmin.statisticsManager.whitelistCheckTime.result());
+    const playersTableSearchTime = formatQuantileTimes(txAdmin.statisticsManager.playersTableSearchTime.result());
+    const historyTableSearchTime = formatQuantileTimes(txAdmin.statisticsManager.historyTableSearchTime.result());
 
     return {
         //Stats
@@ -300,6 +302,8 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
         hbHTTPFails: txAdmin.statisticsManager.monitorStats.healthIssues.http,
         banCheckTime,
         whitelistCheckTime,
+        playersTableSearchTime,
+        historyTableSearchTime,
 
         //Log stuff:
         logStorageSize: (await txAdmin.logger.getStorageSize()).total,

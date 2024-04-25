@@ -43,3 +43,60 @@ export type PlayerModalSuccess = {
     player: PlayerModalPlayerData;
 }
 export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;
+
+
+/**
+ * Used in the players page
+ */
+export type PlayersStatsResp = {
+    total: number;
+    playedLast24h: number;
+    joinedLast24h: number;
+    joinedLast7d: number;
+} | GenericApiErrorResp;
+
+
+export type PlayersTableSearchType = null | {
+    value: string;
+    type: string;
+}
+
+export type PlayersTableFiltersType = string[];
+
+export type PlayersTableSortingType = {
+    key: 'playTime' | 'tsJoined' | 'tsLastConnection';
+    desc: boolean;
+};
+
+export type PlayersTableReqType = {
+    search: PlayersTableSearchType;
+    filters: PlayersTableFiltersType;
+    sorting: PlayersTableSortingType;
+    //NOTE: the query needs to be offset.param inclusive, but ignore offset.license
+    // therefore, optimistically always limit to x + 1
+    offset?: {
+        param: number;
+        license: string;
+    }
+};
+
+export type PlayersTablePlayerType = {
+    license: string;
+    displayName: string;
+    playTime: number;
+    tsJoined: number;
+    tsLastConnection: number;
+    notes?: string;
+
+    isAdmin: boolean;
+    isOnline: boolean;
+    isWhitelisted: boolean;
+    // isBanned: boolean;
+    // warnCount: number;
+    // banCount: number;
+}
+
+export type PlayersTableSearchResp = {
+    players: PlayersTablePlayerType[];
+    hasReachedEnd: boolean;
+} | GenericApiErrorResp;

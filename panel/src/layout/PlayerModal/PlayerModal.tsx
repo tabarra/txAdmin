@@ -6,18 +6,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { usePlayerModalStateValue } from "@/hooks/playerModal";
 import { InfoIcon, ListIcon, HistoryIcon, GavelIcon } from "lucide-react";
-import InfoTab from "./InfoTab";
+import PlayerInfoTab from "./PlayerInfoTab";
 import { useEffect, useState } from "react";
-import IdsTab from "./IdsTab";
+import PlayerIdsTab from "./PlayerIdsTab";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import HistoryTab from "./HistoryTab";
-import BanTab from "./BanTab";
+import PlayerHistoryTab from "./PlayerHistoryTab";
+import PlayerBanTab from "./PlayerBanTab";
 import GenericSpinner from "@/components/GenericSpinner";
 import { cn } from "@/lib/utils";
 import { useBackendApi } from "@/hooks/fetch";
 import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
 import PlayerModalFooter from "./PlayerModalFooter";
-import PlayerModalMidMessage from "./PlayerModalMidMessage";
+import ModalCentralMessage from "@/components/ModalCentralMessage";
 
 
 const modalTabs = [
@@ -47,6 +47,7 @@ export default function PlayerModal() {
     const [currRefreshKey, setCurrRefreshKey] = useState(0);
     const [modalData, setModalData] = useState<PlayerModalSuccess | undefined>(undefined);
     const [modalError, setModalError] = useState('');
+    const [tsFetch, setTsFetch] = useState(0);
     const playerQueryApi = useBackendApi<PlayerModalResp>({
         method: 'GET',
         path: `/player`,
@@ -70,6 +71,7 @@ export default function PlayerModal() {
                     setModalError(resp.error);
                 } else {
                     setModalData(resp);
+                    setTsFetch(Math.round(Date.now() / 1000));
                 }
             },
             error: (error) => {
@@ -93,11 +95,37 @@ export default function PlayerModal() {
         }
     };
 
+    //Move to tab up or down
+    const handleTabButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            const currentIndex = modalTabs.findIndex((tab) => tab.title === selectedTab);
+            const nextIndex = e.key === 'ArrowUp' ? currentIndex - 1 : currentIndex + 1;
+            const nextTab = modalTabs[nextIndex];
+            if (nextTab) {
+                setSelectedTab(nextTab.title);
+                const nextButton = document.getElementById(`player-modal-tab-${nextTab.title}`);
+                if (nextButton) {
+                    nextButton.focus();
+                }
+            }
+        }
+    }
+
     let pageTitle: JSX.Element;
     if (modalData) {
-        pageTitle = <>
-            <span className="text-muted-foreground font-mono">[{modalData.player.netid || 'OFFLINE'}]</span> {modalData.player.displayName}
-        </>;
+        if (modalData.player.netid) {
+            pageTitle = <>
+                <span className="text-success-inline font-mono mr-2">[{modalData.player.netid}]</span>
+                {modalData.player.displayName}
+            </>;
+        } else {
+            pageTitle = <>
+                <span className="text-destructive-inline font-mono mr-2">[OFF]</span>
+                {modalData.player.displayName}
+            </>;
+
+        }
     } else if (modalError) {
         pageTitle = <span className="text-destructive-inline">Error!</span>;
     } else {
@@ -108,7 +136,7 @@ export default function PlayerModal() {
         <Dialog open={isModalOpen} onOpenChange={handleOpenClose}>
             <DialogContent
                 className="max-w-2xl h-full sm:h-auto max-h-full p-0 gap-1 sm:gap-4 flex flex-col"
-                onOpenAutoFocus={(e) => e.preventDefault()}
+            // onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <DialogHeader className="p-4 border-b">
                     <DialogTitle className="tracking-wide line-clamp-1 break-all mr-6">{pageTitle}</DialogTitle>
@@ -118,6 +146,7 @@ export default function PlayerModal() {
                     <div className="flex flex-row md:flex-col gap-1 bg-muted md:bg-transparent p-1 md:p-0 mx-2 md:mx-0 rounded-md">
                         {modalTabs.map((tab) => (
                             <Button
+                                id={`player-modal-tab-${tab.title}`}
                                 key={tab.title}
                                 variant={selectedTab === tab.title ? "secondary" : "ghost"}
                                 className={cn(
@@ -127,6 +156,7 @@ export default function PlayerModal() {
                                     tab.className,
                                 )}
                                 onClick={() => setSelectedTab(tab.title)}
+                                onKeyDown={handleTabButtonKeyDown}
                             >
                                 {tab.icon} {tab.title}
                             </Button>
@@ -135,30 +165,32 @@ export default function PlayerModal() {
                     {/* NOTE: consistent height: sm:h-[16.5rem] */}
                     <ScrollArea className="w-full max-h-[calc(100vh-3.125rem-4rem-5rem)] min-h-[16.5rem] md:max-h-[50vh] px-4 py-2 md:py-0">
                         {!modalData ? (
-                            <PlayerModalMidMessage>
+                            <ModalCentralMessage>
                                 {modalError ? (
                                     <span className="text-destructive-inline">Error: {modalError}</span>
                                 ) : (
                                     <GenericSpinner msg="Loading..." />
                                 )}
-                            </PlayerModalMidMessage>
+                            </ModalCentralMessage>
                         ) : (
                             <>
-                                {selectedTab === 'Info' && <InfoTab
+                                {selectedTab === 'Info' && <PlayerInfoTab
                                     playerRef={playerRef!}
                                     player={modalData.player}
+                                    serverTime={modalData.serverTime}
+                                    tsFetch={tsFetch}
                                     setSelectedTab={setSelectedTab}
                                     refreshModalData={refreshModalData}
                                 />}
-                                {selectedTab === 'History' && <HistoryTab
+                                {selectedTab === 'History' && <PlayerHistoryTab
                                     actionHistory={modalData.player.actionHistory}
                                     serverTime={modalData.serverTime}
                                     refreshModalData={refreshModalData}
                                 />}
-                                {selectedTab === 'IDs' && <IdsTab
+                                {selectedTab === 'IDs' && <PlayerIdsTab
                                     player={modalData.player}
                                 />}
-                                {selectedTab === 'Ban' && <BanTab
+                                {selectedTab === 'Ban' && <PlayerBanTab
                                     playerRef={playerRef!}
                                 />}
                             </>
