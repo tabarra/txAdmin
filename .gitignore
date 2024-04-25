@@ -2,6 +2,7 @@
 db/*
 cache/*
 dist/*
+.reports/*
 license_report/*
 tmp_core_tsc/*
 *.ignore.*

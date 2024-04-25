@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "typecheck": "tsc -p tsconfig.json --noEmit",
-        "license_report": "npx license-report > ../license_report/shared.html"
+        "license:report": "npx license-report > ../.reports/license/shared.html"
     },
     "keywords": [],
     "author": "André Tabarra",

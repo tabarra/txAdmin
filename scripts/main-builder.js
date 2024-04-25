@@ -7,7 +7,8 @@ import esbuild from 'esbuild';
 import { licenseBanner, getFxsPaths } from './scripts-utils.js';
 import config from '../.deploy.config.js';
 
-const txLicenseBanner = licenseBanner();
+const txLicenseBannerComment = licenseBanner(undefined, true);
+const txLicenseBannerFile = licenseBanner();
 
 
 /**
@@ -220,6 +221,7 @@ const runPublishTask = () => {
     console.log('Starting txAdmin Prod Builder.');
     copyStaticFiles('./dist/', 'publish');
     fs.writeFileSync('./dist/package.json', '{"type":"commonjs"}');
+    fs.writeFileSync('./dist/LICENSE.txt', txLicenseBannerFile);
 
     //Transpile & bundle core
     try {
@@ -235,8 +237,11 @@ const runPublishTask = () => {
                 TX_PRERELEASE_EXPIRATION: getPreReleaseExpirationString(),
             },
             banner: {
-                js: txLicenseBanner,
+                js: txLicenseBannerComment,
             },
+            //To satisfy the license's "full text" requirement, it will be generated 
+            //by another npm script and it is referenced in the banner.
+            legalComments: 'none', 
         });
         if (errors.length) {
             console.log(`[BUNDLER] Failed with ${errors.length} errors.`);
