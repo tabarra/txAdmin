@@ -197,7 +197,7 @@ RegisterNetEvent('txcl:heal', function()
   local pos = GetEntityCoords(ped)
   local heading = GetEntityHeading(ped)
   if IsEntityDead(ped) then
-       NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false,false)
+       NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false)
   end
   ResurrectPed(ped)
   SetEntityHealth(ped, GetEntityMaxHealth(ped))
