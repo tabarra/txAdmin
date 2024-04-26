@@ -11,7 +11,7 @@
     "lint": "eslint ./**",
     "lint:count": "eslint ./** -f ../scripts/lint-formatter.js",
     "lint:fix": "eslint ./** --fix",
-    "license_report": "npx license-report > ../license_report/core.html"
+    "license:report": "npx license-report > ../.reports/license/core.html"
   },
   "keywords": [],
   "author": "André Tabarra",

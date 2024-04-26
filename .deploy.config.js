@@ -22,7 +22,6 @@ export default {
     ],
     copy: [
         'README.md',
-        'LICENSE',
         'docs/',
         'fxmanifest.lua',
         'entrypoint.js',

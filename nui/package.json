@@ -9,7 +9,7 @@
         "dev": "vite build --watch --mode development",
         "browser": "vite dev --port 40121 --strictPort --mode devNuiBrowser",
         "typecheck": "tsc -p tsconfig.json --noEmit",
-        "license_report": "npx license-report > ../license_report/nui.html"
+        "license:report": "npx license-report > ../.reports/license/nui.html"
     },
     "keywords": [],
     "author": "André Tabarra",
