@@ -59,7 +59,7 @@ RegisterCommand('txAdmin:menu:openPlayersPage', function()
   sendMenuMessage('setMenuPage', 1)
   toggleMenuVisibility(true)
   SetNuiFocus(true, true)
-end,false)
+end)
 
 
 -- This needs to run even when menu is disabled so the ServerCtx
@@ -97,14 +97,11 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     debugPrint("^2[AUTH] logged in as '" .. username .. "' with perms: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
-
-    if not IS_REDM then
-       RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
-       RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
-       RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
-       RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
-       RegisterKeyMapping('txAdmin:menu:tpToWaypoint', 'Menu: Teleport to Waypoint', 'KEYBOARD', '')
-    end
+    RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
+    RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
+    RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
+    RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
+    RegisterKeyMapping('txAdmin:menu:tpToWaypoint', 'Menu: Teleport to Waypoint', 'KEYBOARD', '')
 
   else
     noMenuReason = tostring(rejectReason)
@@ -180,7 +177,7 @@ end)
 RegisterSecureNuiCallback('closeMenu', function(_, cb)
   isMenuVisible = false
   debugPrint('Releasing all NUI Focus')
-  SetNuiFocus(false,false)
+  SetNuiFocus(false)
   SetNuiFocusKeepInput(false)
   playLibrarySound('enter')
   cb({})
@@ -200,10 +197,10 @@ RegisterNetEvent('txcl:heal', function()
   local pos = GetEntityCoords(ped)
   local heading = GetEntityHeading(ped)
   if IsEntityDead(ped) then
-       NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, 0, false,false,false)
+       NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false,false)
   end
   ResurrectPed(ped)
-  SetEntityHealth(ped, GetEntityMaxHealth(ped),0)
+  SetEntityHealth(ped, GetEntityMaxHealth(ped))
   ClearPedBloodDamage(ped)
   RestorePlayerStamina(PlayerId(), 100.0)
   if IS_REDM then
