@@ -97,7 +97,7 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     debugPrint("^2[AUTH] logged in as '" .. username .. "' with perms: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
-    if not IS_REDM then
+    if IS_FIVEM then
         RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
         RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
         RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
