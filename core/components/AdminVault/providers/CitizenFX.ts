@@ -29,6 +29,7 @@ export default class CitizenFXProvider {
 
         this.client = new fivemIssuer.Client({
             label: 'txAdmin',
+            client_id: 'txAdmin',
             response_types: ['openid'],
         });
         this.client[custom.clock_tolerance] = 2 * 60 * 60; //Two hours due to the DST change.
