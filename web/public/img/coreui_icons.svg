@@ -1,7 +1,7 @@
 <!-- Light version with only what we need -->
 <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<defs>
-		<!-- From CoreUI Icons - https://github.com/coreui/coreui-icons/blob/main/LICENS -->
+		<!-- From CoreUI Icons - https://github.com/coreui/coreui-icons/blob/main/LICENSE -->
 		<symbol id="cil-magnifying-glass" viewBox="0 0 24 24">
 			<title>
 				magnifying-glass
@@ -10,7 +10,7 @@
 			</path>
 		</symbol>
 
-		<!-- From CoreUI Icons - https://github.com/coreui/coreui-icons/blob/main/LICENS -->
+		<!-- From CoreUI Icons - https://github.com/coreui/coreui-icons/blob/main/LICENSE -->
 		<symbol id="cil-x" viewBox="0 0 24 24">
 			<title>
 				x

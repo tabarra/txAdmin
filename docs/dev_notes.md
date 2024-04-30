@@ -58,9 +58,11 @@ In this case, if the player modal showed clearly "this player is banned until: x
 player name history? (not searchable)
 
 web/main/playerList.ejs ainda é usado? ele tá segurando o cil-magnifying-glass * tem mais coisa
+simple-line-icons na pasta web/public e também puxado via cdn?
 
 break down the discord /info command in /info and /admininfo?
 
+https://observablehq.com/@d3/zoomable-area-chart?collection=@d3/d3-zoom
 
 
 # @formkit/auto-animate
