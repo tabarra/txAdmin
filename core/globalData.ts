@@ -14,7 +14,7 @@ const console = consoleFactory();
 const cleanPath = (x: string) => { return slash(path.normalize(x)); };
 const getBuild = (ver: any) => {
     try {
-        const res = /v1\.0\.0\.(\d{3,5})\s*/.exec(ver);
+        const res = /v1\.0\.0\.(\d{3,4})\s*/.exec(ver);
         // @ts-expect-error: let it throw
         return parseInt(res[1]);
     } catch (error) {
