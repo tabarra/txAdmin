@@ -59,7 +59,7 @@ const resourceName = GetCurrentResourceName();
 //5894 = CREATE_VEHICLE_SERVER_SETTER
 //6185 = added ScanResourceRoot (not yet in use)
 //6508 = unhandledRejection is now handlable, we need this due to discord.js's bug
-const minFXServerVersion = 5894;
+const minFXServerVersion = 1;
 const fxServerVersion = getBuild(getConvarString('version'));
 if (fxServerVersion === 9999) {
     console.error('It looks like you are running a custom build of VMP server.');
