@@ -66,7 +66,7 @@ export default function AddMasterPin() {
     return (
         <form onSubmit={handleSubmit} className='w-full'>
             <CardHeader className="space-y-1">
-                <CardTitle className="text-3xl">No Cfx.re account linked.</CardTitle>
+                <CardTitle className="text-3xl">No VMP.ir account linked.</CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
                     Type the PIN from your terminal and click "Link Account".
                 </CardDescription>

@@ -14,7 +14,7 @@ const console = consoleFactory();
 const cleanPath = (x: string) => { return slash(path.normalize(x)); };
 const getBuild = (ver: any) => {
     try {
-        const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
+        const res = /v1\.0\.0\.(\d{3,5})\s*/.exec(ver);
         // @ts-expect-error: let it throw
         return parseInt(res[1]);
     } catch (error) {
@@ -62,13 +62,13 @@ const resourceName = GetCurrentResourceName();
 const minFXServerVersion = 5894;
 const fxServerVersion = getBuild(getConvarString('version'));
 if (fxServerVersion === 9999) {
-    console.error('It looks like you are running a custom build of fxserver.');
+    console.error('It looks like you are running a custom build of VMP server.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
 } else if (!fxServerVersion) {
-    console.error(`This version of FXServer is NOT compatible with txAdmin. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
+    console.error(`This version of VMP server is NOT compatible with txAdmin. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
     process.exit(101);
 } else if (fxServerVersion < minFXServerVersion) {
-    console.error(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
+    console.error(`This version of VMP server is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
     process.exit(102);
 }
 
