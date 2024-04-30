@@ -1,14 +1,36 @@
 {
     "login": [
-        
+        {
+            "text": "http:/.",
+            "logoLightMode": "img/zap256_k.png",
+            "logoDarkMode": "img/zap256_white.png",
+            "link": "http:/./txAdmin3"
+        }
     ],
     "main": [
-        
+        {
+            "text": "http:/.",
+            "logoLightMode": "img/zap256_k.png",
+            "logoDarkMode": "img/zap256_white.png",
+            "linkDesktop": "http:/./txAdmin5",
+            "linkMobile": "http:/./txAdmin7"
+        }
     ],
     "loginZap": [
-        
+        {
+            "text": "http:/.",
+            "logoLightMode": "img/zap256_k.png",
+            "logoDarkMode": "img/zap256_white.png",
+            "link": "http:/./txAdmin3"
+        }
     ],
     "mainZap": [
-        
+        {
+            "text": "http:/.",
+            "logoLightMode": "img/zap256_k.png",
+            "logoDarkMode": "img/zap256_white.png",
+            "linkDesktop": "http:/./txAdmin5",
+            "linkMobile": "http:/./txAdmin7"
+        }
     ]
 }

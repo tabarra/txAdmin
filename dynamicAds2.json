@@ -1,14 +1,18 @@
 {
     "login": {
-        
+        "img": "img/zap_login1.png",
+        "url": "http://"
     },
     "main": {
-        
+        "img": "img/zap_main1.png",
+        "url": "http://"
     },
     "loginZap": {
-        
+        "img": "img/zap_login1.png",
+        "url": "http://"
     },
     "mainZap": {
-        
+        "img": "img/zap_main1.png",
+        "url": "http://"
     }
 }

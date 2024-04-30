@@ -12,7 +12,7 @@ const isValidAd = (ad) => {
     if (typeof ad.url !== 'string') return false;
     return true;
 };
-const REMOTE_AD_INDEX = 'https://raw.githubusercontent.com/tabarra/txAdmin/master/dynamicAds2.json';
+const REMOTE_AD_INDEX = 'https://raw.githubusercontent.com/hamidrez4/txAdmin/master/dynamicAds2.json';
 
 export default class DynamicAds {
     constructor() {
