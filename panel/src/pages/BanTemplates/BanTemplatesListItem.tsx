@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
 import { BanDurationType } from "@shared/otherTypes";
 import { Settings2Icon, XIcon } from "lucide-react";
-import { banDurationToString } from "./PresetReasonsPage";
+import { banDurationToString } from "./BanTemplatesPage";
 
 
-type PresetReasonListItemProps = {
+type BanTemplatesListItemProps = {
     id: string;
     reason: string;
     duration: BanDurationType;
@@ -13,7 +13,7 @@ type PresetReasonListItemProps = {
     disabled: boolean;
 }
 
-export default function PresetReasonListItem({ id, reason, duration, onEdit, onRemove, disabled }: PresetReasonListItemProps) {
+export default function BanTemplatesListItem({ id, reason, duration, onEdit, onRemove, disabled }: BanTemplatesListItemProps) {
     return (<>
         <div className="grow flex items-center justify-items-start gap-2">
             <span className="line-clamp-1">

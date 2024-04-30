@@ -7,7 +7,7 @@ import TmpSocket from "./TmpSocket";
 import TmpToasts from "./TmpToasts";
 import TmpApi from "./TmpApi";
 import TmpFiller from "./TmpFiller";
-import PresetReasons from "../PresetReasons/PresetReasonsPage";
+import BanTemplatesPage from "../BanTemplates/BanTemplatesPage";
 import TmpDndSortable from "./TmpDndSortable";
 
 
@@ -26,6 +26,6 @@ export default function TestingPage() {
         {/* <TmpMarkdown /> */}
         {/* <TmpColors /> */}
         {/* <TmpDndSortable /> */}
-        <PresetReasons />
+        <BanTemplatesPage />
     </div>;
 }

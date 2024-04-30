@@ -2,12 +2,12 @@ import { cn } from "@/lib/utils";
 import { PlusIcon } from "lucide-react";
 
 
-type PresetReasonListAddButtonProps = {
+type BanTemplatesListAddButtonProps = {
     onClick: () => void;
     disabled: boolean;
 }
 
-export default function PresetReasonListAddButton({ onClick, disabled }: PresetReasonListAddButtonProps) {
+export default function BanTemplatesListAddButton({ onClick, disabled }: BanTemplatesListAddButtonProps) {
     return (
         <li
             onClick={onClick}

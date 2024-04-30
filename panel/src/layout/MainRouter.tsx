@@ -11,7 +11,7 @@ import TestingPage from "@/pages/TestingPage/TestingPage";
 import LiveConsole from "@/pages/LiveConsole/LiveConsole";
 import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
-import PresetReasons from "@/pages/PresetReasons/PresetReasonsPage";
+import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
 
 
 type RouteType = {
@@ -54,9 +54,9 @@ const allRoutes: RouteType[] = [
         children: <Iframe legacyUrl="settings" />
     },
     {
-        path: '/settings/preset-reasons',
-        title: 'Preset Reasons',
-        children: <PresetReasons />
+        path: '/settings/ban-templates',
+        title: 'Ban Templates',
+        children: <BanTemplatesPage />
     },
     {
         path: '/system/master-actions',

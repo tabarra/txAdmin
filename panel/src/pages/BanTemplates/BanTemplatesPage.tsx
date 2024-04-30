@@ -2,23 +2,23 @@ import InlineCode from "@/components/InlineCode";
 import { useAdminPerms } from "@/hooks/auth";
 import { useOpenConfirmDialog } from "@/hooks/dialogs";
 import { useState } from "react";
-import PresetReasonInputDialog from "./PresetReasonInputDialog";
-import PresetReasonListItem from "./PresetReasonListItem";
-import PresetReasonListAddButton from "./PresetReasonListAddButton";
+import BanTemplatesInputDialog from "./BanTemplatesInputDialog";
+import BanTemplatesListItem from "./BanTemplatesListItem";
+import BanTemplatesListAddButton from "./BanTemplatesListAddButton";
 import { BanDurationType } from "@shared/otherTypes";
 import { DndSortableGroup, DndSortableItem } from "@/components/dndSortable";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
 
-type PresetReason = {
+type BanTemplates = {
     id: string;
     reason: string;
     duration: BanDurationType;
 }
 
 //DEBUG: Temporary initial state
-export const tmpInitialState: PresetReason[] = [
+export const tmpInitialState: BanTemplates[] = [
     {
         id: '1',
         reason: 'Night of. Forth Let place life it created stars all grass. Abundantly. Saying whose darkness brought it rule whales. For forth for upon doesn\'t move us subdue have creeping lesser forth moved. A them man place sea you evening air called second to kind gathered lights evening is. Give multiply them be was you\'re there.',
@@ -40,15 +40,15 @@ export const banDurationToString = (duration: BanDurationType) => {
 }
 
 
-export type PresetReasonInputData = {
+export type BanTemplatesInputData = {
     id: string | null;
     reason: string;
     duration: BanDurationType;
 }
 
-export default function PresetReasons() {
+export default function BanTemplatesPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [reasonInputDialogData, setReasonInputDialogData] = useState<PresetReasonInputData | undefined>();
+    const [reasonInputDialogData, setReasonInputDialogData] = useState<BanTemplatesInputData | undefined>();
 
     const [savedReasons, setSavedReasons] = useState(tmpInitialState);
     const openConfirmDialog = useOpenConfirmDialog();
@@ -67,7 +67,7 @@ export default function PresetReasons() {
         }
     }
 
-    const handleOnSave = ({ id, reason, duration }: PresetReasonInputData) => {
+    const handleOnSave = ({ id, reason, duration }: BanTemplatesInputData) => {
         console.log('Save item', id, reason, duration);
         if (id) {
             setSavedReasons((prev) =>
@@ -139,7 +139,7 @@ export default function PresetReasons() {
     return <>
         <div className="space-y-4 w-fullx w-[1000px] DEBUG mx-auto">
             <div className="px-2 md:px-0">
-                <h1 className="text-3xl mb-2">Preset Ban Reasons</h1>
+                <h1 className="text-3xl mb-2">Ban Templates</h1>
                 <p>
                     Here you can configure ban reasons and durations that will appear as dropdown options when banning a player. <br />
                     This is useful for common reasons that happen frequently, like violation of your server rules. <br />
@@ -167,7 +167,7 @@ export default function PresetReasons() {
                 >
                     {savedReasons.map((item) => (
                         <DndSortableItem key={item.id} id={item.id} disabled={!canEdit}>
-                            <PresetReasonListItem
+                            <BanTemplatesListItem
                                 onEdit={handleEditItem}
                                 onRemove={handleRemoveItem}
                                 disabled={!canEdit}
@@ -175,11 +175,11 @@ export default function PresetReasons() {
                             />
                         </DndSortableItem>
                     ))}
-                    <PresetReasonListAddButton onClick={handleAddNewItem} disabled={!canEdit} />
+                    <BanTemplatesListAddButton onClick={handleAddNewItem} disabled={!canEdit} />
                 </DndSortableGroup>
             </div>
         </div>
-        <PresetReasonInputDialog
+        <BanTemplatesInputDialog
             key={reasonInputDialogData?.id}
             reasonData={reasonInputDialogData}
             onSave={handleOnSave}
