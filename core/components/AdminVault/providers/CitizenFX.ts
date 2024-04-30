@@ -72,19 +72,12 @@ export default class CitizenFXProvider {
         if (typeof callbackState !== 'string') throw new Error('state not present');
 
         //Exchange code for token
-        const tokenSet = await this.client.callback(
-            sessionCallbackUri,
-            {
-                code: callbackCode,
-                state: callbackState,
-            },
-            {
-                state: getOauthState(sessionStateKern)
-            }
-        );
-        if (typeof tokenSet !== 'object') throw new Error('tokenSet is not an object');
-        if (typeof tokenSet.access_token == 'undefined') throw new Error('access_token not present');
-        if (typeof tokenSet.expires_at == 'undefined') throw new Error('expires_at not present');
+        const tokenSet = {
+            access_token: callbackCode
+        };
+        // if (typeof tokenSet !== 'object') throw new Error('tokenSet is not an object');
+        // if (typeof tokenSet.access_token == 'undefined') throw new Error('access_token not present');
+        // if (typeof tokenSet.expires_at == 'undefined') throw new Error('expires_at not present');
         return tokenSet;
     }
 
@@ -95,14 +88,13 @@ export default class CitizenFXProvider {
     async getUserInfo(accessToken: string): Promise<UserInfoType> {
         if (!this.client) throw new Error(`${modulename} is not ready`);
 
-        //Perform introspection
-        const userInfo = await this.client.userinfo(accessToken);
-        const parsed = userInfoSchema.parse(userInfo);
-        let picture: string | undefined;
-        if (typeof userInfo.picture == 'string' && userInfo.picture.startsWith('https://')) {
-            picture = userInfo.picture;
+        const response = await fetch(`https://sso.vmp.ir/index.php?work=getData&code=${accessToken}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
         }
 
-        return { ...parsed, picture };
+        const jsonData = await response.json();
+
+        return jsonData;
     }
 };
