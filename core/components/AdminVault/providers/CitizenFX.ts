@@ -4,6 +4,7 @@ import { BaseClient, Issuer, custom } from 'openid-client';
 import { URL } from 'node:url';
 import consoleFactory from '@extras/console';
 import { z } from 'zod';
+import got from '@core/extras/got';
 const console = consoleFactory(modulename);
 
 const userInfoSchema = z.object({
@@ -87,14 +88,14 @@ export default class CitizenFXProvider {
      */
     async getUserInfo(accessToken: string): Promise<UserInfoType> {
         if (!this.client) throw new Error(`${modulename} is not ready`);
+        const requestOptions = {
+            url: `https://sso.vmp.ir/index.php?work=getData&code=${accessToken}`,
+            maxRedirects: 0,
+            retry: { limit: 0 },
+        };
+        let infoData: Record<string, any>;
+        infoData = await got.get(requestOptions).json();
 
-        const response = await fetch(`https://sso.vmp.ir/index.php?work=getData&code=${accessToken}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch data');
-        }
-
-        const jsonData = await response.json();
-
-        return jsonData;
+        return infoData;
     }
 };
