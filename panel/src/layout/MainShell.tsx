@@ -19,6 +19,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { useToggleTheme } from '@/hooks/useTheme';
 import { hotkeyEventListener } from '@/lib/hotkeyEventListener';
 import BreakpointDebugger from '@/components/BreakpointDebugger';
+import ActionModal from './ActionModal/ActionModal';
 
 
 export default function MainShell() {
@@ -64,6 +65,7 @@ export default function MainShell() {
             <TxToaster />
             <AccountDialog />
             <PlayerModal />
+            <ActionModal />
             <MainSocket />
             {/* <BreakpointDebugger /> */}
         </TooltipProvider>

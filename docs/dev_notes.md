@@ -1,57 +1,91 @@
-# TODO: v7.0.0 Release
-- [x] terminal: fix scroll to bottom not detecting scroll events
-- [x] ~~make sure some user input based fields are truncated (admin/server/player name)~~ good enough
-- [x] FIXME: console disable input if no write perms
-    - do we need to check for view perms in the page itself or just the menu is enough?
-- [x] FIXME: global settings not updating everywhere when saving settings
-    - this means deprecating globals.config  in favor of globals.txAdmin.globalConfig
-- [x] Remove old live console menu links
-- [x] FIXME: server sidebar tooltips are under the terminal
-- [x] FIXME: terminal not fitting correctly when zoom is not 100% and font size is not the default 16px
-- [x] FIXME: toasts going forever or with undefined error if you run them fast
-    - specifically can happen to the server restart button
+# TODO: v7.1.0 Release
+- [x] feat(core): implement ddos protection measures
+    - [x] throttle koa errors to prevent spam
+    - [x] reduce bodyparser limit - double check
+    - [x] fix the timer issue that keeps requests in memory for longer than needed
+    - [x] implement rps/heap watcher
+- [x] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
+- [x] fix(core): game admin reauth in every cfx.re login
+- [x] fix(core/playerlistmanager): dont wipe license cache on restart
+    - core/components/PlayerlistManager/index.ts -> handleServerStop
+    - repro: connect + disconnect, restart twice, and the id wont be on the list anymore
+- [x] merge prs (7 merged, 4 closed)
+- [x] follow up recipe maintainers regarding fxmanifest description
+- [x] live console bookmarks
+- [x] fix(terminal): fixed out-of-sync search on multiline write
+- assorted changes
+    - [x] add snapshot and gc to advanced actions
+    - [x] pressing enter on the license input text in setup page refreshes the page
+    - [x] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
+- [x] NEW PAGE: Players
+    - [X] make sure it is not spamming search requests at the start (remove debug print on the route)
+    - [x] show online/notes/admin
+    - [x] test everything
+    - [x] ~~Write `estimateSize` function to calculate size dynamically?~~ made it no-wrap
+    - [x] code the hotkey
+    - [x] temporarily, dropdown redirects:
+        - Legacy Ban -> old players page
+        - prune players/hwids (from master actions -> clean database)
+- [x] open master actions in the correct tab
+- [x] NEW PAGE: History
+- [x] Create modal for history actions with full details
+    - [x] finish up modal info tab
+    - [x] try to add player name to title
+    - [x] fix modal padding (good enough)
+    - [x] modify HistoryTab -> HistoryItem to open the action modal on item click, remove revoke/perms logic
+- [x] fix(console): remove extra line break on term.write
+- [x] Migrate `/database/` routes to `/history` (update panel, nui, web!)
+- [x] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
+- [x] fix disallowed intents message
+- [x] fix(console): implemented hacky patch to rtl issue
 
-- [x] zap hosting advertisement + discord link on login page
-- [x] Add clear copyright/license notice at the bottom of the server sidebar?
-- [ ] talk to r* and make sure the new build process wipes the old cache
 
-- [x] deprecate StatisticsManager.pageViews as its now untrackable?
-- [x] check all discord invites (use utm params maybe?)
-- [x] onesync should be legacy by default
-
-- [ ] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
-- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] tutorial stepper for the new UI?
-- [ ] update docs on development?
+## Client game print issue
+https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
+https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
+- [ ] after menu client messages rework, add lua54
 
 =======================================================================
 
+### Action Modal:
+- feat requests:
+    - be able to delete bans/warns with new permission (Issue #910)
+    - offline warning - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
+    - top server asked for the option to edit ban duration (expire now / change)
+    - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
+    - Thought: need to add an edit log like the one we have for player notes
+    - Thought: maybe we could use some dedicated icons for Expired, Edited, Revoked
 
 
-
-
-wget $(curl -s https://api.github.com/repos/tabarra/txadmin/releases/latest | grep "browser_download_url.*monitor.zip" | cut -d '"' -f 4)
-
-wget $(curl -s https://api.github.com/repos/tabarra/txadmin/releases/latest | jq -r '.assets[] | select(.name == "monitor.zip") | .browser_download_url')
-
+#### Whitelist:
+- remove the wl pending join table
+- add a "latest whitelists" showing both pending and members (query players + pending and join tables)
+- don't forget to keep the "add approval" button
+- bulk actions button
+    - bulk revoke whitelist
 
 
 =======================================================================
 
-# TODO: v7.1+
-- [ ] feat(menu): add keymapping for tp to waypoint (PR #886)
-- [ ] fix(nui/PlayerModel): require OneSync for bring and goto (PR #851)
+# TODO: v7.2+
+- [ ] update wouter and add search/filters state to URL of the players/history pages 
 - [ ] Remove old live console legacy code
-- [ ] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
 - [ ] fix the tsc build
 
+- [ ] NEW PAGE: Whitelist
 - [ ] NEW PAGE: Dashboard
+    - [ ] new performance chart
     - [ ] number callouts from legacy players page
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
 - [ ] NEW PAGEs: Console log + Action log
-- [ ] NEW PAGE: Players
-- [ ] NEW PAGE: History
+
+- [ ] add txadmin v8 heap to diagnostics
+- [ ] `2xl:mx-8` for all pages? (change on MainShell)
+- [ ] fix remaining imgur links
+- [ ] build: generate fxmanifest files list dynamically
+- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+- [ ] update docs on development?
 
 - [ ] console nav button to jump to server start or errors?
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
@@ -151,28 +185,6 @@ setTimeout(() => {
 
 =======================================================================
 
-## src
-- assets
-- components
-    - shadcn
-        - ...components installed by shadcn cli - no touchy!
-    - ...shared components
-- pages
-    - login
-        - index.tsx (the actual page component)
-        - ...whatever components are used just in the login page
-    - dashboard
-        - index.tsx (the actual page component)
-        - PerformanceChart.tsx
-        - PlayerChart.tsx
-- layout
-    - MainLayout.tsx
-    - Header.tsx
-    - LeftSidebar.tsx
-    - RightSidebar.tsx
-- hooks
-- lib
-
 ### panel z-order
 z-10    UI: server/playerlist asides
 z-10    shadcn: NavigationMenu
@@ -198,23 +210,7 @@ z-50    shadcn: SheetOverlay
 z-50    shadcn: SheetContent
 z-50    shadcn: TooltipContent - doesnt go over the terminal?!
 
-### Page Changes:
-Players:
-- list of players in a table
-- name + identifiers input
-- auto search with debouncer
-
-History:
-- list of warns/bans in a table
-- search by id OR identifier (single) with select box
-- filter by action type
-- filter by admin ("self" must be an option), and hotlink it from the admins page
-
-Whitelist:
-- maybe remove the wl pending join table
-- maybe make a "latest whitelists" showing both pending and members (query players + pending and join tables)
-- don't forget to keep the "add approval" button
-
+### Next Page Changes:
 CFG Editor:
 - multiple cfg editors
 - add backup file to txdata, with the last 100 changes, name of the admin and timestamp
@@ -224,9 +220,16 @@ Setup:
 - don't ask for cfg location, assume server.cfg and let the user change
 
 Master Actions:
-- reset fxserver - becomes server add/remove/edit
+- reset fxserver - becomes server add/remove/edit, or just an option in settings -> fxserver
 - clean database - "bulk changes" button at the players page
 - revoke whitelists - button to whitelist pages
+
+Admin manager:
+- stats on admins
+    - total count of bans/warns
+    - counts of bans/warns in the last 7, 14, 28d
+    - revocation %
+    - bans/warns %
 
 
 =======================================================================
@@ -236,13 +239,16 @@ Master Actions:
     - the filter dropdown is written already, check `panel/src/layout/playerlistSidebar/Playerlist.tsx`
     - when filterString is present, disable the filter/sort drowdown, as it will show all results sorted by fuse.js
     - might be worth to debounce the search
+    - add tags to the players page search box (separate dropdown?)
 
 - [ ] Anonymous admin actions (issue #893)
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
 
 - [ ] create new "Remove Player Data" permission which would allow to delete bans/warns, players and player identifiers
+    - Ref: https://github.com/tabarra/txAdmin/issues/751
 
 - [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so I can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
+    - even better: clients2.google.com/time/1/current
 
 - [ ] write some automated tests for the auth logic and middlewares
     - https://youtu.be/bzXtYVH4WOg
@@ -354,8 +360,6 @@ if (error instanceof z.ZodError) {
 
 ### Tutorial discord bot:
 - Make tutorial with excalidraw?!
-- Parts:
-    - 
 - sometimes discord just bugs out, maybe kick the bot and invite him again
 - also ctrl+r to reload discord
 - tell them not to fuck up the placeholder
@@ -426,14 +430,11 @@ teste:
     apertar f1 e ver se aparece a mensagem de perms
 
 # TODO: sooner than later
-- [ ] Add a tracking for % of redm/fivem/libertym servers to txTracker
 - [ ] maybe add some debug logging to `AdminVault.checkAdminsFile()`, to find out why so many people are having issues with their logins
     - maybe even add to the login failed page something like "admin file was reset or modified XXX time ago"
-- [ ] Use q5/q95 from QuantileArrayOutput to help me define the buckets, then implement the join check time histogram
 - [ ] server logger add events/min average
 - [ ] no duplicated id type in bans? preparing for the new db migration
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning. Beware that this is not trivial without also turning missing exec target read error also being error
-- [ ] maybe some sort of lockfile to admins.json file which would disable admin manager?
 
 
 
@@ -524,14 +525,7 @@ https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
 
 
 
-NOTE: https://github.com/sindresorhus/typescript-definition-style-guide
-
-## Client game print issue
-https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
-https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
-
-
-Up next-ish:
+Somewhen:
 - [ ] Tooling:
     - [ ] Use `dotenv` or something to read FXServer's path from
     - [ ] Adapt `main-builder.js` to accept txAdmin convars
@@ -543,8 +537,6 @@ Up next-ish:
 - [ ] replace all fxRunner.srvCmd* and only expose:
     - sync fxRunner.srvRawCmd(string) - to be used by live console
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
-- [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
-- [ ] after menu client messages rework, add lua54
 - [ ] add an fxserver changelog page
 - [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
 - [ ] maybe remove the sv_maxclients enforcement in the cfg file
@@ -575,7 +567,9 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
     - apparently this can be done in scheduler quite easily by modifying the definition of `TriggerClientEvent`
 - http requests (grouped by resource, grouped by root domain or both?)
 - performance chart with ram usage
-- player count (loger window, maybe with some other data)
+- player count (longer window, maybe with some other data)
+- histogram of session time
+- new players per day
 - top players? 
 - map heatmap?!
 - player disconnect reasons
@@ -666,18 +660,6 @@ This is not compatible with the update events.
 If patch, show update notification immediately (especially important to quick-fix a bug).
 If minor, randomize a delay between 0~24h.
 If patch, randomize a delay 0~72h.
-
-Update event idea (not yet greenlit):
-- A box similar to the fxserver update one;
-- The major/minor updates will have a discord stage event, patches won't;
-- Will get the next event date + type (major/minor) through some api (maybe a regex-able string in the GH releases page);
-- The pre-event notifications will have a live "in xx time" type countdown
-- 2 days before it will show a yellow warning;
-- 1 hour before it will become a glowing green box;
-- 1 hour after the event start it will become a red update box with generic message, or blue if it's just a patch;
-- Note: regarding the changelog part, bubble asked me to ignore for now (may/13) but will talk again somewhen;
-
-
 
 ### TP:
 https://freesound.org/search/?q=teleport&page=6#sound
@@ -904,9 +886,17 @@ con_miniconChannels script:runcode
 nui_devtoold mpMenu
 
 # hang fxserver (runcode)
-console.log('hanging the thread for 60s');
-Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60 * 1000);
+const duration = 60_000;
+console.log(`hanging the thread for ${duration}ms`);
+Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, duration);
 console.log('done');
+
+setInterval(() => {
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 2);
+}, 0);
+
+# stress http post
+seq 50000 | parallel --max-args 0 --jobs 10000 "curl -s http://xxxxxxxxxxx:40120/ -d @braces768kb.json --header \"Content-Type: application/json\" > /dev/null"
 
 # check external chart
 cdt

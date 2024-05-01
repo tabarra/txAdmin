@@ -77,7 +77,8 @@
             "not_enabled": "A txAdmin menü nincs engedélyezve! Engedélyezheted a txAdmin beállítások fülön.",
             "announcement_title": "Szerver felhívás %{author}:",
             "dialog_empty_input": "Nem lehet üresen hagyni.",
-            "directmessage_title": "Privát üzenet admintól %{author}:"
+            "directmessage_title": "Privát üzenet admintól %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Lefagyasztottad a játékost!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Jármű",
-                "onesync_error": "Ezen beállítás használatához, engedélyezd a OneSync-et.",
                 "not_in_veh_error": "Jelenleg nem ülsz járműben!",
                 "spawn": {
                     "title": "Lehívás",

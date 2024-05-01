@@ -353,7 +353,7 @@
 
         txAdminAPI({
             type: "GET",
-            url: '/player/search?query=' + encodeURI(searchString),
+            url: '/player/search/old?query=' + encodeURI(searchString),
             timeout: REQ_TIMEOUT_LONG,
             success: function (data) {
                 if(data.error){
@@ -499,7 +499,7 @@
 
         txAdminAPI({
             type: "POST",
-            url: '/database/ban_ids',
+            url: '/history/ban_ids',
             timeout: REQ_TIMEOUT_LONG,
             data,
             success: function (data) {

@@ -21,13 +21,15 @@ export function PlayerlistSidebar({ isSheet }: PlayerSidebarProps) {
                     : 'calc(100vh - 3.5rem - 1px - 2rem)',
             }}
         >
-            <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm shrink-0">
+            <div className="rounded-xl border border-border bg-card text-card-foreground shadow-sm shrink-0 p-4">
+            {/* <div className="rounded-xl border border-border bg-cardx text-card-foreground shadow-sm shrink-0 p-4"> */}
                 <PlayerlistSummary />
             </div>
             <div
                 className={cn(
                     'min-h-[480px]',
                     !isSheet && 'rounded-xl border border-border bg-card text-card-foreground shadow-sm',
+                    // !isSheet && 'rounded-xl border border-border bg-cardx text-card-foreground shadow-sm',
                     'flex flex-col gap-2 flex-grow overflow-hidden',
                 )}
             >

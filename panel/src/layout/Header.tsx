@@ -182,6 +182,7 @@ export function Header() {
                 <div className="flex flex-row items-center flex-grow gap-5 mr-5">
                     <div className="w-sidebar hidden xl:flex justify-center">
                         <NavLink href="/">
+                            {/* <h2 className="text-4xl font-bold text-pink-500 saturate-150">Option B</h2> */}
                             <LogoFullSquareGreen className="h-9 hover:scale-105 hover:brightness-110" />
                         </NavLink>
                     </div>

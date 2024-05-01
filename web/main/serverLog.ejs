@@ -239,7 +239,19 @@
 
             if (targetEl.classList.contains('collapse')) targetEl.classList.remove('collapse');
         })
-        
+
+        //============================================== Socket Stuff
+        pageSocket.on('error', (error) => {
+            console.log('Page Socket.IO', error)
+        });
+        pageSocket.on('connect', () => {
+            console.log("Page Socket.IO Connected.");
+            logContainer.innerHTML = '';
+        });
+        pageSocket.on('disconnect', (message) => {
+            console.log("Page Socket.IO Disonnected:", message);
+        });
+        pageSocket.on('logData', processLog);
 
         //============================================== Mode selection
         function goLive() {
@@ -249,19 +261,7 @@
             modeLabel.textContent = 'LIVE';
             viewOlderBtn.disabled = false;
             viewNewerBtn.disabled = true;
-
-            //Socket stuff
-            pageSocket.on('error', (error) => {
-                console.log('Page Socket.IO', error)
-            });
-            pageSocket.on('connect', () => {
-                console.log("Page Socket.IO Connected.");
-                logContainer.innerHTML = '';
-            });
-            pageSocket.on('disconnect', (message) => {
-                console.log("Page Socket.IO Disonnected:", message);
-            });
-            pageSocket.on('logData', processLog);
+            if (!pageSocket.connected) pageSocket.connect();
         }
 
         function goHistory(direction) {

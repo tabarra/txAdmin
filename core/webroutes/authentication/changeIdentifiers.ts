@@ -14,8 +14,8 @@ const cfxHttpReqOptions = {
 type ProviderDataType = {id: string, identifier: string};
 
 const bodySchema = z.object({
-    cfxreId: z.string(),
-    discordId: z.string(),
+    cfxreId: z.string().trim(),
+    discordId: z.string().trim(),
 });
 export type ApiChangeIdentifiersReqSchema = z.infer<typeof bodySchema>;
 
@@ -65,7 +65,7 @@ export default async function AuthChangeIdentifiers(ctx: AuthedCtx) {
     if (discordId.length) {
         if (!consts.validIdentifiers.discord.test(discordId)) {
             return ctx.send<GenericApiResp>({
-                error: `Invalid Discord ID.`,
+                error: `The Discord ID needs to be the numeric "User ID" instead of the username.\n You can also leave it blank.`,
             });
         }
         discordData = {

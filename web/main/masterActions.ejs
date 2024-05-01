@@ -212,6 +212,20 @@
 <script>
     //============================================== General
     (()=>{
+        console.log('masterActions page loaded', window.location.hash);
+        if(window.location.hash === '#cleandb'){
+            document.getElementById('nav-cleandb').classList.add('active', 'show');
+            document.getElementById('nav-cleandb-tab').classList.add('active');
+            document.getElementById('nav-general').classList.remove('active', 'show');
+            document.getElementById('nav-general-tab').classList.remove('active');
+        }else if(window.location.hash === '#revokewl'){
+            document.getElementById('nav-revokewl').classList.add('active', 'show');
+            document.getElementById('nav-revokewl-tab').classList.add('active');
+            document.getElementById('nav-general').classList.remove('active', 'show');
+            document.getElementById('nav-general-tab').classList.remove('active');
+        }
+    })();
+    (()=>{
         const generalBtnBackupDatabase = document.getElementById('general-btnBackupDatabase');
         const generalBtnResetFXServer = document.getElementById('general-btnResetFXServer');
 

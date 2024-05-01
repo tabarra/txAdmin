@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin Meni ni omogočen! Lahko ga omogočiš v txAdmin nastavitvah.",
             "announcement_title": "Obvestilo od %{author}:",
             "dialog_empty_input": "Ne moreš imeti praznega vnosa.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM from admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Zamrznil si igralca!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Vozila",
-                "onesync_error": "Ta možnost zahteva, da je OneSync vklopljen za ravnanje s »entity handling«",
                 "not_in_veh_error": "Trenutno nisi v vozilu!",
                 "spawn": {
                     "title": "Spawn",

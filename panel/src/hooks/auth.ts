@@ -7,6 +7,7 @@ import { isGlobalMenuSheetOpenAtom, isPlayerlistSheetOpenAtom, isServerSheetOpen
 import { playerModalOpenAtom } from './playerModal';
 import { globalStatusAtom } from './status';
 import { txToast } from '@/components/TxToaster';
+import { actionModalOpenAtom } from './actionModal';
 
 
 /**
@@ -125,6 +126,7 @@ export const logoutWatcher = atomEffect((get, set) => {
     set(isServerSheetOpenAtom, false);
     set(isPlayerlistSheetOpenAtom, false);
     set(playerModalOpenAtom, false);
+    set(actionModalOpenAtom, false);
     set(globalStatusAtom, null);
     txToast.dismiss(); //making sure we don't have any pending toasts
 

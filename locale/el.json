@@ -77,7 +77,8 @@
             "not_enabled": "Tο txAdmin Menu δεν είναι ενεργοποιημένο ! Μπορείς να το ενεργοποιήσεις στήν σελίδα ρυθμίσεων του txAdmin.",
             "announcement_title": "Ανακοίνωση από τον %{author}:",
             "dialog_empty_input": "Δεν μπορείς να μην εισάγεις τίποτα.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM from admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Έχεις παγώσει έναν παίκτη!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Vehicle",
-                "onesync_error": "Αυτή η επιλογή απαιτεί ο διακομιστής να έχει ενεργοποιημένο OneSync",
                 "not_in_veh_error": "Δεν είσαι μέσα σε όχημα!",
                 "spawn": {
                     "title": "Spawn",

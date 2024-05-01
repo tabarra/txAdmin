@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin Menu chưa được bật, bạn có thể bật tại mục cài đặt.",
             "announcement_title": "Thông báo máy chủ bởi %{author}:",
             "directmessage_title": "Tin nhắn từ Admin %{author}:",
-            "dialog_empty_input": "Bạn không thể để trống mục này."
+            "dialog_empty_input": "Bạn không thể để trống mục này.",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Bạn đã đóng băng người chơi!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Phương tiện",
-                "onesync_error": "Yêu cầu Onesync",
                 "not_in_veh_error": "Bạn đang ở trong xe!",
                 "spawn": {
                     "title": "Tạo ra",

@@ -137,7 +137,7 @@ export const useBackendApi = <
     hookOpts.abortOnUnmount ??= false;
     useEffect(() => {
         return () => {
-            if (!hookOpts.abortOnUnmount) return
+            if (!hookOpts.abortOnUnmount) return;
             abortController.current?.abort('unmount');
             if (currentToastId.current) {
                 txToast.dismiss(currentToastId.current);
@@ -153,7 +153,7 @@ export const useBackendApi = <
         }
         //The abort controller is not aborted, just forgotten
         abortController.current = new AbortController();
-        
+
         //Processing URL
         let fetchUrl = hookOpts.path;
         if (opts.pathParams) {
@@ -261,8 +261,13 @@ export const useBackendApi = <
             } else {
                 errorMessage = error.message;
             }
-            console.error('[ERROR]', apiCallDesc, errorMessage);
-            handleError('Request Error', errorMessage);
+
+            if (errorMessage.includes('unmount')) {
+                console.warn('[UNMOUNTED]', apiCallDesc);
+            } else {
+                console.error('[ERROR]', apiCallDesc, errorMessage);
+                handleError('Request Error', errorMessage);
+            }
         }
     }
 }

@@ -77,7 +77,8 @@
             "not_enabled": "Il menu txAdmin non è attivo! Puoi attivarlo dalle impostazioni del txAdmin.",
             "announcement_title": "Annuncio da %{author}:",
             "dialog_empty_input": "Non puoi dare un input vuoto.",
-            "directmessage_title": "DM dall'admin %{author}:"
+            "directmessage_title": "DM dall'admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Hai freezato il player!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Veicolo",
-                "onesync_error": "Questa opzione richiede che OneSync sia attivo",
                 "not_in_veh_error": "Non sei su un veicolo!",
                 "spawn": {
                     "title": "Spawna",

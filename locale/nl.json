@@ -77,7 +77,8 @@
             "not_enabled": "Het txAdmin Menu is uitgeschakeld! Je kan hem inschakelen bij de txAdmin instellingen pagina.",
             "announcement_title": "Server Mededeling door %{author}:",
             "dialog_empty_input": "Je moet iets invullen.",
-            "directmessage_title": "Privé Bericht van %{author}:"
+            "directmessage_title": "Privé Bericht van %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Je hebt de speler gefreezed!",
@@ -145,14 +146,13 @@
             },
             "vehicle": {
                 "title": "Voertuig",
-                "onesync_error": "Om deze optie te gebruiken, moet OneSync aan staan",
                 "not_in_veh_error": "Je zit niet in een voertuig!",
                 "spawn": {
                     "title": "Spawn",
                     "label": "Spawn een voertuig door middel van de spawn naam",
                     "dialog_title": "Spawn voertuig",
                     "dialog_desc": "Vul de spawn naam in om het voertuig te spawnen.",
-                    "dialog_success": "Vehicle gespawned!",
+                    "dialog_success": "Voertuig gespawned!",
                     "dialog_error": "Het voertuig model '%{modelName}' bestaat niet!",
                     "dialog_info": "Proberen %{modelName} te spawnen."
                 },
@@ -172,7 +172,7 @@
                     "success": "Voertuig opgevoerd!",
                     "already_boosted": "Dit voertuig is al opgevoerd.",
                     "unsupported_class": "Deze voertuigklasse wordt niet ondersteund.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "Je kan alleen boosten als je op een paard zit."
                 }
             },
             "heal": {
@@ -290,7 +290,7 @@
                         "spectate_failed": "Kon de speler niet vinden! Spectate aan het afsluiten.",
                         "spectate_yourself": "Je kan jezelf niet spectaten.",
                         "freeze_yourself": "Je kan jezelf niet freezen.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Er zijn geen spelers om naar door te cyclen."
                     }
                 },
                 "troll": {
@@ -348,7 +348,7 @@
             "ids": {
                 "current_ids": "Huidige Identifiers",
                 "previous_ids": "Eerder gebruikte Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "all_hwids": "Alle Hardware IDs"
             }
         }
     }

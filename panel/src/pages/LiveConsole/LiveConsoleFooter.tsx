@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 import { Input } from "@/components/ui/input";
 import { cn, openExternalLink } from "@/lib/utils";
 import { BookMarkedIcon, FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useAdminPerms } from '@/hooks/auth';
+import { useLiveConsoleHistory } from '@/hooks/liveConsole';
+import DynamicNewBadge from '@/components/DynamicNewBadge';
 
 
 type ConsoleFooterButtonProps = {
@@ -17,39 +17,40 @@ type ConsoleFooterButtonProps = {
 function ConsoleFooterButton({ icon: Icon, title, disabled, onClick }: ConsoleFooterButtonProps) {
     return (
         <div
+            tabIndex={0}
             className={cn(
-                "group bg-secondary xs:bg-transparent 2xl:hover:bg-secondary w-full rounded-lg px-1.5 py-2 cursor-pointer flex items-center justify-center",
+                `group bg-secondary xs:bg-transparent 2xl:hover:bg-secondary w-full rounded-lg px-1.5 py-2 cursor-pointer flex items-center justify-center
+                transition-all ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`,
                 disabled && 'opacity-50 pointer-events-none'
             )}
             onClick={() => !disabled && onClick()}
+            onKeyDown={(e) => (e.code === 'Enter' || e.code === 'Space') && !disabled && onClick()}
         >
             <Icon className="w-6 h-6 2xl:w-5 2xl:h-5 text-muted-foreground group-hover:scale-110 group-hover:text-secondary-foreground inline" />
             <span className="hidden 2xl:inline ml-1 align-middle">
                 {title}
             </span>
+            {/* FIXME: remove */}
+            {title === 'Saved' && <DynamicNewBadge featName='liveConsoleBookmarks' />}
         </div>
     )
 }
 
 
-// Create the history atom outside of the component
-// TODO: move this to hooks?
-export const historyAtom = atomWithStorage<string[]>('liveConsoleCommandHistory', []);
-const historyMaxLength = 100;
-
 type LiveConsoleFooterProps = {
     isConnected: boolean;
-    consoleWrite: (data: string) => void;
+    consoleWrite: (_data: string) => void;
     consoleClear: () => void;
     toggleSaveSheet: () => void;
     toggleSearchBar: () => void;
+    termInputRef: React.RefObject<HTMLInputElement>;
 }
 
 export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
-    const [history, setHistory] = useAtom(historyAtom);
+    const { history, appendHistory } = useLiveConsoleHistory();
     const [histIndex, setHistIndex] = useState(-1);
     const savedInput = useRef('');
-    const termInputRef = useRef<HTMLInputElement>(null);
+    const termInputRef = props.termInputRef;
     const { hasPerm } = useAdminPerms();
     const hasWritePerm = hasPerm('console.write');
 
@@ -58,7 +59,7 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
         if (props.isConnected && termInputRef.current) {
             termInputRef.current.focus();
         }
-    }, [props.isConnected]);
+    }, [props.isConnected, termInputRef]);
 
     const handleArrowUp = () => {
         if (!termInputRef.current) return;
@@ -90,12 +91,8 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
         setHistIndex(-1);
         termInputRef.current.value = '';
         savedInput.current = '';
-
         if (currentInput) {
-            const newHistory = history.filter((cmd) => cmd !== currentInput);
-            newHistory.unshift(currentInput);
-            if (newHistory.length > historyMaxLength) newHistory.pop();
-            setHistory(newHistory);
+            appendHistory(currentInput);
             props.consoleWrite(currentInput);
         }
     };
@@ -144,7 +141,11 @@ export default function LiveConsoleFooter(props: LiveConsoleFooterProps) {
                 />
             </div>
             <div className="flex flex-row justify-evenly gap-3 2xl:gap-1 select-none">
-                {/* <ConsoleFooterButton icon={BookMarkedIcon} title="Saved" onClick={props.toggleSaveSheet} /> */}
+                <ConsoleFooterButton
+                    icon={BookMarkedIcon}
+                    title="Saved"
+                    onClick={props.toggleSaveSheet}
+                />
                 <ConsoleFooterButton
                     icon={SearchIcon}
                     title="Search"

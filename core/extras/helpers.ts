@@ -1,4 +1,4 @@
-import { PlayerIdsObjectType } from "@shared/otherTypes";
+import type { PlayerIdsObjectType } from "@shared/otherTypes";
 import consts from "../../shared/consts";
 
 /**
@@ -176,6 +176,56 @@ export const filterPlayerHwids = (hwids: string[]) => {
 
     return { invalidHwidsArray, validHwidsArray };
 }
+
+
+/**
+ * Attempts to parse a user-provided string into an array of valid identifiers.
+ * This function is lenient and will attempt to parse any string into an array of valid identifiers.
+ * For non-prefixed ids, it will attempt to parse it as discord, fivem, steam, or license.
+ * Returns an array of valid ids/hwids, and array of invalid identifiers.
+ * 
+ * Stricter version of this function is parsePlayerIds
+ */
+export const parseLaxIdsArrayInput = (fullInput: string) => {
+    const validIds: string[] = [];
+    const validHwids: string[] = [];
+    const invalids: string[] = [];
+
+    if (typeof fullInput !== 'string') {
+        return { validIds, validHwids, invalids };
+    }
+    const inputs = fullInput.toLowerCase().split(/[,;\s]+/g).filter(Boolean);
+
+    for (const input of inputs) {
+        if (input.includes(':')) {
+            if (consts.regexValidHwidToken.test(input)) {
+                validHwids.push(input);
+            }else if (Object.values(consts.validIdentifiers).some((regex) => regex.test(input))){
+                validIds.push(input);
+            } else {
+                const [type, value] = input.split(':', 1);
+                if (consts.validIdentifierParts[type as keyof typeof consts.validIdentifierParts]?.test(value)) {
+                    validIds.push(input);
+                } else {
+                    invalids.push(input);
+                }
+            }
+        } else if (consts.validIdentifierParts.discord.test(input)) {
+            validIds.push(`discord:${input}`);
+        } else if (consts.validIdentifierParts.fivem.test(input)) {
+            validIds.push(`fivem:${input}`);
+        } else if (consts.validIdentifierParts.license.test(input)) {
+            validIds.push(`license:${input}`);
+        } else if (consts.validIdentifierParts.steam.test(input)) {
+            validIds.push(`steam:${input}`);
+        } else {
+            invalids.push(input);
+        }
+    }
+
+    return { validIds, validHwids, invalids };
+}
+
 
 
 /**

@@ -23,7 +23,8 @@ import topLevelMw from './middlewares/topLevelMw';
 import ctxVarsMw from './middlewares/ctxVarsMw';
 import ctxUtilsMw from './middlewares/ctxUtilsMw';
 import { SessionMemoryStorage, koaSessMw, socketioSessMw } from './middlewares/sessionMws';
-import checkRateLimit from './middlewares/globalRateLimiterMw';
+import checkRateLimit from './middlewares/globalRateLimiter';
+import checkHttpLoad from './middlewares/httpLoadMonitor';
 import cacheControlMw from './middlewares/cacheControlMw';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict51, 32);
@@ -88,7 +89,6 @@ export default class WebServer {
                 || error.code === 'ECANCELED'
             )) {
                 console.error(`Probably harmless error on ${ctx.path}`);
-                console.error('Please be kind and send a screenshot of this error to the txAdmin developer.');
                 console.dir(error);
             }
         });
@@ -102,13 +102,17 @@ export default class WebServer {
         this.app.use(topLevelMw);
 
         //Setting up additional middlewares:
-        const jsonLimit = '16MB';
         const panelPublicPath = convars.isDevMode
             ? path.join(process.env.TXADMIN_DEV_SRC_PATH as string, 'panel/public')
             : path.join(txEnv.txAdminResourcePath, 'panel');
         this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), koaServeOptions));
         this.app.use(KoaServe(panelPublicPath, koaServeOptions));
-        this.app.use(KoaBodyParser({ jsonLimit }));
+        this.app.use(KoaBodyParser({
+            // Heavy bodies can cause v8 mem exhaustion during a POST DDoS.
+            // The heaviest JSON is the /intercom/resources endpoint.
+            // Conservative estimate: 768kb/300b = 2621 resources
+            jsonLimit: '768kb',
+        }));
 
         //Custom stuff
         this.sessionStore = new SessionMemoryStorage();
@@ -163,7 +167,8 @@ export default class WebServer {
         //Calls the appropriate callback
         try {
             // console.debug(`HTTP ${req.method} ${req.url}`);
-            if (!checkRateLimit(req?.socket?.remoteAddress)) return;
+            if (!checkHttpLoad()) return;
+            if (!checkRateLimit(req?.socket?.remoteAddress)) return; 
             if (req.url.startsWith('/socket.io')) {
                 (this.io.engine as any).handleRequest(req, res);
             } else {
@@ -192,6 +197,19 @@ export default class WebServer {
             };
             //@ts-ignore
             this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this));
+            // this.httpServer = HttpClass.createServer((req, res) => {
+            //     // const reqSize = parseInt(req.headers['content-length'] || '0');
+            //     // if (req.method === 'POST' && reqSize > 0) {
+            //     //     console.debug(chalk.yellow(bytes(reqSize)), `HTTP ${req.method} ${req.url}`);
+            //     // }
+
+            //     this.httpCallbackHandler(req, res);
+            //     // if(checkRateLimit(req?.socket?.remoteAddress)){
+            //     //     this.httpCallbackHandler(req, res);
+            //     // }else {
+            //     //     req.destroy();
+            //     // }
+            // });
             this.httpServer.on('error', listenErrorHandler);
 
             let iface: string;

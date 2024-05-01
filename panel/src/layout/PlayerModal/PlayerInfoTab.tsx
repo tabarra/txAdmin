@@ -1,3 +1,4 @@
+import DateTimeCorrected from "@/components/DateTimeCorrected";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -107,35 +108,53 @@ function PlayerNotesBox({ playerRef, player, refreshModalData }: PlayerNotesBoxP
 }
 
 
-type InfoTabProps = {
+type PlayerInfoTabProps = {
     playerRef: PlayerModalRefType;
     player: PlayerModalPlayerData;
+    serverTime: number;
+    tsFetch: number;
     setSelectedTab: (t: string) => void;
     refreshModalData: () => void;
 }
 
-export default function InfoTab({ playerRef, player, setSelectedTab, refreshModalData }: InfoTabProps) {
+export default function PlayerInfoTab({ playerRef, player, serverTime, tsFetch, setSelectedTab, refreshModalData }: PlayerInfoTabProps) {
     const { hasPerm } = useAdminPerms();
     const playerWhitelistApi = useBackendApi<GenericApiOkResp>({
         method: 'POST',
         path: `/player/whitelist`,
     });
 
-    const sessionTimeText = player.sessionTime ? msToDuration(
+    const sessionTimeText = !player.sessionTime ? '--' : msToDuration(
         player.sessionTime * 60_000,
         { units: ['h', 'm'] }
-    ) : '--';
-    const lastConnectionText = player.tsLastConnection
-        ? tsToLocaleDate(player.tsLastConnection)
-        : '--';
-    const playTimeText = player.playTime ? msToDuration(
+    );
+    const lastConnectionText = !player.tsLastConnection ? '--' : <DateTimeCorrected
+        className="opacity-75 cursor-help"
+        serverTime={serverTime}
+        tsObject={player.tsLastConnection}
+        tsFetch={tsFetch}
+        isDateOnly
+    />;
+    const playTimeText = !player.playTime ? '--' : msToDuration(
         player.playTime * 60_000,
         { units: ['d', 'h', 'm'] }
-    ) : '--';
-    const joinDateText = player.tsJoined ? tsToLocaleDate(player.tsJoined) : '--';
-    const whitelistedText = player.tsWhitelisted ? tsToLocaleDate(player.tsWhitelisted) : 'not yet';
-    const banCount = player.actionHistory.filter((a) => a.type === 'ban').length;
-    const warnCount = player.actionHistory.filter((a) => a.type === 'warn').length;
+    )
+    const joinDateText = !player.tsJoined ? '--' : <DateTimeCorrected
+        className="opacity-75 cursor-help"
+        serverTime={serverTime}
+        tsObject={player.tsJoined}
+        tsFetch={tsFetch}
+        isDateOnly
+    />;
+    const whitelistedText = !player.tsWhitelisted ? 'not yet' : <DateTimeCorrected
+        className="opacity-75 cursor-help"
+        serverTime={serverTime}
+        tsObject={player.tsWhitelisted}
+        tsFetch={tsFetch}
+        isDateOnly
+    />;
+    const banCount = player.actionHistory.filter((a) => a.type === 'ban' && !a.revokedAt).length;
+    const warnCount = player.actionHistory.filter((a) => a.type === 'warn' && !a.revokedAt).length;
 
     const handleWhitelistClick = () => {
         playerWhitelistApi({
@@ -190,7 +209,7 @@ export default function InfoTab({ playerRef, player, setSelectedTab, refreshModa
                 </dd>
             </div>
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
-                <dt className="text-sm font-medium leading-6 text-muted-foreground">Log</dt>
+                <dt className="text-sm font-medium leading-6 text-muted-foreground">Sanctions</dt>
                 <dd className="text-sm leading-6 mt-0 space-x-2">
                     <LogActionCounter type="Ban" count={banCount} />
                     <LogActionCounter type="Warn" count={warnCount} />

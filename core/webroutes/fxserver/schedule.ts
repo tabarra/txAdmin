@@ -20,7 +20,6 @@ export default async function FXServerSchedule(ctx: AuthedCtx) {
         });
     }
     const {action, parameter} = ctx.request.body;
-    console.dir({action, parameter});
 
     //Check permissions
     if (!ctx.admin.testPermission('control.server', modulename)) {

@@ -37,6 +37,8 @@ export default class StatisticsManager {
     public readonly menuCommands = new MultipleCounter();
     public readonly banCheckTime = new QuantileArray(5000, 50);
     public readonly whitelistCheckTime = new QuantileArray(5000, 50);
+    public readonly playersTableSearchTime = new QuantileArray(5000, 50);
+    public readonly historyTableSearchTime = new QuantileArray(5000, 50);
     public currHbData: string = '{"error": "not yet initialized in StatisticsManager"}';
 
     public monitorStats = {
@@ -123,6 +125,7 @@ export default class StatisticsManager {
      *    and loginMethods dropped 'nui' and 'iframe'
      *    Did not change the version because its fully compatible.
      * 10: deprecated pageViews because of the react migration
+     * 11: added playersTableSearchTime and historyTableSearchTime
      * 
      * TODO:
      * Use the average q5 and q95 to find out the buckets.
@@ -180,6 +183,8 @@ export default class StatisticsManager {
                 whitelistCheckTime: playerDbConfig.whitelistMode && playerDbConfig.whitelistMode !== 'disabled'
                     ? this.whitelistCheckTime
                     : false,
+                playersTableSearchTime: this.playersTableSearchTime,
+                historyTableSearchTime: this.historyTableSearchTime,
 
                 //Settings & stuff
                 adminCount: Array.isArray(this.#txAdmin.adminVault.admins) ? this.#txAdmin.adminVault.admins.length : 1,
@@ -204,7 +209,7 @@ export default class StatisticsManager {
             const jwe = await new jose.CompactEncrypt(encodedHbData)
                 .setProtectedHeader(jweHeader)
                 .encrypt(this.#publicKey);
-            this.currHbData = JSON.stringify({ '$statsVersion': 10, jwe });
+            this.currHbData = JSON.stringify({ '$statsVersion': 11, jwe });
             tmpDurationDebugLog('finished');
 
         } catch (error) {

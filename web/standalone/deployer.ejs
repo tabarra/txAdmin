@@ -403,6 +403,12 @@
             });
         }
         
+        if(step2elements.form){
+            step2elements.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                step2Action();
+            });
+        }
 
         function step2Action(){
             if(!step2elements.form.reportValidity()) return;

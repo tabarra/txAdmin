@@ -17,6 +17,17 @@ import { isMobile } from 'is-mobile';
 import { useAtomValue } from 'jotai';
 import { pageTitleWatcher } from './hooks/pages.ts';
 
+//If inside NUI, silence console.* calls
+if (!window.txConsts.isWebInterface) {
+    console.log('Silencing txAdmin Web UI console.* calls inside NUI to prevent confusion.');
+    console.log = () => { };
+    console.info = () => { };
+    console.warn = () => { };
+    console.error = () => { };
+    console.debug = () => { };
+    console.table = () => { };
+}
+
 //Detecting if the user is on a mobile device
 try {
     window.txIsMobile = isMobile({ tablet: true });
