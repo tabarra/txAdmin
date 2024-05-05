@@ -76,6 +76,8 @@ export default (config: WebServerConfigType) => {
     router.get('/deployer/status', apiAuthMw, webRoutes.deployer_status);
     router.post('/deployer/recipe/:action', apiAuthMw, webRoutes.deployer_actions);
     router.post('/settings/save/:scope', apiAuthMw, webRoutes.settings_save);
+    router.get('/settings/banTemplates', apiAuthMw, webRoutes.settings_getBanTemplates);
+    router.post('/settings/banTemplates', apiAuthMw, webRoutes.settings_saveBanTemplates);
 
     //Master Actions
     router.get('/masterActions/backupDatabase', webAuthMw, webRoutes.masterActions_getBackup);

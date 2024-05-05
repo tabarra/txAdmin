@@ -1,4 +1,7 @@
-import { ReactAuthDataType } from "./authApiTypes";
+import type { ReactAuthDataType } from "./authApiTypes";
+export { BanTemplatesDataType, BanDurationType } from "@core/webroutes/banTemplates/utils";
+export { GetBanTemplatesSuccessResp } from "@core/webroutes/banTemplates/getBanTemplates";
+export { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/webroutes/banTemplates/saveBanTemplates";
 
 
 export type UpdateDataType = {
@@ -48,10 +51,4 @@ export type PlayerIdsObjectType = {
     live: string | null;
     steam: string | null;
     xbl: string | null;
-};
-
-//Used in the player modal, preset ban reasons, and legacy bans
-export type BanDurationType = 'permanent' | {
-    value: number;
-    unit: 'hours' | 'days' | 'weeks' | 'months';
 };

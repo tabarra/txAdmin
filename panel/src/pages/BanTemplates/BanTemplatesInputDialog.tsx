@@ -5,8 +5,9 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AutosizeTextAreaRef, AutosizeTextarea } from "@/components/ui/autosize-textarea";
-import { BanTemplatesInputData, banDurationToString } from "./BanTemplatesPage";
+import { BanTemplatesInputData } from "./BanTemplatesPage";
 import { BanDurationType } from "@shared/otherTypes";
+import { banDurationToString } from "@/lib/utils";
 
 //Default dropdown options
 const dropdownOptions = [

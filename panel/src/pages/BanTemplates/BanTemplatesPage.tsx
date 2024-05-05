@@ -1,43 +1,17 @@
 import InlineCode from "@/components/InlineCode";
 import { useAdminPerms } from "@/hooks/auth";
 import { useOpenConfirmDialog } from "@/hooks/dialogs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BanTemplatesInputDialog from "./BanTemplatesInputDialog";
 import BanTemplatesListItem from "./BanTemplatesListItem";
 import BanTemplatesListAddButton from "./BanTemplatesListAddButton";
-import { BanDurationType } from "@shared/otherTypes";
+import { BanDurationType, BanTemplatesDataType, GetBanTemplatesSuccessResp, SaveBanTemplatesReq, SaveBanTemplatesResp } from "@shared/otherTypes";
 import { DndSortableGroup, DndSortableItem } from "@/components/dndSortable";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-
-
-type BanTemplates = {
-    id: string;
-    reason: string;
-    duration: BanDurationType;
-}
-
-//DEBUG: Temporary initial state
-export const tmpInitialState: BanTemplates[] = [
-    {
-        id: '1',
-        reason: 'Night of. Forth Let place life it created stars all grass. Abundantly. Saying whose darkness brought it rule whales. For forth for upon doesn\'t move us subdue have creeping lesser forth moved. A them man place sea you evening air called second to kind gathered lights evening is. Give multiply them be was you\'re there.',
-        duration: { value: 2, unit: 'hours' }
-    },
-    { id: '2', reason: 'Hacking or cheating', duration: 'permanent' },
-    { id: '3', reason: 'Exploiting or griefing', duration: { value: 1, unit: 'weeks' } },
-    { id: '4', reason: 'Racism, harassment or bullying', duration: { value: 8, unit: 'hours' } },
-    { id: '5', reason: 'Inappropriate language', duration: { value: 1, unit: 'days' } },
-    { id: '6', reason: 'Spamming or trolling', duration: 'permanent' },
-];
-
-//Converts the duration object to a lowercase string with correct unit pluralization
-export const banDurationToString = (duration: BanDurationType) => {
-    if (duration === 'permanent') return 'permanent';
-    if (typeof duration === 'string') return duration;
-    const pluralizedString = duration.value === 1 ? duration.unit.slice(0, -1) : duration.unit;
-    return `${duration.value} ${pluralizedString}`;
-}
+import { BackendApiError, useBackendApi } from "@/hooks/fetch";
+import { Loader2Icon } from "lucide-react";
+import useSWR from "swr";
 
 
 export type BanTemplatesInputData = {
@@ -46,19 +20,72 @@ export type BanTemplatesInputData = {
     duration: BanDurationType;
 }
 
+type DataUpdaterFunc = (prev: BanTemplatesDataType[]) => BanTemplatesDataType[];
+
 export default function BanTemplatesPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [reasonInputDialogData, setReasonInputDialogData] = useState<BanTemplatesInputData | undefined>();
-
-    const [savedReasons, setSavedReasons] = useState(tmpInitialState);
     const openConfirmDialog = useOpenConfirmDialog();
     const { hasPerm } = useAdminPerms();
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
+    const [isSaveSuccessful, setIsSaveSuccessful] = useState(false);
+
+    const queryApi = useBackendApi<GetBanTemplatesSuccessResp>({
+        method: 'GET',
+        path: `/settings/banTemplates`,
+        throwGenericErrors: true,
+    });
+
+    const saveApi = useBackendApi<SaveBanTemplatesResp, SaveBanTemplatesReq>({
+        method: 'POST',
+        path: `/settings/banTemplates`,
+        throwGenericErrors: true,
+    });
+
+    const swr = useSWR('/settings/banTemplates', async () => {
+        const data = await queryApi({});
+        if (!data) throw new Error('No data returned');
+        return data;
+    }, {
+        isPaused: () => (isSaving || !!saveError || isDialogOpen),
+    });
+
+    const updateBackend = async (updater: DataUpdaterFunc) => {
+        setIsSaving(true);
+        setSaveError(null);
+        setIsSaveSuccessful(false);
+        try {
+            const data = await swr.mutate(updater as any, false);
+            const resp = await saveApi({ data });
+            if (!resp) throw new Error('No data returned');
+            setIsSaveSuccessful(true);
+        } catch (error) {
+            if (error instanceof BackendApiError || error instanceof Error) {
+                setSaveError(error.message);
+            } else {
+                setSaveError(JSON.stringify(error));
+            }
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
+    //Clear the save successful after 5 seconds
+    useEffect(() => {
+        if (!isSaveSuccessful) return;
+        const timeout = setTimeout(() => {
+            setIsSaveSuccessful(false);
+        }, 5000);
+        return () => clearTimeout(timeout);
+    }, [isSaveSuccessful]);
+
 
     //Drag and drop
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         if (over && active.id !== over.id) {
-            setSavedReasons((items) => {
+            updateBackend((items) => {
                 const oldIndex = items.findIndex(x => x.id === active.id);
                 const newIndex = items.findIndex(x => x.id === over.id);
 
@@ -70,15 +97,19 @@ export default function BanTemplatesPage() {
     const handleOnSave = ({ id, reason, duration }: BanTemplatesInputData) => {
         console.log('Save item', id, reason, duration);
         if (id) {
-            setSavedReasons((prev) =>
+            updateBackend((prev) =>
                 prev.map((item) =>
                     item.id === id ? { id, reason, duration } : item
                 )
             );
         } else {
-            setSavedReasons((prev) => [
+            updateBackend((prev) => [
                 ...prev,
-                { id: Math.random().toString(), reason, duration },
+                {
+                    id: Math.random().toString(36).substring(2, 15),
+                    reason,
+                    duration
+                },
             ]);
         }
         setIsDialogOpen(false);
@@ -87,24 +118,29 @@ export default function BanTemplatesPage() {
 
     //Handler for list actions
     const handleRemoveItem = (id: string) => {
+        if (!id || !swr.data) return;
+        const toBeRemoved = swr.data.find((item) => item.id === id);
+        if (!toBeRemoved) return;
         openConfirmDialog({
-            title: 'Remove Reason',
+            title: 'Remove Template',
+            actionLabel: 'Remove',
+            confirmBtnVariant: 'destructive',
             message: <>
-                Are you sure you want to remove this reason? <br />
+                Are you sure you want to remove this ban template? <br />
                 <blockquote className='opacity-70 italic border-l-4 pl-2'>
-                    {savedReasons.find((item) => item.id === id)?.reason}
+                    {toBeRemoved.reason}
                 </blockquote>
             </>,
             onConfirm: () => {
-                console.log('Remove item', id);
-                setSavedReasons((prev) => prev.filter((item) => item.id !== id));
+                console.log('Remove confirmed', id);
+                updateBackend((prev) => prev.filter((item) => item.id !== id));
             },
-            confirmBtnVariant: 'destructive',
         });
     }
     const handleEditItem = (id: string) => {
+        if (!id || !swr.data) return;
         console.log('Edit item', id);
-        setReasonInputDialogData(savedReasons.find((item) => item.id === id));
+        setReasonInputDialogData(swr.data.find((item) => item.id === id));
         setIsDialogOpen(true);
     }
     const handleAddNewItem = () => {
@@ -114,23 +150,35 @@ export default function BanTemplatesPage() {
 
 
     //Status display
-    const isFetching = false;
-    // const loadError = true;
-    const loadError = 'Lorem ipsum dolor sit amet consectetur adipiscing.';
-    const saveSuccessfull = false;
     let statusNode: React.ReactNode;
-    if (isFetching) {
-        statusNode = <span className="text-success-inline animate-pulse">
+    if (swr.error) {
+        const retryFunc = () => swr.mutate();
+        const errMsg = swr?.error?.message ?? 'unknown error';
+        statusNode = <div className="inline-flex flex-wrap gap-1">
+            <span className='text-destructive-inline'>Error loading: {errMsg}</span><br />
+            <button className='underline hover:text-accent' onClick={retryFunc}>Try again?</button>
+        </div>
+    } else if (isSaving) {
+        statusNode = <span className="text-success-inlinex animate-pulse">
             Saving...
         </span>
-    } else if (loadError) {
+    } else if (saveError) {
+        const retryFunc = () => {
+            if (!swr.data) return;
+            updateBackend(() => swr.data!);
+        }
+        const errMsg = saveError ?? 'unknown error';
         statusNode = <div className="inline-flex flex-wrap gap-1">
-            <span className='text-destructive-inline'>Error saving: {loadError}</span><br />
-            <button className='underline hover:text-accent' onClick={() => { }}>Try again?</button>
+            <span className='text-destructive-inline'>Error saving: {errMsg}</span><br />
+            <button className='underline hover:text-accent' onClick={retryFunc}>Try again?</button>
         </div>
-    } else if (saveSuccessfull) {
+    } else if (isSaveSuccessful) {
         statusNode = <span className="text-success-inline">
             Saved.
+        </span>
+    } else if (swr.isLoading || swr.isValidating) {
+        statusNode = <span className="text-muted-foreground">
+            Loading...
         </span>
     }
 
@@ -143,7 +191,6 @@ export default function BanTemplatesPage() {
                 <p>
                     Here you can configure ban reasons and durations that will appear as dropdown options when banning a player. <br />
                     This is useful for common reasons that happen frequently, like violation of your server rules. <br />
-
                     {canEdit ? (
                         <span className="text-muted-foreground italic">
                             TIP: You can also drag and drop to reorder the list. <br />
@@ -157,26 +204,42 @@ export default function BanTemplatesPage() {
             </div>
             <div className="space-y-2">
                 <div className="flex flex-wrap justify-between text-muted-foreground px-2 md:px-0">
-                    <span className="shrink-0">Configured reasons: {savedReasons.length}</span>
+                    <span className="shrink-0">Configured reasons: {swr.data?.length ?? 0}</span>
                     {statusNode}
                 </div>
-                <DndSortableGroup
-                    className="space-y-2 border p-2 rounded-lg"
-                    ids={savedReasons.map((item) => item.id)}
-                    onDragEnd={handleDragEnd}
-                >
-                    {savedReasons.map((item) => (
-                        <DndSortableItem key={item.id} id={item.id} disabled={!canEdit}>
-                            <BanTemplatesListItem
-                                onEdit={handleEditItem}
-                                onRemove={handleRemoveItem}
+
+                {!swr.data && !saveError && (
+                    <div className="text-muted-foreground text-lg md:text-2xl text-center my-4 px-2 md:px-0">
+                        <Loader2Icon className="inline animate-spin h-8" />Loading...
+                    </div>
+                )}
+                {swr.data && (
+                    <DndSortableGroup
+                        className="space-y-2 border p-2 rounded-lg"
+                        ids={swr.data.map((item) => item.id)}
+                        onDragEnd={handleDragEnd}
+                    >
+                        {!swr.data.length ? (
+                            <div className="text-muted-foreground text-lg md:text-2xl text-center my-4 px-2 md:px-0">
+                                No reasons configured yet.
+                            </div>
+                        ) : swr.data.map((item) => (
+                            <DndSortableItem
+                                key={item.id}
+                                id={item.id}
                                 disabled={!canEdit}
-                                {...item}
-                            />
-                        </DndSortableItem>
-                    ))}
-                    <BanTemplatesListAddButton onClick={handleAddNewItem} disabled={!canEdit} />
-                </DndSortableGroup>
+                            >
+                                <BanTemplatesListItem
+                                    onEdit={handleEditItem}
+                                    onRemove={handleRemoveItem}
+                                    disabled={!canEdit}
+                                    {...item}
+                                />
+                            </DndSortableItem>
+                        ))}
+                        <BanTemplatesListAddButton onClick={handleAddNewItem} disabled={!canEdit} />
+                    </DndSortableGroup>
+                )}
             </div>
         </div>
         <BanTemplatesInputDialog

@@ -33,6 +33,9 @@ export { default as deployer_actions } from './deployer/actions';
 export { default as settings_page } from './settings/get';
 export { default as settings_save } from './settings/save';
 
+export { default as settings_getBanTemplates } from './banTemplates/getBanTemplates.js';
+export { default as settings_saveBanTemplates } from './banTemplates/saveBanTemplates.js';
+
 export { default as masterActions_page } from './masterActions/page';
 export { default as masterActions_getBackup } from './masterActions/getBackup';
 export { default as masterActions_actions } from './masterActions/actions';

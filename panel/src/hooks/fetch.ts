@@ -106,6 +106,7 @@ type HookOpts = {
     method: 'GET' | 'POST';
     path: string;
     abortOnUnmount?: boolean;
+    throwGenericErrors?: boolean;
 }
 
 type ApiCallOpts<RespType, ReqType> = {
@@ -213,6 +214,10 @@ export const useBackendApi = <
             clearTimeout(timeoutId);
             if (abortController.current?.signal.aborted) return;
 
+            //If generic error
+            if (hookOpts.throwGenericErrors && 'error' in data) {
+                throw new BackendApiError('API Error', data.error);
+            }
 
             //Auto handler for GenericApiOkResp genericHandler
             if (opts.genericHandler && currentToastId.current) {

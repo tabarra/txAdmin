@@ -103,6 +103,7 @@ export default class ConfigVault {
             webServer: null,
             discordBot: null,
             fxRunner: null,
+            banTemplates: null,
         };
 
         //NOTE: this shit is ugly, but I wont bother fixing it.
@@ -166,6 +167,7 @@ export default class ConfigVault {
                 shutdownNoticeDelay: toDefault(cfg.fxRunner.shutdownNoticeDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
+            out.banTemplates = toDefault(cfg.banTemplates, []); //not in template
 
             //Migrations
             //Removing menu beta convar (v4.9)
@@ -251,6 +253,10 @@ export default class ConfigVault {
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 750; //not in template
             cfg.fxRunner.shutdownNoticeDelay = parseInt(cfg.fxRunner.shutdownNoticeDelay) || 5; //not in template
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
+
+            //Ban Templates
+            //FIXME: this should be validated here, no module to do it
+            cfg.banTemplates = cfg.banTemplates ?? [];
         } catch (error) {
             console.verbose.dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);
@@ -331,7 +337,7 @@ export default class ConfigVault {
     /**
      * Save the new scope to this context, then saves it to the configFile
      * @param {string} scope
-     * @param {string} newConfig
+     * @param {object} newConfig
      */
     saveProfile(scope, newConfig) {
         let toSave = cloneDeep(this.configFile);

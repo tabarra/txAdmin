@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import humanizeDuration from '@/lib/humanizeDuration';
 import { io } from "socket.io-client";
 import type { HumanizerOptions } from "humanize-duration";
+import type { BanDurationType } from "@shared/otherTypes";
 
 //Statically caching the current year
 const currentYear = new Date().getFullYear();
@@ -179,7 +180,7 @@ export const createRandomHslColor = () => {
  * FIXME: literally not working
  */
 export const copyToClipboard = async (value: string) => {
-    if (navigator?.clipboard) { 
+    if (navigator?.clipboard) {
         return navigator.clipboard.writeText(value);
     } else {
         const clipElem = document.createElement("textarea");
@@ -190,4 +191,15 @@ export const copyToClipboard = async (value: string) => {
         document.body.removeChild(clipElem);
         return result;
     }
+}
+
+
+/**
+ * Converts the duration object to a lowercase string with correct unit pluralization
+ */
+export const banDurationToString = (duration: BanDurationType) => {
+    if (duration === 'permanent') return 'permanent';
+    if (typeof duration === 'string') return duration;
+    const pluralizedString = duration.value === 1 ? duration.unit.slice(0, -1) : duration.unit;
+    return `${duration.value} ${pluralizedString}`;
 }

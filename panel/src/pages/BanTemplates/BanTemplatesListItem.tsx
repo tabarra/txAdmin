@@ -1,7 +1,6 @@
-import { cn } from "@/lib/utils";
+import { banDurationToString, cn } from "@/lib/utils";
 import { BanDurationType } from "@shared/otherTypes";
 import { Settings2Icon, XIcon } from "lucide-react";
-import { banDurationToString } from "./BanTemplatesPage";
 
 
 type BanTemplatesListItemProps = {
