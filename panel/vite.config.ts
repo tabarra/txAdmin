@@ -39,6 +39,8 @@ const baseConfig = {
         react(),
         visualizer({
             // template: 'flamegraph',
+            // template: 'sunburst',
+            gzipSize: true,
             filename: '../.reports/panel_bundle.html',
         }),
     ] as PluginOption[], //i gave up

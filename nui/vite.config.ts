@@ -36,6 +36,8 @@ const baseConfig = {
         react(),
         visualizer({
             // template: 'flamegraph',
+            // template: 'sunburst',
+            gzipSize: true,
             filename: '../.reports/nui_bundle.html',
         }),
     ] as PluginOption[], //i gave up
