@@ -1,16 +1,27 @@
 import React from "react";
 
+/**
+ * Types
+ */
+type DynamicNewItemProps = {
+    featName: string;
+    durationDays?: number; //3d default
+    children: React.ReactNode;
+};
+
 type DynamicNewBadgeProps = {
     featName: string;
     durationDays?: number; //3d default
+    badgeText?: string;
 };
 
+
 /**
- * A dynamic badge that shows "NEW" for the first X days.
+ * A dynamic component that shows its children for the first X days.
  * NOTE: always on for dev mode to make sure I doesn't forget to remove it.
  */
-function DynamicNewBadge({ featName, durationDays }: DynamicNewBadgeProps) {
-    const storageKeyName = `dynamicNewBadgeTs-${featName}`;
+function DynamicNewItemInner({ featName, durationDays, children }: DynamicNewItemProps) {
+    const storageKeyName = `dynamicNewFeatTs-${featName}`;
     const storedTs = parseInt(localStorage.getItem(storageKeyName) ?? '');
     if (isNaN(storedTs) || window.txConsts.showAdvanced) {
         localStorage.setItem(storageKeyName, Date.now().toString());
@@ -22,10 +33,23 @@ function DynamicNewBadge({ featName, durationDays }: DynamicNewBadgeProps) {
         }
     }
 
-    //bg-accent or bg-success?
+    return children;
+}
+
+export const DynamicNewItem = React.memo(DynamicNewItemInner);
+
+
+/**
+ * A dynamic badge that shows "NEW" for the first X days.
+ */
+function DynamicNewBadgeInner({ badgeText, featName, durationDays }: DynamicNewBadgeProps): JSX.Element {
     return (
-        <span className='rounded bg-accent text-accent-foreground text-2xs tracking-wider font-semibold px-1 ml-1.5'>NEW</span>
+        <DynamicNewItemInner featName={featName} durationDays={durationDays}>
+            <span className='rounded bg-accent text-accent-foreground text-2xs tracking-wider font-semibold px-1 ml-1.5'>
+                {badgeText ?? 'NEW'}
+            </span>
+        </DynamicNewItemInner>
     );
 }
 
-export default React.memo(DynamicNewBadge);
+export const DynamicNewBadge = React.memo(DynamicNewBadgeInner);

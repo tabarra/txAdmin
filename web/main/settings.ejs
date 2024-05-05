@@ -121,6 +121,26 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Ban Templates
+                                <!-- DynamicNewBadge reference, but static -->
+                                <span class="badge badge-danger">NEW</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <button
+                                    class="btn btn-sm btn-secondary"
+                                    type="submit"
+                                    onclick="navigateParentTo('/settings/ban-templates')"
+                                >
+                                    <i class="icon-pencil"></i> Edit Ban Templates
+                                </button>
+                                <span class="form-text text-muted">
+                                    Configure ban reasons and durations that will appear as dropdown options when banning a player. This is useful for common reasons that happen frequently, like violation of your server rules.
+                                </span>
+                            </div>
+                        </div>
+
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmGlobal-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Global Settings

@@ -49,6 +49,7 @@
 - [ ] update docs on development?
 - [ ] redact discord api webhook urls from reports
 - [ ] fix the eslint config + tailwind sort
+- [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
 
 ## Quick notes:
 
