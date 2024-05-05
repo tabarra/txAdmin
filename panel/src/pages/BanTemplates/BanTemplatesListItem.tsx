@@ -14,13 +14,15 @@ type BanTemplatesListItemProps = {
 
 export default function BanTemplatesListItem({ id, reason, duration, onEdit, onRemove, disabled }: BanTemplatesListItemProps) {
     return (<>
-        <div className="grow flex items-center justify-items-start gap-2">
-            <span className="line-clamp-1">
+        <div className="grow sm:flex items-center justify-items-start gap-2">
+            <span className="line-clamp-5 md:line-clamp-3">
                 {reason}
             </span>
             <div className={cn(
-                "bg-black/50 opacity-75 px-2 py-0.5 text-sm rounded shrink-0 uppercase",
-                duration === 'permanent' ? 'text-red-500' : 'text-primary'
+                "bg-black/5 dark:bg-black/40 px-2 py-0.5 my-1 sm:my-0 border text-sm rounded w-max shrink-0 uppercase select-none",
+                duration === 'permanent'
+                    ? 'border-destructive bg-destructive-hint text-destructive'
+                    : 'border-primary text-primary opacity-85'
             )}>
                 {banDurationToString(duration)}
             </div>

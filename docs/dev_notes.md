@@ -18,11 +18,10 @@
 - [ ] pre-configured ban/warn reasons with new perm to lock admins to only use them?
     - [ ] apply new ban scheme to the web player modal
     - [ ] apply new ban scheme to the NUI
-    - [ ] maybe this should be named Ban Templates?
-    - [ ] checklist:
-        - [ ] light mode
-        - [ ] multiline
-        - [ ] mobile
+    - [x] checklist:
+        - [x] light mode
+        - [x] multiline
+        - [x] mobile
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page
@@ -63,6 +62,13 @@ simple-line-icons na pasta web/public e também puxado via cdn?
 break down the discord /info command in /info and /admininfo?
 
 https://observablehq.com/@d3/zoomable-area-chart?collection=@d3/d3-zoom
+
+player/history modal is cutting bottom of title (test with jgpq, etc)
+
+new apis? useBackendQuery & useBackendMutation
+based on swr's methods
+the auth part can be the same middleware for both
+need to check swr's behavior on unmount nad how to change timeouts
 
 
 # @formkit/auto-animate
@@ -723,6 +729,8 @@ https://freesound.org/browse/tags/laser/?page=5#sound
 > We could totally do like a "jump in time" feature for the log page.
 > A slider with 500 steps, and an array with 500 timestamps
 > this array can be done by dividing the serverLog.length to get the step, then a for loop to get the timestamps
+
+> may 2024: use https://observablehq.com/@d3/d3-bisect
 
 
 ### New database alternatives:

@@ -185,7 +185,7 @@ export default function BanTemplatesPage() {
     //Rendering
     const canEdit = hasPerm('settings.write');
     return <>
-        <div className="space-y-4 w-fullx w-[1000px] DEBUG mx-auto">
+        <div className="space-y-4 w-full max-w-screen-lg mx-auto">
             <div className="px-2 md:px-0">
                 <h1 className="text-3xl mb-2">Ban Templates</h1>
                 <p>

@@ -37,7 +37,10 @@ export function DndSortableItem({ id, disabled, className, children }: DndSortab
 
     attributes.role = 'listitem'; //Override role due to having a drag handle
     const style: React.CSSProperties = {
-        transform: CSS.Transform.toString(transform),
+        transform: CSS.Transform.toString(transform && {
+            ...transform,
+            scaleY: 1, //prevent default squishing behavior for multiline items
+        }),
         transition,
     };
 
@@ -45,7 +48,7 @@ export function DndSortableItem({ id, disabled, className, children }: DndSortab
         <li
             ref={setNodeRef} style={style} {...attributes}
             className={cn(
-                "bg-card rounded-lg border px-2 py-3 flex gap-3 relative aria-pressed:z-50 aria-pressed:opacity-85",
+                "bg-card rounded-lg border px-2 py-3 flex gap-3 relative aria-pressed:z-50 aria-pressed:opacity-85 aria-pressed:shadow-xl",
                 className
             )}
         >
@@ -53,7 +56,7 @@ export function DndSortableItem({ id, disabled, className, children }: DndSortab
                 {...listeners}
                 title="Drag to reorder"
                 className={cn(
-                    "text-muted-foreground",
+                    "text-muted-foreground my-auto",
                     disabled
                         ? "cursor-not-allowed opacity-50"
                         : "cursor-grab hover:text-primary hover:scale-110"
