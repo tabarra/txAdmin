@@ -13,6 +13,7 @@ export enum PlayerDataSort {
   IdJoinedLast = "idJoinedLast",
   DistanceClosest = "distanceClosest",
   DistanceFarthest = "distanceFarthest",
+  InVehicle = "inVehicle",
 }
 
 const playersState = {
@@ -57,6 +58,10 @@ const playersState = {
           return [...playerStates].sort((a, b) => (a.id > b.id ? 1 : -1));
         case PlayerDataSort.IdJoinedLast:
           return [...playerStates].sort((a, b) => (a.id < b.id ? 1 : -1));
+        case PlayerDataSort.InVehicle:
+          return [...playerStates].filter(
+            (a) => a.vType !== VehicleStatus.Walking
+          );
         default:
           return playerStates;
       }

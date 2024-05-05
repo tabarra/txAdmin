@@ -226,7 +226,8 @@
                 "joined_first": "Joined First",
                 "joined_last": "Joined Last",
                 "closest": "Closest",
-                "farthest": "Farthest"
+                "farthest": "Farthest",
+                "in_vehicle": "In a vehicle"
             },
             "card": {
                 "health": "%{percentHealth}% health"

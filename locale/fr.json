@@ -226,7 +226,8 @@
                 "joined_first": "Premières connexions",
                 "joined_last": "Dernières connexions",
                 "closest": "Le - loin",
-                "farthest": "Le + loin"
+                "farthest": "Le + loin",
+                "in_vehicle": "Dans un véhicule"
             },
             "card": {
                 "health": "Santé : %{percentHealth}%"

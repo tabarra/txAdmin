@@ -17,7 +17,7 @@ import {
 import { useServerCtxValue } from "../../state/server.state";
 import { useTranslate } from "react-polyglot";
 import { TextField } from "../misc/TextField";
-import {useDebounce} from "@nui/src/hooks/useDebouce";
+import { useDebounce } from "@nui/src/hooks/useDebouce";
 
 const TypographyTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 600,
@@ -128,6 +128,9 @@ export const PlayerPageHeader: React.FC = () => {
             {`${t("nui_menu.page_players.sort.distance")} (${t(
               "nui_menu.page_players.sort.farthest"
             )})`}
+          </MenuItem>
+          <MenuItem value={PlayerDataSort.InVehicle}>
+            {`${t("nui_menu.page_players.sort.in_vehicle")}`}
           </MenuItem>
         </TextFieldInputs>
       </Box>
