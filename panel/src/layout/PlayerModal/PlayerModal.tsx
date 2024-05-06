@@ -18,7 +18,6 @@ import { useBackendApi } from "@/hooks/fetch";
 import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
 import PlayerModalFooter from "./PlayerModalFooter";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
-import type { BanTemplatesDataType } from "@shared/otherTypes";
 
 
 const modalTabs = [

@@ -112,19 +112,11 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
 
     return (
         <form onSubmit={handleSubmit} className="grid gap-4 p-1">
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="banReason" className="col-span-4 xs:col-auto">
+            <div className="flex flex-col gap-3">
+                <Label htmlFor="banReason" className="">
                     Reason
                 </Label>
-                <div className="col-span-full xs:col-span-3 flex gap-1">
-                    <Input
-                        id="banReason"
-                        placeholder="The reason for the ban, rule violated, etc."
-                        className="w-full"
-                        ref={reasonRef}
-                        autoFocus
-                        required
-                    />
+                <div className="flex gap-1">
                     <DropDownSelect onValueChange={handleTemplateSelectChange}>
                         <DropDownSelectTrigger className="tracking-wide">
                             <button
@@ -138,11 +130,11 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
                             >
                                 <ClipboardPasteIcon className="size-5" />
                                 <DynamicNewItem featName="banTemplates" durationDays={7}>
-                                    <div className="absolute rounded-full size-2 -top-1 -right-1 bg-accent" />
+                                    <div className="absolute rounded-full size-2 -top-1 -left-1 bg-accent" />
                                 </DynamicNewItem>
                             </button>
                         </DropDownSelectTrigger>
-                        <DropDownSelectContent className="tracking-wide max-w-screen-sm" align="center">
+                        <DropDownSelectContent className="tracking-wide w-[calc(100vw-1rem)] sm:max-w-screen-sm">
                             {!banTemplates.length ? (
                                 <div className="text-warning-inline text-center p-4">
                                     You do not have any template configured. <br />
@@ -168,13 +160,21 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
                             ) : null}
                         </DropDownSelectContent>
                     </DropDownSelect>
+                    <Input
+                        id="banReason"
+                        placeholder="The reason for the ban, rule violated, etc."
+                        className="w-full"
+                        ref={reasonRef}
+                        autoFocus
+                        required
+                    />
                 </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="durationSelect" className="col-span-4 xs:col-auto">
+            <div className="flex flex-col gap-3">
+                <Label htmlFor="durationSelect">
                     Duration
                 </Label>
-                <div className="col-span-full xs:col-span-3 space-y-1">
+                <div className="space-y-1">
                     <Select
                         onValueChange={setCurrentDuration}
                         value={currentDuration}
@@ -223,11 +223,10 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="flex place-content-end">
                 <Button
                     variant="destructive"
-                    size='xs'
-                    className="col-start-1 col-span-full xs:col-span-3 xs:col-start-2"
+                    size="sm"
                     type="submit"
                     disabled={isSaving}
                 >
