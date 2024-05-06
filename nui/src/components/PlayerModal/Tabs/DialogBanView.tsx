@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-  Alert,
+  Autocomplete,
   Box,
   Button,
   DialogContent,
@@ -21,6 +21,36 @@ import { usePermissionsValue } from "../../../state/permissions.state";
 import { DialogLoadError } from "./DialogLoadError";
 import { GenericApiErrorResp, GenericApiResp } from "@shared/genericApiTypes";
 import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
+import type { BanTemplatesDataType, BanDurationType } from "@shared/otherTypes";
+
+//Helpers - yoinked from the web ui code
+const maxReasonSize = 128;
+const defaultDurations = ['permanent', '2 hours', '8 hours', '1 day', '2 days', '1 week', '2 weeks'];
+const banDurationToString = (duration: BanDurationType) => {
+  if (duration === 'permanent') return 'permanent';
+  if (typeof duration === 'string') return duration;
+  const pluralizedString = duration.value === 1 ? duration.unit.slice(0, -1) : duration.unit;
+  return `${duration.value} ${pluralizedString}`;
+}
+const banDurationToShortString = (duration: BanDurationType) => {
+  if (typeof duration === 'string') {
+    return duration === 'permanent' ? 'PERM' : duration;
+  }
+
+  let suffix: string;
+  if (duration.unit === 'hours') {
+    suffix = 'h';
+  } else if (duration.unit === 'days') {
+    suffix = 'd';
+  } else if (duration.unit === 'weeks') {
+    suffix = 'w';
+  } else if (duration.unit === 'months') {
+    suffix = 'mo';
+  } else {
+    suffix = duration.unit;
+  }
+  return `${duration.value}${suffix}`;
+}
 
 const DialogBanView: React.FC = () => {
   const assocPlayer = useAssociatedPlayerValue();
@@ -51,8 +81,9 @@ const DialogBanView: React.FC = () => {
       return;
     }
 
-    const actualDuration =
-      duration === "custom" ? `${customDurLength} ${customDuration}` : duration;
+    const actualDuration = duration === "custom"
+      ? `${customDurLength} ${customDuration}`
+      : duration;
 
     fetchWebPipe<GenericApiResp>(
       `/player/ban?mutex=current&netid=${assocPlayer.id}`,
@@ -72,8 +103,7 @@ const DialogBanView: React.FC = () => {
           });
         } else {
           enqueueSnackbar(
-            (result as GenericApiErrorResp).error ??
-              t("nui_menu.misc.unknown_error"),
+            (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
             { variant: "error" }
           );
         }
@@ -137,23 +167,68 @@ const DialogBanView: React.FC = () => {
     },
   ];
 
+  //Handling ban templates
+  const banTemplates: BanTemplatesDataType[] = (playerDetails as any)?.banTemplates ?? [];
+  const processedTemplates = useMemo(() => {
+    return banTemplates.map((template, index) => ({
+      id: template.id,
+      label: template.reason,
+    }));
+  }, [banTemplates]);
+
+  const handleTemplateChange = (event: React.SyntheticEvent, value: any, reason: string, details?: any) => {
+    //reason = One of "createOption", "selectOption", "removeOption", "blur" or "clear".
+    if (reason !== 'selectOption' || value === null) return;
+    const template = banTemplates.find(template => template.id === value.id);
+    if (!template) return;
+
+    const processedDuration = banDurationToString(template.duration);
+    if (defaultDurations.includes(processedDuration)) {
+      setDuration(processedDuration);
+    } else if (typeof template.duration === 'object') {
+      setDuration('custom');
+      setCustomDurLength(template.duration.value.toString());
+      setCustomDuration(template.duration.unit);
+    }
+  }
+
+  const handleReasonInputChange = (event: React.SyntheticEvent, value: string, reason: string) => {
+    setReason(value);
+  }
+
   return (
     <DialogContent>
       <Typography variant="h6" sx={{ mb: 2 }}>
         {t("nui_menu.player_modal.ban.title")}
       </Typography>
       <form onSubmit={handleBan}>
-        <TextField
+        <Autocomplete
+          id="name"
           autoFocus
           size="small"
-          id="name"
-          label={t("nui_menu.player_modal.ban.reason_placeholder")}
-          required
-          type="text"
-          variant="outlined"
-          fullWidth
+          freeSolo
           value={reason}
-          onChange={(e) => setReason(e.currentTarget.value)}
+          onChange={handleTemplateChange}
+          onInputChange={handleReasonInputChange}
+          options={processedTemplates}
+          renderOption={(props, option, state) => {
+            const duration = banTemplates.find((t) => t.id === option.id)?.duration ?? '????';
+            const reason = option.label.length > maxReasonSize
+              ? option.label.slice(0, maxReasonSize - 3) + '...'
+              : option.label;
+            return <li {...props} key={option.id}>
+              <span
+                style={{
+                  display: "inline-block",
+                  paddingRight: "0.5rem",
+                  fontFamily: "monospace",
+                  opacity: "0.75",
+                  minWidth: "4ch"
+                }}
+              >{banDurationToShortString(duration as any)}</span> {reason}
+            </li>
+          }}
+          renderInput={(params) => <TextField {...params} label="Reason" />}
         />
         <TextField
           size="small"
@@ -174,33 +249,29 @@ const DialogBanView: React.FC = () => {
           ))}
         </TextField>
         {duration === "custom" && (
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <Box>
-              <TextField
-                type="number"
-                placeholder="1"
-                variant="outlined"
-                size="small"
-                value={customDurLength}
-                onChange={(e) => setCustomDurLength(e.target.value)}
-              />
-            </Box>
-            <Box flexGrow={1}>
-              <TextField
-                select
-                size="small"
-                variant="outlined"
-                fullWidth
-                value={customDuration}
-                onChange={(e) => setCustomDuration(e.target.value)}
-              >
-                {customBanLength.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Box>
+          <Box display="flex" alignItems="stretch" gap={1}>
+            <TextField
+              type="number"
+              placeholder="1"
+              variant="outlined"
+              size="small"
+              value={customDurLength}
+              onChange={(e) => setCustomDurLength(e.target.value)}
+            />
+            <TextField
+              select
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={customDuration}
+              onChange={(e) => setCustomDuration(e.target.value)}
+            >
+              {customBanLength.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
           </Box>
         )}
         <Button

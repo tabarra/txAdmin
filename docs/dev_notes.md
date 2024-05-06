@@ -16,14 +16,15 @@
 
 ## Highlights
 - [ ] pre-configured ban/warn reasons with new perm to lock admins to only use them?
-    - [ ] apply new ban scheme to the web player modal
-    - [ ] apply new ban scheme to the NUI
+    - [x] apply new ban scheme to the web player modal
+    - [x] apply new ban scheme to the NUI
     - [ ] checklist:
         - [x] light mode
         - [x] multiline
         - [x] mobile
-        - [ ] better random id (no random id? stable-hash?)
         - [ ] dialog input sanitization
+        - [ ] better random id (no random id? stable-hash?)
+        - [ ] settings enforce unique id
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page
