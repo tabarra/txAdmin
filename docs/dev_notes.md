@@ -15,16 +15,16 @@
 - [ ] remove all "blur" as that is slow as hell for browsers with hw acceleration disabled
 
 ## Highlights
-- [ ] pre-configured ban/warn reasons with new perm to lock admins to only use them?
+- [x] pre-configured ban/warn reasons with new perm to lock admins to only use them?
     - [x] apply new ban scheme to the web player modal
     - [x] apply new ban scheme to the NUI
-    - [ ] checklist:
+    - [x] checklist:
         - [x] light mode
         - [x] multiline
         - [x] mobile
-        - [ ] dialog input sanitization
-        - [ ] better random id (no random id? stable-hash?)
-        - [ ] settings enforce unique id
+        - [x] dialog input sanitization
+        - [x] better random id (no random id? stable-hash?)
+        - [x] settings enforce unique id
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page

@@ -12,8 +12,8 @@ export type BanDurationType = z.infer<typeof BanDurationTypeSchema>;
 
 
 export const BanTemplatesDataSchema = z.object({
-    id: z.string().min(1),
-    reason: z.string().min(3),
+    id: z.string().length(22), //nanoid fixed at 22 chars
+    reason: z.string().min(3).max(2048), //should be way less, but just in case
     duration: BanDurationTypeSchema,
 });
 export type BanTemplatesDataType = z.infer<typeof BanTemplatesDataSchema>;

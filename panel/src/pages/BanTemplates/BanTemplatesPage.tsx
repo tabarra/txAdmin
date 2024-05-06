@@ -12,6 +12,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { BackendApiError, useBackendApi } from "@/hooks/fetch";
 import { Loader2Icon } from "lucide-react";
 import useSWR from "swr";
+import { nanoid } from "nanoid";
 
 
 export type BanTemplatesInputData = {
@@ -106,7 +107,7 @@ export default function BanTemplatesPage() {
             updateBackend((prev) => [
                 ...prev,
                 {
-                    id: Math.random().toString(36).substring(2, 15),
+                    id: nanoid(22),
                     reason,
                     duration
                 },

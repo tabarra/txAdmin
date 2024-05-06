@@ -8,6 +8,7 @@ import { AutosizeTextAreaRef, AutosizeTextarea } from "@/components/ui/autosize-
 import { BanTemplatesInputData } from "./BanTemplatesPage";
 import { BanDurationType } from "@shared/otherTypes";
 import { banDurationToString } from "@/lib/utils";
+import { txToast } from "@/components/TxToaster";
 
 //Default dropdown options
 const dropdownOptions = [
@@ -62,11 +63,20 @@ export default function BanTemplatesInputDialog({
         e.preventDefault();
         const form = e.currentTarget;
         const id = reasonData?.id || null;
-        const reason = form.reason.value;
+        const reason = form.reason.value.trim();
+        form.reason.value = reason; //just to make sure the field is also trimmed
+        if (reason.length < 3) {
+            form.reason.focus();
+            return txToast.warning('Reason must be at least 3 characters long');
+        }
         let duration: BanDurationType;
         if (selectedDuration === 'permanent') {
             duration = 'permanent';
         } else if (selectedDuration === 'custom') {
+            if (form.durationMultiplier.value <= 0) {
+                form.durationMultiplier.focus();
+                return txToast.warning('Custom duration must be a positive number');
+            }
             duration = {
                 value: parseInt(form.durationMultiplier.value),
                 unit: customUnits as 'hours' | 'days' | 'weeks' | 'months'
@@ -100,6 +110,7 @@ export default function BanTemplatesInputDialog({
                                 defaultValue={initialReason}
                                 ref={reasonRef}
                                 maxHeight={160}
+                                minLength={3}
                                 autoFocus
                                 required
                                 onChangeCapture={(e) => {
@@ -142,6 +153,8 @@ export default function BanTemplatesInputDialog({
                                         defaultValue={initialCustomValue}
                                         disabled={selectedDuration !== 'custom'}
                                         ref={customMultiplierRef}
+                                        min={1}
+                                        max={99}
                                         required
                                     />
                                     <Select

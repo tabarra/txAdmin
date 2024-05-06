@@ -26,12 +26,21 @@ export const getBanTemplatesImpl = (ctx: AuthedCtx): BanTemplatesDataType[] => {
         return [];
     }
 
-    const filteredTemplates = (savedTemplates as unknown[]).filter((template): template is BanTemplatesDataType => {
+    //Filtering valid & unique templates
+    const filteredTemplates = (savedTemplates as unknown[]).filter((template, index): template is BanTemplatesDataType => {
         const isValid = BanTemplatesDataSchema.safeParse(template);
         if (!isValid.success) {
             console.error(
                 'Invalid ban template:',
                 JSON.stringify(template)
+            );
+            return false;
+        }
+        const isUnique = savedTemplates.findIndex((t) => t.id === isValid.data.id) === index;
+        if (!isUnique) {
+            console.error(
+                'Duplicate ban template id:',
+                isValid.data.id
             );
             return false;
         }

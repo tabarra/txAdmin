@@ -35,9 +35,14 @@ export default async function SaveBanTemplates(ctx: AuthedCtx) {
     }
     const banTemplates = schemaRes.data;
 
+    //Dropping duplicates
+    const filteredBanTemplates = banTemplates.filter((template, index) => {
+        return banTemplates.findIndex((t) => t.id === template.id) === index;
+    });
+
     //Preparing & saving config
     try {
-        ctx.txAdmin.configVault.saveProfile('banTemplates', banTemplates);
+        ctx.txAdmin.configVault.saveProfile('banTemplates', filteredBanTemplates);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing banTemplates settings.`);
         console.verbose.dir(error);

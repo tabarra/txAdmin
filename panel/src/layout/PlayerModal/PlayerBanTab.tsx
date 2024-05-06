@@ -101,7 +101,11 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
                 ? template.reason.slice(0, maxReasonSize - 3) + '...'
                 : template.reason;
             return (
-                <DropDownSelectItem key={index} value={template.id}>
+                <DropDownSelectItem
+                    key={index}
+                    value={template.id}
+                    className="focus:bg-secondary focus:text-secondary-foreground"
+                >
                     <span
                         className="inline-block pr-1 font-mono opacity-75 min-w-[4ch]"
                     >{duration}</span> {reason}
@@ -117,6 +121,14 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
                     Reason
                 </Label>
                 <div className="flex gap-1">
+                    <Input
+                        id="banReason"
+                        placeholder="The reason for the ban, rule violated, etc."
+                        className="w-full"
+                        ref={reasonRef}
+                        autoFocus
+                        required
+                    />
                     <DropDownSelect onValueChange={handleTemplateSelectChange}>
                         <DropDownSelectTrigger className="tracking-wide">
                             <button
@@ -130,11 +142,11 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
                             >
                                 <ClipboardPasteIcon className="size-5" />
                                 <DynamicNewItem featName="banTemplates" durationDays={7}>
-                                    <div className="absolute rounded-full size-2 -top-1 -left-1 bg-accent" />
+                                    <div className="absolute rounded-full size-2 -top-1 -right-1 bg-accent" />
                                 </DynamicNewItem>
                             </button>
                         </DropDownSelectTrigger>
-                        <DropDownSelectContent className="tracking-wide w-[calc(100vw-1rem)] sm:max-w-screen-sm">
+                        <DropDownSelectContent className="tracking-wide w-[calc(100vw-1rem)] sm:max-w-screen-sm" align="end">
                             {!banTemplates.length ? (
                                 <div className="text-warning-inline text-center p-4">
                                     You do not have any template configured. <br />
@@ -160,14 +172,6 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
                             ) : null}
                         </DropDownSelectContent>
                     </DropDownSelect>
-                    <Input
-                        id="banReason"
-                        placeholder="The reason for the ban, rule violated, etc."
-                        className="w-full"
-                        ref={reasonRef}
-                        autoFocus
-                        required
-                    />
                 </div>
             </div>
             <div className="flex flex-col gap-3">
