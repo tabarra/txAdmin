@@ -18,6 +18,7 @@ import { useBackendApi } from "@/hooks/fetch";
 import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
 import PlayerModalFooter from "./PlayerModalFooter";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
+import type { BanTemplatesDataType } from "@shared/otherTypes";
 
 
 const modalTabs = [
@@ -191,6 +192,7 @@ export default function PlayerModal() {
                                     player={modalData.player}
                                 />}
                                 {selectedTab === 'Ban' && <PlayerBanTab
+                                    banTemplates={modalData.banTemplates}
                                     playerRef={playerRef!}
                                 />}
                             </>

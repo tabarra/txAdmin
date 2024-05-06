@@ -9,12 +9,12 @@ const console = consoleFactory(modulename);
 //Response type
 export type GetBanTemplatesSuccessResp = BanTemplatesDataType[];
 
+
 /**
- * Retrieves the ban templates from the config file
+ * NOTE: Extracted this from the default export to be able to use it in player modal
  * NOTE: i'm doing validation here because really nowhere else to do at boot time
  */
-export default async function GetBanTemplates(ctx: AuthedCtx) {
-    const sendTypedResp = (data: GetBanTemplatesSuccessResp | GenericApiErrorResp) => ctx.send(data);
+export const getBanTemplatesImpl = (ctx: AuthedCtx): BanTemplatesDataType[] => {
     const savedTemplates = ctx.txAdmin.configVault.getScopedStructure('banTemplates');
 
     //Validating saved data
@@ -23,7 +23,7 @@ export default async function GetBanTemplates(ctx: AuthedCtx) {
             'Invalid ban templates data. Expected array, got:',
             typeof savedTemplates,
         );
-        return sendTypedResp([]);
+        return [];
     }
 
     const filteredTemplates = (savedTemplates as unknown[]).filter((template): template is BanTemplatesDataType => {
@@ -38,5 +38,16 @@ export default async function GetBanTemplates(ctx: AuthedCtx) {
         return true;
     });
 
-    return sendTypedResp(filteredTemplates);
+    return filteredTemplates;
+}
+
+
+/**
+ * Retrieves the ban templates from the config file
+ */
+export default async function GetBanTemplates(ctx: AuthedCtx) {
+    const sendTypedResp = (data: GetBanTemplatesSuccessResp | GenericApiErrorResp) => ctx.send(data);
+    const templates = getBanTemplatesImpl(ctx);
+
+    return sendTypedResp(templates);
 };

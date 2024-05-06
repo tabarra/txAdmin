@@ -203,3 +203,27 @@ export const banDurationToString = (duration: BanDurationType) => {
     const pluralizedString = duration.value === 1 ? duration.unit.slice(0, -1) : duration.unit;
     return `${duration.value} ${pluralizedString}`;
 }
+
+
+/**
+ * Converts the duration object to a short string
+ */
+export const banDurationToShortString = (duration: BanDurationType) => {
+    if (typeof duration === 'string') {
+        return duration === 'permanent' ? 'PERM' : duration;
+    }
+
+    let suffix: string;
+    if (duration.unit === 'hours') {
+        suffix = 'h';
+    } else if (duration.unit === 'days') {
+        suffix = 'd';
+    } else if (duration.unit === 'weeks') {
+        suffix = 'w';
+    } else if (duration.unit === 'months') {
+        suffix = 'mo';
+    } else {
+        suffix = duration.unit;
+    }
+    return `${duration.value}${suffix}`;
+}

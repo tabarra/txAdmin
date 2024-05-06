@@ -7,6 +7,7 @@ import { ServerPlayer } from '@core/playerLogic/playerClasses';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import { now } from '@extras/helpers';
+import { getBanTemplatesImpl } from '../banTemplates/getBanTemplates';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -90,6 +91,7 @@ export default async function PlayerModal(ctx: AuthedCtx) {
     // console.dir(playerData);
     return sendTypedResp({
         serverTime: now(),
+        banTemplates: getBanTemplatesImpl(ctx), //TODO: move this to websocket push
         player: playerData
     });
 };
