@@ -45,9 +45,7 @@ export default function LiveConsole() {
     const [isConnected, setIsConnected] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const termInputRef = useRef<HTMLInputElement>(null);
-    const setPageTitle = useSetPageTitle();
     const refreshPage = useContentRefresh();
-    setPageTitle('Live Console');
 
 
     /**
@@ -316,7 +314,7 @@ export default function LiveConsole() {
             <div className="flex flex-col relative grow overflow-hidden">
                 {/* Connecting overlay */}
                 {!isConnected ? (
-                    <div className='absolute inset-0 z-20 bg-black/40 backdrop-blur-sm flex items-center justify-center'>
+                    <div className='absolute inset-0 z-20 bg-black/60 flex items-center justify-center'>
                         <div className='flex flex-col gap-6 items-center justify-center text-muted-foreground select-none'>
                             <Loader2Icon className='w-16 h-16 animate-spin' />
                             <h2 className='text-3xl tracking-wider font-light animate-pulse'>
