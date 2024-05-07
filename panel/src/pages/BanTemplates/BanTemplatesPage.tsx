@@ -107,7 +107,7 @@ export default function BanTemplatesPage() {
             updateBackend((prev) => [
                 ...prev,
                 {
-                    id: nanoid(22),
+                    id: nanoid(21),
                     reason,
                     duration
                 },
