@@ -59,6 +59,17 @@ export default function BanTemplatesInputDialog({
     const [selectedDuration, setSelectedDuration] = useState(initialSelectedDuration);
     const [customUnits, setCustomUnits] = useState(initialCustomUnits);
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (isDialogOpen) return;
+            setSelectedDuration(initialSelectedDuration);
+            setCustomUnits(initialCustomUnits);
+            if (reasonRef.current) reasonRef.current.textArea.value = '';
+            if (customMultiplierRef.current) customMultiplierRef.current.value = '';
+        }, 500);
+        return () => clearTimeout(timeout);
+    }, [isDialogOpen]);
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;

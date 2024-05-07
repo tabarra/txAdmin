@@ -10,9 +10,9 @@
 - [x] "Search by Player IDs" filter on players page is overflowing
 - [x] history action modal needs py-1 because of the reason field outline
 - [x] remove all "blur" as that is slow as hell for browsers with hw acceleration disabled
+- [x] make the new page searches case insensitive (history->reason and maybe more)
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
-- [ ] make the new page searches case insensitive (history->reason and maybe more)
 
 ## Highlights
 - [x] pre-configured ban/warn reasons with new perm to lock admins to only use them?
