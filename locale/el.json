@@ -219,6 +219,13 @@
                 "search": "Αναζήτηση",
                 "zero_players": "Δεν βρέθηκαν παίκτες"
             },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
+            },
             "sort": {
                 "label": "Ταξινόμηση κατά",
                 "distance": "Απόστασης",

@@ -219,6 +219,13 @@
                 "search": "بحث",
                 "zero_players": "لم يتم العثور على لاعبين"
             },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
+            },
             "sort": {
                 "label": "ترتيب حسب",
                 "distance": "مسافة",

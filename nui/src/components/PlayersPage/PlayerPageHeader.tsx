@@ -6,18 +6,20 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { Search, SortByAlpha } from "@mui/icons-material";
+import { FilterAlt, Search, SwapVert } from "@mui/icons-material";
 import {
+  PlayerDataFilter,
   PlayerDataSort,
+  usePlayersFilterBy,
   usePlayersSortBy,
   usePlayersState,
-  usePlayersFilter,
+  usePlayersSearch,
   useSetPlayersFilterIsTemp,
 } from "../../state/players.state";
 import { useServerCtxValue } from "../../state/server.state";
 import { useTranslate } from "react-polyglot";
 import { TextField } from "../misc/TextField";
-import {useDebounce} from "@nui/src/hooks/useDebouce";
+import { useDebounce } from "@nui/src/hooks/useDebouce";
 
 const TypographyTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 600,
@@ -37,8 +39,9 @@ const TextFieldInputs = styled(TextField)({
 });
 
 export const PlayerPageHeader: React.FC = () => {
+  const [filterType, setFilterType] = usePlayersFilterBy();
   const [sortType, setSortType] = usePlayersSortBy();
-  const [playerFilter, setPlayerFilter] = usePlayersFilter();
+  const [playerSearch, setPlayerSearch] = usePlayersSearch();
   const allPlayers = usePlayersState();
   const [searchVal, setSearchVal] = useState("");
   const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
@@ -48,7 +51,10 @@ export const PlayerPageHeader: React.FC = () => {
   const debouncedInput = useDebounce<string>(searchVal, 500);
 
   // We might need to debounce this in the future
-  const handleSortData = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterType(e.target.value as PlayerDataFilter);
+  };
+  const onSortChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSortType(e.target.value as PlayerDataSort);
   };
 
@@ -58,13 +64,13 @@ export const PlayerPageHeader: React.FC = () => {
   };
 
   useEffect(() => {
-    setPlayerFilter(debouncedInput);
+    setPlayerSearch(debouncedInput);
   }, [debouncedInput]);
 
   // Synchronize filter from player state, used for optional args in /tx
   useEffect(() => {
-    setSearchVal(playerFilter);
-  }, [playerFilter]);
+    setSearchVal(playerSearch);
+  }, [playerSearch]);
 
   return (
     <Box display="flex" justifyContent="space-between">
@@ -82,7 +88,7 @@ export const PlayerPageHeader: React.FC = () => {
           }`}
         </TypographyPlayerCount>
       </Box>
-      <Box display="flex" alignItems="center" justifyContent="center">
+      <Box display="flex" alignItems="center" justifyContent="center" gap={3}>
         <TextFieldInputs
           label={t("nui_menu.page_players.misc.search")}
           value={searchVal}
@@ -94,17 +100,42 @@ export const PlayerPageHeader: React.FC = () => {
               </InputAdornmentIcon>
             ),
           }}
-          style={{ marginRight: 20 }}
         />
+        <TextFieldInputs
+          label={t("nui_menu.page_players.filter.label")}
+          select
+          onChange={onFilterChange}
+          value={filterType}
+          InputProps={{
+            startAdornment: (
+              <InputAdornmentIcon position="start">
+                <FilterAlt color="inherit" />
+              </InputAdornmentIcon>
+            ),
+          }}
+        >
+          <MenuItem value={PlayerDataFilter.NoFilter}>
+            {t("nui_menu.page_players.filter.no_filter")}
+          </MenuItem>
+          <MenuItem value={PlayerDataFilter.IsAdmin}>
+            {t("nui_menu.page_players.filter.is_admin")}
+          </MenuItem>
+          <MenuItem value={PlayerDataFilter.IsInjured}>
+            {t("nui_menu.page_players.filter.is_injured")}
+          </MenuItem>
+          <MenuItem value={PlayerDataFilter.InVehicle}>
+            {t("nui_menu.page_players.filter.in_vehicle")}
+          </MenuItem>
+        </TextFieldInputs>
         <TextFieldInputs
           label={t("nui_menu.page_players.sort.label")}
           select
-          onChange={handleSortData}
+          onChange={onSortChange}
           value={sortType}
           InputProps={{
             startAdornment: (
               <InputAdornmentIcon position="start">
-                <SortByAlpha color="inherit" />
+                <SwapVert color="inherit" />
               </InputAdornmentIcon>
             ),
           }}

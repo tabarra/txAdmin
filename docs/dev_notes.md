@@ -25,6 +25,7 @@
         - [x] dialog input sanitization
         - [x] better random id (no random id? stable-hash?)
         - [x] settings enforce unique id
+- [x] added filters to the in-game playerlist
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page
@@ -36,6 +37,7 @@
 - [ ] add txadmin v8 heap to diagnostics
 - [ ] add fxserver version to txDiagnostics
 - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
+- [ ] track channel of last console output, and if it's different prefix a `\n`
 
 ## Chores + refactor
 - [x] update packages
