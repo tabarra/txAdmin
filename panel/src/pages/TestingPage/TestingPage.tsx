@@ -17,7 +17,7 @@ export default function TestingPage() {
 
     return <div className="flex flex-col gap-4 w-full">
         {/* <TmpTestTables /> */}
-        {/* <TmpFiller /> */}
+        <TmpFiller />
         {/* <TmpApi /> */}
         {/* <TmpToasts /> */}
         {/* <TmpSocket /> */}
@@ -26,6 +26,6 @@ export default function TestingPage() {
         {/* <TmpMarkdown /> */}
         {/* <TmpColors /> */}
         {/* <TmpDndSortable /> */}
-        <BanTemplatesPage />
+        {/* <BanTemplatesPage /> */}
     </div>;
 }

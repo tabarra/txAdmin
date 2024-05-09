@@ -8,7 +8,7 @@ import { navigate as setLocation } from 'wouter/use-location';
 import Iframe from "@/pages/Iframe";
 import NotFound from "@/pages/NotFound";
 import TestingPage from "@/pages/TestingPage/TestingPage";
-import LiveConsole from "@/pages/LiveConsole/LiveConsole";
+import LiveConsolePage from "@/pages/LiveConsole/LiveConsolePage";
 import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
 import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
@@ -98,7 +98,7 @@ const allRoutes: RouteType[] = [
     {
         path: '/server/console',
         title: 'Live Console',
-        children: <LiveConsole />
+        children: <LiveConsolePage />
     },
     {
         path: '/server/resources',

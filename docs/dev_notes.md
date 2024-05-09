@@ -26,6 +26,8 @@
         - [x] better random id (no random id? stable-hash?)
         - [x] settings enforce unique id
 - [x] added filters to the in-game playerlist
+- [x] remove old live console page
+- [ ] migrate system logs page & remove xterm files
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page
@@ -120,7 +122,7 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 - [ ] Whitelist
 - [ ] Admins
 - [ ] Settings
-- [ ] Maste Actions
+- [ ] Master Actions
 - [ ] Diagnostics (TODO:)
 - [ ] System Logs (TODO:)
 
@@ -830,19 +832,6 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 - persistent, save in database?
 - have two different status: visited (arr of admins), closed (admin that closed)
 - this one is worth having discordwebhook
-
-References (get usage count):
-https://forum.cfx.re/t/release-admin-reply-report-command/73894
-https://forum.cfx.re/t/release-esx-ban-warning-help-assist-system/786080
-https://forum.cfx.re/t/release-badgerreports-reports-through-discord-and-in-game/1145714/1
-https://forum.cfx.re/t/release-fivem-advanced-reports-system/1798535
-https://forum.cfx.re/t/esx-advanced-report/1636000
-https://forum.cfx.re/t/standalone-esx-reportsystem-a-completely-innovative-report-system-paid/3710522
-https://forum.cfx.re/t/free-esx-simple-mysql-reports-system/3555465
-https://forum.cfx.re/t/paid-esx-new-advanced-report-system/4774382
-https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
-
-
 
 
 =======================================

@@ -40,7 +40,7 @@ const cleanTermOutput = (data: string) => {
         .replace(regexColors, '');
 }
 
-export default function LiveConsole() {
+export default function LiveConsolePage() {
     const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);

@@ -72,6 +72,13 @@ export const PlayerPageHeader: React.FC = () => {
     setSearchVal(playerSearch);
   }, [playerSearch]);
 
+
+  const playerTranslation = t("nui_menu.page_players.misc.players");
+  const oneSyncStatus = serverCtx.oneSync.status 
+    ? `OneSync (${serverCtx.oneSync.type})` 
+    : `OneSync Off`;
+  const playerCountText = `${allPlayers.length}/${serverCtx.maxClients} ${playerTranslation} - ${oneSyncStatus}`;
+
   return (
     <Box display="flex" justifyContent="space-between">
       <Box px={2}>
@@ -79,13 +86,7 @@ export const PlayerPageHeader: React.FC = () => {
           {t("nui_menu.page_players.misc.online_players")}
         </TypographyTitle>
         <TypographyPlayerCount>
-          {`${allPlayers.length}/${serverCtx.maxClients} ${t(
-            "nui_menu.page_players.misc.players"
-          )} - ${
-            serverCtx.oneSync.status
-              ? `OneSync (${serverCtx.oneSync.type})`
-              : `OneSync Off`
-          }`}
+          {playerCountText}
         </TypographyPlayerCount>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center" gap={3}>
