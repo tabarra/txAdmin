@@ -27,7 +27,10 @@
         - [x] settings enforce unique id
 - [x] added filters to the in-game playerlist
 - [x] remove old live console page
-- [ ] migrate system logs page & remove xterm files
+- [x] migrate system logs page & remove xterm files
+    - [x] write new page
+    - [x] remove old page files, links and references on core
+    - [x] remove `web/public/xtermjs`
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page
@@ -124,7 +127,7 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 - [ ] Settings
 - [ ] Master Actions
 - [ ] Diagnostics (TODO:)
-- [ ] System Logs (TODO:)
+- [x] System Logs (TODO:)
 
 - [ ] Dashboard (TODO:)
 - [x] Live Console

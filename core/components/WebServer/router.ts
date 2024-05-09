@@ -48,7 +48,6 @@ export default (config: WebServerConfigType) => {
     router.get('/legacy/resources', webAuthMw, webRoutes.resources);
     router.get('/legacy/serverLog', webAuthMw, webRoutes.serverLog);
     router.get('/legacy/settings', webAuthMw, webRoutes.settings_page);
-    router.get('/legacy/systemLog', webAuthMw, webRoutes.systemLog);
     router.get('/legacy/whitelist', webAuthMw, webRoutes.whitelist_page);
     router.get('/legacy/setup', webAuthMw, webRoutes.setup_get);
     router.get('/legacy/deployer', webAuthMw, webRoutes.deployer_stepper);
@@ -100,6 +99,7 @@ export default (config: WebServerConfigType) => {
 
     //Data routes
     router.get('/serverLog/partial', apiAuthMw, webRoutes.serverLogPartial);
+    router.get('/systemLog/:scope', apiAuthMw, webRoutes.systemLogs);
     router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData);
 
     /*

@@ -12,6 +12,7 @@ import LiveConsolePage from "@/pages/LiveConsole/LiveConsolePage";
 import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
 import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
+import SystemLogPage from "@/pages/SystemLogPage";
 
 
 type RouteType = {
@@ -71,23 +72,13 @@ const allRoutes: RouteType[] = [
     {
         path: '/system/console-log',
         title: 'Console Log',
-        children: <Iframe legacyUrl="systemLog#nav-console" />
+        children: <SystemLogPage pageName="console" />
     },
     {
-        path: '/system/system-logs',
-        title: 'System Logs',
-        children: <Iframe legacyUrl="systemLog" />
+        path: '/system/action-log',
+        title: 'Action Log',
+        children: <SystemLogPage pageName="action" />
     },
-    // {
-    //     path: '/system/console-log',
-    //     title: 'Console Log',
-    //     children: <Iframe legacyUrl="systemLog#nav-console" />
-    // },
-    // {
-    //     path: '/system/action-log',
-    //     title: 'Action Log',
-    //     children: <Iframe legacyUrl="systemLog#nav-actions" />
-    // },
 
     //Server Routes
     {

@@ -126,13 +126,6 @@ export default function DesktopHeader() {
                             </HeaderMenuLink>
                             <HeaderMenuLink
                                 className="w-36 justify-start"
-                                href="/system/system-logs"
-                                disabled={!hasPerm('txadmin.log.view')}
-                            >
-                                System Logs
-                            </HeaderMenuLink>
-                            {/* <HeaderMenuLink
-                                className="w-36 justify-start"
                                 href="/system/console-log"
                                 disabled={!hasPerm('txadmin.log.view')}
                             >
@@ -144,7 +137,7 @@ export default function DesktopHeader() {
                                 disabled={!hasPerm('txadmin.log.view')}
                             >
                                 Action Log
-                            </HeaderMenuLink> */}
+                            </HeaderMenuLink>
                         </NavigationMenuContent>
                     </NavigationMenuItem>
                 </NavigationMenuList>
