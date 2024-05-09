@@ -41,7 +41,6 @@ export default (config: WebServerConfigType) => {
     router.get('/legacy/adminManager', webAuthMw, webRoutes.adminManager_page);
     router.get('/legacy/advanced', webAuthMw, webRoutes.advanced_page);
     router.get('/legacy/cfgEditor', webAuthMw, webRoutes.cfgEditor_page);
-    router.get('/legacy/console', webAuthMw, webRoutes.liveConsole); //FIXME: remove
     router.get('/legacy/dashboard', webAuthMw, webRoutes.dashboard);
     router.get('/legacy/diagnostics', webAuthMw, webRoutes.diagnostics_page);
     router.get('/legacy/masterActions', webAuthMw, webRoutes.masterActions_page);

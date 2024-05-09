@@ -2,7 +2,6 @@ export { default as dashboard } from './dashboard.js';
 export { default as diagnostics_page } from './diagnostics/page';
 export { default as diagnostics_sendReport } from './diagnostics/sendReport';
 export { default as intercom } from './intercom.js';
-export { default as liveConsole } from './liveConsole.js';
 export { default as resources } from './resources.js';
 export { default as chartData } from './chartData.js';
 export { default as systemLog } from './systemLog.js';

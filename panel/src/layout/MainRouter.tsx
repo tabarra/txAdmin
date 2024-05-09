@@ -101,12 +101,6 @@ const allRoutes: RouteType[] = [
         children: <LiveConsole />
     },
     {
-        //FIXME: deprecate
-        path: '/server/console/old',
-        title: 'Old Live Console',
-        children: <Iframe legacyUrl="console" />
-    },
-    {
         path: '/server/resources',
         title: 'Resources',
         children: <Iframe legacyUrl="resources" />
