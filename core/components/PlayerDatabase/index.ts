@@ -85,7 +85,7 @@ export default class PlayerDatabase {
      */
     getPlayerData(license: string): DatabasePlayerType | null {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
-        if (!/[0-9A-Fa-f]{40}/.test(license)) {
+        if (!/[0-9A-Fa-f]{18}/.test(license)) {
             throw new Error('Invalid reference type');
         }
 
