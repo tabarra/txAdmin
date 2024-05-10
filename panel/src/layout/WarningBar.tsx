@@ -101,40 +101,41 @@ export function InnerWarningBar({ titleIcon, title, description, isImportant, ca
 export default function WarningBar() {
     const { offlineWarning, txUpdateData, fxUpdateData } = useWarningBar();
 
-    if (offlineWarning) {
-        return <InnerWarningBar
-            titleIcon={<CloudOffIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
-            title="Socket connection lost."
-            description={<>
-                The connection to the txAdmin server has been lost. <br />
-                If you closed FXServer, please restart it.
-            </>}
-            isImportant={true}
-            canPostpone={false}
-        />
-    } else if (txUpdateData) {
-        return <InnerWarningBar
-            titleIcon={<DownloadCloudIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
-            title={txUpdateData.isImportant
-                ? 'This version of txAdmin is outdated.'
-                : 'A patch (bug fix) update is available for txAdmin.'}
-            description={txUpdateData.isImportant
-                ? `Version v${txUpdateData.version} has been released bringing new features, bug fixes and improvements.`
-                : `If you are experiencing any kind of issue, please update to v${txUpdateData.version}.`}
-            isImportant={txUpdateData.isImportant}
-            canPostpone={true}
-        />
-    } else if (fxUpdateData) {
-        return <InnerWarningBar
-            titleIcon={<DownloadCloudIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
-            title={fxUpdateData.isImportant
-                ? 'This version of FXServer is outdated.'
-                : 'An update is available for FXServer.'}
-            description={`Please update FXServer to artifact ${fxUpdateData.version}.`}
-            isImportant={fxUpdateData.isImportant}
-            canPostpone={true}
-        />
-    } else {
-        return null;
-    }
+    // if (offlineWarning) {
+    //     return <InnerWarningBar
+    //         titleIcon={<CloudOffIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
+    //         title="Socket connection lost."
+    //         description={<>
+    //             The connection to the txAdmin server has been lost. <br />
+    //             If you closed FXServer, please restart it.
+    //         </>}
+    //         isImportant={true}
+    //         canPostpone={false}
+    //     />
+    // } else if (txUpdateData) {
+    //     return <InnerWarningBar
+    //         titleIcon={<DownloadCloudIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
+    //         title={txUpdateData.isImportant
+    //             ? 'This version of txAdmin is outdated.'
+    //             : 'A patch (bug fix) update is available for txAdmin.'}
+    //         description={txUpdateData.isImportant
+    //             ? `Version v${txUpdateData.version} has been released bringing new features, bug fixes and improvements.`
+    //             : `If you are experiencing any kind of issue, please update to v${txUpdateData.version}.`}
+    //         isImportant={txUpdateData.isImportant}
+    //         canPostpone={true}
+    //     />
+    // } else if (fxUpdateData) {
+    //     return <InnerWarningBar
+    //         titleIcon={<DownloadCloudIcon className="inline h-[1.2rem] -mt-1 mr-1" />}
+    //         title={fxUpdateData.isImportant
+    //             ? 'This version of FXServer is outdated.'
+    //             : 'An update is available for FXServer.'}
+    //         description={`Please update FXServer to artifact ${fxUpdateData.version}.`}
+    //         isImportant={fxUpdateData.isImportant}
+    //         canPostpone={true}
+    //     />
+    // } else {
+    //     return null;
+    // }
+    return null;
 }
