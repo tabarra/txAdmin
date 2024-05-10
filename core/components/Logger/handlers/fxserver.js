@@ -93,7 +93,7 @@ export default class FXServerLogger extends LoggerBase {
      */
     writeMarker(type, data, src) {
         if (type === 'starting') {
-            const msg = separator('FXServer Starting');
+            const msg = separator('VMPServer Starting');
             this.lrStream.write(`\n${msg}\n`);
             if (!globals.fxRunner.config.quiet) {
                 process.stdout.write(`\n${chalk.bgBlue(msg)}\n`);

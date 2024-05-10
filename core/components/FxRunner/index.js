@@ -197,7 +197,7 @@ export default class FXRunner {
             if (error.message.includes('unreadable')) {
                 console.error('That is the file where you configure your server and start resources.');
                 console.error('You likely moved/deleted your server files or copied the txData folder from another server.');
-                console.error('To fix this issue, open the txAdmin web interface then go to "Settings > FXServer" and fix the "Server Data Folder" and "CFG File Path".');
+                console.error('To fix this issue, open the txAdmin web interface then go to "Settings > VMPServer" and fix the "Server Data Folder" and "CFG File Path".');
             }
             return errMsg;
         }
@@ -239,7 +239,7 @@ export default class FXRunner {
                 throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
             }
             pid = this.fxChild.pid.toString();
-            console.ok(`>> [${pid}] FXServer Started!`);
+            console.ok(`>> [${pid}] VMPServer Started!`);
             globals.logger.fxserver.writeMarker('starting');
             this.history.push({
                 pid: pid,
@@ -253,7 +253,7 @@ export default class FXRunner {
             historyIndex = this.history.length - 1;
             globals.webServer?.webSocket.pushRefresh('status');
         } catch (error) {
-            console.error('Failed to start FXServer with the following error:');
+            console.error('Failed to start VMPServer with the following error:');
             console.dir(error);
             process.exit(5400);
         }
@@ -269,25 +269,25 @@ export default class FXRunner {
             } else {
                 printableCode = new String(code).toUpperCase();
             }
-            console.warn(`>> [${pid}] FXServer Closed (${printableCode}).`);
+            console.warn(`>> [${pid}] VMPServer Closed (${printableCode}).`);
             this.history[historyIndex].timestamps.close = now();
             globals.webServer?.webSocket.pushRefresh('status');
         }.bind(this));
         this.fxChild.on('disconnect', function () {
-            console.warn(`>> [${pid}] FXServer Disconnected.`);
+            console.warn(`>> [${pid}] VMPServer Disconnected.`);
         }.bind(this));
         this.fxChild.on('error', function (err) {
-            console.warn(`>> [${pid}] FXServer Errored:`);
+            console.warn(`>> [${pid}] VMPServer Errored:`);
             console.dir(err);
         }.bind(this));
         this.fxChild.on('exit', function () {
             process.stdout.write('\n'); //Make sure this isn't concatenated with the last line
-            console.warn(`>> [${pid}] FXServer Exited.`);
+            console.warn(`>> [${pid}] VMPServer Exited.`);
             this.history[historyIndex].timestamps.exit = now();
             globals.webServer?.webSocket.pushRefresh('status');
             if (this.history[historyIndex].timestamps.exit - this.history[historyIndex].timestamps.start <= 5) {
                 setTimeout(() => {
-                    console.warn('FXServer didn\'t start. This is not an issue with txAdmin.');
+                    console.warn('VMPServer didn\'t start. This is not an issue with txAdmin.');
                 }, 500);
             }
         }.bind(this));
@@ -326,7 +326,7 @@ export default class FXRunner {
 
             //If delay override
             if (this.restartDelayOverride) {
-                console.warn(`Restarting the fxserver with delay override ${this.restartDelayOverride}`);
+                console.warn(`Restarting the VMPServer with delay override ${this.restartDelayOverride}`);
                 await sleep(this.restartDelayOverride);
             } else {
                 await sleep(this.config.restartDelay);
@@ -410,7 +410,7 @@ export default class FXRunner {
      * This will also fire the `txAdmin:event:configChanged`
      */
     resetConvars() {
-        console.log('Refreshing fxserver convars.');
+        console.log('Refreshing VMPServer convars.');
         try {
             const convarList = getMutableConvars(false);
             console.verbose.dir(convarList);

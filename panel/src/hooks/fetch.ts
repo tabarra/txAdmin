@@ -3,7 +3,7 @@ import { useCsrfToken, useExpireAuthData } from "@/hooks/auth";
 import { useEffect, useRef } from "react";
 
 const WEBPIPE_PATH = "https://monitor/WebPipe";
-const headeruserAgent = `txAdminPanel/v${window.txConsts.txaVersion} (atop FXServer/b${window.txConsts.fxsVersion})`;
+const headeruserAgent = `txAdminPanel/v${window.txConsts.txaVersion} (atop VMPServer/b${window.txConsts.fxsVersion})`;
 const defaultHeaders = {
     'User-Agent': headeruserAgent,
     'Content-Type': 'application/json; charset=UTF-8',

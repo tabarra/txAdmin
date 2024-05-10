@@ -121,9 +121,9 @@ const nonASCIIRegex = /[^\x00-\x80]+/;
 if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
     console.error('Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.');
     console.error('Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.');
-    console.error('Please make sure FXServer is not in a path contaning those characters.');
+    console.error('Please make sure VMPServer is not in a path contaning those characters.');
     console.error(`If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxServerVersion}/".`);
-    console.log(`FXServer path: ${fxServerPath}`);
+    console.log(`VMPServer path: ${fxServerPath}`);
     console.log(`txData path: ${dataPath}`);
     process.exit(107);
 }

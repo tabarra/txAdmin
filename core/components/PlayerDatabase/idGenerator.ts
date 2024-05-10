@@ -51,7 +51,7 @@ const printDiagnostics = async () => {
     console.error(`Entropy: ${entropy}`);
     console.error(`Distro: ${osDistro}`);
     console.error(`txAdmin: ${txEnv.txAdminVersion}`);
-    console.error(`FXServer: ${txEnv.fxServerVersion}`);
+    console.error(`VMPServer: ${txEnv.fxServerVersion}`);
     console.error(`ZAP: ${convars.isZapHosting}`);
     console.error(`Pterodactyl: ${convars.isPterodactyl}`);
     console.error(`Unique Test: secure ${secureStorage.size}/100, non-secure ${nonsecureStorage.size}/100`);

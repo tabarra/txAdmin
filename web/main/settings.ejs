@@ -58,7 +58,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'fxserver' ? 'active' : '' %>" id="nav-fxserver-tab" data-toggle="tab" href="#nav-fxserver"
-                            role="tab" aria-controls="nav-fxserver" aria-selected="true">FXServer</a>
+                            role="tab" aria-controls="nav-fxserver" aria-selected="true">VMPServer</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'monitor' ? 'active' : '' %>" id="nav-monitor-tab" data-toggle="tab" href="#nav-monitor"
@@ -167,7 +167,7 @@
                             <div class="col-sm-9">
                                 <textarea id="frmFXServer-commandLine" rows="1" class="form-control expandable-textarea" placeholder="+set sv_enforceGameBuild 2545" <%= readOnly ? 'disabled' : '' %>><%= fxserver.commandLine || '' %></textarea>
                                 <span class="form-text text-muted">
-                                    Additional command-line arguments to pass to the FXServer instance. <br>
+                                    Additional command-line arguments to pass to the VMPServer instance. <br>
                                     For example, you can add <code>+set</code> and <code>+exec</code> commands. <br>
                                     <b>Note:</b> These commands can be set inside the <code>server.cfg</code> as well.
                                 </span>
@@ -213,7 +213,7 @@
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    Do not print FXServer's output to the terminal. <br>
+                                    Do not print VMPServer's output to the terminal. <br>
                                     You will still be able to use the Live Console.
                                 </span>
                             </div>
@@ -221,7 +221,7 @@
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmFXServer-save" <%= readOnly ? 'disabled' : '' %>>
-                                <i class="icon-check"></i> Save FXServer Settings
+                                <i class="icon-check"></i> Save VMPServer Settings
                             </button>
                         </div>
                     </div>

@@ -91,7 +91,7 @@ export default class StatisticsManager {
             this.#fxServerBootSeconds = false;
         }
         this.#fxServerBootSeconds = seconds;
-        console.verbose.debug(`FXServer booted in ${seconds} seconds.`);
+        console.verbose.debug(`VMPServer booted in ${seconds} seconds.`);
     }
 
 

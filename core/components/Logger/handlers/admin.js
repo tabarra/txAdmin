@@ -20,7 +20,7 @@ export default class AdminLogger extends LoggerBase {
 
         };
         super(basePath, 'admin', lrDefaultOptions, lrProfileConfig);
-        const sepText = separator(`txAdmin v${txEnv.txAdminVersion} atop fxserver ${txEnv.fxServerVersion} Starting`);
+        const sepText = separator(`txAdmin v${txEnv.txAdminVersion} atop VMPServer ${txEnv.fxServerVersion} Starting`);
         this.lrStream.write(`\n${sepText}\n`);
         this.lrStream.on('rotated', (filename) => {
             this.lrStream.write(`\n${separator('Log Rotated')}\n`);

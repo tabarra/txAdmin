@@ -74,12 +74,12 @@ export const getProcessesData = async () => {
             let procName;
             let order = curr.timestamp || 1;
             if (currPidInt === txProcessId) {
-                procName = 'txAdmin (inside FXserver)';
+                procName = 'txAdmin (inside VMPServer)';
                 order = 0; //forcing order because all process can start at the same second
             } else if (curr.memory <= 10 * MEGABYTE) {
-                procName = 'FXServer MiniDump';
+                procName = 'VMPServer MiniDump';
             } else {
-                procName = 'FXServer';
+                procName = 'VMPServer';
             }
 
             procList.push({
@@ -127,9 +127,9 @@ export const getFXServerData = async (txAdmin: TxAdmin) => {
     try {
         infoData = await got.get(requestOptions).json();
     } catch (error) {
-        console.warn('Failed to get FXServer information.');
+        console.warn('Failed to get VMPServer information.');
         console.verbose.dir(error);
-        return { error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)' };
+        return { error: 'Failed to retrieve VMPServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 
     //Helper function
@@ -157,9 +157,9 @@ export const getFXServerData = async (txAdmin: TxAdmin) => {
             txAdminVersion: (infoData.vars && infoData.vars['txAdmin-version']) ? infoData.vars['txAdmin-version'] : '--',
         };
     } catch (error) {
-        console.warn('Failed to process FXServer information.');
+        console.warn('Failed to process VMPServer information.');
         console.verbose.dir(error);
-        return { error: 'Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)' };
+        return { error: 'Failed to process VMPServer data. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 }
 

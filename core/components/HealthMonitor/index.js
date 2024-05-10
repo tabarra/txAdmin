@@ -133,8 +133,8 @@ export default class HealthMonitor {
         };
         try {
             const data = await got.get(requestOptions).json();
-            if (typeof data !== 'object') throw new Error("FXServer's dynamic endpoint didn't return a JSON object.");
-            if (isUndefined(data.hostname) || isUndefined(data.clients)) throw new Error("FXServer's dynamic endpoint didn't return complete data.");
+            if (typeof data !== 'object') throw new Error("VMPServer's dynamic endpoint didn't return a JSON object.");
+            if (isUndefined(data.hostname) || isUndefined(data.clients)) throw new Error("VMPServer's dynamic endpoint didn't return complete data.");
             dynamicResp = data;
         } catch (error) {
             this.lastHealthCheckErrorMessage = error.message;
@@ -182,7 +182,7 @@ export default class HealthMonitor {
         const currTimestamp = now();
         const elapsedRefreshStatus = currTimestamp - this.lastRefreshStatus;
         if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
-            console.error(`FXServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
+            console.error(`VMPServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
             console.error('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
             return;
@@ -220,7 +220,7 @@ export default class HealthMonitor {
         //Check if still in cooldown
         if (processUptime < this.config.cooldown) {
             if (console.isVerbose && processUptime > 10 && elapsedLastWarning > 10) {
-                console.warn(`${timesPrefix} FXServer is not responding. Still in cooldown of ${this.config.cooldown}s.`);
+                console.warn(`${timesPrefix} VMPServer is not responding. Still in cooldown of ${this.config.cooldown}s.`);
                 this.lastStatusWarningMessage = currTimestamp;
             }
             return;
@@ -240,8 +240,8 @@ export default class HealthMonitor {
         //Log failure message
         if (elapsedLastWarning >= 15) {
             const msg = (healthCheckFailed)
-                ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})`
-                : `${timesPrefix} FXServer is not responding. (HB Failed)`;
+                ? `${timesPrefix} VMPServer is not responding. (${this.lastHealthCheckErrorMessage})`
+                : `${timesPrefix} VMPServer is not responding. (HB Failed)`;
             this.lastStatusWarningMessage = currTimestamp;
             console.warn(msg);
         }

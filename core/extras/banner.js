@@ -39,8 +39,8 @@ const getOSMessage = async () => {
         'on your OS Firewall as well as in the hosting company.',
     ];
     const winWorkstationMessage = [
-        '[!] Home-hosting fxserver is not recommended [!]',
-        'You need to open the fxserver port (usually 30120) on Windows Firewall',
+        '[!] Home-hosting VMPServer is not recommended [!]',
+        'You need to open the VMPServer port (usually 30120) on Windows Firewall',
         'and port forward it in your router for other players be able to access it.',
         'We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.',
     ];

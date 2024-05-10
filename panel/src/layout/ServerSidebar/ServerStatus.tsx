@@ -134,7 +134,7 @@ export default function ServerStatus() {
             <div className="flex justify-between items-center text-muted-foreground text-sm gap-1.5">
                 Process:
                 <StatusBadge
-                    tooltip='Status of the FXServer process.'
+                    tooltip='Status of the VMPServer process.'
                 >{globalStatus?.server.process.toUpperCase() ?? '--'}</StatusBadge>
             </div>
             <div className="flex justify-between items-center text-muted-foreground text-sm gap-1.5">

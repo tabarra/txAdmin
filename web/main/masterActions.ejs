@@ -53,15 +53,15 @@
                         <!-- Reset FXServer -->
                         <div class="row text-center pb-2">
                             <div class="col-lg-9 text-lg-left">
-                                <h5>Reset FXServer</h5>
-                                In the FXServer tab you can change the server data path, but if you want to use
+                                <h5>Reset VMPServer</h5>
+                                In the VMPServer tab you can change the server data path, but if you want to use
                                 the Deployer again, you will need to use this option. <br>
                                 None of your files or databases will be deleted by this action.
                             </div>
                             <div class="col-lg-3 text-lg-right">
                                 <button class="btn btn-sm btn-outline-danger" type="button" 
                                 id="general-btnResetFXServer" <%= disableActions %>>
-                                    Reset FXServer
+                                    Reset VMPServer
                                 </button>
                             </div>
                         </div>
@@ -234,7 +234,7 @@
         }
 
         generalBtnResetFXServer.onclick = async () => {
-            const confirmOptions = {content: `Are you sure you would like to Reset FXServer settings?`};
+            const confirmOptions = {content: `Are you sure you would like to Reset VMPServer settings?`};
             if(!await txAdminConfirm(confirmOptions)){
                 return;
             }

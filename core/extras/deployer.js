@@ -103,11 +103,11 @@ export const parseValidateRecipe = (rawRecipe) => {
     //Checking/parsing meta tag requirements
     if (typeof recipe['$onesync'] == 'string') {
         const onesync = recipe['$onesync'].trim();
-        if (!['off', 'legacy', 'on'].includes(onesync)) throw new Error(`the onesync option selected required for this recipe ("${onesync}") is not supported by this FXServer version.`);
+        if (!['off', 'legacy', 'on'].includes(onesync)) throw new Error(`the onesync option selected required for this recipe ("${onesync}") is not supported by this VMPServer version.`);
         outRecipe.onesync = onesync;
     }
     if (typeof recipe['$minFxVersion'] == 'number') {
-        if (recipe['$minFxVersion'] > txEnv.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
+        if (recipe['$minFxVersion'] > txEnv.fxServerVersion) throw new Error(`this recipe requires VMPServer v${recipe['$minFxVersion']} or above`);
         outRecipe.fxserverMinVersion = recipe['$minFxVersion']; //useless for now
     }
     if (typeof recipe['$engine'] == 'number') {

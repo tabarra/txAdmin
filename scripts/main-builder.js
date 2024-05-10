@@ -82,7 +82,7 @@ class txAdminRunner {
                 },
             );
         } catch (error) {
-            console.error('[RUNNER] Failed to start FXServer with the following error:');
+            console.error('[RUNNER] Failed to start VMPServer with the following error:');
             console.dir(error);
             process.exit(1);
         }
@@ -94,15 +94,15 @@ class txAdminRunner {
 
         //Setting up event handlers
         this.fxChild.on('close', (code) => {
-            console.log('[RUNNER] FXServer Closed.');
+            console.log('[RUNNER] VMPServer Closed.');
         });
         this.fxChild.on('error', (err) => {
-            console.log('[RUNNER] FXServer Errored:');
+            console.log('[RUNNER] VMPServer Errored:');
             console.dir(err);
         });
         this.fxChild.on('exit', () => {
             process.stdout.write('\n');
-            console.log('[RUNNER] FXServer Exited.');
+            console.log('[RUNNER] VMPServer Exited.');
         });
     }
 
@@ -133,7 +133,7 @@ const runDevTask = async () => {
     try {
         ({ fxServerRootPath, fxsBinPath, monitorPath } = getFxsPaths(process.env.TXADMIN_DEV_FXSERVER_PATH));
     } catch (error) {
-        console.error('[BUILDER] Could not extract/validate the fxserver and monitor paths.');
+        console.error('[BUILDER] Could not extract/validate the VMPServer and monitor paths.');
         console.error(error);
         process.exit(1);
     }

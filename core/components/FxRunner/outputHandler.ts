@@ -60,7 +60,7 @@ export default class OutputHandler {
                         this.#txAdmin.fxRunner.restartDelayOverride += 5000;
                     }
                     const [_ip, port] = data.address.split(':');
-                    deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${this.#txAdmin.fxRunner.restartDelayOverride}.`);
+                    deferError(`Detected VMPServer error: Port ${port} is busy! Increasing restart delay to ${this.#txAdmin.fxRunner.restartDelayOverride}.`);
                 } catch (e) { }
                 return;
             }
@@ -85,7 +85,7 @@ export default class OutputHandler {
             //Handle watchdog
             if (channel == 'citizen-server-impl' && data.type == 'watchdog_bark') {
                 try {
-                    deferError(`Detected FXServer thread ${data.thread} hung with stack:`);
+                    deferError(`Detected VMPServer thread ${data.thread} hung with stack:`);
                     deferError(`\t${data.stack}`); //TODO: add to diagnostics page
                     deferError('Please check the resource above to prevent further hangs.');
                 } catch (e) { }

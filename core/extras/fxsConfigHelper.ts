@@ -473,7 +473,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `the '${cmd.command}' port '${port}' is dedicated for txAdmin and CAN NOT be used for FXServer.`
+                    `the '${cmd.command}' port '${port}' is dedicated for txAdmin and CAN NOT be used for VMPServer.`
                 );
                 continue;
             }
@@ -481,7 +481,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `the '${cmd.command}' port '${port}' is being used by txAdmin and CAN NOT be used for FXServer at the same time.`
+                    `the '${cmd.command}' port '${port}' is being used by txAdmin and CAN NOT be used for VMPServer at the same time.`
                 );
                 continue;
             }
@@ -529,7 +529,7 @@ const getConnectEndpoint = (endpoints: EndpointsObjectType) => {
 \t\`endpoint_add_tcp "${desidredEndpoint}"\`
 \t\`endpoint_add_udp "${desidredEndpoint}"\``;
         } else {
-            msg = `Your config file does not specify a valid endpoint for fxserver to use.
+            msg = `Your config file does not specify a valid endpoint for VMPServer to use.
 \tPlease delete all \`endpoint_add_*\` lines and add the following to the start of the file:
 \t\`endpoint_add_tcp "0.0.0.0:30120"\`
 \t\`endpoint_add_udp "0.0.0.0:30120"\``;

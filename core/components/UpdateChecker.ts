@@ -63,7 +63,7 @@ export default class UpdateChecker {
             const resp = await got(reqUrl).json()
             apiResponse = changelogRespSchema.parse(resp);
         } catch (error) {
-            console.verbose.warn(`Failed to retrieve FXServer/txAdmin update data with error: ${(error as Error).message}`);
+            console.verbose.warn(`Failed to retrieve VMPServer/txAdmin update data with error: ${(error as Error).message}`);
             return;
         }
 
@@ -98,31 +98,31 @@ export default class UpdateChecker {
 
         //Checking FXServer version
         try {
-            if (txEnv.fxServerVersion < apiResponse.critical) {
-                if (apiResponse.critical > apiResponse.recommended) {
-                    this.fxsUpdateData = {
-                        version: apiResponse.critical.toString(),
-                        isImportant: true,
-                    }
-                } else {
-                    this.fxsUpdateData = {
-                        version: apiResponse.recommended.toString(),
-                        isImportant: true,
-                    }
-                }
-            } else if (txEnv.fxServerVersion < apiResponse.recommended) {
-                this.fxsUpdateData = {
-                    version: apiResponse.recommended.toString(),
-                    isImportant: true,
-                };
-            } else if (txEnv.fxServerVersion < apiResponse.optional) {
-                this.fxsUpdateData = {
-                    version: apiResponse.optional.toString(),
-                    isImportant: false,
-                };
-            }
+            // if (txEnv.fxServerVersion < apiResponse.critical) {
+            //     if (apiResponse.critical > apiResponse.recommended) {
+            //         this.fxsUpdateData = {
+            //             version: apiResponse.critical.toString(),
+            //             isImportant: true,
+            //         }
+            //     } else {
+            //         this.fxsUpdateData = {
+            //             version: apiResponse.recommended.toString(),
+            //             isImportant: true,
+            //         }
+            //     }
+            // } else if (txEnv.fxServerVersion < apiResponse.recommended) {
+            //     this.fxsUpdateData = {
+            //         version: apiResponse.recommended.toString(),
+            //         isImportant: true,
+            //     };
+            // } else if (txEnv.fxServerVersion < apiResponse.optional) {
+            //     this.fxsUpdateData = {
+            //         version: apiResponse.optional.toString(),
+            //         isImportant: false,
+            //     };
+            // }
         } catch (error) {
-            console.warn('Error checking for FXServer updates. Enable verbosity for more information.');
+            console.warn('Error checking for VMPServer updates. Enable verbosity for more information.');
             console.verbose.dir(error);
         }
 

@@ -291,7 +291,7 @@ async function handleSaveLocal(ctx) {
     globals.persistentCache.set('deployer:recipe', 'none');
 
     //Logging
-    ctx.admin.logAction('Changing global/fxserver settings via setup stepper.');
+    ctx.admin.logAction('Changing global/VMPServer settings via setup stepper.');
 
     //Starting server
     const spawnMsg = await globals.fxRunner.spawnServer(false);

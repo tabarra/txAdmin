@@ -135,7 +135,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     const replacers: { [key: string]: string } = {};
     replacers.basePath = `<base href="${basePath}">`;
     replacers.ogTitle = `txAdmin - ${serverName}`;
-    replacers.ogDescripttion = `Manage & Monitor your FiveM/RedM Server with txAdmin v${txEnv.txAdminVersion} atop FXServer ${txEnv.fxServerVersion}`;
+    replacers.ogDescripttion = `Manage & Monitor your VMP/RedM Server with txAdmin v${txEnv.txAdminVersion} atop VMPServer ${txEnv.fxServerVersion}`;
     replacers.txConstsInjection = `<script>window.txConsts = ${JSON.stringify(injectedConsts)};</script>`;
     replacers.devModules = convars.isDevMode ? devModulesScript : '';
 
