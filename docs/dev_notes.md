@@ -13,6 +13,7 @@
 - [x] make the new page searches case insensitive (history->reason and maybe more)
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
+- [ ] player/history modal is cutting bottom of title (test with jgpq, etc)
 
 ## Highlights
 - [x] pre-configured ban/warn reasons with new perm to lock admins to only use them?
@@ -26,11 +27,6 @@
         - [x] better random id (no random id? stable-hash?)
         - [x] settings enforce unique id
 - [x] added filters to the in-game playerlist
-- [x] remove old live console page
-- [x] migrate system logs page & remove xterm files
-    - [x] write new page
-    - [x] remove old page files, links and references on core
-    - [x] remove `web/public/xtermjs`
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
     - [ ] number callouts from legacy players page
@@ -38,43 +34,52 @@
     - [ ] warning for top servers
 
 ## Small feat
-- [ ] update wouter and add search/filters state to URL of the players/history pages 
-- [ ] add txadmin v8 heap to diagnostics
-- [ ] add fxserver version to txDiagnostics
-- [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
+- [x] remove old live console page
+- [x] migrate system logs page & remove xterm files
+    - [x] write new page
+    - [x] remove old page files, links and references on core
+    - [x] remove `web/public/xtermjs`
 - [ ] track channel of last console output, and if it's different prefix a `\n`
+- [ ] add "this player is banned until: xxx" to the player modal
 
 ## Chores + refactor
 - [x] update packages
 - [x] remove pending DynamicNewBadge
-- [ ] rename to de-capitalize components files that have multiple exports 
-- [ ] add new modal (page?) for adding legacy ban
-    - could plan this in a way that fits some other configs/tools that is not exactly settings page?
-    - some servers mightt be doing multiple ans manually, and having a modal that closes might be too annoying
-- [ ] Remove old live console legacy code
-- [ ] Remove players page legacy code
-- [ ] fix remaining imgur links
+- [x] add new page for adding legacy ban
+    - same style as the ban templates page
+    - admins might be doing multiple bans manually, so make the process streamlined
+    - support using ban templates
+    - textarea as input, line breaks count for separating ids
+    - do I limit 1 of each id?!
+- [x] Remove players page legacy code
+    - [x] check for if i still need cil - coreui icons
+    - [x] functions in web/public/js/txadmin/main.js
+    - [x] can we limit the scope of socketio just to the server log page?
+    - [x] test server log + player click
+- [x] simplify the simple-line-icons dependencies - do i need all the files? remove cdn!
+
+
+
+## Next up... ish
+- [ ] fix the eslint config + tailwind sort
+- [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
 - [ ] build: generate fxmanifest files list dynamically
+- [ ] rename to de-capitalize components files that have multiple exports 
+- [ ] fix remaining imgur links
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 - [ ] update docs on development?
 - [ ] redact discord api webhook urls from reports
-- [ ] fix the eslint config + tailwind sort
-- [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
+- [ ] update wouter and add search/filters state to URL of the players/history pages 
+- [ ] add txadmin v8 heap to diagnostics
+- [ ] add fxserver version to txDiagnostics
+- [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
+
 
 ## Quick notes:
 
-In this case, if the player modal showed clearly "this player is banned until: xxxxxxx" it would probably have prevented this issue, what do you think?
-
 player name history? (not searchable)
 
-web/main/playerList.ejs ainda é usado? ele tá segurando o cil-magnifying-glass * tem mais coisa
-simple-line-icons na pasta web/public e também puxado via cdn?
-
 break down the discord /info command in /info and /admininfo?
-
-https://observablehq.com/@d3/zoomable-area-chart?collection=@d3/d3-zoom
-
-player/history modal is cutting bottom of title (test with jgpq, etc)
 
 new apis? useBackendQuery & useBackendMutation
 based on swr's methods
@@ -873,15 +878,7 @@ Message from bubble:
 
 ## References
 
-### CoreUI Stuff + Things I use
-https://simplelineicons.github.io
-https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
-https://coreui.io/demo/3.0.0/#colors.html
-https://coreui.io/docs/content/typography/
-
-https://www.npmjs.com/package/humanize-duration
-https://kinark.github.io/Materialize-stepper/
-
+### Locale
 https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
 ### RedM stuff

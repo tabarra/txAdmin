@@ -507,7 +507,7 @@ export default class PlayerDatabase {
 
     /**
      * Returns actions/players stats for the database
-     * FIXME: deprecate, used by the old players page
+     * NOTE: used by diagnostics and reporting
      */
     getDatabaseStats() {
         if (!this.#db.obj || !this.#db.obj.data) throw new Error(`database not ready yet`);

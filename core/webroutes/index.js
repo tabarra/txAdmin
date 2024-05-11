@@ -54,8 +54,6 @@ export { default as history_actions } from './history/actions.js';
 
 export { default as player_stats } from './player/stats';
 export { default as player_search } from './player/search';
-export { default as player_pageOld } from './player/pageOld.js'; //FIXME: DEPRECATED
-export { default as player_searchOld } from './player/searchOld'; //FIXME: DEPRECATED
 export { default as player_modal } from './player/modal';
 export { default as player_actions } from './player/actions';
 export { default as player_checkJoin } from './player/checkJoin';
