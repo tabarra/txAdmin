@@ -13,6 +13,7 @@ import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
 import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
 import SystemLogPage from "@/pages/SystemLogPage";
+import AddLegacyBanPage from "@/pages/AddLegacyBanPage";
 
 
 type RouteType = {
@@ -23,12 +24,6 @@ type RouteType = {
 
 const allRoutes: RouteType[] = [
     //Global Routes
-    {
-        //FIXME: deprecate
-        path: '/players/old',
-        title: 'Players',
-        children: <Iframe legacyUrl="players" />
-    },
     {
         path: '/players',
         title: 'Players',
@@ -53,11 +48,6 @@ const allRoutes: RouteType[] = [
         path: '/settings',
         title: 'Settings',
         children: <Iframe legacyUrl="settings" />
-    },
-    {
-        path: '/settings/ban-templates',
-        title: 'Ban Templates',
-        children: <BanTemplatesPage />
     },
     {
         path: '/system/master-actions',
@@ -120,6 +110,18 @@ const allRoutes: RouteType[] = [
         path: '/advanced',
         title: 'Advanced',
         children: <Iframe legacyUrl="advanced" />
+    },
+
+    //No nav routes
+    {
+        path: '/settings/ban-templates',
+        title: 'Ban Templates',
+        children: <BanTemplatesPage />
+    },
+    {
+        path: '/ban-identifiers',
+        title: 'Ban Identifiers',
+        children: <AddLegacyBanPage />
     },
 ];
 

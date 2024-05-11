@@ -267,12 +267,6 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
-                                    <Link href="/players/old" className="cursor-pointer">
-                                        <ExternalLinkIcon className="inline mr-1 h-4" />
-                                        Old Page
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
                                     <Link href="/system/master-actions#cleandb" className="cursor-pointer">
                                         <ExternalLinkIcon className="inline mr-1 h-4" />
                                         Bulk Remove

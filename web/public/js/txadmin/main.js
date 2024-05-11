@@ -33,7 +33,7 @@ function revokeAction(actionId, isModal = false) {
     const notify = $.notify({ message: '<p class="text-center">Revoking...</p>' }, {});
     txAdminAPI({
         type: "POST",
-        url: '/history/revoke_action',
+        url: '/history/revokeAction',
         timeout: REQ_TIMEOUT_LONG,
         data: { actionId },
         success: function (data) {

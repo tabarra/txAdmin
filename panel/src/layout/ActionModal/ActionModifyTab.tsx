@@ -5,6 +5,7 @@ import { GenericApiOkResp } from "@shared/genericApiTypes";
 import { useAdminPerms } from "@/hooks/auth";
 import { Loader2Icon } from "lucide-react";
 import { useBackendApi } from "@/hooks/fetch";
+import { ApiRevokeActionReqSchema } from "../../../../core/webroutes/history/actions";
 
 
 type ActionModifyTabProps = {
@@ -15,9 +16,9 @@ type ActionModifyTabProps = {
 export default function ActionModifyTab({ action, refreshModalData }: ActionModifyTabProps) {
     const [isRevoking, setIsRevoking] = useState(false);
     const { hasPerm } = useAdminPerms();
-    const revokeActionApi = useBackendApi<GenericApiOkResp>({
+    const revokeActionApi = useBackendApi<GenericApiOkResp, ApiRevokeActionReqSchema>({
         method: 'POST',
-        path: `/history/revoke_action`,
+        path: `/history/revokeAction`,
     });
 
     const upperCasedType = action.type.charAt(0).toUpperCase() + action.type.slice(1);

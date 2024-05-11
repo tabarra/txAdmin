@@ -2,6 +2,7 @@ import type { ReactAuthDataType } from "./authApiTypes";
 export { BanTemplatesDataType, BanDurationType } from "@core/webroutes/banTemplates/utils";
 export { GetBanTemplatesSuccessResp } from "@core/webroutes/banTemplates/getBanTemplates";
 export { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/webroutes/banTemplates/saveBanTemplates";
+export { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/webroutes/history/actions";
 
 
 export type UpdateDataType = {
