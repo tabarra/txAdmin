@@ -32,13 +32,16 @@ function PlayerRow({ rowData, modalOpener }: PlayerRowProps) {
                 <div className='hidden md:inline-flex items-center gap-1'>
                     <ActivitySquareIcon className={cn('h-5',
                         rowData.isOnline ? 'text-success-inline animate-pulse' : 'text-muted'
-                    )} />
+                    )}
+                    title="Activity" />
                     <ShieldCheckIcon className={cn('h-5',
                         rowData.isAdmin ? 'text-warning-inline' : 'text-muted'
-                    )} />
+                    )}
+                    title="Admin" />
                     <FileTextIcon className={cn('h-5',
                         rowData.notes ? 'text-secondary-foreground' : 'text-muted'
-                    )} />
+                    )}
+                    title="Notes" />
                 </div>
             </TableCell>
             <TableCell className='min-w-[8rem] px-4 py-2 border-r'>{msToShortDuration(rowData.playTime * 60_000)}</TableCell>
