@@ -7,6 +7,7 @@
   "scripts": {
     "build": "cd ../ && node scripts/main-builder.js publish",
     "dev": "cd ../ && node scripts/main-builder.js dev",
+    "test": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint ./**",
     "lint:count": "eslint ./** -f ../scripts/lint-formatter.js",
@@ -61,7 +62,6 @@
     "string-argv": "^0.3.2",
     "systeminformation": "^5.22.7",
     "unicode-emoji-json": "^0.6.0",
-    "utility-types": "^3.11.0",
     "xss": "^1.0.15",
     "zod": "^3.22.4"
   },
@@ -79,6 +79,8 @@
     "@types/semver": "^7.5.8",
     "@types/slug": "^5.0.8",
     "@types/source-map-support": "^0.5.10",
+    "utility-types": "^3.11.0",
+    "vitest": "^1.6.0",
     "windows-release": "^4.0.0"
   }
 }

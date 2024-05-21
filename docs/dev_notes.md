@@ -57,6 +57,8 @@
     - [x] can we limit the scope of socketio just to the server log page?
     - [x] test server log + player click
 - [x] simplify the simple-line-icons dependencies - do i need all the files? remove cdn!
+- [x] redact discord api webhook urls from reports
+- [ ] locale file optimization - build 8201 and above 
 
 
 
@@ -68,7 +70,6 @@
 - [ ] fix remaining imgur links
 - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 - [ ] update docs on development?
-- [ ] redact discord api webhook urls from reports
 - [ ] update wouter and add search/filters state to URL of the players/history pages 
 - [ ] add txadmin v8 heap to diagnostics
 - [ ] add fxserver version to txDiagnostics
@@ -85,32 +86,6 @@ new apis? useBackendQuery & useBackendMutation
 based on swr's methods
 the auth part can be the same middleware for both
 need to check swr's behavior on unmount nad how to change timeouts
-
-
-# @formkit/auto-animate
-> 2.9kb
-só animação automática
-
-# framer-motion
-> 43.6kb
-animações, reorder, trigger area
-
-# @dnd-kit/core + @dnd-kit/sortable
-> 13.9kb + 3.7kb
-não sei se faz animação
-
-# @hello-pangea/dnd
-> 30.3kb - dependencias como redux
-its.. ok
-
-
-
-1,151 kb - no page
-1,152 kb - page
-
-1,261 kb - framer
-1,198 kb - dnd-kit
-1,206 kb - dnd-kit + auto-animate
 
 
 ## Client game print issue

@@ -55,11 +55,12 @@ export const parseSchedule = (scheduleTimes: string[]) => {
 export const redactApiKeys = (src: string) => {
     if (typeof src !== 'string' || !src.length) return src;
     return src
-        .replace(/licenseKey\s+["']?cfxk_\w{1,60}_(\w+)["']?/gi, 'licenseKey [REDACTED cfxk...$1]')
-        .replace(/steam_webApiKey\s+["']?\w{32}["']?/gi, 'steam_webApiKey [REDACTED]')
-        .replace(/sv_tebexSecret\s+["']?\w{40}["']?/gi, 'sv_tebexSecret [REDACTED]')
-        .replace(/rcon_password\s+["']?[^"']+["']?/gi, 'rcon_password [REDACTED]')
-        .replace(/mysql_connection_string\s+["']?[^"']+["']?/gi, 'mysql_connection_string [REDACTED]');
+        .replace(/licenseKey\s+["']?cfxk_\w{1,60}_(\w+)["']?.?$/gim, 'licenseKey [REDACTED cfxk...$1]')
+        .replace(/steam_webApiKey\s+["']?\w{32}["']?.?$/gim, 'steam_webApiKey [REDACTED]')
+        .replace(/sv_tebexSecret\s+["']?\w{40}["']?.?$/gim, 'sv_tebexSecret [REDACTED]')
+        .replace(/rcon_password\s+["']?[^"']+["']?.?$/gim, 'rcon_password [REDACTED]')
+        .replace(/mysql_connection_string\s+["']?[^"']+["']?.?$/gim, 'mysql_connection_string [REDACTED]')
+        .replace(/discord\.com\/api\/webhooks\/\d{17,20}\/\w{10,}.?$/gim, 'discord.com/api/webhooks/[REDACTED]/[REDACTED]');
 };
 
 
@@ -119,7 +120,7 @@ export const parsePlayerId = (idString: string) => {
     const idlowerCased = idString.toLocaleLowerCase();
     const [idType, idValue] = idlowerCased.split(':', 2);
     const validator = consts.validIdentifiers[idType as keyof typeof consts.validIdentifiers];
-    if (validator && validator.test(idString)) {
+    if (validator && validator.test(idlowerCased)) {
         return { isIdValid: true, idType, idValue, idlowerCased };
     } else {
         return { isIdValid: false, idType, idValue, idlowerCased };
@@ -240,4 +241,13 @@ export const getIdFromOauthNameid = (nameid: string) => {
     } catch (error) {
         return false;
     }
+}
+
+
+/**
+ * Parses a number or string to a float with a limited precision.
+ */
+export const parseLimitedFloat = (src: number | string, precision = 6) =>  {
+    const srcAsNum = typeof src === 'string' ? parseFloat(src) : src;
+    return parseFloat(srcAsNum.toFixed(precision));
 }
