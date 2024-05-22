@@ -1,15 +1,13 @@
 const modulename = 'PerformanceCollector';
 import fsp from 'node:fs/promises';
 import * as d3array from 'd3-array';
-import { convars } from '@core/globalData';
-import got from '@core/extras/got.js';
 import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_MIN_TICKS, SSFileSchema, isSSLogDataType } from './perfSchemas';
 import type { SSFileType, SSLogDataType, SSLogType, SSPerfBucketBoundariesType, SSRawPerfType } from './perfSchemas';
-import { diffPerfs, rawPerfToFreqs } from './perfUtils';
-import { parsePerf } from './perfParser';
+import { diffPerfs, fetchFxsMemory, fetchPerfData, rawPerfToFreqs } from './perfUtils';
 import { optimizeStatsLog } from './statsLogOptimizer';
+import { convars } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 
@@ -21,10 +19,9 @@ const STATS_DATA_FILE_NAME = 'statsData.json';
 export default class PerformanceCollector {
     readonly #txAdmin: TxAdmin;
     private readonly statsDataPath: string;
+    private statsLog: SSLogType = [];
     private lastPerfBucketBoundaries: SSPerfBucketBoundariesType | undefined;
     private lastRawPerf: SSRawPerfType | undefined;
-    private statsLog: SSLogType = [];
-
     private lastNodeMemory: { used: number, total: number } | undefined;
     private lastFxsMemory: number | undefined;
 
@@ -92,25 +89,30 @@ export default class PerformanceCollector {
         if (this.#txAdmin.playerlistManager === null) return;
         if (this.#txAdmin.healthMonitor.currentStatus !== 'ONLINE') return;
 
-        //TODO: Update fxserver memory usage
-        this.lastFxsMemory = undefined;
-        //FIXME: usar promises.all pra paralelizar puxar a performance e a memória
-
         //Get performance data
         const fxServerHost = (convars.debugExternalStatsSource)
             ? convars.debugExternalStatsSource
             : this.#txAdmin.fxRunner.fxServerHost;
-        const currPerfRaw = await got(`http://${fxServerHost}/perf/`).text();
-        const {
-            bucketBoundaries,
-            metrics: currPerfData,
-        } = parsePerf(currPerfRaw);
+        if (typeof fxServerHost !== 'string' || !fxServerHost) {
+            throw new Error(`Invalid fxServerHost: ${fxServerHost}`);
+        }
+
+        //Fetch data
+        const [fetchPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
+            fetchPerfData(fxServerHost),
+            fetchFxsMemory(),
+        ]);
+        if (fetchFxsMemoryRes.status === 'fulfilled') {
+            this.lastFxsMemory = fetchFxsMemoryRes.value;
+        }
+        if (fetchPerfDataRes.status === 'rejected') throw fetchPerfDataRes.reason;
+        const { bucketBoundaries, perfMetrics } = fetchPerfDataRes.value;
 
         //Check for min tick count
         if (
-            currPerfData.svMain.count < PERF_DATA_MIN_TICKS ||
-            currPerfData.svNetwork.count < PERF_DATA_MIN_TICKS ||
-            currPerfData.svSync.count < PERF_DATA_MIN_TICKS
+            perfMetrics.svMain.count < PERF_DATA_MIN_TICKS ||
+            perfMetrics.svNetwork.count < PERF_DATA_MIN_TICKS ||
+            perfMetrics.svSync.count < PERF_DATA_MIN_TICKS
         ) {
             console.verbose.warn('Not enough ticks to log. Skipping this collection.');
             return;
@@ -125,18 +127,18 @@ export default class PerformanceCollector {
             this.statsLog = [];
             this.lastPerfBucketBoundaries = bucketBoundaries;
             this.lastRawPerf = undefined;
-        } else if (this.lastRawPerf.svMain.count > currPerfData.svMain.count) {
+        } else if (this.lastRawPerf.svMain.count > perfMetrics.svMain.count) {
             console.warn('Performance counter reset. Resetting lastRawPerf.');
             this.lastRawPerf = undefined;
         }
 
         //Calculate the tick/time counts since last epoch
-        const currRawPerfDiff = diffPerfs(currPerfData, this.lastRawPerf);
+        const currRawPerfDiff = diffPerfs(perfMetrics, this.lastRawPerf);
         const currPerfLogData = rawPerfToFreqs(currRawPerfDiff);
 
         //Update cache
         const now = Date.now();
-        this.lastRawPerf = currPerfData;
+        this.lastRawPerf = perfMetrics;
         const currSnapshot: SSLogDataType = {
             ts: now,
             type: 'data',

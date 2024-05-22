@@ -1,6 +1,9 @@
 import { cloneDeep } from 'lodash-es';
 import { PERF_DATA_BUCKET_COUNT } from "./perfSchemas";
-import type {SSRawPerfType, SSLogDataPerfType, PerfDataThreadNamesType} from "./perfSchemas";
+import type { SSRawPerfType, SSLogDataPerfType, PerfDataThreadNamesType } from "./perfSchemas";
+import got from '@core/extras/got.js';
+import { parsePerf } from './perfParser';
+import { getProcessesData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
 
 
 //Consts
@@ -77,4 +80,27 @@ export const rawPerfToFreqs = (threads: SSRawPerfType) => {
     }
 
     return currPerfFreqs;
+}
+
+
+/**
+ * Requests /perf/, parses it and returns the raw perf data
+ */
+export const fetchPerfData = async (fxServerHost: string) => {
+    const currPerfRaw = await got(`http://${fxServerHost}/perf/`).text();
+    return parsePerf(currPerfRaw);
+}
+
+
+/**
+ * Get the fxserver memory usage
+ */
+export const fetchFxsMemory = async () => {
+    const allProcsData = await getProcessesData();
+    if (!allProcsData) return;
+    
+    const fxProcData = allProcsData.find((proc) => proc.name === 'FXServer');
+    if (!fxProcData) return;
+
+    return fxProcData.memory;
 }

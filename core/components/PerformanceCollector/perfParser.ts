@@ -1,19 +1,9 @@
-import { PERF_DATA_BUCKET_COUNT, isValidPerfThreadName, type SSPerfBucketBoundariesType, type PerfDataThreadNamesType } from "./perfSchemas";
+import { PERF_DATA_BUCKET_COUNT, isValidPerfThreadName, type SSPerfBucketBoundariesType, type SSRawPerfType } from "./perfSchemas";
 
 
 //Consts
 const REGEX_BUCKET_BOUNDARIE = /le="(\d+(\.\d+)?|\+Inf)"/;
 const REGEX_PERF_LINE = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|svMain)"(,le="(\d+(\.\d+)?|\+Inf)")?\}\s(\S+)/;
-
-//Types
-type ParsedRawPerfType = {
-    bucketBoundaries: SSPerfBucketBoundariesType,
-    metrics: Record<PerfDataThreadNamesType, {
-        count: number,
-        sum: number,
-        buckets: number[]
-    }>
-};
 
 
 /**
@@ -49,23 +39,23 @@ export const arePerfBucketBoundariesValid = (boundaries: (number | string)[]): b
 /**
  * Parses the output of FXServer /perf/ in the proteus format
  */
-export const parsePerf = (rawData: string): ParsedRawPerfType => {
+export const parsePerf = (rawData: string) => {
     if (typeof rawData !== 'string') throw new Error('string expected');
     const lines = rawData.trim().split('\n');
-    const metrics: ParsedRawPerfType['metrics'] = {
+    const perfMetrics: SSRawPerfType = {
         svSync: {
             count: 0,
-            sum: 0,
+            // sum: 0,
             buckets: [],
         },
         svNetwork: {
             count: 0,
-            sum: 0,
+            // sum: 0,
             buckets: [],
         },
         svMain: {
             count: 0,
-            sum: 0,
+            // sum: 0,
             buckets: [],
         },
     };
@@ -102,13 +92,13 @@ export const parsePerf = (rawData: string): ParsedRawPerfType => {
 
         if (regType == 'count') {
             const count = parseInt(value);
-            if (!isNaN(count)) metrics[thread].count = count;
+            if (!isNaN(count)) perfMetrics[thread].count = count;
         } else if (regType == 'sum') {
-            const sum = parseFloat(value);
-            if (!isNaN(sum)) metrics[thread].sum = sum;
+            // const sum = parseFloat(value);
+            // if (!isNaN(sum)) currPerfData[thread].sum = sum;
         } else if (regType == 'bucket') {
             //Check if the bucket is correct
-            const currBucketIndex = metrics[thread].buckets.length;
+            const currBucketIndex = perfMetrics[thread].buckets.length;
             const lastBucketIndex = PERF_DATA_BUCKET_COUNT - 1;
             if (currBucketIndex === lastBucketIndex) {
                 if (bucket !== '+Inf') {
@@ -118,17 +108,17 @@ export const parsePerf = (rawData: string): ParsedRawPerfType => {
                 throw new Error(`unexpected bucket ${bucket} at position ${currBucketIndex}`);
             }
             //Add the bucket
-            metrics[thread].buckets.push(parseInt(value));
+            perfMetrics[thread].buckets.push(parseInt(value));
         }
     }
 
     //Check perf validity
-    const invalid = Object.values(metrics).filter((thread) => {
+    const invalid = Object.values(perfMetrics).filter((thread) => {
         return (
             !Number.isInteger(thread.count)
             || thread.count === 0
-            || !Number.isFinite(thread.sum)
-            || thread.sum === 0
+            // || !Number.isFinite(thread.sum)
+            // || thread.sum === 0
             || thread.buckets.length !== PERF_DATA_BUCKET_COUNT
         );
     });
@@ -136,5 +126,5 @@ export const parsePerf = (rawData: string): ParsedRawPerfType => {
         throw new Error(`${invalid.length} invalid threads in /perf/`);
     }
 
-    return { bucketBoundaries, metrics };
+    return { bucketBoundaries, perfMetrics };
 };

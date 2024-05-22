@@ -70,11 +70,11 @@ suite('parsePerf', () => {
     it('should parse the perf data correctly', () => {
         const result = parsePerf(perfValidExample);
         expect(result.bucketBoundaries).toEqual([0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10, '+Inf']);
-        expect(result.metrics.svNetwork.count).toBe(1840805);
-        expect(result.metrics.svSync.count).toBe(2268704);
-        expect(result.metrics.svMain.count).toBe(355594);
-        expect(result.metrics.svSync.sum).toBe(1091.617999988212);
-        expect(result.metrics.svMain.buckets).toEqual([299261, 327819, 352052, 354360, 354808, 355262, 355577, 355591, 355591, 355592, 355593, 355593, 355593, 355593, 355594]);
+        expect(result.perfMetrics.svNetwork.count).toBe(1840805);
+        expect(result.perfMetrics.svSync.count).toBe(2268704);
+        expect(result.perfMetrics.svMain.count).toBe(355594);
+        // expect(result.perfMetrics.svSync.sum).toBe(1091.617999988212);
+        expect(result.perfMetrics.svMain.buckets).toEqual([299261, 327819, 352052, 354360, 354808, 355262, 355577, 355591, 355591, 355592, 355593, 355593, 355593, 355593, 355594]);
     });
 
     it('should handle bad data', () => {
@@ -88,8 +88,8 @@ suite('parsePerf', () => {
         perfModifiedExample = perfValidExample.replace(targetLine, '');
         expect(() => parsePerf(perfModifiedExample)).toThrow('invalid threads');
 
-        targetLine = 'tickTime_sum{name="svNetwork"} 76.39499999999963';
-        perfModifiedExample = perfValidExample.replace(targetLine, 'tickTime_sum{name="svNetwork"} ????');
+        targetLine = 'tickTime_count{name="svNetwork"} 1840805';
+        perfModifiedExample = perfValidExample.replace(targetLine, 'tickTime_count{name="svNetwork"} ????');
         expect(() => parsePerf(perfModifiedExample)).toThrow('invalid threads');
     });
 });
