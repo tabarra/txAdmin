@@ -26,16 +26,38 @@ export default class PlayerlistManager {
     #playerlist: (ServerPlayer | undefined)[] = [];
     licenseCache: [mutexid: string, license: string][] = [];
     licenseCacheLimit = 50_000; //mutex+id+license * 50_000 = ~4mb
+    joinLeaveLog: [ts: number, isJoin: boolean][] = [];
+    joinLeaveLogLimitTime = 30 * 60 * 1000; //30 mins, [ts+isJoin] * 100_000 = ~4.3mb
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
     }
+
 
     /**
      * Number of online/connected players.
      */
     get onlineCount() {
         return this.#playerlist.filter(p => p && p.isConnected).length;
+    }
+
+
+    /**
+     * Number of players that joined/left in the last hour.
+     */
+    get joinLeaveTally() {
+        let toRemove = 0;
+        const out = { joined: 0, left: 0 };
+        const tsWindowStart = Date.now() - this.joinLeaveLogLimitTime;
+        for (const [ts, isJoin] of this.joinLeaveLog) {
+            if (ts > tsWindowStart) {
+                out[isJoin ? 'joined' : 'left']++;
+            } else {
+                toRemove++;
+            }
+        }
+        this.joinLeaveLog.splice(0, toRemove);
+        return out;
     }
 
 
@@ -55,6 +77,7 @@ export default class PlayerlistManager {
         }
         this.licenseCache = this.licenseCache.slice(-this.licenseCacheLimit);
         this.#playerlist = [];
+        this.joinLeaveLog = [];
         this.#txAdmin.webServer.webSocket!.buffer('playerlist', {
             mutex: oldMutex,
             type: 'fullPlayerlist',
@@ -129,6 +152,7 @@ export default class PlayerlistManager {
      * TODO: use zod for type safety
      */
     async handleServerEvents(payload: any, mutex: string) {
+        const currTs = Date.now();
         if (payload.event === 'playerJoining') {
             try {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
@@ -136,10 +160,11 @@ export default class PlayerlistManager {
                 //TODO: pass serverInstance instead of playerDatabase
                 const svPlayer = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
                 this.#playerlist[payload.id] = svPlayer;
+                this.joinLeaveLog.push([currTs, true]);
                 this.#txAdmin.logger.server.write([{
                     type: 'playerJoining',
                     src: payload.id,
-                    ts: Date.now(),
+                    ts: currTs,
                     data: { ids: this.#playerlist[payload.id]!.ids }
                 }], mutex);
                 this.#txAdmin.webServer.webSocket.buffer<PlayerJoiningEventType>('playerlist', {
@@ -160,10 +185,11 @@ export default class PlayerlistManager {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
                 if (!(this.#playerlist[payload.id] instanceof ServerPlayer)) throw new Error(`player id not found`);
                 this.#playerlist[payload.id]!.disconnect();
+                this.joinLeaveLog.push([currTs, false]);
                 this.#txAdmin.logger.server.write([{
                     type: 'playerDropped',
                     src: payload.id,
-                    ts: Date.now(),
+                    ts: currTs,
                     data: { reason: payload.reason }
                 }], mutex);
                 this.#txAdmin.webServer.webSocket.buffer<PlayerDroppedEventType>('playerlist', {

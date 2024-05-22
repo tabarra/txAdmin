@@ -126,6 +126,7 @@ export default class StatisticsManager {
      *    Did not change the version because its fully compatible.
      * 10: deprecated pageViews because of the react migration
      * 11: added playersTableSearchTime and historyTableSearchTime
+     * 12: changed perfSummary format
      * 
      * TODO:
      * Use the average q5 and q95 to find out the buckets.
@@ -200,7 +201,7 @@ export default class StatisticsManager {
 
                 //Processed stuff
                 playerDb: this.#txAdmin.playerDatabase.getDatabaseStats(),
-                perfSummary: this.#txAdmin.performanceCollector.getSummary('svMain'),
+                perfSummary: this.#txAdmin.performanceCollector.getServerPerfSummary(),
             };
             tmpDurationDebugLog('prepared object');
 

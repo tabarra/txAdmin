@@ -1,4 +1,4 @@
-import { PERF_DATA_BUCKET_COUNT, isValidPerfThreadName, type PerfDataBucketBoundariesType, type PerfDataThreadNamesType } from "./perfSchemas";
+import { PERF_DATA_BUCKET_COUNT, isValidPerfThreadName, type SSPerfBucketBoundariesType, type PerfDataThreadNamesType } from "./perfSchemas";
 
 
 //Consts
@@ -7,7 +7,7 @@ const REGEX_PERF_LINE = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|sv
 
 //Types
 type ParsedRawPerfType = {
-    bucketBoundaries: PerfDataBucketBoundariesType,
+    bucketBoundaries: SSPerfBucketBoundariesType,
     metrics: Record<PerfDataThreadNamesType, {
         count: number,
         sum: number,
@@ -19,7 +19,7 @@ type ParsedRawPerfType = {
 /**
  * Returns if the given thread name is a valid PerfDataThreadNamesType
  */
-export const arePerfBucketBoundariesValid = (boundaries: (number | string)[]): boundaries is PerfDataBucketBoundariesType => {
+export const arePerfBucketBoundariesValid = (boundaries: (number | string)[]): boundaries is SSPerfBucketBoundariesType => {
     // Check if the length is correct
     if (boundaries.length !== PERF_DATA_BUCKET_COUNT) {
         return false;
@@ -85,7 +85,7 @@ export const parsePerf = (rawData: string): ParsedRawPerfType => {
         })
         .filter((val): val is number | '+Inf' => {
             return val !== undefined && (val === '+Inf' || isFinite(val))
-        }) as PerfDataBucketBoundariesType; //it's alright, will check later
+        }) as SSPerfBucketBoundariesType; //it's alright, will check later
     if (!arePerfBucketBoundariesValid(bucketBoundaries)) {
         throw new Error('invalid bucket boundaries');
     }

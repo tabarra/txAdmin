@@ -180,7 +180,7 @@ export default class TxAdmin {
             this.statisticsManager = new StatisticsManager(this);
             globalsInternal.statisticsManager = this.statisticsManager;
 
-            this.performanceCollector = new PerformanceCollector();
+            this.performanceCollector = new PerformanceCollector(this);
             globalsInternal.performanceCollector = this.performanceCollector;
 
             this.webServer = new WebServer(this, profileConfig.webServer);

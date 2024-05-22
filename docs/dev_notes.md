@@ -892,9 +892,7 @@ https://vespura.com/doc/natives/
 ```bash
 # convars
 +set txAdminVerbose true
-+set txDebugPlayerlistGenerator true
-+set txDebugPlayerlistGenerator true
-+set txDebugExternalSource "x.x.x.x:30120"
++set txDebugExternalStatsSource "x.x.x.x:30120"
 
 # other stuff
 export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"

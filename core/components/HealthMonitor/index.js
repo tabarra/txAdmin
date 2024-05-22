@@ -89,7 +89,7 @@ export default class HealthMonitor {
     setCurrentStatus(newStatus) {
         if (newStatus !== this.currentStatus) {
             this.currentStatus = newStatus;
-            globals.discordBot.updateStatus().catch((e) => {});
+            globals.discordBot.updateStatus().catch((e) => { });
             globals.webServer?.webSocket.pushRefresh('status');
         }
     }
@@ -125,10 +125,10 @@ export default class HealthMonitor {
             url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
             maxRedirects: 0,
             timeout: {
-                request: this.hardConfigs.timeout
+                request: this.hardConfigs.timeout,
             },
             retry: {
-                limit: 0
+                limit: 0,
             },
         };
         try {
@@ -208,6 +208,7 @@ export default class HealthMonitor {
             if (this.hasServerStartedYet == false) {
                 this.hasServerStartedYet = true;
                 globals.statisticsManager.registerFxserverBoot(processUptime);
+                globals.performanceCollector.logServerBoot(processUptime);
             }
             return;
         }
