@@ -49,11 +49,14 @@ vi.stubGlobal('GetResourcePath', (resourceName: string) => {
 vi.stubGlobal('IsDuplicityVersion', () => {
     return true;
 });
-vi.stubGlobal('VerifyPasswordHash', (password: string, hash: string) => {
-    return true;
+vi.stubGlobal('PrintStructuredTrace', (payload: string) => {
+    //noop
 });
 vi.stubGlobal('ScanResourceRoot', (rootPath: string, callback: (data: object) => void) => {
     throw new Error(`not implemented`);
+});
+vi.stubGlobal('VerifyPasswordHash', (password: string, hash: string) => {
+    return true;
 });
 vi.stubGlobal('Intl.getCanonicalLocales', (locales?: string | readonly string[] | undefined) => {
     return Array.isArray(locales) ? locales : [locales];

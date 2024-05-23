@@ -1,4 +1,5 @@
-import { PERF_DATA_BUCKET_COUNT, isValidPerfThreadName, type SSPerfBoundariesType, type SSPerfCountsType } from "./perfSchemas";
+import { PERF_DATA_BUCKET_COUNT } from "./index";
+import { isValidPerfThreadName, type SSPerfBoundariesType, type SSPerfCountsType } from "./perfSchemas";
 
 
 //Consts

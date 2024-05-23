@@ -1,14 +1,6 @@
-import { ValuesType } from 'utility-types';
 import * as z from 'zod';
-
-
-/**
- * Consts
- */
-export const PERF_DATA_BUCKET_COUNT = 15;
-export const PERF_DATA_MIN_TICKS = 2000; //less than that and the data is not reliable
-export const PERF_DATA_THREAD_NAMES = ['svNetwork', 'svSync', 'svMain'] as const;
-export type PerfDataThreadNamesType = ValuesType<typeof PERF_DATA_THREAD_NAMES>;
+import { PERF_DATA_BUCKET_COUNT, PERF_DATA_THREAD_NAMES, PerfDataThreadNamesType } from './index';
+import { ValuesType } from 'utility-types';
 
 
 /**
@@ -83,8 +75,12 @@ export const SSLogSvCloseSchema = z.object({
 export const SSFileSchema = z.object({
     version: z.literal(1),
     lastPerfBoundaries: SSPerfBoundariesSchema,
-    lastPerfCounts: SSPerfCountsSchema,
     log: z.array(z.union([SSLogDataSchema, SSLogSvBootSchema, SSLogSvCloseSchema])),
+});
+
+export const LogNodeHeapEventSchema = z.object({
+    heapUsed: zIntNonNegative,
+    heapTotal: zIntNonNegative,
 });
 
 
@@ -97,3 +93,4 @@ export type SSLogType = (SSLogSvCloseType | SSLogSvBootType | SSLogDataType)[];
 export type SSPerfHistType = z.infer<typeof SSPerfHistSchema>;
 export type SSPerfCountsType = z.infer<typeof SSPerfCountsSchema>;
 export type SSPerfBoundariesType = z.infer<typeof SSPerfBoundariesSchema>;
+export type LogNodeHeapEventType = z.infer<typeof LogNodeHeapEventSchema>;
