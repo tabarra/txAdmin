@@ -1,3 +1,4 @@
+import '@extras/testEnv';
 import { test, expect, it, suite } from 'vitest';
 import { arePerfBoundariesValid, parseRawPerf } from './perfParser';
 

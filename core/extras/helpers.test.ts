@@ -1,3 +1,4 @@
+import '@extras/testEnv';
 import { test, expect } from 'vitest';
 import * as helpers from './helpers';
 
