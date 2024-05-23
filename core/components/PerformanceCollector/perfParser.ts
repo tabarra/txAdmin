@@ -1,4 +1,4 @@
-import { PERF_DATA_BUCKET_COUNT, isValidPerfThreadName, type SSPerfBucketBoundariesType, type SSRawPerfType } from "./perfSchemas";
+import { PERF_DATA_BUCKET_COUNT, isValidPerfThreadName, type SSPerfBoundariesType, type SSPerfCountsType } from "./perfSchemas";
 
 
 //Consts
@@ -9,7 +9,7 @@ const REGEX_PERF_LINE = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|sv
 /**
  * Returns if the given thread name is a valid PerfDataThreadNamesType
  */
-export const arePerfBucketBoundariesValid = (boundaries: (number | string)[]): boundaries is SSPerfBucketBoundariesType => {
+export const arePerfBoundariesValid = (boundaries: (number | string)[]): boundaries is SSPerfBoundariesType => {
     // Check if the length is correct
     if (boundaries.length !== PERF_DATA_BUCKET_COUNT) {
         return false;
@@ -39,10 +39,10 @@ export const arePerfBucketBoundariesValid = (boundaries: (number | string)[]): b
 /**
  * Parses the output of FXServer /perf/ in the proteus format
  */
-export const parsePerf = (rawData: string) => {
+export const parseRawPerf = (rawData: string) => {
     if (typeof rawData !== 'string') throw new Error('string expected');
     const lines = rawData.trim().split('\n');
-    const perfMetrics: SSRawPerfType = {
+    const perfMetrics: SSPerfCountsType = {
         svSync: {
             count: 0,
             // sum: 0,
@@ -61,7 +61,7 @@ export const parsePerf = (rawData: string) => {
     };
 
     //Extract bucket boundaries
-    const bucketBoundaries = lines
+    const perfBoundaries = lines
         .filter((line) => line.startsWith('tickTime_bucket{name="svMain"'))
         .map((line) => {
             const parsed = line.match(REGEX_BUCKET_BOUNDARIE);
@@ -75,8 +75,8 @@ export const parsePerf = (rawData: string) => {
         })
         .filter((val): val is number | '+Inf' => {
             return val !== undefined && (val === '+Inf' || isFinite(val))
-        }) as SSPerfBucketBoundariesType; //it's alright, will check later
-    if (!arePerfBucketBoundariesValid(bucketBoundaries)) {
+        }) as SSPerfBoundariesType; //it's alright, will check later
+    if (!arePerfBoundariesValid(perfBoundaries)) {
         throw new Error('invalid bucket boundaries');
     }
 
@@ -104,7 +104,7 @@ export const parsePerf = (rawData: string) => {
                 if (bucket !== '+Inf') {
                     throw new Error(`unexpected last bucket to be +Inf and got ${bucket}`);
                 }
-            } else if (parseFloat(bucket) !== bucketBoundaries[currBucketIndex]) {
+            } else if (parseFloat(bucket) !== perfBoundaries[currBucketIndex]) {
                 throw new Error(`unexpected bucket ${bucket} at position ${currBucketIndex}`);
             }
             //Add the bucket
@@ -126,5 +126,5 @@ export const parsePerf = (rawData: string) => {
         throw new Error(`${invalid.length} invalid threads in /perf/`);
     }
 
-    return { bucketBoundaries, perfMetrics };
+    return { perfBoundaries, perfMetrics };
 };

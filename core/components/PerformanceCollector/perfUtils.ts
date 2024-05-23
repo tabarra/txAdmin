@@ -1,13 +1,13 @@
 import { cloneDeep } from 'lodash-es';
 import { PERF_DATA_BUCKET_COUNT } from "./perfSchemas";
-import type { SSRawPerfType, SSLogDataPerfType, PerfDataThreadNamesType } from "./perfSchemas";
+import type { SSPerfCountsType, SSPerfHistType, PerfDataThreadNamesType } from "./perfSchemas";
 import got from '@core/extras/got.js';
-import { parsePerf } from './perfParser';
+import { parseRawPerf } from './perfParser';
 import { getProcessesData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
 
 
 //Consts
-const perfDataRawThreadsTemplate: SSRawPerfType = {
+const perfDataRawThreadsTemplate: SSPerfCountsType = {
     svSync: {
         count: 0,
         // sum: 0,
@@ -29,7 +29,7 @@ const perfDataRawThreadsTemplate: SSRawPerfType = {
 /**
  * Compares a perf snapshot with the one that came before
  */
-export const diffPerfs = (newPerf: SSRawPerfType, oldPerf?: SSRawPerfType) => {
+export const diffPerfs = (newPerf: SSPerfCountsType, oldPerf?: SSPerfCountsType) => {
     if (!oldPerf) {
         oldPerf = cloneDeep(perfDataRawThreadsTemplate);
     }
@@ -57,8 +57,8 @@ export const diffPerfs = (newPerf: SSRawPerfType, oldPerf?: SSRawPerfType) => {
  * Transforms raw perf data into a frequency distribution (histogram)
  * ForEach thread, individualize tick counts (instead of CumSum) and calculates frequency
  */
-export const rawPerfToFreqs = (threads: SSRawPerfType) => {
-    const currPerfFreqs: SSLogDataPerfType = {
+export const perfCountsToHist = (threads: SSPerfCountsType) => {
+    const currPerfFreqs: SSPerfHistType = {
         svSync: {
             count: threads.svSync.count,
             freqs: [],
@@ -86,9 +86,9 @@ export const rawPerfToFreqs = (threads: SSRawPerfType) => {
 /**
  * Requests /perf/, parses it and returns the raw perf data
  */
-export const fetchPerfData = async (fxServerHost: string) => {
+export const fetchRawPerfData = async (fxServerHost: string) => {
     const currPerfRaw = await got(`http://${fxServerHost}/perf/`).text();
-    return parsePerf(currPerfRaw);
+    return parseRawPerf(currPerfRaw);
 }
 
 

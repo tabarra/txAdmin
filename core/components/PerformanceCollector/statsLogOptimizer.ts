@@ -12,11 +12,21 @@ const STATS_RESOLUTION_TABLE = [
      { maxAge: 96 * hoursMs, resolution: 30 * minutesMs },
 ];
 const STATS_LOG_SIZE_LIMIT = 720; //144+48+144 (max data snaps) + 384 (1 reboot every 30 mins)
+const YIELD_INTERVAL = 100;
 
 
 /**
  * Optimizes (in place) the stats log by removing old data and combining snaps to match the resolution
  */
-export const optimizeStatsLog = (statsLog: SSLogType) => {
-     //FIXME: write code
+export const optimizeStatsLog = async (statsLog: SSLogType) => {
+     statsLog.splice(0, statsLog.length - STATS_LOG_SIZE_LIMIT);
+     for (let i = 0; i < statsLog.length; i++) {
+          //FIXME: write code
+          //FIXME: somehow prevent recombining the 0~12h snaps
+
+          // Yield every 100 iterations
+          if (i % YIELD_INTERVAL === 0) {
+               await new Promise((resolve) => setImmediate(resolve));
+          }
+     }
 }

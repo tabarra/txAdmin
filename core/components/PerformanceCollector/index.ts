@@ -4,8 +4,8 @@ import * as d3array from 'd3-array';
 import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_MIN_TICKS, SSFileSchema, isSSLogDataType } from './perfSchemas';
-import type { SSFileType, SSLogDataType, SSLogType, SSPerfBucketBoundariesType, SSRawPerfType } from './perfSchemas';
-import { diffPerfs, fetchFxsMemory, fetchPerfData, rawPerfToFreqs } from './perfUtils';
+import type { SSFileType, SSLogDataType, SSLogType, SSPerfBoundariesType, SSPerfCountsType } from './perfSchemas';
+import { diffPerfs, fetchFxsMemory, fetchRawPerfData, perfCountsToHist } from './perfUtils';
 import { optimizeStatsLog } from './statsLogOptimizer';
 import { convars } from '@core/globalData';
 const console = consoleFactory(modulename);
@@ -16,12 +16,17 @@ const STATS_DATA_FILE_VERSION = 1;
 const STATS_DATA_FILE_NAME = 'statsData.json';
 
 
+/**
+ * This module is reponsiple to collect many statistics from the server.
+ * Most of those will be displayed on the Dashboard.
+ */
 export default class PerformanceCollector {
     readonly #txAdmin: TxAdmin;
     private readonly statsDataPath: string;
     private statsLog: SSLogType = [];
-    private lastPerfBucketBoundaries: SSPerfBucketBoundariesType | undefined;
-    private lastRawPerf: SSRawPerfType | undefined;
+    private lastPerfBoundaries: SSPerfBoundariesType | undefined;
+    private lastPerfCounts: SSPerfCountsType | undefined;
+    private lastPerfCountsSaved: SSPerfCountsType | undefined;
     private lastNodeMemory: { used: number, total: number } | undefined;
     private lastFxsMemory: number | undefined;
 
@@ -33,7 +38,7 @@ export default class PerformanceCollector {
         //Cron functions
         setInterval(() => {
             this.collectStats().catch((error) => {
-                console.verbose.warn('Error while collecting fxserver performance data');
+                console.verbose.warn('Error while collecting server stats.');
                 console.verbose.dir(error);
             });
         }, 60 * 1000);
@@ -75,7 +80,7 @@ export default class PerformanceCollector {
             joinLeaveTally30m: this.#txAdmin.playerlistManager.joinLeaveTally,
             fxsMemory: this.lastFxsMemory,
             nodeMemory: this.lastNodeMemory,
-            perf: this.lastRawPerf ? rawPerfToFreqs(this.lastRawPerf) : undefined,
+            perf: this.lastPerfCounts ? perfCountsToHist(this.lastPerfCounts) : undefined,
         }
     }
 
@@ -98,15 +103,15 @@ export default class PerformanceCollector {
         }
 
         //Fetch data
-        const [fetchPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
-            fetchPerfData(fxServerHost),
+        const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
+            fetchRawPerfData(fxServerHost),
             fetchFxsMemory(),
         ]);
         if (fetchFxsMemoryRes.status === 'fulfilled') {
             this.lastFxsMemory = fetchFxsMemoryRes.value;
         }
-        if (fetchPerfDataRes.status === 'rejected') throw fetchPerfDataRes.reason;
-        const { bucketBoundaries, perfMetrics } = fetchPerfDataRes.value;
+        if (fetchRawPerfDataRes.status === 'rejected') throw fetchRawPerfDataRes.reason;
+        const { perfBoundaries, perfMetrics } = fetchRawPerfDataRes.value;
 
         //Check for min tick count
         if (
@@ -119,51 +124,48 @@ export default class PerformanceCollector {
         }
 
         //Check if first collection, boundaries changed, or counter (somehow) reset
-        if (!this.lastRawPerf || !this.lastPerfBucketBoundaries) {
+        if (!this.lastPerfCounts || !this.lastPerfBoundaries) {
             console.verbose.log('First perf collection');
-            this.lastPerfBucketBoundaries = bucketBoundaries;
-        } else if (JSON.stringify(bucketBoundaries) !== JSON.stringify(this.lastPerfBucketBoundaries)) {
+            this.lastPerfBoundaries = perfBoundaries;
+        } else if (JSON.stringify(perfBoundaries) !== JSON.stringify(this.lastPerfBoundaries)) {
             console.warn('Performance boundaries changed. Resetting history.');
             this.statsLog = [];
-            this.lastPerfBucketBoundaries = bucketBoundaries;
-            this.lastRawPerf = undefined;
-        } else if (this.lastRawPerf.svMain.count > perfMetrics.svMain.count) {
-            console.warn('Performance counter reset. Resetting lastRawPerf.');
-            this.lastRawPerf = undefined;
+            this.lastPerfBoundaries = perfBoundaries;
+            this.lastPerfCounts = undefined;
+            this.lastPerfCountsSaved = undefined;
+        } else if (this.lastPerfCounts.svMain.count > perfMetrics.svMain.count) {
+            console.warn('Performance counter reset. Resetting lastPerfCounts.');
+            this.lastPerfCounts = undefined;
+            this.lastPerfCountsSaved = undefined;
         }
 
         //Calculate the tick/time counts since last epoch
-        const currRawPerfDiff = diffPerfs(perfMetrics, this.lastRawPerf);
-        const currPerfLogData = rawPerfToFreqs(currRawPerfDiff);
+        const currPerfCountsDiff = diffPerfs(perfMetrics, this.lastPerfCounts);
+        const currPerfHist = perfCountsToHist(currPerfCountsDiff);
 
         //Update cache
         const now = Date.now();
-        this.lastRawPerf = perfMetrics;
+        this.lastPerfCounts = perfMetrics;
         const currSnapshot: SSLogDataType = {
             ts: now,
             type: 'data',
             players: this.#txAdmin.playerlistManager.onlineCount,
             fxsMemory: this.lastFxsMemory ?? null,
             nodeMemory: this.lastNodeMemory?.used ?? null,
-            perf: currPerfLogData,
+            perf: currPerfHist,
         };
         this.statsLog.push(currSnapshot);
-        optimizeStatsLog(this.statsLog);
+        await optimizeStatsLog(this.statsLog);
 
         //Save perf series do file
         const savePerfData: SSFileType = {
             version: STATS_DATA_FILE_VERSION,
-            lastPerfBucketBoundaries: this.lastPerfBucketBoundaries,
-            lastPerfData: this.lastRawPerf,
+            lastPerfBoundaries: this.lastPerfBoundaries,
+            lastPerfCounts: this.lastPerfCounts,
             log: this.statsLog,
         };
-        try {
-            await fsp.writeFile(this.statsDataPath, JSON.stringify(savePerfData));
-            console.verbose.ok(`Collected performance snapshot #${this.statsLog.length}`);
-        } catch (error) {
-            console.verbose.warn('Failed to write the performance history log file with error:');
-            console.verbose.dir(error);
-        }
+        await fsp.writeFile(this.statsDataPath, JSON.stringify(savePerfData));
+        console.verbose.ok(`Collected performance snapshot #${this.statsLog.length}`);
     }
 
 
@@ -176,8 +178,9 @@ export default class PerformanceCollector {
             const fileData = JSON.parse(rawFileData);
             if (fileData?.version !== STATS_DATA_FILE_VERSION) throw new Error('invalid version');
             const statsData = await SSFileSchema.parseAsync(fileData);
-            this.lastPerfBucketBoundaries = statsData.lastPerfBucketBoundaries;
-            this.lastRawPerf = statsData.lastPerfData;
+            this.lastPerfBoundaries = statsData.lastPerfBoundaries;
+            this.lastPerfCounts = statsData.lastPerfCounts;
+            this.lastPerfCountsSaved = statsData.lastPerfCounts;
             this.statsLog = statsData.log;
             console.verbose.debug(`Loaded ${this.statsLog.length} performance snapshots from cache`);
             optimizeStatsLog(this.statsLog);

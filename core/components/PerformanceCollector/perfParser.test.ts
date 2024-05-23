@@ -1,15 +1,15 @@
 import { test, expect, it, suite } from 'vitest';
-import { arePerfBucketBoundariesValid, parsePerf } from './perfParser';
+import { arePerfBoundariesValid, parseRawPerf } from './perfParser';
 
-test('arePerfBucketBoundariesValid', () => {
-    const fnc = arePerfBucketBoundariesValid;
+test('arePerfBoundariesValid', () => {
+    const fnc = arePerfBoundariesValid;
     expect(fnc([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, '+Inf'])).toBe(true);
     expect(fnc([])).toBe(false); //length
     expect(fnc([1, 2, 3])).toBe(false); //length
     expect(fnc([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])).toBe(false); //last item
     expect(fnc([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 'xx', 12, 13, 14, '+Inf'])).toBe(false); //always number, except last
     expect(fnc([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11, 12, 13, 14, '+Inf'])).toBe(false); //always increasing
-    expect(fnc([0.1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 11, 12, 13, 14, '+Inf'])).toBe(false); //always increasing
+    expect(fnc([0.1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11, 12, 999, 14, '+Inf'])).toBe(false); //always increasing
 });
 
 const perfValidExample = `# HELP tickTime Time spent on server ticks
@@ -66,10 +66,10 @@ tickTime_bucket{name="svMain",le="7.5"} 355593
 tickTime_bucket{name="svMain",le="10"} 355593
 tickTime_bucket{name="svMain",le="+Inf"} 355594`;
 
-suite('parsePerf', () => {
+suite('parseRawPerf', () => {
     it('should parse the perf data correctly', () => {
-        const result = parsePerf(perfValidExample);
-        expect(result.bucketBoundaries).toEqual([0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10, '+Inf']);
+        const result = parseRawPerf(perfValidExample);
+        expect(result.perfBoundaries).toEqual([0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10, '+Inf']);
         expect(result.perfMetrics.svNetwork.count).toBe(1840805);
         expect(result.perfMetrics.svSync.count).toBe(2268704);
         expect(result.perfMetrics.svMain.count).toBe(355594);
@@ -78,18 +78,18 @@ suite('parsePerf', () => {
     });
 
     it('should handle bad data', () => {
-        expect(() => parsePerf(123 as any)).toThrow('string expected');
+        expect(() => parseRawPerf(123 as any)).toThrow('string expected');
 
         let targetLine = 'tickTime_bucket{name="svMain",le="10"} 355593';
         let perfModifiedExample = perfValidExample.replace(targetLine, '');
-        expect(() => parsePerf(perfModifiedExample)).toThrow('invalid bucket boundaries');
+        expect(() => parseRawPerf(perfModifiedExample)).toThrow('invalid bucket boundaries');
 
         targetLine = 'tickTime_bucket{name="svNetwork",le="+Inf"} 1840805';
         perfModifiedExample = perfValidExample.replace(targetLine, '');
-        expect(() => parsePerf(perfModifiedExample)).toThrow('invalid threads');
+        expect(() => parseRawPerf(perfModifiedExample)).toThrow('invalid threads');
 
         targetLine = 'tickTime_count{name="svNetwork"} 1840805';
         perfModifiedExample = perfValidExample.replace(targetLine, 'tickTime_count{name="svNetwork"} ????');
-        expect(() => parsePerf(perfModifiedExample)).toThrow('invalid threads');
+        expect(() => parseRawPerf(perfModifiedExample)).toThrow('invalid threads');
     });
 });

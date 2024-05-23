@@ -28,40 +28,35 @@ export const isSSLogDataType = (log: ValuesType<SSLogType>): log is SSLogDataTyp
 //Generic schemas
 const zIntNonNegative = z.number().int().nonnegative();
 const zNumberNonNegative = z.number().nonnegative();
-const zBucketFreqs = z.array(zNumberNonNegative).length(PERF_DATA_BUCKET_COUNT);
 
 //Last perf stuff
-export const SSPerfBucketBoundariesSchema = z.array(z.union([
+export const SSPerfBoundariesSchema = z.array(z.union([
     zNumberNonNegative,
     z.literal('+Inf'),
 ]));
 
-export const SSRawPerfThreadSchema = z.object({
+export const SSPerfCountsThreadSchema = z.object({
     count: zIntNonNegative,
     buckets: z.array(zIntNonNegative).length(PERF_DATA_BUCKET_COUNT),
 });
 
-export const SSRawPerfSchema = z.object({
-    svSync: SSRawPerfThreadSchema,
-    svNetwork: SSRawPerfThreadSchema,
-    svMain: SSRawPerfThreadSchema,
+export const SSPerfCountsSchema = z.object({
+    svSync: SSPerfCountsThreadSchema,
+    svNetwork: SSPerfCountsThreadSchema,
+    svMain: SSPerfCountsThreadSchema,
 });
 
 //Log stuff
-export const SSLogDataPerfSchema = z.object({
+export const SSPerfHistThreadSchema = z.object({
     //NOTE: tick count is used to re-combine the logs after X hours for optimization
-    svSync: z.object({
-        count: zIntNonNegative,
-        freqs: zBucketFreqs,
-    }),
-    svNetwork: z.object({
-        count: zIntNonNegative,
-        freqs: zBucketFreqs,
-    }),
-    svMain: z.object({
-        count: zIntNonNegative,
-        freqs: zBucketFreqs,
-    }),
+    count: zIntNonNegative,
+    freqs: z.array(zNumberNonNegative).length(PERF_DATA_BUCKET_COUNT),
+});
+
+export const SSPerfHistSchema = z.object({
+    svSync: SSPerfHistThreadSchema,
+    svNetwork: SSPerfHistThreadSchema,
+    svMain: SSPerfHistThreadSchema,
 });
 
 export const SSLogDataSchema = z.object({
@@ -70,7 +65,7 @@ export const SSLogDataSchema = z.object({
     players: zIntNonNegative,
     fxsMemory: zNumberNonNegative.nullable(),
     nodeMemory: zNumberNonNegative.nullable(),
-    perf: SSLogDataPerfSchema,
+    perf: SSPerfHistSchema,
 });
 
 export const SSLogSvBootSchema = z.object({
@@ -87,8 +82,8 @@ export const SSLogSvCloseSchema = z.object({
 
 export const SSFileSchema = z.object({
     version: z.literal(1),
-    lastPerfBucketBoundaries: SSPerfBucketBoundariesSchema,
-    lastPerfData: SSRawPerfSchema,
+    lastPerfBoundaries: SSPerfBoundariesSchema,
+    lastPerfCounts: SSPerfCountsSchema,
     log: z.array(z.union([SSLogDataSchema, SSLogSvBootSchema, SSLogSvCloseSchema])),
 });
 
@@ -98,7 +93,7 @@ export type SSFileType = z.infer<typeof SSFileSchema>;
 export type SSLogSvCloseType = z.infer<typeof SSLogSvCloseSchema>;
 export type SSLogSvBootType = z.infer<typeof SSLogSvBootSchema>;
 export type SSLogDataType = z.infer<typeof SSLogDataSchema>;
-export type SSLogDataPerfType = z.infer<typeof SSLogDataPerfSchema>;
 export type SSLogType = (SSLogSvCloseType | SSLogSvBootType | SSLogDataType)[];
-export type SSRawPerfType = z.infer<typeof SSRawPerfSchema>;
-export type SSPerfBucketBoundariesType = z.infer<typeof SSPerfBucketBoundariesSchema>;
+export type SSPerfHistType = z.infer<typeof SSPerfHistSchema>;
+export type SSPerfCountsType = z.infer<typeof SSPerfCountsSchema>;
+export type SSPerfBoundariesType = z.infer<typeof SSPerfBoundariesSchema>;
