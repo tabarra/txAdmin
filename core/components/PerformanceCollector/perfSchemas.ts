@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { PERF_DATA_BUCKET_COUNT, PERF_DATA_THREAD_NAMES, PerfDataThreadNamesType } from './index';
+import { PERF_DATA_BUCKET_COUNT, PERF_DATA_THREAD_NAMES, PerfDataThreadNamesType } from './statsConfigs';
 import { ValuesType } from 'utility-types';
 
 
@@ -74,7 +74,7 @@ export const SSLogSvCloseSchema = z.object({
 
 export const SSFileSchema = z.object({
     version: z.literal(1),
-    lastPerfBoundaries: SSPerfBoundariesSchema,
+    lastPerfBoundaries: SSPerfBoundariesSchema.optional(),
     log: z.array(z.union([SSLogDataSchema, SSLogSvBootSchema, SSLogSvCloseSchema])),
 });
 

@@ -3,7 +3,7 @@ import type { SSPerfCountsType, SSPerfHistType } from "./perfSchemas";
 import got from '@core/extras/got.js';
 import { parseRawPerf } from './perfParser';
 import { getProcessesData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
-import { PERF_DATA_BUCKET_COUNT, PerfDataThreadNamesType } from './index';
+import { PERF_DATA_BUCKET_COUNT, PerfDataThreadNamesType } from './statsConfigs';
 
 
 //Consts
@@ -30,24 +30,22 @@ const perfDataRawThreadsTemplate: SSPerfCountsType = {
  * Compares a perf snapshot with the one that came before
  */
 export const diffPerfs = (newPerf: SSPerfCountsType, oldPerf?: SSPerfCountsType) => {
-    if (!oldPerf) {
-        oldPerf = cloneDeep(perfDataRawThreadsTemplate);
-    }
+    const basePerf = oldPerf ?? cloneDeep(perfDataRawThreadsTemplate);
     return {
         svSync: {
-            count: newPerf.svSync.count - oldPerf.svSync.count,
-            // sum: newPerf.svSync.sum - oldPerf.svSync.sum,
-            buckets: newPerf.svSync.buckets.map((bucket, i) => bucket - oldPerf.svSync.buckets[i]),
+            count: newPerf.svSync.count - basePerf.svSync.count,
+            // sum: newPerf.svSync.sum - basePerf.svSync.sum,
+            buckets: newPerf.svSync.buckets.map((bucket, i) => bucket - basePerf.svSync.buckets[i]),
         },
         svNetwork: {
-            count: newPerf.svNetwork.count - oldPerf.svNetwork.count,
-            // sum: newPerf.svNetwork.sum - oldPerf.svNetwork.sum,
-            buckets: newPerf.svNetwork.buckets.map((bucket, i) => bucket - oldPerf.svNetwork.buckets[i]),
+            count: newPerf.svNetwork.count - basePerf.svNetwork.count,
+            // sum: newPerf.svNetwork.sum - basePerf.svNetwork.sum,
+            buckets: newPerf.svNetwork.buckets.map((bucket, i) => bucket - basePerf.svNetwork.buckets[i]),
         },
         svMain: {
-            count: newPerf.svMain.count - oldPerf.svMain.count,
-            // sum: newPerf.svMain.sum - oldPerf.svMain.sum,
-            buckets: newPerf.svMain.buckets.map((bucket, i) => bucket - oldPerf.svMain.buckets[i]),
+            count: newPerf.svMain.count - basePerf.svMain.count,
+            // sum: newPerf.svMain.sum - basePerf.svMain.sum,
+            buckets: newPerf.svMain.buckets.map((bucket, i) => bucket - basePerf.svMain.buckets[i]),
         },
     };
 };
@@ -78,7 +76,6 @@ export const perfCountsToHist = (threads: SSPerfCountsType) => {
             return (bucketValue - prevBucketValue) / tData.count;
         });
     }
-
     return currPerfFreqs;
 }
 
@@ -98,9 +95,9 @@ export const fetchRawPerfData = async (fxServerHost: string) => {
 export const fetchFxsMemory = async () => {
     const allProcsData = await getProcessesData();
     if (!allProcsData) return;
-    
+
     const fxProcData = allProcsData.find((proc) => proc.name === 'FXServer');
     if (!fxProcData) return;
 
-    return fxProcData.memory;
+    return parseFloat((fxProcData.memory).toFixed(2));
 }

@@ -8,36 +8,15 @@ import type { LogNodeHeapEventType, SSFileType, SSLogDataType, SSLogType, SSPerf
 import { diffPerfs, fetchFxsMemory, fetchRawPerfData, perfCountsToHist } from './perfUtils';
 import { optimizeStatsLog } from './statsLogOptimizer';
 import { convars } from '@core/globalData';
-import { ValuesType } from 'utility-types';
-import bytes from 'bytes';
+import { ZodError } from 'zod';
+import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TICKS } from './statsConfigs';
 const console = consoleFactory(modulename);
 
 
 //Consts
-const minutesMs = 60 * 1000;
-const hoursMs = 60 * minutesMs;
 const megabyte = 1024 * 1024;
-
-
-/**
- * Configs
- */
 const STATS_DATA_FILE_VERSION = 1;
 const STATS_DATA_FILE_NAME = 'statsData.json';
-export const PERF_DATA_BUCKET_COUNT = 15;
-export const PERF_DATA_MIN_TICKS = 2000; //less than that and the data is not reliable
-export const PERF_DATA_INITIAL_RESOLUTION = 5 * minutesMs;
-export const STATS_RESOLUTION_TABLE = [
-    //00~12h =  5min = 12/h = 144 snaps
-    //12~24h = 15min =  4/h =  48 snaps
-    //24~96h = 30min =  2/h = 144 snaps
-    { maxAge: 12 * hoursMs, resolution: PERF_DATA_INITIAL_RESOLUTION },
-    { maxAge: 24 * hoursMs, resolution: 15 * minutesMs },
-    { maxAge: 96 * hoursMs, resolution: 30 * minutesMs },
-];
-export const STATS_LOG_SIZE_LIMIT = 720; //144+48+144 (max data snaps) + 384 (1 reboot every 30 mins)
-export const PERF_DATA_THREAD_NAMES = ['svNetwork', 'svSync', 'svMain'] as const;
-export type PerfDataThreadNamesType = ValuesType<typeof PERF_DATA_THREAD_NAMES>;
 
 
 /**
@@ -78,6 +57,13 @@ export default class PerformanceCollector {
     resetPerfState() {
         this.lastPerfCounts = undefined;
         this.lastPerfSaved = undefined;
+    }
+
+
+    /**
+     * Reset the last perf data except boundaries
+     */
+    resetMemoryState() {
         this.lastNodeMemory = undefined;
         this.lastFxsMemory = undefined;
     }
@@ -88,6 +74,7 @@ export default class PerformanceCollector {
      */
     logServerBoot(bootTime: number) {
         this.resetPerfState();
+        this.resetMemoryState();
         //If last log is a boot, remove it as the server didn't really start 
         // otherwise it would have lived long enough to have stats logged
         if (this.statsLog.length && this.statsLog.at(-1)!.type === 'svBoot') {
@@ -98,6 +85,7 @@ export default class PerformanceCollector {
             type: 'svBoot',
             bootTime,
         });
+        this.saveStatsHistory();
     }
 
 
@@ -106,6 +94,7 @@ export default class PerformanceCollector {
      */
     logServerClose(reason: string) {
         this.resetPerfState();
+        this.resetMemoryState();
         if (this.statsLog.length) {
             if (this.statsLog.at(-1)!.type === 'svClose') {
                 //If last log is a close, skip saving a new one
@@ -121,6 +110,7 @@ export default class PerformanceCollector {
             type: 'svClose',
             reason,
         });
+        this.saveStatsHistory();
     }
 
 
@@ -244,16 +234,10 @@ export default class PerformanceCollector {
             perf: perfHistToSave,
         };
         this.statsLog.push(currSnapshot);
-        await optimizeStatsLog(this.statsLog);
+        console.verbose.ok(`Collected performance snapshot #${this.statsLog.length}`);
 
         //Save perf series do file
-        const savePerfData: SSFileType = {
-            version: STATS_DATA_FILE_VERSION,
-            lastPerfBoundaries: this.lastPerfBoundaries,
-            log: this.statsLog,
-        };
-        await fsp.writeFile(this.statsDataPath, JSON.stringify(savePerfData));
-        console.verbose.ok(`Collected performance snapshot #${this.statsLog.length}`);
+        await this.saveStatsHistory();
     }
 
 
@@ -265,15 +249,38 @@ export default class PerformanceCollector {
             const rawFileData = await fsp.readFile(this.statsDataPath, 'utf8');
             const fileData = JSON.parse(rawFileData);
             if (fileData?.version !== STATS_DATA_FILE_VERSION) throw new Error('invalid version');
-            const statsData = await SSFileSchema.parseAsync(fileData);
+            const statsData = SSFileSchema.parse(fileData);
             this.lastPerfBoundaries = statsData.lastPerfBoundaries;
             this.statsLog = statsData.log;
             this.resetPerfState();
             console.verbose.debug(`Loaded ${this.statsLog.length} performance snapshots from cache`);
-            optimizeStatsLog(this.statsLog);
+            await optimizeStatsLog(this.statsLog);
         } catch (error) {
-            console.warn(`Failed to load ${STATS_DATA_FILE_NAME} with message: ${(error as Error).message}`);
-            console.warn('Since this is not a critical file, it will be reset.');
+            if (error instanceof ZodError) {
+                console.warn(`Failed to load ${STATS_DATA_FILE_NAME} due to invalid data.`);
+                console.warn('Since this is not a critical file, it will be reset.');
+            } else {
+                console.warn(`Failed to load ${STATS_DATA_FILE_NAME} with message: ${(error as Error).message}`);
+                console.warn('Since this is not a critical file, it will be reset.');
+            }
+        }
+    }
+
+
+    /**
+     * Saves the stats database/cache/history
+     */
+    async saveStatsHistory() {
+        try {
+            await optimizeStatsLog(this.statsLog);
+            const savePerfData: SSFileType = {
+                version: STATS_DATA_FILE_VERSION,
+                lastPerfBoundaries: this.lastPerfBoundaries,
+                log: this.statsLog,
+            };
+            await fsp.writeFile(this.statsDataPath, JSON.stringify(savePerfData));
+        } catch (error) {
+            console.warn(`Failed to save ${STATS_DATA_FILE_NAME} with message: ${(error as Error).message}`);
         }
     }
 

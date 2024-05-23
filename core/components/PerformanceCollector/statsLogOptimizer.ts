@@ -1,4 +1,4 @@
-import { STATS_LOG_SIZE_LIMIT, STATS_RESOLUTION_TABLE } from "./index";
+import { STATS_LOG_SIZE_LIMIT, STATS_RESOLUTION_TABLE } from "./statsConfigs";
 import type { SSLogType } from "./perfSchemas";
 
 //Consts
