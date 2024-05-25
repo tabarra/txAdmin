@@ -207,8 +207,8 @@ export default class HealthMonitor {
             this.setCurrentStatus('ONLINE');
             if (this.hasServerStartedYet == false) {
                 this.hasServerStartedYet = true;
-                globals.statisticsManager.registerFxserverBoot(processUptime);
-                globals.performanceCollector.logServerBoot(processUptime);
+                globals.statsManager.txRuntime.registerFxserverBoot(processUptime);
+                globals.statsManager.svRuntime.logServerBoot(processUptime);
             }
             return;
         }
@@ -230,7 +230,7 @@ export default class HealthMonitor {
         //Check if fxChild is closed, in this case no need to wait the failure count
         const processStatus = globals.fxRunner.getStatus();
         if (processStatus == 'closed') {
-            globals.statisticsManager.registerFxserverRestart('close');
+            globals.statsManager.txRuntime.registerFxserverRestart('close');
             this.restartFXServer(
                 'server close detected',
                 globals.translator.t('restarter.crash_detected'),
@@ -322,13 +322,13 @@ export default class HealthMonitor {
                 }
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
                 //FIXME: se der hang tanto HB quanto HC, ele ainda sim cai nesse caso
-                globals.statisticsManager.registerFxserverRestart('healthCheck');
+                globals.statsManager.txRuntime.registerFxserverRestart('healthCheck');
                 this.restartFXServer(
                     'server partial hang detected',
                     globals.translator.t('restarter.hang_detected'),
                 );
             } else {
-                globals.statisticsManager.registerFxserverRestart('heartBeat');
+                globals.statsManager.txRuntime.registerFxserverRestart('heartBeat');
                 this.restartFXServer(
                     'server hang detected',
                     globals.translator.t('restarter.hang_detected'),
@@ -347,7 +347,7 @@ export default class HealthMonitor {
                 && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
                 && tsNow - this.lastSuccessfulFD3HeartBeat < 5
             ) {
-                globals.statisticsManager.registerFxserverRestart('http');
+                globals.statsManager.txRuntime.registerFxserverRestart('http');
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
         } else if (source === 'http') {
@@ -356,7 +356,7 @@ export default class HealthMonitor {
                 && tsNow - this.lastSuccessfulFD3HeartBeat > 15
                 && tsNow - this.lastSuccessfulHTTPHeartBeat < 5
             ) {
-                globals.statisticsManager.registerFxserverRestart('fd3');
+                globals.statsManager.txRuntime.registerFxserverRestart('fd3');
             }
             this.lastSuccessfulHTTPHeartBeat = tsNow;
         }

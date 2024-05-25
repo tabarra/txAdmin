@@ -103,7 +103,7 @@ export default class OutputHandler {
                 } else if (data.payload.type === 'txAdminLogData') {
                     this.#txAdmin.logger.server.write(data.payload.logs, mutex);
                 } else if (data.payload.type === 'txAdminLogNodeHeap') {
-                    this.#txAdmin.performanceCollector.logServerNodeMemory(data.payload);
+                    this.#txAdmin.statsManager.svRuntime.logServerNodeMemory(data.payload);
                 } else if (data.payload.type === 'txAdminResourceEvent') {
                     this.#txAdmin.resourcesManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminPlayerlistEvent') {

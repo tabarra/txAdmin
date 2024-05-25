@@ -1,4 +1,4 @@
-import { PERF_DATA_BUCKET_COUNT } from "./statsConfigs";
+import { PERF_DATA_BUCKET_COUNT } from "./config";
 import { isValidPerfThreadName, type SSPerfBoundariesType, type SSPerfCountsType } from "./perfSchemas";
 
 

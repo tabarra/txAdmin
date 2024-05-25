@@ -1,12 +1,15 @@
-const modulename = 'StatisticsManager';
+const modulename = 'TxRuntimeStatsManager';
 import * as jose from 'jose';
 import consoleFactory from '@extras/console';
-import { MultipleCounter, QuantileArray } from './statsUtils';
+import { MultipleCounter, QuantileArray } from '../statsUtils';
 import { convars } from '@core/globalData';
 import { getHostStaticData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
 import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);
 
+
+//Consts
+const JWE_VERSION = 1;
 const statsPublicKeyPem = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2NCbB5DvpR7F8qHF9SyA
 xJKv9lpGO2PiU5wYUmEQaa0IUrUZmQ8ivsoOyCZOGKN9PESsVyqZPx37fhtAIqNo
@@ -23,10 +26,10 @@ const jweHeader = {
 };
 
 /**
- * Responsible for collecting runtime data for statistics
+ * Responsible for collecting server runtime statistics
  * NOTE: the register functions don't throw because we rather break stats than txAdmin itself
  */
-export default class StatisticsManager {
+export default class TxRuntimeStatsManager {
     readonly #txAdmin: TxAdmin;
     #publicKey: jose.KeyLike | undefined;
 
@@ -39,8 +42,8 @@ export default class StatisticsManager {
     public readonly whitelistCheckTime = new QuantileArray(5000, 50);
     public readonly playersTableSearchTime = new QuantileArray(5000, 50);
     public readonly historyTableSearchTime = new QuantileArray(5000, 50);
-    public currHbData: string = '{"error": "not yet initialized in StatisticsManager"}';
-
+    
+    public currHbData: string = '{"error": "not yet initialized in TxRuntimeStatsManager"}';
     public monitorStats = {
         healthIssues: {
             fd3: 0,
@@ -52,7 +55,6 @@ export default class StatisticsManager {
             healthCheck: 0,
         },
     };
-
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
@@ -201,7 +203,7 @@ export default class StatisticsManager {
 
                 //Processed stuff
                 playerDb: this.#txAdmin.playerDatabase.getDatabaseStats(),
-                perfSummary: this.#txAdmin.performanceCollector.getServerPerfSummary(),
+                perfSummary: this.#txAdmin.statsManager.svRuntime.getServerPerfSummary(),
             };
             tmpDurationDebugLog('prepared object');
 
@@ -210,7 +212,7 @@ export default class StatisticsManager {
             const jwe = await new jose.CompactEncrypt(encodedHbData)
                 .setProtectedHeader(jweHeader)
                 .encrypt(this.#publicKey);
-            this.currHbData = JSON.stringify({ '$statsVersion': 11, jwe });
+            this.currHbData = JSON.stringify({ '$statsVersion': JWE_VERSION, jwe });
             tmpDurationDebugLog('finished');
 
         } catch (error) {

@@ -27,9 +27,16 @@
         - [x] better random id (no random id? stable-hash?)
         - [x] settings enforce unique id
 - [x] added filters to the in-game playerlist
+- New Statistics stuff:
+    - [x] reorganize stats into a unified statsManager component
+    - [ ] add simple crash detection
+    - [ ] evaluate and maybe add event bus
+    - [ ] write code to visualize the data
+    - [ ] write txRuntime log optimizer
 - [ ] NEW PAGE: Dashboard
     - [ ] new performance chart
-    - [ ] number callouts from legacy players page
+    - [ ] add new statistics
+    - [ ] maybe: number callouts from legacy players page
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
 
@@ -58,11 +65,13 @@
     - [x] test server log + player click
 - [x] simplify the simple-line-icons dependencies - do i need all the files? remove cdn!
 - [x] redact discord api webhook urls from reports
-- [ ] locale file optimization - build 8201 and above 
+- [ ] reevaluate globals?.tmpSetHbDataTracking
 
 
 
 ## Next up... ish
+- [ ] locale file optimization - build 8201 and above
+- [ ] talk to rockstar about `cfx-server-data`, the chat resource security updates and `resources_useSystemChat` 
 - [ ] fix the eslint config + tailwind sort
 - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
 - [ ] build: generate fxmanifest files list dynamically

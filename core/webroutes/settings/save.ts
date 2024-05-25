@@ -275,7 +275,7 @@ async function handlePlayerDatabase(ctx: AuthedCtx) {
     }
 
     //Sending output
-    ctx.txAdmin.statisticsManager.whitelistCheckTime.clear();
+    ctx.txAdmin.statsManager.txRuntime.whitelistCheckTime.clear();
     ctx.txAdmin.playerDatabase.refreshConfig();
     ctx.admin.logAction('Changing Player Manager settings.');
     return ctx.send({

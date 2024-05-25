@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { PERF_DATA_BUCKET_COUNT, PERF_DATA_THREAD_NAMES, PerfDataThreadNamesType } from './statsConfigs';
+import { PERF_DATA_BUCKET_COUNT, PERF_DATA_THREAD_NAMES, PerfDataThreadNamesType } from './config';
 import { ValuesType } from 'utility-types';
 
 

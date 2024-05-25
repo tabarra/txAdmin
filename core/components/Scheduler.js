@@ -164,7 +164,6 @@ export default class Scheduler {
             string: scheduledString,
             minuteFloorTs: scheduledMinuteFloorTs,
         };
-        console.dir(this.nextTempSchedule);
 
         //This is needed to refresh this.calculatedNextRestartMinuteFloorTs
         this.checkSchedule();

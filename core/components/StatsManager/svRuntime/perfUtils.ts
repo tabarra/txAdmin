@@ -3,7 +3,7 @@ import type { SSPerfCountsType, SSPerfHistType } from "./perfSchemas";
 import got from '@core/extras/got.js';
 import { parseRawPerf } from './perfParser';
 import { getProcessesData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
-import { PERF_DATA_BUCKET_COUNT, PerfDataThreadNamesType } from './statsConfigs';
+import { PERF_DATA_BUCKET_COUNT, PerfDataThreadNamesType } from './config';
 
 
 //Consts

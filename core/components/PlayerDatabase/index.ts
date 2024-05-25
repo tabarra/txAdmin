@@ -7,7 +7,7 @@ import { DatabaseActionType, DatabaseDataType, DatabasePlayerType, DatabaseWhite
 import { cloneDeep } from 'lodash-es';
 import { now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
-import { MultipleCounter } from '../StatisticsManager/statsUtils';
+import { MultipleCounter } from '@core/components/StatsManager/statsUtils';
 const console = consoleFactory(modulename);
 
 

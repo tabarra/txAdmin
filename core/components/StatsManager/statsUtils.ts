@@ -2,6 +2,7 @@ import { inspect } from 'node:util';
 import CircularBuffer from 'mnemonist/circular-buffer';
 import * as d3array from 'd3-array';
 
+
 //Output types
 export type MultipleCounterOutput = Record<string, number>;
 export type QuantileArrayOutput = {
@@ -14,6 +15,7 @@ export type QuantileArrayOutput = {
 } | {
     notEnoughData: true;
 }; //if less than min size
+
 
 /**
  * Helper class to count different options

@@ -393,7 +393,7 @@ export default class FXRunner {
             }
             globals.resourcesManager.handleServerStop();
             globals.playerlistManager.handleServerStop(this.currentMutex);
-            globals.performanceCollector.logServerClose(reasonString);
+            globals.statsManager.svRuntime.logServerClose(reasonString);
             return null;
         } catch (error) {
             const msg = "Couldn't kill the server. Perhaps What Is Dead May Never Die.";
