@@ -17,12 +17,11 @@ suite('MultipleCounter', () => {
     });
 
     it('handle instantiation data error', () => {
-        expect(() => new MultipleCounter(null as any)).toThrowError('must be an iterable');
         expect(() => new MultipleCounter({ a: 'b' as any })).toThrowError('only integer');
     });
 
     const counterWithData = new MultipleCounter({ a: 1, b: 2 });
-    it('should instantiate with data correctly', () => {
+    it('should instantiate with object correctly', () => {
         expect(counterWithData.toArray()).toEqual([['a', 1], ['b', 2]]);
         expect(counterWithData.toJSON()).toEqual({ a: 1, b: 2 });
     });
@@ -31,9 +30,22 @@ suite('MultipleCounter', () => {
         expect(counterWithData.toJSON()).toEqual({ a: 2, b: 2 });
         counterWithData.count('b');
         counterWithData.count('c', 5);
-        expect(counterWithData.toJSON()).toEqual({ a: 2, b: 3, c: 5});
+        expect(counterWithData.toJSON()).toEqual({ a: 2, b: 3, c: 5 });
         counterWithData.clear();
         expect(counterWithData.toJSON()).toEqual({});
+    });
+
+    it('should sort the data', () => {
+        const counter = new MultipleCounter({ a: 3, z: 1, c: 2 });
+        expect(counter.toSortedKeyObject()).toEqual({ a: 3, c: 2, z: 1 });
+        expect(counter.toSortedKeyObject(true)).toEqual({ z: 1, c: 2, a: 3 });
+        expect(counter.toSortedValuesObject()).toEqual({ a: 3, c: 2, z: 1 });
+        expect(counter.toSortedValuesObject(true)).toEqual({ z: 1, c: 2, a: 3 });
+        expect(counter.toSortedKeysArray()).toEqual([['a', 3], ['c', 2], ['z', 1]]);
+        expect(counter.toSortedKeysArray(true)).toEqual([['z', 1], ['c', 2], ['a', 3]]);
+        expect(counter.toSortedValuesArray()).toEqual([['z', 1], ['c', 2], ['a', 3]]);
+        expect(counter.toSortedValuesArray(true)).toEqual([['a', 3], ['c', 2], ['z', 1]]);
+
     });
 });
 
@@ -74,7 +86,7 @@ test('TimeCounter', async () => {
     const counter = new TimeCounter();
     await new Promise((resolve) => setTimeout(resolve, 150));
     const duration = counter.stop();
-    
+
     // Check if the duration is a valid object
     expect(duration.seconds).toBeTypeOf('number');
     expect(duration.milliseconds).toBeTypeOf('number');

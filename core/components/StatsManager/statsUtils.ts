@@ -20,55 +20,88 @@ export type QuantileArrayOutput = {
 /**
  * Helper class to count different options
  */
-export class MultipleCounter {
-    #data = new Map<string, number>();
-    #locked: boolean;
+export class MultipleCounter extends Map<string, number> {
+    public locked: boolean;
+    private _clear: () => void;
 
-    constructor(initialData?: Record<string, number>, locked = false) {
-        this.#locked = locked;
-
-        if (initialData !== undefined) {
-            if (initialData === null || typeof initialData !== 'object') {
-                throw new Error(`initialData must be an iterable object.`);
-            }
-            for (const [key, val] of Object.entries(initialData)) {
-                if (typeof val !== 'number' || !Number.isInteger(val)) {
-                    throw new Error(`initialData objects must map only integer values.`);
+    constructor(initialData?: [string, number][] | null | Record<string, number>, locked = false) {
+        let InitialDataIterable: any;
+        if (initialData !== undefined && initialData !== null || typeof initialData === 'object') {
+            if (Array.isArray(initialData)) {
+                InitialDataIterable = initialData;
+            } else {
+                InitialDataIterable = Object.entries(initialData!);
+                if (InitialDataIterable.some(([k, v]: [string, number]) => typeof k !== 'string' || typeof v !== 'number')) {
+                    throw new Error(`Initial data must be an object with only integer values.`)
                 }
-                this.#data.set(key, val);
             }
         }
+        super(InitialDataIterable ?? initialData);
+        this.locked = locked;
+        this._clear = super.clear;
     }
 
+    //Clears the counter
     clear() {
-        if (this.#locked) throw new Error(`This MultipleCounter is locked to modifications.`);
-        this.#data.clear();
+        if (this.locked) throw new Error(`This MultipleCounter is locked to modifications.`);
+        this._clear();
     };
 
-    count(key: string, val = 1) {
-        if (this.#locked) throw new Error(`This MultipleCounter is locked to modifications.`);
+    //Increments the count of a key by a value
+    sum() {
+        return [...this.values()].reduce((a, b) => a + b, 0);
+    }
 
-        const currentValue = this.#data.get(key);
+    //Increments the count of a key by a value
+    count(key: string, val = 1) {
+        if (this.locked) throw new Error(`This MultipleCounter is locked to modifications.`);
+
+        const currentValue = this.get(key);
         if (currentValue !== undefined) {
             const newVal = currentValue + val;
-            this.#data.set(key, newVal);
+            this.set(key, newVal);
             return newVal;
         } else {
-            this.#data.set(key, val);
+            this.set(key, val);
             return val;
         }
     };
 
+    //Returns an array with sorted keys in asc or desc order
+    toSortedKeysArray(desc?: boolean) {
+        return [...this.entries()]
+            .sort((a, b) => desc
+                ? b[0].localeCompare(a[0])
+                : a[0].localeCompare(b[0])
+            );
+    }
+
+    // Returns an array with sorted values in asc or desc order
+    toSortedValuesArray(desc?: boolean) {
+        return [...this.entries()]
+            .sort((a, b) => desc ? b[1] - a[1] : a[1] - b[1]);
+    }
+
+    //Returns an object with sorted keys in asc or desc order
+    toSortedKeyObject(desc?: boolean) {
+        return Object.fromEntries(this.toSortedKeysArray(desc));
+    }
+
+    //Returns an object with sorted values in asc or desc order
+    toSortedValuesObject(desc?: boolean) {
+        return Object.fromEntries(this.toSortedValuesArray(desc));
+    }
+
     toArray(): [string, number][] {
-        return [...this.#data];
+        return [...this];
     }
 
     toJSON(): MultipleCounterOutput {
-        return Object.fromEntries(this.#data);
+        return Object.fromEntries(this);
     }
 
     [inspect.custom]() {
-        return this.toJSON();
+        return this.toSortedKeyObject();
     }
 }
 

@@ -31,6 +31,7 @@
     - [x] reorganize stats into a unified statsManager component
     - [ ] add simple player drop stats
         - [x] player drop classifier
+        - [x] optimize log for big servers 
         - [ ] updated: fxserver
         - [ ] updated: game build
         - [ ] changed resources

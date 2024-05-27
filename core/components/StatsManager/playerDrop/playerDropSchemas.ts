@@ -1,4 +1,7 @@
 import * as z from 'zod';
+import type { MultipleCounter } from '../statsUtils';
+import { parseDateHourEnc } from './playerDropUtils';
+import { DeepReadonly } from 'utility-types';
 
 
 //Generic schemas
@@ -15,13 +18,6 @@ export const PDLServerBootDataSchema = z.object({
 
 
 //Log stuff
-export const PDLPlayerDropEventSchema = z.object({
-    ts: zIntNonNegative,
-    type: z.literal('playerDrop'),
-    category: z.string(),
-    reason: z.string(),
-});
-
 export const PDLFxsChangedEventSchema = z.object({
     ts: zIntNonNegative,
     type: z.literal('fxsChanged'),
@@ -44,6 +40,17 @@ export const PDLResourcesChangedEventSchema = z.object({
 //     newVersion: z.string(),
 // });
 
+export const PDLHourlyRawSchema = z.object({
+    hour: z.string(),
+    changes: z.array(z.union([
+        PDLFxsChangedEventSchema,
+        PDLGameChangedEventSchema,
+        PDLResourcesChangedEventSchema,
+        // PDLClientChangedEventSchema
+    ])),
+    dropTypes: z.array(z.tuple([z.string(), z.number()])),
+    crashTypes: z.array(z.tuple([z.string(), z.number()])),
+});
 
 export const PDLFileSchema = z.object({
     version: z.literal(1),
@@ -51,28 +58,23 @@ export const PDLFileSchema = z.object({
     lastGameVersion: z.string(),
     lastServerVersion: z.string(),
     lastResourceList: z.array(z.string()),
-    log: z.array(z.union([
-        PDLPlayerDropEventSchema,
-        PDLFxsChangedEventSchema,
-        PDLGameChangedEventSchema,
-        PDLResourcesChangedEventSchema,
-        // PDLClientChangedEventSchema
-    ])),
+    lastUnknownReasons: z.array(z.string()), //store the last few for potential analysis
+    log: z.array(PDLHourlyRawSchema),
 });
-
 
 
 //Exporting types
 export type PDLFileType = z.infer<typeof PDLFileSchema>;
-export type PDLPlayerDropEventType = z.infer<typeof PDLPlayerDropEventSchema>;
+export type PDLHourlyRawType = z.infer<typeof PDLHourlyRawSchema>;
 export type PDLFxsChangedEventType = z.infer<typeof PDLFxsChangedEventSchema>;
 export type PDLGameChangedEventType = z.infer<typeof PDLGameChangedEventSchema>;
 export type PDLResourcesChangedEventType = z.infer<typeof PDLResourcesChangedEventSchema>;
 // export type PDLClientChangedEventType = z.infer<typeof PDLClientChangedEventSchema>;
-export type PDLLogType = (
-    PDLPlayerDropEventType
-    | PDLFxsChangedEventType
-    | PDLGameChangedEventType
-    | PDLResourcesChangedEventType
-    // | PDLClientChangedEventType
-)[];
+export type PDLHourlyChanges = PDLHourlyRawType['changes'];
+
+export type PDLHourlyType = {
+    hour: DeepReadonly<ReturnType<typeof parseDateHourEnc>>;
+    changes: PDLHourlyChanges;
+    dropTypes: MultipleCounter;
+    crashTypes: MultipleCounter;
+};
