@@ -162,7 +162,9 @@ async function handleFXServer(ctx: AuthedCtx) {
 
     //Preparing & saving config
     const newConfig = ctx.txAdmin.configVault.getScopedStructure('fxRunner');
+    const hasServerDataPathChanged = (newConfig.serverDataPath !== cfg.serverDataPath);
     newConfig.serverDataPath = cfg.serverDataPath;
+    const hasCfgPathChanged = (newConfig.cfgPath !== cfg.cfgPath);
     newConfig.cfgPath = cfg.cfgPath;
     newConfig.onesync = cfg.onesync;
     newConfig.autostart = cfg.autostart;
@@ -181,6 +183,9 @@ async function handleFXServer(ctx: AuthedCtx) {
     }
 
     //Sending output
+    if(hasServerDataPathChanged || hasCfgPathChanged){
+        ctx.txAdmin.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+    }
     ctx.txAdmin.fxRunner.refreshConfig();
     ctx.admin.logAction('Changing fxRunner settings.');
     return ctx.send({

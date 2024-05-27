@@ -275,6 +275,7 @@ async function handleSaveLocal(ctx) {
     try {
         globals.configVault.saveProfile('global', newGlobalConfig);
         globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
+        globals.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global/fxserver settings via setup stepper.`);
         console.verbose.dir(error);

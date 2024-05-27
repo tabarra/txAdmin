@@ -256,7 +256,9 @@ export default class SvRuntimeStatsManager {
             console.verbose.debug(`Loaded ${this.statsLog.length} performance snapshots from cache`);
             await optimizeSvRuntimeLog(this.statsLog);
         } catch (error) {
-            if (error instanceof ZodError) {
+            if ((error as any)?.code === 'ENOENT') {
+                console.verbose.debug(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
+            } else if (error instanceof ZodError) {
                 console.warn(`Failed to load ${LOG_DATA_FILE_NAME} due to invalid data.`);
             } else {
                 console.warn(`Failed to load ${LOG_DATA_FILE_NAME} with message: ${(error as Error).message}`);

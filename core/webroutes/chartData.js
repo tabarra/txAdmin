@@ -9,6 +9,7 @@ const caches = {
     svMain: new Cache(30),
 };
 
+//NOTE: used in sendReport.ts
 export const getChartData = (threadName) => {
     //If cache available
     const cachedData = caches[threadName].get();

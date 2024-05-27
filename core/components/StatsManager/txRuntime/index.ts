@@ -9,7 +9,7 @@ const console = consoleFactory(modulename);
 
 
 //Consts
-const JWE_VERSION = 1;
+const JWE_VERSION = 12;
 const statsPublicKeyPem = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2NCbB5DvpR7F8qHF9SyA
 xJKv9lpGO2PiU5wYUmEQaa0IUrUZmQ8ivsoOyCZOGKN9PESsVyqZPx37fhtAIqNo

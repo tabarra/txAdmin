@@ -53,8 +53,8 @@ export default class PlayerDropStatsManager {
                 dateHourStr: dateHourStr,
             },
             changes: [],
-            crashes: [],
-            dropCounts: new MultipleCounter(),
+            crashTypes: new MultipleCounter(),
+            dropTypes: new MultipleCounter(),
         };
         this.eventLog.push(newHourLog);
         return newHourLog;
@@ -66,7 +66,7 @@ export default class PlayerDropStatsManager {
      */
     public handleServerBootData(rawPayload: any) {
         const logRef = this.getCurrentLogHourRef();
-        
+
         //Parsing data
         const validation = PDLServerBootDataSchema.safeParse(rawPayload);
         if (!validation.success) {
@@ -78,39 +78,41 @@ export default class PlayerDropStatsManager {
 
         //Game version change
         const gameString = `${gameName}:${gameBuild}`;
-        if (gameString !== this.lastGameVersion) {
-            shouldSave = true;
+        if (gameString) {
+            if (!this.lastGameVersion) {
+                shouldSave = true;
+            } else if (gameString !== this.lastGameVersion) {
+                shouldSave = true;
+                logRef.changes.push({
+                    ts: Date.now(),
+                    type: 'gameChanged',
+                    newVersion: gameString,
+                });
+            }
             this.lastGameVersion = gameString;
-            logRef.changes.push({
-                ts: Date.now(),
-                type: 'gameChanged',
-                newVersion: gameString,
-            });
         }
 
         //Server version change
         let { build: serverBuild, platform: serverPlatform } = parseFxserverVersion(fxsVersion);
         const fxsVersionString = `${serverPlatform}:${serverBuild}`;
-        if (fxsVersionString !== this.lastServerVersion) {
-            shouldSave = true;
+        if (fxsVersionString) {
+            if (!this.lastServerVersion) {
+                shouldSave = true;
+            } else if (fxsVersionString !== this.lastServerVersion) {
+                shouldSave = true;
+                logRef.changes.push({
+                    ts: Date.now(),
+                    type: 'fxsChanged',
+                    newVersion: fxsVersionString,
+                });
+            }
             this.lastServerVersion = fxsVersionString;
-            logRef.changes.push({
-                ts: Date.now(),
-                type: 'fxsChanged',
-                newVersion: fxsVersionString,
-            });
         }
 
         //Resource list change - if no resources, ignore as that's impossible
         if (resources.length) {
             if (!this.lastResourceList || !this.lastResourceList.length) {
                 shouldSave = true;
-                logRef.changes.push({
-                    ts: Date.now(),
-                    type: 'resourcesChanged',
-                    resAdded: resources,
-                    resRemoved: [],
-                });
             } else {
                 const resAdded = resources.filter(r => !this.lastResourceList!.includes(r));
                 const resRemoved = this.lastResourceList.filter(r => !resources.includes(r));
@@ -124,6 +126,7 @@ export default class PlayerDropStatsManager {
                     });
                 }
             }
+            this.lastResourceList = resources;
         }
 
         //Saving if needed
@@ -144,7 +147,9 @@ export default class PlayerDropStatsManager {
             if (category === 'crash') {
                 logRef.crashTypes.count(cleanReason);
             } else if (category === 'unknown') {
-                this.lastUnknownReasons.push(cleanReason);
+                if (!this.lastUnknownReasons.includes(cleanReason)) {
+                    this.lastUnknownReasons.push(cleanReason);
+                }
             }
         }
         this.saveEventLog();
@@ -189,10 +194,15 @@ export default class PlayerDropStatsManager {
             console.verbose.debug(`Loaded ${this.eventLog.length} log entries from cache`);
             this.optimizeStatsLog();
         } catch (error) {
-            if (error instanceof ZodError) {
+            if ((error as any)?.code === 'ENOENT') {
+                console.verbose.debug(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
+                this.resetLog('File was just created, no data yet');
+            } else if (error instanceof ZodError) {
                 console.warn(`Failed to load ${LOG_DATA_FILE_NAME} due to invalid data.`);
+                this.resetLog('Failed to load log file due to invalid data');
             } else {
                 console.warn(`Failed to load ${LOG_DATA_FILE_NAME} with message: ${(error as Error).message}`);
+                this.resetLog('Failed to load log file due to unknown error');
             }
             console.warn('Since this is not a critical file, it will be reset.');
         }

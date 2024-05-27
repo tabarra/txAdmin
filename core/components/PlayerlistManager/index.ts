@@ -186,6 +186,7 @@ export default class PlayerlistManager {
                 if (!(this.#playerlist[payload.id] instanceof ServerPlayer)) throw new Error(`player id not found`);
                 this.#playerlist[payload.id]!.disconnect();
                 this.joinLeaveLog.push([currTs, false]);
+                this.#txAdmin.statsManager.playerDrop.handlePlayerDrop(payload.reason);
                 this.#txAdmin.logger.server.write([{
                     type: 'playerDropped',
                     src: payload.id,

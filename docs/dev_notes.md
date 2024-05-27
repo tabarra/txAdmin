@@ -29,14 +29,15 @@
 - [x] added filters to the in-game playerlist
 - New Statistics stuff:
     - [x] reorganize stats into a unified statsManager component
+        - [x] check HbData
     - [ ] add simple player drop stats
         - [x] player drop classifier
         - [x] optimize log for big servers 
-        - [ ] updated: fxserver
-        - [ ] updated: game build
-        - [ ] changed resources
-        - [ ] changed server data should reset the log (setup, deployer, settings)
-        - [ ] decide on a max sizes for the log
+        - [x] updated: fxserver
+        - [x] updated: game build
+        - [x] changed resources
+        - [x] changed server data should reset the log (setup, deployer, settings)
+        - [x] decide on a max sizes for the log
     - [ ] write code to visualize the data
     - [ ] write txRuntime log optimizer
 - [ ] NEW PAGE: Dashboard
@@ -74,6 +75,26 @@
 - [ ] reevaluate globals?.tmpSetHbDataTracking
 - [ ] MUST `//FIXME: update_txdiagnostics`
 
+
+==================================================
+
+d3.timeHours(new Date(1715741829000), new Date())[0]
+
+
+
+Initial snap tem que esperar 5 mins do uptime do boot do sv, assim garantimos que cada snap tem pelo menos 5 mins
+Fazer resolução ser 3 consts ao invés de array
+Pra conseguir fazer otimização continuas, não é possível combinar um snap 2x com um snap 1x, então fazer múltiplos
+5, 15, 30mins
+
+
+let toCombine = [];
+for log in statsLog:
+     - log.ts - toCombine[0].ts < resolution
+          - toCombine.push(log)
+     - else:
+          - combined = combine(toCombine)
+          - splice a array
 
 
 ## Next up... ish

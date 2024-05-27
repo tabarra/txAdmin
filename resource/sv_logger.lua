@@ -52,7 +52,35 @@ CreateThread(function()
         end
     end
 end)
-logger('tx', 'LoggerStarted')
+
+--Send initial data
+CreateThread(function()
+    local resList = {}
+    local resCount = GetNumResources() - 1
+    for i = 0, resCount do
+        local resName = GetResourceByFindIndex(i)
+        if GetResourceState(resName) == 'started' then
+            local resVersion = GetResourceMetadata(resName, 'version')
+            if type(resVersion) == 'string' and #resVersion > 0 then
+                resList[#resList+1] = resName..'/'..resVersion
+            else
+                resList[#resList+1] = resName
+            end
+        end
+    end
+
+    logger('tx', 'LoggerStarted', {
+        --txAdmin.statsManager.playerDrops data
+        gameName = GetConvar('gamename', 'gta5'),
+        gameBuild = GetConvar('sv_enforceGameBuild', 'invalid'),
+        fxsVersion = GetConvar('version', 'invalid'),
+        resources = resList,
+
+        --not being used anywhere for now
+        projectName = GetConvar('sv_projectName', 'invalid')
+        --NOTE: unmfortunately its not possible to retrieve the server icon
+    })
+end)
 
 
 -- Explosion handler
