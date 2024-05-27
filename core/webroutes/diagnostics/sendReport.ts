@@ -111,7 +111,7 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
 
     let perfSvMain = [];
     try {
-        perfSvMain = getChartData('svMain');
+        // perfSvMain = getChartData('svMain');
     } catch (error) { }
 
     //Prepare report object

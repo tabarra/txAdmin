@@ -1,13 +1,13 @@
 import { cloneDeep } from 'lodash-es';
-import type { SSPerfCountsType, SSPerfHistType } from "./perfSchemas";
+import type { SvRtPerfCountsType, SvRtPerfHistType } from "./perfSchemas";
 import got from '@core/extras/got.js';
 import { parseRawPerf } from './perfParser';
 import { getProcessesData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
-import { PERF_DATA_BUCKET_COUNT, PerfDataThreadNamesType } from './config';
+import { PERF_DATA_BUCKET_COUNT, SvRtPerfThreadNamesType } from './config';
 
 
 //Consts
-const perfDataRawThreadsTemplate: SSPerfCountsType = {
+const perfDataRawThreadsTemplate: SvRtPerfCountsType = {
     svSync: {
         count: 0,
         // sum: 0,
@@ -29,7 +29,7 @@ const perfDataRawThreadsTemplate: SSPerfCountsType = {
 /**
  * Compares a perf snapshot with the one that came before
  */
-export const diffPerfs = (newPerf: SSPerfCountsType, oldPerf?: SSPerfCountsType) => {
+export const diffPerfs = (newPerf: SvRtPerfCountsType, oldPerf?: SvRtPerfCountsType) => {
     const basePerf = oldPerf ?? cloneDeep(perfDataRawThreadsTemplate);
     return {
         svSync: {
@@ -55,8 +55,8 @@ export const diffPerfs = (newPerf: SSPerfCountsType, oldPerf?: SSPerfCountsType)
  * Transforms raw perf data into a frequency distribution (histogram)
  * ForEach thread, individualize tick counts (instead of CumSum) and calculates frequency
  */
-export const perfCountsToHist = (threads: SSPerfCountsType) => {
-    const currPerfFreqs: SSPerfHistType = {
+export const perfCountsToHist = (threads: SvRtPerfCountsType) => {
+    const currPerfFreqs: SvRtPerfHistType = {
         svSync: {
             count: threads.svSync.count,
             freqs: [],
@@ -71,7 +71,7 @@ export const perfCountsToHist = (threads: SSPerfCountsType) => {
         },
     };
     for (const [tName, tData] of Object.entries(threads)) {
-        currPerfFreqs[tName as PerfDataThreadNamesType].freqs = tData.buckets.map((bucketValue, bucketIndex) => {
+        currPerfFreqs[tName as SvRtPerfThreadNamesType].freqs = tData.buckets.map((bucketValue, bucketIndex) => {
             const prevBucketValue = (bucketIndex) ? tData.buckets[bucketIndex - 1] : 0;
             return (bucketValue - prevBucketValue) / tData.count;
         });

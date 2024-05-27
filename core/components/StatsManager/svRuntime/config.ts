@@ -19,4 +19,4 @@ export const STATS_RESOLUTION_TABLE = [
 ];
 export const STATS_LOG_SIZE_LIMIT = 720; //144+48+144 (max data snaps) + 384 (1 reboot every 30 mins)
 export const PERF_DATA_THREAD_NAMES = ['svNetwork', 'svSync', 'svMain'] as const;
-export type PerfDataThreadNamesType = ValuesType<typeof PERF_DATA_THREAD_NAMES>;
+export type SvRtPerfThreadNamesType = ValuesType<typeof PERF_DATA_THREAD_NAMES>;

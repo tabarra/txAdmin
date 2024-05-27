@@ -1,15 +1,15 @@
 import * as z from 'zod';
-import { PERF_DATA_BUCKET_COUNT, PERF_DATA_THREAD_NAMES, PerfDataThreadNamesType } from './config';
+import { PERF_DATA_BUCKET_COUNT, PERF_DATA_THREAD_NAMES, SvRtPerfThreadNamesType } from './config';
 import { ValuesType } from 'utility-types';
 
 
 /**
  * Type guards
  */
-export const isValidPerfThreadName = (threadName: string): threadName is PerfDataThreadNamesType => {
-    return PERF_DATA_THREAD_NAMES.includes(threadName as PerfDataThreadNamesType);
+export const isValidPerfThreadName = (threadName: string): threadName is SvRtPerfThreadNamesType => {
+    return PERF_DATA_THREAD_NAMES.includes(threadName as SvRtPerfThreadNamesType);
 }
-export const isSSLogDataType = (log: ValuesType<SSLogType>): log is SSLogDataType => {
+export const isSvRtLogDataType = (log: ValuesType<SvRtLogType>): log is SvRtLogDataType => {
     return log.type === 'data';
 }
 
@@ -22,75 +22,75 @@ const zIntNonNegative = z.number().int().nonnegative();
 const zNumberNonNegative = z.number().nonnegative();
 
 //Last perf stuff
-export const SSPerfBoundariesSchema = z.array(z.union([
+export const SvRtPerfBoundariesSchema = z.array(z.union([
     zNumberNonNegative,
     z.literal('+Inf'),
 ]));
 
-export const SSPerfCountsThreadSchema = z.object({
+export const SvRtPerfCountsThreadSchema = z.object({
     count: zIntNonNegative,
     buckets: z.array(zIntNonNegative).length(PERF_DATA_BUCKET_COUNT),
 });
 
-export const SSPerfCountsSchema = z.object({
-    svSync: SSPerfCountsThreadSchema,
-    svNetwork: SSPerfCountsThreadSchema,
-    svMain: SSPerfCountsThreadSchema,
+export const SvRtPerfCountsSchema = z.object({
+    svSync: SvRtPerfCountsThreadSchema,
+    svNetwork: SvRtPerfCountsThreadSchema,
+    svMain: SvRtPerfCountsThreadSchema,
 });
 
 //Log stuff
-export const SSPerfHistThreadSchema = z.object({
+export const SvRtPerfHistThreadSchema = z.object({
     //NOTE: tick count is used to re-combine the logs after X hours for optimization
     count: zIntNonNegative,
     freqs: z.array(zNumberNonNegative).length(PERF_DATA_BUCKET_COUNT),
 });
 
-export const SSPerfHistSchema = z.object({
-    svSync: SSPerfHistThreadSchema,
-    svNetwork: SSPerfHistThreadSchema,
-    svMain: SSPerfHistThreadSchema,
+export const SvRtPerfHistSchema = z.object({
+    svSync: SvRtPerfHistThreadSchema,
+    svNetwork: SvRtPerfHistThreadSchema,
+    svMain: SvRtPerfHistThreadSchema,
 });
 
-export const SSLogDataSchema = z.object({
+export const SvRtLogDataSchema = z.object({
     ts: zIntNonNegative,
     type: z.literal('data'),
     players: zIntNonNegative,
     fxsMemory: zNumberNonNegative.nullable(),
     nodeMemory: zNumberNonNegative.nullable(),
-    perf: SSPerfHistSchema,
+    perf: SvRtPerfHistSchema,
 });
 
-export const SSLogSvBootSchema = z.object({
+export const SvRtLogSvBootSchema = z.object({
     ts: zIntNonNegative,
     type: z.literal('svBoot'),
     bootTime: zIntNonNegative,
 });
 
-export const SSLogSvCloseSchema = z.object({
+export const SvRtLogSvCloseSchema = z.object({
     ts: zIntNonNegative,
     type: z.literal('svClose'),
     reason: z.string(),
 });
 
-export const SSFileSchema = z.object({
+export const SvRtFileSchema = z.object({
     version: z.literal(1),
-    lastPerfBoundaries: SSPerfBoundariesSchema.optional(),
-    log: z.array(z.union([SSLogDataSchema, SSLogSvBootSchema, SSLogSvCloseSchema])),
+    lastPerfBoundaries: SvRtPerfBoundariesSchema.optional(),
+    log: z.array(z.union([SvRtLogDataSchema, SvRtLogSvBootSchema, SvRtLogSvCloseSchema])),
 });
 
-export const LogNodeHeapEventSchema = z.object({
+export const SvRtLogNodeHeapEventSchema = z.object({
     heapUsed: zIntNonNegative,
     heapTotal: zIntNonNegative,
 });
 
 
 //Exporting types
-export type SSFileType = z.infer<typeof SSFileSchema>;
-export type SSLogSvCloseType = z.infer<typeof SSLogSvCloseSchema>;
-export type SSLogSvBootType = z.infer<typeof SSLogSvBootSchema>;
-export type SSLogDataType = z.infer<typeof SSLogDataSchema>;
-export type SSLogType = (SSLogSvCloseType | SSLogSvBootType | SSLogDataType)[];
-export type SSPerfHistType = z.infer<typeof SSPerfHistSchema>;
-export type SSPerfCountsType = z.infer<typeof SSPerfCountsSchema>;
-export type SSPerfBoundariesType = z.infer<typeof SSPerfBoundariesSchema>;
-export type LogNodeHeapEventType = z.infer<typeof LogNodeHeapEventSchema>;
+export type SvRtFileType = z.infer<typeof SvRtFileSchema>;
+export type SvRtLogSvCloseType = z.infer<typeof SvRtLogSvCloseSchema>;
+export type SvRtLogSvBootType = z.infer<typeof SvRtLogSvBootSchema>;
+export type SvRtLogDataType = z.infer<typeof SvRtLogDataSchema>;
+export type SvRtLogType = (SvRtLogSvCloseType | SvRtLogSvBootType | SvRtLogDataType)[];
+export type SvRtPerfHistType = z.infer<typeof SvRtPerfHistSchema>;
+export type SvRtPerfCountsType = z.infer<typeof SvRtPerfCountsSchema>;
+export type SvRtPerfBoundariesType = z.infer<typeof SvRtPerfBoundariesSchema>;
+export type LogNodeHeapEventType = z.infer<typeof SvRtLogNodeHeapEventSchema>;

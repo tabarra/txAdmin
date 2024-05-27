@@ -29,8 +29,13 @@
 - [x] added filters to the in-game playerlist
 - New Statistics stuff:
     - [x] reorganize stats into a unified statsManager component
-    - [ ] add simple crash detection
-    - [ ] evaluate and maybe add event bus
+    - [ ] add simple player drop stats
+        - [x] player drop classifier
+        - [ ] updated: fxserver
+        - [ ] updated: game build
+        - [ ] changed resources
+        - [ ] changed server data should reset the log (setup, deployer, settings)
+        - [ ] decide on a max sizes for the log
     - [ ] write code to visualize the data
     - [ ] write txRuntime log optimizer
 - [ ] NEW PAGE: Dashboard
@@ -66,10 +71,13 @@
 - [x] simplify the simple-line-icons dependencies - do i need all the files? remove cdn!
 - [x] redact discord api webhook urls from reports
 - [ ] reevaluate globals?.tmpSetHbDataTracking
+- [ ] MUST `//FIXME: update_txdiagnostics`
 
 
 
 ## Next up... ish
+- [ ] add average session time tracking to statsManager.playerDrop
+- [ ] evaluate and maybe add event bus
 - [ ] locale file optimization - build 8201 and above
 - [ ] talk to rockstar about `cfx-server-data`, the chat resource security updates and `resources_useSystemChat` 
 - [ ] fix the eslint config + tailwind sort

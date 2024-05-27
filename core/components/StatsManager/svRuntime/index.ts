@@ -3,8 +3,8 @@ import fsp from 'node:fs/promises';
 import * as d3array from 'd3-array';
 import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
-import { LogNodeHeapEventSchema, SSFileSchema, isSSLogDataType } from './perfSchemas';
-import type { LogNodeHeapEventType, SSFileType, SSLogDataType, SSLogType, SSPerfBoundariesType, SSPerfCountsType } from './perfSchemas';
+import { SvRtLogNodeHeapEventSchema, SvRtFileSchema, isSvRtLogDataType } from './perfSchemas';
+import type { LogNodeHeapEventType, SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
 import { diffPerfs, fetchFxsMemory, fetchRawPerfData, perfCountsToHist } from './perfUtils';
 import { optimizeSvRuntimeLog } from './logOptimizer';
 import { convars } from '@core/globalData';
@@ -15,8 +15,8 @@ const console = consoleFactory(modulename);
 
 //Consts
 const megabyte = 1024 * 1024;
-const STATS_DATA_FILE_VERSION = 1;
-const STATS_DATA_FILE_NAME = 'stats_svRuntime.json';
+const LOG_DATA_FILE_VERSION = 1;
+const LOG_DATA_FILE_NAME = 'stats_svRuntime.json';
 
 
 /**
@@ -25,20 +25,20 @@ const STATS_DATA_FILE_NAME = 'stats_svRuntime.json';
  */
 export default class SvRuntimeStatsManager {
     readonly #txAdmin: TxAdmin;
-    private readonly statsDataPath: string;
-    private statsLog: SSLogType = [];
+    private readonly logFilePath: string;
+    private statsLog: SvRtLogType = [];
     private lastFxsMemory: number | undefined;
     private lastNodeMemory: { used: number, total: number } | undefined;
-    private lastPerfBoundaries: SSPerfBoundariesType | undefined;
-    private lastPerfCounts: SSPerfCountsType | undefined;
+    private lastPerfBoundaries: SvRtPerfBoundariesType | undefined;
+    private lastPerfCounts: SvRtPerfCountsType | undefined;
     private lastPerfSaved: {
         ts: number,
-        counts: SSPerfCountsType,
+        counts: SvRtPerfCountsType,
     } | undefined;
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
-        this.statsDataPath = `${txAdmin.info.serverProfilePath}/data/${STATS_DATA_FILE_NAME}`;
+        this.logFilePath = `${txAdmin.info.serverProfilePath}/data/${LOG_DATA_FILE_NAME}`;
         this.loadStatsHistory();
 
         //Cron functions
@@ -118,7 +118,7 @@ export default class SvRuntimeStatsManager {
      * Stores the last server Node.JS memory usage for later use in the data log 
      */
     logServerNodeMemory(payload: LogNodeHeapEventType) {
-        const validation = LogNodeHeapEventSchema.safeParse(payload);
+        const validation = SvRtLogNodeHeapEventSchema.safeParse(payload);
         if (!validation.success) {
             console.verbose.warn('Invalid LogNodeHeapEvent payload:');
             console.verbose.dir(validation.error.errors);
@@ -225,7 +225,7 @@ export default class SvRuntimeStatsManager {
             ts: now,
             counts: perfMetrics,
         };
-        const currSnapshot: SSLogDataType = {
+        const currSnapshot: SvRtLogDataType = {
             ts: now,
             type: 'data',
             players: this.#txAdmin.playerlistManager.onlineCount,
@@ -246,10 +246,10 @@ export default class SvRuntimeStatsManager {
      */
     async loadStatsHistory() {
         try {
-            const rawFileData = await fsp.readFile(this.statsDataPath, 'utf8');
+            const rawFileData = await fsp.readFile(this.logFilePath, 'utf8');
             const fileData = JSON.parse(rawFileData);
-            if (fileData?.version !== STATS_DATA_FILE_VERSION) throw new Error('invalid version');
-            const statsData = SSFileSchema.parse(fileData);
+            if (fileData?.version !== LOG_DATA_FILE_VERSION) throw new Error('invalid version');
+            const statsData = SvRtFileSchema.parse(fileData);
             this.lastPerfBoundaries = statsData.lastPerfBoundaries;
             this.statsLog = statsData.log;
             this.resetPerfState();
@@ -257,12 +257,11 @@ export default class SvRuntimeStatsManager {
             await optimizeSvRuntimeLog(this.statsLog);
         } catch (error) {
             if (error instanceof ZodError) {
-                console.warn(`Failed to load ${STATS_DATA_FILE_NAME} due to invalid data.`);
-                console.warn('Since this is not a critical file, it will be reset.');
+                console.warn(`Failed to load ${LOG_DATA_FILE_NAME} due to invalid data.`);
             } else {
-                console.warn(`Failed to load ${STATS_DATA_FILE_NAME} with message: ${(error as Error).message}`);
-                console.warn('Since this is not a critical file, it will be reset.');
+                console.warn(`Failed to load ${LOG_DATA_FILE_NAME} with message: ${(error as Error).message}`);
             }
+            console.warn('Since this is not a critical file, it will be reset.');
         }
     }
 
@@ -273,14 +272,14 @@ export default class SvRuntimeStatsManager {
     async saveStatsHistory() {
         try {
             await optimizeSvRuntimeLog(this.statsLog);
-            const savePerfData: SSFileType = {
-                version: STATS_DATA_FILE_VERSION,
+            const savePerfData: SvRtFileType = {
+                version: LOG_DATA_FILE_VERSION,
                 lastPerfBoundaries: this.lastPerfBoundaries,
                 log: this.statsLog,
             };
-            await fsp.writeFile(this.statsDataPath, JSON.stringify(savePerfData));
+            await fsp.writeFile(this.logFilePath, JSON.stringify(savePerfData));
         } catch (error) {
-            console.warn(`Failed to save ${STATS_DATA_FILE_NAME} with message: ${(error as Error).message}`);
+            console.warn(`Failed to save ${LOG_DATA_FILE_NAME} with message: ${(error as Error).message}`);
         }
     }
 
@@ -305,7 +304,7 @@ export default class SvRuntimeStatsManager {
         const nodeMemory = []
         for (const log of this.statsLog) {
             if (log.ts < tsScanWindowStart) continue;
-            if (!isSSLogDataType(log)) continue;
+            if (!isSvRtLogDataType(log)) continue;
             if (log.perf.svMain.count < PERF_DATA_MIN_TICKS) continue;
             totalSnapshots++
             players.push(log.players);
