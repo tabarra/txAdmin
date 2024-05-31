@@ -96,6 +96,17 @@ export const tsToLocaleDateTime = (
 
 
 /**
+ * Converts a number to a locale string with commas and decimals
+ */
+export const numberToLocaleString = (num: number, decimals = 0) => {
+    return num.toLocaleString(
+        window?.nuiSystemLanguages ?? navigator.language ?? 'en',
+        { maximumFractionDigits: decimals }
+    );
+};
+
+
+/**
  * Converts a timestamp to a locale time string, considering the current year, shortest unambiguous as possible
  */
 export const convertRowDateTime = (ts: number) => {
