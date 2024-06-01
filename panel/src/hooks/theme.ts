@@ -1,12 +1,4 @@
-import { atom, useAtom, useSetAtom } from 'jotai';
-
-
-/**
- * Helpers
- */
-const setThemeCookieValue = (value: string) => {
-    document.cookie = `txAdmin-theme=${value};path=/;SameSite=Lax;max-age=31536000;`;
-}
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 
 /**
@@ -22,9 +14,54 @@ const initialAtomValue = availableCustomThemes.find((name) => root.classList.con
 
 
 /**
+ * Helpers
+ */
+const setThemeCookieValue = (value: string) => {
+    document.cookie = `txAdmin-theme=${value};path=/;SameSite=Lax;max-age=31536000;`;
+}
+
+const parseTheme = (themeName: string) => {
+    if (defaultThemes.includes(themeName)) {
+        return {
+            isInvalid: false,
+            isDefault: true,
+            isDarkScheme: themeName === 'dark',
+            lightDarkClass: themeName,
+            customClass: undefined,
+        }
+    } else if (availableCustomThemes.includes(themeName)) {
+        const customTheme = window.txConsts.customThemes.find((theme) => theme.name === themeName);
+        if (customTheme) {
+            const isDarkScheme = customTheme.isDark;
+            return {
+                isInvalid: false,
+                isDefault: false,
+                isDarkScheme,
+                lightDarkClass: isDarkScheme ? 'dark' : 'light',
+                customClass: `theme-${themeName}`,
+            }
+        }
+    }
+
+    console.warn(`Could not find theme'${themeName}', defaulting to dark.`);
+    return {
+        isInvalid: true,
+        isDefault: false,
+        isDarkScheme: true,
+        lightDarkClass: 'dark',
+        customClass: undefined,
+    }
+}
+
+
+/**
  * Atom
  */
 const themeAtom = atom(initialAtomValue);
+export const isDarkModeAtom = atom((get) => {
+    const currTheme = get(themeAtom);
+    return parseTheme(currTheme).isDarkScheme;
+});
 
 //Resetting cookie to a valid value + refreshing expiration
 setThemeCookieValue(initialAtomValue);
@@ -34,24 +71,22 @@ setThemeCookieValue(initialAtomValue);
  * Theme changer
  */
 const applyNewTheme = (oldTheme: string, newTheme: string) => {
-    let iframeTheme;
-    root.classList.remove(...defaultThemes, ...customThemesClasses);
-    if (defaultThemes.includes(newTheme)) {
-        root.classList.add(newTheme);
-        iframeTheme = newTheme;
-    } else if (availableCustomThemes.includes(newTheme)) {
-        const selectorTheme = window.txConsts.customThemes.find((theme) => theme.name === newTheme)
-        const lightDarkSelector = selectorTheme?.isDark ? 'dark' : 'light';
-        root.classList.add(lightDarkSelector, `theme-${newTheme}`);
-        iframeTheme = lightDarkSelector;
-    } else {
+    const { isInvalid, isDefault, isDarkScheme, lightDarkClass, customClass } = parseTheme(newTheme);
+    if (isInvalid) {
         throw new Error(`invalid theme ${newTheme}`);
+    }
+
+    //Applying classes
+    root.classList.remove(...defaultThemes, ...customThemesClasses);
+    root.classList.add(lightDarkClass);
+    if (customClass) {
+        root.classList.add(customClass);
     }
 
     //Changing iframe theme
     const iframeBody = (document.getElementById('legacyPageIframe') as HTMLObjectElement)?.contentDocument?.body;
     if (iframeBody) {
-        if (iframeTheme === 'dark') {
+        if (isDarkScheme) {
             iframeBody.classList.add('theme--dark');
         } else {
             iframeBody.classList.remove('theme--dark');
@@ -97,4 +132,8 @@ export const useToggleTheme = () => {
             return curr;
         }
     });
+}
+
+export const useIsDarkMode = () => {
+    return useAtomValue(isDarkModeAtom);
 }

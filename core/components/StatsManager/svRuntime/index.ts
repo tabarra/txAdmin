@@ -215,10 +215,7 @@ export default class SvRuntimeStatsManager {
         } else if (now - this.lastPerfSaved.ts >= PERF_DATA_INITIAL_RESOLUTION) {
             perfHistToSave = perfCountsToHist(diffPerfs(perfMetrics, this.lastPerfSaved.counts));
         }
-        if (!perfHistToSave) {
-            console.verbose.debug('Not enough time passed since last saved collection. Skipping save.');
-            return;
-        }
+        if (!perfHistToSave) return;
 
         //Update cache
         this.lastPerfSaved = {

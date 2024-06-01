@@ -3,6 +3,7 @@ import { LegendDatum, ResponsivePie, DatumId, PieCustomLayerProps, ComputedDatum
 import { numberToLocaleString } from '@/lib/utils';
 import { PlayerDropChartDatum } from './DashboardPage';
 import { DoorOpenIcon } from 'lucide-react';
+import { useIsDarkMode } from '@/hooks/theme';
 
 type PieCenterTextProps = PieCustomLayerProps<PlayerDropChartDatum> & {
     active?: ComputedDatum<PlayerDropChartDatum>;
@@ -72,6 +73,8 @@ type PlayerDropChartProps = {
 };
 
 const PlayerDropChart = memo(({ data, setCustomLegends, activeId, setActiveId }: PlayerDropChartProps) => {
+    const isDarkMode = useIsDarkMode();
+    const [hasClicked, setHasClicked] = useState(false);
     const CenterLayer = useCallback((allArgs: PieCustomLayerProps<PlayerDropChartDatum>) => {
         if (!activeId) return PieCenterText(allArgs);
         const active = allArgs.dataWithArc.find(d => d.id === activeId);
@@ -94,7 +97,7 @@ const PlayerDropChart = memo(({ data, setCustomLegends, activeId, setActiveId }:
         cornerRadius={4}
         activeOuterRadiusOffset={6}
         borderWidth={1}
-        borderColor={{
+        borderColor={isDarkMode ? undefined : {
             from: 'color',
             modifiers: [['darker', 0.8]]
         }}
@@ -106,13 +109,13 @@ const PlayerDropChart = memo(({ data, setCustomLegends, activeId, setActiveId }:
             from: 'color',
             modifiers: [['darker', 2.5]],
         }}
-        colors={{
-            // datum: 'data.color',
-            // scheme: 'pink_yellowGreen',
-            scheme: 'nivo',
-            // scheme: 'yellow_orange_red',
-            size: 6
+        onClick={(datum, event) => setHasClicked(curr => !curr)}
+        onMouseEnter={(datum, event) => setHasClicked(false)} //resets behavior
+        onMouseLeave={(datum, event) => {
+            hasClicked && setActiveId(datum.id)
+            event.preventDefault()
         }}
+        colors={{ scheme: 'nivo' }}
         tooltip={() => null}
         forwardLegendData={setCustomLegends}
     />
@@ -146,7 +149,8 @@ export default function PlayerDropCard({ data }: PlayerDropCardProps) {
                     return (
                         <div
                             key={legend.id}
-                            className="flex items-center cursor-pointer hover:underline"
+                            data-active={activeId === legend.id}
+                            className="flex items-center cursor-pointer hover:underline data-[active=true]:underline"
                             onClick={() => setActiveId(activeId === legend.id ? null : legend.id)}
                         >
                             <div className="size-4 mr-1 rounded-full" style={{ backgroundColor: legend.color }} />

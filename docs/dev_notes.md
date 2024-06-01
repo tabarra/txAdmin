@@ -28,24 +28,37 @@
         - [x] settings enforce unique id
 - [x] added filters to the in-game playerlist
 - New Statistics stuff:
-    - [x] reorganize stats into a unified statsManager component
-        - [x] check HbData
-    - [ ] add simple player drop stats
-        - [x] player drop classifier
-        - [x] optimize log for big servers 
-        - [x] updated: fxserver
-        - [x] updated: game build
-        - [x] changed resources
-        - [x] changed server data should reset the log (setup, deployer, settings)
-        - [x] decide on a max sizes for the log
-    - [ ] write code to visualize the data
+    - [x] add thread performance chart
+    - [ ] write perf chart code
+        - [ ] d3 canvas responsive with resize debounced
+        - [ ] axis with zoom
+        - [ ] cursor + atom for the hovered data
+            - cursor not close enough to a group should disable it
+        - [ ] drawing heatmap
+        - [ ] drawing lines
+        - [ ] drawing groups with the gaps
+    - [ ] write slicer code + tests
+    - [ ] apply it all to the perf chart
+    - [ ] indicate loading, reloading and error states
+    - [ ] get the data to the UI + some caching
+    - [ ] display api data on the charts
+    - [ ] button to switch thread
+    - [ ] buttons to show memory usage, maybe hide player count
+    - [ ] some way for the backend to push updates to the UI
     - [ ] write txRuntime log optimizer
+        - maybe just cutoff by date 30h and optimize it by the next update?
+    - [ ] smaller stuff to fix
+        - [ ] thread perf color should change at the min interval marker point
 - [ ] NEW PAGE: Dashboard
-    - [ ] new performance chart
-    - [ ] add new statistics
+    - [ ] the stats above
+    - [ ] add other stats (player leave/joins?)
     - [ ] maybe: number callouts from legacy players page
+    - [ ] mobile layout
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
+    - [ ] button to docs page with md file lazy loaded
+
+
 
 ## Small feat
 - [x] remove old live console page
@@ -81,6 +94,19 @@
 d3.timeHours(new Date(1715741829000), new Date())[0]
 
 
+# svNetwork (should be 100fps)
+29037t / 300s = 96.79fps
+300s / 29037t = 10.33ms
+
+# svSync (should be 120fps)
+35893t / 300s = 119.64fps
+300s / 35893t = 8.36ms
+
+# svMain (should be 20fps)
+5965t / 300s = 19.88fps
+300s / 5965t = 50.29ms
+
+
 
 Initial snap tem que esperar 5 mins do uptime do boot do sv, assim garantimos que cada snap tem pelo menos 5 mins
 Fazer resolução ser 3 consts ao invés de array
@@ -98,6 +124,7 @@ for log in statsLog:
 
 
 ## Next up... ish
+- [ ] add more menu keybinds 
 - [ ] add average session time tracking to statsManager.playerDrop
 - [ ] evaluate and maybe add event bus
 - [ ] locale file optimization - build 8201 and above
