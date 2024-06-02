@@ -27,7 +27,7 @@
         - [x] better random id (no random id? stable-hash?)
         - [x] settings enforce unique id
 - [x] added filters to the in-game playerlist
-- New Statistics stuff:
+- [ ] New Statistics stuff:
     - [x] add thread performance chart
     - [ ] write perf chart code
         - [ ] d3 canvas responsive with resize debounced
