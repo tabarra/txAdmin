@@ -15,7 +15,7 @@ const serverInitiatedRules = [
     `server shutting down:`,
     `[txadmin]`,
 ];
-const networkingRules = [
+const timeoutRules = [
     `server->client connection timed out`, //basically only see this one
     `connection timed out`,
     `fetching info timed out`,
@@ -120,8 +120,8 @@ export const classifyDropReason = (reason: string) => {
         return { category: 'user-initiated' };
     } else if (serverInitiatedRules.some((rule) => reasonToMatch.startsWith(rule))) {
         return { category: 'server-initiated' };
-    } else if (networkingRules.some((rule) => reasonToMatch.includes(rule))) {
-        return { category: 'networking' };
+    } else if (timeoutRules.some((rule) => reasonToMatch.includes(rule))) {
+        return { category: 'timeout' };
     } else if (securityRules.some((rule) => reasonToMatch.includes(rule))) {
         return { category: 'security' };
     } else if (crashRulesIntl.some((rule) => reasonToMatch.includes(rule))) {

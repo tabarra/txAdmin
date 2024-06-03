@@ -1,8 +1,10 @@
-import { BarChartHorizontalIcon } from 'lucide-react';
-import { memo, useEffect, useRef, useState } from 'react';
-import AutoSizer from "react-virtualized-auto-sizer";
+import { BarChartHorizontalIcon, LineChartIcon } from 'lucide-react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import AutoSizer, { Size, VerticalSize } from "react-virtualized-auto-sizer";
 import * as d3 from 'd3';
 import { createRandomHslColor } from '@/lib/utils';
+import { debounce } from 'throttle-debounce';
+import DebouncedResizeContainer from '@/components/DebouncedResizeContainer';
 
 type FullPerfChartProps = any;
 
@@ -23,7 +25,7 @@ const FullPerfChart = memo(({
     useEffect(() => void d3.select(gx.current).call(d3.axisBottom(x)), [gx, x]);
     useEffect(() => void d3.select(gy.current).call(d3.axisLeft(y)), [gy, y]);
     return (
-        <svg width={'100%'} height={height}>
+        <svg width={'100%'} height={height} style={{ backgroundColor: createRandomHslColor() }}>
             <rect
                 x={(width / 2) - 50} y={0}
                 width={50} height={10}
@@ -41,30 +43,24 @@ const FullPerfChart = memo(({
 });
 
 
+
 type FullPerfCardProps = {
     //
 };
 
 export default function FullPerfCard({ }: FullPerfCardProps) {
+    const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
     const [data, setData] = useState(() => d3.ticks(-2, 2, 200).map(Math.sin));
-    function onMouseMove(event) {
-        const [x, y] = d3.pointer(event);
-        setData(data.slice(-200).concat(Math.atan2(x, y)));
-    }
 
     return (
         <div className="w-full h-[32rem] py-2 rounded-lg border shadow-sm flex flex-col fill-primary">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">Thread performance (last minute)</h3>
-                <div className='hidden xs:block'><BarChartHorizontalIcon /></div>
+                <div className='hidden xs:block'><LineChartIcon /></div>
             </div>
-            <div className="size-full">
-                <AutoSizer style={{ width: '100%' }} onMouseMove={onMouseMove}>
-                    {({ height, width }) => (
-                        <FullPerfChart data={data} height={height} width={width} />
-                    )}
-                </AutoSizer>
-            </div>
+            <DebouncedResizeContainer onDebouncedResize={setChartSize}>
+                <FullPerfChart data={data} width={chartSize.width} height={chartSize.height} />
+            </DebouncedResizeContainer>
         </div>
     );
 }

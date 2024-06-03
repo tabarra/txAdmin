@@ -1,19 +1,21 @@
-import AutoSizer from "react-virtualized-auto-sizer";
 import { Bar, BarTooltipProps } from '@nivo/bar';
 import { BarChartHorizontalIcon } from 'lucide-react';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { useIsDarkMode } from '@/hooks/theme';
 import { ThreadPerfChartDatum } from './DashboardPage';
 import { formatTickBoundary } from './chartingUtils';
+import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
 
 
 type ThreadPerfChartProps = {
     data: ThreadPerfChartDatum[];
     boundaries: (number | string)[];
     minTickIntervalMarker: number | undefined;
+    width: number;
+    height: number;
 };
 
-const ThreadPerfChart = memo(({ data, minTickIntervalMarker }: ThreadPerfChartProps) => {
+const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: ThreadPerfChartProps) => {
     const isDarkMode = useIsDarkMode();
 
     const CustomToolbar = (datum: BarTooltipProps<ThreadPerfChartDatum>) => {
@@ -35,100 +37,99 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker }: ThreadPerfChartPr
         );
     }
 
+    if (!width || !height) return null;
     return (
-        <AutoSizer style={{ width: '100%' }}>
-            {({ height, width }) => (
-                <Bar
-                    height={height}
-                    width={width}
-                    data={data}
-                    theme={{
-                        tooltip: { wrapper: { zIndex: 10000 } },
-                        text: {
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            fill: 'inherit',
-                        },
-                        grid: {
-                            line: {
-                                strokeDasharray: '8 6',
-                                stroke: '#3F4146', //secondary
-                                strokeOpacity: isDarkMode ? 1 : 0.25,
-                                strokeWidth: 1,
-                            },
-                        }
-                    }}
-                    indexBy="bucket"
-                    margin={{ top: 0, right: 25, bottom: 40, left: 60 }}
-                    layout="horizontal"
-                    valueFormat={'.1%'}
-                    colors={{ datum: 'data.color' }}
-                    colorBy='indexValue'
-                    borderWidth={0.5}
-                    borderColor={isDarkMode ? undefined : {
-                        from: 'color',
-                        modifiers: [['darker', 1]]
-                    }}
-                    axisBottom={{
-                        format: '.0%',
-                        legend: 'percent of total time',
-                        legendPosition: 'middle',
-                        legendOffset: 32,
-                    }}
-                    axisLeft={{ format: formatTickBoundary }}
-                    enableGridX={true}
-                    enableGridY={false}
-                    labelSkipWidth={25}
-                    labelSkipHeight={12}
-                    labelTextColor={{
-                        from: 'color',
-                        modifiers: [['darker', 1.6]]
-                    }}
-                    tooltip={CustomToolbar}
-                    markers={minTickIntervalMarker ? [
-                        {
-                            axis: 'y',
-                            value: minTickIntervalMarker,
-                            lineStyle: {
-                                stroke: 'black',
-                                strokeWidth: 4,
-                                strokeDasharray: '6 2',
-                                strokeDashoffset: 1,
-                            },
-                        },
-                        {
-                            axis: 'y',
-                            value: minTickIntervalMarker,
-                            lineStyle: {
-                                stroke: '#F513B3',
-                                strokeWidth: 2,
-                                strokeDasharray: '4 4',
-                            },
-                            legendPosition: 'bottom-right',
-                            legend: 'uh oh!',
-                        },
-                    ] : undefined}
-                />
-            )}
-        </AutoSizer>
+        <Bar
+            height={height}
+            width={width}
+            data={data}
+            theme={{
+                tooltip: { wrapper: { zIndex: 10000 } },
+                text: {
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    fill: 'inherit',
+                },
+                grid: {
+                    line: {
+                        strokeDasharray: '8 6',
+                        stroke: '#3F4146', //secondary
+                        strokeOpacity: isDarkMode ? 1 : 0.25,
+                        strokeWidth: 1,
+                    },
+                },
+            }}
+            indexBy="bucket"
+            margin={{ top: 0, right: 25, bottom: 40, left: 60 }}
+            layout="horizontal"
+            valueFormat={'.1%'}
+            colors={{ datum: 'data.color' }}
+            colorBy='indexValue'
+            borderWidth={0.5}
+            borderColor={isDarkMode ? undefined : {
+                from: 'color',
+                modifiers: [['darker', 1]]
+            }}
+            axisBottom={{
+                format: '.0%',
+                legend: 'percent of total time',
+                legendPosition: 'middle',
+                legendOffset: 32,
+            }}
+            axisLeft={{ format: formatTickBoundary }}
+            enableGridX={true}
+            enableGridY={false}
+            labelSkipWidth={25}
+            labelSkipHeight={12}
+            labelTextColor={{
+                from: 'color',
+                modifiers: [['darker', 1.6]]
+            }}
+            tooltip={CustomToolbar}
+            markers={minTickIntervalMarker ? [
+                {
+                    axis: 'y',
+                    value: minTickIntervalMarker,
+                    lineStyle: {
+                        stroke: 'black',
+                        strokeWidth: 4,
+                        strokeDasharray: '6 2',
+                        strokeDashoffset: 1,
+                    },
+                },
+                {
+                    axis: 'y',
+                    value: minTickIntervalMarker,
+                    lineStyle: {
+                        stroke: '#F513B3',
+                        strokeWidth: 2,
+                        strokeDasharray: '4 4',
+                    },
+                    legendPosition: 'bottom-right',
+                    legend: 'uh oh!',
+                },
+            ] : undefined}
+        />
     );
 });
 
 
 type ThreadPerfCardProps = {
-    data: ThreadPerfChartProps;
+    data: Omit<ThreadPerfChartProps, 'width' | 'height'>;
 };
 
 export default function ThreadPerfCard({ data }: ThreadPerfCardProps) {
+    const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
+
     return (
-        <div className="py-2 rounded-lg border shadow-sm flex flex-col col-span-3 fill-primary">
+        <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[22rem] max-h-[22rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">Thread performance (last minute)</h3>
                 <div className='hidden xs:block'><BarChartHorizontalIcon /></div>
             </div>
-            <div className="size-full">
-                <ThreadPerfChart {...data} />
-            </div>
+            <DebouncedResizeContainer onDebouncedResize={setChartSize}>
+                <ThreadPerfChart {...data} width={chartSize.width} height={chartSize.height} />
+            </DebouncedResizeContainer>
         </div>
     );
 }

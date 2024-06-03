@@ -19,7 +19,7 @@ const serverInitiatedExamples = [
     `Server shutting down: %s`,
     `[txAdmin] Server restarting (scheduled restart at 03:00).`, //not so sure about this
 ];
-const networkingExamples = [
+const timeoutExamples = [
     `Server->client connection timed out. Pending commands: %d.\nCommand list:\n%s`,
     `Server->client connection timed out. Last seen %d msec ago.`,
     `Fetching info timed out.`,
@@ -64,9 +64,9 @@ suite('classifyDropReason', () => {
             expect(fnc(reason).category).toBe('server-initiated');
         }
     });
-    it('should classify networking reasons', () => {
-        for (const reason of networkingExamples) {
-            expect(fnc(reason).category).toBe('networking');
+    it('should classify timeout reasons', () => {
+        for (const reason of timeoutExamples) {
+            expect(fnc(reason).category).toBe('timeout');
         }
     });
     it('should classify security reasons', () => {

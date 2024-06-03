@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { GaugeIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import PlayerDropCard from './PlayerDropCard';
 import ThreadPerfCard from './ThreadPerfCard';
+import PlayerDropCard from './PlayerDropCard';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import { getMinTickIntervalMarker } from './chartingUtils';
 import FullPerfCard from './FullPerfCard';
@@ -22,7 +22,7 @@ export type PlayerDropChartDatum = {
 }
 
 export default function DashboardPage() {
-    const [isRunning, setIsRunning] = useState(true);
+    const [isRunning, setIsRunning] = useState(false);
     const [rndCounter, setRndCounter] = useState(491);
     const [ztoCounter, setZtoCounter] = useState(0);
 
@@ -48,7 +48,7 @@ export default function DashboardPage() {
             data.push({
                 bucket: boundaries[i],
                 count: Math.round(Math.random() * 1000),
-                value: Math.max(0, (Math.sin((indexPct + ztoCounter) * 2 * Math.PI) -1 ) + 1), //rnd
+                value: Math.max(0, (Math.sin((indexPct + ztoCounter) * 2 * Math.PI) - 1) + 1), //rnd
                 // value: Math.max(0, Math.sin(i * 0.24 + tmpMultiplier)) / 2.8, //rnd
                 // value: Math.max(0, Math.sin(i * 0.295 + 0.7)) / 2.8, //good
                 // value: Math.max(0, Math.sin(i * 0.295 + -0.6)) / 2.8, //bad
@@ -92,8 +92,8 @@ export default function DashboardPage() {
                 value: 180 / tmpTotal,
             },
             {
-                "id": "networking",
-                "label": "Networking",
+                "id": "timeout",
+                "label": "Timeout",
                 count: 169,
                 value: 169 / tmpTotal,
             },
@@ -113,12 +113,11 @@ export default function DashboardPage() {
         return data;
     }, [rndCounter]);
 
-
     return (
-        <div className="w-full flex flex-col items-center justify-center gap-2">
-            <div className="w-full grid grid-cols-8 gap-4 h-[22rem]">
+        <div className="w-full flex flex-col items-center justify-center gap-4">
+            <div className="w-full grid grid-cols-8 gap-4 h-[22rem] max-h-[22rem] overflow-clip">
                 <ThreadPerfCard data={threadPerfChartData} />
-                <div className="py-2 px-4 rounded-lg border shadow-sm col-span-2">
+                <div className="py-2 px-4 rounded-lg border shadow-sm col-span-2 min-w-60 bg-card">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                         <h3 className="tracking-tight text-sm font-medium line-clamp-1">Host stats (last minute)</h3>
                         <div className='hidden xs:block'><GaugeIcon /></div>
