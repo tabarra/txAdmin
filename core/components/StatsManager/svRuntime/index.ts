@@ -72,7 +72,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Registers that fxserver has BOOTED (healthMonitor is ONLINE)
      */
-    logServerBoot(bootTime: number) {
+    logServerBoot(duration: number) {
         this.resetPerfState();
         this.resetMemoryState();
         //If last log is a boot, remove it as the server didn't really start 
@@ -83,7 +83,7 @@ export default class SvRuntimeStatsManager {
         this.statsLog.push({
             ts: Date.now(),
             type: 'svBoot',
-            bootTime,
+            duration,
         });
         this.saveStatsHistory();
     }
@@ -168,6 +168,8 @@ export default class SvRuntimeStatsManager {
         ]);
         if (fetchFxsMemoryRes.status === 'fulfilled') {
             this.lastFxsMemory = fetchFxsMemoryRes.value;
+        } else {
+            this.lastFxsMemory = undefined;
         }
         if (fetchRawPerfDataRes.status === 'rejected') throw fetchRawPerfDataRes.reason;
         const { perfBoundaries, perfMetrics } = fetchRawPerfDataRes.value;

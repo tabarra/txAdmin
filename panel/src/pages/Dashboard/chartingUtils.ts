@@ -1,17 +1,23 @@
+import type { SvRtLogType, SvRtPerfHistType } from "@shared/otherTypes";
+import { cloneDeep } from "lodash-es";
+
+
 /**
  * Find which is the last bucket boundary that is less than or equal to the minTickInterval, excluding +Infinity.
  */
 export const getMinTickIntervalMarker = (boundaries: (string | number)[], minTickInterval: number) => {
     let found;
     for (const bucketLE of boundaries) {
-        if (typeof bucketLE === 'string' || bucketLE <= minTickInterval) {
+        if (bucketLE === '+Inf') {
+            if (found !== undefined && found < minTickInterval) {
+                return undefined; //we reached infinite without finding the threshold
+            }
+            break;
+        } else if (typeof bucketLE !== 'string' && bucketLE <= minTickInterval) {
             found = bucketLE;
         }
     }
-    if (typeof found === 'number') {
-        return found;
-    }
-    return undefined;
+    return typeof found === 'number' ? found : undefined;
 }
 
 
@@ -38,4 +44,154 @@ export const formatTickBoundary = (value: number | string) => {
             return `${value.toFixed(0)} s`;
         }
     }
+}
+
+
+/**
+ * Calculates an array of estimated average ticket durations for each bucket, asuming linear distribution,
+ * except for the last bucket which is assumed to be 25% higher than the lower boundary.
+ * This is inherently wrong, but it's a good enough approximation for coloring the chart.
+ * References:
+ * https://stackoverflow.com/q/55162093
+ * https://stackoverflow.com/q/60962520
+ * https://prometheus.io/docs/practices/histograms/#errors-of-quantile-estimation
+ */
+export const getBucketTicketsEstimatedTime = (boundaries: (string | number)[]) => {
+    const estimatedAverageDurations = [];
+    for (let i = 0; i < boundaries.length; i++) {
+        const prev = boundaries[i - 1] ?? 0;
+        if (typeof prev !== 'number') throw new Error(`Invalid prev value: ${prev}`);
+
+        //If last, add a 25% margin as we don't know the actual value
+        if (boundaries.length >= 2 && i === boundaries.length - 1) {
+            estimatedAverageDurations.push(prev * 1.25);
+            break;
+        }
+
+        //Otherwise, calculate the median value between the current and the previous
+        const curr = boundaries[i];
+        if (typeof curr !== 'number') throw new Error(`Invalid current value: ${curr}`);
+        estimatedAverageDurations.push((prev + curr) / 2);
+    }
+    return estimatedAverageDurations;
+}
+
+
+/**
+ * Map the performance data from count frequency histogram to time-weighted histogram.
+ */
+export const getTimeWeightedHistogram = (perfHist: { count: number, freqs: number[] }, bucketEstimatedAverageTimes: number[]) => {
+    if (bucketEstimatedAverageTimes.length !== perfHist.freqs.length) throw new Error('Invalid bucket count');
+
+    //Calculate the total estimated time
+    let totalEstimatedTime = 0;
+    const bucketEstimatedCumulativeTime = [];
+    for (let bucketIndex = 0; bucketIndex < bucketEstimatedAverageTimes.length; bucketIndex++) {
+        const bucketCountFreq = (typeof perfHist.freqs[bucketIndex] === 'number') ? perfHist.freqs[bucketIndex] : 0;
+        const calculatedTime = bucketCountFreq * bucketEstimatedAverageTimes[bucketIndex];
+        bucketEstimatedCumulativeTime.push(calculatedTime);
+        totalEstimatedTime += calculatedTime;
+    }
+
+    //Normalize the values
+    return bucketEstimatedCumulativeTime.map((time) => time / totalEstimatedTime);
+}
+
+
+/**
+ * Slicer types
+ */
+export type PerfSnapType = {
+    start: Date;
+    end: Date;
+    players: number;
+    fxsMemory: number | null;
+    nodeMemory: number | null;
+    weightedPerf: number[];
+}
+export type PerfLifeSpanType = {
+    bootTime?: Date;
+    bootDuration?: number;
+    closeTime?: Date;
+    closeReason?: string;
+    log: PerfSnapType[];
+}
+type PerfProcessorType = (perfLog: SvRtPerfHistType) => number[];
+const minPerfTime = 60 * 1000;
+const maxPerfTimeGap = 15 * 60 * 1000; //15 minutes
+const emptyPerfLifeSpan: PerfLifeSpanType = {
+    bootDuration: undefined,
+    closeReason: undefined,
+    log: [],
+};
+
+
+/**
+ * Slices the log into groups representing server lifespan.
+ */
+export const splitLogIntoLifespans = (perfLog: SvRtLogType, perfProcessor: PerfProcessorType) => {
+    const lifespans: PerfLifeSpanType[] = [];
+    let currentLifespan: PerfLifeSpanType = cloneDeep(emptyPerfLifeSpan);
+    for (const currEntry of perfLog) {
+        if (currentLifespan === undefined) {
+            currentLifespan = cloneDeep(emptyPerfLifeSpan);
+        }
+        const hasDataLogStarted = currentLifespan?.log?.length;
+
+        if (currEntry.type === 'svBoot') {
+            if (hasDataLogStarted) {
+                //last lifespan finished without a svClose
+                lifespans.push(currentLifespan);
+                currentLifespan = cloneDeep(emptyPerfLifeSpan);
+            }
+            //start a new lifespan
+            currentLifespan.bootTime = new Date(currEntry.ts);
+            currentLifespan.bootDuration = currEntry.duration;
+        } else if (currEntry.type === 'svClose') {
+            if (hasDataLogStarted) {
+                //closing gracefully
+                currentLifespan.closeTime = new Date(currEntry.ts);
+                currentLifespan.closeReason = currEntry.reason;
+                lifespans.push(currentLifespan);
+                currentLifespan = cloneDeep(emptyPerfLifeSpan);
+            }
+        } else if (currEntry.type === 'data') {
+            const minAcceptableStartTs = currEntry.ts - maxPerfTimeGap;
+            const lastData = hasDataLogStarted ? currentLifespan.log.at(-1) : undefined;
+            let perfStartTs = currEntry.ts - minPerfTime;
+            if (lastData) {
+                const lastDataEndTs = lastData.end.getTime();
+                //check if the last data entry is too old
+                if (lastDataEndTs >= minAcceptableStartTs) {
+                    perfStartTs = lastDataEndTs;
+                } else {
+                    lifespans.push(currentLifespan);
+                    currentLifespan = cloneDeep(emptyPerfLifeSpan);
+                }
+            } else if (currentLifespan.bootTime) {
+                const currentLifespanBootTs = currentLifespan.bootTime.getTime();
+                // if the boot is too old, reset the lifespan
+                if (currentLifespanBootTs >= minAcceptableStartTs) {
+                    perfStartTs = currentLifespanBootTs;
+                } else {
+                    currentLifespan = cloneDeep(emptyPerfLifeSpan);
+                }
+            }
+            currentLifespan.log.push({
+                start: new Date(perfStartTs),
+                end: new Date(currEntry.ts),
+                players: currEntry.players,
+                fxsMemory: currEntry.fxsMemory,
+                nodeMemory: currEntry.nodeMemory,
+                weightedPerf: perfProcessor(currEntry.perf),
+            });
+        }
+    }
+
+    //Push the last lifespan if it's not empty
+    if (currentLifespan?.log?.length) {
+        lifespans.push(currentLifespan);
+    }
+
+    return lifespans;
 }

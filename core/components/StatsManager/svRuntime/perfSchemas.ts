@@ -63,7 +63,7 @@ export const SvRtLogDataSchema = z.object({
 export const SvRtLogSvBootSchema = z.object({
     ts: zIntNonNegative,
     type: z.literal('svBoot'),
-    bootTime: zIntNonNegative,
+    duration: zIntNonNegative,
 });
 
 export const SvRtLogSvCloseSchema = z.object({

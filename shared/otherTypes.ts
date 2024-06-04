@@ -1,8 +1,9 @@
 import type { ReactAuthDataType } from "./authApiTypes";
-export { BanTemplatesDataType, BanDurationType } from "@core/webroutes/banTemplates/utils";
-export { GetBanTemplatesSuccessResp } from "@core/webroutes/banTemplates/getBanTemplates";
-export { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/webroutes/banTemplates/saveBanTemplates";
-export { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/webroutes/history/actions";
+export type { BanTemplatesDataType, BanDurationType } from "@core/webroutes/banTemplates/utils";
+export type { GetBanTemplatesSuccessResp } from "@core/webroutes/banTemplates/getBanTemplates";
+export type { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/webroutes/banTemplates/saveBanTemplates";
+export type { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/webroutes/history/actions";
+export type { SvRtLogType, SvRtPerfHistType } from "@core/components/StatsManager/svRuntime/perfSchemas";
 
 
 export type UpdateDataType = {
