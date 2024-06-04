@@ -1,5 +1,5 @@
 import '@extras/testEnv';
-import { test, expect } from 'vitest';
+import { test, expect, suite, it } from 'vitest';
 import * as helpers from './helpers';
 
 
@@ -9,14 +9,34 @@ test('txAdminASCII', () => {
     expect(result.split('\n').length).toBe(6);
 });
 
-test('parseSchedule', () => {
-    const result = helpers.parseSchedule(['12:30', '1:30', 'invalid', '1030']);
-    expect(result).toBeTruthy();
-    expect(result.valid).toEqual([
-        { string: '12:30', hours: 12, minutes: 30 },
-        { string: '01:30', hours: 1, minutes: 30 },
-    ]);
-    expect(result.invalid).toEqual(['invalid', '1030']);
+suite('parseSchedule', () => {
+    it('should parse a valid schedule', () => {
+        const result = helpers.parseSchedule(['00:00', '00:15', '12:30', '1:30']);
+        expect(result.valid).toEqual([
+            { string: '00:00', hours: 0, minutes: 0 },
+            { string: '00:15', hours: 0, minutes: 15 },
+            { string: '12:30', hours: 12, minutes: 30 },
+            { string: '01:30', hours: 1, minutes: 30 },
+        ]);
+        expect(result.invalid).toEqual([]);
+    });
+
+    it('should let the average american type 24:00', () => {
+        const result = helpers.parseSchedule(['24:00']);
+        expect(result.valid).toEqual([
+            { string: '00:00', hours: 0, minutes: 0 },
+        ]);
+        expect(result.invalid).toEqual([]);
+    });
+
+    it('should handle invalid stuff', () => {
+        const result = helpers.parseSchedule(['12:34', 'invalid', '1030', '25:00', '1', '01', '']);
+        expect(result).toBeTruthy();
+        expect(result.valid).toEqual([
+            { string: '12:34', hours: 12, minutes: 34 },
+        ]);
+        expect(result.invalid).toEqual(['invalid', '1030', '25:00', '1', '01']);
+    });
 });
 
 test('redactApiKeys', () => {
@@ -116,7 +136,7 @@ test('parseLimitedFloat', () => {
     expect(helpers.parseLimitedFloat('123.4567899999')).toBe(123.45679);
     expect(helpers.parseLimitedFloat(123.4567899999)).toBe(123.45679);
     expect(helpers.parseLimitedFloat(123.4567899999, 2)).toBe(123.46);
-    expect(helpers.parseLimitedFloat(0.1+0.2)).toBe(0.3);
+    expect(helpers.parseLimitedFloat(0.1 + 0.2)).toBe(0.3);
 });
 
 test('parseFxserverVersion', () => {

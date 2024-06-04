@@ -33,11 +33,12 @@ export const parseSchedule = (scheduleTimes: string[]) => {
         const timeTrim = timeInput.trim();
         if (!timeTrim.length) continue;
 
-        const hmRegex = /^$|^([01]?[0-9]|2[0-3]):([0-5][0-9])$/gm; //need to set it insde the loop
+        const hmRegex = /^([01]?[0-9]|2[0-4]):([0-5][0-9])$/gm;
         const m = hmRegex.exec(timeTrim);
         if (m === null) {
             invalid.push(timeTrim);
         } else {
+            if (m[1] === '24') m[1] = '00'; //Americans, amirite?!?!
             valid.push({
                 string: m[1].padStart(2, '0') + ':' + m[2].padStart(2, '0'),
                 hours: parseInt(m[1]),
@@ -201,7 +202,7 @@ export const parseLaxIdsArrayInput = (fullInput: string) => {
         if (input.includes(':')) {
             if (consts.regexValidHwidToken.test(input)) {
                 validHwids.push(input);
-            }else if (Object.values(consts.validIdentifiers).some((regex) => regex.test(input))){
+            } else if (Object.values(consts.validIdentifiers).some((regex) => regex.test(input))) {
                 validIds.push(input);
             } else {
                 const [type, value] = input.split(':', 1);
@@ -247,7 +248,7 @@ export const getIdFromOauthNameid = (nameid: string) => {
 /**
  * Parses a number or string to a float with a limited precision.
  */
-export const parseLimitedFloat = (src: number | string, precision = 6) =>  {
+export const parseLimitedFloat = (src: number | string, precision = 6) => {
     const srcAsNum = typeof src === 'string' ? parseFloat(src) : src;
     return parseFloat(srcAsNum.toFixed(precision));
 }
@@ -260,7 +261,7 @@ export const parseFxserverVersion = (version: any) => {
     if (typeof version !== 'string') throw new Error(`expected string`);
 
     let platform: string | null = null;
-    if(version.includes('win32')){
+    if (version.includes('win32')) {
         platform = 'windows';
     } else if (version.includes('linux')) {
         platform = 'linux';
