@@ -37,6 +37,9 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: Th
         );
     }
 
+    //FIXME: temporarily disable the minTickIntervalMarker
+    minTickIntervalMarker = undefined;
+
     if (!width || !height) return null;
     return (
         <Bar
@@ -96,6 +99,9 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: Th
                         strokeDasharray: '6 2',
                         strokeDashoffset: 1,
                     },
+                    // legend: 'bad',
+                    // legendPosition: 'top-right',
+                    // textStyle: { fontSize: '16px' },
                 },
                 {
                     axis: 'y',
@@ -105,8 +111,9 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: Th
                         strokeWidth: 2,
                         strokeDasharray: '4 4',
                     },
-                    legendPosition: 'bottom-right',
-                    legend: 'uh oh!',
+                    // legend: 'good',
+                    // legendPosition: 'bottom-right',
+                    // textStyle: { fontSize: '16px' },
                 },
             ] : undefined}
         />

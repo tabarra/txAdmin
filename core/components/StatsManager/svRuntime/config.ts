@@ -7,7 +7,7 @@ import { ValuesType } from "utility-types";
 const minutesMs = 60 * 1000;
 const hoursMs = 60 * minutesMs;
 export const PERF_DATA_BUCKET_COUNT = 15;
-export const PERF_DATA_MIN_TICKS = 1000; //less than that and the data is not reliable
+export const PERF_DATA_MIN_TICKS = 600; //less than that and the data is not reliable - 30s for svMain
 export const PERF_DATA_INITIAL_RESOLUTION = 5 * minutesMs;
 export const STATS_RESOLUTION_TABLE = [
     //00~12h =  5min = 12/h = 144 snaps

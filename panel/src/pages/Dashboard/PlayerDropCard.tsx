@@ -124,10 +124,7 @@ const PlayerDropChart = memo(({ data, setCustomLegends, activeId, setActiveId, w
             }}
             colors={{ scheme: 'nivo' }}
             tooltip={() => null}
-            forwardLegendData={(data) => {
-                console.log('forwardLegendData', data);
-                setCustomLegends(data);
-            }}
+            forwardLegendData={setCustomLegends}
         />
     )
 });
