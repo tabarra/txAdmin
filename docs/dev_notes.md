@@ -30,14 +30,15 @@
 - [ ] New Statistics stuff:
     - [x] add thread performance chart
     - [ ] write perf chart code
-        - [ ] d3 canvas responsive with resize debounced
+        - [x] d3 canvas responsive with resize debounced
         - [ ] axis with zoom
         - [ ] cursor + atom for the hovered data
             - cursor not close enough to a group should disable it
         - [ ] drawing heatmap
         - [ ] drawing lines
         - [ ] drawing groups with the gaps
-    - [ ] write slicer code + tests
+    - [x] write slicer code + tests
+    - [x] change StatsManager.svRuntime to save counts instead of frequencies
     - [ ] apply it all to the perf chart
     - [ ] indicate loading, reloading and error states
     - [ ] get the data to the UI + some caching

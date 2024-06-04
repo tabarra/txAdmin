@@ -74,7 +74,7 @@ suite('parseRawPerf', () => {
         expect(result.perfMetrics.svNetwork.count).toBe(1840805);
         expect(result.perfMetrics.svSync.count).toBe(2268704);
         expect(result.perfMetrics.svMain.count).toBe(355594);
-        // expect(result.perfMetrics.svSync.sum).toBe(1091.617999988212);
+        expect(result.perfMetrics.svSync.sum).toBe(1091.617999988212);
         expect(result.perfMetrics.svMain.buckets).toEqual([299261, 327819, 352052, 354360, 354808, 355262, 355577, 355591, 355591, 355592, 355593, 355593, 355593, 355593, 355594]);
     });
 

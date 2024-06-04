@@ -5,7 +5,7 @@ import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
 import { SvRtLogNodeHeapEventSchema, SvRtFileSchema, isSvRtLogDataType } from './perfSchemas';
 import type { LogNodeHeapEventType, SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
-import { diffPerfs, fetchFxsMemory, fetchRawPerfData, perfCountsToHist } from './perfUtils';
+import { didPerfReset, diffPerfs, fetchFxsMemory, fetchRawPerfData } from './perfUtils';
 import { optimizeSvRuntimeLog } from './logOptimizer';
 import { convars } from '@core/globalData';
 import { ZodError } from 'zod';
@@ -30,10 +30,10 @@ export default class SvRuntimeStatsManager {
     private lastFxsMemory: number | undefined;
     private lastNodeMemory: { used: number, total: number } | undefined;
     private lastPerfBoundaries: SvRtPerfBoundariesType | undefined;
-    private lastPerfCounts: SvRtPerfCountsType | undefined;
+    private lastPerfData: SvRtPerfCountsType | undefined;
     private lastPerfSaved: {
         ts: number,
-        counts: SvRtPerfCountsType,
+        data: SvRtPerfCountsType,
     } | undefined;
 
     constructor(txAdmin: TxAdmin) {
@@ -55,7 +55,7 @@ export default class SvRuntimeStatsManager {
      * Reset the last perf data except boundaries
      */
     resetPerfState() {
-        this.lastPerfCounts = undefined;
+        this.lastPerfData = undefined;
         this.lastPerfSaved = undefined;
     }
 
@@ -139,7 +139,7 @@ export default class SvRuntimeStatsManager {
             joinLeaveTally30m: this.#txAdmin.playerlistManager.joinLeaveTally,
             fxsMemory: this.lastFxsMemory,
             nodeMemory: this.lastNodeMemory,
-            perf: this.lastPerfCounts ? perfCountsToHist(this.lastPerfCounts) : undefined,
+            perf: this.lastPerfData,
         }
     }
 
@@ -148,10 +148,11 @@ export default class SvRuntimeStatsManager {
      * Cron function to collect all the stats and save it to the cache file
      */
     async collectStats() {
-        //Precondition checks
+        //Precondition checks - try even when partially online
         if (this.#txAdmin.fxRunner.fxChild === null) return;
         if (this.#txAdmin.playerlistManager === null) return;
-        if (this.#txAdmin.healthMonitor.currentStatus !== 'ONLINE') return;
+        const healthMonitorStatus = this.#txAdmin.healthMonitor.currentStatus;
+        if (healthMonitorStatus !== 'ONLINE' && healthMonitorStatus !== 'PARTIAL') return;
 
         //Get performance data
         const fxServerHost = (convars.debugExternalStatsSource)
@@ -160,8 +161,6 @@ export default class SvRuntimeStatsManager {
         if (typeof fxServerHost !== 'string' || !fxServerHost) {
             throw new Error(`Invalid fxServerHost: ${fxServerHost}`);
         }
-
-        //Fetch data
         const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
             fetchRawPerfData(fxServerHost),
             fetchFxsMemory(),
@@ -185,7 +184,7 @@ export default class SvRuntimeStatsManager {
         }
 
         //Check if first collection, boundaries changed
-        if (!this.lastPerfCounts || !this.lastPerfSaved || !this.lastPerfBoundaries) {
+        if (!this.lastPerfData || !this.lastPerfSaved || !this.lastPerfBoundaries) {
             console.verbose.debug('First perf collection.');
             this.lastPerfBoundaries = perfBoundaries;
             this.resetPerfState();
@@ -197,32 +196,32 @@ export default class SvRuntimeStatsManager {
         }
 
         //Checking if the counter (somehow) reset
-        if (this.lastPerfCounts && this.lastPerfCounts.svMain.count > perfMetrics.svMain.count) {
+        if (this.lastPerfData && didPerfReset(perfMetrics, this.lastPerfData)) {
             console.warn('Performance counter reset. Resetting lastPerfCounts/lastPerfSaved.');
             this.resetPerfState();
-        } else if (this.lastPerfSaved && this.lastPerfSaved.counts.svMain.count > perfMetrics.svMain.count) {
+        } else if (this.lastPerfSaved && didPerfReset(perfMetrics, this.lastPerfSaved.data)) {
             console.warn('Performance counter reset. Resetting lastPerfSaved.');
             this.lastPerfSaved = undefined;
         }
 
         //Calculate the tick/time counts since last collection (1m ago)
-        const latestPerfHist = perfCountsToHist(diffPerfs(perfMetrics, this.lastPerfCounts));
-        this.lastPerfCounts = perfMetrics;
+        const latestPerf = diffPerfs(perfMetrics, this.lastPerfData);
+        this.lastPerfData = perfMetrics;
 
         //Check if enough time passed since last collection
         const now = Date.now();
-        let perfHistToSave;
+        let perfToSave;
         if (!this.lastPerfSaved) {
-            perfHistToSave = latestPerfHist;
+            perfToSave = latestPerf;
         } else if (now - this.lastPerfSaved.ts >= PERF_DATA_INITIAL_RESOLUTION) {
-            perfHistToSave = perfCountsToHist(diffPerfs(perfMetrics, this.lastPerfSaved.counts));
+            perfToSave = diffPerfs(perfMetrics, this.lastPerfSaved.data);
         }
-        if (!perfHistToSave) return;
+        if (!perfToSave) return;
 
         //Update cache
         this.lastPerfSaved = {
             ts: now,
-            counts: perfMetrics,
+            data: perfMetrics,
         };
         const currSnapshot: SvRtLogDataType = {
             ts: now,
@@ -230,7 +229,7 @@ export default class SvRuntimeStatsManager {
             players: this.#txAdmin.playerlistManager.onlineCount,
             fxsMemory: this.lastFxsMemory ?? null,
             nodeMemory: this.lastNodeMemory?.used ?? null,
-            perf: perfHistToSave,
+            perf: perfToSave,
         };
         this.statsLog.push(currSnapshot);
         console.verbose.ok(`Collected performance snapshot #${this.statsLog.length}`);
@@ -312,7 +311,7 @@ export default class SvRuntimeStatsManager {
             fxsMemory.push(log.fxsMemory);
             nodeMemory.push(log.nodeMemory);
             for (let bIndex = 0; bIndex < PERF_DATA_BUCKET_COUNT; bIndex++) {
-                const tickCount = log.perf.svMain.freqs[bIndex] * log.perf.svMain.count;
+                const tickCount = log.perf.svMain.buckets[bIndex];
                 cumTicks += tickCount;
                 cumBuckets[bIndex] += tickCount;
             }

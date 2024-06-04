@@ -46,17 +46,17 @@ export const parseRawPerf = (rawData: string) => {
     const perfMetrics: SvRtPerfCountsType = {
         svSync: {
             count: 0,
-            // sum: 0,
+            sum: 0,
             buckets: [],
         },
         svNetwork: {
             count: 0,
-            // sum: 0,
+            sum: 0,
             buckets: [],
         },
         svMain: {
             count: 0,
-            // sum: 0,
+            sum: 0,
             buckets: [],
         },
     };
@@ -95,8 +95,8 @@ export const parseRawPerf = (rawData: string) => {
             const count = parseInt(value);
             if (!isNaN(count)) perfMetrics[thread].count = count;
         } else if (regType == 'sum') {
-            // const sum = parseFloat(value);
-            // if (!isNaN(sum)) currPerfData[thread].sum = sum;
+            const sum = parseFloat(value);
+            if (!isNaN(sum)) perfMetrics[thread].sum = sum;
         } else if (regType == 'bucket') {
             //Check if the bucket is correct
             const currBucketIndex = perfMetrics[thread].buckets.length;
@@ -118,8 +118,8 @@ export const parseRawPerf = (rawData: string) => {
         return (
             !Number.isInteger(thread.count)
             || thread.count === 0
-            // || !Number.isFinite(thread.sum)
-            // || thread.sum === 0
+            || !Number.isFinite(thread.sum)
+            || thread.sum === 0
             || thread.buckets.length !== PERF_DATA_BUCKET_COUNT
         );
     });

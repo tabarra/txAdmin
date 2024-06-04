@@ -30,6 +30,10 @@ export const SvRtPerfBoundariesSchema = z.array(z.union([
 export const SvRtPerfCountsThreadSchema = z.object({
     count: zIntNonNegative,
     buckets: z.array(zIntNonNegative).length(PERF_DATA_BUCKET_COUNT),
+
+    //NOTE: the sum is literally used for nothing,
+    //could be used to calculate the tick time average though
+    sum: zNumberNonNegative,
 });
 
 export const SvRtPerfCountsSchema = z.object({
@@ -39,25 +43,13 @@ export const SvRtPerfCountsSchema = z.object({
 });
 
 //Log stuff
-export const SvRtPerfHistThreadSchema = z.object({
-    //NOTE: tick count is used to re-combine the logs after X hours for optimization
-    count: zIntNonNegative,
-    freqs: z.array(zNumberNonNegative).length(PERF_DATA_BUCKET_COUNT),
-});
-
-export const SvRtPerfHistSchema = z.object({
-    svSync: SvRtPerfHistThreadSchema,
-    svNetwork: SvRtPerfHistThreadSchema,
-    svMain: SvRtPerfHistThreadSchema,
-});
-
 export const SvRtLogDataSchema = z.object({
     ts: zIntNonNegative,
     type: z.literal('data'),
     players: zIntNonNegative,
     fxsMemory: zNumberNonNegative.nullable(),
     nodeMemory: zNumberNonNegative.nullable(),
-    perf: SvRtPerfHistSchema,
+    perf: SvRtPerfCountsSchema,
 });
 
 export const SvRtLogSvBootSchema = z.object({
@@ -90,7 +82,6 @@ export type SvRtLogSvCloseType = z.infer<typeof SvRtLogSvCloseSchema>;
 export type SvRtLogSvBootType = z.infer<typeof SvRtLogSvBootSchema>;
 export type SvRtLogDataType = z.infer<typeof SvRtLogDataSchema>;
 export type SvRtLogType = (SvRtLogSvCloseType | SvRtLogSvBootType | SvRtLogDataType)[];
-export type SvRtPerfHistType = z.infer<typeof SvRtPerfHistSchema>;
 export type SvRtPerfCountsType = z.infer<typeof SvRtPerfCountsSchema>;
 export type SvRtPerfBoundariesType = z.infer<typeof SvRtPerfBoundariesSchema>;
 export type LogNodeHeapEventType = z.infer<typeof SvRtLogNodeHeapEventSchema>;
