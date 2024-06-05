@@ -3,7 +3,7 @@ import { BarChartHorizontalIcon } from 'lucide-react';
 import { memo, useState } from 'react';
 import { useIsDarkMode } from '@/hooks/theme';
 import { ThreadPerfChartDatum } from './DashboardPage';
-import { formatTickBoundary } from './chartingUtils';
+import { formatTickBoundary, getThreadDisplayName } from './chartingUtils';
 import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
 
 
@@ -127,11 +127,15 @@ type ThreadPerfCardProps = {
 
 export default function ThreadPerfCard({ data }: ThreadPerfCardProps) {
     const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
+    const [selectedThread, setSelectedThread] = useState('svMain');
 
+    const threadDisplayName = getThreadDisplayName(selectedThread);
     return (
         <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[22rem] max-h-[22rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
-                <h3 className="tracking-tight text-sm font-medium line-clamp-1">Thread performance (last minute)</h3>
+                <h3 className="tracking-tight text-sm font-medium line-clamp-1">
+                    {threadDisplayName} Thread Performance (last minute)
+                </h3>
                 <div className='hidden xs:block'><BarChartHorizontalIcon /></div>
             </div>
             <DebouncedResizeContainer onDebouncedResize={setChartSize}>

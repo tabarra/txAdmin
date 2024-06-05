@@ -85,3 +85,9 @@ export type SvRtLogType = (SvRtLogSvCloseType | SvRtLogSvBootType | SvRtLogDataT
 export type SvRtPerfCountsType = z.infer<typeof SvRtPerfCountsSchema>;
 export type SvRtPerfBoundariesType = z.infer<typeof SvRtPerfBoundariesSchema>;
 export type LogNodeHeapEventType = z.infer<typeof SvRtLogNodeHeapEventSchema>;
+
+export type SvRtPerfCountsThreadType = z.infer<typeof SvRtPerfCountsThreadSchema>;
+export type SvRtLogDataFilteredType = Omit<SvRtLogDataType, 'perf'> & {
+    perf: SvRtPerfCountsThreadType
+};
+export type SvRtLogFilteredType = (SvRtLogSvCloseType | SvRtLogSvBootType | SvRtLogDataFilteredType)[];

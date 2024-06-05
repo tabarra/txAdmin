@@ -3,13 +3,14 @@ import fsp from 'node:fs/promises';
 import * as d3array from 'd3-array';
 import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
-import { SvRtLogNodeHeapEventSchema, SvRtFileSchema, isSvRtLogDataType } from './perfSchemas';
+import { SvRtLogNodeHeapEventSchema, SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName } from './perfSchemas';
 import type { LogNodeHeapEventType, SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
 import { didPerfReset, diffPerfs, fetchFxsMemory, fetchRawPerfData } from './perfUtils';
 import { optimizeSvRuntimeLog } from './logOptimizer';
 import { convars } from '@core/globalData';
 import { ZodError } from 'zod';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TICKS } from './config';
+import { PerfChartApiResp } from '@core/webroutes/perfChart';
 const console = consoleFactory(modulename);
 
 
@@ -280,6 +281,27 @@ export default class SvRuntimeStatsManager {
             await fsp.writeFile(this.logFilePath, JSON.stringify(savePerfData));
         } catch (error) {
             console.warn(`Failed to save ${LOG_DATA_FILE_NAME} with message: ${(error as Error).message}`);
+        }
+    }
+
+
+    /**
+     * Returns the data for charting the performance of a specific thread
+     */
+    getChartData(threadName: string): PerfChartApiResp {
+        if (!isValidPerfThreadName(threadName)) return { error: 'invalid_thread_name' };
+        if (!this.statsLog.length || !this.lastPerfBoundaries?.length) return { error: 'data_unavailable' };
+
+        //Processing data
+        return {
+            boundaries: this.lastPerfBoundaries,
+            threadPerfLog: this.statsLog.map((log) => {
+                if (!isSvRtLogDataType(log)) return log;
+                return {
+                    ...log,
+                    perf: log.perf[threadName],
+                };
+            })
         }
     }
 

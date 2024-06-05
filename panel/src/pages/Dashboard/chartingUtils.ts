@@ -1,4 +1,4 @@
-import type { SvRtLogType, SvRtPerfHistType } from "@shared/otherTypes";
+import type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@shared/otherTypes";
 import { cloneDeep } from "lodash-es";
 
 
@@ -80,15 +80,15 @@ export const getBucketTicketsEstimatedTime = (boundaries: (string | number)[]) =
 /**
  * Map the performance data from count frequency histogram to time-weighted histogram.
  */
-export const getTimeWeightedHistogram = (perfHist: { count: number, freqs: number[] }, bucketEstimatedAverageTimes: number[]) => {
-    if (bucketEstimatedAverageTimes.length !== perfHist.freqs.length) throw new Error('Invalid bucket count');
+export const getTimeWeightedHistogram = (perfHist: SvRtPerfCountsThreadType, bucketEstimatedAverageTimes: number[]) => {
+    if (perfHist.buckets.length !== bucketEstimatedAverageTimes.length) throw new Error('Invalid bucket count');
 
     //Calculate the total estimated time
     let totalEstimatedTime = 0;
     const bucketEstimatedCumulativeTime = [];
     for (let bucketIndex = 0; bucketIndex < bucketEstimatedAverageTimes.length; bucketIndex++) {
-        const bucketCountFreq = (typeof perfHist.freqs[bucketIndex] === 'number') ? perfHist.freqs[bucketIndex] : 0;
-        const calculatedTime = bucketCountFreq * bucketEstimatedAverageTimes[bucketIndex];
+        const bucketTickCount = (typeof perfHist.buckets[bucketIndex] === 'number') ? perfHist.buckets[bucketIndex] : 0;
+        const calculatedTime = bucketTickCount * bucketEstimatedAverageTimes[bucketIndex];
         bucketEstimatedCumulativeTime.push(calculatedTime);
         totalEstimatedTime += calculatedTime;
     }
@@ -116,7 +116,7 @@ export type PerfLifeSpanType = {
     closeReason?: string;
     log: PerfSnapType[];
 }
-type PerfProcessorType = (perfLog: SvRtPerfHistType) => number[];
+type PerfProcessorType = (perfLog: SvRtPerfCountsThreadType) => number[];
 const minPerfTime = 60 * 1000;
 const maxPerfTimeGap = 15 * 60 * 1000; //15 minutes
 const emptyPerfLifeSpan: PerfLifeSpanType = {
@@ -129,8 +129,11 @@ const emptyPerfLifeSpan: PerfLifeSpanType = {
 /**
  * Slices the log into groups representing server lifespan.
  */
-export const splitLogIntoLifespans = (perfLog: SvRtLogType, perfProcessor: PerfProcessorType) => {
-    const lifespans: PerfLifeSpanType[] = [];
+export const processPerfLog = (perfLog: SvRtLogFilteredType, perfProcessor: PerfProcessorType) => {
+    let dataStart: Date | undefined;
+    let dataEnd: Date | undefined;
+    let lifespans: PerfLifeSpanType[] = [];
+
     let currentLifespan: PerfLifeSpanType = cloneDeep(emptyPerfLifeSpan);
     for (const currEntry of perfLog) {
         if (currentLifespan === undefined) {
@@ -177,9 +180,14 @@ export const splitLogIntoLifespans = (perfLog: SvRtLogType, perfProcessor: PerfP
                     currentLifespan = cloneDeep(emptyPerfLifeSpan);
                 }
             }
+            const perfStartTime = new Date(perfStartTs);
+            const perfEndTime = new Date(currEntry.ts);
+            if (!dataStart) dataStart = perfStartTime;
+            dataEnd = perfEndTime;
+
             currentLifespan.log.push({
-                start: new Date(perfStartTs),
-                end: new Date(currEntry.ts),
+                start: perfStartTime,
+                end: perfEndTime,
                 players: currEntry.players,
                 fxsMemory: currEntry.fxsMemory,
                 nodeMemory: currEntry.nodeMemory,
@@ -193,5 +201,23 @@ export const splitLogIntoLifespans = (perfLog: SvRtLogType, perfProcessor: PerfP
         lifespans.push(currentLifespan);
     }
 
-    return lifespans;
+    //Filter to only lifespans with data
+    lifespans = lifespans.filter((lifespan) => lifespan.log.length);
+
+    return (dataStart && dataEnd && lifespans.length)
+        ? { dataStart, dataEnd, lifespans }
+        : undefined;
+}
+
+
+/**
+ * Get thread display name
+ */
+export const getThreadDisplayName = (thread: string) => {
+    switch (thread) {
+        case 'svSync': return 'Sync';
+        case 'svNetwork': return 'Network';
+        case 'svMain': return 'Main';
+        default: return thread;
+    }
 }

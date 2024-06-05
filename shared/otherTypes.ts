@@ -3,7 +3,8 @@ export type { BanTemplatesDataType, BanDurationType } from "@core/webroutes/banT
 export type { GetBanTemplatesSuccessResp } from "@core/webroutes/banTemplates/getBanTemplates";
 export type { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/webroutes/banTemplates/saveBanTemplates";
 export type { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/webroutes/history/actions";
-export type { SvRtLogType, SvRtPerfHistType } from "@core/components/StatsManager/svRuntime/perfSchemas";
+export type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@core/components/StatsManager/svRuntime/perfSchemas";
+export type { PerfChartApiResp, PerfChartApiSuccessResp } from "@core/webroutes/perfChart";
 
 
 export type UpdateDataType = {

@@ -27,15 +27,6 @@ export default (config: WebServerConfigType) => {
         disableHeader: true,
         id: (ctx: any) => ctx.txVars.realIP,
     });
-    const chartDataLimiter = KoaRateLimit({
-        driver: 'memory',
-        db: new Map(),
-        max: 10,
-        duration: 30 * 1000,
-        errorMessage: JSON.stringify({ failReason: 'rate_limiter' }),
-        disableHeader: true,
-        id: (ctx: any) => ctx.txVars.realIP,
-    });
 
     //Rendered Pages
     router.get('/legacy/adminManager', webAuthMw, webRoutes.adminManager_page);
@@ -99,7 +90,7 @@ export default (config: WebServerConfigType) => {
     //Data routes
     router.get('/serverLog/partial', apiAuthMw, webRoutes.serverLogPartial);
     router.get('/systemLog/:scope', apiAuthMw, webRoutes.systemLogs);
-    router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData);
+    router.get('/perfChartData/:thread', apiAuthMw, webRoutes.perfChart);
 
     /*
         FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download

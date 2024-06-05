@@ -1,6 +1,6 @@
 import { expect, suite, it } from 'vitest';
-import type { SvRtLogType, SvRtPerfHistType } from "@shared/otherTypes";
-import { formatTickBoundary, getBucketTicketsEstimatedTime, getMinTickIntervalMarker, getTimeWeightedHistogram, splitLogIntoLifespans } from './chartingUtils';
+import type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@shared/otherTypes";
+import { formatTickBoundary, getBucketTicketsEstimatedTime, getMinTickIntervalMarker, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
 
 
 suite('getMinTickIntervalMarker', () => {
@@ -124,7 +124,7 @@ suite('getBucketTicketsEstimatedTime', () => {
         const expected = [0.0005, 0.0015, 0.003, 0.005, 0.007, 0.009, 0.0125, 0.0175, 0.025, 0.04, 0.06, 0.085, 0.125, 0.2, 0.3125];
         const result = fnc(boundaries);
         for (const [i, value] of result.entries()) {
-            expect(Math.abs(value - expected[i])).toBeLessThan(Number.EPSILON);
+            expect(Math.abs(value - expected[i])).toBeLessThanOrEqual(Number.EPSILON);
         }
     });
 });
@@ -135,72 +135,95 @@ suite('getTimeWeightedHistogram', () => {
     //NOTE: the count 9999 does not matter for this test
 
     it('should return an array of the same length as freqs', () => {
-        const perfHist = { count: 9999, freqs: [1, 0, 0] };
+        const perfHist = { count: 9999, sum: 9999, buckets: [1, 0, 0] };
         const result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
-        expect(result.length).toEqual(perfHist.freqs.length);
+        expect(result.length).toEqual(perfHist.buckets.length);
     });
 
     it('should correctly calculate the time-weighted histogram', () => {
-        let perfHist = { count: 9999, freqs: [1, 0, 0] };
+        let perfHist = { count: 9999, sum: 9999, buckets: [1, 0, 0] };
         let result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
         expect(result).toEqual([1, 0, 0]);
 
-        perfHist = { count: 9999, freqs: [0, 0, 1] };
+        perfHist = { count: 9999, sum: 9999, buckets: [0, 0, 1] };
         result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
         expect(result).toEqual([0, 0, 1]);
 
-        perfHist = { count: 9999, freqs: [0.5, 0, 0.5] };
+        perfHist = { count: 9999, sum: 9999, buckets: [100, 0, 100] };
         result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
-        //If the total count was 100, it would be 50x1s + 50x50s = 2550s
-        expect(result).toEqual([50 / 2550, 0 / 2550, 2500 / 2550]);
+        //For total count of 200, result should be 100x1s + 0*5s + 100x50s = 5100s
+        expect(result).toEqual([100 / 5100, 0 / 2550, 5000 / 5100]);
 
-        perfHist = { count: 9999, freqs: [0.8, 0.15, 0.05] };
+        perfHist = { count: 9999, sum: 9999, buckets: [80, 150, 5] };
         result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
-        //If the total count was 100, it would be 80x1s + 15x5s + 5x50s = 405s
-        const expected = [(80 * 1) / 405, (15 * 5) / 405, (5 * 50) / 405];
+        //For total count of 235, result should be 80x1s + 150*5s + 5x50s = 1080s
+        const expected = [(80 * 1) / 1080, (150 * 5) / 1080, (5 * 50) / 1080];
         for (const [i, value] of result.entries()) {
-            expect(Math.abs(value - expected[i])).toBeLessThan(Number.EPSILON);
+            expect(Math.abs(value - expected[i])).toBeLessThanOrEqual(Number.EPSILON);
         }
     });
 
+    it('the sum of values should be 1', () => {
+        const randBucketEstimatedAverageTimes = [
+            Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
+        ]
+        const perfHist = {
+            count: 9999, sum: 9999, buckets: [
+                Math.floor(Math.random() * 100),
+                Math.floor(Math.random() * 100),
+                Math.floor(Math.random() * 100),
+                Math.floor(Math.random() * 100),
+                Math.floor(Math.random() * 100),
+            ]
+        };
+        const result = getTimeWeightedHistogram(perfHist, randBucketEstimatedAverageTimes);
+        const sum = result.reduce((acc, val) => acc + val, 0);
+        expect(Math.abs(sum - 1)).toBeLessThanOrEqual(Number.EPSILON);
+    });
+
     it('should handle freqs with non-number values', () => {
-        const perfHist = { count: 9999, freqs: [0.5, 'notANumber', 0.5] };
+        const perfHist = { count: 9999, sum: 9999, buckets: [5, 'notANumber', 5] };
         const result = getTimeWeightedHistogram(perfHist as any, bucketEstimatedAverageTimes);
-        expect(result).toEqual([50 / 2550, 0 / 2550, 2500 / 2550]);
+        expect(result).toEqual([5 / 255, 0 / 255, 250 / 255]);
     });
 });
 
 
 
-suite('splitLogIntoLifespans', () => {
-    type PerfProcessorType = (perfLog: SvRtPerfHistType) => number[];
+suite('processPerfLog', () => {
+    type PerfProcessorType = (perfLog: SvRtPerfCountsThreadType) => number[];
     const minuteMs = 60 * 1000;
     const perfTestResp = Symbol('perfTestResp');
     const perfProcessor: PerfProcessorType = () => perfTestResp as any as number[];
-    const perfData = {
-        svMain: { count: 1, freqs: [1, 2, 3] },
-        svNetwork: { count: 1, freqs: [1, 2, 3] },
-        svSync: { count: 1, freqs: [1, 2, 3] },
-    }
+    const perfData: SvRtPerfCountsThreadType = { count: 9999, sum: 9999, buckets: [1, 2, 3] }
     const initialEpoch = new Date('2024-01-01').getTime();
 
     suite('should overall work', () => {
-        const perfLog: SvRtLogType = [
+        const perfLog: SvRtLogFilteredType = [
             { type: 'svBoot', ts: initialEpoch, duration: 55 },
             { type: 'data', ts: initialEpoch + minuteMs, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
             { type: 'data', ts: initialEpoch + (minuteMs * 5), players: 20, fxsMemory: 200, nodeMemory: 300, perf: perfData },
             { type: 'svClose', ts: initialEpoch + (minuteMs * 6), reason: 'test' },
         ];
 
-        const result = splitLogIntoLifespans(perfLog, perfProcessor);
-
+        const result = processPerfLog(perfLog, perfProcessor);
+        expect(result).toBeDefined();
+        const { dataStart, dataEnd, lifespans } = result!;
         it('should have general structure', () => {
-            expect(result.length).toBe(1);
-            expect(result[0].bootDuration).toBe(55);
-            expect(result[0].log.length).toBe(2);
-            expect(result[0].closeReason).toBe('test');
+            expect(lifespans.length).toBe(1);
+            expect(lifespans[0].bootDuration).toBe(55);
+            expect(lifespans[0].log.length).toBe(2);
+            expect(lifespans[0].closeReason).toBe('test');
         });
-        const firstLifeSpan = result[0];
+        it('should detect the start and stop time', () => {
+            expect(dataStart).toEqual(new Date(initialEpoch));
+            expect(dataEnd).toEqual(new Date(initialEpoch + (minuteMs * 5)));
+        });
+        const firstLifeSpan = lifespans[0];
         const firstSnap = firstLifeSpan.log[0];
         const secondSnap = firstLifeSpan.log[1];
         it('should detect the first snap correctly', () => {
@@ -223,114 +246,159 @@ suite('splitLogIntoLifespans', () => {
 
     suite('svBoot', () => {
         it('should close pending lifespans', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'data', ts: initialEpoch, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
                 { type: 'svBoot', ts: initialEpoch + minuteMs, duration: 55 },
                 { type: 'data', ts: initialEpoch + (minuteMs * 5), players: 20, fxsMemory: 200, nodeMemory: 300, perf: perfData },
                 { type: 'svClose', ts: initialEpoch + (minuteMs * 6), reason: 'test' },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result.length).toBe(2);
-            expect(result[0].bootDuration).toBeUndefined();
-            expect(result[0].closeReason).toBeUndefined();
-            expect(result[1].bootDuration).toBe(55);
-            expect(result[1].closeReason).toBe('test');
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans.length).toBe(2);
+            expect(lifespans[0].bootDuration).toBeUndefined();
+            expect(lifespans[0].closeReason).toBeUndefined();
+            expect(lifespans[1].bootDuration).toBe(55);
+            expect(lifespans[1].closeReason).toBe('test');
         });
 
         it('should ignore duplicated svBoot', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'data', ts: initialEpoch, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
                 { type: 'svBoot', ts: initialEpoch, duration: 44 },
                 { type: 'svBoot', ts: initialEpoch + minuteMs, duration: 55 },
                 { type: 'data', ts: initialEpoch + (minuteMs * 5), players: 20, fxsMemory: 200, nodeMemory: 300, perf: perfData },
                 { type: 'svClose', ts: initialEpoch + (minuteMs * 6), reason: 'test' },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result.length).toBe(2);
-            expect(result[0].bootDuration).toBeUndefined();
-            expect(result[0].closeReason).toBeUndefined();
-            expect(result[1].bootDuration).toBe(55);
-            expect(result[1].closeReason).toBe('test');
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans.length).toBe(2);
+            expect(lifespans[0].bootDuration).toBeUndefined();
+            expect(lifespans[0].closeReason).toBeUndefined();
+            expect(lifespans[1].bootDuration).toBe(55);
+            expect(lifespans[1].closeReason).toBe('test');
         });
     });
 
     suite('svClose', () => {
         it('should ignore svClose without previous data', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'svClose', ts: initialEpoch, reason: 'test' },
                 { type: 'data', ts: initialEpoch + (minuteMs * 6), players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result.length).toBe(1);
-            expect(result[0].closeReason).toBeUndefined();
-            expect(result[0].log.length).toBe(1);
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans.length).toBe(1);
+            expect(lifespans[0].closeReason).toBeUndefined();
+            expect(lifespans[0].log.length).toBe(1);
         });
 
         it('should ignore duplicated svClose', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'svBoot', ts: initialEpoch, duration: 55 },
                 { type: 'data', ts: initialEpoch + minuteMs, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
                 { type: 'svClose', ts: initialEpoch + (minuteMs * 6), reason: 'test' },
                 { type: 'svClose', ts: initialEpoch + (minuteMs * 7), reason: 'test' },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result.length).toBe(1);
-            expect(result[0].bootDuration).toBe(55);
-            expect(result[0].closeReason).toBe('test');
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans.length).toBe(1);
+            expect(lifespans[0].bootDuration).toBe(55);
+            expect(lifespans[0].closeReason).toBe('test');
         });
 
         it('should close pending lifespans', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'data', ts: initialEpoch, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
                 { type: 'svClose', ts: initialEpoch + minuteMs, reason: 'test' },
                 { type: 'data', ts: initialEpoch + (minuteMs * 6), players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result.length).toBe(2);
-            expect(result[0].closeReason).toBe('test');
-            expect(result[1].log.length).toBe(1);
-            expect(result[1].closeReason).toBeUndefined();
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans.length).toBe(2);
+            expect(lifespans[0].closeReason).toBe('test');
+            expect(lifespans[1].log.length).toBe(1);
+            expect(lifespans[1].closeReason).toBeUndefined();
         });
     });
 
     suite('svData', () => {
         it('break lifespan if gap in data above 15 mins', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'data', ts: initialEpoch, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
                 { type: 'data', ts: initialEpoch + (minuteMs * 16), players: 20, fxsMemory: 200, nodeMemory: 300, perf: perfData },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result.length).toBe(2);
-            expect(result[0].log.length).toBe(1);
-            expect(result[1].log.length).toBe(1);
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans.length).toBe(2);
+            expect(lifespans[0].log.length).toBe(1);
+            expect(lifespans[1].log.length).toBe(1);
         });
 
         it('should default start to be 1 min old if svBoot is above 15 mins old', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'svBoot', ts: initialEpoch - (minuteMs * 16), duration: 55 },
                 { type: 'data', ts: initialEpoch, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result.length).toBe(1);
-            expect(result[0].log.length).toBe(1);
-            expect(result[0].log[0].start).toEqual(new Date(initialEpoch - minuteMs));
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans.length).toBe(1);
+            expect(lifespans[0].log.length).toBe(1);
+            expect(lifespans[0].log[0].start).toEqual(new Date(initialEpoch - minuteMs));
         });
 
         it('should default for the start of data to be 1 min ago', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'data', ts: initialEpoch, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result[0].log[0].start).toEqual(new Date(initialEpoch - minuteMs));
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans[0].log[0].start).toEqual(new Date(initialEpoch - minuteMs));
         });
 
         it('should default data start time to svBoot if less than 15 mins old', () => {
-            const perfLog: SvRtLogType = [
+            const perfLog: SvRtLogFilteredType = [
                 { type: 'svBoot', ts: initialEpoch, duration: 55 },
                 { type: 'data', ts: initialEpoch + (minuteMs * 5), players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
             ];
-            const result = splitLogIntoLifespans(perfLog, perfProcessor);
-            expect(result[0].log[0].start).toEqual(new Date(initialEpoch));
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans[0].log[0].start).toEqual(new Date(initialEpoch));
+        });
+    });
+
+    suite('should handle filtering', () => {
+        it('no lifespans if no data', () => {
+            const perfLog: SvRtLogFilteredType = [
+                { type: 'svBoot', ts: initialEpoch, duration: 55 },
+                { type: 'svClose', ts: initialEpoch + (minuteMs * 6), reason: 'test' },
+            ];
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeUndefined();
+        });
+
+        it('filters out lifespans with no data', () => {
+            const perfLog: SvRtLogFilteredType = [
+                { type: 'svBoot', ts: initialEpoch, duration: 55 },
+                { type: 'data', ts: initialEpoch + minuteMs, players: 10, fxsMemory: 100, nodeMemory: 200, perf: perfData },
+                { type: 'svClose', ts: initialEpoch + (minuteMs * 6), reason: 'test' },
+                { type: 'svBoot', ts: initialEpoch + (minuteMs * 10), duration: 55 },
+                { type: 'svClose', ts: initialEpoch + (minuteMs * 15), reason: 'test' },
+            ];
+            const result = processPerfLog(perfLog, perfProcessor);
+            expect(result).toBeDefined();
+            const { dataStart, dataEnd, lifespans } = result!;
+            expect(lifespans.length).toBe(1);
+            expect(dataStart).toEqual(new Date(initialEpoch));
+            expect(dataEnd).toEqual(new Date(initialEpoch + minuteMs));
         });
     });
 });

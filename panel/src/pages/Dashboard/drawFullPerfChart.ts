@@ -1,53 +1,46 @@
 import * as d3 from 'd3';
-import { formatTickBoundary } from './chartingUtils';
-import { createRandomHslColor } from '@/lib/utils';
+import { PerfLifeSpanType } from './chartingUtils';
 
-type SizeType = {
-    width: number;
-    height: number;
+
+//Helpers
+const translate = (x: number, y: number) => `translate(${x}, ${y})`;
+
+type drawFullPerfChartProps = {
+    svgRef: SVGSVGElement;
+    size: {
+        width: number;
+        height: number;
+    };
+    margins: {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    };
+    boundaries: string[];
+    dataStart: Date;
+    dataEnd: Date;
+    lifespans: PerfLifeSpanType[];
 };
-type MarginsType = {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-};
 
-
-const translate = (x: number, y: number) => {
-    return `translate(${x}, ${y})`;
-};
-
-export const boundaries = [0.001, 0.002, 0.004, 0.006, 0.008, 0.010, 0.015, 0.020, 0.030, 0.050, 0.070, 0.100, 0.150, 0.250, '+Inf'];
-export const boundariesLabels = boundaries.map(formatTickBoundary);
-export const exampleData = [
-    {
-        ts: new Date('2024-05-31T00:00:00.000Z'),
-    },
-    {
-        ts: new Date('2024-06-01T00:00:00.000Z'),
-    },
-    {
-        ts: new Date('2024-06-02T00:00:00.000Z'),
-    },
-    {
-        ts: new Date('2024-06-03T00:00:00.000Z'),
-    },
-];
-
-
-export default function drawFullPerfChart(svgRef: SVGSVGElement, { width, height }: SizeType, margins: MarginsType) {
+export default function drawFullPerfChart({
+    svgRef,
+    size: { width, height },
+    margins,
+    boundaries,
+    dataStart,
+    dataEnd,
+    lifespans,
+}: drawFullPerfChartProps) {
     d3.select(svgRef).selectAll("*").remove(); // FIXME: DEBUG Clear SVG
 
     const svg = d3.select(svgRef);
     console.log(svg, Math.random().toString(36).substring(2, 15));
 
-    console.log(exampleData);
 
     // X Axis - time
     const timeScale = d3.scaleTime()
-        //FIXME: calculate dynamically
-        .domain([exampleData[0].ts, new Date()])
+        .domain([dataStart, dataEnd])
         .range([margins.left, width - margins.right]);
 
     const xAxis = d3.axisBottom(timeScale);
@@ -59,10 +52,10 @@ export default function drawFullPerfChart(svgRef: SVGSVGElement, { width, height
 
     // Y Right Axis - Tick Times
     const tickBucketsScale = d3.scaleBand()
-        .domain(boundariesLabels)
+        .domain(boundaries)
         .range([height - margins.bottom, margins.top]);
     const tickBucketsAxis = d3.axisRight(tickBucketsScale)
-        .tickFormat((d, i) => boundariesLabels[i]);
+    // .tickFormat((d, i) => boundariesLabels[i]);
     svg.append("g")
         .attr("id", "tickBucketsAxis")
         .attr("class", "axis")
@@ -91,18 +84,25 @@ export default function drawFullPerfChart(svgRef: SVGSVGElement, { width, height
         .attr('height', height - margins.top - margins.bottom)
         .attr('fill', bgColor)
 
+    const drawLifespan = (selection: d3.Selection<d3.EnterElement, PerfLifeSpanType, SVGGElement, unknown>) => {
+        console.log('drawLifespan', selection);
+    }
+
 
     // Drawing the Heatmap
     const heatmap = svg.append("g")
         .attr("id", "heatmap")
         .selectAll('rect')
-        .data(exampleData)
+        .data(lifespans)
         .enter()
-        .append('rect')
-        .attr('x', (d, i) => timeScale(d.ts))
-        .attr('data-idk', (d, i) => d.ts.constructor.name)
-        .attr('y', margins.top)
-        .attr("fill", createRandomHslColor())
-        .attr("width", 20)
-        .attr('height', height - margins.top - margins.bottom)
+        .call(drawLifespan);
+
+
+    // .append('rect')
+    // .attr('x', (d, i) => timeScale(d.ts))
+    // .attr('data-idk', (d, i) => d.ts.constructor.name)
+    // .attr('y', margins.top)
+    // .attr("fill", createRandomHslColor())
+    // .attr("width", 20)
+    // .attr('height', height - margins.top - margins.bottom)
 }

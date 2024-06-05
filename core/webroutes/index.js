@@ -3,7 +3,7 @@ export { default as diagnostics_page } from './diagnostics/page';
 export { default as diagnostics_sendReport } from './diagnostics/sendReport';
 export { default as intercom } from './intercom.js';
 export { default as resources } from './resources.js';
-export { default as chartData } from './chartData.js';
+export { default as perfChart } from './perfChart';
 export { default as systemLogs } from './systemLogs';
 
 export { default as auth_addMasterPin } from './authentication/addMasterPin.js';

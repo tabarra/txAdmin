@@ -58,6 +58,8 @@
     - [ ] warning for dev builds of txadmin
     - [ ] warning for top servers
     - [ ] button to docs page with md file lazy loaded
+    - [ ] route new dashboard
+    - [ ] remove old dashboard code & all related dependencies
 
 
 
