@@ -1,10 +1,10 @@
 const modulename = 'WebServer:Diagnostics';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
-import Cache from '../../extras/dataCache';
+import MemCache from '@extras/MemCache';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
-const cache = new Cache(5);
+const cache = new MemCache(5);
 
 
 /**
@@ -12,7 +12,7 @@ const cache = new Cache(5);
  */
 export default async function Diagnostics(ctx: AuthedCtx) {
     const cachedData = cache.get();
-    if (cachedData !== false) {
+    if (cachedData) {
         cachedData.message = 'This page was cached in the last 5 seconds';
         return ctx.utils.render('main/diagnostics', cachedData);
     }

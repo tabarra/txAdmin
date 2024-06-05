@@ -9,7 +9,7 @@ const console = consoleFactory(modulename);
 /**
  * Returns the fxserver's data
  */
-const getinitialData = (txAdmin: TxAdmin): GlobalStatusType => {
+const getInitialData = (txAdmin: TxAdmin): GlobalStatusType => {
     // Check if the deployer is running or setup is pending
     let configPendingStep: ServerConfigPendingStepType;
     if (globals.deployer !== null) {
@@ -50,6 +50,6 @@ export default (txAdmin: TxAdmin): RoomType => ({
     cumulativeBuffer: false,
     outBuffer: null,
     initialData: () => {
-        return getinitialData(txAdmin);
+        return getInitialData(txAdmin);
     },
 })

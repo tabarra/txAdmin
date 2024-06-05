@@ -156,7 +156,7 @@ export default class PlayerlistManager {
         if (payload.event === 'playerJoining') {
             try {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
-                if (typeof this.#playerlist[payload.id] !== 'undefined') throw new Error(`duplicated player id`);
+                if (this.#playerlist[payload.id] !== undefined) throw new Error(`duplicated player id`);
                 //TODO: pass serverInstance instead of playerDatabase
                 const svPlayer = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
                 this.#playerlist[payload.id] = svPlayer;
