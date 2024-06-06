@@ -178,9 +178,11 @@ export const handleExternalLinkClick = (event: React.MouseEvent<HTMLElement, Mou
 /**
  * Returns a random hsl() color - useful for testing react rendering stuff
  */
-export const createRandomHslColor = () => {
+export const createRandomHslColor = (alpha?: number) => {
     const hue = Math.floor(Math.random() * 360);
-    return `hsl(${hue}, 90%, 65%)`;
+    return typeof alpha === 'number'
+        ? `hsla(${hue}, 100%, 50%, ${alpha})`
+        : `hsl(${hue}, 100%, 50%)`
 }
 
 

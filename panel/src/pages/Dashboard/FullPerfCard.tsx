@@ -35,12 +35,14 @@ const FullPerfChart = memo(({ apiData, width, height }: FullPerfChartProps) => {
     useEffect(() => {
         if (!processedData || !svgRef.current || !width || !height) return;
         if (!processedData.lifespans.length) return; //only in case somehow the api returned, but no data found
+        console.time('drawFullPerfChart');
         drawFullPerfChart({
             svgRef: svgRef.current,
             size: { width, height },
             margins: { top: 0, right: 50, bottom: 30, left: 40 },
             ...processedData,
         });
+        console.timeEnd('drawFullPerfChart');
     }, [processedData, width, height, svgRef]);
 
     if (!width || !height) return null;

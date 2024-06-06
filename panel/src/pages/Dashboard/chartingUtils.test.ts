@@ -79,14 +79,22 @@ suite('formatTickBoundary', () => {
 
     it('should deal with values >= 1 second', () => {
         let result = formatTickBoundary(1);
-        expect(result).toBe('1 s');
-
+        expect(result).toBe('1.00 s');
+        result = formatTickBoundary(7.5);
+        expect(result).toBe('7.50 s');
+        result = formatTickBoundary(10);
+        expect(result).toBe('10.0 s');
+        result = formatTickBoundary(100);
+        expect(result).toBe('100 s');
+        result = formatTickBoundary(100.4);
+        expect(result).toBe('100 s');
+        result = formatTickBoundary(100.5);
+        expect(result).toBe('101 s');
+        
         result = formatTickBoundary(1.234);
         expect(result).toBe('1.23 s');
-
         result = formatTickBoundary(1.239);
         expect(result).toBe('1.24 s');
-
         result = formatTickBoundary(150);
         expect(result).toBe('150 s');
     });

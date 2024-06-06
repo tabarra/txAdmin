@@ -38,6 +38,28 @@ export const arePerfBoundariesValid = (boundaries: (number | string)[]): boundar
 
 
 /**
+ * Returns a buckets array with individual counts instead of cumulative counts
+ */
+export const revertCumulativeBuckets = (cumulativeCounts: number[]): number[] => {
+    const individualCounts = [];
+    for (let i = 0; i < cumulativeCounts.length; i++) {
+        const currCount = cumulativeCounts[i];
+        if (typeof currCount !== 'number') throw new Error('number expected');
+        if (!Number.isInteger(currCount)) throw new Error('integer expected');
+        if (!Number.isFinite(currCount)) throw new Error('finite number expected');
+        if (i === 0) {
+            individualCounts.push(currCount);
+        } else {
+            const lastCount = cumulativeCounts[i - 1] as number;
+            if (lastCount > currCount) throw new Error('retrograde cumulative count');
+            individualCounts.push(currCount - lastCount);
+        }
+    }
+    return individualCounts;
+};
+
+
+/**
  * Parses the output of FXServer /perf/ in the proteus format
  */
 export const parseRawPerf = (rawData: string) => {
@@ -126,6 +148,11 @@ export const parseRawPerf = (rawData: string) => {
     if (invalid.length) {
         throw new Error(`${invalid.length} invalid threads in /perf/`);
     }
+
+    //Reverse the cumulative buckets
+    perfMetrics.svSync.buckets = revertCumulativeBuckets(perfMetrics.svSync.buckets);
+    perfMetrics.svNetwork.buckets = revertCumulativeBuckets(perfMetrics.svNetwork.buckets);
+    perfMetrics.svMain.buckets = revertCumulativeBuckets(perfMetrics.svMain.buckets);
 
     return { perfBoundaries, perfMetrics };
 };

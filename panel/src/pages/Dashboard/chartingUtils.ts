@@ -37,12 +37,12 @@ export const formatTickBoundary = (value: number | string) => {
         return '<1 ms';
     } else if (value >= 0.001 && value < 1) {
         return `${(value * 1000).toFixed(0)} ms`;
+    } else if (value < 10) {
+        return `${value.toFixed(2)} s`;
+    } else if (value < 100) {
+        return `${value.toFixed(1)} s`;
     } else {
-        if (value % 1 !== 0) {
-            return `${value.toFixed(value < 1 ? 3 : 2)} s`;
-        } else {
-            return `${value.toFixed(0)} s`;
-        }
+        return `${value.toFixed(0)} s`;
     }
 }
 
