@@ -150,7 +150,7 @@ export default function FullPerfCard() {
     }
 
     return (
-        <div className="w-full h-[32rem] py-2 rounded-lg border shadow-sm flex flex-col fill-primary">
+        <div className="w-full h-[32rem] py-2 rounded-lg border bg-card shadow-sm flex flex-col fill-primary">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
                     Server performance

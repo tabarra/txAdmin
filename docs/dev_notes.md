@@ -31,7 +31,7 @@
     - [x] add thread performance chart
     - [ ] write perf chart code
         - [x] d3 canvas responsive with resize debounced
-        - [ ] axis with zoom
+        - [x] axis with zoom
         - [ ] cursor + atom for the hovered data
             - cursor not close enough to a group should disable it
         - [x] drawing heatmap
@@ -93,6 +93,8 @@
 
 
 ==================================================
+
+TODO: chart of new players per day
 
 d3.timeHours(new Date(1715741829000), new Date())[0]
 
