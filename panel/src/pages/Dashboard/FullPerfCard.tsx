@@ -15,6 +15,14 @@ type FullPerfChartProps = {
 
 const FullPerfChart = memo(({ apiData, width, height }: FullPerfChartProps) => {
     const svgRef = useRef<SVGSVGElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const margins = {
+        top: 0,
+        right: 50,
+        bottom: 30,
+        left: 40,
+        axis: 1
+    };
 
     //Process data only once
     const processedData = useMemo(() => {
@@ -23,6 +31,7 @@ const FullPerfChart = memo(({ apiData, width, height }: FullPerfChartProps) => {
         const perfProcessor = (perfLog: SvRtPerfCountsThreadType) => {
             return getTimeWeightedHistogram(perfLog, bucketTicketsEstimatedTime);
         }
+        // apiData.threadPerfLog = apiData.threadPerfLog.slice(-50)
         const parsed = processPerfLog(apiData.threadPerfLog, perfProcessor);
         if (!parsed) return null;
         return {
@@ -33,22 +42,44 @@ const FullPerfChart = memo(({ apiData, width, height }: FullPerfChartProps) => {
 
     //Redraw chart when data or size changes
     useEffect(() => {
-        if (!processedData || !svgRef.current || !width || !height) return;
+        if (!processedData || !svgRef.current || !canvasRef.current || !width || !height) return;
         if (!processedData.lifespans.length) return; //only in case somehow the api returned, but no data found
         console.time('drawFullPerfChart');
         drawFullPerfChart({
             svgRef: svgRef.current,
+            canvasRef: canvasRef.current,
             size: { width, height },
-            margins: { top: 0, right: 50, bottom: 30, left: 40 },
+            margins,
             ...processedData,
         });
         console.timeEnd('drawFullPerfChart');
-    }, [processedData, width, height, svgRef]);
+    }, [processedData, width, height, svgRef, canvasRef]);
 
     if (!width || !height) return null;
-    return (
-        <svg ref={svgRef} width={width} height={height} />
-    );
+    return (<>
+        <svg
+            ref={svgRef}
+            width={width}
+            height={height}
+            style={{
+                zIndex: 1,
+                position: 'absolute',
+                top: '0px',
+                left: '0px'
+            }}
+        />
+        <canvas
+            ref={canvasRef}
+            width={width - margins.left - margins.right}
+            height={height - margins.top - margins.bottom}
+            style={{
+                zIndex: 0,
+                position: 'absolute',
+                top: `${margins.top}px`,
+                left: `${margins.left}px`,
+            }}
+        />
+    </>);
 });
 
 function ChartErrorMessage({ error }: { error: Error | BackendApiError }) {

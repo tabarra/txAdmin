@@ -34,8 +34,8 @@
         - [ ] axis with zoom
         - [ ] cursor + atom for the hovered data
             - cursor not close enough to a group should disable it
-        - [ ] drawing heatmap
-        - [ ] drawing lines
+        - [x] drawing heatmap
+        - [x] drawing lines
         - [ ] drawing groups with the gaps
     - [x] write slicer code + tests
     - [x] change StatsManager.svRuntime to save counts instead of frequencies
