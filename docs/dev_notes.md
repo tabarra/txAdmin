@@ -36,7 +36,8 @@
             - cursor not close enough to a group should disable it
         - [x] drawing heatmap
         - [x] drawing lines
-        - [ ] drawing groups with the gaps
+        - [x] drawing groups with the gaps
+        - [ ] calculate initial zoom, maybe some linear interpolation
     - [x] write slicer code + tests
     - [x] change StatsManager.svRuntime to save counts instead of frequencies
     - [ ] apply it all to the perf chart
@@ -55,7 +56,7 @@
     - [ ] add other stats (player leave/joins?)
     - [ ] maybe: number callouts from legacy players page
     - [ ] mobile layout
-    - [ ] warning for dev builds of txadmin
+    - [x] warning for dev builds of txadmin (done in the sidebar instead)
     - [ ] warning for top servers
     - [ ] button to docs page with md file lazy loaded
     - [ ] route new dashboard

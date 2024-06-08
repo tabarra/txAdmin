@@ -11,6 +11,7 @@ import { convars } from '@core/globalData';
 import { ZodError } from 'zod';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TICKS } from './config';
 import { PerfChartApiResp } from '@core/webroutes/perfChart';
+import got from '@extras/got';
 const console = consoleFactory(modulename);
 
 
@@ -219,6 +220,15 @@ export default class SvRuntimeStatsManager {
         }
         if (!perfToSave) return;
 
+        //Get player count locally or from external source
+        let playerCount = this.#txAdmin.playerlistManager.onlineCount;
+        if(convars.debugExternalStatsSource){
+            try {
+                const playerCountResp = await got(`http://${fxServerHost}/players.json`).json();
+                playerCount = playerCountResp.length;
+            } catch (error) { }
+        }
+
         //Update cache
         this.lastPerfSaved = {
             ts: now,
@@ -227,7 +237,7 @@ export default class SvRuntimeStatsManager {
         const currSnapshot: SvRtLogDataType = {
             ts: now,
             type: 'data',
-            players: this.#txAdmin.playerlistManager.onlineCount,
+            players: playerCount,
             fxsMemory: this.lastFxsMemory ?? null,
             nodeMemory: this.lastNodeMemory?.used ?? null,
             perf: perfToSave,

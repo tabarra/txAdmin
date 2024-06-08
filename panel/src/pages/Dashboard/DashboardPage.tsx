@@ -114,7 +114,7 @@ export default function DashboardPage() {
     }, [rndCounter]);
 
     return (
-        <div className="w-full flex flex-col items-center justify-center gap-4">
+        <div className="w-full min-w-96 flex flex-col items-center justify-center gap-4">
             <div className="w-full grid grid-cols-8 gap-4 h-[22rem] max-h-[22rem] overflow-clip">
                 <ThreadPerfCard data={threadPerfChartData} />
                 <div className="py-2 px-4 rounded-lg border shadow-sm col-span-2 min-w-60 bg-card">
