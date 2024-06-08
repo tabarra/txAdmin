@@ -59,6 +59,7 @@ export default function drawFullPerfChart({
     // const bgColor = 
     const drawableAreaHeight = height - margins.top - margins.bottom;
     const drawableAreaWidth = width - margins.left - margins.right;
+    const middleDrawableAreaHeight = drawableAreaHeight / 2;
 
     svg.append('clipPath')
         .attr('id', 'fullPerfChartClipPath')
@@ -91,16 +92,17 @@ export default function drawFullPerfChart({
     const maxPlayers = d3.max(lifespans, lspn => d3.max(lspn.log, log => log.players))!;
     const maxFxsMemory = d3.max(lifespans, lspn => d3.max(lspn.log, log => log.fxsMemory))!;
     const maxNodeMemory = d3.max(lifespans, lspn => d3.max(lspn.log, log => log.nodeMemory))!;
-    const y2Padding = Math.round(tickBucketsScale.bandwidth() / 2);
-    const lineScalesRange = [height - margins.bottom - y2Padding, margins.top + y2Padding];
-    const playersScale = d3.scaleLinear([0, maxPlayers], lineScalesRange);
+    const maxPlayersDomain = Math.ceil((maxPlayers + 1) / 5) * 5;
+    const lineScalesRange = [height - margins.bottom, margins.top];
+    const playersScale = d3.scaleLinear([0, maxPlayersDomain], lineScalesRange);
     const fxsMemoryScale = d3.scaleLinear([0, maxFxsMemory], lineScalesRange)
     const nodeMemoryScale = d3.scaleLinear([0, maxNodeMemory], lineScalesRange)
 
 
     //Axis
-    const timeAxis = d3.axisBottom(timeScale);
-    chartGroup.append("g")
+    const timeAxisTicksScale = d3.scaleLinear([382, 1350], [7, 16]);
+    const timeAxis = d3.axisBottom(timeScale).ticks(timeAxisTicksScale(width));
+    const timeAxisGroup = chartGroup.append("g")
         .attr("transform", translate(0, height - margins.bottom))
         .attr("class", 'time-axis')
         .call(timeAxis);
@@ -197,17 +199,15 @@ export default function drawFullPerfChart({
         lifespanGSel: d3.Selection<d3.BaseType | SVGGElement, PerfLifeSpanType, SVGElement, unknown>
     ) => {
         //Background
-        lifespanGSel.selectAll('rect.bg')
-            .data(prepareLifespanDataItem)
-            .join('rect')
-            .attr('class', 'bg')
-            .attr('x', d => d.lifespanStartX)
-            .attr('y', margins.top)
-            .attr('width', d => d.lifespanWidth)
-            .attr('height', 5)
-            .attr('fill', d => createRandomHslColor());
-        // .attr('height', drawableAreaHeight)
-        // .attr('fill', 'rgba(0, 0, 0, 0.25)');
+        // lifespanGSel.selectAll('rect.bg')
+        //     .data(prepareLifespanDataItem)
+        //     .join('rect')
+        //     .attr('class', 'bg')
+        //     .attr('x', d => d.lifespanStartX)
+        //     .attr('y', margins.top)
+        //     .attr('width', d => d.lifespanWidth)
+        //     .attr('height', 5)
+        //     .attr('fill', d => createRandomHslColor());
 
         //Player lines
         // const nodeMemoryLineGenerator = d3.line<PerfSnapType>(
@@ -262,6 +262,39 @@ export default function drawFullPerfChart({
         .call(drawLifespan);
 
 
+    //Drawing day/night reference lines
+    // const drawDayNightMarkers = () => {
+    //     const dayNightInterval = d3.timeDays(dataStart, dataEnd, 1);
+    //     timeAxisGroup.selectAll("rect.day-night")
+    //         .data(dayNightInterval)
+    //         .join('rect')
+    //         .attr('class', 'day-night')
+    //         .attr('x', d => timeScale(d))
+    //         .attr('y', 0)
+    //         .attr('width', (d, i) => {
+    //             const dayDrawEnd = dayNightInterval[i + 1] ?? dataEnd;
+    //             return timeScale(dayDrawEnd) - timeScale(d);
+    //         })
+    //         .attr('height', margins.bottom)
+    //         .attr('fill', (d, i) => (i % 2) ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.2)');
+
+    //     // const timeMarkerInterval = d3.timeHours(dataStart, dataEnd, 12);
+    //     const timeMarkerInterval = d3.timeHour.every(12)!.range(dataStart, dataEnd);
+    //     chartGroup.selectAll("line.time-interval-markers")
+    //         .data(timeMarkerInterval)
+    //         .join('line')
+    //         .attr('class', 'time-interval-markers')
+    //         .attr('x1', d => Math.floor(timeScale(d)))
+    //         .attr('y1', 0)
+    //         .attr('x2', d => Math.floor(timeScale(d)))
+    //         .attr('y2', drawableAreaHeight + margins.bottom)
+    //         .attr('stroke', 'rgba(200, 200, 200, 0.75)')
+    //         .attr('stroke-width', 1)
+    //         .attr('stroke-dasharray', '3,3');
+
+    // }
+    // drawDayNightMarkers();
+
     // let referenceX: d3.Selection<SVGLineElement, PerfLifeSpanType, null, undefined>;
     // const drawReferenceLines = () => {
     //     if (referenceX) referenceX.remove();
@@ -276,6 +309,117 @@ export default function drawFullPerfChart({
     //         .attr('stroke-width', 2);
     // }
     // drawReferenceLines();
+
+
+    /**
+     * Cursor
+     */
+    const cursorLineVert = chartGroup.append('line')
+        .attr('class', 'cursorLineHorz')
+        .attr('stroke', 'rgba(216, 245, 19, 0.75)')
+        .attr('stroke-width', 1)
+        .attr('stroke-dasharray', '3,3');
+    const cursorLineHorz = chartGroup.append('line')
+        .attr('class', 'cursorLineHorz')
+        .attr('stroke', 'rgba(216, 245, 19, 0.75)')
+        .attr('stroke-width', 1)
+        .attr('stroke-dasharray', '3,3');
+    const cursorText = chartGroup.append('text')
+        .attr('class', 'cursorText')
+        .attr('fill', 'rgba(216, 245, 19)')
+        .attr('font-size', 12);
+    const cursorDot = chartGroup.append('circle')
+        .attr('class', 'cursorDot')
+        .attr('fill', 'red')
+        .attr('r', 4);
+
+    const clearCursor = () => {
+        cursorLineVert.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
+        cursorLineHorz.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
+        cursorText.attr('x', -99).attr('y', -99);
+        cursorDot.attr('cx', -99).attr('cy', -99);
+        //FIXME: clear cursor atom
+    };
+    clearCursor();
+
+
+    //Find the closest data point for a given X value
+    const maxAllowedGap = 20 * 60 * 1000;
+    const timeBisector = d3.bisector((lfspn: PerfSnapType) => lfspn.end).center;
+    const allLifespans = lifespans.flatMap(l => l.log);
+    const getClosestData = (x: number): PerfSnapType | undefined => {
+        const xPosDate = timeScale.invert(x);
+        const indexFound = timeBisector(allLifespans, xPosDate);
+        if (indexFound === -1) return;
+        const snapData = allLifespans[indexFound];
+        if (Math.abs(snapData.end.getTime() - xPosDate.getTime()) < maxAllowedGap) {
+            return snapData;
+        }
+    };
+
+
+    //Detect mouse over and show timestamp + draw vertical line
+    const handleMouseMove = (pointerX: number, pointerY: number) => {
+        // Find closest data point
+        const closestDataPoint = getClosestData(pointerX);
+        if (!closestDataPoint) {
+            return clearCursor();
+        }
+        // console.log('closestDataPoint:', closestDataPoint);
+
+        const pointData = {
+            x: timeScale(closestDataPoint.end),
+            y: playersScale(closestDataPoint.players),
+            val: closestDataPoint.players
+        };
+
+        // Draw cursor
+        cursorLineVert.attr('x1', pointData.x)
+            .attr('y1', 0)
+            .attr('x2', pointData.x)
+            .attr('y2', drawableAreaHeight);
+        cursorLineHorz.attr('x1', 0)
+            .attr('y1', pointData.y)
+            .attr('x2', drawableAreaWidth)
+            .attr('y2', pointData.y);
+        cursorText.attr('x', 5)
+            .attr('y', pointData.y < middleDrawableAreaHeight ? pointData.y + 20 : pointData.y - 10)
+            .text(pointData.val);
+        cursorDot.attr('cx', pointData.x)
+            .attr('cy', pointData.y);
+    };
+
+    // Handle svg mouse events
+    let isEventInCooldown = false;
+    let cursorRedrawTimeout: NodeJS.Timeout;
+    const cooldownTime = 20;
+    chartGroup.append('rect')
+        .attr('id', 'cursorTargetRect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', drawableAreaWidth)
+        .attr('height', drawableAreaHeight)
+        .attr('fill', 'transparent')
+        .on('mousemove', function (event) {
+            const [pointerX, pointerY] = d3.pointer(event);
+            if (!isEventInCooldown) {
+                isEventInCooldown = true;
+                handleMouseMove(pointerX, pointerY);
+                setTimeout(() => {
+                    isEventInCooldown = false;
+                }, cooldownTime);
+            } else {
+                clearTimeout(cursorRedrawTimeout);
+                cursorRedrawTimeout = setTimeout(() => {
+                    handleMouseMove(pointerX, pointerY);
+                }, cooldownTime);
+            }
+        })
+    svg.on('mouseleave', function () {
+        setTimeout(() => {
+            clearCursor();
+        }, 150);
+    });
 
 
     /**
@@ -295,15 +439,17 @@ export default function drawFullPerfChart({
             parseFloat(transform.applyX(0).toFixed(6)),
             parseFloat(transform.applyX(drawableAreaWidth).toFixed(6)),
         ]);
+        timeAxis.ticks(timeAxisTicksScale(width) * transform.k);
 
-        timeAxis.ticks(Math.ceil(10 * transform.k));
-        // timeAxis.ticks(d3.timeMinute.every(15));
         //@ts-ignore
         chartGroup.selectAll(`g.time-axis`).call(timeAxis);
+        timeAxisGroup.selectAll('rect.day-night')
         //@ts-ignore
         chartGroup.selectAll('g.lifespan').call(drawLifespan);
 
+        clearCursor();
         drawCanvasHeatmap();
+        // drawDayNightMarkers();
         // drawReferenceLines();
     }
     const debouncedZoomHandler = throttle(20, zoomedHandler, { noLeading: false, noTrailing: false })
@@ -317,5 +463,8 @@ export default function drawFullPerfChart({
         .translateExtent(zoomExtent)
         .extent(zoomExtent)
         .on("zoom", debouncedZoomHandler);
-    svg.call(zoomBehavior);
+    svg.call(zoomBehavior)
+        // .transition()
+        // .duration(750)
+        .call(zoomBehavior.scaleTo, 2, [timeScale(new Date()), 0]);
 }
