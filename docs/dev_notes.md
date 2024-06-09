@@ -31,47 +31,47 @@
     - [x] add thread performance chart
     - [ ] write perf chart code
         - [x] d3 canvas responsive with resize debounced
+        - [x] write slicer code + tests
         - [x] axis with zoom
         - [x] cursor + atom for the hovered data
             - cursor not close enough to a group should disable it
         - [x] drawing heatmap
         - [x] drawing lines
         - [x] drawing groups with the gaps
-        - [ ] calculate initial zoom of 30h, maybe some linear interpolation
-    - [x] write slicer code + tests
+        - [ ] context checking, drawing error handling
+        - [ ] button to switch thread
+        - [ ] show cursor time
     - [x] change StatsManager.svRuntime to save counts instead of frequencies
-    - [x] apply it all to the perf chart
-    - [ ] indicate loading, reloading and error states
-    - [ ] get the data to the UI + some caching
-    - [ ] button to switch thread
-    - [ ] buttons to show memory usage, maybe hide player count
     - [x] some way for the backend to push updates to the UI
+    - [ ] thread perf chart:
+        - [x] throttle cursor atom change events
+        - [ ] indicate loading, reloading and error states
+        - [ ] color should change at the min interval marker point
+        - [ ] button to switch thread
+    - [ ] player drop pie chart:
+        - [ ] apply socket data
+        - [ ] get playerlist events to add to the tally
+        - [ ] indicate loading, reloading and error states
+    - [ ] Other stats
+        - [ ] display hardware
+        - [ ] maybe: number callouts from legacy players page
+        - [ ] maybe: join/leave tally
+        - [ ] maybe: median session time
+        - [ ] indicate loading, reloading and error states
+        - [ ] show cursor time
     - [ ] statsManager.playerDrop.saveEventLog MUST be throttled
-    - [ ] write txRuntime log optimizer
-        - maybe just cutoff by date 30h and optimize it by the next update?
-    - [ ] smaller stuff to fix
-        - [ ] thread perf color should change at the min interval marker point
 - [ ] NEW PAGE: Dashboard
-    - [ ] the stats above
-    - [ ] add other stats (player leave/joins?)
-    - [ ] maybe: number callouts from legacy players page
-    - [ ] mobile layout
-    - [x] warning for dev builds of txadmin (done in the sidebar instead)
-    - [ ] warning for top servers
-    - [ ] button to docs page with md file lazy loaded
     - [ ] route new dashboard
     - [ ] remove old dashboard code & all related dependencies
-
-
+    - [ ] mobile layout
+    - [ ] button to docs page
+    - [ ] everything should look "fine enough" on light mode
 
 ## Small feat
-- [x] remove old live console page
 - [x] migrate system logs page & remove xterm files
     - [x] write new page
     - [x] remove old page files, links and references on core
     - [x] remove `web/public/xtermjs`
-- [ ] track channel of last console output, and if it's different prefix a `\n`
-- [ ] add "this player is banned until: xxx" to the player modal
 
 ## Chores + refactor
 - [x] update packages
@@ -82,6 +82,7 @@
     - support using ban templates
     - textarea as input, line breaks count for separating ids
     - do I limit 1 of each id?!
+- [x] remove old live console page
 - [x] Remove players page legacy code
     - [x] check for if i still need cil - coreui icons
     - [x] functions in web/public/js/txadmin/main.js
@@ -89,8 +90,8 @@
     - [x] test server log + player click
 - [x] simplify the simple-line-icons dependencies - do i need all the files? remove cdn!
 - [x] redact discord api webhook urls from reports
-- [ ] reevaluate globals?.tmpSetHbDataTracking
 - [ ] MUST `//FIXME: update_txdiagnostics`
+- [ ] add fxserver version to txDiagnostics
 - [ ] commit stashed changes
 
 
@@ -131,27 +132,44 @@ for log in statsLog:
 
 
 ## Next up... ish
-- [ ] fix socket.io multiple connections - start a single instance when page opens, and use join/leave commands to switch rooms
-- [ ] add more menu keybinds 
-- [ ] add average session time tracking to statsManager.playerDrop
-- [ ] evaluate and maybe add event bus
-- [ ] locale file optimization - build 8201 and above
-- [ ] talk to rockstar about `cfx-server-data`, the chat resource security updates and `resources_useSystemChat` 
-- [ ] fix the eslint config + tailwind sort
-- [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
-- [ ] build: generate fxmanifest files list dynamically
-- [ ] rename to de-capitalize components files that have multiple exports 
-- [ ] fix remaining imgur links
-- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] update docs on development?
-- [ ] update wouter and add search/filters state to URL of the players/history pages 
-- [ ] add txadmin v8 heap to diagnostics
-- [ ] add fxserver version to txDiagnostics
-- [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
+- Dashboard stuff:
+    - [ ] StatsManager.svRuntime: write log optimizer and remove the webroute 30h filter
+    - [ ] fix getMinTickIntervalMarker behavior when 0.2
+    - [ ] buttons to show memory usage, maybe hide player count
+    - [ ] calculate initial zoom of 30h, maybe some linear interpolation
+    - [ ] warning for top servers
+    - [ ] thread perf chart: swr disable revalidateOnFocus and use interval 
+        - or some kind of push from the dashboard room event
+
+- Highlights:
+    - [ ] add average session time tracking to statsManager.playerDrop
+
+- Small feats & improvements:
+    - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
+    - [ ] add "this player is banned until: xxx" to the player modal
+    - [ ] track channel of last console output, and if it's different prefix a `\n`
+    - [ ] add more menu keybinds 
+    - [ ] locale file optimization - build 8201 and above
+    - [ ] add txadmin v8 heap to diagnostics
+    - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+
+- Chores + Refactor stuff:
+    - [ ] reevaluate globals?.tmpSetHbDataTracking
+    - [ ] fix socket.io multiple connections - start a single instance when page opens, commands to switch rooms
+    - [ ] evaluate and maybe add event bus
+
+- Boring stuff:
+    - [ ] fix the eslint config + tailwind sort
+    - [ ] build: generate fxmanifest files list dynamically
+    - [ ] fix remaining imgur links
+    - [ ] update docs on development?
+    - [ ] rename to de-capitalize components files that have multiple exports 
+    - [ ] talk to rockstar about `cfx-server-data`, the chat resource security updates and `resources_useSystemChat` 
+    - [ ] update wouter and add search/filters state to URL of the players/history pages 
+    - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
 
 
 ## Quick notes:
-
 player name history? (not searchable)
 
 break down the discord /info command in /info and /admininfo?
@@ -183,16 +201,12 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 - [ ] Diagnostics (TODO:)
 - [x] System Logs (TODO:)
 
-- [ ] Dashboard (TODO:)
+- [x] Dashboard
 - [x] Live Console
 - [ ] Resources
 - [ ] Server Log
 - [ ] CFG Editor
 - [ ] Advanced (TODO:)
-
-
-
-
 
 
 
@@ -219,12 +233,9 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 # TODO: v7.3+
 - [ ] Anonymous admin actions (issue #893)
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
-- [ ] MAYBE: bring back hw stats to stats card
-    - put them in a progress bar, on hover/click open popover with detailed info
-    - other than cpu & memory, add server v8 heap - or not worth bringign it back at all
 - [ ] NEW PAGE: Whitelist
 - [ ] `2xl:mx-8` for all pages? (change on MainShell)
-- [ ] console nav button to jump to server start or errors?
+- [ ] console nav button to jump to server start or errors? Or maybe filter just error lines (with margin)
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin

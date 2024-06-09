@@ -3,6 +3,7 @@ import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 import { SvRtLogFilteredType, SvRtPerfBoundariesType } from '@core/components/StatsManager/svRuntime/perfSchemas';
 import { z } from 'zod';
+import { DeepReadonly } from 'utility-types';
 const console = consoleFactory(modulename);
 
 
@@ -14,11 +15,12 @@ export type PerfChartApiSuccessResp = {
     boundaries: SvRtPerfBoundariesType;
     threadPerfLog: SvRtLogFilteredType;
 }
-export type PerfChartApiResp = PerfChartApiErrorResp | PerfChartApiSuccessResp;
+export type PerfChartApiResp = DeepReadonly<PerfChartApiErrorResp | PerfChartApiSuccessResp>;
 
 //Schema
 const paramsSchema = z.object({ thread: z.string() });
 const requiredMinDataAge = 30 * 60 * 1000; //30 mins
+const chartWindow30h = 30 * 60 * 60 * 1000; //30 hours
 
 /**
  * Returns the data required to build the dashboard performance chart of a specific thread
@@ -36,8 +38,13 @@ export default async function perfChart(ctx: AuthedCtx) {
     if ('error' in chartData) {
         return sendTypedResp(chartData);
     }
+    const { threadPerfLog, boundaries } = chartData;
 
-    const oldestDataLogged = chartData.threadPerfLog.find((log) => log.type === 'data');
+    //FIXME: temporary while I work on the chart optimizations
+    const windowCutoffTs = Date.now() - chartWindow30h;
+    const filteredThreadPerfLog = threadPerfLog.filter((log) => log.ts >= windowCutoffTs);
+
+    const oldestDataLogged = filteredThreadPerfLog.find((log) => log.type === 'data');
     if (!oldestDataLogged) {
         return sendTypedResp({
             error: 'not_enough_data',
@@ -47,5 +54,8 @@ export default async function perfChart(ctx: AuthedCtx) {
             error: 'not_enough_data',
         });
     }
-    return sendTypedResp(chartData);
+    return sendTypedResp({
+        boundaries,
+        threadPerfLog: filteredThreadPerfLog,
+    });
 };

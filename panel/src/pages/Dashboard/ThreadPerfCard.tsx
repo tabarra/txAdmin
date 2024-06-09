@@ -77,9 +77,9 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: Th
                     },
                 },
             }}
-            indexBy="bucket"
+            indexBy='bucket'
             margin={{ top: 0, right: 25, bottom: 40, left: 60 }}
-            layout="horizontal"
+            layout='horizontal'
             valueFormat={'.1%'}
             colors={{ datum: 'data.color' }}
             colorBy='indexValue'
@@ -149,9 +149,6 @@ export default function ThreadPerfCard() {
 
         const { perfBoundaries, perfBucketCounts, perfMinTickTime } = svRuntimeData;
         const minTickInterval = perfMinTickTime[selectedThread ?? 'svMain'];
-        // const minTickInterval = 0.01;
-        // const minTickInterval = 0.008333;
-        // const minTickInterval = 0.2;
         const minTickIntervalMarker = getMinTickIntervalMarker(perfBoundaries, minTickInterval);
         const minTickIntervalIndex = perfBoundaries.findIndex(b => b === minTickIntervalMarker);
         let colorFunc: (bucketNum: number) => string;
@@ -189,6 +186,7 @@ export default function ThreadPerfCard() {
         return { data, minTickIntervalMarker, perfBoundaries };
     }, [svRuntimeData, perfCursorData]);
 
+    if (!chartData) return null; //FIXME:
     const threadDisplayName = getThreadDisplayName(selectedThread);
     return (
         <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[22rem] max-h-[22rem]">

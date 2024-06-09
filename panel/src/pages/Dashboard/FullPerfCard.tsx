@@ -6,8 +6,7 @@ import { BackendApiError, useBackendApi } from '@/hooks/fetch';
 import type { SvRtPerfCountsThreadType, PerfChartApiSuccessResp } from "@shared/otherTypes";
 import useSWR from 'swr';
 import { PerfSnapType, formatTickBoundary, getBucketTicketsEstimatedTime, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
-import { useSetAtom } from 'jotai';
-import { dashPerfCursorAtom } from './dashboardHooks';
+import { useThrottledSetCursor } from './dashboardHooks';
 
 type FullPerfChartProps = {
     threadName: string;
@@ -17,7 +16,7 @@ type FullPerfChartProps = {
 };
 
 const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChartProps) => {
-    const setCursor = useSetAtom(dashPerfCursorAtom);
+    const setCursor = useThrottledSetCursor();
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const margins = {
@@ -57,6 +56,8 @@ const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChar
     useEffect(() => {
         if (!processedData || !svgRef.current || !canvasRef.current || !width || !height) return;
         if (!processedData.lifespans.length) return; //only in case somehow the api returned, but no data found
+        console.groupCollapsed('Drawing full performance chart:');
+        console.log('useEffect:', processedData, svgRef.current, canvasRef.current, width, height);
         console.time('drawFullPerfChart');
         drawFullPerfChart({
             svgRef: svgRef.current,
@@ -66,6 +67,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChar
             ...processedData,
         });
         console.timeEnd('drawFullPerfChart');
+        console.groupEnd();
     }, [processedData, width, height, svgRef, canvasRef]);
 
 

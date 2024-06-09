@@ -5,7 +5,7 @@ import ThreadPerfCard from './ThreadPerfCard';
 import PlayerDropCard from './PlayerDropCard';
 import FullPerfCard from './FullPerfCard';
 import { useAtomValue } from 'jotai';
-import { dashPerfCursorAtom, useSetDashboardData } from './dashboardHooks';
+import { dashPerfCursorAtom, dashSvRuntimeAtom, useSetDashboardData } from './dashboardHooks';
 import { getSocket } from '@/lib/utils';
 
 
@@ -22,16 +22,15 @@ export default function DashboardPage() {
 
     //Runing on mount only
     useEffect(() => {
-        console.log('dashboard socket init');
         pageSocket.current = getSocket(['dashboard']);
         pageSocket.current.on('connect', () => {
-            console.log("dashboard Socket.IO Connected.");
+            console.log("Dashboard Socket.IO Connected.");
         });
         pageSocket.current.on('disconnect', (message) => {
-            console.log("dashboard Socket.IO Disonnected:", message);
+            console.log("Dashboard Socket.IO Disonnected:", message);
         });
         pageSocket.current.on('error', (error) => {
-            console.log('dashboard Socket.IO', error);
+            console.log('Dashboard Socket.IO', error);
         });
         pageSocket.current.on('dashboard', function (data) {
             setDashboardData(data);
@@ -45,15 +44,14 @@ export default function DashboardPage() {
     
     //DEBUG
     const cursorData = useAtomValue(dashPerfCursorAtom);
+    const svRuntimeData = useAtomValue(dashSvRuntimeAtom);
     const [isRunning, setIsRunning] = useState(false);
     const [rndCounter, setRndCounter] = useState(491);
-    const [ztoCounter, setZtoCounter] = useState(0);
 
     useEffect(() => {
         if (!isRunning) return;
         const interval = setInterval(() => {
             setRndCounter(num => num + Math.round(Math.random() * 50))
-            setZtoCounter(num => (num + 0.02) % 1)
         }, 150);
         return () => clearInterval(interval);
     }, [isRunning]);
@@ -111,7 +109,7 @@ export default function DashboardPage() {
                         <div className='hidden xs:block'><GaugeIcon /></div>
                     </div>
                     <pre className='whitespace-pre-wrap'>
-                        {JSON.stringify(cursorData, null, 2)}
+                        {JSON.stringify(cursorData ?? svRuntimeData, null, 2)}
                     </pre>
                     <div className="text-xl xs:text-2xl font-bold">
                         {rndCounter}

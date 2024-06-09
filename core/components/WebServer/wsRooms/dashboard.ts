@@ -40,8 +40,9 @@ const getInitialData = (txAdmin: TxAdmin): DashboardDataEventType => {
  * NOTE: 
  * - active push event for only from StatsManager.svRuntime
  * - StatsManager.playerDrop does not push events, those are sent alongside the playerlist drop event
- *   which also means that if accessing from NUI (ie not joining playerlist room), the chart will only
- *   be updated when the user refreshes the page.
+ *   which means that if accessing from NUI (ie not joining playerlist room), the chart will only be
+ *   updated when the user refreshes the page.
+ *   Same goes for "last 6h" not expiring old data if the server is not online pushing new perfs.
  */
 export default (txAdmin: TxAdmin): RoomType => ({
     permission: true, //everyone can see it

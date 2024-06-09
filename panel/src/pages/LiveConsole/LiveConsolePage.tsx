@@ -250,14 +250,13 @@ export default function LiveConsolePage() {
 
     //Runing on mount only
     useEffect(() => {
-        console.log('live console socket init');
         pageSocket.current = getSocket(['liveconsole']);
         pageSocket.current.on('connect', () => {
-            console.log("Live Console Socket.IO Connected.");
+            console.log("LiveConsole Socket.IO Connected.");
             setIsConnected(true);
         });
         pageSocket.current.on('disconnect', (message) => {
-            console.log("Live Console Socket.IO Disonnected:", message);
+            console.log("LiveConsole Socket.IO Disonnected:", message);
             //Grace period of 500ms to allow for quick reconnects
             //Tracking the state change ID for the timeout not to overwrite a reconnection
             const newId = socketStateChangeCounter.current + 1;
@@ -269,7 +268,7 @@ export default function LiveConsolePage() {
             }, 500);
         });
         pageSocket.current.on('error', (error) => {
-            console.log('Live Console Socket.IO', error);
+            console.log('LiveConsole Socket.IO', error);
         });
         pageSocket.current.on('consoleData', function (data) {
             writeToTerminal(data);

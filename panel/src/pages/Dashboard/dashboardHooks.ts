@@ -1,6 +1,8 @@
 import { atom, useSetAtom } from "jotai";
 import { PerfSnapType } from "./chartingUtils";
 import { DashboardDataEventType, DashboardPleyerDropDataType, DashboardSvRuntimeDataType } from "@shared/socketioTypes";
+import { throttle } from "throttle-debounce";
+import { useCallback } from "react";
 
 
 /**
@@ -31,4 +33,13 @@ export const useSetDashboardData = () => {
         setPlayerDrop(eventData.playerDrop);
         setSvRuntime(eventData.svRuntime);
     };
+};
+
+export const useThrottledSetCursor = () => {
+    const setCursor = useSetAtom(dashPerfCursorAtom);
+    const debouncedCursorSetter = useCallback(
+        throttle(250, setCursor, { noLeading: false, noTrailing: false }),
+        [setCursor]
+    );
+    return debouncedCursorSetter;
 };

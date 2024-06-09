@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { PerfLifeSpanType, PerfSnapType } from './chartingUtils';
-import { createRandomHslColor } from '@/lib/utils';
+import { createRandomHslColor, msToShortDuration } from '@/lib/utils';
 import { throttle } from 'throttle-debounce';
 import { useSetAtom } from 'jotai';
 import { dashPerfCursorAtom } from './dashboardHooks';
@@ -54,10 +54,17 @@ export default function drawFullPerfChart({
     //FIXME: passar um state setter de erro aqui pra função, ou então dar throw aqui e capturar no componente
 
 
-    console.log('Drawing chart from:', dataStart.toISOString(), 'to:', dataEnd.toISOString(), 'with', lifespans.length, 'lifespans');
-    d3.select(svgRef).selectAll("*").remove(); // FIXME: DEBUG Clear SVG
+
+    d3.select(svgRef).selectAll('*').remove(); // FIXME: DEBUG Clear SVG
     const svg = d3.select<SVGElement, PerfLifeSpanType>(svgRef);
     const canvas = d3.select(canvasRef)!;
+
+    let isFirstRender = true;
+    console.log('From:', dataStart.toISOString());
+    console.log('To:', dataEnd.toISOString());
+    console.log('Window:', msToShortDuration(dataEnd.getTime() - dataStart.getTime()));
+    console.log('Number of lifespans:', lifespans.length);
+    //closed by the end of file
 
     //Setup
     const drawableAreaHeight = height - margins.top - margins.bottom;
@@ -105,27 +112,28 @@ export default function drawFullPerfChart({
     const timeAxisTicksScale = d3.scaleLinear([382, 1350], [7, 16]);
     const timeAxis = d3.axisBottom(timeScale).ticks(timeAxisTicksScale(width));
     const timeAxisGroup = chartGroup.append("g")
-        .attr("transform", translate(0, height - margins.bottom))
-        .attr("class", 'time-axis')
+        .attr('transform', translate(0, height - margins.bottom))
+        .attr('class', 'time-axis')
         .call(timeAxis);
 
     const bucketsAxis = d3.axisRight(tickBucketsScale);
-    svg.append("g")
-        .attr("class", "buckets-axis")
-        .attr("transform", translate(width - margins.right + margins.axis, 0))
+    svg.append('g')
+        .attr('class', 'buckets-axis')
+        .attr('transform', translate(width - margins.right + margins.axis, 0))
         .call(bucketsAxis);
 
     const playersAxisTickValues = (maxPlayers <= 7) ? d3.range(maxPlayers + 1) : null;
     const playersAxis = d3.axisLeft(playersScale)
         .tickFormat(t => t.toString())
         .tickValues(playersAxisTickValues as any); //integer values only 
-    svg.append("g")
-        .attr("class", "players-axis")
-        .attr("transform", translate(margins.left - margins.axis, 0))
+    svg.append('g')
+        .attr('class', 'players-axis')
+        .attr('transform', translate(margins.left - margins.axis, 0))
         .call(playersAxis);
 
 
     // Drawing the histogram
+    let snapshotsDrawn: PerfSnapType[] = [];
     const bucketYCoords = bucketLabels.map(b => Math.floor(tickBucketsScale(b)!));
     const bucketHeight = Math.ceil(tickBucketsScale.bandwidth());
     const emptyBucketColor = d3.color(histColor(0))!.darker(1.15).formatHsl();
@@ -136,13 +144,14 @@ export default function drawFullPerfChart({
     const canvasBgColor = cssBgParsed.darker(1.05).formatHsl();
     // const canvasBgColor = cssBgParsed.brighter(1.05).formatHsl();
     const drawCanvasHeatmap = () => {
-        // console.time('drawing canvas heatmap');
+        isFirstRender && console.time('drawing canvas heatmap');
         //Setup
         //FIXME: check if the canvas is supported
         const ctx = canvas.node()!.getContext('2d')!;
         ctx.clearRect(0, 0, drawableAreaWidth, drawableAreaHeight);
         ctx.fillStyle = canvasBgColor;
         ctx.fillRect(0, 0, drawableAreaWidth, drawableAreaHeight);
+        snapshotsDrawn = [];
 
         //Drawing
         let lifespanCount = 0;
@@ -161,6 +170,7 @@ export default function drawFullPerfChart({
                 const histX2 = Math.floor(timeScale(snap.end));
                 const histWidth = histX2 - histX1;
                 if (!histWidth) continue;
+                snapshotsDrawn.push(snap);
                 for (let i = 0; i < snap.weightedPerf.length; i++) {
                     const perf = snap.weightedPerf[i];
                     ctx.fillStyle = (perf > 0.001) ? histColor(perf) : emptyBucketColor;
@@ -169,8 +179,10 @@ export default function drawFullPerfChart({
                 }
             }
         }
-        // console.timeEnd('drawing canvas heatmap');
-        // console.log('Canvas heatmap finished drawing:', { lifespanCount, rectCount });
+        if (isFirstRender) {
+            console.log('Canvas heatmap finished drawing:', { lifespanCount, snapCount: snapshotsDrawn.length, rectCount });
+            console.timeEnd('drawing canvas heatmap');
+        }
     }
     drawCanvasHeatmap();
 
@@ -265,7 +277,7 @@ export default function drawFullPerfChart({
     //Drawing day/night reference lines
     // const drawDayNightMarkers = () => {
     //     const dayNightInterval = d3.timeDays(dataStart, dataEnd, 1);
-    //     timeAxisGroup.selectAll("rect.day-night")
+    //     timeAxisGroup.selectAll('rect.day-night')
     //         .data(dayNightInterval)
     //         .join('rect')
     //         .attr('class', 'day-night')
@@ -280,7 +292,7 @@ export default function drawFullPerfChart({
 
     //     // const timeMarkerInterval = d3.timeHours(dataStart, dataEnd, 12);
     //     const timeMarkerInterval = d3.timeHour.every(12)!.range(dataStart, dataEnd);
-    //     chartGroup.selectAll("line.time-interval-markers")
+    //     chartGroup.selectAll('line.time-interval-markers')
     //         .data(timeMarkerInterval)
     //         .join('line')
     //         .attr('class', 'time-interval-markers')
@@ -346,12 +358,12 @@ export default function drawFullPerfChart({
     //Find the closest data point for a given X value
     const maxAllowedGap = 20 * 60 * 1000;
     const timeBisector = d3.bisector((lfspn: PerfSnapType) => lfspn.end).center;
-    const allLifespans = lifespans.flatMap(l => l.log);
     const getClosestData = (x: number) => {
+        if (!snapshotsDrawn.length) return;
         const xPosDate = timeScale.invert(x);
-        const indexFound = timeBisector(allLifespans, xPosDate);
+        const indexFound = timeBisector(snapshotsDrawn, xPosDate);
         if (indexFound === -1) return;
-        const snapData = allLifespans[indexFound];
+        const snapData = snapshotsDrawn[indexFound];
         if (Math.abs(snapData.end.getTime() - xPosDate.getTime()) < maxAllowedGap) {
             return {
                 snapIndex: indexFound,
@@ -450,7 +462,7 @@ export default function drawFullPerfChart({
         timeAxis.ticks(timeAxisTicksScale(width) * transform.k);
 
         //@ts-ignore
-        chartGroup.selectAll(`g.time-axis`).call(timeAxis);
+        chartGroup.selectAll('g.time-axis').call(timeAxis);
         timeAxisGroup.selectAll('rect.day-night')
         //@ts-ignore
         chartGroup.selectAll('g.lifespan').call(drawLifespan);
@@ -460,7 +472,7 @@ export default function drawFullPerfChart({
         // drawDayNightMarkers();
         // drawReferenceLines();
     }
-    const debouncedZoomHandler = throttle(20, zoomedHandler, { noLeading: false, noTrailing: false })
+    const debouncedZoomHandler = throttle(20, zoomedHandler, { noLeading: false, noTrailing: false });
 
     const zoomExtent = [
         [0, margins.top],
@@ -470,9 +482,12 @@ export default function drawFullPerfChart({
         .scaleExtent([1, 12])
         .translateExtent(zoomExtent)
         .extent(zoomExtent)
-        .on("zoom", debouncedZoomHandler);
+        .on('zoom', debouncedZoomHandler);
     svg.call(zoomBehavior)
-        // .transition()
-        // .duration(750)
-        .call(zoomBehavior.scaleTo, 2, [timeScale(new Date()), 0]);
+    //FIXME: to prevent double rendering on first render, need to move this transform up
+    //     .transition()
+    //     .duration(750)
+    //     .call(zoomBehavior.scaleTo, 2, [timeScale(new Date()), 0]);
+
+    isFirstRender = false;
 }
