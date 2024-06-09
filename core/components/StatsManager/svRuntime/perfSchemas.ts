@@ -70,9 +70,10 @@ export const SvRtFileSchema = z.object({
     log: z.array(z.union([SvRtLogDataSchema, SvRtLogSvBootSchema, SvRtLogSvCloseSchema])),
 });
 
-export const SvRtLogNodeHeapEventSchema = z.object({
-    heapUsed: zIntNonNegative,
-    heapTotal: zIntNonNegative,
+export const SvRtNodeMemorySchema = z.object({
+    //NOTE: technically it also has a type string, but we don't need to check it
+    used: zNumberNonNegative,
+    total: zNumberNonNegative,
 });
 
 
@@ -84,7 +85,7 @@ export type SvRtLogDataType = z.infer<typeof SvRtLogDataSchema>;
 export type SvRtLogType = (SvRtLogSvCloseType | SvRtLogSvBootType | SvRtLogDataType)[];
 export type SvRtPerfCountsType = z.infer<typeof SvRtPerfCountsSchema>;
 export type SvRtPerfBoundariesType = z.infer<typeof SvRtPerfBoundariesSchema>;
-export type LogNodeHeapEventType = z.infer<typeof SvRtLogNodeHeapEventSchema>;
+export type SvRtNodeMemoryType = z.infer<typeof SvRtNodeMemorySchema>;
 
 export type SvRtPerfCountsThreadType = z.infer<typeof SvRtPerfCountsThreadSchema>;
 export type SvRtLogDataFilteredType = Omit<SvRtLogDataType, 'perf'> & {

@@ -8,7 +8,6 @@ import { PerfSnapType } from "./chartingUtils";
 type DashboardPerfCursorData = {
     threadName: string;
     snap: PerfSnapType;
-    boundaries: (number | '+Inf')[];
 };
 
 

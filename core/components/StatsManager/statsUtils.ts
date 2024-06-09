@@ -25,18 +25,18 @@ export class MultipleCounter extends Map<string, number> {
     private _clear: () => void;
 
     constructor(initialData?: [string, number][] | null | Record<string, number>, locked = false) {
-        let InitialDataIterable: any;
+        let initialDataIterable: any;
         if (initialData !== undefined && initialData !== null || typeof initialData === 'object') {
             if (Array.isArray(initialData)) {
-                InitialDataIterable = initialData;
+                initialDataIterable = initialData;
             } else {
-                InitialDataIterable = Object.entries(initialData!);
-                if (InitialDataIterable.some(([k, v]: [string, number]) => typeof k !== 'string' || typeof v !== 'number')) {
+                initialDataIterable = Object.entries(initialData!);
+                if (initialDataIterable.some(([k, v]: [string, number]) => typeof k !== 'string' || typeof v !== 'number')) {
                     throw new Error(`Initial data must be an object with only integer values.`)
                 }
             }
         }
-        super(InitialDataIterable ?? initialData);
+        super(initialDataIterable ?? initialData);
         this.locked = locked;
         this._clear = super.clear;
     }
@@ -66,6 +66,22 @@ export class MultipleCounter extends Map<string, number> {
             return val;
         }
     };
+
+    //Merges another counter into this one
+    merge(newData: MultipleCounter | [string, number][] | Record<string, number>) {
+        if (this.locked) throw new Error(`This MultipleCounter is locked to modifications.`);
+        let iterable;
+        if (newData instanceof MultipleCounter || Array.isArray(newData)) {
+            iterable = newData;
+        } else if (typeof newData === 'object' && newData !== null){
+            iterable = Object.entries(newData);
+        } else {
+            throw new Error(`Invalid data type for merge`);
+        }
+        for (const [key, value] of iterable) {
+            this.count(key, value);
+        }
+    }
 
     //Returns an array with sorted keys in asc or desc order
     toSortedKeysArray(desc?: boolean) {

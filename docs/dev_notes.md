@@ -32,21 +32,21 @@
     - [ ] write perf chart code
         - [x] d3 canvas responsive with resize debounced
         - [x] axis with zoom
-        - [ ] cursor + atom for the hovered data
+        - [x] cursor + atom for the hovered data
             - cursor not close enough to a group should disable it
         - [x] drawing heatmap
         - [x] drawing lines
         - [x] drawing groups with the gaps
-        - [ ] calculate initial zoom, maybe some linear interpolation
+        - [ ] calculate initial zoom of 30h, maybe some linear interpolation
     - [x] write slicer code + tests
     - [x] change StatsManager.svRuntime to save counts instead of frequencies
-    - [ ] apply it all to the perf chart
+    - [x] apply it all to the perf chart
     - [ ] indicate loading, reloading and error states
     - [ ] get the data to the UI + some caching
-    - [ ] display api data on the charts
     - [ ] button to switch thread
     - [ ] buttons to show memory usage, maybe hide player count
-    - [ ] some way for the backend to push updates to the UI
+    - [x] some way for the backend to push updates to the UI
+    - [ ] statsManager.playerDrop.saveEventLog MUST be throttled
     - [ ] write txRuntime log optimizer
         - maybe just cutoff by date 30h and optimize it by the next update?
     - [ ] smaller stuff to fix
@@ -91,6 +91,7 @@
 - [x] redact discord api webhook urls from reports
 - [ ] reevaluate globals?.tmpSetHbDataTracking
 - [ ] MUST `//FIXME: update_txdiagnostics`
+- [ ] commit stashed changes
 
 
 ==================================================
@@ -130,6 +131,7 @@ for log in statsLog:
 
 
 ## Next up... ish
+- [ ] fix socket.io multiple connections - start a single instance when page opens, and use join/leave commands to switch rooms
 - [ ] add more menu keybinds 
 - [ ] add average session time tracking to statsManager.playerDrop
 - [ ] evaluate and maybe add event bus

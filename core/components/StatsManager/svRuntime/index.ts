@@ -3,8 +3,8 @@ import fsp from 'node:fs/promises';
 import * as d3array from 'd3-array';
 import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
-import { SvRtLogNodeHeapEventSchema, SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName } from './perfSchemas';
-import type { LogNodeHeapEventType, SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
+import { SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName, SvRtNodeMemorySchema } from './perfSchemas';
+import type { SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtNodeMemoryType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
 import { didPerfReset, diffPerfs, fetchFxsMemory, fetchRawPerfData } from './perfUtils';
 import { optimizeSvRuntimeLog } from './logOptimizer';
 import { convars } from '@core/globalData';
@@ -16,7 +16,6 @@ const console = consoleFactory(modulename);
 
 
 //Consts
-const megabyte = 1024 * 1024;
 const LOG_DATA_FILE_VERSION = 1;
 const LOG_DATA_FILE_NAME = 'stats_svRuntime.json';
 
@@ -30,7 +29,7 @@ export default class SvRuntimeStatsManager {
     private readonly logFilePath: string;
     private statsLog: SvRtLogType = [];
     private lastFxsMemory: number | undefined;
-    private lastNodeMemory: { used: number, total: number } | undefined;
+    private lastNodeMemory: SvRtNodeMemoryType | undefined;
     private lastPerfBoundaries: SvRtPerfBoundariesType | undefined;
     private lastPerfData: SvRtPerfCountsType | undefined;
     private lastPerfSaved: {
@@ -56,7 +55,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Reset the last perf data except boundaries
      */
-    resetPerfState() {
+    private resetPerfState() {
         this.lastPerfData = undefined;
         this.lastPerfSaved = undefined;
     }
@@ -65,7 +64,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Reset the last perf data except boundaries
      */
-    resetMemoryState() {
+    private resetMemoryState() {
         this.lastNodeMemory = undefined;
         this.lastFxsMemory = undefined;
     }
@@ -74,7 +73,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Registers that fxserver has BOOTED (healthMonitor is ONLINE)
      */
-    logServerBoot(duration: number) {
+    public logServerBoot(duration: number) {
         this.resetPerfState();
         this.resetMemoryState();
         //If last log is a boot, remove it as the server didn't really start 
@@ -94,7 +93,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Registers that fxserver has CLOSED (fxRunner killing the process)
      */
-    logServerClose(reason: string) {
+    public logServerClose(reason: string) {
         this.resetPerfState();
         this.resetMemoryState();
         if (this.statsLog.length) {
@@ -119,16 +118,16 @@ export default class SvRuntimeStatsManager {
     /**
      * Stores the last server Node.JS memory usage for later use in the data log 
      */
-    logServerNodeMemory(payload: LogNodeHeapEventType) {
-        const validation = SvRtLogNodeHeapEventSchema.safeParse(payload);
+    public logServerNodeMemory(payload: SvRtNodeMemoryType) {
+        const validation = SvRtNodeMemorySchema.safeParse(payload);
         if (!validation.success) {
             console.verbose.warn('Invalid LogNodeHeapEvent payload:');
             console.verbose.dir(validation.error.errors);
             return;
         }
         this.lastNodeMemory = {
-            used: parseFloat((payload.heapUsed / megabyte).toFixed(2)),
-            total: parseFloat((payload.heapTotal / megabyte).toFixed(2)),
+            used: payload.used,
+            total: payload.total,
         };
     }
 
@@ -136,12 +135,16 @@ export default class SvRuntimeStatsManager {
     /**
      * Get recent stats
      */
-    getRecentStats() {
+    public getRecentStats() {
         return {
-            joinLeaveTally30m: this.#txAdmin.playerlistManager.joinLeaveTally,
             fxsMemory: this.lastFxsMemory,
             nodeMemory: this.lastNodeMemory,
-            perf: this.lastPerfData,
+            perfBoundaries: this.lastPerfBoundaries,
+            perfBucketCounts: this.lastPerfData ? {
+                svMain: this.lastPerfData.svMain.buckets,
+                svNetwork: this.lastPerfData.svNetwork.buckets,
+                svSync: this.lastPerfData.svSync.buckets,
+            } : undefined,
         }
     }
 
@@ -149,7 +152,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Cron function to collect all the stats and save it to the cache file
      */
-    async collectStats() {
+    private async collectStats() {
         //Precondition checks - try even when partially online
         if (this.#txAdmin.fxRunner.fxChild === null) return;
         if (this.#txAdmin.playerlistManager === null) return;
@@ -210,6 +213,9 @@ export default class SvRuntimeStatsManager {
         const latestPerf = diffPerfs(perfMetrics, this.lastPerfData);
         this.lastPerfData = perfMetrics;
 
+        //Push the updated data to the dashboard ws room
+        this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
+
         //Check if enough time passed since last collection
         const now = Date.now();
         let perfToSave;
@@ -222,7 +228,7 @@ export default class SvRuntimeStatsManager {
 
         //Get player count locally or from external source
         let playerCount = this.#txAdmin.playerlistManager.onlineCount;
-        if(convars.debugExternalStatsSource){
+        if (convars.debugExternalStatsSource) {
             try {
                 const playerCountResp = await got(`http://${fxServerHost}/players.json`).json();
                 playerCount = playerCountResp.length;
@@ -253,7 +259,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Loads the stats database/cache/history
      */
-    async loadStatsHistory() {
+    private async loadStatsHistory() {
         try {
             const rawFileData = await fsp.readFile(this.logFilePath, 'utf8');
             const fileData = JSON.parse(rawFileData);
@@ -280,7 +286,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Saves the stats database/cache/history
      */
-    async saveStatsHistory() {
+    private async saveStatsHistory() {
         try {
             await optimizeSvRuntimeLog(this.statsLog);
             const savePerfData: SvRtFileType = {
@@ -298,7 +304,7 @@ export default class SvRuntimeStatsManager {
     /**
      * Returns the data for charting the performance of a specific thread
      */
-    getChartData(threadName: string): PerfChartApiResp {
+    public getChartData(threadName: string): PerfChartApiResp {
         if (!isValidPerfThreadName(threadName)) return { error: 'invalid_thread_name' };
         if (!this.statsLog.length || !this.lastPerfBoundaries?.length) return { error: 'data_unavailable' };
 
@@ -320,7 +326,7 @@ export default class SvRuntimeStatsManager {
      * Returns a summary of the collected data and returns.
      * NOTE: kinda expensive
      */
-    getServerPerfSummary() {
+    public getServerPerfSummary() {
         //Configs
         const minSnapshots = 36; //3h of data
         const tsScanWindowStart = Date.now() - 6 * 60 * 60 * 1000; //6h ago

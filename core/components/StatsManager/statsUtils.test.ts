@@ -16,7 +16,7 @@ suite('MultipleCounter', () => {
         expect(() => lockedCounter.clear()).toThrowError('is locked');
     });
 
-    it('handle instantiation data error', () => {
+    it('should handle instantiation data error', () => {
         expect(() => new MultipleCounter({ a: 'b' as any })).toThrowError('only integer');
     });
 
@@ -45,7 +45,29 @@ suite('MultipleCounter', () => {
         expect(counter.toSortedKeysArray(true)).toEqual([['z', 1], ['c', 2], ['a', 3]]);
         expect(counter.toSortedValuesArray()).toEqual([['z', 1], ['c', 2], ['a', 3]]);
         expect(counter.toSortedValuesArray(true)).toEqual([['a', 3], ['c', 2], ['z', 1]]);
+    });
 
+    suite('should handle merging counters', () => {
+        it('with another counter', () => {
+            const ogCounter = new MultipleCounter({ a: 1, b: 2 });
+            const newCounter = new MultipleCounter({ b: 3, c: 4 });
+            ogCounter.merge(newCounter);
+            expect(ogCounter.toJSON()).toEqual({ a: 1, b: 5, c: 4 });
+        });
+        it('with an array', () => {
+            const ogCounter = new MultipleCounter({ a: 1, b: 2 });
+            ogCounter.merge([['b', 3], ['c', 4]]);
+            expect(ogCounter.toJSON()).toEqual({ a: 1, b: 5, c: 4 });
+        });
+        it('with an object', () => {
+            const ogCounter = new MultipleCounter({ a: 1, b: 2 });
+            ogCounter.merge({ b: 3, c: 4 });
+            expect(ogCounter.toJSON()).toEqual({ a: 1, b: 5, c: 4 });
+        });
+        it('with invalid data', () => {
+            const ogCounter = new MultipleCounter();
+            expect(() => ogCounter.merge('a' as any)).toThrowError('Invalid data type for merge');
+        });
     });
 });
 

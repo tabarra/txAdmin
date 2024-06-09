@@ -186,7 +186,7 @@ export default class PlayerlistManager {
                 if (!(this.#playerlist[payload.id] instanceof ServerPlayer)) throw new Error(`player id not found`);
                 this.#playerlist[payload.id]!.disconnect();
                 this.joinLeaveLog.push([currTs, false]);
-                this.#txAdmin.statsManager.playerDrop.handlePlayerDrop(payload.reason);
+                const reasonCategory = this.#txAdmin.statsManager.playerDrop.handlePlayerDrop(payload.reason);
                 this.#txAdmin.logger.server.write([{
                     type: 'playerDropped',
                     src: payload.id,
@@ -197,6 +197,7 @@ export default class PlayerlistManager {
                     mutex,
                     type: 'playerDropped',
                     netid: this.#playerlist[payload.id]!.netid,
+                    reasonCategory,
                 });
             } catch (error) {
                 console.verbose.warn(`playerDropped event error: ${(error as Error).message}`);

@@ -40,6 +40,21 @@ export default class PlayerDropStatsManager {
 
 
     /**
+     * Get the recent category count for player drops in the last X hours
+     */
+    public getRecentStats(windowHours: number) {
+        const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000) - 1;
+        const flatCounts = this.eventLog
+            .filter((entry) => entry.hour.dateHourTs >= logCutoff)
+            .map((entry) => entry.dropTypes.toSortedValuesArray())
+            .flat();
+        const cumulativeCounter = new MultipleCounter();
+        cumulativeCounter.merge(flatCounts);
+        return cumulativeCounter.toSortedValuesArray();
+    }
+
+
+    /**
      * Returns the object of the current hour object in log.
      * Creates one if doesn't exist one for the current hour.
      */
@@ -137,7 +152,7 @@ export default class PlayerDropStatsManager {
 
 
     /**
-     * Handles receiving the player drop event
+     * Handles receiving the player drop event, and returns the category of the drop
      */
     public handlePlayerDrop(reason: string) {
         const logRef = this.getCurrentLogHourRef();
@@ -153,6 +168,7 @@ export default class PlayerDropStatsManager {
             }
         }
         this.saveEventLog();
+        return category;
     }
 
 
@@ -229,6 +245,7 @@ export default class PlayerDropStatsManager {
      * Saves the stats database/cache/history
      */
     private async saveEventLog(emptyReason?: string) {
+        //FIXME: need to throttle this to avoid writing too often
         try {
             const sizeBefore = this.eventLog.length;
             this.optimizeStatsLog();

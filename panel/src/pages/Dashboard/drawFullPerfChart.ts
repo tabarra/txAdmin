@@ -53,15 +53,13 @@ export default function drawFullPerfChart({
     // }
     //FIXME: passar um state setter de erro aqui pra função, ou então dar throw aqui e capturar no componente
 
-    // FIXME: DEBUG Clear SVG
-    console.clear();
+
     console.log('Drawing chart from:', dataStart.toISOString(), 'to:', dataEnd.toISOString(), 'with', lifespans.length, 'lifespans');
-    d3.select(svgRef).selectAll("*").remove();
+    d3.select(svgRef).selectAll("*").remove(); // FIXME: DEBUG Clear SVG
     const svg = d3.select<SVGElement, PerfLifeSpanType>(svgRef);
     const canvas = d3.select(canvasRef)!;
 
     //Setup
-    // const bgColor = 
     const drawableAreaHeight = height - margins.top - margins.bottom;
     const drawableAreaWidth = width - margins.left - margins.right;
     const middleDrawableAreaHeight = drawableAreaHeight / 2;
@@ -374,10 +372,9 @@ export default function drawFullPerfChart({
             return clearCursor();
         }
         const { snapIndex, snapData } = findResult;
-        if(snapIndex === lastFlatSnapsIndex) return;
+        if (snapIndex === lastFlatSnapsIndex) return;
         lastFlatSnapsIndex = snapIndex;
         cursorSetter(snapData);
-        console.log('Found snap:', snapData);
 
         const pointData = {
             x: timeScale(snapData.end),

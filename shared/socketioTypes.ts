@@ -1,3 +1,4 @@
+import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/components/StatsManager/svRuntime/perfSchemas";
 import type { ReactAuthDataType } from "authApiTypes";
 import type { UpdateDataType } from "otherTypes";
 
@@ -28,6 +29,31 @@ export type GlobalStatusType = {
 
 
 /**
+ * Status channel
+ */
+export type DashboardDataEventType = {
+    fxsMemory?: number;
+    nodeMemory?: SvRtNodeMemoryType;
+    perfBoundaries?: SvRtPerfBoundariesType;
+    perfBucketCounts?: {
+        svMain: number[];
+        svNetwork: number[];
+        svSync: number[];
+    };
+    perfMinTickTime: {
+        svMain: number;
+        svNetwork: number;
+        svSync: number;
+    };
+    playerDropReasons: [string, number][];
+    // joinLeaveTally30m: {
+    //     joined: number;
+    //     left: number;
+    // };
+}
+
+
+/**
  * Playerlist channel
  * TODO: apply those types to the playerlistManager
  */
@@ -49,6 +75,7 @@ export type PlayerDroppedEventType = {
     mutex: string,
     type: 'playerDropped',
     netid: number,
+    reasonCategory: string,
 }
 
 export type PlayerJoiningEventType = {
@@ -79,6 +106,8 @@ export type ListenEventsMap = {
     status: (status: GlobalStatusType) => void;
     playerlist: (playerlistData: PlayerlistEventType[]) => void;
     updateAuthData: (authData: ReactAuthDataType) => void;
+    consoleData: (data: string) => void;
+    dashboard: (data: DashboardDataEventType) => void;
 
     //Standalone events
     updateAvailable: (event: UpdateAvailableEventType) => void

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { GaugeIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ThreadPerfCard from './ThreadPerfCard';
@@ -8,12 +8,7 @@ import { getMinTickIntervalMarker } from './chartingUtils';
 import FullPerfCard from './FullPerfCard';
 import { useAtomValue } from 'jotai';
 import { dashboardPerfCursorAtom } from './dashboardHooks';
-
-type ThreadPerfChartRENAME = {
-    svMain: number[];
-    svNetwork: number[];
-    svSync: number[];
-};
+import { getSocket } from '@/lib/utils';
 
 export type ThreadPerfChartDatum = {
     bucket: string | number;
@@ -30,12 +25,36 @@ export type PlayerDropChartDatum = {
 }
 
 export default function DashboardPage() {
+    const pageSocket = useRef<ReturnType<typeof getSocket> | null>(null);
+
+    //Runing on mount only
+    useEffect(() => {
+        console.log('dashboard socket init');
+        pageSocket.current = getSocket(['dashboard']);
+        pageSocket.current.on('connect', () => {
+            console.log("dashboard Socket.IO Connected.");
+        });
+        pageSocket.current.on('disconnect', (message) => {
+            console.log("dashboard Socket.IO Disonnected:", message);
+        });
+        pageSocket.current.on('error', (error) => {
+            console.log('dashboard Socket.IO', error);
+        });
+        pageSocket.current.on('dashboard', function (data) {
+            console.log(data);
+        });
+
+        return () => {
+            pageSocket.current?.removeAllListeners();
+            pageSocket.current?.disconnect();
+        }
+    }, []);
+    
+    //DEBUG
+    const cursorData = useAtomValue(dashboardPerfCursorAtom);
     const [isRunning, setIsRunning] = useState(false);
     const [rndCounter, setRndCounter] = useState(491);
     const [ztoCounter, setZtoCounter] = useState(0);
-
-    //DEBUG
-    const cursorData = useAtomValue(dashboardPerfCursorAtom);
 
     useEffect(() => {
         if (!isRunning) return;
