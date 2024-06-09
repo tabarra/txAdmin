@@ -14,17 +14,20 @@ const getInitialData = (txAdmin: TxAdmin): DashboardDataEventType => {
 
     return {
         // joinLeaveTally30m: txAdmin.playerlistManager.joinLeaveTally,
-        fxsMemory: svRuntimeStats.fxsMemory,
-        nodeMemory: svRuntimeStats.nodeMemory,
-        perfBoundaries: svRuntimeStats.perfBoundaries,
-        perfBucketCounts: svRuntimeStats.perfBucketCounts,
-        playerDropReasons: txAdmin.statsManager.playerDrop.getRecentStats(6),
-
-        //NOTE: numbers from fivem/code/components/citizen-server-impl/src/GameServer.cpp
-        perfMinTickTime: {
-            svMain: 1000 / 20,
-            svNetwork: 1000 / 100,
-            svSync: 1000 / 120,
+        playerDrop: {
+            summaryLast6h: txAdmin.statsManager.playerDrop.getRecentStats(6),
+        },
+        svRuntime: {
+            fxsMemory: svRuntimeStats.fxsMemory,
+            nodeMemory: svRuntimeStats.nodeMemory,
+            perfBoundaries: svRuntimeStats.perfBoundaries,
+            perfBucketCounts: svRuntimeStats.perfBucketCounts,
+            //NOTE: numbers from fivem/code/components/citizen-server-impl/src/GameServer.cpp
+            perfMinTickTime: {
+                svMain: (1000 / 20) / 1000,
+                svNetwork: (1000 / 100) / 1000,
+                svSync: (1000 / 120) / 1000,
+            },
         },
     }
 }

@@ -140,30 +140,29 @@ suite('getBucketTicketsEstimatedTime', () => {
 
 suite('getTimeWeightedHistogram', () => {
     const bucketEstimatedAverageTimes = [1, 5, 50];
-    //NOTE: the count 9999 does not matter for this test
 
     it('should return an array of the same length as freqs', () => {
-        const perfHist = { count: 9999, sum: 9999, buckets: [1, 0, 0] };
-        const result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
-        expect(result.length).toEqual(perfHist.buckets.length);
+        const bucketCounts = [1, 0, 0];
+        const result = getTimeWeightedHistogram(bucketCounts, bucketEstimatedAverageTimes);
+        expect(result.length).toEqual(bucketCounts.length);
     });
 
     it('should correctly calculate the time-weighted histogram', () => {
-        let perfHist = { count: 9999, sum: 9999, buckets: [1, 0, 0] };
-        let result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
+        let bucketCounts = [1, 0, 0];
+        let result = getTimeWeightedHistogram(bucketCounts, bucketEstimatedAverageTimes);
         expect(result).toEqual([1, 0, 0]);
 
-        perfHist = { count: 9999, sum: 9999, buckets: [0, 0, 1] };
-        result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
+        bucketCounts = [0, 0, 1];
+        result = getTimeWeightedHistogram(bucketCounts, bucketEstimatedAverageTimes);
         expect(result).toEqual([0, 0, 1]);
 
-        perfHist = { count: 9999, sum: 9999, buckets: [100, 0, 100] };
-        result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
+        bucketCounts = [100, 0, 100];
+        result = getTimeWeightedHistogram(bucketCounts, bucketEstimatedAverageTimes);
         //For total count of 200, result should be 100x1s + 0*5s + 100x50s = 5100s
         expect(result).toEqual([100 / 5100, 0 / 2550, 5000 / 5100]);
 
-        perfHist = { count: 9999, sum: 9999, buckets: [80, 150, 5] };
-        result = getTimeWeightedHistogram(perfHist, bucketEstimatedAverageTimes);
+        bucketCounts = [80, 150, 5];
+        result = getTimeWeightedHistogram(bucketCounts, bucketEstimatedAverageTimes);
         //For total count of 235, result should be 80x1s + 150*5s + 5x50s = 1080s
         const expected = [(80 * 1) / 1080, (150 * 5) / 1080, (5 * 50) / 1080];
         for (const [i, value] of result.entries()) {
@@ -179,23 +178,21 @@ suite('getTimeWeightedHistogram', () => {
             Math.floor(Math.random() * 100),
             Math.floor(Math.random() * 100),
         ]
-        const perfHist = {
-            count: 9999, sum: 9999, buckets: [
+        const bucketCounts = [
                 Math.floor(Math.random() * 100),
                 Math.floor(Math.random() * 100),
                 Math.floor(Math.random() * 100),
                 Math.floor(Math.random() * 100),
                 Math.floor(Math.random() * 100),
-            ]
-        };
-        const result = getTimeWeightedHistogram(perfHist, randBucketEstimatedAverageTimes);
+        ];
+        const result = getTimeWeightedHistogram(bucketCounts, randBucketEstimatedAverageTimes);
         const sum = result.reduce((acc, val) => acc + val, 0);
         expect(Math.abs(sum - 1)).toBeLessThanOrEqual(Number.EPSILON);
     });
 
     it('should handle freqs with non-number values', () => {
-        const perfHist = { count: 9999, sum: 9999, buckets: [5, 'notANumber', 5] };
-        const result = getTimeWeightedHistogram(perfHist as any, bucketEstimatedAverageTimes);
+        const bucketCounts = [5, 'notANumber', 5];
+        const result = getTimeWeightedHistogram(bucketCounts as any, bucketEstimatedAverageTimes);
         expect(result).toEqual([5 / 255, 0 / 255, 250 / 255]);
     });
 });

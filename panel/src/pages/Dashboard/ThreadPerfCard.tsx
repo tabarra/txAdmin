@@ -1,20 +1,35 @@
 import { Bar, BarTooltipProps } from '@nivo/bar';
 import { BarChartHorizontalIcon } from 'lucide-react';
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useIsDarkMode } from '@/hooks/theme';
-import { ThreadPerfChartDatum } from './DashboardPage';
-import { formatTickBoundary, getThreadDisplayName } from './chartingUtils';
+import { formatTickBoundary, getBucketTicketsEstimatedTime, getMinTickIntervalMarker, getThreadDisplayName, getTimeWeightedHistogram } from './chartingUtils';
 import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
+import { useAtomValue } from 'jotai';
+import { dashPerfCursorAtom, dashSvRuntimeAtom } from './dashboardHooks';
+import * as d3ScaleChromatic from 'd3-scale-chromatic';
+import { SvRtPerfThreadNamesType } from '@shared/otherTypes';
 
+/**
+ * Types
+ */
+type ThreadPerfChartDatum = {
+    bucket: string | number;
+    value: number;
+    color: string;
+    count: number;
+}
 
 type ThreadPerfChartProps = {
     data: ThreadPerfChartDatum[];
-    boundaries: (number | string)[];
     minTickIntervalMarker: number | undefined;
     width: number;
     height: number;
 };
 
+
+/**
+ * Memoized nivo bar chart component
+ */
 const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: ThreadPerfChartProps) => {
     const isDarkMode = useIsDarkMode();
 
@@ -121,13 +136,58 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: Th
 });
 
 
-type ThreadPerfCardProps = {
-    data: Omit<ThreadPerfChartProps, 'width' | 'height'>;
-};
 
-export default function ThreadPerfCard({ data }: ThreadPerfCardProps) {
+export default function ThreadPerfCard() {
     const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
-    const [selectedThread, setSelectedThread] = useState('svMain');
+    const [selectedThread, setSelectedThread] = useState<SvRtPerfThreadNamesType>('svMain');
+    const svRuntimeData = useAtomValue(dashSvRuntimeAtom);
+    const perfCursorData = useAtomValue(dashPerfCursorAtom);
+
+    const chartData = useMemo(() => {
+        if (!svRuntimeData) return null;
+        if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts || !svRuntimeData.perfMinTickTime) return null;
+
+        const { perfBoundaries, perfBucketCounts, perfMinTickTime } = svRuntimeData;
+        const minTickInterval = perfMinTickTime[selectedThread ?? 'svMain'];
+        // const minTickInterval = 0.01;
+        // const minTickInterval = 0.008333;
+        // const minTickInterval = 0.2;
+        const minTickIntervalMarker = getMinTickIntervalMarker(perfBoundaries, minTickInterval);
+        const minTickIntervalIndex = perfBoundaries.findIndex(b => b === minTickIntervalMarker);
+        let colorFunc: (bucketNum: number) => string;
+        if (minTickIntervalIndex) {
+            colorFunc = (bucketNum) => {
+                const minTickIntervalNum = minTickIntervalIndex + 1;
+                if (bucketNum <= minTickIntervalIndex) {
+                    return d3ScaleChromatic.interpolateYlGn(1.1 - (bucketNum / minTickIntervalNum));
+                } else {
+                    return d3ScaleChromatic.interpolateYlOrRd(0.25 + (bucketNum - minTickIntervalNum) / (perfBoundaries.length - minTickIntervalNum));
+                }
+            };
+        } else {
+            colorFunc = (index) => d3ScaleChromatic.interpolateRdYlGn(1 - (index + 1) / perfBoundaries.length);
+        }
+
+        const threadBucketCounts = perfBucketCounts[selectedThread ?? 'svMain'];
+        let threadHistogram: number[];
+        if (perfCursorData) {
+            threadHistogram = perfCursorData.snap.weightedPerf;
+        } else {
+            const bucketTicketsEstimatedTime = getBucketTicketsEstimatedTime(perfBoundaries);
+            threadHistogram = getTimeWeightedHistogram(threadBucketCounts, bucketTicketsEstimatedTime);
+        }
+
+        const data: ThreadPerfChartDatum[] = [];
+        for (let i = 0; i < perfBoundaries.length; i++) {
+            data.push({
+                bucket: perfBoundaries[i],
+                count: perfCursorData ? 0 : threadBucketCounts[i],
+                value: threadHistogram[i],
+                color: colorFunc(i+1),
+            });
+        }
+        return { data, minTickIntervalMarker, perfBoundaries };
+    }, [svRuntimeData, perfCursorData]);
 
     const threadDisplayName = getThreadDisplayName(selectedThread);
     return (
@@ -139,7 +199,7 @@ export default function ThreadPerfCard({ data }: ThreadPerfCardProps) {
                 <div className='hidden xs:block'><BarChartHorizontalIcon /></div>
             </div>
             <DebouncedResizeContainer onDebouncedResize={setChartSize}>
-                <ThreadPerfChart {...data} width={chartSize.width} height={chartSize.height} />
+                <ThreadPerfChart {...chartData} width={chartSize.width} height={chartSize.height} />
             </DebouncedResizeContainer>
         </div>
     );

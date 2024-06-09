@@ -1,3 +1,4 @@
+import { SvRtPerfThreadNamesType } from "@core/components/StatsManager/svRuntime/config";
 import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/components/StatsManager/svRuntime/perfSchemas";
 import type { ReactAuthDataType } from "authApiTypes";
 import type { UpdateDataType } from "otherTypes";
@@ -31,21 +32,23 @@ export type GlobalStatusType = {
 /**
  * Status channel
  */
-export type DashboardDataEventType = {
+export type DashboardSvRuntimeDataType = {
     fxsMemory?: number;
     nodeMemory?: SvRtNodeMemoryType;
     perfBoundaries?: SvRtPerfBoundariesType;
     perfBucketCounts?: {
-        svMain: number[];
-        svNetwork: number[];
-        svSync: number[];
+        [key in SvRtPerfThreadNamesType]: number[];
     };
     perfMinTickTime: {
-        svMain: number;
-        svNetwork: number;
-        svSync: number;
+        [key in SvRtPerfThreadNamesType]: number;
     };
-    playerDropReasons: [string, number][];
+}
+export type DashboardPleyerDropDataType = {
+    summaryLast6h: [reasonCategory: string, count: number][];
+};
+export type DashboardDataEventType = {
+    svRuntime: DashboardSvRuntimeDataType;
+    playerDrop: DashboardPleyerDropDataType;
     // joinLeaveTally30m: {
     //     joined: number;
     //     left: number;

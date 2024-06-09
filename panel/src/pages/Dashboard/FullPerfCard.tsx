@@ -7,7 +7,7 @@ import type { SvRtPerfCountsThreadType, PerfChartApiSuccessResp } from "@shared/
 import useSWR from 'swr';
 import { PerfSnapType, formatTickBoundary, getBucketTicketsEstimatedTime, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
 import { useSetAtom } from 'jotai';
-import { dashboardPerfCursorAtom } from './dashboardHooks';
+import { dashPerfCursorAtom } from './dashboardHooks';
 
 type FullPerfChartProps = {
     threadName: string;
@@ -17,7 +17,7 @@ type FullPerfChartProps = {
 };
 
 const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChartProps) => {
-    const setCursor = useSetAtom(dashboardPerfCursorAtom);
+    const setCursor = useSetAtom(dashPerfCursorAtom);
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const margins = {
@@ -33,7 +33,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChar
         if (!apiData) return null;
         const bucketTicketsEstimatedTime = getBucketTicketsEstimatedTime(apiData.boundaries);
         const perfProcessor = (perfLog: SvRtPerfCountsThreadType) => {
-            return getTimeWeightedHistogram(perfLog, bucketTicketsEstimatedTime);
+            return getTimeWeightedHistogram(perfLog.buckets, bucketTicketsEstimatedTime);
         }
         // apiData.threadPerfLog = apiData.threadPerfLog.slice(-50)
         const parsed = processPerfLog(apiData.threadPerfLog, perfProcessor);

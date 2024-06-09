@@ -3,7 +3,7 @@ import { PerfLifeSpanType, PerfSnapType } from './chartingUtils';
 import { createRandomHslColor } from '@/lib/utils';
 import { throttle } from 'throttle-debounce';
 import { useSetAtom } from 'jotai';
-import { dashboardPerfCursorAtom } from './dashboardHooks';
+import { dashPerfCursorAtom } from './dashboardHooks';
 
 
 //Helpers
@@ -62,7 +62,6 @@ export default function drawFullPerfChart({
     //Setup
     const drawableAreaHeight = height - margins.top - margins.bottom;
     const drawableAreaWidth = width - margins.left - margins.right;
-    const middleDrawableAreaHeight = drawableAreaHeight / 2;
 
     svg.append('clipPath')
         .attr('id', 'fullPerfChartClipPath')
@@ -392,7 +391,7 @@ export default function drawFullPerfChart({
             .attr('x2', drawableAreaWidth)
             .attr('y2', pointData.y);
         cursorText.attr('x', 5)
-            .attr('y', pointData.y < middleDrawableAreaHeight ? pointData.y + 20 : pointData.y - 10)
+            .attr('y', pointData.y < 50 ? pointData.y + 20 : pointData.y - 10)
             .text(pointData.val);
         cursorDot.attr('cx', pointData.x)
             .attr('cy', pointData.y);

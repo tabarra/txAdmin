@@ -80,14 +80,14 @@ export const getBucketTicketsEstimatedTime = (boundaries: (string | number)[]) =
 /**
  * Map the performance data from count frequency histogram to time-weighted histogram.
  */
-export const getTimeWeightedHistogram = (perfHist: SvRtPerfCountsThreadType, bucketEstimatedAverageTimes: number[]) => {
-    if (perfHist.buckets.length !== bucketEstimatedAverageTimes.length) throw new Error('Invalid bucket count');
+export const getTimeWeightedHistogram = (bucketCounts: number[], bucketEstimatedAverageTimes: number[]) => {
+    if (bucketCounts.length !== bucketEstimatedAverageTimes.length) throw new Error('Invalid bucket count');
 
     //Calculate the total estimated time
     let totalEstimatedTime = 0;
     const bucketEstimatedCumulativeTime = [];
     for (let bucketIndex = 0; bucketIndex < bucketEstimatedAverageTimes.length; bucketIndex++) {
-        const bucketTickCount = (typeof perfHist.buckets[bucketIndex] === 'number') ? perfHist.buckets[bucketIndex] : 0;
+        const bucketTickCount = (typeof bucketCounts[bucketIndex] === 'number') ? bucketCounts[bucketIndex] : 0;
         const calculatedTime = bucketTickCount * bucketEstimatedAverageTimes[bucketIndex];
         bucketEstimatedCumulativeTime.push(calculatedTime);
         totalEstimatedTime += calculatedTime;

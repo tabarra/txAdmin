@@ -1,11 +1,12 @@
-import { atom, useAtom } from "jotai";
+import { atom, useSetAtom } from "jotai";
 import { PerfSnapType } from "./chartingUtils";
+import { DashboardDataEventType, DashboardPleyerDropDataType, DashboardSvRuntimeDataType } from "@shared/socketioTypes";
 
 
 /**
  * Types
  */
-type DashboardPerfCursorData = {
+type DashboardPerfCursorDataType = {
     threadName: string;
     snap: PerfSnapType;
 };
@@ -14,5 +15,20 @@ type DashboardPerfCursorData = {
 /**
  * Atoms
  */
-export const dashboardPerfCursorAtom = atom<DashboardPerfCursorData | undefined>(undefined);
+export const dashPlayerDropAtom = atom<DashboardPleyerDropDataType | undefined>(undefined);
+export const dashSvRuntimeAtom = atom<DashboardSvRuntimeDataType | undefined>(undefined);
+export const dashPerfCursorAtom = atom<DashboardPerfCursorDataType | undefined>(undefined);
 
+
+/**
+ * Hooks
+ */
+export const useSetDashboardData = () => {
+    const setPlayerDrop = useSetAtom(dashPlayerDropAtom);
+    const setSvRuntime = useSetAtom(dashSvRuntimeAtom);
+
+    return (eventData: DashboardDataEventType) => {
+        setPlayerDrop(eventData.playerDrop);
+        setSvRuntime(eventData.svRuntime);
+    };
+};

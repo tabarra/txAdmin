@@ -3,19 +3,11 @@ import { GaugeIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ThreadPerfCard from './ThreadPerfCard';
 import PlayerDropCard from './PlayerDropCard';
-import * as d3ScaleChromatic from 'd3-scale-chromatic';
-import { getMinTickIntervalMarker } from './chartingUtils';
 import FullPerfCard from './FullPerfCard';
 import { useAtomValue } from 'jotai';
-import { dashboardPerfCursorAtom } from './dashboardHooks';
+import { dashPerfCursorAtom, useSetDashboardData } from './dashboardHooks';
 import { getSocket } from '@/lib/utils';
 
-export type ThreadPerfChartDatum = {
-    bucket: string | number;
-    value: number;
-    color: string;
-    count: number;
-}
 
 export type PlayerDropChartDatum = {
     id: string;
@@ -26,6 +18,7 @@ export type PlayerDropChartDatum = {
 
 export default function DashboardPage() {
     const pageSocket = useRef<ReturnType<typeof getSocket> | null>(null);
+    const setDashboardData = useSetDashboardData();
 
     //Runing on mount only
     useEffect(() => {
@@ -41,7 +34,7 @@ export default function DashboardPage() {
             console.log('dashboard Socket.IO', error);
         });
         pageSocket.current.on('dashboard', function (data) {
-            console.log(data);
+            setDashboardData(data);
         });
 
         return () => {
@@ -51,7 +44,7 @@ export default function DashboardPage() {
     }, []);
     
     //DEBUG
-    const cursorData = useAtomValue(dashboardPerfCursorAtom);
+    const cursorData = useAtomValue(dashPerfCursorAtom);
     const [isRunning, setIsRunning] = useState(false);
     const [rndCounter, setRndCounter] = useState(491);
     const [ztoCounter, setZtoCounter] = useState(0);
@@ -64,39 +57,6 @@ export default function DashboardPage() {
         }, 150);
         return () => clearInterval(interval);
     }, [isRunning]);
-
-    const threadPerfChartData = useMemo(() => {
-        const boundaries = [0.001, 0.002, 0.004, 0.006, 0.008, 0.010, 0.015, 0.020, 0.030, 0.050, 0.070, 0.100, 0.150, 0.250, '+Inf'];
-        const minTickInterval = 0.050; // 50 ms - svMain
-
-        const data: ThreadPerfChartDatum[] = [];
-        for (let i = 0; i < boundaries.length; i++) {
-            const bucketNum = i + 1;
-            const indexPct = bucketNum / boundaries.length;
-            data.push({
-                bucket: boundaries[i],
-                count: Math.round(Math.random() * 1000),
-                value: Math.max(0, (Math.sin((indexPct + ztoCounter) * 2 * Math.PI) - 1) + 1), //rnd
-                // value: Math.max(0, Math.sin(i * 0.24 + tmpMultiplier)) / 2.8, //rnd
-                // value: Math.max(0, Math.sin(i * 0.295 + 0.7)) / 2.8, //good
-                // value: Math.max(0, Math.sin(i * 0.295 + -0.6)) / 2.8, //bad
-
-                // value: (1 + Math.sin(i * 0.295 + 0.7)) / 2.8 + 0.1,
-                // value: (1 + Math.sin(i * 0.55 + 4)) / 2.8 + 0.1,
-
-                // value: (1 + Math.cos(1.2 + i * 0.35)) / 2.8 + 0.1,
-                // value: (1 + Math.sin(i * Math.PI / (2 * 9))) / 2.8 + 0.1,
-                // color: i < goodThreshold
-                //     ? d3ScaleChromatic.interpolateYlGn(1.3 - (bucketNum / goodThreshold))
-                //     : d3ScaleChromatic.interpolateYlOrRd((bucketNum - goodThreshold) / (yLabels.length - goodThreshold)),
-                color: d3ScaleChromatic.interpolateRdYlGn(1.3 - bucketNum / boundaries.length * 2),
-            });
-        }
-
-        const minTickIntervalMarker = getMinTickIntervalMarker(boundaries, minTickInterval);
-
-        return { data, minTickIntervalMarker, boundaries };
-    }, [rndCounter]);
 
     const pieChartData = useMemo(() => {
         const tmpTotal = rndCounter + 135 + 180 + 169 + 365 + 365;
@@ -144,7 +104,7 @@ export default function DashboardPage() {
     return (
         <div className="w-full min-w-96 flex flex-col items-center justify-center gap-4">
             <div className="w-full grid grid-cols-8 gap-4 h-[22rem] max-h-[22rem] overflow-clip">
-                <ThreadPerfCard data={threadPerfChartData} />
+                <ThreadPerfCard />
                 <div className="py-2 px-4 rounded-lg border shadow-sm col-span-2 min-w-60 bg-card">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                         <h3 className="tracking-tight text-sm font-medium line-clamp-1">Host stats (last minute)</h3>

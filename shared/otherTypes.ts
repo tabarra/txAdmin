@@ -4,6 +4,7 @@ export type { GetBanTemplatesSuccessResp } from "@core/webroutes/banTemplates/ge
 export type { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/webroutes/banTemplates/saveBanTemplates";
 export type { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/webroutes/history/actions";
 export type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@core/components/StatsManager/svRuntime/perfSchemas";
+export type { SvRtPerfThreadNamesType } from "@core/components/StatsManager/svRuntime/config";
 export type { PerfChartApiResp, PerfChartApiSuccessResp } from "@core/webroutes/perfChart";
 
 
