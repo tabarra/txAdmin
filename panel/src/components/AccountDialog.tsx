@@ -250,7 +250,7 @@ function ChangeIdentifiersTab() {
                 </p>
                 <div className="space-y-3 pt-2 pb-6">
                     <div className="space-y-1">
-                        <Label htmlFor="cfxreId">FiveM identifier <span className="text-sm opacity-75 text-info">(optional)</span></Label>
+                        <Label htmlFor="cfxreId">VMP identifier <span className="text-sm opacity-75 text-info">(optional)</span></Label>
                         <Input
                             id="cfxreId"
                             autoCapitalize="none"
@@ -268,8 +268,8 @@ function ChangeIdentifiersTab() {
                         />
                         <p className="text-sm text-muted-foreground">
                             Your identifier can be found by clicking in your name in the playerlist and going to the IDs page. <br />
-                            You can also type in your <TxAnchor href="https://forum.cfx.re/">forum.cfx.re</TxAnchor> username and it will be converted automatically. <br />
-                            This is required if you want to login using the Cfx.re button.
+                            You can also type in your <TxAnchor href="https://forum.vmp.ir/">forum.vmp.ir</TxAnchor> username and it will be converted automatically. <br />
+                            This is required if you want to login using the VMP button.
                         </p>
                     </div>
                     <div className="space-y-1">
