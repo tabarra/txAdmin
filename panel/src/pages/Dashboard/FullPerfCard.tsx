@@ -5,15 +5,19 @@ import drawFullPerfChart from './drawFullPerfChart';
 import { BackendApiError, useBackendApi } from '@/hooks/fetch';
 import type { SvRtPerfCountsThreadType, PerfChartApiSuccessResp } from "@shared/otherTypes";
 import useSWR from 'swr';
-import { formatTickBoundary, getBucketTicketsEstimatedTime, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
+import { PerfSnapType, formatTickBoundary, getBucketTicketsEstimatedTime, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
+import { useSetAtom } from 'jotai';
+import { dashboardPerfCursorAtom } from './dashboardHooks';
 
 type FullPerfChartProps = {
+    threadName: string;
     apiData: PerfChartApiSuccessResp;
     width: number;
     height: number;
 };
 
-const FullPerfChart = memo(({ apiData, width, height }: FullPerfChartProps) => {
+const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChartProps) => {
+    const setCursor = useSetAtom(dashboardPerfCursorAtom);
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const margins = {
@@ -34,11 +38,20 @@ const FullPerfChart = memo(({ apiData, width, height }: FullPerfChartProps) => {
         // apiData.threadPerfLog = apiData.threadPerfLog.slice(-50)
         const parsed = processPerfLog(apiData.threadPerfLog, perfProcessor);
         if (!parsed) return null;
+
         return {
-            boundaries: apiData.boundaries.map(formatTickBoundary),
             ...parsed,
+            bucketLabels: apiData.boundaries.map(formatTickBoundary),
+            cursorSetter: (snap: PerfSnapType | undefined) => {
+                if (!snap) return setCursor(undefined);
+                setCursor({
+                    threadName,
+                    snap,
+                });
+            },
         }
-    }, [apiData]);
+    }, [apiData, threadName]);
+
 
     //Redraw chart when data or size changes
     useEffect(() => {
@@ -54,6 +67,7 @@ const FullPerfChart = memo(({ apiData, width, height }: FullPerfChartProps) => {
         });
         console.timeEnd('drawFullPerfChart');
     }, [processedData, width, height, svgRef, canvasRef]);
+
 
     if (!width || !height) return null;
     return (<>
@@ -137,6 +151,7 @@ export default function FullPerfCard() {
     let contentNode: React.ReactNode = null;
     if (swrChartApiResp.data) {
         contentNode = <FullPerfChart
+            threadName={selectedThread}
             apiData={swrChartApiResp.data}
             width={chartSize.width}
             height={chartSize.height}

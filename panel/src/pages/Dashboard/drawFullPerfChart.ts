@@ -2,6 +2,8 @@ import * as d3 from 'd3';
 import { PerfLifeSpanType, PerfSnapType } from './chartingUtils';
 import { createRandomHslColor } from '@/lib/utils';
 import { throttle } from 'throttle-debounce';
+import { useSetAtom } from 'jotai';
+import { dashboardPerfCursorAtom } from './dashboardHooks';
 
 
 //Helpers
@@ -27,10 +29,11 @@ type drawFullPerfChartProps = {
         left: number;
         axis: number;
     };
-    boundaries: string[];
+    bucketLabels: string[];
     dataStart: Date;
     dataEnd: Date;
     lifespans: PerfLifeSpanType[];
+    cursorSetter: (snap: PerfSnapType | undefined) => void;
 };
 
 export default function drawFullPerfChart({
@@ -38,10 +41,11 @@ export default function drawFullPerfChart({
     canvasRef,
     size: { width, height },
     margins,
-    boundaries,
+    bucketLabels,
     dataStart,
     dataEnd,
     lifespans,
+    cursorSetter,
 }: drawFullPerfChartProps) {
     //FIXME: checar se tem contexto
     // if (!canvasRef?.getContext) {
@@ -51,6 +55,7 @@ export default function drawFullPerfChart({
 
     // FIXME: DEBUG Clear SVG
     console.clear();
+    console.log('Drawing chart from:', dataStart.toISOString(), 'to:', dataEnd.toISOString(), 'with', lifespans.length, 'lifespans');
     d3.select(svgRef).selectAll("*").remove();
     const svg = d3.select<SVGElement, PerfLifeSpanType>(svgRef);
     const canvas = d3.select(canvasRef)!;
@@ -81,7 +86,7 @@ export default function drawFullPerfChart({
         .range([0, drawableAreaWidth]);
 
     const tickBucketsScale = d3.scaleBand()
-        .domain(boundaries)
+        .domain(bucketLabels)
         .range([height - margins.bottom, margins.top]);
 
     const histColor = d3.scaleSequential(d3.interpolateViridis)
@@ -124,9 +129,7 @@ export default function drawFullPerfChart({
 
 
     // Drawing the histogram
-    // const bucketYCoords = boundaries.map(b => tickBucketsScale(b)!);
-    // const bucketHeight = tickBucketsScale.bandwidth();
-    const bucketYCoords = boundaries.map(b => Math.floor(tickBucketsScale(b)!));
+    const bucketYCoords = bucketLabels.map(b => Math.floor(tickBucketsScale(b)!));
     const bucketHeight = Math.ceil(tickBucketsScale.bandwidth());
     const emptyBucketColor = d3.color(histColor(0))!.darker(1.15).formatHsl();
     const cssBgHslVar = getComputedStyle(document.documentElement)
@@ -338,7 +341,7 @@ export default function drawFullPerfChart({
         cursorLineHorz.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
         cursorText.attr('x', -99).attr('y', -99);
         cursorDot.attr('cx', -99).attr('cy', -99);
-        //FIXME: clear cursor atom
+        cursorSetter(undefined);
     };
     clearCursor();
 
@@ -347,30 +350,39 @@ export default function drawFullPerfChart({
     const maxAllowedGap = 20 * 60 * 1000;
     const timeBisector = d3.bisector((lfspn: PerfSnapType) => lfspn.end).center;
     const allLifespans = lifespans.flatMap(l => l.log);
-    const getClosestData = (x: number): PerfSnapType | undefined => {
+    const getClosestData = (x: number) => {
         const xPosDate = timeScale.invert(x);
         const indexFound = timeBisector(allLifespans, xPosDate);
         if (indexFound === -1) return;
         const snapData = allLifespans[indexFound];
         if (Math.abs(snapData.end.getTime() - xPosDate.getTime()) < maxAllowedGap) {
-            return snapData;
+            return {
+                snapIndex: indexFound,
+                snapData
+            };
         }
     };
 
 
     //Detect mouse over and show timestamp + draw vertical line
+    let lastFlatSnapsIndex: number | null = null;
     const handleMouseMove = (pointerX: number, pointerY: number) => {
         // Find closest data point
-        const closestDataPoint = getClosestData(pointerX);
-        if (!closestDataPoint) {
+        const findResult = getClosestData(pointerX);
+        if (!findResult) {
+            lastFlatSnapsIndex = null;
             return clearCursor();
         }
-        // console.log('closestDataPoint:', closestDataPoint);
+        const { snapIndex, snapData } = findResult;
+        if(snapIndex === lastFlatSnapsIndex) return;
+        lastFlatSnapsIndex = snapIndex;
+        cursorSetter(snapData);
+        console.log('Found snap:', snapData);
 
         const pointData = {
-            x: timeScale(closestDataPoint.end),
-            y: playersScale(closestDataPoint.players),
-            val: closestDataPoint.players
+            x: timeScale(snapData.end),
+            y: playersScale(snapData.players),
+            val: snapData.players
         };
 
         // Draw cursor
