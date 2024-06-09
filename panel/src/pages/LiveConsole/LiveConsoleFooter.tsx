@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { cn, openExternalLink } from "@/lib/utils";
 import { BookMarkedIcon, FileDownIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useAdminPerms } from '@/hooks/auth';
-import { useLiveConsoleHistory } from '@/hooks/liveConsole';
+import { useLiveConsoleHistory } from '@/pages/LiveConsole/liveConsoleHooks';
 
 
 type ConsoleFooterButtonProps = {

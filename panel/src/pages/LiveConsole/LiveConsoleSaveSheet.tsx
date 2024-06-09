@@ -1,7 +1,7 @@
 import { txToast } from "@/components/TxToaster";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useOpenPromptDialog } from "@/hooks/dialogs";
-import { useLiveConsoleBookmarks, useLiveConsoleHistory } from "@/hooks/liveConsole";
+import { useLiveConsoleBookmarks, useLiveConsoleHistory } from "@/pages/LiveConsole/liveConsoleHooks";
 import { cn } from "@/lib/utils";
 import { PlusIcon, StarIcon, StarOffIcon, XIcon } from "lucide-react";
 

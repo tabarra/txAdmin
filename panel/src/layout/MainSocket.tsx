@@ -1,8 +1,8 @@
-import { useExpireAuthData, useSetAuthData } from '../hooks/auth';
 import { useEffect, useRef } from 'react';
+import { getSocket } from '@/lib/utils';
+import { useExpireAuthData, useSetAuthData } from '@/hooks/auth';
 import { useSetGlobalStatus } from '@/hooks/status';
 import { useProcessUpdateAvailableEvent, useSetOfflineWarning } from '@/hooks/useWarningBar';
-import { getSocket } from '@/lib/utils';
 import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
 
 
@@ -18,7 +18,7 @@ export default function MainSocket() {
     const setGlobalStatus = useSetGlobalStatus();
     const processPlayerlistEvents = useProcessPlayerlistEvents();
     const processUpdateAvailableEvent = useProcessUpdateAvailableEvent();
-    
+
     //Runing on mount only
     useEffect(() => {
         //SocketIO

@@ -6,6 +6,14 @@ import PlayerDropCard from './PlayerDropCard';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import { getMinTickIntervalMarker } from './chartingUtils';
 import FullPerfCard from './FullPerfCard';
+import { useAtomValue } from 'jotai';
+import { dashboardPerfCursorAtom } from './dashboardHooks';
+
+type ThreadPerfChartRENAME = {
+    svMain: number[];
+    svNetwork: number[];
+    svSync: number[];
+};
 
 export type ThreadPerfChartDatum = {
     bucket: string | number;
@@ -26,6 +34,9 @@ export default function DashboardPage() {
     const [rndCounter, setRndCounter] = useState(491);
     const [ztoCounter, setZtoCounter] = useState(0);
 
+    //DEBUG
+    const cursorData = useAtomValue(dashboardPerfCursorAtom);
+
     useEffect(() => {
         if (!isRunning) return;
         const interval = setInterval(() => {
@@ -36,8 +47,6 @@ export default function DashboardPage() {
     }, [isRunning]);
 
     const threadPerfChartData = useMemo(() => {
-        // const yLabels = ['5 ms', '10 ms', '25 ms', '50 ms', '75 ms', '100 ms', '250 ms', '500 ms', '750 ms', '1.0 s', '2.5 s', '5.0 s', '7.5 s', '10 s', '+Inf'];
-        // const yLabels = ['1 ms', '2 ms', '4 ms', '6 ms', '8 ms', '10 ms', '15 ms', '20 ms', '30 ms', '50 ms', '70 ms', '100 ms', '150 ms', '250 ms', '+Inf'];
         const boundaries = [0.001, 0.002, 0.004, 0.006, 0.008, 0.010, 0.015, 0.020, 0.030, 0.050, 0.070, 0.100, 0.150, 0.250, '+Inf'];
         const minTickInterval = 0.050; // 50 ms - svMain
 
@@ -122,6 +131,9 @@ export default function DashboardPage() {
                         <h3 className="tracking-tight text-sm font-medium line-clamp-1">Host stats (last minute)</h3>
                         <div className='hidden xs:block'><GaugeIcon /></div>
                     </div>
+                    <pre className='whitespace-pre-wrap'>
+                        {JSON.stringify(cursorData, null, 2)}
+                    </pre>
                     <div className="text-xl xs:text-2xl font-bold">
                         {rndCounter}
                     </div>

@@ -1,4 +1,5 @@
-import { UpdateDataType } from "otherTypes";
+import type { ReactAuthDataType } from "authApiTypes";
+import type { UpdateDataType } from "otherTypes";
 
 /**
  * Status channel
@@ -66,3 +67,19 @@ export type UpdateAvailableEventType = {
     fxserver?: UpdateDataType;
     txadmin?: UpdateDataType;
 }
+
+
+/**
+ * Listen Events Map
+ */
+export type ListenEventsMap = {
+    error: (reason?: string) => void;
+    logout: (reason?: string) => void;
+    refreshToUpdate: () => void;
+    status: (status: GlobalStatusType) => void;
+    playerlist: (playerlistData: PlayerlistEventType[]) => void;
+    updateAuthData: (authData: ReactAuthDataType) => void;
+
+    //Standalone events
+    updateAvailable: (event: UpdateAvailableEventType) => void
+};

@@ -1,9 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import humanizeDuration from '@/lib/humanizeDuration';
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import type { HumanizerOptions } from "humanize-duration";
 import type { BanDurationType } from "@shared/otherTypes";
+import { ListenEventsMap } from "@shared/socketioTypes";
 
 //Statically caching the current year
 const currentYear = new Date().getFullYear();
@@ -142,7 +143,8 @@ export const getSocket = (rooms: string[] | string) => {
         ? io({ ...socketOpts, path: '/socket.io' })
         : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
 
-    return socket;
+    //Can't use the generic type on io(), so need to apply it here
+    return socket as Socket<ListenEventsMap, any>;
 }
 
 
