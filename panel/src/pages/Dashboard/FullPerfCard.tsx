@@ -147,6 +147,7 @@ export default function FullPerfCard() {
 
     useEffect(() => {
         swrChartApiResp.mutate();
+        //FIXME: should probably clear the data when changing the thread
     }, [selectedThread]);
 
     //Rendering

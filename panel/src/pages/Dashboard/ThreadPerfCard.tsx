@@ -8,6 +8,7 @@ import { useAtomValue } from 'jotai';
 import { dashPerfCursorAtom, dashSvRuntimeAtom } from './dashboardHooks';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import { SvRtPerfThreadNamesType } from '@shared/otherTypes';
+import { dateToLocaleDateTimeString } from '@/lib/utils';
 
 /**
  * Types
@@ -186,13 +187,20 @@ export default function ThreadPerfCard() {
         return { data, minTickIntervalMarker, perfBoundaries };
     }, [svRuntimeData, perfCursorData]);
 
+    const cursorSnapTime = useMemo(() => {
+        if (!perfCursorData) return undefined;
+        return dateToLocaleDateTimeString(perfCursorData.snap.end, 'short', 'short');
+    }, [perfCursorData]);
+
     if (!chartData) return null; //FIXME:
     const threadDisplayName = getThreadDisplayName(selectedThread);
     return (
         <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[22rem] max-h-[22rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
-                    {threadDisplayName} Thread Performance (last minute)
+                    {threadDisplayName} Thread Performance ({cursorSnapTime ? (
+                        <span className="text-xs text-warning-inline">{cursorSnapTime}</span>
+                    ) : 'last minute'})
                 </h3>
                 <div className='hidden xs:block'><BarChartHorizontalIcon /></div>
             </div>

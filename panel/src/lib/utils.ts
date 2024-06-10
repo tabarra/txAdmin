@@ -68,12 +68,11 @@ export const msToShortDuration = humanizeDuration.humanizer({
 /**
  * Converts a timestamp to a locale date string
  */
-export const tsToLocaleDate = (
-    ts: number,
+export const dateToLocaleDateString = (
+    time: Date,
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
 ) => {
-    return new Date(ts * 1000)
-        .toLocaleDateString(
+    return time.toLocaleDateString(
             window?.nuiSystemLanguages ?? navigator.language,
             { dateStyle }
         );
@@ -81,18 +80,40 @@ export const tsToLocaleDate = (
 
 
 /**
+ * Converts a timestamp to a locale date string
+ */
+export const tsToLocaleDateString = (
+    ts: number,
+    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
+) => {
+    return dateToLocaleDateString(new Date(ts * 1000), dateStyle);
+}
+
+
+/**
  * Translates a timestamp into a localized date time string
  */
-export const tsToLocaleDateTime = (
+export const dateToLocaleDateTimeString = (
+    time: Date,
+    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
+    timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
+) => {
+    return time.toLocaleString(
+            window?.nuiSystemLanguages ?? navigator.language,
+            { dateStyle, timeStyle }
+        );
+}
+
+
+/**
+ * Translates a timestamp into a localized date time string
+ */
+export const tsToLocaleDateTimeString = (
     ts: number,
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
     timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
 ) => {
-    return new Date(ts * 1000)
-        .toLocaleString(
-            window?.nuiSystemLanguages ?? navigator.language,
-            { dateStyle, timeStyle }
-        );
+    return dateToLocaleDateTimeString(new Date(ts * 1000), dateStyle, timeStyle);
 }
 
 

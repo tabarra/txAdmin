@@ -43,6 +43,13 @@ suite('getMinTickIntervalMarker', () => {
         const result = getMinTickIntervalMarker(boundaries, minTickInterval);
         expect(result).toBe(0.050);
     });
+    it('should handle another real case', () => {
+        const boundaries = [0.001, 0.002, 0.004, 0.006, 0.008, 0.010, 0.015, 0.020, 0.030, 0.050, 0.070, 0.100, 0.150, 0.250, '+Inf'];
+        const minTickInterval = 0.2; // 50 ms - svMain
+        const result = getMinTickIntervalMarker(boundaries, minTickInterval);
+        console.log(result);
+        expect(result).toBe(0.150);
+    });
 });
 
 
@@ -179,11 +186,11 @@ suite('getTimeWeightedHistogram', () => {
             Math.floor(Math.random() * 100),
         ]
         const bucketCounts = [
-                Math.floor(Math.random() * 100),
-                Math.floor(Math.random() * 100),
-                Math.floor(Math.random() * 100),
-                Math.floor(Math.random() * 100),
-                Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
+            Math.floor(Math.random() * 100),
         ];
         const result = getTimeWeightedHistogram(bucketCounts, randBucketEstimatedAverageTimes);
         const sum = result.reduce((acc, val) => acc + val, 0);

@@ -40,13 +40,12 @@
         - [x] drawing groups with the gaps
         - [ ] context checking, drawing error handling
         - [ ] button to switch thread
-        - [ ] show cursor time
     - [x] change StatsManager.svRuntime to save counts instead of frequencies
     - [x] some way for the backend to push updates to the UI
     - [ ] thread perf chart:
         - [x] throttle cursor atom change events
+        - [x] show cursor time
         - [ ] indicate loading, reloading and error states
-        - [ ] color should change at the min interval marker point
         - [ ] button to switch thread
     - [ ] player drop pie chart:
         - [ ] apply socket data
@@ -60,9 +59,10 @@
         - [ ] indicate loading, reloading and error states
         - [ ] show cursor time
     - [ ] statsManager.playerDrop.saveEventLog MUST be throttled
+    - [ ] dashboard data atom with timestamp and expiration
 - [ ] NEW PAGE: Dashboard
-    - [ ] route new dashboard
-    - [ ] remove old dashboard code & all related dependencies
+    - [x] route new dashboard
+    - [x] remove old dashboard code & all related dependencies
     - [ ] mobile layout
     - [ ] button to docs page
     - [ ] everything should look "fine enough" on light mode
@@ -93,6 +93,7 @@
 - [ ] MUST `//FIXME: update_txdiagnostics`
 - [ ] add fxserver version to txDiagnostics
 - [ ] commit stashed changes
+- [ ] merge #952 manually
 
 
 ==================================================
@@ -138,17 +139,22 @@ for log in statsLog:
     - [ ] buttons to show memory usage, maybe hide player count
     - [ ] calculate initial zoom of 30h, maybe some linear interpolation
     - [ ] warning for top servers
-    - [ ] thread perf chart: swr disable revalidateOnFocus and use interval 
-        - or some kind of push from the dashboard room event
-
+    - thread perf chart:
+        - [ ] color should change correctly at the min interval marker point
+    - full perf chart:
+        - [ ] don't clear canvas on render, use d3 joins
+        - [ ] swr disable revalidateOnFocus and use interval
+            - or some kind of push from the dashboard room event
+        
 - Highlights:
     - [ ] add average session time tracking to statsManager.playerDrop
 
-- Small feats & improvements:
+- Small feats, fix, and improvements:
     - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
     - [ ] add "this player is banned until: xxx" to the player modal
     - [ ] track channel of last console output, and if it's different prefix a `\n`
     - [ ] add more menu keybinds 
+    - [ ] the WarningBar scrolls up with the pages when they have scroll
     - [ ] locale file optimization - build 8201 and above
     - [ ] add txadmin v8 heap to diagnostics
     - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg

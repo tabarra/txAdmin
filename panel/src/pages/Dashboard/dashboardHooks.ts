@@ -38,7 +38,7 @@ export const useSetDashboardData = () => {
 export const useThrottledSetCursor = () => {
     const setCursor = useSetAtom(dashPerfCursorAtom);
     const debouncedCursorSetter = useCallback(
-        throttle(250, setCursor, { noLeading: false, noTrailing: false }),
+        throttle(150, setCursor, { noLeading: false, noTrailing: false }),
         [setCursor]
     );
     return debouncedCursorSetter;

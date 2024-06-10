@@ -14,6 +14,7 @@ import HistoryPage from "@/pages/History/HistoryPage";
 import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
 import SystemLogPage from "@/pages/SystemLogPage";
 import AddLegacyBanPage from "@/pages/AddLegacyBanPage";
+import DashboardPage from "@/pages/Dashboard/DashboardPage";
 
 
 type RouteType = {
@@ -74,7 +75,7 @@ const allRoutes: RouteType[] = [
     {
         path: '/',
         title: 'Dashboard',
-        children: <Iframe legacyUrl="dashboard" />
+        children: <DashboardPage />
     },
     {
         path: '/server/console',

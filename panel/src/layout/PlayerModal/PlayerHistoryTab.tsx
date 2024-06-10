@@ -1,4 +1,4 @@
-import { cn, tsToLocaleDateTime } from "@/lib/utils";
+import { cn, tsToLocaleDateTimeString } from "@/lib/utils";
 import { PlayerHistoryItem } from "@shared/playerApiTypes";
 import InlineCode from "@/components/InlineCode";
 import { useOpenActionModal } from "@/hooks/actionModal";
@@ -22,10 +22,10 @@ function HistoryItem({ action, serverTime, modalOpener }: HistoryItemProps) {
     }
     if (action.revokedBy) {
         borderColorClass = '';
-        const revocationDate = tsToLocaleDateTime(action.revokedAt ?? 0, 'medium', 'short');
+        const revocationDate = tsToLocaleDateTimeString(action.revokedAt ?? 0, 'medium', 'short');
         footerNote = `Revoked by ${action.revokedBy} on ${revocationDate}.`;
     } else if (typeof action.exp === 'number') {
-        const expirationDate = tsToLocaleDateTime(action.exp, 'medium', 'short');
+        const expirationDate = tsToLocaleDateTimeString(action.exp, 'medium', 'short');
         footerNote = (action.exp < serverTime) ? `Expired on ${expirationDate}.` : `Expires in ${expirationDate}.`;
     }
 
@@ -43,9 +43,9 @@ function HistoryItem({ action, serverTime, modalOpener }: HistoryItemProps) {
                     <InlineCode className="tracking-widest">{action.id}</InlineCode>
                     <span
                         className="opacity-75 cursor-help"
-                        title={tsToLocaleDateTime(action.ts, 'long', 'long')}
+                        title={tsToLocaleDateTimeString(action.ts, 'long', 'long')}
                     >
-                        {tsToLocaleDateTime(action.ts, 'medium', 'short')}
+                        {tsToLocaleDateTimeString(action.ts, 'medium', 'short')}
                     </span>
                 </small>
             </div>

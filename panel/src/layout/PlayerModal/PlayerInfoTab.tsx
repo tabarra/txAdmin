@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAdminPerms } from "@/hooks/auth";
 import { useBackendApi } from "@/hooks/fetch";
 import { PlayerModalRefType } from "@/hooks/playerModal";
-import { cn, msToDuration, tsToLocaleDate } from "@/lib/utils";
+import { cn, msToDuration, tsToLocaleDateString } from "@/lib/utils";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import { PlayerModalPlayerData } from "@shared/playerApiTypes";
 import { useRef, useState } from "react";
