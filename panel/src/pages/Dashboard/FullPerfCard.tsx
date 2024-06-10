@@ -7,15 +7,18 @@ import type { SvRtPerfCountsThreadType, PerfChartApiSuccessResp } from "@shared/
 import useSWR from 'swr';
 import { PerfSnapType, formatTickBoundary, getBucketTicketsEstimatedTime, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
 import { useThrottledSetCursor } from './dashboardHooks';
+import { useIsDarkMode } from '@/hooks/theme';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type FullPerfChartProps = {
     threadName: string;
     apiData: PerfChartApiSuccessResp;
     width: number;
     height: number;
+    isDarkMode: boolean;
 };
 
-const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChartProps) => {
+const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: FullPerfChartProps) => {
     const setCursor = useThrottledSetCursor();
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -49,7 +52,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChar
                 });
             },
         }
-    }, [apiData, threadName]);
+    }, [apiData, threadName, isDarkMode]);
 
 
     //Redraw chart when data or size changes
@@ -64,6 +67,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height }: FullPerfChar
             canvasRef: canvasRef.current,
             size: { width, height },
             margins,
+            isDarkMode,
             ...processedData,
         });
         console.timeEnd('drawFullPerfChart');
@@ -130,6 +134,7 @@ function ChartErrorMessage({ error }: { error: Error | BackendApiError }) {
 export default function FullPerfCard() {
     const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
     const [selectedThread, setSelectedThread] = useState('svMain');
+    const isDarkMode = useIsDarkMode();
 
     const chartApi = useBackendApi<PerfChartApiSuccessResp>({
         method: 'GET',
@@ -158,6 +163,7 @@ export default function FullPerfCard() {
             apiData={swrChartApiResp.data}
             width={chartSize.width}
             height={chartSize.height}
+            isDarkMode={isDarkMode}
         />;
     } else if (swrChartApiResp.isLoading) {
         contentNode = <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -168,12 +174,30 @@ export default function FullPerfCard() {
     }
 
     return (
-        <div className="w-full h-[32rem] py-2 md:rounded-lg border bg-card shadow-sm flex flex-col fill-primary">
+        <div className="w-full h-[28rem] py-2 md:rounded-lg border bg-card shadow-sm flex flex-col fill-primary">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
                     Server performance
                 </h3>
-                <div className='hidden xs:block'><LineChartIcon /></div>
+                <div className="flex gap-4">
+                    <Select defaultValue={selectedThread} onValueChange={setSelectedThread}>
+                        <SelectTrigger className="w-32 grow md:grow-0 h-6 px-3 py-1 text-sm" >
+                            <SelectValue placeholder="Filter by admin" />
+                        </SelectTrigger>
+                        <SelectContent className="px-0">
+                            <SelectItem value={'svMain'} className="cursor-pointer">
+                                svMain
+                            </SelectItem>
+                            <SelectItem value={'svSync'} className="cursor-pointer">
+                                svSync
+                            </SelectItem>
+                            <SelectItem value={'svNetwork'} className="cursor-pointer">
+                                svNetwork
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <div className='hidden xs:block'><LineChartIcon /></div>
+                </div>
             </div>
             <DebouncedResizeContainer onDebouncedResize={setChartSize}>
                 {contentNode}

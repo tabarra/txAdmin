@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
     return (
         <div className="w-full min-w-96 flex flex-col gap-4">
-            <div className="w-full grid grid-cols-8 gap-4 h-[22rem] max-h-[22rem] overflow-clip">
+            <div className="w-full grid grid-cols-8 gap-4 h-[20rem] max-h-[20rem] overflow-clip">
                 <PlayerDropCard />
                 <div className="py-2 px-4 rounded-lg border shadow-sm col-span-2 min-w-60 bg-card">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">

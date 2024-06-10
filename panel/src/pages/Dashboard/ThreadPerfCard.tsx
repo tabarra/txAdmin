@@ -9,6 +9,7 @@ import { dashPerfCursorAtom, dashSvRuntimeAtom, useGetDashDataAge } from './dash
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import { SvRtPerfThreadNamesType } from '@shared/otherTypes';
 import { dateToLocaleDateTimeString } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 /**
@@ -140,7 +141,7 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: Th
 
 export default function ThreadPerfCard() {
     const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
-    const [selectedThread, setSelectedThread] = useState<SvRtPerfThreadNamesType>('svMain');
+    const [selectedThread, setSelectedThread] = useState<string>('svMain');
     const svRuntimeData = useAtomValue(dashSvRuntimeAtom);
     const perfCursorData = useAtomValue(dashPerfCursorAtom);
     const getDashDataAge = useGetDashDataAge();
@@ -156,8 +157,13 @@ export default function ThreadPerfCard() {
             return 'incomplete';
         }
 
+        const threadName = (perfCursorData
+            ? perfCursorData.threadName
+            : selectedThread
+            ?? 'svMain') as SvRtPerfThreadNamesType;
+
         const { perfBoundaries, perfBucketCounts, perfMinTickTime } = svRuntimeData;
-        const minTickInterval = perfMinTickTime[selectedThread ?? 'svMain'];
+        const minTickInterval = perfMinTickTime[threadName];
         const minTickIntervalMarker = getMinTickIntervalMarker(perfBoundaries, minTickInterval);
         const minTickIntervalIndex = perfBoundaries.findIndex(b => b === minTickIntervalMarker);
         let colorFunc: (bucketNum: number) => string;
@@ -174,7 +180,7 @@ export default function ThreadPerfCard() {
             colorFunc = (index) => d3ScaleChromatic.interpolateRdYlGn(1 - (index + 1) / perfBoundaries.length);
         }
 
-        const threadBucketCounts = perfBucketCounts[selectedThread ?? 'svMain'];
+        const threadBucketCounts = perfBucketCounts[threadName];
         let threadHistogram: number[];
         if (perfCursorData) {
             threadHistogram = perfCursorData.snap.weightedPerf;
@@ -192,8 +198,8 @@ export default function ThreadPerfCard() {
                 color: colorFunc(i + 1),
             });
         }
-        return { data, minTickIntervalMarker, perfBoundaries };
-    }, [svRuntimeData, perfCursorData]);
+        return { threadName, data, minTickIntervalMarker, perfBoundaries };
+    }, [svRuntimeData, perfCursorData, selectedThread]);
 
 
     const titleTimeIndicator = useMemo(() => {
@@ -219,8 +225,10 @@ export default function ThreadPerfCard() {
 
 
     //Rendering
+    let cursorThreadLabel;
     let contentNode: React.ReactNode = null;
     if (typeof chartData === 'object' && chartData !== null) {
+        cursorThreadLabel = getThreadDisplayName(chartData.threadName);
         contentNode = <ThreadPerfChart {...chartData} width={chartSize.width} height={chartSize.height} />;
     } else if (typeof chartData === 'string') {
         contentNode = <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground text-center">
@@ -235,13 +243,33 @@ export default function ThreadPerfCard() {
         </div>;
     }
 
+
     return (
-        <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[22rem] max-h-[22rem]">
+        <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[20rem] max-h-[20rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
-                    {getThreadDisplayName(selectedThread)} Thread Performance {titleTimeIndicator}
+                    {cursorThreadLabel ?? getThreadDisplayName(selectedThread)} Thread Performance {titleTimeIndicator}
                 </h3>
-                <div className='hidden xs:block'><BarChartHorizontalIcon /></div>
+                {/* <div className='hidden xs:block'><BarChartHorizontalIcon /></div> */}
+                <div className="flex gap-4">
+                    <Select defaultValue={selectedThread} onValueChange={setSelectedThread}>
+                        <SelectTrigger className="w-32 grow md:grow-0 h-6 px-3 py-1 text-sm" >
+                            <SelectValue placeholder="Filter by admin" />
+                        </SelectTrigger>
+                        <SelectContent className="px-0">
+                            <SelectItem value={'svMain'} className="cursor-pointer">
+                                svMain
+                            </SelectItem>
+                            <SelectItem value={'svSync'} className="cursor-pointer">
+                                svSync
+                            </SelectItem>
+                            <SelectItem value={'svNetwork'} className="cursor-pointer">
+                                svNetwork
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <div className='hidden xs:block'><BarChartHorizontalIcon /></div>
+                </div>
             </div>
             <DebouncedResizeContainer onDebouncedResize={setChartSize}>
                 {contentNode}

@@ -29,6 +29,7 @@ type drawFullPerfChartProps = {
         left: number;
         axis: number;
     };
+    isDarkMode: boolean;
     bucketLabels: string[];
     dataStart: Date;
     dataEnd: Date;
@@ -41,6 +42,7 @@ export default function drawFullPerfChart({
     canvasRef,
     size: { width, height },
     margins,
+    isDarkMode,
     bucketLabels,
     dataStart,
     dataEnd,
@@ -93,8 +95,9 @@ export default function drawFullPerfChart({
         .domain(bucketLabels)
         .range([height - margins.bottom, margins.top]);
 
-    const histColor = d3.scaleSequential(d3.interpolateViridis)
+    const histColor = d3.scaleSequential(isDarkMode ? d3.interpolateViridis : d3.interpolateCool)
         .domain([0, 1]);
+        //interpolateCividis?
 
 
     //Line Scales
@@ -137,19 +140,21 @@ export default function drawFullPerfChart({
     const bucketYCoords = bucketLabels.map(b => Math.floor(tickBucketsScale(b)!));
     const bucketHeight = Math.ceil(tickBucketsScale.bandwidth());
     const emptyBucketColor = d3.color(histColor(0))!.darker(1.15).formatHsl();
-    const cssBgHslVar = getComputedStyle(document.documentElement)
-        .getPropertyValue('--background')
-        .split(' ').join(', ');
-    const cssBgParsed = d3.color(`hsl(${cssBgHslVar})`)!;
-    const canvasBgColor = cssBgParsed.darker(1.05).formatHsl();
-    // const canvasBgColor = cssBgParsed.brighter(1.05).formatHsl();
+    // const cssBgHslVar = getComputedStyle(document.documentElement)
+    //     .getPropertyValue('--background')
+    //     .split(' ').join(', ');
+    // const cssBgParsed = d3.color(`hsl(${cssBgHslVar})`)!;
+    // // const cssBgParsed = d3.color(`#F5F6FA`)!;
+    // // const canvasBgColor = cssBgParsed.formatHsl();
+    // const canvasBgColor = cssBgParsed.darker(1.05).formatHsl();
+    // // const canvasBgColor = cssBgParsed.brighter(1.05).formatHsl();
     const drawCanvasHeatmap = () => {
         isFirstRender && console.time('drawing canvas heatmap');
         //Setup
         //FIXME: check if the canvas is supported
         const ctx = canvas.node()!.getContext('2d')!;
         ctx.clearRect(0, 0, drawableAreaWidth, drawableAreaHeight);
-        ctx.fillStyle = canvasBgColor;
+        ctx.fillStyle = isDarkMode ? '#281C2B' : '#E4D4FA';
         ctx.fillRect(0, 0, drawableAreaWidth, drawableAreaHeight);
         snapshotsDrawn = [];
 

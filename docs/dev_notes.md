@@ -39,14 +39,14 @@
         - [x] drawing lines
         - [x] drawing groups with the gaps
         - [ ] context checking, drawing error handling
-        - [ ] button to switch thread
+        - [x] button to switch thread
     - [x] change StatsManager.svRuntime to save counts instead of frequencies
     - [x] some way for the backend to push updates to the UI
-    - [ ] thread perf chart:
+    - [x] thread perf chart:
         - [x] throttle cursor atom change events
         - [x] show cursor time
         - [x] indicate loading, reloading and error states
-        - [ ] button to switch thread
+        - [x] button to switch thread
     - [x] player drop pie chart:
         - [x] apply socket data
         - [x] get playerlist events to add to the tally
@@ -65,7 +65,7 @@
     - [x] remove old dashboard code & all related dependencies
     - [ ] mobile layout
     - [ ] button to docs page
-    - [ ] everything should look "fine enough" on light mode
+    - [x] everything should look "fine enough" on light mode
 
 ## Small feat
 - [x] migrate system logs page & remove xterm files

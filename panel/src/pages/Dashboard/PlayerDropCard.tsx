@@ -69,7 +69,7 @@ const PieCenterText = ({ centerX, centerY, dataWithArc, innerRadius, active }: P
                 y={centerY - 15}
                 textAnchor="middle"
                 dominantBaseline="central"
-                className='text-2xl font-bold'
+                className='text-xl font-bold'
                 opacity={0.75}
             >
                 {active.label}:
@@ -79,7 +79,7 @@ const PieCenterText = ({ centerX, centerY, dataWithArc, innerRadius, active }: P
                 y={centerY + 15}
                 textAnchor="middle"
                 dominantBaseline="central"
-                className='text-2xl font-bold'
+                className='text-xl font-bold'
                 opacity={0.75}
             >
                 {numberToLocaleString(active.data.count)}
@@ -94,7 +94,7 @@ const PieCenterText = ({ centerX, centerY, dataWithArc, innerRadius, active }: P
                 y={centerY - 15}
                 textAnchor="middle"
                 dominantBaseline="central"
-                className='text-3xl font-bold fill-muted-foreground'
+                className='text-2xl font-bold fill-muted-foreground'
             >
                 Total:
             </text>
@@ -103,7 +103,7 @@ const PieCenterText = ({ centerX, centerY, dataWithArc, innerRadius, active }: P
                 y={centerY + 15}
                 textAnchor="middle"
                 dominantBaseline="central"
-                className='text-3xl font-bold fill-muted-foreground'
+                className='text-2xl font-bold fill-muted-foreground'
             >
                 {numberToLocaleString(totalDrops)}
             </text>
@@ -136,14 +136,14 @@ const PlayerDropChart = memo(({ data, activeId, setActiveId, width, height }: Pl
             width={width}
             theme={{
                 text: {
-                    fontSize: '14px',
+                    fontSize: '13px',
                     fontWeight: 600,
                 },
             }}
             activeId={activeId}
             onActiveIdChange={setActiveId}
             margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
-            innerRadius={0.65}
+            innerRadius={0.6}
             padAngle={1.75}
             cornerRadius={4}
             activeOuterRadiusOffset={6}
@@ -234,7 +234,7 @@ export default function PlayerDropCard() {
     }
 
     return (
-        <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 min-w-64 h-[22rem] max-h-[22rem]">
+        <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 min-w-64 h-[20rem] max-h-[20rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">Player drop reasons (last 6h)</h3>
                 <div className='hidden sm:block'><DoorOpenIcon /></div>
