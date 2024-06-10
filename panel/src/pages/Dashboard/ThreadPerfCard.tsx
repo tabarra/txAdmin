@@ -1,14 +1,15 @@
 import { Bar, BarTooltipProps } from '@nivo/bar';
-import { BarChartHorizontalIcon } from 'lucide-react';
+import { BarChartHorizontalIcon, Loader2Icon } from 'lucide-react';
 import { memo, useMemo, useState } from 'react';
 import { useIsDarkMode } from '@/hooks/theme';
 import { formatTickBoundary, getBucketTicketsEstimatedTime, getMinTickIntervalMarker, getThreadDisplayName, getTimeWeightedHistogram } from './chartingUtils';
 import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
 import { useAtomValue } from 'jotai';
-import { dashPerfCursorAtom, dashSvRuntimeAtom } from './dashboardHooks';
+import { dashPerfCursorAtom, dashSvRuntimeAtom, useGetDashDataAge } from './dashboardHooks';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import { SvRtPerfThreadNamesType } from '@shared/otherTypes';
 import { dateToLocaleDateTimeString } from '@/lib/utils';
+
 
 /**
  * Types
@@ -137,16 +138,23 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: Th
 });
 
 
-
 export default function ThreadPerfCard() {
     const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
     const [selectedThread, setSelectedThread] = useState<SvRtPerfThreadNamesType>('svMain');
     const svRuntimeData = useAtomValue(dashSvRuntimeAtom);
     const perfCursorData = useAtomValue(dashPerfCursorAtom);
+    const getDashDataAge = useGetDashDataAge();
 
     const chartData = useMemo(() => {
+        //Data availability & age check
         if (!svRuntimeData) return null;
-        if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts || !svRuntimeData.perfMinTickTime) return null;
+        const dataAge = getDashDataAge();
+        if (dataAge.isExpired) return null;
+
+        //Data completeness check
+        if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts || !svRuntimeData.perfMinTickTime) {
+            return 'incomplete';
+        }
 
         const { perfBoundaries, perfBucketCounts, perfMinTickTime } = svRuntimeData;
         const minTickInterval = perfMinTickTime[selectedThread ?? 'svMain'];
@@ -181,31 +189,62 @@ export default function ThreadPerfCard() {
                 bucket: perfBoundaries[i],
                 count: perfCursorData ? 0 : threadBucketCounts[i],
                 value: threadHistogram[i],
-                color: colorFunc(i+1),
+                color: colorFunc(i + 1),
             });
         }
         return { data, minTickIntervalMarker, perfBoundaries };
     }, [svRuntimeData, perfCursorData]);
 
-    const cursorSnapTime = useMemo(() => {
-        if (!perfCursorData) return undefined;
-        return dateToLocaleDateTimeString(perfCursorData.snap.end, 'short', 'short');
-    }, [perfCursorData]);
 
-    if (!chartData) return null; //FIXME:
-    const threadDisplayName = getThreadDisplayName(selectedThread);
+    const titleTimeIndicator = useMemo(() => {
+        //Data availability & age check
+        if (!svRuntimeData) return null;
+        const dataAge = getDashDataAge();
+        if (dataAge.isExpired) return null;
+
+        //Data completeness check
+        if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts || !svRuntimeData.perfMinTickTime) {
+            return null;
+        }
+
+        if (perfCursorData) {
+            const timeStr = dateToLocaleDateTimeString(perfCursorData.snap.end, 'short', 'short');
+            return <>
+                (<span className="text-xs text-warning-inline font-mono">{timeStr}</span>)
+            </>;
+        } else {
+            return dataAge.isStale ? '(minutes ago)' : '(last minute)';
+        }
+    }, [svRuntimeData, perfCursorData]);
+
+
+    //Rendering
+    let contentNode: React.ReactNode = null;
+    if (typeof chartData === 'object' && chartData !== null) {
+        contentNode = <ThreadPerfChart {...chartData} width={chartSize.width} height={chartSize.height} />;
+    } else if (typeof chartData === 'string') {
+        contentNode = <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground text-center">
+            <p className='max-w-80'>
+                Data not yet available. <br />
+                The thread performance chart will appear once the server is online.
+            </p>
+        </div>;
+    } else {
+        contentNode = <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <Loader2Icon className="animate-spin size-16 text-muted-foreground" />
+        </div>;
+    }
+
     return (
         <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[22rem] max-h-[22rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
-                    {threadDisplayName} Thread Performance ({cursorSnapTime ? (
-                        <span className="text-xs text-warning-inline">{cursorSnapTime}</span>
-                    ) : 'last minute'})
+                    {getThreadDisplayName(selectedThread)} Thread Performance {titleTimeIndicator}
                 </h3>
                 <div className='hidden xs:block'><BarChartHorizontalIcon /></div>
             </div>
             <DebouncedResizeContainer onDebouncedResize={setChartSize}>
-                <ThreadPerfChart {...chartData} width={chartSize.width} height={chartSize.height} />
+                {contentNode}
             </DebouncedResizeContainer>
         </div>
     );

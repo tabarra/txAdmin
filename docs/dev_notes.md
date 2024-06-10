@@ -45,12 +45,12 @@
     - [ ] thread perf chart:
         - [x] throttle cursor atom change events
         - [x] show cursor time
-        - [ ] indicate loading, reloading and error states
+        - [x] indicate loading, reloading and error states
         - [ ] button to switch thread
-    - [ ] player drop pie chart:
-        - [ ] apply socket data
-        - [ ] get playerlist events to add to the tally
-        - [ ] indicate loading, reloading and error states
+    - [x] player drop pie chart:
+        - [x] apply socket data
+        - [x] get playerlist events to add to the tally
+        - [x] indicate loading, reloading and error states
     - [ ] Other stats
         - [ ] display hardware
         - [ ] maybe: number callouts from legacy players page
@@ -241,7 +241,9 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
     - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
 - [ ] NEW PAGE: Whitelist
 - [ ] `2xl:mx-8` for all pages? (change on MainShell)
-- [ ] console nav button to jump to server start or errors? Or maybe filter just error lines (with margin)
+- [ ] console nav button to jump to server start or errors? 
+    - Or maybe filter just error lines (with margin)
+    - Or maybe even detect all channels and allow you to filter them, show dropdown sorted by frequency
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin

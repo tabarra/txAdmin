@@ -76,6 +76,8 @@ export default class SvRuntimeStatsManager {
     public logServerBoot(duration: number) {
         this.resetPerfState();
         this.resetMemoryState();
+        this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
+
         //If last log is a boot, remove it as the server didn't really start 
         // otherwise it would have lived long enough to have stats logged
         if (this.statsLog.length && this.statsLog.at(-1)!.type === 'svBoot') {
@@ -96,6 +98,8 @@ export default class SvRuntimeStatsManager {
     public logServerClose(reason: string) {
         this.resetPerfState();
         this.resetMemoryState();
+        this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
+
         if (this.statsLog.length) {
             if (this.statsLog.at(-1)!.type === 'svClose') {
                 //If last log is a close, skip saving a new one
@@ -129,6 +133,7 @@ export default class SvRuntimeStatsManager {
             used: payload.used,
             total: payload.total,
         };
+        this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
     }
 
 

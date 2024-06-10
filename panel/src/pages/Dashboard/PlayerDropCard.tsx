@@ -1,10 +1,55 @@
 import { memo, useCallback, useMemo, useState } from 'react';
-import { LegendDatum, Pie, DatumId, PieCustomLayerProps, ComputedDatum } from '@nivo/pie';
+import { Pie, DatumId, PieCustomLayerProps, ComputedDatum } from '@nivo/pie';
 import { numberToLocaleString } from '@/lib/utils';
-import { PlayerDropChartDatum } from './DashboardPage';
-import { DoorOpenIcon } from 'lucide-react';
+import { DoorOpenIcon, Loader2Icon } from 'lucide-react';
 import { useIsDarkMode } from '@/hooks/theme';
 import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
+import { useAtomValue } from 'jotai';
+import { dashPlayerDropAtom, useGetDashDataAge } from './dashboardHooks';
+
+
+const defaultDropCategoryColor = '#A97CD2';
+export const dropReasonCategories = {
+    'user-initiated': {
+        label: 'By user',
+        color: '#7CD28F', //nivo
+        // color2: '#005F73',
+    },
+    timeout: {
+        label: 'Timeout',
+        color: '#E8A838', //nivo
+        // color2: '#0A9396',
+    },
+    'server-initiated': {
+        label: 'By server',
+        color: '#61CDBB', //nivo
+        // color2: '#94D2BD',
+    },
+    unknown: {
+        label: 'Unknown',
+        color: '#E8C1A0', //nivo
+        // color2: '#E9D8A6',
+    },
+    security: {
+        label: 'Security',
+        color: '#F47560', //nivo
+        // color2: '#EE9B00',
+    },
+    crash: {
+        label: 'Crash',
+        color: '#F1E15B', //nivo
+        // color2: '#BB3E03',
+    },
+} as { [key: string]: { label: string, color: string } };
+
+
+type PlayerDropChartDatum = {
+    id: string;
+    label: string;
+    value: number;
+    count: number;
+}
+
 
 type PieCenterTextProps = PieCustomLayerProps<PlayerDropChartDatum> & {
     active?: ComputedDatum<PlayerDropChartDatum>;
@@ -68,14 +113,13 @@ const PieCenterText = ({ centerX, centerY, dataWithArc, innerRadius, active }: P
 
 type PlayerDropChartProps = {
     data: PlayerDropChartDatum[];
-    setCustomLegends: (data: LegendDatum<PlayerDropChartDatum>[]) => void;
     activeId: DatumId | null;
     setActiveId: (id: DatumId | null) => void;
     width: number;
     height: number;
 };
 
-const PlayerDropChart = memo(({ data, setCustomLegends, activeId, setActiveId, width, height }: PlayerDropChartProps) => {
+const PlayerDropChart = memo(({ data, activeId, setActiveId, width, height }: PlayerDropChartProps) => {
     const isDarkMode = useIsDarkMode();
     const [hasClicked, setHasClicked] = useState(false);
     const CenterLayer = useCallback((allArgs: PieCustomLayerProps<PlayerDropChartDatum>) => {
@@ -122,30 +166,72 @@ const PlayerDropChart = memo(({ data, setCustomLegends, activeId, setActiveId, w
                 hasClicked && setActiveId(datum.id)
                 event.preventDefault()
             }}
-            colors={{ scheme: 'nivo' }}
+            colors={{ datum: 'data.color' }}
             tooltip={() => null}
-            forwardLegendData={setCustomLegends}
+            sortByValue
         />
     )
 });
 
-const getInitialLegendsData = (data: PlayerDropChartDatum[]) => {
-    return data.map(d => ({
-        id: d.id,
-        label: d.label,
-        color: 'transparent',
-    } as any));
-}
 
-
-type PlayerDropCardProps = {
-    data: PlayerDropChartDatum[];
-};
-
-export default function PlayerDropCard({ data }: PlayerDropCardProps) {
-    const [customLegends, setCustomLegends] = useState<LegendDatum<PlayerDropChartDatum>[]>(getInitialLegendsData(data))
+export default function PlayerDropCard() {
     const [activeId, setActiveId] = useState<DatumId | null>(null)
     const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
+    const playerDropData = useAtomValue(dashPlayerDropAtom);
+    const getDashDataAge = useGetDashDataAge();
+
+    const chartData = useMemo(() => {
+        if (!playerDropData?.summaryLast6h) return null;
+        const dataAge = getDashDataAge();
+        if (dataAge.isExpired) return null;
+        if (!playerDropData.summaryLast6h.length) return 'not_enough_data';
+
+        const totalDrops = playerDropData.summaryLast6h.reduce((acc, d) => acc + d[1], 0);
+        return playerDropData.summaryLast6h.map(([reason, count]) => ({
+            id: reason,
+            label: dropReasonCategories[reason]?.label ?? reason,
+            count,
+            value: count / totalDrops,
+            color: dropReasonCategories[reason]?.color ?? defaultDropCategoryColor,
+        }));
+    }, [playerDropData?.summaryLast6h]);
+
+
+    const displayLegends = useMemo(() => {
+        if (!playerDropData?.summaryLast6h) return null;
+        const dataAge = getDashDataAge();
+        if (dataAge.isExpired) return null;
+        if (!playerDropData.summaryLast6h.length) return null;
+
+        return playerDropData.summaryLast6h.map(([reason, count]) => ({
+            id: reason,
+            label: dropReasonCategories[reason]?.label ?? reason,
+            color: dropReasonCategories[reason]?.color ?? defaultDropCategoryColor,
+        }));
+    }, [playerDropData?.summaryLast6h]);
+
+
+    //Rendering
+    let contentNode: React.ReactNode = null;
+    if (typeof chartData === 'object' && chartData !== null) {
+        contentNode = <PlayerDropChart
+            data={chartData}
+            activeId={activeId}
+            setActiveId={setActiveId}
+            width={chartSize.width}
+            height={chartSize.height}
+        />;
+    } else if (typeof chartData === 'string') {
+        contentNode = <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground text-center">
+            <p className='max-w-80'>
+                No players have disconnected from the server in the last 6 hours.
+            </p>
+        </div>;
+    } else {
+        contentNode = <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <Loader2Icon className="animate-spin size-16 text-muted-foreground" />
+        </div>;
+    }
 
     return (
         <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 min-w-64 h-[22rem] max-h-[22rem]">
@@ -153,18 +239,18 @@ export default function PlayerDropCard({ data }: PlayerDropCardProps) {
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">Player drop reasons (last 6h)</h3>
                 <div className='hidden sm:block'><DoorOpenIcon /></div>
             </div>
+            {/* <div className='font-mono'>
+                {Object.entries(dropReasonCategories).map(([reason, { label, color }]) => {
+                    return (
+                        <div key={reason} className='w-full pl-8 text-black' style={{ backgroundColor: color }}>{color} - {label}</div>
+                    )
+                })}
+            </div> */}
             <DebouncedResizeContainer onDebouncedResize={setChartSize}>
-                <PlayerDropChart
-                    data={data}
-                    setCustomLegends={setCustomLegends}
-                    activeId={activeId}
-                    setActiveId={setActiveId}
-                    width={chartSize.width}
-                    height={chartSize.height}
-                />
+                {contentNode}
             </DebouncedResizeContainer>
-            <div className='px-4 mx-auto max-w-[25rem] flex flex-wrap justify-center gap-2'>
-                {customLegends.map(legend => {
+            {displayLegends && <div className='px-4 mx-auto max-w-[25rem] flex flex-wrap justify-center gap-2'>
+                {displayLegends.map(legend => {
                     return (
                         <div
                             key={legend.id}
@@ -177,7 +263,7 @@ export default function PlayerDropCard({ data }: PlayerDropCardProps) {
                         </div>
                     )
                 })}
-            </div>
+            </div>}
         </div>
     );
 }
