@@ -15,6 +15,8 @@ export const getMinTickIntervalMarker = (boundaries: (string | number)[], minTic
             break;
         } else if (typeof bucketLE !== 'string' && bucketLE <= minTickInterval) {
             found = bucketLE;
+        } else if (typeof bucketLE !== 'string' && bucketLE > minTickInterval && found !== undefined) {
+            return found; // we found a value greater than minTickInterval, return the last found value
         }
     }
     return typeof found === 'number' ? found : undefined;
