@@ -64,7 +64,7 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
                 reasonRef.current?.focus();
             }
         };
-    }, []);
+    }, [reasonRef, customMultiplierRef, currentDuration, customUnits]);
 
     const handleTemplateSelectChange = (value: string) => {
         if (value === ADD_NEW_SELECT_OPTION) {

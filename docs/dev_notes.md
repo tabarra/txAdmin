@@ -90,8 +90,10 @@
 - [x] redact discord api webhook urls from reports
 - [x] MUST `//FIXME: update_txdiagnostics`
 - [x] add fxserver version to txDiagnostics
-- [ ] commit stashed changes
-- [ ] merge #952 manually
+- [x] commit stashed changes
+- [x] merge #952 manually
+
+
 
 
 ==================================================
@@ -130,7 +132,9 @@ for log in statsLog:
 ## Next up... ish
 - Dashboard stuff:
     - [ ] add testing for getServerStatsData
-    - [ ] StatsManager.svRuntime: write log optimizer and remove the webroute 30h filter
+    - StatsManager.svRuntime:
+        - [ ] write log optimizer and remove the webroute 30h filter
+        - [ ] fix: it's not wiping the log when detecting new boundaries
     - [ ] fix getMinTickIntervalMarker behavior when 0.2
     - [ ] buttons to show memory usage, maybe hide player count
     - [ ] calculate initial zoom of 30h, maybe some linear interpolation
@@ -138,6 +142,7 @@ for log in statsLog:
     - thread perf chart:
         - [ ] color should change correctly at the min interval marker point
     - full perf chart:
+        - [ ] increase `h-[26rem]` back to 28 after removing the new chart warning
         - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
         - [ ] don't clear canvas on render, use d3 joins
         - [ ] swr disable revalidateOnFocus and use interval

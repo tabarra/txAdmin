@@ -3,7 +3,7 @@ import React, { ReactNode, memo, useEffect, useMemo, useRef, useState } from 're
 import DebouncedResizeContainer from '@/components/DebouncedResizeContainer';
 import drawFullPerfChart from './drawFullPerfChart';
 import { BackendApiError, useBackendApi } from '@/hooks/fetch';
-import type { PerfChartApiSuccessResp } from "@shared/otherTypes";
+import type { PerfChartApiResp, PerfChartApiSuccessResp } from "@shared/otherTypes";
 import useSWR from 'swr';
 import { PerfSnapType, formatTickBoundary, getBucketTicketsEstimatedTime, getServerStatsData, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
 import { dashServerStatsAtom, useThrottledSetCursor } from './dashboardHooks';
@@ -143,7 +143,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: 
     </>);
 });
 
-function ChartErrorMessage({ error }: { error: Error | BackendApiError }) {
+function ChartErrorMessage({ error }: { error: Error | string }) {
     const errorMessageMaps: Record<string, ReactNode> = {
         bad_request: 'Chart data loading failed: bad request.',
         invalid_thread_name: 'Chart data loading failed: invalid thread name.',
@@ -156,10 +156,10 @@ function ChartErrorMessage({ error }: { error: Error | BackendApiError }) {
         </p>),
     };
 
-    if (error instanceof BackendApiError) {
+    if (typeof error === 'string') {
         return (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-2xl text-muted-foreground">
-                {errorMessageMaps[error.message] ?? 'Unknown BackendApiError'}
+                {errorMessageMaps[error] ?? 'Unknown BackendApiError'}
             </div>
         );
     } else {
@@ -175,19 +175,24 @@ function ChartErrorMessage({ error }: { error: Error | BackendApiError }) {
 export default function FullPerfCard() {
     const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
     const [selectedThread, setSelectedThread] = useState('svMain');
+    const [apiFailReason, setApiFailReason] = useState('');
     const isDarkMode = useIsDarkMode();
 
-    const chartApi = useBackendApi<PerfChartApiSuccessResp>({
+    const chartApi = useBackendApi<PerfChartApiResp>({
         method: 'GET',
         path: `/perfChartData/:thread/`,
-        throwGenericErrors: true,
     });
 
     const swrChartApiResp = useSWR('/perfChartData/:thread', async () => {
+        setApiFailReason('');
         const data = await chartApi({
             pathParams: { thread: selectedThread },
         });
         if (!data) throw new Error('empty_response');
+        if ('fail_reason' in data) {
+            setApiFailReason(data.fail_reason);
+            return null;
+        }
         return data;
     }, {});
 
@@ -201,7 +206,7 @@ export default function FullPerfCard() {
     if (swrChartApiResp.data) {
         contentNode = <FullPerfChart
             threadName={selectedThread}
-            apiData={swrChartApiResp.data}
+            apiData={swrChartApiResp.data as PerfChartApiSuccessResp}
             width={chartSize.width}
             height={chartSize.height}
             isDarkMode={isDarkMode}
@@ -210,12 +215,12 @@ export default function FullPerfCard() {
         contentNode = <div className="absolute inset-0 flex flex-col items-center justify-center">
             <Loader2Icon className="animate-spin size-16 text-muted-foreground" />
         </div>;
-    } else if (swrChartApiResp.error) {
-        contentNode = <ChartErrorMessage error={swrChartApiResp.error} />;
+    } else if (apiFailReason || swrChartApiResp.error) {
+        contentNode = <ChartErrorMessage error={apiFailReason || swrChartApiResp.error} />;
     }
 
     return (
-        <div className="w-full h-[28rem] py-2 md:rounded-lg border bg-card shadow-sm flex flex-col fill-primary">
+        <div className="w-full h-[26rem] py-2 md:rounded-xl border bg-card shadow-sm flex flex-col fill-primary">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
                     Server performance

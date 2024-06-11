@@ -200,7 +200,7 @@ export default class SvRuntimeStatsManager {
         }
 
         //Check if first collection, boundaries changed
-        if (!this.lastPerfData || !this.lastPerfSaved || !this.lastPerfBoundaries) {
+        if (!this.lastPerfBoundaries) {
             console.verbose.debug('First perf collection.');
             this.lastPerfBoundaries = perfBoundaries;
             this.resetPerfState();
@@ -317,8 +317,8 @@ export default class SvRuntimeStatsManager {
      * Returns the data for charting the performance of a specific thread
      */
     public getChartData(threadName: string): PerfChartApiResp {
-        if (!isValidPerfThreadName(threadName)) return { error: 'invalid_thread_name' };
-        if (!this.statsLog.length || !this.lastPerfBoundaries?.length) return { error: 'data_unavailable' };
+        if (!isValidPerfThreadName(threadName)) return { fail_reason: 'invalid_thread_name' };
+        if (!this.statsLog.length || !this.lastPerfBoundaries?.length) return { fail_reason: 'data_unavailable' };
 
         //Processing data
         return {

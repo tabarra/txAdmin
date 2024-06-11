@@ -9,7 +9,7 @@ const console = consoleFactory(modulename);
 
 //Types
 export type PerfChartApiErrorResp = {
-    error: string;
+    fail_reason: string;
 };
 export type PerfChartApiSuccessResp = {
     boundaries: SvRtPerfBoundariesType;
@@ -31,11 +31,11 @@ export default async function perfChart(ctx: AuthedCtx) {
     //Validating input
     const schemaRes = paramsSchema.safeParse(ctx.request.params);
     if (!schemaRes.success) {
-        return sendTypedResp({ error: 'bad_request' });
+        return sendTypedResp({ fail_reason: 'bad_request' });
     }
 
     const chartData = ctx.txAdmin.statsManager.svRuntime.getChartData(schemaRes.data.thread);
-    if ('error' in chartData) {
+    if ('fail_reason' in chartData) {
         return sendTypedResp(chartData);
     }
     const { threadPerfLog, boundaries } = chartData;
@@ -47,11 +47,11 @@ export default async function perfChart(ctx: AuthedCtx) {
     const oldestDataLogged = filteredThreadPerfLog.find((log) => log.type === 'data');
     if (!oldestDataLogged) {
         return sendTypedResp({
-            error: 'not_enough_data',
+            fail_reason: 'not_enough_data',
         });
     } else if (oldestDataLogged.ts > Date.now() - requiredMinDataAge) {
         return sendTypedResp({
-            error: 'not_enough_data',
+            fail_reason: 'not_enough_data',
         });
     }
     return sendTypedResp({
