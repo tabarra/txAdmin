@@ -15,6 +15,7 @@ import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
 import SystemLogPage from "@/pages/SystemLogPage";
 import AddLegacyBanPage from "@/pages/AddLegacyBanPage";
 import DashboardPage from "@/pages/Dashboard/DashboardPage";
+import PlayerCrashesPage from "@/pages/PlayerCrashesPage";
 
 
 type RouteType = {
@@ -123,6 +124,11 @@ const allRoutes: RouteType[] = [
         path: '/ban-identifiers',
         title: 'Ban Identifiers',
         children: <AddLegacyBanPage />
+    },
+    {
+        path: '/player-crashes',
+        title: 'Player Crashes',
+        children: <PlayerCrashesPage />
     },
 ];
 

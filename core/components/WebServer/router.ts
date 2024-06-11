@@ -91,6 +91,7 @@ export default (config: WebServerConfigType) => {
     router.get('/serverLog/partial', apiAuthMw, webRoutes.serverLogPartial);
     router.get('/systemLog/:scope', apiAuthMw, webRoutes.systemLogs);
     router.get('/perfChartData/:thread', apiAuthMw, webRoutes.perfChart);
+    router.get('/playerCrashesData', apiAuthMw, webRoutes.playerCrashes);
 
     /*
         FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download

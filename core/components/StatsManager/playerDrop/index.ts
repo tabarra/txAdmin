@@ -61,6 +61,21 @@ export default class PlayerDropStatsManager {
 
 
     /**
+     * Get the recent category count for player drops in the last X hours
+     */
+    public getRecentCrashes(windowHours: number) {
+        const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000) - 1;
+        const flatCounts = this.eventLog
+            .filter((entry) => entry.hour.dateHourTs >= logCutoff)
+            .map((entry) => entry.crashTypes.toSortedValuesArray())
+            .flat();
+        const cumulativeCounter = new MultipleCounter();
+        cumulativeCounter.merge(flatCounts);
+        return cumulativeCounter.toSortedValuesArray();
+    }
+
+
+    /**
      * Returns the object of the current hour object in log.
      * Creates one if doesn't exist one for the current hour.
      */

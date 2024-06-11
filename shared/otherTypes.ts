@@ -6,6 +6,7 @@ export type { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/w
 export type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@core/components/StatsManager/svRuntime/perfSchemas";
 export type { SvRtPerfThreadNamesType } from "@core/components/StatsManager/svRuntime/config";
 export type { PerfChartApiResp, PerfChartApiSuccessResp } from "@core/webroutes/perfChart";
+export type { PlayerCrashesApiResp, PlayerCrashesApiSuccessResp } from "@core/webroutes/playerCrashes";
 
 
 export type UpdateDataType = {
