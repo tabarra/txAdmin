@@ -16,7 +16,7 @@ function CrashReasonCard({ reason, count, totalCrashes }: { reason: string, coun
                 <span className="ml-1 ">({percentage}%)</span>
             </div>
             <p className="flex-1 text-sm ">
-                {reason} lipsu
+                {reason}
             </p>
         </div>
     )
