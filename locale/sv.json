@@ -355,7 +355,7 @@
             "ids": {
                 "current_ids": "Nuvarande identifikationer",
                 "previous_ids": "Tidigare använda identifikationer",
-                "all_hwids": "All Hardware IDs"
+                "all_hwids": "Alla hårdvaru identifikationer"
             }
         }
     }
