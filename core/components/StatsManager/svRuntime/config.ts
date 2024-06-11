@@ -20,3 +20,43 @@ export const STATS_RESOLUTION_TABLE = [
 export const STATS_LOG_SIZE_LIMIT = 720; //144+48+144 (max data snaps) + 384 (1 reboot every 30 mins)
 export const PERF_DATA_THREAD_NAMES = ['svNetwork', 'svSync', 'svMain'] as const;
 export type SvRtPerfThreadNamesType = ValuesType<typeof PERF_DATA_THREAD_NAMES>;
+
+
+// // @ts-ignore Typescript Pseudocode:
+
+// type SnapType = {
+//     dateStart: Date;
+//     dateEnd: Date;
+//     value: number;
+// }
+
+// const snapshots: SnapType[] = [/*data*/];
+// const fixedDesiredResolution = 15 * 60 * 1000; // 15 minutes in milliseconds
+// const processedSnapshots: SnapType[] = [];
+// let pendingSnapshots: SnapType[] = [];
+// for (const snap of snapshots) {
+//     if (pendingSnapshots.length === 0) {
+//         pendingSnapshots.push(snap);
+//         continue;
+//     }
+
+//     const pendingStart = pendingSnapshots[0].dateStart;
+//     const currSnapEnd = snap.dateEnd;
+//     const totalDuration = currSnapEnd.getTime() - pendingStart.getTime();
+//     if (totalDuration <= fixedDesiredResolution) {
+//         pendingSnapshots.push(snap);
+//     } else {
+//         const sumValue = pendingSnapshots.reduce((acc, curr) => {
+//             const snapDuration = curr.dateEnd.getTime() - curr.dateStart.getTime();
+//             return acc + curr.value * snapDuration;
+//         }, 0);
+//         processedSnapshots.push({
+//             dateStart: pendingStart,
+//             dateEnd: currSnapEnd,
+//             value: sumValue / totalDuration,
+//         });
+//         pendingSnapshots = [];
+//     }
+// }
+
+// //processedSnapshots contains the snapshots with the fixed resolution

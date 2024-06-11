@@ -106,22 +106,23 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
         dbStats = ctx.txAdmin.playerDatabase.getDatabaseStats();
     } catch (error) { }
 
-    let perfSvMain = [];
+    let perfSvMain: ReturnType<typeof ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary> = null;
     try {
-        // perfSvMain = getChartData('svMain');
+        perfSvMain = ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary();
     } catch (error) { }
 
     //Prepare report object
     const reportData = {
-        $schemaVersion: 1,
+        $schemaVersion: 2,
         $txVersion: txEnv.txAdminVersion,
+        $fxVersion: txEnv.fxServerVersion, //TODO: update_txdiagnostics
         diagnostics,
         txSystemLog,
         txActionLog,
         serverLog,
         fxserverLog,
         envVars,
-        perfSvMain,
+        perfSvMain, //TODO: update_txdiagnostics
         dbStats,
         settings,
         adminList,

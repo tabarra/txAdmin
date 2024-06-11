@@ -16,7 +16,7 @@ type HostStatsDataProps = {
 };
 
 const HostStatsData = memo(({ uptimePct, medianPlayerCount, fxsMemory, nodeMemory }: HostStatsDataProps) => {
-    const uptimePart = uptimePct ? uptimePct.toFixed(3) + '%' : '--';
+    const uptimePart = uptimePct ? uptimePct.toFixed(2) + '%' : '--';
     const medianPlayerPart = medianPlayerCount ? Math.ceil(medianPlayerCount) : '--';
     const fxsPart = fxsMemory ? fxsMemory.toFixed(2) + 'MB' : '--';
 
@@ -33,35 +33,35 @@ const HostStatsData = memo(({ uptimePct, medianPlayerCount, fxsMemory, nodeMemor
     }
 
     return (
-        <div className="flex flex-col justify-between h-full pb-2 text-muted-foreground">
+        <div className="grid grid-cols-2 sm:grid-cols-1 gap-4 h-full pb-2 text-muted-foreground">
             <div className="flex items-center">
-                <TimerIcon className="size-12 mr-2 opacity-75" />
-                <div className="flex flex-col ml-auto">
-                    <span className="text-right text-xl text-primary">{uptimePart}</span>
-                    <span className="text-right text-sm">Uptime 24h</span>
+                <TimerIcon className="hidden sm:block sm:size-6 md:size-12 mr-2 opacity-75" />
+                <div className="flex flex-col mr-auto ml-auto sm:mr-0 sm:ml-auto">
+                    <span className="text-center sm:text-right text-xl text-primary">{uptimePart}</span>
+                    <span className="text-center sm:text-right text-sm">Uptime 24h</span>
                 </div>
             </div>
             <div className="flex items-center">
-                <TrendingUpIcon className="size-12 mr-2 opacity-75" />
-                <div className="flex flex-col ml-auto">
-                    <span className="text-right text-xl text-primary">{medianPlayerPart}</span>
-                    <span className="text-right text-sm">Median Players 24h</span>
+                <TrendingUpIcon className="hidden sm:block sm:size-6 md:size-12 mr-2 opacity-75" />
+                <div className="flex flex-col mr-auto ml-auto sm:mr-0 sm:ml-auto">
+                    <span className="text-center sm:text-right text-xl text-primary">{medianPlayerPart}</span>
+                    <span className="text-center sm:text-right text-sm">Median Players 24h</span>
                 </div>
             </div>
             <div className="flex items-center">
-                <MemoryStickIcon className="size-12 mr-2 opacity-75" />
-                <div className="flex flex-col ml-auto">
-                    <span className="text-right text-xl text-primary">{fxsPart}</span>
-                    <span className="text-right text-sm">FXServer Memory</span>
+                <MemoryStickIcon className="hidden sm:block sm:size-6 md:size-12 mr-2 opacity-75" />
+                <div className="flex flex-col mr-auto ml-auto sm:mr-0 sm:ml-auto">
+                    <span className="text-center sm:text-right text-xl text-primary">{fxsPart}</span>
+                    <span className="text-center sm:text-right text-sm">FXServer Memory</span>
                 </div>
             </div>
             <div className={cn("flex items-center", nodeCustomClass ?? 'text-muted-foreground')}>
-                <MemoryStickIcon className="size-12 mr-2 opacity-75" />
-                <div className="flex flex-col ml-auto">
-                    <span className={cn("text-right text-xl", nodeCustomClass ?? 'text-primary')}>
+                <MemoryStickIcon className="hidden sm:block sm:size-6 md:size-12 mr-2 opacity-75" />
+                <div className="flex flex-col mr-auto ml-auto sm:mr-0 sm:ml-auto">
+                    <span className={cn("text-center sm:text-right text-xl", nodeCustomClass ?? 'text-primary')}>
                         {nodePart}
                     </span>
-                    <span className="text-right text-sm">Node.js Memory</span>
+                    <span className="text-center sm:text-right text-sm">Node.js Memory</span>
                 </div>
             </div>
         </div>
@@ -123,7 +123,7 @@ export default function ServerStatsCard() {
     }
 
     return (
-        <div className="col-span-2 min-w-60 py-2 px-4 flex flex-col rounded-lg border shadow-sm bg-card">
+        <div className="col-span-3 sm:col-span-1 2xl:col-span-2 min-w-52 py-2 px-4 flex flex-col md:rounded-lg border shadow-sm bg-card">
             <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
                     Server stats {titleNode}

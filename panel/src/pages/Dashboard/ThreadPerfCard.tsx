@@ -244,7 +244,7 @@ export default function ThreadPerfCard() {
 
 
     return (
-        <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[20rem] max-h-[20rem]">
+        <div className="py-2 md:rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[20rem] max-h-[20rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
                     {cursorThreadLabel ?? selectedThread} performance {titleTimeIndicator}

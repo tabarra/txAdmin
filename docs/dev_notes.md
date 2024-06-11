@@ -58,11 +58,11 @@
         - [x] show uptime and median players
     - [x] statsManager.playerDrop.saveEventLog MUST be throttled
     - [x] dashboard data atom with timestamp and expiration
-- [ ] NEW PAGE: Dashboard
+- [x] NEW PAGE: Dashboard
     - [x] route new dashboard
     - [x] remove old dashboard code & all related dependencies
-    - [ ] mobile layout
-    - [ ] button to docs page
+    - [x] mobile layout
+    - [x] write docs and add link or callout
     - [x] everything should look "fine enough" on light mode
 
 ## Small feat
@@ -88,8 +88,8 @@
     - [x] test server log + player click
 - [x] simplify the simple-line-icons dependencies - do i need all the files? remove cdn!
 - [x] redact discord api webhook urls from reports
-- [ ] MUST `//FIXME: update_txdiagnostics`
-- [ ] add fxserver version to txDiagnostics
+- [x] MUST `//FIXME: update_txdiagnostics`
+- [x] add fxserver version to txDiagnostics
 - [ ] commit stashed changes
 - [ ] merge #952 manually
 
