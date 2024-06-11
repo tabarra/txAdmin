@@ -3,12 +3,15 @@ import React, { ReactNode, memo, useEffect, useMemo, useRef, useState } from 're
 import DebouncedResizeContainer from '@/components/DebouncedResizeContainer';
 import drawFullPerfChart from './drawFullPerfChart';
 import { BackendApiError, useBackendApi } from '@/hooks/fetch';
-import type { SvRtPerfCountsThreadType, PerfChartApiSuccessResp } from "@shared/otherTypes";
+import type { PerfChartApiSuccessResp } from "@shared/otherTypes";
 import useSWR from 'swr';
-import { PerfSnapType, formatTickBoundary, getBucketTicketsEstimatedTime, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
-import { useThrottledSetCursor } from './dashboardHooks';
+import { PerfSnapType, formatTickBoundary, getBucketTicketsEstimatedTime, getServerStatsData, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
+import { dashServerStatsAtom, useThrottledSetCursor } from './dashboardHooks';
 import { useIsDarkMode } from '@/hooks/theme';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { useSetAtom } from 'jotai';
+
 
 type FullPerfChartProps = {
     threadName: string;
@@ -19,9 +22,12 @@ type FullPerfChartProps = {
 };
 
 const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: FullPerfChartProps) => {
-    const setCursor = useThrottledSetCursor();
+    const setServerStats = useSetAtom(dashServerStatsAtom);
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [renderError, setRenderError] = useState('');
+    const [errorRetry, setErrorRetry] = useState(0);
+    const setCursor = useThrottledSetCursor();
     const margins = {
         top: 0,
         right: 50,
@@ -32,14 +38,25 @@ const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: 
 
     //Process data only once
     const processedData = useMemo(() => {
-        if (!apiData) return null;
-        const bucketTicketsEstimatedTime = getBucketTicketsEstimatedTime(apiData.boundaries);
-        const perfProcessor = (perfLog: SvRtPerfCountsThreadType) => {
-            return getTimeWeightedHistogram(perfLog.buckets, bucketTicketsEstimatedTime);
+        if (!apiData) {
+            setServerStats(undefined);
+            return null;
         }
-        // apiData.threadPerfLog = apiData.threadPerfLog.slice(-50)
-        const parsed = processPerfLog(apiData.threadPerfLog, perfProcessor);
-        if (!parsed) return null;
+        const parsed = processPerfLog(apiData.threadPerfLog, (perfLog) => {
+            const bucketTicketsEstimatedTime = getBucketTicketsEstimatedTime(apiData.boundaries);
+            return getTimeWeightedHistogram(
+                perfLog.buckets,
+                bucketTicketsEstimatedTime
+            );
+        });
+        if (!parsed) {
+            setServerStats(undefined);
+            return null;
+        }
+
+        //Calculate server stats here because the data comes from SWR instead of jotai
+        const serverStatsData = getServerStatsData(parsed.lifespans, 24);
+        setServerStats(serverStatsData);
 
         return {
             ...parsed,
@@ -52,30 +69,54 @@ const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: 
                 });
             },
         }
-    }, [apiData, threadName, isDarkMode]);
+    }, [apiData, threadName, isDarkMode, renderError]);
 
 
     //Redraw chart when data or size changes
     useEffect(() => {
         if (!processedData || !svgRef.current || !canvasRef.current || !width || !height) return;
         if (!processedData.lifespans.length) return; //only in case somehow the api returned, but no data found
-        console.groupCollapsed('Drawing full performance chart:');
-        console.log('useEffect:', processedData, svgRef.current, canvasRef.current, width, height);
-        console.time('drawFullPerfChart');
-        drawFullPerfChart({
-            svgRef: svgRef.current,
-            canvasRef: canvasRef.current,
-            size: { width, height },
-            margins,
-            isDarkMode,
-            ...processedData,
-        });
-        console.timeEnd('drawFullPerfChart');
-        console.groupEnd();
-    }, [processedData, width, height, svgRef, canvasRef]);
+        try {
+            console.groupCollapsed('Drawing full performance chart:');
+            console.time('drawFullPerfChart');
+            drawFullPerfChart({
+                svgRef: svgRef.current,
+                canvasRef: canvasRef.current,
+                setRenderError,
+                size: { width, height },
+                margins,
+                isDarkMode,
+                ...processedData,
+            });
+            setErrorRetry(0);
+            setRenderError('');
+            console.timeEnd('drawFullPerfChart');
+        } catch (error) {
+            setRenderError((error as Error).message ?? 'Unknown error.');
+        } finally {
+            console.groupEnd();
+        }
+    }, [processedData, width, height, svgRef, canvasRef, renderError]);
 
 
     if (!width || !height) return null;
+    if (renderError) {
+        return <div className="absolute inset-0 p-4 flex flex-col gap-4 items-center justify-center text-center text-lg font-mono text-destructive-inline">
+            Render Error: {renderError}
+            <br />
+            <Button
+                size={'sm'}
+                variant={'outline'}
+                className='text-primary'
+                onClick={() => {
+                    setErrorRetry(c => c + 1);
+                    setRenderError('');
+                }}
+            >
+                Retry{errorRetry ? ` (${errorRetry})` : ''}
+            </Button>
+        </div>
+    }
     return (<>
         <svg
             ref={svgRef}
@@ -85,7 +126,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: 
                 zIndex: 1,
                 position: 'absolute',
                 top: '0px',
-                left: '0px'
+                left: '0px',
             }}
         />
         <canvas

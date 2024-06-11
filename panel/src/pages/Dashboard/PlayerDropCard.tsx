@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo, useState } from 'react';
 import { Pie, DatumId, PieCustomLayerProps, ComputedDatum } from '@nivo/pie';
 import { numberToLocaleString } from '@/lib/utils';
-import { DoorOpenIcon, Loader2Icon } from 'lucide-react';
+import { Loader2Icon, PieChartIcon } from 'lucide-react';
 import { useIsDarkMode } from '@/hooks/theme';
 import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
 import { useAtomValue } from 'jotai';
@@ -237,7 +237,8 @@ export default function PlayerDropCard() {
         <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 min-w-64 h-[20rem] max-h-[20rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">Player drop reasons (last 6h)</h3>
-                <div className='hidden sm:block'><DoorOpenIcon /></div>
+                <div className='hidden sm:block'><PieChartIcon /></div>
+                {/* <div className='hidden sm:block'><DoorOpenIcon /></div> */}
             </div>
             {/* <div className='font-mono'>
                 {Object.entries(dropReasonCategories).map(([reason, { label, color }]) => {
@@ -249,7 +250,7 @@ export default function PlayerDropCard() {
             <DebouncedResizeContainer onDebouncedResize={setChartSize}>
                 {contentNode}
             </DebouncedResizeContainer>
-            {displayLegends && <div className='px-4 mx-auto max-w-[25rem] flex flex-wrap justify-center gap-2'>
+            {displayLegends && <div className='px-4 mx-auto flex flex-wrap justify-center gap-2'>
                 {displayLegends.map(legend => {
                     return (
                         <div

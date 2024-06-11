@@ -107,6 +107,10 @@ export default async function AdvancedActions(ctx) {
         } else {
             return ctx.send({ type: 'danger', message: 'GC is not exposed' });
         }
+    } else if (action.startsWith('playerDrop')) {
+        const reason = action.split(' ', 2)[1];
+        const category = globals.statsManager.playerDrop.handlePlayerDrop(reason);
+        return ctx.send({ type: 'success', message: category });
     } else if (action == 'xxxxxx') {
         // const res = globals.playerDatabase.xxxxx();
         // console.dir(res);

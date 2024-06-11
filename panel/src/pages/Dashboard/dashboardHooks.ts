@@ -13,14 +13,19 @@ type DashboardPerfCursorDataType = {
     snap: PerfSnapType;
 };
 
+type DashboardServerStatsDataType = {
+    uptimePct: number;
+    medianPlayerCount: number;
+};
 
 /**
  * Atoms
  */
 export const dashPlayerDropAtom = atom<DashboardPleyerDropDataType | undefined>(undefined);
+export const dashServerStatsAtom = atom<DashboardServerStatsDataType | undefined>(undefined);
 export const dashSvRuntimeAtom = atom<DashboardSvRuntimeDataType | undefined>(undefined);
 export const dashPerfCursorAtom = atom<DashboardPerfCursorDataType | undefined>(undefined);
-const dashDataTsAtom = atom<number>(0);
+export const dashDataTsAtom = atom<number>(0);
 const dataMaxAge = 2.5 * 60 * 1000; //2.5 minutes
 
 

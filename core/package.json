@@ -61,6 +61,7 @@
     "stream-json": "^1.8.0",
     "string-argv": "^0.3.2",
     "systeminformation": "^5.22.7",
+    "throttle-debounce": "^5.0.0",
     "unicode-emoji-json": "^0.6.0",
     "xss": "^1.0.15",
     "zod": "^3.22.4"

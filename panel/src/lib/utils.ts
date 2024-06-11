@@ -66,6 +66,35 @@ export const msToShortDuration = humanizeDuration.humanizer({
 
 
 /**
+ * Converts a timestamp to a locale time string
+ */
+export const dateToLocaleTimeString = (
+    time: Date,
+    hour: 'numeric' | '2-digit' = '2-digit',
+    minute: 'numeric' | '2-digit' = '2-digit',
+    second?: 'numeric' | '2-digit',
+) => {
+    return time.toLocaleTimeString(
+        window?.nuiSystemLanguages ?? navigator.language,
+        { hour, minute, second }
+    );
+}
+
+
+/**
+ * Converts a timestamp to a locale time string
+ */
+export const tsToLocaleTimeString = (
+    ts: number,
+    hour: 'numeric' | '2-digit' = '2-digit',
+    minute: 'numeric' | '2-digit' = '2-digit',
+    second?: 'numeric' | '2-digit',
+) => {
+    return dateToLocaleTimeString(new Date(ts * 1000), hour, minute, second);
+}
+
+
+/**
  * Converts a timestamp to a locale date string
  */
 export const dateToLocaleDateString = (
@@ -73,9 +102,9 @@ export const dateToLocaleDateString = (
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
 ) => {
     return time.toLocaleDateString(
-            window?.nuiSystemLanguages ?? navigator.language,
-            { dateStyle }
-        );
+        window?.nuiSystemLanguages ?? navigator.language,
+        { dateStyle }
+    );
 }
 
 
@@ -99,9 +128,9 @@ export const dateToLocaleDateTimeString = (
     timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
 ) => {
     return time.toLocaleString(
-            window?.nuiSystemLanguages ?? navigator.language,
-            { dateStyle, timeStyle }
-        );
+        window?.nuiSystemLanguages ?? navigator.language,
+        { dateStyle, timeStyle }
+    );
 }
 
 
@@ -115,6 +144,19 @@ export const tsToLocaleDateTimeString = (
 ) => {
     return dateToLocaleDateTimeString(new Date(ts * 1000), dateStyle, timeStyle);
 }
+
+
+/**
+ * Checks if a date is today
+ */
+export const isDateToday = (date: Date) => {
+    const today = new Date();
+    return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+    );
+};
 
 
 /**

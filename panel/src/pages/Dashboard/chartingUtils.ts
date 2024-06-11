@@ -1,5 +1,6 @@
 import type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@shared/otherTypes";
 import { cloneDeep } from "lodash-es";
+import * as d3 from 'd3';
 
 
 /**
@@ -220,4 +221,37 @@ export const getThreadDisplayName = (thread: string) => {
         case 'svMain': return 'Main';
         default: return thread;
     }
+}
+
+
+/**
+ * Process the data to return the median player count and uptime in the last X hours
+ */
+export const getServerStatsData = (lifespans: PerfLifeSpanType[], windowHours: number) => {
+    const now = Date.now();
+    const windowMs = windowHours * 60 * 60 * 1000;
+    const windowStart = now - windowMs;
+
+    let uptime = 0;
+    const playerCounts = [];
+    for (const lifespan of lifespans) {
+        if (!lifespan.log.length) continue;
+        const lifespanEnd = lifespan.log.at(-1)!.end.getTime();
+        if (lifespanEnd < windowStart) continue;
+
+        for (const snap of lifespan.log) {
+            playerCounts.push(snap.players);
+            if (snap.end.getTime() < windowStart) continue;
+            if (snap.start.getTime() < windowStart) {
+                uptime += snap.end.getTime() - windowStart;
+            } else {
+                uptime += snap.end.getTime() - snap.start.getTime();
+            }
+        }
+    }
+
+    return {
+        uptimePct: uptime / windowMs * 100,
+        medianPlayerCount: d3.quantile(playerCounts, 0.5) ?? 0,
+    };
 }

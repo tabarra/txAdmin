@@ -25,8 +25,12 @@ const getInitialData = (txAdmin: TxAdmin): DashboardDataEventType => {
             //NOTE: numbers from fivem/code/components/citizen-server-impl/src/GameServer.cpp
             perfMinTickTime: {
                 svMain: (1000 / 20) / 1000,
-                svNetwork: (1000 / 100) / 1000,
-                svSync: (1000 / 120) / 1000,
+                // svNetwork: (1000 / 100) / 1000,
+                // svSync: (1000 / 120) / 1000,
+
+                //NOTE: faking the numbers due to the colors being wrong in the chart
+                svNetwork: (1000 / 40) / 1000,
+                svSync: (1000 / 40) / 1000,
             },
         },
     }

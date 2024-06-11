@@ -12,6 +12,7 @@ import { ZodError } from 'zod';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TICKS } from './config';
 import { PerfChartApiResp } from '@core/webroutes/perfChart';
 import got from '@extras/got';
+import { throttle } from 'throttle-debounce';
 const console = consoleFactory(modulename);
 
 
@@ -36,6 +37,11 @@ export default class SvRuntimeStatsManager {
         ts: number,
         data: SvRtPerfCountsType,
     } | undefined;
+    private queueSaveStatsHistory = throttle(
+        15_000,
+        this.saveStatsHistory.bind(this),
+        { noLeading: true }
+    );
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
@@ -88,7 +94,7 @@ export default class SvRuntimeStatsManager {
             type: 'svBoot',
             duration,
         });
-        this.saveStatsHistory();
+        this.queueSaveStatsHistory();
     }
 
 
@@ -115,7 +121,7 @@ export default class SvRuntimeStatsManager {
             type: 'svClose',
             reason,
         });
-        this.saveStatsHistory();
+        this.queueSaveStatsHistory();
     }
 
 
@@ -131,7 +137,7 @@ export default class SvRuntimeStatsManager {
         }
         this.lastNodeMemory = {
             used: payload.used,
-            total: payload.total,
+            limit: payload.limit,
         };
         this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
     }
@@ -256,8 +262,9 @@ export default class SvRuntimeStatsManager {
         this.statsLog.push(currSnapshot);
         console.verbose.ok(`Collected performance snapshot #${this.statsLog.length}`);
 
-        //Save perf series do file
-        await this.saveStatsHistory();
+        //Save perf series do file - not queued because it's priority
+        this.queueSaveStatsHistory.cancel({ upcomingOnly: true });
+        this.saveStatsHistory();
     }
 
 

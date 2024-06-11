@@ -1,11 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { GaugeIcon } from 'lucide-react';
 import ThreadPerfCard from './ThreadPerfCard';
 import PlayerDropCard from './PlayerDropCard';
 import FullPerfCard from './FullPerfCard';
-import { useAtomValue } from 'jotai';
-import { dashPerfCursorAtom, dashSvRuntimeAtom, useSetDashboardData } from './dashboardHooks';
+import { useSetDashboardData } from './dashboardHooks';
 import { getSocket } from '@/lib/utils';
+import ServerStatsCard from './ServerStatsCard';
 
 
 export default function DashboardPage() {
@@ -34,23 +33,11 @@ export default function DashboardPage() {
         }
     }, []);
 
-    //DEBUG
-    const cursorData = useAtomValue(dashPerfCursorAtom);
-    const svRuntimeData = useAtomValue(dashSvRuntimeAtom);
-
     return (
         <div className="w-full min-w-96 flex flex-col gap-4">
             <div className="w-full grid grid-cols-8 gap-4 h-[20rem] max-h-[20rem] overflow-clip">
                 <PlayerDropCard />
-                <div className="py-2 px-4 rounded-lg border shadow-sm col-span-2 min-w-60 bg-card">
-                    <div className="flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
-                        <h3 className="tracking-tight text-sm font-medium line-clamp-1">Host stats (last minute)</h3>
-                        <div className='hidden xs:block'><GaugeIcon /></div>
-                    </div>
-                    <pre className='whitespace-pre-wrap'>
-                        {JSON.stringify(cursorData ?? svRuntimeData, null, 2)}
-                    </pre>
-                </div>
+                <ServerStatsCard />
                 <ThreadPerfCard />
             </div>
 

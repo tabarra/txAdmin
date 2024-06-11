@@ -27,9 +27,9 @@
         - [x] better random id (no random id? stable-hash?)
         - [x] settings enforce unique id
 - [x] added filters to the in-game playerlist
-- [ ] New Statistics stuff:
+- [x] New Statistics stuff:
     - [x] add thread performance chart
-    - [ ] write perf chart code
+    - [x] write perf chart code
         - [x] d3 canvas responsive with resize debounced
         - [x] write slicer code + tests
         - [x] axis with zoom
@@ -38,7 +38,7 @@
         - [x] drawing heatmap
         - [x] drawing lines
         - [x] drawing groups with the gaps
-        - [ ] context checking, drawing error handling
+        - [x] context checking, drawing error handling
         - [x] button to switch thread
     - [x] change StatsManager.svRuntime to save counts instead of frequencies
     - [x] some way for the backend to push updates to the UI
@@ -51,15 +51,13 @@
         - [x] apply socket data
         - [x] get playerlist events to add to the tally
         - [x] indicate loading, reloading and error states
-    - [ ] Other stats
-        - [ ] display hardware
-        - [ ] maybe: number callouts from legacy players page
-        - [ ] maybe: join/leave tally
-        - [ ] maybe: median session time
-        - [ ] indicate loading, reloading and error states
-        - [ ] show cursor time
-    - [ ] statsManager.playerDrop.saveEventLog MUST be throttled
-    - [ ] dashboard data atom with timestamp and expiration
+    - [x] Other stats
+        - [x] show cursor time
+        - [x] indicate loading, reloading and error states
+        - [x] display hardware stats
+        - [x] show uptime and median players
+    - [x] statsManager.playerDrop.saveEventLog MUST be throttled
+    - [x] dashboard data atom with timestamp and expiration
 - [ ] NEW PAGE: Dashboard
     - [x] route new dashboard
     - [x] remove old dashboard code & all related dependencies
@@ -100,6 +98,9 @@
 
 TODO: chart of new players per day
 
+can permissions for announcement / dm be separated 🥺 
+
+
 d3.timeHours(new Date(1715741829000), new Date())[0]
 
 
@@ -117,12 +118,6 @@ d3.timeHours(new Date(1715741829000), new Date())[0]
 
 
 
-Initial snap tem que esperar 5 mins do uptime do boot do sv, assim garantimos que cada snap tem pelo menos 5 mins
-Fazer resolução ser 3 consts ao invés de array
-Pra conseguir fazer otimização continuas, não é possível combinar um snap 2x com um snap 1x, então fazer múltiplos
-5, 15, 30mins
-
-
 let toCombine = [];
 for log in statsLog:
      - log.ts - toCombine[0].ts < resolution
@@ -134,6 +129,7 @@ for log in statsLog:
 
 ## Next up... ish
 - Dashboard stuff:
+    - [ ] add testing for getServerStatsData
     - [ ] StatsManager.svRuntime: write log optimizer and remove the webroute 30h filter
     - [ ] fix getMinTickIntervalMarker behavior when 0.2
     - [ ] buttons to show memory usage, maybe hide player count
@@ -142,6 +138,7 @@ for log in statsLog:
     - thread perf chart:
         - [ ] color should change correctly at the min interval marker point
     - full perf chart:
+        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
         - [ ] don't clear canvas on render, use d3 joins
         - [ ] swr disable revalidateOnFocus and use interval
             - or some kind of push from the dashboard room event
@@ -994,7 +991,7 @@ npm-upgrade
 con_miniconChannels script:monitor*
 con_miniconChannels script:runcode
 +setr txAdmin-debugMode true
-nui_devtoold mpMenu
+nui_devtools mpMenu
 
 # hang fxserver (runcode)
 const duration = 60_000;

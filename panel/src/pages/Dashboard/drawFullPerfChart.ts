@@ -18,6 +18,7 @@ type AugmentedLifespanType = PerfLifeSpanType & {
 type drawFullPerfChartProps = {
     svgRef: SVGElement;
     canvasRef: HTMLCanvasElement;
+    setRenderError: (error: string) => void;
     size: {
         width: number;
         height: number;
@@ -40,6 +41,7 @@ type drawFullPerfChartProps = {
 export default function drawFullPerfChart({
     svgRef,
     canvasRef,
+    setRenderError,
     size: { width, height },
     margins,
     isDarkMode,
@@ -49,17 +51,17 @@ export default function drawFullPerfChart({
     lifespans,
     cursorSetter,
 }: drawFullPerfChartProps) {
-    //FIXME: checar se tem contexto
-    // if (!canvasRef?.getContext) {
-    //     // canvas-unsupported code here
-    // }
-    //FIXME: passar um state setter de erro aqui pra função, ou então dar throw aqui e capturar no componente
+    //Clear SVG
+    d3.select(svgRef).selectAll('*').remove(); // FIXME: Clear SVG
 
-
-
-    d3.select(svgRef).selectAll('*').remove(); // FIXME: DEBUG Clear SVG
+    //Setup selectors
     const svg = d3.select<SVGElement, PerfLifeSpanType>(svgRef);
+    if (svg.empty()) throw new Error('SVG selection failed.');
     const canvas = d3.select(canvasRef)!;
+    if (canvas.empty()) throw new Error('Canvas selection failed.');
+    if (!canvasRef?.getContext) {
+        throw new Error(`Canvas not supported.`);
+    }
 
     let isFirstRender = true;
     console.log('From:', dataStart.toISOString());
@@ -149,10 +151,14 @@ export default function drawFullPerfChart({
     // const canvasBgColor = cssBgParsed.darker(1.05).formatHsl();
     // // const canvasBgColor = cssBgParsed.brighter(1.05).formatHsl();
     const drawCanvasHeatmap = () => {
-        isFirstRender && console.time('drawing canvas heatmap');
+        //Context preconditions
+        const canvasNode = canvas.node();
+        if (!canvasNode) return setRenderError('Canvas node not found.');
+        const ctx = canvasNode.getContext('2d');
+        if (!ctx) return setRenderError('Canvas 2d context not found.');
+
         //Setup
-        //FIXME: check if the canvas is supported
-        const ctx = canvas.node()!.getContext('2d')!;
+        isFirstRender && console.time('drawing canvas heatmap');
         ctx.clearRect(0, 0, drawableAreaWidth, drawableAreaHeight);
         ctx.fillStyle = isDarkMode ? '#281C2B' : '#E4D4FA';
         ctx.fillRect(0, 0, drawableAreaWidth, drawableAreaHeight);

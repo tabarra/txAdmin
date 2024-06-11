@@ -2,13 +2,13 @@ import { Bar, BarTooltipProps } from '@nivo/bar';
 import { BarChartHorizontalIcon, Loader2Icon } from 'lucide-react';
 import { memo, useMemo, useState } from 'react';
 import { useIsDarkMode } from '@/hooks/theme';
-import { formatTickBoundary, getBucketTicketsEstimatedTime, getMinTickIntervalMarker, getThreadDisplayName, getTimeWeightedHistogram } from './chartingUtils';
+import { formatTickBoundary, getBucketTicketsEstimatedTime, getMinTickIntervalMarker, getTimeWeightedHistogram } from './chartingUtils';
 import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
 import { useAtomValue } from 'jotai';
 import { dashPerfCursorAtom, dashSvRuntimeAtom, useGetDashDataAge } from './dashboardHooks';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import { SvRtPerfThreadNamesType } from '@shared/otherTypes';
-import { dateToLocaleDateTimeString } from '@/lib/utils';
+import { cn, dateToLocaleDateString, dateToLocaleTimeString, isDateToday } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
@@ -148,9 +148,7 @@ export default function ThreadPerfCard() {
 
     const chartData = useMemo(() => {
         //Data availability & age check
-        if (!svRuntimeData) return null;
-        const dataAge = getDashDataAge();
-        if (dataAge.isExpired) return null;
+        if (!svRuntimeData || getDashDataAge().isExpired) return null;
 
         //Data completeness check
         if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts || !svRuntimeData.perfMinTickTime) {
@@ -204,9 +202,8 @@ export default function ThreadPerfCard() {
 
     const titleTimeIndicator = useMemo(() => {
         //Data availability & age check
-        if (!svRuntimeData) return null;
         const dataAge = getDashDataAge();
-        if (dataAge.isExpired) return null;
+        if (!svRuntimeData || dataAge.isExpired) return null;
 
         //Data completeness check
         if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts || !svRuntimeData.perfMinTickTime) {
@@ -214,10 +211,12 @@ export default function ThreadPerfCard() {
         }
 
         if (perfCursorData) {
-            const timeStr = dateToLocaleDateTimeString(perfCursorData.snap.end, 'short', 'short');
-            return <>
-                (<span className="text-xs text-warning-inline font-mono">{timeStr}</span>)
-            </>;
+            const timeStr = dateToLocaleTimeString(perfCursorData.snap.end, '2-digit', '2-digit');
+            const dateStr = dateToLocaleDateString(perfCursorData.snap.end, 'short');
+            const fullStr = isDateToday(perfCursorData.snap.end) ? timeStr : `${timeStr} - ${dateStr}`;
+            return (<>
+                (<span className="text-xs text-warning-inline font-mono">{fullStr}</span>)
+            </>);
         } else {
             return dataAge.isStale ? '(minutes ago)' : '(last minute)';
         }
@@ -228,13 +227,13 @@ export default function ThreadPerfCard() {
     let cursorThreadLabel;
     let contentNode: React.ReactNode = null;
     if (typeof chartData === 'object' && chartData !== null) {
-        cursorThreadLabel = getThreadDisplayName(chartData.threadName);
+        cursorThreadLabel = chartData.threadName;
         contentNode = <ThreadPerfChart {...chartData} width={chartSize.width} height={chartSize.height} />;
     } else if (typeof chartData === 'string') {
         contentNode = <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground text-center">
             <p className='max-w-80'>
                 Data not yet available. <br />
-                The thread performance chart will appear once the server is online.
+                The thread performance chart will appear soon after the server is online.
             </p>
         </div>;
     } else {
@@ -248,12 +247,19 @@ export default function ThreadPerfCard() {
         <div className="py-2 rounded-lg border bg-card shadow-sm flex flex-col col-span-3 fill-primary h-[20rem] max-h-[20rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
-                    {cursorThreadLabel ?? getThreadDisplayName(selectedThread)} Thread Performance {titleTimeIndicator}
+                    {cursorThreadLabel ?? selectedThread} performance {titleTimeIndicator}
                 </h3>
                 {/* <div className='hidden xs:block'><BarChartHorizontalIcon /></div> */}
                 <div className="flex gap-4">
-                    <Select defaultValue={selectedThread} onValueChange={setSelectedThread}>
-                        <SelectTrigger className="w-32 grow md:grow-0 h-6 px-3 py-1 text-sm" >
+                    <Select
+                        defaultValue={selectedThread}
+                        onValueChange={setSelectedThread}
+                        disabled={!!perfCursorData}
+                    >
+                        <SelectTrigger className={cn(
+                            "w-32 grow md:grow-0 h-6 px-3 py-1 text-sm",
+                            !!perfCursorData && 'hidden'
+                        )} >
                             <SelectValue placeholder="Filter by admin" />
                         </SelectTrigger>
                         <SelectContent className="px-0">

@@ -73,7 +73,7 @@ export const SvRtFileSchema = z.object({
 export const SvRtNodeMemorySchema = z.object({
     //NOTE: technically it also has a type string, but we don't need to check it
     used: zNumberNonNegative,
-    total: zNumberNonNegative,
+    limit: zNumberNonNegative,
 });
 
 

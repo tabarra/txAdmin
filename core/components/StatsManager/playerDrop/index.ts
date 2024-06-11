@@ -9,6 +9,7 @@ import { PDL_RETENTION, PDL_UNKNOWN_LIST_SIZE_LIMIT } from './config';
 import { ZodError } from 'zod';
 import { getDateHourEnc, parseDateHourEnc } from './playerDropUtils';
 import { MultipleCounter } from '../statsUtils';
+import { throttle } from 'throttle-debounce';
 const console = consoleFactory(modulename);
 
 
@@ -31,6 +32,11 @@ export default class PlayerDropStatsManager {
     private lastServerVersion: string | undefined;
     private lastResourceList: string[] | undefined;
     private lastUnknownReasons: string[] = [];
+    private queueSaveEventLog = throttle(
+        15_000,
+        this.saveEventLog.bind(this),
+        { noLeading: true }
+    );
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
@@ -146,7 +152,7 @@ export default class PlayerDropStatsManager {
 
         //Saving if needed
         if (shouldSave) {
-            this.saveEventLog();
+            this.queueSaveEventLog();
         }
     }
 
@@ -167,13 +173,13 @@ export default class PlayerDropStatsManager {
                 }
             }
         }
-        this.saveEventLog();
+        this.queueSaveEventLog();
         return category;
     }
 
 
     /**
-     * Handles receiving the player drop event
+     * Resets the player drop stats log
      */
     public resetLog(reason: string) {
         if (typeof reason !== 'string' || !reason) throw new Error(`reason required`);
@@ -182,6 +188,7 @@ export default class PlayerDropStatsManager {
         this.lastServerVersion = undefined;
         this.lastResourceList = undefined;
         this.lastUnknownReasons = [];
+        this.queueSaveEventLog.cancel({ upcomingOnly: true });
         this.saveEventLog(reason);
     }
 
@@ -245,7 +252,6 @@ export default class PlayerDropStatsManager {
      * Saves the stats database/cache/history
      */
     private async saveEventLog(emptyReason?: string) {
-        //FIXME: need to throttle this to avoid writing too often
         try {
             const sizeBefore = this.eventLog.length;
             this.optimizeStatsLog();
