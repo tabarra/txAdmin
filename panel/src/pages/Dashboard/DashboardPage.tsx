@@ -55,7 +55,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex-grow">
                         <span className="block whitespace-pre-line">
-                            <b>This update changes how the performance chart show its data.</b> <br />
+                            <b>Essa atualização altera como o gráfico de desempenho exibe seus dados.</b> <br />
                             Now the histogram (colors) are based on the time spent on each bucket instead of the number of ticks. And the bucket boundaries (ms) may have changed to have a better resolution at lower tick times.
                         </span>
                     </div>
