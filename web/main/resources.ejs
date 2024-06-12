@@ -3,10 +3,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
 <style>
-    tbody {
-        transition: height 0.3s ease;
-        overflow: hidden;
-    }
     .collapsed {
         height: 0;
     }
@@ -55,7 +51,7 @@
         <% for (const resGroup of resGroups) { %>
             <div class="card table-responsive-sm" style="margin: 1em 0; border-radius: 0;" id="resList-card-<%= resGroup.divName %>">
                 <table class="table table-hover table-outline mb-0">
-                    <thead class="thead-light head-hover">
+                    <thead class="thead-light">
                         <tr>
                             <th class="text-break text-center" colspan="2">
                                 <span class="toggle-icon" id="icon-<%= resGroup.divName %>">
@@ -303,7 +299,7 @@
         }
 
         document.getElementById('stoppedResCheckbox').checked = window.localStorage.resourcesPageShowStopped === 'true';
-        
+
         const theads = document.querySelectorAll('thead.thead-light');
         theads.forEach(thead => {
             thead.addEventListener('click', function() {
@@ -324,4 +320,7 @@
 
         refreshResourceList();
     });
+
+    // document.addEventListener('DOMContentLoaded', function() {
+    // });
 </script>
