@@ -1,5 +1,21 @@
 <%- await include('parts/header.ejs', locals) %>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<style>
+    tbody {
+        transition: height 0.3s ease;
+        overflow: hidden;
+    }
+    .collapsed {
+        height: 0;
+    }
+    .head-hover:hover {
+        cursor: pointer;
+        text-decoration: underline;
+        text-decoration-color: #d8dbe0;
+    }
+</style>
 
 <div class="row justify-content-center">
     <div class="col-md-8 mw-col6">
@@ -36,16 +52,20 @@
 </div>
 <div class="row justify-content-center">
     <div class="col-sm-12 col-lg-8 mw-col8">
-        <div class="card card-accent-info table-responsive-sm">
-            <table class="table table-hover table-outline mb-0">
-                <% for (const resGroup of resGroups) { %>
-                    <thead class="thead-light" id="resList-card-<%= resGroup.divName %>">
+        <% for (const resGroup of resGroups) { %>
+            <div class="card table-responsive-sm" style="margin: 1em 0; border-radius: 0;">
+                <table class="table table-hover table-outline mb-0">
+                    <thead class="thead-light head-hover" id="resList-card-<%= resGroup.divName %>">
                         <tr>
-                            <th class="text-break text-center" colspan="2"><%= resGroup.subPath %></th>
+                            <th class="text-break text-center" colspan="2">
+                                <span class="toggle-icon" id="icon-<%= resGroup.divName %>">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                                <%= resGroup.subPath %>
+                            </th>
                         </tr>
                     </thead>
-                    <tbody id="resList-cardBody-<%= resGroup.divName %>"
-                        aria-labelledby="resList-cardHeader-<%= resGroup.divName %>">
+                    <tbody id="resList-cardBody-<%= resGroup.divName %>" aria-labelledby="resList-cardHeader-<%= resGroup.divName %>" class="collapse mb-1">
                         <% for (const resource of resGroup.resources) { %>
                             <tr id="res-<%= resource.divName %>">
                                 <td>
@@ -61,7 +81,6 @@
                                         <%= resource.description %>
                                     <% } %>
                                 </td>
-
                                 <td class="tableActions">
                                     <% if (resource.status === 'started') { %>
                                     <a class="btn btn-sm btn-outline-warning d-block d-md-inline-block mr-md-1 mb-1 mb-md-0 <%= disableActions %>"
@@ -83,13 +102,11 @@
                                     <% } %>
                                 </td>
                             </tr>
-                        <% } %> 
-                        <%# End individual resource loop %>
+                        <% } %>
                     </tbody>
-                <% } %>
-                <%# End resource group loop %>
-            </table>
-        </div>
+                </table>
+            </div>
+        <% } %>
     </div>
 </div>
 
@@ -238,14 +255,23 @@
             defaultResources.forEach(defRes => {
                 $(`#res-${defRes}`).show();
                 $(`#res-${defRes}`).removeClass("defaultRes");
+
+                $(`#res-${defRes}`).closest('div').show();
             })
         } else {
             defaultResources.forEach(defRes => {
-                $(`#res-${defRes}`).hide();
-                $(`#res-${defRes}`).addClass("defaultRes");
+                const trElement = $(`#res-${defRes}`);
+
+                trElement.hide();
+                trElement.addClass("defaultRes");
+
+                $(`#res-${defRes}`).closest('div').hide();
             })
         }
 
+        // ToDo: when doing the check on stopped resources,
+        // If a category is then empty hide entirely
+        // Currently a grey bar is visible where it was, unlike for the default resources
         const onlyStopped = $('#stoppedResCheckbox').is(':checked')
         resGroupsJS.forEach(folder => {
             let hidden = 0;
@@ -279,7 +305,25 @@
             window.localStorage.resourcesPageShowDefault = false;
         }
 
-        document.getElementById('stoppedResCheckbox').checked = window.localStorage.resourcesPageShowStopped === 'true'
+        document.getElementById('stoppedResCheckbox').checked = window.localStorage.resourcesPageShowStopped === 'true';
+        
+        const theads = document.querySelectorAll('thead.thead-light');
+        theads.forEach(thead => {
+            thead.addEventListener('click', function() {
+                const tbody = this.nextElementSibling;
+                const icon = this.querySelector('.toggle-icon i');
+                if (tbody.classList.contains('collapse')) {
+                    tbody.classList.remove('collapse');
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-down');
+                    this.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    tbody.classList.add('collapse');
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-right');
+                }
+            });
+        });
 
         refreshResourceList();
     });
