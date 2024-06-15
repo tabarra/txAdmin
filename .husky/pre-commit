@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Rejects commits with the !NC flag is present in the changes
+# The !NC flag is used to mark code that should not be commited to the repository
+# It's useful to avoid commiting debug code, test code, etc.
+
+# Check if the !NC flag is present in the changes
+if git diff --staged --unified=0 --no-color | grep '^+' | grep -q '!NC'; then
+  echo -e "COMMIT REJECTED: Found the !NC flag in your changes.\nMake sure you didn't accidently staged something you shouldn't!"
+  exit 1
+fi
+
+exit 0
