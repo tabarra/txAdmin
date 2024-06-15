@@ -1,10 +1,6 @@
-import InlineCode from "@/components/InlineCode";
-import { DndSortableGroup, DndSortableItem } from "@/components/dndSortable";
 import { useBackendApi } from "@/hooks/fetch";
-import { Loader2Icon } from "lucide-react";
 import { PlayerCrashesApiResp } from "@shared/otherTypes";
 import useSWR from "swr";
-import { useState } from "react";
 
 function CrashReasonCard({ reason, count, totalCrashes }: { reason: string, count: number, totalCrashes: number }) {
     const percentage = ((count / totalCrashes) * 100).toFixed(2);
@@ -15,9 +11,7 @@ function CrashReasonCard({ reason, count, totalCrashes }: { reason: string, coun
                 <span>{count}</span>
                 <span className="ml-1 ">({percentage}%)</span>
             </div>
-            <p className="flex-1 text-sm ">
-                {reason} lipsu
-            </p>
+            <p className="flex-1 text-sm ">{reason}</p>
         </div>
     )
 }
@@ -40,7 +34,6 @@ export default function PlayerCrashesPage() {
 
     let totalCrashes = 0;
     if (swrDataApiResp.data) {
-        console.log('asdfsfdgfsd');
         totalCrashes = swrDataApiResp.data?.reduce((acc, [, count]) => acc + count, 0) ?? 0
     }
     return <>
