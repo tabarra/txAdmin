@@ -37,11 +37,11 @@
         "guild_member": {
             "mode_title": "<strong>عضو في القائمة</strong> هذا الخادم في الوضع",
             "insufficient_ids": ".(لن يعمل الديسكورد الموقع) والمحاولة مرة أخرى Discord Desktop يرجى فتح تطبيق .Discord Guild المعرف ، وهو مطلوب للتحقق مما إذا كنت قد انضممت إلى <code>discord</code> ليس لديك",
-            "deny_title": "لدخول Discord Guild أنت مطالب بالانضمام إلى",
-            "deny_message": ".ثم أعد المحاولة %{guildname}  يرجى الانضمام إلى النقابة"
+            "deny_title": "للدخول إلى السيرفر، أنت مطالب بالانضمام لسيرفر الديسكورد",
+            "deny_message": ".ثم أعد المحاولة %{guildname} يرجى الانضمام إلى سيرفر"
         },
         "guild_roles": {
-            "mode_title": "<strong>القائمة الرول في الديسكورد</strong> هذا الخادم في الوضع",
+            "mode_title": "هذا السيرفر يتطلب دخولك سيرفر الديسكورد للانضمام",
             "insufficient_ids": ".والمحاولة مرة أخرى (لن يعمل الديسكورد الموقع) Discord Desktop يرجى فتح تطبيق .Discord Guild المعرف ، وهو مطلوب للتحقق مما إذا كنت قد انضممت إلى <code>discord</code>  ليس لديك",
             "deny_notmember_title": "لدخول Discord Guild أنت مطالب بالانضمام إلى",
             "deny_notmember_message": ".احصل على أحد الرول المطلوبة ، ثم حاول مرة أخرى ،%{guildname} يرجى الانضمام",
@@ -75,15 +75,15 @@
             "no_perms": ".ليس لديك هذا الإذن",
             "unknown_error": ".حدث خطأ غير معروف",
             "not_enabled": ".txAdmin يمكنك تمكينه في صفحة إعدادات !txAdmin لم يتم تمكين قائمة",
-            "announcement_title": ":%{author} رسالة من سيرفر مهم من",
+            "announcement_title": ":%{author} تنويه من الإداري",
             "dialog_empty_input": ".لا يمكن أن يكون لديك إدخال فارغ",
             "directmessage_title": ":%{author} رسالة مباشرة من المشرف",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "هذا الأمر يتطلب تشغيل الون سنك"
         },
         "frozen": {
-            "froze_player": "!لقد جمدت اللاعب",
+            "froze_player": "!لقد قمت بتجميد اللاعب",
             "unfroze_player": "!لقد قمت بإلغاء تجميد اللاعب",
-            "was_frozen": "!لقد تم تجميدك من قبل مسؤول الخادم"
+            "was_frozen": "!لقد تم تجميدك من قبل إداري"
         },
         "common": {
             "cancel": "الغاء",
@@ -99,33 +99,33 @@
             "player_mode": {
                 "title": "وضع اللاعب",
                 "noclip": {
-                    "title": "طيران",
-                    "label": "تحلق",
+                    "title": "الطيران",
+                    "label": "قم بالتحليق بالأجواء",
                     "success": "تم تفعيل طيران"
                 },
                 "godmode": {
                     "title": "خارق",
-                    "label": "شفاف",
+                    "label": "لن يتمكن اللاعبين الآخير بقتلك",
                     "success": "تم تفعيل وضع خارق"
                 },
                 "superjump": {
                     "title": "القفزة الخارقة",
-                    "label": "تبديل وضع القفز الفائق ، سيعمل اللاعب أيضًا بشكل أسرع",
+                    "label": "سوف تصبح القفزة الخاصة بك عالية جداً، كذلك سوف تصبح شخصيتك اسرع بقليل",
                     "success": "تم تفعيل القفزة الخارقة"
                 },
                 "normal": {
                     "title": "طبيعي",
                     "label": "الوضع الافتراضي",
-                    "success": ".عاد إلى وضع المشغل الافتراضي"
+                    "success": "لقد عدت للوضع الطبيعي"
                 }
             },
             "teleport": {
                 "title": "التنقل",
-                "generic_success": "أرسلك إلى الثقب الدودي!",
+                "generic_success": "تم الانتقال بنجاح",
                 "waypoint": {
-                    "title": "إحداثية",
-                    "label": "انتقل إلى تعيين إحداثية",
-                    "error": ".ليس لديك تعيين إحداثية"
+                    "title": "الوجهة",
+                    "label": "انتقل إلى الموقع المحدد بالخريطة",
+                    "error": "قم بتحديد موقع بالخريطة أولاً"
                 },
                 "coords": {
                     "title": "إحداثيات",
@@ -146,7 +146,7 @@
             },
             "vehicle": {
                 "title": "المركبات",
-                "not_in_veh_error": "!أنت لست في سيارة حاليا",
+                "not_in_veh_error": "!أنت لست في مركبة حاليا",
                 "spawn": {
                     "title": "انشاء",
                     "label": "انشئ المركبة باسم الطراز",
@@ -181,22 +181,22 @@
                     "title": "نفسي",
                     "label": "يعيد صحتك",
                     "success_0": "!شفاء كل",
-                    "success_1": "!يجب أن تشعر بشعور جيد الآن",
-                    "success_2": "تمت الاستعادة إلى الوضع الكامل!",
-                    "success_3": "!Ouchies تم إصلاح"
+                    "success_1": "سوف تشعر بشعور جيد الآن",
+                    "success_2": "أنت الآن بصحة ممتازة",
+                    "success_3": "تم اصلاح الخدشات"
                 },
                 "everyone": {
                     "title": "الجميع",
                     "label": "سيشفي وينعش كل اللاعبين",
-                    "success": ".شفاء وإحياء جميع اللاعبين"
+                    "success": "تم شفاء وإحياء جميع اللاعبين"
                 }
             },
             "announcement": {
                 "title": "إرسال إعلان",
-                "label": "-إرسال إعلان لجميع اللاعبين",
+                "label": "إرسال إعلان لجميع اللاعبين",
                 "dialog_desc": "..إرسال إعلان لجميع اللاعبين",
                 "dialog_placeholder": "... اعلانك",
-                "dialog_success": ".ارسال الاعلان"
+                "dialog_success": "تم إرسال الإعلان بنجاح"
             },
             "clear_area": {
                 "title": "إعادة تعيين منطقة العالم",
@@ -214,8 +214,8 @@
         },
         "page_players": {
             "misc": {
-                "online_players": "لاعبين الاونلاين",
-                "players": "لاعبين",
+                "online_players": "اللاعبين المتصلين",
+                "players": "لاعب",
                 "search": "بحث",
                 "zero_players": "لم يتم العثور على لاعبين"
             },
@@ -229,14 +229,14 @@
             "sort": {
                 "label": "ترتيب حسب",
                 "distance": "مسافة",
-                "id": "ID",
+                "id": "الرقم بالسيرفر",
                 "joined_first": "انضم أولا",
                 "joined_last": "انضم اخرا",
                 "closest": "الأقرب",
                 "farthest": "ابعد"
             },
             "card": {
-                "health": "%{percentHealth}% صحة"
+                "health": "%{percentHealth}% الدم"
             }
         },
         "player_modal": {
@@ -285,10 +285,10 @@
                     "title": "تفاعل",
                     "options": {
                         "heal": "شفاء",
-                        "go_to": "اذهب إلى",
-                        "bring": "باحضار لاعب",
-                        "spectate": "إلق نظرة",
-                        "toggle_freeze": "تفعيل التجميد"
+                        "go_to": "انتقل للاعب",
+                        "bring": "احضر اللاعب",
+                        "spectate": "مراقبة اللاعب",
+                        "toggle_freeze": "تفعيل/تعطيل التجميد"
                     },
                     "notifications": {
                         "heal_player": "تم الشفاء لاعب",
@@ -297,15 +297,15 @@
                         "spectate_failed": ".فشل في حل الهدف! خروج الطيف",
                         "spectate_yourself": ".لا يمكنك مشاهدة نفسك",
                         "freeze_yourself": ".لا يمكنك تجميد نفسك",
-                        "spectate_cycle_failed": ".لا يوجد لاعبون"
+                        "spectate_cycle_failed": ".لا يوجد لاعبين"
                     }
                 },
                 "troll": {
-                    "title": "مضحك",
+                    "title": "المزاح",
                     "options": {
-                        "drunk": "يسكر",
-                        "fire": "أشعل النار",
-                        "wild_attack": "هجوم بري"
+                        "drunk": "اجعل اللاعب سكران",
+                        "fire": "قم بإحراق اللاعب",
+                        "wild_attack": "قم بإطلاق هجوم بري على اللاعب"
                     }
                 }
             },
