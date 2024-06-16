@@ -63,6 +63,14 @@ jobs:
               });
             }
 
+      - name: Change git origin
+        shell: bash
+        run: |
+                  git init .
+                  git config core.symlinks true
+                  git remote add origin https://github.com/$GITHUB_REPOSITORY.git
+                  git pull origin $GITHUB_REF:PR_BRANCH --depth=1
+
       - name: Run locale:check
         id: locale-check
         run: npm run locale:check
