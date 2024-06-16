@@ -1,10 +1,13 @@
 name: Check Locale PR
 
 on:
-  pull_request:
+  pull_request_target:
     paths:
       - 'locale/**'
 
+permissions:
+  pull-requests: write
+  
 jobs:
   check-locale-pr:
     runs-on: ubuntu-latest
