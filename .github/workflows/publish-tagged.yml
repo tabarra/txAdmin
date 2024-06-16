@@ -1,0 +1,54 @@
+name: Publish Tagged Build
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+jobs:
+  build:
+    name: "Build Changelog & Release Prod"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Download all modules
+        run: npm ci
+
+      - name: Build project
+        run: |
+          npm run build
+          cat .github/.cienv >> $GITHUB_ENV
+
+      - name: Compress build output with zip
+        run: |
+          cd dist
+          zip -r ../monitor.zip .
+          cd ..
+          sha256sum monitor.zip
+
+      - name: Attest build provenance
+        id: attest_build_provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: monitor.zip
+
+      - name: Create and Upload Release
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: ${{ env.TX_IS_PRERELEASE }}
+          files: monitor.zip

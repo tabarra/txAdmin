@@ -9,6 +9,7 @@ tmp_core_tsc/*
 /start_*.bat
 monitor-*.zip
 bundle_size_report.html
+.github/.cienv
 
 # IDE Specific
 .idea
