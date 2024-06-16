@@ -66,8 +66,8 @@ jobs:
       - name: Change git origin
         shell: bash
         run: |
-                  git remote add fork https://github.com/$GITHUB_REPOSITORY.git
-                  git pull fork $GITHUB_REF:PR_BRANCH --depth=1
+                  git remote set-url origin https://github.com/$GITHUB_REPOSITORY.git
+                  git pull origin $GITHUB_REF:PR_BRANCH --depth=1
 
       - name: Run locale:check
         id: locale-check
