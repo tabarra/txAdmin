@@ -4,7 +4,7 @@
 - [ ] player/history modal is cutting bottom of title (test with "jgpq", etc)
 - [x] `lipsum` suffix to all the crash reasons
 - [x] thread chart data is the cumulative sum and not the diff, so it "averages out"
-- [ ] use the fxRunner PID to get the correct fxserver process - perfUtils.fetchFxsMemory
+- [x] use the fxRunner PID to get the correct fxserver process - perfUtils.fetchFxsMemory
 - [ ] investigate player desync issues
 
 ## Highlights
@@ -31,9 +31,9 @@
         - [ ] don't clear svg on render, use d3 joins
         - [ ] swr disable revalidateOnFocus and use interval
             - or some kind of push from the dashboard room event
-- [ ] 
 
 ## Small feat
+- [ ] make server v8 heap reports faster to large changes
 - [ ] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds 

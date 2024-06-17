@@ -181,7 +181,7 @@ export default class SvRuntimeStatsManager {
         }
         const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
             fetchRawPerfData(fxServerHost),
-            fetchFxsMemory(),
+            fetchFxsMemory(this.#txAdmin.fxRunner.fxChild.pid),
         ]);
         if (fetchFxsMemoryRes.status === 'fulfilled') {
             this.lastFxsMemory = fetchFxsMemoryRes.value;
