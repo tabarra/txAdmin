@@ -83,6 +83,14 @@ export const parseRawPerf = (rawData: string) => {
         },
     };
 
+    //Checking basic integrity
+    if(!rawData.includes('tickTime_')){
+        throw new Error('missing tickTime_ in /perf/');
+    }
+    if (!rawData.includes('svMain') || !rawData.includes('svNetwork') || !rawData.includes('svSync')) {
+        throw new Error('missing threads in /perf/');
+    }
+
     //Extract bucket boundaries
     const perfBoundaries = lines
         .filter((line) => line.startsWith('tickTime_bucket{name="svMain"'))

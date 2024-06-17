@@ -33,7 +33,7 @@
             - or some kind of push from the dashboard room event
 
 ## Small feat
-- [ ] make server v8 heap reports faster to large changes
+- [x] make server v8 heap reports faster to large changes
 - [ ] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds 
