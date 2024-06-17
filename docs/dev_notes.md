@@ -1,98 +1,57 @@
-# TODO: v7.2.0 Release
-- [x] chore: update most packages
-- [x] chore: remove pending DynamicNewBadge
-- [x] chore: added dependencies license report generator
-- [x] tweak: improved invisible characters detection on player names
-- [x] chore: replaced coreui bundled file
-
-## v7.1.0 bugs
-- [x] unrenderable legacy 404 page
-- [x] "Search by Player IDs" filter on players page is overflowing
-- [x] history action modal needs py-1 because of the reason field outline
-- [x] remove all "blur" as that is slow as hell for browsers with hw acceleration disabled
-- [x] make the new page searches case insensitive (history->reason and maybe more)
+## Previous bugs
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
-- [ ] player/history modal is cutting bottom of title (test with jgpq, etc)
+- [ ] player/history modal is cutting bottom of title (test with "jgpq", etc)
+- [x] `lipsum` suffix to all the crash reasons
+- [x] thread chart data is the cumulative sum and not the diff, so it "averages out"
+- [ ] use the fxRunner PID to get the correct fxserver process - perfUtils.fetchFxsMemory
+- [ ] investigate player desync issues
 
 ## Highlights
-- [x] pre-configured ban/warn reasons with new perm to lock admins to only use them?
-    - [x] apply new ban scheme to the web player modal
-    - [x] apply new ban scheme to the NUI
-    - [x] checklist:
-        - [x] light mode
-        - [x] multiline
-        - [x] mobile
-        - [x] dialog input sanitization
-        - [x] better random id (no random id? stable-hash?)
-        - [x] settings enforce unique id
-- [x] added filters to the in-game playerlist
-- [x] New Statistics stuff:
-    - [x] add thread performance chart
-    - [x] write perf chart code
-        - [x] d3 canvas responsive with resize debounced
-        - [x] write slicer code + tests
-        - [x] axis with zoom
-        - [x] cursor + atom for the hovered data
-            - cursor not close enough to a group should disable it
-        - [x] drawing heatmap
-        - [x] drawing lines
-        - [x] drawing groups with the gaps
-        - [x] context checking, drawing error handling
-        - [x] button to switch thread
-    - [x] change StatsManager.svRuntime to save counts instead of frequencies
-    - [x] some way for the backend to push updates to the UI
-    - [x] thread perf chart:
-        - [x] throttle cursor atom change events
-        - [x] show cursor time
-        - [x] indicate loading, reloading and error states
-        - [x] button to switch thread
-    - [x] player drop pie chart:
-        - [x] apply socket data
-        - [x] get playerlist events to add to the tally
-        - [x] indicate loading, reloading and error states
-    - [x] Other stats
-        - [x] show cursor time
-        - [x] indicate loading, reloading and error states
-        - [x] display hardware stats
-        - [x] show uptime and median players
-    - [x] statsManager.playerDrop.saveEventLog MUST be throttled
-    - [x] dashboard data atom with timestamp and expiration
-- [x] NEW PAGE: Dashboard
-    - [x] route new dashboard
-    - [x] remove old dashboard code & all related dependencies
-    - [x] mobile layout
-    - [x] write docs and add link or callout
-    - [x] everything should look "fine enough" on light mode
+- [ ] Anonymous admin actions (issue #893)
+    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
+- [ ] Offline warning
+    - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
+    - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
+- [ ] New player drops page?
+    - 
+- Dashboard stuff:
+    - [ ] add testing for getServerStatsData
+    - [ ] fix getMinTickIntervalMarker behavior when 0.2
+    - [ ] warning for top servers
+    - StatsManager.svRuntime:
+        - [ ] write log optimizer and remove the webroute 30h filter
+    - thread perf chart:
+        - [ ] color should change correctly at the min interval marker point
+    - full perf chart:
+        - [ ] buttons to show memory usage, maybe hide player count
+        - [ ] calculate initial zoom of 30h, maybe some linear interpolation
+        - [ ] increase `h-[26rem]` back to 28 after removing the new chart warning
+        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
+        - [ ] don't clear svg on render, use d3 joins
+        - [ ] swr disable revalidateOnFocus and use interval
+            - or some kind of push from the dashboard room event
+- [ ] 
 
 ## Small feat
-- [x] migrate system logs page & remove xterm files
-    - [x] write new page
-    - [x] remove old page files, links and references on core
-    - [x] remove `web/public/xtermjs`
+- [ ] add "this player is banned until: xxx" to the player modal
+- [ ] track channel of last console output, and if it's different prefix a `\n`
+- [ ] add more menu keybinds 
+- [ ] separate "announcements" and "dm" permissions
+- [ ] disable some actions while in NUI?
 
-## Chores + refactor
-- [x] update packages
-- [x] remove pending DynamicNewBadge
-- [x] add new page for adding legacy ban
-    - same style as the ban templates page
-    - admins might be doing multiple bans manually, so make the process streamlined
-    - support using ban templates
-    - textarea as input, line breaks count for separating ids
-    - do I limit 1 of each id?!
-- [x] remove old live console page
-- [x] Remove players page legacy code
-    - [x] check for if i still need cil - coreui icons
-    - [x] functions in web/public/js/txadmin/main.js
-    - [x] can we limit the scope of socketio just to the server log page?
-    - [x] test server log + player click
-- [x] simplify the simple-line-icons dependencies - do i need all the files? remove cdn!
-- [x] redact discord api webhook urls from reports
-- [x] MUST `//FIXME: update_txdiagnostics`
-- [x] add fxserver version to txDiagnostics
-- [x] commit stashed changes
-- [x] merge #952 manually
+## Chores + refactor + boring stuff
+- [ ] fix txDiagnostics (and add tx v8 heap data to it)
+- [ ] update packages
+- [ ] check if the client print issues have been solved and switch tx to lua54
+    - https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
+    - https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
+- [ ] update wouter and add search/filters state to URL of the players/history pages 
+- [ ] Use `dotenv` or something to configure `main-builder.js` and update `development.md`
+- [ ]
 
+
+semana que vem fazer votação sobre feature de crashes perguntando how often do you use the page
 
 
 
@@ -100,7 +59,6 @@
 
 TODO: chart of new players per day
 
-can permissions for announcement / dm be separated 🥺 
 
 
 d3.timeHours(new Date(1715741829000), new Date())[0]
@@ -130,38 +88,16 @@ for log in statsLog:
 
 
 ## Next up... ish
-- Dashboard stuff:
-    - [ ] add testing for getServerStatsData
-    - StatsManager.svRuntime:
-        - [ ] write log optimizer and remove the webroute 30h filter
-        - [ ] fix: it's not wiping the log when detecting new boundaries
-    - [ ] fix getMinTickIntervalMarker behavior when 0.2
-    - [ ] buttons to show memory usage, maybe hide player count
-    - [ ] calculate initial zoom of 30h, maybe some linear interpolation
-    - [ ] warning for top servers
-    - thread perf chart:
-        - [ ] color should change correctly at the min interval marker point
-    - full perf chart:
-        - [ ] increase `h-[26rem]` back to 28 after removing the new chart warning
-        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
-        - [ ] don't clear canvas on render, use d3 joins
-        - [ ] swr disable revalidateOnFocus and use interval
-            - or some kind of push from the dashboard room event
-        
 - Highlights:
     - [ ] add average session time tracking to statsManager.playerDrop
 
 - Small feats, fix, and improvements:
-    - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
-    - [ ] add "this player is banned until: xxx" to the player modal
-    - [ ] track channel of last console output, and if it's different prefix a `\n`
-    - [ ] add more menu keybinds 
     - [ ] the WarningBar scrolls up with the pages when they have scroll
     - [ ] locale file optimization - build 8201 and above
-    - [ ] add txadmin v8 heap to diagnostics
     - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
 
 - Chores + Refactor stuff:
+    - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
     - [ ] reevaluate globals?.tmpSetHbDataTracking
     - [ ] fix socket.io multiple connections - start a single instance when page opens, commands to switch rooms
     - [ ] evaluate and maybe add event bus
@@ -173,25 +109,19 @@ for log in statsLog:
     - [ ] update docs on development?
     - [ ] rename to de-capitalize components files that have multiple exports 
     - [ ] talk to rockstar about `cfx-server-data`, the chat resource security updates and `resources_useSystemChat` 
-    - [ ] update wouter and add search/filters state to URL of the players/history pages 
     - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
+    - [ ] break down the discord /info command in /info and /admininfo?
 
 
 ## Quick notes:
 player name history? (not searchable)
 
-break down the discord /info command in /info and /admininfo?
 
 new apis? useBackendQuery & useBackendMutation
 based on swr's methods
 the auth part can be the same middleware for both
-need to check swr's behavior on unmount nad how to change timeouts
+need to check swr's behavior on unmount and how to change timeouts
 
-
-## Client game print issue
-https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
-https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
-- [ ] after menu client messages rework, add lua54
 
 =======================================================================
 
@@ -221,9 +151,7 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 ### Action Modal:
 - feat requests:
     - be able to delete bans/warns with new permission (Issue #910)
-    - offline warning - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
     - top server asked for the option to edit ban duration (expire now / change)
-    - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
     - Thought: need to add an edit log like the one we have for player notes
     - Thought: maybe we could use some dedicated icons for Expired, Edited, Revoked
 
@@ -239,8 +167,6 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 =======================================================================
 
 # TODO: v7.3+
-- [ ] Anonymous admin actions (issue #893)
-    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
 - [ ] NEW PAGE: Whitelist
 - [ ] `2xl:mx-8` for all pages? (change on MainShell)
 - [ ] console nav button to jump to server start or errors? 
@@ -510,7 +436,7 @@ ScanResourceRoot('E:/FiveM/txData/default.base/', (data: object) => {
 
 =======================================================================
 
-Perf charts:
+Old Perf charts:
 
 https://media.discordapp.net/attachments/1058975904811991080/1078919282924208238/image.png
 https://media.discordapp.net/attachments/589106731376836608/1108806732991430736/image.png
@@ -660,12 +586,7 @@ https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
 
 
 Somewhen:
-- [ ] Tooling:
-    - [ ] Use `dotenv` or something to read FXServer's path from
-    - [ ] Adapt `main-builder.js` to accept txAdmin convars
-    - [ ] Update `development.md`
 - [ ] checar se outros resources conseguem chamar 'txaLogger:menuEvent'?
-- [ ] add ram usage to perf chart?
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
 - [ ] replace all fxRunner.srvCmd* and only expose:
@@ -862,14 +783,6 @@ https://github.com/duckdb/duckdb
 > Don't forget to add a integrations doc page + to the readme
 > for menu and internal stuff to use token-based rest api: ok, just make sure to use the webpipe proxy
 > for resource permissions, use resource.* ace thing, which also works for exports
-
-> for ban things, bubble wants a generic thing that is not just for txadmin, so any resource could implement it
-> so its not exports.txadmin.xxxx, but some other generic thing that bubble would need to expose
-
-> querying user info: in-server monitor resource should set specific state keys (non-replicated), which get properly specified so other resources can also populate any 'generic' fields. thinking of kubernetes-style namespaces as java-style namespaces are disgusting (playerdata.cfx.re/firstjoin or so)
-> bans: some sort of generic event/provide-stuff api. generic event spec format is needed for a lot of things, i don't want 'xd another api no other resource uses', i just want all resources from X on to do things proper event-y way
-> --bubble
-https://docs.fivem.net/docs/scripting-manual/networking/state-bags/
 
 ps.: need to also include the external events reporting thing
 
