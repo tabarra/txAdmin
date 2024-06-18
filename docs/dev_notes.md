@@ -5,6 +5,7 @@
 - [x] `lipsum` suffix to all the crash reasons
 - [x] thread chart data is the cumulative sum and not the diff, so it "averages out"
 - [x] use the fxRunner PID to get the correct fxserver process - perfUtils.fetchFxsMemory
+- [x] fix the uptime detection
 - [ ] investigate player desync issues
 
 ## Highlights

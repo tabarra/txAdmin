@@ -14,8 +14,8 @@ type DashboardPerfCursorDataType = {
 };
 
 type DashboardServerStatsDataType = {
-    uptimePct: number;
-    medianPlayerCount: number;
+    uptimePct?: number;
+    medianPlayerCount?: number;
 };
 
 /**
