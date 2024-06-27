@@ -203,6 +203,10 @@ export default class ServerLogger extends LoggerBase {
 
         } else if (eventData.type === 'LoggerStarted') {
             eventMessage = 'Logger started';
+            globals?.statsManager.playerDrop.handleServerBootData(eventData.data);
+            if (typeof eventData.data?.projectName === 'string' && eventData.data.projectName.length) {
+                globals?.persistentCache.set('fxsRuntime:projectName', eventData.data.projectName);
+            }
 
         } else if (eventData.type === 'DebugMessage') {
             eventMessage = (typeof eventData.data === 'string')
@@ -210,12 +214,12 @@ export default class ServerLogger extends LoggerBase {
                 : 'Debug Message: unknown';
 
         } else if (eventData.type === 'MenuEvent') {
-            globals?.statisticsManager.menuCommands.count(eventData.data?.action ?? 'unknown');
+            globals?.statsManager.txRuntime.menuCommands.count(eventData.data?.action ?? 'unknown');
             eventMessage = (typeof eventData.data.message === 'string')
                 ? `${eventData.data.message}`
                 : 'did unknown action';
 
-        } else if (eventData.type !== 'playerJoining') {
+        } else {
             console.verbose.warn(`Unrecognized event: ${eventData.type}`);
             console.verbose.dir(eventData);
             eventMessage = eventData.type;
@@ -243,6 +247,7 @@ export default class ServerLogger extends LoggerBase {
      * @param {Number} sliceLength
      */
     readPartialNewer(timestamp, sliceLength) {
+        //FIXME: use d3 bissect to optimize this
         const limitIndex = this.recentBuffer.findIndex((x) => x.ts > timestamp);
         return this.recentBuffer.slice(limitIndex, limitIndex + sliceLength);
     }
@@ -254,6 +259,7 @@ export default class ServerLogger extends LoggerBase {
      * @param {Number} sliceLength
      */
     readPartialOlder(timestamp, sliceLength) {
+        //FIXME: use d3 bissect to optimize this
         const limitIndex = this.recentBuffer.findIndex((x) => x.ts >= timestamp);
 
         if (limitIndex === -1) {

@@ -1,12 +1,9 @@
 <%- await include('parts/header.ejs', locals) %>
 
 
-<div class="text-center mb-4">
-    <h2>Master Actions</h2>
-</div>
 <div class="row justify-content-md-center">
     <div class="col-lg-6 col-md-8 col-sm-12">
-        <% if (!adminIsMaster) { %>
+        <% if (!isMasterAdmin) { %>
             <div class="alert alert-warning text-center" role="alert">
                 <strong>Warning:</strong> You MUST be the Master Admin to be able to use the options below.
             </div>
@@ -165,7 +162,7 @@
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-outline-danger" id="cleandb-submitButton" <%= disableActions %>>
-                                <i class="icon-check"></i> Clean Database
+                                <i class="icon-trash"></i> Clean Database
                             </button>
                         </div>
                     </div>
@@ -179,20 +176,21 @@
                             </label>
                             <div class="col-sm-9">
                                 <select id="revokewl-filter" name="filter" class="form-control" required>
-                                    <option value="30d" selected>player that haven't joined in the last 30 days</option>
-                                    <option value="15d">player that haven't joined in the last 15 days</option>
-                                    <option value="7d">player that haven't joined in the last 7 days</option>
+                                    <option value="30d" selected>players that haven't joined in the last 30 days</option>
+                                    <option value="15d">players that haven't joined in the last 15 days</option>
+                                    <option value="7d">players that haven't joined in the last 7 days</option>
                                     <option value="all" class="font-weight-bold text-danger">REVOKE ALL WHITELISTS</option>
                                 </select>
                                 <span class="form-text text-muted">
-                                    Revoke whitelist from players that have not joined the server the last X days.
+                                    Revoke whitelist from players that have not joined the server the last X days. <br>
+                                    <strong>Note:</strong> This only applies to license whitelist, and not Discord member or Discord role whitelist.
                                 </span>
                             </div>
                         </div>
     
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-outline-danger" id="revokewl-submitButton" <%= disableActions %>>
-                                <i class="icon-check"></i> Revoke Whitelists
+                                <i class="icon-close"></i> Revoke Whitelists
                             </button>
                         </div>
                     </div>
@@ -213,6 +211,19 @@
 
 <script>
     //============================================== General
+    (()=>{
+        if(window.location.hash === '#cleandb'){
+            document.getElementById('nav-cleandb').classList.add('active', 'show');
+            document.getElementById('nav-cleandb-tab').classList.add('active');
+            document.getElementById('nav-general').classList.remove('active', 'show');
+            document.getElementById('nav-general-tab').classList.remove('active');
+        }else if(window.location.hash === '#revokewl'){
+            document.getElementById('nav-revokewl').classList.add('active', 'show');
+            document.getElementById('nav-revokewl-tab').classList.add('active');
+            document.getElementById('nav-general').classList.remove('active', 'show');
+            document.getElementById('nav-general-tab').classList.remove('active');
+        }
+    })();
     (()=>{
         const generalBtnBackupDatabase = document.getElementById('general-btnBackupDatabase');
         const generalBtnResetFXServer = document.getElementById('general-btnResetFXServer');
@@ -236,7 +247,7 @@
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if(data.success == true){
-                        window.location = '/setup';
+                        navigateParentTo('/server/setup');
                         return;
                     }else{
                         updateMarkdownNotification(data, notify);

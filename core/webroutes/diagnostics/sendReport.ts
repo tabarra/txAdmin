@@ -1,22 +1,17 @@
 const modulename = 'WebServer:SendDiagnosticsReport';
-import Logger from '@core/components/Logger';
-import ConfigVault from '@core/components/ConfigVault';
 import got from '@core/extras/got';
 import { txEnv } from '@core/globalData';
-import { GenericApiError } from '@shared/genericApiTypes';
-import { Context } from 'koa';
+import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
-import AdminVault from '@core/components/AdminVault';
 import { redactApiKeys } from '@core/extras/helpers';
 import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@core/extras/serverDataScanner.js';
-import PlayerDatabase from '@core/components/PlayerDatabase';
-import Cache from '@core/extras/dataCache';
-import { getChartData } from '../chartData';
+import MemCache from '@extras/MemCache';
 import consoleFactory, { getLogBuffer } from '@extras/console';
+import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Consts & Helpers
-const reportIdCache = new Cache(60);
+const reportIdCache = new MemCache<string>(60);
 const maskedKeywords = ['key', 'license', 'pass', 'private', 'secret', 'token'];
 const maskString = (input: string) => input.replace(/\w/gi, 'x');
 const maskIps = (input: string) => input.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/gi, 'x.x.x.x');
@@ -32,43 +27,39 @@ type ServerLogType = {
 
 /**
  * Prepares and sends the diagnostics report to txAPI
- * @param {object} ctx
  */
-export default async function SendDiagnosticsReport(ctx: Context) {
-    const logger = (globals.logger as Logger);
-    const configVault = (globals.configVault as ConfigVault);
-    const adminVault = (globals.adminVault as AdminVault);
-    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
-
+export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     type SuccessResp = {
         reportId: string;
     };
-    const sendTypedResp = (data: SuccessResp | GenericApiError) => ctx.send(data);
+    const sendTypedResp = (data: SuccessResp | GenericApiErrorResp) => ctx.send(data);
 
     //Rate limit (and cache) report submissions
     const cachedReportId = reportIdCache.get();
-    if (cachedReportId !== false) {
-        return sendTypedResp({ error: `You can send at most one report per minute. Your last report ID was ${cachedReportId}.` });
+    if (cachedReportId) {
+        return sendTypedResp({
+            error: `You can send at most one report per minute. Your last report ID was ${cachedReportId}.`
+        });
     }
 
     //Diagnostics
     let diagnostics;
     try {
         const [host, txadmin, fxserver, proccesses] = await Promise.all([
-            diagnosticsFuncs.getHostData(),
-            diagnosticsFuncs.getTxAdminData(),
-            diagnosticsFuncs.getFXServerData(),
+            diagnosticsFuncs.getHostData(ctx.txAdmin),
+            diagnosticsFuncs.getTxAdminData(ctx.txAdmin),
+            diagnosticsFuncs.getFXServerData(ctx.txAdmin),
             diagnosticsFuncs.getProcessesData(),
         ]);
         diagnostics = { host, txadmin, fxserver, proccesses };
     } catch (error) { }
 
     //Admins
-    const adminList = (adminVault.getRawAdminsList() as any[])
+    const adminList = (ctx.txAdmin.adminVault.getRawAdminsList() as any[])
         .map(a => ({ ...a, password_hash: '[REDACTED]' }));
 
     //Settings
-    const settings = (configVault.getRawFile() as any);
+    const settings = (ctx.txAdmin.configVault.getRawFile() as any);
     if (settings?.discordBot?.token) {
         settings.discordBot.token = '[REDACTED]';
     }
@@ -91,14 +82,14 @@ export default async function SendDiagnosticsReport(ctx: Context) {
     //Remove IP from logs
     const txSystemLog = maskIps(getLogBuffer());
 
-    const rawTxActionLog = await logger.admin.getRecentBuffer();
+    const rawTxActionLog = await ctx.txAdmin.logger.admin.getRecentBuffer();
     const txActionLog = (typeof rawTxActionLog !== 'string')
         ? 'error reading log file'
         : maskIps(rawTxActionLog).split('\n').slice(-500).join('\n');
 
-    const serverLog = (logger.server.getRecentBuffer(500) as ServerLogType[])
+    const serverLog = (ctx.txAdmin.logger.server.getRecentBuffer(500) as ServerLogType[])
         .map((l) => ({ ...l, msg: maskIps(l.msg) }));
-    const fxserverLog = maskIps(logger.fxserver.getRecentBuffer());
+    const fxserverLog = maskIps(ctx.txAdmin.logger.fxserver.getRecentBuffer());
 
     //Getting server data content
     let serverDataContent: ServerDataContentType = [];
@@ -112,25 +103,26 @@ export default async function SendDiagnosticsReport(ctx: Context) {
     //Database & perf stats
     let dbStats = {};
     try {
-        dbStats = playerDatabase.getDatabaseStats();
+        dbStats = ctx.txAdmin.playerDatabase.getDatabaseStats();
     } catch (error) { }
 
-    let perfSvMain = [];
+    let perfSvMain: ReturnType<typeof ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary> = null;
     try {
-        perfSvMain = getChartData('svMain');
+        perfSvMain = ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary();
     } catch (error) { }
 
     //Prepare report object
     const reportData = {
-        $schemaVersion: 1,
+        $schemaVersion: 2,
         $txVersion: txEnv.txAdminVersion,
+        $fxVersion: txEnv.fxServerVersion, //TODO: update_txdiagnostics
         diagnostics,
         txSystemLog,
         txActionLog,
         serverLog,
         fxserverLog,
         envVars,
-        perfSvMain,
+        perfSvMain, //TODO: update_txdiagnostics
         dbStats,
         settings,
         adminList,
@@ -152,7 +144,7 @@ export default async function SendDiagnosticsReport(ctx: Context) {
         const apiResp = await got.post(requestOptions).json() as ResponseType;
         if ('reportId' in apiResp) {
             reportIdCache.set(apiResp.reportId);
-            console.warn(`Diagnostics data report ID ${apiResp.reportId} sent by ${ctx.session.auth.username}`);
+            console.warn(`Diagnostics data report ID ${apiResp.reportId} sent by ${ctx.admin.name}`);
             return sendTypedResp({ reportId: apiResp.reportId });
         } else {
             console.verbose.dir(apiResp);
@@ -160,8 +152,7 @@ export default async function SendDiagnosticsReport(ctx: Context) {
         }
     } catch (error) {
         try {
-            const apiErrorResp = JSON.parse(error?.response?.body);
-            // console.dir(apiErrorResp); //DEBUG
+            const apiErrorResp = JSON.parse((error as any)?.response?.body);
             const reason = apiErrorResp.message ?? apiErrorResp.error ?? (error as Error).message;
             return sendTypedResp({ error: `Report failed: ${reason}` });
         } catch (error2) {

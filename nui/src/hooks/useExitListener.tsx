@@ -22,6 +22,7 @@ export const useExitListener = () => {
 
         setVisible(false);
         fetchNui("closeMenu");
+        fetchNui("playSound", "enter");
       }
     };
 

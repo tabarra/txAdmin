@@ -15,14 +15,15 @@ import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
 import { DialogLoadError } from "./DialogLoadError";
-import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import { GenericApiErrorResp, GenericApiResp } from "@shared/genericApiTypes";
 import humanizeDuration, { Unit } from "humanize-duration";
 import { ButtonXS } from "../../misc/ButtonXS";
-import { tsToLocaleDate } from "@nui/src/utils/miscUtils";
+import { tsToLocaleDate, userHasPerm } from "@nui/src/utils/miscUtils";
 import {
   PlayerModalTabs,
   useSetPlayerModalTab,
 } from "@nui/src/state/playerModal.state";
+import { usePermissionsValue } from "@nui/src/state/permissions.state";
 
 const DialogInfoView: React.FC = () => {
   const [note, setNote] = useState("");
@@ -32,9 +33,8 @@ const DialogInfoView: React.FC = () => {
   const setTab = useSetPlayerModalTab();
   const t = useTranslate();
   const theme = useTheme();
+  const userPerms = usePermissionsValue();
   if ("error" in playerDetails) return <DialogLoadError />;
-
-  const meta = playerDetails.meta;
   const player = playerDetails.player;
 
   //Prepare vars
@@ -64,7 +64,7 @@ const DialogInfoView: React.FC = () => {
         });
       } else {
         enqueueSnackbar(
-          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+          (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
           { variant: "error" }
         );
       }
@@ -94,7 +94,7 @@ const DialogInfoView: React.FC = () => {
         });
       } else {
         enqueueSnackbar(
-          (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+          (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
           { variant: "error" }
         );
       }
@@ -146,7 +146,7 @@ const DialogInfoView: React.FC = () => {
           color={player.tsWhitelisted ? "error" : "success"}
           variant="outlined"
           onClick={btnChangeWhitelistStatus as any}
-          disabled={!meta.tmpPerms.whitelist || !player.license}
+          disabled={!userHasPerm('players.whitelist', userPerms) || !player.license}
         >
           {player.tsWhitelisted
             ? t("nui_menu.player_modal.info.btn_wl_remove")

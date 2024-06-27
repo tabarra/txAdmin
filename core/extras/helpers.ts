@@ -1,4 +1,5 @@
-import consts from "./consts";
+import type { PlayerIdsObjectType } from "@shared/otherTypes";
+import consts from "../../shared/consts";
 
 /**
  * txAdmin in ASCII
@@ -32,11 +33,12 @@ export const parseSchedule = (scheduleTimes: string[]) => {
         const timeTrim = timeInput.trim();
         if (!timeTrim.length) continue;
 
-        const hmRegex = /^$|^([01]?[0-9]|2[0-3]):([0-5][0-9])$/gm; //need to set it insde the loop
+        const hmRegex = /^([01]?[0-9]|2[0-4]):([0-5][0-9])$/gm;
         const m = hmRegex.exec(timeTrim);
         if (m === null) {
             invalid.push(timeTrim);
         } else {
+            if (m[1] === '24') m[1] = '00'; //Americans, amirite?!?!
             valid.push({
                 string: m[1].padStart(2, '0') + ':' + m[2].padStart(2, '0'),
                 hours: parseInt(m[1]),
@@ -54,11 +56,12 @@ export const parseSchedule = (scheduleTimes: string[]) => {
 export const redactApiKeys = (src: string) => {
     if (typeof src !== 'string' || !src.length) return src;
     return src
-        .replace(/licenseKey\s+["']?cfxk_\w{1,60}_(\w+)["']?/gi, 'licenseKey [REDACTED cfxk...$1]')
-        .replace(/steam_webApiKey\s+["']?\w{32}["']?/gi, 'steam_webApiKey [REDACTED]')
-        .replace(/sv_tebexSecret\s+["']?\w{40}["']?/gi, 'sv_tebexSecret [REDACTED]')
-        .replace(/rcon_password\s+["']?[^"']+["']?/gi, 'rcon_password [REDACTED]')
-        .replace(/mysql_connection_string\s+["']?[^"']+["']?/gi, 'mysql_connection_string [REDACTED]');
+        .replace(/licenseKey\s+["']?cfxk_\w{1,60}_(\w+)["']?.?$/gim, 'licenseKey [REDACTED cfxk...$1]')
+        .replace(/steam_webApiKey\s+["']?\w{32}["']?.?$/gim, 'steam_webApiKey [REDACTED]')
+        .replace(/sv_tebexSecret\s+["']?\w{40}["']?.?$/gim, 'sv_tebexSecret [REDACTED]')
+        .replace(/rcon_password\s+["']?[^"']+["']?.?$/gim, 'rcon_password [REDACTED]')
+        .replace(/mysql_connection_string\s+["']?[^"']+["']?.?$/gim, 'mysql_connection_string [REDACTED]')
+        .replace(/discord\.com\/api\/webhooks\/\d{17,20}\/\w{10,}.?$/gim, 'discord.com/api/webhooks/[REDACTED]/[REDACTED]');
 };
 
 
@@ -81,7 +84,7 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
     let expiration;
     let duration;
     if (inputDuration === 'permanent') {
-        expiration = false;
+        expiration = false as const;
     } else {
         const [multiplierInput, unit] = inputDuration.split(/\s+/);
         const multiplier = parseInt(multiplierInput);
@@ -118,7 +121,7 @@ export const parsePlayerId = (idString: string) => {
     const idlowerCased = idString.toLocaleLowerCase();
     const [idType, idValue] = idlowerCased.split(':', 2);
     const validator = consts.validIdentifiers[idType as keyof typeof consts.validIdentifiers];
-    if (validator && validator.test(idString)) {
+    if (validator && validator.test(idlowerCased)) {
         return { isIdValid: true, idType, idValue, idlowerCased };
     } else {
         return { isIdValid: false, idType, idValue, idlowerCased };
@@ -156,6 +159,7 @@ export const parsePlayerIds = (ids: string[]) => {
     return { invalidIdsArray, validIdsArray, validIdsObject };
 }
 
+
 /**
  * Get valid and invalid player HWIDs
  */
@@ -176,21 +180,100 @@ export const filterPlayerHwids = (hwids: string[]) => {
 }
 
 
-//Maybe extract to some shared folder
-export type PlayerIdsObjectType = {
-    discord: string | null;
-    fivem: string | null;
-    license: string | null;
-    license2: string | null;
-    live: string | null;
-    steam: string | null;
-    xbl: string | null;
-};
+/**
+ * Attempts to parse a user-provided string into an array of valid identifiers.
+ * This function is lenient and will attempt to parse any string into an array of valid identifiers.
+ * For non-prefixed ids, it will attempt to parse it as discord, fivem, steam, or license.
+ * Returns an array of valid ids/hwids, and array of invalid identifiers.
+ * 
+ * Stricter version of this function is parsePlayerIds
+ */
+export const parseLaxIdsArrayInput = (fullInput: string) => {
+    const validIds: string[] = [];
+    const validHwids: string[] = [];
+    const invalids: string[] = [];
+
+    if (typeof fullInput !== 'string') {
+        return { validIds, validHwids, invalids };
+    }
+    const inputs = fullInput.toLowerCase().split(/[,;\s]+/g).filter(Boolean);
+
+    for (const input of inputs) {
+        if (input.includes(':')) {
+            if (consts.regexValidHwidToken.test(input)) {
+                validHwids.push(input);
+            } else if (Object.values(consts.validIdentifiers).some((regex) => regex.test(input))) {
+                validIds.push(input);
+            } else {
+                const [type, value] = input.split(':', 1);
+                if (consts.validIdentifierParts[type as keyof typeof consts.validIdentifierParts]?.test(value)) {
+                    validIds.push(input);
+                } else {
+                    invalids.push(input);
+                }
+            }
+        } else if (consts.validIdentifierParts.discord.test(input)) {
+            validIds.push(`discord:${input}`);
+        } else if (consts.validIdentifierParts.fivem.test(input)) {
+            validIds.push(`fivem:${input}`);
+        } else if (consts.validIdentifierParts.license.test(input)) {
+            validIds.push(`license:${input}`);
+        } else if (consts.validIdentifierParts.steam.test(input)) {
+            validIds.push(`steam:${input}`);
+        } else {
+            invalids.push(input);
+        }
+    }
+
+    return { validIds, validHwids, invalids };
+}
+
 
 
 /**
- * Validates if a redirect path is valid or not.
- * To prevent open redirect, we need to make sure the first char is / and the second is not,
- * otherwise //example.com would be a valid redirect to <proto>://example.com
+ * Extracts the fivem:xxxxxx identifier from the nameid field from the userInfo oauth response.
+ * Example: https://forum.cfx.re/internal/user/271816 -> fivem:271816
  */
-export const isValidRedirectPath = (redirPath: unknown) => typeof redirPath === 'string' && /^\/\w/.test(redirPath);
+export const getIdFromOauthNameid = (nameid: string) => {
+    try {
+        const res = /\/user\/(\d{1,8})/.exec(nameid);
+        //@ts-expect-error
+        return `fivem:${res[1]}`;
+    } catch (error) {
+        return false;
+    }
+}
+
+
+/**
+ * Parses a number or string to a float with a limited precision.
+ */
+export const parseLimitedFloat = (src: number | string, precision = 6) => {
+    const srcAsNum = typeof src === 'string' ? parseFloat(src) : src;
+    return parseFloat(srcAsNum.toFixed(precision));
+}
+
+
+/**
+ * Parses a fxserver version convar into a number.
+ */
+export const parseFxserverVersion = (version: any) => {
+    if (typeof version !== 'string') throw new Error(`expected string`);
+
+    let platform: string | null = null;
+    if (version.includes('win32')) {
+        platform = 'windows';
+    } else if (version.includes('linux')) {
+        platform = 'linux';
+    }
+
+    let build: number | null = null;
+    try {
+        const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(version);
+        // @ts-ignore: let it throw
+        const num = parseInt(res[1]);
+        if (!isNaN(num)) build = num;
+    } catch (error) { }
+
+    return { platform, build };
+};

@@ -5,6 +5,7 @@ import Polyglot from 'node-polyglot';
 import { txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import consoleFactory from '@extras/console';
+import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);
 
 
@@ -14,13 +15,15 @@ const console = consoleFactory(modulename);
  * For the future, its probably a good idea to upgrade to i18next
  */
 export default class Translator {
+    readonly #txAdmin: TxAdmin;
     language: string;
     canonical: string = 'en-GB';
     readonly customLocalePath: string;
     #polyglot: Polyglot | null = null;
 
-    constructor() {
-        this.language = globals.config.language;
+    constructor(txAdmin: TxAdmin) {
+        this.#txAdmin = txAdmin;
+        this.language = txAdmin.globalConfig.language;
         this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');
 
         //Load language
@@ -51,7 +54,7 @@ export default class Translator {
             this.#polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
             console.dir(error);
-            if (isFirstTime) process.exit();
+            if (isFirstTime) process.exit(5200);
         }
     }
 
@@ -61,12 +64,12 @@ export default class Translator {
      */
     refreshConfig() {
         //Change config and restart polyglot
-        this.language = globals.config.language;
+        this.language = this.#txAdmin.globalConfig.language;
         this.setupTranslator(false);
 
         //Rebuild Monitor's schedule with new text and refreshes fxserver convars
         try {
-            globals.fxRunner.resetConvars();
+            this.#txAdmin.fxRunner.resetConvars();
         } catch (error) {
             console.verbose.dir(error);
         }
@@ -95,7 +98,7 @@ export default class Translator {
 
         } else {
             //If its an invalid language
-            throw new Error('Language not found.');
+            throw new Error(`Language '${lang}' not found.`);
         }
     }
 

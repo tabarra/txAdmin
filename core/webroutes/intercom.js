@@ -12,7 +12,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Intercommunications endpoint
  * @param {object} ctx
  */
-export default async function Intercom(ctx) {
+export default async function Intercom(ctx) { //TODO: type with InitializedCtx
     //Sanity check
     if (isUndefined(ctx.params.scope)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -26,7 +26,7 @@ export default async function Intercom(ctx) {
     if (scope == 'monitor') {
         try {
             globals.healthMonitor.handleHeartBeat('http', postData);
-            return ctx.send(globals.statisticsManager.currHbData);
+            return ctx.send(globals.statsManager.txRuntime.currHbData);
         } catch (error) {
             return ctx.send({
                 txAdminVersion: txEnv.txAdminVersion,

@@ -13,8 +13,8 @@ export default {
       main: "#57D58D", //darker
     },
     warning: {
-      // main: "#F5B041",
-      main: "#F39C12", //darker
+      main: "#F5B041",
+      // main: "#F39C12", //darker
     },
     error: {
       // main: "#E74C3C",

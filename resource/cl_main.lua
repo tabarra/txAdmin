@@ -12,7 +12,8 @@ function updateServerCtx()
         TriggerServerEvent('txsv:req:serverCtx')
     else
         ServerCtx = stateBagServerCtx
-        debugPrint('^2ServerCtx updated from global state')
+        debugPrint('^2ServerCtx updated from global state.')
+        sendMenuMessage('setServerCtx', ServerCtx)
     end
 end
 
@@ -106,6 +107,7 @@ CreateThread(function()
         '/txAdmin:menu:noClipToggle',
         '/txAdmin:menu:openPlayersPage',
         '/txAdmin:menu:togglePlayerIDs',
+        '/txAdmin:menu:tpToWaypoint',
 
         --Convars
         '/txAdmin-version',
@@ -135,3 +137,61 @@ CreateThread(function()
         TriggerEvent('chat:removeSuggestion', suggestion)
     end
 end)
+
+
+-- =============================================
+--  Helper to protect the NUI callbacks from CSRF attacks
+--  NOTE: This is a temporary fix for the NUI callback Origin issue
+-- =============================================
+--- Check if a NUI callback is from the correct Origin
+--- technically no request should come from nui://monitor, since the manifest version is cerulean
+---@param headers table
+---@return boolean
+function IsNuiRequestOriginValid(headers)
+    if type(headers) ~= 'table' then
+        return false --no clue
+    end
+    if headers['Origin'] == nil then
+        return true --probably legacy page
+    end
+    if type(headers['Origin']) ~= 'string' or headers['Origin'] == '' then
+        return false --no clue
+    end
+
+    if headers['Origin'] == 'https://cfx-nui-monitor' then
+        return true --probably self
+    end
+    if headers['Origin'] == 'https://monitor' then
+        return true --probably legacy iframe inside web iframe
+    end
+
+    -- warn admin of possible csrf attempt
+    if menuIsAccessible and sendPersistentAlert then
+        local msg = ('ATTENTION! txAdmin received a NUI message from the origin "%s" which is not approved. This likely means that that resource is vulnerable to XSS which has been exploited to inject txAdmin commands. It is recommended that you fix the vulnerability or remove that resource completely. For more information: discord.gg/txAdmin.'):format(headers['Origin'])
+        sendPersistentAlert('csrfWarning', 'error', msg, false)
+    end
+
+    return false
+end
+
+--- Wrapper for RegisterRawNuiCallback which mimics the behavior of RegisterNUICallback
+--- but checks the origin of the request to prevent CSRF attacks
+function RegisterSecureNuiCallback(callbackName, funcCallback)
+    RegisterRawNuiCallback(callbackName, function(req, nuiCallback)
+        if not IsNuiRequestOriginValid(req.headers) then
+            debugPrint(("^1Invalid NUI callback origin for %s"):format(callbackName))
+            return nuiCallback({
+                status = 403,
+                body = '{}',
+            })
+        end
+
+        -- calls the function
+        funcCallback(json.decode(req.body), function(data)
+            nuiCallback({
+                status = 200,
+                body = type(data) == 'table' and json.encode(data) or '{}',
+            })
+        end)
+    end)
+end

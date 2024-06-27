@@ -186,11 +186,9 @@ export const MainPageList: React.FC = () => {
 
   //=============================================
   const handleSpawnVehicle = () => {
-    // Since we depend on server side gamestate awareness
-    // we disable this function from being used if onesync
-    // isn't on
+    // Requires onesync because the vehicle is spawned on the server
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t("nui_menu.page_main.vehicle.onesync_error"), {
+      return enqueueSnackbar(t("nui_menu.misc.onesync_error"), {
         variant: "error",
       });
     }
@@ -237,7 +235,7 @@ export const MainPageList: React.FC = () => {
   const handleDeleteVehicle = () => {
     // If onesync is disabled, show an error due to server side entity handling
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t("nui_menu.page_main.vehicle.onesync_error"), {
+      return enqueueSnackbar(t("nui_menu.misc.onesync_error"), {
         variant: "error",
       });
     }

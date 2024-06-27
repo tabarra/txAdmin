@@ -1,4 +1,5 @@
-$txadmin-dark-900: #29292A;
+$txadmin-dark-900: #222326;
+$txadmin-dark-950: #222326;
 $txadmin-dark-800: lighten($txadmin-dark-900, 8%);
 $txadmin-dark-700: lighten($txadmin-dark-800, 8%);
 $txadmin-dark-600: lighten($txadmin-dark-700, 8%);
@@ -22,6 +23,23 @@ $txadmin-danger: #ff148f;
   --danger: #{$txadmin-danger} !important;
 }
 
+//Adapting to the new UI
+//shadcn's default
+$radius: 0.5rem; 
+$radius-lg: $radius;
+$radius-md: calc($radius - 2px);
+$radius-sm: calc($radius - 4px);
+$border-color: hsl(224 5.6% 21.2%);
+
+
+.card:first-child,
+.card-header:first-child,
+.card-body {
+    border-radius: $radius-lg;
+    background-color: #F0F1F4;
+}
+
+
 /**
  *  A dark theme for all, by GoatGeek#0001
  *
@@ -32,12 +50,6 @@ $txadmin-danger: #ff148f;
  *        / / ``   w w
  *       w w
  */
-
-#darkToggleDark, #darkToggleLight {
-  max-width: 22px !important;
-  cursor: pointer;
-}
-
 body.theme--dark {
 
   /*************************
@@ -47,7 +59,7 @@ body.theme--dark {
   // ----- Core Styles
   //   Shape CoreUI in the darkness
   &, .c-app, .c-main, .c-footer, .c-header {
-    background: darken($txadmin-dark-900, 7%);
+    background: #0000;
     color: $txadmin-text-color;
   }
 
@@ -176,7 +188,7 @@ body.theme--dark {
   .c-footer, .c-header, .card-footer, .card-header,
   .modal-body, .modal-header, .modal-footer,
   .border-right {
-    border-color: $txadmin-border-color !important;
+    border-color: $border-color !important;
   }
 
   // Darken backgrounds
@@ -223,7 +235,7 @@ body.theme--dark {
 
     .nav-link {
       border-color: $txadmin-dark-700;
-      border-radius: 0;
+      border-radius: $radius-md;
       transition: background-color 300ms ease-in-out;
 
       &.active {
@@ -299,7 +311,7 @@ body.theme--dark {
 
   // ----- Forms
   .form-control, .btn, .c-callout {
-    border-radius: 0;
+    border-radius: $radius-md;
   }
 
   .form-control, .input-group-text {
@@ -355,11 +367,11 @@ body.theme--dark {
 
   // ----- Cards
   .card {
-    border: 0 solid transparent;
-    border-radius: 0;
+    border: 1px solid $border-color;
+    border-radius: $radius-lg !important;
 
     &, .card-header, .card-body, .card-footer {
-      background-color: $txadmin-dark-900;
+      background-color: $txadmin-dark-950;
     }
 
     .card-header, .card-body {
@@ -371,7 +383,7 @@ body.theme--dark {
     .card-header {
       & > h5, .card-title {
         font-size: 1.05rem;
-        border-radius: 0;
+        // border-radius: 0;
         border: 0 solid transparent;
       }
     }

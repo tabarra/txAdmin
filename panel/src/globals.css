@@ -1,0 +1,222 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .root-og {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 10% 3.9%;
+        --radius: 0.5rem;
+
+        --font-sans: "Inter Variable";
+        --font-mono: "JetBrains Mono Variable";
+    }
+
+    :root {
+        /* Default background color of <body />...etc */
+        --background: 224 33.3% 97.1%;
+        --foreground: 224 10.2% 9.6%;
+
+        /* Background color for <Card /> */
+        --card: 224 16.1% 95%;
+        --card-foreground: 224 10.2% 9.6%;
+
+        /* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
+        --popover: 224 33.3% 97.1%;
+        --popover-foreground: 224 10.2% 9.6%;
+
+        /* Primary colors for <Button /> */
+        --primary: 224 10.2% 9.6%;
+        --primary-foreground: 224 10% 96.1%;
+
+        /* Secondary colors for <Button /> */
+        --secondary: 224 7% 86.1%;
+        --secondary-foreground: 224 10.2% 9.6%;
+
+        /* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
+        --muted: 224 5.4% 85.5%;
+        --muted-foreground: 224 4.7% 25.1%;
+
+        /* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
+        --accent: 341 92.3% 49%;
+        --accent-foreground: 0 0% 100%;
+
+        /* Default border color */
+        --border: 224 3.2% 81.4%;
+
+        /* Border color for inputs such as <Input />, <Select />, <Textarea /> */
+        --input: 224 7% 86.1%;
+
+        /* Used for focus ring */
+        --ring: 224 10.2% 9.6%;
+
+        /* Semantic colors used for button variants and maybe more */
+        /* hint and inline generated with the 50 and 600 (respectivelly) variants via https://uicolors.app/create*/
+        --destructive: 0 84.5% 59.6%;
+        --destructive-foreground: 0 0% 100%;
+        --destructive-hint: 0 85.7% 97.3%;
+        --destructive-inline: 0 72% 51%;
+        --warning: 47.1 77.5% 56.5%;
+        --warning-foreground: 48.9 77.1% 6.9%;
+        --warning-hint: 53.3 75% 95.3%;
+        --warning-inline: 39.75 78% 40%;
+        --success: 136.6 77.6% 56.3%;
+        --success-foreground: 137.5 80% 5.9%;
+        --success-hint: 136 88.2% 96.7%;
+        --success-inline: 137 86% 36%;
+        --info: 191.1 77.6% 56.3%;
+        --info-foreground: 195 66.7% 1.2%;
+        --info-hint: 187.1 89.5% 96.3%;
+        --info-inline: 194.8 83% 37%;
+
+        /* Other stuff - common for dark an light themes */
+        --font-sans: "Inter Variable";
+        --font-mono: "JetBrains Mono Variable";
+        --radius: 0.5rem;
+    }
+
+    .dark-og {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 240 4.9% 83.9%;
+
+        /* Other stuff */
+        --font-sans: "Inter Variable";
+        --font-mono: "JetBrains Mono Variable";
+    }
+
+    .dark {
+        /* Default background color of <body />...etc */
+        --background: 224 5.7% 10.4%;
+        --foreground: 224 6.7% 97.1%;
+
+        /* Background color for <Card /> */
+        --card: 224 5.6% 14.1%;
+        --card-foreground: 224 6.7% 97.1%;
+
+        /* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
+        --popover: 224 5.7% 10.4%;
+        --popover-foreground: 224 6.7% 97.1%;
+
+        /* Primary colors for <Button /> */
+        --primary: 224 6.7% 97.1%;
+        --primary-foreground: 224 7.1% 11%;
+
+        /* Secondary colors for <Button /> */
+        --secondary: 224 5.3% 26.1%;
+        --secondary-foreground: 224 6.7% 97.1%;
+
+        /* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
+        --muted: 224 5% 15.7%;
+        --muted-foreground: 224 4.9% 72%;
+
+        /* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
+        --accent: 341 92.3% 49%;
+        --accent-foreground: 0 0% 100%;
+
+        /* Default border color */
+        --border: 224 5.6% 21.2%;
+
+        /* Border color for inputs such as <Input />, <Select />, <Textarea /> */
+        --input: 224 5.3% 26.1%;
+
+        /* Used for focus ring */
+        --ring: 224 6.7% 97.1%;
+
+        /* Semantic colors used for button variants and maybe more */
+        /* hint generated with the 950 variant via https://uicolors.app/create*/
+        /* for the dark theme, inline is the same as the default */
+        --destructive: 0 91.3% 68.4%;
+        --destructive-foreground: 0 0% 100%;
+        --destructive-hint: 0 74.7% 15.5%;
+        --destructive-inline:0 91.3% 68.4%;
+        --warning: 47.2 75.9% 62.5%;
+        --warning-foreground: 48.9 77.1% 6.9%;
+        --warning-hint: 21.9 72.2% 14.1%;
+        --warning-inline: 47.2 75.9% 62.5%;
+        --success: 136.7 73.1% 60.6%;
+        --success-foreground: 136.2 72.2% 7.1%;
+        --success-hint: 139.5 84.3% 10%;
+        --success-inline: 136.7 73.1% 60.6%;
+        --info: 191.1 69.2% 61.8%;
+        --info-foreground: 197.1 63.6% 2.2%;
+        --info-hint: 200.5 57.9% 14.9%;
+        --info-inline: 191.1 69.2% 61.8%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground antialiased;
+    }
+
+    .tx-sidebar {
+        @apply self-start sticky shrink-0 w-sidebar z-0;
+        /* 3.5rem + 1px + 1rem = header + border + padding */
+        top: calc(4.5rem + 1px);
+    }
+
+    /* Since this is going to be repeated a lot, better to externalize the style */
+    .tx-playerlist {
+        & > .player {
+            @apply absolute top-0 left-0 w-full px-2 py-1 overflow-clip;
+            @apply cursor-pointer text-sm whitespace-nowrap text-ellipsis;
+            @apply hover:bg-secondary hover:text-secondary-foreground transition-colors duration-75;
+    
+            & > .pid-block {
+                @apply inline-block text-right;
+    
+                & > .pid-badge {
+                    @apply px-1 pt-0.5 ml-auto border rounded-[0.35rem];
+                    @apply font-mono tracking-wider;
+                    @apply dark:text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900;
+                    @apply text-zinc-500 border-zinc-300 bg-zinc-100;
+                }
+            }
+    
+            & > .pname {
+                @apply ml-2 font-semibold
+            }
+        }
+    }
+    
+}

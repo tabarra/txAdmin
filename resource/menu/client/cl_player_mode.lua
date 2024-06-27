@@ -212,7 +212,7 @@ RegisterCommand('txAdmin:menu:noClipToggle', function()
 end)
 
 -- Menu callback to change the player mode
-RegisterNUICallback('playerModeChanged', function(mode, cb)
+RegisterSecureNuiCallback('playerModeChanged', function(mode, cb)
     askChangePlayerMode(mode)
     cb({})
 end)
@@ -223,14 +223,17 @@ RegisterNetEvent('txcl:setPlayerMode', function(mode, ptfx)
         createPlayerModePtfxLoop(PlayerPedId())
     end
 
+    --NOTE: always do the toggleX(true) at the bottom to prevent
+    --conflict with some other native like toggleGodMode(false) after toggleFreecam(true)
+    --which disables the SetEntityInvincible(true)
     if mode == 'godmode' then
         toggleFreecam(false)
-        toggleGodMode(true)
         toggleSuperJump(false)
+        toggleGodMode(true)
     elseif mode == 'noclip' then
-        toggleFreecam(true)
         toggleGodMode(false)
         toggleSuperJump(false)
+        toggleFreecam(true)
     elseif mode == 'superjump' then
         toggleFreecam(false)
         toggleGodMode(false)

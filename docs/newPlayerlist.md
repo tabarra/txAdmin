@@ -29,10 +29,10 @@ Client:
 - The distance is calculated on the client side, and if the player is over the ~425m distance culling limit, it's probably not relevant to know exactly how far he is anyways;
 - The initial playerlist (sent after auth) will be 20.5kb if there are 1k players with nickname 16 chars long;
 - The detailed playerlist will be 6.8kb for 1k players;
-- The refresh interval for now is fixed at 2500ms, but I already coded a linear function to increase it to 5s when the server reaches 150 players online (tests pending) - https://www.desmos.com/calculator/ls0lfokshc.
+- The refresh interval is dynamic and increases with the number of players - https://www.desmos.com/calculator/dx9f5ko2ge.
 
 
-## Taso Specs
+## React Specs
 - React updates it's internal playerlist when receives the `setPlayerlist` event;
 - React calls `iNeedPlayerlistDetails` when the "tabs page" is opened, and then every 5s while it's open;
 - When the "players" tab open, it's okay to show the existing (outdated) playerlist, but need to show in yellow somewhere "updating playerlist..." and then remove it on the first `setPlayerlist` received after opening the page;

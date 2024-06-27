@@ -10,7 +10,7 @@ import { debugLog } from "../utils/debugLog";
 import { MockedPlayerDetails } from "../utils/constants";
 import { PlayerData } from "../hooks/usePlayerListListener";
 import { PlayerModalResp, PlayerModalSuccess } from "@shared/playerApiTypes";
-import { GenericApiError } from "@shared/genericApiTypes";
+import { GenericApiErrorResp } from "@shared/genericApiTypes";
 
 const playerDetails = {
   selectedPlayerData: selector<PlayerModalResp | undefined>({
@@ -28,7 +28,7 @@ const playerDetails = {
       debugLog("FetchWebPipe", res, "PlayerFetch");
 
       if (res.error) {
-        return { error: (res as GenericApiError).error };
+        return { error: (res as GenericApiErrorResp).error };
       } else if (res.player) {
         const player = (res as PlayerModalSuccess).player;
         if (player.isConnected) {

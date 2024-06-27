@@ -80,13 +80,9 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
     return
   end
 
-  -- Adding auth information for NUI routes
-  if path:sub(1, 5) == '/nui/' then
-    headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
-    headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ', ')
-  else
-    headers['X-TxAdmin-Token'] = 'not_required' -- so it's easy to detect webpipes
-  end
+  -- Adding admin identifiers for auth middleware to deal with
+  headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
+  headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ',')
 
   
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))
@@ -97,6 +93,8 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
     -- this is likely because of how json.encode() interprets null and an empty table
     data = data or ''
     resultHeaders['x-badcast-fix'] = 'https://youtu.be/LDU_Txk06tM' -- fixed in artifact v3996
+    --https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
+    resultHeaders['Content-Security-Policy'] = 'frame-ancestors https://monitor/ https://cfx-nui-monitor/ nui://game/'
 
     -- fixing redirects
     if resultHeaders.Location then

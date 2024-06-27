@@ -62,6 +62,24 @@ RegisterCommand('txAdmin:menu:openPlayersPage', function()
 end)
 
 
+-- This needs to run even when menu is disabled so the ServerCtx
+-- is updated for react, needed by the Warn page
+RegisterSecureNuiCallback('reactLoaded', function(_, cb)
+  debugPrint("React loaded, requesting ServerCtx.")
+
+  CreateThread(function()
+    updateServerCtx()
+    while ServerCtx == false do Wait(0) end
+    debugPrint("ServerCtx loaded, sending variables.")
+    sendMenuMessage('setGameName', GAME_NAME)
+    sendMenuMessage('setDebugMode', TX_DEBUG_MODE)
+    sendMenuMessage('setServerCtx', ServerCtx)
+    sendMenuMessage('setPermissions', menuPermissions)
+  end)
+
+  cb({})
+end)
+
 
 -- =============================================
 --  The rest of the file will only run if menu is enabled
@@ -79,10 +97,13 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     debugPrint("^2[AUTH] logged in as '" .. username .. "' with perms: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
-    RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
-    RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
-    RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
-    RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
+    if IS_FIVEM then
+        RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
+        RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
+        RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
+        RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
+        RegisterKeyMapping('txAdmin:menu:tpToWaypoint', 'Menu: Teleport to Waypoint', 'KEYBOARD', '')
+    end
   else
     noMenuReason = tostring(rejectReason)
     debugPrint("^3[AUTH] rejected (" .. noMenuReason .. ")")
@@ -103,12 +124,11 @@ local function retryAuthentication()
   debugPrint("^5[AUTH] Retrying menu authentication.")
   menuIsAccessible = false
   menuPermissions = {}
-  sendMenuMessage('resetSession')
   sendMenuMessage('setPermissions', menuPermissions)
   TriggerServerEvent('txsv:checkIfAdmin')
 end
 RegisterNetEvent('txcl:reAuth', retryAuthentication)
-RegisterCommand('txAdmin-reauth', function ()
+RegisterCommand('txAdmin-reauth', function()
   sendSnackbarMessage('info', 'Retrying menu authentication.', false)
   awaitingReauth = true
   retryAuthentication()
@@ -142,7 +162,7 @@ end)
 
 --[[ NUI Callbacks ]]
 -- Triggered whenever we require full focus, cursor and keyboard
-RegisterNUICallback('focusInputs', function(shouldFocus, cb)
+RegisterSecureNuiCallback('focusInputs', function(shouldFocus, cb)
   debugPrint('NUI Focus + Keep Input ' .. tostring(shouldFocus))
   -- Will prevent mouse focus on initial menu mount as the useEffect emits there
   if not isMenuVisible then
@@ -154,34 +174,19 @@ RegisterNUICallback('focusInputs', function(shouldFocus, cb)
 end)
 
 
-RegisterNUICallback('reactLoaded', function(_, cb)
-  debugPrint("React loaded, requesting ServerCtx.")
-
-  CreateThread(function()
-    updateServerCtx()
-    while ServerCtx == false do Wait(0) end
-    debugPrint("ServerCtx loaded, sending variables.")
-    sendMenuMessage('setGameName', GAME_NAME)
-    sendMenuMessage('setDebugMode', TX_DEBUG_MODE)
-    sendMenuMessage('setServerCtx', ServerCtx)
-    sendMenuMessage('setPermissions', menuPermissions)
-  end)
-
-  cb({})
-end)
-
 -- When the escape key is pressed in menu
-RegisterNUICallback('closeMenu', function(_, cb)
+RegisterSecureNuiCallback('closeMenu', function(_, cb)
   isMenuVisible = false
   debugPrint('Releasing all NUI Focus')
   SetNuiFocus(false)
   SetNuiFocusKeepInput(false)
+  playLibrarySound('enter')
   cb({})
 end)
 
 
 -- Audio play callback
-RegisterNUICallback('playSound', function(sound, cb)
+RegisterSecureNuiCallback('playSound', function(sound, cb)
   playLibrarySound(sound)
   cb({})
 end)
@@ -193,16 +198,16 @@ RegisterNetEvent('txcl:heal', function()
   local pos = GetEntityCoords(ped)
   local heading = GetEntityHeading(ped)
   if IsEntityDead(ped) then
-      NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false)
+    NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false)
   end
   ResurrectPed(ped)
   SetEntityHealth(ped, GetEntityMaxHealth(ped))
   ClearPedBloodDamage(ped)
   RestorePlayerStamina(PlayerId(), 100.0)
   if IS_REDM then
-      Citizen.InvokeNative(0xC6258F41D86676E0, ped, 0, 100) -- SetAttributeCoreValue
-      Citizen.InvokeNative(0xC6258F41D86676E0, ped, 1, 100) -- SetAttributeCoreValue
-      Citizen.InvokeNative(0xC6258F41D86676E0, ped, 2, 100) -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 0, 100) -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 1, 100) -- SetAttributeCoreValue
+    Citizen.InvokeNative(0xC6258F41D86676E0, ped, 2, 100) -- SetAttributeCoreValue
   end
 end)
 
@@ -210,6 +215,6 @@ end)
 AddEventHandler('playerSpawned', function()
   Wait(15000)
   if menuIsAccessible then
-      sendMenuMessage('showMenuHelpInfo', {})
+    sendMenuMessage('showMenuHelpInfo', {})
   end
 end)

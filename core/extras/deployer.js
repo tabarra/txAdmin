@@ -1,7 +1,7 @@
 const modulename = 'Deployer';
-import path from 'path';
+import path from 'node:path';
 import { cloneDeep }  from 'lodash-es';
-import dateFormat from 'dateformat'
+import dateFormat from 'dateformat';
 import fse from 'fs-extra';
 import open from 'open';
 import YAML from 'js-yaml';
@@ -161,7 +161,7 @@ export class Deployer {
         this.originalRecipe = originalRecipe;
         this.deploymentID = deploymentID;
         this.progress = 0;
-        this.serverName = customMetaData.serverName || globals.config.serverName || '';
+        this.serverName = customMetaData.serverName || globals.txAdmin.globalConfig.serverName || '';
         this.logLines = [];
 
         //Load recipe

@@ -22,7 +22,8 @@ import { userHasPerm } from "../../../utils/miscUtils";
 import { useTranslate } from "react-polyglot";
 import { usePermissionsValue } from "../../../state/permissions.state";
 import { DialogLoadError } from "./DialogLoadError";
-import { GenericApiError, GenericApiResp } from "@shared/genericApiTypes";
+import { useServerCtxValue } from "../../../state/server.state";
+import { GenericApiErrorResp, GenericApiResp } from "@shared/genericApiTypes";
 import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 
 const PREFIX = "DialogActionView";
@@ -62,6 +63,7 @@ const DialogActionView: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const t = useTranslate();
   const { goToFramePage } = useIFrameCtx();
+  const serverCtx = useServerCtxValue();
   const playerPerms = usePermissionsValue();
   const setModalOpen = useSetPlayerModalVisibility();
   const { closeMenu, showNoPerms } = usePlayerModalContext();
@@ -78,7 +80,7 @@ const DialogActionView: React.FC = () => {
       });
     } else {
       enqueueSnackbar(
-        (result as GenericApiError).error ?? t("nui_menu.misc.unknown_error"),
+        (result as GenericApiErrorResp).error ?? t("nui_menu.misc.unknown_error"),
         { variant: "error" }
       );
     }
@@ -196,7 +198,7 @@ const DialogActionView: React.FC = () => {
     }
 
     // TODO: Change iFrame Src through Provider?
-    goToFramePage(`/nui/start/adminManager?${params}`);
+    goToFramePage(`/admins?${params}`);
     setModalOpen(false);
   };
 
@@ -215,6 +217,13 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm("players.teleport", playerPerms))
       return showNoPerms("Teleport");
 
+    // Only works with onesync because server needs to know the player's coords
+    if (!serverCtx.oneSync.status) {
+      return enqueueSnackbar(t("nui_menu.misc.onesync_error"), {
+        variant: "error",
+      });
+    }
+
     closeMenu();
     fetchNui("tpToPlayer", { id: assocPlayer.id });
     enqueueSnackbar(
@@ -227,6 +236,13 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm("players.teleport", playerPerms))
       return showNoPerms("Teleport");
 
+    // Only works with onesync because server needs to know the player's coords
+    if (!serverCtx.oneSync.status) {
+      return enqueueSnackbar(t("nui_menu.misc.onesync_error"), {
+        variant: "error",
+      });
+    }
+    
     closeMenu();
     fetchNui("summonPlayer", { id: assocPlayer.id });
     enqueueSnackbar(

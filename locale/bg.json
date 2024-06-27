@@ -60,7 +60,7 @@
         "restarting_discord": "**%{servername}** се рестартира, (%{reason}).",
         "stopping": "Сървърът е спрян, (%{reason}).",
         "stopping_discord": "**%{servername}** сървърът се спира, (%{reason}).",
-        "spawning_discord": "**%{servername}** е пуснат. "
+        "spawning_discord": "**%{servername}** е пуснат."
     },
     "nui_warning": {
         "title": "ПРЕДУПРЕЖДЕНИЕ",
@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin менюто не е включено! Може да го включиш чрез настройките на txAdmin.",
             "announcement_title": "Сървърно съобщение от %{author}:",
             "dialog_empty_input": "Полето е празно.",
-            "directmessage_title": "ЛС от администратор %{author}:"
+            "directmessage_title": "ЛС от администратор %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Ти замрази играч!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Автомобил",
-                "onesync_error": "Тази опция изисква 'OneSync' да е включен.",
                 "not_in_veh_error": "Не си в автомобил!",
                 "spawn": {
                     "title": "Създай",
@@ -218,6 +218,13 @@
                 "players": "Играчи",
                 "search": "Търси",
                 "zero_players": "Няма намерени играчи"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Сортирай",

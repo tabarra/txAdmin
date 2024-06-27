@@ -1,4 +1,5 @@
-import { GenericApiError } from "genericApiTypes";
+import { GenericApiErrorResp } from "genericApiTypes";
+import { BanTemplatesDataType } from "otherTypes";
 
 //Already compliant with new db specs
 export type PlayerHistoryItem = {
@@ -9,17 +10,7 @@ export type PlayerHistoryItem = {
     ts: number;
     exp?: number;
     revokedBy?: string;
-}
-
-export type PlayerModalMeta = {
-    serverTime: number; //required to calculate if bans have expired on frontend
-    tmpPerms: {
-        message: boolean;
-        whitelist: boolean;
-        warn: boolean;
-        kick: boolean;
-        ban: boolean;
-    };
+    revokedAt?: number;
 }
 
 export type PlayerModalPlayerData = {
@@ -49,7 +40,65 @@ export type PlayerModalPlayerData = {
 }
 
 export type PlayerModalSuccess = {
-    meta: PlayerModalMeta
-    player: PlayerModalPlayerData,
+    serverTime: number; //required to calculate if bans have expired on frontend
+    banTemplates: BanTemplatesDataType[]; //TODO: move this to websocket push
+    player: PlayerModalPlayerData;
 }
-export type PlayerModalResp = PlayerModalSuccess | GenericApiError;
+export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;
+
+
+/**
+ * Used in the players page
+ */
+export type PlayersStatsResp = {
+    total: number;
+    playedLast24h: number;
+    joinedLast24h: number;
+    joinedLast7d: number;
+} | GenericApiErrorResp;
+
+
+export type PlayersTableSearchType = null | {
+    value: string;
+    type: string;
+}
+
+export type PlayersTableFiltersType = string[];
+
+export type PlayersTableSortingType = {
+    key: 'playTime' | 'tsJoined' | 'tsLastConnection';
+    desc: boolean;
+};
+
+export type PlayersTableReqType = {
+    search: PlayersTableSearchType;
+    filters: PlayersTableFiltersType;
+    sorting: PlayersTableSortingType;
+    //NOTE: the query needs to be offset.param inclusive, but ignore offset.license
+    // therefore, optimistically always limit to x + 1
+    offset?: {
+        param: number;
+        license: string;
+    }
+};
+
+export type PlayersTablePlayerType = {
+    license: string;
+    displayName: string;
+    playTime: number;
+    tsJoined: number;
+    tsLastConnection: number;
+    notes?: string;
+
+    isAdmin: boolean;
+    isOnline: boolean;
+    isWhitelisted: boolean;
+    // isBanned: boolean;
+    // warnCount: number;
+    // banCount: number;
+}
+
+export type PlayersTableSearchResp = {
+    players: PlayersTablePlayerType[];
+    hasReachedEnd: boolean;
+} | GenericApiErrorResp;

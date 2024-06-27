@@ -9,15 +9,15 @@ const console = consoleFactory(modulename);
 export default async function Dashboard(ctx) {
     // Check if the deployer is running or setup is pending
     if (globals.deployer !== null) {
-        return ctx.response.redirect('/deployer');
+        return ctx.utils.legacyNavigateToPage('/server/deployer');
     }
     if (!globals.fxRunner.config.serverDataPath || !globals.fxRunner.config.cfgPath) {
-        return ctx.response.redirect('/setup');
+        return ctx.utils.legacyNavigateToPage('/server/setup');
     }
 
     //Shortcut function
     const getPermDisable = (perm) => {
-        return (ctx.utils.hasPermission(perm)) ? '' : 'disabled';
+        return (ctx.admin.hasPermission(perm)) ? '' : 'disabled';
     };
 
     //Preparing render data
@@ -40,7 +40,7 @@ export default async function Dashboard(ctx) {
             commandKick: getPermDisable('players.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),
-            controlsClass: (ctx.utils.hasPermission('control.server')) ? 'danger' : 'secondary',
+            controlsClass: (ctx.admin.hasPermission('control.server')) ? 'danger' : 'secondary',
         },
     };
 

@@ -77,7 +77,8 @@
             "not_enabled": "Le Menu txAdmin n'est pas activé ! Vous pouvez l'activer dans les paramètres de txAdmin.",
             "announcement_title": "Annonce serveur par %{author}:",
             "dialog_empty_input": "Vous ne pouvez pas avoir un champ vide.",
-            "directmessage_title": "Message d'un administrateur : %{author}:"
+            "directmessage_title": "Message d'un administrateur : %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Vous avez gelé le joueur !",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Véhicule",
-                "onesync_error": "Cette option nécessite que OneSync soit activé pour la gestion des entités du serveur",
                 "not_in_veh_error": "Vous n'êtes pas dans un véhicule !",
                 "spawn": {
                     "title": "Spawn",
@@ -218,6 +218,13 @@
                 "players": "Joueur(s)",
                 "search": "Rechercher",
                 "zero_players": "Aucun joueur trouvé"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Trier par",
@@ -306,7 +313,7 @@
                 "title": "Informations du joueur",
                 "session_time": "Durée de la session",
                 "play_time": "Temps de jeu",
-                "joined": "Connecté le ",
+                "joined": "Connecté le",
                 "whitelisted_label": "whitelisté",
                 "whitelisted_notyet": "pas encore",
                 "btn_wl_add": "AJOUTER WL",

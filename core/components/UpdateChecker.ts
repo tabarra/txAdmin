@@ -4,23 +4,13 @@ import { z } from "zod";
 import got from '@core/extras/got.js';
 import { txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
-import { convars } from '@core/globalData';
+import { UpdateDataType } from '@shared/otherTypes';
+import TxAdmin from '@core/txAdmin';
+import { UpdateAvailableEventType } from '@shared/socketioTypes';
 const console = consoleFactory(modulename);
 
 
-type txUpdateDataType = {
-    semverDiff: semver.ReleaseType | null;
-    latest: string;
-    color: 'info' | 'secondary' | 'success' | 'warning' | 'danger';
-};
-
-type fxsUpdateDataType = {
-    color: 'info' | 'secondary' | 'success' | 'warning' | 'danger';
-    message: string;
-    subtext: string;
-    downloadLink: string;
-};
-
+//Schemas
 const txVersion = z.string().refine(
     (x) => x !== '0.0.0',
     { message: 'must not be 0.0.0' }
@@ -41,12 +31,14 @@ const changelogRespSchema = z.object({
 });
 
 
-
 export default class UpdateChecker {
-    txUpdateData?: txUpdateDataType;
-    fxsUpdateData?: fxsUpdateDataType;
+    #txAdmin: TxAdmin;
+    txaUpdateData?: UpdateDataType;
+    fxsUpdateData?: UpdateDataType;
 
-    constructor() {
+    constructor(txAdmin: TxAdmin) {
+        this.#txAdmin = txAdmin;
+
         //Check for updates ASAP
         this.checkChangelog();
 
@@ -71,7 +63,7 @@ export default class UpdateChecker {
             const resp = await got(reqUrl).json()
             apiResponse = changelogRespSchema.parse(resp);
         } catch (error) {
-            console.verbose.warn(`Failed to retrieve FXServer/txAdmin update data with error: ${error.message}`);
+            console.verbose.warn(`Failed to retrieve FXServer/txAdmin update data with error: ${(error as Error).message}`);
             return;
         }
 
@@ -85,19 +77,17 @@ export default class UpdateChecker {
                     console.warn('A patch (bug fix) update is available for txAdmin.');
                     console.warn('If you are experiencing any kind of issue, please update now.');
                     console.warn('For more information: https://discord.gg/uAmsGa2');
-                    this.txUpdateData = {
-                        semverDiff,
-                        latest: apiResponse.latest_txadmin,
-                        color: 'secondary',
+                    this.txaUpdateData = {
+                        version: apiResponse.latest_txadmin,
+                        isImportant: false,
                     };
                 } else {
                     console.error('This version of txAdmin is outdated.');
                     console.error('Please update as soon as possible.');
                     console.error('For more information: https://discord.gg/uAmsGa2');
-                    this.txUpdateData = {
-                        semverDiff,
-                        latest: apiResponse.latest_txadmin,
-                        color: 'danger',
+                    this.txaUpdateData = {
+                        version: apiResponse.latest_txadmin,
+                        isImportant: true,
                     };
                 }
             }
@@ -107,44 +97,41 @@ export default class UpdateChecker {
         }
 
         //Checking FXServer version
-        //TODO: logic copied from dashboard webroute, adapt to new thing
         try {
             if (txEnv.fxServerVersion < apiResponse.critical) {
-                const shouldUpdate = {
-                    color: 'danger',
-                    message: 'A critical update is available for FXServer, you should update now.',
-                } as const;
                 if (apiResponse.critical > apiResponse.recommended) {
                     this.fxsUpdateData = {
-                        ...shouldUpdate,
-                        subtext: `critical update ${txEnv.fxServerVersion} ➤ ${apiResponse.critical}`,
-                        downloadLink: apiResponse.critical_download,
+                        version: apiResponse.critical.toString(),
+                        isImportant: true,
                     }
                 } else {
                     this.fxsUpdateData = {
-                        ...shouldUpdate,
-                        subtext: `recommended update ${txEnv.fxServerVersion} ➤ ${apiResponse.recommended}`,
-                        downloadLink: apiResponse.recommended_download,
+                        version: apiResponse.recommended.toString(),
+                        isImportant: true,
                     }
                 }
             } else if (txEnv.fxServerVersion < apiResponse.recommended) {
                 this.fxsUpdateData = {
-                    color: 'warning',
-                    message: 'A recommended update is available for FXServer, you should update.',
-                    subtext: `recommended update ${txEnv.fxServerVersion} ➤ ${apiResponse.recommended}`,
-                    downloadLink: apiResponse.recommended_download,
+                    version: apiResponse.recommended.toString(),
+                    isImportant: true,
                 };
             } else if (txEnv.fxServerVersion < apiResponse.optional) {
                 this.fxsUpdateData = {
-                    color: 'info',
-                    message: 'An optional update is available for FXServer.',
-                    subtext: `optional update ${txEnv.fxServerVersion} ➤ ${apiResponse.optional}`,
-                    downloadLink: apiResponse.optional_download,
+                    version: apiResponse.optional.toString(),
+                    isImportant: false,
                 };
             }
         } catch (error) {
             console.warn('Error checking for FXServer updates. Enable verbosity for more information.');
             console.verbose.dir(error);
+        }
+
+        //Sending event to the UI
+        if (this.txaUpdateData || this.fxsUpdateData) {
+            this.#txAdmin.webServer.webSocket.pushEvent<UpdateAvailableEventType>('updateAvailable', {
+                fxserver: this.fxsUpdateData,
+                txadmin: this.txaUpdateData,
+            });
         }
     }
 };

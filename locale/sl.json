@@ -77,7 +77,8 @@
             "not_enabled": "txAdmin Meni ni omogočen! Lahko ga omogočiš v txAdmin nastavitvah.",
             "announcement_title": "Obvestilo od %{author}:",
             "dialog_empty_input": "Ne moreš imeti praznega vnosa.",
-            "directmessage_title": "DM from admin %{author}:"
+            "directmessage_title": "DM from admin %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Zamrznil si igralca!",
@@ -93,7 +94,7 @@
         "page_main": {
             "tooltips": {
                 "tooltip_1": "Uporabi %{key} da izbiraš med stranmi in puščične tipke za krmarjenje po elementih menija",
-                "tooltip_2": "Nekateri elementi menija imajo podmožnosti, ki jih je mogoče izbrati z levo in desno puščično tipko "
+                "tooltip_2": "Nekateri elementi menija imajo podmožnosti, ki jih je mogoče izbrati z levo in desno puščično tipko"
             },
             "player_mode": {
                 "title": "Tvoje možnosti",
@@ -135,7 +136,7 @@
                 },
                 "back": {
                     "title": "Nazaj",
-                    "label": "Vrneš se na lokacijo pred zadnjo teleportacijo ",
+                    "label": "Vrneš se na lokacijo pred zadnjo teleportacijo",
                     "error": "Nimaš zadnje lokacije, kamor bi se lahko vrnil!"
                 },
                 "copy": {
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Vozila",
-                "onesync_error": "Ta možnost zahteva, da je OneSync vklopljen za ravnanje s »entity handling«",
                 "not_in_veh_error": "Trenutno nisi v vozilu!",
                 "spawn": {
                     "title": "Spawn",
@@ -218,6 +218,13 @@
                 "players": "Igralci",
                 "search": "Išči",
                 "zero_players": "Najden ni bil noben igralec"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Razvrsti po",

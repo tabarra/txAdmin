@@ -46,7 +46,7 @@ export const IFrameProvider: React.FC<IFrameProviderProps> = ({ children }) => {
   useEffect(() => {
     if (isMenuVisible) {
       const refreshBuster = Math.random().toString().padStart(8, "0").slice(-8);
-      setCurFramePg(`/nui/start?refresh${refreshBuster}`);
+      setCurFramePg(`/server/server-log?refresh${refreshBuster}`);
     }
   }, [isMenuVisible]);
 

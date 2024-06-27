@@ -1,24 +1,26 @@
 import path from 'node:path';
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
-
-import { getFxsPaths } from '../scripts/scripts-utils.js'
+import { visualizer } from "rollup-plugin-visualizer";
+import { PluginOption, UserConfig, defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { getFxsPaths } from '../scripts/scripts-utils.js';
 import config from '../.deploy.config.js';
-//FIXME: probably better to use .env with deploypath, sv_licensekey, etc
+import { licenseBanner } from '../scripts/scripts-utils.js';
+
 
 const baseConfig = {
     build: {
         emptyOutDir: true,
         reportCompressedSize: false,
         outDir: '../dist/nui',
-        minify: true,
+        minify: true as boolean,
         target: 'chrome103',
         sourcemap: false,
 
-        //Doing this because fxserver's cicd doesn't wipe the dist folder
         rollupOptions: {
             output: {
+                banner: licenseBanner('..', true),
+                //Doing this because fxserver's cicd doesn't wipe the dist folder
                 entryFileNames: `[name].js`,
                 chunkFileNames: `[name].js`,
                 assetFileNames: '[name].[ext]',
@@ -31,9 +33,15 @@ const baseConfig = {
         tsconfigPaths({
             projects: ['./', '../shared']
         }),
-        react()
-    ]
-}
+        react(),
+        visualizer({
+            // template: 'flamegraph',
+            // template: 'sunburst',
+            gzipSize: true,
+            filename: '../.reports/nui_bundle.html',
+        }),
+    ] as PluginOption[], //i gave up
+} satisfies UserConfig;
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -45,7 +53,12 @@ export default defineConfig(({ command, mode }) => {
     if (mode === 'development') {
         let devDeplyPath;
         try {
-            const { monitorPath } = getFxsPaths(config.fxserverPath);
+            //Extract paths and validate them
+            if (typeof process.env.TXADMIN_DEV_FXSERVER_PATH !== 'string') {
+                console.error('process.env.TXADMIN_DEV_FXSERVER_PATH is not defined.');
+                process.exit(1);
+            }
+            const { monitorPath } = getFxsPaths(process.env.TXADMIN_DEV_FXSERVER_PATH);
             devDeplyPath = path.join(monitorPath, 'nui');
         } catch (error) {
             console.error('Could not extract/validate the fxserver and monitor paths.');

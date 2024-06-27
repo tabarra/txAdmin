@@ -1,106 +1,67 @@
 const modulename = 'DynamicAds';
-import xss from 'xss';
-import defaultAds from '../../dynamicAds.json';
+import defaultAds from '../../dynamicAds2.json';
 import got from '@core/extras/got.js';
 import consoleFactory from '@extras/console';
 import { convars } from '@core/globalData';
 const console = consoleFactory(modulename);
 
-
-//Helper
-const cleanAds = (ads) => {
-    return ads.map((ad) => {
-        if (ad.text) ad.text = xss(ad.text);
-        return ad;
-    });
+//Helpers
+const isValidAd = (ad) => {
+    if (typeof ad !== 'object' || ad === null) return false;
+    if (typeof ad.img !== 'string') return false;
+    if (typeof ad.url !== 'string') return false;
+    return true;
 };
-
+const REMOTE_AD_INDEX = 'https://raw.githubusercontent.com/tabarra/txAdmin/master/dynamicAds2.json';
 
 export default class DynamicAds {
     constructor() {
-        this.adIndex = {
-            login: 0,
-            main: 0,
+        this.adData = {
+            login: false,
+            main: false,
         };
-        this.adOptions = false;
 
         //Set default ads
-        let loginAds, mainAds;
-        if(convars.isZapHosting){
-            loginAds = defaultAds.loginZap;
-            mainAds = defaultAds.mainZap;
-        } else {
-            loginAds = defaultAds.login;
-            mainAds = defaultAds.main;
-        }
-        if (Array.isArray(loginAds) && Array.isArray(mainAds)) {
-            this.adOptions = {
-                login: cleanAds(loginAds),
-                main: cleanAds(mainAds),
-            };
+        try {
+            if (convars.isZapHosting) {
+                this.adData = {
+                    login: isValidAd(defaultAds.loginZap) && defaultAds.loginZap,
+                    main: isValidAd(defaultAds.mainZap) && defaultAds.mainZap,
+                };
+            } else {
+                this.adData = {
+                    login: isValidAd(defaultAds.login) && defaultAds.login,
+                    main: isValidAd(defaultAds.main) && defaultAds.main,
+                };
+            }
+        } catch (error) {
+            console.verbose.warn(`Failed to read default dynamic ads with error: ${error.message}`);
         }
 
         //Update with the ads from the interweebs
         this.update();
-
-        //Cron Function
-        setInterval(() => {
-            this.rotate();
-        }, 60 * 1000);
     }
 
 
-    //================================================================
+    /**
+     * Updates the ads from the interweebs
+     */
     async update() {
-        const indexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin/master/dynamicAds.json';
         try {
-            const res = await got(indexURL).json();
-            let loginAds, mainAds;
-            if(convars.isZapHosting){
-                loginAds = res.loginZap;
-                mainAds = res.mainZap;
-            } else {
-                loginAds = res.login;
-                mainAds = res.main;
-            }
-            if (Array.isArray(loginAds) && Array.isArray(mainAds)) {
-                this.adOptions = {
-                    login: cleanAds(loginAds),
-                    main: cleanAds(mainAds),
+            const res = await got(REMOTE_AD_INDEX).json();
+            if (convars.isZapHosting) {
+                this.adData = {
+                    login: isValidAd(res.loginZap) && res.loginZap,
+                    main: isValidAd(res.mainZap) && res.mainZap,
                 };
-                this.adIndex = {
-                    login: 0,
-                    main: 0,
+            } else {
+                this.adData = {
+                    login: isValidAd(res.login) && res.login,
+                    main: isValidAd(res.main) && res.main,
                 };
             }
         } catch (error) {
             console.verbose.warn(`Failed to retrieve dynamic ads with error: ${error.message}`);
-        }
-    }
-
-
-    //================================================================
-    rotate() {
-        if (!this.adOptions) return;
-        this.adIndex.login = (this.adIndex.login + 1) % this.adOptions.login.length;
-        this.adIndex.main = (this.adIndex.main + 1) % this.adOptions.main.length;
-    }
-
-
-    //================================================================
-    pick(spot) {
-        if (!this.adOptions) {
-            return false;
-        } else if (spot === 'login') {
-            return (this.adOptions.login && this.adOptions.login.length)
-                ? this.adOptions.login[this.adIndex.login]
-                : false;
-        } else if (spot === 'main') {
-            return (this.adOptions.main && this.adOptions.main.length)
-                ? this.adOptions.main[this.adIndex.main]
-                : false;
-        } else {
-            throw new Error('unknown spot type');
         }
     }
 };

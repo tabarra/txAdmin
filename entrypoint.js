@@ -7,7 +7,7 @@ try {
     if (!IsDuplicityVersion()) throw new Error();
 } catch (error) {
     console.log('txAdmin must be run inside FXServer in monitor mode!');
-    process.exit();
+    process.exit(999);
 }
 
 //Checking monitor mode and starting
@@ -15,7 +15,7 @@ try {
     if (GetConvar('monitorMode', 'false') == 'true') {
         require('./core/index.js');
     } else if (GetConvar('txAdminServerMode', 'false') == 'true') {
-        //Nothing, for now
+        require('./resource/sv_reportHeap.js');
     }
 } catch (error) {
     //Prevent any async console.log messing with the output

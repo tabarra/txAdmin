@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" translate="no" class="{{htmlClasses}}">
+  <head>
+    <!-- {{basePath}} -->
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg" href="./favicon_default.svg" id="favicon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>txAdmin</title>
+    <meta name="description" content="{{ogDescripttion}}">
+    <meta name="author" content="André Tabarra">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:url" content="https://github.com/tabarra/txAdmin">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ogTitle}}">
+    <meta property="og:description" content="{{ogDescripttion}}">
+    <meta property="og:image" content="https://forum-cfx-re.akamaized.net/optimized/5X/5/4/8/e/548e82fce6119ea9b4d2b3ec3b3d50375463adbc_2_375x375.png">
+    <meta name="robots" content="noindex, nofollow">
+    <!-- {{txConstsInjection}} -->
+    <!-- {{devModules}} -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx" data-prod-only></script>
+    <script data-always-remove>
+      if (!window?.txConsts) { document.body.innerHTML = '<p style="margin: 1rem;">Error: window.txConsts is undefined.<br />This likely means you didn\'t open this page through txAdmin.<br /><a class="bg-discord hover:bg-discord-active animate-pulse p-1 rounded-md" href="http://discord.gg/txAdmin" target="_blank" rel="noopener noreferrer">Support: discord.gg/txAdmin</a></p>'; }
+    </script>
+    <!-- {{customThemesStyle}} -->
+  </body>
+</html>

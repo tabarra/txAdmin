@@ -1,5 +1,5 @@
 const modulename = 'WebServer:Resources';
-import path from 'path';
+import path from 'node:path';
 import slash from 'slash';
 import slug from 'slug';
 import consoleFactory from '@extras/console';
@@ -54,9 +54,9 @@ export default async function Resources(ctx) {
 
     const timeoutMessage = `<strong>Couldn't load the resources list.</strong> <br>
     - Make sure the server is online (try to join it). <br>
-    - Make sure you don't have more than 200 resources. <br>
-    - Make sure you are not running the fxserver outside txAdmin. <br>
-    - Check <a href="console">Live Console</a> for any errors. They may indicate that some resource has a malformed <code>fxmanifest</code> file.`;
+    - Make sure you don't have more than 1000 resources. <br>
+    - Make sure you are not running the FXServer outside of txAdmin. <br>
+    - Check the <strong>Live Console</strong> for any errors which may indicate that some resource has a malformed <code>fxmanifest.lua</code> file.`;
 
     //Send command request
     const cmdSuccess = globals.fxRunner.srvCmd('txaReportResources');
@@ -70,7 +70,7 @@ export default async function Resources(ctx) {
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
             if (
-                globals.resourcesManager.resourceReport !== null
+                globals.resourcesManager.resourceReport
                 && (new Date() - globals.resourcesManager.resourceReport.ts) <= 1000
                 && Array.isArray(globals.resourcesManager.resourceReport.resources)
             ) {
@@ -81,7 +81,7 @@ export default async function Resources(ctx) {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),
                     resGroups,
-                    disableActions: (ctx.utils.hasPermission('commands.resources')) ? '' : 'disabled',
+                    disableActions: (ctx.admin.hasPermission('commands.resources')) ? '' : 'disabled',
                 };
                 resolve(['main/resources', renderData]);
             }

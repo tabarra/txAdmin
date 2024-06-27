@@ -1,4 +1,4 @@
-const modulename = 'WebServer:CFGEditorGet';
+const modulename = 'WebServer:CFGEditorPage';
 import { resolveCFGFilePath, readRawCFGFile } from '@core/extras/fxsConfigHelper';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
@@ -8,9 +8,9 @@ const console = consoleFactory(modulename);
  * Returns the output page containing the server.cfg
  * @param {object} ctx
  */
-export default async function CFGEditorGet(ctx) {
+export default async function CFGEditorPage(ctx) {
     //Check permissions
-    if (!ctx.utils.hasPermission('server.cfg.editor')) {
+    if (!ctx.admin.hasPermission('server.cfg.editor')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
@@ -33,6 +33,6 @@ export default async function CFGEditorGet(ctx) {
     return ctx.utils.render('main/cfgEditor', {
         headerTitle: 'CFG Editor',
         rawFile,
-        disableRestart: (ctx.utils.hasPermission('control.server')) ? '' : 'disabled',
+        disableRestart: (ctx.admin.hasPermission('control.server')) ? '' : 'disabled',
     });
 };

@@ -15,7 +15,7 @@
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Teid on sellest serverist ajutiselt keelustatud \"%{reason}\" tõttu. Teie keelustamine aegub: %{expiration}.",
-        "kick_permanent": " (%{author}) Teid on sellest serverist igavesti keelustatud \"%{reason}\" tõttu. Teie keelustamine ei aegugi.",
+        "kick_permanent": "(%{author}) Teid on sellest serverist igavesti keelustatud \"%{reason}\" tõttu. Teie keelustamine ei aegugi.",
         "reject": {
             "title_permanent": "Teid on sellest serverist igavesti keelustatud.",
             "title_temporary": "Teid on sellest serverist ajutiselt keelustatud.",
@@ -77,7 +77,8 @@
             "not_enabled": "txAdmini menüü pole lubatud! Saate selle lubada txAdmini seadete lehel.",
             "announcement_title": "Serveri teadaanne %{author}:",
             "dialog_empty_input": "See ei saa olla tühi sisend.",
-            "directmessage_title": "DM administraatorilt %{author}:"
+            "directmessage_title": "DM administraatorilt %{author}:",
+            "onesync_error": "This action requires OneSync to be enabled."
         },
         "frozen": {
             "froze_player": "Olete mängija külmutanud!",
@@ -145,7 +146,6 @@
             },
             "vehicle": {
                 "title": "Sõidukid",
-                "onesync_error": "See suvand nõuab, et OneSync oleks serveris sisse lülitatud",
                 "not_in_veh_error": "Te ei ole praegu sõidukis!",
                 "spawn": {
                     "title": "Loo",
@@ -218,6 +218,13 @@
                 "players": "Mängijad",
                 "search": "Otsi",
                 "zero_players": "Mängijat ei leitud"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Sorteeri",

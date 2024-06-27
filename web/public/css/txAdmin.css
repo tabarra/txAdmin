@@ -404,6 +404,7 @@ mark {background-color: #ffeaa7;}
     /* 56+50 = 106 +4 */
     position: relative;
     height: calc(100vh - 110px);
+    padding-top: unset;
 }
 
 .thin-scroll {
@@ -487,4 +488,19 @@ pre.thin-scroll{
 }
 .switch-lg .c-switch-slider::after {
     width: 65%;
+}
+
+
+/* Shadcn patches for the light mode */
+body {
+    background-color: #0000 !important;
+}
+
+.card {
+    --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color),
+        0 1px 2px -1px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+        var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }

@@ -24,12 +24,12 @@ export const txAdminASCII = () => {
  * txAdmin + license banner for bundled files
  * @returns {String}
  */
-export const licenseBanner = () => {
-    const licensePath = path.join('.', 'LICENSE');
+export const licenseBanner = (baseDir = '.', isBundledFile = false) => {
+    const licensePath = path.join(baseDir, 'LICENSE');
+    const rootPrefix = isBundledFile ? '../' : '';
     const lineSep = '%'.repeat(80);
     const logoPad = ' '.repeat(18);
     const contentLines = [
-        '',
         lineSep,
         ...txAdminASCII().split('\n').map((x) => logoPad + x),
         lineSep,
@@ -39,8 +39,18 @@ export const licenseBanner = () => {
         lineSep,
         ...fs.readFileSync(licensePath, 'utf8').trim().split('\n'),
         lineSep,
-    ].join('\n * ');
-    return `/*!${contentLines}\n */`;
+        'This distribution also includes third party code under their own licenses, which',
+        `can be found in ${rootPrefix}THIRD-PARTY-LICENSES.txt or their respective repositories.`,
+        `Attribution for non-code assets can be found at the bottom of ${rootPrefix}README.md or at`,
+        'the top of the respective file.',
+        lineSep,
+    ];
+    if (isBundledFile) {
+        const flattened = contentLines.join('\n * ');
+        return `/*!\n * ${flattened}\n */`;
+    } else {
+        return contentLines.join('\n');
+    }
 };
 
 
@@ -52,7 +62,7 @@ export const licenseBanner = () => {
  * @returns fxServerRootPath, fxsBinPath, monitorPath
  */
 export const getFxsPaths = (fxserverPath) => {
-    const fxServerRootPath = path.parse(fxserverPath).dir;
+    const fxServerRootPath = path.normalize(fxserverPath);
 
     //Process fxserver path
     const fxsBinPath = path.join(fxServerRootPath, 'FXServer.exe');

@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css" 
     integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" 
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="css/codemirror_lucario.css">
+<link rel="stylesheet" href="<%= resourcePath %>css/codemirror_lucario.css?txVer=<%= txAdminVersion %>">
 <style>
     .cm-s-lucario{
         font-size: 1.05rem !important;
@@ -43,11 +43,6 @@
         font-size: 70%;
     }
 </style>
-
-
-<div class="text-center mb-4">
-    <h2>Settings</h2>
-</div>
 
 
 <div class="row justify-content-md-center">
@@ -126,6 +121,26 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Ban Templates
+                                <!-- DynamicNewBadge reference, but static -->
+                                <span class="badge badge-danger">NEW</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <button
+                                    class="btn btn-sm btn-secondary"
+                                    type="submit"
+                                    onclick="navigateParentTo('/settings/ban-templates')"
+                                >
+                                    <i class="icon-pencil"></i> Edit Ban Templates
+                                </button>
+                                <span class="form-text text-muted">
+                                    Configure ban reasons and durations that will appear as dropdown options when banning a player. This is useful for common reasons that happen frequently, like violation of your server rules.
+                                </span>
+                            </div>
+                        </div>
+
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmGlobal-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Global Settings
@@ -183,8 +198,8 @@
                             <label for="frmFXServer-onesync" class="col-sm-3 col-form-label">OneSync</label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmFXServer-onesync" <%= readOnly ? 'disabled' : '' %>>
-                                    <option value="off" <%= fxserver.onesync === 'off' ? 'selected' : '' %>>Off (default)</option>
-                                    <option value="legacy" <%= fxserver.onesync === 'legacy' ? 'selected' : '' %>>Legacy (without infinity)</option>
+                                    <option value="off" <%= fxserver.onesync === 'off' ? 'selected' : '' %>>Off</option>
+                                    <option value="legacy" <%= fxserver.onesync === 'legacy' ? 'selected' : '' %>>Legacy (default)</option>
                                     <option value="on" <%= fxserver.onesync === 'on' ? 'selected' : '' %>>On (with infinity)</option>
                                 </select>
                                 <span class="form-text text-muted">
@@ -304,7 +319,7 @@
                                         <strong class="text-secondary">Discord Guild Roles:</strong> Checks if the player joining has a <code>discord:</code> identifier and is present in the Discord guild configured in the Discord Tab and has at least one of the roles specified below.
                                     </p>
                                     <p class="form-text text-muted mb-2">
-                                        <strong class="text-secondary">Approved License:</strong> The player <code>license:</code> identifier must be whitelisted by a txAdmin administrator. This can be done through the <a href="/whitelist">Whitelist page</a>, or the <code>/whitelist</code> Discord bot slash command.
+                                        <strong class="text-secondary">Approved License:</strong> The player <code>license:</code> identifier must be whitelisted by a txAdmin administrator. This can be done through the <a href="#" onclick="navigateParentTo('/whitelist')">Whitelist page</a>, or the <code>/whitelist</code> Discord bot slash command.
                                     </p>
                                 </span>
                             </div>
@@ -387,7 +402,7 @@
                             <div class="col-sm-9">
                                 <textarea id="frmPlayerManager-banRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You can join http://discord.gg/example to appeal this ban." <%= readOnly ? 'disabled' : '' %>><%= playerDatabase.banRejectionMessage || '' %></textarea>
                                 <span class="form-text text-muted">
-                                    Optional message to display to a player on the rejection message that shows when they try to connect while bein banned. <br>
+                                    Optional message to display to a player on the rejection message that shows when they try to connect while being banned. <br>
                                     If you have a ban appeal process, you can use this field to inform the players.
                                 </span>
                             </div>
@@ -459,7 +474,11 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">Announcements <br>Channel ID</label>
+                            <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">
+                                Announcements <br>
+                                To Channel ID <br>
+                                <i class="text-info">(optional)</i>
+                            </label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmDiscord-announceChannel"
                                     value="<%= discord.announceChannel || '' %>" 
@@ -668,11 +687,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js" 
     integrity="sha512-ZTpbCvmiv7Zt4rK0ltotRJVRaSBKFQHQTrwfs6DoYlBYzO1MA6Oz2WguC+LkV8pGiHraYLEpo7Paa+hoVbCfKw==" 
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="js/codeEditor/mode/yaml.js"></script>
-<script src="js/codeEditor/autorefresh.js"></script>
-<script src="js/codeEditor/searchcursor.js"></script>
-<script src="js/codeEditor/dialog.js"></script>
-<script src="js/codeEditor/search.js"></script>
+<script src="<%= resourcePath %>js/codeEditor/mode/yaml.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/autorefresh.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/searchcursor.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/dialog.js?txVer=<%= txAdminVersion %>"></script>
+<script src="<%= resourcePath %>js/codeEditor/search.js?txVer=<%= txAdminVersion %>"></script>
 
 <!-- Embed JSON editors -->
 <div class="modal fade" id="modJsonEditor" tabindex="-1" role="dialog" aria-labelledby="modJsonEditor-title" aria-hidden="true">

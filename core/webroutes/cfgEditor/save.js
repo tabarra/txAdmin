@@ -22,7 +22,7 @@ export default async function CFGEditorSave(ctx) {
     }
 
     //Check permissions
-    if (!ctx.utils.testPermission('server.cfg.editor', modulename)) {
+    if (!ctx.admin.testPermission('server.cfg.editor', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',

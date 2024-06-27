@@ -1,0 +1,29 @@
+.cfxrebtn {
+    display: inline-block;
+    color: #4f5d73;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    padding: 0.375rem 0.75rem;
+    border: solid 2px #f40552;
+    background: #2e1828b2;
+    box-shadow: 0 0 5px 0 rgba(244, 5, 82, 0.75);
+    letter-spacing: 1px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+.cfxrebtn:hover {
+    background-color: #f40552;
+}
+.cfxrebtn:disabled {
+    color: lightgray;
+    cursor: wait;
+    background-color: rgb(40, 40, 40);
+    border: solid 2px rgb(89, 89, 89);
+    box-shadow: 0 0 5px 0 rgba(89, 89, 89, 0.75);
+}

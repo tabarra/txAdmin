@@ -1,26 +1,24 @@
 const modulename = 'WebServer:WhitelistList';
 import Fuse from "fuse.js";
-import PlayerDatabase from '@core/components/PlayerDatabase';
 import { DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
-import { Context } from 'koa';
 import cleanPlayerName from "@shared/cleanPlayerName";
-import { GenericApiError } from "@core/../shared/genericApiTypes";
+import { GenericApiErrorResp } from "@core/../shared/genericApiTypes";
 import consoleFactory from '@extras/console';
+import { AuthedCtx } from "@core/components/WebServer/ctxTypes";
 const console = consoleFactory(modulename);
 
 
 /**
  * Returns the output page containing the action log, and the console log
  */
-export default async function WhitelistList(ctx: Context) {
-    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
+export default async function WhitelistList(ctx: AuthedCtx) {
     const table = ctx.params.table;
 
     //Delegate to the specific handler
     if (table === 'requests') {
-        return await handleRequests(ctx, playerDatabase);
+        return await handleRequests(ctx);
     } else if (table === 'approvals') {
-        return await handleApprovals(ctx, playerDatabase);
+        return await handleApprovals(ctx);
     } else {
         return ctx.send({ error: 'unknown table' });
     }
@@ -30,7 +28,7 @@ export default async function WhitelistList(ctx: Context) {
 /**
  * Handles the search functionality.
  */
-async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
+async function handleRequests(ctx: AuthedCtx) {
     type resp = {
         cntTotal: number;
         cntFiltered: number;
@@ -38,10 +36,10 @@ async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
         totalPages: number;
         currPage: number;
         requests: DatabaseWhitelistRequestsType[];
-    } | GenericApiError;
+    } | GenericApiErrorResp;
     const sendTypedResp = (data: resp) => ctx.send(data);
 
-    const requests = playerDatabase.getWhitelistRequests().reverse();
+    const requests = ctx.txAdmin.playerDatabase.getWhitelistRequests().reverse();
 
     //Filter by player name, discord tag and req id
     let filtered = requests;
@@ -87,9 +85,9 @@ async function handleRequests(ctx: Context, playerDatabase: PlayerDatabase) {
 /**
  * Handles the search functionality.
  */
-async function handleApprovals(ctx: Context, playerDatabase: PlayerDatabase) {
+async function handleApprovals(ctx: AuthedCtx) {
     const sendTypedResp = (data: DatabaseWhitelistApprovalsType[]) => ctx.send(data);
 
-    const approvals = playerDatabase.getWhitelistApprovals().reverse();
+    const approvals = ctx.txAdmin.playerDatabase.getWhitelistApprovals().reverse();
     return sendTypedResp(approvals);
 }

@@ -23,8 +23,18 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
     local headers = req.headers
     local body = req.body
     local method = req.method
-
     debugPrint(("^3WebPipe[^1%d^3]^0 ^2%s ^4%s^0"):format(pipeCallbackCounter, method, path))
+
+    -- Check for CSRF attempt
+    if not IsNuiRequestOriginValid(headers) then
+        debugPrint(("^3WebPipe[^1%d^3]^0 ^1invalid origin^0"):format(pipeCallbackCounter))
+        return cb({
+            status = 403,
+            body = '{}',
+        })
+    end
+
+    -- Check if the request is cached
     if staticCacheData[path] ~= nil then
         debugPrint(("^3WebPipe[^1%d^3]^0 ^2answered from cache!"):format(pipeCallbackCounter))
         local cacheEntry = staticCacheData[path]
@@ -34,30 +44,6 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
             headers = cacheEntry.headers,
         })
         return
-    end
-
-    -- Cookie wiper to prevent sticky cookie sessions after reauth
-    if path == '/nui/resetSession' then
-        if type(headers['Cookie']) ~= 'string' then
-            return cb({
-                status = 200,
-                body = '{}',
-            })
-        else
-            local cookies = {}
-            for cookie in headers['Cookie']:gmatch('(tx:[^=]+)') do 
-                cookies[#cookies +1] = cookie.."=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly; SameSite=None; Secure"
-            end
-            return cb({
-                status = 200,
-                body = '{}',
-                headers = {
-                    ['Connection'] = "close",
-                    ['Content-Type'] = "text/plain",
-                    ['Set-Cookie'] = cookies
-                }
-            })
-        end
     end
 
     local id = pipeCallbackCounter
