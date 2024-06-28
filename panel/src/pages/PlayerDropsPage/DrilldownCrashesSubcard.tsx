@@ -30,7 +30,7 @@ export default function DrilldownCrashesSubcard({ crashTypes }: DrilldownCrashes
                         key={crashType}
                         className={cn(
                             index < crashTypes.length - 1 ? 'border-b' : '',
-                            index % 2 && 'bg-secondary/15',
+                            index % 2 === 0 && 'bg-secondary/15',
                             'hover:bg-secondary/35'
                         )}
                     >

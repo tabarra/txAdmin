@@ -1,92 +1,148 @@
-import { useMemo } from "react";
-import { cn, numberToLocaleString } from "@/lib/utils";
+import { Fragment, useMemo } from "react";
 import { PlayerDropsMessage } from "./PlayerDropsGenericSubcards";
 import type { PDLChangeEventType } from "@shared/otherTypes";
+import { processResourceChanges } from "./utils";
+import { cn, tsToLocaleDateString, tsToLocaleDateTimeString, tsToLocaleTimeString } from "@/lib/utils";
 
 
 function DiffOld({ children }: { children: React.ReactNode }) {
     return (
-        <span className="font-mono px-1 text-sm text-primary dark:text-background bg-destructive-inline">
+        <span className="font-mono px-1 text-sm text-primary dark:text-background bg-destructive-inline/60 dark:bg-destructive-inline/90">
             {children}
         </span>
     );
 }
 function DiffNew({ children }: { children: React.ReactNode }) {
     return (
-        <span className="font-mono px-1 text-sm text-primary dark:text-background bg-success-inline">
+        <span className="font-mono px-1 text-sm text-primary dark:text-background bg-success-inline/60 dark:bg-success-inline/90">
             {children}
         </span>
     );
 }
+function DiffUpdated({ children }: { children: React.ReactNode }) {
+    return (
+        <span className="font-mono px-1 text-sm text-primary dark:text-background bg-warning/60 dark:bg-warning/90">
+            {children}
+        </span>
+    );
+}
+
+type ChangedFxsEventProps = { change: Extract<PDLChangeEventType, { type: "fxsChanged" }> };
+function ChangedFxsEvent({ change }: ChangedFxsEventProps) {
+    return (<>
+        Switched from <DiffOld>{change.oldVersion}</DiffOld> to <DiffNew>{change.newVersion}</DiffNew>
+    </>);
+}
+
+type ChangedGameEventProps = { change: Extract<PDLChangeEventType, { type: "gameChanged" }> };
+function ChangedGameEvent({ change }: ChangedGameEventProps) {
+    return (<>
+        Switched from <DiffOld>{change.oldVersion}</DiffOld> to <DiffNew>{change.newVersion}</DiffNew>
+    </>);
+}
+
+type ChangedResourcesEventProps = { change: Extract<PDLChangeEventType, { type: "resourcesChanged" }> };
+function ChangedResourcesEvent({ change }: ChangedResourcesEventProps) {
+    const processedChanges = useMemo(() => {
+        return processResourceChanges(change.resRemoved, change.resAdded);
+    }, [change.resRemoved, change.resAdded]);
+
+    let removedNode = null;
+    if (processedChanges.removed.length) {
+        removedNode = (<p>
+            Removed: {
+                processedChanges.removed.map((item, index, array) => (
+                    <Fragment key={item}>
+                        <DiffOld>{item}</DiffOld>{index < array.length - 1 ? ', ' : '.'}
+                    </Fragment>
+                ))
+            }
+        </p>);
+    }
+
+    let addedNode = null;
+    if (processedChanges.added.length) {
+        addedNode = (<p>
+            Added: {
+                processedChanges.added.map((item, index, array) => (
+                    <Fragment key={item}>
+                        <DiffNew>{item}</DiffNew>{index < array.length - 1 ? ', ' : '.'}
+                    </Fragment>
+                ))
+            }
+        </p>);
+    }
+
+    let updatedNode = null;
+    if (processedChanges.updated.length) {
+        updatedNode = (<p>
+            Updated: {
+                processedChanges.updated.map((item, index, array) => (
+                    <Fragment key={index}>
+                        <DiffUpdated>{item.resName} {item.oldVer} -&gt; {item.newVer}</DiffUpdated>{index < array.length - 1 ? ', ' : '.'}
+                    </Fragment>
+                ))
+            }
+        </p>);
+    }
+
+    return (<>
+        {removedNode}
+        {addedNode}
+        {updatedNode}
+    </>);
+}
+
 
 type DrilldownChangesSubcardProps = {
     changes: PDLChangeEventType[];
 };
 
 export default function DrilldownChangesSubcard({ changes }: DrilldownChangesSubcardProps) {
-    changes = [
-        {
-            type: 'fxsChanged',
-            oldVersion: 'xxxx',
-            newVersion: '7999',
-            ts: 192837465000,
-        },
-        {
-            type: 'gameChanged',
-            oldVersion: 'gta5:xxx',
-            newVersion: 'gta5:2060',
-            ts: 192837465000,
-        },
-        {
-            type: 'resourcesChanged',
-            resAdded: ['aaaaa', 'bbbbb', 'ccccc'],
-            resRemoved: ['xxxx', 'yyyyy', 'zzzzzz'],
-            ts: 192837465000,
-        }
-    ]
+    const eventTitles: Record<string, string> = {
+        fxsChanged: 'Changed FXServer version',
+        gameChanged: 'Changed game version',
+        resourcesChanged: 'Changed boot resources',
+    };
 
     if (!changes.length) {
         return <PlayerDropsMessage message="No environmental changes within this time window." />;
     }
 
     return (
-        <div className="px-4 pt-2 space-y-4">
-            <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    June 14, 2024
-                </div>
-                <div className="flex-1 space-y-1">
-                    <h3 className="text-lg font-semibold">Changed FXServer Version</h3>
-                    <p className="text-gray-500 dark:text-gray-400">
-                        Switched from <DiffOld>7999</DiffOld> to <DiffNew>8509</DiffNew>.
-                    </p>
-                </div>
-            </div>
-
-            <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    June 14, 2024
-                </div>
-                <div className="flex-1 space-y-1">
-                    <h3 className="text-lg font-semibold">Changed Game Version</h3>
-                    <p className="text-gray-500 dark:text-gray-400">
-                        Switched from <DiffOld>gta5:2060</DiffOld> to <DiffNew>gta5:3095</DiffNew>.
-                    </p>
-                </div>
-            </div>
-
-            <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 text-sm font-medium text-gray-500 dark:text-gray-400">May 22, 2024</div>
-                <div className="flex-1 space-y-1">
-                    <h3 className="text-lg font-semibold">
-                        Changed boot resources
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
-                        Removed: <DiffOld>xxxx</DiffOld>, <DiffOld>yyyyy</DiffOld>, <DiffOld>zzzzzz</DiffOld>. <br />
-                        Added: <DiffNew>aaaaa</DiffNew>, <DiffNew>bbbbb</DiffNew>, <DiffNew>ccccc</DiffNew>.
-                    </p>
-                </div>
-            </div>
+        <div className="md:grid md:grid-cols-[auto_minmax(0,1fr)] gap-4 md:px-4 pt-2 ">
+            {changes.map((change, index) => (
+                <Fragment key={index}>
+                    <div className="hidden mx-auto md:flex items-center gap-4 divide-y">
+                        <div className="flex flex-col items-center justify-center px-2 py-1 rounded-lg text-sm font-medium bg-muted">
+                            <span>{tsToLocaleDateString(change.ts, 'medium')}</span>
+                            <span>{tsToLocaleTimeString(change.ts)}</span>
+                        </div>
+                    </div>
+                    <div
+                        className={cn(
+                            'flex-1 col-span-2 md:col-span-1 px-2 md:px-0 py-2 md:py-0',
+                            index % 2 === 0 && 'bg-secondary/25 md:bg-transparent',
+                        )}
+                    >
+                        <div className="flex flex-wrap-reverse justify-between">
+                            <h3 className="flex-grow inline text-lg font-semibold">
+                                {change.type in eventTitles ? eventTitles[change.type] : change.type}
+                            </h3>
+                            <div className="md:hidden mx-auto">
+                                <span className="border-muted-foreground border rounded px-2 py-0.5 font-normal text-xs text-muted-foreground">
+                                    {tsToLocaleDateTimeString(change.ts, 'medium', 'short')}
+                                </span>
+                            </div>
+                        </div>
+                        <p className="text-gray-500 dark:text-gray-400">
+                            {change.type === 'fxsChanged' && <ChangedFxsEvent change={change} />}
+                            {change.type === 'gameChanged' && <ChangedGameEvent change={change} />}
+                            {change.type === 'resourcesChanged' && <ChangedResourcesEvent change={change} />}
+                        </p>
+                    </div>
+                </Fragment>
+            ))}
         </div>
     );
 }

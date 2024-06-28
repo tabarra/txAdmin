@@ -37,7 +37,7 @@ export default function DrilldownOverviewSubcard({ dropTypes }: DrilldownOvervie
     }
 
     return (
-        <div className="px-4 py-2 flex flex-wrap justify-evenly gap-4 text-muted-foreground">
+        <div className="px-4 py-4 flex flex-wrap justify-evenly gap-4 text-muted-foreground">
             {categories.map(([reasonId, reasonData]) => (
                 <div
                     key={reasonId}

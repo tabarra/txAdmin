@@ -67,7 +67,7 @@ const DrilldownCardInner = function DrilldownCard({ windowStart, windowEnd, wind
                 <span>Period from {windowStartStr} to {windowEndStr}.</span>
             </div>
             <div className="pb-2 md:rounded-xl border bg-cardx shadow-sm flex flex-col">
-                <div className="pb-4">
+                <div className="">
                     <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-xl bg-secondary/35">
                         <div className="flex items-center space-x-2">
                             <div className='hidden xs:block'><FolderOpenIcon className="size-4" /></div>
@@ -75,6 +75,16 @@ const DrilldownCardInner = function DrilldownCard({ windowStart, windowEnd, wind
                         </div>
                     </div>
                     <DrilldownOverviewSubcard dropTypes={windowData.dropTypes} />
+                </div>
+
+                <div className="pb-4">
+                    <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-t border-b bg-secondary/35">
+                        <div className="flex items-center space-x-2">
+                            <div className='hidden xs:block'><ShapesIcon className="size-4" /></div>
+                            <h2 className="font-mono text-sm">Environment Changes</h2>
+                        </div>
+                    </div>
+                    <DrilldownChangesSubcard changes={windowData.changes} />
                 </div>
 
                 <div className="">
@@ -87,15 +97,6 @@ const DrilldownCardInner = function DrilldownCard({ windowStart, windowEnd, wind
                     <DrilldownCrashesSubcard crashTypes={windowData.crashTypes} />
                 </div>
 
-                <div className="pb-4">
-                    <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-t border-b bg-secondary/35">
-                        <div className="flex items-center space-x-2">
-                            <div className='hidden xs:block'><ShapesIcon className="size-4" /></div>
-                            <h2 className="font-mono text-sm">Environment Changes</h2>
-                        </div>
-                    </div>
-                    <DrilldownChangesSubcard changes={windowData.changes} />
-                </div>
             </div>
         </div>
     )
