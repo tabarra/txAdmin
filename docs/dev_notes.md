@@ -15,11 +15,12 @@
     - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
 - [ ] New player drops page
-    - [ ] remove old player crashes page
-    - [x] Page layout
-    - [x] drilldown cards layout
-    - [x] Migrate stats file to include oldVersion in changes and remove the game crashed prefix 
-    - [x] change `Unhandled exception:` to be subpart of "Game Crashed"
+    - [x] remove old player crashes page
+    - [x] replace core webroute
+    - [ ] Page layout
+    - [ ] drilldown cards layout
+    - [ ] migrate stats file to include oldVersion in changes and remove the game crashed prefix 
+    - [ ] change `Unhandled exception:` to be subpart of "Game Crashed"
     - [ ] apply new prefix algo to the crash reasons
     - [ ] env changes subcard
     - [ ] display charts

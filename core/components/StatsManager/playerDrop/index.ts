@@ -2,7 +2,7 @@ const modulename = 'PlayerDropStatsManager';
 import fsp from 'node:fs/promises';
 import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
-import { PDLFileSchema, PDLFileType, PDLHourlyRawType, PDLHourlyType, PDLServerBootDataSchema } from './playerDropSchemas';
+import { PDLChangeEventType, PDLFileSchema, PDLFileType, PDLHourlyRawType, PDLHourlyType, PDLServerBootDataSchema } from './playerDropSchemas';
 import { classifyDropReason } from './classifyDropReason';
 import { parseFxserverVersion } from '@extras/helpers';
 import { PDL_RETENTION, PDL_UNKNOWN_LIST_SIZE_LIMIT } from './config';
@@ -10,6 +10,7 @@ import { ZodError } from 'zod';
 import { getDateHourEnc, parseDateHourEnc } from './playerDropUtils';
 import { MultipleCounter } from '../statsUtils';
 import { throttle } from 'throttle-debounce';
+import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@core/webroutes/playerDrops';
 import { migratePlayerDropsFile } from './playerDropMigrations';
 const console = consoleFactory(modulename);
 
@@ -49,7 +50,7 @@ export default class PlayerDropStatsManager {
     /**
      * Get the recent category count for player drops in the last X hours
      */
-    public getRecentStats(windowHours: number) {
+    public getRecentDropTally(windowHours: number) {
         const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000) - 1;
         const flatCounts = this.eventLog
             .filter((entry) => entry.hour.dateHourTs >= logCutoff)
@@ -62,17 +63,42 @@ export default class PlayerDropStatsManager {
 
 
     /**
-     * Get the recent category count for player drops in the last X hours
+     * Get the recent log with drop/crash/changes for the last X hours
      */
-    public getRecentCrashes(windowHours: number) {
+    public getRecentSummary(windowHours: number): PlayerDropsSummaryHour[] {
         const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000) - 1;
-        const flatCounts = this.eventLog
+        const windowSummary = this.eventLog
             .filter((entry) => entry.hour.dateHourTs >= logCutoff)
-            .map((entry) => entry.crashTypes.toSortedValuesArray())
-            .flat();
-        const cumulativeCounter = new MultipleCounter();
-        cumulativeCounter.merge(flatCounts);
-        return cumulativeCounter.toSortedValuesArray();
+            .map((entry) => ({
+                hour: entry.hour.dateHourStr,
+                hasChanges: !!entry.changes.length,
+                dropTypes: entry.dropTypes.toSortedValuesArray(),
+                crashes: entry.crashTypes.sum(),
+            }));
+        return windowSummary;
+    }
+
+
+    /**
+     * Get the data for the player drops drilldown cards in the last X hours
+     */
+    public getWindowData(windowStart: number, windowEnd: number): PlayerDropsDetailedWindow {
+        const allChanges: PDLChangeEventType[] = [];
+        const crashTypes = new MultipleCounter();
+        const dropTypes = new MultipleCounter();
+        const filteredLogs = this.eventLog.filter((entry) => {
+            return entry.hour.dateHourTs >= windowStart && entry.hour.dateHourTs <= windowEnd;
+        });
+        for (const log of filteredLogs) {
+            allChanges.push(...log.changes);
+            crashTypes.merge(log.crashTypes);
+            dropTypes.merge(log.dropTypes);
+        }
+        return {
+            changes: allChanges,
+            crashTypes: crashTypes.toSortedValuesArray(),
+            dropTypes: dropTypes.toSortedValuesArray(),
+        };
     }
 
 
