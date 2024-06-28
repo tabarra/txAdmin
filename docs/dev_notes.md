@@ -17,10 +17,10 @@
 - [ ] New player drops page
     - [x] remove old player crashes page
     - [x] replace core webroute
-    - [ ] Page layout
-    - [ ] drilldown cards layout
-    - [ ] migrate stats file to include oldVersion in changes and remove the game crashed prefix 
-    - [ ] change `Unhandled exception:` to be subpart of "Game Crashed"
+    - [x] Page layout
+    - [x] drilldown cards layout
+    - [x] migrate stats file to include oldVersion in changes and remove the game crashed prefix 
+    - [x] change `Unhandled exception:` to be subpart of "Game Crashed"
     - [ ] apply new prefix algo to the crash reasons
     - [ ] env changes subcard
     - [ ] display charts
