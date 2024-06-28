@@ -186,8 +186,8 @@ export function Header() {
                             <LogoFullSquareGreen className="h-9 hover:scale-105 hover:brightness-110" />
                         </NavLink>
                     </div>
-                    <NavLink href="/">
-                        <LogoSquareGreen className="h-8 w-8 lg:h-10 lg:w-10 hidden sm:max-xl:block hover:scale-105 hover:brightness-110" />
+                    <NavLink href="/" className="hidden sm:max-xl:block">
+                        <LogoSquareGreen className="h-8 w-8 lg:h-10 lg:w-10 hover:scale-105 hover:brightness-110" />
                     </NavLink>
 
                     <div className="lg:hidden">

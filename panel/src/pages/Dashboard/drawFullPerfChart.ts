@@ -1,9 +1,7 @@
 import * as d3 from 'd3';
 import { PerfLifeSpanType, PerfSnapType } from './chartingUtils';
-import { createRandomHslColor, msToShortDuration } from '@/lib/utils';
+import { msToShortDuration } from '@/lib/utils';
 import { throttle } from 'throttle-debounce';
-import { useSetAtom } from 'jotai';
-import { dashPerfCursorAtom } from './dashboardHooks';
 
 
 //Helpers

@@ -249,7 +249,6 @@ export default function ThreadPerfCard() {
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
                     {cursorThreadLabel ?? selectedThread} performance {titleTimeIndicator}
                 </h3>
-                {/* <div className='hidden xs:block'><BarChartHorizontalIcon /></div> */}
                 <div className="flex gap-4">
                     <Select
                         defaultValue={selectedThread}

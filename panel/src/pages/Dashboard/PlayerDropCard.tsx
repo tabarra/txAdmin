@@ -29,6 +29,7 @@ export const dropReasonCategories = {
         label: 'Unknown',
         color: '#E8C1A0', //nivo
         // color2: '#E9D8A6',
+        //TODO: switch this to be the purple (#A97CD2) and use this color for resources
     },
     security: {
         label: 'Security',
