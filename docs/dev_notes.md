@@ -14,8 +14,16 @@
 - [ ] Offline warning
     - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
-- [ ] New player drops page?
-    - 
+- [ ] New player drops page
+    - [ ] remove old player crashes page
+    - [x] Page layout
+    - [x] drilldown cards layout
+    - [x] Migrate stats file to include oldVersion in changes and remove the game crashed prefix 
+    - [x] change `Unhandled exception:` to be subpart of "Game Crashed"
+    - [ ] apply new prefix algo to the crash reasons
+    - [ ] env changes subcard
+    - [ ] display charts
+    - [ ] clickable charts to change range of drilldown card
 - Dashboard stuff:
     - [ ] add testing for getServerStatsData
     - [ ] fix getMinTickIntervalMarker behavior when 0.2
@@ -24,7 +32,9 @@
         - [ ] write log optimizer and remove the webroute 30h filter
     - thread perf chart:
         - [ ] color should change correctly at the min interval marker point
+        - [ ] change the bg color to the color of the average ticket with heavy transparency?
     - full perf chart:
+        - [ ] increase the size of the cursor Y value indicator? maybe move to where the mouse is instead of x=0
         - [ ] buttons to show memory usage, maybe hide player count
         - [ ] calculate initial zoom of 30h, maybe some linear interpolation
         - [ ] increase `h-[26rem]` back to 28 after removing the new chart warning
@@ -49,10 +59,23 @@
     - https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
 - [ ] update wouter and add search/filters state to URL of the players/history pages 
 - [ ] Use `dotenv` or something to configure `main-builder.js` and update `development.md`
-- [ ]
+- [ ] add `.yarn.installed` to the dist? even in dev
 
 
+
+dashboard should not show up if server is not set up
 semana que vem fazer votação sobre feature de crashes perguntando how often do you use the page
+
+
+
+# Easy way of doing on/off duty scripts:
+- the current ones out there exist by abusing the auth event:
+    - `TriggerEvent("txcl:setAdmin", false, false, "you are offduty")`
+- provide an export to register a resource as a onduty validator
+- when an auth sets place, reach out to the registered export to validate if someone should get the admin perms or not
+    - if not, return an error message displaying a `[resource] <custom message>` as the fail reason
+- provide an export to trigger the admin auth of any player
+- provide an export to trigger a setAdmin removing the perms
 
 
 
@@ -143,6 +166,7 @@ need to check swr's behavior on unmount and how to change timeouts
 - [x] Dashboard
 - [x] Live Console
 - [ ] Resources
+    - by default show just the "newly added" resources?
 - [ ] Server Log
 - [ ] CFG Editor
 - [ ] Advanced (TODO:)

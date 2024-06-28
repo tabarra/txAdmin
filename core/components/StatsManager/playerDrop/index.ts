@@ -10,11 +10,12 @@ import { ZodError } from 'zod';
 import { getDateHourEnc, parseDateHourEnc } from './playerDropUtils';
 import { MultipleCounter } from '../statsUtils';
 import { throttle } from 'throttle-debounce';
+import { migratePlayerDropsFile } from './playerDropMigrations';
 const console = consoleFactory(modulename);
 
 
 //Consts
-const LOG_DATA_FILE_VERSION = 1;
+export const LOG_DATA_FILE_VERSION = 2;
 const LOG_DATA_FILE_NAME = 'stats_playerDrop.json';
 
 
@@ -122,6 +123,7 @@ export default class PlayerDropStatsManager {
                 logRef.changes.push({
                     ts: Date.now(),
                     type: 'gameChanged',
+                    oldVersion: this.lastGameVersion,
                     newVersion: gameString,
                 });
             }
@@ -139,6 +141,7 @@ export default class PlayerDropStatsManager {
                 logRef.changes.push({
                     ts: Date.now(),
                     type: 'fxsChanged',
+                    oldVersion: this.lastServerVersion,
                     newVersion: fxsVersionString,
                 });
             }
@@ -215,8 +218,16 @@ export default class PlayerDropStatsManager {
         try {
             const rawFileData = await fsp.readFile(this.logFilePath, 'utf8');
             const fileData = JSON.parse(rawFileData);
-            if (fileData?.version !== LOG_DATA_FILE_VERSION) throw new Error('invalid version');
-            const statsData = PDLFileSchema.parse(fileData);
+            let statsData: PDLFileType;
+            if (fileData.version === LOG_DATA_FILE_VERSION) {
+                statsData = PDLFileSchema.parse(fileData);
+            } else {
+                try {
+                    statsData = await migratePlayerDropsFile(fileData);
+                } catch (error) {
+                    throw new Error(`Failed to migrate ${LOG_DATA_FILE_NAME} from ${fileData?.version} to ${LOG_DATA_FILE_VERSION}: ${(error as Error).message}`);
+                }
+            }
             this.lastGameVersion = statsData.lastGameVersion;
             this.lastServerVersion = statsData.lastServerVersion;
             this.lastResourceList = statsData.lastResourceList;

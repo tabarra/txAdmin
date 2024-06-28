@@ -41,9 +41,9 @@ const crashExamples = [
     `Game crashed: Recursive error: An exception occurred (c0000005 at 0x7ff6bb17f1c9) during loading of resources:/cars/data/[limiteds]/xmas 4/carvariations.meta in data file mounter 0x141a22350. The game will be terminated.`,
     `O jogo crashou: %s`,
 ];
-const exceptionExamples = [
-    `Unhandled exception: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
-    `Exceção não tratada: %s`,
+const crashExceptionExamples = [
+    `Game crashed: Unhandled exception: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
+    `Game crashed: Exceção não tratada: %s`,
 ];
 
 
@@ -75,16 +75,16 @@ suite('classifyDropReason', () => {
         }
     });
     it('should classify crash reasons', () => {
-        for (const reason of [...crashExamples, ...exceptionExamples]) {
+        for (const reason of [...crashExamples, ...crashExceptionExamples]) {
             expect(fnc(reason).category).toBe('crash');
         }
     });
-    it('should translate crash reasons', () => {
-        for (const reason of [...crashExamples, ...exceptionExamples]) {
+    it('should translate crash exceptions', () => {
+        for (const reason of [...crashExceptionExamples]) {
             const resp = fnc(reason);
             expect(resp.cleanReason).toBeTypeOf('string');
             expect(resp.cleanReason).toSatisfy((x: string) => {
-                return x.startsWith('Game crashed: ') || x.startsWith('Unhandled exception: ')
+                return x.startsWith('Unhandled exception: ')
             });
         }
     });
