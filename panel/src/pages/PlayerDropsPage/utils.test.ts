@@ -1,5 +1,5 @@
-import { suite, it, expect } from 'vitest';
-import { parseResourceNameVerion, processResourceChanges } from './utils';
+import { suite, it, expect, test } from 'vitest';
+import { parseResourceNameVerion, processResourceChanges, splitPrefixedStrings } from './utils';
 
 
 suite('parseResourceNameVerion', () => {
@@ -109,3 +109,25 @@ suite('processResourceChanges', () => {
     });
 });
 
+
+test('splitPrefixedStrings', () => {
+    const fnc = splitPrefixedStrings;
+    const logLines = [
+        '=xx',
+        '=yy',
+        'aa[=]bb',
+        'aa[=]cc',
+        'GTA5_b3095.ext!sub_xx (0x230)',
+        'GTA5_b3095.ext!sub_xx (0x666)',
+        'GTA5_b3095.ext+sub_xx (0x999)',
+    ];
+    expect(fnc(logLines)).toEqual([
+        { prefix: false, suffix: '=xx' },
+        { prefix: false, suffix: '=yy' },
+        { prefix: false, suffix: 'aa[=]bb' },
+        { prefix: 'aa', suffix: '[=]cc' },
+        { prefix: false, suffix: 'GTA5_b3095.ext!sub_xx (0x230)' },
+        { prefix: 'GTA5_b3095.ext!sub_xx', suffix: ' (0x666)' },
+        { prefix: 'GTA5_b3095.ext', suffix: '+sub_xx (0x999)' }
+    ]);
+});

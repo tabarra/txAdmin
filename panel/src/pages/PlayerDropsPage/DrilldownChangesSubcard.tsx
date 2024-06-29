@@ -105,16 +105,20 @@ export default function DrilldownChangesSubcard({ changes }: DrilldownChangesSub
         resourcesChanged: 'Changed boot resources',
     };
 
+    const sortedChanges = useMemo(() => {
+        return changes.sort((a, b) => a.ts - b.ts);
+    }, [changes]);
+
     if (!changes.length) {
         return <PlayerDropsMessage message="No environmental changes within this time window." />;
     }
 
     return (
         <div className="md:grid md:grid-cols-[auto_minmax(0,1fr)] gap-4 md:px-4 pt-2 ">
-            {changes.map((change, index) => (
+            {sortedChanges.map((change, index) => (
                 <Fragment key={index}>
                     <div className="hidden mx-auto md:flex items-center gap-4 divide-y">
-                        <div className="flex flex-col items-center justify-center px-2 py-1 rounded-lg text-sm font-medium bg-muted">
+                        <div className="flex flex-col items-center justify-center px-2 py-1 rounded-lg text-xs font-medium bg-muted">
                             <span>{tsToLocaleDateString(change.ts, 'medium')}</span>
                             <span>{tsToLocaleTimeString(change.ts)}</span>
                         </div>
@@ -135,11 +139,11 @@ export default function DrilldownChangesSubcard({ changes }: DrilldownChangesSub
                                 </span>
                             </div>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400">
+                        <div className="text-gray-500 dark:text-gray-400">
                             {change.type === 'fxsChanged' && <ChangedFxsEvent change={change} />}
                             {change.type === 'gameChanged' && <ChangedGameEvent change={change} />}
                             {change.type === 'resourcesChanged' && <ChangedResourcesEvent change={change} />}
-                        </p>
+                        </div>
                     </div>
                 </Fragment>
             ))}

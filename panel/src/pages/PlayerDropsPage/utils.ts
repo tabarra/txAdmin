@@ -52,4 +52,100 @@ export const processResourceChanges = (
     };
 };
 
-type PackageChange = { resName: string, oldVer: string, newVer: string };
+type PackageChange = {
+    resName: string;
+    oldVer: string;
+    newVer: string;
+};
+
+
+/**
+ *  Check if a character is alphanumeric
+ */
+const isCharAlphaNum = (ch: number) => (
+    (ch >= 0x30 && ch <= 0x39) // 0-9
+    || (ch >= 0x41 && ch <= 0x5A) // A-Z
+    || (ch >= 0x61 && ch <= 0x7A) // a-z
+);
+
+
+/**
+ * Get the common prefix of two strings
+ */
+const getCommonPrefix = (input1: string, input2: string) => {
+    let length = 0;
+    //find the length of the common prefix
+    while (length < input1.length && length < input2.length && input1[length] === input2[length]) {
+        length++;
+    }
+
+    //backtrack until it finds the last separator character
+    while (length > 0 &&
+        (
+            isCharAlphaNum(input2.charCodeAt(length))
+            || !isCharAlphaNum(input2.charCodeAt(length - 1))
+        )
+    ) {
+        length--;
+    }
+
+    if (length <= 1) {
+        return false;
+    } else {
+        return input2.slice(0, length);
+    }
+}
+
+
+/**
+ * Split an array of strings into prefixed strings
+ */
+export const splitPrefixedStrings = (strings: string[]): PrefixedString[] => {
+    return strings.map((str, i) => {
+        const prefix = (i === 0) ? false : getCommonPrefix(strings[i - 1], str);
+        return {
+            prefix,
+            suffix: prefix ? str.slice(prefix.length) : str
+        };
+    });
+}
+
+export type PrefixedString = {
+    prefix: string | false;
+    suffix: string;
+};
+
+
+/**
+ * Compress MultipleCounter array up to a desired length by dropping the elements with fewer counts
+ */
+export const compressMultipleCounter = (data: [string, number][], targetLength: number) => {
+    if (data.length <= targetLength) {
+        return {
+            filteredIn: data,
+            filteredOut: false as const,
+        };
+    }
+    const cutoff = data.map(([_, count]) => count)
+        .sort((a, b) => b - a)[targetLength - 1];
+
+    let filteredOutTypes = 0;
+    let filteredOutCounts = 0;
+    const filteredIn: [string, number][] = [];
+    for (const [key, count] of data) {
+        if (count >= cutoff) {
+            filteredIn.push([key, count]);
+        } else {
+            filteredOutTypes++;
+            filteredOutCounts += count;
+        }
+    }
+    filteredIn.sort((a, b) => a[0].localeCompare(b[0]));
+    return {
+        filteredIn,
+        filteredOut: !!filteredOutTypes && {
+            count: filteredOutCounts,
+            types: filteredOutTypes,
+        }
+    };
+}

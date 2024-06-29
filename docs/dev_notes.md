@@ -21,8 +21,8 @@
     - [x] drilldown cards layout
     - [x] migrate stats file to include oldVersion in changes and remove the game crashed prefix 
     - [x] change `Unhandled exception:` to be subpart of "Game Crashed"
-    - [ ] apply new prefix algo to the crash reasons
-    - [ ] env changes subcard
+    - [x] apply new prefix algo to the crash reasons
+    - [x] env changes subcard
     - [ ] display charts
     - [ ] clickable charts to change range of drilldown card
 - Dashboard stuff:

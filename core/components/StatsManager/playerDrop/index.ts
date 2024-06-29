@@ -96,8 +96,8 @@ export default class PlayerDropStatsManager {
         }
         return {
             changes: allChanges,
-            crashTypes: crashTypes.toSortedValuesArray(),
-            dropTypes: dropTypes.toSortedValuesArray(),
+            crashTypes: crashTypes.toSortedKeysArray(true),
+            dropTypes: dropTypes.toSortedValuesArray(true),
         };
     }
 
