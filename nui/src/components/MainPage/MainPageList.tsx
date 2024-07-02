@@ -46,6 +46,9 @@ const BoxFadeTop = styled(Box)(({ theme }) => ({
   position: "relative",
   bottom: listHeight + fadeHeight - 4,
   height: fadeHeight,
+  '@media (min-height: 2160px)': {
+    bottom: 600 + fadeHeight - 4,
+  }
 }));
 
 const BoxFadeBottom = styled(Box)(({ theme }) => ({
@@ -68,6 +71,9 @@ const StyledList = styled(List)({
   "&::-webkit-scrollbar": {
     display: "none",
   },
+  '@media (min-height: 2160px)': {
+    maxHeight: 800,
+  }
 });
 
 // TODO: This component is kinda getting out of hand, might want to split it somehow
@@ -563,6 +569,12 @@ export const MainPageList: React.FC = () => {
     [playerMode, teleportMode, vehicleMode, healMode, serverCtx, isRedm]
   );
 
+  const StyledExpandMore = styled(ExpandMore)({
+    fontSize: '1rem',
+    '@media (min-height: 2160px)': {
+      fontSize: '2.8rem',
+    },
+  });
   return (
     // add pb={2} if we don't have that arrow at the bottom
     <Box>
@@ -588,7 +600,7 @@ export const MainPageList: React.FC = () => {
       <BoxFadeTop style={{ opacity: curSelected <= 1 ? 0 : 1 }} />
       <BoxFadeBottom style={{ opacity: curSelected >= 6 ? 0 : 1 }} />
       <BoxIcon display="flex" justifyContent="center">
-        <ExpandMore />
+        <StyledExpandMore />
       </BoxIcon>
       {/* <Typography
         color="textSecondary"

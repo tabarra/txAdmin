@@ -6,9 +6,15 @@ import { useTabDisabledValue } from "../../state/keys.state";
 import { useIsMenuVisibleValue } from "../../state/visibility.state";
 import { useServerCtxValue } from "../../state/server.state";
 
-const StyledTab = styled(Tab)({
+const StyledTab = styled(Tab)(({ theme }) => ({
   minWidth: 100,
-});
+  '@media (min-height: 2160px)': {
+    '&.MuiTab-root': {
+      fontSize: '2.2rem',
+      marginTop: 20,
+    },
+  },
+}));
 
 export const PageTabs: React.FC = () => {
   const [page, setPage] = usePage();
