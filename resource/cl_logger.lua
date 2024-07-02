@@ -339,19 +339,13 @@ AddEventHandler('txAdmin:beta:deathLog', function(ped)
 	processDeath(ped) -- Remember to add a wait function before reviving into an animation.
 end)
 
---[[ Thread ]]--
-local deathFlag = false
-local IsEntityDead = IsEntityDead
-CreateThread(function()
-    while true do
-        Wait(500)
-        local ped = PlayerPedId()
-        local isDead = IsEntityDead(ped)
-        if isDead and not deathFlag then
-            deathFlag = true
-            processDeath(ped)
-        elseif not isDead then
-            deathFlag = false
-        end
-    end
+--[[ Handle death ]]--
+
+AddEventHandler('gameEventTriggered', function(event, data)
+	if event ~= 'CEventNetworkEntityDamage' then return end
+	local ped = PlayerPedId()
+	local victimPed, died = data[1], data[4]
+    	if died and victimPed == ped then
+        	processDeath(ped)
+    	end
 end)
