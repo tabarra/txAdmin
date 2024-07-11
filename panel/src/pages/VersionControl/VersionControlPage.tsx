@@ -1,6 +1,8 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import VersionControlHeader from "./VersionControlHeader";
 import { Button } from "@/components/ui/button";
+import { useAuthedFetcher, useBackendApi } from "@/hooks/fetch";
+import { useQuery } from "@tanstack/react-query";
 
 interface Resource {
   submoduleName: string;
@@ -16,56 +18,34 @@ interface Resource {
 }
 
 export default function VersionControlPage() {
+  const authedFetcher = useAuthedFetcher();
   const [repository, setRepository] = useState<string>(
     "westroleplay/local-dev-env"
   );
   const [childAmount, setChildAmount] = useState<number>(0);
   const [updateAvailableAmount, setUpdateAvailableAmount] = useState<number>(0);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [resources, setResources] = useState<Resource[]>([
-    {
-      submoduleName: "core",
-      path: "fx-data/resources/[wsrp]/core",
-      repository: "westroleplay/core",
-      commit: "5440e03",
-      isUpToDate: true
-    },
-    {
-      submoduleName: "default",
-      path: "fx-data/resources/[wsrp]/default",
-      repository: "westroleplay/default",
-      commit: "a320e03",
-      isUpToDate: true
-    },
-    {
-      submoduleName: "chat",
-      path: "fx-data/resources/[wsrp]/chat",
-      repository: "westroleplay/chat",
-      commit: "3025dba",
-      isUpToDate: {
-        prId: 7,
-        latestCommit: "d36428f"
-      }
-    },
-    {
-      submoduleName: "oxmysql",
-      path: "fx-data/resources/[standalone]/oxmysql",
-      repository: "overextended/oxmysql",
-      commit: "5440e03",
-      isUpToDate: {
-        prId: 8,
-        latestCommit: "19d55a2"
-      }
-    }
-  ]);
+  const {
+    isPending: queryIsPending,
+    error: queryError,
+    data: queryData
+  } = useQuery<{
+    resources: Resource[];
+  }>({
+    queryKey: ["getResources"],
+    gcTime: 30_000,
+    queryFn: () => authedFetcher("/versionControl/resources")
+  });
   const [formattedResources, setFormattedResources] = useState<Resource[]>([]);
 
   useEffect(() => {
-    setChildAmount(resources.length);
-    setUpdateAvailableAmount(
-      resources.filter((r) => r.isUpToDate !== true).length
-    );
-  }, [resources]);
+    if (queryData !== undefined) {
+      setChildAmount(queryData.resources.length);
+      setUpdateAvailableAmount(
+        queryData.resources.filter((r) => r.isUpToDate !== true).length
+      );
+    }
+  }, [queryData]);
 
   const updateSearchValue = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
@@ -82,31 +62,33 @@ export default function VersionControlPage() {
   };
 
   useEffect(() => {
-    let newFilteredResources = resources;
+    if (queryData !== undefined) {
+      let newFilteredResources = queryData.resources;
 
-    if (searchValue.trim().length !== 0) {
-      newFilteredResources = newFilteredResources.filter((r) => {
-        return (
-          r.repository.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1 ||
-          r.path.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
-          r.submoduleName.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1
-        );
-      });
+      if (searchValue.trim().length !== 0) {
+        newFilteredResources = newFilteredResources.filter((r) => {
+          return (
+            r.repository.toLowerCase().indexOf(searchValue.toLowerCase()) !==
+              -1 ||
+            r.path.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+            r.submoduleName.toLowerCase().indexOf(searchValue.toLowerCase()) !==
+              -1
+          );
+        });
+      }
+
+      setFormattedResources([
+        // We want the outdated resources to be first
+        // But we also wish for each list (outdated & up-to-date) to be alphabetically sorted
+        ...newFilteredResources
+          .filter((r) => r.isUpToDate !== true)
+          .sort(alphabeticalSort),
+        ...newFilteredResources
+          .filter((r) => r.isUpToDate === true)
+          .sort(alphabeticalSort)
+      ]);
     }
-
-    setFormattedResources([
-      // We want the outdated resources to be first
-      // But we also wish for each list (outdated & up-to-date) to be alphabetically sorted
-      ...newFilteredResources
-        .filter((r) => r.isUpToDate !== true)
-        .sort(alphabeticalSort),
-      ...newFilteredResources
-        .filter((r) => r.isUpToDate === true)
-        .sort(alphabeticalSort)
-    ]);
-  }, [searchValue, resources]);
+  }, [searchValue, queryData]);
 
   return (
     <div className="flex flex-col w-full h-full gap-4">
