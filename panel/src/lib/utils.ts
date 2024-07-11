@@ -66,6 +66,14 @@ export const msToShortDuration = humanizeDuration.humanizer({
 
 
 /**
+ * Converts a timestamp to Date, detecting if ts is seconds or milliseconds
+ */
+export const tsToDate = (ts: number) => {
+    return new Date(ts < 10000000000 ? ts * 1000 : ts);
+}
+
+
+/**
  * Converts a timestamp to a locale time string
  */
 export const dateToLocaleTimeString = (
@@ -90,7 +98,7 @@ export const tsToLocaleTimeString = (
     minute: 'numeric' | '2-digit' = '2-digit',
     second?: 'numeric' | '2-digit',
 ) => {
-    return dateToLocaleTimeString(new Date(ts * 1000), hour, minute, second);
+    return dateToLocaleTimeString(tsToDate(ts), hour, minute, second);
 }
 
 
@@ -115,7 +123,7 @@ export const tsToLocaleDateString = (
     ts: number,
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
 ) => {
-    return dateToLocaleDateString(new Date(ts * 1000), dateStyle);
+    return dateToLocaleDateString(tsToDate(ts), dateStyle);
 }
 
 
@@ -142,7 +150,7 @@ export const tsToLocaleDateTimeString = (
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
     timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
 ) => {
-    return dateToLocaleDateTimeString(new Date(ts * 1000), dateStyle, timeStyle);
+    return dateToLocaleDateTimeString(tsToDate(ts), dateStyle, timeStyle);
 }
 
 
@@ -174,7 +182,7 @@ export const numberToLocaleString = (num: number, decimals = 0) => {
  * Converts a timestamp to a locale time string, considering the current year, shortest unambiguous as possible
  */
 export const convertRowDateTime = (ts: number) => {
-    const date = new Date(ts * 1000);
+    const date = tsToDate(ts);
     const isAnotheryear = date.getFullYear() !== currentYear;
     return date.toLocaleString(
         window?.nuiSystemLanguages ?? navigator.language,

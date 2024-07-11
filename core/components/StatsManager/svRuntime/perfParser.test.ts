@@ -80,6 +80,16 @@ suite('parseRawPerf', () => {
         expect(result.perfMetrics.svMain.buckets).toEqual([299261, 28558, 24233, 2308, 448, 454, 315, 14, 0, 1, 1, 0, 0, 0, 1]);
     });
 
+    it('should detect bad perf output', () => {
+        expect(() => parseRawPerf(null as any)).toThrow('string expected');
+        expect(() => parseRawPerf('bad data')).toThrow('missing tickTime_');
+    });
+
+    it('should detect server still booting', () => {
+        const perfNoMain = perfValidExample.replaceAll('svMain', 'idk');
+        expect(() => parseRawPerf(perfNoMain)).toThrow('missing threads');
+    });
+
     it('should handle bad data', () => {
         expect(() => parseRawPerf(123 as any)).toThrow('string expected');
 

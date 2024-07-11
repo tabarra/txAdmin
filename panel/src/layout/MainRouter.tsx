@@ -16,7 +16,6 @@ import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
 import SystemLogPage from "@/pages/SystemLogPage";
 import AddLegacyBanPage from "@/pages/AddLegacyBanPage";
 import DashboardPage from "@/pages/Dashboard/DashboardPage";
-import PlayerCrashesPage from "@/pages/PlayerCrashesPage";
 
 
 type RouteType = {
@@ -131,11 +130,13 @@ const allRoutes: RouteType[] = [
         title: 'Ban Identifiers',
         children: <AddLegacyBanPage />
     },
-    {
-        path: '/player-crashes',
-        title: 'Player Crashes',
-        children: <PlayerCrashesPage />
-    },
+    //FIXME: decide on how to organize the url for the player drops page - /server/ prefix?
+    //       This will likely be a part of the insights page, eventually
+    // {
+    //     path: '/player-crashes',
+    //     title: 'Player Crashes',
+    //     children: <PlayerCrashesPage />
+    // },
 ];
 
 

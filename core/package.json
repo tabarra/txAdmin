@@ -76,6 +76,7 @@
     "@types/koa-bodyparser": "^4.3.12",
     "@types/koa-ratelimit": "^5.0.5",
     "@types/nanoid-dictionary": "^4.2.3",
+    "@types/pidusage": "^2.0.5",
     "@types/semver": "^7.5.8",
     "@types/slug": "^5.0.8",
     "@types/source-map-support": "^0.5.10",

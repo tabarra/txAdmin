@@ -32,8 +32,9 @@ export default class SvRuntimeStatsManager {
     private lastFxsMemory: number | undefined;
     private lastNodeMemory: SvRtNodeMemoryType | undefined;
     private lastPerfBoundaries: SvRtPerfBoundariesType | undefined;
-    private lastPerfData: SvRtPerfCountsType | undefined;
-    private lastPerfSaved: {
+    private lastRawPerfData: SvRtPerfCountsType | undefined;
+    private lastDiffPerfData: SvRtPerfCountsType | undefined;
+    private lastRawPerfSaved: {
         ts: number,
         data: SvRtPerfCountsType,
     } | undefined;
@@ -62,8 +63,9 @@ export default class SvRuntimeStatsManager {
      * Reset the last perf data except boundaries
      */
     private resetPerfState() {
-        this.lastPerfData = undefined;
-        this.lastPerfSaved = undefined;
+        this.lastRawPerfData = undefined;
+        this.lastDiffPerfData = undefined;
+        this.lastRawPerfSaved = undefined;
     }
 
 
@@ -151,10 +153,10 @@ export default class SvRuntimeStatsManager {
             fxsMemory: this.lastFxsMemory,
             nodeMemory: this.lastNodeMemory,
             perfBoundaries: this.lastPerfBoundaries,
-            perfBucketCounts: this.lastPerfData ? {
-                svMain: this.lastPerfData.svMain.buckets,
-                svNetwork: this.lastPerfData.svNetwork.buckets,
-                svSync: this.lastPerfData.svSync.buckets,
+            perfBucketCounts: this.lastDiffPerfData ? {
+                svMain: this.lastDiffPerfData.svMain.buckets,
+                svNetwork: this.lastDiffPerfData.svNetwork.buckets,
+                svSync: this.lastDiffPerfData.svSync.buckets,
             } : undefined,
         }
     }
@@ -179,7 +181,7 @@ export default class SvRuntimeStatsManager {
         }
         const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
             fetchRawPerfData(fxServerHost),
-            fetchFxsMemory(),
+            fetchFxsMemory(this.#txAdmin.fxRunner.fxChild.pid),
         ]);
         if (fetchFxsMemoryRes.status === 'fulfilled') {
             this.lastFxsMemory = fetchFxsMemoryRes.value;
@@ -212,17 +214,17 @@ export default class SvRuntimeStatsManager {
         }
 
         //Checking if the counter (somehow) reset
-        if (this.lastPerfData && didPerfReset(perfMetrics, this.lastPerfData)) {
+        if (this.lastRawPerfData && didPerfReset(perfMetrics, this.lastRawPerfData)) {
             console.warn('Performance counter reset. Resetting lastPerfCounts/lastPerfSaved.');
             this.resetPerfState();
-        } else if (this.lastPerfSaved && didPerfReset(perfMetrics, this.lastPerfSaved.data)) {
+        } else if (this.lastRawPerfSaved && didPerfReset(perfMetrics, this.lastRawPerfSaved.data)) {
             console.warn('Performance counter reset. Resetting lastPerfSaved.');
-            this.lastPerfSaved = undefined;
+            this.lastRawPerfSaved = undefined;
         }
 
         //Calculate the tick/time counts since last collection (1m ago)
-        const latestPerf = diffPerfs(perfMetrics, this.lastPerfData);
-        this.lastPerfData = perfMetrics;
+        this.lastDiffPerfData = diffPerfs(perfMetrics, this.lastRawPerfData);
+        this.lastRawPerfData = perfMetrics;
 
         //Push the updated data to the dashboard ws room
         this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
@@ -230,10 +232,10 @@ export default class SvRuntimeStatsManager {
         //Check if enough time passed since last collection
         const now = Date.now();
         let perfToSave;
-        if (!this.lastPerfSaved) {
-            perfToSave = latestPerf;
-        } else if (now - this.lastPerfSaved.ts >= PERF_DATA_INITIAL_RESOLUTION) {
-            perfToSave = diffPerfs(perfMetrics, this.lastPerfSaved.data);
+        if (!this.lastRawPerfSaved) {
+            perfToSave = this.lastDiffPerfData;
+        } else if (now - this.lastRawPerfSaved.ts >= PERF_DATA_INITIAL_RESOLUTION) {
+            perfToSave = diffPerfs(perfMetrics, this.lastRawPerfSaved.data);
         }
         if (!perfToSave) return;
 
@@ -247,7 +249,7 @@ export default class SvRuntimeStatsManager {
         }
 
         //Update cache
-        this.lastPerfSaved = {
+        this.lastRawPerfSaved = {
             ts: now,
             data: perfMetrics,
         };
