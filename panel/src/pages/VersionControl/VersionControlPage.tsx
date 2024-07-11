@@ -1,8 +1,9 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import VersionControlHeader from "./VersionControlHeader";
 import { Button } from "@/components/ui/button";
-import { useAuthedFetcher, useBackendApi } from "@/hooks/fetch";
+import { useAuthedFetcher } from "@/hooks/fetch";
 import { useQuery } from "@tanstack/react-query";
+import { LoaderCircle } from "lucide-react";
 
 interface Resource {
   submoduleName: string;
@@ -109,73 +110,77 @@ export default function VersionControlPage() {
           placeholder="Filter child repositories by name..."
         />
 
-        <div className="flex flex-col">
-          {formattedResources.map((r) => {
-            return (
-              <div
-                key={r.submoduleName}
-                className="flex flex-row justify-between py-2 odd:bg-slate-100/5 px-4"
-              >
-                <div className="flex flex-col">
-                  <h1>
-                    <a
-                      href={`https://github.com/${r.repository}`}
-                      target="_blank"
-                    >
-                      <span
-                        className={
-                          r.isUpToDate === true
-                            ? "hover:[text-shadow:_0px_0px_3px_#00bf8f] text-[#00bf8f]"
-                            : "hover:[text-shadow:_0px_0px_3px_#fd4a4a] text-[#fd4a4a]"
-                        }
+        <div className="flex flex-col relative h-full">
+          {queryIsPending === true ? (
+            <LoaderCircle className="my-auto mx-auto w-24 h-24 animate-spin" />
+          ) : (
+            formattedResources.map((r) => {
+              return (
+                <div
+                  key={r.submoduleName}
+                  className="flex flex-row justify-between py-2 odd:bg-slate-100/5 px-4"
+                >
+                  <div className="flex flex-col">
+                    <h1>
+                      <a
+                        href={`https://github.com/${r.repository}`}
+                        target="_blank"
                       >
-                        {r.repository}
-                      </span>
-                    </a>{" "}
-                    (
-                    <a
-                      target="_blank"
-                      href={`https://github.com/${r.repository}/commit/${r.commit}`}
-                    >
-                      <span className="hover:[text-shadow:_0px_0px_3px_#fff]">
-                        {r.commit}
-                      </span>
-                    </a>
-                    {r.isUpToDate !== true ? (
+                        <span
+                          className={
+                            r.isUpToDate === true
+                              ? "hover:[text-shadow:_0px_0px_3px_#00bf8f] text-[#00bf8f]"
+                              : "hover:[text-shadow:_0px_0px_3px_#fd4a4a] text-[#fd4a4a]"
+                          }
+                        >
+                          {r.repository}
+                        </span>
+                      </a>{" "}
+                      (
                       <a
                         target="_blank"
-                        href={`https://github.com/${r.repository}/commit/${r.isUpToDate.latestCommit}`}
+                        href={`https://github.com/${r.repository}/commit/${r.commit}`}
                       >
-                        <span className="hover:[text-shadow:_0px_0px_3px_#fff] font-bold">
-                          {`, newest: ${r.isUpToDate.latestCommit}`}
+                        <span className="hover:[text-shadow:_0px_0px_3px_#fff]">
+                          {r.commit}
                         </span>
                       </a>
-                    ) : null}
-                    )
-                  </h1>
-                  <h2 className="text-muted-foreground">{r.path}</h2>
-                </div>
+                      {r.isUpToDate !== true ? (
+                        <a
+                          target="_blank"
+                          href={`https://github.com/${r.repository}/commit/${r.isUpToDate.latestCommit}`}
+                        >
+                          <span className="hover:[text-shadow:_0px_0px_3px_#fff] font-bold">
+                            {`, newest: ${r.isUpToDate.latestCommit}`}
+                          </span>
+                        </a>
+                      ) : null}
+                      )
+                    </h1>
+                    <h2 className="text-muted-foreground">{r.path}</h2>
+                  </div>
 
-                <div className="flex flex-col justify-center">
-                  {r.isUpToDate !== true ? (
-                    <a
-                      href={`https://github.com/${repository}/pull/${r.isUpToDate.prId.toString()}`}
-                      target="_blank"
-                    >
-                      <Button
-                        variant="outline"
-                        color="primary"
-                        size="sm"
-                        className="border-warning text-warning hover:bg-warning hover:text-white"
+                  <div className="flex flex-col justify-center">
+                    {r.isUpToDate !== true ? (
+                      <a
+                        href={`https://github.com/${repository}/pull/${r.isUpToDate.prId.toString()}`}
+                        target="_blank"
                       >
-                        View Update PR
-                      </Button>
-                    </a>
-                  ) : null}
+                        <Button
+                          variant="outline"
+                          color="primary"
+                          size="sm"
+                          className="border-warning text-warning hover:bg-warning hover:text-white"
+                        >
+                          View Update PR
+                        </Button>
+                      </a>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
     </div>
