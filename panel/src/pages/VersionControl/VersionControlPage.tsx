@@ -23,9 +23,12 @@ export default function VersionControlPage() {
   const [repository, setRepository] = useState<string>(
     "westroleplay/local-dev-env"
   );
-  const [childAmount, setChildAmount] = useState<number>(0);
-  const [updateAvailableAmount, setUpdateAvailableAmount] = useState<number>(0);
+  const [childAmount, setChildAmount] = useState<number | string>("...");
+  const [updateAvailableAmount, setUpdateAvailableAmount] = useState<
+    number | string
+  >("...");
   const [searchValue, setSearchValue] = useState<string>("");
+  const [error, setError] = useState("");
   const {
     isPending: queryIsPending,
     error: queryError,
@@ -47,6 +50,10 @@ export default function VersionControlPage() {
       );
     }
   }, [queryData]);
+
+  useEffect(() => {
+    setError(queryError ? queryError.message : "");
+  }, [queryError]);
 
   const updateSearchValue = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
@@ -111,7 +118,16 @@ export default function VersionControlPage() {
         />
 
         <div className="flex flex-col relative h-full">
-          {queryIsPending === true ? (
+          {error ? (
+            <div className="my-auto mx-auto w-fit h-fit">
+              <h1 className="text-destructive font-bold text-[1.4rem]">
+                Couldnt fetch resources...
+              </h1>
+              <p className="text-destructive text-center text-[1.1rem]">
+                {error}
+              </p>
+            </div>
+          ) : queryIsPending === true ? (
             <LoaderCircle className="my-auto mx-auto w-24 h-24 animate-spin" />
           ) : (
             formattedResources.map((r) => {

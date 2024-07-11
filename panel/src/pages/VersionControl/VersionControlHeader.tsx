@@ -1,16 +1,9 @@
-import {
-  BookIcon,
-  FolderGit2,
-  FolderPenIcon,
-  HistoryIcon,
-  RefreshCcw
-} from "lucide-react";
-import { Link } from "wouter";
+import { BookIcon, FolderGit2, FolderPenIcon, RefreshCcw } from "lucide-react";
 
 interface Props {
   repository: string;
-  childAmount: number;
-  updateAvailableAmount: number;
+  childAmount: number | string;
+  updateAvailableAmount: number | string;
 }
 
 export default function VersionControlHeader({
