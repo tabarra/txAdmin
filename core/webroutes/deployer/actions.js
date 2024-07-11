@@ -35,6 +35,7 @@ export default async function DeployerActions(ctx) {
     }
 
     //Delegate to the specific action functions
+    console.log('action', action);
     if (action == 'confirmRecipe') {
         return await handleConfirmRecipe(ctx);
     } else if (action == 'setVariables') {
@@ -167,13 +168,16 @@ async function handleSetVariables(ctx) {
         ? addPrincipalLines.join('\n')
         : '# Deployer Note: this admin master has no identifiers to be automatically added.\n# add_principal identifier.discord:111111111111111111 group.admin #example';
 
-    //Start deployer
-    try {
-        ctx.admin.logAction('Running recipe.');
-        globals.deployer.start(userVars);
-    } catch (error) {
-        return ctx.send({ type: 'danger', message: error.message });
-    }
+    console.log('globals.deployer.step', globals.deployer.step);
+    globals.deployer.step = 'versionControl';
+
+    // //Start deployer
+    // try {
+    //     ctx.admin.logAction('Running recipe.');
+    //     globals.deployer.start(userVars);
+    // } catch (error) {
+    //     return ctx.send({ type: 'danger', message: error.message });
+    // }
 
     return ctx.send({ success: true });
 }
