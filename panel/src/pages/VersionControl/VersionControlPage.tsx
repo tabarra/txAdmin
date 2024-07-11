@@ -71,6 +71,16 @@ export default function VersionControlPage() {
     setSearchValue(e.target.value);
   }, []);
 
+  const alphabeticalSort = (a: Resource, b: Resource) => {
+    if (a.repository < b.repository) {
+      return -1;
+    }
+    if (a.repository > b.repository) {
+      return 1;
+    }
+    return 0;
+  };
+
   useEffect(() => {
     let newFilteredResources = resources;
 
@@ -86,7 +96,16 @@ export default function VersionControlPage() {
       });
     }
 
-    setFormattedResources(newFilteredResources);
+    setFormattedResources([
+      // We want the outdated resources to be first
+      // But we also wish for each list (outdated & up-to-date) to be alphabetically sorted
+      ...newFilteredResources
+        .filter((r) => r.isUpToDate !== true)
+        .sort(alphabeticalSort),
+      ...newFilteredResources
+        .filter((r) => r.isUpToDate === true)
+        .sort(alphabeticalSort)
+    ]);
   }, [searchValue, resources]);
 
   return (
