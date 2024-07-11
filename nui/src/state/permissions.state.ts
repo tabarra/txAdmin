@@ -15,6 +15,7 @@ export type ResolvablePermission =
   | "players.warn"
   | "players.whitelist"
   | "console.view"
+  | "version_control"
   | "console.write"
   | "control.server"
   | "server.cfg.editor"

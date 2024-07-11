@@ -94,7 +94,7 @@ export default function ServerMenu() {
                 <MenuNavLink href="/server/cfg-editor" disabled={!hasPerm('server.cfg.editor')}>
                     <FileEditIcon className="mr-2 h-4 w-4" />CFG Editor
                 </MenuNavLink>
-                <MenuNavLink href="/server/version-control" disabled={!hasPerm('server.cfg.versionControl')}>
+                <MenuNavLink href="/server/version-control" disabled={!hasPerm('version_control')}>
                     <HistoryIcon className="mr-2 h-4 w-4" />Version Control
                 </MenuNavLink>
                 {window.txConsts.showAdvanced && (

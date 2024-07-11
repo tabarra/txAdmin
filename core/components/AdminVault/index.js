@@ -46,6 +46,7 @@ export default class AdminVault {
             'control.server': 'Start/Stop Server + Scheduler',
             'commands.resources': 'Start/Stop Resources',
             'server.cfg.editor': 'Read/Write server.cfg',
+            'version_control': 'Version Control: Manage',
             'txadmin.log.view': 'View System Logs', //FIXME: rename to system.log.view
 
             'menu.vehicle': 'Spawn / Fix Vehicles',
