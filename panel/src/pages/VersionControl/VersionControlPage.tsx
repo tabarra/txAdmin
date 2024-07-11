@@ -1,11 +1,18 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import VersionControlHeader from "./VersionControlHeader";
+import { Button } from "@/components/ui/button";
 
 interface Resource {
   submoduleName: string;
   repository: string;
   path: string;
-  isUpToDate: boolean;
+  commit: string;
+  isUpToDate:
+    | true
+    | {
+        prId: number;
+        latestCommit: string;
+      };
 }
 
 export default function VersionControlPage() {
@@ -19,39 +26,68 @@ export default function VersionControlPage() {
     {
       submoduleName: "core",
       path: "fx-data/resources/[wsrp]/core",
-      repository: "https://github.com/westroleplay/core",
+      repository: "westroleplay/core",
+      commit: "5440e03",
       isUpToDate: true
     },
     {
       submoduleName: "default",
       path: "fx-data/resources/[wsrp]/default",
-      repository: "https://github.com/westroleplay/default",
+      repository: "westroleplay/default",
+      commit: "a320e03",
       isUpToDate: true
     },
     {
       submoduleName: "chat",
       path: "fx-data/resources/[wsrp]/chat",
-      repository: "https://github.com/westroleplay/chat",
-      isUpToDate: false
+      repository: "westroleplay/chat",
+      commit: "3025dba",
+      isUpToDate: {
+        prId: 7,
+        latestCommit: "d36428f"
+      }
     },
     {
       submoduleName: "oxmysql",
       path: "fx-data/resources/[standalone]/oxmysql",
-      repository: "https://github.com/overextended/core",
-      isUpToDate: false
+      repository: "overextended/oxmysql",
+      commit: "5440e03",
+      isUpToDate: {
+        prId: 8,
+        latestCommit: "19d55a2"
+      }
     }
   ]);
+  const [formattedResources, setFormattedResources] = useState<Resource[]>([]);
 
   useEffect(() => {
     setChildAmount(resources.length);
     setUpdateAvailableAmount(
-      resources.filter((r) => r.isUpToDate === false).length
+      resources.filter((r) => r.isUpToDate !== true).length
     );
   }, [resources]);
 
   const updateSearchValue = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   }, []);
+
+  useEffect(() => {
+    let newFilteredResources = resources;
+
+    if (searchValue.trim().length !== 0) {
+      newFilteredResources = newFilteredResources.filter((r) => {
+        return (
+          r.repository.toLowerCase().indexOf(searchValue.toLowerCase()) !==
+            -1 ||
+          r.path.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+          r.submoduleName.toLowerCase().indexOf(searchValue.toLowerCase()) !==
+            -1
+        );
+      });
+    }
+
+    setFormattedResources(newFilteredResources);
+  }, [searchValue, resources]);
 
   return (
     <div className="flex flex-col w-full h-full gap-4">
@@ -61,9 +97,9 @@ export default function VersionControlPage() {
         childAmount={childAmount}
       />
 
-      <div className="dark text-primary flex flex-col h-full w-full bg-card border md:rounded-xl overflow-clip p-4">
+      <div className="dark text-primary flex flex-col h-full w-full bg-card border md:rounded-xl overflow-clip py-4 gap-4">
         <input
-          className="p-2 rounded bg-primary-foreground border"
+          className="p-2 rounded bg-primary-foreground border mx-4"
           type="text"
           name="resource"
           id="resourceInput"
@@ -71,6 +107,75 @@ export default function VersionControlPage() {
           onChange={updateSearchValue}
           placeholder="Filter child repositories by name..."
         />
+
+        <div className="flex flex-col">
+          {formattedResources.map((r) => {
+            return (
+              <div
+                key={r.submoduleName}
+                className="flex flex-row justify-between py-2 odd:bg-slate-100/5 px-4"
+              >
+                <div className="flex flex-col">
+                  <h1>
+                    <a
+                      href={`https://github.com/${r.repository}`}
+                      target="_blank"
+                    >
+                      <span
+                        className={
+                          r.isUpToDate === true
+                            ? "hover:[text-shadow:_0px_0px_3px_#00bf8f] text-[#00bf8f]"
+                            : "hover:[text-shadow:_0px_0px_3px_#fd4a4a] text-[#fd4a4a]"
+                        }
+                      >
+                        {r.repository}
+                      </span>
+                    </a>{" "}
+                    (
+                    <a
+                      target="_blank"
+                      href={`https://github.com/${r.repository}/commit/${r.commit}`}
+                    >
+                      <span className="hover:[text-shadow:_0px_0px_3px_#fff]">
+                        {r.commit}
+                      </span>
+                    </a>
+                    {r.isUpToDate !== true ? (
+                      <a
+                        target="_blank"
+                        href={`https://github.com/${r.repository}/commit/${r.isUpToDate.latestCommit}`}
+                      >
+                        <span className="hover:[text-shadow:_0px_0px_3px_#fff] font-bold">
+                          {`, newest: ${r.isUpToDate.latestCommit}`}
+                        </span>
+                      </a>
+                    ) : null}
+                    )
+                  </h1>
+                  <h2 className="text-muted-foreground">{r.path}</h2>
+                </div>
+
+                <div className="flex flex-col justify-center">
+                  {r.isUpToDate !== true ? (
+                    <a
+                      href={`https://github.com/${repository}/pull/${r.isUpToDate.prId.toString()}`}
+                      target="_blank"
+                    >
+                      <Button
+                        variant="outline"
+                        color="primary"
+                        size="sm"
+                        className="border-warning text-warning hover:bg-warning hover:text-white"
+                      >
+                        View Update PR
+                      </Button>
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
