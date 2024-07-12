@@ -19,6 +19,9 @@ const defaultConfig = {
     monitor: {
         restarterSchedule: [],
     },
+    versionControl: {
+        githubAuthKey: null,
+    },
     webServer: {},
     discordBot: {
         enabled: false,
@@ -62,9 +65,9 @@ export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePat
     if (osType == 'windows') {
         try {
             const batLines = [
-                `@echo off`,
+                '@echo off',
                 `"${fxServerPath}/FXServer.exe" +set serverProfile "${serverProfile}"`,
-                `pause`
+                'pause',
             ];
             const batFolder = path.resolve(fxServerPath, '..');
             const batPath = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);

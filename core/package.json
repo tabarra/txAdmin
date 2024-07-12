@@ -48,6 +48,7 @@
     "nanoid-dictionary": "^4.3.0",
     "node-polyglot": "^2.5.0",
     "node-stream-zip": "^1.15.0",
+    "octokit": "^4.0.2",
     "open": "7.1.0",
     "openid-client": "^5.6.5",
     "pidtree": "^0.6.0",

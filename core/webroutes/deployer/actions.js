@@ -35,11 +35,12 @@ export default async function DeployerActions(ctx) {
     }
 
     //Delegate to the specific action functions
-    console.log('action', action);
     if (action == 'confirmRecipe') {
         return await handleConfirmRecipe(ctx);
     } else if (action == 'setVariables') {
         return await handleSetVariables(ctx);
+    } else if (action == 'setVersionControlVariables') {
+        return await handleSetVersionControlVariables(ctx);
     } else if (action == 'commit') {
         return await handleSaveConfig(ctx);
     } else if (action == 'cancel') {
@@ -75,6 +76,43 @@ async function handleConfirmRecipe(ctx) {
     return ctx.send({ success: true });
 }
 
+//================================================================
+/**
+ * Handle submition of the version control variables
+ * @param {object} ctx
+ */
+async function handleSetVersionControlVariables(ctx) {
+    if (typeof ctx.request.body.githubAuthKey !== 'string' && ctx.request.body.githubAuthKey !== null) {
+        return ctx.utils.error(400, 'Invalid Request - invalid parameters');
+    }
+
+    const newGlobalConfig = globals.configVault.getScopedStructure('versionControl');
+    newGlobalConfig.githubAuthKey = ctx.request.body.githubAuthKey;
+
+    try {
+        globals.configVault.saveProfile('versionControl', newGlobalConfig);
+    } catch (error) {
+        console.warn(`[${ctx.admin.name}] Error changing version control settings via deployer.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${error.message}`,
+        });
+    }
+    globals.txAdmin.refreshConfig();
+    ctx.admin.logAction('Changing version control settings via deployer.');
+
+    //Start deployer
+    try {
+        ctx.admin.logAction('Running recipe.');
+        globals.deployer.start();
+    } catch (error) {
+        return ctx.send({ type: 'danger', message: error.message });
+    }
+
+    return ctx.send({ success: true });
+}
 
 //================================================================
 /**
@@ -124,7 +162,7 @@ async function handleSetVariables(ctx) {
                 }
                 outMessage = `${error?.message}<br>\n${specificError}`;
             } else if (error.message?.includes('auth_gssapi_client')) {
-                outMessage = `Your database does not accept the required authentication method. Please update your MySQL/MariaDB server and try again.`;
+                outMessage = 'Your database does not accept the required authentication method. Please update your MySQL/MariaDB server and try again.';
             }
 
             return ctx.send({ type: 'danger', message: `<b>Database connection failed:</b> ${outMessage}` });
@@ -168,16 +206,8 @@ async function handleSetVariables(ctx) {
         ? addPrincipalLines.join('\n')
         : '# Deployer Note: this admin master has no identifiers to be automatically added.\n# add_principal identifier.discord:111111111111111111 group.admin #example';
 
-    console.log('globals.deployer.step', globals.deployer.step);
+    Object.assign(globals.deployer.recipe.variables, userVars);
     globals.deployer.step = 'versionControl';
-
-    // //Start deployer
-    // try {
-    //     ctx.admin.logAction('Running recipe.');
-    //     globals.deployer.start(userVars);
-    // } catch (error) {
-    //     return ctx.send({ type: 'danger', message: error.message });
-    // }
 
     return ctx.send({ success: true });
 }
@@ -232,7 +262,7 @@ async function handleSaveConfig(ctx) {
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `**Error saving the configuration file:** ${error.message}`
+            message: `**Error saving the configuration file:** ${error.message}`,
         });
     }
 

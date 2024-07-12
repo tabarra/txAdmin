@@ -163,6 +163,7 @@ export class Deployer {
         this.progress = 0;
         this.serverName = customMetaData.serverName || globals.txAdmin.globalConfig.serverName || '';
         this.logLines = [];
+        this.userVars = null;
 
         //Load recipe
         const impRecipe = (originalRecipe !== false)
@@ -225,11 +226,10 @@ export class Deployer {
 
     /**
      * Starts the deployment process
-     * @param {string} userInputs
      */
-    start(userInputs) {
-        if (this.step !== 'input') throw new Error('expected input step');
-        Object.assign(this.recipe.variables, userInputs);
+    start() {
+        if (this.step !== 'versionControl') throw new Error('expected versionControl step');
+        console.log(this.recipe.variables);
         this.logLines = [];
         this.customLog(`Starting deployment of ${this.recipe.name}.`);
         this.deployFailed = false;
@@ -290,7 +290,7 @@ export class Deployer {
                         + JSON.stringify([
                             txEnv.txAdminVersion,
                             await getOsDistro(),
-                            contextVariables.$step
+                            contextVariables.$step,
                         ]);
                 }
                 this.customLogError(msg);

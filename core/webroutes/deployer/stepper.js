@@ -43,7 +43,7 @@ export default async function DeployerStepper(ctx) {
             raw: globals.deployer.recipe.raw,
         };
     } else if (globals.deployer.step === 'versionControl') {
-        console.log('hi');
+        // todo: perhaps add logic here;
     } else if (globals.deployer.step === 'input') {
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
