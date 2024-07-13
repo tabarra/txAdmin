@@ -25,7 +25,12 @@
     - [x] env changes subcard
     - [x] charts: draw bars
     - [ ] charts: display days mode
-    - [ ] charts: add cursor with legends
+    - [x] charts: add cursor with legends
+    - [ ] charts: get "ratio" to the legends?
+    - [ ] charts: get "changes" back to chart?
+    - [x] charts: cleanup of code, mayhaps add some testing
+    - [ ] charts: is the current memoization correct?
+    - [ ] charts: test with very few drops
     - [ ] add window selection buttons to drilldown card
     - [ ] review page layout: make it less card-y
     - [ ] add drilldown interval buttons
@@ -56,6 +61,9 @@
 
 ## Small feat
 - [x] make server v8 heap reports faster to large changes
+- [ ] add "HANGUL FILLER" characters to `cleanPlayerName`
+    - or check how vscode does to highlight invisible characters and use that approach instead
+    - `@vscode/src/vs/base/common/strings.ts:1277`
 - [ ] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds 

@@ -2,7 +2,6 @@ import { memo, useEffect, useRef, useState } from "react";
 import { useIsDarkMode } from "@/hooks/theme";
 import { Button } from "@/components/ui/button";
 import drawDropsTimeline, { TimelineDropsDatum } from "./drawDropsTimeline";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { playerDropCategories } from "@/lib/playerDropCategories";
 
 export type TimelineDropsChartData = {
@@ -38,15 +37,15 @@ const ChartLabels = memo(({ categories }: { categories: string[] }) => {
 });
 
 type TimelineDropsChartProps = {
+    chartData: TimelineDropsChartData;
+    chartName: string;
     width: number;
     height: number;
-    chartData: TimelineDropsChartData;
 };
 
-function TimelineDropsChart({ chartData, width, height }: TimelineDropsChartProps) {
+function TimelineDropsChart({ chartData, chartName, width, height }: TimelineDropsChartProps) {
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [autoAnimateParentRef, enableAnimations] = useAutoAnimate<HTMLDivElement>();
     const legendRef = useRef<HTMLDivElement>(null);
     const [renderError, setRenderError] = useState('');
     const [errorRetry, setErrorRetry] = useState(0);
@@ -64,8 +63,8 @@ function TimelineDropsChart({ chartData, width, height }: TimelineDropsChartProp
         if (!chartData || !legendRef.current || !svgRef.current || !canvasRef.current || !width || !height) return;
         if (!chartData.log.length) return; //only in case somehow the api returned, but no data found
         try {
-            console.groupCollapsed('Drawing player drops:');
-            console.time('drawDropsTimeline');
+            console.groupCollapsed(`Drawing player ${chartName} drops:`);
+            console.time(`drawDropsTimeline-${chartName}`);
             drawDropsTimeline({
                 legendRef: legendRef.current,
                 svgRef: svgRef.current,
@@ -78,13 +77,13 @@ function TimelineDropsChart({ chartData, width, height }: TimelineDropsChartProp
             });
             setErrorRetry(0);
             setRenderError('');
-            console.timeEnd('drawDropsTimeline');
+            console.timeEnd(`drawDropsTimeline-${chartName}`);
         } catch (error) {
             setRenderError((error as Error).message ?? 'Unknown error.');
         } finally {
             console.groupEnd();
         }
-    }, [chartData, width, height, isDarkMode, legendRef, svgRef, canvasRef, renderError]);
+    }, [chartData, chartName, width, height, isDarkMode, legendRef, svgRef, canvasRef, renderError]);
 
     if (!width || !height) return null;
     if (renderError) {

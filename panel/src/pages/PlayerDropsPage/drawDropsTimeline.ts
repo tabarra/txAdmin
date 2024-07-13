@@ -1,7 +1,6 @@
 import * as d3 from 'd3';
-import { createRandomHslColor, msToShortDuration, numberToLocaleString } from '@/lib/utils';
-import { throttle } from 'throttle-debounce';
-import { playerDropCategories, playerDropCategoryDefaultColor } from "@/lib/playerDropCategories";
+import { msToShortDuration, numberToLocaleString } from '@/lib/utils';
+import { playerDropCategories } from "@/lib/playerDropCategories";
 import { PlayerDropsCategoryCount } from './chartingUtils';
 import { TimelineDropsChartData } from './TimelineDropsChart';
 
@@ -76,7 +75,6 @@ export default function drawDropsTimeline({
         [data.startDate, data.endDate],
         [0, drawableAreaWidth],
     );
-
     const countsScale = d3.scaleLinear(
         [0, data.maxDrops],
         [height - margins.bottom, margins.top],
@@ -96,7 +94,7 @@ export default function drawDropsTimeline({
 
     const countsAxisTickValues = (data.maxDrops <= 7) ? d3.range(data.maxDrops + 1) : null;
     const countsAxis = d3.axisLeft(countsScale)
-        .ticks(6)
+        .ticks(height > 200 ? 6 : 4)
         .tickFormat(d => numberToLocaleString(d as number))
         .tickValues(countsAxisTickValues as any); //integer values only 
     const countsAxisGroup = svg.append('g')
@@ -104,10 +102,15 @@ export default function drawDropsTimeline({
         .attr('transform', translate(margins.left - margins.axis, 0))
         .call(countsAxis)
 
-    // Drawing the timeline
+
+    /**
+     * Canvas
+     */
     const periodInHours = data.selectedPeriod === 'day' ? 24 : 1;
     const endOfFirstInterval = new Date(data.startDate.getTime() + (periodInHours * 60 * 60 * 1000));
     const intervalWidth = timeScale(endOfFirstInterval) - timeScale(data.startDate);
+    const canvasTicksStyle = isDarkMode ? `rgba(255, 255, 255, 0.15)` : `rgba(0, 0, 0, 0.35)`;
+    const canvasBackgroundStyle = isDarkMode ? '#00000035' : '#00000007';
     const canvasCountScale = (value: number) => countsScale(value) - margins.top;
 
     const drawCanvasTimeline = () => {
@@ -116,21 +119,17 @@ export default function drawDropsTimeline({
         if (!canvasNode) return setRenderError('Canvas node not found.');
         const ctx = canvasNode.getContext('2d');
         if (!ctx) return setRenderError('Canvas 2d context not found.');
-        if (!intervalWidth) return setRenderError('Cannot render with zero interval width');
+        if (!intervalWidth) return setRenderError('Cannot render with zero interval width.');
 
         //Setup
         isFirstRender && console.time('drawing canvas timeline');
         ctx.clearRect(0, 0, drawableAreaWidth, drawableAreaHeight);
-        if (isDarkMode) {
-            ctx.fillStyle = '#00000055'
-            ctx.fillRect(0, 0, drawableAreaWidth, drawableAreaHeight);
-        }
+        ctx.fillStyle = canvasBackgroundStyle;
+        ctx.fillRect(0, 0, drawableAreaWidth, drawableAreaHeight);
 
         //Drawing horizontal ticks - trycatcking because it's a bit fragile
-        ctx.strokeStyle = isDarkMode ? `rgba(255, 255, 255, 0.15)` : `rgba(0, 0, 0, 0.35)`;
-
+        ctx.strokeStyle = canvasTicksStyle;
         ctx.setLineDash([2, 2]);
-        console.group('AxisLines:');
         try {
             const tickLines = countsAxisGroup.selectAll("g.tick").nodes();
             for (const tickLine of tickLines) {
@@ -146,13 +145,8 @@ export default function drawDropsTimeline({
             console.error('Error drawing horizontal ticks:', error);
         }
         ctx.setLineDash([]);
-        console.groupEnd();
 
-
-
-
-
-        //Drawing hour bars
+        //Drawing the timeline
         ctx.lineWidth = 1;
         for (const hour of data.log) {
             const baseX = timeScale(hour.hour);
@@ -165,30 +159,19 @@ export default function drawDropsTimeline({
 
             //Draw the count blocks
             let dropSum = 0;
-            let lastRenderBottomY = drawableAreaHeight;
+            let lastRenderBottomY = drawableAreaHeight + 1;
             for (const [dropCategory, dropCount] of hour.drops) {
                 if (!dropCount) continue;
-                const barBottomY = lastRenderBottomY-1;
+                const barBottomY = lastRenderBottomY - 1;
                 const barTopY = canvasCountScale(dropSum + dropCount) + 1;
                 const barHeight = barBottomY - barTopY;
-                const barHeightRnd = Math.floor(barHeight);
-                const rndDiff = barHeight - barHeightRnd;
-
-                if (hour.hour.getTime() === (new Date('2024-07-06T12:00:00.000Z')).getTime()) {
-                    console.group(`${dropCategory}: ${dropCount} drops`);
-                    console.log({ barBottomY, barHeight, barHeightRnd });
-                    console.groupEnd();
-                }
-                /*
-                    Drawing line at y: 94  .5
-                    Drawing line at y: 71  .5
-                    Drawing line at y: 48  .5
-                    Drawing line at y: 25  .5
-                */
-
+                const barHeightRnd = Math.max(
+                    Math.floor(barHeight),
+                    barHeight > 0.8 ? 1 : 0
+                );
 
                 dropSum += dropCount;
-                // if (barHeight < 1) continue; //FIXME: re-enable
+                if (barHeightRnd < 1) continue;
                 lastRenderBottomY = barBottomY - barHeightRnd;
 
                 //Draw the bar
@@ -197,7 +180,6 @@ export default function drawDropsTimeline({
                     renderStartX, barBottomY,
                     barWidth, -barHeightRnd,
                 );
-
                 ctx.strokeStyle = playerDropCategories[dropCategory]?.border ?? 'black';
                 ctx.strokeRect(
                     renderStartX + 0.5, barBottomY + 0.5,
@@ -226,11 +208,9 @@ export default function drawDropsTimeline({
     };
     clearCursor();
 
-
     //Find the closest data point for a given X value
     const maxAllowedGap = (data.selectedPeriod === 'day' ? 24 : 1) * 60 * 60 * 1000 / 2; //half the period in ms
     const timeBisector = d3.bisector((hour: TimelineDropsDatum) => hour.hour).center;
-
     const getClosestData = (x: number) => {
         const xPosDate = timeScale.invert(x);
         const indexFound = timeBisector(data.log, xPosDate);
@@ -243,7 +223,6 @@ export default function drawDropsTimeline({
             };
         }
     };
-
 
     //Detect mouse over and show timestamp + draw vertical line
     let lastHourIndex: number | null = null;
@@ -269,18 +248,24 @@ export default function drawDropsTimeline({
         }
 
         //Move legend
+        let wasTransitionDisabled = false;
+        if(legendRef.style.opacity === '0') {
+            legendRef.style.transitionProperty = 'opacity';
+            wasTransitionDisabled = true;
+        }
         const legendWidth = legendRef.clientWidth;
         let legendX = hourX - legendWidth - 10 + margins.left;
         if (legendX < margins.left) legendX = hourX + 10 + margins.left;
         legendRef.style.left = `${legendX}px`;
         legendRef.style.opacity = '1';
+        if(wasTransitionDisabled) {
+            setTimeout(() => {
+                legendRef.style.transitionProperty = 'all';
+            }, 0);
+        }
 
         // Draw cursor
-        cursorLineVert
-            .attr('x1', hourX)
-            .attr('y1', 0)
-            .attr('x2', hourX)
-            .attr('y2', drawableAreaHeight);
+        cursorLineVert.attr('x1', hourX).attr('y1', 0).attr('x2', hourX).attr('y2', drawableAreaHeight);
     };
 
     // Handle svg mouse events
@@ -313,8 +298,6 @@ export default function drawDropsTimeline({
             clearCursor();
         }, 150);
     });
-
-
 
     isFirstRender = false;
 }

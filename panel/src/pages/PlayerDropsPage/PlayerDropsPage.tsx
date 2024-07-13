@@ -3,7 +3,6 @@ import type { PlayerDropsApiResp, PlayerDropsApiSuccessResp } from "@shared/othe
 import useSWR from "swr";
 import DrilldownCard, { DrilldownCardLoading } from "./DrilldownCard";
 import TimelineCard from "./TimelineCard";
-import { playerDropCategories } from "@/lib/playerDropCategories";
 
 
 export default function PlayerDropsPage() {
