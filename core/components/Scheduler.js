@@ -38,7 +38,7 @@ export default class Scheduler {
         this.calculatedNextRestartMinuteFloorTs = false;
         this.checkSchedule();
 
-        //Cron Function 
+        //Cron Function
         setInterval(() => {
             this.checkSchedule();
             globals.webServer?.webSocket.pushRefresh('status');
@@ -101,7 +101,7 @@ export default class Scheduler {
             //Dispatch `txAdmin:events:skippedNextScheduledRestart`
             globals.fxRunner.sendEvent('skippedNextScheduledRestart', {
                 secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
-                temporary
+                temporary,
             });
         } else {
             this.nextSkip = false;
@@ -193,7 +193,7 @@ export default class Scheduler {
 
         //Checking if skipped
         if (this.nextSkip === this.calculatedNextRestartMinuteFloorTs) {
-            console.verbose.log(`Skipping next scheduled restart`);
+            console.verbose.log('Skipping next scheduled restart');
             return;
         }
 
@@ -212,7 +212,6 @@ export default class Scheduler {
 
             //reset next scheduled
             this.nextTempSchedule = false;
-
         } else if (scheduleWarnings.includes(nextDistMins)) {
             const tOptions = {
                 smart_count: nextDistMins,
@@ -224,14 +223,14 @@ export default class Scheduler {
                 type: 'warning',
                 description: {
                     key: 'restarter.schedule_warn_discord',
-                    data: tOptions
-                }
+                    data: tOptions,
+                },
             });
 
-            //Dispatch `txAdmin:events:scheduledRestart` 
+            //Dispatch `txAdmin:events:scheduledRestart`
             globals.fxRunner.sendEvent('scheduledRestart', {
                 secondsRemaining: nextDistMins * 60,
-                translatedMessage: globals.translator.t('restarter.schedule_warn', tOptions)
+                translatedMessage: globals.translator.t('restarter.schedule_warn', tOptions),
             });
         }
     }
