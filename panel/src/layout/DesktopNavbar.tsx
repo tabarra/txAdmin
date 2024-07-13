@@ -85,6 +85,9 @@ export default function DesktopHeader() {
                     <HeaderMenuLink href="/history">
                         History
                     </HeaderMenuLink>
+                    <HeaderMenuLink href="/insights/player-drops">
+                        Player Drops
+                    </HeaderMenuLink>
                     <HeaderMenuLink href="/whitelist">
                         Whitelist
                     </HeaderMenuLink>

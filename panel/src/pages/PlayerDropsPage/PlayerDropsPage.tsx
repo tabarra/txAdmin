@@ -2,7 +2,8 @@ import { useBackendApi } from "@/hooks/fetch";
 import type { PlayerDropsApiResp, PlayerDropsApiSuccessResp } from "@shared/otherTypes";
 import useSWR from "swr";
 import DrilldownCard, { DrilldownCardLoading } from "./DrilldownCard";
-import PlayerDropsTimelineCharts from "./PlayerDropsTimelineCharts";
+import TimelineCard from "./TimelineCard";
+import { playerDropCategories } from "@/lib/playerDropCategories";
 
 
 export default function PlayerDropsPage() {
@@ -20,10 +21,12 @@ export default function PlayerDropsPage() {
         return data as PlayerDropsApiSuccessResp;
     }, {});
 
-
     return (
-        <div className="space-y-8">
-            <PlayerDropsTimelineCharts />
+        <div className="w-full space-y-8">
+            <TimelineCard
+                isError={!!swrDataApiResp.error}
+                summaryData={swrDataApiResp.data?.summary}
+            />
 
             {swrDataApiResp.data ? (
                 <DrilldownCard
