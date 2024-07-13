@@ -15,6 +15,7 @@ export type TimelineDropsDatum = {
 }
 
 type drawDropsTimelineProps = {
+    legendRef: HTMLDivElement;
     svgRef: SVGElement;
     canvasRef: HTMLCanvasElement;
     setRenderError: (error: string) => void;
@@ -34,6 +35,7 @@ type drawDropsTimelineProps = {
 };
 
 export default function drawDropsTimeline({
+    legendRef,
     svgRef,
     canvasRef,
     setRenderError,
@@ -209,6 +211,108 @@ export default function drawDropsTimeline({
     }
     drawCanvasTimeline();
 
+
+    /**
+     * Cursor
+     */
+    const cursorLineVert = chartGroup.append('line')
+        .attr('stroke', isDarkMode ? 'rgba(216, 245, 19, 0.75)' : 'rgba(62, 70, 5, 0.75)')
+        .attr('stroke-width', 1)
+        .attr('stroke-dasharray', '3,3');
+
+    const clearCursor = () => {
+        cursorLineVert.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
+        legendRef.style.opacity = '0';
+    };
+    clearCursor();
+
+
+    //Find the closest data point for a given X value
+    const maxAllowedGap = (data.selectedPeriod === 'day' ? 24 : 1) * 60 * 60 * 1000 / 2; //half the period in ms
+    const timeBisector = d3.bisector((hour: TimelineDropsDatum) => hour.hour).center;
+
+    const getClosestData = (x: number) => {
+        const xPosDate = timeScale.invert(x);
+        const indexFound = timeBisector(data.log, xPosDate);
+        if (indexFound === -1) return;
+        const hourData = data.log[indexFound];
+        if (Math.abs(hourData.hour.getTime() - xPosDate.getTime()) < maxAllowedGap) {
+            return {
+                hourIndex: indexFound,
+                hourData
+            };
+        }
+    };
+
+
+    //Detect mouse over and show timestamp + draw vertical line
+    let lastHourIndex: number | null = null;
+    const handleMouseMove = (pointerX: number, pointerY: number) => {
+        // Find closest data point
+        const findResult = getClosestData(pointerX - intervalWidth / 2);
+        if (!findResult) {
+            lastHourIndex = null;
+            return clearCursor();
+        }
+        const { hourIndex, hourData } = findResult;
+        if (hourIndex === lastHourIndex) return;
+        lastHourIndex = hourIndex;
+        const hourX = Math.round(timeScale(hourData.hour) + intervalWidth / 2) + 0.5
+
+        //Set legend data
+        const allNumEls = legendRef.querySelectorAll('span[data-category]');
+        for (const numEl of allNumEls) {
+            const catName = numEl.getAttribute('data-category');
+            if (!catName) continue;
+            const catCount = hourData.drops.find(([cat]) => cat === catName)?.[1] ?? 0;
+            numEl.textContent = numberToLocaleString(catCount);
+        }
+
+        //Move legend
+        const legendWidth = legendRef.clientWidth;
+        let legendX = hourX - legendWidth - 10 + margins.left;
+        if (legendX < margins.left) legendX = hourX + 10 + margins.left;
+        legendRef.style.left = `${legendX}px`;
+        legendRef.style.opacity = '1';
+
+        // Draw cursor
+        cursorLineVert
+            .attr('x1', hourX)
+            .attr('y1', 0)
+            .attr('x2', hourX)
+            .attr('y2', drawableAreaHeight);
+    };
+
+    // Handle svg mouse events
+    let isEventInCooldown = false;
+    let cursorRedrawTimeout: NodeJS.Timeout;
+    const cooldownTime = 20;
+    chartGroup.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', drawableAreaWidth)
+        .attr('height', drawableAreaHeight)
+        .attr('fill', 'transparent')
+        .on('mousemove', function (event) {
+            const [pointerX, pointerY] = d3.pointer(event);
+            if (!isEventInCooldown) {
+                isEventInCooldown = true;
+                handleMouseMove(pointerX, pointerY);
+                setTimeout(() => {
+                    isEventInCooldown = false;
+                }, cooldownTime);
+            } else {
+                clearTimeout(cursorRedrawTimeout);
+                cursorRedrawTimeout = setTimeout(() => {
+                    handleMouseMove(pointerX, pointerY);
+                }, cooldownTime);
+            }
+        })
+    svg.on('mouseleave', function () {
+        setTimeout(() => {
+            clearCursor();
+        }, 150);
+    });
 
 
 

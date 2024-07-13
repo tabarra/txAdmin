@@ -2,6 +2,8 @@ import { memo, useEffect, useRef, useState } from "react";
 import { useIsDarkMode } from "@/hooks/theme";
 import { Button } from "@/components/ui/button";
 import drawDropsTimeline, { TimelineDropsDatum } from "./drawDropsTimeline";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { playerDropCategories } from "@/lib/playerDropCategories";
 
 export type TimelineDropsChartData = {
     selectedPeriod: string;
@@ -12,6 +14,29 @@ export type TimelineDropsChartData = {
     log: TimelineDropsDatum[];
 }
 
+const ChartLabels = memo(({ categories }: { categories: string[] }) => {
+    const categoriesReversed = categories.slice().reverse();
+    return categoriesReversed.map((catName) => {
+        return (
+            <div key={catName} className="flex items-center text-sm">
+                <div
+                    className="size-4 mr-1 rounded-full border dark:border-0"
+                    style={{
+                        backgroundColor: playerDropCategories[catName].color,
+                        borderColor: playerDropCategories[catName].border,
+                    }}
+                />
+                <span className="tracking-wider">
+                    {playerDropCategories[catName].label}:
+                </span>
+                <div className="flex-grow text-right font-semibold min-w-[3ch] text-muted-foreground">
+                    <span data-category={catName} />
+                </div>
+            </div>
+        )
+    })
+});
+
 type TimelineDropsChartProps = {
     width: number;
     height: number;
@@ -21,6 +46,8 @@ type TimelineDropsChartProps = {
 function TimelineDropsChart({ chartData, width, height }: TimelineDropsChartProps) {
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [autoAnimateParentRef, enableAnimations] = useAutoAnimate<HTMLDivElement>();
+    const legendRef = useRef<HTMLDivElement>(null);
     const [renderError, setRenderError] = useState('');
     const [errorRetry, setErrorRetry] = useState(0);
     const isDarkMode = useIsDarkMode();
@@ -34,12 +61,13 @@ function TimelineDropsChart({ chartData, width, height }: TimelineDropsChartProp
 
     //Redraw chart when data or size changes
     useEffect(() => {
-        if (!chartData || !svgRef.current || !canvasRef.current || !width || !height) return;
+        if (!chartData || !legendRef.current || !svgRef.current || !canvasRef.current || !width || !height) return;
         if (!chartData.log.length) return; //only in case somehow the api returned, but no data found
         try {
             console.groupCollapsed('Drawing player drops:');
             console.time('drawDropsTimeline');
             drawDropsTimeline({
+                legendRef: legendRef.current,
                 svgRef: svgRef.current,
                 canvasRef: canvasRef.current,
                 setRenderError,
@@ -56,8 +84,7 @@ function TimelineDropsChart({ chartData, width, height }: TimelineDropsChartProp
         } finally {
             console.groupEnd();
         }
-    }, [chartData, width, height, isDarkMode, svgRef, canvasRef, renderError]);
-
+    }, [chartData, width, height, isDarkMode, legendRef, svgRef, canvasRef, renderError]);
 
     if (!width || !height) return null;
     if (renderError) {
@@ -79,6 +106,18 @@ function TimelineDropsChart({ chartData, width, height }: TimelineDropsChartProp
     }
     return (
         <>
+            <div
+                ref={legendRef}
+                style={{
+                    zIndex: 2,
+                    position: 'absolute',
+                    top: `12px`,
+                    opacity: 0,
+                }}
+                className="p-2 rounded-md border shadow-lg dark:bg-zinc-800/90 bg-zinc-200/90 pointer-events-none transition-all"
+            >
+                <ChartLabels categories={chartData.categoriesSorted} />
+            </div>
             <svg
                 ref={svgRef}
                 width={width}
