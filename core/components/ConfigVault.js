@@ -53,6 +53,9 @@ export default class ConfigVault {
             let cfgData = this.getConfigFromFile();
             this.configFile = this.setupConfigStructure(cfgData);
             this.config = this.setupConfigDefaults(this.configFile);
+            if (globals.versionControl) {
+                globals.versionControl.configUpdated();
+            }
             this.setupFolderStructure();
         } catch (error) {
             console.error(error);
@@ -127,6 +130,7 @@ export default class ConfigVault {
             };
             out.versionControl = {
                 githubAuthKey: toDefault(cfg.versionControl.githubAuthKey, null),
+                githubOwner: toDefault(cfg.versionControl.githubAuthKey, null),
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {
@@ -228,6 +232,7 @@ export default class ConfigVault {
 
             //Version Control
             cfg.versionControl.githubAuthKey = toDefault(cfg.versionControl.githubAuthKey, null);
+            cfg.versionControl.githubOwner = toDefault(cfg.versionControl.githubOwner, null);
 
             //Monitor
             cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];
@@ -354,5 +359,9 @@ export default class ConfigVault {
         fs.writeFileSync(this.configFilePath, JSON.stringify(toSave, null, 2), 'utf8');
         this.configFile = toSave;
         this.config = this.setupConfigDefaults(this.configFile);
+
+        if (scope == 'versionControl' && globals.versionControl) {
+            globals.versionControl.configUpdated();
+        }
     }
 };

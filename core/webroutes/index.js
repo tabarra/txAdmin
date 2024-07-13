@@ -48,7 +48,8 @@ export { default as fxserver_controls } from './fxserver/controls';
 export { default as fxserver_downloadLog } from './fxserver/downloadLog';
 export { default as fxserver_schedule } from './fxserver/schedule';
 
-export { default as version_control_resources } from './versionControl/resources';
+export { default as versionControl_resources } from './versionControl/resources';
+export { default as versionControl_owners } from './versionControl/owners';
 
 export { default as history_stats } from './history/stats';
 export { default as history_search } from './history/search';

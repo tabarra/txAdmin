@@ -354,18 +354,14 @@ async function handleMonitor(ctx: AuthedCtx) {
 
 //================================================================
 /**
- * Handle Discord settings
+ * Handle version control
  */
 async function handleVersionControl(ctx: AuthedCtx) {
-    if(typeof ctx.request.body.githubAuthKey === 'string' || ctx.request.body.githubAuthKey === null) {
-        //Prepare body input
-        const cfg = {
-            githubAuthKey: (ctx.request.body.githubAuthKey === 'true'),
-        };
-
+    if((typeof ctx.request.body.githubAuthKey === 'string' || ctx.request.body.githubAuthKey === null) && (typeof ctx.request.body.githubOwner === 'string' || ctx.request.body.githubOwner === null)) {
         //Preparing & saving config
         const newConfig = ctx.txAdmin.configVault.getScopedStructure('versionControl');
-        newConfig.githubAuthKey = cfg.githubAuthKey;
+        newConfig.githubAuthKey = ctx.request.body.githubAuthKey;
+        newConfig.githubOwner = ctx.request.body.githubOwner;
         try {
             ctx.txAdmin.configVault.saveProfile('versionControl', newConfig);
         } catch (error) {

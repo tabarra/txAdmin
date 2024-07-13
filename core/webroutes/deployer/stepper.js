@@ -43,7 +43,10 @@ export default async function DeployerStepper(ctx) {
             raw: globals.deployer.recipe.raw,
         };
     } else if (globals.deployer.step === 'versionControl') {
-        // todo: perhaps add logic here;
+        renderData.githubOwners = await globals.versionControl.getOwners();
+        renderData.githubAuthKey = globals.deployer.recipe.variables.githubAuthKey ?? '';
+        renderData.githubOwner = globals.deployer.recipe.variables.githubOwner ?? 'none';
+        renderData.githubAutoFork = typeof globals.deployer.recipe.variables.githubAutoFork === 'boolean' ? globals.deployer.recipe.variables.githubAutoFork : false;
     } else if (globals.deployer.step === 'input') {
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;

@@ -108,7 +108,8 @@ export default (config: WebServerConfigType) => {
     router.post('/history/:action', apiAuthMw, webRoutes.history_actions);
 
     // Version Control routes
-    router.get('/versionControl/resources', apiAuthMw, webRoutes.version_control_resources);
+    router.get('/versionControl/resources', apiAuthMw, webRoutes.versionControl_resources);
+    router.get("/versionControl/owners", apiAuthMw, webRoutes.versionControl_owners)
 
     //Player routes
     router.get('/player', apiAuthMw, webRoutes.player_modal);

@@ -150,7 +150,7 @@ export default class FXRunner {
     async spawnServer(announce) {
         //If the server is already alive
         if (this.fxChild !== null) {
-            const msg = `The server is already started.`;
+            const msg = 'The server is already started.';
             console.error(msg);
             return msg;
         }
@@ -166,13 +166,13 @@ export default class FXRunner {
             || typeof this.spawnVariables.command == 'undefined'
             || typeof this.spawnVariables.args == 'undefined'
         ) {
-            const msg = `this.spawnVariables is not set.`;
+            const msg = 'this.spawnVariables is not set.';
             console.error(msg);
             return msg;
         }
         //If there is any FXServer configuration missing
         if (this.config.serverDataPath === null || this.config.cfgPath === null) {
-            const msg = `Cannot start the server with missing configuration (serverDataPath || cfgPath).`;
+            const msg = 'Cannot start the server with missing configuration (serverDataPath || cfgPath).';
             console.error(msg);
             return msg;
         }
@@ -218,8 +218,8 @@ export default class FXRunner {
                 type: 'success',
                 description: {
                     key: 'server_actions.spawning_discord',
-                    data: { servername: globals.txAdmin.globalConfig.serverName }
-                }
+                    data: { servername: globals.txAdmin.globalConfig.serverName },
+                },
             });
         }
 
@@ -335,7 +335,7 @@ export default class FXRunner {
             //Start server again :)
             return this.spawnServer();
         } catch (error) {
-            const errMsg = `Couldn't restart the server.`;
+            const errMsg = 'Couldn\'t restart the server.';
             console.error(errMsg);
             console.verbose.dir(error);
             return errMsg;
@@ -377,8 +377,8 @@ export default class FXRunner {
                 type: messageColor,
                 description: {
                     key: `server_actions.${messageType}_discord`,
-                    data: tOptions
-                }
+                    data: tOptions,
+                },
             });
 
             //Awaiting restart delay

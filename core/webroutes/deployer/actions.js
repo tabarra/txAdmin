@@ -12,7 +12,6 @@ const console = consoleFactory(modulename);
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
-
 /**
  * Handle all the server control actions
  * @param {object} ctx
@@ -82,12 +81,47 @@ async function handleConfirmRecipe(ctx) {
  * @param {object} ctx
  */
 async function handleSetVersionControlVariables(ctx) {
-    if (typeof ctx.request.body.githubAuthKey !== 'string' && ctx.request.body.githubAuthKey !== null) {
+    if (ctx.request.body.key !== 'githubAutoFork' && ctx.request.body.key !== 'githubAuthKey' && ctx.request.body.key !== 'githubOwner') {
         return ctx.utils.error(400, 'Invalid Request - invalid parameters');
     }
 
+    // User doesnt want version control
+    if (ctx.request.body.value === null) {
+        return ctx.send({ success: true });
+    }
+
+    if (typeof ctx.request.body.value !== 'string') {
+        return ctx.utils.error(400, 'Invalid Request - invalid parameters');
+    }
+
+    // User doesnt want version control
+    if (ctx.request.body.value.trim().length <= 0) {
+        return ctx.send({ success: true });
+    }
+
+    //Validating auth key
+    if (
+        ctx.request.body.key === 'githubAuthKey'
+        && !consts.regexGithubAuthKey.test(ctx.request.body.value)
+    ) {
+        return ctx.send({ type: 'danger', message: 'The Github Auth Key does not appear to be valid.' });
+    }
+
+    if (ctx.request.body.key === 'githubAuthKey' && (await globals.versionControl.isAuthKeyValid(ctx.request.body.value)) === false) {
+        return ctx.send({ type: 'danger', message: 'The Github Auth Key does not appear to be valid.' });
+    }
+
+    //Validating github auto fork
+    if (ctx.request.body.key === 'githubAutoFork') {
+        if (ctx.request.body.value !== 'true' && ctx.request.body.value !== 'false') {
+            return ctx.utils.error(400, 'Invalid Request - invalid parameters');
+        } else {
+            ctx.request.body.value = ctx.request.body.value === 'true';
+        }
+    }
+
     const newGlobalConfig = globals.configVault.getScopedStructure('versionControl');
-    newGlobalConfig.githubAuthKey = ctx.request.body.githubAuthKey;
+    newGlobalConfig[ctx.request.body.key] = ctx.request.body.value;
 
     try {
         globals.configVault.saveProfile('versionControl', newGlobalConfig);
@@ -103,13 +137,15 @@ async function handleSetVersionControlVariables(ctx) {
     globals.txAdmin.refreshConfig();
     ctx.admin.logAction('Changing version control settings via deployer.');
 
-    //Start deployer
-    try {
-        ctx.admin.logAction('Running recipe.');
-        globals.deployer.start();
-    } catch (error) {
-        return ctx.send({ type: 'danger', message: error.message });
-    }
+    globals.deployer.recipe.variables[ctx.request.body.key] = ctx.request.body.value;
+
+    // //Start deployer
+    // try {
+    //     ctx.admin.logAction('Running recipe.');
+    //     globals.deployer.start();
+    // } catch (error) {
+    //     return ctx.send({ type: 'danger', message: error.message });
+    // }
 
     return ctx.send({ success: true });
 }

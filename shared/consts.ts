@@ -32,6 +32,7 @@ export default {
     //Other stuff
     regexSvLicenseOld: /^\w{32}$/,
     regexSvLicenseNew: /^cfxk_\w{1,60}_\w{1,20}$/,
+    regexGithubAuthKey: /^ghp_\w{36}$/,
     regexValidIP: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
     noLookAlikesAlphabet,
     nuiWebpipePath: 'https://monitor/WebPipe/',
