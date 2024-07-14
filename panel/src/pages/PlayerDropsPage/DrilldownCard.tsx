@@ -74,7 +74,7 @@ const DrilldownCardInner = function DrilldownCard({ windowStart, windowEnd, wind
                     <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-xl bg-secondary/35">
                         <div className="flex items-center space-x-2">
                             <div className='hidden xs:block'><FolderOpenIcon className="size-4" /></div>
-                            <h2 className="font-mono text-sm">Overview</h2>
+                            <h2 className="font-mono text-sm">Period Overview</h2>
                         </div>
                     </div>
                     <DrilldownOverviewSubcard dropTypes={windowData.dropTypes} />

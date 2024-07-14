@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { dropReasonCategories } from "../Dashboard/PlayerDropCard";
 import { numberToLocaleString } from "@/lib/utils";
 import { PlayerDropsMessage } from "./PlayerDropsGenericSubcards";
+import { playerDropCategories } from "@/lib/playerDropCategories";
 
 type DisplayCategoryDataType = {
     label: string;
@@ -19,10 +19,10 @@ export default function DrilldownOverviewSubcard({ dropTypes }: DrilldownOvervie
         const categories: Record<string, DisplayCategoryDataType> = {};
         for (const [cat, cnt] of dropTypes) {
             totalDrops += cnt;
-            if (!(cat in dropReasonCategories)) continue;
+            if (!(cat in playerDropCategories)) continue;
             categories[cat] = {
-                label: dropReasonCategories[cat].label,
-                color: dropReasonCategories[cat].color,
+                label: playerDropCategories[cat].label,
+                color: playerDropCategories[cat].color,
                 count: cnt,
             };
         }

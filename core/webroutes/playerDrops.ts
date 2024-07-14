@@ -66,7 +66,7 @@ export default async function playerDrops(ctx: AuthedCtx) {
             })
         }
     } else {
-        detailedWindowStart = (new Date).setUTCMinutes(0, 0, 0) - (24 * 60 * 60 * 1000) - 1;
+        detailedWindowStart = (new Date).setUTCMinutes(0, 0, 0) - (14 * 24 * 60 * 60 * 1000) - 1;
         detailedWindowEnd = (new Date).setUTCMinutes(0, 0, 0) - 1;
     }
     const detailed = ctx.txAdmin.statsManager.playerDrop.getWindowData(detailedWindowStart, detailedWindowEnd);

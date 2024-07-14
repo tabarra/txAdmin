@@ -23,8 +23,23 @@
     - [x] change `Unhandled exception:` to be subpart of "Game Crashed"
     - [x] apply new prefix algo to the crash reasons
     - [x] env changes subcard
-    - [ ] display charts
-    - [ ] clickable charts to change range of drilldown card
+    - [x] charts: draw bars
+    - [ ] charts: display days mode
+    - [x] charts: add cursor with legends
+    - [ ] charts: get "ratio" to the legends?
+    - [ ] charts: get "changes" back to chart?
+    - [x] charts: cleanup of code, mayhaps add some testing
+    - [ ] charts: is the current memoization correct?
+    - [ ] charts: test with very few drops
+    - [ ] add window selection buttons to drilldown card
+    - [ ] review page layout: make it less card-y
+    - [ ] add drilldown interval buttons
+    - [ ] tune in swr caching/reloading behavior
+    - [ ] fix crashes table is not responsive
+    - [ ] fix crashes table widening the outer shell - is it just the scroll? 🤦‍♂️
+    - [ ] adapt code to track resource drops + adjust categories according to the new ones
+        - server shutting down should not be counted
+        - check dashboard player drops chart brightness and "By Resources" overflow
 - Dashboard stuff:
     - [ ] add testing for getServerStatsData
     - [ ] fix getMinTickIntervalMarker behavior when 0.2
@@ -46,6 +61,9 @@
 
 ## Small feat
 - [x] make server v8 heap reports faster to large changes
+- [ ] add "HANGUL FILLER" characters to `cleanPlayerName`
+    - or check how vscode does to highlight invisible characters and use that approach instead
+    - `@vscode/src/vs/base/common/strings.ts:1277`
 - [ ] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds 
@@ -61,6 +79,9 @@
 - [ ] update wouter and add search/filters state to URL of the players/history pages 
 - [ ] Use `dotenv` or something to configure `main-builder.js` and update `development.md`
 - [ ] add `.yarn.installed` to the dist? even in dev
+- [ ] check if chat PRs were merged, and start migrating recipes to use `resources_useSystemChat`
+- [ ] check netid uint16 overflow
+    - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
 
 
 
@@ -133,7 +154,6 @@ for log in statsLog:
     - [ ] fix remaining imgur links
     - [ ] update docs on development?
     - [ ] rename to de-capitalize components files that have multiple exports 
-    - [ ] talk to rockstar about `cfx-server-data`, the chat resource security updates and `resources_useSystemChat` 
     - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
     - [ ] break down the discord /info command in /info and /admininfo?
 
@@ -649,6 +669,7 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 - http requests (grouped by resource, grouped by root domain or both?)
 - performance chart with ram usage
 - player count (longer window, maybe with some other data)
+    - show the player count at the peaks
 - histogram of session time
 - new players per day
 - top players? 
