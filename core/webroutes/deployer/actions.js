@@ -38,6 +38,8 @@ export default async function DeployerActions(ctx) {
         return await handleConfirmRecipe(ctx);
     } else if (action == 'setVariables') {
         return await handleSetVariables(ctx);
+    } else if (action == 'runRecipe') {
+        return await handleRunRecipe(ctx);
     } else if (action == 'setVersionControlVariables') {
         return await handleSetVersionControlVariables(ctx);
     } else if (action == 'commit') {
@@ -80,8 +82,25 @@ async function handleConfirmRecipe(ctx) {
  * Handle submition of the version control variables
  * @param {object} ctx
  */
+async function handleRunRecipe(ctx) {
+    //Start deployer
+    try {
+        ctx.admin.logAction('Running recipe.');
+        await globals.deployer.start();
+    } catch (error) {
+        return ctx.send({ type: 'danger', message: error.message });
+    }
+
+    return ctx.send({ success: true });
+}
+
+//================================================================
+/**
+ * Handle submition of the version control variables
+ * @param {object} ctx
+ */
 async function handleSetVersionControlVariables(ctx) {
-    if (ctx.request.body.key !== 'githubAutoFork' && ctx.request.body.key !== 'githubAuthKey' && ctx.request.body.key !== 'githubOwner') {
+    if (ctx.request.body.key !== 'githubAutoFork' && ctx.request.body.key !== 'githubAuthKey' && ctx.request.body.key !== 'githubOwner' && ctx.request.body.key !== 'githubParentRepo') {
         return ctx.utils.error(400, 'Invalid Request - invalid parameters');
     }
 
@@ -138,14 +157,6 @@ async function handleSetVersionControlVariables(ctx) {
     ctx.admin.logAction('Changing version control settings via deployer.');
 
     globals.deployer.recipe.variables[ctx.request.body.key] = ctx.request.body.value;
-
-    // //Start deployer
-    // try {
-    //     ctx.admin.logAction('Running recipe.');
-    //     globals.deployer.start();
-    // } catch (error) {
-    //     return ctx.send({ type: 'danger', message: error.message });
-    // }
 
     return ctx.send({ success: true });
 }

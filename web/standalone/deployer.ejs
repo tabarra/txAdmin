@@ -127,7 +127,7 @@
                                         <div style="display: flex; flex-direction: row; gap: 0.5rem;">
                                             <input type="text" class="form-control blur-input" id="step3-githubAuthKey" maxlength="86" 
                                                 autocomplete="off" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
-                                                value="<%= githubAuthKey %>" required autofocus>
+                                                value="<%= githubAuthKey %>" autofocus>
                                             <button class="btn btn-success" type="button" 
                                                 onclick="step3SaveKeyAction();" autofocus>Save</button>
                                         </div>
@@ -179,6 +179,22 @@
                                         </div>
                                         <span class="form-text text-muted">
                                             If this is enabled, then all the repositories from this server deployer will be auto forked to your own organization/user
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="step3-githubParentRepo" class="col-sm-3 col-form-label">
+                                        Github Parent Repo Name
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <div style="display: flex; flex-direction: row; gap: 0.5rem;">
+                                            <input type="text" class="form-control" id="step3-githubParentRepo" maxlength="86" 
+                                                autocomplete="off" value="<%= githubParentRepo %>" autofocus placeholder="Repository name">
+                                            <button class="btn btn-success" type="button" 
+                                                onclick="step3SaveRepoNameAction();" autofocus>Save</button>
+                                        </div>
+                                        <span class="form-text text-muted">
+                                            This will be the name of the new github repository
                                         </span>
                                     </div>
                                 </div>
@@ -561,10 +577,32 @@
             form: document.getElementById('step3-form'),
             githubAuthKey: document.getElementById('step3-githubAuthKey'),
             githubOwner: document.getElementById('step3-githubOwner'),
-            githubAutoFork: document.getElementById('step3-githubAutoFork')
+            githubAutoFork: document.getElementById('step3-githubAutoFork'),
+            githubParentRepo: document.getElementById('step3-githubParentRepo')
         }
         function step3Action() {
-            
+            const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+            txAdminAPI({
+                type: "POST",
+                url: '/deployer/recipe/runRecipe',
+                timeout: REQ_TIMEOUT_LONG,
+                data: {},
+                success: function (data) {
+                    if (checkApiLogoutRefresh(data)) return;
+                    if (data.success == true){
+                        window.location.reload(true);
+                    }else{
+                        notify.update('progress', 0);
+                        notify.update('type', data.type);
+                        notify.update('message', data.message);
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    notify.update('progress', 0);
+                    notify.update('type', 'danger');
+                    notify.update('message', message);
+                }
+            });
         }
         function step3SaveOwnerAction() {
             if(!step3elements.form.reportValidity()) return;
@@ -581,7 +619,9 @@
                 data: postData,
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
-                    if (data.success == false){
+                    if (data.success == true){
+                        window.location.reload(true);
+                    }else{
                         notify.update('progress', 0);
                         notify.update('type', data.type);
                         notify.update('message', data.message);
@@ -610,7 +650,40 @@
                 data: postData,
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
-                    if (data.success == false){
+                    if (data.success == true){
+                        window.location.reload(true);
+                    }else{
+                        notify.update('progress', 0);
+                        notify.update('type', data.type);
+                        notify.update('message', data.message);
+                    }
+                    
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    notify.update('progress', 0);
+                    notify.update('type', 'danger');
+                    notify.update('message', message);
+                }
+            });
+        }
+        function step3SaveRepoNameAction() {
+            if(!step3elements.form.reportValidity()) return;
+            const postData = {
+                key: 'githubParentRepo',
+                value: step3elements.githubParentRepo.value.trim()
+            }
+
+            const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+            txAdminAPI({
+                type: "POST",
+                url: '/deployer/recipe/setVersionControlVariables',
+                timeout: REQ_TIMEOUT_LONG,
+                data: postData,
+                success: function (data) {
+                    if (checkApiLogoutRefresh(data)) return;
+                    if (data.success == true){
+                        window.location.reload(true);
+                    }else{
                         notify.update('progress', 0);
                         notify.update('type', data.type);
                         notify.update('message', data.message);

@@ -357,11 +357,12 @@ async function handleMonitor(ctx: AuthedCtx) {
  * Handle version control
  */
 async function handleVersionControl(ctx: AuthedCtx) {
-    if((typeof ctx.request.body.githubAuthKey === 'string' || ctx.request.body.githubAuthKey === null) && (typeof ctx.request.body.githubOwner === 'string' || ctx.request.body.githubOwner === null)) {
+    if((typeof ctx.request.body.githubAuthKey === 'string' || ctx.request.body.githubAuthKey === null) && (typeof ctx.request.body.githubParentRepo === 'string' || ctx.request.body.githubParentRepo === null) && (typeof ctx.request.body.githubOwner === 'string' || ctx.request.body.githubOwner === null)) {
         //Preparing & saving config
         const newConfig = ctx.txAdmin.configVault.getScopedStructure('versionControl');
         newConfig.githubAuthKey = ctx.request.body.githubAuthKey;
         newConfig.githubOwner = ctx.request.body.githubOwner;
+        newConfig.githubParentRepo = ctx.request.body.githubParentRepo;
         try {
             ctx.txAdmin.configVault.saveProfile('versionControl', newConfig);
         } catch (error) {

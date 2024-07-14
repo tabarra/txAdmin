@@ -131,6 +131,7 @@ export default class ConfigVault {
             out.versionControl = {
                 githubAuthKey: toDefault(cfg.versionControl.githubAuthKey, null),
                 githubOwner: toDefault(cfg.versionControl.githubAuthKey, null),
+                githubParentRepo: toDefault(cfg.versionControl.githubParentRepo, null)
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {

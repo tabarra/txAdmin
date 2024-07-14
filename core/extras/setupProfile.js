@@ -22,6 +22,7 @@ const defaultConfig = {
     versionControl: {
         githubAuthKey: null,
         githubOwner: null,
+        githubParentRepo: null,
     },
     webServer: {},
     discordBot: {

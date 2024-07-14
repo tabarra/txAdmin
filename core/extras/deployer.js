@@ -161,6 +161,8 @@ export class Deployer {
         this.originalRecipe = originalRecipe;
         this.deploymentID = deploymentID;
         this.progress = 0;
+        this.validGithubData = false;
+        this.isOwnerOrganization = false;
         this.serverName = customMetaData.serverName || globals.txAdmin.globalConfig.serverName || '';
         this.logLines = [];
         this.userVars = null;
@@ -227,14 +229,18 @@ export class Deployer {
     /**
      * Starts the deployment process
      */
-    start() {
+    async start() {
         if (this.step !== 'versionControl') throw new Error('expected versionControl step');
-        console.log(this.recipe.variables);
         this.logLines = [];
         this.customLog(`Starting deployment of ${this.recipe.name}.`);
         this.deployFailed = false;
         this.progress = 0;
         this.step = 'run';
+        this.validGithubData = typeof globals.deployer.recipe.variables.githubAutoFork === 'boolean' && typeof globals.deployer.recipe.variables.githubAuthKey === 'string' && globals.deployer.recipe.variables.githubAuthKey.trim().length > 0 && typeof globals.deployer.recipe.variables.githubOwner === 'string' && globals.deployer.recipe.variables.githubOwner.trim().length > 0 && typeof globals.deployer.recipe.variables.githubParentRepo === 'string' && globals.deployer.recipe.variables.githubParentRepo.trim().length > 0;
+        if (this.validGithubData == true) {
+            const localUsername = await globals.versionControl.getUsername();
+            this.isOwnerOrganization = this.recipe.variables.githubOwner === localUsername;
+        }
         this.runTasks();
     }
 

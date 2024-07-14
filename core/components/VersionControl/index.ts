@@ -13,9 +13,10 @@ const console = consoleFactory(modulename);
 export default class VersionControl {
   readonly #txAdmin: TxAdmin;
   public readonly svRuntime: SvRuntimeVersionControl;
-  private octokit: Octokit | null;
+  public octokit: Octokit | null;
   private githubAuthKey: string | null;
   private githubOwner: string | null;
+  private githubParentRepo: string | null;
 
   private async updateGithubAuthKey(newValue: string | null) {
     this.githubAuthKey = newValue;
@@ -36,6 +37,18 @@ export default class VersionControl {
       console.verbose.warn(err);
       return false;
     }
+  }
+
+  public async getUsername() {
+    if (this.octokit) {
+      const { data } = await this.octokit.rest.users.getAuthenticated();
+
+      if (data) {
+        return data.login;
+      }
+    }
+
+    return null;
   }
 
   private async updateOctokitValue() {
@@ -61,6 +74,7 @@ export default class VersionControl {
 
     this.updateGithubAuthKey(cfg.githubAuthKey);
     this.githubOwner = cfg.githubOwner;
+    this.githubParentRepo = cfg.githubParentRepo;
   }
 
   public async getOwners() {
