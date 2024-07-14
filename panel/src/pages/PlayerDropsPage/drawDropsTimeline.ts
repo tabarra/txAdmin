@@ -10,6 +10,7 @@ const translate = (x: number, y: number) => `translate(${x}, ${y})`;
 
 export type TimelineDropsDatum = {
     hour: Date;
+    hasChanges: boolean;
     drops: PlayerDropsCategoryCount[];
 }
 
@@ -75,8 +76,9 @@ export default function drawDropsTimeline({
         [data.startDate, data.endDate],
         [0, drawableAreaWidth],
     );
+    const countsScaleMaxDomain = data.maxDrops < 10 ? data.maxDrops + 1 : data.maxDrops;
     const countsScale = d3.scaleLinear(
-        [0, data.maxDrops],
+        [0, countsScaleMaxDomain],
         [height - margins.bottom, margins.top],
     );
 
@@ -92,7 +94,7 @@ export default function drawDropsTimeline({
         .attr('class', 'time-axis')
         .call(timeAxis);
 
-    const countsAxisTickValues = (data.maxDrops <= 7) ? d3.range(data.maxDrops + 1) : null;
+    const countsAxisTickValues = (countsScaleMaxDomain <= 7) ? d3.range(countsScaleMaxDomain + 1) : null;
     const countsAxis = d3.axisLeft(countsScale)
         .ticks(height > 200 ? 6 : 4)
         .tickFormat(d => numberToLocaleString(d as number))
@@ -111,6 +113,7 @@ export default function drawDropsTimeline({
     const intervalWidth = timeScale(endOfFirstInterval) - timeScale(data.startDate);
     const canvasTicksStyle = isDarkMode ? `rgba(255, 255, 255, 0.15)` : `rgba(0, 0, 0, 0.35)`;
     const canvasBackgroundStyle = isDarkMode ? '#00000035' : '#00000007';
+    const changeIndicatorStyle = isDarkMode ? '#FFFFFFE0' : '#000000D0';
     const canvasCountScale = (value: number) => countsScale(value) - margins.top;
 
     const drawCanvasTimeline = () => {
@@ -159,10 +162,10 @@ export default function drawDropsTimeline({
 
             //Draw the count blocks
             let dropSum = 0;
-            let lastRenderBottomY = drawableAreaHeight + 1;
+            let lastRenderTopY = drawableAreaHeight + 1;
             for (const [dropCategory, dropCount] of hour.drops) {
                 if (!dropCount) continue;
-                const barBottomY = lastRenderBottomY - 1;
+                const barBottomY = lastRenderTopY - 1;
                 const barTopY = canvasCountScale(dropSum + dropCount) + 1;
                 const barHeight = barBottomY - barTopY;
                 const barHeightRnd = Math.max(
@@ -172,7 +175,7 @@ export default function drawDropsTimeline({
 
                 dropSum += dropCount;
                 if (barHeightRnd < 1) continue;
-                lastRenderBottomY = barBottomY - barHeightRnd;
+                lastRenderTopY = barBottomY - barHeightRnd;
 
                 //Draw the bar
                 ctx.fillStyle = playerDropCategories[dropCategory]?.color ?? 'white';
@@ -186,6 +189,21 @@ export default function drawDropsTimeline({
                     barWidth - 1, -barHeightRnd - 1,
                 );
             }
+
+            //Draw the changes indicator
+            if (hour.hasChanges) {
+                ctx.fillStyle = changeIndicatorStyle;
+                const centerX = Math.round(renderStartX - 0.5 + barWidth / 2) + 0.5;
+                const centerY = lastRenderTopY - 6;
+                const halfSize = 3;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - halfSize);
+                ctx.lineTo(centerX + halfSize, centerY);
+                ctx.lineTo(centerX, centerY + halfSize);
+                ctx.lineTo(centerX - halfSize, centerY);
+                ctx.closePath();
+                ctx.fill();
+            }
         }
         if (isFirstRender) {
             console.timeEnd('drawing canvas timeline');
@@ -195,16 +213,36 @@ export default function drawDropsTimeline({
 
 
     /**
-     * Cursor
+     * Cursor + Range selector
      */
+    type RangePoint = { x: number, hourData: TimelineDropsDatum };
+    let lastCursorData: RangePoint | null = null;
+    let rangeStartData: RangePoint | null = null;
+    let cursorRedrawTimeout: NodeJS.Timeout;
+
     const cursorLineVert = chartGroup.append('line')
         .attr('stroke', isDarkMode ? 'rgba(216, 245, 19, 0.75)' : 'rgba(62, 70, 5, 0.75)')
         .attr('stroke-width', 1)
         .attr('stroke-dasharray', '3,3');
 
+    const rangeSelector = chartGroup.append('rect')
+        .attr('y', margins.top + 0.5)
+        .attr('height', drawableAreaHeight + 0.5)
+        .attr('fill', isDarkMode ? 'rgba(216, 245, 19, 0.05)' : 'rgba(62, 70, 5, 0.15)')
+        .attr('stroke', isDarkMode ? 'rgba(216, 245, 19, 0.25)' : 'rgba(62, 70, 5, 0.25)')
+        .attr('stroke-width', 1)
+        .attr('pointer-events', 'none')
+        .attr('opacity', '0');
+
+    const clearRangeData = (hideRect = false) => {
+        lastCursorData = null;
+        rangeStartData = null;
+        if (hideRect) rangeSelector.attr('opacity', '0');
+    }
     const clearCursor = () => {
         cursorLineVert.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
         legendRef.style.opacity = '0';
+        clearTimeout(cursorRedrawTimeout);
     };
     clearCursor();
 
@@ -226,30 +264,50 @@ export default function drawDropsTimeline({
 
     //Detect mouse over and show timestamp + draw vertical line
     let lastHourIndex: number | null = null;
-    const handleMouseMove = (pointerX: number, pointerY: number) => {
+    const handleMouseMove = (pointerX: number) => {
         // Find closest data point
         const findResult = getClosestData(pointerX - intervalWidth / 2);
         if (!findResult) {
             lastHourIndex = null;
-            return clearCursor();
+            clearRangeData();
+            clearCursor();
+            return;
         }
         const { hourIndex, hourData } = findResult;
         if (hourIndex === lastHourIndex) return;
         lastHourIndex = hourIndex;
-        const hourX = Math.round(timeScale(hourData.hour) + intervalWidth / 2) + 0.5
+        const hourX = timeScale(hourData.hour)
+        const cursorX = Math.round(hourX + intervalWidth / 2) + 0.5
+        lastCursorData = { x: hourX, hourData };
 
         //Set legend data
-        const allNumEls = legendRef.querySelectorAll('span[data-category]');
+        const allNumEls = legendRef.querySelectorAll<HTMLSpanElement>('span[data-category]');
         for (const numEl of allNumEls) {
             const catName = numEl.getAttribute('data-category');
             if (!catName) continue;
             const catCount = hourData.drops.find(([cat]) => cat === catName)?.[1] ?? 0;
             numEl.textContent = numberToLocaleString(catCount);
         }
+        const changeFlagEl = legendRef.querySelector<HTMLDivElement>('div.change-flag');
+        if (changeFlagEl) {
+            changeFlagEl.style.display = hourData.hasChanges ? 'block' : 'none';
+        }
 
-        //Move legend
+        //Update range selector if holding click
+        if (rangeStartData) {
+            const startX = rangeStartData.x;
+            const endX = hourX;
+            const x = Math.min(startX, endX);
+            const width = Math.abs(endX - startX);
+            rangeSelector
+                .attr('x', Math.round(x) + 0.5)
+                .attr('width', Math.round(width + intervalWidth) + 0.5);
+            return;
+        }
+
+        //Move legend - only when not holding click
         let wasTransitionDisabled = false;
-        if(legendRef.style.opacity === '0') {
+        if (legendRef.style.opacity === '0') {
             legendRef.style.transitionProperty = 'opacity';
             wasTransitionDisabled = true;
         }
@@ -258,19 +316,48 @@ export default function drawDropsTimeline({
         if (legendX < margins.left) legendX = hourX + 10 + margins.left;
         legendRef.style.left = `${legendX}px`;
         legendRef.style.opacity = '1';
-        if(wasTransitionDisabled) {
+        if (wasTransitionDisabled) {
             setTimeout(() => {
                 legendRef.style.transitionProperty = 'all';
             }, 0);
         }
 
         // Draw cursor
-        cursorLineVert.attr('x1', hourX).attr('y1', 0).attr('x2', hourX).attr('y2', drawableAreaHeight);
+        cursorLineVert.attr('x1', cursorX).attr('y1', 0).attr('x2', cursorX).attr('y2', drawableAreaHeight);
     };
+
+    const handleMouseDown = (pointerX: number) => {
+        if (!lastCursorData) return;
+        clearCursor();
+        rangeStartData = lastCursorData;
+        rangeSelector
+            .attr('opacity', '1')
+            .attr('x', rangeStartData.x)
+            .attr('width', 0);
+    }
+
+    const handleMouseUp = (pointerX: number) => {
+        if (!rangeStartData) return;
+        clearTimeout(cursorRedrawTimeout);
+        handleMouseMove(pointerX);
+        if (!lastCursorData || lastCursorData.hourData.hour === rangeStartData.hourData.hour) {
+            clearRangeData(true);
+            return;
+        }
+
+        console.log('Range selected:', rangeStartData.hourData.hour, lastCursorData.hourData.hour);
+        rangeStartData = null;
+    }
+
+    const handleMouseLeave = () => {
+        setTimeout(() => {
+            clearRangeData(!!rangeStartData);
+            clearCursor();
+        }, 150);
+    }
 
     // Handle svg mouse events
     let isEventInCooldown = false;
-    let cursorRedrawTimeout: NodeJS.Timeout;
     const cooldownTime = 20;
     chartGroup.append('rect')
         .attr('x', 0)
@@ -279,25 +366,29 @@ export default function drawDropsTimeline({
         .attr('height', drawableAreaHeight)
         .attr('fill', 'transparent')
         .on('mousemove', function (event) {
-            const [pointerX, pointerY] = d3.pointer(event);
+            const [pointerX] = d3.pointer(event);
             if (!isEventInCooldown) {
                 isEventInCooldown = true;
-                handleMouseMove(pointerX, pointerY);
+                handleMouseMove(pointerX);
                 setTimeout(() => {
                     isEventInCooldown = false;
                 }, cooldownTime);
             } else {
                 clearTimeout(cursorRedrawTimeout);
                 cursorRedrawTimeout = setTimeout(() => {
-                    handleMouseMove(pointerX, pointerY);
+                    handleMouseMove(pointerX);
                 }, cooldownTime);
             }
         })
-    svg.on('mouseleave', function () {
-        setTimeout(() => {
-            clearCursor();
-        }, 150);
-    });
+        .on('mousedown', function (event) {
+            const [pointerX] = d3.pointer(event);
+            handleMouseDown(pointerX);
+        })
+        .on('mouseup', function (event) {
+            const [pointerX] = d3.pointer(event);
+            handleMouseUp(pointerX);
+        });
+    svg.on('mouseleave', handleMouseLeave);
 
     isFirstRender = false;
 }

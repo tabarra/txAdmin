@@ -26,11 +26,10 @@
     - [x] charts: draw bars
     - [ ] charts: display days mode
     - [x] charts: add cursor with legends
-    - [ ] charts: get "ratio" to the legends?
-    - [ ] charts: get "changes" back to chart?
+    - [x] charts: get "changes" back to chart?
     - [x] charts: cleanup of code, mayhaps add some testing
-    - [ ] charts: is the current memoization correct?
-    - [ ] charts: test with very few drops
+    - [x] charts: is the current memoization correct?
+    - [x] charts: test with very few drops
     - [ ] add window selection buttons to drilldown card
     - [ ] review page layout: make it less card-y
     - [ ] add drilldown interval buttons

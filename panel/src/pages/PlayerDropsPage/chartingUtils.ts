@@ -47,8 +47,7 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], selectedP
         expectedSeriesMax = Math.max(expectedSeriesMax, hourExpectedTotalDrops);
         unexpectedSeriesMax = Math.max(unexpectedSeriesMax, hourUnexpectedTotalDrops);
         series.push({
-            // hasChanges: hourData.hasChanges,
-            // hourTotalDrops,
+            hasChanges: hourData.hasChanges,
             expectedDrops: expectedDrops,
             unexpectedDrops: unexpectedDrops,
         });
@@ -75,12 +74,14 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], selectedP
         const currHour = new Date(hourData.hour);
         expectedSeries.push({
             hour: currHour,
+            hasChanges: seriesData.hasChanges,
             drops: seriesData.expectedDrops.sort(([aCat], [bCat]) => {
                 return expectedCategoriesOrder[aCat] - expectedCategoriesOrder[bCat];
             }),
         });
         unexpectedSeries.push({
             hour: currHour,
+            hasChanges: seriesData.hasChanges,
             drops: seriesData.unexpectedDrops.sort(([aCat], [bCat]) => {
                 return unexpectedCategoriesOrder[aCat] - unexpectedCategoriesOrder[bCat];
             }),
