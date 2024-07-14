@@ -239,7 +239,10 @@ export class Deployer {
         this.validGithubData = typeof globals.deployer.recipe.variables.githubAutoFork === 'boolean' && typeof globals.deployer.recipe.variables.githubAuthKey === 'string' && globals.deployer.recipe.variables.githubAuthKey.trim().length > 0 && typeof globals.deployer.recipe.variables.githubOwner === 'string' && globals.deployer.recipe.variables.githubOwner.trim().length > 0 && typeof globals.deployer.recipe.variables.githubParentRepo === 'string' && globals.deployer.recipe.variables.githubParentRepo.trim().length > 0;
         if (this.validGithubData == true) {
             const localUsername = await globals.versionControl.getUsername();
-            this.isOwnerOrganization = this.recipe.variables.githubOwner === localUsername;
+            this.isOwnerOrganization = this.recipe.variables.githubOwner !== localUsername;
+
+            const repoCreationResp = await globals.versionControl.createGithubRepo(this.recipe.variables.githubParentRepo, this.recipe.variables.githubOwner, this.isOwnerOrganization);
+            console.log('repoCreationResp', repoCreationResp);
         }
         this.runTasks();
     }

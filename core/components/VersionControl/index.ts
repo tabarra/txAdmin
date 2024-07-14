@@ -23,6 +23,53 @@ export default class VersionControl {
     await this.updateOctokitValue();
   }
 
+  public async createGithubRepo(
+    repoName: string,
+    ownerName: string,
+    isOrganization: boolean
+  ): Promise<[boolean, any?]> {
+    console.log({
+      repoName,
+      ownerName,
+      isOrganization
+    });
+    if (this.octokit) {
+      if (isOrganization === true) {
+        const resp = this.octokit.request("POST /orgs/{org}/repos", {
+          org: ownerName,
+          name: repoName,
+          description: "Server repository created by txAdmin",
+          private: true,
+          has_issues: true,
+          has_projects: true,
+          has_wiki: true,
+          is_template: false
+        });
+        console.log("resp", JSON.stringify(resp));
+
+        if (resp.status === 200) {
+          return [true, resp.data];
+        }
+      } else {
+        const resp = this.octokit.request("POST /user/repos", {
+          name: repoName,
+          description: "Server repository created by txAdmin",
+          private: true,
+          has_issues: true,
+          has_projects: true,
+          has_wiki: true,
+          is_template: false
+        });
+
+        if (resp.status === 200) {
+          return [true, resp.data];
+        }
+      }
+    }
+
+    return [false];
+  }
+
   public async isAuthKeyValid(key: string) {
     try {
       const val = await new Octokit({
