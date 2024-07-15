@@ -144,20 +144,16 @@
                                         Github Repository Owner
                                     </label>
                                     <div class="col-sm-9">
-                                        <div style="display: flex; flex-direction: row; gap: 0.5rem;">
-                                            <select id="step3-githubOwner" name="players" class="form-control" value="<%= githubOwner %>" required <% if (githubAuthKey === null) { %>disabled<% } %>>
-                                                <% if (githubAuthKey == null) { %>
-                                                    <option value="none" selected disabled>Input github key first</option>
-                                                <% } else { %>
-                                                    <option value="none" <% if (githubOwner === 'none') { %>selected<% } %> disabled>Select owner</option>
-                                                    <% for (const owner of githubOwners) { %>
-                                                        <option value="<%= owner %>" <% if (githubOwner === owner) { %>selected<% } %>><%= owner %></option>
-                                                    <% } %>
+                                        <select id="step3-githubOwner" name="players" class="form-control" value="<%= githubOwner %>" required <% if (githubAuthKey === null) { %>disabled<% } %>>
+                                            <% if (githubAuthKey == null) { %>
+                                                <option value="none" selected disabled>Input github key first</option>
+                                            <% } else { %>
+                                                <option value="none" <% if (githubOwner === 'none') { %>selected<% } %> disabled>Select owner</option>
+                                                <% for (const owner of githubOwners) { %>
+                                                    <option value="<%= owner %>" <% if (githubOwner === owner) { %>selected<% } %>><%= owner %></option>
                                                 <% } %>
-                                            </select>
-                                            <button class="btn btn-success" type="button" id="step3-owner-button"  <% if (githubAuthKey === null) { %>disabled<% } %>
-                                                onclick="step3SaveOwnerAction();" autofocus>Save</button>
-                                        </div>
+                                            <% } %>
+                                        </select>
                                         <span class="form-text text-muted">
                                             This dropdown is for selecting which github account / orginization should own the repositories related to your server
                                         </span>
@@ -169,30 +165,23 @@
                                         Github Auto Fork
                                     </label>
                                     <div class="col-sm-9">
-                                        <div style="display: flex; flex-direction: row; gap: 0.5rem;">
-                                            <select id="step3-githubAutoFork" class="form-control" value="<%= githubAutoFork %>" required>
-                                                <option value="false" <% if (githubAutoFork === false) { %>selected<% } %>>No</option>
-                                                <option value="true" <% if (githubAutoFork === true) { %>selected<% } %>>Yes</option>
-                                            </select>
-                                            <button class="btn btn-success" type="button" 
-                                                onclick="step3SaveForkAction();" autofocus>Save</button>
-                                        </div>
+                                        <select id="step3-githubAutoFork" class="form-control" value="<%= githubAutoFork %>" required>
+                                            <option value="false" <% if (githubAutoFork === false) { %>selected<% } %>>No</option>
+                                            <option value="true" <% if (githubAutoFork === true) { %>selected<% } %>>Yes</option>
+                                        </select>
                                         <span class="form-text text-muted">
                                             If this is enabled, then all the repositories from this server deployer will be auto forked to your own organization/user
                                         </span>
                                     </div>
                                 </div>
+
                                 <div class="form-group row">
                                     <label for="step3-githubParentRepo" class="col-sm-3 col-form-label">
                                         Github Parent Repo Name
                                     </label>
                                     <div class="col-sm-9">
-                                        <div style="display: flex; flex-direction: row; gap: 0.5rem;">
-                                            <input type="text" class="form-control" id="step3-githubParentRepo" maxlength="86" 
-                                                autocomplete="off" value="<%= githubParentRepo %>" autofocus placeholder="Repository name">
-                                            <button class="btn btn-success" type="button" 
-                                                onclick="step3SaveRepoNameAction();" autofocus>Save</button>
-                                        </div>
+                                        <input type="text" class="form-control" id="step3-githubParentRepo" maxlength="86" 
+                                            autocomplete="off" value="<%= githubParentRepo %>" autofocus placeholder="Repository name">
                                         <span class="form-text text-muted">
                                             This will be the name of the new github repository
                                         </span>
@@ -586,37 +575,11 @@
                 type: "POST",
                 url: '/deployer/recipe/runRecipe',
                 timeout: REQ_TIMEOUT_LONG,
-                data: {},
-                success: function (data) {
-                    if (checkApiLogoutRefresh(data)) return;
-                    if (data.success == true){
-                        window.location.reload(true);
-                    }else{
-                        notify.update('progress', 0);
-                        notify.update('type', data.type);
-                        notify.update('message', data.message);
-                    }
+                data: {
+                    githubOwner: step3elements.githubOwner.value.trim(),
+                    githubAutoFork: step3elements.githubAutoFork.value.trim(),
+                    githubParentRepo: step3elements.githubParentRepo.value.trim()
                 },
-                error: function (xmlhttprequest, textstatus, message) {
-                    notify.update('progress', 0);
-                    notify.update('type', 'danger');
-                    notify.update('message', message);
-                }
-            });
-        }
-        function step3SaveOwnerAction() {
-            if(!step3elements.form.reportValidity()) return;
-            const postData = {
-                key: 'githubOwner',
-                value: step3elements.githubOwner.value.trim()
-            }
-
-            const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
-            txAdminAPI({
-                type: "POST",
-                url: '/deployer/recipe/setVersionControlVariables',
-                timeout: REQ_TIMEOUT_LONG,
-                data: postData,
                 success: function (data) {
                     if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
@@ -626,69 +589,6 @@
                         notify.update('type', data.type);
                         notify.update('message', data.message);
                     }
-                    
-                },
-                error: function (xmlhttprequest, textstatus, message) {
-                    notify.update('progress', 0);
-                    notify.update('type', 'danger');
-                    notify.update('message', message);
-                }
-            });
-        }
-        function step3SaveForkAction() {
-            if(!step3elements.form.reportValidity()) return;
-            const postData = {
-                key: 'githubAutoFork',
-                value: step3elements.githubAutoFork.value.trim()
-            }
-
-            const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
-            txAdminAPI({
-                type: "POST",
-                url: '/deployer/recipe/setVersionControlVariables',
-                timeout: REQ_TIMEOUT_LONG,
-                data: postData,
-                success: function (data) {
-                    if (checkApiLogoutRefresh(data)) return;
-                    if (data.success == true){
-                        window.location.reload(true);
-                    }else{
-                        notify.update('progress', 0);
-                        notify.update('type', data.type);
-                        notify.update('message', data.message);
-                    }
-                    
-                },
-                error: function (xmlhttprequest, textstatus, message) {
-                    notify.update('progress', 0);
-                    notify.update('type', 'danger');
-                    notify.update('message', message);
-                }
-            });
-        }
-        function step3SaveRepoNameAction() {
-            if(!step3elements.form.reportValidity()) return;
-            const postData = {
-                key: 'githubParentRepo',
-                value: step3elements.githubParentRepo.value.trim()
-            }
-
-            const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
-            txAdminAPI({
-                type: "POST",
-                url: '/deployer/recipe/setVersionControlVariables',
-                timeout: REQ_TIMEOUT_LONG,
-                data: postData,
-                success: function (data) {
-                    if (checkApiLogoutRefresh(data)) return;
-                    if (data.success == true){
-                        window.location.reload(true);
-                    }else{
-                        notify.update('progress', 0);
-                        notify.update('type', data.type);
-                        notify.update('message', data.message);
-                    }
-                    
                 },
                 error: function (xmlhttprequest, textstatus, message) {
                     notify.update('progress', 0);

@@ -83,6 +83,10 @@ async function handleConfirmRecipe(ctx) {
  * @param {object} ctx
  */
 async function handleRunRecipe(ctx) {
+    globals.deployer.recipe.variables['githubAutoFork'] = ctx.request.body.githubAutoFork === 'true';
+    globals.deployer.recipe.variables['githubParentRepo'] = typeof ctx.request.body.githubParentRepo === 'string' ? ctx.request.body.githubParentRepo : null;
+    globals.deployer.recipe.variables['githubOwner'] = typeof ctx.request.body.githubOwner === 'string' ? ctx.request.body.githubOwner : null;
+
     //Start deployer
     try {
         ctx.admin.logAction('Running recipe.');

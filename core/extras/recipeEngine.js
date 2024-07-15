@@ -5,10 +5,11 @@ import fsp from 'node:fs/promises';
 import path from 'node:path';
 import stream from 'node:stream';
 import StreamZip from 'node-stream-zip';
-import { cloneDeep, escapeRegExp }  from 'lodash-es';
+import { cloneDeep, escapeRegExp } from 'lodash-es';
 import mysql from 'mysql2/promise';
 import got from '@core/extras/got.js';
 import consoleFactory from '@extras/console';
+import { githubRepoSourceRegex } from './helpers';
 const console = consoleFactory(modulename);
 
 
@@ -84,7 +85,6 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
  * Downloads a github repository with an optional reference (branch, tag, commit hash) or subpath.
  * If the directory structure does not exist, it is created.
  */
-const githubRepoSourceRegex = /^((https?:\/\/github\.com\/)?|@)?([\w.\-_]+)\/([\w.\-_]+).*$/;
 const validatorDownloadGithub = (options) => {
     return (
         typeof options.src == 'string'
@@ -112,8 +112,8 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
         const data = await got.get(
             `https://api.github.com/repos/${repoOwner}/${repoName}`,
             {
-                timeout: { request: 15e3 }
-            }
+                timeout: { request: 15e3 },
+            },
         ).json();
         if (typeof data !== 'object' || !data.default_branch) {
             throw new Error('reference not set, and wasn ot able to detect using github\'s api');
