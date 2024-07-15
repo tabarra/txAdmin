@@ -3,6 +3,7 @@ import { useIsDarkMode } from "@/hooks/theme";
 import { Button } from "@/components/ui/button";
 import drawDropsTimeline, { TimelineDropsDatum } from "./drawDropsTimeline";
 import { playerDropCategories } from "@/lib/playerDropCategories";
+import { PlayerDropsMessage } from "./PlayerDropsGenericSubcards";
 
 export type TimelineDropsChartData = {
     selectedPeriod: string;
@@ -102,45 +103,48 @@ function TimelineDropsChart({ chartData, chartName, width, height }: TimelineDro
                 Retry{errorRetry ? ` (${errorRetry})` : ''}
             </Button>
         </div>
+    } else if (!chartData.maxDrops) {
+        return <PlayerDropsMessage message="No players disconnected from your server recently." />
     }
-    return (
-        <>
-            <div
-                ref={legendRef}
-                style={{
-                    zIndex: 2,
-                    position: 'absolute',
-                    top: `12px`,
-                    opacity: 0,
-                }}
-                className="p-2 rounded-md border shadow-lg dark:bg-zinc-800/90 bg-zinc-200/90 pointer-events-none transition-all"
-            >
-                <ChartLabels categories={chartData.categoriesSorted} />
+    return (<>
+        <div
+            ref={legendRef}
+            style={{
+                zIndex: 2,
+                position: 'absolute',
+                top: `12px`,
+                opacity: 0,
+            }}
+            className="p-2 rounded-md border shadow-lg dark:bg-zinc-800/90 bg-zinc-200/90 pointer-events-none transition-all"
+        >
+            <ChartLabels categories={chartData.categoriesSorted} />
+            <div className="change-flag w-full mt-1 bg-card/75 rounded-md border text-center text-xs tracking-wider">
+                ENV CHANGES
             </div>
-            <svg
-                ref={svgRef}
-                width={width}
-                height={height}
-                style={{
-                    zIndex: 1,
-                    position: 'absolute',
-                    top: '0px',
-                    left: '0px',
-                }}
-            />
-            <canvas
-                ref={canvasRef}
-                width={width - margins.left - margins.right}
-                height={height - margins.top - margins.bottom}
-                style={{
-                    zIndex: 0,
-                    position: 'absolute',
-                    top: `${margins.top}px`,
-                    left: `${margins.left}px`,
-                }}
-            />
-        </>
-    );
+        </div>
+        <svg
+            ref={svgRef}
+            width={width}
+            height={height}
+            style={{
+                zIndex: 1,
+                position: 'absolute',
+                top: '0px',
+                left: '0px',
+            }}
+        />
+        <canvas
+            ref={canvasRef}
+            width={width - margins.left - margins.right}
+            height={height - margins.top - margins.bottom}
+            style={{
+                zIndex: 0,
+                position: 'absolute',
+                top: `${margins.top}px`,
+                left: `${margins.left}px`,
+            }}
+        />
+    </>);
 }
 
 export default memo(TimelineDropsChart);
