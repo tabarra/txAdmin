@@ -1,3 +1,5 @@
+import { randomBytes } from 'node:crypto';
+
 const byteToRegexHex = (byte: number) => {
     return '\\u' + byte.toString(16).padStart(2, '0').toUpperCase();
 }
@@ -15,6 +17,12 @@ function unicodeUtf16RangeToRegex(codePointStart: number, codePointEnd: number) 
 }
 // unicodeUtf16RangeToRegex(0x1D000, 0x1D0FF) = \uD834[\uDC00-\uDCFF]
 
+function uniqueId(length: number): string {
+    const byteLength = Math.ceil(length / 2);
+    const bytes = randomBytes(byteLength);
+    
+    return bytes.toString('hex').slice(0, length);
+}
 /**
  * Cleans up a player name and returns one version to be displayed, and one pure version to be used for fuzzy matching.
  * In case the name has no ascii characters, the pure name will be "empty name".
@@ -48,14 +56,14 @@ export default (original: string) => {
         .replace(/\p{Mark}{2,}/ug, '') //2+ consecutive marks (zalgo text)
         .replace(/\s+/g, ' ')
         .trim();
-    if (!displayName.length) displayName = 'empty name';
+    if (!displayName.length) displayName = `empty name ${uniqueId(5)}`;
     let pureName = displayName
         .normalize('NFKC')
         .replace(/[^\p{Letter}\p{Number} ]/gu, '')
         .replace(/\s+/g, '')
         .toLocaleLowerCase()
         .trim();
-    if (!pureName.length) pureName = 'emptyname';
+    if (!pureName.length) pureName = `emptyname${uniqueId(5)}`;
 
     return {displayName, pureName};
 };
