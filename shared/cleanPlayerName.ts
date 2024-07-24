@@ -54,14 +54,14 @@ export default (original: string) => {
         .replace(/\p{Mark}{2,}/ug, '') //2+ consecutive marks (zalgo text)
         .replace(/\s+/g, ' ')
         .trim();
-    if (!displayName.length) displayName = `empty name ${generateHashId(original)}`;
+    if (!displayName.length) displayName = `∅${generateHashId(original)}`;
     let pureName = displayName
         .normalize('NFKC')
         .replace(/[^\p{Letter}\p{Number} ]/gu, '')
         .replace(/\s+/g, '')
         .toLocaleLowerCase()
         .trim();
-    if (!pureName.length) pureName = `emptyname${generateHashId(original)}`;
+    if (!pureName.length) pureName = `∅${generateHashId(original)}`;
 
     return {displayName, pureName};
 };
