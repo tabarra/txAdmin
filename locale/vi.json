@@ -25,7 +25,7 @@
             "label_reason": "Lý do cấm",
             "label_id": "ID cấm",
             "note_multiple_bans": "Lưu ý: bạn có nhiều hơn một lệnh cấm hoạt động đối với tài khoản của mình.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_diff_license": "Lưu ý: lệnh cấm ở trên đã được áp dụng cho một <code>giấy phép</code> khác, có nghĩa là một số ID/HWID của bạn khớp với những ID/HWID được liên kết với lệnh cấm đó."
         }
     },
     "whitelist_messages": {
@@ -78,7 +78,7 @@
             "announcement_title": "Thông báo máy chủ bởi %{author}:",
             "directmessage_title": "Tin nhắn từ Admin %{author}:",
             "dialog_empty_input": "Bạn không thể để trống mục này.",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "Hành động này yêu cầu bật OneSync."
         },
         "frozen": {
             "froze_player": "Bạn đã đóng băng người chơi!",
