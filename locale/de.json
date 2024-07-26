@@ -78,7 +78,7 @@
             "announcement_title": "Serverweite Ankündigung von %{author}:",
             "dialog_empty_input": "Du kannst keine leere Eingabe senden.",
             "directmessage_title": "DM von Admin %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "Für diese Aktion muss OneSync aktiviert sein."
         },
         "frozen": {
             "froze_player": "Du hast den Spieler eingefroren.",
@@ -220,11 +220,11 @@
                 "zero_players": "Keine Spieler gefunden"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "Filtern nach",
+                "no_filter": "Kein Filter",
+                "is_admin": "Ist Admin",
+                "is_injured": "Ist Verletzt / Tot",
+                "in_vehicle": "Ist in Fahrzeug"
             },
             "sort": {
                 "label": "Sortieren nach",
