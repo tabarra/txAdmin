@@ -71,6 +71,7 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], selectedP
     for (let i = 0; i < windowData.length; i++) {
         const hourData = windowData[i];
         const seriesData = series[i];
+        if (!seriesData) continue;
         const currHour = new Date(hourData.hour);
         expectedSeries.push({
             hour: currHour,

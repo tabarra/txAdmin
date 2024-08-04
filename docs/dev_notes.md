@@ -30,7 +30,8 @@
     - [x] charts: cleanup of code, mayhaps add some testing
     - [x] charts: is the current memoization correct?
     - [x] charts: test with very few drops
-    - [ ] add window selection buttons to drilldown card
+    - [x] add window selection buttons to drilldown card
+    - [ ] change `ENV CHANGES` to the count of changes
     - [ ] review page layout: make it less card-y
     - [ ] add drilldown interval buttons
     - [ ] tune in swr caching/reloading behavior
@@ -139,7 +140,11 @@ for log in statsLog:
 - Small feats, fix, and improvements:
     - [ ] the WarningBar scrolls up with the pages when they have scroll
     - [ ] locale file optimization - build 8201 and above
-    - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+    - [ ] easter egg???
+        - some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+        - Having the menu protest when someone fixes their car too much in a short time span?
+        - Zeus or crazy thunder effects when someone spams no clip?
+        - Increasingly exciting 'tada' sounds when someone bans multiple people in a short time span? (ban 1: Ooh.. / ban 2: OOooh.. / ban 3: OOOOOHHH!)
 
 - Chores + Refactor stuff:
     - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
@@ -220,6 +225,8 @@ need to check swr's behavior on unmount and how to change timeouts
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
+- [ ] update stuff that requires WMIC to use PS command directly (https://github.com/tabarra/txAdmin/issues/970)
+    - https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/07-working-with-wmi?view=powershell-7.2
 
 
 =======================================================================

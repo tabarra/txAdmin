@@ -3,6 +3,7 @@ import { msToShortDuration, numberToLocaleString } from '@/lib/utils';
 import { playerDropCategories } from "@/lib/playerDropCategories";
 import { PlayerDropsCategoryCount } from './chartingUtils';
 import { TimelineDropsChartData } from './TimelineDropsChart';
+import { DrilldownRangeSelectionType } from './PlayerDropsPage';
 
 
 //Helpers
@@ -23,6 +24,8 @@ type drawDropsTimelineProps = {
         width: number;
         height: number;
     };
+    rangeSelected: DrilldownRangeSelectionType;
+    rangeSetter: (range: DrilldownRangeSelectionType) => void;
     margins: {
         top: number;
         right: number;
@@ -31,6 +34,7 @@ type drawDropsTimelineProps = {
         axis: number;
     };
     isDarkMode: boolean;
+    chartName: string;
     data: TimelineDropsChartData,
 };
 
@@ -40,8 +44,11 @@ export default function drawDropsTimeline({
     canvasRef,
     setRenderError,
     size: { width, height },
+    rangeSelected,
+    rangeSetter,
     margins,
     isDarkMode,
+    chartName,
     data,
 }: drawDropsTimelineProps) {
     //Clear SVG
@@ -68,7 +75,7 @@ export default function drawDropsTimeline({
     console.log('Drawable area:', drawableAreaWidth, drawableAreaHeight);
 
     const chartGroup = svg.append('g')
-        .attr('transform', translate(margins.left, 0));
+        .attr('transform', translate(margins.left, margins.top));
 
 
     //Scales
@@ -90,7 +97,7 @@ export default function drawDropsTimeline({
     // .tickFormat(d => d && dateToLocaleTimeString(d as Date, 'numeric', '2-digit'));
     // .tickFormat(d3.timeFormat('%H:%M'));
     const timeAxisGroup = chartGroup.append("g")
-        .attr('transform', translate(0, height - margins.bottom))
+        .attr('transform', translate(0, drawableAreaHeight))
         .attr('class', 'time-axis')
         .call(timeAxis);
 
@@ -100,7 +107,7 @@ export default function drawDropsTimeline({
         .tickFormat(d => numberToLocaleString(d as number))
         .tickValues(countsAxisTickValues as any); //integer values only 
     const countsAxisGroup = svg.append('g')
-        .attr('class', 'players-axis')
+        .attr('class', 'counts-axis')
         .attr('transform', translate(margins.left - margins.axis, 0))
         .call(countsAxis)
 
@@ -215,94 +222,141 @@ export default function drawDropsTimeline({
     /**
      * Cursor + Range selector
      */
-    type RangePoint = { x: number, hourData: TimelineDropsDatum };
-    let lastCursorData: RangePoint | null = null;
+    type RangePoint = { x: number, datum: TimelineDropsDatum };
     let rangeStartData: RangePoint | null = null;
     let cursorRedrawTimeout: NodeJS.Timeout;
+    const maskElmntId = `chartMask-${chartName}`;
 
+    //Cursor line
     const cursorLineVert = chartGroup.append('line')
         .attr('stroke', isDarkMode ? 'rgba(216, 245, 19, 0.75)' : 'rgba(62, 70, 5, 0.75)')
         .attr('stroke-width', 1)
         .attr('stroke-dasharray', '3,3');
 
-    const rangeSelector = chartGroup.append('rect')
-        .attr('y', margins.top + 0.5)
-        .attr('height', drawableAreaHeight + 0.5)
-        .attr('fill', isDarkMode ? 'rgba(216, 245, 19, 0.05)' : 'rgba(62, 70, 5, 0.15)')
-        .attr('stroke', isDarkMode ? 'rgba(216, 245, 19, 0.25)' : 'rgba(62, 70, 5, 0.25)')
-        .attr('stroke-width', 1)
-        .attr('pointer-events', 'none')
+    //Range selector mark
+    const defs = chartGroup.append('defs');
+    const mask = defs.append('mask')
+        .attr('id', maskElmntId);
+    const maskArea = mask.append('rect')
+        .attr('width', drawableAreaWidth)
+        .attr('height', drawableAreaHeight)
+        .attr('fill', 'white')
+        .attr('class', 'transition-opacity')
         .attr('opacity', '0');
+    const maskRect = mask.append('rect')
+        .attr('height', drawableAreaHeight)
+        .attr('fill', 'black');
+    chartGroup.append('rect')
+        .attr('width', drawableAreaWidth)
+        .attr('height', drawableAreaHeight)
+        .attr('fill', isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.35)')
+        .attr('mask', `url(#${maskElmntId})`);
 
-    const clearRangeData = (hideRect = false) => {
-        lastCursorData = null;
-        rangeStartData = null;
-        if (hideRect) rangeSelector.attr('opacity', '0');
+    const updateRangeRect = (x1?: number, x2?: number) => {
+        //Hide mask
+        if (
+            (typeof x1 !== 'number' || typeof x2 !== 'number')
+            || (x1 < 0 && x2 < 0)
+            || (x1 > drawableAreaWidth && x2 > drawableAreaWidth)
+        ) {
+            maskArea.attr('opacity', '0');
+            return;
+        }
+
+        //Set mask
+        const x1Floor = Math.floor(x1);
+        const x2Floor = Math.floor(x2);
+        maskRect
+            .attr('x', Math.min(x1Floor, x2Floor) + 0.5)
+            .attr('width', Math.abs(x2Floor - x1Floor) + intervalWidth + 0.5);
+        maskArea.attr('opacity', '1');
     }
-    const clearCursor = () => {
+    const setUpstreamRangeState = (range: [date1: Date, date2: Date] | null) => {
+        if (!Array.isArray(range) || range.length !== 2) {
+            rangeSetter(null);
+        } else if (range[0].getTime() <= range[1].getTime()) {
+            rangeSetter({
+                startDate: range[0],
+                endDate: range[1],
+            });
+        } else if (range[0].getTime() > range[1].getTime()) {
+            rangeSetter({
+                startDate: range[1],
+                endDate: range[0],
+            });
+        }
+    }
+    const clearRangeData = (hideRect = false) => {
+        rangeStartData = null;
+        if (hideRect) {
+            updateRangeRect();
+            if (rangeSelected) {
+                setUpstreamRangeState(null);
+            }
+        }
+    }
+    const hideCursor = () => {
         cursorLineVert.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
         legendRef.style.opacity = '0';
         clearTimeout(cursorRedrawTimeout);
     };
-    clearCursor();
+    hideCursor();
+
+    //Setting range if upstream range info available
+    if (rangeSelected) {
+        console.log('Upsream range selected:', rangeSelected.startDate.toISOString(), rangeSelected.endDate.toISOString());
+        updateRangeRect(
+            timeScale(rangeSelected.startDate),
+            timeScale(rangeSelected.endDate),
+        );
+    }
+
 
     //Find the closest data point for a given X value
-    const maxAllowedGap = (data.selectedPeriod === 'day' ? 24 : 1) * 60 * 60 * 1000 / 2; //half the period in ms
+    // const maxAllowedGap = (data.selectedPeriod === 'day' ? 24 : 1) * 60 * 60 * 1000 / 2; //half the period in ms //FIXME: remove?
     const timeBisector = d3.bisector((hour: TimelineDropsDatum) => hour.hour).center;
-    const getClosestData = (x: number) => {
-        const xPosDate = timeScale.invert(x);
+    const findClosestDatum = (pointerX: number) => {
+        const xPosDate = timeScale.invert(pointerX - intervalWidth / 2);
         const indexFound = timeBisector(data.log, xPosDate);
         if (indexFound === -1) return;
-        const hourData = data.log[indexFound];
-        if (Math.abs(hourData.hour.getTime() - xPosDate.getTime()) < maxAllowedGap) {
-            return {
-                hourIndex: indexFound,
-                hourData
-            };
-        }
+        const datum = data.log[indexFound];
+        if (!datum.drops.length) return;
+        const datumStartTs = datum.hour.getTime();
+        // if (Math.abs(datumStartTs - xPosDate.getTime()) > maxAllowedGap) return; //FIXME: remove?
+        return {
+            datum,
+            datumStartTs,
+            datumStartX: timeScale(datum.hour),
+            dataumIndex: indexFound,
+        };
     };
 
     //Detect mouse over and show timestamp + draw vertical line
-    let lastHourIndex: number | null = null;
+    let lastDatumIndex: number | null = null;
     const handleMouseMove = (pointerX: number) => {
         // Find closest data point
-        const findResult = getClosestData(pointerX - intervalWidth / 2);
-        if (!findResult) {
-            lastHourIndex = null;
-            clearRangeData();
-            clearCursor();
-            return;
+        const datumFound = findClosestDatum(pointerX);
+        if (!datumFound) return;
+        const { datum, datumStartX, dataumIndex } = datumFound;
+        if (dataumIndex === lastDatumIndex) return;
+        lastDatumIndex = dataumIndex;
+
+        //Update range selector if holding click
+        if (rangeStartData) {
+            return updateRangeRect(rangeStartData.x, datumStartX);
         }
-        const { hourIndex, hourData } = findResult;
-        if (hourIndex === lastHourIndex) return;
-        lastHourIndex = hourIndex;
-        const hourX = timeScale(hourData.hour)
-        const cursorX = Math.round(hourX + intervalWidth / 2) + 0.5
-        lastCursorData = { x: hourX, hourData };
 
         //Set legend data
         const allNumEls = legendRef.querySelectorAll<HTMLSpanElement>('span[data-category]');
         for (const numEl of allNumEls) {
             const catName = numEl.getAttribute('data-category');
             if (!catName) continue;
-            const catCount = hourData.drops.find(([cat]) => cat === catName)?.[1] ?? 0;
+            const catCount = datum.drops.find(([cat]) => cat === catName)?.[1] ?? 0;
             numEl.textContent = numberToLocaleString(catCount);
         }
         const changeFlagEl = legendRef.querySelector<HTMLDivElement>('div.change-flag');
         if (changeFlagEl) {
-            changeFlagEl.style.display = hourData.hasChanges ? 'block' : 'none';
-        }
-
-        //Update range selector if holding click
-        if (rangeStartData) {
-            const startX = rangeStartData.x;
-            const endX = hourX;
-            const x = Math.min(startX, endX);
-            const width = Math.abs(endX - startX);
-            rangeSelector
-                .attr('x', Math.round(x) + 0.5)
-                .attr('width', Math.round(width + intervalWidth) + 0.5);
-            return;
+            changeFlagEl.style.display = datum.hasChanges ? 'block' : 'none';
         }
 
         //Move legend - only when not holding click
@@ -312,8 +366,8 @@ export default function drawDropsTimeline({
             wasTransitionDisabled = true;
         }
         const legendWidth = legendRef.clientWidth;
-        let legendX = hourX - legendWidth - 10 + margins.left;
-        if (legendX < margins.left) legendX = hourX + 10 + margins.left;
+        let legendX = datumStartX - legendWidth - 10 + margins.left;
+        if (legendX < margins.left) legendX = datumStartX + 10 + margins.left;
         legendRef.style.left = `${legendX}px`;
         legendRef.style.opacity = '1';
         if (wasTransitionDisabled) {
@@ -323,36 +377,37 @@ export default function drawDropsTimeline({
         }
 
         // Draw cursor
+        const cursorX = Math.round(datumStartX + intervalWidth / 2) + 0.5;
         cursorLineVert.attr('x1', cursorX).attr('y1', 0).attr('x2', cursorX).attr('y2', drawableAreaHeight);
     };
 
     const handleMouseDown = (pointerX: number) => {
-        if (!lastCursorData) return;
-        clearCursor();
-        rangeStartData = lastCursorData;
-        rangeSelector
-            .attr('opacity', '1')
-            .attr('x', rangeStartData.x)
-            .attr('width', 0);
+        const datumFound = findClosestDatum(pointerX);
+        if (!datumFound) return;
+        hideCursor();
+        rangeStartData = {
+            x: datumFound.datumStartX,
+            datum: datumFound.datum,
+        };
+        updateRangeRect(datumFound.datumStartX);
     }
 
     const handleMouseUp = (pointerX: number) => {
-        if (!rangeStartData) return;
+        if (!rangeStartData) return clearRangeData(true);
+        const datumFound = findClosestDatum(pointerX);
+        if (!datumFound) return clearRangeData(true);
+        const { datum, datumStartX, dataumIndex } = datumFound;
         clearTimeout(cursorRedrawTimeout);
-        handleMouseMove(pointerX);
-        if (!lastCursorData || lastCursorData.hourData.hour === rangeStartData.hourData.hour) {
-            clearRangeData(true);
-            return;
-        }
 
-        console.log('Range selected:', rangeStartData.hourData.hour, lastCursorData.hourData.hour);
-        rangeStartData = null;
+        console.log('PlayerDrops chart range selected:', rangeStartData.datum.hour.toISOString(), datum.hour.toISOString());
+        setUpstreamRangeState([rangeStartData.datum.hour, datum.hour]);
+        clearRangeData();
     }
 
     const handleMouseLeave = () => {
         setTimeout(() => {
             clearRangeData(!!rangeStartData);
-            clearCursor();
+            hideCursor();
         }, 150);
     }
 
@@ -360,8 +415,6 @@ export default function drawDropsTimeline({
     let isEventInCooldown = false;
     const cooldownTime = 20;
     chartGroup.append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
         .attr('width', drawableAreaWidth)
         .attr('height', drawableAreaHeight)
         .attr('fill', 'transparent')

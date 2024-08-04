@@ -1,12 +1,14 @@
 import { FolderOpenIcon, ShapesIcon, SkullIcon } from "lucide-react";
 import { memo, useState } from "react";
 import type { PlayerDropsApiSuccessResp } from "@shared/otherTypes";
-import { dateToLocaleDateString, dateToLocaleTimeString, isDateToday } from "@/lib/utils";
+import { cn, dateToLocaleDateString, dateToLocaleTimeString, isDateToday } from "@/lib/utils";
 import DrilldownCrashesSubcard from "./DrilldownCrashesSubcard";
 import { PlayerDropsLoadingSpinner } from "./PlayerDropsGenericSubcards";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DrilldownChangesSubcard from "./DrilldownChangesSubcard";
 import DrilldownOverviewSubcard from "./DrilldownOverviewSubcard";
+import { DrilldownRangeSelectionType } from "./PlayerDropsPage";
+import InlineCode from "@/components/InlineCode";
 
 
 export function DrilldownCardLoading({ isError }: { isError?: boolean }) {
@@ -48,9 +50,12 @@ export function DrilldownCardLoading({ isError }: { isError?: boolean }) {
     );
 }
 
-type DrilldownCardProps = PlayerDropsApiSuccessResp['detailed'];
+type DrilldownCardProps = PlayerDropsApiSuccessResp['detailed'] & {
+    rangeSelected: DrilldownRangeSelectionType;
+    rangeSetter: (range: DrilldownRangeSelectionType) => void;
+};
 
-const DrilldownCardInner = function DrilldownCard({ windowStart, windowEnd, windowData }: DrilldownCardProps) {
+const DrilldownCardInner = function DrilldownCard({ windowStart, windowEnd, windowData, rangeSelected, rangeSetter }: DrilldownCardProps) {
     const [crashesTargetLimit, setCrashesTargetLimit] = useState(50);
 
     //Window indicator
@@ -66,8 +71,11 @@ const DrilldownCardInner = function DrilldownCard({ windowStart, windowEnd, wind
 
     return (
         <div className="space-y-1">
-            <div className="text-center space-x-2 text-sm text-muted-foreground">
-                <span>Period from {windowStartStr} to {windowEndStr}.</span>
+            <div className={cn(
+                "text-center space-x-2 text-sm",
+                rangeSelected ? 'text-warning-inline' : 'text-muted-foreground'
+            )}>
+                <span>Period from <InlineCode className={rangeSelected ? 'text-warning-inline' : undefined}>{windowStartStr}</InlineCode> to <InlineCode className={rangeSelected ? 'text-warning-inline' : undefined}>{windowEndStr}</InlineCode>.</span>
             </div>
             <div className="md:rounded-xl border bg-cardx shadow-sm flex flex-col">
                 <div className="">

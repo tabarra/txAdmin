@@ -6,13 +6,16 @@ import type { PlayerDropsSummaryHour } from "@shared/otherTypes";
 import { PlayerDropsLoadingSpinner } from "./PlayerDropsGenericSubcards";
 import TimelineDropsChart, { TimelineDropsChartData } from "./TimelineDropsChart";
 import { processDropsSummary } from "./chartingUtils";
+import { DrilldownRangeSelectionType } from "./PlayerDropsPage";
 
 
 type PlayerDropsTimelineChartsProps = {
     isError?: boolean;
     summaryData?: PlayerDropsSummaryHour[];
+    rangeSelected: DrilldownRangeSelectionType;
+    rangeSetter: (range: DrilldownRangeSelectionType) => void;
 };
-const TimelineCard = memo(({ summaryData, isError }: PlayerDropsTimelineChartsProps) => {
+const TimelineCard = memo(({ summaryData, isError, rangeSelected, rangeSetter }: PlayerDropsTimelineChartsProps) => {
     const [selectedPeriod, setSelectedPeriod] = useState<string>('hour');
     const [expectedDropsChartSize, setExpectedDropsChartSize] = useState({ width: 0, height: 0 });
     const [unexpectedDropsChartSize, setUnexpectedDropsChartSize] = useState({ width: 0, height: 0 });
@@ -79,6 +82,8 @@ const TimelineCard = memo(({ summaryData, isError }: PlayerDropsTimelineChartsPr
                             chartName='expected'
                             width={expectedDropsChartSize.width}
                             height={expectedDropsChartSize.height}
+                            rangeSelected={rangeSelected}
+                            rangeSetter={rangeSetter}
                         />
                     ) : (
                         <PlayerDropsLoadingSpinner isError={isError} />
@@ -100,6 +105,8 @@ const TimelineCard = memo(({ summaryData, isError }: PlayerDropsTimelineChartsPr
                             chartName='unexpected'
                             width={unexpectedDropsChartSize.width}
                             height={unexpectedDropsChartSize.height}
+                            rangeSelected={rangeSelected}
+                            rangeSetter={rangeSetter}
                         />
                     ) : (
                         <PlayerDropsLoadingSpinner isError={isError} />

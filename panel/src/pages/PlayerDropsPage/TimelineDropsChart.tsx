@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import drawDropsTimeline, { TimelineDropsDatum } from "./drawDropsTimeline";
 import { playerDropCategories } from "@/lib/playerDropCategories";
 import { PlayerDropsMessage } from "./PlayerDropsGenericSubcards";
+import { DrilldownRangeSelectionType } from "./PlayerDropsPage";
 
 export type TimelineDropsChartData = {
     selectedPeriod: string;
@@ -42,9 +43,11 @@ type TimelineDropsChartProps = {
     chartName: string;
     width: number;
     height: number;
+    rangeSelected: DrilldownRangeSelectionType;
+    rangeSetter: (range: DrilldownRangeSelectionType) => void;
 };
 
-function TimelineDropsChart({ chartData, chartName, width, height }: TimelineDropsChartProps) {
+function TimelineDropsChart({ chartData, chartName, width, height, rangeSelected, rangeSetter }: TimelineDropsChartProps) {
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const legendRef = useRef<HTMLDivElement>(null);
@@ -67,14 +70,17 @@ function TimelineDropsChart({ chartData, chartName, width, height }: TimelineDro
             console.groupCollapsed(`Drawing player ${chartName} drops:`);
             console.time(`drawDropsTimeline-${chartName}`);
             drawDropsTimeline({
+                chartName,
                 legendRef: legendRef.current,
                 svgRef: svgRef.current,
                 canvasRef: canvasRef.current,
-                setRenderError,
                 size: { width, height },
+                rangeSelected,
                 margins,
                 isDarkMode,
                 data: chartData,
+                setRenderError,
+                rangeSetter,
             });
             setErrorRetry(0);
             setRenderError('');
@@ -84,7 +90,19 @@ function TimelineDropsChart({ chartData, chartName, width, height }: TimelineDro
         } finally {
             console.groupEnd();
         }
-    }, [chartData, chartName, width, height, isDarkMode, legendRef, svgRef, canvasRef, renderError]);
+    }, [
+        chartData,
+        chartName,
+        width,
+        height,
+        rangeSelected,
+        rangeSetter,
+        isDarkMode,
+        legendRef,
+        svgRef,
+        canvasRef,
+        renderError
+    ]);
 
     if (!width || !height) return null;
     if (renderError) {
