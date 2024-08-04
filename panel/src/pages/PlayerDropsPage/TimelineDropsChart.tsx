@@ -7,7 +7,7 @@ import { PlayerDropsMessage } from "./PlayerDropsGenericSubcards";
 import { DrilldownRangeSelectionType } from "./PlayerDropsPage";
 
 export type TimelineDropsChartData = {
-    selectedPeriod: string;
+    displayLod: string;
     startDate: Date;
     endDate: Date;
     maxDrops: number;

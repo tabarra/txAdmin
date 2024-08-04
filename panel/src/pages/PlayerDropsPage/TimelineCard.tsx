@@ -6,7 +6,7 @@ import type { PlayerDropsSummaryHour } from "@shared/otherTypes";
 import { PlayerDropsLoadingSpinner } from "./PlayerDropsGenericSubcards";
 import TimelineDropsChart, { TimelineDropsChartData } from "./TimelineDropsChart";
 import { processDropsSummary } from "./chartingUtils";
-import { DrilldownRangeSelectionType } from "./PlayerDropsPage";
+import { DisplayLodType, DrilldownRangeSelectionType } from "./PlayerDropsPage";
 
 
 type PlayerDropsTimelineChartsProps = {
@@ -14,26 +14,34 @@ type PlayerDropsTimelineChartsProps = {
     summaryData?: PlayerDropsSummaryHour[];
     rangeSelected: DrilldownRangeSelectionType;
     rangeSetter: (range: DrilldownRangeSelectionType) => void;
+    displayLod: DisplayLodType;
+    setDisplayLod: (range: DisplayLodType) => void;
 };
-const TimelineCard = memo(({ summaryData, isError, rangeSelected, rangeSetter }: PlayerDropsTimelineChartsProps) => {
-    const [selectedPeriod, setSelectedPeriod] = useState<string>('hour');
+const TimelineCard = memo(({
+    summaryData,
+    isError,
+    rangeSelected,
+    rangeSetter,
+    displayLod,
+    setDisplayLod
+}: PlayerDropsTimelineChartsProps) => {
     const [expectedDropsChartSize, setExpectedDropsChartSize] = useState({ width: 0, height: 0 });
     const [unexpectedDropsChartSize, setUnexpectedDropsChartSize] = useState({ width: 0, height: 0 });
 
     //Process data only once
     const chartsData = useMemo(() => {
         if (!summaryData) return;
-        const windowDays = selectedPeriod === 'day' ? 14 : 7;
+        const windowDays = displayLod === 'day' ? 14 : 7;
         const startDate = new Date();
         startDate.setHours(startDate.getHours() - windowDays * 24, 0, 0, 0);
-        const processed = processDropsSummary(summaryData, selectedPeriod, startDate);
-        const thirtyMinsInMs = 30 * 60 * 1000; //small offset at the end of the chart
-        //FIXME: change to 1 hour? since it draws ahead of the current hour start X
+        const processed = processDropsSummary(summaryData, displayLod, startDate);
+        if (!processed) return;
+        const endPaddingHours = displayLod === 'day' ? 12 : 1; //small offset at the end of the chart
 
         const commonProps = {
-            selectedPeriod,
+            displayLod,
             startDate,
-            endDate: new Date(Date.now() + thirtyMinsInMs),
+            endDate: new Date(Date.now() + endPaddingHours * 60 * 60 * 1000),
         };
         return {
             expected: {
@@ -49,7 +57,7 @@ const TimelineCard = memo(({ summaryData, isError, rangeSelected, rangeSetter }:
                 log: processed.unexpectedSeries,
             } satisfies TimelineDropsChartData,
         }
-    }, [summaryData, selectedPeriod]);
+    }, [summaryData, displayLod]);
 
     return (
         <div className="md:rounded-xl border bg-card shadow-sm flex flex-col">
@@ -58,7 +66,7 @@ const TimelineCard = memo(({ summaryData, isError, rangeSelected, rangeSetter }:
                     <div className='hidden xs:block'><DoorOpenIcon className="size-4" /></div>
                     <h2 className="font-mono text-sm">Expected Player Drops</h2>
                 </div>
-                <Select defaultValue={selectedPeriod} onValueChange={setSelectedPeriod}>
+                <Select defaultValue={displayLod} onValueChange={setDisplayLod}>
                     <SelectTrigger
                         className="w-32 h-6 px-3 py-1 text-sm"
                     >

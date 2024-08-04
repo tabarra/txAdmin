@@ -1,6 +1,8 @@
 import { PlayerDropsSummaryHour } from "@shared/otherTypes";
 import { playerDropExpectedCategories, playerDropUnexpectedCategories } from "@/lib/playerDropCategories";
 import { TimelineDropsDatum } from "./drawDropsTimeline";
+import { DisplayLodType } from "./PlayerDropsPage";
+import { cloneDeep } from "lodash-es";
 
 export type PlayerDropsCategoryCount = [category: string, count: number];
 
@@ -12,15 +14,55 @@ export type PlayerDropsCategoryCount = [category: string, count: number];
  * 2. get max drops per expected/unexpected category to size the Y axis'
  * 3. sort the expected/unexpected category by cumulative drops for displaying in consistent order
  */
-export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], selectedPeriod: string, windowStart: Date) => {
+export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], displayLod: DisplayLodType, windowStart: Date) => {
     const tsWindowStart = windowStart.getTime();
-    const windowStartIndex = apiData.findIndex(hourData => (new Date(hourData.hour)).getTime() >= tsWindowStart);
+    const windowStartIndex = apiData.findIndex(x => (new Date(x.hour)).getTime() >= tsWindowStart);
     const windowData = apiData.slice(windowStartIndex);
-    //FIXME: consider the selectedPeriod for the time range
+    // const windowData = cloneDeep(apiData.slice(windowStartIndex));
+    if (windowData.length === 0) return null;
 
     //Separate expected and unexpected drops so we can sort the categories by total drops
     const expectedCategoriesDropsTotal = Object.fromEntries(playerDropExpectedCategories.map(cat => [cat, 0]));
     const unexpectedCategoriesDropsTotal = Object.fromEntries(playerDropUnexpectedCategories.map(cat => [cat, 0]));
+
+    //If the LOD is day, bin the data
+    let binnedData: PlayerDropsSummaryHour[] = windowData;
+    if (displayLod === 'day') {
+        binnedData = [];
+        let currDayOfMonth;
+        let currDayData: PlayerDropsSummaryHour | undefined;
+        for (const hourData of windowData) {
+            const hourDayOfMonth = (new Date(hourData.hour)).getDate();
+            if (!currDayData) {
+                currDayOfMonth = hourDayOfMonth;
+                currDayData = {
+                    hour: hourData.hour,
+                    hasChanges: false,
+                    crashes: 0,
+                    dropTypes: [],
+                };
+            } else if (hourDayOfMonth !== currDayOfMonth) {
+                binnedData.push(currDayData);
+                currDayOfMonth = hourDayOfMonth;
+                currDayData = cloneDeep(hourData);
+                continue;
+            }
+
+            //Merge the data
+            currDayData.hasChanges = currDayData.hasChanges || hourData.hasChanges;
+            currDayData.crashes += hourData.crashes;
+            for (const [catName, catCount] of hourData.dropTypes.slice()) {
+                const currCatCount = currDayData.dropTypes.find(([currCatName]) => currCatName === catName);
+                if (currCatCount) {
+                    currCatCount[1] += catCount;
+                } else {
+                    currDayData.dropTypes.push([catName, catCount]);
+                }
+            }
+        }
+        //Push the last day
+        if (currDayData) binnedData.push(currDayData);
+    }
 
     //Get the max drops per category to size the Y axis
     let expectedSeriesMax = 0;
@@ -28,26 +70,26 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], selectedP
 
     //Process the data
     const series = [];
-    for (const hourData of windowData) {
+    for (const intervalData of binnedData) {
         const expectedDrops: PlayerDropsCategoryCount[] = [];
         const unexpectedDrops: PlayerDropsCategoryCount[] = [];
-        let hourExpectedTotalDrops = 0;
-        let hourUnexpectedTotalDrops = 0;
-        for (const [catName, catCount] of hourData.dropTypes) {
+        let intervalExpectedTotalDrops = 0;
+        let intervalUnexpectedTotalDrops = 0;
+        for (const [catName, catCount] of intervalData.dropTypes) {
             if (playerDropExpectedCategories.includes(catName)) {
-                hourExpectedTotalDrops += catCount;
+                intervalExpectedTotalDrops += catCount;
                 expectedDrops.push([catName, catCount]);
                 expectedCategoriesDropsTotal[catName] += catCount;
             } else {
-                hourUnexpectedTotalDrops += catCount;
+                intervalUnexpectedTotalDrops += catCount;
                 unexpectedDrops.push([catName, catCount]);
                 unexpectedCategoriesDropsTotal[catName] += catCount;
             }
         }
-        expectedSeriesMax = Math.max(expectedSeriesMax, hourExpectedTotalDrops);
-        unexpectedSeriesMax = Math.max(unexpectedSeriesMax, hourUnexpectedTotalDrops);
+        expectedSeriesMax = Math.max(expectedSeriesMax, intervalExpectedTotalDrops);
+        unexpectedSeriesMax = Math.max(unexpectedSeriesMax, intervalUnexpectedTotalDrops);
         series.push({
-            hasChanges: hourData.hasChanges,
+            hasChanges: intervalData.hasChanges,
             expectedDrops: expectedDrops,
             unexpectedDrops: unexpectedDrops,
         });
@@ -68,20 +110,20 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], selectedP
     //Separate the series and sort drops by category
     const expectedSeries: TimelineDropsDatum[] = [];
     const unexpectedSeries: TimelineDropsDatum[] = [];
-    for (let i = 0; i < windowData.length; i++) {
-        const hourData = windowData[i];
+    for (let i = 0; i < binnedData.length; i++) {
+        const intervalData = binnedData[i];
         const seriesData = series[i];
         if (!seriesData) continue;
-        const currHour = new Date(hourData.hour);
+        const currIntervalStart = new Date(intervalData.hour);
         expectedSeries.push({
-            hour: currHour,
+            startDate: currIntervalStart,
             hasChanges: seriesData.hasChanges,
             drops: seriesData.expectedDrops.sort(([aCat], [bCat]) => {
                 return expectedCategoriesOrder[aCat] - expectedCategoriesOrder[bCat];
             }),
         });
         unexpectedSeries.push({
-            hour: currHour,
+            startDate: currIntervalStart,
             hasChanges: seriesData.hasChanges,
             drops: seriesData.unexpectedDrops.sort(([aCat], [bCat]) => {
                 return unexpectedCategoriesOrder[aCat] - unexpectedCategoriesOrder[bCat];

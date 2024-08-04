@@ -24,14 +24,14 @@
     - [x] apply new prefix algo to the crash reasons
     - [x] env changes subcard
     - [x] charts: draw bars
-    - [ ] charts: display days mode
+    - [x] charts: display days mode
     - [x] charts: add cursor with legends
     - [x] charts: get "changes" back to chart?
     - [x] charts: cleanup of code, mayhaps add some testing
     - [x] charts: is the current memoization correct?
     - [x] charts: test with very few drops
     - [x] add window selection buttons to drilldown card
-    - [ ] change `ENV CHANGES` to the count of changes
+    - [x] when range is selected, single click should remove it
     - [ ] review page layout: make it less card-y
     - [ ] add drilldown interval buttons
     - [ ] tune in swr caching/reloading behavior

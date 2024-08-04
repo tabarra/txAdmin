@@ -10,7 +10,7 @@ import { DrilldownRangeSelectionType } from './PlayerDropsPage';
 const translate = (x: number, y: number) => `translate(${x}, ${y})`;
 
 export type TimelineDropsDatum = {
-    hour: Date;
+    startDate: Date;
     hasChanges: boolean;
     drops: PlayerDropsCategoryCount[];
 }
@@ -67,7 +67,7 @@ export default function drawDropsTimeline({
     console.log('From:', data.startDate.toISOString());
     console.log('To:', data.endDate.toISOString());
     console.log('Window:', msToShortDuration(data.startDate.getTime() - data.endDate.getTime()));
-    console.log('Number of hours:', data.log.length);
+    console.log('Number of intervals:', data.log.length);
 
     //Setup
     const drawableAreaHeight = height - margins.top - margins.bottom;
@@ -115,9 +115,11 @@ export default function drawDropsTimeline({
     /**
      * Canvas
      */
-    const periodInHours = data.selectedPeriod === 'day' ? 24 : 1;
-    const endOfFirstInterval = new Date(data.startDate.getTime() + (periodInHours * 60 * 60 * 1000));
+    const lodInHours = data.displayLod === 'day' ? 24 : 1;
+    const endOfFirstInterval = new Date(data.startDate.getTime() + (lodInHours * 60 * 60 * 1000));
     const intervalWidth = timeScale(endOfFirstInterval) - timeScale(data.startDate);
+    const barCenterOffset = Math.floor(intervalWidth / 2);
+    const barPadding = data.displayLod === 'day' ? 12 : 0;
     const canvasTicksStyle = isDarkMode ? `rgba(255, 255, 255, 0.15)` : `rgba(0, 0, 0, 0.35)`;
     const canvasBackgroundStyle = isDarkMode ? '#00000035' : '#00000007';
     const changeIndicatorStyle = isDarkMode ? '#FFFFFFE0' : '#000000D0';
@@ -158,19 +160,20 @@ export default function drawDropsTimeline({
 
         //Drawing the timeline
         ctx.lineWidth = 1;
-        for (const hour of data.log) {
-            const baseX = timeScale(hour.hour);
+        for (const intervalData of data.log) {
+            const baseX = timeScale(intervalData.startDate);
             if (baseX < 0 || baseX > drawableAreaWidth) continue;
 
-            const renderStartX = Math.round(baseX);
+            const supposedStartX = Math.round(baseX);
+            const renderStartX = supposedStartX - barCenterOffset + barPadding;
             const renderOffsetX = baseX - renderStartX;
-            const barWidth = Math.round(intervalWidth + renderOffsetX) + 1;
+            const barWidth = Math.round(intervalWidth + renderOffsetX) + 1 - barCenterOffset - barPadding;
             if (barWidth < 1) continue;
 
             //Draw the count blocks
             let dropSum = 0;
             let lastRenderTopY = drawableAreaHeight + 1;
-            for (const [dropCategory, dropCount] of hour.drops) {
+            for (const [dropCategory, dropCount] of intervalData.drops) {
                 if (!dropCount) continue;
                 const barBottomY = lastRenderTopY - 1;
                 const barTopY = canvasCountScale(dropSum + dropCount) + 1;
@@ -198,7 +201,7 @@ export default function drawDropsTimeline({
             }
 
             //Draw the changes indicator
-            if (hour.hasChanges) {
+            if (intervalData.hasChanges) {
                 ctx.fillStyle = changeIndicatorStyle;
                 const centerX = Math.round(renderStartX - 0.5 + barWidth / 2) + 0.5;
                 const centerY = lastRenderTopY - 6;
@@ -224,6 +227,7 @@ export default function drawDropsTimeline({
      */
     type RangePoint = { x: number, datum: TimelineDropsDatum };
     let rangeStartData: RangePoint | null = null;
+    let rangeCrossedThreshold = false;
     let cursorRedrawTimeout: NodeJS.Timeout;
     const maskElmntId = `chartMask-${chartName}`;
 
@@ -267,7 +271,7 @@ export default function drawDropsTimeline({
         const x1Floor = Math.floor(x1);
         const x2Floor = Math.floor(x2);
         maskRect
-            .attr('x', Math.min(x1Floor, x2Floor) + 0.5)
+            .attr('x', Math.min(x1Floor, x2Floor) + 0.5 - barCenterOffset)
             .attr('width', Math.abs(x2Floor - x1Floor) + intervalWidth + 0.5);
         maskArea.attr('opacity', '1');
     }
@@ -288,6 +292,7 @@ export default function drawDropsTimeline({
     }
     const clearRangeData = (hideRect = false) => {
         rangeStartData = null;
+        rangeCrossedThreshold = false;
         if (hideRect) {
             updateRangeRect();
             if (rangeSelected) {
@@ -313,20 +318,21 @@ export default function drawDropsTimeline({
 
 
     //Find the closest data point for a given X value
-    // const maxAllowedGap = (data.selectedPeriod === 'day' ? 24 : 1) * 60 * 60 * 1000 / 2; //half the period in ms //FIXME: remove?
-    const timeBisector = d3.bisector((hour: TimelineDropsDatum) => hour.hour).center;
+    // const maxAllowedGap = (data.displayLod === 'day' ? 24 : 1) * 60 * 60 * 1000 / 2; //half the period in ms //FIXME: remove?
+    const timeBisector = d3.bisector((interval: TimelineDropsDatum) => interval.startDate).center;
     const findClosestDatum = (pointerX: number) => {
-        const xPosDate = timeScale.invert(pointerX - intervalWidth / 2);
+        // const xPosDate = timeScale.invert(pointerX - intervalWidth / 2);
+        const xPosDate = timeScale.invert(pointerX);
         const indexFound = timeBisector(data.log, xPosDate);
         if (indexFound === -1) return;
         const datum = data.log[indexFound];
         if (!datum.drops.length) return;
-        const datumStartTs = datum.hour.getTime();
+        const datumStartTs = datum.startDate.getTime();
         // if (Math.abs(datumStartTs - xPosDate.getTime()) > maxAllowedGap) return; //FIXME: remove?
         return {
             datum,
             datumStartTs,
-            datumStartX: timeScale(datum.hour),
+            datumStartX: timeScale(datum.startDate),
             dataumIndex: indexFound,
         };
     };
@@ -343,6 +349,7 @@ export default function drawDropsTimeline({
 
         //Update range selector if holding click
         if (rangeStartData) {
+            rangeCrossedThreshold = true;
             return updateRangeRect(rangeStartData.x, datumStartX);
         }
 
@@ -377,7 +384,7 @@ export default function drawDropsTimeline({
         }
 
         // Draw cursor
-        const cursorX = Math.round(datumStartX + intervalWidth / 2) + 0.5;
+        const cursorX = Math.round(datumStartX + intervalWidth / 2) + 0.5 - barCenterOffset;
         cursorLineVert.attr('x1', cursorX).attr('y1', 0).attr('x2', cursorX).attr('y2', drawableAreaHeight);
     };
 
@@ -396,11 +403,17 @@ export default function drawDropsTimeline({
         if (!rangeStartData) return clearRangeData(true);
         const datumFound = findClosestDatum(pointerX);
         if (!datumFound) return clearRangeData(true);
-        const { datum, datumStartX, dataumIndex } = datumFound;
+        if (!rangeCrossedThreshold && rangeStartData.datum.startDate.getTime() === datumFound.datum.startDate.getTime()) {
+            return clearRangeData(true);
+        }
+        
+        console.log(
+            'PlayerDrops range selected:',
+            rangeStartData.datum.startDate,
+            datumFound.datum.startDate,
+        );
         clearTimeout(cursorRedrawTimeout);
-
-        console.log('PlayerDrops chart range selected:', rangeStartData.datum.hour.toISOString(), datum.hour.toISOString());
-        setUpstreamRangeState([rangeStartData.datum.hour, datum.hour]);
+        setUpstreamRangeState([rangeStartData.datum.startDate, datumFound.datum.startDate]);
         clearRangeData();
     }
 

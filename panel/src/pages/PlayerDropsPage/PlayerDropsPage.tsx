@@ -9,8 +9,10 @@ export type DrilldownRangeSelectionType = {
     startDate: Date;
     endDate: Date;
 } | null;
+export type DisplayLodType = 'hour' | 'day';
 
 export default function PlayerDropsPage() {
+    const [displayLod, setDisplayLod] = useState<DisplayLodType>('hour');
     const [drilldownRange, setDrilldownRange] = useState<DrilldownRangeSelectionType>(null);
     const playerDropsApi = useBackendApi<PlayerDropsApiResp>({
         method: 'GET',
@@ -31,6 +33,9 @@ export default function PlayerDropsPage() {
     useEffect(() => {
         swrDataApiResp.mutate();
     }, [drilldownRange]);
+    useEffect(() => {
+        setDrilldownRange(null);
+    }, [displayLod]);
 
     return (
         <div className="w-full space-y-8">
@@ -39,6 +44,8 @@ export default function PlayerDropsPage() {
                 summaryData={swrDataApiResp.data?.summary}
                 rangeSelected={drilldownRange}
                 rangeSetter={setDrilldownRange}
+                displayLod={displayLod}
+                setDisplayLod={setDisplayLod}
             />
 
             {swrDataApiResp.data && !swrDataApiResp.isValidating ? (
@@ -47,7 +54,7 @@ export default function PlayerDropsPage() {
                     windowEnd={swrDataApiResp.data.detailed.windowEnd}
                     windowData={swrDataApiResp.data.detailed.windowData}
                     rangeSelected={drilldownRange}
-                    rangeSetter={setDrilldownRange}
+                    displayLod={displayLod}
                 />
             ) : (
                 <DrilldownCardLoading isError={!!swrDataApiResp.error} />

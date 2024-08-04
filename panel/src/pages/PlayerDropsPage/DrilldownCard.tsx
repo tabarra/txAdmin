@@ -7,7 +7,7 @@ import { PlayerDropsLoadingSpinner } from "./PlayerDropsGenericSubcards";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DrilldownChangesSubcard from "./DrilldownChangesSubcard";
 import DrilldownOverviewSubcard from "./DrilldownOverviewSubcard";
-import { DrilldownRangeSelectionType } from "./PlayerDropsPage";
+import { DisplayLodType, DrilldownRangeSelectionType } from "./PlayerDropsPage";
 import InlineCode from "@/components/InlineCode";
 
 
@@ -52,30 +52,43 @@ export function DrilldownCardLoading({ isError }: { isError?: boolean }) {
 
 type DrilldownCardProps = PlayerDropsApiSuccessResp['detailed'] & {
     rangeSelected: DrilldownRangeSelectionType;
-    rangeSetter: (range: DrilldownRangeSelectionType) => void;
+    displayLod: DisplayLodType;
 };
 
-const DrilldownCardInner = function DrilldownCard({ windowStart, windowEnd, windowData, rangeSelected, rangeSetter }: DrilldownCardProps) {
+const DrilldownCardInner = function DrilldownCard({
+    windowStart,
+    windowEnd,
+    windowData,
+    rangeSelected,
+    displayLod,
+}: DrilldownCardProps) {
     const [crashesTargetLimit, setCrashesTargetLimit] = useState(50);
 
     //Window indicator
-    const doesWindowEndToday = isDateToday(new Date(windowEnd));
+    const showDate = !isDateToday(new Date(windowStart)) || !isDateToday(new Date(windowEnd));
     const windowStartDate = new Date(windowStart);
     const windowStartTimeStr = dateToLocaleTimeString(windowStartDate, '2-digit', '2-digit');
     const windowStartDateStr = dateToLocaleDateString(windowStartDate, 'short');
-    const windowStartStr = doesWindowEndToday ? windowStartTimeStr : `${windowStartTimeStr} - ${windowStartDateStr}`;
+    const windowStartStr = showDate ? `${windowStartTimeStr} - ${windowStartDateStr}` : windowStartTimeStr;
     const windowEndDate = new Date(windowEnd);
+    if (displayLod === 'hour') {
+        windowEndDate.setMinutes(59, 59, 999);
+    } else if (displayLod === 'day') {
+        windowEndDate.setHours(23, 59, 59, 999);
+    } else {
+        throw new Error(`Invalid displayLod: ${displayLod}`);
+    }
     const windowEndTimeStr = dateToLocaleTimeString(windowEndDate, '2-digit', '2-digit');
     const windowEndDateStr = dateToLocaleDateString(windowEndDate, 'short');
-    const windowEndStr = doesWindowEndToday ? windowEndTimeStr : `${windowEndTimeStr} - ${windowEndDateStr}`;
+    const windowEndStr = showDate ? `${windowEndTimeStr} - ${windowEndDateStr}` : windowEndTimeStr;
 
     return (
         <div className="space-y-1">
             <div className={cn(
-                "text-center space-x-2 text-sm",
-                rangeSelected ? 'text-warning-inline' : 'text-muted-foreground'
+                "text-center space-x-2 text-sm text-muted-foreground",
+                rangeSelected && 'font-semibold text-primary'
             )}>
-                <span>Period from <InlineCode className={rangeSelected ? 'text-warning-inline' : undefined}>{windowStartStr}</InlineCode> to <InlineCode className={rangeSelected ? 'text-warning-inline' : undefined}>{windowEndStr}</InlineCode>.</span>
+                <span>Period from <InlineCode>{windowStartStr}</InlineCode> to <InlineCode>{windowEndStr}</InlineCode>.</span>
             </div>
             <div className="md:rounded-xl border bg-cardx shadow-sm flex flex-col">
                 <div className="">
