@@ -18,7 +18,6 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], displayLo
     const tsWindowStart = windowStart.getTime();
     const windowStartIndex = apiData.findIndex(x => (new Date(x.hour)).getTime() >= tsWindowStart);
     const windowData = apiData.slice(windowStartIndex);
-    // const windowData = cloneDeep(apiData.slice(windowStartIndex));
     if (windowData.length === 0) return null;
 
     //Separate expected and unexpected drops so we can sort the categories by total drops
@@ -37,8 +36,7 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], displayLo
                 currDayOfMonth = hourDayOfMonth;
                 currDayData = {
                     hour: hourData.hour,
-                    hasChanges: false,
-                    crashes: 0,
+                    changes: 0,
                     dropTypes: [],
                 };
             } else if (hourDayOfMonth !== currDayOfMonth) {
@@ -49,8 +47,7 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], displayLo
             }
 
             //Merge the data
-            currDayData.hasChanges = currDayData.hasChanges || hourData.hasChanges;
-            currDayData.crashes += hourData.crashes;
+            currDayData.changes += hourData.changes;
             for (const [catName, catCount] of hourData.dropTypes.slice()) {
                 const currCatCount = currDayData.dropTypes.find(([currCatName]) => currCatName === catName);
                 if (currCatCount) {
@@ -89,7 +86,7 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], displayLo
         expectedSeriesMax = Math.max(expectedSeriesMax, intervalExpectedTotalDrops);
         unexpectedSeriesMax = Math.max(unexpectedSeriesMax, intervalUnexpectedTotalDrops);
         series.push({
-            hasChanges: intervalData.hasChanges,
+            changes: intervalData.changes,
             expectedDrops: expectedDrops,
             unexpectedDrops: unexpectedDrops,
         });
@@ -117,14 +114,14 @@ export const processDropsSummary = (apiData: PlayerDropsSummaryHour[], displayLo
         const currIntervalStart = new Date(intervalData.hour);
         expectedSeries.push({
             startDate: currIntervalStart,
-            hasChanges: seriesData.hasChanges,
+            changes: seriesData.changes,
             drops: seriesData.expectedDrops.sort(([aCat], [bCat]) => {
                 return expectedCategoriesOrder[aCat] - expectedCategoriesOrder[bCat];
             }),
         });
         unexpectedSeries.push({
             startDate: currIntervalStart,
-            hasChanges: seriesData.hasChanges,
+            changes: seriesData.changes,
             drops: seriesData.unexpectedDrops.sort(([aCat], [bCat]) => {
                 return unexpectedCategoriesOrder[aCat] - unexpectedCategoriesOrder[bCat];
             }),

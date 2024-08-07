@@ -66,21 +66,20 @@ export default class PlayerDropStatsManager {
      * Get the recent log with drop/crash/changes for the last X hours
      */
     public getRecentSummary(windowHours: number): PlayerDropsSummaryHour[] {
-        const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000) - 1;
+        const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000);
         const windowSummary = this.eventLog
             .filter((entry) => entry.hour.dateHourTs >= logCutoff)
             .map((entry) => ({
                 hour: entry.hour.dateHourStr,
-                hasChanges: !!entry.changes.length,
+                changes: entry.changes.length,
                 dropTypes: entry.dropTypes.toSortedValuesArray(),
-                crashes: entry.crashTypes.sum(),
             }));
         return windowSummary;
     }
 
 
     /**
-     * Get the data for the player drops drilldown cards in the last X hours
+     * Get the data for the player drops drilldown card within a inclusive time window
      */
     public getWindowData(windowStart: number, windowEnd: number): PlayerDropsDetailedWindow {
         const allChanges: PDLChangeEventType[] = [];

@@ -10,19 +10,23 @@ const console = consoleFactory(modulename);
 //Types & validation
 const querySchema = z.object({
     detailedWindow: z.string().optional(),
+    detailedDaysAgo: z.string().optional(),
 });
+
+const SUMMARY_DEFAULT_HOURS = 14 * 24;
+const DETAILED_DEFAULT_HOURS = 7 * 24;
 
 export type PlayerDropsSummaryHour = {
     hour: string;
-    hasChanges: boolean;
+    changes: number;
     dropTypes: [reason: string, count: number][];
-    crashes: number;
 }
 
 //NOTE: cumulative, not hourly
 export type PlayerDropsDetailedWindow = Omit<PDLHourlyRawType, 'hour'>;
 
 export type PlayerDropsApiSuccessResp = {
+    ts: number;
     summary: PlayerDropsSummaryHour[];
     detailed: {
         windowStart: string;
@@ -38,7 +42,7 @@ export type PlayerDropsApiResp = DeepReadonly<PlayerDropsApiSuccessResp | Player
 
 
 /**
- * Returns the data required to build the dashboard performance chart of a specific thread
+ * Returns the data required to build the player drops page, both summary timeline and detailed drilldown
  */
 export default async function playerDrops(ctx: AuthedCtx) {
     const sendTypedResp = (data: PlayerDropsApiResp) => ctx.send(data);
@@ -48,30 +52,44 @@ export default async function playerDrops(ctx: AuthedCtx) {
             fail_reason: `Invalid request query: ${schemaRes.error.message}`,
         });
     }
-    const { detailedWindow } = schemaRes.data;
+    const { detailedWindow, detailedDaysAgo } = schemaRes.data;
+    const lookupTs = Date.now();
 
     //Get the summary for the last 2 weeks
-    const summary = ctx.txAdmin.statsManager.playerDrop.getRecentSummary(24 * 14);
+    const summary = ctx.txAdmin.statsManager.playerDrop.getRecentSummary(SUMMARY_DEFAULT_HOURS);
 
     //Get the detailed data for the requested window or 1d by default
     let detailedWindowStart, detailedWindowEnd;
     if (detailedWindow) {
         try {
             const [windowStartStr, windowEndStr] = detailedWindow.split(',');
-            detailedWindowStart = (new Date(windowStartStr)).setUTCMinutes(0, 0, 0);
-            detailedWindowEnd = (new Date(windowEndStr)).setUTCMinutes(0, 0, 0);
+            detailedWindowStart = new Date(windowStartStr).getTime();
+            detailedWindowEnd = Math.min(
+                lookupTs,
+                new Date(windowEndStr).getTime(),
+            );
         } catch (error) {
             return sendTypedResp({
                 fail_reason: `Invalid date format: ${(error as Error).message}`,
             })
         }
     } else {
-        detailedWindowStart = (new Date).setUTCMinutes(0, 0, 0) - (14 * 24 * 60 * 60 * 1000) - 1;
-        detailedWindowEnd = (new Date).setUTCMinutes(0, 0, 0) - 1;
+        let windowHours = DETAILED_DEFAULT_HOURS;
+        if (detailedDaysAgo) {
+            const daysAgo = parseInt(detailedDaysAgo);
+            if (!isNaN(daysAgo) && daysAgo >= 1 && daysAgo <= 14) {
+                windowHours = daysAgo * 24;
+            }
+        }
+
+        const startDate = new Date();
+        detailedWindowStart = startDate.setHours(startDate.getHours() - (windowHours), 0, 0, 0);
+        detailedWindowEnd = lookupTs;
     }
     const detailed = ctx.txAdmin.statsManager.playerDrop.getWindowData(detailedWindowStart, detailedWindowEnd);
 
     return sendTypedResp({
+        ts: lookupTs,
         summary,
         detailed: {
             windowStart: new Date(detailedWindowStart).toISOString(),

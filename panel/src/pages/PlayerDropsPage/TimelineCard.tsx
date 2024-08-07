@@ -11,15 +11,18 @@ import { DisplayLodType, DrilldownRangeSelectionType } from "./PlayerDropsPage";
 
 type PlayerDropsTimelineChartsProps = {
     isError?: boolean;
+    dataTs?: number;
     summaryData?: PlayerDropsSummaryHour[];
     rangeSelected: DrilldownRangeSelectionType;
     rangeSetter: (range: DrilldownRangeSelectionType) => void;
     displayLod: DisplayLodType;
     setDisplayLod: (range: DisplayLodType) => void;
 };
+
 const TimelineCard = memo(({
-    summaryData,
     isError,
+    dataTs,
+    summaryData,
     rangeSelected,
     rangeSetter,
     displayLod,
@@ -30,19 +33,22 @@ const TimelineCard = memo(({
 
     //Process data only once
     const chartsData = useMemo(() => {
-        if (!summaryData) return;
-        const windowDays = displayLod === 'day' ? 14 : 7;
-        const startDate = new Date();
-        startDate.setHours(startDate.getHours() - windowDays * 24, 0, 0, 0);
+        if (!summaryData || !dataTs) return;
+        const startDate = new Date(dataTs);
+        const endDate = new Date(dataTs);
+        if (displayLod === 'day') {
+            // 14d window, 12h+15m padding start
+            startDate.setHours(-(14 * 24) - 12, -15, 0, 0);
+            endDate.setHours(12, 0, 0, 0);
+        } else {
+            // 7d window, 30m+15m padding start
+            startDate.setHours(startDate.getHours() - 7 * 24, -45, 0, 0);
+            endDate.setMinutes(30, 0, 0);
+        }
         const processed = processDropsSummary(summaryData, displayLod, startDate);
         if (!processed) return;
-        const endPaddingHours = displayLod === 'day' ? 12 : 1; //small offset at the end of the chart
 
-        const commonProps = {
-            displayLod,
-            startDate,
-            endDate: new Date(Date.now() + endPaddingHours * 60 * 60 * 1000),
-        };
+        const commonProps = { displayLod, startDate, endDate };
         return {
             expected: {
                 ...commonProps,

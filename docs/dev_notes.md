@@ -32,14 +32,18 @@
     - [x] charts: test with very few drops
     - [x] add window selection buttons to drilldown card
     - [x] when range is selected, single click should remove it
-    - [ ] review page layout: make it less card-y
-    - [ ] add drilldown interval buttons
-    - [ ] tune in swr caching/reloading behavior
-    - [ ] fix crashes table is not responsive
+    - [x] tune in swr caching/reloading behavior
+    - [ ] don't send crash counts anymore?
+    - [ ] review page layout: 
+        - [ ] make it less card-y
     - [ ] fix crashes table widening the outer shell - is it just the scroll? 🤦‍♂️
+        - [ ] fix crashes table is not responsive
+        - [ ] fix scroll popping in/out
     - [ ] adapt code to track resource drops + adjust categories according to the new ones
         - server shutting down should not be counted
         - check dashboard player drops chart brightness and "By Resources" overflow
+    - Optional stuff:
+        - [ ] add drilldown interval buttons
 - Dashboard stuff:
     - [ ] add testing for getServerStatsData
     - [ ] fix getMinTickIntervalMarker behavior when 0.2

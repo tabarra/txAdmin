@@ -114,7 +114,7 @@ type ApiCallOpts<RespType, ReqType> = {
         [key: string]: string;
     };
     queryParams?: {
-        [key: string]: string | number | boolean;
+        [key: string]: string | number | boolean | undefined;
     };
     timeout?: ApiTimeout;
     data?: ReqType;
@@ -165,7 +165,9 @@ export const useBackendApi = <
         if (opts.queryParams) {
             const params = new URLSearchParams();
             for (const [key, val] of Object.entries(opts.queryParams)) {
-                params.append(key, val.toString());
+                if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
+                    params.append(key, val.toString());
+                }
             }
             fetchUrl += `?${params.toString()}`;
         }

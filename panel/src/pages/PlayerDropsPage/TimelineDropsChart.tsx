@@ -136,9 +136,7 @@ function TimelineDropsChart({ chartData, chartName, width, height, rangeSelected
             className="p-2 rounded-md border shadow-lg dark:bg-zinc-800/90 bg-zinc-200/90 pointer-events-none transition-all"
         >
             <ChartLabels categories={chartData.categoriesSorted} />
-            <div className="change-flag w-full mt-1 bg-card/75 rounded-md border text-center text-xs tracking-wider">
-                ENV CHANGES
-            </div>
+            <div className="change-flag w-full mt-1 bg-card/75 rounded-md border text-center text-xs tracking-wider" />
         </div>
         <svg
             ref={svgRef}

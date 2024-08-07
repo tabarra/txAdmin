@@ -65,19 +65,13 @@ const DrilldownCardInner = function DrilldownCard({
     const [crashesTargetLimit, setCrashesTargetLimit] = useState(50);
 
     //Window indicator
-    const showDate = !isDateToday(new Date(windowStart)) || !isDateToday(new Date(windowEnd));
     const windowStartDate = new Date(windowStart);
+    const windowEndDate = new Date(windowEnd);
+    const showDate = !isDateToday(windowStartDate) || !isDateToday(windowStartDate);
+
     const windowStartTimeStr = dateToLocaleTimeString(windowStartDate, '2-digit', '2-digit');
     const windowStartDateStr = dateToLocaleDateString(windowStartDate, 'short');
     const windowStartStr = showDate ? `${windowStartTimeStr} - ${windowStartDateStr}` : windowStartTimeStr;
-    const windowEndDate = new Date(windowEnd);
-    if (displayLod === 'hour') {
-        windowEndDate.setMinutes(59, 59, 999);
-    } else if (displayLod === 'day') {
-        windowEndDate.setHours(23, 59, 59, 999);
-    } else {
-        throw new Error(`Invalid displayLod: ${displayLod}`);
-    }
     const windowEndTimeStr = dateToLocaleTimeString(windowEndDate, '2-digit', '2-digit');
     const windowEndDateStr = dateToLocaleDateString(windowEndDate, 'short');
     const windowEndStr = showDate ? `${windowEndTimeStr} - ${windowEndDateStr}` : windowEndTimeStr;
@@ -88,7 +82,7 @@ const DrilldownCardInner = function DrilldownCard({
                 "text-center space-x-2 text-sm text-muted-foreground",
                 rangeSelected && 'font-semibold text-primary'
             )}>
-                <span>Period from <InlineCode>{windowStartStr}</InlineCode> to <InlineCode>{windowEndStr}</InlineCode>.</span>
+                <span>Period from <InlineCode title={windowStartDate.toISOString()}>{windowStartStr}</InlineCode> to <InlineCode title={windowEndDate.toISOString()}>{windowEndStr}</InlineCode>.</span>
             </div>
             <div className="md:rounded-xl border bg-cardx shadow-sm flex flex-col">
                 <div className="">

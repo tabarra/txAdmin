@@ -11,7 +11,7 @@ const translate = (x: number, y: number) => `translate(${x}, ${y})`;
 
 export type TimelineDropsDatum = {
     startDate: Date;
-    hasChanges: boolean;
+    changes: number;
     drops: PlayerDropsCategoryCount[];
 }
 
@@ -201,7 +201,7 @@ export default function drawDropsTimeline({
             }
 
             //Draw the changes indicator
-            if (intervalData.hasChanges) {
+            if (intervalData.changes) {
                 ctx.fillStyle = changeIndicatorStyle;
                 const centerX = Math.round(renderStartX - 0.5 + barWidth / 2) + 0.5;
                 const centerY = lastRenderTopY - 6;
@@ -256,6 +256,7 @@ export default function drawDropsTimeline({
         .attr('fill', isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.35)')
         .attr('mask', `url(#${maskElmntId})`);
 
+    //Helpers
     const updateRangeRect = (x1?: number, x2?: number) => {
         //Hide mask
         if (
@@ -277,16 +278,17 @@ export default function drawDropsTimeline({
     }
     const setUpstreamRangeState = (range: [date1: Date, date2: Date] | null) => {
         if (!Array.isArray(range) || range.length !== 2) {
-            rangeSetter(null);
-        } else if (range[0].getTime() <= range[1].getTime()) {
+            return rangeSetter(null);
+        }
+        if (range[0].getTime() <= range[1].getTime()) {
             rangeSetter({
-                startDate: range[0],
-                endDate: range[1],
+                startDate: new Date(range[0]),
+                endDate: new Date(range[1]),
             });
-        } else if (range[0].getTime() > range[1].getTime()) {
+        } else {
             rangeSetter({
-                startDate: range[1],
-                endDate: range[0],
+                startDate: new Date(range[1]),
+                endDate: new Date(range[0]),
             });
         }
     }
@@ -316,9 +318,7 @@ export default function drawDropsTimeline({
         );
     }
 
-
     //Find the closest data point for a given X value
-    // const maxAllowedGap = (data.displayLod === 'day' ? 24 : 1) * 60 * 60 * 1000 / 2; //half the period in ms //FIXME: remove?
     const timeBisector = d3.bisector((interval: TimelineDropsDatum) => interval.startDate).center;
     const findClosestDatum = (pointerX: number) => {
         // const xPosDate = timeScale.invert(pointerX - intervalWidth / 2);
@@ -326,9 +326,7 @@ export default function drawDropsTimeline({
         const indexFound = timeBisector(data.log, xPosDate);
         if (indexFound === -1) return;
         const datum = data.log[indexFound];
-        if (!datum.drops.length) return;
         const datumStartTs = datum.startDate.getTime();
-        // if (Math.abs(datumStartTs - xPosDate.getTime()) > maxAllowedGap) return; //FIXME: remove?
         return {
             datum,
             datumStartTs,
@@ -363,7 +361,13 @@ export default function drawDropsTimeline({
         }
         const changeFlagEl = legendRef.querySelector<HTMLDivElement>('div.change-flag');
         if (changeFlagEl) {
-            changeFlagEl.style.display = datum.hasChanges ? 'block' : 'none';
+            if (datum.changes) {
+                changeFlagEl.style.display = 'block';
+                changeFlagEl.textContent = datum.changes > 1 ? `${datum.changes} CHANGES` : '1 CHANGE';
+            } else {
+                changeFlagEl.style.display = 'none';
+                changeFlagEl.textContent = '';
+            }
         }
 
         //Move legend - only when not holding click
@@ -406,7 +410,7 @@ export default function drawDropsTimeline({
         if (!rangeCrossedThreshold && rangeStartData.datum.startDate.getTime() === datumFound.datum.startDate.getTime()) {
             return clearRangeData(true);
         }
-        
+
         console.log(
             'PlayerDrops range selected:',
             rangeStartData.datum.startDate,
