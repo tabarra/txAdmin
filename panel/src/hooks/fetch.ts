@@ -63,7 +63,7 @@ export const useAuthedFetcher = () => {
         });
         const data = await resp.json();
         if (data?.logout) {
-            expireSess('api');
+            expireSess('useAuthedFetcher', data?.reason ?? 'unknown');
             throw new Error('Session expired');
         }
         return data;
