@@ -51,19 +51,14 @@ export default function PlayerDropsPage() {
         method: 'GET',
         path: `/playerDropsData`,
     });
-    const dataFetcher = async () => {
-        console.log('Request: ', queryParams);
+    const swrDataApiResp = useSWRImmutable(`/playerDropsData?${queryKey}`, async () => {
         const data = await playerDropsApi({ queryParams });
         if (!data) throw new Error('empty_response');
         if ('fail_reason' in data) {
             throw new Error(data.fail_reason);
         }
         return data as PlayerDropsApiSuccessResp;
-    };
-    const swrDataApiResp = useSWRImmutable(
-        `/playerDropsData?${queryKey}`,
-        dataFetcher,
-    );
+    });
     const displayLodSetter = (lod: DisplayLodType) => {
         setDisplayLod(lod);
         setDrilldownRange(null);

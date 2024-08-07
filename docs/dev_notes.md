@@ -33,7 +33,6 @@
     - [x] add window selection buttons to drilldown card
     - [x] when range is selected, single click should remove it
     - [x] tune in swr caching/reloading behavior
-    - [ ] don't send crash counts anymore?
     - [ ] review page layout: 
         - [ ] make it less card-y
     - [ ] fix crashes table widening the outer shell - is it just the scroll? 🤦‍♂️
@@ -65,6 +64,7 @@
 
 ## Small feat
 - [x] make server v8 heap reports faster to large changes
+- [x] logout now brings to the login page with post-login redirect
 - [ ] add "HANGUL FILLER" characters to `cleanPlayerName`
     - or check how vscode does to highlight invisible characters and use that approach instead
     - `@vscode/src/vs/base/common/strings.ts:1277`

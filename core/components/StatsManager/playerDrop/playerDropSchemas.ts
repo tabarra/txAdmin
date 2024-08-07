@@ -36,11 +36,6 @@ export const PDLResourcesChangedEventSchema = z.object({
     resAdded: z.array(z.string().min(1)),
     resRemoved: z.array(z.string().min(1)),
 });
-// export const PDLClientChangedEventSchema = z.object({
-//     ts: zIntNonNegative,
-//     type: z.literal('clientChanged'),
-//     newVersion: z.string(),
-// });
 
 export const PDLHourlyRawSchema = z.object({
     hour: z.string(),
@@ -48,7 +43,6 @@ export const PDLHourlyRawSchema = z.object({
         PDLFxsChangedEventSchema,
         PDLGameChangedEventSchema,
         PDLResourcesChangedEventSchema,
-        // PDLClientChangedEventSchema
     ])),
     dropTypes: z.array(z.tuple([z.string(), z.number()])),
     crashTypes: z.array(z.tuple([z.string(), z.number()])),

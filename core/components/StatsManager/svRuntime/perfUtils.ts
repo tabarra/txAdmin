@@ -3,7 +3,6 @@ import { cloneDeep } from 'lodash-es';
 import type { SvRtPerfCountsType } from "./perfSchemas";
 import got from '@core/extras/got.js';
 import { parseRawPerf } from './perfParser';
-import { getProcessesData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
 import { PERF_DATA_BUCKET_COUNT } from './config';
 
 

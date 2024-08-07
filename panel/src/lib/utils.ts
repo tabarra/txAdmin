@@ -37,7 +37,7 @@ export function isValidRedirectPath(location: unknown): location is string {
  */
 export function redirectToLogin(reasonHash = LogoutReasonHash.NONE) {
     const currLocation = window.location.pathname + window.location.search + window.location.hash;
-    const newLocation = currLocation === '/'
+    const newLocation = currLocation === '/' || currLocation.startsWith('/login')
         ? `/login${reasonHash}`
         : `/login?r=${encodeURIComponent(currLocation)}${reasonHash}`;
     window.history.replaceState(null, '', newLocation);

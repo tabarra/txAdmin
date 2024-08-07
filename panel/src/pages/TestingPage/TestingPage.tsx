@@ -8,6 +8,7 @@ import TmpToasts from "./TmpToasts";
 import TmpApi from "./TmpApi";
 import TmpFiller from "./TmpFiller";
 import TmpDndSortable from "./TmpDndSortable";
+import TmpSwr from "./TmpSwr";
 
 
 export default function TestingPage() {
@@ -25,5 +26,6 @@ export default function TestingPage() {
         {/* <TmpMarkdown /> */}
         {/* <TmpColors /> */}
         {/* <TmpDndSortable /> */}
+        {/* <TmpSwr /> */}
     </div>;
 }

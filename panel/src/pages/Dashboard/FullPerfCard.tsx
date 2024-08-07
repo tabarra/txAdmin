@@ -185,7 +185,7 @@ export default function FullPerfCard() {
         path: `/perfChartData/:thread/`,
     });
 
-    const swrChartApiResp = useSWR('/perfChartData/:thread', async () => {
+    const swrChartApiResp = useSWR(`/perfChartData/${selectedThread}`, async () => {
         setApiFailReason('');
         const data = await chartApi({
             pathParams: { thread: selectedThread },
@@ -198,11 +198,6 @@ export default function FullPerfCard() {
         setApiDataAge(Date.now());
         return data;
     }, {});
-
-    useEffect(() => {
-        swrChartApiResp.mutate();
-        //FIXME: should probably clear the data when changing the thread
-    }, [selectedThread]);
 
     //Rendering
     let contentNode: React.ReactNode = null;
