@@ -19,7 +19,7 @@ const isUndefined = (x: unknown) => (typeof x === 'undefined');
  */
 export default async function SettingsSave(ctx: AuthedCtx) {
     //Sanity check
-    if (isUndefined(ctx.params.scope)) {
+    if (!('params' in ctx) || ctx.params === null || typeof ctx.params !== 'object' || Array.isArray(ctx.params) === true || !('scope' in ctx.params) || typeof ctx.params.scope !== 'string') {
         return ctx.utils.error(400, 'Invalid Request');
     }
     let scope = ctx.params.scope;
@@ -43,6 +43,8 @@ export default async function SettingsSave(ctx: AuthedCtx) {
         return await handleMonitor(ctx);
     } else if (scope == 'discord') {
         return await handleDiscord(ctx);
+    } else if (scope == 'versionControl'){
+        return await handleVersionControl(ctx);
     } else if (scope == 'menu') {
         return await handleMenu(ctx);
     } else {
@@ -140,7 +142,7 @@ async function handleFXServer(ctx: AuthedCtx) {
         const resPath = path.join(cfg.serverDataPath, 'resources');
         const resStat = await fsp.stat(resPath);
         if (!resStat.isDirectory()) {
-            throw new Error("Couldn't locate or read a resources folder inside of the base path.");
+            throw new Error('Couldn\'t locate or read a resources folder inside of the base path.');
         }
     } catch (error) {
         const msg = cfg.serverDataPath.includes('resources')
@@ -239,7 +241,7 @@ async function handlePlayerDatabase(ctx: AuthedCtx) {
     if (invalidRoleInputs.length) {
         return ctx.send({
             type: 'danger',
-            message: `The whitelist role(s) "${invalidRoleInputs.join(', ')}" do not appear to be valid`
+            message: `The whitelist role(s) '${invalidRoleInputs.join(', ')}' do not appear to be valid`
         });
     }
 
@@ -350,6 +352,41 @@ async function handleMonitor(ctx: AuthedCtx) {
     });
 }
 
+//================================================================
+/**
+ * Handle version control
+ */
+async function handleVersionControl(ctx: AuthedCtx) {
+    if((typeof ctx.request.body.githubAuthKey === 'string' || ctx.request.body.githubAuthKey === null) && (typeof ctx.request.body.githubParentRepo === 'string' || ctx.request.body.githubParentRepo === null) && (typeof ctx.request.body.githubOwner === 'string' || ctx.request.body.githubOwner === null)) {
+        //Preparing & saving config
+        const newConfig = ctx.txAdmin.configVault.getScopedStructure('versionControl');
+        newConfig.githubAuthKey = ctx.request.body.githubAuthKey;
+        newConfig.githubOwner = ctx.request.body.githubOwner;
+        newConfig.githubParentRepo = ctx.request.body.githubParentRepo;
+        try {
+            ctx.txAdmin.configVault.saveProfile('versionControl', newConfig);
+        } catch (error) {
+            console.warn(`[${ctx.admin.name}] Error changing Version Control settings.`);
+            console.verbose.dir(error);
+            return ctx.send({
+                type: 'danger',
+                markdown: true,
+                message: `**Error saving the configuration file:** ${(error as Error).message}`
+            });
+        }
+
+        //Sending output
+        ctx.txAdmin.refreshConfig();
+        ctx.admin.logAction('Changing version control settings.');
+        return ctx.send({
+            type: 'success',
+            markdown: true,
+            message: `**Version control configuration saved!**`
+        });
+    } else {
+        return ctx.utils.error(400, 'Invalid Request - invalid parameters')
+    }
+}
 
 //================================================================
 /**

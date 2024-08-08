@@ -1,8 +1,3 @@
-const modulename = 'WebServer:DeployerStatus';
-import consoleFactory from '@extras/console';
-const console = consoleFactory(modulename);
-
-
 /**
  * Returns the output page containing the live console
  * @param {object} ctx

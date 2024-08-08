@@ -12,7 +12,6 @@ const console = consoleFactory(modulename);
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
-
 /**
  * Handle all the server control actions
  * @param {object} ctx
@@ -39,6 +38,10 @@ export default async function DeployerActions(ctx) {
         return await handleConfirmRecipe(ctx);
     } else if (action == 'setVariables') {
         return await handleSetVariables(ctx);
+    } else if (action == 'runRecipe') {
+        return await handleRunRecipe(ctx);
+    } else if (action == 'setVersionControlVariables') {
+        return await handleSetVersionControlVariables(ctx);
     } else if (action == 'commit') {
         return await handleSaveConfig(ctx);
     } else if (action == 'cancel') {
@@ -74,6 +77,93 @@ async function handleConfirmRecipe(ctx) {
     return ctx.send({ success: true });
 }
 
+//================================================================
+/**
+ * Handle submition of the version control variables
+ * @param {object} ctx
+ */
+async function handleRunRecipe(ctx) {
+    globals.deployer.recipe.variables['githubAutoFork'] = ctx.request.body.githubAutoFork === 'true';
+    globals.deployer.recipe.variables['githubParentRepo'] = typeof ctx.request.body.githubParentRepo === 'string' ? ctx.request.body.githubParentRepo : null;
+    globals.deployer.recipe.variables['githubOwner'] = typeof ctx.request.body.githubOwner === 'string' ? ctx.request.body.githubOwner : null;
+
+    //Start deployer
+    try {
+        ctx.admin.logAction('Running recipe.');
+        await globals.deployer.start();
+    } catch (error) {
+        return ctx.send({ type: 'danger', message: error.message });
+    }
+
+    return ctx.send({ success: true });
+}
+
+//================================================================
+/**
+ * Handle submition of the version control variables
+ * @param {object} ctx
+ */
+async function handleSetVersionControlVariables(ctx) {
+    if (ctx.request.body.key !== 'githubAutoFork' && ctx.request.body.key !== 'githubAuthKey' && ctx.request.body.key !== 'githubOwner' && ctx.request.body.key !== 'githubParentRepo') {
+        return ctx.utils.error(400, 'Invalid Request - invalid parameters');
+    }
+
+    // User doesnt want version control
+    if (ctx.request.body.value === null) {
+        return ctx.send({ success: true });
+    }
+
+    if (typeof ctx.request.body.value !== 'string') {
+        return ctx.utils.error(400, 'Invalid Request - invalid parameters');
+    }
+
+    // User doesnt want version control
+    if (ctx.request.body.value.trim().length <= 0) {
+        return ctx.send({ success: true });
+    }
+
+    //Validating auth key
+    if (
+        ctx.request.body.key === 'githubAuthKey'
+        && !consts.regexGithubAuthKey.test(ctx.request.body.value)
+    ) {
+        return ctx.send({ type: 'danger', message: 'The Github Auth Key does not appear to be valid.' });
+    }
+
+    if (ctx.request.body.key === 'githubAuthKey' && (await globals.versionControl.isAuthKeyValid(ctx.request.body.value)) === false) {
+        return ctx.send({ type: 'danger', message: 'The Github Auth Key does not appear to be valid.' });
+    }
+
+    //Validating github auto fork
+    if (ctx.request.body.key === 'githubAutoFork') {
+        if (ctx.request.body.value !== 'true' && ctx.request.body.value !== 'false') {
+            return ctx.utils.error(400, 'Invalid Request - invalid parameters');
+        } else {
+            ctx.request.body.value = ctx.request.body.value === 'true';
+        }
+    }
+
+    const newGlobalConfig = globals.configVault.getScopedStructure('versionControl');
+    newGlobalConfig[ctx.request.body.key] = ctx.request.body.value;
+
+    try {
+        globals.configVault.saveProfile('versionControl', newGlobalConfig);
+    } catch (error) {
+        console.warn(`[${ctx.admin.name}] Error changing version control settings via deployer.`);
+        console.verbose.dir(error);
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Error saving the configuration file:** ${error.message}`,
+        });
+    }
+    globals.txAdmin.refreshConfig();
+    ctx.admin.logAction('Changing version control settings via deployer.');
+
+    globals.deployer.recipe.variables[ctx.request.body.key] = ctx.request.body.value;
+
+    return ctx.send({ success: true });
+}
 
 //================================================================
 /**
@@ -123,7 +213,7 @@ async function handleSetVariables(ctx) {
                 }
                 outMessage = `${error?.message}<br>\n${specificError}`;
             } else if (error.message?.includes('auth_gssapi_client')) {
-                outMessage = `Your database does not accept the required authentication method. Please update your MySQL/MariaDB server and try again.`;
+                outMessage = 'Your database does not accept the required authentication method. Please update your MySQL/MariaDB server and try again.';
             }
 
             return ctx.send({ type: 'danger', message: `<b>Database connection failed:</b> ${outMessage}` });
@@ -167,13 +257,8 @@ async function handleSetVariables(ctx) {
         ? addPrincipalLines.join('\n')
         : '# Deployer Note: this admin master has no identifiers to be automatically added.\n# add_principal identifier.discord:111111111111111111 group.admin #example';
 
-    //Start deployer
-    try {
-        ctx.admin.logAction('Running recipe.');
-        globals.deployer.start(userVars);
-    } catch (error) {
-        return ctx.send({ type: 'danger', message: error.message });
-    }
+    Object.assign(globals.deployer.recipe.variables, userVars);
+    globals.deployer.step = 'versionControl';
 
     return ctx.send({ success: true });
 }
@@ -228,7 +313,7 @@ async function handleSaveConfig(ctx) {
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `**Error saving the configuration file:** ${error.message}`
+            message: `**Error saving the configuration file:** ${error.message}`,
         });
     }
 

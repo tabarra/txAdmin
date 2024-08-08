@@ -29,6 +29,11 @@ export default async function DeployerStepper(ctx) {
         serverProfile: globals.info.serverProfile,
         deploymentID: globals.deployer.deploymentID,
         requireDBConfig: false,
+        githubOwners: [],
+        githubAuthKey: '',
+        githubOwner: 'none',
+        githubParentRepo: '',
+        githubAutoFork: false,
         defaultLicenseKey: '',
         recipe: undefined,
         defaults: {},
@@ -42,6 +47,12 @@ export default async function DeployerStepper(ctx) {
             description: globals.deployer.recipe.description,
             raw: globals.deployer.recipe.raw,
         };
+    } else if (globals.deployer.step === 'versionControl') {
+        renderData.githubOwners = await globals.versionControl.getOwners();
+        renderData.githubAuthKey = globals.deployer.recipe.variables.githubAuthKey ?? '';
+        renderData.githubOwner = globals.deployer.recipe.variables.githubOwner ?? 'none';
+        renderData.githubParentRepo = globals.deployer.recipe.variables.githubParentRepo ?? '';
+        renderData.githubAutoFork = typeof globals.deployer.recipe.variables.githubAutoFork === 'boolean' ? globals.deployer.recipe.variables.githubAutoFork : false;
     } else if (globals.deployer.step === 'input') {
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;

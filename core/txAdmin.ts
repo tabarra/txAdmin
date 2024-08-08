@@ -16,6 +16,7 @@ import Logger from '@core/components/Logger';
 import HealthMonitor from '@core/components/HealthMonitor';
 import Scheduler from '@core/components/Scheduler';
 import StatsManager from '@core/components/StatsManager';
+import VersionControl from '@core/components/VersionControl';
 import Translator from '@core/components/Translator';
 import WebServer from '@core/components/WebServer';
 import ResourcesManager from '@core/components/ResourcesManager';
@@ -46,6 +47,7 @@ const globalsInternal: Record<string, any> = {
     healthMonitor: null,
     scheduler: null,
     statsManager: null,
+    versionControl: null,
     translator: null,
     webServer: null,
     resourcesManager: null,
@@ -78,6 +80,7 @@ export default class TxAdmin {
     healthMonitor;
     scheduler;
     statsManager;
+    versionControl;
     webServer;
     resourcesManager;
     playerlistManager;
@@ -176,6 +179,9 @@ export default class TxAdmin {
 
             this.statsManager = new StatsManager(this);
             globalsInternal.statsManager = this.statsManager;
+
+            this.versionControl = new VersionControl(this);
+            globalsInternal.versionControl = this.versionControl;
 
             this.webServer = new WebServer(this, profileConfig.webServer);
             globalsInternal.webServer = this.webServer;

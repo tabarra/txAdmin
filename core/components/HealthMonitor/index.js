@@ -209,6 +209,7 @@ export default class HealthMonitor {
                 this.hasServerStartedYet = true;
                 globals.statsManager.txRuntime.registerFxserverBoot(processUptime);
                 globals.statsManager.svRuntime.logServerBoot(processUptime);
+                globals.versionControl.svRuntime.handleServerBoot(processUptime);
             }
             return;
         }

@@ -9,6 +9,7 @@ import Iframe from "@/pages/Iframe";
 import NotFound from "@/pages/NotFound";
 import TestingPage from "@/pages/TestingPage/TestingPage";
 import LiveConsolePage from "@/pages/LiveConsole/LiveConsolePage";
+import VersionControlPage from "@/pages/VersionControl/VersionControlPage";
 import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
 import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
@@ -102,6 +103,11 @@ const allRoutes: RouteType[] = [
         path: '/server/cfg-editor',
         title: 'CFG Editor',
         children: <Iframe legacyUrl="cfgEditor" />
+    },
+    {
+        path: '/server/version-control',
+        title: 'Version Control',
+        children: <VersionControlPage />
     },
     {
         path: '/server/setup',

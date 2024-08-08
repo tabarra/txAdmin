@@ -9,6 +9,7 @@ The permissions are saved in the `txData/admins.json` file and can be edited thr
 - `settings.view`: Settings: View (no tokens);
 - `settings.write`: Settings: Change;
 - `console.view`: Console: View;
+- `version_control`: Version Control: Manage;
 - `console.write`: Console: Write;
 - `control.server`: Start/Stop/Restart Server;
 - `commands.resources`: Start/Stop Resources;

@@ -111,7 +111,7 @@ async function handleValidateRecipeURL(ctx) {
     try {
         const recipeText = await got.get({
             url: recipeURL,
-            timeout: { request: 4500 }
+            timeout: { request: 4500 },
         }).text();
         if (typeof recipeText !== 'string') throw new Error('This URL did not return a string.');
         const recipe = parseValidateRecipe(recipeText);
@@ -282,7 +282,7 @@ async function handleSaveLocal(ctx) {
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `**Error saving the configuration file:** ${error.message}`
+            message: `**Error saving the configuration file:** ${error.message}`,
         });
     }
 
@@ -331,7 +331,7 @@ async function handleSaveDeployerImport(ctx) {
     try {
         recipeText = await got.get({
             url: recipeURL,
-            timeout: { request: 4500 }
+            timeout: { request: 4500 },
         }).text();
         if (typeof recipeText !== 'string') throw new Error('This URL did not return a string.');
     } catch (error) {
@@ -349,7 +349,7 @@ async function handleSaveDeployerImport(ctx) {
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `**Error saving the configuration file:** ${error.message}`
+            message: `**Error saving the configuration file:** ${error.message}`,
         });
     }
     globals.txAdmin.refreshConfig();
@@ -395,7 +395,7 @@ async function handleSaveDeployerCustom(ctx) {
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `**Error saving the configuration file:** ${error.message}`
+            message: `**Error saving the configuration file:** ${error.message}`,
         });
     }
     globals.txAdmin.refreshConfig();

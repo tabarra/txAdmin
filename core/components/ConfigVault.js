@@ -53,6 +53,9 @@ export default class ConfigVault {
             let cfgData = this.getConfigFromFile();
             this.configFile = this.setupConfigStructure(cfgData);
             this.config = this.setupConfigDefaults(this.configFile);
+            if (globals.versionControl) {
+                globals.versionControl.configUpdated();
+            }
             this.setupFolderStructure();
         } catch (error) {
             console.error(error);
@@ -100,6 +103,7 @@ export default class ConfigVault {
             logger: null,
             monitor: null,
             playerDatabase: null,
+            versionControl: null,
             webServer: null,
             discordBot: null,
             fxRunner: null,
@@ -110,6 +114,7 @@ export default class ConfigVault {
         //      this entire config vault is stupid.
         //      use convict, lodash defaults or something like that
         cfg.playerDatabase = cfg.playerDatabase ?? cfg.playerController ?? {};
+        cfg.versionControl = cfg.versionControl ?? {};
 
         try {
             out.global = {
@@ -122,6 +127,11 @@ export default class ConfigVault {
                 hideDefaultDirectMessage: toDefault(cfg.global.hideDefaultDirectMessage, false),
                 hideDefaultWarning: toDefault(cfg.global.hideDefaultWarning, false),
                 hideDefaultScheduledRestartWarning: toDefault(cfg.global.hideDefaultScheduledRestartWarning, false),
+            };
+            out.versionControl = {
+                githubAuthKey: toDefault(cfg.versionControl.githubAuthKey, null),
+                githubOwner: toDefault(cfg.versionControl.githubAuthKey, null),
+                githubParentRepo: toDefault(cfg.versionControl.githubParentRepo, null)
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {
@@ -220,6 +230,10 @@ export default class ConfigVault {
             cfg.logger.server = toDefault(cfg.logger.server, {});
             cfg.logger.admin = toDefault(cfg.logger.admin, {});
             cfg.logger.console = toDefault(cfg.logger.console, {});
+
+            //Version Control
+            cfg.versionControl.githubAuthKey = toDefault(cfg.versionControl.githubAuthKey, null);
+            cfg.versionControl.githubOwner = toDefault(cfg.versionControl.githubOwner, null);
 
             //Monitor
             cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];
@@ -346,5 +360,9 @@ export default class ConfigVault {
         fs.writeFileSync(this.configFilePath, JSON.stringify(toSave, null, 2), 'utf8');
         this.configFile = toSave;
         this.config = this.setupConfigDefaults(this.configFile);
+
+        if (scope == 'versionControl' && globals.versionControl) {
+            globals.versionControl.configUpdated();
+        }
     }
 };

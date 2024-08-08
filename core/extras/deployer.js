@@ -1,6 +1,6 @@
 const modulename = 'Deployer';
 import path from 'node:path';
-import { cloneDeep }  from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import dateFormat from 'dateformat';
 import fse from 'fs-extra';
 import open from 'open';
@@ -9,6 +9,8 @@ import getOsDistro from '@core/extras/getOsDistro.js';
 import { txEnv } from '@core/globalData';
 import recipeEngine from './recipeEngine.js';
 import consoleFactory from '@extras/console';
+import { githubRepoSourceRegex } from './helpers.js';
+import { spawnSync } from 'node:child_process';
 const console = consoleFactory(modulename);
 
 
@@ -161,8 +163,11 @@ export class Deployer {
         this.originalRecipe = originalRecipe;
         this.deploymentID = deploymentID;
         this.progress = 0;
+        this.validGithubData = false;
+        this.isOwnerOrganization = false;
         this.serverName = customMetaData.serverName || globals.txAdmin.globalConfig.serverName || '';
         this.logLines = [];
+        this.userVars = null;
 
         //Load recipe
         const impRecipe = (originalRecipe !== false)
@@ -225,16 +230,19 @@ export class Deployer {
 
     /**
      * Starts the deployment process
-     * @param {string} userInputs
      */
-    start(userInputs) {
-        if (this.step !== 'input') throw new Error('expected input step');
-        Object.assign(this.recipe.variables, userInputs);
+    async start() {
+        if (this.step !== 'versionControl') throw new Error('expected versionControl step');
         this.logLines = [];
         this.customLog(`Starting deployment of ${this.recipe.name}.`);
         this.deployFailed = false;
         this.progress = 0;
         this.step = 'run';
+        this.validGithubData = typeof globals.deployer.recipe.variables.githubAutoFork === 'boolean' && typeof globals.deployer.recipe.variables.githubAuthKey === 'string' && globals.deployer.recipe.variables.githubAuthKey.trim().length > 0 && typeof globals.deployer.recipe.variables.githubOwner === 'string' && globals.deployer.recipe.variables.githubOwner.trim().length > 0 && typeof globals.deployer.recipe.variables.githubParentRepo === 'string' && globals.deployer.recipe.variables.githubParentRepo.trim().length > 0;
+        if (this.validGithubData == true) {
+            const localUsername = await globals.versionControl.getUsername();
+            this.isOwnerOrganization = this.recipe.variables.githubOwner !== localUsername;
+        }
         this.runTasks();
     }
 
@@ -249,11 +257,49 @@ export class Deployer {
         } catch (error) { }
     }
 
+    getSubmoduleFileData() {
+        let resp = '';
+
+        if (this.recipe.variables.githubAutoFork === true) {
+            for (let i = 0; i < this.recipe.tasks.length; i++) {
+                const v = this.recipe.tasks[i];
+
+                // todo: perhaps this should be verified the same way as in `./recipeEngine`
+                // todo: the last part here needs to be checked in a better way. we want all git submodules to be created in the root repo. therefore we need checks to see if there's technically a submodule containing another submodule
+                if (v.action === 'download_github' && typeof v.src === 'string' && typeof v.dest === 'string' && v.src !== 'https://github.com/citizenfx/cfx-server-data' && v.dest !== './resources') {
+                    const srcMatch = v.src.match(githubRepoSourceRegex);
+                    if (!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error('invalid repository');
+                    const repoOwner = srcMatch[3];
+                    const repoName = srcMatch[4];
+
+                    if (i !== 0) {
+                        resp += '\n\n';
+                    }
+
+                    resp += `[submodule "${repoName}"]\npath = "${v.dest}"\nurl = "https://github.com/${this.recipe.variables.githubAutoFork === true ? this.recipe.variables.githubOwner : repoOwner}/${repoName}"`;
+                }
+            }
+        }
+
+        return resp;
+    }
+
     /**
      * (Private) Run the tasks in a sequential way.
      */
     async runTasks() {
         if (this.step !== 'run') throw new Error('expected run step');
+
+        if (this.validGithubData === true) {
+            const repoCreationResp = await globals.versionControl.createGithubRepo(this.recipe.variables.githubParentRepo, this.recipe.variables.githubOwner, this.isOwnerOrganization);
+
+            if (repoCreationResp) {
+                this.customLog('Created github repo');
+            } else {
+                this.customLog('Couldnt create github repo');
+            }
+        }
+
         const contextVariables = cloneDeep(this.recipe.variables);
         contextVariables.deploymentID = this.deploymentID;
         contextVariables.serverName = this.serverName;
@@ -263,7 +309,7 @@ export class Deployer {
 
         //Run all the tasks
         for (let index = 0; index < this.recipe.tasks.length; index++) {
-            this.progress = Math.round((index / this.recipe.tasks.length) * 100);
+            this.progress = Math.round((index / this.recipe.tasks.length) * (this.validGithubData === true ? 90 : 100));
             const task = this.recipe.tasks[index];
             const taskID = `[task${index + 1}:${task.action}]`;
             this.customLog(`Running ${taskID}...`);
@@ -290,17 +336,13 @@ export class Deployer {
                         + JSON.stringify([
                             txEnv.txAdminVersion,
                             await getOsDistro(),
-                            contextVariables.$step
+                            contextVariables.$step,
                         ]);
                 }
                 this.customLogError(msg);
                 return await this.markFailedDeploy();
             }
         }
-
-        //Set progress
-        this.progress = 100;
-        this.customLog('All tasks completed.');
 
         //Check deploy folder validity (resources + server.cfg)
         try {
@@ -326,6 +368,40 @@ export class Deployer {
             this.customLogError(`Failed to replace all vars in server.cfg: ${error.message}`);
             return await this.markFailedDeploy();
         }
+
+        this.customLog('Starting github version control setup');
+        if (this.validGithubData) {
+            fse.writeFileSync(path.join(this.deployPath, '.gitmodules'), this.getSubmoduleFileData());
+            this.customLog('Wrote git submodules file!');
+            fse.writeFileSync(path.join(this.deployPath, './resources/.gitignore'), 'node_modules\ncache\npackage-lock.json');
+            fse.writeFileSync(path.join(this.deployPath, '.gitignore'), 'cache\n.replxx_history\n./*.bkp');
+
+            // todo: we need to check earlier if the `git` cli exists or not
+            // todo: if commit signing is turned on, this wont work
+            const cmdValue = [
+                'git init',
+                'git add .',
+                'git commit -am "feat: initial commit"',
+                'git branch -M main',
+                `git remote add origin https://github.com/${this.recipe.variables.githubOwner}/${this.recipe.variables.githubParentRepo}.git`,
+                'git push -u origin main',
+            ].join(' && ');
+            const gitResp = spawnSync(cmdValue, [], {
+                cwd: this.deployPath,
+                shell: true,
+                detached: true,
+            });
+
+            if (gitResp.status === 0) {
+                this.customLog('Pushed initial commit to github');
+            } else {
+                this.customLog('Failed to push initial commit to github');
+            }
+        }
+
+        //Set progress
+        this.progress = 100;
+        this.customLog('All tasks completed.');
 
         //Else: success :)
         this.customLog('Deploy finished and folder validated. All done!');
