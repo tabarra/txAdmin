@@ -242,7 +242,7 @@ export class ServerPlayer extends BasePlayer {
 
 
     /**
-     *  Updates dbData play time every minute
+     * Updates dbData play time every minute
      */
     #minuteCron() {
         if (!this.dbData || !this.isConnected) return;

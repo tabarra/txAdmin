@@ -194,11 +194,13 @@ export default class TxRuntimeStatsManager {
                 banCheckingEnabled: this.#txAdmin.playerDatabase.config.onJoinCheckBan,
                 whitelistMode: this.#txAdmin.playerDatabase.config.whitelistMode,
                 recipeName: this.#txAdmin.persistentCache.get('deployer:recipe') ?? 'not_in_persistentCache',
-                tmpDisabledGameMessages: [
-                    globalConfig.hideDefaultAnnouncement && 'Announcement',
-                    globalConfig.hideDefaultDirectMessage && 'DirectMessage',
-                    globalConfig.hideDefaultScheduledRestartWarning && 'ScheduledRestartWarning',
-                    globalConfig.hideDefaultWarning && 'Warning',
+                tmpConfigFlags: [
+                    globalConfig.hideDefaultAnnouncement && 'global.hideDefaultAnnouncement',
+                    globalConfig.hideDefaultDirectMessage && 'global.hideDefaultDirectMessage',
+                    globalConfig.hideDefaultScheduledRestartWarning && 'global.hideDefaultScheduledRestartWarning',
+                    globalConfig.hideDefaultWarning && 'global.hideDefaultWarning',
+                    globalConfig.hideAdminInPunishments && 'global.hideAdminInPunishments',
+                    globalConfig.hideAdminInMessages && 'global.hideAdminInMessages',
                 ].filter(x => x),
 
                 //Processed stuff

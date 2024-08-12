@@ -1,9 +1,7 @@
 import * as d3 from 'd3';
 import { PerfLifeSpanType, PerfSnapType } from './chartingUtils';
-import { createRandomHslColor, msToShortDuration } from '@/lib/utils';
+import { msToShortDuration } from '@/lib/utils';
 import { throttle } from 'throttle-debounce';
-import { useSetAtom } from 'jotai';
-import { dashPerfCursorAtom } from './dashboardHooks';
 
 
 //Helpers
@@ -425,7 +423,6 @@ export default function drawFullPerfChart({
     let cursorRedrawTimeout: NodeJS.Timeout;
     const cooldownTime = 20;
     chartGroup.append('rect')
-        .attr('id', 'cursorTargetRect')
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', drawableAreaWidth)
@@ -474,7 +471,6 @@ export default function drawFullPerfChart({
 
         //@ts-ignore
         chartGroup.selectAll('g.time-axis').call(timeAxis);
-        timeAxisGroup.selectAll('rect.day-night')
         //@ts-ignore
         chartGroup.selectAll('g.lifespan').call(drawLifespan);
 

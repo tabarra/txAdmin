@@ -9,6 +9,9 @@ const escape = (x: string) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd: string, ...params: string[]) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
+const delay = async (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
 
 /**
@@ -56,16 +59,13 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         const profileDuration = 5;
         const savePath = `${ctx.txAdmin.info.serverProfilePath}/data/txProfile.bin`;
         ExecuteCommand('profiler record start');
-        setTimeout(async () => {
-            ExecuteCommand('profiler record stop');
-            setTimeout(async () => {
-                ExecuteCommand(`profiler save "${escape(savePath)}"`);
-                setTimeout(async () => {
-                    console.ok(`Profile saved to: ${savePath}`);
-                    fxRunner.srvCmd(`profiler view "${escape(savePath)}"`, ctx.admin.name);
-                }, 150);
-            }, 150);
-        }, profileDuration * 1000);
+        await delay(profileDuration * 1000);
+        ExecuteCommand('profiler record stop');
+        await delay(150);
+        ExecuteCommand(`profiler save "${escape(savePath)}"`);
+        await delay(150);
+        console.ok(`Profile saved to: ${savePath}`);
+        fxRunner.srvCmd(`profiler view "${escape(savePath)}"`, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'success',
             msg: 'Check your live console in a few seconds.',
@@ -84,11 +84,12 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         ctx.admin.logAction(`Sending announcement: ${parameter}`);
 
         // Sending discord announcement
+        const publicAuthor = ctx.txAdmin.adminVault.getAdminPublicName(ctx.admin.name, 'message');
         ctx.txAdmin.discordBot.sendAnnouncement({
             type: 'info',
             title: {
                 key: 'nui_menu.misc.announcement_title',
-                data: {author: ctx.admin.name}
+                data: {author: publicAuthor}
             },
             description: message
         });

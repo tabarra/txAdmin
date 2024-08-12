@@ -1,8 +1,8 @@
+import pidusage from 'pidusage';
 import { cloneDeep } from 'lodash-es';
 import type { SvRtPerfCountsType } from "./perfSchemas";
 import got from '@core/extras/got.js';
 import { parseRawPerf } from './perfParser';
-import { getProcessesData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
 import { PERF_DATA_BUCKET_COUNT } from './config';
 
 
@@ -108,12 +108,9 @@ export const fetchRawPerfData = async (fxServerHost: string) => {
 /**
  * Get the fxserver memory usage
  */
-export const fetchFxsMemory = async () => {
-    const allProcsData = await getProcessesData();
-    if (!allProcsData) return;
-
-    const fxProcData = allProcsData.find((proc) => proc.name === 'FXServer');
-    if (!fxProcData) return;
-
-    return parseFloat((fxProcData.memory).toFixed(2));
+export const fetchFxsMemory = async (fxsPid?: number) => {
+    if (!fxsPid) return;
+    const pidUsage = await pidusage(fxsPid);
+    const memoryMb = pidUsage.memory / 1024 / 1024;
+    return parseFloat((memoryMb).toFixed(2));
 }

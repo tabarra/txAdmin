@@ -120,7 +120,7 @@ export default function ServerSchedule() {
         if (input.includes(',')) {
             txToast.error({
                 title: 'Invalid scheduled restart time.',
-                msg: 'It looks like you are trying to schedule multiple restart times, which can only be done the Settings page.\nThis input is for just the next (not persistent) restart.',
+                msg: 'It looks like you are trying to schedule multiple restart times, which can only be done in the Settings page.\nThis input is for just the next (not persistent) restart.',
             }, { duration: 10000 });
             return;
         }

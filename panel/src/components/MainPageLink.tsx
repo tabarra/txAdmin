@@ -96,9 +96,10 @@ export function MenuNavLink({ href, children, className, disabled }: MenuNavProp
 type NavLinkProps = {
     href: string;
     children: React.ReactNode;
+    className?: string;
 };
 
-export function NavLink({ href, children }: NavLinkProps) {
+export function NavLink({ href, children, className }: NavLinkProps) {
     const [isActive] = useRoute(href);
 
     return (
@@ -106,7 +107,7 @@ export function NavLink({ href, children }: NavLinkProps) {
             href={href}
             isActive={isActive}
         >
-            <a>{children}</a>
+            <a className={className}>{children}</a>
         </MainPageLink>
     )
 }

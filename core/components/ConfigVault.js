@@ -122,6 +122,8 @@ export default class ConfigVault {
                 hideDefaultDirectMessage: toDefault(cfg.global.hideDefaultDirectMessage, false),
                 hideDefaultWarning: toDefault(cfg.global.hideDefaultWarning, false),
                 hideDefaultScheduledRestartWarning: toDefault(cfg.global.hideDefaultScheduledRestartWarning, false),
+                hideAdminInPunishments: toDefault(cfg.global.hideAdminInPunishments, true),
+                hideAdminInMessages: toDefault(cfg.global.hideAdminInMessages, false),
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {
@@ -214,6 +216,8 @@ export default class ConfigVault {
             cfg.global.hideDefaultDirectMessage = (cfg.global.hideDefaultDirectMessage === 'true' || cfg.global.hideDefaultDirectMessage === true);
             cfg.global.hideDefaultWarning = (cfg.global.hideDefaultWarning === 'true' || cfg.global.hideDefaultWarning === true);
             cfg.global.hideDefaultScheduledRestartWarning = (cfg.global.hideDefaultScheduledRestartWarning === 'true' || cfg.global.hideDefaultScheduledRestartWarning === true);
+            cfg.global.hideAdminInPunishments = (cfg.global.hideAdminInPunishments === 'true' || cfg.global.hideAdminInPunishments === true);
+            cfg.global.hideAdminInMessages = (cfg.global.hideAdminInMessages === 'true' || cfg.global.hideAdminInMessages === true);
 
             //Logger - NOTE: this one default's i'm doing directly into the class
             cfg.logger.fxserver = toDefault(cfg.logger.fxserver, {});

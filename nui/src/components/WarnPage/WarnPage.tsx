@@ -4,7 +4,7 @@ import { Box, Fade, Typography } from "@mui/material";
 import { useNuiEvent } from "../../hooks/useNuiEvent";
 import { useTranslate } from "react-polyglot";
 import { debugData } from "../../utils/debugData";
-import { ReportProblemOutlined } from "@mui/icons-material";
+import { Opacity, ReportProblemOutlined } from "@mui/icons-material";
 
 
 /**
@@ -50,6 +50,7 @@ const WarnInnerStyles = styled('div')({
     marginTop: "1em",
     fontSize: "0.85em",
     textAlign: "center",
+    opacity: 0.85,
   },
 });
 
@@ -83,6 +84,7 @@ const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
           <WarningIcon />
         </Box>
         <Typography
+          letterSpacing={1}
           variant="h5"
           style={{
             textAlign: "center",
@@ -91,9 +93,11 @@ const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
           {message}
         </Typography>
         <Typography
+          letterSpacing={1}
           style={{
             textAlign: "right",
             marginBottom: -20,
+            opacity: 0.85,
           }}
           variant="body2"
         >

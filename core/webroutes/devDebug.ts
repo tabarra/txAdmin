@@ -7,7 +7,7 @@ const console = consoleFactory(modulename);
 
 
 //Helpers
-const devWarningMessage = 'The privileged /dev was called. This webroute is unsafe and only enabled in developer mode.';
+const devWarningMessage = 'The unsafe privileged /dev webroute was called and should only be used in developer mode.';
 const paramsSchema = z.object({
     scope: z.string(),
 });

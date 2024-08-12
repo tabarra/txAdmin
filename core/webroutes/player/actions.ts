@@ -116,7 +116,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     } catch (error) {
         return { error: `Failed to warn player: ${(error as Error).message}` };
     }
-    ctx.admin.logAction(`Warned player [${player.netid}] ${player.displayName}: ${reason}`);
+    ctx.admin.logAction(`Warned player ${player.displayName}: ${reason}`);
 
     // Dispatch `txAdmin:events:playerWarned`
     const cmdOk = ctx.txAdmin.fxRunner.sendEvent('playerWarned', {
@@ -197,7 +197,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     //Prepare and send command
     let kickMessage, durationTranslated;
     const tOptions: any = {
-        author: ctx.admin.name,
+        author: ctx.txAdmin.adminVault.getAdminPublicName(ctx.admin.name, 'punishment'),
         reason: reason,
     };
     if (expiration !== false && duration) {
@@ -312,7 +312,7 @@ async function handleMessage(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     }
 
     try {
-        ctx.admin.logAction(`DM to #${player.displayName}: ${message}`);
+        ctx.admin.logAction(`DM to ${player.displayName}: ${message}`);
 
         // Dispatch `txAdmin:events:playerDirectMessage`
         ctx.txAdmin.fxRunner.sendEvent('playerDirectMessage', {
@@ -348,14 +348,14 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
 
     //Validating server & player
     if (ctx.txAdmin.fxRunner.fxChild === null) {
-        return { error: 'The server is not online.' };
+        return { error: 'The server is offline.' };
     }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
     }
 
     try {
-        ctx.admin.logAction(`Kicked #${player.displayName}: ${reason}`);
+        ctx.admin.logAction(`Kicked ${player.displayName}: ${reason}`);
 
         // Dispatch `txAdmin:events:playerKicked`
         ctx.txAdmin.fxRunner.sendEvent('playerKicked', {

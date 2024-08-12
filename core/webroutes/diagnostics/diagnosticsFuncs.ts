@@ -87,7 +87,7 @@ export const getProcessesData = async () => {
                 ppid: (curr.ppid == txProcessId) ? 'txAdmin' : curr.ppid,
                 name: procName,
                 cpu: curr.cpu,
-                memory: curr.memory / (MEGABYTE),
+                memory: curr.memory / MEGABYTE,
                 order: order,
             });
         });

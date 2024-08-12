@@ -9,6 +9,8 @@ import { globalStatusAtom } from './status';
 import { txToast } from '@/components/TxToaster';
 import { actionModalOpenAtom } from './actionModal';
 import { dashDataTsAtom, dashPerfCursorAtom, dashPlayerDropAtom, dashServerStatsAtom, dashSvRuntimeAtom } from '@/pages/Dashboard/dashboardHooks';
+import { redirectToLogin } from '@/lib/utils';
+import { LogoutReasonHash } from '@/pages/auth/Login';
 
 
 /**
@@ -82,10 +84,10 @@ export const useAdminPerms = () => {
 //Since this is triggered by a logout notice, we don't need to bother doing a POST /auth/logout
 export const useExpireAuthData = () => {
     const setAuthData = useSetAtom(authDataAtom);
-    return (src = 'unknown', reason = 'unknown') => {
-        console.log(`Logout notice received from '${src}' for reason '${reason}'. Wiping auth data.`);
+    return (src = 'unknown', reason = 'unknown', reasonHash = LogoutReasonHash.EXPIRED) => {
+        console.log('[useExpireAuthData] Logout notice received:', { src, reason, reasonHash });
         setAuthData(false);
-        window.history.replaceState(null, '', '/login#expired');
+        redirectToLogin(reasonHash);
     }
 }
 
@@ -98,8 +100,9 @@ export const useAuth = () => {
         mutationFn: () => fetch('/auth/logout', { method: 'POST' }).then(res => res.json()),
         onSuccess: (data) => {
             if (data.logout) {
+                console.log('[useAuth] Manually triggered logout.');
                 setAuthData(false);
-                window.history.replaceState(null, '', '/login#logout');
+                redirectToLogin(LogoutReasonHash.LOGOUT);
             }
         },
     });

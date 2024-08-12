@@ -73,6 +73,14 @@ async function handleGlobal(ctx: AuthedCtx) {
         language: ctx.request.body.language.trim(),
     };
 
+    // Check server name length
+    if (!cfg.serverName.length) {
+        return ctx.send({
+            type: 'danger',
+            message: 'Server name cannot be empty.',
+        });
+    }
+
     //Trying to load language file
     try {
         ctx.txAdmin.translator.getLanguagePhrases(cfg.language);
@@ -485,6 +493,8 @@ async function handleMenu(ctx: AuthedCtx) {
         isUndefined(ctx.request.body.menuEnabled)
         || isUndefined(ctx.request.body.menuAlignRight)
         || isUndefined(ctx.request.body.menuPageKey)
+        || isUndefined(ctx.request.body.hideAdminInPunishments)
+        || isUndefined(ctx.request.body.hideAdminInMessages)
         || isUndefined(ctx.request.body.hideDefaultAnnouncement)
         || isUndefined(ctx.request.body.hideDefaultDirectMessage)
         || isUndefined(ctx.request.body.hideDefaultWarning)
@@ -498,6 +508,8 @@ async function handleMenu(ctx: AuthedCtx) {
         menuEnabled: (ctx.request.body.menuEnabled === 'true'),
         menuAlignRight: (ctx.request.body.menuAlignRight === 'true'),
         menuPageKey: ctx.request.body.menuPageKey.trim(),
+        hideAdminInPunishments: (ctx.request.body.hideAdminInPunishments === 'true'),
+        hideAdminInMessages: (ctx.request.body.hideAdminInMessages === 'true'),
         hideDefaultAnnouncement: (ctx.request.body.hideDefaultAnnouncement === 'true'),
         hideDefaultDirectMessage: (ctx.request.body.hideDefaultDirectMessage === 'true'),
         hideDefaultWarning: (ctx.request.body.hideDefaultWarning === 'true'),
@@ -509,6 +521,8 @@ async function handleMenu(ctx: AuthedCtx) {
     newConfig.menuEnabled = cfg.menuEnabled;
     newConfig.menuAlignRight = cfg.menuAlignRight;
     newConfig.menuPageKey = cfg.menuPageKey;
+    newConfig.hideAdminInPunishments = cfg.hideAdminInPunishments;
+    newConfig.hideAdminInMessages = cfg.hideAdminInMessages;
     newConfig.hideDefaultAnnouncement = cfg.hideDefaultAnnouncement;
     newConfig.hideDefaultDirectMessage = cfg.hideDefaultDirectMessage;
     newConfig.hideDefaultWarning = cfg.hideDefaultWarning;
