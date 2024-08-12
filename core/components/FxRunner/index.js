@@ -67,16 +67,14 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Refresh fxRunner configurations
      */
     refreshConfig() {
         this.config = globals.configVault.getScoped('fxRunner');
-    }//Final refreshConfig()
+    }
 
 
-    //================================================================
     /**
      * Receives the signal that all the start banner was already printed and other modules loaded
      */
@@ -92,10 +90,9 @@ export default class FXRunner {
         }
 
         this.spawnServer(true);
-    }//Final signalStartReady()
+    }
 
 
-    //================================================================
     /**
      * Setup the spawn parameters
      */
@@ -141,10 +138,9 @@ export default class FXRunner {
                 ],
             };
         }
-    }//Final setupVariables()
+    }
 
 
-    //================================================================
     /**
      * Spawns the FXServer and sets up all the event handlers
      * @param {boolean} announce
@@ -312,10 +308,9 @@ export default class FXRunner {
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler, this.currentMutex));
 
         return null;
-    }//Final spawnServer()
+    }
 
 
-    //================================================================
     /**
      * Restarts the FXServer
      * @param {string} reason
@@ -346,7 +341,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Kills the FXServer
      * @param {string} reason
@@ -408,7 +402,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Resets the convars in the server.
      * Useful for when we change txAdmin settings and want it to reflect on the server.
@@ -431,7 +424,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Fires an `txAdmin:event` inside the server via srvCmd > stdin > command > lua broadcaster.
      * @param {string} eventType
@@ -455,7 +447,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
      * TODO: make this method accept an array and apply the formatCommand() logic
@@ -477,7 +468,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Handles a live console command input
      * @param {import('../WebServer/authLogic').AuthedAdminType} admin
@@ -489,7 +479,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Returns the status of the server, with the states being:
      *  - not started
@@ -533,7 +522,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Returns the current fxserver uptime in seconds
      * @returns {numeric} buffer

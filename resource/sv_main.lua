@@ -17,7 +17,7 @@ end
 
 
 -- =============================================
--- Variables stuff
+-- MARK: Variables stuff
 -- =============================================
 TX_ADMINS = {}
 TX_PLAYERLIST = {}
@@ -53,7 +53,7 @@ local hbReturnData = '{"error": "no data cached in sv_main.lua"}'
 
 
 -- =============================================
--- Heartbeat functions
+-- MARK: Heartbeat functions
 -- =============================================
 local function HTTPHeartBeat()
     local url = "http://"..TX_LUACOMHOST.."/intercom/monitor"
@@ -89,7 +89,7 @@ end
 
 
 -- =============================================
--- Commands
+-- MARK: Commands
 -- =============================================
 
 --- Simple stdout reply just to make sure the resource is alive
@@ -172,7 +172,7 @@ end
 
 
 -- =============================================
---  Events handling
+-- MARK: Events handling
 -- =============================================
 local txServerName = GetConvar("txAdmin-serverName", "txAdmin")
 local cvHideAdminInPunishments = GetConvarBool('txAdmin-hideAdminInPunishments')
@@ -304,7 +304,7 @@ end
 
 
 -- =============================================
--- Player connecting handler
+-- MARK: Player connecting handler
 -- =============================================
 local function handleConnections(name, setKickReason, d)
     -- if server is shutting down
@@ -380,7 +380,7 @@ end
 
 
 -- =============================================
--- Setup threads and commands & main stuff
+-- MARK: Setup threads and commands & main stuff
 -- =============================================
 
 -- All commands & handlers

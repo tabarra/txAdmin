@@ -89,7 +89,7 @@
             <div class="card-body settings-card">
                 <div class="tab-content" id="nav-tabContent">
 
-                    <!-- Global Tab -->
+                    <!-- MARK: Global Tab -->
                     <div class="tab-pane fade <%= activeTab === 'global' ? 'active show' : '' %>" id="nav-global" role="tabpanel"
                         aria-labelledby="nav-global-tab">
                         <div class="form-group row">
@@ -126,8 +126,6 @@
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">
                                 Ban Templates
-                                <!-- DynamicNewBadge reference, but static -->
-                                <span class="badge badge-danger">NEW</span>
                             </label>
                             <div class="col-sm-9">
                                 <button
@@ -149,9 +147,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Global Tab -->
 
-                    <!-- FXServer Tab -->
+                    <!-- MARK: FXServer Tab -->
                     <div class="tab-pane fade <%= activeTab === 'fxServer' ? 'active show' : '' %>" id="nav-fxserver" role="tabpanel" aria-labelledby="nav-fxserver-tab">
                         <div class="form-group row">
                             <label for="frmFXServer-serverDataPath" class="col-sm-3 col-form-label">Server Data Folder
@@ -247,9 +244,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /FXServer Tab -->
 
-                    <!-- Restarter Tab -->
+                    <!-- MARK: Restarter Tab -->
                     <div class="tab-pane fade <%= activeTab === 'monitor' ? 'active show' : '' %>" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
                         <div class="form-group row">
                             <label for="frmMonitor-resourceStartingTolerance" class="col-sm-3 col-form-label">
@@ -291,9 +287,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Restarter Tab -->
                     
-                    <!-- Player Manager Tab -->
+                    <!-- MARK: Player Manager Tab -->
                     <div class="tab-pane fade <%= activeTab === 'playerManager' ? 'active show' : '' %>" id="nav-playerManager" role="tabpanel" aria-labelledby="nav-playerManager-tab">
                         <div class="form-group row">
                             <label for="frmPlayerManager-whitelistMode" class="col-sm-3 col-form-label">
@@ -416,9 +411,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Player Manager Tab -->
 
-                    <!-- Discord Tab -->
+                    <!-- MARK: Discord Tab -->
                     <div class="tab-pane fade <%= activeTab === 'discord' ? 'active show' : '' %>" id="nav-discord" role="tabpanel" aria-labelledby="nav-discord-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Enable Bot</label>
@@ -551,9 +545,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Discord Tab -->
 
-                    <!-- Game/Menu Tab -->
+                    <!-- MARK: Game/Menu Tab -->
                     <div class="tab-pane fade <%= activeTab === 'menu' ? 'active show' : '' %>" id="nav-menu" role="tabpanel" aria-labelledby="nav-menu-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Enable Menu</label>
@@ -712,7 +705,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Menu Tab -->
 
                 </div>
             </div>
@@ -771,9 +763,9 @@
     </div>
 </div>
 
-
+<!-- MARK: Save-->
 <script>
-    //============================================== General
+    //MARK: Save General Settings
     const serverTimezone = "<%= serverTimezone %>";
     const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if(serverTimezone !== browserTimezone){
@@ -811,7 +803,7 @@
         }
     }
 
-    //============================================== Global Settings
+    //MARK: Save Global Settings
     $('#frmGlobal-save').click(function () {
         let data = {
             serverName: $('#frmGlobal-serverName').val().trim(),
@@ -839,7 +831,7 @@
     });
 
 
-    //============================================== FXServer Settings
+    //MARK: Save FXServer Settings
     $('#frmFXServer-save').click(function () {
         let data = {
             serverDataPath: $('#frmFXServer-serverDataPath').val().trim(),
@@ -876,7 +868,7 @@
     });
 
 
-    //============================================== Player Manager Settings
+    //MARK: Save Player Manager Settings
     $('#frmPlayerManager-save').click(function () {
         const data = {
             whitelistMode: $('#frmPlayerManager-whitelistMode').val(),
@@ -905,7 +897,7 @@
     });
 
 
-    //============================================== Monitor Settings
+    //MARK: Save Monitor Settings
     $('#frmMonitor-save').click(function () {
         let data = {
             restarterSchedule: $('#frmMonitor-restarterSchedule').val().trim(),
@@ -930,7 +922,7 @@
     });
 
 
-    //============================================== Discord Settings
+    //MARK: Save Discord Settings
     let jsonBeingEdited = false;
     let defaultOfJsonBeingEdited = false;
     const discEls = {
@@ -1051,7 +1043,7 @@
     });
 
 
-    //============================================== Menu Settings
+    //MARK: Save Menu Settings
     const pageKeyEl = document.getElementById('frmMenu-pageKey');
     pageKeyEl.onkeydown = (e) => {
         if (!e.metaKey) e.preventDefault();

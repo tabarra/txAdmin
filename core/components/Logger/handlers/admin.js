@@ -52,16 +52,16 @@ export default class AdminLogger extends LoggerBase {
      * Handles the input of log data
      * TODO: add here discord log forwarding
      * 
-     * @param {string} author 
-     * @param {string} action 
-     * @param {'default'|'command'} type 
+     * @param {string} author
+     * @param {string} action
+     * @param {'default'|'command'} type
      */
     write(author, action, type = 'default') {
         let saveMsg;
-        if(type === 'command'){
+        if (type === 'command') {
             saveMsg = `[${author}] executed "${action}"`;
             console.log(`${author} executed ` + chalk.inverse(' ' + action + ' '));
-        }else{
+        } else {
             saveMsg = `[${author}] ${action}`;
             console.log(saveMsg);
         }

@@ -73,6 +73,14 @@ async function handleGlobal(ctx: AuthedCtx) {
         language: ctx.request.body.language.trim(),
     };
 
+    // Check server name length
+    if (!cfg.serverName.length) {
+        return ctx.send({
+            type: 'danger',
+            message: 'Server name cannot be empty.',
+        });
+    }
+
     //Trying to load language file
     try {
         ctx.txAdmin.translator.getLanguagePhrases(cfg.language);

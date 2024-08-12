@@ -107,31 +107,45 @@ const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: Th
                 modifiers: [['darker', 1.6]]
             }}
             tooltip={CustomToolbar}
+            //FIXME: adapt this to light mode
             markers={minTickIntervalMarker ? [
                 {
                     axis: 'y',
                     value: minTickIntervalMarker,
                     lineStyle: {
                         stroke: 'black',
+                        opacity: 0.5,
                         strokeWidth: 4,
                         strokeDasharray: '6 2',
                         strokeDashoffset: 1,
                     },
-                    // legend: 'bad',
-                    // legendPosition: 'top-right',
-                    // textStyle: { fontSize: '16px' },
+                    legend: 'good',
+                    legendPosition: 'bottom-right',
+                    //@ts-ignore - types are wrong, it errors if I remove this
+                    legendOffsetX: 10, legendOffsetY: 12, legendOrientation: 'horizontal',
+                    textStyle: {
+                        fontSize: '16px',
+                        opacity: 0.5,
+                    },
                 },
                 {
                     axis: 'y',
                     value: minTickIntervalMarker,
                     lineStyle: {
-                        stroke: '#F513B3',
+                        // stroke: '#F513B3',
+                        stroke: 'white',
+                        opacity: 0.55,
                         strokeWidth: 2,
                         strokeDasharray: '4 4',
                     },
-                    // legend: 'good',
-                    // legendPosition: 'bottom-right',
-                    // textStyle: { fontSize: '16px' },
+                    legend: 'bad',
+                    legendPosition: 'top-right',
+                    //@ts-ignore - types are wrong, it errors if I remove this
+                    legendOffsetX: 10, legendOffsetY: 12, legendOrientation: 'horizontal',
+                    textStyle: {
+                        fontSize: '16px',
+                        opacity: 0.5,
+                    },
                 },
             ] : undefined}
         />

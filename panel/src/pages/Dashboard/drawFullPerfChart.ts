@@ -423,7 +423,6 @@ export default function drawFullPerfChart({
     let cursorRedrawTimeout: NodeJS.Timeout;
     const cooldownTime = 20;
     chartGroup.append('rect')
-        .attr('id', 'cursorTargetRect')
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', drawableAreaWidth)
@@ -472,7 +471,6 @@ export default function drawFullPerfChart({
 
         //@ts-ignore
         chartGroup.selectAll('g.time-axis').call(timeAxis);
-        timeAxisGroup.selectAll('rect.day-night')
         //@ts-ignore
         chartGroup.selectAll('g.lifespan').call(drawLifespan);
 

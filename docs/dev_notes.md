@@ -48,9 +48,13 @@
     - [x] add window selection buttons to drilldown card
     - [x] when range is selected, single click should remove it
     - [x] tune in swr caching/reloading behavior
+    - [ ] improve crash sorting
+        - change logic of backend to sort by count by default
+        - then on the frontend if it's `crashesSortByReason`, then array.slice.sort(...)
+        - copy the sort code from [](/core/components/StatsManager/statsUtils.ts#L87)
     - [ ] review page layout: 
         - [ ] make it less card-y
-    - [ ] fix crashes table widening the outer shell - is it just the scroll? 🤦‍♂️
+        - [ ] fix crashes table widening the outer shell - is it just the scroll?
         - [ ] fix crashes table is not responsive
         - [ ] fix scroll popping in/out
     - [ ] adapt code to track resource drops + adjust categories according to the new ones
@@ -872,6 +876,7 @@ NOTE: Dec/2023 - why even bother?! Current system works, and we can exports the 
 On server start, or admins permission change:
 - write a `txData/<profile>/txAcePerms.cfg` with:
     - remove_ace/remove_principal to wipe old permissions (would need something like `remove_ace identifier.xxx:xx txadmin.* any`)
+    - or just `remove_ace identifier.xxx:xx txadmin.*` which would remove all aces, for all subscopes
     - add_ace/add_principal for each admin
 - stdin> `exec xxx.cfg; txaBroadcast xxxxx`
 
