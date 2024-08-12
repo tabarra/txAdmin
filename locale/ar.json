@@ -14,9 +14,9 @@
         "schedule_warn_discord": ".دقائق %{smart_count} ومن المقرر إعادة التشغيل في **%{servername}** |||| .دقيقة %{smart_count} ومن المقرر إعادة التشغيل في **%{servername}**"
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "تم طرد جميع اللاعبين: %{reason}.",
+        "player": "تم طردك: %{reason}.",
+        "unknown_reason": "لسبب مجهول"
     },
     "ban_messages": {
         "kick_temporary": ".%{expiration} :ستنتهي صلاحية حظرك في .\"%{reason}\"  لقد تم حظرك من هذا الخادم لسبب (%{author})",
