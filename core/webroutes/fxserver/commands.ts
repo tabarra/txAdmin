@@ -102,13 +102,13 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
     //==============================================
     } else if (action == 'kick_all') {
         if (!ensurePermission(ctx, 'control.server')) return false;
-        let cmd;
-        if (parameter.length) {
-            cmd = formatCommand('txaKickAll', parameter);
-        } else {
-            cmd = 'txaKickAll "txAdmin Web Panel"';
-        }
-        ctx.admin.logCommand(cmd);
+        const kickReason = (parameter ?? '').trim() || ctx.txAdmin.translator.t('kick_messages.unknown_reason');
+        const fullReason = ctx.txAdmin.translator.t(
+            'kick_messages.everyone',
+            { reason: kickReason }
+        );
+        ctx.admin.logAction(`Kicking all players: ${kickReason}`);
+        const cmd = formatCommand('txaKickAll', fullReason);
         fxRunner.srvCmd(cmd, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'success',

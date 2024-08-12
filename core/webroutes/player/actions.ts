@@ -339,7 +339,7 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
     )) {
         return { error: 'Invalid request.' };
     }
-    const reason = ctx.request.body.reason.trim() || 'no reason provided';
+    const kickReason = ctx.request.body.reason.trim() || ctx.txAdmin.translator.t('kick_messages.unknown_reason');
 
     //Check permissions
     if (!ctx.admin.testPermission('players.kick', modulename)) {
@@ -355,13 +355,17 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
     }
 
     try {
-        ctx.admin.logAction(`Kicked ${player.displayName}: ${reason}`);
+        ctx.admin.logAction(`Kicked ${player.displayName}: ${kickReason}`);
+        const fullReason = ctx.txAdmin.translator.t(
+            'kick_messages.player',
+            { reason: kickReason }
+        );
 
         // Dispatch `txAdmin:events:playerKicked`
         ctx.txAdmin.fxRunner.sendEvent('playerKicked', {
             target: player.netid,
             author: ctx.admin.name,
-            reason,
+            reason: fullReason,
         });
 
         return { success: true };

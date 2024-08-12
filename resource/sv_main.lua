@@ -107,9 +107,9 @@ local function txaKickAll(source, args)
     else
         args[1] = unDeQuote(args[1])
     end
-    txPrint("Kicking all players with reason: "..args[1])
+    txPrint("Kicking all players: "..args[1])
     for _, pid in pairs(GetPlayers()) do
-        DropPlayer(pid, "\n".."Kicked for: " .. args[1])
+        DropPlayer(pid, '[txAdmin] ' .. args[1])
     end
     CancelEvent()
 end

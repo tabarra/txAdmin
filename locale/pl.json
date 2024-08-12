@@ -13,6 +13,11 @@
         "schedule_warn": "Ten serwer ma zaplanowany restart w ciągu %{smart_count} minuty. Proszę opuścić serwer. |||| Ten serwer ma zaplanowany restart w ciągu %{smart_count} minut.",
         "schedule_warn_discord": "**%{servername}** ma zaplanowany restart w ciągu %{smart_count} minuty. |||| **%{servername}** ma zaplanowany restart w ciągu %{smart_count} minut."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Zostałeś zbanowany na tym serwerze z powodu \"%{reason}\". Twój ban wygaśnie za: %{expiration}.",
         "kick_permanent": "(%{author}) Zostałeś permanentnie zbanowany na tym serwerze za \"%{reason}\".",

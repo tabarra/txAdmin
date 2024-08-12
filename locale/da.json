@@ -13,6 +13,11 @@
         "schedule_warn": "Denne server er planlagt til at genstarte om %{smart_count} minut. Afslut venligst forbindelsen nu. |||| Denne server er planlagt til at genstarte om %{smart_count} minutter.",
         "schedule_warn_discord": "**%{servername}** er planlagt til at genstarte om %{smart_count} minut. |||| **%{servername}** er planlagt til at genstarte om %{smart_count} minutter."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Du er blevet bannet fra denne server på grund af \"%{reason}\". Dit ban udløber om: %{expiration}.",
         "kick_permanent": "(%{author}) Du er blevet permanent udelukket fra denne server på grund af \"%{reason}\".",

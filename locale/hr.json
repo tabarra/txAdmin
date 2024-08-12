@@ -13,6 +13,11 @@
         "schedule_warn": "Ovaj server je zakazan da se restarta za %{smart_count} minutu. Molimo da izađete sa servera. |||| Ovaj server će se restartati za %{smart_count} minuta.",
         "schedule_warn_discord": "**%{servername}** se restarta za %{smart_count} minutu. |||| **%{servername}** se restarta za %{smart_count} minuta."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Banani ste sa servera zbog \"%{reason}\". Vaš ban ističe za: %{expiration}.",
         "kick_permanent": "(%{author}) Banani ste sa servera zauvijek zbog \"%{reason}\".",

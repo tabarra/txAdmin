@@ -84,12 +84,12 @@
 ## Small feat
 - [x] make server v8 heap reports faster to large changes
 - [x] logout now brings to the login page with post-login redirect
-- [ ] messages to improve:
-    - [ ] kick
+- [x] messages to improve:
+    - [x] kick
         - [edit](/core/webroutes/player/actions.ts#L342)
-    - [ ] kick_all
+    - [x] kick_all
         - [edit](/core/webroutes/fxserver/commands.ts#L105)
-    - [ ] server stop/restart 
+    - [x] server stop/restart 
         - change to `admin request`
 - [ ] add "HANGUL FILLER" characters to `cleanPlayerName`
     - or check how vscode does to highlight invisible characters and use that approach instead

@@ -13,6 +13,11 @@
         "schedule_warn": "เซิร์ฟเวอร์ถูกกำหนดเวลาให้รีสตาร์ทใน %{smart_count} นาที โปรดยกเลิกการเชื่อมต่อทันที |||| เซิร์ฟเวอร์ถูกกำหนดเวลาให้รีสตาร์ทใน %{smart_count} นาที.",
         "schedule_warn_discord": "**%{servername}** มีกำหนดการจะรีสตาร์ทใน %{smart_count} นาที |||| **%{servername}** มีกำหนดการจะรีสตาร์ทใน %{smart_count} นาที"
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) คุณถูกแบนจากเซิร์ฟเวอร์นี้เพราะ \"%{reason}\" การแบนของคุณจะหมดอายุใน: %{expiration}.",
         "kick_permanent": "(%{author}) คุณถูกแบนจากเซิร์ฟเวอร์นี้อย่างถาวรเพราะ \"%{reason}\"",

@@ -29,15 +29,15 @@ export default async function FXServerControls(ctx: AuthedCtx) {
         //TODO: delay override message logic should be on fxserver, but for now keep here
         // as it messages with the sync notification on the UI
         if (fxRunner.restartDelayOverride && fxRunner.restartDelayOverride <= 4000) {
-            fxRunner.restartServer(`requested by ${ctx.admin.name}`, ctx.admin.name);
+            fxRunner.restartServer('admin request', ctx.admin.name); 
             return ctx.send<ApiToastResp>({
                 type: 'success',
                 msg: `The server is now restarting with delay override ${fxRunner.restartDelayOverride}.`
             });
         } else {
-            const restartMsg = await fxRunner.restartServer(`requested by ${ctx.admin.name}`, ctx.admin.name);
-            if (restartMsg !== null) {
-                return ctx.send<ApiToastResp>({ type: 'error', md: true, msg: restartMsg });
+            const restartError = await fxRunner.restartServer('admin request', ctx.admin.name);
+            if (restartError !== null) {
+                return ctx.send<ApiToastResp>({ type: 'error', md: true, msg: restartError });
             } else {
                 return ctx.send<ApiToastResp>({ type: 'success', msg: 'The server is now restarting.' });
             }
@@ -48,7 +48,7 @@ export default async function FXServerControls(ctx: AuthedCtx) {
             return ctx.send<ApiToastResp>({ type: 'success', msg: 'The server is already stopped.' });
         }
         ctx.admin.logCommand('STOP SERVER');
-        await fxRunner.killServer(`requested by ${ctx.admin.name}`, ctx.admin.name, false);
+        await fxRunner.killServer('admin request', ctx.admin.name, false);
         return ctx.send<ApiToastResp>({ type: 'success', msg: 'Server stopped.' });
 
     } else if (action == 'start') {
