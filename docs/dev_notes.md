@@ -9,8 +9,23 @@
 - [ ] investigate player desync issues
 
 ## Highlights
-- [ ] Anonymous admin actions (issue #893)
-    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
+- [x] Anonymous admin actions (issue #893)
+    - [x] add settings
+    - [x] add convars to fxrunner
+    - [x] add public AdminVault.getAdminPublicName(name: string, purpose: enum)
+    - [x] to hide:
+    - [x] hide from: ban reject connection
+        - doesn't have the admin object, just name
+    - [x] hide from: ban kick
+        - has event, but only requires changing tOptions for the reason
+    - [x] hide from: warn
+        - edit txaEventHandlers.playerWarned
+    - [x] hide from: dm
+        - edit txaEventHandlers.playerDirectMessage
+    - [x] hide from: announcement
+        - edit txaEventHandlers.announcement
+        - [edit](/core/webroutes/fxserver/commands.ts#L91)
+        - [edit](/core/components/FxRunner/outputHandler.ts#L148)
 - [ ] Offline warning
     - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
@@ -65,6 +80,13 @@
 ## Small feat
 - [x] make server v8 heap reports faster to large changes
 - [x] logout now brings to the login page with post-login redirect
+- [ ] messages to improve:
+    - [ ] kick
+        - [edit](/core/webroutes/player/actions.ts#L342)
+    - [ ] kick_all
+        - [edit](/core/webroutes/fxserver/commands.ts#L105)
+    - [ ] server stop/restart 
+        - change to `admin request`
 - [ ] add "HANGUL FILLER" characters to `cleanPlayerName`
     - or check how vscode does to highlight invisible characters and use that approach instead
     - `@vscode/src/vs/base/common/strings.ts:1277`

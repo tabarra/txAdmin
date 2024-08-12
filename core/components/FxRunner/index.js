@@ -29,12 +29,15 @@ const getMutableConvars = (isCmdLine = false) => {
 
     return [
         //type, name, value
+        [`${p}set`, 'txAdmin-serverName', globals.txAdmin.globalConfig.serverName ?? 'txAdmin'],
         [`${p}setr`, 'txAdmin-locale', globals.translator.language ?? 'en'],
         [`${p}set`, 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
         [`${p}setr`, 'txAdmin-verbose', console.isVerbose],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
         [`${p}set`, 'txAdmin-menuAlignRight', globals.txAdmin.globalConfig.menuAlignRight],
         [`${p}set`, 'txAdmin-menuPageKey', globals.txAdmin.globalConfig.menuPageKey],
+        [`${p}set`, 'txAdmin-hideAdminInPunishments', globals.txAdmin.globalConfig.hideAdminInPunishments],
+        [`${p}set`, 'txAdmin-hideAdminInMessages', globals.txAdmin.globalConfig.hideAdminInMessages],
         [`${p}set`, 'txAdmin-hideDefaultAnnouncement', globals.txAdmin.globalConfig.hideDefaultAnnouncement],
         [`${p}set`, 'txAdmin-hideDefaultDirectMessage', globals.txAdmin.globalConfig.hideDefaultDirectMessage],
         [`${p}set`, 'txAdmin-hideDefaultWarning', globals.txAdmin.globalConfig.hideDefaultWarning],

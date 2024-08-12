@@ -84,11 +84,12 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         ctx.admin.logAction(`Sending announcement: ${parameter}`);
 
         // Sending discord announcement
+        const publicAuthor = ctx.txAdmin.adminVault.getAdminPublicName(ctx.admin.name, 'message');
         ctx.txAdmin.discordBot.sendAnnouncement({
             type: 'info',
             title: {
                 key: 'nui_menu.misc.announcement_title',
-                data: {author: ctx.admin.name}
+                data: {author: publicAuthor}
             },
             description: message
         });

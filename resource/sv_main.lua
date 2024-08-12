@@ -174,6 +174,9 @@ end
 -- =============================================
 --  Events handling
 -- =============================================
+local txServerName = GetConvar("txAdmin-serverName", "txAdmin")
+local cvHideAdminInPunishments = GetConvarBool('txAdmin-hideAdminInPunishments')
+local cvHideAdminInMessages = GetConvarBool('txAdmin-hideAdminInMessages')
 local cvHideAnnouncement = GetConvarBool('txAdmin-hideDefaultAnnouncement')
 local cvHideDirectMessage = GetConvarBool('txAdmin-hideDefaultDirectMessage')
 local cvHideWarning = GetConvarBool('txAdmin-hideDefaultWarning')
@@ -183,10 +186,11 @@ local txaEventHandlers = {}
 --- Handler for announcement events
 --- Broadcast admin message to all players
 txaEventHandlers.announcement = function(eventData)
+    local authorName = cvHideAdminInMessages and txServerName or eventData.author or 'anonym'
     if not cvHideAnnouncement then
-        TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, eventData.author)
+        TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, authorName)
     end
-    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(Broadcast) '..eventData.author, eventData.message)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(Broadcast) '..authorName, eventData.message)
 end
 
 
@@ -203,10 +207,11 @@ end
 --- Handler for player DM event
 --- Sends a direct message from an admin to a player
 txaEventHandlers.playerDirectMessage = function(eventData)
+    local authorName = cvHideAdminInMessages and txServerName or eventData.author or 'anonym'
     if not cvHideDirectMessage then
-        TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, eventData.author)
+        TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, authorName)
     end
-    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(DM) '..eventData.author, eventData.message)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(DM) '..authorName, eventData.message)
 end
 
 
@@ -221,9 +226,10 @@ end
 --- Warn specific player via server ID
 txaEventHandlers.playerWarned = function(eventData)
     local pName = GetPlayerName(eventData.target)
+    local authorName = cvHideAdminInPunishments and txServerName or eventData.author or 'anonym'
     if pName ~= nil then
         if not cvHideWarning then
-            TriggerClientEvent('txcl:showWarning', eventData.target, eventData.author, eventData.reason)
+            TriggerClientEvent('txcl:showWarning', eventData.target, authorName, eventData.reason)
         end
         txPrint('Warning '..pName..' with reason: '..eventData.reason)
     else

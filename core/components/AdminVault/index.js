@@ -601,4 +601,22 @@ export default class AdminVault {
             return false;
         }
     }
+
+
+    /**
+     * Returns the public name to display for that particular purpose
+     * TODO: maybe use enums for the purpose
+     */
+    getAdminPublicName(name, purpose) {
+        if (!name || !purpose) throw new Error('Invalid parameters');
+        const replacer = globals.txAdmin.globalConfig.serverName ?? 'txAdmin';
+
+        if (purpose === 'punishment') {
+            return globals.txAdmin.globalConfig.hideAdminInPunishments ? replacer : name;
+        } else if (purpose === 'message') {
+            return globals.txAdmin.globalConfig.hideAdminInMessages ? replacer : name;
+        } else {
+            throw new Error(`Invalid purpose: ${purpose}`);
+        }
+    }
 };

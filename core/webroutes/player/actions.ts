@@ -197,7 +197,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     //Prepare and send command
     let kickMessage, durationTranslated;
     const tOptions: any = {
-        author: ctx.admin.name,
+        author: ctx.txAdmin.adminVault.getAdminPublicName(ctx.admin.name, 'punishment'),
         reason: reason,
     };
     if (expiration !== false && duration) {

@@ -79,6 +79,8 @@
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">
                             Game
+                            <!-- DynamicNewBadge reference, but static -->
+                            <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
                         </a>
                     </li>
                 </ul>
@@ -597,6 +599,46 @@
 
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">
+                                Hide Admin Name <br>
+                                In Punishments <br>
+                                <!-- DynamicNewBadge reference, but static -->
+                                <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideAdminInPunishments"
+                                        <%= global.hideAdminInPunishments || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Never show to the players the admin name on <strong>Bans</strong> or <strong>Warns</strong>. <br>
+                                    This information will still be available in the history and logs.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Admin Name <br>
+                                In Messages <br>
+                                <!-- DynamicNewBadge reference, but static -->
+                                <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideAdminInMessages"
+                                        <%= global.hideAdminInMessages || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Do not show the admin name on <strong>Announcements</strong> or <strong>DMs</strong>. <br>
+                                    This information will still be available in the live console and logs.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
                                 Hide Announcement <br>
                                 Notification
                             </label>
@@ -1026,6 +1068,8 @@
             menuEnabled: ($('#frmMenu-enabled').is(':checked') === true),
             menuAlignRight: ($('#frmMenu-alignRight').is(':checked') === true),
             menuPageKey: $('#frmMenu-pageKey').val().trim(),
+            hideAdminInPunishments: ($('#frmMenu-hideAdminInPunishments').is(':checked') === true),
+            hideAdminInMessages: ($('#frmMenu-hideAdminInMessages').is(':checked') === true),
             hideDefaultAnnouncement: ($('#frmMenu-hideDefaultAnnouncement').is(':checked') === true),
             hideDefaultDirectMessage: ($('#frmMenu-hideDefaultDirectMessage').is(':checked') === true),
             hideDefaultWarning: ($('#frmMenu-hideDefaultWarning').is(':checked') === true),
