@@ -536,7 +536,7 @@ export const MainPageList: React.FC = () => {
       {
         title: t("nui_menu.page_main.announcement.title"),
         label: t("nui_menu.page_main.announcement.label"),
-        requiredPermission: "players.message",
+        requiredPermission: "announcement",
         icon: <Announcement />,
         onSelect: handleAnnounceMessage,
       },

@@ -299,7 +299,7 @@ async function handleMessage(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     }
 
     //Check permissions
-    if (!ctx.admin.testPermission('players.message', modulename)) {
+    if (!ctx.admin.testPermission('players.direct_message', modulename)) {
         return { error: 'You don\'t have permission to execute this action.' };
     }
 

@@ -91,16 +91,18 @@
         - [edit](/core/webroutes/fxserver/commands.ts#L105)
     - [x] server stop/restart 
         - change to `admin request`
+- [x] separate "announcements" and "dm" permissions
 - [ ] add "HANGUL FILLER" characters to `cleanPlayerName`
     - or check how vscode does to highlight invisible characters and use that approach instead
     - `@vscode/src/vs/base/common/strings.ts:1277`
 - [ ] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds 
-- [ ] separate "announcements" and "dm" permissions
 - [ ] disable some actions while in NUI?
 
 ## Chores + refactor + boring stuff
+- [ ] remove /legacy/dashboard route + handler
+- [ ] fix new dashboard not redirecting to set up
 - [ ] fix txDiagnostics (and add tx v8 heap data to it)
 - [ ] update packages
 - [ ] check if the client print issues have been solved and switch tx to lua54
@@ -112,11 +114,14 @@
 - [ ] check if chat PRs were merged, and start migrating recipes to use `resources_useSystemChat`
 - [ ] check netid uint16 overflow
     - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
+    - increase mutex to 6 digits?
+    - `/^(?<mutex>\w{5})#(?<netid>\d{1,6})(?:r(?<rollover>\d{1,3}))?$/`
+    - write parser, which will return the groups, defaulting rollover to 0
+- [ ] check the noLookAlikesAlphabet vs nanoid-dictionary/nolookalikes situation
+    - the nanoid version is 49 chars long, and yet it's referenced as dict51
 
 
 
-dashboard should not show up if server is not set up
-semana que vem fazer votação sobre feature de crashes perguntando how often do you use the page
 
 
 

@@ -117,7 +117,7 @@ export default function ServerControls() {
     }
 
     const hasControlPerms = hasPerm('control.server');
-    const hasAnnouncementPerm = hasPerm('players.message');
+    const hasAnnouncementPerm = hasPerm('announcement');
 
     if (serverConfigPendingStep) {
         return (

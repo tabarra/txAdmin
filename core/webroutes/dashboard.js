@@ -36,7 +36,7 @@ export default async function Dashboard(ctx) {
         //     imgSrc: 'https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield',
         // },
         perms: {
-            commandMessage: getPermDisable('players.message'),
+            commandMessage: getPermDisable('announcement'),
             commandKick: getPermDisable('players.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),

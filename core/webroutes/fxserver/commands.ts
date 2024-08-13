@@ -73,7 +73,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
 
     //==============================================
     } else if (action == 'admin_broadcast') {
-        if (!ensurePermission(ctx, 'players.message')) return false;
+        if (!ensurePermission(ctx, 'announcement')) return false;
         const message = (parameter ?? '').trim();
 
         // Dispatch `txAdmin:events:announcement`

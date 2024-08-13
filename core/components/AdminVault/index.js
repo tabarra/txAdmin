@@ -43,15 +43,16 @@ export default class AdminVault {
             'settings.write': 'Settings: Change',
             'console.view': 'Console: View',
             'console.write': 'Console: Write',
-            'control.server': 'Start/Stop Server + Scheduler',
+            'control.server': 'Start/Stop Server + Scheduler', //FIXME: horrible name
+            'announcement': 'Send Announcements',
             'commands.resources': 'Start/Stop Resources',
-            'server.cfg.editor': 'Read/Write server.cfg',
+            'server.cfg.editor': 'Read/Write server.cfg', //FIXME: rename to server.cfg_editor
             'txadmin.log.view': 'View System Logs', //FIXME: rename to system.log.view
 
             'menu.vehicle': 'Spawn / Fix Vehicles',
             'menu.clear_area': 'Reset world area',
             'menu.viewids': 'View Player IDs in-game', //be able to see the ID of the players
-            'players.message': 'Announcement / DM', //enable/disable the dm button on modal as well
+            'players.direct_message': 'Direct Message',
             'players.whitelist': 'Whitelist',
             'players.warn': 'Warn',
             'players.kick': 'Kick',
@@ -465,7 +466,7 @@ export default class AdminVault {
     async loadAdminsFile() {
         let raw = null;
         let jsonData = null;
-        let migrated = false;
+        let hasMigration = false;
 
         const callError = (reason) => {
             console.error(`Unable to load admins.json: ${reason}`);
@@ -517,7 +518,7 @@ export default class AdminVault {
                     if (x.providers[y].identifier.length < 3) return true;
                 } else {
                     migrateProviderIdentifiers(y, x.providers[y]);
-                    migrated = true;
+                    hasMigration = true;
                 }
             });
             if (providersTest) return true;
@@ -533,10 +534,20 @@ export default class AdminVault {
             return callError('must have exactly 1 master account');
         }
 
+        //Migration (tx v7.3.0): separate DM and Announcement permissions
+        jsonData.forEach((admin) => {
+            if (admin.permissions.includes('players.message')) {
+                hasMigration = true;
+                admin.permissions = admin.permissions.filter((perm) => perm !== 'players.message');
+                admin.permissions.push('players.direct_message');
+                admin.permissions.push('announcement');
+            }
+        });
+
         this.admins = jsonData;
         //NOTE: since this runs only at the start, nobody is online yet
         // this.refreshOnlineAdmins().catch((e) => { });
-        if (migrated) {
+        if (hasMigration) {
             try {
                 await this.writeAdminsFile();
                 console.ok('The admins.json file was migrated to a new version.');

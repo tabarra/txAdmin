@@ -140,7 +140,7 @@ export default function PlayerModalFooter({ playerRef, player }: PlayerModalFoot
             <Button
                 variant='outline'
                 size='sm'
-                disabled={!hasPerm('players.message') || !player || !player.isConnected}
+                disabled={!hasPerm('players.direct_message') || !player || !player.isConnected}
                 onClick={handleDm}
                 className="pl-2"
             >
