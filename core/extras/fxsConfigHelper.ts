@@ -419,6 +419,15 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
             continue;
         }
 
+        if (cmd.getSetForVariable('sv_enforceGameBuild')) {
+            toCommentOut.add(
+                cmd.file,
+                cmd.line,
+                'gamebuild MUST only be set in the txAdmin settings page.',
+            )
+            continue;
+        }
+
         //Extract & process endpoint validity
         if (cmd.command === 'endpoint_add_tcp' || cmd.command === 'endpoint_add_udp') {
             //Validating args length

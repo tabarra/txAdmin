@@ -111,6 +111,7 @@ export default class FXRunner {
             getMutableConvars(true),
             extraArgs,
             '+set', 'onesync', this.config.onesync,
+            '+set', 'sv_enforceGameBuild', this.config.gamebuild,
             '+sets', 'txAdmin-version', txEnv.txAdminVersion,
             '+setr', 'txAdmin-menuEnabled', globals.txAdmin.globalConfig.menuEnabled,
             '+set', 'txAdmin-luaComHost', txAdminInterface,

@@ -185,7 +185,7 @@
                                 Additional Arguments
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmFXServer-commandLine" rows="1" class="form-control expandable-textarea" placeholder="+set sv_enforceGameBuild 2545" <%= readOnly ? 'disabled' : '' %>><%= fxserver.commandLine || '' %></textarea>
+                                <textarea id="frmFXServer-commandLine" rows="1" class="form-control expandable-textarea" placeholder="+set sv_purelevel 2" <%= readOnly ? 'disabled' : '' %>><%= fxserver.commandLine || '' %></textarea>
                                 <span class="form-text text-muted">
                                     Additional command-line arguments to pass to the FXServer instance. <br>
                                     For example, you can add <code>+set</code> and <code>+exec</code> commands. <br>
@@ -209,6 +209,29 @@
                                 </span>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label for="frmFXServer-gamebuild" class="col-sm-3 col-form-label">Gamebuild</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="frmFXServer-gamebuild" <%= readOnly ? 'disabled' : '' %>>
+                                    <option value="1604" <%= fxserver.gamebuild === '1604' ? 'selected' : '' %>>Arena War (1604)</option>
+                                    <option value="2060" <%= fxserver.gamebuild === '2060' ? 'selected' : '' %>>Los Santos Summer Special (2060)</option>
+                                    <option value="2189" <%= fxserver.gamebuild === '2189' ? 'selected' : '' %>>Cayo Perico Heist (2189)</option>
+                                    <option value="2372" <%= fxserver.gamebuild === '2372' ? 'selected' : '' %>>Los Santos Tuners (2372)</option>
+                                    <option value="2545" <%= fxserver.gamebuild === '2545' ? 'selected' : '' %>>The Contract (2545)</option>
+                                    <option value="2699" <%= fxserver.gamebuild === '2699' ? 'selected' : '' %>>The Criminal Enterprises (2699)</option>
+                                    <option value="2802" <%= fxserver.gamebuild === '2802' ? 'selected' : '' %>>Los Santos Drug Wars (2802)</option>
+                                    <option value="2944" <%= fxserver.gamebuild === '2944' ? 'selected' : '' %>>San Andreas Mercenaries (2944)</option>
+                                    <option value="3095" <%= fxserver.gamebuild === '3095' ? 'selected' : '' %>>The Chop Shop (3095)</option>
+                                    <option value="3258" <%= fxserver.gamebuild === '3258' ? 'selected' : '' %>>Bottom Dollar Bounties (3258)</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    Necessary when configuring your server to support specific GTA 5 DLC versions.<br>
+                                    <b>Note:</b> Some gamebuilds require specific artifacts to function. Ensure that you are using the correct artifact version for your chosen gamebuild to avoid compatibility issues.
+                                </span>
+                            </div>
+                        </div>
+                                              
 
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Autostart</label>
@@ -802,6 +825,7 @@
         let data = {
             serverDataPath: $('#frmFXServer-serverDataPath').val().trim(),
             cfgPath: $('#frmFXServer-cfgPath').val().trim(),
+            gamebuild: $('#frmFXServer-gamebuild').val().trim(),
             commandLine: $('#frmFXServer-commandLine').val().trim(),
             onesync: $('#frmFXServer-onesync').val(),
             autostart: $('#frmFXServer-autostart').is(':checked'),
@@ -810,8 +834,11 @@
         if (!data.serverDataPath.length || !data.cfgPath.length) {
             return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
         }
-        if (data.commandLine.includes(' onesync ')){
+        if (data.commandLine.includes(' onesync ')) {
             return $.notify({ message: 'You cannot set onesync in Additional Arguments. Please use the selectbox below it.' }, { type: 'warning' });
+        }
+        if (data.commandLine.includes(' sv_enforceGameBuild ')) {
+            return $.notify({ message: 'You cannot set gamebuild in Additional Arguments. Please use the selectbox below.' }, { type: 'warning' });
         }
         //Removing menu beta convar (v4.9)
         data.commandLine = data.commandLine.replace(/\+?setr? txEnableMenuBeta true\s?/gi, '');

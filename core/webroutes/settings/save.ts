@@ -118,6 +118,7 @@ async function handleFXServer(ctx: AuthedCtx) {
         isUndefined(ctx.request.body.serverDataPath)
         || isUndefined(ctx.request.body.cfgPath)
         || isUndefined(ctx.request.body.commandLine)
+        || isUndefined(ctx.request.body.gamebuild)
         || isUndefined(ctx.request.body.onesync)
         || isUndefined(ctx.request.body.autostart)
         || isUndefined(ctx.request.body.quiet)
@@ -131,6 +132,7 @@ async function handleFXServer(ctx: AuthedCtx) {
         cfgPath: slash(path.normalize(ctx.request.body.cfgPath)),
         commandLine: ctx.request.body.commandLine.trim(),
         onesync: ctx.request.body.onesync,
+        gamebuild: ctx.request.body.gamebuild,
         autostart: (ctx.request.body.autostart === 'true'),
         quiet: (ctx.request.body.quiet === 'true'),
     };
@@ -168,6 +170,7 @@ async function handleFXServer(ctx: AuthedCtx) {
     newConfig.cfgPath = cfg.cfgPath;
     newConfig.onesync = cfg.onesync;
     newConfig.autostart = cfg.autostart;
+    newConfig.gamebuild = cfg.gamebuild;
     newConfig.quiet = cfg.quiet;
     newConfig.commandLine = cfg.commandLine;
     try {
