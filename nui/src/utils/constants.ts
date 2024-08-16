@@ -1,9 +1,43 @@
 import { PlayerModalSuccess } from "@shared/playerApiTypes";
 
-// export const MockedPlayerDetails: PlayerModalSuccess = {"meta":{"tmpPerms":{"message":true,"whitelist":true,"warn":true,"kick":true,"ban":true},"serverTime":1668030674},"player":{"displayName":"nobody","pureName":"nobody","isRegistered":false,"isConnected":true,"license":null,"ids":[],"actionHistory":[],"netid":101,"sessionTime":1}};
-
 export const MockedPlayerDetails: PlayerModalSuccess = {
-    "serverTime": 1667712061,
+    "serverTime": Math.floor(Date.now() / 1000),
+    "banTemplates": [
+        {
+            "id": "vocszy2sd1a",
+            "reason": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean condimentum, mi quis laoreet placerat, diam neque scelerisque tellus, at venenatis sem nunc vel enim. Etiam in erat posuere, blandit diam sollicitudin, tincidunt urna. In dolor lectus, facilisis in enim ac, varius ultrices libero. Vestibulum semper lobortis aliquam. Donec pharetra commodo tellus, non eleifend lacus dictum ut. Nunc rhoncus sem in lacinia sagittis. Mauris ut nisi ut dolor pretium finibus. Pellentesque eu tincidunt mauris.",
+            "duration": {
+                "value": 2,
+                "unit": "weeks"
+            }
+        },
+        {
+            "id": "q3u6jof67pd",
+            "reason": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            "duration": {
+                "value": 1,
+                "unit": "days"
+            }
+        },
+        {
+            "id": "vcmorv3c11n",
+            "reason": "I don't know, some random reason example.",
+            "duration": "permanent"
+        },
+        {
+            "id": "fhtva57e4tq",
+            "reason": "Aiuhgi aiuHIHA huifhuidhsiuhIUHAUsh hUHAIUhs ihufdisahf",
+            "duration": "permanent"
+        },
+        {
+            "id": "kdmte4kjwg",
+            "reason": "Test long months",
+            "duration": {
+                "value": 99,
+                "unit": "months"
+            }
+        },
+    ],
     "player": {
         "displayName": "tabby",
         "pureName": "tabby",

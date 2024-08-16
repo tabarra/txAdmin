@@ -11,18 +11,14 @@ export default {
         '+set', 'txAdminDevMode', 'true',
         '+set', 'txAdminVerbose', 'true',
         // '+set', 'txAdminPort', '40125',
+        // '+set', 'txDebugExternalStatsSource', 'xxxxxxxx:30120',
         // '--trace-warnings',
         // '--inspect',
         // '--trace-gc',
         // '--max-old-space-size=4096', //doesn't work
-        
-        //FIXME: broken
-        // '+set', 'txDebugPlayerlistGenerator', 'true',
-        // '+set', 'txDebugExternalSource', 'xxxxxxxx:30120',
     ],
     copy: [
         'README.md',
-        'LICENSE',
         'docs/',
         'fxmanifest.lua',
         'entrypoint.js',

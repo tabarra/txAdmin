@@ -1,43 +1,191 @@
-# TODO: v7.1.0 Release
-- [x] feat(core): implement ddos protection measures
-    - [x] throttle koa errors to prevent spam
-    - [x] reduce bodyparser limit - double check
-    - [x] fix the timer issue that keeps requests in memory for longer than needed
-    - [x] implement rps/heap watcher
-- [x] fix issue where the forced password change on save reloads the page instead of moving to the identifiers tab
-- [x] fix(core): game admin reauth in every cfx.re login
-- [x] fix(core/playerlistmanager): dont wipe license cache on restart
-    - core/components/PlayerlistManager/index.ts -> handleServerStop
-    - repro: connect + disconnect, restart twice, and the id wont be on the list anymore
-- [x] merge prs (7 merged, 4 closed)
-- [x] follow up recipe maintainers regarding fxmanifest description
-- [x] live console bookmarks
-- [x] fix(terminal): fixed out-of-sync search on multiline write
-- assorted changes
-    - [x] add snapshot and gc to advanced actions
-    - [x] pressing enter on the license input text in setup page refreshes the page
-    - [x] can I remove `/nui/resetSession`? I think we don't even use cookies anymore
-- [x] NEW PAGE: Players
-    - [X] make sure it is not spamming search requests at the start (remove debug print on the route)
-    - [x] show online/notes/admin
-    - [x] test everything
-    - [x] ~~Write `estimateSize` function to calculate size dynamically?~~ made it no-wrap
-    - [x] code the hotkey
-    - [x] temporarily, dropdown redirects:
-        - Legacy Ban -> old players page
-        - prune players/hwids (from master actions -> clean database)
-- [x] open master actions in the correct tab
-- [x] NEW PAGE: History
-- [x] Create modal for history actions with full details
-    - [x] finish up modal info tab
-    - [x] try to add player name to title
-    - [x] fix modal padding (good enough)
-    - [x] modify HistoryTab -> HistoryItem to open the action modal on item click, remove revoke/perms logic
-- [x] fix(console): remove extra line break on term.write
-- [x] Migrate `/database/` routes to `/history` (update panel, nui, web!)
-- [x] Add StatisticsManager tracking for players/actions search duration (QuantileArray)
-- [x] fix disallowed intents message
-- [x] fix(console): implemented hacky patch to rtl issue
+# TODO: v7.2.0 Release
+- [x] chore: update most packages
+- [x] chore: remove pending DynamicNewBadge
+- [x] chore: added dependencies license report generator
+- [x] tweak: improved invisible characters detection on player names
+- [x] chore: replaced coreui bundled file
+
+## v7.1.0 bugs
+- [x] unrenderable legacy 404 page
+- [x] "Search by Player IDs" filter on players page is overflowing
+- [x] history action modal needs py-1 because of the reason field outline
+- [x] remove all "blur" as that is slow as hell for browsers with hw acceleration disabled
+- [x] make the new page searches case insensitive (history->reason and maybe more)
+- [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
+    - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
+- [ ] player/history modal is cutting bottom of title (test with jgpq, etc)
+
+## Highlights
+- [x] pre-configured ban/warn reasons with new perm to lock admins to only use them?
+    - [x] apply new ban scheme to the web player modal
+    - [x] apply new ban scheme to the NUI
+    - [x] checklist:
+        - [x] light mode
+        - [x] multiline
+        - [x] mobile
+        - [x] dialog input sanitization
+        - [x] better random id (no random id? stable-hash?)
+        - [x] settings enforce unique id
+- [x] added filters to the in-game playerlist
+- [x] New Statistics stuff:
+    - [x] add thread performance chart
+    - [x] write perf chart code
+        - [x] d3 canvas responsive with resize debounced
+        - [x] write slicer code + tests
+        - [x] axis with zoom
+        - [x] cursor + atom for the hovered data
+            - cursor not close enough to a group should disable it
+        - [x] drawing heatmap
+        - [x] drawing lines
+        - [x] drawing groups with the gaps
+        - [x] context checking, drawing error handling
+        - [x] button to switch thread
+    - [x] change StatsManager.svRuntime to save counts instead of frequencies
+    - [x] some way for the backend to push updates to the UI
+    - [x] thread perf chart:
+        - [x] throttle cursor atom change events
+        - [x] show cursor time
+        - [x] indicate loading, reloading and error states
+        - [x] button to switch thread
+    - [x] player drop pie chart:
+        - [x] apply socket data
+        - [x] get playerlist events to add to the tally
+        - [x] indicate loading, reloading and error states
+    - [x] Other stats
+        - [x] show cursor time
+        - [x] indicate loading, reloading and error states
+        - [x] display hardware stats
+        - [x] show uptime and median players
+    - [x] statsManager.playerDrop.saveEventLog MUST be throttled
+    - [x] dashboard data atom with timestamp and expiration
+- [x] NEW PAGE: Dashboard
+    - [x] route new dashboard
+    - [x] remove old dashboard code & all related dependencies
+    - [x] mobile layout
+    - [x] write docs and add link or callout
+    - [x] everything should look "fine enough" on light mode
+
+## Small feat
+- [x] migrate system logs page & remove xterm files
+    - [x] write new page
+    - [x] remove old page files, links and references on core
+    - [x] remove `web/public/xtermjs`
+
+## Chores + refactor
+- [x] update packages
+- [x] remove pending DynamicNewBadge
+- [x] add new page for adding legacy ban
+    - same style as the ban templates page
+    - admins might be doing multiple bans manually, so make the process streamlined
+    - support using ban templates
+    - textarea as input, line breaks count for separating ids
+    - do I limit 1 of each id?!
+- [x] remove old live console page
+- [x] Remove players page legacy code
+    - [x] check for if i still need cil - coreui icons
+    - [x] functions in web/public/js/txadmin/main.js
+    - [x] can we limit the scope of socketio just to the server log page?
+    - [x] test server log + player click
+- [x] simplify the simple-line-icons dependencies - do i need all the files? remove cdn!
+- [x] redact discord api webhook urls from reports
+- [x] MUST `//FIXME: update_txdiagnostics`
+- [x] add fxserver version to txDiagnostics
+- [x] commit stashed changes
+- [x] merge #952 manually
+
+
+
+
+==================================================
+
+TODO: chart of new players per day
+
+can permissions for announcement / dm be separated 🥺 
+
+
+d3.timeHours(new Date(1715741829000), new Date())[0]
+
+
+# svNetwork (should be 100fps)
+29037t / 300s = 96.79fps
+300s / 29037t = 10.33ms
+
+# svSync (should be 120fps)
+35893t / 300s = 119.64fps
+300s / 35893t = 8.36ms
+
+# svMain (should be 20fps)
+5965t / 300s = 19.88fps
+300s / 5965t = 50.29ms
+
+
+
+let toCombine = [];
+for log in statsLog:
+     - log.ts - toCombine[0].ts < resolution
+          - toCombine.push(log)
+     - else:
+          - combined = combine(toCombine)
+          - splice a array
+
+
+## Next up... ish
+- Dashboard stuff:
+    - [ ] add testing for getServerStatsData
+    - StatsManager.svRuntime:
+        - [ ] write log optimizer and remove the webroute 30h filter
+        - [ ] fix: it's not wiping the log when detecting new boundaries
+    - [ ] fix getMinTickIntervalMarker behavior when 0.2
+    - [ ] buttons to show memory usage, maybe hide player count
+    - [ ] calculate initial zoom of 30h, maybe some linear interpolation
+    - [ ] warning for top servers
+    - thread perf chart:
+        - [ ] color should change correctly at the min interval marker point
+    - full perf chart:
+        - [ ] increase `h-[26rem]` back to 28 after removing the new chart warning
+        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
+        - [ ] don't clear canvas on render, use d3 joins
+        - [ ] swr disable revalidateOnFocus and use interval
+            - or some kind of push from the dashboard room event
+        
+- Highlights:
+    - [ ] add average session time tracking to statsManager.playerDrop
+
+- Small feats, fix, and improvements:
+    - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
+    - [ ] add "this player is banned until: xxx" to the player modal
+    - [ ] track channel of last console output, and if it's different prefix a `\n`
+    - [ ] add more menu keybinds 
+    - [ ] the WarningBar scrolls up with the pages when they have scroll
+    - [ ] locale file optimization - build 8201 and above
+    - [ ] add txadmin v8 heap to diagnostics
+    - [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+
+- Chores + Refactor stuff:
+    - [ ] reevaluate globals?.tmpSetHbDataTracking
+    - [ ] fix socket.io multiple connections - start a single instance when page opens, commands to switch rooms
+    - [ ] evaluate and maybe add event bus
+
+- Boring stuff:
+    - [ ] fix the eslint config + tailwind sort
+    - [ ] build: generate fxmanifest files list dynamically
+    - [ ] fix remaining imgur links
+    - [ ] update docs on development?
+    - [ ] rename to de-capitalize components files that have multiple exports 
+    - [ ] talk to rockstar about `cfx-server-data`, the chat resource security updates and `resources_useSystemChat` 
+    - [ ] update wouter and add search/filters state to URL of the players/history pages 
+    - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
+
+
+## Quick notes:
+player name history? (not searchable)
+
+break down the discord /info command in /info and /admininfo?
+
+new apis? useBackendQuery & useBackendMutation
+based on swr's methods
+the auth part can be the same middleware for both
+need to check swr's behavior on unmount nad how to change timeouts
 
 
 ## Client game print issue
@@ -46,6 +194,29 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 - [ ] after menu client messages rework, add lua54
 
 =======================================================================
+
+
+# React Migration Roadmap
+- [ ] Setup
+- [ ] Deployer
+
+- [x] Players
+- [x] History
+- [ ] Whitelist
+- [ ] Admins
+- [ ] Settings
+- [ ] Master Actions
+- [ ] Diagnostics (TODO:)
+- [x] System Logs (TODO:)
+
+- [x] Dashboard
+- [x] Live Console
+- [ ] Resources
+- [ ] Server Log
+- [ ] CFG Editor
+- [ ] Advanced (TODO:)
+
+
 
 ### Action Modal:
 - feat requests:
@@ -67,53 +238,19 @@ https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f13
 
 =======================================================================
 
-# TODO: v7.2+
-- [ ] update wouter and add search/filters state to URL of the players/history pages 
-- [ ] Remove old live console legacy code
-- [ ] fix the tsc build
-
+# TODO: v7.3+
+- [ ] Anonymous admin actions (issue #893)
+    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
 - [ ] NEW PAGE: Whitelist
-- [ ] NEW PAGE: Dashboard
-    - [ ] new performance chart
-    - [ ] number callouts from legacy players page
-    - [ ] warning for dev builds of txadmin
-    - [ ] warning for top servers
-- [ ] NEW PAGEs: Console log + Action log
-
-- [ ] add txadmin v8 heap to diagnostics
 - [ ] `2xl:mx-8` for all pages? (change on MainShell)
-- [ ] fix remaining imgur links
-- [ ] build: generate fxmanifest files list dynamically
-- [ ] easter egg with some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-- [ ] update docs on development?
-
-- [ ] console nav button to jump to server start or errors?
+- [ ] console nav button to jump to server start or errors? 
+    - Or maybe filter just error lines (with margin)
+    - Or maybe even detect all channels and allow you to filter them, show dropdown sorted by frequency
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 
 
-=======================================================================
-
-### v7 Menus:
-- Server:
-    - Dashboard
-    - Live Console
-    - Resources
-    - Server Log
-    - CFG Editor
-    - Advanced
-- Global:
-    - Players
-    - History
-    - Whitelist
-    - Admins
-    - Settings
-    - System \/
-        - Master Actions
-        - Diagnostics
-        - Console Log
-        - Action Log
 =======================================================================
 
 This worked, no time to check which. 
@@ -240,9 +377,7 @@ Admin manager:
     - when filterString is present, disable the filter/sort drowdown, as it will show all results sorted by fuse.js
     - might be worth to debounce the search
     - add tags to the players page search box (separate dropdown?)
-
-- [ ] Anonymous admin actions (issue #893)
-    - settings with select box for which options to choose (bans, warns, dms, kicks, restarts, announcements, everything)
+    - maybe https://shadcnui-expansions.typeart.cc/docs/multiple-selector
 
 - [ ] create new "Remove Player Data" permission which would allow to delete bans/warns, players and player identifiers
     - Ref: https://github.com/tabarra/txAdmin/issues/751
@@ -252,15 +387,10 @@ Admin manager:
 
 - [ ] write some automated tests for the auth logic and middlewares
     - https://youtu.be/bzXtYVH4WOg
-- [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
-- [ ] fix the eslint config
-- [ ] add fxserver version to txDiagnostics
+
 - [ ] slide gesture to open/close the sidebars on mobile
 - [ ] new restart schedule in status card
-
 - [ ] ask framework owners to use `txAdmin-locale`
-
-- [ ] redact discord api webhook urls from reports
 - [ ] xxxxxx
 
 
@@ -305,6 +435,10 @@ scheduleNextExecution();
 https://www.npmjs.com/search?q=timer
 https://www.npmjs.com/search?ranking=popularity&q=scheduler
 https://www.npmjs.com/package/node-schedule
+
+> user report
+> canceled 18:00 for a 20:00 restart and it wont let me change to 20:00
+problema: as vezes querem adiar um restart das settings, mas não é possível
 
 
 
@@ -682,6 +816,8 @@ https://freesound.org/browse/tags/laser/?page=5#sound
 > A slider with 500 steps, and an array with 500 timestamps
 > this array can be done by dividing the serverLog.length to get the step, then a for loop to get the timestamps
 
+> may 2024: use https://observablehq.com/@d3/d3-bisect
+
 
 ### New database alternatives:
 > check the chat saved messages on that chat
@@ -775,19 +911,6 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 - have two different status: visited (arr of admins), closed (admin that closed)
 - this one is worth having discordwebhook
 
-References (get usage count):
-https://forum.cfx.re/t/release-admin-reply-report-command/73894
-https://forum.cfx.re/t/release-esx-ban-warning-help-assist-system/786080
-https://forum.cfx.re/t/release-badgerreports-reports-through-discord-and-in-game/1145714/1
-https://forum.cfx.re/t/release-fivem-advanced-reports-system/1798535
-https://forum.cfx.re/t/esx-advanced-report/1636000
-https://forum.cfx.re/t/standalone-esx-reportsystem-a-completely-innovative-report-system-paid/3710522
-https://forum.cfx.re/t/free-esx-simple-mysql-reports-system/3555465
-https://forum.cfx.re/t/paid-esx-new-advanced-report-system/4774382
-https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
-
-
-
 
 =======================================
 
@@ -825,15 +948,7 @@ Message from bubble:
 
 ## References
 
-### CoreUI Stuff + Things I use
-https://simplelineicons.github.io
-https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
-https://coreui.io/demo/3.0.0/#colors.html
-https://coreui.io/docs/content/typography/
-
-https://www.npmjs.com/package/humanize-duration
-https://kinark.github.io/Materialize-stepper/
-
+### Locale
 https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
 ### RedM stuff
@@ -872,9 +987,7 @@ https://vespura.com/doc/natives/
 ```bash
 # convars
 +set txAdminVerbose true
-+set txDebugPlayerlistGenerator true
-+set txDebugPlayerlistGenerator true
-+set txDebugExternalSource "x.x.x.x:30120"
++set txDebugExternalStatsSource "x.x.x.x:30120"
 
 # other stuff
 export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
@@ -883,7 +996,7 @@ npm-upgrade
 con_miniconChannels script:monitor*
 con_miniconChannels script:runcode
 +setr txAdmin-debugMode true
-nui_devtoold mpMenu
+nui_devtools mpMenu
 
 # hang fxserver (runcode)
 const duration = 60_000;

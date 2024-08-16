@@ -7,7 +7,7 @@ import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
 import { now, parseLaxIdsArrayInput } from '@extras/helpers';
 import { HistoryTableActionType, HistoryTableSearchResp } from '@shared/historyApiTypes';
-import { TimeCounter } from '@core/components/StatisticsManager/statsUtils';
+import { TimeCounter } from '@core/components/StatsManager/statsUtils';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -156,7 +156,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
         } satisfies HistoryTableActionType;
     });
 
-    ctx.txAdmin.statisticsManager.historyTableSearchTime.count(searchTime.stop().milliseconds);
+    ctx.txAdmin.statsManager.txRuntime.historyTableSearchTime.count(searchTime.stop().milliseconds);
     return sendTypedResp({
         history: processedActions,
         hasReachedEnd,

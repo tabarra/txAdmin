@@ -37,7 +37,8 @@ export const useNuiEvent = <T = any>(
 
       if (savedHandler.current && savedHandler.current.call) {
         if (eventAction === action) {
-          debugLog(action, data, "NuiMessageReceived");
+          //omg this is so annoying!!!
+          // debugLog(action, data, "NuiMessageReceived");
           savedHandler.current(data);
         }
       }

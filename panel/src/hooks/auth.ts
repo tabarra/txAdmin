@@ -8,6 +8,7 @@ import { playerModalOpenAtom } from './playerModal';
 import { globalStatusAtom } from './status';
 import { txToast } from '@/components/TxToaster';
 import { actionModalOpenAtom } from './actionModal';
+import { dashDataTsAtom, dashPerfCursorAtom, dashPlayerDropAtom, dashServerStatsAtom, dashSvRuntimeAtom } from '@/pages/Dashboard/dashboardHooks';
 
 
 /**
@@ -128,6 +129,11 @@ export const logoutWatcher = atomEffect((get, set) => {
     set(playerModalOpenAtom, false);
     set(actionModalOpenAtom, false);
     set(globalStatusAtom, null);
+    set(dashPlayerDropAtom, undefined);
+    set(dashServerStatsAtom, undefined);
+    set(dashSvRuntimeAtom, undefined);
+    set(dashPerfCursorAtom, undefined);
+    set(dashDataTsAtom, 0);
     txToast.dismiss(); //making sure we don't have any pending toasts
 
     //TODO: maybe also erase playerlist/mutex?

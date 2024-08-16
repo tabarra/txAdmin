@@ -11,12 +11,15 @@
     "shared"
   ],
   "scripts": {
-    "build": "rimraf dist tmp_core_tsc && npm run build -w nui && npm run build -w panel && npm run build -w core",
+    "build": "rimraf dist tmp_core_tsc && npm run build -w nui && npm run build -w panel && npm run build -w core && npm run license:distfile",
     "prepare": "husky install",
     "test": "bash ./scripts/test_build.sh",
     "typecheck": "npm run typecheck --workspaces",
     "locale:rebase": "node scripts/locale-utils.js rebase",
-    "locale:check": "node scripts/locale-utils.js check --color"
+    "locale:check": "node scripts/locale-utils.js check --color",
+    "license:report": "rimraf .reports/license && mkdir \".reports/license\" && npm run license:report --workspaces",
+    "license:list": "node scripts/list-licenses.js",
+    "license:distfile": "generate-license-file --ci --no-spinner --input package.json --output dist/THIRD-PARTY-LICENSES.txt"
   },
   "repository": {
     "type": "git",
@@ -31,18 +34,21 @@
   "dependencies": {
     "chalk": "^5.3.0",
     "humanize-duration": "^3.31.0",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "semver": "^7.6.2"
   },
   "devDependencies": {
+    "@commitlint/cli": "^18.4.4",
+    "@commitlint/config-conventional": "^18.4.4",
+    "@types/humanize-duration": "^3.27.4",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^16.9.1",
     "esbuild": "~0.19.11",
     "eslint": "^8.56.0",
-    "typescript": "^5.3.3",
+    "generate-license-file": "^3.4.0",
     "husky": "^8.0.3",
-    "@types/humanize-duration": "^3.27.4",
-    "@commitlint/cli": "^18.4.4",
-    "@commitlint/config-conventional": "^18.4.4",
-    "@types/lodash-es": "^4.17.12",
-    "rimraf": "^5.0.5"
+    "rimraf": "^5.0.5",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.3.3"
   }
 }

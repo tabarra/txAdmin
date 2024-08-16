@@ -130,10 +130,10 @@ export default class WebServer {
                 if (ctx.path.startsWith('/legacy')) {
                     ctx.status = 404;
                     console.verbose.warn(`Request 404 error: ${ctx.path}`);
-                    return ctx.utils.render('standalone/404');
+                    return ctx.send('Not found.');
                 } else if (ctx.path.endsWith('.map')) {
                     ctx.status = 404;
-                    return ctx.send('Not found');
+                    return ctx.send('Not found.');
                 } else {
                     return ctx.utils.serveReactIndex();
                 }

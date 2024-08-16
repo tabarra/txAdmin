@@ -1,8 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import humanizeDuration from '@/lib/humanizeDuration';
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import type { HumanizerOptions } from "humanize-duration";
+import type { BanDurationType } from "@shared/otherTypes";
+import { ListenEventsMap } from "@shared/socketioTypes";
 
 //Statically caching the current year
 const currentYear = new Date().getFullYear();
@@ -64,34 +66,108 @@ export const msToShortDuration = humanizeDuration.humanizer({
 
 
 /**
+ * Converts a timestamp to a locale time string
+ */
+export const dateToLocaleTimeString = (
+    time: Date,
+    hour: 'numeric' | '2-digit' = '2-digit',
+    minute: 'numeric' | '2-digit' = '2-digit',
+    second?: 'numeric' | '2-digit',
+) => {
+    return time.toLocaleTimeString(
+        window?.nuiSystemLanguages ?? navigator.language,
+        { hour, minute, second }
+    );
+}
+
+
+/**
+ * Converts a timestamp to a locale time string
+ */
+export const tsToLocaleTimeString = (
+    ts: number,
+    hour: 'numeric' | '2-digit' = '2-digit',
+    minute: 'numeric' | '2-digit' = '2-digit',
+    second?: 'numeric' | '2-digit',
+) => {
+    return dateToLocaleTimeString(new Date(ts * 1000), hour, minute, second);
+}
+
+
+/**
  * Converts a timestamp to a locale date string
  */
-export const tsToLocaleDate = (
+export const dateToLocaleDateString = (
+    time: Date,
+    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
+) => {
+    return time.toLocaleDateString(
+        window?.nuiSystemLanguages ?? navigator.language,
+        { dateStyle }
+    );
+}
+
+
+/**
+ * Converts a timestamp to a locale date string
+ */
+export const tsToLocaleDateString = (
     ts: number,
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
 ) => {
-    return new Date(ts * 1000)
-        .toLocaleDateString(
-            window?.nuiSystemLanguages ?? navigator.language,
-            { dateStyle }
-        );
+    return dateToLocaleDateString(new Date(ts * 1000), dateStyle);
 }
 
 
 /**
  * Translates a timestamp into a localized date time string
  */
-export const tsToLocaleDateTime = (
+export const dateToLocaleDateTimeString = (
+    time: Date,
+    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
+    timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
+) => {
+    return time.toLocaleString(
+        window?.nuiSystemLanguages ?? navigator.language,
+        { dateStyle, timeStyle }
+    );
+}
+
+
+/**
+ * Translates a timestamp into a localized date time string
+ */
+export const tsToLocaleDateTimeString = (
     ts: number,
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
     timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
 ) => {
-    return new Date(ts * 1000)
-        .toLocaleString(
-            window?.nuiSystemLanguages ?? navigator.language,
-            { dateStyle, timeStyle }
-        );
+    return dateToLocaleDateTimeString(new Date(ts * 1000), dateStyle, timeStyle);
 }
+
+
+/**
+ * Checks if a date is today
+ */
+export const isDateToday = (date: Date) => {
+    const today = new Date();
+    return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+    );
+};
+
+
+/**
+ * Converts a number to a locale string with commas and decimals
+ */
+export const numberToLocaleString = (num: number, decimals = 0) => {
+    return num.toLocaleString(
+        window?.nuiSystemLanguages ?? navigator.language ?? 'en',
+        { maximumFractionDigits: decimals }
+    );
+};
 
 
 /**
@@ -130,7 +206,8 @@ export const getSocket = (rooms: string[] | string) => {
         ? io({ ...socketOpts, path: '/socket.io' })
         : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
 
-    return socket;
+    //Can't use the generic type on io(), so need to apply it here
+    return socket as Socket<ListenEventsMap, any>;
 }
 
 
@@ -166,9 +243,11 @@ export const handleExternalLinkClick = (event: React.MouseEvent<HTMLElement, Mou
 /**
  * Returns a random hsl() color - useful for testing react rendering stuff
  */
-export const createRandomHslColor = () => {
+export const createRandomHslColor = (alpha?: number) => {
     const hue = Math.floor(Math.random() * 360);
-    return `hsl(${hue}, 90%, 65%)`;
+    return typeof alpha === 'number'
+        ? `hsla(${hue}, 100%, 50%, ${alpha})`
+        : `hsl(${hue}, 100%, 50%)`
 }
 
 
@@ -179,7 +258,7 @@ export const createRandomHslColor = () => {
  * FIXME: literally not working
  */
 export const copyToClipboard = async (value: string) => {
-    if (navigator?.clipboard) { 
+    if (navigator?.clipboard) {
         return navigator.clipboard.writeText(value);
     } else {
         const clipElem = document.createElement("textarea");
@@ -190,4 +269,39 @@ export const copyToClipboard = async (value: string) => {
         document.body.removeChild(clipElem);
         return result;
     }
+}
+
+
+/**
+ * Converts the duration object to a lowercase string with correct unit pluralization
+ */
+export const banDurationToString = (duration: BanDurationType) => {
+    if (duration === 'permanent') return 'permanent';
+    if (typeof duration === 'string') return duration;
+    const pluralizedString = duration.value === 1 ? duration.unit.slice(0, -1) : duration.unit;
+    return `${duration.value} ${pluralizedString}`;
+}
+
+
+/**
+ * Converts the duration object to a short string
+ */
+export const banDurationToShortString = (duration: BanDurationType) => {
+    if (typeof duration === 'string') {
+        return duration === 'permanent' ? 'PERM' : duration;
+    }
+
+    let suffix: string;
+    if (duration.unit === 'hours') {
+        suffix = 'h';
+    } else if (duration.unit === 'days') {
+        suffix = 'd';
+    } else if (duration.unit === 'weeks') {
+        suffix = 'w';
+    } else if (duration.unit === 'months') {
+        suffix = 'mo';
+    } else {
+        suffix = duration.unit;
+    }
+    return `${duration.value}${suffix}`;
 }

@@ -7,7 +7,7 @@ import pidUsageTree from '@core/extras/pidUsageTree.js';
 import { txEnv } from '@core/globalData';
 import si from 'systeminformation';
 import consoleFactory from '@extras/console';
-import { QuantileArrayOutput } from '@core/components/StatisticsManager/statsUtils';
+import { QuantileArrayOutput } from '@core/components/StatsManager/statsUtils';
 import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);
 
@@ -285,21 +285,21 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
         }
         return output;
     }
-    const banCheckTime = formatQuantileTimes(txAdmin.statisticsManager.banCheckTime.result());
-    const whitelistCheckTime = formatQuantileTimes(txAdmin.statisticsManager.whitelistCheckTime.result());
-    const playersTableSearchTime = formatQuantileTimes(txAdmin.statisticsManager.playersTableSearchTime.result());
-    const historyTableSearchTime = formatQuantileTimes(txAdmin.statisticsManager.historyTableSearchTime.result());
+    const banCheckTime = formatQuantileTimes(txAdmin.statsManager.txRuntime.banCheckTime.result());
+    const whitelistCheckTime = formatQuantileTimes(txAdmin.statsManager.txRuntime.whitelistCheckTime.result());
+    const playersTableSearchTime = formatQuantileTimes(txAdmin.statsManager.txRuntime.playersTableSearchTime.result());
+    const historyTableSearchTime = formatQuantileTimes(txAdmin.statsManager.txRuntime.historyTableSearchTime.result());
 
     return {
         //Stats
         uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
         monitorRestarts: {
-            close: txAdmin.statisticsManager.monitorStats.restartReasons.close,
-            heartBeat: txAdmin.statisticsManager.monitorStats.restartReasons.heartBeat,
-            healthCheck: txAdmin.statisticsManager.monitorStats.restartReasons.healthCheck,
+            close: txAdmin.statsManager.txRuntime.monitorStats.restartReasons.close,
+            heartBeat: txAdmin.statsManager.txRuntime.monitorStats.restartReasons.heartBeat,
+            healthCheck: txAdmin.statsManager.txRuntime.monitorStats.restartReasons.healthCheck,
         },
-        hbFD3Fails: txAdmin.statisticsManager.monitorStats.healthIssues.fd3,
-        hbHTTPFails: txAdmin.statisticsManager.monitorStats.healthIssues.http,
+        hbFD3Fails: txAdmin.statsManager.txRuntime.monitorStats.healthIssues.fd3,
+        hbHTTPFails: txAdmin.statsManager.txRuntime.monitorStats.healthIssues.http,
         banCheckTime,
         whitelistCheckTime,
         playersTableSearchTime,

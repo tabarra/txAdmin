@@ -1,3 +1,4 @@
+import { usePushPlayerDropEvent } from "@/pages/Dashboard/dashboardHooks";
 import { PlayerlistEventType, PlayerlistPlayerType } from "@shared/socketioTypes";
 import { atom, useSetAtom } from "jotai";
 
@@ -14,6 +15,7 @@ export const serverMutexAtom = atom<string | null>(null);
  * Hooks
  */
 export const useProcessPlayerlistEvents = () => {
+    const pushPlayerDropEvent = usePushPlayerDropEvent();
     const setPlayerlist = useSetAtom(playerlistAtom);
     const setServerMutex = useSetAtom(serverMutexAtom);
 
@@ -31,6 +33,7 @@ export const useProcessPlayerlistEvents = () => {
                 setPlayerlist((oldList) => [...oldList, event]);
             } else if (event.type === 'playerDropped') {
                 setPlayerlist((oldList) => oldList.filter(p => p.netid !== event.netid));
+                if (event.reasonCategory) pushPlayerDropEvent(event.reasonCategory);
             } else {
                 console.error('Unknown playerlist event type', event);
             }

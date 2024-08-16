@@ -69,8 +69,8 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
         ctx.sessTools.set({ auth: sessData });
 
         ctx.txAdmin.logger.admin.write(vaultAdmin.name, `logged in from ${ctx.ip} via password`);
-        ctx.txAdmin.statisticsManager.loginOrigins.count(ctx.txVars.hostType);
-        ctx.txAdmin.statisticsManager.loginMethods.count('password');
+        ctx.txAdmin.statsManager.txRuntime.loginOrigins.count(ctx.txVars.hostType);
+        ctx.txAdmin.statsManager.txRuntime.loginMethods.count('password');
 
         const authedAdmin = new AuthedAdmin(ctx.txAdmin, vaultAdmin, sessData.csrfToken)
         return ctx.send<ReactAuthDataType>(authedAdmin.getAuthData());

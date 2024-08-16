@@ -217,7 +217,14 @@
                 "online_players": "Online Players",
                 "players": "Players",
                 "search": "Search",
-                "zero_players": "No players found"
+                "zero_players": "No players found."
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Sort by",

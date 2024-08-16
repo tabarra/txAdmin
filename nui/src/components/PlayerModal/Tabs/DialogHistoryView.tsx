@@ -147,7 +147,7 @@ const DialogHistoryView: React.FC = () => {
   const handleRevoke = async (actionId: string) => {
     try {
       const result = await fetchWebPipe<GenericApiResp>(
-        `/history/revoke_action`,
+        `/history/revokeAction`,
         {
           method: "POST",
           data: { actionId },

@@ -13,7 +13,6 @@ import MainPageLink from '@/components/MainPageLink';
 import { cva } from 'class-variance-authority';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAdminPerms } from '@/hooks/auth';
-import DynamicNewBadge from '@/components/DynamicNewBadge';
 
 const buttonVariants = cva(
     `group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 ring-offset-background  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`,
@@ -82,13 +81,9 @@ export default function DesktopHeader() {
                 <NavigationMenuList>
                     <HeaderMenuLink href="/players">
                         Players
-                        {/* FIXME: remove */}
-                        <DynamicNewBadge featName='newPlayersPage' />
                     </HeaderMenuLink>
                     <HeaderMenuLink href="/history">
                         History
-                        {/* FIXME: remove */}
-                        <DynamicNewBadge featName='newHistoryPage' />
                     </HeaderMenuLink>
                     <HeaderMenuLink href="/whitelist">
                         Whitelist
@@ -131,13 +126,6 @@ export default function DesktopHeader() {
                             </HeaderMenuLink>
                             <HeaderMenuLink
                                 className="w-36 justify-start"
-                                href="/system/system-logs"
-                                disabled={!hasPerm('txadmin.log.view')}
-                            >
-                                System Logs
-                            </HeaderMenuLink>
-                            {/* <HeaderMenuLink
-                                className="w-36 justify-start"
                                 href="/system/console-log"
                                 disabled={!hasPerm('txadmin.log.view')}
                             >
@@ -149,7 +137,7 @@ export default function DesktopHeader() {
                                 disabled={!hasPerm('txadmin.log.view')}
                             >
                                 Action Log
-                            </HeaderMenuLink> */}
+                            </HeaderMenuLink>
                         </NavigationMenuContent>
                     </NavigationMenuItem>
                 </NavigationMenuList>

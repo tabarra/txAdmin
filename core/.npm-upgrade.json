@@ -31,6 +31,10 @@
     "lowdb": {
       "versions": ">6",
       "reason": "dropped support for node 16"
+    },
+    "slug": {
+      "versions": ">8",
+      "reason": "dropped support for node 16"
     }
   }
 }

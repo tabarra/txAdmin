@@ -219,6 +219,13 @@
                 "search": "Vyhledat",
                 "zero_players": "Žádní hráči nenalezeni"
             },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
+            },
             "sort": {
                 "label": "Seřadit podle",
                 "distance": "Vzdálenosti",

@@ -1,5 +1,6 @@
+import { visualizer } from "rollup-plugin-visualizer";
 import path from 'node:path';
-import { defineConfig } from 'vite';
+import { PluginOption, UserConfig, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 // import tsconfigPaths from 'vite-tsconfig-paths';
 import config from '../.deploy.config.js';
@@ -18,7 +19,7 @@ const baseConfig = {
             input: undefined, //placeholder
 
             output: {
-                banner: licenseBanner('..'),
+                banner: licenseBanner('..', true),
                 //Adding hash to help with cache busting
                 entryFileNames: `[name]-[hash].js`,
                 chunkFileNames: `[name]-[hash].js`,
@@ -35,15 +36,21 @@ const baseConfig = {
         // tsconfigPaths({
         //     projects: ['./', '../shared']
         // }),
-        react()
-    ],
+        react(),
+        visualizer({
+            // template: 'flamegraph',
+            // template: 'sunburst',
+            gzipSize: true,
+            filename: '../.reports/panel_bundle.html',
+        }),
+    ] as PluginOption[], //i gave up
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "./src"),
             "@shared": path.resolve(__dirname, "../shared"),
         },
     },
-}
+} satisfies UserConfig;
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {

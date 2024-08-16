@@ -162,7 +162,7 @@
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-outline-danger" id="cleandb-submitButton" <%= disableActions %>>
-                                <i class="icon-check"></i> Clean Database
+                                <i class="icon-trash"></i> Clean Database
                             </button>
                         </div>
                     </div>
@@ -190,7 +190,7 @@
     
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-outline-danger" id="revokewl-submitButton" <%= disableActions %>>
-                                <i class="icon-check"></i> Revoke Whitelists
+                                <i class="icon-close"></i> Revoke Whitelists
                             </button>
                         </div>
                     </div>
@@ -212,7 +212,6 @@
 <script>
     //============================================== General
     (()=>{
-        console.log('masterActions page loaded', window.location.hash);
         if(window.location.hash === '#cleandb'){
             document.getElementById('nav-cleandb').classList.add('active', 'show');
             document.getElementById('nav-cleandb-tab').classList.add('active');

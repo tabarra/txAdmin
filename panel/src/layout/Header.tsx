@@ -9,7 +9,7 @@ import DesktopHeader from "./DesktopNavbar";
 import Avatar from "@/components/Avatar";
 import { useAuth } from "@/hooks/auth";
 import { useGlobalMenuSheet, usePlayerlistSheet, useServerSheet } from "@/hooks/sheets";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/hooks/theme";
 import { FaDiscord } from "react-icons/fa";
 import { useAtomValue } from "jotai";
 import { serverNameAtom } from "@/hooks/status";

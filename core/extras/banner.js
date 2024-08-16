@@ -1,6 +1,8 @@
 import boxen from 'boxen';
 import chalk from 'chalk';
 import open from 'open';
+import { shuffle } from 'd3-array';
+import { z } from 'zod';
 
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
@@ -10,25 +12,26 @@ import { addLocalIpAddress } from './isIpAddressLocal';
 const console = consoleFactory();
 
 
-const getIPs = async () => {
+const getPublicIp = async () => {
+    const zIpValidator = z.string().ip();
     const reqOptions = {
-        timeout: { request: 2500 },
+        timeout: { request: 2000 },
     };
-    const allOps = await Promise.allSettled([
-        // op.value.ip
-        // got('https://ip.seeip.org/json', reqOptions).json(), //expired cert?
-        got('https://api.ipify.org/?format=json', reqOptions).json(),
-        got('https://api.myip.com', reqOptions).json(),
+    const httpGetter = async (url, jsonPath) => {
+        const res = await got(url, reqOptions).json();
+        return zIpValidator.parse(res[jsonPath]);
+    };
 
-        // op.value.query
-        // got(`http://ip-api.com/json/`, reqOptions).json(),
-        // got(`https://extreme-ip-lookup.com/json/`, reqOptions).json(),
+    const allApis = shuffle([
+        ['http://ip-api.com/json/', 'query'],
+        ['https://api.ipify.org?format=json', 'ip'],
+        ['https://api.myip.com', 'ip'],
+        ['https://ip.seeip.org/json', 'ip'],
     ]);
-    for (let i = 0; i < allOps.length; i++) {
-        const op = allOps[i];
-        if (op.status == 'fulfilled' && op.value.ip) {
-            return op.value.ip;
-        }
+    for await (const [url, jsonPath] of allApis) {
+        try {
+            return await httpGetter(url, jsonPath);
+        } catch (error) { }
     }
     return false;
 };
@@ -111,8 +114,8 @@ const awaitDatabase = new Promise((resolve, reject) => {
 
 
 export const printBanner = async () => {
-    const [ipRes, msgRes, adminPinRes] = await Promise.allSettled([
-        getIPs(),
+    const [publicIpResp, msgRes, adminPinRes] = await Promise.allSettled([
+        getPublicIp(),
         getOSMessage(),
         awaitMasterPin,
         awaitHttp,
@@ -125,9 +128,9 @@ export const printBanner = async () => {
         addrs = [
             (txEnv.isWindows) ? 'localhost' : 'your-public-ip',
         ];
-        if (ipRes.value) {
-            addrs.push(ipRes.value);
-            addLocalIpAddress(ipRes.value);
+        if (publicIpResp.value) {
+            addrs.push(publicIpResp.value);
+            addLocalIpAddress(publicIpResp.value);
         }
     } else {
         addrs = [convars.forceInterface];
@@ -162,7 +165,7 @@ export const printBanner = async () => {
 
     //Opening page
     if (txEnv.isWindows && adminPinRes.value) {
-        open(`http://localhost:${convars.txAdminPort}/addMaster/pin#${adminPinRes.value}`).catch((e) => {});
+        open(`http://localhost:${convars.txAdminPort}/addMaster/pin#${adminPinRes.value}`).catch((e) => { });
     }
 
     //Starting server

@@ -219,6 +219,13 @@
                 "search": "Tìm",
                 "zero_players": "Không tìm thấy"
             },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
+            },
             "sort": {
                 "label": "Sắp xếp theo",
                 "distance": "Khoảng Cách",

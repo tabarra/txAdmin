@@ -102,6 +102,8 @@ export default class OutputHandler {
                     this.#txAdmin.healthMonitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
                     this.#txAdmin.logger.server.write(data.payload.logs, mutex);
+                } else if (data.payload.type === 'txAdminLogNodeHeap') {
+                    this.#txAdmin.statsManager.svRuntime.logServerNodeMemory(data.payload);
                 } else if (data.payload.type === 'txAdminResourceEvent') {
                     this.#txAdmin.resourcesManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminPlayerlistEvent') {

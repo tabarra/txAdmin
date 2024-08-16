@@ -219,6 +219,13 @@
                 "search": "Szukaj",
                 "zero_players": "Nie znaleziono żadnych graczy"
             },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
+            },
             "sort": {
                 "label": "Sortuj po",
                 "distance": "Dystansie",

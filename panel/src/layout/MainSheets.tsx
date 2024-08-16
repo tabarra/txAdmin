@@ -61,15 +61,12 @@ export function GlobalMenuSheet() {
                         <MenuNavLink href="/system/diagnostics">
                             <PieChartIcon className="mr-2 h-4 w-4" />Diagnostics
                         </MenuNavLink>
-                        <MenuNavLink href="/system/system-logs" disabled={!hasPerm('txadmin.log.view')}>
-                            <ListIcon className="mr-2 h-4 w-4" />System Logs
-                        </MenuNavLink>
-                        {/* <MenuNavLink href="/system/console-log" disabled={!hasPerm('txadmin.log.view')}>
+                        <MenuNavLink href="/system/console-log" disabled={!hasPerm('txadmin.log.view')}>
                             <ListIcon className="mr-2 h-4 w-4" />Console Log
                         </MenuNavLink>
                         <MenuNavLink href="/system/action-log" disabled={!hasPerm('txadmin.log.view')}>
                             <ListIcon className="mr-2 h-4 w-4" />Action Log
-                        </MenuNavLink> */}
+                        </MenuNavLink>
                     </div>
                 </div>
             </SheetContent>

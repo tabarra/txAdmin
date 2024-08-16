@@ -1,4 +1,7 @@
-import { UpdateDataType } from "otherTypes";
+import { SvRtPerfThreadNamesType } from "@core/components/StatsManager/svRuntime/config";
+import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/components/StatsManager/svRuntime/perfSchemas";
+import type { ReactAuthDataType } from "authApiTypes";
+import type { UpdateDataType } from "otherTypes";
 
 /**
  * Status channel
@@ -27,6 +30,33 @@ export type GlobalStatusType = {
 
 
 /**
+ * Status channel
+ */
+export type DashboardSvRuntimeDataType = {
+    fxsMemory?: number;
+    nodeMemory?: SvRtNodeMemoryType;
+    perfBoundaries?: SvRtPerfBoundariesType;
+    perfBucketCounts?: {
+        [key in SvRtPerfThreadNamesType]: number[];
+    };
+    perfMinTickTime: {
+        [key in SvRtPerfThreadNamesType]: number;
+    };
+}
+export type DashboardPleyerDropDataType = {
+    summaryLast6h: [reasonCategory: string, count: number][];
+};
+export type DashboardDataEventType = {
+    svRuntime: DashboardSvRuntimeDataType;
+    playerDrop: DashboardPleyerDropDataType;
+    // joinLeaveTally30m: {
+    //     joined: number;
+    //     left: number;
+    // };
+}
+
+
+/**
  * Playerlist channel
  * TODO: apply those types to the playerlistManager
  */
@@ -48,6 +78,7 @@ export type PlayerDroppedEventType = {
     mutex: string,
     type: 'playerDropped',
     netid: number,
+    reasonCategory: string,
 }
 
 export type PlayerJoiningEventType = {
@@ -66,3 +97,21 @@ export type UpdateAvailableEventType = {
     fxserver?: UpdateDataType;
     txadmin?: UpdateDataType;
 }
+
+
+/**
+ * Listen Events Map
+ */
+export type ListenEventsMap = {
+    error: (reason?: string) => void;
+    logout: (reason?: string) => void;
+    refreshToUpdate: () => void;
+    status: (status: GlobalStatusType) => void;
+    playerlist: (playerlistData: PlayerlistEventType[]) => void;
+    updateAuthData: (authData: ReactAuthDataType) => void;
+    consoleData: (data: string) => void;
+    dashboard: (data: DashboardDataEventType) => void;
+
+    //Standalone events
+    updateAvailable: (event: UpdateAvailableEventType) => void
+};

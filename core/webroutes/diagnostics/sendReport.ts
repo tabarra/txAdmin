@@ -1,22 +1,17 @@
 const modulename = 'WebServer:SendDiagnosticsReport';
-import Logger from '@core/components/Logger';
-import ConfigVault from '@core/components/ConfigVault';
 import got from '@core/extras/got';
 import { txEnv } from '@core/globalData';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
-import AdminVault from '@core/components/AdminVault';
 import { redactApiKeys } from '@core/extras/helpers';
 import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@core/extras/serverDataScanner.js';
-import PlayerDatabase from '@core/components/PlayerDatabase';
-import Cache from '@core/extras/dataCache';
-import { getChartData } from '../chartData';
+import MemCache from '@extras/MemCache';
 import consoleFactory, { getLogBuffer } from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Consts & Helpers
-const reportIdCache = new Cache(60);
+const reportIdCache = new MemCache<string>(60);
 const maskedKeywords = ['key', 'license', 'pass', 'private', 'secret', 'token'];
 const maskString = (input: string) => input.replace(/\w/gi, 'x');
 const maskIps = (input: string) => input.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/gi, 'x.x.x.x');
@@ -41,8 +36,10 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
 
     //Rate limit (and cache) report submissions
     const cachedReportId = reportIdCache.get();
-    if (cachedReportId !== false) {
-        return sendTypedResp({ error: `You can send at most one report per minute. Your last report ID was ${cachedReportId}.` });
+    if (cachedReportId) {
+        return sendTypedResp({
+            error: `You can send at most one report per minute. Your last report ID was ${cachedReportId}.`
+        });
     }
 
     //Diagnostics
@@ -109,22 +106,23 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
         dbStats = ctx.txAdmin.playerDatabase.getDatabaseStats();
     } catch (error) { }
 
-    let perfSvMain = [];
+    let perfSvMain: ReturnType<typeof ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary> = null;
     try {
-        perfSvMain = getChartData('svMain');
+        perfSvMain = ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary();
     } catch (error) { }
 
     //Prepare report object
     const reportData = {
-        $schemaVersion: 1,
+        $schemaVersion: 2,
         $txVersion: txEnv.txAdminVersion,
+        $fxVersion: txEnv.fxServerVersion, //TODO: update_txdiagnostics
         diagnostics,
         txSystemLog,
         txActionLog,
         serverLog,
         fxserverLog,
         envVars,
-        perfSvMain,
+        perfSvMain, //TODO: update_txdiagnostics
         dbStats,
         settings,
         adminList,

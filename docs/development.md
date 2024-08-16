@@ -5,7 +5,7 @@ Before starting, please make sure you are familiar with the basics of NodeJS & e
 
 
 ## Requirements
-- Windows, as the `main-builder.js` is doesn't yet work for other OSs;
+- Windows, as the `main-builder.js` doesn't work for other OSs;
 - NodeJS v16.x to match the one in FXServer;
 - FXServer;
 

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { msToDuration, tsToLocaleDateTime } from "@/lib/utils";
+import { msToDuration, tsToLocaleDateTimeString } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { DatabaseActionType } from "../../../../core/components/PlayerDatabase/databaseTypes";
 import { useOpenPlayerModal } from "@/hooks/playerModal";
@@ -91,7 +91,7 @@ export default function ActionInfoTab({ action, serverTime, tsFetch }: ActionInf
         openPlayerModal({ license: linkedPlayer });
     }
 
-    return <div className="mb-1 md:mb-4">
+    return <div className="px-1 mb-1 md:mb-4">
         <dl className="pb-2">
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                 <dt className="text-sm font-medium leading-6 text-muted-foreground">Date/Time</dt>

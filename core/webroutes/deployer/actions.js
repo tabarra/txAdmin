@@ -233,6 +233,7 @@ async function handleSaveConfig(ctx) {
     }
 
     globals.fxRunner.refreshConfig();
+    globals.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     ctx.admin.logAction('Completed and committed server deploy.');
 
     //Starting server

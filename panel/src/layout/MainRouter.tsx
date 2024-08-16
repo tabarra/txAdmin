@@ -8,9 +8,14 @@ import { navigate as setLocation } from 'wouter/use-location';
 import Iframe from "@/pages/Iframe";
 import NotFound from "@/pages/NotFound";
 import TestingPage from "@/pages/TestingPage/TestingPage";
-import LiveConsole from "@/pages/LiveConsole/LiveConsole";
+import LiveConsolePage from "@/pages/LiveConsole/LiveConsolePage";
 import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
+import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
+import SystemLogPage from "@/pages/SystemLogPage";
+import AddLegacyBanPage from "@/pages/AddLegacyBanPage";
+import DashboardPage from "@/pages/Dashboard/DashboardPage";
+import PlayerCrashesPage from "@/pages/PlayerCrashesPage";
 
 
 type RouteType = {
@@ -21,12 +26,6 @@ type RouteType = {
 
 const allRoutes: RouteType[] = [
     //Global Routes
-    {
-        //FIXME: deprecate
-        path: '/players/old',
-        title: 'Players',
-        children: <Iframe legacyUrl="players" />
-    },
     {
         path: '/players',
         title: 'Players',
@@ -65,40 +64,24 @@ const allRoutes: RouteType[] = [
     {
         path: '/system/console-log',
         title: 'Console Log',
-        children: <Iframe legacyUrl="systemLog#nav-console" />
+        children: <SystemLogPage pageName="console" />
     },
     {
-        path: '/system/system-logs',
-        title: 'System Logs',
-        children: <Iframe legacyUrl="systemLog" />
+        path: '/system/action-log',
+        title: 'Action Log',
+        children: <SystemLogPage pageName="action" />
     },
-    // {
-    //     path: '/system/console-log',
-    //     title: 'Console Log',
-    //     children: <Iframe legacyUrl="systemLog#nav-console" />
-    // },
-    // {
-    //     path: '/system/action-log',
-    //     title: 'Action Log',
-    //     children: <Iframe legacyUrl="systemLog#nav-actions" />
-    // },
 
     //Server Routes
     {
         path: '/',
         title: 'Dashboard',
-        children: <Iframe legacyUrl="dashboard" />
+        children: <DashboardPage />
     },
     {
         path: '/server/console',
         title: 'Live Console',
-        children: <LiveConsole />
-    },
-    {
-        //FIXME: deprecate
-        path: '/server/console/old',
-        title: 'Old Live Console',
-        children: <Iframe legacyUrl="console" />
+        children: <LiveConsolePage />
     },
     {
         path: '/server/resources',
@@ -129,6 +112,23 @@ const allRoutes: RouteType[] = [
         path: '/advanced',
         title: 'Advanced',
         children: <Iframe legacyUrl="advanced" />
+    },
+
+    //No nav routes
+    {
+        path: '/settings/ban-templates',
+        title: 'Ban Templates',
+        children: <BanTemplatesPage />
+    },
+    {
+        path: '/ban-identifiers',
+        title: 'Ban Identifiers',
+        children: <AddLegacyBanPage />
+    },
+    {
+        path: '/player-crashes',
+        title: 'Player Crashes',
+        children: <PlayerCrashesPage />
     },
 ];
 

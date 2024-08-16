@@ -1,32 +1,43 @@
 const modulename = 'WebServer:HistoryActions';
-import { GenericApiResp } from '@shared/genericApiTypes';
+import { GenericApiOkResp } from '@shared/genericApiTypes';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import { calcExpirationFromDuration } from '@core/extras/helpers';
 import consts from '@shared/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { z } from 'zod';
 const console = consoleFactory(modulename);
 
-//Helper functions
-const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };
+//Schema
+const addLegacyBanBodySchema = z.object({
+    identifiers: z.string().array(),
+    reason: z.string().trim().min(3).max(2048),
+    duration: z.string(),
+});
+export type ApiAddLegacyBanReqSchema = z.infer<typeof addLegacyBanBodySchema>;
+
+const revokeActionBodySchema = z.object({
+    actionId: z.string(),
+});
+export type ApiRevokeActionReqSchema = z.infer<typeof revokeActionBodySchema>;
 
 
 /**
  * Endpoint to interact with the actions database.
  */
-export default async function HistoryActions(ctx: AuthedCtx) {
+export default async function HistoryActions(ctx: AuthedCtx & { params: any }) {
     //Sanity check
-    if (!ctx.params?.action) {
+    if (!ctx.params.action) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const action = ctx.params.action;
-    const sendTypedResp = (data: GenericApiResp) => ctx.send(data);
+    const sendTypedResp = (data: GenericApiOkResp) => ctx.send(data);
 
     //Delegate to the specific action handler
-    if (action === 'ban_ids') {
+    if (action === 'addLegacyBan') {
         return sendTypedResp(await handleBandIds(ctx));
-    } else if (action === 'revoke_action') {
+    } else if (action === 'revokeAction') {
         return sendTypedResp(await handleRevokeAction(ctx));
     } else {
         return sendTypedResp({ error: 'unknown action' });
@@ -39,36 +50,30 @@ export default async function HistoryActions(ctx: AuthedCtx) {
  * This is only called from the players page, where you ban an ID array instead of a PlayerClass
  * Doesn't support HWIDs, only banning player does
  */
-async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiResp> {
-    //Checking request & identifiers
-    if (
-        anyUndefined(
-            ctx.request.body,
-            ctx.request.body.identifiers,
-            ctx.request.body.duration,
-            ctx.request.body.reason,
-        )
-    ) {
-        return { error: 'Invalid request.' };
+async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
+    //Checking request
+    const schemaRes = addLegacyBanBodySchema.safeParse(ctx.request.body);
+    if (!schemaRes.success) {
+        return { error: 'Invalid request body.' };
     }
-    const identifiers = ctx.request.body.identifiers;
-    const durationInput = ctx.request.body.duration.trim();
-    const reason = (ctx.request.body.reason as string).trim() || 'no reason provided';
+    const {
+        reason,
+        identifiers: identifiersInput,
+        duration: durationInput
+    } = schemaRes.data;
 
     //Filtering identifiers
-    if (Array.isArray(identifiers)) {
-        if (!identifiers.length) {
-            return { error: 'You must send at least one identifier' };
-        }
-        const invalids = identifiers.filter((id) => {
-            return (typeof id !== 'string') || !Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
-        });
-        if (invalids.length) {
-            return { error: 'Invalid identifiers: ' + invalids.join(', ') };
-        }
-    } else {
-        return { error: `identifiers expected to be an array, got ${typeof identifiers}` };
+    if (!identifiersInput.length) {
+        return { error: 'You must send at least one identifier' };
     }
+    const invalids = identifiersInput.filter((id) => {
+        return (typeof id !== 'string') || !Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
+    });
+    if (invalids.length) {
+        return { error: 'Invalid IDs: ' + invalids.join(', ') };
+    }
+    const identifiers = [...new Set(identifiersInput)];
+
 
     //Calculating expiration/duration
     let calcResults;
@@ -149,15 +154,13 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiResp> {
  * Handle revoke database action.
  * This is called from the player modal or the players page.
  */
-async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiResp> {
+async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiOkResp> {
     //Checking request
-    if (anyUndefined(
-        ctx.request.body,
-        ctx.request.body.actionId,
-    )) {
-        return { error: 'Invalid request.' };
+    const schemaRes = revokeActionBodySchema.safeParse(ctx.request.body);
+    if (!schemaRes.success) {
+        return { error: 'Invalid request body.' };
     }
-    const { actionId } = ctx.request.body;
+    const { actionId } = schemaRes.data;
 
     //Check permissions
     const perms = [];

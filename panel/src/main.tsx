@@ -26,6 +26,12 @@ if (!window.txConsts.isWebInterface) {
     console.error = () => { };
     console.debug = () => { };
     console.table = () => { };
+    console.group = () => { };
+    console.groupEnd = () => { };
+    console.groupCollapsed = () => { };
+    console.time = () => { };
+    console.timeEnd = () => { };
+    console.timeLog = () => { };
 }
 
 //Detecting if the user is on a mobile device

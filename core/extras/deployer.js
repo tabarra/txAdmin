@@ -1,7 +1,7 @@
 const modulename = 'Deployer';
 import path from 'node:path';
 import { cloneDeep }  from 'lodash-es';
-import dateFormat from 'dateformat'
+import dateFormat from 'dateformat';
 import fse from 'fs-extra';
 import open from 'open';
 import YAML from 'js-yaml';

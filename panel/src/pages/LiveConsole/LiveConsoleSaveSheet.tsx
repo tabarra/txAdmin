@@ -1,7 +1,7 @@
 import { txToast } from "@/components/TxToaster";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useOpenPromptDialog } from "@/hooks/dialogs";
-import { useLiveConsoleBookmarks, useLiveConsoleHistory } from "@/hooks/liveConsole";
+import { useLiveConsoleBookmarks, useLiveConsoleHistory } from "@/pages/LiveConsole/liveConsoleHooks";
 import { cn } from "@/lib/utils";
 import { PlusIcon, StarIcon, StarOffIcon, XIcon } from "lucide-react";
 
@@ -17,10 +17,10 @@ function SheetBackdrop({ isOpen, closeSheet }: Omit<SheetProps, 'toTermInput'>) 
         <div
             className={cn(
                 'absolute inset-0 z-20',
-                'bg-black/40 duration-300',
+                'bg-black/60 duration-300',
                 'data-[state=open]:pointer-events-auto data-[state=closed]:pointer-events-none',
-                'data-[state=open]:opacity-100 data-[state=open]:backdrop-blur-sm',
-                'data-[state=closed]:opacity-0 data-[state=closed]:backdrop-blur-none',
+                'data-[state=open]:opacity-100',
+                'data-[state=closed]:opacity-0',
             )}
             data-state={isOpen ? 'open' : 'closed'}
             onClick={closeSheet}

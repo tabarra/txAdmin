@@ -134,8 +134,7 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
  */
 const isDevMode = getConvarBool('txAdminDevMode');
 const verboseConvar = getConvarBool('txAdminVerbose');
-const debugPlayerlistGenerator = getConvarBool('txDebugPlayerlistGenerator');
-const debugExternalSource = getConvarString('txDebugExternalSource');
+const debugExternalStatsSource = getConvarString('txDebugExternalStatsSource');
 if (isDevMode) {
     console.warn('Starting txAdmin in DEV mode.');
     if(!process.env.TXADMIN_DEV_SRC_PATH || !process.env.TXADMIN_DEV_VITE_URL){
@@ -250,8 +249,7 @@ export const txEnv = Object.freeze({
 export const convars = Object.freeze({
     //Convars - Debug
     isDevMode,
-    debugPlayerlistGenerator,
-    debugExternalSource,
+    debugExternalStatsSource,
     //Convars - zap dependant
     isPterodactyl,
     isZapHosting,

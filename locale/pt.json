@@ -217,7 +217,14 @@
                 "online_players": "Jogadores Online",
                 "players": "Jogadores",
                 "search": "Buscar",
-                "zero_players": "Nenhum jogador encontrado"
+                "zero_players": "Nenhum jogador encontrado."
+            },
+            "filter": {
+                "label": "Filtrar por",
+                "no_filter": "Sem Filtro",
+                "is_admin": "É Admin",
+                "is_injured": "Está Machucado / Morto",
+                "in_vehicle": "Está em Veículo"
             },
             "sort": {
                 "label": "Ordenar por",

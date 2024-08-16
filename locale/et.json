@@ -219,6 +219,13 @@
                 "search": "Otsi",
                 "zero_players": "Mängijat ei leitud"
             },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
+            },
             "sort": {
                 "label": "Sorteeri",
                 "distance": "Kaugus",

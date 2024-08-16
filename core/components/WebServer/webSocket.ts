@@ -2,6 +2,7 @@ const modulename = 'WebSocket';
 import { Server as SocketIO, Socket, RemoteSocket } from 'socket.io';
 import consoleFactory from '@extras/console';
 import statusRoom from './wsRooms/status';
+import dashboardRoom from './wsRooms/dashboard';
 import playerlistRoom from './wsRooms/playerlist';
 import liveconsoleRoom from './wsRooms/liveconsole';
 import serverlogRoom from './wsRooms/serverlog';
@@ -28,7 +29,7 @@ export type RoomType = {
 }
 
 //NOTE: quen adding multiserver, create dynamic rooms like playerlist#<svname>
-const VALID_ROOMS = ['status', 'liveconsole', 'serverlog', 'playerlist'] as const;
+const VALID_ROOMS = ['status', 'dashboard', 'liveconsole', 'serverlog', 'playerlist'] as const;
 type RoomNames = typeof VALID_ROOMS[number];
 
 
@@ -63,6 +64,7 @@ export default class WebSocket {
         this.#io = io;
         this.#rooms = {
             status: statusRoom(txAdmin),
+            dashboard: dashboardRoom(txAdmin),
             playerlist: playerlistRoom(txAdmin),
             liveconsole: liveconsoleRoom(txAdmin),
             serverlog: serverlogRoom(txAdmin),

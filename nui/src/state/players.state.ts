@@ -8,6 +8,12 @@ import {
 import { VehicleStatus, PlayerData } from "../hooks/usePlayerListListener";
 import { debugData } from "../utils/debugData";
 
+export enum PlayerDataFilter {
+  NoFilter = "noFilter",
+  IsAdmin = "isAdmin",
+  IsInjured = "isInjured",
+  InVehicle = "inVehicle",
+}
 export enum PlayerDataSort {
   IdJoinedFirst = "idJoinedFirst",
   IdJoinedLast = "idJoinedLast",
@@ -20,6 +26,10 @@ const playersState = {
     default: [],
     key: "playerStates",
   }),
+  playerFilterType: atom<PlayerDataFilter | null>({
+    default: PlayerDataFilter.NoFilter,
+    key: "playerFilterType",
+  }),
   playerSortType: atom<PlayerDataSort | null>({
     default: PlayerDataSort.IdJoinedFirst,
     key: "playerSortType",
@@ -27,19 +37,32 @@ const playersState = {
   sortedAndFilteredPlayerData: selector({
     key: "sortedAndFilteredPlayerStates",
     get: ({ get }) => {
-      const sortType: PlayerDataSort = get(playersState.playerSortType);
+      const filterType: PlayerDataFilter = get(playersState.playerFilterType) ?? PlayerDataFilter.NoFilter;
+      const sortType: PlayerDataSort = get(playersState.playerSortType) ?? PlayerDataSort.IdJoinedFirst;
       const filteredValueInput = get(playersState.filterPlayerDataInput);
-      const unfilteredPlayerStates = get(playersState.playerData);
+      const unfilteredPlayerStates = get(playersState.playerData) as PlayerData[];
 
-      const formattedInput = filteredValueInput.trim().toLowerCase();
+      let searchFilter = (p: PlayerData) => true;
+      const formattedInput = filteredValueInput.trim().toLocaleLowerCase();
+      if (formattedInput) {
+        searchFilter = (p) => {
+          return p.name.toLocaleLowerCase().includes(formattedInput)
+            || p.id.toString().includes(formattedInput)
+        };
+      }
 
-      const playerStates: PlayerData[] = filteredValueInput
-        ? unfilteredPlayerStates.filter(
-            (player) =>
-              player.name?.toLowerCase().includes(formattedInput) ||
-              player.id.toString().includes(formattedInput)
-          )
-        : unfilteredPlayerStates;
+      let playerFilter = (p: PlayerData) => true;
+      if (filterType === PlayerDataFilter.IsAdmin) {
+        playerFilter = (p) => p.admin;
+      } else if (filterType === PlayerDataFilter.IsInjured) {
+        playerFilter = (p) => p.health <= 20;
+      } else if (filterType === PlayerDataFilter.InVehicle) {
+        playerFilter = (p) => p.vType !== VehicleStatus.Walking;
+      }
+
+      const playerStates = unfilteredPlayerStates.filter((p) => {
+        return searchFilter(p) && playerFilter(p);
+      });
 
       switch (sortType) {
         case PlayerDataSort.DistanceClosest:
@@ -87,10 +110,13 @@ export const useSetPlayersFilterIsTemp = () =>
 export const usePlayersSortedValue = () =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
 
+export const usePlayersFilterBy = () =>
+  useRecoilState(playersState.playerFilterType);
+
 export const usePlayersSortBy = () =>
   useRecoilState(playersState.playerSortType);
 
-export const usePlayersFilter = () =>
+export const usePlayersSearch = () =>
   useRecoilState(playersState.filterPlayerDataInput);
 
 export const usePlayersFilterIsTemp = () =>

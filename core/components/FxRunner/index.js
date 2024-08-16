@@ -361,11 +361,12 @@ export default class FXRunner {
             }
 
             // Send warnings
+            const reasonString = reason ?? 'no reason provided';
             const messageType = isRestarting ? 'restarting' : 'stopping';
             const messageColor = isRestarting ? 'warning' : 'danger';
             const tOptions = {
                 servername: globals.txAdmin.globalConfig.serverName,
-                reason: reason ?? 'no reason provided',
+                reason: reasonString,
             };
             this.sendEvent('serverShuttingDown', {
                 delay: this.config.shutdownNoticeDelay * 1000,
@@ -392,6 +393,7 @@ export default class FXRunner {
             }
             globals.resourcesManager.handleServerStop();
             globals.playerlistManager.handleServerStop(this.currentMutex);
+            globals.statsManager.svRuntime.logServerClose(reasonString);
             return null;
         } catch (error) {
             const msg = "Couldn't kill the server. Perhaps What Is Dead May Never Die.";

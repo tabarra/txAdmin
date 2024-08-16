@@ -15,8 +15,7 @@ import FxRunner from '@core/components/FxRunner';
 import Logger from '@core/components/Logger';
 import HealthMonitor from '@core/components/HealthMonitor';
 import Scheduler from '@core/components/Scheduler';
-import StatisticsManager from '@core/components/StatisticsManager';
-import PerformanceCollector from '@core/components/PerformanceCollector';
+import StatsManager from '@core/components/StatsManager';
 import Translator from '@core/components/Translator';
 import WebServer from '@core/components/WebServer';
 import ResourcesManager from '@core/components/ResourcesManager';
@@ -46,8 +45,7 @@ const globalsInternal: Record<string, any> = {
     dynamicAds: null,
     healthMonitor: null,
     scheduler: null,
-    statisticsManager: null,
-    performanceCollector: null,
+    statsManager: null,
     translator: null,
     webServer: null,
     resourcesManager: null,
@@ -79,8 +77,7 @@ export default class TxAdmin {
     dynamicAds;
     healthMonitor;
     scheduler;
-    statisticsManager;
-    performanceCollector;
+    statsManager;
     webServer;
     resourcesManager;
     playerlistManager;
@@ -177,11 +174,8 @@ export default class TxAdmin {
             this.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
             globalsInternal.scheduler = this.scheduler;
 
-            this.statisticsManager = new StatisticsManager(this);
-            globalsInternal.statisticsManager = this.statisticsManager;
-
-            this.performanceCollector = new PerformanceCollector();
-            globalsInternal.performanceCollector = this.performanceCollector;
+            this.statsManager = new StatsManager(this);
+            globalsInternal.statsManager = this.statsManager;
 
             this.webServer = new WebServer(this, profileConfig.webServer);
             globalsInternal.webServer = this.webServer;

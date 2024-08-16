@@ -4,7 +4,8 @@
     "description": "The shared package contains stuff used in more than one package, no build step required.",
     "main": "index.js",
     "scripts": {
-        "typecheck": "tsc -p tsconfig.json --noEmit"
+        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "license:report": "npx license-report > ../.reports/license/shared.html"
     },
     "keywords": [],
     "author": "André Tabarra",

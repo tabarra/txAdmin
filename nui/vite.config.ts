@@ -1,5 +1,6 @@
 import path from 'node:path';
-import { defineConfig } from 'vite';
+import { visualizer } from "rollup-plugin-visualizer";
+import { PluginOption, UserConfig, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { getFxsPaths } from '../scripts/scripts-utils.js';
@@ -12,13 +13,13 @@ const baseConfig = {
         emptyOutDir: true,
         reportCompressedSize: false,
         outDir: '../dist/nui',
-        minify: true,
+        minify: true as boolean,
         target: 'chrome103',
         sourcemap: false,
 
         rollupOptions: {
             output: {
-                banner: licenseBanner('..'),
+                banner: licenseBanner('..', true),
                 //Doing this because fxserver's cicd doesn't wipe the dist folder
                 entryFileNames: `[name].js`,
                 chunkFileNames: `[name].js`,
@@ -32,9 +33,15 @@ const baseConfig = {
         tsconfigPaths({
             projects: ['./', '../shared']
         }),
-        react()
-    ]
-}
+        react(),
+        visualizer({
+            // template: 'flamegraph',
+            // template: 'sunburst',
+            gzipSize: true,
+            filename: '../.reports/nui_bundle.html',
+        }),
+    ] as PluginOption[], //i gave up
+} satisfies UserConfig;
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
