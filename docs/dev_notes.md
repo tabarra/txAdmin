@@ -26,6 +26,11 @@
         - edit txaEventHandlers.announcement
         - [edit](/core/webroutes/fxserver/commands.ts#L91)
         - [edit](/core/components/FxRunner/outputHandler.ts#L148)
+- [x] No more invisible names!
+    - [x] rewrite `cleanPlayerName` to better deal with empty names, and better detect invisible characters
+    - [x] apply `cleanPlayerName` to the ingame menu playerlist
+    - [x] improved in game player search
+    - related: https://github.com/tabarra/txAdmin/pull/968
 - [ ] Offline warning
     - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
@@ -92,8 +97,6 @@
     - [x] server stop/restart 
         - change to `admin request`
 - [x] separate "announcements" and "dm" permissions
-- [x] rewrite `cleanPlayerName` to better deal with empty names, and better detect invisible characters
-- [ ] apply `cleanPlayerName` to the ingame menu playerlist
 - [ ] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds 
