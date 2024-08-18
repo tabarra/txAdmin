@@ -92,9 +92,8 @@
     - [x] server stop/restart 
         - change to `admin request`
 - [x] separate "announcements" and "dm" permissions
-- [ ] add "HANGUL FILLER" characters to `cleanPlayerName`
-    - or check how vscode does to highlight invisible characters and use that approach instead
-    - `@vscode/src/vs/base/common/strings.ts:1277`
+- [x] rewrite `cleanPlayerName` to better deal with empty names, and better detect invisible characters
+- [ ] apply `cleanPlayerName` to the ingame menu playerlist
 - [ ] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds 
@@ -385,6 +384,12 @@ Admin manager:
 =======================================================================
 
 ## Next Up
+- After Node 20:
+    - Use `/^\p{RGI_Emoji}$/v` to detect emojis 
+        - ref: https://v8.dev/features/regexp-v-flag
+        - remove `unicode-emoji-json` from dependencies
+        - update cleanPlayerNames
+
 - [ ] Playerlist: implement basic tag system with filters, sorting and Fuse.js
     - the filter dropdown is written already, check `panel/src/layout/playerlistSidebar/Playerlist.tsx`
     - when filterString is present, disable the filter/sort drowdown, as it will show all results sorted by fuse.js
@@ -717,7 +722,7 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 - map heatmap?!
 - player disconnect reasons
 - something with server log events like chat messages, kills, leave reasons, etc?
-
+- we must find a way to show player turnover and retention, like % that come back, etc
 
 https://www.npmjs.com/search?q=effective%20domain
 https://www.npmjs.com/package/parse-domain
@@ -999,6 +1004,7 @@ con_miniconChannels script:monitor*
 con_miniconChannels script:runcode
 +setr txAdmin-debugMode true
 nui_devtools mpMenu
+window.invokeNative('changeName', '\u{1160}\u{3164}');
 
 # hang fxserver (runcode)
 const duration = 60_000;
