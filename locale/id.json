@@ -1,6 +1,3 @@
-Berikut adalah terjemahan dari teks tersebut ke dalam bahasa Indonesia:
-
-```json
 {
     "$meta": {
         "label": "Bahasa Indonesia",
@@ -152,9 +149,7 @@ Berikut adalah terjemahan dari teks tersebut ke dalam bahasa Indonesia:
                 "not_in_veh_error": "Anda tidak sedang berada di dalam kendaraan!",
                 "spawn": {
                     "title": "Spawn",
-                    "label
-
-": "Masukkan spawn code dari kendaraan yang ingin Anda spawn",
+                    "label": "Masukkan spawn code dari kendaraan yang ingin Anda spawn",
                     "success": "Spawned %{model}!",
                     "error": "Spawn code kendaraan tidak valid atau kendaraan tidak ditemukan.",
                     "out_error": "Tidak dapat spawn kendaraan baru karena ada kendaraan dalam radius 10m."
@@ -244,4 +239,3 @@ Berikut adalah terjemahan dari teks tersebut ke dalam bahasa Indonesia:
         }
     }
 }
-```
