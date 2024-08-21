@@ -965,6 +965,11 @@ https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 https://github.com/femga/rdr3_discoveries
 https://vespura.com/doc/natives/
 
+### Ptero stuff
+https://github.com/pelican-eggs/games-standalone/blob/main/gta/fivem/egg-five-m.json
+https://github.com/pelican-eggs/yolks/blob/master/oses/debian/Dockerfile
+https://github.com/pelican-eggs/yolks/commit/57e3ef41ed05109f5e693d2e0d648cf4b161f72c
+
 
 =======================================
 

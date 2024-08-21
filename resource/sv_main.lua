@@ -328,7 +328,7 @@ local function handleConnections(name, setKickReason, d)
             playerName = name
         }
         if #exData.playerIds <= 1 then
-            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, which you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
+            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, but you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
             return
         end
 

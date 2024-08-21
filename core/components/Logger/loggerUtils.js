@@ -47,7 +47,7 @@ export const getLogSizes = async (basePath, filterRegex) => {
  * Default class for logger instances.
  * Implements log-rotate, listLogFiles() and getLogFile()
  */
- export class LoggerBase {
+export class LoggerBase {
     constructor(basePath, logName, lrDefaultOptions, lrProfileConfig = false) {
         //FIXME: move these to private class fields as soon as eslint v8 drops
         this.lrStream = null;
@@ -106,7 +106,7 @@ export const getLogSizes = async (basePath, filterRegex) => {
 /**
  * Generates a multiline separator string
  */
- export const separator = (msg) => {
+export const separator = (msg) => {
     const sepLine = '='.repeat(64);
     const timestamp = new Date().toLocaleString();
     return [
