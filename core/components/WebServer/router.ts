@@ -32,7 +32,6 @@ export default (config: WebServerConfigType) => {
     router.get('/legacy/adminManager', webAuthMw, webRoutes.adminManager_page);
     router.get('/legacy/advanced', webAuthMw, webRoutes.advanced_page);
     router.get('/legacy/cfgEditor', webAuthMw, webRoutes.cfgEditor_page);
-    router.get('/legacy/dashboard', webAuthMw, webRoutes.dashboard);
     router.get('/legacy/diagnostics', webAuthMw, webRoutes.diagnostics_page);
     router.get('/legacy/masterActions', webAuthMw, webRoutes.masterActions_page);
     router.get('/legacy/resources', webAuthMw, webRoutes.resources);

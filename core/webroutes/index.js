@@ -1,4 +1,3 @@
-export { default as dashboard } from './dashboard.js';
 export { default as diagnostics_page } from './diagnostics/page';
 export { default as diagnostics_sendReport } from './diagnostics/sendReport';
 export { default as intercom } from './intercom.js';
