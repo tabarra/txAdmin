@@ -6,9 +6,12 @@ import { useSetDashboardData } from './dashboardHooks';
 import { getSocket } from '@/lib/utils';
 import ServerStatsCard from './ServerStatsCard';
 import { DynamicNewItem } from '@/components/DynamicNewBadge';
+import { useAtomValue } from 'jotai';
+import { serverConfigPendingStepAtom } from '@/hooks/status';
+import { useLocation } from 'wouter';
 
 
-export default function DashboardPage() {
+function DashboardPageInner() {
     const pageSocket = useRef<ReturnType<typeof getSocket> | null>(null);
     const setDashboardData = useSetDashboardData();
 
@@ -63,4 +66,20 @@ export default function DashboardPage() {
             </DynamicNewItem>
         </div>
     );
+}
+
+
+export default function DashboardPage() {
+    const serverConfigPendingStep = useAtomValue(serverConfigPendingStepAtom);
+    const setLocation = useLocation()[1];
+
+    if (serverConfigPendingStep === 'setup') {
+        setLocation('/server/setup');
+        return null;
+    } else if (serverConfigPendingStep === 'deployer') {
+        setLocation('/server/deployer');
+        return null;
+    } else {
+        return <DashboardPageInner />;
+    }
 }

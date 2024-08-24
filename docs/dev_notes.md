@@ -103,8 +103,8 @@
 - [ ] disable some actions while in NUI?
 
 ## Chores + refactor + boring stuff
-- [ ] remove /legacy/dashboard route + handler
-- [ ] fix new dashboard not redirecting to set up
+- [x] remove /legacy/dashboard route + handler
+- [x] fix new dashboard not redirecting to set up
 - [ ] fix txDiagnostics (and add tx v8 heap data to it)
 - [ ] update packages
 - [ ] check if the client print issues have been solved and switch tx to lua54
