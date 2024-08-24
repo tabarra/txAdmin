@@ -13,6 +13,7 @@ import MainPageLink from '@/components/MainPageLink';
 import { cva } from 'class-variance-authority';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAdminPerms } from '@/hooks/auth';
+import { DynamicNewItem } from '@/components/DynamicNewBadge';
 
 const buttonVariants = cva(
     `group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 ring-offset-background  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`,
@@ -79,6 +80,10 @@ export default function DesktopHeader() {
         <div className='space-x-1 flex flex-row select-none'>
             <NavigationMenu>
                 <NavigationMenuList>
+                    {/* TODO: copypaste for new menu items */}
+                    {/* <DynamicNewItem featName='xxxxxxxx' durationDays={7}>
+                        <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
+                    </DynamicNewItem> */}
                     <HeaderMenuLink href="/players">
                         Players
                     </HeaderMenuLink>
@@ -87,6 +92,9 @@ export default function DesktopHeader() {
                     </HeaderMenuLink>
                     <HeaderMenuLink href="/insights/player-drops">
                         Player Drops
+                        <DynamicNewItem featName='newPlayerDropsPage' durationDays={7}>
+                            <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
+                        </DynamicNewItem>
                     </HeaderMenuLink>
                     <HeaderMenuLink href="/whitelist">
                         Whitelist
@@ -96,6 +104,9 @@ export default function DesktopHeader() {
                     </HeaderMenuLink>
                     <HeaderMenuLink href="/settings" disabled={!hasPerm('settings.view')}>
                         Settings
+                        <DynamicNewItem featName='hideAdminNames' durationDays={7}>
+                            <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
+                        </DynamicNewItem>
                     </HeaderMenuLink>
                 </NavigationMenuList>
             </NavigationMenu>

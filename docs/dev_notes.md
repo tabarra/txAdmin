@@ -1,7 +1,7 @@
 ## Previous bugs
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
-- [ ] player/history modal is cutting bottom of title (test with "jgpq", etc)
+- [x] player/history modal is cutting bottom of title (test with "jgpq", etc)
 - [x] `lipsum` suffix to all the crash reasons
 - [x] thread chart data is the cumulative sum and not the diff, so it "averages out"
 - [x] use the fxRunner PID to get the correct fxserver process - perfUtils.fetchFxsMemory
@@ -77,10 +77,10 @@
         - [ ] color should change correctly at the min interval marker point
         - [ ] change the bg color to the color of the average ticket with heavy transparency?
     - full perf chart:
-        - [ ] increase the size of the cursor Y value indicator? maybe move to where the mouse is instead of x=0
+        - [x] increase the size of the cursor Y value indicator? maybe move to where the mouse is instead of x=0
+        - [x] increase `h-[26rem]` back to 28 after removing the new chart warning
         - [ ] buttons to show memory usage, maybe hide player count
         - [ ] calculate initial zoom of 30h, maybe some linear interpolation
-        - [ ] increase `h-[26rem]` back to 28 after removing the new chart warning
         - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
         - [ ] don't clear svg on render, use d3 joins
         - [ ] swr disable revalidateOnFocus and use interval
@@ -99,12 +99,16 @@
 - [x] separate "announcements" and "dm" permissions
 - [ ] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
-- [ ] add more menu keybinds 
+- [ ] add more menu keybinds
+    - check if the RegisterCommand is colocated
+    - need to add and test `if not menuIsAccessible then return end` to all keybinds
 - [ ] disable some actions while in NUI?
 
 ## Chores + refactor + boring stuff
 - [x] remove /legacy/dashboard route + handler
 - [x] fix new dashboard not redirecting to set up
+- [x] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
+    - and add new ones to the player drops and settings
 - [ ] fix txDiagnostics (and add tx v8 heap data to it)
 - [ ] update packages
 - [ ] check if the client print issues have been solved and switch tx to lua54

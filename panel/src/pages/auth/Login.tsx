@@ -20,6 +20,7 @@ export enum LogoutReasonHash {
     LOGOUT = '#logout',
     EXPIRED = '#expired',
     UPDATED = '#updated',
+    MASTER_ALREADY_SET = '#master_already_set',
 }
 
 export default function Login() {
@@ -104,6 +105,8 @@ export default function Login() {
         logoutMessage = 'Session Expired.';
     } else if (window.location.hash === LogoutReasonHash.UPDATED) {
         logoutMessage = 'txAdmin updated, please login again.';
+    } else if (window.location.hash === LogoutReasonHash.MASTER_ALREADY_SET) {
+        logoutMessage = 'Master account already configured. Please login instead.';
     }
     const displayMessage = errorMessage ?? logoutMessage;
 

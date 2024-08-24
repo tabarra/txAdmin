@@ -345,14 +345,20 @@ export default function drawFullPerfChart({
         .attr('stroke', 'rgba(216, 245, 19, 0.75)')
         .attr('stroke-width', 1)
         .attr('stroke-dasharray', '3,3');
-    const cursorText = chartGroup.append('text')
-        .attr('class', 'cursorText')
-        .attr('fill', 'rgba(216, 245, 19)')
-        .attr('font-size', 12);
     const cursorDot = chartGroup.append('circle')
         .attr('class', 'cursorDot')
         .attr('fill', 'red')
         .attr('r', 4);
+    const cursorTextBg = chartGroup.append('rect')
+        .attr('class', 'cursorTextBg')
+        .attr('fill', 'rgba(0, 0, 0, 0.75)')
+        .attr('rx', 5)
+        .attr('ry', 5);
+    const cursorText = chartGroup.append('text')
+        .attr('class', 'cursorText font-mono')
+        .attr('fill', 'rgba(216, 245, 19)')
+        .attr('font-size', 16);
+    const cursorTextNode = cursorText.node();
 
     const clearCursor = () => {
         cursorLineVert.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
@@ -397,8 +403,8 @@ export default function drawFullPerfChart({
         cursorSetter(snapData);
 
         const pointData = {
-            x: timeScale(snapData.end),
-            y: playersScale(snapData.players),
+            x: Math.round(timeScale(snapData.end)) + 0.5,
+            y: Math.round(playersScale(snapData.players)) + 0.5,
             val: snapData.players
         };
 
@@ -411,11 +417,23 @@ export default function drawFullPerfChart({
             .attr('y1', pointData.y)
             .attr('x2', drawableAreaWidth)
             .attr('y2', pointData.y);
-        cursorText.attr('x', 5)
-            .attr('y', pointData.y < 50 ? pointData.y + 20 : pointData.y - 10)
-            .text(pointData.val);
         cursorDot.attr('cx', pointData.x)
             .attr('cy', pointData.y);
+
+        const countString = pointData.val.toString();
+        const isTextTooLeft = pointData.x < 50;
+        const isTextTooHigh = pointData.y < 50;
+        cursorText.text(countString)
+            .attr('x', isTextTooLeft ? pointData.x + 20 : pointData.x - 10)
+            .attr('y', isTextTooHigh ? pointData.y + 10 : pointData.y - 10)
+            .attr('text-anchor', isTextTooLeft ? 'start' : 'end')
+            .attr('dominant-baseline', isTextTooHigh ? 'hanging' : 'baseline');
+        if (!cursorTextNode) return;
+        const cursorTextBBox = cursorTextNode.getBBox();
+        cursorTextBg.attr('x', cursorTextBBox.x - 4)
+            .attr('y', cursorTextBBox.y - 2)
+            .attr('width', cursorTextBBox.width + 8)
+            .attr('height', cursorTextBBox.height + 3);
     };
 
     // Handle svg mouse events
