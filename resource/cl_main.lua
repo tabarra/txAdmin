@@ -142,6 +142,7 @@ CreateThread(function()
         '/txAdmin:menu:openPlayersPage',
         '/txAdmin:menu:togglePlayerIDs',
         '/txAdmin:menu:tpToWaypoint',
+        '/txAdmin:menu:fixVehicle',
 
         --Convars
         '/txAdmin-version',

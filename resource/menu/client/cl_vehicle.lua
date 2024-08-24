@@ -369,3 +369,14 @@ RegisterNetEvent('txcl:seatInVehicle', function(vehNetID, seat, oldVehVelocity)
         end
     end
 end)
+
+RegisterCommand('txAdmin:menu:fixVehicle', function()
+    local ped = PlayerPedId()
+    local veh = GetVehiclePedIsIn(ped, false)
+    if (veh == 0) and not IsPedOnMount(ped) then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.not_in_veh_error', true)
+    end
+
+    TriggerServerEvent('txsv:req:vehicle:fix')
+    sendSnackbarMessage('info', 'nui_menu.page_main.vehicle.fix.success', true)
+end)
