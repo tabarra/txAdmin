@@ -351,9 +351,11 @@ export default function drawFullPerfChart({
         .attr('r', 4);
     const cursorTextBg = chartGroup.append('rect')
         .attr('class', 'cursorTextBg')
-        .attr('fill', 'rgba(0, 0, 0, 0.75)')
+        .attr('fill', 'black')
         .attr('rx', 5)
-        .attr('ry', 5);
+        .attr('ry', 5)
+        .attr('stroke', 'rgba(216, 245, 19, 0.35)')
+        .attr('stroke-width', 1);
     const cursorText = chartGroup.append('text')
         .attr('class', 'cursorText font-mono')
         .attr('fill', 'rgba(216, 245, 19)')
@@ -362,9 +364,10 @@ export default function drawFullPerfChart({
 
     const clearCursor = () => {
         cursorLineVert.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
+        cursorDot.attr('cx', -99).attr('cy', -99);
         cursorLineHorz.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
         cursorText.attr('x', -99).attr('y', -99);
-        cursorDot.attr('cx', -99).attr('cy', -99);
+        cursorTextBg.attr('x', -99).attr('y', -99);
         cursorSetter(undefined);
     };
     clearCursor();
@@ -424,16 +427,19 @@ export default function drawFullPerfChart({
         const isTextTooLeft = pointData.x < 50;
         const isTextTooHigh = pointData.y < 50;
         cursorText.text(countString)
-            .attr('x', isTextTooLeft ? pointData.x + 20 : pointData.x - 10)
-            .attr('y', isTextTooHigh ? pointData.y + 10 : pointData.y - 10)
+            .attr('x', isTextTooLeft ? pointData.x + 20 : pointData.x - 15)
+            .attr('y', isTextTooHigh ? pointData.y + 15 : pointData.y - 15)
             .attr('text-anchor', isTextTooLeft ? 'start' : 'end')
             .attr('dominant-baseline', isTextTooHigh ? 'hanging' : 'baseline');
         if (!cursorTextNode) return;
         const cursorTextBBox = cursorTextNode.getBBox();
-        cursorTextBg.attr('x', cursorTextBBox.x - 4)
-            .attr('y', cursorTextBBox.y - 2)
-            .attr('width', cursorTextBBox.width + 8)
-            .attr('height', cursorTextBBox.height + 3);
+        const bgPadX = 6;
+        const bgPadY = 2;
+        cursorTextBg
+            .attr('x', Math.round(cursorTextBBox.x) - bgPadX - 0.5)
+            .attr('y', Math.round(cursorTextBBox.y) - bgPadY - 0.5)
+            .attr('width', Math.round(cursorTextBBox.width) + bgPadX * 2)
+            .attr('height', Math.round(cursorTextBBox.height) + bgPadY * 2);
     };
 
     // Handle svg mouse events
