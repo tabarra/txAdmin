@@ -109,6 +109,7 @@
 - [x] fix new dashboard not redirecting to set up
 - [x] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
     - and add new ones to the player drops and settings
+- [x] improve the procps/wmic error messages
 - [ ] fix txDiagnostics (and add tx v8 heap data to it)
 - [ ] update packages
 - [ ] check if the client print issues have been solved and switch tx to lua54
@@ -266,7 +267,9 @@ need to check swr's behavior on unmount and how to change timeouts
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
-- [ ] update stuff that requires WMIC to use PS command directly (https://github.com/tabarra/txAdmin/issues/970)
+- [ ] update stuff that requires WMIC to use PS command directly 
+    - issue: https://github.com/tabarra/txAdmin/issues/970#issuecomment-2308462733
+    - new lib, same dev: https://www.npmjs.com/package/pidusage-gwmi
     - https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/07-working-with-wmi?view=powershell-7.2
 
 
