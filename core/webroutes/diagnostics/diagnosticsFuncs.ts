@@ -183,7 +183,7 @@ export const getFXServerData = async (txAdmin: TxAdmin) => {
 export const getHostData = async (txAdmin: TxAdmin): Promise<HostDataReturnType> => {
     const tmpDurationDebugLog = (msg: string) => {
         // @ts-expect-error
-        if(globals?.tmpSetHbDataTracking){
+        if (globals?.tmpSetHbDataTracking) {
             console.verbose.debug(`refreshHbData: ${msg}`);
         }
     }
@@ -198,7 +198,7 @@ export const getHostData = async (txAdmin: TxAdmin): Promise<HostDataReturnType>
             const userInfo = os.userInfo();
             tmpDurationDebugLog('got userInfo');
             osUsername = userInfo.username;
-        } catch (error) {}
+        } catch (error) { }
 
         try {
             const cpuStats = await si.cpu();
@@ -287,7 +287,7 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
 
     const formatQuantileTimes = (res: QuantileArrayOutput) => {
         let output = 'not enough data available';
-        if (!('notEnoughData' in res)){
+        if (!('notEnoughData' in res)) {
             const quantileTimes = [res.count.toString()];
             for (const [key, val] of Object.entries(res)) {
                 if (key === 'count') continue;

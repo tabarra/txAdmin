@@ -111,9 +111,11 @@ export default function drawFullPerfChart({
 
     //Axis
     const timeAxisTicksScale = d3.scaleLinear([382, 1350], [7, 16]);
-    const timeAxis = d3.axisBottom(timeScale).ticks(timeAxisTicksScale(width));
-    const timeAxisGroup = chartGroup.append("g")
-        .attr('transform', translate(0, height - margins.bottom))
+    const timeAxis = d3.axisBottom(timeScale)
+        .ticks(timeAxisTicksScale(width))
+    // .tickFormat(d3.timeFormat('%H:%M'));
+    const timeAxisGroup = svg.append("g")
+        .attr('transform', translate(margins.left, height - margins.bottom))
         .attr('class', 'time-axis')
         .call(timeAxis);
 
@@ -131,6 +133,24 @@ export default function drawFullPerfChart({
         .attr('class', 'players-axis')
         .attr('transform', translate(margins.left - margins.axis, 0))
         .call(playersAxis);
+
+    // const fxsMemoryAxisTickValues = (maxFxsMemory <= 7) ? d3.range(maxFxsMemory + 1) : null;
+    // const fxsMemoryAxis = d3.axisLeft(fxsMemoryScale)
+    //     .tickFormat(t => t.toString() + ' MB')
+    //     .tickValues(fxsMemoryAxisTickValues as any); //integer values only 
+    // svg.append('g')
+    //     .attr('class', 'fxsmem-axis')
+    //     .attr('transform', translate(margins.left - margins.axis, 0))
+    //     .call(fxsMemoryAxis);
+
+    // const nodeMemoryAxisTickValues = (maxNodeMemory <= 7) ? d3.range(maxNodeMemory + 1) : null;
+    // const nodeMemoryAxis = d3.axisLeft(nodeMemoryScale)
+    //     .tickFormat(t => t.toString() + ' MB')
+    //     .tickValues(nodeMemoryAxisTickValues as any); //integer values only 
+    // svg.append('g')
+    //     .attr('class', 'nodemem-axis')
+    //     .attr('transform', translate(margins.left - margins.axis, 0))
+    //     .call(nodeMemoryAxis);
 
 
     // Drawing the histogram
@@ -217,30 +237,71 @@ export default function drawFullPerfChart({
     const drawLifespan = (
         lifespanGSel: d3.Selection<d3.BaseType | SVGGElement, PerfLifeSpanType, SVGElement, unknown>
     ) => {
-        //Background
-        // lifespanGSel.selectAll('rect.bg')
+        // // Close Reason
+        // lifespanGSel.selectAll('text.closeReason')
         //     .data(prepareLifespanDataItem)
-        //     .join('rect')
-        //     .attr('class', 'bg')
-        //     .attr('x', d => d.lifespanStartX)
-        //     .attr('y', margins.top)
-        //     .attr('width', d => d.lifespanWidth)
-        //     .attr('height', 5)
-        //     .attr('fill', d => createRandomHslColor());
+        //     .join('text')
+        //     .attr('class', 'closeReason')
+        //     .attr('x', d => d.lifespanEndX)
+        //     .attr('y', 0)
+        //     .attr('dy', 6)
+        //     .attr('text-anchor', 'end')
+        //     .attr('dominant-baseline', 'baseline')
+        //     .attr('font-size', 12)
+        //     .attr('fill', 'rgba(255, 255, 255, 0.75)')
+        //     .attr('transform', d => `rotate(-90, ${d.lifespanEndX}, 12)`)
+        //     .attr('letter-spacing', '2px') // Add this line to increase letter spacing
+        //     .text(d => d.closeReason ?? '');
+
+        // //FXServer memory
+        // const fxsMemoryLineGenerator = d3.line<PerfSnapType>()
+        //     .defined(d => d.fxsMemory !== null) // Filter out null values
+        //     .x(d => timeScale(d.end))
+        //     .y(d => fxsMemoryScale(d.fxsMemory as number))
+        //     .curve(d3.curveNatural);
+        // lifespanGSel.selectAll('path.fxsmem-line')
+        //     .data(prepareLifespanDataItem)
+        //     .join('path')
+        //     .attr('class', 'fxsmem-line')
+        //     .each((d, i, nodes) => {
+        //         d3.select(nodes[i])
+        //             .attr('fill', 'none')
+        //             .attr('opacity', 0.75)
+        //             .attr('stroke-dasharray', '4 6')
+        //             .attr('stroke-linejoin', 'round')
+        //             .attr('stroke-linecap', 'round')
+        //             .attr('stroke', 'rgb(204, 42, 107)')
+        //             .attr('stroke-width', 1.5)
+        //             .attr('d', fxsMemoryLineGenerator(d.log));
+        //     });
+
+        // //Node memory
+        // const nodeMemoryLineGenerator = d3.line<PerfSnapType>()
+        //     .defined(d => d.nodeMemory !== null) // Filter out null values
+        //     .x(d => timeScale(d.end))
+        //     .y(d => nodeMemoryScale(d.nodeMemory as number))
+        //     .curve(d3.curveNatural);
+        // lifespanGSel.selectAll('path.nodemem-line')
+        //     .data(prepareLifespanDataItem)
+        //     .join('path')
+        //     .attr('class', 'nodemem-line')
+        //     .each((d, i, nodes) => {
+        //         d3.select(nodes[i])
+        //             .attr('fill', 'none')
+        //             .attr('opacity', 0.75)
+        //             .attr('stroke-dasharray', '4 6')
+        //             .attr('stroke-linejoin', 'round')
+        //             .attr('stroke-linecap', 'round')
+        //             .attr('stroke', 'rgb(202, 204, 42)')
+        //             .attr('stroke-width', 1.5)
+        //             .attr('d', nodeMemoryLineGenerator(d.log));
+        //     });
 
         //Player lines
-        // const nodeMemoryLineGenerator = d3.line<PerfSnapType>(
-        //     (d) => timeScaleSvg(d.end),
-        //     (d) => nodeMemoryScale(d.nodeMemory),
-        // );
-        // const fxsMemoryLineGenerator = d3.line<PerfSnapType>(
-        //     (d) => timeScaleSvg(d.end),
-        //     (d) => fxsMemoryScale(d.fxsMemory),
-        // );
         const playerLineGenerator = d3.line<PerfSnapType>(
             (d) => timeScale(d.end),
             (d) => playersScale(d.players),
-        );
+        ).curve(d3.curveNatural);
         lifespanGSel.selectAll('path.players-line-bg')
             .data(prepareLifespanDataItem)
             .join('path')
@@ -281,7 +342,8 @@ export default function drawFullPerfChart({
         .call(drawLifespan);
 
 
-    //Drawing day/night reference lines
+    // // Drawing day/night reference lines
+    // //FIXME: correct groups and svg ordering
     // const drawDayNightMarkers = () => {
     //     const dayNightInterval = d3.timeDays(dataStart, dataEnd, 1);
     //     timeAxisGroup.selectAll('rect.day-night')
@@ -295,35 +357,33 @@ export default function drawFullPerfChart({
     //             return timeScale(dayDrawEnd) - timeScale(d);
     //         })
     //         .attr('height', margins.bottom)
-    //         .attr('fill', (d, i) => (i % 2) ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.2)');
+    //         .attr('fill', (d, i) => (i % 2) ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.25)');
 
-    //     // const timeMarkerInterval = d3.timeHours(dataStart, dataEnd, 12);
     //     const timeMarkerInterval = d3.timeHour.every(12)!.range(dataStart, dataEnd);
     //     chartGroup.selectAll('line.time-interval-markers')
     //         .data(timeMarkerInterval)
     //         .join('line')
     //         .attr('class', 'time-interval-markers')
     //         .attr('x1', d => Math.floor(timeScale(d)))
-    //         .attr('y1', 0)
+    //         .attr('y1', margins.top)
     //         .attr('x2', d => Math.floor(timeScale(d)))
-    //         .attr('y2', drawableAreaHeight + margins.bottom)
+    //         .attr('y2', margins.top + drawableAreaHeight)
     //         .attr('stroke', 'rgba(200, 200, 200, 0.75)')
     //         .attr('stroke-width', 1)
-    //         .attr('stroke-dasharray', '3,3');
-
+    //         .attr('stroke-dasharray', '3 3');
     // }
     // drawDayNightMarkers();
 
     // let referenceX: d3.Selection<SVGLineElement, PerfLifeSpanType, null, undefined>;
     // const drawReferenceLines = () => {
     //     if (referenceX) referenceX.remove();
-    //     const referenceLineX = timeScale(new Date(2024, 5, 6, 21, 0, 0, 0));
+    //     const referenceLineX = timeScale(new Date(2024, 7, 25, 2, 0, 0, 0));
     //     referenceX = chartGroup.append('line')
     //         .attr('id', 'referenceLineVert')
     //         .attr('x1', referenceLineX)
-    //         .attr('y1', 0)
+    //         .attr('y1', margins.top)
     //         .attr('x2', referenceLineX)
-    //         .attr('y2', drawableAreaHeight)
+    //         .attr('y2', margins.top + drawableAreaHeight)
     //         .attr('stroke', 'red')
     //         .attr('stroke-width', 2);
     // }
@@ -337,12 +397,12 @@ export default function drawFullPerfChart({
         .attr('class', 'cursorLineHorz')
         .attr('stroke', 'rgba(216, 245, 19, 0.75)')
         .attr('stroke-width', 1)
-        .attr('stroke-dasharray', '3,3');
+        .attr('stroke-dasharray', '3 3');
     const cursorLineHorz = chartGroup.append('line')
         .attr('class', 'cursorLineHorz')
         .attr('stroke', 'rgba(216, 245, 19, 0.75)')
         .attr('stroke-width', 1)
-        .attr('stroke-dasharray', '3,3');
+        .attr('stroke-dasharray', '3 3');
     const cursorDot = chartGroup.append('circle')
         .attr('class', 'cursorDot')
         .attr('fill', 'red')
@@ -497,8 +557,8 @@ export default function drawFullPerfChart({
 
         clearCursor();
         drawCanvasHeatmap();
-        // drawDayNightMarkers();
-        // drawReferenceLines();
+        drawDayNightMarkers();
+        drawReferenceLines();
     }
     const debouncedZoomHandler = throttle(20, zoomedHandler, { noLeading: false, noTrailing: false });
 

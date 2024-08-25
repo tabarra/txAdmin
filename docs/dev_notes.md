@@ -295,6 +295,15 @@ export declare global {
         exampleProperty: string;
     }
 }
+
+// pra garantir que nada no primeiro tick use global tx instance, antes de instanciar a classe txAdmin,
+// fazer global.xxxxx ser uma classe com um getter pras vars do txAdmin, mas throw new error
+class ErrorOnAccess {
+    constructor() { }
+    get xxxxxx(): any {
+        throw new Error(`initial tick`);
+    }
+}
 ```
 
 ```js
@@ -395,6 +404,7 @@ Admin manager:
 
 ## Next Up
 - After Node 20:
+    - check all `.npm-upgrade.json` for packages that can now be updated
     - Use `/^\p{RGI_Emoji}$/v` to detect emojis 
         - ref: https://v8.dev/features/regexp-v-flag
         - remove `unicode-emoji-json` from dependencies
@@ -833,14 +843,6 @@ https://freesound.org/browse/tags/laser/?page=5#sound
     https://freesound.org/people/nsstudios/sounds/344276/
     https://freesound.org/people/HadaHector/sounds/446383/
     https://freesound.org/people/unfa/sounds/193427/
-
-
-### Log page time slider
-> We could totally do like a "jump in time" feature for the log page.
-> A slider with 500 steps, and an array with 500 timestamps
-> this array can be done by dividing the serverLog.length to get the step, then a for loop to get the timestamps
-
-> may 2024: use https://observablehq.com/@d3/d3-bisect
 
 
 ### New database alternatives:
