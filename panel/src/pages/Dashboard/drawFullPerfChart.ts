@@ -82,7 +82,6 @@ export default function drawFullPerfChart({
 
     const chartGroup = svg.append('g')
         .attr('clip-path', 'url(#fullPerfChartClipPath)')
-        .attr('id', 'fullPerfChartGroup')
         .attr('transform', translate(margins.left, 0));
 
 
@@ -93,11 +92,10 @@ export default function drawFullPerfChart({
 
     const tickBucketsScale = d3.scaleBand()
         .domain(bucketLabels)
-        .range([height - margins.bottom, margins.top]);
+        .range([height - margins.bottom, 0]);
 
     const histColor = d3.scaleSequential(isDarkMode ? d3.interpolateViridis : d3.interpolateCool)
         .domain([0, 1]);
-        //interpolateCividis?
 
 
     //Line Scales
@@ -122,7 +120,7 @@ export default function drawFullPerfChart({
     const bucketsAxis = d3.axisRight(tickBucketsScale);
     svg.append('g')
         .attr('class', 'buckets-axis')
-        .attr('transform', translate(width - margins.right + margins.axis, 0))
+        .attr('transform', translate(width - margins.right + margins.axis, margins.top))
         .call(bucketsAxis);
 
     const playersAxisTickValues = (maxPlayers <= 7) ? d3.range(maxPlayers + 1) : null;
@@ -491,10 +489,9 @@ export default function drawFullPerfChart({
             parseFloat(transform.applyX(0).toFixed(6)),
             parseFloat(transform.applyX(drawableAreaWidth).toFixed(6)),
         ]);
-        timeAxis.ticks(timeAxisTicksScale(width) * transform.k);
+        timeAxis.scale(transform.rescaleX(timeScale).range([0, drawableAreaWidth]));
+        timeAxisGroup.call(timeAxis);
 
-        //@ts-ignore
-        chartGroup.selectAll('g.time-axis').call(timeAxis);
         //@ts-ignore
         chartGroup.selectAll('g.lifespan').call(drawLifespan);
 
