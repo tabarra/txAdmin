@@ -102,20 +102,24 @@ export class Database {
             dbo = new LowWithLodash(adapterAsync, defaultDatabase);
             await dbo.read();
         } catch (errorMain) {
-            console.error('Your txAdmin player/actions database could not be loaded.');
+            const errTitle = 'Your txAdmin player/actions database could not be loaded.';
             try {
                 await fsp.copyFile(this.backupPath, this.dbPath);
                 const adapterAsync = new JSONFile<DatabaseDataType>(this.dbPath);
                 dbo = new LowWithLodash(adapterAsync, defaultDatabase);
                 await dbo.read();
+                console.warn(errTitle);
                 console.warn('The database file was restored with the automatic backup file.');
                 console.warn('A five minute rollback is expected.');
             } catch (errorBackup) {
-                console.error('It was also not possible to load the automatic backup file.');
-                console.error(`Main error: '${(errorMain as Error).message}'`);
-                console.error(`Backup error: '${(errorBackup as Error).message}'`);
-                console.error(`Database path: '${this.dbPath}'`);
-                console.error('If there is a file in that location, you may try to delete or restore it manually.');
+                console.majorMultilineError([
+                    errTitle,
+                    'It was also not possible to load the automatic backup file.',
+                    `Main error: '${(errorMain as Error).message}'`,
+                    `Backup error: '${(errorBackup as Error).message}'`,
+                    `Database path: '${this.dbPath}'`,
+                    'If there is a file in that location, you may try to delete or restore it manually.',
+                ]);
                 process.exit(5600);
             }
         }
@@ -134,6 +138,23 @@ export class Database {
                 this.obj = await migrations(dbo);
             } else {
                 this.obj = dbo;
+            }
+
+            //Checking basic structure integrity
+            if (
+                !Array.isArray(this.obj!.data.players)
+                || !Array.isArray(this.obj!.data.actions)
+                || !Array.isArray(this.obj!.data.whitelistApprovals)
+                || !Array.isArray(this.obj!.data.whitelistRequests)
+            ) {
+                console.majorMultilineError([
+                    'Your txAdmin player/actions database is corrupted!',
+                    'It is missing one of the required arrays (players, actions, whitelistApprovals, whitelistRequests).',
+                    'If you modified the database file manually, you may try to restore it from the automatic backup file.',
+                    `Database path: '${this.dbPath}'`,
+                    'For further support: https://discord.gg/txAdmin',
+                ]);
+                process.exit(5602);
             }
 
             this.lastWrite = Date.now();
