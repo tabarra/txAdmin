@@ -97,7 +97,7 @@
     - [x] server stop/restart 
         - change to `admin request`
 - [x] separate "announcements" and "dm" permissions
-- [ ] add "this player is banned until: xxx" to the player modal
+- [x] add "this player is banned until: xxx" to the player modal
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds
     - check if the RegisterCommand is colocated
@@ -176,6 +176,11 @@ for log in statsLog:
 
 
 ## Next up... ish
+- Kick as punishment might be needed since minimum ban is 1 hour, possible solutions:
+    - Allow for ban minutes
+    - Add a "timeout" button that brings a prompt with 1/5/15/30 mins buttons
+    - Add a checkbox to the kick modal to mark it as a punishment
+
 - Highlights:
     - [ ] add average session time tracking to statsManager.playerDrop
 
