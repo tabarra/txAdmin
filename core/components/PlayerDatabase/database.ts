@@ -11,7 +11,7 @@ import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Consts & helpers
-export const DATABASE_VERSION = 4;
+export const DATABASE_VERSION = 5;
 export const defaultDatabase = {
     version: DATABASE_VERSION,
     players: [],

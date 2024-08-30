@@ -99,6 +99,8 @@
 - [x] separate "announcements" and "dm" permissions
 - [x] add "this player is banned until: xxx" to the player modal
 - [x] enable nui strict mode
+- [ ] migration to change "revocation" to optional
+    - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds
     - check if the RegisterCommand is colocated

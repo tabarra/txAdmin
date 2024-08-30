@@ -1,11 +1,12 @@
 const modulename = 'Player';
 import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
-import { DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
+import { DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
 import { cloneDeep, union } from 'lodash-es';
 import { parsePlayerIds, now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
 import consts from '@shared/consts';
+import PlayerlistManager from '@core/components/PlayerlistManager';
 const console = consoleFactory(modulename);
 
 
@@ -114,14 +115,21 @@ type PlayerDataType = {
  * Class to represent a player that is or was connected to the currently running server process.
  */
 export class ServerPlayer extends BasePlayer {
+    readonly #playerlistManager: PlayerlistManager;
     readonly netid: number;
     readonly tsConnected = now();
     readonly isRegistered: boolean;
     readonly #minuteCronInterval?: ReturnType<typeof setInterval>;
     // #offlineDbDataCacheTimeout?: ReturnType<typeof setTimeout>;
 
-    constructor(netid: number, playerData: PlayerDataType, dbInstance: PlayerDatabase) {
+    constructor(
+        netid: number,
+        playerData: PlayerDataType,
+        playerlistManager: PlayerlistManager,
+        dbInstance: PlayerDatabase
+    ) {
         super(dbInstance, Symbol(`netid${netid}`));
+        this.#playerlistManager = playerlistManager;
         this.netid = netid;
         this.isConnected = true;
         if (
@@ -201,9 +209,33 @@ export class ServerPlayer extends BasePlayer {
                 this.dbData = toRegister;
                 console.verbose.ok(`Adding '${this.displayName}' to players database.`);
             }
+            setImmediate(this.#sendInitialData.bind(this));
         } catch (error) {
             console.error(`Failed to load/register player ${this.displayName} from/to the database with error:`);
             console.dir(error);
+        }
+    }
+
+    /**
+     * Prepares the initial player data and reports to playerlistManager, which will dispatch to the server via command.
+     * TODO: adapt to be used for admin auth and player tags.
+     */
+    #sendInitialData() {
+        if (!this.isRegistered) return;
+        if (!this.dbData) throw new Error(`cannot send initial data for a player that has no dbData`);
+
+        let oldestPendingWarn: undefined | DatabaseActionWarnType;
+        const actionHistory = this.getHistory();
+        for (const action of actionHistory) {
+            if (action.type !== 'warn' || action.revocation.timestamp !== null) continue;
+            if (!action.ack) {
+                oldestPendingWarn = action;
+                break;
+            }
+        }
+
+        if (oldestPendingWarn) {
+            this.#playerlistManager.dispatchInitialPlayerData(this.netid, oldestPendingWarn);
         }
     }
 

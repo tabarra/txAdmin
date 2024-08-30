@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
 const modulename = 'WebServer:MasterActions:Action';
-import ConfigVault from '@core/components/ConfigVault';
-import FXRunner from '@core/components/FxRunner';
-import PlayerDatabase from '@core/components/PlayerDatabase';
-import { DatabaseActionType, DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
+import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType, DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
 import { now } from '@core/extras/helpers';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import consoleFactory from '@extras/console';
@@ -123,30 +120,30 @@ async function handleCleanDatabase(ctx: AuthedCtx) {
 
     let bansFilter: Function;
     if (bans === 'none') {
-        bansFilter = (x: DatabaseActionType) => false;
+        bansFilter = (x: DatabaseActionBanType) => false;
     } else if (bans === 'revoked') {
-        bansFilter = (x: DatabaseActionType) => x.type === 'ban' && x.revocation.timestamp;
+        bansFilter = (x: DatabaseActionBanType) => x.type === 'ban' && x.revocation.timestamp;
     } else if (bans === 'revokedExpired') {
-        bansFilter = (x: DatabaseActionType) => x.type === 'ban' && (x.revocation.timestamp || (x.expiration && x.expiration < currTs));
+        bansFilter = (x: DatabaseActionBanType) => x.type === 'ban' && (x.revocation.timestamp || (x.expiration && x.expiration < currTs));
     } else if (bans === 'all') {
-        bansFilter = (x: DatabaseActionType) => x.type === 'ban';
+        bansFilter = (x: DatabaseActionBanType) => x.type === 'ban';
     } else {
         return sendTypedResp({error: 'Invalid bans filter type.'});
     }
 
     let warnsFilter: Function;
     if (warns === 'none') {
-        warnsFilter = (x: DatabaseActionType) => false;
+        warnsFilter = (x: DatabaseActionWarnType) => false;
     } else if (warns === 'revoked') {
-        warnsFilter = (x: DatabaseActionType) => x.type === 'warn' && x.revocation.timestamp;
+        warnsFilter = (x: DatabaseActionWarnType) => x.type === 'warn' && x.revocation.timestamp;
     } else if (warns === '30d') {
-        warnsFilter = (x: DatabaseActionType) => x.type === 'warn' && x.timestamp < (currTs - 30 * daySecs);
+        warnsFilter = (x: DatabaseActionWarnType) => x.type === 'warn' && x.timestamp < (currTs - 30 * daySecs);
     } else if (warns === '15d') {
-        warnsFilter = (x: DatabaseActionType) => x.type === 'warn' && x.timestamp < (currTs - 15 * daySecs);
+        warnsFilter = (x: DatabaseActionWarnType) => x.type === 'warn' && x.timestamp < (currTs - 15 * daySecs);
     } else if (warns === '7d') {
-        warnsFilter = (x: DatabaseActionType) => x.type === 'warn' && x.timestamp < (currTs - 7 * daySecs);
+        warnsFilter = (x: DatabaseActionWarnType) => x.type === 'warn' && x.timestamp < (currTs - 7 * daySecs);
     } else if (warns === 'all') {
-        warnsFilter = (x: DatabaseActionType) => x.type === 'warn';
+        warnsFilter = (x: DatabaseActionWarnType) => x.type === 'warn';
     } else {
         return sendTypedResp({error: 'Invalid warns filter type.'});
     }

@@ -91,12 +91,6 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     }
 
     //Validating server & player
-    if (ctx.txAdmin.fxRunner.fxChild === null) {
-        return { error: 'The server is not online.' };
-    }
-    if (!(player instanceof ServerPlayer) || !player.isConnected) {
-        return { error: 'This player is not connected to the server.' };
-    }
     const allIds = player.getAllIdentifiers();
     if (!allIds.length) {
         return { error: 'Cannot warn a player with no identifiers.' };
@@ -105,13 +99,11 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     //Register action
     let actionId;
     try {
-        actionId = ctx.txAdmin.playerDatabase.registerAction(
+        actionId = ctx.txAdmin.playerDatabase.registerWarnAction(
             allIds,
-            'warn',
             ctx.admin.name,
             reason,
-            false,
-            player.displayName
+            player.displayName,
         );
     } catch (error) {
         return { error: `Failed to warn player: ${(error as Error).message}` };
@@ -120,10 +112,12 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
 
     // Dispatch `txAdmin:events:playerWarned`
     const cmdOk = ctx.txAdmin.fxRunner.sendEvent('playerWarned', {
-        target: player.netid,
         author: ctx.admin.name,
         reason,
         actionId,
+        targetNetId: (player instanceof ServerPlayer && player.isConnected) ? player.netid : null,
+        targetIds: allIds,
+        targetName: player.displayName,
     });
 
     if (cmdOk) {
@@ -175,9 +169,8 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     //Register action
     let actionId;
     try {
-        actionId = ctx.txAdmin.playerDatabase.registerAction(
+        actionId = ctx.txAdmin.playerDatabase.registerBanAction(
             allIds,
-            'ban',
             ctx.admin.name,
             reason,
             expiration,

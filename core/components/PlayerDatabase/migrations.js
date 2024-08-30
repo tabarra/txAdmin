@@ -138,6 +138,22 @@ export default async (dbo) => {
         await dbo.write();
     }
 
+    if (dbo.data.version === 4) {
+        console.warn('Migrating your players database from v4 to v5.');
+        console.warn('This process will allow for offline warns.');
+
+        //Migrating actions
+        for (const action of dbo.data.actions) {
+            if (action.type === 'warn') {
+                action.ack = true;
+            }
+        }
+
+        //Saving db
+        dbo.data.version = 5;
+        await dbo.write();
+    }
+
     if (dbo.data.version !== DATABASE_VERSION) {
         console.error(`Your players database is on v${dbo.data.version}, which is different from this version of txAdmin (v${DATABASE_VERSION}).`);
         console.error('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');

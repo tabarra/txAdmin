@@ -3,7 +3,7 @@ const modulename = 'PlayerDatabase';
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
 import { genActionID, genWhitelistRequestID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
-import { DatabaseActionType, DatabaseDataType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
+import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
 import { now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
@@ -207,7 +207,7 @@ export default class PlayerDatabase {
         if (hwidsArray && !Array.isArray(hwidsArray)) throw new Error('hwidsArray should be an array or undefined');
         const idsFilter = (action: DatabaseActionType) => idsArray.some((fi) => action.ids.includes(fi))
         const hwidsFilter = (action: DatabaseActionType) => {
-            if (!action.hwids) return false;
+            if (!('hwids' in action)) return false;
             const count = hwidsArray!.filter((fi) => action.hwids!.includes(fi)).length
             return count >= this.config.requiredBanHwidMatches;
         }
@@ -232,35 +232,32 @@ export default class PlayerDatabase {
 
 
     /**
-     * Registers an action (ban, warn) and returns action id
+     * Registers a ban action and returns its id
      */
-    registerAction(
+    registerBanAction(
         ids: string[],
-        type: 'ban' | 'warn',
         author: string,
         reason: string,
-        expiration: number | false = false,
+        expiration: number | false,
         playerName: string | false = false,
         hwids?: string[], //only used for bans
     ): string {
         //Sanity check
         if (!this.#db.obj) throw new Error(`database not ready yet`);
         if (!Array.isArray(ids) || !ids.length) throw new Error('Invalid ids array.');
-        if (!validActions.includes(type)) throw new Error('Invalid action type.');
         if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
         if (typeof reason !== 'string' || !reason.length) throw new Error('Invalid reason.');
         if (expiration !== false && (typeof expiration !== 'number')) throw new Error('Invalid expiration.');
         if (playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
         if (hwids && !Array.isArray(hwids)) throw new Error('Invalid hwids array.');
-        if (type !== 'ban' && hwids) throw new Error('Hwids should only be used for bans.')
 
         //Saves it to the database
         const timestamp = now();
         try {
-            const actionID = genActionID(this.#db.obj, type);
-            const toDB: DatabaseActionType = {
+            const actionID = genActionID(this.#db.obj, 'ban');
+            const toDB: DatabaseActionBanType = {
                 id: actionID,
-                type,
+                type: 'ban',
                 ids,
                 hwids,
                 playerName,
@@ -279,7 +276,56 @@ export default class PlayerDatabase {
             this.#db.writeFlag(SAVE_PRIORITY_HIGH);
             return actionID;
         } catch (error) {
-            let msg = `Failed to register event to database with message: ${(error as Error).message}`;
+            let msg = `Failed to register ban to database with message: ${(error as Error).message}`;
+            console.error(msg);
+            console.verbose.dir(error);
+            throw error;
+        }
+    }
+
+
+    /**
+     * Registers a warn action and returns its id
+     */
+    registerWarnAction(
+        ids: string[],
+        author: string,
+        reason: string,
+        playerName: string | false = false,
+    ): string {
+        //Sanity check
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (!Array.isArray(ids) || !ids.length) throw new Error('Invalid ids array.');
+        if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
+        if (typeof reason !== 'string' || !reason.length) throw new Error('Invalid reason.');
+        if (playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
+
+        //Saves it to the database
+        const timestamp = now();
+        try {
+            const actionID = genActionID(this.#db.obj, 'warn');
+            const toDB: DatabaseActionWarnType = {
+                id: actionID,
+                type: 'warn',
+                ids,
+                playerName,
+                reason,
+                author,
+                timestamp,
+                expiration: false,
+                ack: false,
+                revocation: {
+                    timestamp: null,
+                    author: null,
+                },
+            };
+            this.#db.obj.chain.get('actions')
+                .push(toDB)
+                .value();
+            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            return actionID;
+        } catch (error) {
+            let msg = `Failed to register warn to database with message: ${(error as Error).message}`;
             console.error(msg);
             console.verbose.dir(error);
             throw error;

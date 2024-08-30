@@ -225,16 +225,26 @@ end
 --- Handler for player warned event
 --- Warn specific player via server ID
 txaEventHandlers.playerWarned = function(eventData)
-    local pName = GetPlayerName(eventData.target)
-    local authorName = cvHideAdminInPunishments and txServerName or eventData.author or 'anonym'
-    if pName ~= nil then
-        if not cvHideWarning then
-            TriggerClientEvent('txcl:showWarning', eventData.target, authorName, eventData.reason)
-        end
-        txPrint('Warning '..pName..' with reason: '..eventData.reason)
-    else
-        txPrint('handleWarnEvent: player not found')
+    if cvHideWarning then return end
+    if eventData.targetNetId == nil then return end
+
+    if not DoesPlayerExist(eventData.targetNetId) then
+        txPrint(string.format(
+            'handleWarnEvent: ignoring warning for disconnected player (#%s) %s',
+            eventData.targetNetId,
+            eventData.targetName
+        ))
+        return
     end
+
+    local authorName = cvHideAdminInPunishments and txServerName or eventData.author or 'anonym'
+    TriggerClientEvent('txcl:showWarning', eventData.targetNetId, authorName, eventData.reason)
+    txPrint(string.format(
+        'Warning player (#%s) %s for %s',
+        eventData.targetNetId,
+        eventData.targetName,
+        eventData.reason
+    ))
 end
 
 
