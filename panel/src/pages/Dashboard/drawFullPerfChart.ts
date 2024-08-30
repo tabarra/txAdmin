@@ -557,8 +557,8 @@ export default function drawFullPerfChart({
 
         clearCursor();
         drawCanvasHeatmap();
-        drawDayNightMarkers();
-        drawReferenceLines();
+        // drawDayNightMarkers();
+        // drawReferenceLines();
     }
     const debouncedZoomHandler = throttle(20, zoomedHandler, { noLeading: false, noTrailing: false });
 

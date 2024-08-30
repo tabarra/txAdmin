@@ -5,7 +5,7 @@ import { ApiToastResp } from '@shared/genericApiTypes';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const escape = (x: string) => {return x.replace(/"/g, '\uff02');};
+const escape = (x: string) => x.replace(/"/g, '\uff02');
 const formatCommand = (cmd: string, ...params: string[]) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
@@ -89,7 +89,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
             type: 'info',
             title: {
                 key: 'nui_menu.misc.announcement_title',
-                data: {author: publicAuthor}
+                data: { author: publicAuthor }
             },
             description: message
         });

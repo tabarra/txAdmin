@@ -448,6 +448,47 @@ export default class FXRunner {
 
 
     /**
+     * Formats and sends commands to fxserver's stdin.
+     * @param {string} cmdName
+     * @param {(string|object)[]} input
+     * @param {string} src
+     * @returns {boolean} success
+     */
+    sendCommand(cmdName, cmdArgs = [], src = 'TXADMIN') {
+        if (this.fxChild === null) return false;
+        if (typeof cmdName !== 'string' || !cmdName.length) throw new Error('cmdName is empty');
+        if (!Array.isArray(cmdArgs)) throw new Error('cmdArgs is not an array');
+
+        // Sanitize and format the command and arguments
+        const sanitizeArgString = (x) => x.replaceAll(/"/g, '\uff02').replaceAll(/\n/g, ' ');
+        const rawInputParts = [sanitizeArgString(cmdName)];
+        for (const arg of cmdArgs) {
+            let argAsString;
+            if (typeof arg === 'string') {
+                argAsString = arg;
+            } else if (typeof arg === 'object' && arg !== null) {
+                argAsString = JSON.stringify(arg);
+            } else {
+                throw new Error('arg expected to be string or object');
+            }
+            rawInputParts.push(`"${sanitizeArgString(argAsString)}"`);
+        }
+
+        // Send the command to the server
+        try {
+            const rawInputString = rawInputParts.join(' ');
+            const success = this.fxChild.stdin.write(rawInputString + '\n');
+            globals.logger.fxserver.writeMarker('command', rawInputString, src);
+            return success;
+        } catch (error) {
+            console.verbose.error('Error sending command to fxChild.stdin');
+            console.verbose.dir(error);
+            return false;
+        }
+    }
+
+
+    /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
      * TODO: make this method accept an array and apply the formatCommand() logic
      * @param {string} command

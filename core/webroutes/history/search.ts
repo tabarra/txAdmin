@@ -2,7 +2,6 @@ const modulename = 'WebServer:HistorySearch';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
-import cleanPlayerName from '@shared/cleanPlayerName';
 import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
 import { now, parseLaxIdsArrayInput } from '@extras/helpers';

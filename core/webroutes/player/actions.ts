@@ -40,7 +40,7 @@ export default async function PlayerActions(ctx: AuthedCtx) {
     } else if (action === 'whitelist') {
         return sendTypedResp(await handleSetWhitelist(ctx, player));
     } else if (action === 'message') {
-        return sendTypedResp(await handleMessage(ctx, player));
+        return sendTypedResp(await handleDirectMessage(ctx, player));
     } else if (action === 'kick') {
         return sendTypedResp(await handleKick(ctx, player));
     } else {
@@ -285,7 +285,7 @@ async function handleSetWhitelist(ctx: AuthedCtx, player: PlayerClass): Promise<
 /**
  * Handle Direct Message Action
  */
-async function handleMessage(ctx: AuthedCtx, player: PlayerClass): Promise<GenericApiResp> {
+async function handleDirectMessage(ctx: AuthedCtx, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,

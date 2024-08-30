@@ -98,11 +98,11 @@
         - change to `admin request`
 - [x] separate "announcements" and "dm" permissions
 - [x] add "this player is banned until: xxx" to the player modal
+- [x] enable nui strict mode
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds
     - check if the RegisterCommand is colocated
     - need to add and test `if not menuIsAccessible then return end` to all keybinds
-- [ ] disable some actions while in NUI?
 
 ## Chores + refactor + boring stuff
 - [x] remove /legacy/dashboard route + handler
@@ -110,11 +110,11 @@
 - [x] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
     - and add new ones to the player drops and settings
 - [x] improve the procps/wmic error messages
-- [ ] fix txDiagnostics (and add tx v8 heap data to it)
-- [ ] update packages
-- [ ] check if the client print issues have been solved and switch tx to lua54
+- [x] check if the client print issues have been solved
     - https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
     - https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
+- [ ] fix txDiagnostics (and add tx v8 heap data to it)
+- [ ] update packages
 - [ ] update wouter and add search/filters state to URL of the players/history pages 
 - [ ] Use `dotenv` or something to configure `main-builder.js` and update `development.md`
 - [ ] add `.yarn.installed` to the dist? even in dev
@@ -198,6 +198,8 @@ for log in statsLog:
     - [ ] reevaluate globals?.tmpSetHbDataTracking
     - [ ] fix socket.io multiple connections - start a single instance when page opens, commands to switch rooms
     - [ ] evaluate and maybe add event bus
+    - [ ] switch tx to lua54
+    - [ ] disable some actions while in NUI?
 
 - Boring stuff:
     - [ ] fix the eslint config + tailwind sort
@@ -546,9 +548,9 @@ if (error instanceof z.ZodError) {
 
 
 ### Server resource scanner
-ScanResourceRoot('E:/FiveM/txData/default.base/', (data: object) => {
+ScanResourceRoot('E:/FiveM/txData/default.base/resources', (data: object) => {
     console.dir(data);
-})
+});
 
 
 =======================================================================
