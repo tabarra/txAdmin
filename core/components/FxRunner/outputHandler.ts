@@ -140,11 +140,12 @@ export default class OutputHandler {
                 this.#txAdmin.fxRunner.sendEvent('announcement', { message, author });
 
                 // Sending discord announcement
+                const publicAuthor = this.#txAdmin.adminVault.getAdminPublicName(payload.author, 'message');
                 this.#txAdmin.discordBot.sendAnnouncement({
                     type: 'info',
                     title: {
                         key: 'nui_menu.misc.announcement_title',
-                        data: { author }
+                        data: { author: publicAuthor }
                     },
                     description: message
                 });

@@ -79,6 +79,8 @@
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">
                             Game
+                            <!-- DynamicNewBadge reference, but static -->
+                            <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
                         </a>
                     </li>
                 </ul>
@@ -87,7 +89,7 @@
             <div class="card-body settings-card">
                 <div class="tab-content" id="nav-tabContent">
 
-                    <!-- Global Tab -->
+                    <!-- MARK: Global Tab -->
                     <div class="tab-pane fade <%= activeTab === 'global' ? 'active show' : '' %>" id="nav-global" role="tabpanel"
                         aria-labelledby="nav-global-tab">
                         <div class="form-group row">
@@ -124,8 +126,6 @@
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">
                                 Ban Templates
-                                <!-- DynamicNewBadge reference, but static -->
-                                <span class="badge badge-danger">NEW</span>
                             </label>
                             <div class="col-sm-9">
                                 <button
@@ -147,9 +147,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Global Tab -->
 
-                    <!-- FXServer Tab -->
+                    <!-- MARK: FXServer Tab -->
                     <div class="tab-pane fade <%= activeTab === 'fxServer' ? 'active show' : '' %>" id="nav-fxserver" role="tabpanel" aria-labelledby="nav-fxserver-tab">
                         <div class="form-group row">
                             <label for="frmFXServer-serverDataPath" class="col-sm-3 col-form-label">Server Data Folder
@@ -205,7 +204,7 @@
                                 <span class="form-text text-muted">
                                     Required if your server has more than 48 slots. <br>
                                     <b>Note:</b> Setting to <code>on</code> will override <code>onesync_enableInfinity</code> if set as an Additional Argument above. <br>
-                                    <b>Note:</b> Setting onesync in your <code>server.cfg</code> will override this configuration.
+                                    <b>Note:</b> Do not attempt to set onesync in the <code>server.cfg</code> file.
                                 </span>
                             </div>
                         </div>
@@ -245,9 +244,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /FXServer Tab -->
 
-                    <!-- Restarter Tab -->
+                    <!-- MARK: Restarter Tab -->
                     <div class="tab-pane fade <%= activeTab === 'monitor' ? 'active show' : '' %>" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
                         <div class="form-group row">
                             <label for="frmMonitor-resourceStartingTolerance" class="col-sm-3 col-form-label">
@@ -289,9 +287,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Restarter Tab -->
                     
-                    <!-- Player Manager Tab -->
+                    <!-- MARK: Player Manager Tab -->
                     <div class="tab-pane fade <%= activeTab === 'playerManager' ? 'active show' : '' %>" id="nav-playerManager" role="tabpanel" aria-labelledby="nav-playerManager-tab">
                         <div class="form-group row">
                             <label for="frmPlayerManager-whitelistMode" class="col-sm-3 col-form-label">
@@ -414,9 +411,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Player Manager Tab -->
 
-                    <!-- Discord Tab -->
+                    <!-- MARK: Discord Tab -->
                     <div class="tab-pane fade <%= activeTab === 'discord' ? 'active show' : '' %>" id="nav-discord" role="tabpanel" aria-labelledby="nav-discord-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Enable Bot</label>
@@ -549,9 +545,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Discord Tab -->
 
-                    <!-- Game/Menu Tab -->
+                    <!-- MARK: Game/Menu Tab -->
                     <div class="tab-pane fade <%= activeTab === 'menu' ? 'active show' : '' %>" id="nav-menu" role="tabpanel" aria-labelledby="nav-menu-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Enable Menu</label>
@@ -591,6 +586,46 @@
                                     The key used to to switch tabs in the menu. <br>
                                     Click above and press any key to change the configuration. <br>
                                     <strong>Note:</strong> The default is <code>Tab</code>, and you cannot use <code>Escape</code> or <code>Backspace</code>.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Admin Name <br>
+                                In Punishments <br>
+                                <!-- DynamicNewBadge reference, but static -->
+                                <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideAdminInPunishments"
+                                        <%= global.hideAdminInPunishments || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Never show to the players the admin name on <strong>Bans</strong> or <strong>Warns</strong>. <br>
+                                    This information will still be available in the history and logs.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Hide Admin Name <br>
+                                In Messages <br>
+                                <!-- DynamicNewBadge reference, but static -->
+                                <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-hideAdminInMessages"
+                                        <%= global.hideAdminInMessages || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Hide" data-unchecked="Show"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Do not show the admin name on <strong>Announcements</strong> or <strong>DMs</strong>. <br>
+                                    This information will still be available in the live console and logs.
                                 </span>
                             </div>
                         </div>
@@ -670,7 +705,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /Menu Tab -->
 
                 </div>
             </div>
@@ -729,9 +763,9 @@
     </div>
 </div>
 
-
+<!-- MARK: Save-->
 <script>
-    //============================================== General
+    //MARK: Save General Settings
     const serverTimezone = "<%= serverTimezone %>";
     const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if(serverTimezone !== browserTimezone){
@@ -769,7 +803,7 @@
         }
     }
 
-    //============================================== Global Settings
+    //MARK: Save Global Settings
     $('#frmGlobal-save').click(function () {
         let data = {
             serverName: $('#frmGlobal-serverName').val().trim(),
@@ -797,7 +831,7 @@
     });
 
 
-    //============================================== FXServer Settings
+    //MARK: Save FXServer Settings
     $('#frmFXServer-save').click(function () {
         let data = {
             serverDataPath: $('#frmFXServer-serverDataPath').val().trim(),
@@ -834,7 +868,7 @@
     });
 
 
-    //============================================== Player Manager Settings
+    //MARK: Save Player Manager Settings
     $('#frmPlayerManager-save').click(function () {
         const data = {
             whitelistMode: $('#frmPlayerManager-whitelistMode').val(),
@@ -863,7 +897,7 @@
     });
 
 
-    //============================================== Monitor Settings
+    //MARK: Save Monitor Settings
     $('#frmMonitor-save').click(function () {
         let data = {
             restarterSchedule: $('#frmMonitor-restarterSchedule').val().trim(),
@@ -888,7 +922,7 @@
     });
 
 
-    //============================================== Discord Settings
+    //MARK: Save Discord Settings
     let jsonBeingEdited = false;
     let defaultOfJsonBeingEdited = false;
     const discEls = {
@@ -1009,7 +1043,7 @@
     });
 
 
-    //============================================== Menu Settings
+    //MARK: Save Menu Settings
     const pageKeyEl = document.getElementById('frmMenu-pageKey');
     pageKeyEl.onkeydown = (e) => {
         if (!e.metaKey) e.preventDefault();
@@ -1026,6 +1060,8 @@
             menuEnabled: ($('#frmMenu-enabled').is(':checked') === true),
             menuAlignRight: ($('#frmMenu-alignRight').is(':checked') === true),
             menuPageKey: $('#frmMenu-pageKey').val().trim(),
+            hideAdminInPunishments: ($('#frmMenu-hideAdminInPunishments').is(':checked') === true),
+            hideAdminInMessages: ($('#frmMenu-hideAdminInMessages').is(':checked') === true),
             hideDefaultAnnouncement: ($('#frmMenu-hideDefaultAnnouncement').is(':checked') === true),
             hideDefaultDirectMessage: ($('#frmMenu-hideDefaultDirectMessage').is(':checked') === true),
             hideDefaultWarning: ($('#frmMenu-hideDefaultWarning').is(':checked') === true),

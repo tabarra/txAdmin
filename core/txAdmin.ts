@@ -101,6 +101,8 @@ export default class TxAdmin {
         hideDefaultDirectMessage: boolean,
         hideDefaultWarning: boolean,
         hideDefaultScheduledRestartWarning: boolean,
+        hideAdminInPunishments: boolean,
+        hideAdminInMessages: boolean,
     }
 
 

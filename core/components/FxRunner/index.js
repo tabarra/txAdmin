@@ -29,12 +29,15 @@ const getMutableConvars = (isCmdLine = false) => {
 
     return [
         //type, name, value
+        [`${p}set`, 'txAdmin-serverName', globals.txAdmin.globalConfig.serverName ?? 'txAdmin'],
         [`${p}setr`, 'txAdmin-locale', globals.translator.language ?? 'en'],
         [`${p}set`, 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
         [`${p}setr`, 'txAdmin-verbose', console.isVerbose],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
         [`${p}set`, 'txAdmin-menuAlignRight', globals.txAdmin.globalConfig.menuAlignRight],
         [`${p}set`, 'txAdmin-menuPageKey', globals.txAdmin.globalConfig.menuPageKey],
+        [`${p}set`, 'txAdmin-hideAdminInPunishments', globals.txAdmin.globalConfig.hideAdminInPunishments],
+        [`${p}set`, 'txAdmin-hideAdminInMessages', globals.txAdmin.globalConfig.hideAdminInMessages],
         [`${p}set`, 'txAdmin-hideDefaultAnnouncement', globals.txAdmin.globalConfig.hideDefaultAnnouncement],
         [`${p}set`, 'txAdmin-hideDefaultDirectMessage', globals.txAdmin.globalConfig.hideDefaultDirectMessage],
         [`${p}set`, 'txAdmin-hideDefaultWarning', globals.txAdmin.globalConfig.hideDefaultWarning],
@@ -64,16 +67,14 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Refresh fxRunner configurations
      */
     refreshConfig() {
         this.config = globals.configVault.getScoped('fxRunner');
-    }//Final refreshConfig()
+    }
 
 
-    //================================================================
     /**
      * Receives the signal that all the start banner was already printed and other modules loaded
      */
@@ -89,10 +90,9 @@ export default class FXRunner {
         }
 
         this.spawnServer(true);
-    }//Final signalStartReady()
+    }
 
 
-    //================================================================
     /**
      * Setup the spawn parameters
      */
@@ -138,10 +138,9 @@ export default class FXRunner {
                 ],
             };
         }
-    }//Final setupVariables()
+    }
 
 
-    //================================================================
     /**
      * Spawns the FXServer and sets up all the event handlers
      * @param {boolean} announce
@@ -309,10 +308,9 @@ export default class FXRunner {
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler, this.currentMutex));
 
         return null;
-    }//Final spawnServer()
+    }
 
 
-    //================================================================
     /**
      * Restarts the FXServer
      * @param {string} reason
@@ -343,7 +341,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Kills the FXServer
      * @param {string} reason
@@ -405,7 +402,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Resets the convars in the server.
      * Useful for when we change txAdmin settings and want it to reflect on the server.
@@ -428,7 +424,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Fires an `txAdmin:event` inside the server via srvCmd > stdin > command > lua broadcaster.
      * @param {string} eventType
@@ -452,7 +447,47 @@ export default class FXRunner {
     }
 
 
-    //================================================================
+    /**
+     * Formats and sends commands to fxserver's stdin.
+     * @param {string} cmdName
+     * @param {(string|object)[]} input
+     * @param {string} src
+     * @returns {boolean} success
+     */
+    sendCommand(cmdName, cmdArgs = [], src = 'TXADMIN') {
+        if (this.fxChild === null) return false;
+        if (typeof cmdName !== 'string' || !cmdName.length) throw new Error('cmdName is empty');
+        if (!Array.isArray(cmdArgs)) throw new Error('cmdArgs is not an array');
+
+        // Sanitize and format the command and arguments
+        const sanitizeArgString = (x) => x.replaceAll(/"/g, '\uff02').replaceAll(/\n/g, ' ');
+        const rawInputParts = [sanitizeArgString(cmdName)];
+        for (const arg of cmdArgs) {
+            let argAsString;
+            if (typeof arg === 'string') {
+                argAsString = arg;
+            } else if (typeof arg === 'object' && arg !== null) {
+                argAsString = JSON.stringify(arg);
+            } else {
+                throw new Error('arg expected to be string or object');
+            }
+            rawInputParts.push(`"${sanitizeArgString(argAsString)}"`);
+        }
+
+        // Send the command to the server
+        try {
+            const rawInputString = rawInputParts.join(' ');
+            const success = this.fxChild.stdin.write(rawInputString + '\n');
+            globals.logger.fxserver.writeMarker('command', rawInputString, src);
+            return success;
+        } catch (error) {
+            console.verbose.error('Error sending command to fxChild.stdin');
+            console.verbose.dir(error);
+            return false;
+        }
+    }
+
+
     /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
      * TODO: make this method accept an array and apply the formatCommand() logic
@@ -474,7 +509,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Handles a live console command input
      * @param {import('../WebServer/authLogic').AuthedAdminType} admin
@@ -486,7 +520,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Returns the status of the server, with the states being:
      *  - not started
@@ -530,7 +563,6 @@ export default class FXRunner {
     }
 
 
-    //================================================================
     /**
      * Returns the current fxserver uptime in seconds
      * @returns {numeric} buffer

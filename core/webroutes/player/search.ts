@@ -39,7 +39,7 @@ export default async function PlayerSearch(ctx: AuthedCtx) {
     const adminsIdentifiers = ctx.txAdmin.adminVault.getAdminsIdentifiers();
     const onlinePlayersLicenses = ctx.txAdmin.playerlistManager.getOnlinePlayersLicenses();
     const dbo = ctx.txAdmin.playerDatabase.getDb();
-    let chain = dbo.chain.get('players');
+    let chain = dbo.chain.get('players').clone(); //shadow clone to avoid sorting the original
     /*
         In order:
         - [X] sort the players by the sortingKey/sortingDesc

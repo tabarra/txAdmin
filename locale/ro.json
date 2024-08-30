@@ -13,6 +13,11 @@
         "schedule_warn": "Acest server este programat sa se restarteze in %{smart_count} minut. Va rugam sa va deconctati. |||| Acest server este programat sa se restarteze in %{smart_count} minute.",
         "schedule_warn_discord": "**%{servername}** este programat sa se restarteze in %{smart_count} minut. |||| **%{servername}** este programat sa se restarteze in %{smart_count} minute."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Ai fost interzis de pe acest server pentru \"%{reason}\". Interzicerea ta va expira în: %{expiration}.",
         "kick_permanent": "(%{author}) Ai fost banat permanent de pe acest server pentru \"%{reason}\".",

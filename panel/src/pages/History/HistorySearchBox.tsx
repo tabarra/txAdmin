@@ -25,7 +25,6 @@ import {
     SelectValue
 } from "@/components/ui/select"
 import { HistoryTableSearchType } from "@shared/historyApiTypes";
-import { DynamicNewBadge } from "@/components/DynamicNewBadge";
 
 
 /**
@@ -261,7 +260,6 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="grow md:grow-0">
                                     More
-                                    <DynamicNewBadge featName="banTemplates" durationDays={7} />
                                     <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -276,7 +274,6 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
                                     <Link href="/settings/ban-templates" className="cursor-pointer">
                                         <ExternalLinkIcon className="inline mr-1 h-4" />
                                         Ban Templates
-                                        <DynamicNewBadge featName="banTemplates" durationDays={7} />
                                     </Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>

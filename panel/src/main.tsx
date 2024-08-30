@@ -10,7 +10,7 @@ import { AppErrorFallback } from './components/ErrorFallback.tsx';
 import { logoutWatcher, useIsAuthenticated } from './hooks/auth.ts';
 import AuthShell from './layout/AuthShell.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { isValidRedirectPath } from './lib/utils.ts';
+import { isValidRedirectPath, redirectToLogin } from './lib/utils.ts';
 import ThemeProvider from './components/ThemeProvider.tsx';
 import { StrictMode } from 'react';
 import { isMobile } from 'is-mobile';
@@ -65,7 +65,7 @@ export function AuthContextSwitch() {
         const redirectPath = urlParams.get('r');
         if (redirectPath) {
             if (isValidRedirectPath(redirectPath)) {
-                window.history.replaceState(null, '', redirectPath as string);
+                window.history.replaceState(null, '', redirectPath);
             } else {
                 window.history.replaceState(null, '', '/');
             }
@@ -81,11 +81,7 @@ export function AuthContextSwitch() {
             window.history.replaceState(null, '', '/addMaster/pin');
         } else if (!isAuthRoute(window.location.pathname)) {
             console.log('User is not authenticated. Redirecting to login page.');
-            const suffix = window.location.pathname + window.location.search + window.location.hash;
-            const newSuffix = suffix === '/'
-                ? `/login`
-                : `/login?r=${encodeURIComponent(suffix)}`;
-            window.history.replaceState(null, '', newSuffix);
+            redirectToLogin();
         }
 
         return <AuthShell />;

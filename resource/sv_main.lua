@@ -17,7 +17,7 @@ end
 
 
 -- =============================================
--- Variables stuff
+-- MARK: Variables stuff
 -- =============================================
 TX_ADMINS = {}
 TX_PLAYERLIST = {}
@@ -53,7 +53,7 @@ local hbReturnData = '{"error": "no data cached in sv_main.lua"}'
 
 
 -- =============================================
--- Heartbeat functions
+-- MARK: Heartbeat functions
 -- =============================================
 local function HTTPHeartBeat()
     local url = "http://"..TX_LUACOMHOST.."/intercom/monitor"
@@ -89,7 +89,7 @@ end
 
 
 -- =============================================
--- Commands
+-- MARK: Commands
 -- =============================================
 
 --- Simple stdout reply just to make sure the resource is alive
@@ -107,9 +107,9 @@ local function txaKickAll(source, args)
     else
         args[1] = unDeQuote(args[1])
     end
-    txPrint("Kicking all players with reason: "..args[1])
+    txPrint("Kicking all players: "..args[1])
     for _, pid in pairs(GetPlayers()) do
-        DropPlayer(pid, "\n".."Kicked for: " .. args[1])
+        DropPlayer(pid, '[txAdmin] ' .. args[1])
     end
     CancelEvent()
 end
@@ -172,8 +172,11 @@ end
 
 
 -- =============================================
---  Events handling
+-- MARK: Events handling
 -- =============================================
+local txServerName = GetConvar("txAdmin-serverName", "txAdmin")
+local cvHideAdminInPunishments = GetConvarBool('txAdmin-hideAdminInPunishments')
+local cvHideAdminInMessages = GetConvarBool('txAdmin-hideAdminInMessages')
 local cvHideAnnouncement = GetConvarBool('txAdmin-hideDefaultAnnouncement')
 local cvHideDirectMessage = GetConvarBool('txAdmin-hideDefaultDirectMessage')
 local cvHideWarning = GetConvarBool('txAdmin-hideDefaultWarning')
@@ -183,10 +186,11 @@ local txaEventHandlers = {}
 --- Handler for announcement events
 --- Broadcast admin message to all players
 txaEventHandlers.announcement = function(eventData)
+    local authorName = cvHideAdminInMessages and txServerName or eventData.author or 'anonym'
     if not cvHideAnnouncement then
-        TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, eventData.author)
+        TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, authorName)
     end
-    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(Broadcast) '..eventData.author, eventData.message)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(Broadcast) '..authorName, eventData.message)
 end
 
 
@@ -203,10 +207,11 @@ end
 --- Handler for player DM event
 --- Sends a direct message from an admin to a player
 txaEventHandlers.playerDirectMessage = function(eventData)
+    local authorName = cvHideAdminInMessages and txServerName or eventData.author or 'anonym'
     if not cvHideDirectMessage then
-        TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, eventData.author)
+        TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, authorName)
     end
-    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(DM) '..eventData.author, eventData.message)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(DM) '..authorName, eventData.message)
 end
 
 
@@ -221,9 +226,10 @@ end
 --- Warn specific player via server ID
 txaEventHandlers.playerWarned = function(eventData)
     local pName = GetPlayerName(eventData.target)
+    local authorName = cvHideAdminInPunishments and txServerName or eventData.author or 'anonym'
     if pName ~= nil then
         if not cvHideWarning then
-            TriggerClientEvent('txcl:showWarning', eventData.target, eventData.author, eventData.reason)
+            TriggerClientEvent('txcl:showWarning', eventData.target, authorName, eventData.reason)
         end
         txPrint('Warning '..pName..' with reason: '..eventData.reason)
     else
@@ -298,7 +304,7 @@ end
 
 
 -- =============================================
--- Player connecting handler
+-- MARK: Player connecting handler
 -- =============================================
 local function handleConnections(name, setKickReason, d)
     -- if server is shutting down
@@ -322,7 +328,7 @@ local function handleConnections(name, setKickReason, d)
             playerName = name
         }
         if #exData.playerIds <= 1 then
-            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, which you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
+            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, but you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
             return
         end
 
@@ -374,7 +380,7 @@ end
 
 
 -- =============================================
--- Setup threads and commands & main stuff
+-- MARK: Setup threads and commands & main stuff
 -- =============================================
 
 -- All commands & handlers

@@ -2,7 +2,6 @@ const modulename = 'WebServer:HistorySearch';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
-import cleanPlayerName from '@shared/cleanPlayerName';
 import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
 import { now, parseLaxIdsArrayInput } from '@extras/helpers';
@@ -36,7 +35,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
     const sendTypedResp = (data: HistoryTableSearchResp) => ctx.send(data);
     const searchTime = new TimeCounter();
     const dbo = ctx.txAdmin.playerDatabase.getDb();
-    let chain = dbo.chain.get('actions');
+    let chain = dbo.chain.get('actions').clone(); //shadow clone to avoid sorting the original
 
     //sort the actions by the sortingKey/sortingDesc
     const parsedSortingDesc = sortingDesc === 'true';

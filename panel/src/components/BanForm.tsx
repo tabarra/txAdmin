@@ -7,7 +7,6 @@ import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "reac
 import { DropDownSelect, DropDownSelectContent, DropDownSelectItem, DropDownSelectTrigger } from "@/components/dropDownSelect";
 import { banDurationToShortString, banDurationToString, cn } from "@/lib/utils";
 import { Link, useLocation } from "wouter";
-import { DynamicNewItem } from "@/components/DynamicNewBadge";
 import type { BanTemplatesDataType } from "@shared/otherTypes";
 
 // Consts
@@ -169,7 +168,6 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
                         <DropDownSelectTrigger className="tracking-wide">
                             <button
                                 className={cn(
-                                    'relative', //FIXME: REMOVE THIS LINE - DynamicNewItem
                                     'size-10 inline-flex justify-center items-center rounded-md shrink-0',
                                     'ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                                     'border bg-black/20 shadow-sm',
@@ -178,9 +176,6 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
                                 )}
                             >
                                 <ClipboardPasteIcon className="size-5" />
-                                <DynamicNewItem featName="banTemplates" durationDays={7}>
-                                    <div className="absolute rounded-full size-2 -top-1 -right-1 bg-accent" />
-                                </DynamicNewItem>
                             </button>
                         </DropDownSelectTrigger>
                         <DropDownSelectContent className="tracking-wide w-[calc(100vw-1rem)] sm:max-w-screen-sm" align="end">

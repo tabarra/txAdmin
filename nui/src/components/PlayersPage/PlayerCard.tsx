@@ -139,23 +139,14 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
               <Typography variant="subtitle1" color="textSecondary">
                 |
               </Typography>
-              <Tooltip
-                title={playerData.name}
-                placement="top"
-                arrow
-                classes={{
-                  tooltip: classes.tooltipOverride,
-                }}
+              <Typography
+                style={{ marginLeft: 5 }}
+                noWrap
+                variant="subtitle1"
+                color="textPrimary"
               >
-                <Typography
-                  style={{ marginLeft: 5 }}
-                  noWrap
-                  variant="subtitle1"
-                  color="textPrimary"
-                >
-                  {playerData.admin && "🛡️"} {playerData.name}
-                </Typography>
-              </Tooltip>
+                {playerData.admin && "🛡️"} {playerData.displayName}
+              </Typography>
               <Typography
                 style={{ marginLeft: 7, minWidth: "fit-content" }}
                 noWrap

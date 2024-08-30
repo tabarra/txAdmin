@@ -13,6 +13,11 @@
         "schedule_warn": "Denne server er planlagt til at genstarte om %{smart_count} minut. Afslut venligst forbindelsen nu. |||| Denne server er planlagt til at genstarte om %{smart_count} minutter.",
         "schedule_warn_discord": "**%{servername}** er planlagt til at genstarte om %{smart_count} minut. |||| **%{servername}** er planlagt til at genstarte om %{smart_count} minutter."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Du er blevet bannet fra denne server på grund af \"%{reason}\". Dit ban udløber om: %{expiration}.",
         "kick_permanent": "(%{author}) Du er blevet permanent udelukket fra denne server på grund af \"%{reason}\".",
@@ -56,7 +61,7 @@
         }
     },
     "server_actions": {
-        "restarting": "Server genstarter: (%{reason}).",
+        "restarting": "Serveren genstarter: (%{reason}).",
         "restarting_discord": "**%{servername}** genstarter: (%{reason}).",
         "stopping": "Serveren er stoppet (%{reason}).",
         "stopping_discord": "**%{servername}** er lukket ned: (%{reason}).",
@@ -206,15 +211,15 @@
                 "dialog_error": "Ugyldig radiusinput. Prøv igen."
             },
             "player_ids": {
-                "title": "Vælg spiller-id'er",
-                "label": "Skift visning af spiller-id'er (og anden info) over hovedet på alle nærliggende spillere",
+                "title": "Vis spiller-id'er",
+                "label": "Skift visning af spiller-id'er (og anden info) over hovedet på alle spillere i nærheden.",
                 "alert_show": "Viser nærliggende spillerens NetID'er.",
                 "alert_hide": "Skjuler afspillerens NetID'er i nærheden."
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online spillere",
+                "online_players": "Spillere Online",
                 "players": "Spillere",
                 "search": "Søg",
                 "zero_players": "Ingen spillere fundet"
@@ -230,8 +235,8 @@
                 "label": "Sortér efter",
                 "distance": "Afstand",
                 "id": "ID",
-                "joined_first": "Deltog først",
-                "joined_last": "Deltog sidst",
+                "joined_first": "Tilsluttede først",
+                "joined_last": "Tilsluttede sidst",
                 "closest": "Tættest",
                 "farthest": "Længst"
             },

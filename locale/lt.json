@@ -13,6 +13,11 @@
         "schedule_warn": "Serveris persikraus už %{smart_count} min. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} min. Prašome atsijungti.",
         "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} min. |||| **%{servername}** automatiškai persikraus už %{smart_count} min."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Buvote užblokuotas iš serverio dėl \"%{reason}\". Blokavimas bus baigtas: %{expiration}.",
         "kick_permanent": "(%{author}) Buvote užblokuotas iš serverio visam laikui dėl \"%{reason}\".",

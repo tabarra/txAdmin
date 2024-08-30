@@ -40,7 +40,7 @@ export default async function PlayerActions(ctx: AuthedCtx) {
     } else if (action === 'whitelist') {
         return sendTypedResp(await handleSetWhitelist(ctx, player));
     } else if (action === 'message') {
-        return sendTypedResp(await handleMessage(ctx, player));
+        return sendTypedResp(await handleDirectMessage(ctx, player));
     } else if (action === 'kick') {
         return sendTypedResp(await handleKick(ctx, player));
     } else {
@@ -116,7 +116,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     } catch (error) {
         return { error: `Failed to warn player: ${(error as Error).message}` };
     }
-    ctx.admin.logAction(`Warned player [${player.netid}] ${player.displayName}: ${reason}`);
+    ctx.admin.logAction(`Warned player ${player.displayName}: ${reason}`);
 
     // Dispatch `txAdmin:events:playerWarned`
     const cmdOk = ctx.txAdmin.fxRunner.sendEvent('playerWarned', {
@@ -197,7 +197,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     //Prepare and send command
     let kickMessage, durationTranslated;
     const tOptions: any = {
-        author: ctx.admin.name,
+        author: ctx.txAdmin.adminVault.getAdminPublicName(ctx.admin.name, 'punishment'),
         reason: reason,
     };
     if (expiration !== false && duration) {
@@ -285,7 +285,7 @@ async function handleSetWhitelist(ctx: AuthedCtx, player: PlayerClass): Promise<
 /**
  * Handle Direct Message Action
  */
-async function handleMessage(ctx: AuthedCtx, player: PlayerClass): Promise<GenericApiResp> {
+async function handleDirectMessage(ctx: AuthedCtx, player: PlayerClass): Promise<GenericApiResp> {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -299,7 +299,7 @@ async function handleMessage(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     }
 
     //Check permissions
-    if (!ctx.admin.testPermission('players.message', modulename)) {
+    if (!ctx.admin.testPermission('players.direct_message', modulename)) {
         return { error: 'You don\'t have permission to execute this action.' };
     }
 
@@ -312,7 +312,7 @@ async function handleMessage(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     }
 
     try {
-        ctx.admin.logAction(`DM to #${player.displayName}: ${message}`);
+        ctx.admin.logAction(`DM to ${player.displayName}: ${message}`);
 
         // Dispatch `txAdmin:events:playerDirectMessage`
         ctx.txAdmin.fxRunner.sendEvent('playerDirectMessage', {
@@ -339,7 +339,7 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
     )) {
         return { error: 'Invalid request.' };
     }
-    const reason = ctx.request.body.reason.trim() || 'no reason provided';
+    const kickReason = ctx.request.body.reason.trim() || ctx.txAdmin.translator.t('kick_messages.unknown_reason');
 
     //Check permissions
     if (!ctx.admin.testPermission('players.kick', modulename)) {
@@ -348,20 +348,24 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
 
     //Validating server & player
     if (ctx.txAdmin.fxRunner.fxChild === null) {
-        return { error: 'The server is not online.' };
+        return { error: 'The server is offline.' };
     }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
     }
 
     try {
-        ctx.admin.logAction(`Kicked #${player.displayName}: ${reason}`);
+        ctx.admin.logAction(`Kicked ${player.displayName}: ${kickReason}`);
+        const fullReason = ctx.txAdmin.translator.t(
+            'kick_messages.player',
+            { reason: kickReason }
+        );
 
         // Dispatch `txAdmin:events:playerKicked`
         ctx.txAdmin.fxRunner.sendEvent('playerKicked', {
             target: player.netid,
             author: ctx.admin.name,
-            reason,
+            reason: fullReason,
         });
 
         return { success: true };

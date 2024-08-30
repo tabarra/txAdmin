@@ -2,7 +2,7 @@ const modulename = 'PlayerDropStatsManager';
 import fsp from 'node:fs/promises';
 import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
-import { PDLFileSchema, PDLFileType, PDLHourlyRawType, PDLHourlyType, PDLServerBootDataSchema } from './playerDropSchemas';
+import { PDLChangeEventType, PDLFileSchema, PDLFileType, PDLHourlyRawType, PDLHourlyType, PDLServerBootDataSchema } from './playerDropSchemas';
 import { classifyDropReason } from './classifyDropReason';
 import { parseFxserverVersion } from '@extras/helpers';
 import { PDL_RETENTION, PDL_UNKNOWN_LIST_SIZE_LIMIT } from './config';
@@ -10,11 +10,13 @@ import { ZodError } from 'zod';
 import { getDateHourEnc, parseDateHourEnc } from './playerDropUtils';
 import { MultipleCounter } from '../statsUtils';
 import { throttle } from 'throttle-debounce';
+import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@core/webroutes/playerDrops';
+import { migratePlayerDropsFile } from './playerDropMigrations';
 const console = consoleFactory(modulename);
 
 
 //Consts
-const LOG_DATA_FILE_VERSION = 1;
+export const LOG_DATA_FILE_VERSION = 2;
 const LOG_DATA_FILE_NAME = 'stats_playerDrop.json';
 
 
@@ -48,7 +50,7 @@ export default class PlayerDropStatsManager {
     /**
      * Get the recent category count for player drops in the last X hours
      */
-    public getRecentStats(windowHours: number) {
+    public getRecentDropTally(windowHours: number) {
         const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000) - 1;
         const flatCounts = this.eventLog
             .filter((entry) => entry.hour.dateHourTs >= logCutoff)
@@ -61,17 +63,41 @@ export default class PlayerDropStatsManager {
 
 
     /**
-     * Get the recent category count for player drops in the last X hours
+     * Get the recent log with drop/crash/changes for the last X hours
      */
-    public getRecentCrashes(windowHours: number) {
-        const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000) - 1;
-        const flatCounts = this.eventLog
+    public getRecentSummary(windowHours: number): PlayerDropsSummaryHour[] {
+        const logCutoff = (new Date).setUTCMinutes(0, 0, 0) - (windowHours * 60 * 60 * 1000);
+        const windowSummary = this.eventLog
             .filter((entry) => entry.hour.dateHourTs >= logCutoff)
-            .map((entry) => entry.crashTypes.toSortedValuesArray())
-            .flat();
-        const cumulativeCounter = new MultipleCounter();
-        cumulativeCounter.merge(flatCounts);
-        return cumulativeCounter.toSortedValuesArray();
+            .map((entry) => ({
+                hour: entry.hour.dateHourStr,
+                changes: entry.changes.length,
+                dropTypes: entry.dropTypes.toSortedValuesArray(),
+            }));
+        return windowSummary;
+    }
+
+
+    /**
+     * Get the data for the player drops drilldown card within a inclusive time window
+     */
+    public getWindowData(windowStart: number, windowEnd: number): PlayerDropsDetailedWindow {
+        const allChanges: PDLChangeEventType[] = [];
+        const crashTypes = new MultipleCounter();
+        const dropTypes = new MultipleCounter();
+        const filteredLogs = this.eventLog.filter((entry) => {
+            return entry.hour.dateHourTs >= windowStart && entry.hour.dateHourTs <= windowEnd;
+        });
+        for (const log of filteredLogs) {
+            allChanges.push(...log.changes);
+            crashTypes.merge(log.crashTypes);
+            dropTypes.merge(log.dropTypes);
+        }
+        return {
+            changes: allChanges,
+            crashTypes: crashTypes.toSortedKeysArray(true),
+            dropTypes: dropTypes.toSortedValuesArray(true),
+        };
     }
 
 
@@ -122,6 +148,7 @@ export default class PlayerDropStatsManager {
                 logRef.changes.push({
                     ts: Date.now(),
                     type: 'gameChanged',
+                    oldVersion: this.lastGameVersion,
                     newVersion: gameString,
                 });
             }
@@ -139,6 +166,7 @@ export default class PlayerDropStatsManager {
                 logRef.changes.push({
                     ts: Date.now(),
                     type: 'fxsChanged',
+                    oldVersion: this.lastServerVersion,
                     newVersion: fxsVersionString,
                 });
             }
@@ -215,8 +243,16 @@ export default class PlayerDropStatsManager {
         try {
             const rawFileData = await fsp.readFile(this.logFilePath, 'utf8');
             const fileData = JSON.parse(rawFileData);
-            if (fileData?.version !== LOG_DATA_FILE_VERSION) throw new Error('invalid version');
-            const statsData = PDLFileSchema.parse(fileData);
+            let statsData: PDLFileType;
+            if (fileData.version === LOG_DATA_FILE_VERSION) {
+                statsData = PDLFileSchema.parse(fileData);
+            } else {
+                try {
+                    statsData = await migratePlayerDropsFile(fileData);
+                } catch (error) {
+                    throw new Error(`Failed to migrate ${LOG_DATA_FILE_NAME} from ${fileData?.version} to ${LOG_DATA_FILE_VERSION}: ${(error as Error).message}`);
+                }
+            }
             this.lastGameVersion = statsData.lastGameVersion;
             this.lastServerVersion = statsData.lastServerVersion;
             this.lastResourceList = statsData.lastResourceList;

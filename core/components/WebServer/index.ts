@@ -168,7 +168,7 @@ export default class WebServer {
         try {
             // console.debug(`HTTP ${req.method} ${req.url}`);
             if (!checkHttpLoad()) return;
-            if (!checkRateLimit(req?.socket?.remoteAddress)) return; 
+            if (!checkRateLimit(req?.socket?.remoteAddress)) return;
             if (req.url.startsWith('/socket.io')) {
                 (this.io.engine as any).handleRequest(req, res);
             } else {

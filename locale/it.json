@@ -13,6 +13,11 @@
         "schedule_warn": "Questo server è programmato per riavviarsi in %{smart_count} minuti. Per cortesia uscite ora! |||| Questo server è programmato per riavviarsi in %{smart_count} minuti.",
         "schedule_warn_discord": "**%{servername}** è programmato per riavviarsi in %{smart_count} minuti. |||| **%{servername}** è programmato per riavviarsi in %{smart_count} minuti."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Sei stato bannato da questo server per \"%{reason}\". Il tuo ban scadrà in: %{expiration}.",
         "kick_permanent": "(%{author}) Sei stato bannato permanentemente da questo server per \"%{reason}\".",

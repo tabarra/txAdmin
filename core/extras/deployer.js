@@ -14,7 +14,7 @@ const console = consoleFactory(modulename);
 
 //Helper functions
 const getTimestamp = () => { return dateFormat(new Date(), 'HH:MM:ss'); };
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const isUndefined = (x) => (x === undefined);
 const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : input; };
 const canCreateFile = async (targetPath) => {
     try {

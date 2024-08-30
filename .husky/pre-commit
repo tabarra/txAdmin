@@ -7,6 +7,8 @@
 # Check if the !NC flag is present in the changes
 if git diff --staged --unified=0 --no-color | grep '^+' | grep -q '!NC'; then
   echo -e "COMMIT REJECTED: Found the !NC flag in your changes.\nMake sure you didn't accidently staged something you shouldn't!"
+  echo "Flags found:"
+  git diff --staged --unified=0 --no-color | grep -C 2 '!NC'
   exit 1
 fi
 

@@ -135,7 +135,7 @@ AddEventHandler('playerJoining', function(srcString, _oldID)
     end
 
     local playerData = {
-        name = sub(playerDetectedName or "unknown", 1, 75),
+        name = sub(playerDetectedName or "unknown", 1, 128),
         ids = GetPlayerIdentifiers(source),
         hwids = GetPlayerTokens(source),
     }

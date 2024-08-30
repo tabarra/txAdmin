@@ -27,7 +27,7 @@ RegisterNetEvent('txsv:req:sendAnnouncement', function(message)
   if type(message) ~= 'string' then
     return
   end
-  local allow = PlayerHasTxPermission(src, 'players.message')
+  local allow = PlayerHasTxPermission(src, 'announcement')
   TriggerEvent('txsv:logger:menuEvent', src, 'announcement', allow, message)
   if allow then
     PrintStructuredTrace(json.encode({

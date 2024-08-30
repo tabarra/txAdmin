@@ -1,4 +1,5 @@
 const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ'; //i,o removed
+
 export default {
     //Identifier stuff
     regexValidHwidToken: /^[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{64}$/,

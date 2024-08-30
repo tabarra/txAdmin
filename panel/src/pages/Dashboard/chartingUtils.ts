@@ -227,10 +227,13 @@ export const getThreadDisplayName = (thread: string) => {
 /**
  * Process the data to return the median player count and uptime in the last X hours
  */
-export const getServerStatsData = (lifespans: PerfLifeSpanType[], windowHours: number) => {
-    const now = Date.now();
+export const getServerStatsData = (
+    lifespans: PerfLifeSpanType[],
+    windowHours: number,
+    apiDataAge: number,
+) => {
     const windowMs = windowHours * 60 * 60 * 1000;
-    const windowStart = now - windowMs;
+    const windowStart = apiDataAge - windowMs;
 
     let uptime = 0;
     const playerCounts = [];
@@ -251,7 +254,9 @@ export const getServerStatsData = (lifespans: PerfLifeSpanType[], windowHours: n
     }
 
     return {
-        uptimePct: uptime / windowMs * 100,
+        uptimePct: apiDataAge
+            ? Math.min(100, uptime / windowMs * 100)
+            : undefined,
         medianPlayerCount: d3.quantile(playerCounts, 0.5) ?? 0,
     };
 }
