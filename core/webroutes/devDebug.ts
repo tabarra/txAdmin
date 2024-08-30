@@ -11,6 +11,7 @@ const devWarningMessage = 'The unsafe privileged /dev webroute was called and sh
 const paramsSchema = z.object({
     scope: z.string(),
 });
+let playerJoinCounter = 0;
 
 
 /**
@@ -45,6 +46,19 @@ export const post = async (ctx: AuthedCtx) => {
         try {
             if(!ctx.txAdmin.fxRunner.currentMutex){
                 return ctx.send({ error: 'server not ready' });
+            }
+            if (ctx.request.body.id === null) {
+                if (ctx.request.body.event === 'playerDropped') {
+                    const onlinePlayers = ctx.txAdmin.playerlistManager.getPlayerList();
+                    if (onlinePlayers.length){
+                        ctx.request.body.id = onlinePlayers[0].netid;
+                    }
+                } else if (ctx.request.body.event === 'playerJoining') {
+                    ctx.request.body.id = playerJoinCounter + 101;
+                }
+            }
+            if (ctx.request.body.event === 'playerJoining') {
+                playerJoinCounter++;
             }
             ctx.txAdmin.playerlistManager.handleServerEvents(ctx.request.body, ctx.txAdmin.fxRunner.currentMutex);
             return ctx.send({ success: true });
