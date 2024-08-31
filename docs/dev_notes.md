@@ -115,10 +115,16 @@
 - [x] check if the client print issues have been solved
     - https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
     - https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
+- [x] the WarningBar scrolls up with the pages when they have scroll
+- [ ] fix the message `Since this is not a critical file, ...` on first boot without txData
+    - from `SvRuntimeStatsManager` and `PlayerDropStatsManager`
+- [ ] implement `.env`
+    - Use with chokidar on `main-builder.js` to restart the build
+    - Maybe pass it through so I could use it for the server as well
+    - Don't forgor to update `development.md`
 - [ ] fix txDiagnostics (and add tx v8 heap data to it)
 - [ ] update packages
 - [ ] update wouter and add search/filters state to URL of the players/history pages 
-- [ ] Use `dotenv` or something to configure `main-builder.js` and update `development.md`
 - [ ] add `.yarn.installed` to the dist? even in dev
 - [ ] check if chat PRs were merged, and start migrating recipes to use `resources_useSystemChat`
 - [ ] check netid uint16 overflow
@@ -187,7 +193,6 @@ for log in statsLog:
     - [ ] add average session time tracking to statsManager.playerDrop
 
 - Small feats, fix, and improvements:
-    - [ ] the WarningBar scrolls up with the pages when they have scroll
     - [ ] locale file optimization - build 8201 and above
     - [ ] easter egg???
         - some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
