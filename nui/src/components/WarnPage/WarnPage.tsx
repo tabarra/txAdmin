@@ -215,7 +215,8 @@ export const WarnPage: React.FC = ({ }) => {
 //     action: 'setWarnOpen',
 //     data: {
 //       reason: 'Stop doing bad things 😠',
-//       warnedBy: 'Tabby'
+//       warnedBy: 'Tabby',
+//       isWarningNew: true,
 //     }
 //   }
 // ], 500)

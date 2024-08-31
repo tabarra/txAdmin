@@ -228,7 +228,7 @@ export class ServerPlayer extends BasePlayer {
         const actionHistory = this.getHistory();
         for (const action of actionHistory) {
             if (action.type !== 'warn' || action.revocation.timestamp !== null) continue;
-            if (!action.ack) {
+            if (!action.acked) {
                 oldestPendingWarn = action;
                 break;
             }

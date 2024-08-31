@@ -36,7 +36,7 @@ export type DatabaseActionBanType = {
 export type DatabaseActionWarnType = {
     type: 'warn';
     expiration: false; //FIXME: remove
-    ack: boolean; //if the player has acknowledged the warning
+    acked: boolean; //if the player has acknowledged the warning
 } & DatabaseActionBaseType;
 export type DatabaseActionType = DatabaseActionBanType | DatabaseActionWarnType;
 

@@ -28,6 +28,7 @@ server_scripts {
     'resource/sv_resources.lua',
     'resource/sv_playerlist.lua',
     'resource/sv_ctx.lua',
+    'resource/sv_initialData.lua',
     'resource/menu/server/sv_webpipe.lua',
     'resource/menu/server/sv_functions.lua',
     'resource/menu/server/sv_main_page.lua',

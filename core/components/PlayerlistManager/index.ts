@@ -153,10 +153,12 @@ export default class PlayerlistManager {
         const cmdData = {
             netId: playerId,
             pendingWarn: {
-                target: playerId,
                 author: pendingWarn.author,
                 reason: pendingWarn.reason,
                 actionId: pendingWarn.id,
+                targetNetId: playerId,
+                targetIds: pendingWarn.ids, //not used in the playerWarned handler
+                targetName: pendingWarn.playerName,
             }
         }
         this.#txAdmin.fxRunner.sendCommand('txaInitialData', [cmdData]);

@@ -59,11 +59,12 @@ else
     dismissKeyGroup = 1
 end
 
-RegisterNetEvent('txcl:showWarning', function(author, reason)
+RegisterNetEvent('txcl:showWarning', function(author, reason, actionId, isWarningNew)
     toggleMenuVisibility(false)
     sendMenuMessage('setWarnOpen', {
         reason = reason,
-        warnedBy = author
+        warnedBy = author,
+        isWarningNew = isWarningNew,
     })
     CreateThread(function()
         local countLimit = 100 --10 seconds
@@ -74,6 +75,7 @@ RegisterNetEvent('txcl:showWarning', function(author, reason)
                 count = count + 1
                 if count >= countLimit then
                     sendMenuMessage('closeWarning')
+                    TriggerServerEvent('txsv:ackWarning', actionId)
                     return
                 elseif math.fmod(count, 10) == 0 then
                     sendMenuMessage('pulseWarning')
@@ -85,6 +87,34 @@ RegisterNetEvent('txcl:showWarning', function(author, reason)
     end)
 end)
 
+--- Awaits the player to start walking before issuing the warning
+--- to prevent players from being warned during character selection.
+--- Unlike the warn dismissal, stopping does not reset the counter.
+--- NOTE: Doing walk detection this way because IsPedRunning isn't reliable,
+--- and IsPedStopped is true even while teleporting.
+CreateThread(function()
+    local minimumMoveCycles = 20 -- around 5 seconds of walking
+    local moveCycles = 0
+    local hasPedStartedWalking = false
+    while true do
+        Wait(250)
+        local ped = PlayerPedId()
+        if type(ped) == 'number' and ped > 0 then
+            if hasPedStartedWalking then
+                if not IsPedStopped(ped) then
+                    moveCycles = moveCycles + 1
+                    if moveCycles >= minimumMoveCycles then
+                        TriggerServerEvent('txsv:startedWalking')
+                        debugPrint('Player started walking.')
+                        return
+                    end
+                end
+            elseif IsPedWalking(ped) or IsPedRunning(ped) then
+                hasPedStartedWalking = true
+            end
+        end
+    end
+end)
 
 -- =============================================
 --  Other stuff

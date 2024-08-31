@@ -313,7 +313,7 @@ export default class PlayerDatabase {
                 author,
                 timestamp,
                 expiration: false,
-                ack: false,
+                acked: false,
                 revocation: {
                     timestamp: null,
                     author: null,

@@ -145,7 +145,7 @@ export default async (dbo) => {
         //Migrating actions
         for (const action of dbo.data.actions) {
             if (action.type === 'warn') {
-                action.ack = true;
+                action.acked = true;
             }
         }
 

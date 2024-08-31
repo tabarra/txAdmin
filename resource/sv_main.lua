@@ -181,11 +181,11 @@ local cvHideAnnouncement = GetConvarBool('txAdmin-hideDefaultAnnouncement')
 local cvHideDirectMessage = GetConvarBool('txAdmin-hideDefaultDirectMessage')
 local cvHideWarning = GetConvarBool('txAdmin-hideDefaultWarning')
 local cvHideScheduledRestartWarning = GetConvarBool('txAdmin-hideDefaultScheduledRestartWarning')
-local txaEventHandlers = {}
+TX_EVENT_HANDLERS = {}
 
 --- Handler for announcement events
 --- Broadcast admin message to all players
-txaEventHandlers.announcement = function(eventData)
+TX_EVENT_HANDLERS.announcement = function(eventData)
     local authorName = cvHideAdminInMessages and txServerName or eventData.author or 'anonym'
     if not cvHideAnnouncement then
         TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, authorName)
@@ -196,7 +196,7 @@ end
 
 --- Handler for scheduled restarts event
 --- Broadcast through an announcement that the server will restart in XX minutes
-txaEventHandlers.scheduledRestart = function(eventData)
+TX_EVENT_HANDLERS.scheduledRestart = function(eventData)
     if not cvHideScheduledRestartWarning then
         TriggerClientEvent('txcl:showAnnouncement', -1, eventData.translatedMessage, 'txAdmin')
     end
@@ -206,7 +206,7 @@ end
 
 --- Handler for player DM event
 --- Sends a direct message from an admin to a player
-txaEventHandlers.playerDirectMessage = function(eventData)
+TX_EVENT_HANDLERS.playerDirectMessage = function(eventData)
     local authorName = cvHideAdminInMessages and txServerName or eventData.author or 'anonym'
     if not cvHideDirectMessage then
         TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, authorName)
@@ -216,7 +216,7 @@ end
 
 
 --- Handler for player kicked event
-txaEventHandlers.playerKicked = function(eventData)
+TX_EVENT_HANDLERS.playerKicked = function(eventData)
     Wait(0) -- give other resources a chance to read player data
     DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
 end
@@ -224,7 +224,9 @@ end
 
 --- Handler for player warned event
 --- Warn specific player via server ID
-txaEventHandlers.playerWarned = function(eventData)
+local pendingWarnings = {}
+TX_EVENT_HANDLERS.playerWarned = function(eventData, isWarningNew)
+    if isWarningNew == nil then isWarningNew = true end
     if cvHideWarning then return end
     if eventData.targetNetId == nil then return end
 
@@ -237,8 +239,16 @@ txaEventHandlers.playerWarned = function(eventData)
         return
     end
 
+    pendingWarnings[tostring(eventData.targetNetId)] = eventData.actionId
     local authorName = cvHideAdminInPunishments and txServerName or eventData.author or 'anonym'
-    TriggerClientEvent('txcl:showWarning', eventData.targetNetId, authorName, eventData.reason)
+    TriggerClientEvent(
+        'txcl:showWarning',
+        eventData.targetNetId,
+        authorName,
+        eventData.reason,
+        eventData.actionId,
+        isWarningNew
+    )
     txPrint(string.format(
         'Warning player (#%s) %s for %s',
         eventData.targetNetId,
@@ -247,10 +257,35 @@ txaEventHandlers.playerWarned = function(eventData)
     ))
 end
 
+-- Event so the client can ack the warning
+RegisterNetEvent('txsv:ackWarning', function(actionId)
+    if pendingWarnings[tostring(source)] == actionId then
+        PrintStructuredTrace(json.encode({
+            type = 'txAdminAckWarning',
+            actionId = actionId,
+        }))
+        pendingWarnings[tostring(source)] = nil
+    end
+end)
+
+-- Remove any pending warnings when a player leaves
+AddEventHandler('playerDropped', function()
+    local srcStr = tostring(source)
+    local pendingActionId = pendingWarnings[srcStr]
+    if pendingActionId ~= nil then
+        pendingWarnings[srcStr] = nil
+        txPrint(string.format(
+            'Player #%s left without accepting the warning [%s]',
+            srcStr,
+            pendingActionId
+        ))
+    end
+end)
+
 
 --- Handler for the player banned event
 --- Ban player(s) via netid or identifiers
-txaEventHandlers.playerBanned = function(eventData)
+TX_EVENT_HANDLERS.playerBanned = function(eventData)
     Wait(0) -- give other resources a chance to read player data
     local kickCount = 0
     for _, playerID in pairs(GetPlayers()) do
@@ -281,9 +316,9 @@ end
 
 --- Handler for the imminent shutdown event
 --- Kicks all players and lock joins in preparation for server shutdown
-txaEventHandlers.serverShuttingDown = function(eventData)
+TX_EVENT_HANDLERS.serverShuttingDown = function(eventData)
     txPrint('Server shutdown imminent. Kicking all players.')
-    rejectAllConnections = true
+    isServerShuttingDown = true
     local players = GetPlayers()
     for _, serverID in pairs(players) do
         DropPlayer(serverID, '[txAdmin] ' .. eventData.message)
@@ -306,8 +341,8 @@ local function txaEvent(source, args)
     local eventData = json.decode(unDeQuote(args[2]))
     TriggerEvent('txAdmin:events:' .. eventName, eventData)
 
-    if txaEventHandlers[eventName] ~= nil then
-        return txaEventHandlers[eventName](eventData)
+    if TX_EVENT_HANDLERS[eventName] ~= nil then
+        return TX_EVENT_HANDLERS[eventName](eventData)
     end
     CancelEvent()
 end
