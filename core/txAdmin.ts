@@ -151,6 +151,9 @@ export default class TxAdmin {
         //  - adminVault before webserver
         //  - logger before fxrunner
         //FIXME: After the migration, delete the globalsInternal.
+
+        //FIXME: group the modules into two groups, one is the "core stuff" (server running, web open, banner, database, etc)
+        //FIXME: and the other group can start on the next tick
         try {
             this.adminVault = new AdminVault();
             globalsInternal.adminVault = this.adminVault;

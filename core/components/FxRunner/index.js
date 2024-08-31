@@ -7,6 +7,7 @@ import StreamValues from 'stream-json/streamers/StreamValues';
 
 import { convars, txEnv } from '@core/globalData';
 import { validateFixServerConfig } from '@core/extras/fxsConfigHelper';
+import { now } from '@extras/helpers';
 import OutputHandler from './outputHandler';
 
 import { customAlphabet } from 'nanoid/non-secure';
@@ -17,8 +18,7 @@ const genMutex = customAlphabet(dict51, 5);
 
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000); };
-const escape = (x) => { return x.toString().replace(/"/g, '\uff02'); };
+const escape = (x) => x.toString().replace(/"/g, '\uff02');
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };

@@ -1,23 +1,21 @@
 const modulename = 'WebServer:Intercom';
 import { cloneDeep }  from 'lodash-es';
-import { convars, txEnv } from '@core/globalData';
+import { txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
+import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
-
-//Helper functions
-const isUndefined = (x) => (x === undefined);
 
 
 /**
  * Intercommunications endpoint
  * @param {object} ctx
  */
-export default async function Intercom(ctx) { //TODO: type with InitializedCtx
+export default async function Intercom(ctx: InitializedCtx) {
     //Sanity check
-    if (isUndefined(ctx.params.scope)) {
+    if ((typeof (ctx as any).params.scope !== 'string') || (ctx as any).request.body === undefined) {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const scope = ctx.params.scope;
+    const scope = (ctx as any).params.scope as string;
 
     const postData = cloneDeep(ctx.request.body);
     postData.txAdminToken = true;
@@ -25,8 +23,8 @@ export default async function Intercom(ctx) { //TODO: type with InitializedCtx
     //Delegate to the specific scope functions
     if (scope == 'monitor') {
         try {
-            globals.healthMonitor.handleHeartBeat('http', postData);
-            return ctx.send(globals.statsManager.txRuntime.currHbData);
+            ctx.txAdmin.healthMonitor.handleHeartBeat('http', postData);
+            return ctx.send(ctx.txAdmin.statsManager.txRuntime.currHbData);
         } catch (error) {
             return ctx.send({
                 txAdminVersion: txEnv.txAdminVersion,
@@ -37,7 +35,7 @@ export default async function Intercom(ctx) { //TODO: type with InitializedCtx
         if (!Array.isArray(postData.resources)) {
             return ctx.utils.error(400, 'Invalid Request');
         }
-        globals.resourcesManager.tmpUpdateResourceList(postData.resources);
+        ctx.txAdmin.resourcesManager.tmpUpdateResourceList(postData.resources);
     } else {
         return ctx.send({
             type: 'danger',
