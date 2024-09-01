@@ -31,11 +31,11 @@
     - [x] apply `cleanPlayerName` to the ingame menu playerlist
     - [x] improved in game player search
     - related: https://github.com/tabarra/txAdmin/pull/968
-- [ ] Offline warning
+- [x] Offline warning
     - show when rejoin and IS_PED_WALKING, requires showing when it happened to the player (Issue #522)
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
-    - [ ] fix the `nui_warning.instruction` replacer
-    - [ ] test warn on redm
+    - [x] fix the `nui_warning.instruction` replacer
+    - [x] test warn on redm
 - [ ] New player drops page
     - [x] remove old player crashes page
     - [x] replace core webroute

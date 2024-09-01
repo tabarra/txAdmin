@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "ADVARSEL",
         "warned_by": "Advarsel fra:",
-        "instruction": "Vennligst hold [MELLOMROM] for 10 sekunder for å ta bort denne meldingen."
+        "stale_message": "Denne advarselen ble utstedt før du koblet deg til serveren.",
+        "dismiss_key": "MELLOMROM",
+        "instruction": "Vennligst hold %{key} i %{smart_count} sekund for å ta bort denne meldingen. |||| Vennligst hold %{key} i %{smart_count} sekunder for å ta bort denne meldingen."
     },
     "nui_menu": {
         "misc": {

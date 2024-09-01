@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "AVERTISSEMENT",
         "warned_by": "Avertis par:",
-        "instruction": "Maintenir [ESPACE] pendant 10 secondes pour cacher ce message."
+        "stale_message": "Cet avertissement a été émis avant que vous ne vous connectiez au serveur.",
+        "dismiss_key": "ESPACE",
+        "instruction": "Maintenir %{key} pendant %{smart_count} seconde pour cacher ce message. |||| Maintenir %{key} pendant %{smart_count} secondes pour cacher ce message."
     },
     "nui_menu": {
         "misc": {

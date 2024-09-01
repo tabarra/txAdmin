@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "警告",
         "warned_by": "操作人:",
-        "instruction": "按住 [空格] 10秒来关闭这个消息。"
+        "stale_message": "此警告是在您连接服务器之前发出的。",
+        "dismiss_key": "空格",
+        "instruction": "按住 %{key} %{smart_count}秒来关闭这个消息。 |||| 按住 %{key} %{smart_count}秒来关闭这个消息。"
     },
     "nui_menu": {
         "misc": {

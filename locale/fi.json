@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "VAROITUS",
         "warned_by": "Sinua varoitti:",
-        "instruction": "Pidä välilyöntiä pohjassa 10 sekuntia jatkaaksesi."
+        "stale_message": "Tämä varoitus annettiin ennen kuin yhdistit palvelimeen.",
+        "dismiss_key": "välilyönti",
+        "instruction": "Pidä %{key} pohjassa %{smart_count} sekunti jatkaaksesi. |||| Pidä %{key} pohjassa %{smart_count} sekuntia jatkaaksesi."
     },
     "nui_menu": {
         "misc": {

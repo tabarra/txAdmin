@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "تحذير",
         "warned_by": ":تحذير من",
-        "instruction": ".لمدة 10 ثوانٍ لتجاهل هذه الرسالة [SPACE] اضغط باستمرار على"
+        "stale_message": ".تم إصدار هذا التحذير قبل أن تتصل بالخادم",
+        "dismiss_key": "SPACE",
+        "instruction": ".اضغط باستمرار على %{key} لمدة %{smart_count} ثانية لتجاهل هذه الرسالة |||| .اضغط باستمرار على %{key} لمدة %{smart_count} ثوانٍ لتجاهل هذه الرسالة"
     },
     "nui_menu": {
         "misc": {

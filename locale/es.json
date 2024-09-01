@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "ADVERTENCIA",
         "warned_by": "Advertido por:",
-        "instruction": "Presione [ESPACIO] durante 10 segundos para descartar este mensaje."
+        "stale_message": "Esta advertencia se emitió antes de que te conectaras al servidor.",
+        "dismiss_key": "ESPACIO",
+        "instruction": "Presione %{key} durante %{smart_count} segundo para descartar este mensaje. |||| Presione %{key} durante %{smart_count} segundos para descartar este mensaje."
     },
     "nui_menu": {
         "misc": {

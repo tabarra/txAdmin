@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "CẢNH BÁO",
         "warned_by": "Cảnh cáo bởi:",
-        "instruction": "Giữ [SPACE] trong 10 giây để đóng cửa sổ này."
+        "stale_message": "Cảnh báo này đã được phát hành trước khi bạn kết nối với máy chủ.",
+        "dismiss_key": "SPACE",
+        "instruction": "Giữ %{key} trong %{smart_count} giây để đóng cửa sổ này. |||| Giữ %{key} trong %{smart_count} giây để đóng cửa sổ này."
     },
     "nui_menu": {
         "misc": {

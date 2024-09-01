@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "WARNING",
         "warned_by": "Warned by:",
-        "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
+        "stale_message": "This warning was issued before you connected to the server.",
+        "dismiss_key": "SPACE",
+        "instruction": "Hold %{key} for %{smart_count} second to dismiss this message. |||| Hold %{key} for %{smart_count} seconds to dismiss this message. "
     },
     "nui_menu": {
         "misc": {

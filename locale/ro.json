@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "AVERTIZARE",
         "warned_by": "Avertizat de:",
-        "instruction": "Țineți [SPACE] timp de 10 secunde pentru a respinge acest mesaj."
+        "stale_message": "Acest avertisment a fost emis înainte de a vă conecta la server.",
+        "dismiss_key": "SPACE",
+        "instruction": "Țineți %{key} timp de %{smart_count} secundă pentru a respinge acest mesaj. |||| Țineți %{key} timp de %{smart_count} secunde pentru a respinge acest mesaj."
     },
     "nui_menu": {
         "misc": {

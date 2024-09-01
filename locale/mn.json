@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "АНХААРУУЛГА!",
         "warned_by": "Анхааруулсан:",
-        "instruction": "[SPACE] Товчийг 10 секунд дарж арилгана уу."
+        "stale_message": "Энэхүү сануулгыг серверт холбогдохоосоо өмнө гаргасан байна.",
+        "dismiss_key": "SPACE",
+        "instruction": "%{key} товчийг %{smart_count} секунд дарж арилгана уу. |||| %{key} товчийг %{smart_count} секунд дарж арилгана уу."
     },
     "nui_menu": {
         "misc": {

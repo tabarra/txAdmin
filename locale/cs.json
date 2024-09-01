@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "VAROVÁNÍ",
         "warned_by": "Admin, který tě varoval:",
-        "instruction": "Podrž [MEZERNÍK] po dobu 10 sekund pro zavření varování."
+        "stale_message": "Toto varování bylo vydáno předtím, než jste se připojili k serveru.",
+        "dismiss_key": "MEZERNÍK",
+        "instruction": "Podrž %{key} po dobu %{smart_count} sekundy pro zavření varování. |||| Podrž %{key} po dobu %{smart_count} sekund pro zavření varování."
     },
     "nui_menu": {
         "misc": {

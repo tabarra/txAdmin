@@ -78,9 +78,13 @@ RegisterNetEvent('txcl:showWarning', function(author, reason, actionId, isWarnin
                     TriggerServerEvent('txsv:ackWarning', actionId)
                     return
                 elseif math.fmod(count, 10) == 0 then
-                    sendMenuMessage('pulseWarning')
+                    local secsRemaining = (countLimit - count) / 10
+                    sendMenuMessage('pulseWarning', secsRemaining)
                 end
             else
+                if count > 10 then
+                    sendMenuMessage('resetWarning')
+                end
                 count = 0
             end
         end

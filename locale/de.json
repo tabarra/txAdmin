@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "VERWARNUNG",
         "warned_by": "Verwarnt von:",
-        "instruction": "Halte deine [LEERTASTE] für 10 Sekunden gedrückt, um diese Mitteilung zu schließen."
+        "stale_message": "Diese Warnung wurde ausgegeben, bevor Sie sich mit dem Server verbunden haben.",
+        "dismiss_key": "LEERTASTE",
+        "instruction": "Halte deine %{key} für %{smart_count} Sekunde gedrückt, um diese Mitteilung zu schließen. |||| Halte deine %{key} für %{smart_count} Sekunden gedrückt, um diese Mitteilung zu schließen."
     },
     "nui_menu": {
         "misc": {

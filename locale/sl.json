@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "OPOZORILO",
         "warned_by": "Opozorjen s strani:",
-        "instruction": "Drži [SPACE] za 10 sekund, da to sporočilo izgine."
+        "stale_message": "To opozorilo je bilo izdano, preden ste se povezali s strežnikom.",
+        "dismiss_key": "SPACE",
+        "instruction": "Drži %{key} za %{smart_count} sekundo, da to sporočilo izgine. |||| Drži %{key} za %{smart_count} sekund, da to sporočilo izgine."
     },
     "nui_menu": {
         "misc": {

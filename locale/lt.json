@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "ĮSPĖJIMAS",
         "warned_by": "Įspėjimą skyrė:",
-        "instruction": "Laikykite [SPACE] 10 sekundžių, kad išjungtum šį pranešimą."
+        "stale_message": "Šis įspėjimas buvo išduotas prieš jums prisijungiant prie serverio.",
+        "dismiss_key": "SPACE",
+        "instruction": "Laikykite %{key} %{smart_count} sekundę, kad išjungtum šį pranešimą. |||| Laikykite %{key} %{smart_count} sekundes, kad išjungtum šį pranešimą."
     },
     "nui_menu": {
         "misc": {

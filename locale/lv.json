@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "WARNING",
         "warned_by": "Warned by:",
-        "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
+        "stale_message": "Šis brīdinājums tika izdots pirms jūs pievienojāties serverim.",
+        "dismiss_key": "SPACE",
+        "instruction": "Turiet %{key} %{smart_count} sekundi, lai noraidītu šo ziņojumu. |||| Turiet %{key} %{smart_count} sekundes, lai noraidītu šo ziņojumu."
     },
     "nui_menu": {
         "misc": {

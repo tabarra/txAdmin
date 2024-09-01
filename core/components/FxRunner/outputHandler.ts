@@ -110,6 +110,8 @@ export default class OutputHandler {
                     this.#txAdmin.playerlistManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminCommandBridge') {
                     this.bridgeCommand(data.payload);
+                } else if (data.payload.type === 'txAdminAckWarning') {
+                    this.#txAdmin.playerDatabase.ackWarnAction(data.payload.actionId);
                 }
             }
         } catch (error) {

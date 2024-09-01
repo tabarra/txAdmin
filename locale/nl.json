@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "WAARSCHUWING",
         "warned_by": "Gewaarschuwd door:",
-        "instruction": "Houd [SPATIE] 10 seconden ingedrukt om dit bericht te verbergen."
+        "stale_message": "Deze waarschuwing is afgegeven voordat je verbinding maakte met de server.",
+        "dismiss_key": "SPATIE",
+        "instruction": "Houd %{key} %{smart_count} seconde ingedrukt om dit bericht te verbergen. |||| Houd %{key} %{smart_count} seconden ingedrukt om dit bericht te verbergen."
     },
     "nui_menu": {
         "misc": {

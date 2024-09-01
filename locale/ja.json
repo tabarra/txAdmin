@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "警告",
         "warned_by": "警告した人:",
-        "instruction": "[スペース]を10秒間押し続けると、このメッセージは解除されます。"
+        "stale_message": "この警告はサーバーに接続する前に発行されました。",
+        "dismiss_key": "スペース",
+        "instruction": "%{key}を%{smart_count}秒間押し続けると、このメッセージは解除されます。 |||| %{key}を%{smart_count}秒間押し続けると、このメッセージは解除されます。"
     },
     "nui_menu": {
         "misc": {

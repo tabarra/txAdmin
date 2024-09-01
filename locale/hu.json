@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "FIGYELMEZTETÉS",
         "warned_by": "Figyelmeztetett:",
-        "instruction": "Tartsd lenyomva a [SPACE]-t 10 másodpercig, hogy eltüntesd az üzenetet."
+        "stale_message": "Ezt a figyelmeztetést még azelőtt adták ki, hogy csatlakoztál volna a szerverhez.",
+        "dismiss_key": "SPACE",
+        "instruction": "Tartsd lenyomva a %{key}-t %{smart_count} másodpercig, hogy eltüntesd az üzenetet. |||| Tartsd lenyomva a %{key}-t %{smart_count} másodpercig, hogy eltüntesd az üzenetet."
     },
     "nui_menu": {
         "misc": {

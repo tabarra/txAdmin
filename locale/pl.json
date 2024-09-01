@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "OSTRZEŻENIE",
         "warned_by": "Ostrzeżony przez:",
-        "instruction": "Przytrzymaj [SPACJA] przez 10 sekund, aby odrzucić tę wiadomość."
+        "stale_message": "To ostrzeżenie zostało wydane przed połączeniem się z serwerem.",
+        "dismiss_key": "SPACJA",
+        "instruction": "Przytrzymaj %{key} przez %{smart_count} sekundę, aby odrzucić tę wiadomość. |||| Przytrzymaj %{key} przez %{smart_count} sekundy, aby odrzucić tę wiadomość."
     },
     "nui_menu": {
         "misc": {

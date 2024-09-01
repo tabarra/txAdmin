@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "WARNING",
         "warned_by": "Warned by:",
-        "instruction": "Dokme [SPACE] ro baraye 10 saniye negah darid ta payam rad shavad."
+        "stale_message": "این هشدار قبل از اتصال شما به سرور صادر شده است.",
+        "dismiss_key": "SPACE",
+        "instruction": "Dokme %{key} ro baraye %{smart_count} sanie negah darid ta payam rad shavad. |||| Dokme %{key} ro baraye %{smart_count} sanieha negah darid ta payam rad shavad."
     },
     "nui_menu": {
         "misc": {

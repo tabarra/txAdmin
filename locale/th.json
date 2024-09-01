@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "WARNING",
         "warned_by": "Warned by:",
-        "instruction": "กด [SPACE] ค้าวไว้เป็นเวลา 10 วินาทีเพื่อปิดข้อความนี้"
+        "stale_message": "คำเตือนนี้ถูกออกก่อนที่คุณจะเชื่อมต่อกับเซิร์ฟเวอร์",
+        "dismiss_key": "SPACE",
+        "instruction": "กด %{key} ค้างไว้เป็นเวลา %{smart_count} วินาทีเพื่อปิดข้อความนี้ |||| กด %{key} ค้างไว้เป็นเวลา %{smart_count} วินาทีเพื่อปิดข้อความนี้"
     },
     "nui_menu": {
         "misc": {

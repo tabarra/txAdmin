@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "UYARI",
         "warned_by": "Uyarıldın:",
-        "instruction": "Bu mesajı geçmek için [SPACE] tuşuna 10 saniye boyunca basılı tut."
+        "stale_message": "Bu uyarı, sunucuya bağlanmadan önce verildi.",
+        "dismiss_key": "SPACE",
+        "instruction": "Bu mesajı geçmek için %{key} tuşuna %{smart_count} saniye boyunca basılı tut. |||| Bu mesajı geçmek için %{key} tuşuna %{smart_count} saniye boyunca basılı tut."
     },
     "nui_menu": {
         "misc": {

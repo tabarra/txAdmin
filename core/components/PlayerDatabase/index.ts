@@ -332,6 +332,29 @@ export default class PlayerDatabase {
         }
     }
 
+    /**
+     * Marks a warning as acknowledged
+     */
+    ackWarnAction(actionId: string) {
+        if (!this.#db.obj) throw new Error(`database not ready yet`);
+        if (typeof actionId !== 'string' || !actionId.length) throw new Error('Invalid actionId.');
+
+        try {
+            const action = this.#db.obj.chain.get('actions')
+                .find({ id: actionId })
+                .value();
+            if (!action) throw new Error(`action not found`);
+            if (action.type !== 'warn') throw new Error(`action is not a warn`);
+            action.acked = true;
+            this.#db.writeFlag(SAVE_PRIORITY_MEDIUM);
+        } catch (error) {
+            const msg = `Failed to ack warn with message: ${(error as Error).message}`;
+            console.error(msg);
+            console.verbose.dir(error);
+            throw error;
+        }
+    }
+
 
     /**
      * Revoke an action (ban, warn)

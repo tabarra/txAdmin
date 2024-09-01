@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "ADVARSEL",
         "warned_by": "Advarsel afsendt fra:",
-        "instruction": "Hold [MELLEMRUM] nede i 10 sekunder, for at afvise denne meddelelse."
+        "stale_message": "Denne advarsel blev udsendt, før du tilsluttede dig serveren.",
+        "dismiss_key": "MELLEMRUM",
+        "instruction": "Hold %{key} nede i %{smart_count} sekund for at afvise denne meddelelse. |||| Hold %{key} nede i %{smart_count} sekunder for at afvise denne meddelelse."
     },
     "nui_menu": {
         "misc": {

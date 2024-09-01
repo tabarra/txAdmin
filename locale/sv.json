@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "VARNING",
         "warned_by": "Varnad av:",
-        "instruction": "Håll in [SPACE] i 10 sekunder för att dölja detta meddelande."
+        "stale_message": "Den här varningen utfärdades innan du anslöt till servern.",
+        "dismiss_key": "SPACE",
+        "instruction": "Håll in %{key} i %{smart_count} sekund för att dölja detta meddelande. |||| Håll in %{key} i %{smart_count} sekunder för att dölja detta meddelande."
     },
     "nui_menu": {
         "misc": {

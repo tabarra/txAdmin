@@ -70,7 +70,9 @@
     "nui_warning": {
         "title": "PERINGATAN",
         "warned_by": "Diperingatkan oleh:",
-        "instruction": "Tahan [SPACE] selama 10 detik untuk mengabaikan pesan ini."
+        "stale_message": "Peringatan ini diterbitkan sebelum Anda terhubung ke server.",
+        "dismiss_key": "SPACE",
+        "instruction": "Tahan %{key} selama %{smart_count} detik untuk mengabaikan pesan ini. |||| Tahan %{key} selama %{smart_count} detik untuk mengabaikan pesan ini."
     },
     "nui_menu": {
         "misc": {
