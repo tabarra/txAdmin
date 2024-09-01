@@ -47,43 +47,42 @@ CreateThread(function()
 end)
 
 
--- vars
-local rejectAllConnections = false
-local hbReturnData = '{"error": "no data cached in sv_main.lua"}'
+-- Local variables
+local isServerShuttingDown = false
 
 
 -- =============================================
 -- MARK: Heartbeat functions
 -- =============================================
+local httpHbUrl = "http://" .. TX_LUACOMHOST .. "/intercom/monitor"
+local httpHbPayload = json.encode({ txAdminToken = TX_LUACOMTOKEN })
+local hbReturnData = '{"error": "no data cached in sv_main.lua"}'
 local function HTTPHeartBeat()
-    local url = "http://"..TX_LUACOMHOST.."/intercom/monitor"
-    local exData = {
-        txAdminToken = TX_LUACOMTOKEN
-    }
-    PerformHttpRequest(url, function(httpCode, data, resultHeaders)
+    PerformHttpRequest(httpHbUrl, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
-            hbReturnData = "HeartBeat failed with code "..httpCode.." and message: "..resp
+            hbReturnData = "HeartBeat failed with code " .. httpCode .. " and message: " .. resp
             logError(hbReturnData)
         else
             hbReturnData = resp
         end
-    end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+    end, 'POST', httpHbPayload, { ['Content-Type'] = 'application/json' })
 end
 
+local fd3HbPayload = json.encode({ type = 'txAdminHeartBeat' })
 local function FD3HeartBeat()
-    local payload = json.encode({type = 'txAdminHeartBeat'})
-    PrintStructuredTrace(payload)
+    PrintStructuredTrace(fd3HbPayload)
 end
 
 -- HTTP request handler
+local notFoundResponse = json.encode({ error = 'route not found' })
 local function handleHttp(req, res)
-    res.writeHead(200, {["Content-Type"]="application/json"})
+    res.writeHead(200, { ["Content-Type"] = "application/json" })
 
     if req.path == '/stats.json' then
         return res.send(hbReturnData)
     else
-        return res.send(json.encode({error = 'route not found'}))
+        return res.send(notFoundResponse)
     end
 end
 
@@ -353,7 +352,7 @@ end
 -- =============================================
 local function handleConnections(name, setKickReason, d)
     -- if server is shutting down
-    if rejectAllConnections then
+    if isServerShuttingDown then
         CancelEvent()
         setKickReason("[txAdmin] Server is shutting down, try again in a few seconds.")
         return

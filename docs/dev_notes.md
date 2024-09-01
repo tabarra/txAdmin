@@ -139,7 +139,23 @@
 
 
 
+## live console timestamp:
+- na virada do dia, adicionar um marker ---data---
+- whenever data arrives, push `[chan: string, data:string, pendingStart?: number]` to an array and start a ~250ms debounce
+- on debounce timer
+    - assemble all (incl. pending from previous)
+    - if last packet doesn't end in `\n`, do `packet.pendingStart = now`
+    - if any stderr, group them at the end, if any packet delayed to next debounce, also hold the stderr group
+    - flush the data to ws in a way that it gets flushed immediately
+    - start a 1500ms timer to flush any pending (do not append `\n` at the end)
+    - only add the ts marker to the start of the block, skip one `\n` if the last line didn't end with `\n`
 
+## live console persistent clear:
+- either use the timestamps from above, or
+- create butex to the FXServerLogger, so client knows when it's reset
+- when sending initial data, send also the number of bytes that have been wiped
+- upon "clear", panel saves to session storage the mutex, the bytes from item above + bytes received
+- use the data above to wipe data udner the offset when joining the session
 
 
 # Easy way of doing on/off duty scripts:

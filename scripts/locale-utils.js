@@ -71,18 +71,30 @@ const rebaseCommand = () => {
  * This is just a quick way to do some stuff without having to open all files
  */
 const processStuff = () => {
-    for (const { name, path, data } of loadedLocales) {
-        // add stuff
-        // data.nui_menu.player_modal.ids.all_hwids = 'All Hardware IDs';
+    // const joined = [];
+    // for (const { name, path, data } of loadedLocales) {
+    //     joined.push({
+    //         file: name,
+    //         language: data.$meta.label,
+    //         instruction: data.nui_warning.instruction,
+    //     });
+    // }
+    // const out = JSON.stringify(joined, null, 4) + '\n';
+    // fs.writeFileSync('./locale-joined.json', out);
+    // console.log(`Saved joined file`);
 
-        // remove stuff
-        // data.whitelist_messages = undefined;
+    // for (const { name, path, data } of loadedLocales) {
+    //     // add stuff
+    //     // data.nui_menu.player_modal.ids.all_hwids = 'All Hardware IDs';
 
-        // Save file - FIXME: commented out just to make sure i don't fuck it up by accident
-        const out = JSON.stringify(data, null, 4) + '\n';
-        fs.writeFileSync(path, out);
-        console.log(`Edited file: ${name}`);
-    }
+    //     // remove stuff
+    //     // data.whitelist_messages = undefined;
+
+    //     // Save file - FIXME: commented out just to make sure i don't fuck it up by accident
+    //     const out = JSON.stringify(data, null, 4) + '\n';
+    //     fs.writeFileSync(path, out);
+    //     console.log(`Edited file: ${name}`);
+    // }
 };
 
 /**
@@ -234,7 +246,7 @@ const checkCommand = () => {
             const correctLines = correctFormatting.split(/\n/ug);
             if (rawLinesNormalized.at(-1).length) {
                 errorsFound.push(['file', 'is not formatted correctly (must end with a newline)']);
-            } else if(rawLinesNormalized.length !== correctLines.length) {
+            } else if (rawLinesNormalized.length !== correctLines.length) {
                 errorsFound.push(['file', 'is not formatted correctly (line count)']);
             } else {
                 for (let i = 0; i < rawLinesNormalized.length; i++) {
@@ -248,7 +260,7 @@ const checkCommand = () => {
                         errorsFound.push([`line ${i + 1}`, `has wrong indentation (expected ${correctIndentSize} spaces)`]);
                         break;
                     }
-                    if(rawLinesNormalized[i].endsWith(' ')) {
+                    if (rawLinesNormalized[i].endsWith(' ')) {
                         errorsFound.push([`line ${i + 1}`, 'has trailing whitespace']);
                         break;
                     }

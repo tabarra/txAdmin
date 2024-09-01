@@ -12,7 +12,6 @@ const console = consoleFactory(modulename);
 
 
 //Consts
-const validActions = ['ban', 'warn'];
 export class DuplicateKeyError extends Error {
     readonly code = 'DUPLICATE_KEY';
     constructor(message: string) {
