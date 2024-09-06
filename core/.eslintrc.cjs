@@ -43,7 +43,7 @@ module.exports = {
             },
         }],
         'space-before-blocks': 'error',
-        quotes: ['error', 'single', { avoidEscape: true }],
+        quotes: ['error', 'single', { allowTemplateLiterals: true }],
         semi: ['error', 'always'],
         'no-trailing-spaces': ['error', {
             skipBlankLines: false,

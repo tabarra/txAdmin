@@ -8,7 +8,7 @@ import StreamValues from 'stream-json/streamers/StreamValues';
 import { convars, txEnv } from '@core/globalData';
 import { validateFixServerConfig } from '@core/extras/fxsConfigHelper';
 import { now } from '@extras/helpers';
-import OutputHandler from './outputHandler';
+import OutputHandler, { FxChildChannelType } from './outputHandler';
 
 import { customAlphabet } from 'nanoid/non-secure';
 import dict51 from 'nanoid-dictionary/nolookalikes';
@@ -23,28 +23,46 @@ const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
 const getMutableConvars = (isCmdLine = false) => {
-    const p = isCmdLine ? '+' : '';
     const playerDbConfigs = globals.playerDatabase.config;
     const checkPlayerJoin = (playerDbConfigs.onJoinCheckBan || playerDbConfigs.whitelistMode !== 'disabled');
 
-    return [
-        //type, name, value
-        [`${p}set`, 'txAdmin-serverName', globals.txAdmin.globalConfig.serverName ?? 'txAdmin'],
-        [`${p}setr`, 'txAdmin-locale', globals.translator.language ?? 'en'],
-        [`${p}set`, 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
-        [`${p}setr`, 'txAdmin-verbose', console.isVerbose],
-        [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
-        [`${p}set`, 'txAdmin-menuAlignRight', globals.txAdmin.globalConfig.menuAlignRight],
-        [`${p}set`, 'txAdmin-menuPageKey', globals.txAdmin.globalConfig.menuPageKey],
-        [`${p}set`, 'txAdmin-hideAdminInPunishments', globals.txAdmin.globalConfig.hideAdminInPunishments],
-        [`${p}set`, 'txAdmin-hideAdminInMessages', globals.txAdmin.globalConfig.hideAdminInMessages],
-        [`${p}set`, 'txAdmin-hideDefaultAnnouncement', globals.txAdmin.globalConfig.hideDefaultAnnouncement],
-        [`${p}set`, 'txAdmin-hideDefaultDirectMessage', globals.txAdmin.globalConfig.hideDefaultDirectMessage],
-        [`${p}set`, 'txAdmin-hideDefaultWarning', globals.txAdmin.globalConfig.hideDefaultWarning],
-        [`${p}set`, 'txAdmin-hideDefaultScheduledRestartWarning', globals.txAdmin.globalConfig.hideDefaultScheduledRestartWarning],
+    //type, name, value
+    const convars = [
+        ['set', 'txAdmin-serverName', globals.txAdmin.globalConfig.serverName ?? 'txAdmin'],
+        ['setr', 'txAdmin-locale', globals.translator.language ?? 'en'],
+        ['set', 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
+        ['setr', 'txAdmin-verbose', console.isVerbose],
+        ['set', 'txAdmin-checkPlayerJoin', checkPlayerJoin],
+        ['set', 'txAdmin-menuAlignRight', globals.txAdmin.globalConfig.menuAlignRight],
+        ['set', 'txAdmin-menuPageKey', globals.txAdmin.globalConfig.menuPageKey],
+        ['set', 'txAdmin-hideAdminInPunishments', globals.txAdmin.globalConfig.hideAdminInPunishments],
+        ['set', 'txAdmin-hideAdminInMessages', globals.txAdmin.globalConfig.hideAdminInMessages],
+        ['set', 'txAdmin-hideDefaultAnnouncement', globals.txAdmin.globalConfig.hideDefaultAnnouncement],
+        ['set', 'txAdmin-hideDefaultDirectMessage', globals.txAdmin.globalConfig.hideDefaultDirectMessage],
+        ['set', 'txAdmin-hideDefaultWarning', globals.txAdmin.globalConfig.hideDefaultWarning],
+        ['set', 'txAdmin-hideDefaultScheduledRestartWarning', globals.txAdmin.globalConfig.hideDefaultScheduledRestartWarning],
     ];
+
+    const prefix = isCmdLine ? '+' : '';
+    return convars.map((c) => ([
+        prefix + c[0],
+        c[1],
+        c[2].toString(),
+    ]));
 };
 
+//Blackhole event logger
+let lastBlackHoleSpewTime = 0;
+const blackHoleSpillMaxInterval = 5000;
+const chanEventBlackHole = (...args) => {
+    const currentTime = Date.now();
+    if (currentTime - lastBlackHoleSpewTime > blackHoleSpillMaxInterval) {
+        //Let's call this "hawking radiation"
+        console.verbose.error('StdIo unexpected event:');
+        console.verbose.dir(args);
+        lastLogTime = currentTime;
+    }
+};
 
 export default class FXRunner {
     constructor(txAdmin, config) {
@@ -217,8 +235,8 @@ export default class FXRunner {
                 type: 'success',
                 description: {
                     key: 'server_actions.spawning_discord',
-                    data: { servername: globals.txAdmin.globalConfig.serverName }
-                }
+                    data: { servername: globals.txAdmin.globalConfig.serverName },
+                },
             });
         }
 
@@ -291,21 +309,38 @@ export default class FXRunner {
             }
         }.bind(this));
 
-        this.fxChild.stdin.on('error', () => { });
-        this.fxChild.stdin.on('data', () => { });
+        //Default channel handlers
+        this.fxChild.stdout.on('data',
+            this.outputHandler.write.bind(
+                this.outputHandler,
+                FxChildChannelType.StdOut,
+                this.currentMutex,
+            ),
+        );
+        this.fxChild.stderr.on('data',
+            this.outputHandler.write.bind(
+                this.outputHandler,
+                FxChildChannelType.StdErr,
+                this.currentMutex,
+            ),
+        );
 
-        this.fxChild.stdout.on('error', () => { });
-        this.fxChild.stdout.on('data', this.outputHandler.write.bind(this.outputHandler, 'stdout', this.currentMutex));
+        //JsonIn channel handler
+        const jsoninPipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
+        jsoninPipe.on('data',
+            this.outputHandler.write.bind(
+                this.outputHandler,
+                FxChildChannelType.JsonIn,
+                this.currentMutex,
+            ),
+        );
 
-        this.fxChild.stderr.on('error', () => { });
-        this.fxChild.stderr.on('data', this.outputHandler.write.bind(this.outputHandler, 'stderr', this.currentMutex));
-
-        const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
-        tracePipe.on('error', (data) => {
-            //NOTE: this should be verbose warn, but since i've never seen it happen, let's see if someone reports it.
-            console.error(`FD3 decode error: ${data.message}`);
-        });
-        tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler, this.currentMutex));
+        //_Almost_ don't care
+        this.fxChild.stdin.on('error', chanEventBlackHole);
+        this.fxChild.stdin.on('data', chanEventBlackHole);
+        this.fxChild.stdout.on('error', chanEventBlackHole);
+        this.fxChild.stderr.on('error', chanEventBlackHole);
+        this.fxChild.stdio[3].on('error', chanEventBlackHole);
 
         return null;
     }
@@ -374,8 +409,8 @@ export default class FXRunner {
                 type: messageColor,
                 description: {
                     key: `server_actions.${messageType}_discord`,
-                    data: tOptions
-                }
+                    data: tOptions,
+                },
             });
 
             //Awaiting restart delay
@@ -393,7 +428,7 @@ export default class FXRunner {
             globals.statsManager.svRuntime.logServerClose(reasonString);
             return null;
         } catch (error) {
-            const msg = "Couldn't kill the server. Perhaps What Is Dead May Never Die.";
+            const msg = `Couldn't kill the server. Perhaps What Is Dead May Never Die.`;
             console.error(msg);
             console.verbose.dir(error);
             this.fxChild = null;
@@ -412,9 +447,9 @@ export default class FXRunner {
         try {
             const convarList = getMutableConvars(false);
             console.verbose.dir(convarList);
-            convarList.forEach(([type, name, value]) => {
-                this.srvCmd(formatCommand(type, name, value));
-            });
+            for (const [set, convar, value] of convarList) {
+                this.sendCommand(set, [convar, value]);
+            }
             return this.sendEvent('configChanged');
         } catch (error) {
             console.verbose.error('Error resetting server convars');

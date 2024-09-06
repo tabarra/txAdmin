@@ -80,6 +80,7 @@
     "@types/semver": "^7.5.8",
     "@types/slug": "^5.0.8",
     "@types/source-map-support": "^0.5.10",
+    "@types/stream-json": "^1.7.7",
     "utility-types": "^3.11.0",
     "vitest": "^1.6.0",
     "windows-release": "^4.0.0"

@@ -154,11 +154,7 @@ class txAdminRunner {
     }
 
     killServer() {
-        if (this.isRebootingPaused) {
-            console.log('[RUNNER] Kill request received, scheduling for unpause.');
-            this.hasPendingReboot = true;
-            return;
-        }
+        if (this.isRebootingPaused) return;
         try {
             if (this.fxChild !== null) {
                 console.log('[RUNNER] killing process.');
@@ -170,8 +166,12 @@ class txAdminRunner {
         }
     }
 
-    toggleRebootPause(forceDisable) {
-        if (forceDisable && !this.isRebootingPaused) return;
+    removeRebootPause() {
+        console.log('[RUNNER] Removing reboot pause.');
+        this.isRebootingPaused = true;
+    }
+
+    toggleRebootPause() {
         if (this.isRebootingPaused) {
             console.log('[RUNNER] Unpausing reboot.');
             this.isRebootingPaused = false;
@@ -230,7 +230,7 @@ const runDevTask = async (txVersion, preReleaseExpiration) => {
     process.stdin.on('data', (data) => {
         const cmd = data.toString().toLowerCase().trim();
         if (cmd === 'r' || cmd === 'rr') {
-            txInstance.toggleRebootPause(true);
+            txInstance.removeRebootPause();
             console.log(`[BUILDER] Restarting due to stdin request.`);
             txInstance.killServer();
             txInstance.spawnServer();
