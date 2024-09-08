@@ -14,9 +14,9 @@
         "schedule_warn_discord": "**%{servername}** se restarta za %{smart_count} minutu. |||| **%{servername}** se restarta za %{smart_count} minuta."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Svi igrači izbačeni: %{reason}.",
+        "player": "Izbačen si: %{reason}.",
+        "unknown_reason": "iz nepoznatog razloga"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Banani ste sa servera zbog \"%{reason}\". Vaš ban ističe za: %{expiration}.",
@@ -70,9 +70,9 @@
     "nui_warning": {
         "title": "UPOZORENJE",
         "warned_by": "Vas je upozorio",
-        "stale_message": "Ovo upozorenje je izdano prije nego što ste se spojili na poslužitelj.",
+        "stale_message": "Ovo upozorenje je izdano prije nego što ste se spojili na server.",
         "dismiss_key": "SPACE",
-        "instruction": "Držite %{key} %{smart_count} sekundu da vam se skine ova poruka. |||| Držite %{key} %{smart_count} sekunde da vam se skine ova poruka."
+        "instruction": "Držite [SPACE] 10 sekundi da vam se skine ova poruka."
     },
     "nui_menu": {
         "misc": {
