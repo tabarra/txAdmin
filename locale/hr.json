@@ -19,18 +19,18 @@
         "unknown_reason": "iz nepoznatog razloga"
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Banani ste sa servera zbog \"%{reason}\". Vaš ban ističe za: %{expiration}.",
-        "kick_permanent": "(%{author}) Banani ste sa servera zauvijek zbog \"%{reason}\".",
+        "kick_temporary": "(%{author}) Zabranjeni ste sa servera zbog \"%{reason}\". Vaša zabrana ističe za: %{expiration}.",
+        "kick_permanent": "(%{author}) Zabranjeni ste sa servera zauvijek zbog \"%{reason}\".",
         "reject": {
-            "title_permanent": "Banani ste sa servera zauvijek.",
-            "title_temporary": "Privremeno ste banani sa servera.",
-            "label_expiration": "Vaš ban će isteči za",
-            "label_date": "Datum bana",
-            "label_author": "Banan od",
-            "label_reason": "Razlog bana",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Poruka: Imaš više od jednog bana na ovom profilu.",
-            "note_diff_license": "Poruka: Gornji ban je stavljen na <code>license</code>, što znači da jedan od tvojih IDova/HWIDova se slažu sa tim koji ima ban."
+            "title_permanent": "Zabranjeni ste sa servera zauvijek.",
+            "title_temporary": "Privremeno ste zabranjeni sa servera.",
+            "label_expiration": "Vaša zabrana će isteči za",
+            "label_date": "Datum zabrane",
+            "label_author": "Zabranjen od",
+            "label_reason": "Razlog zabrane",
+            "label_id": "ID zabrane",
+            "note_multiple_bans": "Poruka: Imaš više od jedne zabrane na ovom profilu.",
+            "note_diff_license": "Poruka: Gornja zabrana je stavljen na <code>license</code>, što znači da jedan od tvojih IDova/HWIDova se slažu sa tim koji ima zabranu."
         }
     },
     "whitelist_messages": {
@@ -186,14 +186,14 @@
                 "title": "Izliječi",
                 "myself": {
                     "title": "Sebe",
-                    "label": "Puni vaš helt",
-                    "success_0": "Svi su hilani!",
+                    "label": "Puni vaše zdravlje",
+                    "success_0": "Svi su izliječeni!",
                     "success_1": "Sada bi se trebao osječati puno bolje!",
                     "success_2": "Napunjen do kraja!",
                     "success_3": "Bolovi uklonjeni!"
                 },
                 "everyone": {
-                    "title": "Svi",
+                    "title": "Sve",
                     "label": "Će izlječiti i oživiti sve igrače",
                     "success": "Izlječeni i oživljeni su svi igrači."
                 }
@@ -243,7 +243,7 @@
                 "farthest": "Najdalji"
             },
             "card": {
-                "health": "%{percentHealth}% helta"
+                "health": "%{percentHealth}% zdravlja"
             }
         },
         "player_modal": {
@@ -256,7 +256,7 @@
                 "info": "Info",
                 "ids": "ID-ovi",
                 "history": "Povijest",
-                "ban": "Ban"
+                "ban": "Zabrane"
             },
             "actions": {
                 "title": "Akcije igrača",
@@ -327,8 +327,8 @@
                 "btn_wl_remove": "MAKNI WL",
                 "btn_wl_success": "Status Whiteliste promijenjen.",
                 "log_label": "Log",
-                "log_empty": "Nema bana/upozorenja pronađenih.",
-                "log_ban_count": "%{smart_count} banaj |||| %{smart_count} banova",
+                "log_empty": "Nema zabrana/upozorenja pronađenih.",
+                "log_ban_count": "%{smart_count} zabrani |||| %{smart_count} zabrana",
                 "log_warn_count": "%{smart_count} upozori |||| %{smart_count} upozorenja",
                 "log_btn": "DETALJI",
                 "notes_changed": "Bilješka promijenjena.",
@@ -338,14 +338,14 @@
                 "title": "Povezana povijest",
                 "btn_revoke": "MAKNI",
                 "revoked_success": "Akcija maknuta!",
-                "banned_by": "BANAN od %{author}",
+                "banned_by": "Zabrana data od %{author}",
                 "warned_by": "UPOZOREN od %{author}",
                 "revoked_by": "Maknut od %{author}.",
                 "expired_at": "Isteko u %{date}.",
                 "expires_at": "Ističe u %{date}."
             },
             "ban": {
-                "title": "Banuj igrača",
+                "title": "Zabrani ulazak igraču",
                 "reason_placeholder": "Razlog",
                 "duration_placeholder": "Duljina",
                 "hours": "sati",
@@ -355,9 +355,9 @@
                 "permanent": "Zauvijek",
                 "custom": "Custom",
                 "helper_text": "Odaberi duljinu",
-                "submit": "Potvrdi ban",
+                "submit": "Potvrdi zabranu",
                 "reason_required": "Polje za razlog mora biti popunjeno.",
-                "success": "Igrač banan!"
+                "success": "Igraču zabranjen ulazak!"
             },
             "ids": {
                 "current_ids": "Trenutni profili",
