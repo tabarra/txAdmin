@@ -17,7 +17,6 @@ import InlineCode from '@/components/InlineCode';
 import { PlayersTableFiltersType, PlayersTableSearchType } from "@shared/playerApiTypes";
 import { useEventListener } from "usehooks-ts";
 import { Link } from "wouter";
-import { DynamicNewBadge } from "@/components/DynamicNewBadge";
 
 
 /**
@@ -244,7 +243,6 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                             <DropdownMenuTrigger className="">
                                 <Button variant="outline" className="grow md:grow-0">
                                     More
-                                    <DynamicNewBadge featName="banIdentifiersPage" durationDays={3} />
                                     <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -253,7 +251,6 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                                     <Link href="/ban-identifiers" className="cursor-pointer">
                                         <ExternalLinkIcon className="inline mr-1 h-4" />
                                         Ban Identifiers
-                                        <DynamicNewBadge featName="banIdentifiersPage" durationDays={3} />
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>

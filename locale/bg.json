@@ -13,6 +13,11 @@
         "schedule_warn": "Сървърът е планиран да се рестартира след %{smart_count} минути. Моля излезте сега. |||| Сървърът е планиран да се рестартира след %{smart_count} минути.",
         "schedule_warn_discord": "**%{servername}** ще се рестартира след %{smart_count} минути. |||| **%{servername}** ще се рестартира след %{smart_count} минути."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Вие бяхте баннат: \"%{reason}\". Твоята забрана ще изтече след: %{expiration}.",
         "kick_permanent": "(%{author}) Вие бяхте перманентно баннат от този сървър с причина: \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "ПРЕДУПРЕЖДЕНИЕ",
         "warned_by": "Предупреден от:",
-        "instruction": "Задръж [SPACE] за 10 секунди, за да махнеш предупреждението."
+        "stale_message": "Това предупреждение беше издадено преди да се свържете със сървъра.",
+        "dismiss_key": "SPACE",
+        "instruction": "Задръж %{key} за %{smart_count} секунда, за да махнеш предупреждението. |||| Задръж %{key} за %{smart_count} секунди, за да махнеш предупреждението."
     },
     "nui_menu": {
         "misc": {

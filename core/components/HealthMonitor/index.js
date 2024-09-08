@@ -3,12 +3,12 @@ import got from 'got'; //we need internal requests to have 127.0.0.1 src
 import { convars } from '@core/globalData';
 import getHostStats from './getHostStats';
 import consoleFactory from '@extras/console';
+import { now } from '@extras/helpers';
 const console = consoleFactory(modulename);
 
 
 //Helper functions
-const now = () => { return Math.round(Date.now() / 1000); };
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const isUndefined = (x) => (x === undefined);
 
 export default class HealthMonitor {
     constructor(config) {

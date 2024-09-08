@@ -13,6 +13,11 @@
         "schedule_warn": "This server is scheduled to restart in %{smart_count} minute. Please disconnect now. |||| This server is scheduled to restart in %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** серверийн ээлжит шинэчлэлт %{smart_count} минутын дараа болох гэж байна. |||| **%{servername}** хотын ээлжит шинэчлэлт хүртэл %{smart_count} минут дутуу байна."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Таны нэвтрэх эрх хязгаарлагдсан байна. Шалтгаан: \"%{reason}\". Хязгаарлагдах хугацаа: %{expiration}.",
         "kick_permanent": "(%{author}) Та тус серверт үүрд нэвтрэх эрхгүй болсон байна. \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "АНХААРУУЛГА!",
         "warned_by": "Анхааруулсан:",
-        "instruction": "[SPACE] Товчийг 10 секунд дарж арилгана уу."
+        "stale_message": "Энэхүү сануулгыг серверт холбогдохоосоо өмнө гаргасан байна.",
+        "dismiss_key": "SPACE",
+        "instruction": "%{key} товчийг %{smart_count} секунд дарж арилгана уу. |||| %{key} товчийг %{smart_count} секунд дарж арилгана уу."
     },
     "nui_menu": {
         "misc": {

@@ -4,8 +4,7 @@ import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 
-//Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const isUndefined = (x) => (x === undefined);
 
 
 /**

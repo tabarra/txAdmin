@@ -55,7 +55,10 @@ const HostStatsData = memo(({ uptimePct, medianPlayerCount, fxsMemory, nodeMemor
                     <span className="text-center sm:text-right text-sm">FXServer Memory</span>
                 </div>
             </div>
-            <div className={cn("flex items-center", nodeCustomClass ?? 'text-muted-foreground')}>
+            <div
+                className={cn("flex items-center", nodeCustomClass ?? 'text-muted-foreground')}
+                title={nodeMemory ? `${nodeMemory.used.toFixed(2)}MB / ${nodeMemory.limit}MB` : ''}
+            >
                 <MemoryStickIcon className="hidden sm:block sm:size-6 md:size-12 mr-2 opacity-75" />
                 <div className="flex flex-col mr-auto ml-auto sm:mr-0 sm:ml-auto">
                     <span className={cn("text-center sm:text-right text-xl", nodeCustomClass ?? 'text-primary')}>

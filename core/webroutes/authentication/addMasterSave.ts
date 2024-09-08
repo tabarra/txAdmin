@@ -30,7 +30,7 @@ export default async function AuthAddMasterSave(ctx: InitializedCtx) {
     //Check if there are already admins set up
     if (ctx.txAdmin.adminVault.hasAdmins()) {
         return ctx.send<ApiAddMasterSaveResp>({
-            error: `Master account already set.`,
+            error: `master_already_set`,
         });
     }
 

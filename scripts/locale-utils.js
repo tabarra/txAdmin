@@ -11,9 +11,10 @@ const langFiles = fs.readdirSync('./locale/', { withFileTypes: true })
     .map((dirent) => dirent.name);
 const loadedLocales = langFiles.map((fName) => {
     const fPath = path.join('./locale/', fName);
-    let data;
+    let raw, data;
     try {
-        data = JSON.parse(fs.readFileSync(fPath, 'utf8'));
+        raw = fs.readFileSync(fPath, 'utf8');
+        data = JSON.parse(raw);
     } catch (error) {
         console.log(chalk.red(`Failed to load ${fName}:`));
         console.log(error.message);
@@ -22,6 +23,7 @@ const loadedLocales = langFiles.map((fName) => {
     return {
         name: fName,
         path: fPath,
+        raw,
         data,
     };
 });
@@ -69,18 +71,30 @@ const rebaseCommand = () => {
  * This is just a quick way to do some stuff without having to open all files
  */
 const processStuff = () => {
-    for (const { name, path, data } of loadedLocales) {
-        // add stuff
-        // data.nui_menu.player_modal.ids.all_hwids = 'All Hardware IDs';
+    // const joined = [];
+    // for (const { name, path, data } of loadedLocales) {
+    //     joined.push({
+    //         file: name,
+    //         language: data.$meta.label,
+    //         instruction: data.nui_warning.instruction,
+    //     });
+    // }
+    // const out = JSON.stringify(joined, null, 4) + '\n';
+    // fs.writeFileSync('./locale-joined.json', out);
+    // console.log(`Saved joined file`);
 
-        // remove stuff
-        // data.whitelist_messages = undefined;
+    // for (const { name, path, data } of loadedLocales) {
+    //     // add stuff
+    //     // data.nui_menu.player_modal.ids.all_hwids = 'All Hardware IDs';
 
-        // Save file - FIXME: commented out just to make sure i don't fuck it up by accident
-        const out = JSON.stringify(data, null, 4) + '\n';
-        fs.writeFileSync(path, out);
-        console.log(`Edited file: ${name}`);
-    }
+    //     // remove stuff
+    //     // data.whitelist_messages = undefined;
+
+    //     // Save file - FIXME: commented out just to make sure i don't fuck it up by accident
+    //     const out = JSON.stringify(data, null, 4) + '\n';
+    //     fs.writeFileSync(path, out);
+    //     console.log(`Edited file: ${name}`);
+    // }
 };
 
 /**
@@ -180,7 +194,7 @@ const checkCommand = () => {
     }
 
     // For each locale
-    for (const { name, data } of loadedLocales) {
+    for (const { name, raw, data } of loadedLocales) {
         try {
             const parsedLocale = parseLocale(data);
             const parsedLocaleKeys = Object.keys(parsedLocale);
@@ -223,6 +237,33 @@ const checkCommand = () => {
                 });
                 for (const key of keysWithEmptyStrings) {
                     errorsFound.push([key, `empty string`]);
+                }
+            }
+
+            // Check if raw file is formatted correctly
+            const rawLinesNormalized = raw.split(/\r?\n/ug).map((l) => l.replace(/\r?\n$/, '\n'));
+            const correctFormatting = JSON.stringify(data, null, 4) + '\n';
+            const correctLines = correctFormatting.split(/\n/ug);
+            if (rawLinesNormalized.at(-1).length) {
+                errorsFound.push(['file', 'is not formatted correctly (must end with a newline)']);
+            } else if (rawLinesNormalized.length !== correctLines.length) {
+                errorsFound.push(['file', 'is not formatted correctly (line count)']);
+            } else {
+                for (let i = 0; i < rawLinesNormalized.length; i++) {
+                    const rawIndentSize = rawLinesNormalized[i].search(/\S/);
+                    const correctIndentSize = correctLines[i].search(/\S/);
+                    if (rawIndentSize === -1 ^ correctIndentSize === -1) {
+                        errorsFound.push([`line ${i + 1}`, 'empty line']);
+                        break;
+                    }
+                    if (rawIndentSize !== correctIndentSize) {
+                        errorsFound.push([`line ${i + 1}`, `has wrong indentation (expected ${correctIndentSize} spaces)`]);
+                        break;
+                    }
+                    if (rawLinesNormalized[i].endsWith(' ')) {
+                        errorsFound.push([`line ${i + 1}`, 'has trailing whitespace']);
+                        break;
+                    }
                 }
             }
 

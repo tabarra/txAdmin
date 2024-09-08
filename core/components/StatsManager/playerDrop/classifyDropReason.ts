@@ -63,7 +63,7 @@ const crashRulesIntl = [
     // (sv) Swedish - 0.69%
     `spelet kraschade: `,
 ];
-const exceptionRulesIntl = [
+const exceptionPrefixesIntl = [
     // (en) English - 18.46%
     `unhandled exception: `,
     // (pt) Portuguese - 15.67%
@@ -95,7 +95,7 @@ const exceptionRulesIntl = [
 
 const truncateReason = (reason: string, maxLength: number) => {
     const truncationSuffix = '[truncated]';
-    if(reason.length > maxLength){
+    if (reason.length > maxLength) {
         return reason.slice(0, maxLength - truncationSuffix.length) + truncationSuffix;
     } else {
         return reason;
@@ -126,16 +126,13 @@ export const classifyDropReason = (reason: string) => {
         return { category: 'security' };
     } else if (crashRulesIntl.some((rule) => reasonToMatch.includes(rule))) {
         const cutoffIdx = reason.indexOf(': ') + 2;
-        const msg = 'Game crashed: ' + reason.slice(cutoffIdx);
+        const msg = reason.slice(cutoffIdx);
+        const exceptionPrefix = exceptionPrefixesIntl.find((prefix) => msg.toLocaleLowerCase().startsWith(prefix));
+        const saveMsg = exceptionPrefix
+            ? 'Unhandled exception: ' + msg.slice(exceptionPrefix.length)
+            : msg;
         return {
-            cleanReason: truncateReason(msg, PDL_CRASH_REASON_CHAR_LIMIT),
-            category: 'crash'
-        };
-    } else if (exceptionRulesIntl.some((rule) => reasonToMatch.includes(rule))) {
-        const cutoffIdx = reason.indexOf(': ') + 2;
-        const msg = 'Unhandled exception: ' + reason.slice(cutoffIdx);
-        return {
-            cleanReason: truncateReason(msg, PDL_CRASH_REASON_CHAR_LIMIT),
+            cleanReason: truncateReason(saveMsg, PDL_CRASH_REASON_CHAR_LIMIT),
             category: 'crash'
         };
     } else {

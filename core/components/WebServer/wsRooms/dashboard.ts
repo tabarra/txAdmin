@@ -15,7 +15,7 @@ const getInitialData = (txAdmin: TxAdmin): DashboardDataEventType => {
     return {
         // joinLeaveTally30m: txAdmin.playerlistManager.joinLeaveTally,
         playerDrop: {
-            summaryLast6h: txAdmin.statsManager.playerDrop.getRecentStats(6),
+            summaryLast6h: txAdmin.statsManager.playerDrop.getRecentDropTally(6),
         },
         svRuntime: {
             fxsMemory: svRuntimeStats.fxsMemory,

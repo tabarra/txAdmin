@@ -27,7 +27,7 @@ git clone https://github.com/tabarra/txAdmin
 ```
 2. Install dependencies & prepare commit hook;
 ```sh
-# for each workspace (core/nui/panel/shared) + root
+# In your root folder run the following
 npm install
 npm run prepare
 ```

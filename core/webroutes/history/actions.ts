@@ -92,9 +92,8 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
     //Register action
     let actionId;
     try {
-        actionId = ctx.txAdmin.playerDatabase.registerAction(
+        actionId = ctx.txAdmin.playerDatabase.registerBanAction(
             identifiers,
-            'ban',
             ctx.admin.name,
             reason,
             expiration,
@@ -189,7 +188,7 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiOkResp> {
             actionAuthor: action.author,
             playerName: action.playerName,
             playerIds: action.ids,
-            playerHwids: action.hwids ?? [],
+            playerHwids: 'hwids' in action ? action.hwids : [],
             revokedBy: ctx.admin.name,
         });
     } catch (error) { }

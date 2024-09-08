@@ -13,6 +13,11 @@
         "schedule_warn": "Der Server wird in einer Minute neu gestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
         "schedule_warn_discord": "**%{servername}** wird in einer Minute neu gestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Du wurdest von diesem Server für %{expiration} gebannt. Grund: \"%{reason}\".",
         "kick_permanent": "(%{author}) Du wurdest permanent von diesem Server gebannt. Grund: \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "VERWARNUNG",
         "warned_by": "Verwarnt von:",
-        "instruction": "Halte deine [LEERTASTE] für 10 Sekunden gedrückt, um diese Mitteilung zu schließen."
+        "stale_message": "Diese Warnung wurde ausgegeben, bevor Sie sich mit dem Server verbunden haben.",
+        "dismiss_key": "LEERTASTE",
+        "instruction": "Halte deine %{key} für %{smart_count} Sekunde gedrückt, um diese Mitteilung zu schließen. |||| Halte deine %{key} für %{smart_count} Sekunden gedrückt, um diese Mitteilung zu schließen."
     },
     "nui_menu": {
         "misc": {
@@ -78,7 +85,7 @@
             "announcement_title": "Serverweite Ankündigung von %{author}:",
             "dialog_empty_input": "Du kannst keine leere Eingabe senden.",
             "directmessage_title": "DM von Admin %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "Für diese Aktion muss OneSync aktiviert sein."
         },
         "frozen": {
             "froze_player": "Du hast den Spieler eingefroren.",
@@ -220,11 +227,11 @@
                 "zero_players": "Keine Spieler gefunden"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "Filtern nach",
+                "no_filter": "Kein Filter",
+                "is_admin": "Ist Admin",
+                "is_injured": "Ist Verletzt / Tot",
+                "in_vehicle": "Ist in Fahrzeug"
             },
             "sort": {
                 "label": "Sortieren nach",

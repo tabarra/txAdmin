@@ -22,6 +22,13 @@ type StructuredTraceType = {
     }
 }
 
+export enum FxChildChannelType {
+    StdIn,
+    StdOut,
+    StdErr,
+    JsonIn,
+}
+
 
 /**
  * FXServer output helper that mostly relays to other components.
@@ -44,7 +51,7 @@ export default class OutputHandler {
      *   script_log
      *   script_structured_trace (handled by server logger)
      */
-    trace(mutex: string, trace: StructuredTraceType) {
+    private handleTrace(mutex: string, trace: StructuredTraceType) {
         try {
             //Filter valid and fresh packages
             if (mutex !== this.#txAdmin.fxRunner.currentMutex) return;
@@ -52,7 +59,7 @@ export default class OutputHandler {
             const { channel, data } = trace.value;
 
             //Handle bind errors
-            if (channel == 'citizen-server-impl' && data?.type == 'bind_error') {
+            if (channel === 'citizen-server-impl' && data?.type === 'bind_error') {
                 try {
                     if (!this.#txAdmin.fxRunner.restartDelayOverride) {
                         this.#txAdmin.fxRunner.restartDelayOverride = 10000;
@@ -66,7 +73,7 @@ export default class OutputHandler {
             }
 
             //Handle nucleus auth
-            if (channel == 'citizen-server-impl' && data.type == 'nucleus_connected') {
+            if (channel === 'citizen-server-impl' && data.type === 'nucleus_connected') {
                 if (typeof data.url !== 'string') {
                     console.error(`FD3 nucleus_connected event without URL.`);
                 } else {
@@ -83,19 +90,17 @@ export default class OutputHandler {
             }
 
             //Handle watchdog
-            if (channel == 'citizen-server-impl' && data.type == 'watchdog_bark') {
-                try {
-                    deferError(`Detected FXServer thread ${data.thread} hung with stack:`);
-                    deferError(`\t${data.stack}`); //TODO: add to diagnostics page
-                    deferError('Please check the resource above to prevent further hangs.');
-                } catch (e) { }
+            if (channel === 'citizen-server-impl' && data.type === 'watchdog_bark') {
+                deferError(`Detected FXServer thread ${data?.thread ?? 'unknown'} hung with stack:`);
+                deferError(`\t${data?.stack ?? 'unknown'}`); //TODO: add to diagnostics page
+                deferError('Please check the resource above to prevent further hangs.');
                 return;
             }
 
             //Handle script traces
             if (
-                channel == 'citizen-server-impl'
-                && data.type == 'script_structured_trace'
+                channel === 'citizen-server-impl'
+                && data.type === 'script_structured_trace'
                 && data.resource === 'monitor'
             ) {
                 if (data.payload.type === 'txAdminHeartBeat') {
@@ -110,6 +115,8 @@ export default class OutputHandler {
                     this.#txAdmin.playerlistManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminCommandBridge') {
                     this.bridgeCommand(data.payload);
+                } else if (data.payload.type === 'txAdminAckWarning') {
+                    this.#txAdmin.playerDatabase.ackWarnAction(data.payload.actionId);
                 }
             }
         } catch (error) {
@@ -123,7 +130,7 @@ export default class OutputHandler {
      * handles stdout and stderr from child fxserver and send to be processed by the logger
      * TODO: use zod for type safety
      */
-    bridgeCommand(payload: any) {
+    private bridgeCommand(payload: any) {
         if (payload.command === 'announcement') {
             try {
                 //Validate input
@@ -140,11 +147,12 @@ export default class OutputHandler {
                 this.#txAdmin.fxRunner.sendEvent('announcement', { message, author });
 
                 // Sending discord announcement
+                const publicAuthor = this.#txAdmin.adminVault.getAdminPublicName(payload.author, 'message');
                 this.#txAdmin.discordBot.sendAnnouncement({
                     type: 'info',
                     title: {
                         key: 'nui_menu.misc.announcement_title',
-                        data: { author }
+                        data: { author: publicAuthor }
                     },
                     description: message
                 });
@@ -162,8 +170,12 @@ export default class OutputHandler {
     /**
      * handles stdout and stderr from child fxserver and send to be processed by the logger
      */
-    write(source: string, mutex: string, data: string | Buffer) {
-        data = data.toString();
-        this.#txAdmin.logger.fxserver.writeStdIO(source, data);
+    public write(source: FxChildChannelType, mutex: string, data: string | Buffer | StructuredTraceType) {
+        if (source === FxChildChannelType.JsonIn) {
+            this.handleTrace(mutex, data as StructuredTraceType);
+        } else {
+            data = data.toString();
+            this.#txAdmin.logger.fxserver.writeStdIO(source, data);
+        }
     }
 };

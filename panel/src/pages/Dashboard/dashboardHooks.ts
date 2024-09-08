@@ -12,11 +12,11 @@ type DashboardPerfCursorDataType = {
     threadName: string;
     snap: PerfSnapType;
 };
-
 type DashboardServerStatsDataType = {
-    uptimePct: number;
-    medianPlayerCount: number;
+    uptimePct?: number;
+    medianPlayerCount?: number;
 };
+
 
 /**
  * Atoms

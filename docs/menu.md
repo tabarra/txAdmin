@@ -39,6 +39,14 @@ Convars configured in the settings page should not be set manually.
 - Description: Will change the key used for changing pages in the menu. This value must be the exact browser key code for your preferred key. You can use [this](https://keycode.info/) website and the `event.code` section to find it.
 - Default: `Tab`
 
+**txAdmin-hideAdminInPunishments**
+- Description: Never show to the players the admin name on Bans or Warns.
+- Default: `true`
+
+**txAdmin-hideAdminInMessages**
+- Description: Do not show the admin name on Announcements or DMs. 
+- Default: `false`
+
 **txAdmin-hideDefaultAnnouncement**
 - Description: Suppresses the display of announcements, allowing you to implement your own announcement via the event `txAdmin:events:announcement`.
 - Default: `false`

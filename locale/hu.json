@@ -13,6 +13,11 @@
         "schedule_warn": "A szerver ütemezett újraindítása lesz %{smart_count} perc múlva. Kérjük, lépj ki!. |||| A szerver ütemezett újraindítása lesz %{smart_count} perc múlva.",
         "schedule_warn_discord": "A(z) **%{servername}** ütemezett újraindítása lesz %{smart_count} perc múlva. |||| **%{servername}** ütemezett újraindítása lesz %{smart_count} perc múlva."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Ki lettél tiltva a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
         "kick_permanent": "(%{author}) Véglegesen ki lettél tiltva a szerverről. Indok: \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "FIGYELMEZTETÉS",
         "warned_by": "Figyelmeztetett:",
-        "instruction": "Tartsd lenyomva a [SPACE]-t 10 másodpercig, hogy eltüntesd az üzenetet."
+        "stale_message": "Ezt a figyelmeztetést még azelőtt adták ki, hogy csatlakoztál volna a szerverhez.",
+        "dismiss_key": "SPACE",
+        "instruction": "Tartsd lenyomva a %{key}-t %{smart_count} másodpercig, hogy eltüntesd az üzenetet. |||| Tartsd lenyomva a %{key}-t %{smart_count} másodpercig, hogy eltüntesd az üzenetet."
     },
     "nui_menu": {
         "misc": {

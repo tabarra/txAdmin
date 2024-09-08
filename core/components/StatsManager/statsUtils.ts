@@ -47,7 +47,7 @@ export class MultipleCounter extends Map<string, number> {
         this._clear();
     };
 
-    //Increments the count of a key by a value
+    //Returns the sum of all values
     sum() {
         return [...this.values()].reduce((a, b) => a + b, 0);
     }

@@ -9,7 +9,7 @@ import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const isUndefined = (x) => (x === undefined);
 
 const getDirectories = (source) => {
     return fse.readdirSync(source, { withFileTypes: true })
@@ -295,9 +295,9 @@ async function handleSaveLocal(ctx) {
     ctx.admin.logAction('Changing global/fxserver settings via setup stepper.');
 
     //Starting server
-    const spawnMsg = await globals.fxRunner.spawnServer(false);
-    if (spawnMsg !== null) {
-        return ctx.send({success: false, markdown: true, message: spawnMsg});
+    const spawnError = await globals.fxRunner.spawnServer(false);
+    if (spawnError !== null) {
+        return ctx.send({success: false, markdown: true, message: spawnError});
     } else {
         return ctx.send({success: true});
     }
