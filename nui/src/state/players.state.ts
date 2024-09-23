@@ -5,8 +5,9 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from "recoil";
-import { VehicleStatus, PlayerData } from "../hooks/usePlayerListListener";
+import { VehicleStatus, PlayerData, LuaPlayerData } from "../hooks/usePlayerListListener";
 import { debugData } from "../utils/debugData";
+import cleanPlayerName from "@shared/cleanPlayerName";
 
 export enum PlayerDataFilter {
   NoFilter = "noFilter",
@@ -43,10 +44,11 @@ const playersState = {
       const unfilteredPlayerStates = get(playersState.playerData) as PlayerData[];
 
       let searchFilter = (p: PlayerData) => true;
-      const formattedInput = filteredValueInput.trim().toLocaleLowerCase();
+      const formattedInput = filteredValueInput.trim();
       if (formattedInput) {
+        const searchInput = cleanPlayerName(formattedInput).pureName;
         searchFilter = (p) => {
-          return p.name.toLocaleLowerCase().includes(formattedInput)
+          return p.pureName.includes(searchInput)
             || p.id.toString().includes(formattedInput)
         };
       }
@@ -125,7 +127,7 @@ export const usePlayersFilterIsTemp = () =>
 export const useFilteredSortedPlayers = (): PlayerData[] =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
 
-debugData<PlayerData[]>(
+debugData<LuaPlayerData[]>(
   [
     {
       action: "setPlayerList",

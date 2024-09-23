@@ -110,16 +110,19 @@ export default function PlayerModalFooter({ playerRef, player }: PlayerModalFoot
         if (!player) return;
         openPromptDialog({
             title: `Warn ${player.displayName}`,
-            message: 'Type the warn reason.',
-            placeholder: 'any reason you want',
+            message: <p>
+                Type below the warn reason. <br />
+                Offline players will receive  the warning when they come back online.
+            </p>,
+            placeholder: 'The reason for the warn, rule violated, etc.',
             submitLabel: 'Send',
             required: true,
             onSubmit: (input) => {
                 playerWarnApi({
                     queryParams: playerRef,
                     data: { reason: input },
-                    genericHandler: { successMsg: 'Player warned.' },
-                    toastLoadingMessage: 'Warning player...',
+                    genericHandler: { successMsg: 'Warning sent.' },
+                    toastLoadingMessage: 'Sending warning...',
                     success: closeOnSuccess,
                 });
             }
@@ -140,7 +143,7 @@ export default function PlayerModalFooter({ playerRef, player }: PlayerModalFoot
             <Button
                 variant='outline'
                 size='sm'
-                disabled={!hasPerm('players.message') || !player || !player.isConnected}
+                disabled={!hasPerm('players.direct_message') || !player || !player.isConnected}
                 onClick={handleDm}
                 className="pl-2"
             >
@@ -163,7 +166,7 @@ export default function PlayerModalFooter({ playerRef, player }: PlayerModalFoot
             <Button
                 variant='outline'
                 size='sm'
-                disabled={!hasPerm('players.warn') || !player || !player.isConnected}
+                disabled={!hasPerm('players.warn') || !player}
                 onClick={handleWarn}
                 className="pl-2"
             >

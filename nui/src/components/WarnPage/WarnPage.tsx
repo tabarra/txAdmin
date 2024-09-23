@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { styled } from '@mui/material/styles';
 import { Box, Fade, Typography } from "@mui/material";
 import { useNuiEvent } from "../../hooks/useNuiEvent";
@@ -48,14 +48,17 @@ const WarnInnerStyles = styled('div')({
   },
   [`& .${boxClasses.instruction}`]: {
     marginTop: "1em",
-    fontSize: "0.85em",
     textAlign: "center",
+    opacity: 0.85,
   },
 });
 
 interface WarnInnerComp {
   message: string;
   warnedBy: string;
+  isWarningNew: boolean;
+  secsRemaining: number;
+  resetCounter: number;
 }
 
 const WarningIcon = () => (
@@ -69,10 +72,35 @@ const WarningIcon = () => (
   />
 );
 
-const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
+const WarnInnerComp: React.FC<WarnInnerComp> = ({
+  message,
+  warnedBy,
+  isWarningNew,
+  secsRemaining,
+  resetCounter,
+}) => {
   const t = useTranslate();
+  const instructionFontSize = Math.min(1.5, 0.9 + resetCounter  * 0.15);
 
-  return (
+  const [iHead, iTail] = t("nui_warning.instruction", {
+    key: "%R%",
+    smart_count: secsRemaining,
+  }).split("%R%", 2);
+
+  const iKey = <span style={{
+    padding: "0.15rem 0.35rem",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    border: "1px solid rgba(255, 255, 255, 0.25)",
+    fontFamily: "monospace",
+    fontSize: "1.25em",
+    letterSpacing: 1,
+    borderRadius: 4,
+    fontWeight: 600,
+  }}>
+    {t("nui_warning.dismiss_key")}
+  </span>
+
+  return (<>
     <WarnInnerStyles className={boxClasses.root}>
       <Box className={boxClasses.inner}>
         <Box className={boxClasses.title}>
@@ -83,6 +111,7 @@ const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
           <WarningIcon />
         </Box>
         <Typography
+          letterSpacing={1}
           variant="h5"
           style={{
             textAlign: "center",
@@ -91,18 +120,35 @@ const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
           {message}
         </Typography>
         <Typography
+          letterSpacing={1}
           style={{
             textAlign: "right",
             marginBottom: -20,
+            opacity: 0.85,
           }}
           variant="body2"
         >
           {t("nui_warning.warned_by")} {warnedBy}
         </Typography>
       </Box>
-      <Box className={boxClasses.instruction}>{t("nui_warning.instruction")}</Box>
+      {!isWarningNew ? (
+        <Box className={boxClasses.instruction} fontWeight={600} letterSpacing={1}>
+          {t("nui_warning.stale_message")}
+        </Box>
+      ) : null}
+
     </WarnInnerStyles>
-  );
+    <Box>
+      <span
+        style={{
+          color: "whitesmoke",
+          fontSize: `${instructionFontSize}em`,
+        }}
+      >
+        {iHead} {iKey} {iTail}
+      </span>
+    </Box>
+  </>);
 };
 
 
@@ -123,6 +169,8 @@ const MainPageStyles = styled('div')(({
     height: "100vh",
     width: "100vw",
     display: "flex",
+    flexDirection: "column",
+    gap: "1em",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(133, 3, 3, 0.95)",
@@ -152,6 +200,7 @@ const MainPageStyles = styled('div')(({
 export interface SetWarnOpenData {
   reason: string;
   warnedBy: string;
+  isWarningNew: boolean;
 }
 
 const pulseSound = new Audio("sounds/warning_pulse.mp3");
@@ -162,19 +211,34 @@ export const WarnPage: React.FC = ({ }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [warnData, setWarnData] = useState<SetWarnOpenData | null>(null);
+  const [secsRemaining, setSecsRemaining] = useState(10);
+  const [resetCounter, setResetCounter] = useState(0);
 
   useNuiEvent<SetWarnOpenData>("setWarnOpen", (warnData) => {
     setWarnData(warnData);
+    setSecsRemaining(10);
+    setResetCounter(0);
     setIsOpen(true);
     openSound.play();
   });
 
-  useNuiEvent("pulseWarning", () => {
+  useNuiEvent<number>("pulseWarning", (secsRemaining) => {
+    setSecsRemaining(secsRemaining);
     setIsMiniBounce(true);
     pulseSound.play();
     setTimeout(() => {
       setIsMiniBounce(false);
     }, 500);
+  });
+
+  useNuiEvent("resetWarning", () => {
+    setSecsRemaining(10);
+    setResetCounter((prev) => prev + 1);
+    pulseSound.pause();
+    pulseSound.currentTime = 0;
+    openSound.pause();
+    openSound.currentTime = 0;
+    openSound.play();
   });
 
   useNuiEvent("closeWarning", () => {
@@ -196,6 +260,9 @@ export const WarnPage: React.FC = ({ }) => {
           <WarnInnerComp
             message={warnData?.reason ?? ''}
             warnedBy={warnData?.warnedBy ?? ''}
+            isWarningNew={warnData?.isWarningNew ?? true}
+            secsRemaining={secsRemaining}
+            resetCounter={resetCounter}
           />
         </Box>
       </Fade>
@@ -211,7 +278,8 @@ export const WarnPage: React.FC = ({ }) => {
 //     action: 'setWarnOpen',
 //     data: {
 //       reason: 'Stop doing bad things 😠',
-//       warnedBy: 'Tabby'
+//       warnedBy: 'Tabby',
+//       isWarningNew: false,
 //     }
 //   }
 // ], 500)

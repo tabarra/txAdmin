@@ -89,7 +89,7 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
         const [multiplierInput, unit] = inputDuration.split(/\s+/);
         const multiplier = parseInt(multiplierInput);
         if (isNaN(multiplier) || multiplier < 1) {
-            throw new Error(`The duration multiplier must be a number above 1.`);
+            throw new Error(`The duration number must be at least 1.`);
         }
 
         if (unit.startsWith('hour')) {

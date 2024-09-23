@@ -5,7 +5,6 @@ import { useEffect, useRef } from "react";
 const WEBPIPE_PATH = "https://monitor/WebPipe";
 const headeruserAgent = `txAdminPanel/v${window.txConsts.txaVersion} (atop FXServer/b${window.txConsts.fxsVersion})`;
 const defaultHeaders = {
-    'User-Agent': headeruserAgent,
     'Content-Type': 'application/json; charset=UTF-8',
     'Accept': 'application/json',
 }
@@ -56,6 +55,7 @@ export const useAuthedFetcher = () => {
             method: fetchOpts.method,
             headers: {
                 ...defaultHeaders,
+                'User-Agent': headeruserAgent,
                 'X-TxAdmin-CsrfToken': csrfToken,
             },
             body: fetchOpts.body ? JSON.stringify(fetchOpts.body) : undefined,
@@ -63,7 +63,7 @@ export const useAuthedFetcher = () => {
         });
         const data = await resp.json();
         if (data?.logout) {
-            expireSess('api');
+            expireSess('useAuthedFetcher', data?.reason ?? 'unknown');
             throw new Error('Session expired');
         }
         return data;
@@ -81,12 +81,14 @@ export const fetchWithTimeout = async <T = any>(url: string, fetchOpts: SimpleFe
     const timeoutId = setTimeout(() => {
         controller.abort('timeout');
     }, fetchOpts.timeout ?? ApiTimeout.DEFAULT);
-    fetchOpts.method ??= 'GET';
 
     try {
         const response = await fetch(url, {
-            ...defaultHeaders,
-            signal: controller.signal
+            headers: defaultHeaders,
+            method: 'GET',
+            // signal: AbortSignal.timeout(fetchOpts.timeout ?? ApiTimeout.DEFAULT),
+            signal: controller.signal, //TODO: replace with the static method above
+            ...fetchOpts,
         });
         clearTimeout(timeoutId);
         return await response.json() as T;
@@ -114,7 +116,7 @@ type ApiCallOpts<RespType, ReqType> = {
         [key: string]: string;
     };
     queryParams?: {
-        [key: string]: string | number | boolean;
+        [key: string]: string | number | boolean | undefined;
     };
     timeout?: ApiTimeout;
     data?: ReqType;
@@ -165,7 +167,9 @@ export const useBackendApi = <
         if (opts.queryParams) {
             const params = new URLSearchParams();
             for (const [key, val] of Object.entries(opts.queryParams)) {
-                params.append(key, val.toString());
+                if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
+                    params.append(key, val.toString());
+                }
             }
             fetchUrl += `?${params.toString()}`;
         }

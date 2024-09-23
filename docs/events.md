@@ -42,11 +42,14 @@ Event Data:
 ## txAdmin:events:playerWarned (v3.7)
 Broadcasted when a player is warned using txAdmin.  
 Can be used with the convar `txAdmin-hideDefaultWarning` to display custom warning.  
+Note: starting on v7.3, the `target` parameter was replaced by `targetNetId`, `targetIds`, and `targetName` to accomodate offline warns.
 Event Data:
-- `target`: The id of the player that was warned.
 - `author`: The name of the admin.
 - `reason`: The reason of the warn.
 - `actionId`: The ID of this action.
+- `targetNetId`: The netid of the player that was warned, or `null` if the target is not online. Added in v7.3.
+- `targetIds`: The identifiers that were warned. Added in v7.3.
+- `targetName`: The clean name of the player warned. Added in v7.3.
 
 
 ## txAdmin:events:playerBanned (v3.7)

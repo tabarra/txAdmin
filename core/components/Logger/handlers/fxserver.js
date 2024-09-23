@@ -3,6 +3,7 @@ import bytes from 'bytes';
 import chalk from 'chalk';
 import { LoggerBase, separator } from '../loggerUtils.js';
 import consoleFactory from '@extras/console';
+import { FxChildChannelType } from '@core/components/FxRunner/outputHandler.js';
 const console = consoleFactory(modulename);
 
 
@@ -116,7 +117,7 @@ export default class FXServerLogger extends LoggerBase {
      * Handles all stdio data.
      * NOTE: XSS is NOT handled here, the frontend is responsible for it!
      *
-     * @param {String} type
+     * @param {FxChildChannelType} type
      * @param {String} data
      */
     writeStdIO(type, data) {
@@ -130,12 +131,16 @@ export default class FXServerLogger extends LoggerBase {
 
         //For the terminal
         if (!globals.fxRunner.config.quiet) {
-            const coloredAnsiData = (type === 'stdout') ? consoleData : chalk.redBright(consoleData);
+            const coloredAnsiData = (type === FxChildChannelType.StdOut)
+                ? consoleData
+                : chalk.redBright(consoleData);
             process.stdout.write(coloredAnsiData);
         }
 
         //For the live console
-        const coloredMarkData = (type === 'stdout') ? consoleData : markLines(consoleData, 'error', 'STDERR');
+        const coloredMarkData = (type === FxChildChannelType.StdOut)
+            ? consoleData
+            : markLines(consoleData, 'error', 'STDERR');
         globals.webServer.webSocket.buffer('liveconsole', coloredMarkData);
         this.appendRecent(coloredMarkData);
     }

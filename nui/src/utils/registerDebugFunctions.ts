@@ -17,6 +17,7 @@ const MenuObject = {
         data: {
           reason: reason,
           warnedBy: "Taso",
+          isWarningNew: true,
         },
       },
     ]);

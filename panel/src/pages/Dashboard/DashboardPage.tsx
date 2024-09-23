@@ -5,10 +5,12 @@ import FullPerfCard from './FullPerfCard';
 import { useSetDashboardData } from './dashboardHooks';
 import { getSocket } from '@/lib/utils';
 import ServerStatsCard from './ServerStatsCard';
-import { DynamicNewItem } from '@/components/DynamicNewBadge';
+import { useAtomValue } from 'jotai';
+import { serverConfigPendingStepAtom } from '@/hooks/status';
+import { useLocation } from 'wouter';
 
 
-export default function DashboardPage() {
+function DashboardPageInner() {
     const pageSocket = useRef<ReturnType<typeof getSocket> | null>(null);
     const setDashboardData = useSetDashboardData();
 
@@ -43,24 +45,38 @@ export default function DashboardPage() {
             </div>
             <FullPerfCard />
 
-            {/* FIXME: remove DynamicNewBadge */}
-            <DynamicNewItem featName='dashboardNewCharts' durationDays={28}>
-                <div className="mx-auto max-w-4xl w-full sm:w-auto sm:min-w-[28rem] relative overflow-hidden z-40 p-3 pr-10 flex items-center justify-between space-x-4 rounded-xl border shadow-lg transition-all text-black/75 dark:text-white/90 border-warning/70 bg-warning-hint animate-toastbar-enter opacity-50 hover:opacity-100">
-                    <div className="flex-shrink-0 flex flex-col gap-2 items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-warning stroke-warning animate-toastbar-icon">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 16v-4"></path>
-                            <path d="M12 8h.01"></path>
-                        </svg>
-                    </div>
-                    <div className="flex-grow">
-                        <span className="block whitespace-pre-line">
-                            <b>This update changes how the performance chart show its data.</b> <br />
-                            Now the histogram (colors) are based on the time spent on each bucket instead of the number of ticks. And the bucket boundaries (ms) may have changed to have a better resolution at lower tick times.
-                        </span>
-                    </div>
+            {/* TODO: maybe convert in top server warning */}
+            {/* <div className="mx-auto max-w-4xl w-full sm:w-auto sm:min-w-[28rem] relative overflow-hidden z-40 p-3 pr-10 flex items-center justify-between space-x-4 rounded-xl border shadow-lg transition-all text-black/75 dark:text-white/90 border-warning/70 bg-warning-hint animate-toastbar-enter opacity-50 hover:opacity-100">
+                <div className="flex-shrink-0 flex flex-col gap-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-warning stroke-warning animate-toastbar-icon">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4"></path>
+                        <path d="M12 8h.01"></path>
+                    </svg>
                 </div>
-            </DynamicNewItem>
+                <div className="flex-grow">
+                    <span className="block whitespace-pre-line">
+                        <b>This update changes how the performance chart show its data.</b> <br />
+                        Now the histogram (colors) are based on the time spent on each bucket instead of the number of ticks. And the bucket boundaries (ms) may have changed to have a better resolution at lower tick times.
+                    </span>
+                </div>
+            </div> */}
         </div>
     );
+}
+
+
+export default function DashboardPage() {
+    const serverConfigPendingStep = useAtomValue(serverConfigPendingStepAtom);
+    const setLocation = useLocation()[1];
+
+    if (serverConfigPendingStep === 'setup') {
+        setLocation('/server/setup');
+        return null;
+    } else if (serverConfigPendingStep === 'deployer') {
+        setLocation('/server/deployer');
+        return null;
+    } else {
+        return <DashboardPageInner />;
+    }
 }

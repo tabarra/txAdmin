@@ -2,7 +2,7 @@ const modulename = 'PlayerlistManager';
 import { cloneDeep } from 'lodash-es';
 import TxAdmin from '@core/txAdmin.js';
 import { ServerPlayer } from '@core/playerLogic/playerClasses.js';
-import { DatabasePlayerType } from '../PlayerDatabase/databaseTypes';
+import { DatabaseActionWarnType, DatabasePlayerType } from '../PlayerDatabase/databaseTypes';
 import consoleFactory from '@extras/console';
 import { PlayerDroppedEventType, PlayerJoiningEventType } from '@shared/socketioTypes';
 const console = consoleFactory(modulename);
@@ -146,6 +146,24 @@ export default class PlayerlistManager {
         return new Set(this.#playerlist.filter(p => p && p.isConnected).map(p => p!.license));
     }
 
+    /**
+     * Receives initial data callback from ServerPlayer and dispatches to the server as stdin.
+     */
+    dispatchInitialPlayerData(playerId: number, pendingWarn: DatabaseActionWarnType) {
+        const cmdData = {
+            netId: playerId,
+            pendingWarn: {
+                author: pendingWarn.author,
+                reason: pendingWarn.reason,
+                actionId: pendingWarn.id,
+                targetNetId: playerId,
+                targetIds: pendingWarn.ids, //not used in the playerWarned handler
+                targetName: pendingWarn.playerName,
+            }
+        }
+        this.#txAdmin.fxRunner.sendCommand('txaInitialData', [cmdData]);
+    }
+
 
     /**
      * Handler for all txAdminPlayerlistEvent structured trace events
@@ -158,7 +176,7 @@ export default class PlayerlistManager {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
                 if (this.#playerlist[payload.id] !== undefined) throw new Error(`duplicated player id`);
                 //TODO: pass serverInstance instead of playerDatabase
-                const svPlayer = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
+                const svPlayer = new ServerPlayer(payload.id, payload.player, this, this.#txAdmin.playerDatabase);
                 this.#playerlist[payload.id] = svPlayer;
                 this.joinLeaveLog.push([currTs, true]);
                 this.#txAdmin.logger.server.write([{

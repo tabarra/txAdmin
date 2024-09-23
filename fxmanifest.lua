@@ -11,6 +11,7 @@ ui_label 'txAdmin'
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
 fx_version 'cerulean'
 games { 'gta5', 'rdr3' }
+nui_callback_strict_mode 'true'
 
 -- NOTE: All server_scripts will be executed both on monitor and server mode 
 -- NOTE: Due to global package constraints, js scripts will be loaded from entrypoint.js
@@ -27,6 +28,7 @@ server_scripts {
     'resource/sv_resources.lua',
     'resource/sv_playerlist.lua',
     'resource/sv_ctx.lua',
+    'resource/sv_initialData.lua',
     'resource/menu/server/sv_webpipe.lua',
     'resource/menu/server/sv_functions.lua',
     'resource/menu/server/sv_main_page.lua',

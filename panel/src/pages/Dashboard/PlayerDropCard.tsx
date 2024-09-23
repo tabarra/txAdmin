@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo, useState } from 'react';
 import { Pie, DatumId, PieCustomLayerProps, ComputedDatum } from '@nivo/pie';
 import { numberToLocaleString } from '@/lib/utils';
-import { Loader2Icon, PieChartIcon } from 'lucide-react';
+import { DoorOpenIcon, Loader2Icon } from 'lucide-react';
 import { useIsDarkMode } from '@/hooks/theme';
 import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
 import { useAtomValue } from 'jotai';
@@ -29,6 +29,7 @@ export const dropReasonCategories = {
         label: 'Unknown',
         color: '#E8C1A0', //nivo
         // color2: '#E9D8A6',
+        //TODO: switch this to be the purple (#A97CD2) and use this color for resources
     },
     security: {
         label: 'Security',
@@ -237,8 +238,7 @@ export default function PlayerDropCard() {
         <div className="col-span-3 sm:col-span-2 2xl:col-span-3 py-2 md:rounded-xl border bg-card shadow-sm flex flex-col min-w-64 h-[20rem] max-h-[20rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">Player drop reasons (last 6h)</h3>
-                <div className='hidden sm:block'><PieChartIcon /></div>
-                {/* <div className='hidden sm:block'><DoorOpenIcon /></div> */}
+                <div className='hidden sm:block'><DoorOpenIcon /></div>
             </div>
             {/* <div className='font-mono'>
                 {Object.entries(dropReasonCategories).map(([reason, { label, color }]) => {

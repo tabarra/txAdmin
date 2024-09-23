@@ -6,6 +6,7 @@ import { ApiAddMasterPinReq, ApiAddMasterPinResp } from "@shared/authApiTypes";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { LogoutReasonHash } from "./Login";
 
 export default function AddMasterPin() {
     const [isRedirecting, setIsRedirecting] = useState(false);
@@ -25,8 +26,13 @@ export default function AddMasterPin() {
         }).then(res => res.json()),
         onSuccess: (data) => {
             if ('error' in data) {
-                setIsMessageError(true);
-                setMessageText(data.error);
+                if (data.error === 'master_already_set') {
+                    setIsRedirecting(true);
+                    window.location.href = `/login${LogoutReasonHash.MASTER_ALREADY_SET}`;
+                } else {
+                    setIsMessageError(true);
+                    setMessageText(data.error);
+                }
             } else {
                 setIsRedirecting(true);
                 console.log('Redirecting to', data.authUrl);

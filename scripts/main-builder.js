@@ -14,6 +14,7 @@ const txLicenseBannerFile = licenseBanner();
 
 /**
  * Extracts the version from the GITHUB_REF env var and detects if pre-release
+ * NOTE: to run locally: `GITHUB_REF="refs/tags/v7.3.0" npm run build`
  */
 const getPublishVersion = (isOptional) => {
     const workflowRef = process.env.GITHUB_REF;
@@ -88,6 +89,8 @@ class txAdminRunner {
         this.fxServerRootPath = fxServerRootPath;
         this.fxsBinPath = fxsBinPath;
         this.fxChild = null;
+        this.isRebootingPaused = false;
+        this.hasPendingReboot = false;
 
         this.spawnVariables = {
             command: fxsBinPath,
@@ -96,6 +99,12 @@ class txAdminRunner {
     }
 
     spawnServer() {
+        if (this.isRebootingPaused) {
+            console.log('[RUNNER] Boot request received, scheduling for unpause.');
+            this.hasPendingReboot = true;
+            return;
+        }
+
         //If the server is already alive
         if (this.fxChild !== null) {
             return console.error('[RUNNER] The server is already started.');
@@ -145,6 +154,7 @@ class txAdminRunner {
     }
 
     killServer() {
+        if (this.isRebootingPaused) return;
         try {
             if (this.fxChild !== null) {
                 console.log('[RUNNER] killing process.');
@@ -153,6 +163,26 @@ class txAdminRunner {
             }
         } catch (error) {
             console.error(msg);
+        }
+    }
+
+    removeRebootPause() {
+        console.log('[RUNNER] Removing reboot pause.');
+        this.isRebootingPaused = true;
+    }
+
+    toggleRebootPause() {
+        if (this.isRebootingPaused) {
+            console.log('[RUNNER] Unpausing reboot.');
+            this.isRebootingPaused = false;
+            if (this.hasPendingReboot) {
+                this.hasPendingReboot = false;
+                this.killServer();
+                this.spawnServer();
+            }
+        } else {
+            console.log('[RUNNER] Pausing reboot.');
+            this.isRebootingPaused = true;
         }
     }
 };
@@ -200,9 +230,12 @@ const runDevTask = async (txVersion, preReleaseExpiration) => {
     process.stdin.on('data', (data) => {
         const cmd = data.toString().toLowerCase().trim();
         if (cmd === 'r' || cmd === 'rr') {
+            txInstance.removeRebootPause();
             console.log(`[BUILDER] Restarting due to stdin request.`);
             txInstance.killServer();
             txInstance.spawnServer();
+        } else if (cmd === 'p' || cmd === 'pause') {
+            txInstance.toggleRebootPause();
         } else if (cmd === 'cls' || cmd === 'clear') {
             console.clear();
         }

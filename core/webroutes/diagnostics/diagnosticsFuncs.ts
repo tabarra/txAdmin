@@ -45,6 +45,7 @@ let hostStaticDataCache: HostStaticDataType;
 
 /**
  * Gets the Processes Data.
+ * FIXME: migrate to use gwmi on windows by default
  */
 export const getProcessesData = async () => {
     type ProcDataType = {
@@ -87,13 +88,24 @@ export const getProcessesData = async () => {
                 ppid: (curr.ppid == txProcessId) ? 'txAdmin' : curr.ppid,
                 name: procName,
                 cpu: curr.cpu,
-                memory: curr.memory / (MEGABYTE),
+                memory: curr.memory / MEGABYTE,
                 order: order,
             });
         });
     } catch (error) {
-        console.error('Error getting processes tree usage data.');
-        console.verbose.dir(error);
+        if ((error as any).code = 'ENOENT') {
+            console.error('Failed to get processes tree usage data.');
+            if (txEnv.isWindows) {
+                console.error('This is probably because the `wmic` command is not available in your system.');
+                console.error('If you are on Windows 11 or Windows Server 2025, you can enable it in the "Windows Features" settings.');
+            } else {
+                console.error('This is probably because the `ps` command is not available in your system.');
+                console.error('This command is part of the `procps` package in most Linux distributions.');
+            }
+        } else {
+            console.error('Error getting processes tree usage data.');
+            console.verbose.dir(error);
+        }
     }
 
     //Sort procList array
@@ -171,7 +183,7 @@ export const getFXServerData = async (txAdmin: TxAdmin) => {
 export const getHostData = async (txAdmin: TxAdmin): Promise<HostDataReturnType> => {
     const tmpDurationDebugLog = (msg: string) => {
         // @ts-expect-error
-        if(globals?.tmpSetHbDataTracking){
+        if (globals?.tmpSetHbDataTracking) {
             console.verbose.debug(`refreshHbData: ${msg}`);
         }
     }
@@ -186,7 +198,7 @@ export const getHostData = async (txAdmin: TxAdmin): Promise<HostDataReturnType>
             const userInfo = os.userInfo();
             tmpDurationDebugLog('got userInfo');
             osUsername = userInfo.username;
-        } catch (error) {}
+        } catch (error) { }
 
         try {
             const cpuStats = await si.cpu();
@@ -275,7 +287,7 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
 
     const formatQuantileTimes = (res: QuantileArrayOutput) => {
         let output = 'not enough data available';
-        if (!('notEnoughData' in res)){
+        if (!('notEnoughData' in res)) {
             const quantileTimes = [res.count.toString()];
             for (const [key, val] of Object.entries(res)) {
                 if (key === 'count') continue;

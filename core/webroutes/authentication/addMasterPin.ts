@@ -28,7 +28,7 @@ export default async function AuthAddMasterPin(ctx: InitializedCtx) {
     //Check if there are already admins set up
     if (ctx.txAdmin.adminVault.hasAdmins()) {
         return ctx.send<ApiOauthRedirectResp>({
-            error: `Master account already set.`,
+            error: `master_already_set`,
         });
     }
 

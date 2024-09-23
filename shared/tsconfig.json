@@ -1,10 +1,12 @@
 {
     "compilerOptions": {
         /* Truncated compiler options to list only relevant options */
+        "target": "es2021",
         "declaration": true,
         "declarationMap": true,
         "composite": true,
 
+        "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "outDir": "../tmp_shared_tsc",

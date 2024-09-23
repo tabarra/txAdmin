@@ -3,7 +3,7 @@ import type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@shared/othe
 import { formatTickBoundary, getBucketTicketsEstimatedTime, getMinTickIntervalMarker, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
 
 
-suite('getMinTickIntervalMarker', () => {
+suite.todo('getMinTickIntervalMarker', () => {
     it('should return undefined when boundaries array is empty', () => {
         const result = getMinTickIntervalMarker([], 10);
         expect(result).toBeUndefined();

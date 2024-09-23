@@ -4,6 +4,7 @@ import { useExpireAuthData, useSetAuthData } from '@/hooks/auth';
 import { useSetGlobalStatus } from '@/hooks/status';
 import { useProcessUpdateAvailableEvent, useSetOfflineWarning } from '@/hooks/useWarningBar';
 import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
+import { LogoutReasonHash } from '@/pages/auth/Login';
 
 
 /**
@@ -47,7 +48,7 @@ export default function MainSocket() {
             expireSession('main socketio', reason);
         });
         socket.on('refreshToUpdate', function () {
-            window.location.href = '/login#updated';
+            expireSession('main socketio', 'got refreshToUpdate', LogoutReasonHash.UPDATED);
         });
         socket.on('status', function (status) {
             setGlobalStatus(status);

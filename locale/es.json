@@ -13,6 +13,11 @@
         "schedule_warn": "El servidor se va a reiniciar en %{smart_count} minutos. Por favor desconéctense. |||| El servidor se va a reiniciar en %{smart_count} minutos.",
         "schedule_warn_discord": "**%{servername}** El servidor se va a reiniciar en %{smart_count} minutos. |||| **%{servername}** El servidor se va a reiniciar en %{smart_count} minutos."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Has sido baneado del servidor por \"%{reason}\". Tu baneo expirará en: %{expiration}.",
         "kick_permanent": "(%{author}) Has sido baneado permanentemente del servidor por \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "ADVERTENCIA",
         "warned_by": "Advertido por:",
-        "instruction": "Presione [ESPACIO] durante 10 segundos para descartar este mensaje."
+        "stale_message": "Esta advertencia se emitió antes de que te conectaras al servidor.",
+        "dismiss_key": "ESPACIO",
+        "instruction": "Presione %{key} durante %{smart_count} segundo para descartar este mensaje. |||| Presione %{key} durante %{smart_count} segundos para descartar este mensaje."
     },
     "nui_menu": {
         "misc": {

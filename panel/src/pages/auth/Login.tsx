@@ -15,6 +15,13 @@ import { useAuth } from '@/hooks/auth';
 import './components/cfxreLoginButton.css';
 import { useLocation } from "wouter";
 
+export enum LogoutReasonHash {
+    NONE = '',
+    LOGOUT = '#logout',
+    EXPIRED = '#expired',
+    UPDATED = '#updated',
+    MASTER_ALREADY_SET = '#master_already_set',
+}
 
 export default function Login() {
     const { setAuthData } = useAuth();
@@ -72,7 +79,7 @@ export default function Login() {
         onSuccess: (data) => {
             if ('error' in data) {
                 if (data.error === 'refreshToUpdate') {
-                    window.location.href = '/login#updated';
+                    window.location.href = `/login${LogoutReasonHash.UPDATED}`;
                     window.location.reload();
                 } else {
                     onErrorResponse(data.error);
@@ -92,12 +99,14 @@ export default function Login() {
     };
 
     let logoutMessage;
-    if (window.location.hash === '#logout') {
+    if (window.location.hash === LogoutReasonHash.LOGOUT) {
         logoutMessage = 'Logged Out.';
-    } else if (window.location.hash === '#expired') {
+    } else if (window.location.hash === LogoutReasonHash.EXPIRED) {
         logoutMessage = 'Session Expired.';
-    } else if (window.location.hash === '#updated') {
+    } else if (window.location.hash === LogoutReasonHash.UPDATED) {
         logoutMessage = 'txAdmin updated, please login again.';
+    } else if (window.location.hash === LogoutReasonHash.MASTER_ALREADY_SET) {
+        logoutMessage = 'Master account already configured. Please login instead.';
     }
     const displayMessage = errorMessage ?? logoutMessage;
 

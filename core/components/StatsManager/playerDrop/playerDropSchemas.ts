@@ -21,12 +21,14 @@ export const PDLServerBootDataSchema = z.object({
 export const PDLFxsChangedEventSchema = z.object({
     ts: zIntNonNegative,
     type: z.literal('fxsChanged'),
-    newVersion: z.string(), //eg: linux:7999
+    oldVersion: z.string(),
+    newVersion: z.string(),
 });
 export const PDLGameChangedEventSchema = z.object({
     ts: zIntNonNegative,
     type: z.literal('gameChanged'),
-    newVersion: z.string(), //eg: gta5:1604
+    oldVersion: z.string(),
+    newVersion: z.string(),
 });
 export const PDLResourcesChangedEventSchema = z.object({
     ts: zIntNonNegative,
@@ -34,11 +36,6 @@ export const PDLResourcesChangedEventSchema = z.object({
     resAdded: z.array(z.string().min(1)),
     resRemoved: z.array(z.string().min(1)),
 });
-// export const PDLClientChangedEventSchema = z.object({
-//     ts: zIntNonNegative,
-//     type: z.literal('clientChanged'),
-//     newVersion: z.string(),
-// });
 
 export const PDLHourlyRawSchema = z.object({
     hour: z.string(),
@@ -46,14 +43,13 @@ export const PDLHourlyRawSchema = z.object({
         PDLFxsChangedEventSchema,
         PDLGameChangedEventSchema,
         PDLResourcesChangedEventSchema,
-        // PDLClientChangedEventSchema
     ])),
     dropTypes: z.array(z.tuple([z.string(), z.number()])),
     crashTypes: z.array(z.tuple([z.string(), z.number()])),
 });
 
 export const PDLFileSchema = z.object({
-    version: z.literal(1),
+    version: z.literal(2),
     emptyReason: z.string().optional(), //If the log is empty, this will be the reason
     lastGameVersion: z.string(),
     lastServerVersion: z.string(),
@@ -70,6 +66,7 @@ export type PDLFxsChangedEventType = z.infer<typeof PDLFxsChangedEventSchema>;
 export type PDLGameChangedEventType = z.infer<typeof PDLGameChangedEventSchema>;
 export type PDLResourcesChangedEventType = z.infer<typeof PDLResourcesChangedEventSchema>;
 // export type PDLClientChangedEventType = z.infer<typeof PDLClientChangedEventSchema>;
+export type PDLChangeEventType = (PDLFxsChangedEventType | PDLGameChangedEventType | PDLResourcesChangedEventType);
 export type PDLHourlyChanges = PDLHourlyRawType['changes'];
 
 export type PDLHourlyType = {
@@ -78,3 +75,28 @@ export type PDLHourlyType = {
     dropTypes: MultipleCounter;
     crashTypes: MultipleCounter;
 };
+
+
+/**
+ * Migration schemas from v1 to v2 with changes:
+ * - added "oldVersion" to the fxsChanged and gameChanged events
+ * - removed the "Game crashed: " prefix from crash reasons
+ */
+export const PDLFxsChangedEventSchema_v1 = PDLFxsChangedEventSchema.omit({
+    oldVersion: true,
+});
+export const PDLGameChangedEventSchema_v1 = PDLGameChangedEventSchema.omit({
+    oldVersion: true,
+});
+export const PDLHourlyRawSchema_v1 = PDLHourlyRawSchema.extend({
+    changes: z.array(z.union([
+        PDLFxsChangedEventSchema_v1,
+        PDLGameChangedEventSchema_v1,
+        PDLResourcesChangedEventSchema,
+    ])),
+});
+export const PDLFileSchema_v1 = PDLFileSchema.extend({
+    version: z.literal(1),
+    log: z.array(PDLHourlyRawSchema_v1),
+});
+export type PDLFileType_v1 = z.infer<typeof PDLFileSchema_v1>;
