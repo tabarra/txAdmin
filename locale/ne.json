@@ -1,7 +1,7 @@
 {
     "$meta": {
         "label": "Nepali",
-        "humanizer_language": "np"
+        "humanizer_language": "en"
     },
     "restarter": {
         "start_timeout": "समयमै सुरु हुन असफल",
@@ -12,6 +12,11 @@
         "schedule_reason": "%{time} मा तालिकाबद्ध पुनः सुरुवात",
         "schedule_warn": "यो सर्भर %{smart_count} मिनेटमा पुनः सुरु हुन तालिकाबद्ध छ। कृपया अहिले नै डिस्कनेक्ट गर्नुहोस्। |||| यो सर्भर %{smart_count} मिनेटमा पुनः सुरु हुन तालिकाबद्ध छ।",
         "schedule_warn_discord": "**%{servername}** %{smart_count} मिनेटमा पुनः सुरु हुन तालिकाबद्ध छ। |||| **%{servername}** %{smart_count} मिनेटमा पुनः सुरु हुन तालिकाबद्ध छ।"
+    },
+    "kick_messages": {
+        "everyone": "सबैलाई किक गरिँदै",
+        "player": "खेलाडीलाई किक गरिँदै",
+        "unknown_reason": "अज्ञात कारण"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) तपाईंलाई \"%{reason}\" को कारणले यो सर्भरबाट प्रतिबन्धित गरिएको छ। तपाईंको प्रतिबन्ध %{expiration} मा समाप्त हुनेछ।",
@@ -65,6 +70,8 @@
     "nui_warning": {
         "title": "चेतावनी",
         "warned_by": "चेतावनी दिने व्यक्ति:",
+        "stale_message": "यो चेतावनी अब पुरानो भएको छ र स्वचालित रूपमा बन्द हुनेछ।",
+        "dismiss_key": "[SPACE]",
         "instruction": "यो सन्देश हटाउन [SPACE] १० सेकेन्डसम्म थिच्नुहोस्।"
     },
     "nui_menu": {
