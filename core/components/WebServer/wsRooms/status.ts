@@ -28,6 +28,7 @@ const getInitialData = (txAdmin: TxAdmin): GlobalStatusType => {
             instantiated: !!txAdmin.fxRunner.fxChild, //used to disable the control buttons
             name: txAdmin.globalConfig.serverName,
             whitelist: txAdmin.playerDatabase.config.whitelistMode,
+            cpxRaces: txAdmin.fxRunner.getCpxRaceStatus(),
         },
         // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
         scheduler: txAdmin.scheduler.getStatus(), //no push events, only passively updated

@@ -16,6 +16,7 @@ export type GlobalStatusType = {
         instantiated: boolean;
         name: string;
         whitelist: "disabled" | "adminOnly" | "guildMember" | "guildRoles" | "approvedLicense";
+        cpxRaces: string;
     };
     scheduler: {
         nextRelativeMs: number;

@@ -67,6 +67,9 @@ export default function ServerStatus() {
     let discordStatusText = '--';
     let discordStatusDescription = '--';
     let discordStatusColor: StatusBadgeTypesVars = 'default';
+    let cpxRacesStatusText = '--';
+    let cpxRacesStatusDescription = '--';
+    let cpxRacesStatusColor: StatusBadgeTypesVars = 'default';
 
     if (globalStatus) {
         //Server status
@@ -120,6 +123,16 @@ export default function ServerStatus() {
                 ? `Bot ws status: ${discordStatusMap[globalStatus.discord]}`
                 : 'Unknown status code';
         }
+
+        if (globalStatus.server.cpxRaces === 'online') {
+            cpxRacesStatusText = 'ONLINE';
+            cpxRacesStatusDescription = 'Websocket server is online.';
+            cpxRacesStatusColor = 'success';
+        } else {
+            cpxRacesStatusText = 'OFFLINE';
+            cpxRacesStatusDescription = 'Websocket server is offline.';
+            cpxRacesStatusColor = 'destructive';
+        }
     }
 
     return (
@@ -150,6 +163,13 @@ export default function ServerStatus() {
                     tooltip={discordStatusDescription}
                     type={discordStatusColor}
                 >{discordStatusText}</StatusBadge>
+            </div>
+            <div className="flex justify-between items-center text-muted-foreground text-sm gap-1.5">
+                CPX Races:
+                <StatusBadge
+                    tooltip={cpxRacesStatusDescription}
+                    type={cpxRacesStatusColor}
+                >{cpxRacesStatusText}</StatusBadge>
             </div>
         </div>
     )

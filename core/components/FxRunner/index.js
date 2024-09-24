@@ -54,6 +54,8 @@ export default class FXRunner {
 
         this.spawnVariables = null;
         this.fxChild = null;
+        this.cpxRaces = null;
+        this.cpxRacesStatus = 'offline';
         this.restartDelayOverride = 0;
         this.history = [];
         this.lastKillRequest = 0;
@@ -225,8 +227,54 @@ export default class FXRunner {
 
         //Starting server
         let pid;
+        let cpxRacesPid;
         let historyIndex;
         try {
+            /* CPX RACES */
+            const cpxRacesPath = path.resolve(this.config.serverDataPath, '..\\services\\cpx-races\\cpx-races.exe')
+            this.cpxRaces = spawn(
+                cpxRacesPath,
+                [],
+                {
+                    cwd: path.dirname(cpxRacesPath),
+                    dettached: true,
+                }
+            )
+            
+            if (typeof this.cpxRaces.pid === 'undefined') {
+                console.error(`Executon of "${cpxRacesPath}" failed.`);
+            } else {
+                cpxRacesPid = this.cpxRaces.pid.toString();
+                console.ok(`>> [${cpxRacesPid}] CPX Races Websocket Started!`);
+
+                this.cpxRaces.stdout.setEncoding('utf8');
+                this.cpxRaces.stdout.on('data', this.outputHandler.write.bind(this.outputHandler, 'stdout', this.currentMutex));
+
+                this.cpxRaces.stderr.setEncoding('utf8');
+                this.cpxRaces.stderr.on('data', this.outputHandler.write.bind(this.outputHandler, 'stderr', this.currentMutex));
+                this.cpxRacesStatus = 'online';
+
+                this.cpxRaces.on('close', (code) => {
+                    console.warn(`>> [${cpxRacesPid}] CPX Races websocket closed (${code}).`);
+                    this.cpxRacesStatus = 'offline';
+                    cpxRacesPid = undefined;
+                    globals.webServer?.webSocket.pushRefresh('status');
+                });
+                this.cpxRaces.on('error', (err) => {
+                    console.error(`>> [${cpxRacesPid}] CPX Races websocket errored: ${err.message}`);
+                    this.cpxRacesStatus = 'offline';
+                    cpxRacesPid = undefined;
+                    globals.webServer?.webSocket.pushRefresh('status');
+                });
+                this.cpxRaces.on('exit', () => {
+                    console.warn(`>> [${cpxRacesPid}] CPX Races websocket exited.`);
+                    this.cpxRacesStatus = 'offline';
+                    cpxRacesPid = undefined;
+                    globals.webServer?.webSocket.pushRefresh('status');
+                });
+            }
+
+            /* FXSERVER */
             this.fxChild = spawn(
                 this.spawnVariables.command,
                 this.spawnVariables.args,
@@ -272,13 +320,22 @@ export default class FXRunner {
             console.warn(`>> [${pid}] FXServer Closed (${printableCode}).`);
             this.history[historyIndex].timestamps.close = now();
             globals.webServer?.webSocket.pushRefresh('status');
+            if (typeof cpxRacesPid !== 'undefined') {
+                this.cpxRaces.kill();
+            }
         }.bind(this));
         this.fxChild.on('disconnect', function () {
             console.warn(`>> [${pid}] FXServer Disconnected.`);
+            if (typeof cpxRacesPid !== 'undefined') {
+                this.cpxRaces.kill();
+            }
         }.bind(this));
         this.fxChild.on('error', function (err) {
             console.warn(`>> [${pid}] FXServer Errored:`);
             console.dir(err);
+            if (typeof cpxRacesPid !== 'undefined') {
+                this.cpxRaces.kill();
+            }
         }.bind(this));
         this.fxChild.on('exit', function () {
             process.stdout.write('\n'); //Make sure this isn't concatenated with the last line
@@ -289,6 +346,9 @@ export default class FXRunner {
                 setTimeout(() => {
                     console.warn('FXServer didn\'t start. This is not an issue with txAdmin.');
                 }, 500);
+            }
+            if (typeof cpxRacesPid !== 'undefined') {
+                this.cpxRaces.kill();
             }
         }.bind(this));
 
@@ -380,7 +440,10 @@ export default class FXRunner {
                     data: tOptions
                 }
             });
-
+            
+            if (this.cpxRaces !== null) {
+                this.cpxRaces.kill();
+            }
             //Awaiting restart delay
             //The 250 is so at least everyone is kicked from the server
             await sleep(250 + this.config.shutdownNoticeDelay * 1000);
@@ -529,6 +592,16 @@ export default class FXRunner {
         }
     }
 
+    //================================================================
+    /**
+     * Returns the status of the CPX Races websocket, with the states being:
+     *  - offline
+     *  - online
+     * @returns {string} status
+     */
+    getCpxRaceStatus() {
+        return this.cpxRaces ? this.cpxRacesStatus : 'offline';
+    }
 
     //================================================================
     /**
