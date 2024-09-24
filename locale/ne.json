@@ -14,8 +14,8 @@
         "schedule_warn_discord": "**%{servername}** %{smart_count} मिनेटमा पुनः सुरु हुन तालिकाबद्ध छ। |||| **%{servername}** %{smart_count} मिनेटमा पुनः सुरु हुन तालिकाबद्ध छ।"
     },
     "kick_messages": {
-        "everyone": "सबैलाई किक गरिँदै",
-        "player": "खेलाडीलाई किक गरिँदै",
+        "everyone": "सबैलाई निकालियो कारण: %{reason}।",
+        "player": "%{name} निकालियो कारण: %{reason}।",
         "unknown_reason": "अज्ञात कारण"
     },
     "ban_messages": {
@@ -72,7 +72,7 @@
         "warned_by": "चेतावनी दिने व्यक्ति:",
         "stale_message": "यो चेतावनी अब पुरानो भएको छ र स्वचालित रूपमा बन्द हुनेछ।",
         "dismiss_key": "[SPACE]",
-        "instruction": "यो सन्देश हटाउन [SPACE] १० सेकेन्डसम्म थिच्नुहोस्।"
+        "instruction": "यो सन्देश हटाउन %{key} %{smart_count} सेकेन्डसम्म थिच्नुहोस्। |||| यो सन्देश हटाउन %{key} एक सेकेन्ड थिच्नुहोस्।"
     },
     "nui_menu": {
         "misc": {
