@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import humanizeDuration from 'humanize-duration';
-import { defaults, defaultsDeep, xor } from 'lodash-es';
+import { defaults, defaultsDeep, xor, difference } from 'lodash-es';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -215,12 +215,15 @@ const checkCommand = () => {
             // Skip the rest of the checks if there are missing/excess keys
             if (!diffKeys.length) {
                 // Checking specials (placeholders or smart time division)
-                const keysWithDiffSpecials = defaultLocaleKeys.filter((k) => {
-                    return xor(defaultLocaleParsed[k].specials, parsedLocale[k].specials).length;
-                });
-                for (const key of keysWithDiffSpecials) {
-                    const defaultSpecialsString = JSON.stringify(defaultLocaleParsed[key].specials);
-                    errorsFound.push([key, `must contain the placeholders ${defaultSpecialsString}`]);
+                for (const key of defaultLocaleKeys) {
+                    const missing = difference(defaultLocaleParsed[key].specials, parsedLocale[key].specials);
+                    if (missing.length) {
+                        errorsFound.push([key, `must contain the placeholders ${missing.join(', ')}`]);
+                    }
+                    const excess = difference(parsedLocale[key].specials, defaultLocaleParsed[key].specials);
+                    if (excess.length) {
+                        errorsFound.push([key, `contain unknown placeholders: ${excess.join(', ')}`]);
+                    }
                 }
 
                 // Check for untrimmed strings
