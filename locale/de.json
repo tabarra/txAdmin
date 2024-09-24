@@ -78,7 +78,7 @@
             "announcement_title": "Serverweite Ankündigung von %{author}:",
             "dialog_empty_input": "Du kannst keine leere Eingabe senden.",
             "directmessage_title": "DM von Admin %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "Diese Aktion erfordert, dass OneSync aktiviert ist."
         },
         "frozen": {
             "froze_player": "Du hast den Spieler eingefroren.",
