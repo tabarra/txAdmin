@@ -15,7 +15,7 @@
     },
     "kick_messages": {
         "everyone": "सबैलाई निकालियो कारण: %{reason}।",
-        "player": "%{name} निकालियो कारण: %{reason}।",
+        "player": "तिमीलाई निकालियो कारण: %{reason}।",
         "unknown_reason": "अज्ञात कारण"
     },
     "ban_messages": {
