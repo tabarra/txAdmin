@@ -1,12 +1,18 @@
+Legend:
+- [ ] -> Not started
+- [x] -> Completed
+- [!] -> Attention needed
+- [?] -> Lower priority or pending investigation
+
 ## Previous bugs
-- [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
+- [?] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
 - [x] player/history modal is cutting bottom of title (test with "jgpq", etc)
 - [x] `lipsum` suffix to all the crash reasons
 - [x] thread chart data is the cumulative sum and not the diff, so it "averages out"
 - [x] use the fxRunner PID to get the correct fxserver process - perfUtils.fetchFxsMemory
 - [x] fix the uptime detection
-- [ ] investigate player desync issues
+- [?] investigate player desync issues
 
 ## Highlights
 - [x] Anonymous admin actions (issue #893)
@@ -59,38 +65,39 @@
         - change logic of backend to sort by count by default
         - then on the frontend if it's `crashesSortByReason`, then array.slice.sort(...)
         - copy the sort code from [](/core/components/StatsManager/statsUtils.ts#L87)
-    - [ ] review page layout: 
-        - [ ] make it less card-y
-        - [ ] fix crashes table widening the outer shell - is it just the scroll?
-        - [ ] fix crashes table is not responsive
-        - [ ] fix scroll popping in/out
     - [ ] adapt code to track resource drops + adjust categories according to the new ones
         - server shutting down should not be counted
         - check dashboard player drops chart brightness and "By Resources" overflow
-    - Optional stuff:
-        - [ ] add drilldown interval buttons
+    - [?] review page layout: 
+        - [?] make it less card-y
+        - [?] fix crashes table widening the outer shell - is it just the scroll?
+        - [?] fix crashes table is not responsive
+        - [?] fix scroll popping in/out
+    - [?] add drilldown interval buttons
 - Dashboard stuff:
-    - [ ] add testing for getServerStatsData
-    - [ ] fix getMinTickIntervalMarker behavior when 0.2
-    - [ ] warning for top servers
-    - StatsManager.svRuntime:
-        - [ ] write log optimizer and remove the webroute 30h filter
-    - thread perf chart:
-        - [ ] color should change correctly at the min interval marker point
-        - [ ] change the bg color to the color of the average ticket with heavy transparency?
+    - [?] add testing for getServerStatsData
+    - [?] fix getMinTickIntervalMarker behavior when 0.2
+    - [?] warning for top servers
     - full perf chart:
         - [x] increase the size of the cursor Y value indicator? maybe move to where the mouse is instead of x=0
         - [x] increase `h-[26rem]` back to 28 after removing the new chart warning
-        - [ ] buttons to show memory usage, maybe hide player count
-        - [ ] calculate initial zoom of 30h, maybe some linear interpolation
-        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
-        - [ ] don't clear svg on render, use d3 joins
-        - [ ] swr disable revalidateOnFocus and use interval
+        - [!] swr disable revalidateOnFocus and use interval
             - or some kind of push from the dashboard room event
+        - [ ] buttons to show memory usage, maybe hide player count
+        - [ ] calculate initial zoom of 30h
+            - Initial zoom code: https://observablehq.com/@d3/zoomable-area-chart?intent=fork
+        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
+        - [?] show server close reason
+        - [?] don't clear svg on render, use d3 joins
+    - StatsManager.svRuntime:
+        - [?] write log optimizer and remove the webroute 30h filter
+    - thread perf chart:
+        - [?] add the good/bad markers?
+        - [?] color should change correctly at the min interval marker point
+        - [?] change the bg color to the color of the average ticket with heavy transparency?
 
 ## Small feat
 - [x] make server v8 heap reports faster to large changes
-- [x] logout now brings to the login page with post-login redirect
 - [x] messages to improve:
     - [x] kick
         - [edit](/core/webroutes/player/actions.ts#L342)
@@ -100,42 +107,59 @@
         - change to `admin request`
 - [x] separate "announcements" and "dm" permissions
 - [x] add "this player is banned until: xxx" to the player modal
-- [x] enable nui strict mode
-- [ ] migration to change "revocation" to optional
-    - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
 - [ ] track channel of last console output, and if it's different prefix a `\n`
 - [ ] add more menu keybinds
     - check if the RegisterCommand is colocated
     - need to add and test `if not menuIsAccessible then return end` to all keybinds
 
+## Fixes
+- [x] logout now brings to the login page with post-login redirect
+- [x] fix new dashboard not redirecting to set up
+- [x] the WarningBar scrolls up with the pages when they have scroll
+- [!] fix the spam of `[tx:WebServer:AuthMws] Invalid session auth: admin_not_found`
+- [!] fix: doing /tx <disconnected id> shows empty modal
+- [ ] fix the message `Since this is not a critical file, ...` on first boot without txData
+    - from `SvRuntimeStatsManager` and `PlayerDropStatsManager`
+- [ ] fix: `server partial hang detected` should not be the error for `(HB:0HC:--)`
+- [ ] fix txDiagnostics (and add tx v8 heap data to it)
+
 ## Chores + refactor + boring stuff
 - [x] remove /legacy/dashboard route + handler
-- [x] fix new dashboard not redirecting to set up
 - [x] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
     - and add new ones to the player drops and settings
 - [x] improve the procps/wmic error messages
 - [x] check if the client print issues have been solved
     - https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
     - https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
-- [x] the WarningBar scrolls up with the pages when they have scroll
-- [ ] fix the message `Since this is not a critical file, ...` on first boot without txData
-    - from `SvRuntimeStatsManager` and `PlayerDropStatsManager`
-- [ ] implement `.env`
-    - Use with chokidar on `main-builder.js` to restart the build
-    - Maybe pass it through so I could use it for the server as well
-    - Don't forgor to update `development.md`
-- [ ] fix txDiagnostics (and add tx v8 heap data to it)
-- [ ] update packages
-- [ ] update wouter and add search/filters state to URL of the players/history pages 
-- [ ] add `.yarn.installed` to the dist? even in dev
-- [ ] check if chat PRs were merged, and start migrating recipes to use `resources_useSystemChat`
-- [ ] check netid uint16 overflow
+- [x] check if chat PRs were merged, and start migrating recipes to use `resources_useSystemChat`
+- [!] check compatibility with `sv_enableNetEventReassembly false`
+- [!] check tx on node 22
+    - maybe change the gh workflows to use node 22 as well
+- [!] merge easy PRs
+- [!] update packages
+- [!] check cicd stuff on testing repo before release
+- [ ] migration to change "revocation" to optional
+    - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
+- [ ] update wouter and add search/filters state to URL of the players/history pages
+- [ ] enable nui strict mode
+    - check if the menu -> tx -> iframe -> legacy iframe is now working
+- [ ] healthmonitor: write to logger.fxserver the internal reason as marker
+- [?] add `.yarn.installed` to the dist? even in dev
+- [?] check netid uint16 overflow
     - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
     - increase mutex to 6 digits?
     - `/^(?<mutex>\w{5})#(?<netid>\d{1,6})(?:r(?<rollover>\d{1,3}))?$/`
     - write parser, which will return the groups, defaulting rollover to 0
-- [ ] check the noLookAlikesAlphabet vs nanoid-dictionary/nolookalikes situation
+- [?] check the noLookAlikesAlphabet vs nanoid-dictionary/nolookalikes situation
     - the nanoid version is 49 chars long, and yet it's referenced as dict51
+- [?] check if it makes sense to allow the txAdmin thread to run more than every 50ms
+    - node 22 branch -> code/components/citizen-server-monitor/src/MonitorInstance.cpp:307
+- [?] implement `.env`
+    - https://www.npmjs.com/package/dotenv-expand
+    - Use with chokidar on `main-builder.js` to restart the build
+    - Maybe pass it through so I could use it for the server as well
+    - Don't forget to update `development.md`
+    - node 22 `process.loadEnvFile(path)` ?
 
 
 
@@ -217,6 +241,7 @@ for log in statsLog:
         - Having the menu protest when someone fixes their car too much in a short time span?
         - Zeus or crazy thunder effects when someone spams no clip?
         - Increasingly exciting 'tada' sounds when someone bans multiple people in a short time span? (ban 1: Ooh.. / ban 2: OOooh.. / ban 3: OOOOOHHH!)
+    - [ ] use `ScanResourceRoot()`
 
 - Chores + Refactor stuff:
     - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
@@ -229,6 +254,7 @@ for log in statsLog:
 - Boring stuff:
     - [ ] fix the eslint config + tailwind sort
     - [ ] build: generate fxmanifest files list dynamically
+        - node 22 use fs.glob
     - [ ] fix remaining imgur links
     - [ ] update docs on development?
     - [ ] rename to de-capitalize components files that have multiple exports 
@@ -435,12 +461,14 @@ Admin manager:
 =======================================================================
 
 ## Next Up
-- After Node 20:
+- After Node 22:
     - check all `.npm-upgrade.json` for packages that can now be updated
     - Use `/^\p{RGI_Emoji}$/v` to detect emojis 
         - ref: https://v8.dev/features/regexp-v-flag
         - remove `unicode-emoji-json` from dependencies
         - update cleanPlayerNames
+    - it will support native bindings, so this might work:
+        - https://www.npmjs.com/package/fd-lock
 
 - [ ] Playerlist: implement basic tag system with filters, sorting and Fuse.js
     - the filter dropdown is written already, check `panel/src/layout/playerlistSidebar/Playerlist.tsx`
@@ -573,8 +601,8 @@ if (error instanceof z.ZodError) {
 
 
 ### Server resource scanner
-ScanResourceRoot('E:/FiveM/txData/default.base/resources', (data: object) => {
-    console.dir(data);
+ScanResourceRoot('E:/FiveM/txData/default.base/resources/', (data: object) => {
+    console.dir(data, { depth: 5 });
 });
 
 

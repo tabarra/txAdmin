@@ -116,6 +116,7 @@ type PlayerDataType = {
  */
 export class ServerPlayer extends BasePlayer {
     readonly #playerlistManager: PlayerlistManager;
+    // readonly psid: string; //TODO: calculate player session id (sv mutex, netid, rollover id) here
     readonly netid: number;
     readonly tsConnected = now();
     readonly isRegistered: boolean;

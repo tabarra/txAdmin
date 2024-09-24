@@ -81,6 +81,7 @@ export default class HealthMonitor {
         this.isAwaitingRestart = true;
         const logMessage = `Restarting server (${reasonInternal}).`;
         globals.logger.admin.write('MONITOR', logMessage);
+        //FIXME: write internal reason to logger.fxserver as a marker
         globals.fxRunner.restartServer(reasonTranslated, null);
     }
 

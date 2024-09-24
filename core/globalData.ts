@@ -59,6 +59,7 @@ const resourceName = GetCurrentResourceName();
 //5894 = CREATE_VEHICLE_SERVER_SETTER
 //6185 = added ScanResourceRoot (not yet in use)
 //6508 = unhandledRejection is now handlable, we need this due to discord.js's bug
+//8495 = changed prometheus::Histogram::BucketBoundaries
 //9655 = Fixed ScanResourceRoot + latent events
 const minFXServerVersion = 5894;
 const fxServerVersion = getBuild(getConvarString('version'));
