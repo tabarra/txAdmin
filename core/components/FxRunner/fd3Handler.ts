@@ -1,4 +1,4 @@
-const modulename = 'OutputHandler';
+const modulename = 'Fd3Handler';
 import { anyUndefined } from '@core/extras/helpers';
 import TxAdmin from '@core/txAdmin';
 import consoleFactory from '@extras/console';
@@ -22,18 +22,11 @@ type StructuredTraceType = {
     }
 }
 
-export enum FxChildChannelType {
-    StdIn,
-    StdOut,
-    StdErr,
-    JsonIn,
-}
-
 
 /**
- * FXServer output helper that mostly relays to other components.
+ * Handles all the FD3 traces from the FXServer
  */
-export default class OutputHandler {
+export default class Fd3Handler {
     readonly #txAdmin: TxAdmin;
 
     constructor(txAdmin: TxAdmin) {
@@ -51,7 +44,7 @@ export default class OutputHandler {
      *   script_log
      *   script_structured_trace (handled by server logger)
      */
-    private handleTrace(mutex: string, trace: StructuredTraceType) {
+    public write(mutex: string, trace: StructuredTraceType) {
         try {
             //Filter valid and fresh packages
             if (mutex !== this.#txAdmin.fxRunner.currentMutex) return;
@@ -96,6 +89,10 @@ export default class OutputHandler {
                 deferError('Please check the resource above to prevent further hangs.');
                 return;
             }
+
+            // if (data.type == 'script_log') {
+            //     return console.dir(data);
+            // }
 
             //Handle script traces
             if (
@@ -163,19 +160,6 @@ export default class OutputHandler {
         } else {
             console.warn(`Command bridge received invalid command:`);
             console.dir(payload);
-        }
-    }
-
-
-    /**
-     * handles stdout and stderr from child fxserver and send to be processed by the logger
-     */
-    public write(source: FxChildChannelType, mutex: string, data: string | Buffer | StructuredTraceType) {
-        if (source === FxChildChannelType.JsonIn) {
-            this.handleTrace(mutex, data as StructuredTraceType);
-        } else {
-            data = data.toString();
-            this.#txAdmin.logger.fxserver.writeStdIO(source, data);
         }
     }
 };

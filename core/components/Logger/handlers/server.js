@@ -1,6 +1,7 @@
 /* eslint-disable padded-blocks */
 const modulename = 'Logger:Server';
-import { LoggerBase, separator } from '../loggerUtils.js';
+import { LoggerBase } from '../LoggerBase';
+import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
@@ -46,7 +47,7 @@ before sending it to fd3
 
 
 export default class ServerLogger extends LoggerBase {
-    constructor(basePath, lrProfileConfig) {
+    constructor(txAdmin, basePath, lrProfileConfig) {
         const lrDefaultOptions = {
             path: basePath,
             intervalBoundary: true,
@@ -59,11 +60,7 @@ export default class ServerLogger extends LoggerBase {
 
         };
         super(basePath, 'server', lrDefaultOptions, lrProfileConfig);
-        this.lrStream.write(`\n${separator('txAdmin Starting')}\n`);
-        this.lrStream.on('rotated', (filename) => {
-            this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            console.verbose.log(`Rotated file ${filename}`);
-        });
+        this.lrStream.write(getBootDivider());
 
         this.recentBuffer = [];
         this.recentBufferMaxSize = 32e3;
