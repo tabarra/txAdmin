@@ -161,7 +161,7 @@ export default class TxAdmin {
             this.discordBot = new DiscordBot(this, profileConfig.discordBot);
             globalsInternal.discordBot = this.discordBot;
 
-            this.logger = new Logger(profileConfig.logger);
+            this.logger = new Logger(this, profileConfig.logger);
             globalsInternal.logger = this.logger;
 
             this.translator = new Translator(this);

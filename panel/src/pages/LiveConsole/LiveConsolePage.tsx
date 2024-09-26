@@ -19,7 +19,7 @@ import ScrollDownAddon from "./ScrollDownAddon";
 import terminalOptions from "./xtermOptions";
 import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
-import { getSocket, openExternalLink } from '@/lib/utils';
+import { getSocket, openExternalLink, tsToLocaleTimeString } from '@/lib/utils';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import { txToast } from '@/components/TxToaster';
 
@@ -29,22 +29,37 @@ const keyDebounceTime = 150; //ms
 //Yoinked from the internet, no good source
 const rtlRangeRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]{3,}/; //ignoring anything less than 3 characters
 
-//Yoinked from core/components/Logger/handlers/fxserver.js
-const regexConsole = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F\x80-\x9F]/g;
-const regexCsi = /(\u001b\[|\u009B)[\d;]+[@-K]/g;
-const regexColors = /\u001b[^m]*?m/g;
+//Yoinked from core/components/Logger/FXServerLogger/index.ts
+const regexControls = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F]|(?:\x1B\[|\x9B)[\d;]+[@-K]/g;
+const regexColors = /\x1B[^m]*?m/g;
 const cleanTermOutput = (data: string) => {
     return data
-        .replace(regexConsole, '')
-        .replace(regexCsi, '')
+        .replace(regexControls, '')
         .replace(regexColors, '');
 }
 
+//Terminal prefix
+const regexMarker = /^{§[0-9a-f]{8}}/;
+const ANSI_WHITE = '\x1B[0;37m';
+const ANSI_GRAY = '\x1B[1;90m';
+const ANSI_RESET = '\x1B[0m';
+const formatUnixTimestamp = (timestamp: number): string => {
+    const str = tsToLocaleTimeString(timestamp, '2-digit', '2-digit', '2-digit');
+    return str + ANSI_RESET;
+}
+const defaultTermPrefix = formatUnixTimestamp(Date.now()).replace(/\w/g, '-');
+
+//Main component
 export default function LiveConsolePage() {
     const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const termInputRef = useRef<HTMLInputElement>(null);
+    const termPrefixRef = useRef({
+        ts: 0, //so we can clear the console
+        lastEol: true,
+        prefix: defaultTermPrefix,
+    });
     const refreshPage = useContentRefresh();
 
 
@@ -213,16 +228,51 @@ export default function LiveConsolePage() {
     const writeToTerminal = (data: string) => {
         const lines = data.split(/\r?\n/);
         //check if last line isn't empty
-        //NOTE: i'm not trimming because having multiple \n at the end is valid
+        // NOTE: i'm not trimming because having multiple \n at the end is valid
+        let wasEolStripped = false;
         if (lines.length && !lines[lines.length - 1]) {
             lines.pop();
+            wasEolStripped = true;
         }
-        //print each line
-        for (const line of lines) {
-            if(rtlRangeRegex.test(line)) {
+    
+        //extracts timestamp & print each line
+        let isNewTs = false;
+        for (let i = 0; i < lines.length; i++) {
+            isNewTs = false;
+            let line = lines[i];
+            //tries to extract timestamp
+            if (regexMarker.test(line)) {
+                isNewTs = true;
+                try {
+                    const ts = parseInt(line.slice(2, 10), 16);
+                    line = line.slice(11);
+                    termPrefixRef.current.ts = ts;
+                    termPrefixRef.current.prefix = formatUnixTimestamp(ts);
+                } catch (error) {
+                    termPrefixRef.current.prefix = defaultTermPrefix;
+                    console.warn('Failed to parse timestamp from:', line, (error as any).message);
+                }
+            }
+            if (rtlRangeRegex.test(line)) {
                 registerBidiMarker(cleanTermOutput(line));
             }
-            term.writeln(line);
+            //Check if it's last line, and if the EOL was stripped
+            const prefixColor = isNewTs ? ANSI_WHITE : ANSI_GRAY;
+            const prefix = termPrefixRef.current.lastEol
+                ? prefixColor + termPrefixRef.current.prefix + ' '
+                : '';
+            if (i < lines.length - 1) {
+                term.writeln(prefix + line);
+                termPrefixRef.current.lastEol = true;
+            } else {
+                if (wasEolStripped) {
+                    term.writeln(prefix + line);
+                    termPrefixRef.current.lastEol = true;
+                } else {
+                    term.write(prefix + line);
+                    termPrefixRef.current.lastEol = false;
+                }
+            }
         }
     }
 

@@ -1,38 +1,72 @@
 const modulename = 'ConsoleStreamAssembler';
-import { debounce } from 'throttle-debounce';
+import { throttle } from 'throttle-debounce';
 import consoleFactory from '@extras/console';
-import { EOL } from 'node:os'
-import { FxsConsoleMessageType } from './index';
+import { ConsoleLineType } from './index';
+import chalk from 'chalk';
 const console = consoleFactory(modulename);
 
 
-//Max time to wait before breaking a line to output from different sources
-const MAX_HOLDOFF_MS = 2500;
-//Unicode char "↩" to indicate the forced break of a line
-const FORCED_EOL = '\u21A9' + EOL;
-
 
 //Types
-type FlushCallbackType = (parts: FlushQueueBlockType[]) => void;
-export type FlushQueueBlockType = {
-    ts?: number;
-    noPrefix?: boolean;
-    src: FxsConsoleMessageType;
-    data: string;
-    context?: string;
-};
+type FlushCallbackType = (webBuffer: string, stdoutBuffer: string, fileBuffer: string) => void;
 
 type LastOutputInfoType = {
-    ts: number; //always in seconds, floored
-    src: FxsConsoleMessageType;
+    src: string;
+    type: ConsoleLineType;
+    context?: string;
     eol: boolean;
 }
 
 type IncomingQueueBlockType = {
-    src: FxsConsoleMessageType;
+    src: string;
+    type: ConsoleLineType;
     data: string;
     context?: string;
     delayedSince?: number;
+}
+
+type ColorLibrary = {
+    [key in ConsoleLineType]: (str: string) => string;
+}
+
+//Constants
+const WEB_COLORS = {
+    [ConsoleLineType.StdOut]: (str) => str,
+    [ConsoleLineType.StdErr]: chalk.bgRedBright.bold.black,
+    [ConsoleLineType.MarkerAdminCmd]: chalk.bgYellowBright.bold.black,
+    [ConsoleLineType.MarkerSystemCmd]: chalk.bgHex('#36383D').bold.hex('#CCCCCC'),
+    [ConsoleLineType.MarkerInfo]: chalk.bgBlueBright.bold.black,
+} as ColorLibrary;
+const STDOUT_COLORS = {
+    [ConsoleLineType.StdOut]: (str) => str,
+    [ConsoleLineType.StdErr]: chalk.bgRedBright.bold.black,
+    [ConsoleLineType.MarkerAdminCmd]: chalk.bgYellowBright.bold.black,
+    [ConsoleLineType.MarkerSystemCmd]: chalk.bgHex('#36383D').bold.hex('#CCCCCC'),
+    [ConsoleLineType.MarkerInfo]: chalk.bgBlueBright.bold.black,
+} as ColorLibrary;
+
+//Max time to wait before breaking a line to output from different sources
+const MAX_HOLDOFF_MS = 2500;
+
+//To break any fake marker - using only one char because multichar can be broken by processQueue
+const SECT_ZWNBSP = '§\uFEFF';
+
+const getConsoleLinePrefix = (prefix: string) => `[${prefix.padStart(20, ' ')}] `;
+const consoleSystemPrefix = getConsoleLinePrefix('TXADMIN');
+const consoleStderrPrefix = getConsoleLinePrefix('STDERR');
+
+const getStyledPrefix = (type: ConsoleLineType, context?: string) => {
+    let prefix = '';
+    if (type === ConsoleLineType.StdErr) {
+        prefix = consoleStderrPrefix;
+    } else if (type === ConsoleLineType.MarkerAdminCmd) {
+        prefix = getConsoleLinePrefix(context ?? '?');
+    } else if (type === ConsoleLineType.MarkerSystemCmd) {
+        prefix = consoleSystemPrefix;
+    } else if (type === ConsoleLineType.MarkerInfo) {
+        prefix = consoleSystemPrefix;
+    }
+    return prefix;
 }
 
 
@@ -41,12 +75,18 @@ type IncomingQueueBlockType = {
  */
 export default class ConsoleStreamAssembler {
     private queue: (IncomingQueueBlockType | null)[] = [];
-    private triggerQueue = debounce(250, this.processQueue.bind(this));
+    private triggerQueue = throttle(250, this.processQueue.bind(this));
     private lastOutput: LastOutputInfoType = {
-        ts: 0,
-        src: FxsConsoleMessageType.StdOut,
+        type: ConsoleLineType.StdOut,
+        src: '',
         eol: true,
     };
+    private webBuffer = '';
+    private stdoutBuffer = '';
+    private fileBuffer = '';
+    private markerLastTs = 0; //in seconds
+    private markerIsPending = true;
+    private markerOffset: number | undefined = undefined;
 
     constructor(private readonly flushCallback: FlushCallbackType) { }
 
@@ -54,182 +94,96 @@ export default class ConsoleStreamAssembler {
      * Processes the queue to assemble the output
      */
     private processQueue() {
-        // console.log(
-        //     'Processing queue:',
-        //     this.queue.length,
-        //     this.queue.map((x) => x && [x.src, x.data]),
-        // );
         const last = this.lastOutput; //For easier access
+
+        //Checking if a new timestamp marker is needed
         const currTs = Date.now();
         const currMarkerTs = Math.floor(currTs / 1000);
-        let isMarkerPending = currMarkerTs !== last.ts;
-        const outQueue: FlushQueueBlockType[] = [];
+        this.markerIsPending = currMarkerTs !== this.markerLastTs;
+        this.markerOffset = undefined;
+
+        //Processing the queue
         const delayedQueue: IncomingQueueBlockType[] = [];
         for (let i = 0; i < this.queue.length; i++) {
             const curr = this.queue[i];
             if (curr === null || !curr.data.length) continue;
-            // const currEndsWithEol = curr.data.endsWith(EOL);
-            const currEndsWithEol = curr.data[curr.data.length - 1] === '\n';
-
-            // console.warn('='.repeat(80));
-            // console.error({
-            //     lastSrc: last.src,
-            //     lastEol: last.eol,
-            //     isMarkerPending,
-            //     src: curr.src,
-            //     data: curr.data,
-            //     currEndsWithEol,
-            //     delay: curr.delayedSince ? currTs - curr.delayedSince : null,
-            // });
-
+            // const currEndsWithEol = curr.data[curr.data.length - 1] === '\n';
 
             //If the block is pending for too long, break prev line and output it
             if (curr.delayedSince && currTs - curr.delayedSince > MAX_HOLDOFF_MS) {
-                outQueue.push({
-                    noPrefix: true,
-                    src: last.src,
-                    data: FORCED_EOL,
-                });
-                const ts = isMarkerPending ? currMarkerTs : undefined;
-                outQueue.push({
-                    ts,
-                    src: curr.src,
-                    data: curr.data,
-                    context: curr.context,
-                });
-                last.ts = currMarkerTs;
-                last.src = curr.src;
-                last.eol = currEndsWithEol;
-                isMarkerPending = false;
-                // console.error(2, 'the block is pending for too long, break prev line and output it');
+                this.bufferForcedEolMark();
+                this.processNewLine(curr);
                 continue;
             }
 
             //if the last line was finished
             if (last.eol) {
-                const ts = isMarkerPending ? currMarkerTs : undefined;
-                outQueue.push({
-                    ts,
-                    src: curr.src,
-                    data: curr.data,
-                    context: curr.context,
-                });
-                last.ts = currMarkerTs;
-                last.src = curr.src;
-                last.eol = currEndsWithEol;
-                isMarkerPending = false;
-                // console.error(1, 'the last line was finished');
+                this.processNewLine(curr);
                 continue;
             }
 
             //if last line is unfinished, same source
             if (curr.src === last.src) {
-                if (!isMarkerPending) {
-                    outQueue.push({
-                        noPrefix: true,
-                        src: curr.src,
-                        data: curr.data,
-                        context: curr.context,
-                    });
-                    last.eol = currEndsWithEol;
-                    // console.error(1, 'the last line is unfinished, same source - no marker pending');
-                } else {
-                    //if a marker is pending we try to insert it in the first EOL
-                    const currEolIndex = curr.data.indexOf('\n');
-                    if (currEolIndex === -1) {
-                        //If doesn't have any EOL, consume the whole block
-                        outQueue.push({
-                            noPrefix: true,
-                            src: curr.src,
-                            data: curr.data,
-                            context: curr.context,
-                        });
-                        // console.error(1, 'the last line is unfinished, same source - no EOL');
-                    } else {
-                        const isEolCrLf = currEolIndex > 0 && curr.data[currEolIndex - 1] === '\r';
-                        const foundEolLength = isEolCrLf ? 2 : 1;
-                        const currEolAtEnd = currEolIndex === curr.data.length - foundEolLength;
-                        if (currEolAtEnd) {
-                            //curr ends with EOL: consume the whole block
-                            outQueue.push({
-                                noPrefix: true,
-                                src: curr.src,
-                                data: curr.data,
-                            });
-                            last.eol = true;
-                            // console.error(1, 'the last line is unfinished, same source - EOL at end');
-                        } else {
-                            //curr has EOL in the middle: insert the marker at first line break
-                            const oldChunk = curr.data.substring(0, currEolIndex + foundEolLength);
-                            outQueue.push({
-                                noPrefix: true,
-                                src: curr.src,
-                                data: oldChunk,
-                            });
-                            const newChunk = curr.data.substring(currEolIndex + foundEolLength);
-                            outQueue.push({
-                                ts: currMarkerTs,
-                                src: curr.src,
-                                data: newChunk,
-                                context: curr.context,
-                            });
-                            last.ts = currMarkerTs;
-                            last.eol = currEndsWithEol;
-                            isMarkerPending = false;
-                            // console.error(2, 'the last line is unfinished, same source - EOL at middle');
-                        }
-                    }
-                }
+                this.processPostfix(curr.data);
                 continue;
+                // if (!this.markerIsPending) {
+                //     //no marker pending, consume the whole block
+                //     this.bufferPostfix(curr.data, currEndsWithEol);
+                //     continue;
+                // }
+
+                // //if a marker is pending we try to insert it in the first EOL
+                // const currFirstEolIndex = curr.data.indexOf('\n');
+                // if (currFirstEolIndex === -1) {
+                //     //If doesn't have any EOL, consume the whole block
+                //     this.bufferPostfix(curr.data, false);
+                // } else {
+                //     const isEolCrLf = currFirstEolIndex > 0 && curr.data[currFirstEolIndex - 1] === '\r';
+                //     const foundEolLength = isEolCrLf ? 2 : 1;
+                //     const currFirstEolAtEnd = currFirstEolIndex === curr.data.length - foundEolLength;
+                //     if (currFirstEolAtEnd) {
+                //         //curr ends with EOL: consume the whole block
+                //         this.bufferPostfix(curr.data, true);
+                //     } else {
+                //         //curr has EOL in the middle: insert the marker at first line break
+                //         const oldChunk = curr.data.substring(0, currFirstEolIndex + foundEolLength);
+                //         this.bufferPostfix(oldChunk, true);
+                //         curr.data = curr.data.substring(currFirstEolIndex + foundEolLength);
+                //         this.bufferNewLine(curr, currEndsWithEol);
+                //     }
+                // }
+                // continue;
             }
 
             //if last line is unfinished, different source
             //look forward to try to find the end of the line with same source in the same queue
             //but does not update the last ts, even if writing to it
             if (i + 1 < this.queue.length) {
+                //if it's not the last block
                 for (let j = i + 1; j < this.queue.length; j++) {
                     const upcoming = this.queue[j];
                     //upcoming block is the same as last but different than current
                     if (upcoming === null || upcoming.src !== last.src) continue;
 
-                    const upcomingEolIndex = upcoming.data.indexOf('\n');
-                    if (upcomingEolIndex === -1) {
+                    const upcomingFirstEolIndex = upcoming.data.indexOf('\n');
+                    if (upcomingFirstEolIndex === -1) {
                         //If doesn't have any EOL, consume the whole block
-                        outQueue.push({
-                            noPrefix: true,
-                            src: upcoming.src,
-                            data: upcoming.data,
-                            context: curr.context, //FIXME: idk
-                        });
+                        this.processPostfix(upcoming.data);
                         this.queue[j] = null;
-                        // console.error(1, 'upcoming no EOL');
                     } else {
-                        const isEolCrLf = upcomingEolIndex > 0 && curr.data[upcomingEolIndex - 1] === '\r';
+                        const isEolCrLf = upcomingFirstEolIndex > 0 && curr.data[upcomingFirstEolIndex - 1] === '\r';
                         const foundEolLength = isEolCrLf ? 2 : 1;
-                        const upcomingEolAtEnd = upcomingEolIndex === upcoming.data.length - foundEolLength;
-                        if (upcomingEolAtEnd) {
+                        const upcomingFirstEolAtEnd = upcomingFirstEolIndex === upcoming.data.length - foundEolLength;
+                        if (upcomingFirstEolAtEnd) {
                             //upcoming ends with EOL: consume the whole block
-                            outQueue.push({
-                                noPrefix: true,
-                                src: upcoming.src,
-                                data: upcoming.data,
-                                context: curr.context, //FIXME: idk
-                            });
+                            this.processPostfix(upcoming.data);
                             this.queue[j] = null;
-                            // console.error(1, 'upcoming EOL at end');
                         } else {
                             //upcoming has EOL in the middle: consume up to first line break
-                            const chunk = upcoming.data.substring(0, upcomingEolIndex + foundEolLength);
-                            outQueue.push({
-                                noPrefix: true,
-                                src: upcoming.src,
-                                data: chunk,
-                                context: curr.context, //FIXME: idk
-                            });
-                            upcoming.data = upcoming.data.substring(upcomingEolIndex + foundEolLength);
-                            // console.error(2, 'upcoming EOL at middle');
+                            const chunk = upcoming.data.substring(0, upcomingFirstEolIndex + foundEolLength);
+                            this.processPostfix(chunk);
+                            upcoming.data = upcoming.data.substring(upcomingFirstEolIndex + foundEolLength);
                         }
-                        last.eol = true;
                         break;
                     }
                 }
@@ -238,29 +192,38 @@ export default class ConsoleStreamAssembler {
             //If by now the last line was completed, add it to the output
             //Else, add it to the pending queue
             if (last.eol) {
-                const ts = isMarkerPending ? currMarkerTs : undefined;
-                isMarkerPending = false;
-                outQueue.push({ 
-                    ts, 
-                    src: curr.src, 
-                    data: curr.data,
-                    context: curr.context,
-                });
-                last.ts = currMarkerTs;
-                last.src = curr.src;
-                last.eol = currEndsWithEol;
-                // console.error(1, 'the last line was completed, add it to the output');
+                this.processNewLine(curr);
             } else {
                 curr.delayedSince ??= currTs;
                 delayedQueue.push(curr);
-                // console.error(false, 'adding it to the pending queue');
             }
         }
 
         //Finishing up & flushing
-        if (outQueue.length) {
-            console.log('flushing:', outQueue.length);
-            this.flushCallback(outQueue);
+        if (this.webBuffer.length || this.stdoutBuffer.length || this.fileBuffer.length) {
+            console.dir({
+                markerOffset: this.markerOffset,
+                markerLastTs: this.markerLastTs,
+                markerIsPending: this.markerIsPending,
+            });
+            let webFlushBuffer = '';
+            if (this.markerOffset === undefined) {
+                webFlushBuffer = this.webBuffer.replaceAll('§', SECT_ZWNBSP);
+            } else {
+                this.markerLastTs = currMarkerTs;
+                if (this.markerOffset) {
+                    webFlushBuffer = this.webBuffer.substring(0, this.markerOffset).replaceAll('§', SECT_ZWNBSP)
+                        + `{§${currMarkerTs.toString(16)}}`
+                        + this.webBuffer.substring(this.markerOffset).replaceAll('§', SECT_ZWNBSP)
+                } else {
+                    webFlushBuffer = `{§${currMarkerTs.toString(16)}}` + this.webBuffer.replaceAll('§', SECT_ZWNBSP);
+                }
+            }
+
+            this.flushCallback(webFlushBuffer, this.stdoutBuffer, this.fileBuffer);
+            this.webBuffer = '';
+            this.stdoutBuffer = '';
+            this.fileBuffer = '';
         }
 
         //Requeue delayed blocks or clear the queue
@@ -272,11 +235,109 @@ export default class ConsoleStreamAssembler {
 
 
     /**
+     * Writes a postfix (continuation of unfinished line) to the buffer
+     */
+    private processPostfix(chunk: string) {
+        //Shortcircuiting for empty strings
+        if (!chunk.length) return;
+        if (chunk === '\n' || chunk === '\r\n') {
+            this.webBuffer += '\n';
+            this.stdoutBuffer += '\n';
+            this.fileBuffer += '\n';
+            this.lastOutput.eol = true;
+        } else {
+            this.bufferChunk(chunk, true);
+        }
+    }
+
+
+    /**
+     * Writes a new line to the buffer
+     * If a timestamp mark is pending and adds it to the buffer
+     */
+    private processNewLine(block: IncomingQueueBlockType) {
+        this.lastOutput.type = block.type;
+        this.lastOutput.src = block.src;
+        this.lastOutput.context = block.context;
+        this.bufferChunk(block.data, false);
+    }
+
+
+    /**
+     * Writes a postfix (continuation of unfinished line) to the buffer
+     */
+    private bufferChunk(chunk: string, isPostfix: boolean) {
+        console.dir({
+            chunk,
+            isPostfix,
+        });
+        const { type, context } = this.lastOutput;
+        if (!isPostfix) {
+            this.bufferMarker();
+        }
+
+        //Processing the chunk
+        const chunkLines = chunk.split(/\r?\n/);
+        this.lastOutput.eol = false;
+        if (chunkLines.length && chunkLines[chunkLines.length - 1].length === 0) {
+            chunkLines.pop();
+            this.lastOutput.eol = true;
+        }
+        const lineTypePrefix = getStyledPrefix(type, context);
+        let prefix = isPostfix ? '' : lineTypePrefix;
+        for (let i = 0; i < chunkLines.length; i++) {
+            if (i === 1) {
+                prefix = lineTypePrefix;
+                if (isPostfix) {
+                    this.bufferMarker();
+                }
+            }
+            const lineEol = i < chunkLines.length - 1 ? '\n' : '';
+            this.webBuffer += WEB_COLORS[type](prefix + chunkLines[i]) + lineEol;
+            this.stdoutBuffer += STDOUT_COLORS[type](prefix + chunkLines[i]) + lineEol;
+            this.fileBuffer += prefix + chunkLines[i] + lineEol;
+        }
+        if (this.lastOutput.eol) {
+            this.webBuffer += '\n';
+            this.stdoutBuffer += '\n';
+            this.fileBuffer += '\n';
+            this.lastOutput.context = undefined;
+        }
+    }
+
+
+    /**
+     * Writes a new line to the buffer
+     * If a timestamp mark is pending and adds it to the buffer
+     */
+    private bufferMarker() {
+        console.error('bufferMarker', this.markerIsPending);
+        if (this.markerIsPending) {
+            this.markerOffset = this.webBuffer.length;
+            this.markerIsPending = false;
+        }
+    }
+
+
+    /**
+     * Marks in the buffer that a line was forcefully broken with the unicode char "↩".
+     * This happens when a line is incomplete and the newcomer times out.
+     */
+    private bufferForcedEolMark() {
+        const FORCED_EOL = '\u21A9\n';
+        this.webBuffer += FORCED_EOL;
+        this.stdoutBuffer += FORCED_EOL;
+        this.fileBuffer += FORCED_EOL;
+    }
+
+
+    /**
      * Queues a string to be processed by the output handler
      */
-    public push(source: FxsConsoleMessageType, data: string, context?: string) {
+    public push(type: ConsoleLineType, data: string, context?: string) {
         this.queue.push({
-            src: source,
+            src: `${type}:${context}`, //just used for comparison against lastOutput
+            type: type,
             data,
             context,
         });

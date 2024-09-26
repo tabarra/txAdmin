@@ -41,12 +41,12 @@ export const getLogSizes = async (basePath: string, filterRegex: RegExp) => {
 /**
  * Generates a multiline separator string with 1 line padding
  */
-export const getLogDivider = (msg: string, linePrefix = '') => {
+export const getLogDivider = (msg: string) => {
     const sepLine = '='.repeat(64);
     const timestamp = new Date().toLocaleString();
-    let out = linePrefix + sepLine + '\n';
-    out += linePrefix + `======== ${msg} - ${timestamp}`.padEnd(64, ' ') + '\n';
-    out += linePrefix + sepLine + '\n';
+    let out = sepLine + '\n';
+    out += `======== ${msg} - ${timestamp}`.padEnd(64, ' ') + '\n';
+    out += sepLine + '\n';
     return out;
 };
 

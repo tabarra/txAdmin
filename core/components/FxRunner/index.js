@@ -13,7 +13,7 @@ import Fd3Handler from './fd3Handler';
 import { customAlphabet } from 'nanoid/non-secure';
 import dict51 from 'nanoid-dictionary/nolookalikes';
 import consoleFactory from '@extras/console';
-import { FxsConsoleMessageType } from '@core/components/Logger/FXServerLogger';
+import { ConsoleLineType } from '@core/components/Logger/FXServerLogger';
 const console = consoleFactory(modulename);
 const genMutex = customAlphabet(dict51, 5);
 
@@ -314,13 +314,13 @@ export default class FXRunner {
         this.fxChild.stdout.on('data',
             globals.logger.fxserver.writeFxsOutput.bind(
                 globals.logger.fxserver,
-                FxsConsoleMessageType.StdOut,
+                ConsoleLineType.StdOut,
             ),
         );
         this.fxChild.stderr.on('data',
             globals.logger.fxserver.writeFxsOutput.bind(
                 globals.logger.fxserver,
-                FxsConsoleMessageType.StdErr,
+                ConsoleLineType.StdErr,
             ),
         );
 
