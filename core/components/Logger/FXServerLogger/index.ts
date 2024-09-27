@@ -1,12 +1,11 @@
 const modulename = 'Logger:FXServer';
 import bytes from 'bytes';
-import chalk, { ChalkInstance } from 'chalk';
 import rfs from 'rotating-file-stream';
 import { getLogDivider } from '../loggerUtils.js';
 import consoleFactory from '@extras/console';
 import { LoggerBase } from '../LoggerBase.js';
 import TxAdmin from '@core/txAdmin.js';
-import ConsoleStreamAssembler from './ConsoleStreamAssembler.js';
+import ConsoleTransformer from './ConsoleTransformer.js';
 const console = consoleFactory(modulename);
 
 
@@ -33,7 +32,7 @@ export enum ConsoleLineType {
 
 export default class FXServerLogger extends LoggerBase {
     private readonly txAdmin: TxAdmin;
-    private readonly assembler = new ConsoleStreamAssembler(this.flushCallback.bind(this));
+    private readonly transformer = new ConsoleTransformer();
     private recentBuffer = '';
     private readonly recentBufferMaxSize = 256 * 1024; //kb
     private readonly recentBufferTrimSliceSize = 32 * 1024; //how much will be cut when overflows
@@ -75,22 +74,18 @@ export default class FXServerLogger extends LoggerBase {
      * Receives the assembled console blocks, stringifies, marks, colors them and dispatches it to
      * lrStream, websocket, and process stdout.
      */
-    private flushCallback(webBuffer: string, stdoutBuffer: string, fileBuffer: string) {
-        webBuffer = webBuffer.replace(regexControls, '');
-        stdoutBuffer = stdoutBuffer.replace(regexControls, '');
-        fileBuffer = fileBuffer.replace(regexControls, '').replace(regexColors, '');
+    private ingest(type: ConsoleLineType, data: string, context?: string) {
+        const { webBuffer, stdoutBuffer, fileBuffer } = this.transformer.process(type, data, context);
 
         //To file
-        //FIXME: this replacer should be on an async function, preferably buffered
-        this.lrStream.write(fileBuffer);
+        this.lrStream.write(fileBuffer.replace(regexColors, ''));
 
         //For the terminal
         if (!this.txAdmin.fxRunner.config.quiet) {
-            process.stdout.write(consoleBuffer);
+            process.stdout.write(stdoutBuffer);
         }
 
         //For the live console
-        //FIXME: ao invés de re-bufferizar, já dar um flush no websocket
         this.txAdmin.webServer.webSocket.buffer('liveconsole', webBuffer);
         this.appendRecent(webBuffer);
     }
@@ -102,7 +97,7 @@ export default class FXServerLogger extends LoggerBase {
     public logFxserverBoot(mutex: string, pid: string) {
         //FIXME: add mutex & pid?
         const msg = getLogDivider('FXServer Starting');
-        this.assembler.push(ConsoleLineType.MarkerInfo, msg);
+        this.ingest(ConsoleLineType.MarkerInfo, msg);
     }
 
 
@@ -110,7 +105,7 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log an admin command
      */
     public logAdminCommand(author: string, cmd: string) {
-        this.assembler.push(ConsoleLineType.MarkerAdminCmd, `${cmd} \n`, author);
+        this.ingest(ConsoleLineType.MarkerAdminCmd, `${cmd} \n`, author);
     }
 
 
@@ -118,7 +113,7 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log a system command
      */
     public logSystemCommand(cmd: string) {
-        this.assembler.push(ConsoleLineType.MarkerSystemCmd, `${cmd} \n`);
+        this.ingest(ConsoleLineType.MarkerSystemCmd, `${cmd} \n`);
     }
 
 
@@ -132,7 +127,7 @@ export default class FXServerLogger extends LoggerBase {
         if (typeof data !== 'string') {
             data = data.toString();
         }
-        this.assembler.push(source, data);
+        this.ingest(source, data.replace(regexControls, ''));
     }
 
 
