@@ -41,6 +41,19 @@ try {
     window.txIsMobile = false;
 }
 
+//Detecting locale preferences
+try {
+    window.txBrowserLocale = window?.nuiSystemLanguages ?? navigator.language ?? 'en';
+} catch (error) {
+    window.txBrowserLocale = 'en';
+}
+try {
+    const localeOption = Intl.DateTimeFormat(window.txBrowserLocale,  { hour: 'numeric' }).resolvedOptions().hour12
+    window.txBrowserHour12 = localeOption ?? true;
+} catch (error) {
+    window.txBrowserHour12 = true;
+}
+
 //If the initial routing is from WebPipe, remove it from the pathname so the router can handle it
 if (window.location.pathname.substring(0, 8) === '/WebPipe') {
     console.info('Removing WebPipe prefix from the pathname.');

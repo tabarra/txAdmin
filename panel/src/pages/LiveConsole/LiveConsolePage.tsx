@@ -44,7 +44,16 @@ const ANSI_WHITE = '\x1B[0;37m';
 const ANSI_GRAY = '\x1B[1;90m';
 const ANSI_RESET = '\x1B[0m';
 const formatUnixTimestamp = (timestamp: number): string => {
-    const str = tsToLocaleTimeString(timestamp, '2-digit', '2-digit', '2-digit');
+    const time = new Date(timestamp * 1000);
+    const str = time.toLocaleTimeString(
+        'en-US', //as en-gb uses 4 digits for the am/pm indicator
+        {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: window.txBrowserHour12,
+        }
+    );
     return str + ANSI_RESET;
 }
 const defaultTermPrefix = formatUnixTimestamp(Date.now()).replace(/\w/g, '-');
@@ -234,7 +243,7 @@ export default function LiveConsolePage() {
             lines.pop();
             wasEolStripped = true;
         }
-    
+
         //extracts timestamp & print each line
         let isNewTs = false;
         for (let i = 0; i < lines.length; i++) {

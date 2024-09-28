@@ -1,7 +1,6 @@
-import { prefixMultiline, splitFirstLine } from './fxsLoggerUtils';
+import { prefixMultiline, splitFirstLine, stripLastEol } from './fxsLoggerUtils';
 import { ConsoleLineType } from './index';
-import chalk from 'chalk';
-
+import chalk, { ChalkInstance } from 'chalk';
 
 
 //Types
@@ -11,39 +10,78 @@ export type MultiBuffer = {
     fileBuffer: string;
 }
 
-type ColorLibrary = {
-    [key in ConsoleLineType]: (str: string) => string;
+type StylesLibrary = {
+    [key in ConsoleLineType]: StyleConfig | null;
+};
+type StyleConfig = {
+    web: StyleChannelConfig;
+    stdout: StyleChannelConfig | false;
 }
-const WEB_COLORS = {
-    [ConsoleLineType.StdOut]: (str) => str,
-    [ConsoleLineType.StdErr]: chalk.bgRedBright.bold.black,
-    [ConsoleLineType.MarkerAdminCmd]: chalk.bgYellowBright.bold.black,
-    [ConsoleLineType.MarkerSystemCmd]: chalk.bgHex('#36383D').bold.hex('#CCCCCC'),
-    [ConsoleLineType.MarkerInfo]: chalk.bgBlueBright.bold.black,
-} as ColorLibrary;
-const STDOUT_COLORS = {
-    [ConsoleLineType.StdOut]: (str) => str,
-    [ConsoleLineType.StdErr]: chalk.bgRedBright.bold.black,
-    [ConsoleLineType.MarkerAdminCmd]: chalk.bgYellowBright.bold.black,
-    [ConsoleLineType.MarkerSystemCmd]: chalk.bgHex('#36383D').bold.hex('#CCCCCC'),
-    [ConsoleLineType.MarkerInfo]: chalk.bgBlueBright.bold.black,
-} as ColorLibrary;
+type StyleChannelConfig = {
+    prefix?: ChalkInstance;
+    line?: ChalkInstance;
+}
 
-const getConsoleLinePrefix = (prefix: string) => `[${prefix.padStart(20, ' ')}] `;
+const STYLES = {
+    [ConsoleLineType.StdOut]: null, //fully shortcircuited
+    [ConsoleLineType.StdErr]: {
+        web: {
+            prefix: chalk.bgRedBright.bold.black,
+            line: chalk.bold.redBright,
+        },
+        stdout: {
+            prefix: chalk.bgRedBright.bold.black,
+            line: chalk.bold.redBright,
+        },
+    },
+    [ConsoleLineType.MarkerAdminCmd]: {
+        web: {
+            prefix: chalk.bgYellowBright.bold.black,
+            line: chalk.bold.yellowBright,
+        },
+        stdout: false,
+    },
+    [ConsoleLineType.MarkerSystemCmd]: {
+        //chalk.bgHex('#36383D').bold.hex('#CCCCCC')
+        web: {
+            prefix: chalk.bgWhiteBright.bold.black,
+            line: chalk.bold.blackBright,
+        },
+        stdout: false,
+    },
+    [ConsoleLineType.MarkerInfo]: {
+        web: {
+            prefix: chalk.bgBlueBright.bold.black,
+            line: chalk.bgBlueBright.bold.black,
+        },
+        stdout: {
+            prefix: chalk.bgBlueBright.bold.black,
+            line: chalk.bgBlueBright.bold.black,
+        },
+    },
+} as StylesLibrary;
+
+
+
+const getConsoleLinePrefix = (prefix: string) => `[${prefix.padStart(20, ' ')}]`;
 export const FORCED_EOL = '\u21A9\n'; //used in test file only
+
+//NOTE: the \n must come _after_ the color so LiveConsolePage.tsx can know when it's an incomplete line
+const colorLines = (str: string, color: ChalkInstance | undefined) => {
+    if (!color) return str;
+    const stripped = stripLastEol(str);
+    return color(stripped.str) + stripped.eol;
+};
 
 
 /**
  * Handles fxserver stdio and turns it into a cohesive textual output
  */
 export default class ConsoleTransformer {
-    private lastMarkerTs = 0; //in seconds
-    private lastEol = true;
+    public lastEol = true;
     private lastSrc = '0:undefined';
-    private WEB_PREFIX_COLOR = WEB_COLORS;
-    private WEB_LINE_COLOR = WEB_COLORS;
-    private STDOUT_PREFIX_COLOR = STDOUT_COLORS;
-    private STDOUT_LINE_COLOR = STDOUT_COLORS;
+    private lastMarkerTs = 0; //in seconds
+    private STYLES = STYLES;
     private PREFIX_SYSTEM = getConsoleLinePrefix('TXADMIN');
     private PREFIX_STDERR = getConsoleLinePrefix('STDERR');
 
@@ -79,9 +117,21 @@ export default class ConsoleTransformer {
             }
             //same source
             const parts = splitFirstLine(data);
-            webBuffer += this.WEB_LINE_COLOR[type](parts.first);
-            stdoutBuffer += this.STDOUT_LINE_COLOR[type](parts.first);
             fileBuffer += parts.first;
+            const style = this.STYLES[type];
+            if (style === null) {
+                webBuffer += parts.first;
+                stdoutBuffer += parts.first;
+            } else {
+                webBuffer += colorLines(
+                    parts.first,
+                    style.web.line,
+                );
+                stdoutBuffer += style.stdout ? colorLines(
+                    parts.first,
+                    style.stdout.line,
+                ) : '';
+            }
             if (parts.rest) {
                 const prefixed = this.prefixChunk(type, parts.rest, context);
                 webBuffer += this.getTimeMarker() + prefixed.webBuffer;
@@ -112,12 +162,18 @@ export default class ConsoleTransformer {
         return '';
     }
 
-    //NOTE: since only StdOut is spammed, efficiency of the other ones isn't crucial
     private prefixChunk(type: ConsoleLineType, chunk: string, context?: string): MultiBuffer {
-        if (type === ConsoleLineType.StdOut) {
-            return { webBuffer: chunk, stdoutBuffer: chunk, fileBuffer: chunk };
+        //NOTE: as long as stdout is shortcircuited, the other ones don't need to be micro-optimized
+        const style = this.STYLES[type];
+        if (style === null) {
+            return {
+                webBuffer: chunk,
+                stdoutBuffer: chunk,
+                fileBuffer: chunk,
+            };
         }
-        
+
+        //selecting prefix and color
         let prefix = '';
         if (type === ConsoleLineType.StdErr) {
             prefix = this.PREFIX_STDERR;
@@ -128,13 +184,22 @@ export default class ConsoleTransformer {
         } else if (type === ConsoleLineType.MarkerInfo) {
             prefix = this.PREFIX_SYSTEM;
         }
-        let webBuffer = this.WEB_LINE_COLOR[type](
-            prefixMultiline(chunk, this.WEB_PREFIX_COLOR[type](prefix))
+
+        const webPrefix = style.web.prefix ? style.web.prefix(prefix) : prefix;
+        const webBuffer = colorLines(
+            prefixMultiline(chunk, webPrefix + ' '),
+            style.web.line,
         );
-        let stdoutBuffer = this.STDOUT_LINE_COLOR[type](
-            prefixMultiline(chunk, this.STDOUT_PREFIX_COLOR[type](prefix))
-        );
-        let fileBuffer = prefixMultiline(chunk, prefix);
+
+        let stdoutBuffer = '';
+        if (style.stdout) {
+            const stdoutPrefix = style.stdout.prefix ? style.stdout.prefix(prefix) : prefix;
+            stdoutBuffer = colorLines(
+                prefixMultiline(chunk, stdoutPrefix + ' '),
+                style.stdout.line,
+            );
+        }
+        const fileBuffer = prefixMultiline(chunk, prefix + ' ');
 
         return { webBuffer, stdoutBuffer, fileBuffer };
     }

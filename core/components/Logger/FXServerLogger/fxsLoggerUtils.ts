@@ -30,6 +30,25 @@ type SplitFirstLineResult = {
 
 
 /**
+ * Strips the last end-of-line (EOL) character from a string.
+ */
+export const stripLastEol = (str: string) => {
+    if (str.endsWith('\r\n')) {
+        return {
+            str: str.slice(0, -2),
+            eol: '\r\n',
+        }
+    } else if (str.endsWith('\n')) {
+        return {
+            str: str.slice(0, -1),
+            eol: '\n',
+        }
+    }
+    return { str, eol: '' };
+}
+
+
+/**
  * Adds a given prefix to each line in the input string.
  * Does not add a prefix to the very last empty line, if it exists.
  * Efficiently handles strings without line breaks by returning the prefixed string.

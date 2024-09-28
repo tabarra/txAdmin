@@ -95,10 +95,11 @@ export const dateToLocaleTimeString = (
     hour: 'numeric' | '2-digit' = '2-digit',
     minute: 'numeric' | '2-digit' = '2-digit',
     second?: 'numeric' | '2-digit',
+    hour12?: boolean,
 ) => {
     return time.toLocaleTimeString(
-        window?.nuiSystemLanguages ?? navigator.language,
-        { hour, minute, second }
+        window.txBrowserLocale,
+        { hour, minute, second, hour12 }
     );
 }
 
@@ -111,8 +112,9 @@ export const tsToLocaleTimeString = (
     hour: 'numeric' | '2-digit' = '2-digit',
     minute: 'numeric' | '2-digit' = '2-digit',
     second?: 'numeric' | '2-digit',
+    hour12?: boolean,
 ) => {
-    return dateToLocaleTimeString(tsToDate(ts), hour, minute, second);
+    return dateToLocaleTimeString(tsToDate(ts), hour, minute, second, hour12);
 }
 
 
@@ -124,7 +126,7 @@ export const dateToLocaleDateString = (
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
 ) => {
     return time.toLocaleDateString(
-        window?.nuiSystemLanguages ?? navigator.language,
+        window.txBrowserLocale,
         { dateStyle }
     );
 }
@@ -150,7 +152,7 @@ export const dateToLocaleDateTimeString = (
     timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
 ) => {
     return time.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language,
+        window.txBrowserLocale,
         { dateStyle, timeStyle }
     );
 }
@@ -186,7 +188,7 @@ export const isDateToday = (date: Date) => {
  */
 export const numberToLocaleString = (num: number, decimals = 0) => {
     return num.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language ?? 'en',
+        window.txBrowserLocale,
         { maximumFractionDigits: decimals }
     );
 };
@@ -199,7 +201,7 @@ export const convertRowDateTime = (ts: number) => {
     const date = tsToDate(ts);
     const isAnotheryear = date.getFullYear() !== currentYear;
     return date.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language,
+        window.txBrowserLocale,
         {
             year: isAnotheryear ? 'numeric' : undefined,
             month: isAnotheryear ? 'numeric' : 'short',

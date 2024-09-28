@@ -258,7 +258,7 @@ export default class FXRunner {
             }
             pid = this.fxChild.pid.toString();
             console.ok(`>> [${pid}] FXServer Started!`);
-            globals.logger.fxserver.logFxserverBoot(this.currentMutex, pid);
+            globals.logger.fxserver.logFxserverBoot(pid);
             this.history.push({
                 pid,
                 timestamps: {

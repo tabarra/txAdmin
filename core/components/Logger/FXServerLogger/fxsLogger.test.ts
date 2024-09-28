@@ -1,7 +1,7 @@
 //@ts-nocheck
 import '@extras/testEnv';
 import { test, expect, suite, it, vitest, vi } from 'vitest';
-import { prefixMultiline, splitFirstLine } from './fxsLoggerUtils';
+import { prefixMultiline, splitFirstLine, stripLastEol } from './fxsLoggerUtils';
 import ConsoleTransformer, { FORCED_EOL } from './ConsoleTransformer';
 import { ConsoleLineType } from '.';
 
@@ -27,6 +27,30 @@ suite('splitFirstLine', () => {
     it('should handle multiple newlines correctly', () => {
         const result = splitFirstLine('Hello\nWorld\nAgain');
         expect(result).toEqual({ first: 'Hello\n', rest: 'World\nAgain', eol: false });
+    });
+});
+
+
+//MARK: stripLastEol
+suite('stripLastEol', () => {
+    it('should strip \\r\\n from the end of the string', () => {
+        const result = stripLastEol('Hello World\r\n');
+        expect(result).toEqual({ str: 'Hello World', eol: '\r\n' });
+    });
+
+    it('should strip \\n from the end of the string', () => {
+        const result = stripLastEol('Hello World\n');
+        expect(result).toEqual({ str: 'Hello World', eol: '\n' });
+    });
+
+    it('should return the same string if there is no EOL character', () => {
+        const result = stripLastEol('Hello World');
+        expect(result).toEqual({ str: 'Hello World', eol: '' });
+    });
+
+    it('should return the same string if it ends with other characters', () => {
+        const result = stripLastEol('Hello World!');
+        expect(result).toEqual({ str: 'Hello World!', eol: '' });
     });
 });
 
@@ -116,19 +140,15 @@ suite('transformer: marker', () => {
 
 //MARK: Transformer ingest
 const jp = (arr: string[]) => arr.join('');
-const NO_COLORS = {
-    [ConsoleLineType.StdOut]: (str) => str,
-    [ConsoleLineType.StdErr]: (str) => str,
-    [ConsoleLineType.MarkerAdminCmd]: (str) => str,
-    [ConsoleLineType.MarkerSystemCmd]: (str) => str,
-    [ConsoleLineType.MarkerInfo]: (str) => str,
-} as ColorLibrary;
 const getPatchedTransformer = () => {
     const t = new ConsoleTransformer();
-    t.WEB_PREFIX_COLOR = NO_COLORS;
-    t.WEB_LINE_COLOR = NO_COLORS;
-    t.STDOUT_PREFIX_COLOR = NO_COLORS;
-    t.STDOUT_LINE_COLOR = NO_COLORS;
+    t.STYLES = {
+        [ConsoleLineType.StdOut]: null,
+        [ConsoleLineType.StdErr]: { web: {} },
+        [ConsoleLineType.MarkerAdminCmd]: { web: {} },
+        [ConsoleLineType.MarkerSystemCmd]: { web: {} },
+        [ConsoleLineType.MarkerInfo]: { web: {} },
+    };
     t.PREFIX_SYSTEM = '-';
     t.PREFIX_STDERR = '-';
     return t;
@@ -203,7 +223,7 @@ suite('transformer: new line', () => {
     test('single line diff src', () => {
         const transformer = getPatchedTransformer();
         const result = transformer.process(ConsoleLineType.StdErr, 'test');
-        expect(result.webBuffer).toEqual(jp([expectedTimeMarker, '-', 'test']));
+        expect(result.webBuffer).toEqual(jp([expectedTimeMarker, '- ', 'test']));
         expect(transformer.lastEol).toEqual(false);
     });
     test('multi line same src', () => {
@@ -215,7 +235,7 @@ suite('transformer: new line', () => {
     test('multi line diff src', () => {
         const transformer = getPatchedTransformer();
         const result = transformer.process(ConsoleLineType.StdErr, 'test\ntest2');
-        expect(result.webBuffer).toEqual(jp([expectedTimeMarker, '-', 'test\n', '-', 'test2']));
+        expect(result.webBuffer).toEqual(jp([expectedTimeMarker, '- ', 'test\n', '- ', 'test2']));
         expect(transformer.lastEol).toEqual(false);
     });
 });
@@ -251,21 +271,21 @@ suite('transformer: postfix', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
         const result = transformer.process(ConsoleLineType.StdErr, 'test');
-        expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '-', 'test']));
+        expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '- ', 'test']));
         expect(transformer.lastEol).toEqual(false);
     });
     test('diff source complete line', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
         const result = transformer.process(ConsoleLineType.StdErr, 'test\n');
-        expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '-', 'test\n']));
+        expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '- ', 'test\n']));
         expect(transformer.lastEol).toEqual(true);
     });
     test('diff source multi line', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
         const result = transformer.process(ConsoleLineType.StdErr, 'test\nabcde\n');
-        expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '-', 'test\n', '-', 'abcde\n']));
+        expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '- ', 'test\n', '- ', 'abcde\n']));
         expect(transformer.lastEol).toEqual(true);
     });
 });

@@ -223,7 +223,6 @@ export default class ConfigVault {
             cfg.logger.fxserver = toDefault(cfg.logger.fxserver, {});
             cfg.logger.server = toDefault(cfg.logger.server, {});
             cfg.logger.admin = toDefault(cfg.logger.admin, {});
-            cfg.logger.console = toDefault(cfg.logger.console, {});
 
             //Monitor
             cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];
