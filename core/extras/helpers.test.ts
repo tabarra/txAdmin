@@ -89,9 +89,9 @@ test('calcExpirationFromDuration', () => {
     result = helpers.calcExpirationFromDuration('permanent');
     expect(result?.expiration).toBe(false);
 
-    expect(() => helpers.calcExpirationFromDuration('x day')).toThrowError('multiplier');
-    expect(() => helpers.calcExpirationFromDuration('')).toThrowError('multiplier');
-    expect(() => helpers.calcExpirationFromDuration('-1 day')).toThrowError('multiplier');
+    expect(() => helpers.calcExpirationFromDuration('x day')).toThrowError('duration number');
+    expect(() => helpers.calcExpirationFromDuration('')).toThrowError('duration number');
+    expect(() => helpers.calcExpirationFromDuration('-1 day')).toThrowError('duration number');
 });
 
 test('parsePlayerId', () => {

@@ -5,14 +5,14 @@ Legend:
 - [?] -> Lower priority or pending investigation
 
 ## Previous bugs
-- [?] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
-    - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
 - [x] player/history modal is cutting bottom of title (test with "jgpq", etc)
 - [x] `lipsum` suffix to all the crash reasons
 - [x] thread chart data is the cumulative sum and not the diff, so it "averages out"
 - [x] use the fxRunner PID to get the correct fxserver process - perfUtils.fetchFxsMemory
 - [x] fix the uptime detection
 - [?] investigate player desync issues
+- [?] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
+    - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
 
 ## Highlights
 - [x] Anonymous admin actions (issue #893)
@@ -76,23 +76,24 @@ Legend:
     - [?] add drilldown interval buttons
 - Dashboard stuff:
     - [?] add testing for getServerStatsData
-    - [?] fix getMinTickIntervalMarker behavior when 0.2
     - [?] warning for top servers
     - full perf chart:
         - [x] increase the size of the cursor Y value indicator? maybe move to where the mouse is instead of x=0
         - [x] increase `h-[26rem]` back to 28 after removing the new chart warning
         - [!] swr disable revalidateOnFocus and use interval
             - or some kind of push from the dashboard room event
-        - [ ] buttons to show memory usage, maybe hide player count
-        - [ ] calculate initial zoom of 30h
+        - [?] buttons to show memory usage, maybe hide player count
+        - [?] calculate initial zoom of 30h
             - Initial zoom code: https://observablehq.com/@d3/zoomable-area-chart?intent=fork
-        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to
+        - [?] use semi-transparent arrows on the sides to indicate there is more to pan to when hovering
         - [?] show server close reason
         - [?] don't clear svg on render, use d3 joins
     - StatsManager.svRuntime:
         - [?] write log optimizer and remove the webroute 30h filter
     - thread perf chart:
         - [?] add the good/bad markers?
+        - [?] fix getMinTickIntervalMarker behavior when 0.2
+            - maybe just check if it's the hardcoded or color everything blue
         - [?] color should change correctly at the min interval marker point
         - [?] change the bg color to the color of the average ticket with heavy transparency?
 
@@ -107,7 +108,9 @@ Legend:
         - change to `admin request`
 - [x] separate "announcements" and "dm" permissions
 - [x] add "this player is banned until: xxx" to the player modal
-- [ ] track channel of last console output, and if it's different prefix a `\n`
+- [x] add timestamp to live console
+    - [x] track channel of last console output, and if it's different prefix a `\n`
+    - [x] modify the live console code
 - [ ] add more menu keybinds
     - check if the RegisterCommand is colocated
     - need to add and test `if not menuIsAccessible then return end` to all keybinds
@@ -134,10 +137,10 @@ Legend:
 - [x] check if chat PRs were merged, and start migrating recipes to use `resources_useSystemChat`
 - [!] check compatibility with `sv_enableNetEventReassembly false`
 - [!] check tx on node 22
-    - maybe change the gh workflows to use node 22 as well
 - [!] merge easy PRs
 - [!] update packages
 - [!] check cicd stuff on testing repo before release
+- [!] uncommited nui controls stuff
 - [ ] migration to change "revocation" to optional
     - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
 - [ ] update wouter and add search/filters state to URL of the players/history pages
@@ -163,20 +166,10 @@ Legend:
 
 
 
-## live console timestamp:
-- na virada do dia, adicionar um marker ---data---
-- whenever data arrives, push `[chan: string, data:string, pendingStart?: number]` to an array and start a ~250ms debounce
-- on debounce timer
-    - assemble all (incl. pending from previous)
-    - if last packet doesn't end in `\n`, do `packet.pendingStart = now`
-    - if any stderr, group them at the end, if any packet delayed to next debounce, also hold the stderr group
-    - flush the data to ws in a way that it gets flushed immediately
-    - start a 1500ms timer to flush any pending (do not append `\n` at the end)
-    - only add the ts marker to the start of the block, skip one `\n` if the last line didn't end with `\n`
 
 ## live console persistent clear:
 - either use the timestamps from above, or
-- create butex to the FXServerLogger, so client knows when it's reset
+- create mutex to the FXServerLogger, so client knows when it's reset
 - when sending initial data, send also the number of bytes that have been wiped
 - upon "clear", panel saves to session storage the mutex, the bytes from item above + bytes received
 - use the data above to wipe data udner the offset when joining the session
@@ -235,6 +228,7 @@ for log in statsLog:
     - [ ] add average session time tracking to statsManager.playerDrop
 
 - Small feats, fix, and improvements:
+    - [ ] persistent live console clearing + scroll back in time
     - [ ] locale file optimization - build 8201 and above
     - [ ] easter egg???
         - some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
@@ -462,6 +456,7 @@ Admin manager:
 
 ## Next Up
 - After Node 22:
+    - change the gh workflows to use node 22 as well
     - check all `.npm-upgrade.json` for packages that can now be updated
     - Use `/^\p{RGI_Emoji}$/v` to detect emojis 
         - ref: https://v8.dev/features/regexp-v-flag

@@ -168,7 +168,7 @@ class txAdminRunner {
 
     removeRebootPause() {
         console.log('[RUNNER] Removing reboot pause.');
-        this.isRebootingPaused = true;
+        this.isRebootingPaused = false;
     }
 
     toggleRebootPause() {
