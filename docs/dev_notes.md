@@ -61,7 +61,7 @@ Legend:
     - [x] add window selection buttons to drilldown card
     - [x] when range is selected, single click should remove it
     - [x] tune in swr caching/reloading behavior
-    - [ ] improve crash sorting
+    - [x] improve crash sorting
         - change logic of backend to sort by count by default
         - then on the frontend if it's `crashesSortByReason`, then array.slice.sort(...)
         - copy the sort code from [](/core/components/StatsManager/statsUtils.ts#L87)

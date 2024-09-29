@@ -4,21 +4,13 @@ import { PlayerDropsMessage } from "./PlayerDropsGenericSubcards";
 import { compressMultipleCounter, splitPrefixedStrings } from "./utils";
 
 
-type CrashTypeData = {
+type CrashDatumData = {
     key: string;
     pctStr: string;
     cntStr: string;
     prefix: string | false;
     suffix: string;
 };
-type CrashGroupData = {
-    key: string;
-    pctStr: number | null;
-    cntStr: number | null;
-    subgroup: CrashTypeData[];
-};
-type CrashDatumData = CrashTypeData | CrashGroupData;
-
 
 type CrashTypeRowProps = {
     datum: CrashDatumData;
@@ -28,36 +20,13 @@ type CrashTypeRowProps = {
 
 function CrashTypeRow({ datum, isLast, isOdd }: CrashTypeRowProps) {
     let dataCellNode = null;
-    if ('subgroup' in datum) {
-        dataCellNode = (
-            <>
-                <div className="block group-hover:hidden">
-                    <span className="text-info-inline">
-                        {datum.subgroup.length}x
-                    </span> {' '}
-                    <span className="text-warning-inline">
-                        {datum.key}
-                    </span>
-                </div>
-                <div className="hidden group-hover:block">
-                    {datum.subgroup.map((crash) => (
-                        <p>
-                            <span className="text-muted-foreground/50">{crash.prefix}</span>
-                            <span>{crash.suffix}</span>
-                        </p>
-                    ))}
-                </div>
-            </>
-        );
+    if (datum.prefix) {
+        dataCellNode = <>
+            <span className="text-muted-foreground/50">{datum.prefix}</span>
+            <span>{datum.suffix}</span>
+        </>
     } else {
-        if (datum.prefix) {
-            dataCellNode = <>
-                <span className="text-muted-foreground/50">{datum.prefix}</span>
-                <span>{datum.suffix}</span>
-            </>
-        } else {
-            dataCellNode = datum.suffix;
-        }
+        dataCellNode = datum.suffix;
     }
 
     return (
@@ -84,13 +53,15 @@ function CrashTypeRow({ datum, isLast, isOdd }: CrashTypeRowProps) {
 
 
 type DrilldownCrashesSubcardProps = {
-    crashTypes: [string, number][];
+    crashTypes: [reasonType: string, count: number][];
+    crashesGroupReasons: boolean;
     crashesTargetLimit: number;
     setCrashesTargetLimit: (limit: number) => void;
 };
 
 export default function DrilldownCrashesSubcard({
     crashTypes,
+    crashesGroupReasons,
     crashesTargetLimit,
     setCrashesTargetLimit
 }: DrilldownCrashesSubcardProps) {
@@ -99,22 +70,32 @@ export default function DrilldownCrashesSubcard({
     }
 
     const crashesData = useMemo(() => {
+        //Sort the data - the default api sort is by count (NOTE: we are mutating the array)
+        if (crashesGroupReasons) {
+            crashTypes.sort((a, b) => a[0].localeCompare(b[0]));
+        } else {
+            crashTypes.sort((a, b) => b[1] - a[1]);
+        }
+
+        //Calculate the total crashes and compress the data
         const totalCrashes = crashTypes.reduce((acc, [, cnt]) => acc + cnt, 0);
         const { filteredIn, filteredOut } = crashesTargetLimit
-            ? compressMultipleCounter(crashTypes, crashesTargetLimit)
+            ? compressMultipleCounter(crashTypes, crashesTargetLimit, crashesGroupReasons)
             : { filteredIn: crashTypes, filteredOut: false as const };
         const processedStrings = splitPrefixedStrings(filteredIn.map(([str, cnt]) => str));
 
+        //Prepare the display data
         const display: CrashDatumData[] = [];
         let displayCrashCount = 0;
-        for (let index = 0; index < filteredIn.length; index++) {
-            const [crashType, crashCount] = filteredIn[index];
+        for (let i = 0; i < filteredIn.length; i++) {
+            const [crashType, crashCount] = filteredIn[i];
             displayCrashCount += crashCount;
+            const fraction = (crashCount / totalCrashes);
             display.push({
                 key: crashType,
-                pctStr: numberToLocaleString((crashCount / totalCrashes) * 100, 1) + '%',
+                pctStr: numberToLocaleString(fraction * 100, 1) + '%',
                 cntStr: numberToLocaleString(crashCount),
-                ...processedStrings[index],
+                ...processedStrings[i],
             });
         }
         return {
@@ -126,7 +107,7 @@ export default function DrilldownCrashesSubcard({
             }
         };
 
-    }, [crashTypes, crashesTargetLimit, setCrashesTargetLimit]);
+    }, [crashTypes, crashesGroupReasons, crashesTargetLimit, setCrashesTargetLimit]);
 
     return (
         <table className="w-full px-4 pt-2">
