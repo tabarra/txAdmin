@@ -197,7 +197,12 @@ export default function FullPerfCard() {
         }
         setApiDataAge(Date.now());
         return data;
-    }, {});
+    }, {
+        //the data min interval is 5 mins, so we can safely cache for 1 min
+        revalidateOnMount: true,
+        revalidateOnFocus: false,
+        refreshInterval: 60 * 1000, 
+    });
 
     //Rendering
     let contentNode: React.ReactNode = null;

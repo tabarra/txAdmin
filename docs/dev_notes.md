@@ -80,7 +80,7 @@ Legend:
     - full perf chart:
         - [x] increase the size of the cursor Y value indicator? maybe move to where the mouse is instead of x=0
         - [x] increase `h-[26rem]` back to 28 after removing the new chart warning
-        - [!] swr disable revalidateOnFocus and use interval
+        - [x] swr disable revalidateOnFocus and use interval
             - or some kind of push from the dashboard room event
         - [?] buttons to show memory usage, maybe hide player count
         - [?] calculate initial zoom of 30h
