@@ -103,6 +103,7 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
         RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
         RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
         RegisterKeyMapping('txAdmin:menu:tpToWaypoint', 'Menu: Teleport to Waypoint', 'KEYBOARD', '')
+        RegisterKeyMapping('txAdmin:menu:fixVehicle', 'Menu: Fix vehicle', 'KEYBOARD', '')
     end
   else
     noMenuReason = tostring(rejectReason)
