@@ -7,7 +7,6 @@ import pidUsageTree from '@core/extras/pidUsageTree.js';
 import { txEnv } from '@core/globalData';
 import si from 'systeminformation';
 import consoleFactory from '@extras/console';
-import { QuantileArrayOutput } from '@core/components/StatsManager/statsUtils';
 import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);
 
@@ -285,22 +284,10 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
         units: ['d', 'h', 'm'],
     };
 
-    const formatQuantileTimes = (res: QuantileArrayOutput) => {
-        let output = 'not enough data available';
-        if (!('notEnoughData' in res)) {
-            const quantileTimes = [res.count.toString()];
-            for (const [key, val] of Object.entries(res)) {
-                if (key === 'count') continue;
-                quantileTimes.push(`${Math.ceil(val)}ms`);
-            }
-            output = quantileTimes.join(' / ');
-        }
-        return output;
-    }
-    const banCheckTime = formatQuantileTimes(txAdmin.statsManager.txRuntime.banCheckTime.result());
-    const whitelistCheckTime = formatQuantileTimes(txAdmin.statsManager.txRuntime.whitelistCheckTime.result());
-    const playersTableSearchTime = formatQuantileTimes(txAdmin.statsManager.txRuntime.playersTableSearchTime.result());
-    const historyTableSearchTime = formatQuantileTimes(txAdmin.statsManager.txRuntime.historyTableSearchTime.result());
+    const banCheckTime = txAdmin.statsManager.txRuntime.banCheckTime.resultSummary();
+    const whitelistCheckTime = txAdmin.statsManager.txRuntime.whitelistCheckTime.resultSummary();
+    const playersTableSearchTime = txAdmin.statsManager.txRuntime.playersTableSearchTime.resultSummary();
+    const historyTableSearchTime = txAdmin.statsManager.txRuntime.historyTableSearchTime.resultSummary();
 
     return {
         //Stats

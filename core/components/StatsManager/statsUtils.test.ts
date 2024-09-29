@@ -72,52 +72,67 @@ suite('MultipleCounter', () => {
 });
 
 
-test('QuantileArray', () => {
+suite('QuantileArray', () => {
     const array = new QuantileArray(4, 2);
-    array.count(0);
-    expect(array.result()).toEqual({ notEnoughData: true });
-    array.count(0);
-    array.count(0);
-    array.count(0);
-    expect(array.result()).toEqual({
-        count: 4,
-        q5: 0,
-        q25: 0,
-        q50: 0,
-        q75: 0,
-        q95: 0,
+    test('min data', () => {
+        array.count(0);
+        expect(array.result()).toEqual({ notEnoughData: true });
     });
-
-    array.count(1);
-    array.count(1);
-    expect(array.result()).toEqual({
-        count: 4,
-        q5: 0,
-        q25: 0,
-        q50: 0.5,
-        q75: 1,
-        q95: 1,
+    test('zeros only', () => {
+        array.count(0);
+        array.count(0);
+        array.count(0);
+        expect(array.result()).toEqual({
+            count: 4,
+            q5: 0,
+            q25: 0,
+            q50: 0,
+            q75: 0,
+            q95: 0,
+        });
     });
-
-    array.clear();
-    expect(array.result()).toEqual({ notEnoughData: true });
+    test('calc quantile', () => {
+        array.count(1);
+        array.count(1);
+        expect(array.result()).toEqual({
+            count: 4,
+            q5: 0,
+            q25: 0,
+            q50: 0.5,
+            q75: 1,
+            q95: 1,
+        });
+    });
+    test('summary', () => {
+        expect(array.resultSummary()).toEqual('(4) p5:0ms/p25:0ms/p50:1ms/p75:1ms/p95:1ms');
+        expect(array.resultSummary('x')).toEqual('(4) p5:0x/p25:0x/p50:1x/p75:1x/p95:1x');
+    });
+    test('clear', () => {
+        array.clear();
+        expect(array.result()).toEqual({ notEnoughData: true });
+        expect(array.resultSummary()).toEqual('not enough data available');
+    });
 });
 
 
-test('TimeCounter', async () => {
+suite('TimeCounter', async () => {
     const counter = new TimeCounter();
     await new Promise((resolve) => setTimeout(resolve, 150));
     const duration = counter.stop();
 
     // Check if the duration is a valid object
-    expect(duration.seconds).toBeTypeOf('number');
-    expect(duration.milliseconds).toBeTypeOf('number');
-    expect(duration.nanoseconds).toBeTypeOf('number');
-    expect(counter.toJSON()).toEqual(duration);
+    test('duration is valid', () => {
+        expect(duration.seconds).toBeTypeOf('number');
+        expect(duration.milliseconds).toBeTypeOf('number');
+        expect(duration.nanoseconds).toBeTypeOf('number');
+        expect(counter.toJSON()).toEqual(duration);
+    });
 
     // Check if the duration is within the expected range
-    const isCloseTo50ms = (x: number) => (x > 150 && x < 175);
-    expect(duration.seconds * 1000).toSatisfy(isCloseTo50ms);
-    expect(duration.milliseconds).toSatisfy(isCloseTo50ms);
-    expect(duration.nanoseconds / 1_000_000).toSatisfy(isCloseTo50ms);
+    test('duration within range', () => {
+        const isCloseTo50ms = (x: number) => (x > 150 && x < 175);
+        expect(duration.seconds * 1000).toSatisfy(isCloseTo50ms);
+        expect(duration.milliseconds).toSatisfy(isCloseTo50ms);
+        expect(duration.nanoseconds / 1_000_000).toSatisfy(isCloseTo50ms);
+    });
 });

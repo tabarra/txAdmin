@@ -145,6 +145,7 @@ export default class ServerLogger extends LoggerBase {
         } else if (typeof eventData.src === 'number' && eventData.src > 0) {
             const player = globals.playerlistManager.getPlayerById(eventData.src);
             if (player) {
+                //FIXME: playermutex must be a ServerPlayer prop, already considering mutex, netid and rollover
                 const playerID = `${mutex}#${eventData.src}`;
                 srcObject = { id: playerID, name: player.displayName };
                 srcString = `[${playerID}] ${player.displayName}`;

@@ -1,4 +1,5 @@
-const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ'; //i,o removed
+//All uppercase and [0,I,O] removed
+const actionIdAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 
 export default {
     //Identifier stuff
@@ -27,14 +28,14 @@ export default {
     // Database stuff
     adminPasswordMinLength: 6,
     adminPasswordMaxLength: 128,
-    regexActionID: new RegExp(`^[${noLookAlikesAlphabet}]{4}-[${noLookAlikesAlphabet}]{4}$`),
-    regexWhitelistReqID: new RegExp(`R[${noLookAlikesAlphabet}]{4}`),
+    regexActionID: new RegExp(`^[${actionIdAlphabet}]{4}-[${actionIdAlphabet}]{4}$`),
+    regexWhitelistReqID: new RegExp(`R[${actionIdAlphabet}]{4}`),
 
     //Other stuff
     regexSvLicenseOld: /^\w{32}$/,
     regexSvLicenseNew: /^cfxk_\w{1,60}_\w{1,20}$/,
     regexValidIP: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
-    noLookAlikesAlphabet,
+    actionIdAlphabet,
     nuiWebpipePath: 'https://monitor/WebPipe/',
     regexCustomThemeName: /^[a-z0-9]+(-[a-z0-9]+)*$/
 } as const;

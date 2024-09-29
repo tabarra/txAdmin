@@ -135,9 +135,11 @@ Legend:
     - https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
     - https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
 - [x] check if chat PRs were merged, and start migrating recipes to use `resources_useSystemChat`
+- [x] merge easy PRs
+- [x] check the noLookAlikesAlphabet vs nanoid-dictionary/nolookalikes situation
+    - the nanoid version is 49 chars long, and yet it's referenced as dict51
 - [!] check compatibility with `sv_enableNetEventReassembly false`
 - [!] check tx on node 22
-- [!] merge easy PRs
 - [!] update packages
 - [!] check cicd stuff on testing repo before release
 - [!] uncommited nui controls stuff
@@ -149,18 +151,17 @@ Legend:
 - [ ] healthmonitor: write to logger.fxserver the internal reason as marker
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
+    - right now the `mutex#netid` is being calculated on [logger](/core/components/Logger/handlers/server.js#L148)
     - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
     - increase mutex to 6 digits?
     - `/^(?<mutex>\w{5})#(?<netid>\d{1,6})(?:r(?<rollover>\d{1,3}))?$/`
     - write parser, which will return the groups, defaulting rollover to 0
-- [?] check the noLookAlikesAlphabet vs nanoid-dictionary/nolookalikes situation
-    - the nanoid version is 49 chars long, and yet it's referenced as dict51
 - [?] check if it makes sense to allow the txAdmin thread to run more than every 50ms
     - node 22 branch -> code/components/citizen-server-monitor/src/MonitorInstance.cpp:307
 - [?] implement `.env`
     - https://www.npmjs.com/package/dotenv-expand
     - Use with chokidar on `main-builder.js` to restart the build
-    - Maybe pass it through so I could use it for the server as well
+    - Pass it through so I could use it for the server as well
     - Don't forget to update `development.md`
     - node 22 `process.loadEnvFile(path)` ?
 

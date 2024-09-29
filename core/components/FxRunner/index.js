@@ -11,11 +11,11 @@ import { now } from '@extras/helpers';
 import Fd3Handler from './fd3Handler';
 
 import { customAlphabet } from 'nanoid/non-secure';
-import dict51 from 'nanoid-dictionary/nolookalikes';
+import dict49 from 'nanoid-dictionary/nolookalikes';
 import consoleFactory from '@extras/console';
 import { ConsoleLineType } from '@core/components/Logger/FXServerLogger';
 const console = consoleFactory(modulename);
-const genMutex = customAlphabet(dict51, 5);
+const genMutex = customAlphabet(dict49, 5);
 
 
 //Helpers

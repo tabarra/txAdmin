@@ -3,20 +3,6 @@ import CircularBuffer from 'mnemonist/circular-buffer';
 import * as d3array from 'd3-array';
 
 
-//Output types
-export type MultipleCounterOutput = Record<string, number>;
-export type QuantileArrayOutput = {
-    count: number;
-    q5: number;
-    q25: number;
-    q50: number;
-    q75: number;
-    q95: number;
-} | {
-    notEnoughData: true;
-}; //if less than min size
-
-
 /**
  * Helper class to count different options
  */
@@ -120,6 +106,7 @@ export class MultipleCounter extends Map<string, number> {
         return this.toSortedKeyObject();
     }
 }
+export type MultipleCounterOutput = Record<string, number>;
 
 
 /**
@@ -159,21 +146,39 @@ export class QuantileArray {
      * Processes the cache and returns the count and quantiles, if enough data.
      */
     result(): QuantileArrayOutput {
-        const cacheSize = this.#cache.size
-        if (cacheSize < this.#minSize) {
+        if (this.#cache.size < this.#minSize) {
             return {
                 notEnoughData: true,
             }
         } else {
             return {
-                count: cacheSize,
-                q5: d3array.quantile(this.#cache.values(), 0.05) as number,
-                q25: d3array.quantile(this.#cache.values(), 0.25) as number,
-                q50: d3array.quantile(this.#cache.values(), 0.50) as number,
-                q75: d3array.quantile(this.#cache.values(), 0.75) as number,
-                q95: d3array.quantile(this.#cache.values(), 0.95) as number,
+                count: this.#cache.size,
+                q5: d3array.quantile(this.#cache.values(), 0.05)!,
+                q25: d3array.quantile(this.#cache.values(), 0.25)!,
+                q50: d3array.quantile(this.#cache.values(), 0.50)!,
+                q75: d3array.quantile(this.#cache.values(), 0.75)!,
+                q95: d3array.quantile(this.#cache.values(), 0.95)!,
             };
         }
+    }
+
+    /**
+     * Returns a human readable summary of the data.
+     */
+    resultSummary(unit = 'ms') {
+        if (this.#cache.size < this.#minSize) {
+            return 'not enough data available'
+        } 
+        
+        const data = {
+            p5: d3array.quantile(this.#cache.values(), 0.05)!,
+            p25: d3array.quantile(this.#cache.values(), 0.25)!,
+            p50: d3array.quantile(this.#cache.values(), 0.50)!,
+            p75: d3array.quantile(this.#cache.values(), 0.75)!,
+            p95: d3array.quantile(this.#cache.values(), 0.95)!,
+        };
+        const output = Object.entries(data).map(([key, val]) => `${key}:${Math.ceil(val)}${unit}`);
+        return `(${this.#cache.size}) ` + output.join('/');
     }
 
     toJSON() {
@@ -184,6 +189,16 @@ export class QuantileArray {
         return this.result();
     }
 }
+type QuantileArrayOutput = {
+    count: number;
+    q5: number;
+    q25: number;
+    q50: number;
+    q75: number;
+    q95: number;
+} | {
+    notEnoughData: true;
+}; //if less than min size
 
 
 /**

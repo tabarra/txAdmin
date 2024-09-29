@@ -1,6 +1,6 @@
 /**
  * This script is used to merge multiple stats_playerDrop files into a single file with the last 336 hours of data.
- * NOTE: use npx tsx scripts/makeOldStatsFile.ts to run this script
+ * NOTE: use npx tsx scripts/dev/makeOldStatsFile.local.ts to run this script
  */
 import fs from 'node:fs';
 import { shuffle } from 'd3-array';

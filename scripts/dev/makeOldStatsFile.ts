@@ -2,7 +2,7 @@
  * This script is used to merge multiple stats_playerDrop files into a single file with the last 336 hours of data.
  * 
  * NOTE: RENAME TO makeOldStatsFile.local.ts
- * NOTE: THEN RUN npx tsx scripts/runners/makeOldStatsFile.local.ts
+ * NOTE: THEN RUN npx tsx scripts/dev/makeOldStatsFile.local.ts
  */
 import makeOldStatsFile from "./makeOldStatsFile.code";
 //Extract all crashes from all files
