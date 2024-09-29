@@ -287,7 +287,9 @@ export default class SvRuntimeStatsManager {
         } catch (error) {
             if ((error as any)?.code === 'ENOENT') {
                 console.verbose.debug(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
-            } else if (error instanceof ZodError) {
+                return;
+            }
+            if (error instanceof ZodError) {
                 console.warn(`Failed to load ${LOG_DATA_FILE_NAME} due to invalid data.`);
             } else {
                 console.warn(`Failed to load ${LOG_DATA_FILE_NAME} with message: ${(error as Error).message}`);

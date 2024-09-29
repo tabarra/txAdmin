@@ -271,7 +271,9 @@ export default class PlayerDropStatsManager {
             if ((error as any)?.code === 'ENOENT') {
                 console.verbose.debug(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
                 this.resetLog('File was just created, no data yet');
-            } else if (error instanceof ZodError) {
+                return;
+            }
+            if (error instanceof ZodError) {
                 console.warn(`Failed to load ${LOG_DATA_FILE_NAME} due to invalid data.`);
                 this.resetLog('Failed to load log file due to invalid data');
             } else {
