@@ -98,12 +98,20 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     menuIsAccessible = true
     menuPermissions = perms
     if IS_FIVEM then
-        RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
-        RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
-        RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
-        RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
-        RegisterKeyMapping('txAdmin:menu:tpToWaypoint', 'Menu: Teleport to Waypoint', 'KEYBOARD', '')
-        RegisterKeyMapping('txAdmin:menu:fixVehicle', 'Menu: Fix vehicle', 'KEYBOARD', '')
+      --NOTE: appending # to the desc so the sorting shows it at the top
+      RegisterKeyMapping('txadmin', '#Open Main Page', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:openPlayersPage', '#Open Players page', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:clearArea', '#Clear Area', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:healMyself', '#Heal Yourself', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:tpBack', '#Teleport: go Back', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:tpToCoords', '#Teleport: to Coords', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:tpToWaypoint', '#Teleport: to Waypoint', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:noClipToggle', '#Toggle NoClip', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', '#Toggle Player IDs', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:boostVehicle', '#Vehicle: Boost', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:deleteVehicle', '#Vehicle: Delete', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:fixVehicle', '#Vehicle: Fix', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:spawnVehicle', '#Vehicle: Spawn', 'KEYBOARD', '')
     end
   else
     noMenuReason = tostring(rejectReason)

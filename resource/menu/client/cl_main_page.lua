@@ -14,28 +14,52 @@ RegisterSecureNuiCallback('tpToCoords', function(data, cb)
     TriggerServerEvent('txsv:req:tpToCoords', data.x + 0.0, data.y + 0.0, data.z + 0.0)
     cb({})
 end)
-
-RegisterSecureNuiCallback('tpToWaypoint', function(_, cb)
-    TriggerServerEvent('txsv:req:tpToWaypoint')
-    cb({})
+RegisterCommand('txAdmin:menu:tpToCoords', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'players.teleport') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    toggleMenuVisibility(true)
+    SetNuiFocus(true, true)
+    sendMenuMessage('openTeleportCoordsDialog', {})
 end)
 
+
+local function reqTpToWaypoint(_, cb)
+    TriggerServerEvent('txsv:req:tpToWaypoint')
+    if cb then cb({}) end
+end
+RegisterSecureNuiCallback('tpToWaypoint', reqTpToWaypoint)
 RegisterCommand('txAdmin:menu:tpToWaypoint', function()
-    TriggerServerEvent('txsv:req:tpToWaypoint')
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'players.teleport') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    reqTpToWaypoint()
 end)
+
+
+local function reqTpBack(_, cb)
+    if lastTpCoords then
+        TriggerServerEvent('txsv:req:tpToCoords', lastTpCoords.x, lastTpCoords.y, lastTpCoords.z)
+    else
+        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.back.error', true)
+    end
+    if cb then cb({}) end
+end
+RegisterSecureNuiCallback('tpBack', reqTpBack)
+RegisterCommand('txAdmin:menu:tpBack', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'players.teleport') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    reqTpBack()
+end)
+
 
 RegisterSecureNuiCallback('tpToPlayer', function(data, cb)
     TriggerServerEvent('txsv:req:tpToPlayer', tonumber(data.id))
     cb({})
-end)
-
-RegisterSecureNuiCallback('tpBack', function(_, cb)
-    if lastTpCoords then
-        TriggerServerEvent('txsv:req:tpToCoords', lastTpCoords.x, lastTpCoords.y, lastTpCoords.z)
-        cb({})
-    else
-        cb({ e = true })
-    end
 end)
 
 RegisterSecureNuiCallback('summonPlayer', function(data, cb)
@@ -56,6 +80,15 @@ RegisterSecureNuiCallback('clearArea', function(radius, cb)
     TriggerServerEvent('txsv:req:clearArea', radius)
     cb({})
 end)
+RegisterCommand('txAdmin:menu:clearArea', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'menu.clear_area') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    toggleMenuVisibility(true)
+    SetNuiFocus(true, true)
+    sendMenuMessage('openClearAreaDialog', {})
+end)
 
 -- [[ Spawn weapon (only in dev, for now) ]]
 RegisterSecureNuiCallback('spawnWeapon', function(weapon, cb)
@@ -70,9 +103,24 @@ RegisterSecureNuiCallback('healPlayer', function(data, cb)
     cb({})
 end)
 
-RegisterSecureNuiCallback('healMyself', function(_, cb)
+local healSelfMessage = 0
+local function reqHealMyself(_, cb)
+    local msg = 'nui_menu.page_main.heal.myself.success_'..healSelfMessage
+    sendSnackbarMessage('success', msg, true)
+    healSelfMessage = healSelfMessage + 1
+    if healSelfMessage > 3 then
+        healSelfMessage = 0
+    end
     TriggerServerEvent('txsv:req:healMyself')
-    cb({})
+    if cb then cb({}) end
+end
+RegisterSecureNuiCallback('healMyself', reqHealMyself)
+RegisterCommand('txAdmin:menu:healMyself', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'players.heal') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    reqHealMyself()
 end)
 
 RegisterSecureNuiCallback('healAllPlayers', function(_, cb)
@@ -141,7 +189,7 @@ local function handleTpNormally(x, y, z)
     end
 
     -- Teleport to targert
-    ped = PlayerPedId()  --update ped id
+    ped = PlayerPedId() --update ped id
     if IS_FIVEM then
         SetPedCoordsKeepVehicle(ped, x, y, z)
     else
@@ -222,6 +270,7 @@ end
 ---@param z number
 RegisterNetEvent('txcl:tpToCoords', function(x, y, z)
     teleportToCoords(vec3(x, y, z))
+    return sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
 end)
 
 -- Teleport to the current waypoint
@@ -244,6 +293,12 @@ end)
 
 
 RegisterNetEvent('txcl:clearArea', function(radius)
+    sendSnackbarMessage(
+        'success',
+        'nui_menu.page_main.clear_area.dialog_success',
+        true,
+        { radius = radius }
+    )
     if IS_REDM then return end
     local curCoords = GetEntityCoords(PlayerPedId())
     local radiusToFloat = radius + 0.0

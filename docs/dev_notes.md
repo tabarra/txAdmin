@@ -111,7 +111,7 @@ Legend:
 - [x] add timestamp to live console
     - [x] track channel of last console output, and if it's different prefix a `\n`
     - [x] modify the live console code
-- [ ] add more menu keybinds
+- [x] feat(menu): added keybinds for almost all main page actions
     - check if the RegisterCommand is colocated
     - need to add and test `if not menuIsAccessible then return end` to all keybinds
 

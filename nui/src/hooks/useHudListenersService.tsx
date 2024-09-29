@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useNuiEvent } from "./useNuiEvent";
 import { Box, Typography } from "@mui/material";

@@ -111,7 +111,7 @@ RegisterNetEvent('txsv:req:tpToCoords', function(x, y, z)
   end
 
   local allow = PlayerHasTxPermission(src, 'players.teleport')
-  TriggerEvent('txsv:logger:menuEvent', src, 'teleportCoords', true, { x = x, y = y, z = z })
+  TriggerEvent('txsv:logger:menuEvent', src, 'teleportCoords', allow, { x = x, y = y, z = z })
   if allow then
     TriggerClientEvent('txcl:tpToCoords', src, x, y, z)
   end
