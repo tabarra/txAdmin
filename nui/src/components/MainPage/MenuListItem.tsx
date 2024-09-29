@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import { styled } from '@mui/material/styles';
+import { styled, Theme } from '@mui/material/styles';
 import {
   Box,
   BoxProps,
@@ -27,6 +27,8 @@ const classes = {
   root: `${PREFIX}-root`,
   rootDisabled: `${PREFIX}-rootDisabled`,
   icon: `${PREFIX}-icon`,
+  largeIcon: `${PREFIX}-largeIcon`,
+  largeTypography: `${PREFIX}-largeTypography`,
   overrideText: `${PREFIX}-overrideText`
 };
 
@@ -47,7 +49,27 @@ const Root = styled('div')(({ theme }) => ({
   [`& .${classes.overrideText}`]: {
     color: theme.palette.text.primary,
     fontSize: 16,
-  }
+  },
+  '@media (min-height: 2160px)': {
+    [`& .${classes.root}`]: {
+      padding: 12,
+      borderRadius: 20,
+    },
+    [`& .${classes.icon}`]: {
+      fontSize: '2.8rem',
+      padding: 8,
+    },
+    [`& .${classes.largeIcon}`]: {
+      fontSize: '2.8rem',
+    },
+    [`& .${classes.overrideText}`]: {
+      fontSize: '2.4rem',
+      marginLeft: 50,
+    },
+    [`& .${classes.largeTypography}`]: {
+      fontSize: '2.4rem',
+    },
+  },
 }));
 
 export interface MenuListItemProps {
@@ -114,12 +136,15 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
     return (
       <Root ref={divRef}>
         <ListItem
+          style={{ maxHeight: 'none', overflow: 'visible' }}
           onClick={() => onSelect()}
           className={isUserAllowed ? classes.root : classes.rootDisabled}
           dense
           selected={selected}
         >
-          <ListItemIcon className={classes.icon}>{icon}</ListItemIcon>
+          <ListItemIcon className={classes.icon}>
+            {React.cloneElement(icon, { className: classes.largeIcon })}
+          </ListItemIcon>
           <ListItemText
             primary={title}
             classes={{
@@ -246,13 +271,13 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
           selected={selected}
         >
           <ListItemIcon className={classes.icon}>
-            {actions[curState]?.icon ?? icon}
+            {React.cloneElement(actions[curState]?.icon ?? icon, { className: classes.largeIcon })}
           </ListItemIcon>
           <ListItemText
             primary={
               <>
                 {title}:&nbsp;
-                <Typography component="span" color="text.secondary">
+                <Typography component="span" color="text.secondary" className={classes.largeTypography}>
                   {actions[curState]?.name ?? "???"}
                 </Typography>
               </>
