@@ -90,10 +90,14 @@ Legend:
         - [?] don't clear svg on render, use d3 joins
     - StatsManager.svRuntime:
         - [?] write log optimizer and remove the webroute 30h filter
+            - [ref](/core/components/StatsManager/svRuntime/config.ts#L33)
+            - maybe use rounded/aligned times?
+            - check how this code works `d3.timeHours(new Date(1715741829000), new Date())[0]`
     - thread perf chart:
         - [?] add the good/bad markers?
         - [?] fix getMinTickIntervalMarker behavior when 0.2
             - maybe just check if it's the hardcoded or color everything blue
+            - [ref](/core/components/WebServer/wsRooms/dashboard.ts#L26)
         - [?] color should change correctly at the min interval marker point
         - [?] change the bg color to the color of the average ticket with heavy transparency?
 
@@ -143,11 +147,7 @@ Legend:
 - [!] update packages
 - [!] check cicd stuff on testing repo before release
 - [!] uncommited nui controls stuff
-- [ ] migration to change "revocation" to optional
-    - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
 - [ ] update wouter and add search/filters state to URL of the players/history pages
-- [ ] enable nui strict mode
-    - check if the menu -> tx -> iframe -> legacy iframe is now working
 - [ ] healthmonitor: write to logger.fxserver the internal reason as marker
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
@@ -160,13 +160,22 @@ Legend:
     - node 22 branch -> code/components/citizen-server-monitor/src/MonitorInstance.cpp:307
 - [?] implement `.env`
     - https://www.npmjs.com/package/dotenv-expand
+    - https://cs.github.com/?scopeName=All+repos&scope=&q=repo%3Avercel%2Fnext.js+%40next%2Fenv
+    - https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
     - Use with chokidar on `main-builder.js` to restart the build
     - Pass it through so I could use it for the server as well
     - Don't forget to update `development.md`
-    - node 22 `process.loadEnvFile(path)` ?
+    - node 22 `process.loadEnvFile(path)`?
 
 
-
+## Tentative Database Changes
+- [ ] migration to change "revocation" to optional
+    - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
+- [ ] add player name history
+- [ ] add player session time tracking
+    - [ref](/core/playerLogic/playerClasses.ts#L281)
+    - [ ] create simple page to list top 100 players by playtime in the last 30d, 14d, 7d, yesterday, today
+    - if storing in a linear UInt16Array, 100k players * 120d * 4bytes per date = 48mb
 
 ## live console persistent clear:
 - either use the timestamps from above, or
@@ -175,158 +184,6 @@ Legend:
 - upon "clear", panel saves to session storage the mutex, the bytes from item above + bytes received
 - use the data above to wipe data udner the offset when joining the session
 
-
-# Easy way of doing on/off duty scripts:
-- the current ones out there exist by abusing the auth event:
-    - `TriggerEvent("txcl:setAdmin", false, false, "you are offduty")`
-- provide an export to register a resource as a onduty validator
-- when an auth sets place, reach out to the registered export to validate if someone should get the admin perms or not
-    - if not, return an error message displaying a `[resource] <custom message>` as the fail reason
-- provide an export to trigger the admin auth of any player
-- provide an export to trigger a setAdmin removing the perms
-
-
-
-==================================================
-
-TODO: chart of new players per day
-
-
-
-d3.timeHours(new Date(1715741829000), new Date())[0]
-
-
-# svNetwork (should be 100fps)
-29037t / 300s = 96.79fps
-300s / 29037t = 10.33ms
-
-# svSync (should be 120fps)
-35893t / 300s = 119.64fps
-300s / 35893t = 8.36ms
-
-# svMain (should be 20fps)
-5965t / 300s = 19.88fps
-300s / 5965t = 50.29ms
-
-
-
-let toCombine = [];
-for log in statsLog:
-     - log.ts - toCombine[0].ts < resolution
-          - toCombine.push(log)
-     - else:
-          - combined = combine(toCombine)
-          - splice a array
-
-
-## Next up... ish
-- Kick as punishment might be needed since minimum ban is 1 hour, possible solutions:
-    - Allow for ban minutes
-    - Add a "timeout" button that brings a prompt with 1/5/15/30 mins buttons
-    - Add a checkbox to the kick modal to mark it as a punishment
-
-- Highlights:
-    - [ ] add average session time tracking to statsManager.playerDrop
-
-- Small feats, fix, and improvements:
-    - [ ] persistent live console clearing + scroll back in time
-    - [ ] locale file optimization - build 8201 and above
-    - [ ] easter egg???
-        - some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
-        - Having the menu protest when someone fixes their car too much in a short time span?
-        - Zeus or crazy thunder effects when someone spams no clip?
-        - Increasingly exciting 'tada' sounds when someone bans multiple people in a short time span? (ban 1: Ooh.. / ban 2: OOooh.. / ban 3: OOOOOHHH!)
-    - [ ] use `ScanResourceRoot()`
-
-- Chores + Refactor stuff:
-    - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
-    - [ ] reevaluate globals?.tmpSetHbDataTracking
-    - [ ] fix socket.io multiple connections - start a single instance when page opens, commands to switch rooms
-    - [ ] evaluate and maybe add event bus
-    - [ ] switch tx to lua54
-    - [ ] disable some actions while in NUI?
-
-- Boring stuff:
-    - [ ] fix the eslint config + tailwind sort
-    - [ ] build: generate fxmanifest files list dynamically
-        - node 22 use fs.glob
-    - [ ] fix remaining imgur links
-    - [ ] update docs on development?
-    - [ ] rename to de-capitalize components files that have multiple exports 
-    - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
-    - [ ] break down the discord /info command in /info and /admininfo?
-
-
-## Quick notes:
-player name history? (not searchable)
-
-
-new apis? useBackendQuery & useBackendMutation
-based on swr's methods
-the auth part can be the same middleware for both
-need to check swr's behavior on unmount and how to change timeouts
-
-
-=======================================================================
-
-
-# React Migration Roadmap
-- [ ] Setup
-- [ ] Deployer
-
-- [x] Players
-- [x] History
-- [ ] Whitelist
-- [ ] Admins
-- [ ] Settings
-- [ ] Master Actions
-- [ ] Diagnostics (TODO:)
-- [x] System Logs (TODO:)
-
-- [x] Dashboard
-- [x] Live Console
-- [ ] Resources
-    - by default show just the "newly added" resources?
-- [ ] Server Log
-- [ ] CFG Editor
-- [ ] Advanced (TODO:)
-
-
-
-### Action Modal:
-- feat requests:
-    - be able to delete bans/warns with new permission (Issue #910)
-    - top server asked for the option to edit ban duration (expire now / change)
-    - Thought: need to add an edit log like the one we have for player notes
-    - Thought: maybe we could use some dedicated icons for Expired, Edited, Revoked
-
-
-#### Whitelist:
-- remove the wl pending join table
-- add a "latest whitelists" showing both pending and members (query players + pending and join tables)
-- don't forget to keep the "add approval" button
-- bulk actions button
-    - bulk revoke whitelist
-
-
-=======================================================================
-
-# TODO: v7.3+
-- [ ] NEW PAGE: Whitelist
-- [ ] `2xl:mx-8` for all pages? (change on MainShell)
-- [ ] console nav button to jump to server start or errors? 
-    - Or maybe filter just error lines (with margin)
-    - Or maybe even detect all channels and allow you to filter them, show dropdown sorted by frequency
-- [ ] cfg parser: resource relative read errors shouldn't trigger warnings
-- [ ] check again for the need of lazy loading
-- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
-- [ ] update stuff that requires WMIC to use PS command directly 
-    - issue: https://github.com/tabarra/txAdmin/issues/970#issuecomment-2308462733
-    - new lib, same dev: https://www.npmjs.com/package/pidusage-gwmi
-    - https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/07-working-with-wmi?view=powershell-7.2
-
-
-=======================================================================
 
 This worked, no time to check which. 
 Note it's in the core root and not in the `types` folder, also it has an `export` before the declaration.
@@ -358,6 +215,153 @@ class ErrorOnAccess {
     }
 }
 ```
+
+==================================================
+
+# svNetwork (should be 100fps)
+29037t / 300s = 96.79fps
+300s / 29037t = 10.33ms
+
+# svSync (should be 120fps)
+35893t / 300s = 119.64fps
+300s / 35893t = 8.36ms
+
+# svMain (should be 20fps)
+5965t / 300s = 19.88fps
+300s / 5965t = 50.29ms
+
+
+==================================================
+
+## Next up... ish
+- Kick as punishment might be needed since minimum ban is 1 hour, possible solutions:
+    - Allow for ban minutes
+    - Add a "timeout" button that brings a prompt with 1/5/15/30 mins buttons
+    - Add a checkbox to the kick modal to mark it as a punishment
+
+- Highlights:
+    - [ ] add average session time tracking to statsManager.playerDrop
+
+- Small feats, fix, and improvements:
+    - [ ] persistent live console clearing + scroll back in time
+    - [ ] locale file optimization - build 8201 and above
+    - [ ] easter egg???
+        - some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
+        - Having the menu protest when someone fixes their car too much in a short time span?
+        - Zeus or crazy thunder effects when someone spams no clip?
+        - Increasingly exciting 'tada' sounds when someone bans multiple people in a short time span? (ban 1: Ooh.. / ban 2: OOooh.. / ban 3: OOOOOHHH!)
+    - [ ] use `ScanResourceRoot()`
+
+- Chores + Refactor stuff:
+    - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
+    - [ ] reevaluate globals?.tmpSetHbDataTracking
+    - [ ] fix socket.io multiple connections - start a single instance when page opens, commands to switch rooms
+    - [ ] evaluate and maybe add event bus
+    - [ ] switch tx to lua54
+
+- Boring stuff:
+    - [ ] fix the eslint config + tailwind sort
+    - [ ] build: generate fxmanifest files list dynamically
+        - node 22 use fs.glob
+    - [ ] fix remaining imgur links
+    - [ ] update docs on development?
+    - [ ] rename to de-capitalize components files that have multiple exports 
+    - [ ] instead of showing cfg errors when trying to start server, just show "there are errors in your cfg file" and link the user to the cfg editor page
+    - [ ] break down the discord /info command in /info and /admininfo?
+    - [ ] enable nui strict mode
+        - check if the menu -> tx -> iframe -> legacy iframe is not working
+        - check both canary and prod builds
+
+
+=======================================================================
+
+
+# React Migration Roadmap
+- [ ] Setup
+- [ ] Deployer
+
+- [x] Players
+- [x] History
+- [ ] Whitelist
+- [ ] Admins
+- [ ] Settings
+- [ ] Master Actions
+- [ ] Diagnostics (TODO:)
+- [x] System Logs (TODO:)
+
+- [x] Dashboard
+- [x] Live Console
+- [ ] Resources
+    - by default show just the "newly added" resources?
+- [ ] Server Log
+- [ ] CFG Editor
+- [ ] Advanced (TODO:)
+
+
+## Next Page Changes:
+### CFG Editor:
+- multiple cfg editors
+- add backup file to txdata, with the last 100 changes, name of the admin and timestamp
+
+### Setup:
+- don't ask for server data location, list txData subfolders and let the user pick or specify
+- don't ask for cfg location, assume server.cfg and let the user change
+
+### Master Actions:
+- reset fxserver - becomes server add/remove/edit, or just an option in settings -> fxserver
+- clean database - "bulk changes" button at the players page
+- revoke whitelists - button to whitelist pages
+
+### Admin manager:
+- stats on admins
+    - total count of bans/warns
+    - counts of bans/warns in the last 7, 14, 28d
+    - revocation %
+    - bans/warns %
+
+### Whitelist:
+- remove the wl pending join table
+- add a "latest whitelists" showing both pending and members (query players + pending and join tables)
+- don't forget to keep the "add approval" button
+- bulk actions button
+    - bulk revoke whitelist
+
+### Action Modal:
+- feat requests:
+    - be able to delete bans/warns with new permission (Issue #910)
+    - top server asked for the option to edit ban duration (expire now / change)
+    - Thought: need to add an edit log like the one we have for player notes
+    - Thought: maybe we could use some dedicated icons for Expired, Edited, Revoked
+
+
+
+=======================================================================
+
+# TODO: v7.3+
+- [ ] NEW PAGE: Whitelist
+- [ ] `2xl:mx-8` for all pages? (change on MainShell)
+- [ ] console nav button to jump to server start or errors? 
+    - Or maybe filter just error lines (with margin)
+    - Or maybe even detect all channels and allow you to filter them, show dropdown sorted by frequency
+- [ ] cfg parser: resource relative read errors shouldn't trigger warnings
+- [ ] check again for the need of lazy loading
+- [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
+- [ ] update stuff that requires WMIC to use PS command directly 
+    - issue: https://github.com/tabarra/txAdmin/issues/970#issuecomment-2308462733
+    - new lib, same dev: https://www.npmjs.com/package/pidusage-gwmi
+    - https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/07-working-with-wmi?view=powershell-7.2
+
+
+# Easy way of doing on/off duty scripts:
+- the current ones out there exist by abusing the auth event:
+    - `TriggerEvent("txcl:setAdmin", false, false, "you are offduty")`
+- provide an export to register a resource as a onduty validator
+- when an auth sets place, reach out to the registered export to validate if someone should get the admin perms or not
+    - if not, return an error message displaying a `[resource] <custom message>` as the fail reason
+- provide an export to trigger the admin auth of any player
+- provide an export to trigger a setAdmin removing the perms
+
+=======================================================================
 
 ```js
 import bytes from 'bytes';
@@ -431,26 +435,7 @@ z-50    shadcn: SheetOverlay
 z-50    shadcn: SheetContent
 z-50    shadcn: TooltipContent - doesnt go over the terminal?!
 
-### Next Page Changes:
-CFG Editor:
-- multiple cfg editors
-- add backup file to txdata, with the last 100 changes, name of the admin and timestamp
 
-Setup:
-- don't ask for server data location, list txData subfolders and let the user pick or specify
-- don't ask for cfg location, assume server.cfg and let the user change
-
-Master Actions:
-- reset fxserver - becomes server add/remove/edit, or just an option in settings -> fxserver
-- clean database - "bulk changes" button at the players page
-- revoke whitelists - button to whitelist pages
-
-Admin manager:
-- stats on admins
-    - total count of bans/warns
-    - counts of bans/warns in the last 7, 14, 28d
-    - revocation %
-    - bans/warns %
 
 
 =======================================================================
@@ -620,25 +605,6 @@ https://media.discordapp.net/attachments/885648563105837116/1059850236421492736/
 https://media.discordapp.net/attachments/881583434802294894/1109145714824597575/image.png
 
 =======================================================================
-> FIXME: chat doesn't build, possibly docker image issue
-docker run \
-  -p 40121:40120 \
-  -p 30121:30120 -p 30121:30120/udp \
-  --name fxstest \
-  --volume "E:\\FiveM\\dockerFxserver":/fxserver \
-  -it ubuntu bash
-
-docker exec -it fxstest bash
-apt update
-apt install -y wget xz-utils nano iputils-ping bind9-host mycli
-
-mycli -u root -h 172.17.0.2
-
-cd /fxserver
-wget https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/6427-843247aae475eb586950a706015e89033e01b3f4/fx.tar.xz
-tar xvf fx.tar.xz
-
-=======================================================================
 
 (function() {
     var s = document.createElement('script');
@@ -793,7 +759,7 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 - player count (longer window, maybe with some other data)
     - show the player count at the peaks
 - histogram of session time
-- new players per day
+- chart of new players per day
 - top players? 
 - map heatmap?!
 - player disconnect reasons

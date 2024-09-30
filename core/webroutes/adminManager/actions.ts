@@ -210,6 +210,7 @@ async function handleEdit(ctx: AuthedCtx) {
     }
 
     //Validate Discord ID
+    //FIXME: you cannot remove a discord id by erasing from the field
     let discordData: ProviderDataType | undefined;
     if (discordID.length) {
         if (!consts.validIdentifierParts.discord.test(discordID)) {

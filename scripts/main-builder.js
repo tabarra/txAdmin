@@ -14,7 +14,7 @@ const txLicenseBannerFile = licenseBanner();
 
 /**
  * Extracts the version from the GITHUB_REF env var and detects if pre-release
- * NOTE: to run locally: `GITHUB_REF="refs/tags/v7.3.0" npm run build`
+ * NOTE: to run locally: `GITHUB_REF="refs/tags/v9.9.9" npm run build`
  */
 const getPublishVersion = (isOptional) => {
     const workflowRef = process.env.GITHUB_REF;
