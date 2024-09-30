@@ -5,6 +5,7 @@ import slash from 'slash';
 
 import consoleFactory, { setConsoleEnvData } from '@extras/console';
 import { addLocalIpAddress } from '@extras/isIpAddressLocal';
+import { parseFxserverVersion } from '@extras/fxsVersionParser';
 const console = consoleFactory();
 
 
@@ -12,15 +13,6 @@ const console = consoleFactory();
  * Helpers
  */
 const cleanPath = (x: string) => { return slash(path.normalize(x)); };
-const getBuild = (ver: any) => {
-    try {
-        const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
-        // @ts-expect-error: let it throw
-        return parseInt(res[1]);
-    } catch (error) {
-        return 9999;
-    }
-};
 const getConvarBool = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim().toLowerCase();
     return ['true', '1', 'on'].includes(cvar);
@@ -62,16 +54,16 @@ const resourceName = GetCurrentResourceName();
 //8495 = changed prometheus::Histogram::BucketBoundaries
 //9655 = Fixed ScanResourceRoot + latent events
 const minFXServerVersion = 5894;
-const fxServerVersion = getBuild(getConvarString('version'));
-if (fxServerVersion === 9999) {
+const fxsVerParsed = parseFxserverVersion(getConvarString('version'));
+const fxServerVersion = fxsVerParsed.valid ? fxsVerParsed.build : 99999;
+if (!fxsVerParsed.valid) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
-} else if (!fxServerVersion) {
-    console.error(`This version of FXServer is NOT compatible with txAdmin. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
-    process.exit(101);
-} else if (fxServerVersion < minFXServerVersion) {
+} else if (fxsVerParsed.build < minFXServerVersion) {
     console.error(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
     process.exit(102);
+} else if (fxsVerParsed.branch !== 'master') {
+    console.warn(`You are running a custom branch of FXServer: ${fxsVerParsed.branch}`);
 }
 
 //Getting txAdmin version

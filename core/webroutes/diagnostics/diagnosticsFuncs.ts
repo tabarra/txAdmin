@@ -8,6 +8,7 @@ import { txEnv } from '@core/globalData';
 import si from 'systeminformation';
 import consoleFactory from '@extras/console';
 import TxAdmin from '@core/txAdmin';
+import { parseFxserverVersion } from '@extras/fxsVersionParser';
 const console = consoleFactory(modulename);
 
 
@@ -143,25 +144,15 @@ export const getFXServerData = async (txAdmin: TxAdmin) => {
         return { error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)' };
     }
 
-    //Helper function
-    const getBuild = (ver: any) => {
-        try {
-            const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
-            // @ts-ignore: let it throw
-            return parseInt(res[1]);
-        } catch (error) {
-            return 0;
-        }
-    };
-
     //Processing result
     try {
+        const ver = parseFxserverVersion(infoData.server);
         return {
             error: false,
             statusColor: 'success',
             status: ' ONLINE ',
-            version: infoData.server,
-            versionMismatch: (getBuild(infoData.server) !== txEnv.fxServerVersion),
+            version: ver.valid ? `${ver.platform}:${ver.branch}:${ver.build}` : `${ver.platform ?? 'unknown'}:INVALID`,
+            versionMismatch: (ver.build !== txEnv.fxServerVersion),
             resources: infoData.resources.length,
             onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true') ? 'enabled' : 'disabled',
             maxClients: (infoData.vars && infoData.vars.sv_maxClients) ? infoData.vars.sv_maxClients : '--',

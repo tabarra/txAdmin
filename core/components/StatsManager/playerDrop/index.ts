@@ -4,7 +4,6 @@ import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
 import { PDLChangeEventType, PDLFileSchema, PDLFileType, PDLHourlyRawType, PDLHourlyType, PDLServerBootDataSchema } from './playerDropSchemas';
 import { classifyDropReason } from './classifyDropReason';
-import { parseFxserverVersion } from '@extras/helpers';
 import { PDL_RETENTION, PDL_UNKNOWN_LIST_SIZE_LIMIT } from './config';
 import { ZodError } from 'zod';
 import { getDateHourEnc, parseDateHourEnc } from './playerDropUtils';
@@ -12,6 +11,7 @@ import { MultipleCounter } from '../statsUtils';
 import { throttle } from 'throttle-debounce';
 import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@core/webroutes/playerDrops';
 import { migratePlayerDropsFile } from './playerDropMigrations';
+import { parseFxserverVersion } from '@extras/fxsVersionParser';
 const console = consoleFactory(modulename);
 
 

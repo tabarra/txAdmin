@@ -252,28 +252,3 @@ export const parseLimitedFloat = (src: number | string, precision = 6) => {
     const srcAsNum = typeof src === 'string' ? parseFloat(src) : src;
     return parseFloat(srcAsNum.toFixed(precision));
 }
-
-
-/**
- * Parses a fxserver version convar into a number.
- */
-export const parseFxserverVersion = (version: any) => {
-    if (typeof version !== 'string') throw new Error(`expected string`);
-
-    let platform: string | null = null;
-    if (version.includes('win32')) {
-        platform = 'windows';
-    } else if (version.includes('linux')) {
-        platform = 'linux';
-    }
-
-    let build: number | null = null;
-    try {
-        const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(version);
-        // @ts-ignore: let it throw
-        const num = parseInt(res[1]);
-        if (!isNaN(num)) build = num;
-    } catch (error) { }
-
-    return { platform, build };
-};
