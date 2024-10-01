@@ -39,6 +39,15 @@
                         <input type="checkbox" id="stoppedResCheckbox" class="c-switch-input">
                         <span class="c-switch-slider" data-checked="Show" data-unchecked="Hide"></span>
                     </label>
+                    
+                    <span class="form-text text-muted ml-3 mr-1">
+                        Expand/Collapse Tabs:
+                    </span>
+                    
+                    <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                        <input type="checkbox" id="toggleTabsResCheckbox" class="c-switch-input">
+                        <span class="c-switch-slider" data-checked="Show" data-unchecked="Hide"></span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -49,7 +58,7 @@
         <% for (const resGroup of resGroups) { %>
             <div class="card table-responsive-sm" style="margin: 1em 0; border-radius: 0;" id="resList-card-<%= resGroup.divName %>">
                 <!-- Table class is responsible for the sharper edges -->
-                <table class="table table-hover table-outline mb-0">
+                <table class="table table-hover table-outline mb-0" id="resourceTabs">
                     <thead class="thead-light">
                         <tr>
                             <th class="text-break text-center" colspan="2">
@@ -243,6 +252,11 @@
     $('#stoppedResCheckbox').click(() => {
         window.localStorage.resourcesPageShowStopped = document.getElementById('stoppedResCheckbox').checked;
         refreshResourceList();
+    });
+
+    $('#toggleTabsResCheckbox').click(() => {
+        window.localStorage.resourcesPageShowStopped = document.getElementById('toggleTabsResCheckbox').checked;
+        refreshResourceList();
     })
 
     function refreshResourceList() {
@@ -288,6 +302,29 @@
                 $(`#resList-card-${folder.divName}`).show();
             }
         });
+        
+        const tables = document.querySelectorAll('#resourceTabs');
+        if ($('#toggleTabsResCheckbox').is(':checked')) {
+            tables.forEach(table => {
+                const tbody = table.querySelector("tbody");
+                const icon = table.querySelector('.toggle-icon i');
+                if (tbody.classList.contains('collapse')) {
+                    tbody.classList.remove('collapse');
+                    icon.classList.remove('icon-arrow-down');
+                    icon.classList.add('icon-arrow-up');
+                }
+            });
+        } else {
+            tables.forEach(table => {
+                const tbody = table.querySelector("tbody");
+                const icon = table.querySelector('.toggle-icon i');
+                if (!tbody.classList.contains('collapse')) {
+                    tbody.classList.add('collapse');
+                    icon.classList.add('icon-arrow-down');
+                    icon.classList.remove('icon-arrow-up');
+                }
+            });
+        }
     }
 
     $(() => {
