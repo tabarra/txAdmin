@@ -16,6 +16,7 @@ import { txAdminMenuPage, useSetPage } from "../state/page.state";
 import { useAnnounceNotiPosValue } from "../state/server.state";
 import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 import cleanPlayerName from "@shared/cleanPlayerName";
+import { usePlayerModalContext } from "../provider/PlayerModalProvider";
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -76,6 +77,7 @@ export const useHudListenersService = () => {
   const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
   const setPage = useSetPage();
   const notiPos = useAnnounceNotiPosValue();
+  const { closeMenu } = usePlayerModalContext();
 
   const snackFormat = (m: string) => (
     <span style={{ whiteSpace: "pre-wrap" }}>{m}</span>
@@ -164,15 +166,17 @@ export const useHudListenersService = () => {
     }
 
     if (targetPlayer) {
-      setPage(txAdminMenuPage.Players);
+      setPage(txAdminMenuPage.Main);
       setAssocPlayer(targetPlayer);
+      setModalOpen(true);
     } else {
+      closeMenu();
+      setModalOpen(false);
       enqueueSnackbar(
         t("nui_menu.player_modal.misc.target_not_found", { target }),
         { variant: "error" }
       );
     }
-    setModalOpen(true);
   });
 
   useNuiEvent<AddAnnounceData>("addAnnounceMessage", ({ message, author }) => {

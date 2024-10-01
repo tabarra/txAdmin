@@ -128,8 +128,8 @@ Legend:
 - [x] the WarningBar scrolls up with the pages when they have scroll
 - [x] fix the message `Since this is not a critical file, ...` on first boot without txData
     - from `SvRuntimeStatsManager` and `PlayerDropStatsManager` + persistent cache
+- [x] fix: doing /tx <disconnected id> shows empty modal
 - [!] fix the spam of `[tx:WebServer:AuthMws] Invalid session auth: admin_not_found`
-- [!] fix: doing /tx <disconnected id> shows empty modal
 - [ ] fix: `server partial hang detected` should not be the error for `(HB:0HC:--)`
 - [ ] fix txDiagnostics (and add tx v8 heap data to it)
 
