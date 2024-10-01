@@ -86,7 +86,7 @@ export default class PlayerDropStatsManager {
         const allChanges: PDLChangeEventType[] = [];
         const crashTypes = new MultipleCounter();
         const dropTypes = new MultipleCounter();
-        const resources = new MultipleCounter();
+        const resKicks = new MultipleCounter();
         const filteredLogs = this.eventLog.filter((entry) => {
             return entry.hour.dateHourTs >= windowStart && entry.hour.dateHourTs <= windowEnd;
         });
@@ -94,13 +94,13 @@ export default class PlayerDropStatsManager {
             allChanges.push(...log.changes);
             crashTypes.merge(log.crashTypes);
             dropTypes.merge(log.dropTypes);
-            resources.merge(log.resources);
+            resKicks.merge(log.resKicks);
         }
         return {
             changes: allChanges,
             crashTypes: crashTypes.toSortedValuesArray(true),
             dropTypes: dropTypes.toSortedValuesArray(true),
-            resources: resources.toSortedValuesArray(true),
+            resKicks: resKicks.toSortedValuesArray(true),
         };
     }
 
@@ -121,7 +121,7 @@ export default class PlayerDropStatsManager {
             changes: [],
             crashTypes: new MultipleCounter(),
             dropTypes: new MultipleCounter(),
-            resources: new MultipleCounter(),
+            resKicks: new MultipleCounter(),
         };
         this.eventLog.push(newHourLog);
         return newHourLog;
@@ -218,7 +218,7 @@ export default class PlayerDropStatsManager {
         const logRef = this.getCurrentLogHourRef();
         logRef.dropTypes.count(drop.category);
         if (drop.category === 'resource' && drop.resource) {
-            logRef.resources.count(drop.resource);
+            logRef.resKicks.count(drop.resource);
         } else if (drop.category === 'crash' && drop.cleanReason) {
             logRef.crashTypes.count(drop.cleanReason);
         } else if (drop.category === 'unknown' && drop.cleanReason) {
@@ -273,7 +273,7 @@ export default class PlayerDropStatsManager {
                     changes: entry.changes,
                     crashTypes: new MultipleCounter(entry.crashTypes),
                     dropTypes: new MultipleCounter(entry.dropTypes),
-                    resources: new MultipleCounter(entry.resources),
+                    resKicks: new MultipleCounter(entry.resKicks),
                 }
             });
             console.verbose.debug(`Loaded ${this.eventLog.length} log entries from cache`);
@@ -340,7 +340,7 @@ export default class PlayerDropStatsManager {
                         changes: entry.changes,
                         crashTypes: entry.crashTypes.toArray(),
                         dropTypes: entry.dropTypes.toArray(),
-                        resources: entry.resources.toArray(),
+                        resKicks: entry.resKicks.toArray(),
                     }
                 }),
             };

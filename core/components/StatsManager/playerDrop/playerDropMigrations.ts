@@ -41,7 +41,7 @@ export const migratePlayerDropsFile = async (fileData: any): Promise<PDLFileType
                 }
             }).filter(Array.isArray);
             //@ts-ignore
-            log.resources = [];
+            log.resKicks = [];
         }
 
         fileData = {

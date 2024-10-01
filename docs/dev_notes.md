@@ -42,7 +42,7 @@ Legend:
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
     - [x] fix the `nui_warning.instruction` replacer
     - [x] test warn on redm
-- [ ] New player drops page
+- [x] New player drops page
     - [x] remove old player crashes page
     - [x] replace core webroute
     - [x] Page layout
@@ -65,12 +65,12 @@ Legend:
         - change logic of backend to sort by count by default
         - then on the frontend if it's `crashesSortByReason`, then array.slice.sort(...)
         - copy the sort code from [](/core/components/StatsManager/statsUtils.ts#L87)
-    - [ ] adapt code to track resource drops + adjust categories according to the new ones
+    - [x] adapt code to track resource drops + adjust categories according to the new ones
         - [x] server shutting down should not be counted
         - [x] add migration for `user-initiated`, `server-initiated` and `resources[]`
-        - [ ] check dashboard player drops chart brightness and "By Resources" overflow
-        - [ ] fix border color calculation on playerDropCategories.ts
-        - [ ] add resources stats to player drops page
+        - [x] check dashboard player drops chart brightness and "By Resources" overflow
+        - [x] fix border color calculation on playerDropCategories.ts
+        - [x] add resources stats to player drops page
     - [?] review page layout: 
         - [?] make it less card-y
         - [?] fix crashes table widening the outer shell - is it just the scroll?
