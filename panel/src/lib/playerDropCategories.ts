@@ -15,14 +15,13 @@ type PlayerDropCategoriesType = {
 const borderDarkerRatio = 2;
 export const playerDropCategoryDefaultColor = '#A97CD2';
 export const playerDropCategories: PlayerDropCategoriesType = {
-    //FIXME: replace with "player-initiated" 
-    'user-initiated': {
+    player: {
         label: 'Player',
         color: '#39E673', //green
         border: color('#39E673')!.darker(borderDarkerRatio).toString(),
         expected: true,
     },
-    unknown: {
+    resource: {
         label: 'Resource',
         color: '#406FE6', //blue
         border: color('#406FE6')!.darker(borderDarkerRatio).toString(),
@@ -46,7 +45,7 @@ export const playerDropCategories: PlayerDropCategoriesType = {
         border: color('#FF3E26')!.darker(borderDarkerRatio).toString(),
         expected: false,
     },
-    'server-initiated': {
+    unknown: {
         label: 'Unknown',
         color: '#F13BF7', //Roxo
         border: color('#F13BF7')!.darker(borderDarkerRatio).toString(),

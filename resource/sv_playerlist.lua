@@ -152,18 +152,24 @@ AddEventHandler('playerJoining', function(srcString, _oldID)
     end
 end)
 
-AddEventHandler('playerDropped', function(reason)
+AddEventHandler('playerDropped', function(reason, resource, category)
     -- sanity checking source
     if source <= 0 then
         logError('playerDropped event with source ' .. json.encode(source))
         return
     end
 
+    if resource == 'monitor' and TX_IS_SERVER_SHUTTING_DOWN then
+        reason = 'server_shutting_down'
+    end
+
     PrintStructuredTrace(json.encode({
         type = 'txAdminPlayerlistEvent',
         event = 'playerDropped',
         id = source,
-        reason = reason
+        reason = reason,
+        resource = resource,
+        category = category,
     }))
 
     -- relaying this info to all admins

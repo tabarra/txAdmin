@@ -66,8 +66,11 @@ Legend:
         - then on the frontend if it's `crashesSortByReason`, then array.slice.sort(...)
         - copy the sort code from [](/core/components/StatsManager/statsUtils.ts#L87)
     - [ ] adapt code to track resource drops + adjust categories according to the new ones
-        - server shutting down should not be counted
-        - check dashboard player drops chart brightness and "By Resources" overflow
+        - [x] server shutting down should not be counted
+        - [x] add migration for `user-initiated`, `server-initiated` and `resources[]`
+        - [ ] check dashboard player drops chart brightness and "By Resources" overflow
+        - [ ] fix border color calculation on playerDropCategories.ts
+        - [ ] add resources stats to player drops page
     - [?] review page layout: 
         - [?] make it less card-y
         - [?] fix crashes table widening the outer shell - is it just the scroll?

@@ -44,8 +44,9 @@ export const PDLHourlyRawSchema = z.object({
         PDLGameChangedEventSchema,
         PDLResourcesChangedEventSchema,
     ])),
-    dropTypes: z.array(z.tuple([z.string(), z.number()])),
     crashTypes: z.array(z.tuple([z.string(), z.number()])),
+    dropTypes: z.array(z.tuple([z.string(), z.number()])),
+    resources: z.array(z.tuple([z.string(), z.number()])),
 });
 
 export const PDLFileSchema = z.object({
@@ -69,11 +70,13 @@ export type PDLResourcesChangedEventType = z.infer<typeof PDLResourcesChangedEve
 export type PDLChangeEventType = (PDLFxsChangedEventType | PDLGameChangedEventType | PDLResourcesChangedEventType);
 export type PDLHourlyChanges = PDLHourlyRawType['changes'];
 
+//Used after parsing (getCurrentLogHourRef)
 export type PDLHourlyType = {
     hour: DeepReadonly<ReturnType<typeof parseDateHourEnc>>;
     changes: PDLHourlyChanges;
-    dropTypes: MultipleCounter;
     crashTypes: MultipleCounter;
+    dropTypes: MultipleCounter;
+    resources: MultipleCounter;
 };
 
 
@@ -94,6 +97,8 @@ export const PDLHourlyRawSchema_v1 = PDLHourlyRawSchema.extend({
         PDLGameChangedEventSchema_v1,
         PDLResourcesChangedEventSchema,
     ])),
+}).omit({
+    resources: true,
 });
 export const PDLFileSchema_v1 = PDLFileSchema.extend({
     version: z.literal(1),
