@@ -303,7 +303,7 @@ export const parseRecursiveConfig = async (
     const MAX_DEPTH = 5;
     if (!Array.isArray(stack)) {
         stack = [];
-    } else if (stack.length > MAX_DEPTH) {
+    } else if (stack.length >= MAX_DEPTH) {
         throw new Error(`cfg 'exec' command depth above ${MAX_DEPTH}`);
     } else if (stack.includes(cfgAbsolutePath)) {
         throw new Error(`cfg cyclical 'exec' command detected to file ${cfgAbsolutePath}`); //should block
@@ -343,6 +343,7 @@ export const parseRecursiveConfig = async (
         }
     }
 
+    stack.pop();
     return parsedCommands;
 };
 
