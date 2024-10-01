@@ -145,13 +145,13 @@ Legend:
 - [x] merge easy PRs
 - [x] check the noLookAlikesAlphabet vs nanoid-dictionary/nolookalikes situation
     - the nanoid version is 49 chars long, and yet it's referenced as dict51
+- [x] healthmonitor: write to logger.fxserver the internal reason as marker
 - [!] check compatibility with `sv_enableNetEventReassembly false`
 - [!] check tx on node 22
 - [!] update packages
 - [!] check cicd stuff on testing repo before release
 - [!] uncommited nui controls stuff
 - [ ] update wouter and add search/filters state to URL of the players/history pages
-- [ ] healthmonitor: write to logger.fxserver the internal reason as marker
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/components/Logger/handlers/server.js#L148)

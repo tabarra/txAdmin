@@ -105,6 +105,14 @@ export default class FXServerLogger extends LoggerBase {
     /**
      * Writes to the log that the server is booting
      */
+    public logInformational(msg: string) {
+        this.ingest(ConsoleLineType.MarkerInfo, `${msg} \n`);
+    }
+
+
+    /**
+     * Writes to the log that the server is booting
+     */
     public logFxserverBoot(pid: string) {
         const msg = getLogDivider(`[${pid}] FXServer Starting`);
         this.ingest(ConsoleLineType.MarkerInfo, msg);

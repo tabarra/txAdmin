@@ -69,8 +69,9 @@ export default class HealthMonitor {
      * Restart the FXServer and logs everything
      * @param {string} reasonInternal
      * @param {string} reasonTranslated
+     * @param {string} timesPrefix
      */
-    async restartFXServer(reasonInternal, reasonTranslated) {
+    async restartFXServer(reasonInternal, reasonTranslated, timesPrefix) {
         //sanity check
         if (globals.fxRunner.fxChild === null) {
             console.warn('Server not started, no need to restart');
@@ -79,9 +80,9 @@ export default class HealthMonitor {
 
         //Restart server
         this.isAwaitingRestart = true;
-        const logMessage = `Restarting server (${reasonInternal}).`;
+        const logMessage = `Restarting server: ${reasonInternal} ${timesPrefix}`;
         globals.logger.admin.write('MONITOR', logMessage);
-        //FIXME: write internal reason to logger.fxserver as a marker
+        globals.logger.fxserver.logInformational(logMessage);
         globals.fxRunner.restartServer(reasonTranslated, null);
     }
 
@@ -235,6 +236,7 @@ export default class HealthMonitor {
             this.restartFXServer(
                 'server close detected',
                 globals.translator.t('restarter.crash_detected'),
+                timesPrefix,
             );
             return;
         }
@@ -307,18 +309,21 @@ export default class HealthMonitor {
                     this.restartFXServer(
                         `resource "${starting.startingResName}" failed to start within the ${this.config.resourceStartingTolerance}s time limit`,
                         globals.translator.t('restarter.start_timeout'),
+                        timesPrefix,
                     );
                 } else if (starting.lastStartElapsedSecs !== null) {
                     //Resources started, but no heartbeat whithin limit after that
                     this.restartFXServer(
                         `server failed to start within time limit - ${this.hardConfigs.heartBeat.resStartedCooldown}s after last resource started`,
                         globals.translator.t('restarter.start_timeout'),
+                        timesPrefix,
                     );
                 } else {
                     //No resource started starting, hb over limit
                     this.restartFXServer(
                         `server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`,
                         globals.translator.t('restarter.start_timeout'),
+                        timesPrefix,
                     );
                 }
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
@@ -327,12 +332,14 @@ export default class HealthMonitor {
                 this.restartFXServer(
                     'server partial hang detected',
                     globals.translator.t('restarter.hang_detected'),
+                    timesPrefix,
                 );
             } else {
                 globals.statsManager.txRuntime.registerFxserverRestart('heartBeat');
                 this.restartFXServer(
                     'server hang detected',
                     globals.translator.t('restarter.hang_detected'),
+                    timesPrefix,
                 );
             }
         }
