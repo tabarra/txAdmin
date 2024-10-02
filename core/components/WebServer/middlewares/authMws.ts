@@ -94,7 +94,7 @@ export const apiAuthMw = async (ctx: InitializedCtx, next: Function) => {
     );
     if (!authResult.success) {
         ctx.sessTools.destroy();
-        if (authResult.rejectReason) {
+        if (authResult.rejectReason && (authResult.rejectReason !== 'nui_admin_not_found' || console.isVerbose)) {
             console.verbose.warn(`Invalid session auth: ${authResult.rejectReason}`);
         }
         return sendTypedResp({

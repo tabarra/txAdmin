@@ -262,7 +262,7 @@ export const nuiAuthLogic = (
                 return failResp('Unauthorized: you do not have a license identifier, which means the server probably has sv_lan enabled. Please disable sv_lan and restart the server to use the in-game menu.');
             } else {
                 //this one is handled differently in resource/menu/client/cl_base.lua
-                return failResp('admin_not_found');
+                return failResp('nui_admin_not_found');
             }
         }
         return successResp(txAdmin, vaultAdmin, undefined);

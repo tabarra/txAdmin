@@ -16,7 +16,7 @@ local awaitingReauth = false
 
 --- Logic to displaying the menu auth rejected snackbar
 local function displayAuthRejectedError()
-  if noMenuReason == 'admin_not_found' then
+  if noMenuReason == 'nui_admin_not_found' then
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_admin', true)
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_auth_failed', true, { reason = noMenuReason })
