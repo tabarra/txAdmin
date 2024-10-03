@@ -19,6 +19,10 @@ local staticCacheData = {}
 
 -- catching all NUI requests for https://monitor/WebPipe/
 RegisterRawNuiCallback('WebPipe', function(req, cb)
+    if not menuIsAccessible or not isMenuVisible then
+        return txPrint('^1NUI request received while the menu is not accessible or visible.')
+    end
+
     local path = req.path
     local headers = req.headers
     local body = req.body

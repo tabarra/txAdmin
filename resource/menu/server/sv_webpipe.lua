@@ -4,11 +4,11 @@ if not TX_SERVER_MODE then return end
 if not TX_MENU_ENABLED then return end
 
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
-  log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+  txPrint('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
   return
 end
 if TX_LUACOMTOKEN == "removed" then
-  log('^1Please do not restart the monitor resource.')
+  txPrint('^1Please do not restart the monitor resource.')
   return
 end
 
@@ -93,7 +93,7 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
   headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
   headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ',')
 
-  
+
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s^0"):format(s, callbackId, json.encode(headers)))
 

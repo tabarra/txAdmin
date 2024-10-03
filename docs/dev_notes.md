@@ -130,8 +130,8 @@ Legend:
     - from `SvRuntimeStatsManager` and `PlayerDropStatsManager` + persistent cache
 - [x] fix: doing /tx <disconnected id> shows empty modal
 - [x] fix the spam of `[tx:WebServer:AuthMws] Invalid session auth: admin_not_found`
-- [ ] fix: `server partial hang detected` should not be the error for `(HB:0HC:--)`
-- [ ] fix txDiagnostics (and add tx v8 heap data to it)
+- [x] fix: `server partial hang detected` should not be the error for `(HB:0HC:--)`
+- [x] fix txDiagnostics (and add tx v8 heap data to it)
 
 ## Chores + refactor + boring stuff
 - [x] remove /legacy/dashboard route + handler
@@ -150,7 +150,6 @@ Legend:
 - [!] check tx on node 22
 - [!] update packages
 - [!] check cicd stuff on testing repo before release
-- [!] uncommited nui controls stuff
 - [ ] update wouter and add search/filters state to URL of the players/history pages
 - [ ] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
     - [ref](/core/components/AdminVault/index.js#L289)

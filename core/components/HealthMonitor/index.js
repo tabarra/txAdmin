@@ -192,6 +192,7 @@ export default class HealthMonitor {
         this.lastRefreshStatus = currTimestamp;
 
         //Get elapsed times & process status
+        const anySuccessfulHealthCheck = (this.lastSuccessfulHealthCheck !== null);
         const elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
         const healthCheckFailed = (elapsedHealthCheck > this.hardConfigs.healthCheck.failThreshold);
         const anySuccessfulHeartBeat = (this.lastSuccessfulFD3HeartBeat !== null || this.lastSuccessfulHTTPHeartBeat !== null);
@@ -299,10 +300,9 @@ export default class HealthMonitor {
         }
 
         //Check if already over the limit
-        if (
-            elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit
-            || elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
-        ) {
+        const healthCheckOverLimit = (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit);
+        const heartBeatOverLimit = (elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit);
+        if (healthCheckOverLimit || heartBeatOverLimit) {
             if (anySuccessfulHeartBeat === false) {
                 if (starting.startingElapsedSecs !== null) {
                     //Resource didn't finish starting (if res boot still active)
@@ -326,18 +326,29 @@ export default class HealthMonitor {
                         timesPrefix,
                     );
                 }
-            } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
-                //FIXME: se der hang tanto HB quanto HC, ele ainda sim cai nesse caso
-                globals.statsManager.txRuntime.registerFxserverRestart('healthCheck');
+            } else if (anySuccessfulHealthCheck === false) {
+                //HB started, but HC didn't
                 this.restartFXServer(
-                    'server partial hang detected',
-                    globals.translator.t('restarter.hang_detected'),
+                    `server failed to start within time limit - resources running but HTTP endpoint unreachable`,
+                    globals.translator.t('restarter.start_timeout'),
                     timesPrefix,
                 );
             } else {
-                globals.statsManager.txRuntime.registerFxserverRestart('heartBeat');
+                //Both threads started, but now at least one stopepd
+                let issueMsg, issueSrc;
+                if (healthCheckFailed && heartBeatFailed) {
+                    issueMsg = 'server full hang detected';
+                    issueSrc = 'both';
+                } else if (healthCheckFailed) {
+                    issueMsg = 'server http hang detected';
+                    issueSrc = 'healthCheck';
+                } else {
+                    issueMsg = 'server resources hang detected';
+                    issueSrc = 'heartBeat';
+                }
+                globals.statsManager.txRuntime.registerFxserverRestart(issueSrc);
                 this.restartFXServer(
-                    'server hang detected',
+                    issueMsg,
                     globals.translator.t('restarter.hang_detected'),
                     timesPrefix,
                 );
