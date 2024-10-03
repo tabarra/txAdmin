@@ -36,37 +36,45 @@ type HeaderMenuLinkProps = {
 function HeaderMenuLink(props: HeaderMenuLinkProps) {
     const [isActive] = useRoute(props.href);
     return (
-        <NavigationMenuItem>
-            <NavigationMenuLink asChild active={isActive}>
-                {props.disabled ? (
-                    <Tooltip>
-                        <TooltipTrigger className="cursor-help">
-                            <a className={cn(
-                                buttonVariants({ variant: 'default' }),
-                                "pointer-events-none opacity-50",
-                                props.className,
-                            )}>
-                                {props.children}
-                            </a>
-                        </TooltipTrigger>
-                        <TooltipContent side='bottom' className="text-destructive-inline text-center">
-                            You do not have permission <br />
-                            to access this page.
-                        </TooltipContent>
-                    </Tooltip>
-                ) : (
-                    <MainPageLink
-                        href={props.href}
-                        isActive={isActive}
-                        className={cn(
-                            buttonVariants({ variant: isActive ? 'secondary' : 'default' }),
+        <NavigationMenuLink asChild active={isActive}>
+            {props.disabled ? (
+                <Tooltip>
+                    <TooltipTrigger className="cursor-help">
+                        <a className={cn(
+                            buttonVariants({ variant: 'default' }),
+                            "pointer-events-none opacity-50",
                             props.className,
-                        )}
-                    >
-                        {props.children}
-                    </MainPageLink>
-                )}
-            </NavigationMenuLink>
+                        )}>
+                            {props.children}
+                        </a>
+                    </TooltipTrigger>
+                    <TooltipContent side='bottom' className="text-destructive-inline text-center">
+                        You do not have permission <br />
+                        to access this page.
+                    </TooltipContent>
+                </Tooltip>
+            ) : (
+                <MainPageLink
+                    href={props.href}
+                    isActive={isActive}
+                    className={cn(
+                        buttonVariants({ variant: isActive ? 'secondary' : 'default' }),
+                        props.className,
+                    )}
+                >
+                    {props.children}
+                </MainPageLink>
+            )}
+        </NavigationMenuLink>
+    );
+}
+
+function HeaderMenuItem(props: HeaderMenuLinkProps) {
+    return (
+        <NavigationMenuItem>
+            <HeaderMenuLink href={props.href} disabled={props.disabled} className={props.className}>
+                {props.children}
+            </HeaderMenuLink>
         </NavigationMenuItem>
     );
 }
@@ -84,35 +92,35 @@ export default function DesktopHeader() {
                     {/* <DynamicNewItem featName='xxxxxxxx' durationDays={7}>
                         <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
                     </DynamicNewItem> */}
-                    <HeaderMenuLink href="/players">
+                    <HeaderMenuItem href="/players">
                         Players
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/history">
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/history">
                         History
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/insights/player-drops">
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/insights/player-drops">
                         Player Drops
                         <DynamicNewItem featName='newPlayerDropsPage' durationDays={7}>
                             <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
                         </DynamicNewItem>
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/whitelist">
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/whitelist">
                         Whitelist
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/admins" disabled={!hasPerm('manage.admins')}>
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/admins" disabled={!hasPerm('manage.admins')}>
                         Admins
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/settings" disabled={!hasPerm('settings.view')}>
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/settings" disabled={!hasPerm('settings.view')}>
                         Settings
                         <DynamicNewItem featName='hideAdminNames' durationDays={7}>
                             <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
                         </DynamicNewItem>
-                    </HeaderMenuLink>
+                    </HeaderMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
 
             <NavigationMenu>
-                <NavigationMenuList>
+                <NavigationMenuList className='aaaaaaaaaaa'>
                     <NavigationMenuItem>
                         <NavigationMenuTrigger
                             onClick={(e) => {

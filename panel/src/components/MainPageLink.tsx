@@ -106,8 +106,9 @@ export function NavLink({ href, children, className }: NavLinkProps) {
         <MainPageLink
             href={href}
             isActive={isActive}
+            className={className}
         >
-            <a className={className}>{children}</a>
+            {children}
         </MainPageLink>
     )
 }

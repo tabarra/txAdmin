@@ -13,7 +13,7 @@ import AccountDialog from '@/components/AccountDialog';
 import { useOpenAccountModal } from '@/hooks/dialogs';
 import PlayerModal from './PlayerModal/PlayerModal';
 import { useOpenPlayerModal } from '@/hooks/playerModal';
-import { navigate as setLocation } from 'wouter/use-location';
+import { navigate as setLocation } from 'wouter/use-browser-location';
 import MainSocket from './MainSocket';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useToggleTheme } from '@/hooks/theme';
