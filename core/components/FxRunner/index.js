@@ -482,10 +482,10 @@ export default class FXRunner {
 
     /**
      * Formats and sends commands to fxserver's stdin.
-     * @param {string} cmdName
-     * @param {(string|object)[]} input
-     * @param {string} src
-     * @returns {boolean} success
+     * @param {string} cmdName - The name of the command to send.
+     * @param {(string|Object)[]} [cmdArgs=[]] - The arguments for the command (optional).
+     * @param {string} [author] - The author of the command (optional).
+     * @returns {boolean} Success status of the command.
      */
     sendCommand(cmdName, cmdArgs = [], author) {
         if (this.fxChild === null) return false;

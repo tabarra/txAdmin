@@ -243,7 +243,9 @@ export const nuiAuthLogic = (
 
         // Check token value
         if (reqHeader['x-txadmin-token'] !== txAdmin.webServer.luaComToken) {
-            console.verbose.warn(`NUI Auth Failed: token received '${reqHeader['x-txadmin-token']}' !== expected '${txAdmin.webServer.luaComToken}'.`);
+            const expected = txAdmin.webServer.luaComToken;
+            const censoredExpected = expected.slice(0, 6) + '...' + expected.slice(-6);
+            console.verbose.warn(`NUI Auth Failed: token received '${reqHeader['x-txadmin-token']}' !== expected '${censoredExpected}'.`);
             return failResp('Unauthorized: token value');
         }
 

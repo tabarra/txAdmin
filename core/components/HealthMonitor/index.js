@@ -135,8 +135,8 @@ export default class HealthMonitor {
         };
         try {
             const data = await got.get(requestOptions).json();
-            if (typeof data !== 'object') throw new Error("FXServer's dynamic endpoint didn't return a JSON object.");
-            if (isUndefined(data.hostname) || isUndefined(data.clients)) throw new Error("FXServer's dynamic endpoint didn't return complete data.");
+            if (typeof data !== 'object') throw new Error('FXServer\'s dynamic endpoint didn\'t return a JSON object.');
+            if (isUndefined(data.hostname) || isUndefined(data.clients)) throw new Error('FXServer\'s dynamic endpoint didn\'t return complete data.');
             dynamicResp = data;
         } catch (error) {
             this.lastHealthCheckErrorMessage = error.message;

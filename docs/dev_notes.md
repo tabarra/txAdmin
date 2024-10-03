@@ -152,6 +152,8 @@ Legend:
 - [!] check cicd stuff on testing repo before release
 - [!] uncommited nui controls stuff
 - [ ] update wouter and add search/filters state to URL of the players/history pages
+- [ ] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
+    - [ref](/core/components/AdminVault/index.js#L289)
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/components/Logger/handlers/server.js#L148)
@@ -321,6 +323,23 @@ class ErrorOnAccess {
     - counts of bans/warns in the last 7, 14, 28d
     - revocation %
     - bans/warns %
+
+### Resources:
+- v1:
+    - should be stateful, with websocket
+    - layout inspired in code editors
+    - left sidebar with resource folders, no resources, with buttons to start/stop/restart/etc
+    - search bar at the top, searches any folder, has filters
+    - filters by default, running, stopped
+    - main content will show the resources of the selected folder OR "recently added"
+- v2:
+    - show "recently added" resources
+    - each resoruce need to have:
+        - warning for outdated, button to update
+        - performance stats
+        - option to add/remove from auto boot
+        - option to auto restart on change (dev mode)
+        - button to see related insights (http calls, events, etc?)
 
 ### Whitelist:
 - remove the wl pending join table
