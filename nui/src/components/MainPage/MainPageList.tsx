@@ -521,23 +521,23 @@ export const MainPageList: React.FC = () => {
 
   return (
     // add pb={2} if we don't have that arrow at the bottom
-    <Box>
+    (<Box>
       <StyledList>
         {menuListItems.map((item, index) =>
           item.isMultiAction ? (
             // @ts-ignore
-            <MenuListItemMulti
+            (<MenuListItemMulti
               key={index}
               selected={curSelected === index}
               {...item}
-            />
+            />)
           ) : (
             // @ts-ignore
-            <MenuListItem
+            (<MenuListItem
               key={index}
               selected={curSelected === index}
               {...item}
-            />
+            />)
           )
         )}
       </StyledList>
@@ -557,6 +557,6 @@ export const MainPageList: React.FC = () => {
       >
         v{serverCtx.txAdminVersion}
       </Typography>  */}
-    </Box>
+    </Box>)
   );
 };
