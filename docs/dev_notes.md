@@ -146,7 +146,7 @@ Legend:
 - [x] check the noLookAlikesAlphabet vs nanoid-dictionary/nolookalikes situation
     - the nanoid version is 49 chars long, and yet it's referenced as dict51
 - [x] healthmonitor: write to logger.fxserver the internal reason as marker
-- [!] check compatibility with `sv_enableNetEventReassembly false`
+- [x] check compatibility with `sv_enableNetEventReassembly false`
 - [!] check tx on node 22
 - [!] update packages
 - [!] check cicd stuff on testing repo before release

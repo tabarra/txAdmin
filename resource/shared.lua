@@ -2,9 +2,34 @@
 --  Truly global
 -- =============================================
 
-function GetConvarBool(cvName)
-  return (GetConvar(cvName, 'false') == 'true')
+function GetConvarBool(cvName, defaultConvarValue)
+  if not cvName then
+    return false
+  elseif defaultConvarValue then
+    return (GetConvar(cvName, 'true') == 'true')
+  else
+    return (GetConvar(cvName, 'false') == 'true')
+  end
 end
+
+-- -- Tests for GetConvarBool
+-- print("==========================")
+-- print('unknown convar')
+-- print(GetConvarBool2('xxx', true)) -- true
+-- print(GetConvarBool2('xxx', false)) -- false
+-- print(GetConvarBool2('xxx')) -- false
+-- print('known convar')
+-- SetConvar('yyy', 'true')
+-- print(GetConvarBool2('yyy', true)) -- true
+-- print(GetConvarBool2('yyy', false)) -- true
+-- print(GetConvarBool2('yyy')) -- true 
+-- print('known convar, but with a false value')
+-- SetConvar('yyy', 'false')
+-- print(GetConvarBool2('yyy', false)) -- false
+-- print(GetConvarBool2('yyy', true)) -- false
+-- print(GetConvarBool2('yyy')) -- false
+-- print("==========================")
+
 
 -- Setting game-specific global vars
 local envName = GetGameName()

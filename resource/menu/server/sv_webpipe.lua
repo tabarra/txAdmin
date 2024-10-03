@@ -21,6 +21,12 @@ end
 local _pipeLastReject
 local _pipeFastCache = {}
 
+-- Check if we should use latent events
+local useLatentEvents = GetConvarBool('sv_enableNetEventReassembly', true);
+if not useLatentEvents then
+  txPrint('^3WARNING: Latent events are disabled. If you have issues using the txAdmin in-game menu, please enable them by setting sv_enableNetEventReassembly to true in your server.cfg.')
+end
+
 ---@param src string
 ---@param callbackId number
 ---@param statusCode number
@@ -35,10 +41,13 @@ local function sendResponse(src, callbackId, statusCode, path, body, headers, ca
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< %s ^4%s%s^0"):format(
     src, callbackId, resultColor, statusCode, path, cachedStr))
   if errorCode then
-    debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0"):format(
-      src, callbackId, resultColor, json.encode(headers)))
+    debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0"):format(src, callbackId, resultColor, json.encode(headers)))
   end
-  TriggerLatentClientEvent('txcl:webpipe:resp', src, 125000, callbackId, statusCode, body, headers)
+  if useLatentEvents then
+    TriggerLatentClientEvent('txcl:webpipe:resp', src, 125000, callbackId, statusCode, body, headers)
+  else
+    TriggerClientEvent('txcl:webpipe:resp', src, callbackId, statusCode, body, headers)
+  end
 end
 
 RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers, body)
