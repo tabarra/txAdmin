@@ -368,6 +368,7 @@ class ErrorOnAccess {
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 - [ ] update stuff that requires WMIC to use PS command directly 
+    - NOTE: perhaps just use `systeminformation.processLoad()` instead
     - issue: https://github.com/tabarra/txAdmin/issues/970#issuecomment-2308462733
     - new lib, same dev: https://www.npmjs.com/package/pidusage-gwmi
     - https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/07-working-with-wmi?view=powershell-7.2
