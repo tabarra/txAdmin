@@ -147,8 +147,7 @@ Legend:
     - the nanoid version is 49 chars long, and yet it's referenced as dict51
 - [x] healthmonitor: write to logger.fxserver the internal reason as marker
 - [x] check compatibility with `sv_enableNetEventReassembly false`
-- [!] check tx on node 22
-- [!] update packages
+- [x] update packages
 - [!] check cicd stuff on testing repo before release
 - [ ] update wouter and add search/filters state to URL of the players/history pages
 - [ ] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
@@ -170,6 +169,9 @@ Legend:
     - Pass it through so I could use it for the server as well
     - Don't forget to update `development.md`
     - node 22 `process.loadEnvFile(path)`?
+- [?] check tx on node 22
+- [?] see if it's a good idea to replace `getHostStats.js` with si.osInfo()
+    - same for getting process load, instead of fixing the wmic issue
 
 
 ## Tentative Database Changes
