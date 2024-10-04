@@ -176,7 +176,7 @@ export default function MainRouter() {
                 {import.meta.env.DEV && (
                     <WouterRoute path="/test"><TestingPage /></WouterRoute>
                 )}
-                <WouterRoute path="/:fullPath*" component={NotFound} />
+                <WouterRoute component={NotFound} />
             </Switch>
         </ErrorBoundary>
     );
