@@ -1,8 +1,11 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import humanizeDuration from '@/lib/humanizeDuration';
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import type { HumanizerOptions } from "humanize-duration";
+import type { BanDurationType } from "@shared/otherTypes";
+import { ListenEventsMap } from "@shared/socketioTypes";
+import { LogoutReasonHash } from "@/pages/auth/Login";
 
 //Statically caching the current year
 const currentYear = new Date().getFullYear();
@@ -21,10 +24,23 @@ export function cn(...inputs: ClassValue[]) {
  * To prevent open redirect, we need to make sure the first char is / and the second is not,
  * otherwise //example.com would be a valid redirect to <proto>://example.com
  */
-export function isValidRedirectPath(location: unknown) {
+export function isValidRedirectPath(location: unknown): location is string {
     if (typeof location !== 'string' || !location) return false;
     const url = new URL(location, window.location.href);
     return location.startsWith('/') && !location.startsWith('//') && url.hostname === window.location.hostname;
+}
+
+
+/**
+ * Returns the path/search/hash of the login URL with redirect params
+ * /aaa/bbb?ccc=ddd#eee -> /login?r=%2Faaa%2Fbbb%3Fccc%3Dddd%23eee
+ */
+export function redirectToLogin(reasonHash = LogoutReasonHash.NONE) {
+    const currLocation = window.location.pathname + window.location.search + window.location.hash;
+    const newLocation = currLocation === '/' || currLocation.startsWith('/login')
+        ? `/login${reasonHash}`
+        : `/login?r=${encodeURIComponent(currLocation)}${reasonHash}`;
+    window.history.replaceState(null, '', newLocation);
 }
 
 
@@ -64,44 +80,128 @@ export const msToShortDuration = humanizeDuration.humanizer({
 
 
 /**
+ * Converts a timestamp to Date, detecting if ts is seconds or milliseconds
+ */
+export const tsToDate = (ts: number) => {
+    return new Date(ts < 10000000000 ? ts * 1000 : ts);
+}
+
+
+/**
+ * Converts a timestamp to a locale time string
+ */
+export const dateToLocaleTimeString = (
+    time: Date,
+    hour: 'numeric' | '2-digit' = '2-digit',
+    minute: 'numeric' | '2-digit' = '2-digit',
+    second?: 'numeric' | '2-digit',
+    hour12?: boolean,
+) => {
+    return time.toLocaleTimeString(
+        window.txBrowserLocale,
+        { hour, minute, second, hour12 }
+    );
+}
+
+
+/**
+ * Converts a timestamp to a locale time string
+ */
+export const tsToLocaleTimeString = (
+    ts: number,
+    hour: 'numeric' | '2-digit' = '2-digit',
+    minute: 'numeric' | '2-digit' = '2-digit',
+    second?: 'numeric' | '2-digit',
+    hour12?: boolean,
+) => {
+    return dateToLocaleTimeString(tsToDate(ts), hour, minute, second, hour12);
+}
+
+
+/**
  * Converts a timestamp to a locale date string
  */
-export const tsToLocaleDate = (
+export const dateToLocaleDateString = (
+    time: Date,
+    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
+) => {
+    return time.toLocaleDateString(
+        window.txBrowserLocale,
+        { dateStyle }
+    );
+}
+
+
+/**
+ * Converts a timestamp to a locale date string
+ */
+export const tsToLocaleDateString = (
     ts: number,
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
 ) => {
-    return new Date(ts * 1000)
-        .toLocaleDateString(
-            window?.nuiSystemLanguages ?? navigator.language,
-            { dateStyle }
-        );
+    return dateToLocaleDateString(tsToDate(ts), dateStyle);
 }
 
 
 /**
  * Translates a timestamp into a localized date time string
  */
-export const tsToLocaleDateTime = (
+export const dateToLocaleDateTimeString = (
+    time: Date,
+    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
+    timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
+) => {
+    return time.toLocaleString(
+        window.txBrowserLocale,
+        { dateStyle, timeStyle }
+    );
+}
+
+
+/**
+ * Translates a timestamp into a localized date time string
+ */
+export const tsToLocaleDateTimeString = (
     ts: number,
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
     timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
 ) => {
-    return new Date(ts * 1000)
-        .toLocaleString(
-            window?.nuiSystemLanguages ?? navigator.language,
-            { dateStyle, timeStyle }
-        );
+    return dateToLocaleDateTimeString(tsToDate(ts), dateStyle, timeStyle);
 }
+
+
+/**
+ * Checks if a date is today
+ */
+export const isDateToday = (date: Date) => {
+    const today = new Date();
+    return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+    );
+};
+
+
+/**
+ * Converts a number to a locale string with commas and decimals
+ */
+export const numberToLocaleString = (num: number, decimals = 0) => {
+    return num.toLocaleString(
+        window.txBrowserLocale,
+        { maximumFractionDigits: decimals }
+    );
+};
 
 
 /**
  * Converts a timestamp to a locale time string, considering the current year, shortest unambiguous as possible
  */
 export const convertRowDateTime = (ts: number) => {
-    const date = new Date(ts * 1000);
+    const date = tsToDate(ts);
     const isAnotheryear = date.getFullYear() !== currentYear;
     return date.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language,
+        window.txBrowserLocale,
         {
             year: isAnotheryear ? 'numeric' : undefined,
             month: isAnotheryear ? 'numeric' : 'short',
@@ -130,7 +230,8 @@ export const getSocket = (rooms: string[] | string) => {
         ? io({ ...socketOpts, path: '/socket.io' })
         : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
 
-    return socket;
+    //Can't use the generic type on io(), so need to apply it here
+    return socket as Socket<ListenEventsMap, any>;
 }
 
 
@@ -166,9 +267,11 @@ export const handleExternalLinkClick = (event: React.MouseEvent<HTMLElement, Mou
 /**
  * Returns a random hsl() color - useful for testing react rendering stuff
  */
-export const createRandomHslColor = () => {
+export const createRandomHslColor = (alpha?: number) => {
     const hue = Math.floor(Math.random() * 360);
-    return `hsl(${hue}, 90%, 65%)`;
+    return typeof alpha === 'number'
+        ? `hsla(${hue}, 100%, 50%, ${alpha})`
+        : `hsl(${hue}, 100%, 50%)`
 }
 
 
@@ -179,7 +282,7 @@ export const createRandomHslColor = () => {
  * FIXME: literally not working
  */
 export const copyToClipboard = async (value: string) => {
-    if (navigator?.clipboard) { 
+    if (navigator?.clipboard) {
         return navigator.clipboard.writeText(value);
     } else {
         const clipElem = document.createElement("textarea");
@@ -190,4 +293,39 @@ export const copyToClipboard = async (value: string) => {
         document.body.removeChild(clipElem);
         return result;
     }
+}
+
+
+/**
+ * Converts the duration object to a lowercase string with correct unit pluralization
+ */
+export const banDurationToString = (duration: BanDurationType) => {
+    if (duration === 'permanent') return 'permanent';
+    if (typeof duration === 'string') return duration;
+    const pluralizedString = duration.value === 1 ? duration.unit.slice(0, -1) : duration.unit;
+    return `${duration.value} ${pluralizedString}`;
+}
+
+
+/**
+ * Converts the duration object to a short string
+ */
+export const banDurationToShortString = (duration: BanDurationType) => {
+    if (typeof duration === 'string') {
+        return duration === 'permanent' ? 'PERM' : duration;
+    }
+
+    let suffix: string;
+    if (duration.unit === 'hours') {
+        suffix = 'h';
+    } else if (duration.unit === 'days') {
+        suffix = 'd';
+    } else if (duration.unit === 'weeks') {
+        suffix = 'w';
+    } else if (duration.unit === 'months') {
+        suffix = 'mo';
+    } else {
+        suffix = duration.unit;
+    }
+    return `${duration.value}${suffix}`;
 }

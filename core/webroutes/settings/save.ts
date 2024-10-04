@@ -73,6 +73,14 @@ async function handleGlobal(ctx: AuthedCtx) {
         language: ctx.request.body.language.trim(),
     };
 
+    // Check server name length
+    if (!cfg.serverName.length) {
+        return ctx.send({
+            type: 'danger',
+            message: 'Server name cannot be empty.',
+        });
+    }
+
     //Trying to load language file
     try {
         ctx.txAdmin.translator.getLanguagePhrases(cfg.language);
@@ -162,7 +170,9 @@ async function handleFXServer(ctx: AuthedCtx) {
 
     //Preparing & saving config
     const newConfig = ctx.txAdmin.configVault.getScopedStructure('fxRunner');
+    const hasServerDataPathChanged = (newConfig.serverDataPath !== cfg.serverDataPath);
     newConfig.serverDataPath = cfg.serverDataPath;
+    const hasCfgPathChanged = (newConfig.cfgPath !== cfg.cfgPath);
     newConfig.cfgPath = cfg.cfgPath;
     newConfig.onesync = cfg.onesync;
     newConfig.autostart = cfg.autostart;
@@ -181,6 +191,9 @@ async function handleFXServer(ctx: AuthedCtx) {
     }
 
     //Sending output
+    if(hasServerDataPathChanged || hasCfgPathChanged){
+        ctx.txAdmin.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+    }
     ctx.txAdmin.fxRunner.refreshConfig();
     ctx.admin.logAction('Changing fxRunner settings.');
     return ctx.send({
@@ -275,7 +288,7 @@ async function handlePlayerDatabase(ctx: AuthedCtx) {
     }
 
     //Sending output
-    ctx.txAdmin.statisticsManager.whitelistCheckTime.clear();
+    ctx.txAdmin.statsManager.txRuntime.whitelistCheckTime.clear();
     ctx.txAdmin.playerDatabase.refreshConfig();
     ctx.admin.logAction('Changing Player Manager settings.');
     return ctx.send({
@@ -480,6 +493,8 @@ async function handleMenu(ctx: AuthedCtx) {
         isUndefined(ctx.request.body.menuEnabled)
         || isUndefined(ctx.request.body.menuAlignRight)
         || isUndefined(ctx.request.body.menuPageKey)
+        || isUndefined(ctx.request.body.hideAdminInPunishments)
+        || isUndefined(ctx.request.body.hideAdminInMessages)
         || isUndefined(ctx.request.body.hideDefaultAnnouncement)
         || isUndefined(ctx.request.body.hideDefaultDirectMessage)
         || isUndefined(ctx.request.body.hideDefaultWarning)
@@ -493,6 +508,8 @@ async function handleMenu(ctx: AuthedCtx) {
         menuEnabled: (ctx.request.body.menuEnabled === 'true'),
         menuAlignRight: (ctx.request.body.menuAlignRight === 'true'),
         menuPageKey: ctx.request.body.menuPageKey.trim(),
+        hideAdminInPunishments: (ctx.request.body.hideAdminInPunishments === 'true'),
+        hideAdminInMessages: (ctx.request.body.hideAdminInMessages === 'true'),
         hideDefaultAnnouncement: (ctx.request.body.hideDefaultAnnouncement === 'true'),
         hideDefaultDirectMessage: (ctx.request.body.hideDefaultDirectMessage === 'true'),
         hideDefaultWarning: (ctx.request.body.hideDefaultWarning === 'true'),
@@ -504,6 +521,8 @@ async function handleMenu(ctx: AuthedCtx) {
     newConfig.menuEnabled = cfg.menuEnabled;
     newConfig.menuAlignRight = cfg.menuAlignRight;
     newConfig.menuPageKey = cfg.menuPageKey;
+    newConfig.hideAdminInPunishments = cfg.hideAdminInPunishments;
+    newConfig.hideAdminInMessages = cfg.hideAdminInMessages;
     newConfig.hideDefaultAnnouncement = cfg.hideDefaultAnnouncement;
     newConfig.hideDefaultDirectMessage = cfg.hideDefaultDirectMessage;
     newConfig.hideDefaultWarning = cfg.hideDefaultWarning;

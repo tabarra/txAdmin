@@ -13,6 +13,11 @@
         "schedule_warn": "Αυτός ο διακομιστής έχει προγραμματιμένη επανεκκίνηση σε %{smart_count} λεπτό. Παρακαλώ αποσυνδεθείτε τώρα. |||| Αυτός ο διακομιστής έχει προγραμματισμένη επανεκκίνηση σε %{smart_count} λεπτά.",
         "schedule_warn_discord": "Ο **%{servername}** έχει προγραμματισμένη επανεκκίνηση σε %{smart_count} λεπτό. |||| Ο **%{servername}** έχει προγραμματιμένη επανεκκίνηση σε %{smart_count} λεπτά."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Έχει απαγορευτεί η είσοδος σου στον διακομιστή για: \"%{reason}\". Η απαγορευσή σου θα λήξει σε: %{expiration}.",
         "kick_permanent": "(%{author}) Έχει απαγορευτεί η είσοδος σου στον διακομιστή για: \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "ΠΡΟΕΙΔΟΠΟΙΗΣΗ",
         "warned_by": "Προειδοποιήθηκες από τον:",
-        "instruction": "Πάτα [SPACE] για 10 δευτερόλεπτα για να απορρίψεις αυτό το μήνυμα."
+        "stale_message": "Αυτή η προειδοποίηση εκδόθηκε πριν συνδεθείτε στον διακομιστή.",
+        "dismiss_key": "SPACE",
+        "instruction": "Πάτα %{key} για %{smart_count} δευτερόλεπτο για να απορρίψεις αυτό το μήνυμα. |||| Πάτα %{key} για %{smart_count} δευτερόλεπτα για να απορρίψεις αυτό το μήνυμα."
     },
     "nui_menu": {
         "misc": {
@@ -218,6 +225,13 @@
                 "players": "Παίκτες",
                 "search": "Αναζήτηση",
                 "zero_players": "Δεν βρέθηκαν παίκτες"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Ταξινόμηση κατά",

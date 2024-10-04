@@ -45,6 +45,7 @@ export type HistoryTableActionType = {
     timestamp: number;
     isRevoked: boolean;
     banExpiration?: 'expired' | 'active' | 'permanent';
+    warnAcked?: boolean;
 }
 
 export type HistoryTableSearchResp = {

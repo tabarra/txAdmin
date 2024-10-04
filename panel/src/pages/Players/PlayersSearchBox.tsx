@@ -192,13 +192,13 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                                 role="combobox"
                                 aria-expanded={isSearchTypeDropdownOpen}
                                 onClick={() => setSearchTypeDropdownOpen(!isSearchTypeDropdownOpen)}
-                                className="xs:w-40 justify-between border-input bg-black/5 dark:bg-black/30 hover:dark:bg-primary grow md:grow-0"
+                                className="xs:w-48 justify-between border-input bg-black/5 dark:bg-black/30 hover:dark:bg-primary grow md:grow-0"
                             >
                                 Search by {selectedSearchType.label}
                                 <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className='w-40'>
+                        <DropdownMenuContent className='w-48'>
                             <DropdownMenuLabel>Search Type</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={currSearchType} onValueChange={setCurrSearchType}>
@@ -265,9 +265,9 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>
-                                    <Link href="/players/old" className="cursor-pointer">
+                                    <Link href="/ban-identifiers" className="cursor-pointer">
                                         <ExternalLinkIcon className="inline mr-1 h-4" />
-                                        Old Page
+                                        Ban Identifiers
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="h-10 pl-1 pr-2 py-2" asChild>

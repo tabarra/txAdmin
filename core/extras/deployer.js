@@ -1,7 +1,7 @@
 const modulename = 'Deployer';
 import path from 'node:path';
 import { cloneDeep }  from 'lodash-es';
-import dateFormat from 'dateformat'
+import dateFormat from 'dateformat';
 import fse from 'fs-extra';
 import open from 'open';
 import YAML from 'js-yaml';
@@ -14,7 +14,7 @@ const console = consoleFactory(modulename);
 
 //Helper functions
 const getTimestamp = () => { return dateFormat(new Date(), 'HH:MM:ss'); };
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const isUndefined = (x) => (x === undefined);
 const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : input; };
 const canCreateFile = async (targetPath) => {
     try {

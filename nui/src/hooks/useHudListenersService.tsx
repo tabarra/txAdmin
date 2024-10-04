@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useNuiEvent } from "./useNuiEvent";
 import { Box, Typography } from "@mui/material";
@@ -15,6 +15,8 @@ import { useSetAssociatedPlayer } from "../state/playerDetails.state";
 import { txAdminMenuPage, useSetPage } from "../state/page.state";
 import { useAnnounceNotiPosValue } from "../state/server.state";
 import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
+import cleanPlayerName from "@shared/cleanPlayerName";
+import { usePlayerModalContext } from "../provider/PlayerModalProvider";
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -75,6 +77,7 @@ export const useHudListenersService = () => {
   const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
   const setPage = useSetPage();
   const notiPos = useAnnounceNotiPosValue();
+  const { closeMenu } = usePlayerModalContext();
 
   const snackFormat = (m: string) => (
     <span style={{ whiteSpace: "pre-wrap" }}>{m}</span>
@@ -136,19 +139,25 @@ export const useHudListenersService = () => {
   // Handler for dynamically opening the player page & player modal with target
   useNuiEvent<string>("openPlayerModal", (target) => {
     let targetPlayer;
-    const targetId = parseInt(target);
 
-    if (targetId) {
+    //Search by ID
+    const targetId = parseInt(target);
+    if (target && !isNaN(targetId)) {
       targetPlayer = onlinePlayers.find(
         (playerData) => playerData.id === targetId
       );
-    } else {
+    }
+
+    //Search by pure name
+    if (!targetPlayer && target && typeof target === "string") {
+      const searchInput = cleanPlayerName(target).pureName;
       const foundPlayers = onlinePlayers.filter((playerData) =>
-        playerData.name?.toLowerCase().includes(target.toLowerCase())
+        playerData.pureName?.includes(searchInput)
       );
 
-      if (foundPlayers.length === 1) targetPlayer = foundPlayers[0];
-      else if (foundPlayers.length > 1) {
+      if (foundPlayers.length === 1) {
+        targetPlayer = foundPlayers[0];
+      } else if (foundPlayers.length > 1) {
         setPlayerFilter(target);
         setPage(txAdminMenuPage.Players);
         setPlayersFilterIsTemp(true);
@@ -156,15 +165,18 @@ export const useHudListenersService = () => {
       }
     }
 
-    if (!targetPlayer)
-      return enqueueSnackbar(
+    if (targetPlayer) {
+      setPage(txAdminMenuPage.Main);
+      setAssocPlayer(targetPlayer);
+      setModalOpen(true);
+    } else {
+      closeMenu();
+      setModalOpen(false);
+      enqueueSnackbar(
         t("nui_menu.player_modal.misc.target_not_found", { target }),
         { variant: "error" }
       );
-
-    setPage(txAdminMenuPage.Players);
-    setAssocPlayer(targetPlayer);
-    setModalOpen(true);
+    }
   });
 
   useNuiEvent<AddAnnounceData>("addAnnounceMessage", ({ message, author }) => {

@@ -56,16 +56,18 @@ CreateThread(function()
             local yCoord = nil
             if onesyncEnabled == true then
                 local ped = GetPlayerPed(serverID)
-                health = GetPedHealthPercent(ped)
-                local veh = GetVehiclePedIsIn(ped)
-                if veh ~= 0 then
-                    vType = vTypeMap[tostring(GetVehicleType(veh))]
-                else
-                    vType = vTypeMap["walking"]
+                if ped and DoesEntityExist(ped) then
+                    health = GetPedHealthPercent(ped)
+                    local veh = GetVehiclePedIsIn(ped)
+                    if veh ~= 0 then
+                       vType = vTypeMap[tostring(GetVehicleType(veh))]
+                    else
+                       vType = vTypeMap["walking"]
+                    end
+                    local coords = GetEntityCoords(ped)
+                    xCoord = math.floor(coords.x)
+                    yCoord = math.floor(coords.y)
                 end
-                local coords = GetEntityCoords(ped)
-                xCoord = math.floor(coords.x)
-                yCoord = math.floor(coords.y)
             end
 
             -- Updating TX_PLAYERLIST
@@ -133,7 +135,7 @@ AddEventHandler('playerJoining', function(srcString, _oldID)
     end
 
     local playerData = {
-        name = sub(playerDetectedName or "unknown", 1, 75),
+        name = sub(playerDetectedName or "unknown", 1, 128),
         ids = GetPlayerIdentifiers(source),
         hwids = GetPlayerTokens(source),
     }
@@ -150,18 +152,24 @@ AddEventHandler('playerJoining', function(srcString, _oldID)
     end
 end)
 
-AddEventHandler('playerDropped', function(reason)
+AddEventHandler('playerDropped', function(reason, resource, category)
     -- sanity checking source
     if source <= 0 then
         logError('playerDropped event with source ' .. json.encode(source))
         return
     end
 
+    if resource == 'monitor' and TX_IS_SERVER_SHUTTING_DOWN then
+        reason = 'server_shutting_down'
+    end
+
     PrintStructuredTrace(json.encode({
         type = 'txAdminPlayerlistEvent',
         event = 'playerDropped',
         id = source,
-        reason = reason
+        reason = reason,
+        resource = resource,
+        category = category,
     }))
 
     -- relaying this info to all admins

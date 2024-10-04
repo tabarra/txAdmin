@@ -13,6 +13,11 @@
         "schedule_warn": "เซิร์ฟเวอร์ถูกกำหนดเวลาให้รีสตาร์ทใน %{smart_count} นาที โปรดยกเลิกการเชื่อมต่อทันที |||| เซิร์ฟเวอร์ถูกกำหนดเวลาให้รีสตาร์ทใน %{smart_count} นาที.",
         "schedule_warn_discord": "**%{servername}** มีกำหนดการจะรีสตาร์ทใน %{smart_count} นาที |||| **%{servername}** มีกำหนดการจะรีสตาร์ทใน %{smart_count} นาที"
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) คุณถูกแบนจากเซิร์ฟเวอร์นี้เพราะ \"%{reason}\" การแบนของคุณจะหมดอายุใน: %{expiration}.",
         "kick_permanent": "(%{author}) คุณถูกแบนจากเซิร์ฟเวอร์นี้อย่างถาวรเพราะ \"%{reason}\"",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "WARNING",
         "warned_by": "Warned by:",
-        "instruction": "กด [SPACE] ค้าวไว้เป็นเวลา 10 วินาทีเพื่อปิดข้อความนี้"
+        "stale_message": "คำเตือนนี้ถูกออกก่อนที่คุณจะเชื่อมต่อกับเซิร์ฟเวอร์",
+        "dismiss_key": "SPACE",
+        "instruction": "กด %{key} ค้างไว้เป็นเวลา %{smart_count} วินาทีเพื่อปิดข้อความนี้ |||| กด %{key} ค้างไว้เป็นเวลา %{smart_count} วินาทีเพื่อปิดข้อความนี้"
     },
     "nui_menu": {
         "misc": {
@@ -218,6 +225,13 @@
                 "players": "ผู้เล่น",
                 "search": "ค้นหา",
                 "zero_players": "ไม่พบผู้เล่น"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "กรอกผู้เล่นจาก",

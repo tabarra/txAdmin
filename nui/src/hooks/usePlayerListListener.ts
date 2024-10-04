@@ -3,6 +3,8 @@ import { txAdminMenuPage, usePageValue } from "../state/page.state";
 import { useNuiEvent } from "./useNuiEvent";
 import { useSetPlayersState } from "../state/players.state";
 import { fetchNui } from "../utils/fetchNui";
+import cleanPlayerName from "@shared/cleanPlayerName";
+import { debugLog } from "../utils/debugLog";
 
 export enum VehicleStatus {
   Unknown = "unknown",
@@ -19,10 +21,13 @@ export interface PlayerData {
    **/
   id: number;
   /**
-   * No default value representing unknown state, this should always
-   * reflect the player's actual name.
+   * Player's display name
    **/
-  name: string;
+  displayName: string;
+  /**
+   * Player's name in its pure form, used for searching
+   */
+  pureName: string;
   /**
    * Player's vehicle status
    **/
@@ -43,11 +48,35 @@ export interface PlayerData {
   admin: boolean;
 }
 
+export type LuaPlayerData = Omit<PlayerData, 'displayName' | 'pureName'> & { name: string };
+
 export const usePlayerListListener = () => {
   const curPage = usePageValue();
   const setPlayerList = useSetPlayersState();
 
-  useNuiEvent<PlayerData[]>("setPlayerList", setPlayerList);
+  useNuiEvent<LuaPlayerData[]>("setPlayerList", (playerList) => {
+    const newPlayerList = playerList.map((player) => {
+      let displayName = 'Unknown';
+      let pureName = 'unknown';
+      try {
+        const res = cleanPlayerName(player.name);
+        displayName = res.displayName;
+        pureName = res.pureName;
+      } catch (error) {
+        debugLog('cleanPlayerName', error);
+      }
+      return {
+        id: player.id,
+        displayName,
+        pureName,
+        vType: player.vType,
+        dist: player.dist,
+        health: player.health,
+        admin: player.admin,
+      } satisfies PlayerData;
+    });
+    setPlayerList(newPlayerList);
+  });
 
   useEffect(() => {
     // Since our player list is never technically unmounted,

@@ -3,14 +3,14 @@ import fsp from 'node:fs/promises';
 import path from 'node:path';
 import chalk from 'chalk';
 import dateFormat from 'dateformat';
-import { txEnv } from '@core/globalData';
-import { LoggerBase, separator } from '@core/components/Logger/loggerUtils.js';
+import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@extras/console';
+import { LoggerBase } from '../LoggerBase';
 const console = consoleFactory(modulename);
 
 
 export default class AdminLogger extends LoggerBase {
-    constructor(basePath, lrProfileConfig) {
+    constructor(txAdmin, basePath, lrProfileConfig) {
         const lrDefaultOptions = {
             path: basePath,
             intervalBoundary: true,
@@ -20,12 +20,7 @@ export default class AdminLogger extends LoggerBase {
 
         };
         super(basePath, 'admin', lrDefaultOptions, lrProfileConfig);
-        const sepText = separator(`txAdmin v${txEnv.txAdminVersion} atop fxserver ${txEnv.fxServerVersion} Starting`);
-        this.lrStream.write(`\n${sepText}\n`);
-        this.lrStream.on('rotated', (filename) => {
-            this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            console.verbose.log(`Rotated file ${filename}`);
-        });
+        this.lrStream.write(getBootDivider());
 
         this.writeCounter = 0;
     }
@@ -51,17 +46,17 @@ export default class AdminLogger extends LoggerBase {
     /**
      * Handles the input of log data
      * TODO: add here discord log forwarding
-     * 
-     * @param {string} author 
-     * @param {string} action 
-     * @param {'default'|'command'} type 
+     *
+     * @param {string} author
+     * @param {string} action
+     * @param {'default'|'command'} type
      */
     write(author, action, type = 'default') {
         let saveMsg;
-        if(type === 'command'){
+        if (type === 'command') {
             saveMsg = `[${author}] executed "${action}"`;
             console.log(`${author} executed ` + chalk.inverse(' ' + action + ' '));
-        }else{
+        } else {
             saveMsg = `[${author}] ${action}`;
             console.log(saveMsg);
         }

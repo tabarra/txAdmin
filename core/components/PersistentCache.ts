@@ -14,6 +14,7 @@ const isAcceptedType = (val: any) => {
     return (val === null || valType === 'string' || valType === 'boolean' || valType === 'number');
 }
 
+const CACHE_FILE_NAME = 'cachedData.json';
 
 /**
  * Dead-simple Map-based persistent cache, saved in txData/<profile>/cachedData.json.
@@ -28,7 +29,7 @@ export default class PersistentCache {
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
-        this.cacheFilePath = `${txAdmin.info.serverProfilePath}/data/cachedData.json`;
+        this.cacheFilePath = `${txAdmin.info.serverProfilePath}/data/${CACHE_FILE_NAME}`;
         this.throttledSaveCache = throttle(
             this.saveCache.bind(this),
             5000,
@@ -76,40 +77,29 @@ export default class PersistentCache {
             // console.debug('Saving:', toSave)
             await fsp.writeFile(this.cacheFilePath, toSave);
             // console.debug('Finished saving:', toSave)
-            console.verbose.debug(`Saved cachedData.json with ${this.#cache.size} entries.`);
+            console.verbose.debug(`Saved ${CACHE_FILE_NAME} with ${this.#cache.size} entries.`);
         } catch (error) {
-            console.error(`Unable to save cachedData.json with error: ${(error as Error).message}`);
+            console.error(`Unable to save ${CACHE_FILE_NAME} with error: ${(error as Error).message}`);
         }
     }
 
     async loadCachedData() {
-        let rawFile = null;
         try {
-            rawFile = await fsp.readFile(this.cacheFilePath, 'utf8');
-        } catch (error) { }
-
-        const resetCacheFile = async () => {
-            try {
-                await fsp.writeFile(this.cacheFilePath, '[]');
-                this.#cache = new Map();
-                console.verbose.warn(`Reset cachedData.json.`);
-            } catch (error) {
-                console.error(`Unable to create cachedData.json with error: ${(error as Error).message}`);
-            }
-        };
-
-        if (rawFile === null) {
-            await resetCacheFile();
-        } else {
-            try {
-                const fileData = JSON.parse(rawFile);
-                if (!Array.isArray(fileData)) throw new Error('data is not an array');
-                this.#cache = new Map(fileData);
-                console.verbose.ok(`Loaded cachedData.json with ${this.#cache.size} entries.`);
-            } catch (error) {
-                console.warn(`Failed to load cachedData.json with message: ${(error as Error).message}`);
+            const rawFileData = await fsp.readFile(this.cacheFilePath, 'utf8');
+            const fileData = JSON.parse(rawFileData);
+            if (!Array.isArray(fileData)) throw new Error('data_is_not_an_array');
+            this.#cache = new Map(fileData);
+            console.verbose.ok(`Loaded ${CACHE_FILE_NAME} with ${this.#cache.size} entries.`);
+        } catch (error) {
+            this.#cache = new Map();
+            if ((error as any)?.code === 'ENOENT') {
+                console.verbose.debug(`${CACHE_FILE_NAME} not found, making a new one.`);
+            } else if ((error as any)?.message === 'data_is_not_an_array') {
+                console.warn(`Failed to load ${CACHE_FILE_NAME} due to invalid data.`);
                 console.warn('Since this is not a critical file, it will be reset.');
-                await resetCacheFile();
+            } else {
+                console.warn(`Failed to load ${CACHE_FILE_NAME} with message: ${(error as any).message}`);
+                console.warn('Since this is not a critical file, it will be reset.');
             }
         }
     }

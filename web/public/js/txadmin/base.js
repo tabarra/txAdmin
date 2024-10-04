@@ -72,16 +72,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
     }
 });
 
-//Handle profile picture load error
-const pfpList = document.getElementsByClassName('profile-pic');
-for (let pfp of pfpList) {
-    pfp.addEventListener('error', () => {
-        if (pfp.src != 'img/default_avatar.png') {
-            pfp.src = 'img/default_avatar.png';
-        }
-    });
-}
-
 
 //================================================================
 //================================================= Helper funcs

@@ -17,13 +17,14 @@ end
 
 
 -- =============================================
--- Variables stuff
+-- MARK: Variables stuff
 -- =============================================
 TX_ADMINS = {}
 TX_PLAYERLIST = {}
 TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
 TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
+TX_IS_SERVER_SHUTTING_DOWN = false
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
@@ -47,49 +48,44 @@ CreateThread(function()
 end)
 
 
--- vars
-local rejectAllConnections = false
+-- =============================================
+-- MARK: Heartbeat functions
+-- =============================================
+local httpHbUrl = "http://" .. TX_LUACOMHOST .. "/intercom/monitor"
+local httpHbPayload = json.encode({ txAdminToken = TX_LUACOMTOKEN })
 local hbReturnData = '{"error": "no data cached in sv_main.lua"}'
-
-
--- =============================================
--- Heartbeat functions
--- =============================================
 local function HTTPHeartBeat()
-    local url = "http://"..TX_LUACOMHOST.."/intercom/monitor"
-    local exData = {
-        txAdminToken = TX_LUACOMTOKEN
-    }
-    PerformHttpRequest(url, function(httpCode, data, resultHeaders)
+    PerformHttpRequest(httpHbUrl, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
-            hbReturnData = "HeartBeat failed with code "..httpCode.." and message: "..resp
+            hbReturnData = "HeartBeat failed with code " .. httpCode .. " and message: " .. resp
             logError(hbReturnData)
         else
             hbReturnData = resp
         end
-    end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+    end, 'POST', httpHbPayload, { ['Content-Type'] = 'application/json' })
 end
 
+local fd3HbPayload = json.encode({ type = 'txAdminHeartBeat' })
 local function FD3HeartBeat()
-    local payload = json.encode({type = 'txAdminHeartBeat'})
-    PrintStructuredTrace(payload)
+    PrintStructuredTrace(fd3HbPayload)
 end
 
 -- HTTP request handler
+local notFoundResponse = json.encode({ error = 'route not found' })
 local function handleHttp(req, res)
-    res.writeHead(200, {["Content-Type"]="application/json"})
+    res.writeHead(200, { ["Content-Type"] = "application/json" })
 
     if req.path == '/stats.json' then
         return res.send(hbReturnData)
     else
-        return res.send(json.encode({error = 'route not found'}))
+        return res.send(notFoundResponse)
     end
 end
 
 
 -- =============================================
--- Commands
+-- MARK: Commands
 -- =============================================
 
 --- Simple stdout reply just to make sure the resource is alive
@@ -107,9 +103,9 @@ local function txaKickAll(source, args)
     else
         args[1] = unDeQuote(args[1])
     end
-    txPrint("Kicking all players with reason: "..args[1])
+    txPrint("Kicking all players: "..args[1])
     for _, pid in pairs(GetPlayers()) do
-        DropPlayer(pid, "\n".."Kicked for: " .. args[1])
+        DropPlayer(pid, '[txAdmin] ' .. args[1])
     end
     CancelEvent()
 end
@@ -172,27 +168,31 @@ end
 
 
 -- =============================================
---  Events handling
+-- MARK: Events handling
 -- =============================================
+local txServerName = GetConvar("txAdmin-serverName", "txAdmin")
+local cvHideAdminInPunishments = GetConvarBool('txAdmin-hideAdminInPunishments')
+local cvHideAdminInMessages = GetConvarBool('txAdmin-hideAdminInMessages')
 local cvHideAnnouncement = GetConvarBool('txAdmin-hideDefaultAnnouncement')
 local cvHideDirectMessage = GetConvarBool('txAdmin-hideDefaultDirectMessage')
 local cvHideWarning = GetConvarBool('txAdmin-hideDefaultWarning')
 local cvHideScheduledRestartWarning = GetConvarBool('txAdmin-hideDefaultScheduledRestartWarning')
-local txaEventHandlers = {}
+TX_EVENT_HANDLERS = {}
 
 --- Handler for announcement events
 --- Broadcast admin message to all players
-txaEventHandlers.announcement = function(eventData)
+TX_EVENT_HANDLERS.announcement = function(eventData)
+    local authorName = cvHideAdminInMessages and txServerName or eventData.author or 'anonym'
     if not cvHideAnnouncement then
-        TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, eventData.author)
+        TriggerClientEvent('txcl:showAnnouncement', -1, eventData.message, authorName)
     end
-    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(Broadcast) '..eventData.author, eventData.message)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(Broadcast) '..authorName, eventData.message)
 end
 
 
 --- Handler for scheduled restarts event
 --- Broadcast through an announcement that the server will restart in XX minutes
-txaEventHandlers.scheduledRestart = function(eventData)
+TX_EVENT_HANDLERS.scheduledRestart = function(eventData)
     if not cvHideScheduledRestartWarning then
         TriggerClientEvent('txcl:showAnnouncement', -1, eventData.translatedMessage, 'txAdmin')
     end
@@ -202,16 +202,17 @@ end
 
 --- Handler for player DM event
 --- Sends a direct message from an admin to a player
-txaEventHandlers.playerDirectMessage = function(eventData)
+TX_EVENT_HANDLERS.playerDirectMessage = function(eventData)
+    local authorName = cvHideAdminInMessages and txServerName or eventData.author or 'anonym'
     if not cvHideDirectMessage then
-        TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, eventData.author)
+        TriggerClientEvent('txcl:showDirectMessage', eventData.target, eventData.message, authorName)
     end
-    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(DM) '..eventData.author, eventData.message)
+    TriggerEvent('txsv:logger:addChatMessage', 'tx', '(DM) '..authorName, eventData.message)
 end
 
 
 --- Handler for player kicked event
-txaEventHandlers.playerKicked = function(eventData)
+TX_EVENT_HANDLERS.playerKicked = function(eventData)
     Wait(0) -- give other resources a chance to read player data
     DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
 end
@@ -219,22 +220,68 @@ end
 
 --- Handler for player warned event
 --- Warn specific player via server ID
-txaEventHandlers.playerWarned = function(eventData)
-    local pName = GetPlayerName(eventData.target)
-    if pName ~= nil then
-        if not cvHideWarning then
-            TriggerClientEvent('txcl:showWarning', eventData.target, eventData.author, eventData.reason)
-        end
-        txPrint('Warning '..pName..' with reason: '..eventData.reason)
-    else
-        txPrint('handleWarnEvent: player not found')
+local pendingWarnings = {}
+TX_EVENT_HANDLERS.playerWarned = function(eventData, isWarningNew)
+    if isWarningNew == nil then isWarningNew = true end
+    if cvHideWarning then return end
+    if eventData.targetNetId == nil then return end
+
+    if not DoesPlayerExist(eventData.targetNetId) then
+        txPrint(string.format(
+            'handleWarnEvent: ignoring warning for disconnected player (#%s) %s',
+            eventData.targetNetId,
+            eventData.targetName
+        ))
+        return
     end
+
+    pendingWarnings[tostring(eventData.targetNetId)] = eventData.actionId
+    local authorName = cvHideAdminInPunishments and txServerName or eventData.author or 'anonym'
+    TriggerClientEvent(
+        'txcl:showWarning',
+        eventData.targetNetId,
+        authorName,
+        eventData.reason,
+        eventData.actionId,
+        isWarningNew
+    )
+    txPrint(string.format(
+        'Warning player (#%s) %s for %s',
+        eventData.targetNetId,
+        eventData.targetName,
+        eventData.reason
+    ))
 end
+
+-- Event so the client can ack the warning
+RegisterNetEvent('txsv:ackWarning', function(actionId)
+    if pendingWarnings[tostring(source)] == actionId then
+        PrintStructuredTrace(json.encode({
+            type = 'txAdminAckWarning',
+            actionId = actionId,
+        }))
+        pendingWarnings[tostring(source)] = nil
+    end
+end)
+
+-- Remove any pending warnings when a player leaves
+AddEventHandler('playerDropped', function()
+    local srcStr = tostring(source)
+    local pendingActionId = pendingWarnings[srcStr]
+    if pendingActionId ~= nil then
+        pendingWarnings[srcStr] = nil
+        txPrint(string.format(
+            'Player #%s left without accepting the warning [%s]',
+            srcStr,
+            pendingActionId
+        ))
+    end
+end)
 
 
 --- Handler for the player banned event
 --- Ban player(s) via netid or identifiers
-txaEventHandlers.playerBanned = function(eventData)
+TX_EVENT_HANDLERS.playerBanned = function(eventData)
     Wait(0) -- give other resources a chance to read player data
     local kickCount = 0
     for _, playerID in pairs(GetPlayers()) do
@@ -265,9 +312,9 @@ end
 
 --- Handler for the imminent shutdown event
 --- Kicks all players and lock joins in preparation for server shutdown
-txaEventHandlers.serverShuttingDown = function(eventData)
+TX_EVENT_HANDLERS.serverShuttingDown = function(eventData)
     txPrint('Server shutdown imminent. Kicking all players.')
-    rejectAllConnections = true
+    TX_IS_SERVER_SHUTTING_DOWN = true
     local players = GetPlayers()
     for _, serverID in pairs(players) do
         DropPlayer(serverID, '[txAdmin] ' .. eventData.message)
@@ -290,19 +337,19 @@ local function txaEvent(source, args)
     local eventData = json.decode(unDeQuote(args[2]))
     TriggerEvent('txAdmin:events:' .. eventName, eventData)
 
-    if txaEventHandlers[eventName] ~= nil then
-        return txaEventHandlers[eventName](eventData)
+    if TX_EVENT_HANDLERS[eventName] ~= nil then
+        return TX_EVENT_HANDLERS[eventName](eventData)
     end
     CancelEvent()
 end
 
 
 -- =============================================
--- Player connecting handler
+-- MARK: Player connecting handler
 -- =============================================
 local function handleConnections(name, setKickReason, d)
     -- if server is shutting down
-    if rejectAllConnections then
+    if TX_IS_SERVER_SHUTTING_DOWN then
         CancelEvent()
         setKickReason("[txAdmin] Server is shutting down, try again in a few seconds.")
         return
@@ -322,7 +369,7 @@ local function handleConnections(name, setKickReason, d)
             playerName = name
         }
         if #exData.playerIds <= 1 then
-            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, which you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
+            d.done("\n[txAdmin] This server has bans or whitelisting enabled, which requires every player to have at least one identifier, but you have none.\nIf you own this server, make sure sv_lan is disabled in your server.cfg.")
             return
         end
 
@@ -374,7 +421,7 @@ end
 
 
 -- =============================================
--- Setup threads and commands & main stuff
+-- MARK: Setup threads and commands & main stuff
 -- =============================================
 
 -- All commands & handlers

@@ -1,14 +1,12 @@
 const modulename = 'WebServer:AdvancedActions';
 import v8 from 'node:v8';
 import bytes from 'bytes';
-import humanizeDuration from 'humanize-duration';
 import got from '@core/extras/got.js';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const now = () => { return Math.round(Date.now() / 1000); };
+const isUndefined = (x) => (x === undefined);
 
 
 /**
@@ -107,6 +105,10 @@ export default async function AdvancedActions(ctx) {
         } else {
             return ctx.send({ type: 'danger', message: 'GC is not exposed' });
         }
+    } else if (action.startsWith('playerDrop')) {
+        const reason = action.split(' ', 2)[1];
+        const category = globals.statsManager.playerDrop.handlePlayerDrop(reason);
+        return ctx.send({ type: 'success', message: category });
     } else if (action == 'xxxxxx') {
         // const res = globals.playerDatabase.xxxxx();
         // console.dir(res);

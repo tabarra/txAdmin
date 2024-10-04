@@ -5,9 +5,12 @@ import { ApiToastResp } from '@shared/genericApiTypes';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const escape = (x: string) => {return x.replace(/"/g, '\uff02');};
+const escape = (x: string) => x.replace(/"/g, '\uff02');
 const formatCommand = (cmd: string, ...params: string[]) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
+};
+const delay = async (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 
@@ -56,16 +59,13 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         const profileDuration = 5;
         const savePath = `${ctx.txAdmin.info.serverProfilePath}/data/txProfile.bin`;
         ExecuteCommand('profiler record start');
-        setTimeout(async () => {
-            ExecuteCommand('profiler record stop');
-            setTimeout(async () => {
-                ExecuteCommand(`profiler save "${escape(savePath)}"`);
-                setTimeout(async () => {
-                    console.ok(`Profile saved to: ${savePath}`);
-                    fxRunner.srvCmd(`profiler view "${escape(savePath)}"`, ctx.admin.name);
-                }, 150);
-            }, 150);
-        }, profileDuration * 1000);
+        await delay(profileDuration * 1000);
+        ExecuteCommand('profiler record stop');
+        await delay(150);
+        ExecuteCommand(`profiler save "${escape(savePath)}"`);
+        await delay(150);
+        console.ok(`Profile saved to: ${savePath}`);
+        fxRunner.srvCmd(`profiler view "${escape(savePath)}"`, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'success',
             msg: 'Check your live console in a few seconds.',
@@ -73,7 +73,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
 
     //==============================================
     } else if (action == 'admin_broadcast') {
-        if (!ensurePermission(ctx, 'players.message')) return false;
+        if (!ensurePermission(ctx, 'announcement')) return false;
         const message = (parameter ?? '').trim();
 
         // Dispatch `txAdmin:events:announcement`
@@ -84,11 +84,12 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         ctx.admin.logAction(`Sending announcement: ${parameter}`);
 
         // Sending discord announcement
+        const publicAuthor = ctx.txAdmin.adminVault.getAdminPublicName(ctx.admin.name, 'message');
         ctx.txAdmin.discordBot.sendAnnouncement({
             type: 'info',
             title: {
                 key: 'nui_menu.misc.announcement_title',
-                data: {author: ctx.admin.name}
+                data: { author: publicAuthor }
             },
             description: message
         });
@@ -101,13 +102,13 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
     //==============================================
     } else if (action == 'kick_all') {
         if (!ensurePermission(ctx, 'control.server')) return false;
-        let cmd;
-        if (parameter.length) {
-            cmd = formatCommand('txaKickAll', parameter);
-        } else {
-            cmd = 'txaKickAll "txAdmin Web Panel"';
-        }
-        ctx.admin.logCommand(cmd);
+        const kickReason = (parameter ?? '').trim() || ctx.txAdmin.translator.t('kick_messages.unknown_reason');
+        const fullReason = ctx.txAdmin.translator.t(
+            'kick_messages.everyone',
+            { reason: kickReason }
+        );
+        ctx.admin.logAction(`Kicking all players: ${kickReason}`);
+        const cmd = formatCommand('txaKickAll', fullReason);
         fxRunner.srvCmd(cmd, ctx.admin.name);
         return ctx.send<ApiToastResp>({
             type: 'success',

@@ -5,6 +5,7 @@ import slash from 'slash';
 
 import consoleFactory, { setConsoleEnvData } from '@extras/console';
 import { addLocalIpAddress } from '@extras/isIpAddressLocal';
+import { parseFxserverVersion } from '@extras/fxsVersionParser';
 const console = consoleFactory();
 
 
@@ -12,15 +13,6 @@ const console = consoleFactory();
  * Helpers
  */
 const cleanPath = (x: string) => { return slash(path.normalize(x)); };
-const getBuild = (ver: any) => {
-    try {
-        const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
-        // @ts-expect-error: let it throw
-        return parseInt(res[1]);
-    } catch (error) {
-        return 9999;
-    }
-};
 const getConvarBool = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim().toLowerCase();
     return ['true', '1', 'on'].includes(cvar);
@@ -59,17 +51,20 @@ const resourceName = GetCurrentResourceName();
 //5894 = CREATE_VEHICLE_SERVER_SETTER
 //6185 = added ScanResourceRoot (not yet in use)
 //6508 = unhandledRejection is now handlable, we need this due to discord.js's bug
+//8495 = changed prometheus::Histogram::BucketBoundaries
+//9423 = feat(server): add more infos to playerDropped event
+//9655 = Fixed ScanResourceRoot + latent events
 const minFXServerVersion = 5894;
-const fxServerVersion = getBuild(getConvarString('version'));
-if (fxServerVersion === 9999) {
+const fxsVerParsed = parseFxserverVersion(getConvarString('version'));
+const fxServerVersion = fxsVerParsed.valid ? fxsVerParsed.build : 99999;
+if (!fxsVerParsed.valid) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
-} else if (!fxServerVersion) {
-    console.error(`This version of FXServer is NOT compatible with txAdmin. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
-    process.exit(101);
-} else if (fxServerVersion < minFXServerVersion) {
+} else if (fxsVerParsed.build < minFXServerVersion) {
     console.error(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
     process.exit(102);
+} else if (fxsVerParsed.branch !== 'master') {
+    console.warn(`You are running a custom branch of FXServer: ${fxsVerParsed.branch}`);
 }
 
 //Getting txAdmin version
@@ -134,8 +129,7 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
  */
 const isDevMode = getConvarBool('txAdminDevMode');
 const verboseConvar = getConvarBool('txAdminVerbose');
-const debugPlayerlistGenerator = getConvarBool('txDebugPlayerlistGenerator');
-const debugExternalSource = getConvarString('txDebugExternalSource');
+const debugExternalStatsSource = getConvarString('txDebugExternalStatsSource');
 if (isDevMode) {
     console.warn('Starting txAdmin in DEV mode.');
     if(!process.env.TXADMIN_DEV_SRC_PATH || !process.env.TXADMIN_DEV_VITE_URL){
@@ -250,8 +244,7 @@ export const txEnv = Object.freeze({
 export const convars = Object.freeze({
     //Convars - Debug
     isDevMode,
-    debugPlayerlistGenerator,
-    debugExternalSource,
+    debugExternalStatsSource,
     //Convars - zap dependant
     isPterodactyl,
     isZapHosting,

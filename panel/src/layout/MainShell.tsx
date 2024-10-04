@@ -13,17 +13,16 @@ import AccountDialog from '@/components/AccountDialog';
 import { useOpenAccountModal } from '@/hooks/dialogs';
 import PlayerModal from './PlayerModal/PlayerModal';
 import { useOpenPlayerModal } from '@/hooks/playerModal';
-import { useLocation } from 'wouter';
+import { navigate as setLocation } from 'wouter/use-browser-location';
 import MainSocket from './MainSocket';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { useToggleTheme } from '@/hooks/useTheme';
+import { useToggleTheme } from '@/hooks/theme';
 import { hotkeyEventListener } from '@/lib/hotkeyEventListener';
 import BreakpointDebugger from '@/components/BreakpointDebugger';
 import ActionModal from './ActionModal/ActionModal';
 
 
 export default function MainShell() {
-    const [, setLocation] = useLocation();
     const expireSession = useExpireAuthData();
     const openAccountModal = useOpenAccountModal();
     const openPlayerModal = useOpenPlayerModal();

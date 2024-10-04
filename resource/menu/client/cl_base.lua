@@ -16,7 +16,7 @@ local awaitingReauth = false
 
 --- Logic to displaying the menu auth rejected snackbar
 local function displayAuthRejectedError()
-  if noMenuReason == 'admin_not_found' then
+  if noMenuReason == 'nui_admin_not_found' then
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_admin', true)
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_auth_failed', true, { reason = noMenuReason })
@@ -97,11 +97,22 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     debugPrint("^2[AUTH] logged in as '" .. username .. "' with perms: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
-    RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
-    RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
-    RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
-    RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
-    RegisterKeyMapping('txAdmin:menu:tpToWaypoint', 'Menu: Teleport to Waypoint', 'KEYBOARD', '')
+    if IS_FIVEM then
+      --NOTE: appending # to the desc so the sorting shows it at the top
+      RegisterKeyMapping('txadmin', '#Open Main Page', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:openPlayersPage', '#Open Players page', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:clearArea', '#Clear Area', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:healMyself', '#Heal Yourself', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:tpBack', '#Teleport: go Back', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:tpToCoords', '#Teleport: to Coords', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:tpToWaypoint', '#Teleport: to Waypoint', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:noClipToggle', '#Toggle NoClip', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', '#Toggle Player IDs', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:boostVehicle', '#Vehicle: Boost', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:deleteVehicle', '#Vehicle: Delete', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:fixVehicle', '#Vehicle: Fix', 'KEYBOARD', '')
+      RegisterKeyMapping('txAdmin:menu:spawnVehicle', '#Vehicle: Spawn', 'KEYBOARD', '')
+    end
   else
     noMenuReason = tostring(rejectReason)
     debugPrint("^3[AUTH] rejected (" .. noMenuReason .. ")")

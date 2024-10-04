@@ -13,7 +13,7 @@ import { Server as SocketIO } from 'socket.io';
 import WebSocket from './webSocket';
 
 import { customAlphabet } from 'nanoid';
-import dict51 from 'nanoid-dictionary/nolookalikes';
+import dict49 from 'nanoid-dictionary/nolookalikes';
 
 import { convars, txEnv } from '@core/globalData';
 import router from './router';
@@ -27,7 +27,7 @@ import checkRateLimit from './middlewares/globalRateLimiter';
 import checkHttpLoad from './middlewares/httpLoadMonitor';
 import cacheControlMw from './middlewares/cacheControlMw';
 const console = consoleFactory(modulename);
-const nanoid = customAlphabet(dict51, 32);
+const nanoid = customAlphabet(dict49, 32);
 
 //Types
 export type WebServerConfigType = {
@@ -130,10 +130,10 @@ export default class WebServer {
                 if (ctx.path.startsWith('/legacy')) {
                     ctx.status = 404;
                     console.verbose.warn(`Request 404 error: ${ctx.path}`);
-                    return ctx.utils.render('standalone/404');
+                    return ctx.send('Not found.');
                 } else if (ctx.path.endsWith('.map')) {
                     ctx.status = 404;
-                    return ctx.send('Not found');
+                    return ctx.send('Not found.');
                 } else {
                     return ctx.utils.serveReactIndex();
                 }
@@ -168,7 +168,7 @@ export default class WebServer {
         try {
             // console.debug(`HTTP ${req.method} ${req.url}`);
             if (!checkHttpLoad()) return;
-            if (!checkRateLimit(req?.socket?.remoteAddress)) return; 
+            if (!checkRateLimit(req?.socket?.remoteAddress)) return;
             if (req.url.startsWith('/socket.io')) {
                 (this.io.engine as any).handleRequest(req, res);
             } else {

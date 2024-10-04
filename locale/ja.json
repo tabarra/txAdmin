@@ -13,6 +13,11 @@
         "schedule_warn": "このサーバーは%{smart_count}分後に再起動予定です。今すぐ切断してください。 |||| このサーバーは%{smart_count}分後に再起動予定です。",
         "schedule_warn_discord": "**%{servername}**サーバーは%{smart_count}分後に再起動予定です。 |||| **%{servername}**サーバーは%{smart_count}分後に再起動予定です。"
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) あなたは次の理由によりBANされました \"%{reason}\" BAN期間: %{expiration}",
         "kick_permanent": "(%{author}) あなたは次の理由により永久BANされました \"%{reason}\"",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "警告",
         "warned_by": "警告した人:",
-        "instruction": "[スペース]を10秒間押し続けると、このメッセージは解除されます。"
+        "stale_message": "この警告はサーバーに接続する前に発行されました。",
+        "dismiss_key": "スペース",
+        "instruction": "%{key}を%{smart_count}秒間押し続けると、このメッセージは解除されます。 |||| %{key}を%{smart_count}秒間押し続けると、このメッセージは解除されます。"
     },
     "nui_menu": {
         "misc": {
@@ -218,6 +225,13 @@
                 "players": "プレイヤー",
                 "search": "検索",
                 "zero_players": "プレイヤーが見つかりませんでした"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "ソート",

@@ -24,24 +24,33 @@ export const txAdminASCII = () => {
  * txAdmin + license banner for bundled files
  * @returns {String}
  */
-export const licenseBanner = (baseDir = '.') => {
+export const licenseBanner = (baseDir = '.', isBundledFile = false) => {
     const licensePath = path.join(baseDir, 'LICENSE');
+    const rootPrefix = isBundledFile ? '../' : '';
     const lineSep = '%'.repeat(80);
     const logoPad = ' '.repeat(18);
     const contentLines = [
-        '',
         lineSep,
         ...txAdminASCII().split('\n').map((x) => logoPad + x),
         lineSep,
         'Author: André Tabarra (https://github.com/tabarra)',
         'Repository: https://github.com/tabarra/txAdmin',
-        'This bundled file includes third party libraries under their respective licenses.',
         'txAdmin is a free open source software provided under the license below.',
         lineSep,
         ...fs.readFileSync(licensePath, 'utf8').trim().split('\n'),
         lineSep,
-    ].join('\n * ');
-    return `/*!${contentLines}\n */`;
+        'This distribution also includes third party code under their own licenses, which',
+        `can be found in ${rootPrefix}THIRD-PARTY-LICENSES.txt or their respective repositories.`,
+        `Attribution for non-code assets can be found at the bottom of ${rootPrefix}README.md or at`,
+        'the top of the respective file.',
+        lineSep,
+    ];
+    if (isBundledFile) {
+        const flattened = contentLines.join('\n * ');
+        return `/*!\n * ${flattened}\n */`;
+    } else {
+        return contentLines.join('\n');
+    }
 };
 
 

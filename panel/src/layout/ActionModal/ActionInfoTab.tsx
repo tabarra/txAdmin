@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { msToDuration, tsToLocaleDateTime } from "@/lib/utils";
+import { msToDuration, tsToLocaleDateTimeString } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { DatabaseActionType } from "../../../../core/components/PlayerDatabase/databaseTypes";
 import { useOpenPlayerModal } from "@/hooks/playerModal";
@@ -65,6 +65,13 @@ export default function ActionInfoTab({ action, serverTime, tsFetch }: ActionInf
         }
     }
 
+    let warnAckedText: React.ReactNode;
+    if (action.type === 'warn' && action.acked) {
+        warnAckedText = <span className="opacity-75">Yes</span>;
+    } else {
+        warnAckedText = <span className="text-warning-inline">Not yet</span>;
+    }
+
     let revokedText: React.ReactNode;
     if (action.revocation.timestamp) {
         revokedText = <span className="text-warning-inline">
@@ -91,7 +98,7 @@ export default function ActionInfoTab({ action, serverTime, tsFetch }: ActionInf
         openPlayerModal({ license: linkedPlayer });
     }
 
-    return <div className="mb-1 md:mb-4">
+    return <div className="px-1 mb-1 md:mb-4">
         <dl className="pb-2">
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                 <dt className="text-sm font-medium leading-6 text-muted-foreground">Date/Time</dt>
@@ -108,6 +115,12 @@ export default function ActionInfoTab({ action, serverTime, tsFetch }: ActionInf
                 <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                     <dt className="text-sm font-medium leading-6 text-muted-foreground">Expiration</dt>
                     <dd className="text-sm leading-6 col-span-2 mt-0">{banExpirationText}</dd>
+                </div>
+            )}
+            {action.type === 'warn' && (
+                <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
+                    <dt className="text-sm font-medium leading-6 text-muted-foreground">Player Accepted</dt>
+                    <dd className="text-sm leading-6 col-span-2 mt-0">{warnAckedText}</dd>
                 </div>
             )}
             <div className="py-0.5 grid grid-cols-3 gap-4 px-0">

@@ -5,10 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAdminPerms } from "@/hooks/auth";
 import { useBackendApi } from "@/hooks/fetch";
 import { PlayerModalRefType } from "@/hooks/playerModal";
-import { cn, msToDuration, tsToLocaleDate } from "@/lib/utils";
+import { cn, msToDuration, tsToLocaleDateTimeString } from "@/lib/utils";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import { PlayerModalPlayerData } from "@shared/playerApiTypes";
-import { useRef, useState } from "react";
+import { ShieldAlertIcon } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 
 
 function LogActionCounter({ type, count }: { type: 'Ban' | 'Warn', count: number }) {
@@ -174,7 +175,37 @@ export default function PlayerInfoTab({ playerRef, player, serverTime, tsFetch, 
         });
     }
 
+    const playerBannedText: string | undefined = useMemo(() => {
+        if (!player || !serverTime) return;
+        let banExpiration;
+        for (const action of player.actionHistory) {
+            if (action.type !== 'ban' || action.revokedAt) continue;
+            if (action.exp) {
+                if (action.exp >= serverTime) {
+                    banExpiration = Math.max(banExpiration ?? 0, action.exp);
+                }
+            } else {
+                return 'This player is permanently banned.';
+            }
+        }
+
+        if (banExpiration !== undefined) {
+            const str = tsToLocaleDateTimeString(banExpiration, 'short', 'short');
+            return `This player is banned until ${str}`;
+        }
+    }, [player, serverTime]);
+
     return <div className="p-1">
+        {playerBannedText ? (
+            <div className="w-full p-2 pr-3 mb-1 flex items-center justify-between space-x-4 rounded-lg border shadow-lg transition-all text-black/75 dark:text-white/90 border-warning/70 bg-warning-hint">
+                <div className="flex-shrink-0 flex flex-col gap-2 items-center">
+                    <ShieldAlertIcon className="size-5 text-warning" />
+                </div>
+                <div className="flex-grow text-sm font-medium">
+                    {playerBannedText}
+                </div>
+            </div>
+        ) : null}
         <dl className="pb-2">
             {player.isConnected && <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                 <dt className="text-sm font-medium leading-6 text-muted-foreground">Session Time</dt>

@@ -76,6 +76,23 @@ export default function PromptDialog() {
                                 </Button>
                             ))}
                         </div>
+                        {/* TODO: mock for kick as punishment - consider the alternative of making a "timeout" */}
+                        {/* <div className="flex flex-col sm:flex-row sm:justify-start gap-2 w-full flex-wrap">
+                            <div className="items-top flex space-x-2">
+                                <Checkbox id="terms1" />
+                                <div className="grid gap-1.5 leading-none">
+                                    <label
+                                        htmlFor="terms1"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        This kick is a punishment.
+                                    </label>
+                                    <p className="text-sm text-muted-foreground">
+                                        Show in the player history as a sanction.
+                                    </p>
+                                </div>
+                            </div>
+                        </div> */}
                         <Button
                             type="submit"
                             variant={dialogState.submitBtnVariant ?? 'default'}

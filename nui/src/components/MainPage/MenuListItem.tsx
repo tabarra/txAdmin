@@ -4,6 +4,7 @@ import {
   Box,
   BoxProps,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
@@ -113,7 +114,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
 
     return (
       <Root ref={divRef}>
-        <ListItem
+        <ListItemButton
           onClick={() => onSelect()}
           className={isUserAllowed ? classes.root : classes.rootDisabled}
           dense
@@ -126,7 +127,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
               primary: classes.overrideText,
             }}
           />
-        </ListItem>
+        </ListItemButton>
       </Root>
     );
   }
@@ -240,7 +241,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     return (
       <Root ref={divRef}>
-        <ListItem
+        <ListItemButton
           className={isUserAllowed ? classes.root : classes.rootDisabled}
           dense
           selected={selected}
@@ -264,7 +265,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
           <ListItemSecondaryAction>
             <Code className={classes.icon} />
           </ListItemSecondaryAction>
-        </ListItem>
+        </ListItemButton>
       </Root>
     );
   }

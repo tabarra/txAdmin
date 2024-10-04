@@ -69,7 +69,7 @@ const RESOURCE_PATH = 'nui://monitor/web/public/';
 const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
 const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
 
-const legaciNavigateHtmlTemplate = `<style>
+const legacyNavigateHtmlTemplate = `<style>
 body {
     margin: 0;
 }
@@ -210,8 +210,9 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
     };
 
     //Legacy page util to navigate parent (react) to some page
+    //NOTE: in use by deployer/stepper.js and setup/get.js
     const legacyNavigateToPage = (href: string) => {
-        ctx.body = legaciNavigateHtmlTemplate.replace(/{{href}}/g, href);
+        ctx.body = legacyNavigateHtmlTemplate.replace(/{{href}}/g, href);
         ctx.type = 'text/html';
     }
 

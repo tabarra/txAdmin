@@ -1,6 +1,7 @@
 /* eslint-disable padded-blocks */
 const modulename = 'Logger:Server';
-import { LoggerBase, separator } from '../loggerUtils.js';
+import { LoggerBase } from '../LoggerBase';
+import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
@@ -46,7 +47,7 @@ before sending it to fd3
 
 
 export default class ServerLogger extends LoggerBase {
-    constructor(basePath, lrProfileConfig) {
+    constructor(txAdmin, basePath, lrProfileConfig) {
         const lrDefaultOptions = {
             path: basePath,
             intervalBoundary: true,
@@ -59,11 +60,7 @@ export default class ServerLogger extends LoggerBase {
 
         };
         super(basePath, 'server', lrDefaultOptions, lrProfileConfig);
-        this.lrStream.write(`\n${separator('txAdmin Starting')}\n`);
-        this.lrStream.on('rotated', (filename) => {
-            this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            console.verbose.log(`Rotated file ${filename}`);
-        });
+        this.lrStream.write(getBootDivider());
 
         this.recentBuffer = [];
         this.recentBufferMaxSize = 32e3;
@@ -148,6 +145,7 @@ export default class ServerLogger extends LoggerBase {
         } else if (typeof eventData.src === 'number' && eventData.src > 0) {
             const player = globals.playerlistManager.getPlayerById(eventData.src);
             if (player) {
+                //FIXME: playermutex must be a ServerPlayer prop, already considering mutex, netid and rollover
                 const playerID = `${mutex}#${eventData.src}`;
                 srcObject = { id: playerID, name: player.displayName };
                 srcString = `[${playerID}] ${player.displayName}`;
@@ -203,6 +201,10 @@ export default class ServerLogger extends LoggerBase {
 
         } else if (eventData.type === 'LoggerStarted') {
             eventMessage = 'Logger started';
+            globals?.statsManager.playerDrop.handleServerBootData(eventData.data);
+            if (typeof eventData.data?.projectName === 'string' && eventData.data.projectName.length) {
+                globals?.persistentCache.set('fxsRuntime:projectName', eventData.data.projectName);
+            }
 
         } else if (eventData.type === 'DebugMessage') {
             eventMessage = (typeof eventData.data === 'string')
@@ -210,12 +212,12 @@ export default class ServerLogger extends LoggerBase {
                 : 'Debug Message: unknown';
 
         } else if (eventData.type === 'MenuEvent') {
-            globals?.statisticsManager.menuCommands.count(eventData.data?.action ?? 'unknown');
+            globals?.statsManager.txRuntime.menuCommands.count(eventData.data?.action ?? 'unknown');
             eventMessage = (typeof eventData.data.message === 'string')
                 ? `${eventData.data.message}`
                 : 'did unknown action';
 
-        } else if (eventData.type !== 'playerJoining') {
+        } else {
             console.verbose.warn(`Unrecognized event: ${eventData.type}`);
             console.verbose.dir(eventData);
             eventMessage = eventData.type;
@@ -243,6 +245,7 @@ export default class ServerLogger extends LoggerBase {
      * @param {Number} sliceLength
      */
     readPartialNewer(timestamp, sliceLength) {
+        //FIXME: use d3 bissect to optimize this
         const limitIndex = this.recentBuffer.findIndex((x) => x.ts > timestamp);
         return this.recentBuffer.slice(limitIndex, limitIndex + sliceLength);
     }
@@ -254,6 +257,7 @@ export default class ServerLogger extends LoggerBase {
      * @param {Number} sliceLength
      */
     readPartialOlder(timestamp, sliceLength) {
+        //FIXME: use d3 bissect to optimize this
         const limitIndex = this.recentBuffer.findIndex((x) => x.ts >= timestamp);
 
         if (limitIndex === -1) {

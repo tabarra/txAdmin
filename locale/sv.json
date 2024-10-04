@@ -13,6 +13,11 @@
         "schedule_warn": "Den här servern kommer startas om inom %{smart_count} minuter. Vänligen lämna. |||| Den här servern kommer startas om inom %{smart_count} minuter.",
         "schedule_warn_discord": "**%{servername}** är schemalagd att startas om inom %{smart_count} minuter. |||| **%{servername}** är schemalagd att startas om inom %{smart_count} minuter."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Du har blivit bannlyst från denna server på grund av \"%{reason}\". Din bannlysning går ut : %{expiration}.",
         "kick_permanent": "(%{author}) Du har blivit permanent bannlyst från denna server på grund av \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "VARNING",
         "warned_by": "Varnad av:",
-        "instruction": "Håll in [SPACE] i 10 sekunder för att dölja detta meddelande."
+        "stale_message": "Den här varningen utfärdades innan du anslöt till servern.",
+        "dismiss_key": "SPACE",
+        "instruction": "Håll in %{key} i %{smart_count} sekund för att dölja detta meddelande. |||| Håll in %{key} i %{smart_count} sekunder för att dölja detta meddelande."
     },
     "nui_menu": {
         "misc": {
@@ -219,6 +226,13 @@
                 "search": "Sök",
                 "zero_players": "Inga spelare funna"
             },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
+            },
             "sort": {
                 "label": "Sortera efter",
                 "distance": "Avstånd",
@@ -348,7 +362,7 @@
             "ids": {
                 "current_ids": "Nuvarande identifikationer",
                 "previous_ids": "Tidigare använda identifikationer",
-                "all_hwids": "All Hardware IDs"
+                "all_hwids": "Alla hårdvaru identifikationer"
             }
         }
     }

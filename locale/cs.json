@@ -13,6 +13,11 @@
         "schedule_warn": "Tento server má naplánovaný restart za %{smart_count} minutu. Prosím odpojte se nyní. |||| Tento server má naplánovaný restart za %{smart_count} minut.",
         "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Byl jsi zabanován z důvodu: \"%{reason}\". Tvůj ban vyprší za: %{expiration}.",
         "kick_permanent": "(%{author}) Byl ti permanentně odebrán přístup k serveru a to z důvodu: \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "VAROVÁNÍ",
         "warned_by": "Admin, který tě varoval:",
-        "instruction": "Podrž [MEZERNÍK] po dobu 10 sekund pro zavření varování."
+        "stale_message": "Toto varování bylo vydáno předtím, než jste se připojili k serveru.",
+        "dismiss_key": "MEZERNÍK",
+        "instruction": "Podrž %{key} po dobu %{smart_count} sekundy pro zavření varování. |||| Podrž %{key} po dobu %{smart_count} sekund pro zavření varování."
     },
     "nui_menu": {
         "misc": {
@@ -218,6 +225,13 @@
                 "players": "Hráči",
                 "search": "Vyhledat",
                 "zero_players": "Žádní hráči nenalezeni"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Seřadit podle",

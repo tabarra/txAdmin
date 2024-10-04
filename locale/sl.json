@@ -13,6 +13,11 @@
         "schedule_warn": "Ta strežnik se bo ponovno zagnal čez %{smart_count} minuto. Prosimo, zapustite strežnik. |||| Ta strežnik se bo ponovno zagnal čez %{smart_count} minut/i/e.",
         "schedule_warn_discord": "**%{servername}** se bo ponovno zagnal čez %{smart_count} minuto. |||| **%{servername}** se bo ponovno zagnal čez %{smart_count} minut/i/e."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Bil si odstranjen iz strežnika zaradi \"%{reason}\". Tvoj BAN se izteče čez: %{expiration}.",
         "kick_permanent": "(%{author}) Bil si odstranjen iz strežnika za vedno  \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "OPOZORILO",
         "warned_by": "Opozorjen s strani:",
-        "instruction": "Drži [SPACE] za 10 sekund, da to sporočilo izgine."
+        "stale_message": "To opozorilo je bilo izdano, preden ste se povezali s strežnikom.",
+        "dismiss_key": "SPACE",
+        "instruction": "Drži %{key} za %{smart_count} sekundo, da to sporočilo izgine. |||| Drži %{key} za %{smart_count} sekund, da to sporočilo izgine."
     },
     "nui_menu": {
         "misc": {
@@ -218,6 +225,13 @@
                 "players": "Igralci",
                 "search": "Išči",
                 "zero_players": "Najden ni bil noben igralec"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Razvrsti po",

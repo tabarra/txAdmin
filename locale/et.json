@@ -13,6 +13,11 @@
         "schedule_warn": "See server taaskäivitub %{smart_count} minuti pärast. Palun katkestage ühendus kohe. |||| See server taaskäivitub %{smart_count} minuti pärast.",
         "schedule_warn_discord": "**%{servername}** taaskäivitub %{smart_count} minuti pärast. |||| **%{servername}** taaskäivitub %{smart_count} minuti pärast."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Teid on sellest serverist ajutiselt keelustatud \"%{reason}\" tõttu. Teie keelustamine aegub: %{expiration}.",
         "kick_permanent": "(%{author}) Teid on sellest serverist igavesti keelustatud \"%{reason}\" tõttu. Teie keelustamine ei aegugi.",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "HOIATUS",
         "warned_by": "Hoiataja:",
-        "instruction": "Sellest sõnumist loobumiseks hoidke klahvi [SPACE] 10 sekundit all."
+        "stale_message": "See hoiatus anti välja enne, kui serveriga ühendust võtsite.",
+        "dismiss_key": "SPACE",
+        "instruction": "Sellest sõnumist loobumiseks hoidke klahvi %{key} %{smart_count} sekund all. |||| Sellest sõnumist loobumiseks hoidke klahvi %{key} %{smart_count} sekundit all."
     },
     "nui_menu": {
         "misc": {
@@ -218,6 +225,13 @@
                 "players": "Mängijad",
                 "search": "Otsi",
                 "zero_players": "Mängijat ei leitud"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Sorteeri",

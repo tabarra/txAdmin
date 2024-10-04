@@ -7,7 +7,7 @@ import cleanPlayerName from '@shared/cleanPlayerName';
 import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
 import { parseLaxIdsArrayInput } from '@extras/helpers';
-import { TimeCounter } from '@core/components/StatisticsManager/statsUtils';
+import { TimeCounter } from '@core/components/StatsManager/statsUtils';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -39,7 +39,7 @@ export default async function PlayerSearch(ctx: AuthedCtx) {
     const adminsIdentifiers = ctx.txAdmin.adminVault.getAdminsIdentifiers();
     const onlinePlayersLicenses = ctx.txAdmin.playerlistManager.getOnlinePlayersLicenses();
     const dbo = ctx.txAdmin.playerDatabase.getDb();
-    let chain = dbo.chain.get('players');
+    let chain = dbo.chain.get('players').clone(); //shadow clone to avoid sorting the original
     /*
         In order:
         - [X] sort the players by the sortingKey/sortingDesc
@@ -176,7 +176,7 @@ export default async function PlayerSearch(ctx: AuthedCtx) {
         };
     });
 
-    ctx.txAdmin.statisticsManager.playersTableSearchTime.count(searchTime.stop().milliseconds);
+    ctx.txAdmin.statsManager.txRuntime.playersTableSearchTime.count(searchTime.stop().milliseconds);
     return sendTypedResp({
         players: processedPlayers,
         hasReachedEnd,

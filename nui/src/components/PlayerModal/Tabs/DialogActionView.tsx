@@ -88,13 +88,13 @@ const DialogActionView: React.FC = () => {
 
   //Moderation
   const handleDM = () => {
-    if (!userHasPerm("players.message", playerPerms))
-      return showNoPerms("Message");
+    if (!userHasPerm("players.direct_message", playerPerms))
+      return showNoPerms("Direct Message");
 
     openDialog({
       title: `${t(
         "nui_menu.player_modal.actions.moderation.dm_dialog.title"
-      )} ${assocPlayer.name}`,
+      )} ${assocPlayer.displayName}`,
       description: t(
         "nui_menu.player_modal.actions.moderation.dm_dialog.description"
       ),
@@ -124,7 +124,7 @@ const DialogActionView: React.FC = () => {
     openDialog({
       title: `${t(
         "nui_menu.player_modal.actions.moderation.warn_dialog.title"
-      )} ${assocPlayer.name}`,
+      )} ${assocPlayer.displayName}`,
       description: t(
         "nui_menu.player_modal.actions.moderation.warn_dialog.description"
       ),
@@ -154,7 +154,7 @@ const DialogActionView: React.FC = () => {
     openDialog({
       title: `${t(
         "nui_menu.player_modal.actions.moderation.kick_dialog.title"
-      )} ${assocPlayer.name}`,
+      )} ${assocPlayer.displayName}`,
       description: t(
         "nui_menu.player_modal.actions.moderation.kick_dialog.description"
       ),
@@ -310,7 +310,7 @@ const DialogActionView: React.FC = () => {
           variant="outlined"
           color="primary"
           onClick={handleDM}
-          disabled={!userHasPerm("players.message", playerPerms)}
+          disabled={!userHasPerm("players.direct_message", playerPerms)}
         >
           {t("nui_menu.player_modal.actions.moderation.options.dm")}
         </Button>

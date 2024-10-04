@@ -124,7 +124,6 @@ export default function PlayerModal() {
                 <span className="text-destructive-inline font-mono mr-2">[OFF]</span>
                 {modalData.player.displayName}
             </>;
-
         }
     } else if (modalError) {
         pageTitle = <span className="text-destructive-inline">Error!</span>;
@@ -138,8 +137,10 @@ export default function PlayerModal() {
                 className="max-w-2xl h-full sm:h-auto max-h-full p-0 gap-1 sm:gap-4 flex flex-col"
             // onOpenAutoFocus={(e) => e.preventDefault()}
             >
-                <DialogHeader className="p-4 border-b">
-                    <DialogTitle className="tracking-wide line-clamp-1 break-all mr-6">{pageTitle}</DialogTitle>
+                <DialogHeader className="px-4 py-3 border-b">
+                    <DialogTitle className="tracking-wide line-clamp-1 leading-7 break-all mr-6">
+                        {pageTitle}
+                    </DialogTitle>
                 </DialogHeader>
 
                 <div className="flex flex-col md:flex-row md:px-4 h-full">
@@ -191,6 +192,7 @@ export default function PlayerModal() {
                                     player={modalData.player}
                                 />}
                                 {selectedTab === 'Ban' && <PlayerBanTab
+                                    banTemplates={modalData.banTemplates}
                                     playerRef={playerRef!}
                                 />}
                             </>

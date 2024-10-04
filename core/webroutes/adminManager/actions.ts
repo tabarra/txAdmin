@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AdminManagerActions';
 import { customAlphabet } from 'nanoid';
-import dict51 from 'nanoid-dictionary/nolookalikes';
+import dict49 from 'nanoid-dictionary/nolookalikes';
 import got from '@core/extras/got.js';
 import consts from '@shared/consts';
 import consoleFactory from '@extras/console';
@@ -8,7 +8,7 @@ import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helpers
-const nanoid = customAlphabet(dict51, 20);
+const nanoid = customAlphabet(dict49, 20);
 const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
 const nameRegex = citizenfxIDRegex;
 const nameRegexDesc = 'up to 18 characters containing only letters, numbers and the characters \`_.-\`';
@@ -210,6 +210,7 @@ async function handleEdit(ctx: AuthedCtx) {
     }
 
     //Validate Discord ID
+    //FIXME: you cannot remove a discord id by erasing from the field
     let discordData: ProviderDataType | undefined;
     if (discordID.length) {
         if (!consts.validIdentifierParts.discord.test(discordID)) {

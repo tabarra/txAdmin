@@ -13,6 +13,11 @@
         "schedule_warn": "Ovaj server je zakazan da se restarta za %{smart_count} minutu. Molim vas se isključitite. |||| Ovaj server ce se restartovati za %{smart_count} minuta.",
         "schedule_warn_discord": "**%{servername}** restarta se za %{smart_count} minutu. |||| **%{servername}** restarta se za %{smart_count} minuta."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Zabranjen vam je pristup ovom serveru zbog \"%{reason}\". Vaša zabrana istječe za: %{expiration}.",
         "kick_permanent": "(%{author}) Zabranjen vam je pristup ovom serveru za uvjek zbog \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "WARNING",
         "warned_by": "Vas je upozorio",
-        "instruction": "držite [SPACE] 10 sekundi da vam se skine ova poruka."
+        "stale_message": "Ovo upozorenje je izdato prije nego što ste se povezali na server.",
+        "dismiss_key": "SPACE",
+        "instruction": "držite %{key} %{smart_count} sekundu da vam se skine ova poruka. |||| držite %{key} %{smart_count} sekundi da vam se skine ova poruka."
     },
     "nui_menu": {
         "misc": {
@@ -217,7 +224,14 @@
                 "online_players": "Online Players",
                 "players": "Players",
                 "search": "Search",
-                "zero_players": "No players found"
+                "zero_players": "No players found."
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Sort by",
@@ -235,7 +249,7 @@
         "player_modal": {
             "misc": {
                 "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "target_not_found": "Was unable to find an online player with ID or a username of %{target}"
             },
             "tabs": {
                 "actions": "Actions",

@@ -2,10 +2,15 @@
 db/*
 cache/*
 dist/*
+.reports/*
+license_report/*
 tmp_core_tsc/*
 *.ignore.*
 /start_*.bat
 monitor-*.zip
+bundle_size_report.html
+.github/.cienv
+scripts/**/*.local.*
 
 # IDE Specific
 .idea

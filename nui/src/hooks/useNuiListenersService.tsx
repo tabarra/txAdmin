@@ -10,7 +10,6 @@ import {
   ServerCtx,
   useSetServerCtx,
 } from "../state/server.state";
-import { fetchWebPipe } from "../utils/fetchWebPipe";
 
 // Passive Message Event Listeners & Handlers for global state
 export const useNuiListenerService = () => {

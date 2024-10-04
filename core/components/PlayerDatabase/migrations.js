@@ -86,7 +86,7 @@ export default async (dbo) => {
 
         //Changing Warn actions id prefix to W
         dbo.data.actions.forEach((action) => {
-            if (action.type === 'warn'){
+            if (action.type === 'warn') {
                 action.id = `W${action.id.substring(1)}`;
             }
         });
@@ -98,11 +98,11 @@ export default async (dbo) => {
             player.pureName = pureName;
             player.name = undefined;
             player.ids = [`license:${player.license}`];
-            
+
             //adding whitelist
             const tsWhitelisted = whitelists.get(player.license);
             if (tsWhitelisted) player.tsWhitelisted = tsWhitelisted;
-            
+
             //removing empty notes
             if (!player.notes.text) player.notes = undefined;
         }
@@ -135,6 +135,22 @@ export default async (dbo) => {
 
         //Saving db
         dbo.data.version = 4;
+        await dbo.write();
+    }
+
+    if (dbo.data.version === 4) {
+        console.warn('Migrating your players database from v4 to v5.');
+        console.warn('This process will allow for offline warns.');
+
+        //Migrating actions
+        for (const action of dbo.data.actions) {
+            if (action.type === 'warn') {
+                action.acked = true;
+            }
+        }
+
+        //Saving db
+        dbo.data.version = 5;
         await dbo.write();
     }
 

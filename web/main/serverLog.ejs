@@ -207,6 +207,31 @@
 
 <script>
     (function () {
+        //============================================== Moved from main.js
+        function showPlayerByMutexNetid(mutexNetid) {
+            const [mutex, netid] = mutexNetid.split(/[_#]/, 2);
+            return window.parent.postMessage({ type: 'openPlayerModal', ref: { mutex, netid } });
+        }
+
+        const getSocket = (rooms) => {
+            const socketOpts = {
+                transports: ['polling'],
+                upgrade: false,
+                query: { rooms }
+            };
+
+            const socket = isWebInterface
+                ? io({ ...socketOpts, path: '/socket.io' })
+                : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
+
+            socket.on('logout', () => {
+                console.log('Received logout command from websocket.');
+                window.parent.postMessage({ type: 'logoutNotice' });
+            });
+
+            return socket;
+        }
+
         //============================================== Preparing variables
         const autoScrollBtn = document.getElementById("autoScrollBtn");
         const logContainer = document.getElementById("logContainer");

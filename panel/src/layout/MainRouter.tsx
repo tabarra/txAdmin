@@ -3,14 +3,19 @@ import { Route as WouterRoute, Switch } from "wouter";
 import { PageErrorFallback } from "@/components/ErrorFallback";
 import { useAtomValue, useSetAtom } from "jotai";
 import { contentRefreshKeyAtom, pageErrorStatusAtom, useSetPageTitle } from "@/hooks/pages";
-import { useLocation } from 'wouter';
+import { navigate as setLocation } from 'wouter/use-browser-location';
 
 import Iframe from "@/pages/Iframe";
 import NotFound from "@/pages/NotFound";
 import TestingPage from "@/pages/TestingPage/TestingPage";
-import LiveConsole from "@/pages/LiveConsole/LiveConsole";
+import LiveConsolePage from "@/pages/LiveConsole/LiveConsolePage";
 import PlayersPage from "@/pages/Players/PlayersPage";
 import HistoryPage from "@/pages/History/HistoryPage";
+import BanTemplatesPage from "@/pages/BanTemplates/BanTemplatesPage";
+import SystemLogPage from "@/pages/SystemLogPage";
+import AddLegacyBanPage from "@/pages/AddLegacyBanPage";
+import DashboardPage from "@/pages/Dashboard/DashboardPage";
+import PlayerDropsPage from "@/pages/PlayerDropsPage/PlayerDropsPage";
 
 
 type RouteType = {
@@ -22,12 +27,6 @@ type RouteType = {
 const allRoutes: RouteType[] = [
     //Global Routes
     {
-        //FIXME: deprecate
-        path: '/players/old',
-        title: 'Players',
-        children: <Iframe legacyUrl="players" />
-    },
-    {
         path: '/players',
         title: 'Players',
         children: <PlayersPage />
@@ -36,6 +35,11 @@ const allRoutes: RouteType[] = [
         path: '/history',
         title: 'History',
         children: <HistoryPage />
+    },
+    {
+        path: '/insights/player-drops',
+        title: 'Player Drops',
+        children: <PlayerDropsPage />
     },
     {
         path: '/whitelist',
@@ -65,40 +69,24 @@ const allRoutes: RouteType[] = [
     {
         path: '/system/console-log',
         title: 'Console Log',
-        children: <Iframe legacyUrl="systemLog#nav-console" />
+        children: <SystemLogPage pageName="console" />
     },
     {
-        path: '/system/system-logs',
-        title: 'System Logs',
-        children: <Iframe legacyUrl="systemLog" />
+        path: '/system/action-log',
+        title: 'Action Log',
+        children: <SystemLogPage pageName="action" />
     },
-    // {
-    //     path: '/system/console-log',
-    //     title: 'Console Log',
-    //     children: <Iframe legacyUrl="systemLog#nav-console" />
-    // },
-    // {
-    //     path: '/system/action-log',
-    //     title: 'Action Log',
-    //     children: <Iframe legacyUrl="systemLog#nav-actions" />
-    // },
 
     //Server Routes
     {
         path: '/',
         title: 'Dashboard',
-        children: <Iframe legacyUrl="dashboard" />
+        children: <DashboardPage />
     },
     {
         path: '/server/console',
         title: 'Live Console',
-        children: <LiveConsole />
-    },
-    {
-        //FIXME: deprecate
-        path: '/server/console/old',
-        title: 'Old Live Console',
-        children: <Iframe legacyUrl="console" />
+        children: <LiveConsolePage />
     },
     {
         path: '/server/resources',
@@ -130,6 +118,25 @@ const allRoutes: RouteType[] = [
         title: 'Advanced',
         children: <Iframe legacyUrl="advanced" />
     },
+
+    //No nav routes
+    {
+        path: '/settings/ban-templates',
+        title: 'Ban Templates',
+        children: <BanTemplatesPage />
+    },
+    {
+        path: '/ban-identifiers',
+        title: 'Ban Identifiers',
+        children: <AddLegacyBanPage />
+    },
+    //FIXME: decide on how to organize the url for the player drops page - /server/ prefix?
+    //       This will likely be a part of the insights page, eventually
+    // {
+    //     path: '/player-crashes',
+    //     title: 'Player Crashes',
+    //     children: <PlayerCrashesPage />
+    // },
 ];
 
 
@@ -141,7 +148,6 @@ function Route(props: RouteType) {
 
 
 export default function MainRouter() {
-    const [, setLocation] = useLocation();
     const setPageErrorStatus = useSetAtom(pageErrorStatusAtom);
     const contentRefreshKey = useAtomValue(contentRefreshKeyAtom);
 

@@ -15,7 +15,7 @@ try {
     if (GetConvar('monitorMode', 'false') == 'true') {
         require('./core/index.js');
     } else if (GetConvar('txAdminServerMode', 'false') == 'true') {
-        //Nothing, for now
+        require('./resource/sv_reportHeap.js');
     }
 } catch (error) {
     //Prevent any async console.log messing with the output

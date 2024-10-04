@@ -13,6 +13,11 @@
         "schedule_warn": "Máy chủ sẽ khởi động lại sau %{smart_count} phút. Vui lòng ngắt kết nối. |||| Máy chủ sẽ khởi động lại sau %{smart_count} phút.",
         "schedule_warn_discord": "**%{servername}** sẽ khởi động lại sau %{smart_count} phút. |||| **%{servername}** đã được lên lịch khởi động lại sau %{smart_count} phút."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Bạn đã bị cấm tham gia máy chủ vì lý do: \"%{reason}\". Thời hạn cấm sẽ hết hạn sau: %{expiration}.",
         "kick_permanent": "(%{author}) Bạn đã bị cấm tham gia máy chủ vì lý do: \"%{reason}\".",
@@ -25,7 +30,7 @@
             "label_reason": "Lý do cấm",
             "label_id": "ID cấm",
             "note_multiple_bans": "Lưu ý: bạn có nhiều hơn một lệnh cấm hoạt động đối với tài khoản của mình.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_diff_license": "Lưu ý: lệnh cấm ở trên đã được áp dụng cho một <code>giấy phép</code> khác, có nghĩa là một số ID/HWID của bạn khớp với những ID/HWID được liên kết với lệnh cấm đó."
         }
     },
     "whitelist_messages": {
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "CẢNH BÁO",
         "warned_by": "Cảnh cáo bởi:",
-        "instruction": "Giữ [SPACE] trong 10 giây để đóng cửa sổ này."
+        "stale_message": "Cảnh báo này đã được phát hành trước khi bạn kết nối với máy chủ.",
+        "dismiss_key": "SPACE",
+        "instruction": "Giữ %{key} trong %{smart_count} giây để đóng cửa sổ này. |||| Giữ %{key} trong %{smart_count} giây để đóng cửa sổ này."
     },
     "nui_menu": {
         "misc": {
@@ -78,7 +85,7 @@
             "announcement_title": "Thông báo máy chủ bởi %{author}:",
             "directmessage_title": "Tin nhắn từ Admin %{author}:",
             "dialog_empty_input": "Bạn không thể để trống mục này.",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "Hành động này yêu cầu bật OneSync."
         },
         "frozen": {
             "froze_player": "Bạn đã đóng băng người chơi!",
@@ -172,7 +179,7 @@
                     "success": "Xe đã được nâng cấp",
                     "already_boosted": "Xe này đã được độ.",
                     "unsupported_class": "Loại xe này không được hỗ trợ.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "Bạn chỉ có thể tăng tốc khi được cưỡi trên ngựa."
                 }
             },
             "heal": {
@@ -193,7 +200,7 @@
             },
             "announcement": {
                 "title": "Gửi thông báo",
-                "label": "Send an announcement to all online players.",
+                "label": "Gửi thông báo tới tất cả người chơi.",
                 "dialog_desc": "Gửi thông báo tới tất cả người chơi.",
                 "dialog_placeholder": "Nhập thông báo...",
                 "dialog_success": "Đang gửi thông báo."
@@ -218,6 +225,13 @@
                 "players": "Người chơi",
                 "search": "Tìm",
                 "zero_players": "Không tìm thấy"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Sắp xếp theo",
@@ -290,7 +304,7 @@
                         "spectate_failed": "Có lỗi khi thực hiện theo dõi, đang thoát chế độ theo dõi.",
                         "spectate_yourself": "Bạn không thể tự theo dõi chính mình.",
                         "freeze_yourself": "Bạn không thể tự đóng băng bản thân!",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Không có người chơi để đạp xe đến."
                     }
                 },
                 "troll": {

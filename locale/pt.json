@@ -13,6 +13,11 @@
         "schedule_warn": "Este servidor está agendado para reiniciar em %{smart_count} minuto. Por favor, desconecte-se agora! |||| Este servidor está agendado para reiniciar em %{smart_count} minutos.",
         "schedule_warn_discord": "**%{servername}** está agendado para reiniciar em %{smart_count} minuto. |||| **%{servername}** está agendado para reiniciar em %{smart_count} minutos."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Você foi banido deste servidor por \"%{reason}\". Seu ban vai expirar em: %{expiration}.",
         "kick_permanent": "(%{author}) Você foi permanentemente banido deste servidor por \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "ADVERTÊNCIA",
         "warned_by": "Advertido por:",
-        "instruction": "Aperte [ESPAÇO] por 10 segundos para fechar esta advertência."
+        "stale_message": "Esta advertência foi emitida antes de você se conectar ao servidor.",
+        "dismiss_key": "ESPAÇO",
+        "instruction": "Aperte %{key} por %{smart_count} segundo para fechar esta advertência. |||| Aperte %{key} por %{smart_count} segundos para fechar esta advertência."
     },
     "nui_menu": {
         "misc": {
@@ -217,7 +224,14 @@
                 "online_players": "Jogadores Online",
                 "players": "Jogadores",
                 "search": "Buscar",
-                "zero_players": "Nenhum jogador encontrado"
+                "zero_players": "Nenhum jogador encontrado."
+            },
+            "filter": {
+                "label": "Filtrar por",
+                "no_filter": "Sem Filtro",
+                "is_admin": "É Admin",
+                "is_injured": "Está Machucado / Morto",
+                "in_vehicle": "Está em Veículo"
             },
             "sort": {
                 "label": "Ordenar por",

@@ -10,7 +10,7 @@ import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const isUndefined = (x) => (x === undefined);
 
 
 /**
@@ -233,15 +233,16 @@ async function handleSaveConfig(ctx) {
     }
 
     globals.fxRunner.refreshConfig();
+    globals.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     ctx.admin.logAction('Completed and committed server deploy.');
 
     //Starting server
-    const spawnMsg = await globals.fxRunner.spawnServer(false);
-    if (spawnMsg !== null) {
+    const spawnError = await globals.fxRunner.spawnServer(false);
+    if (spawnError !== null) {
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `Config file saved, but faied to start server with error:\n${spawnMsg}`,
+            message: `Config file saved, but faied to start server with error:\n${spawnError}`,
         });
     } else {
         globals.deployer = null;

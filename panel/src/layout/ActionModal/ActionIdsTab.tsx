@@ -31,7 +31,7 @@ function IdsBlock({ title, emptyMessage, ids, isSmaller }: IdsBlockProps) {
     }
     const hasIdsAvailable = Array.isArray(ids) && ids.length;
 
-    return <div className="mb-1 md:mb-4">
+    return <div className="px-1 mb-1 md:mb-4">
         <div className="flex justify-between items-center pb-1">
             <h3 className="text-xl">{title}</h3>
             {/* {hasCopiedIds ? (

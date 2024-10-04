@@ -13,6 +13,11 @@
         "schedule_warn": "Palvelin on ajoitettu käynnistymään uudelleen minuutin kuluttua. Poistu palvelimelta nyt! |||| Palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua.",
         "schedule_warn_discord": "**%{servername}** on uudelleenkäynnistymässä %{smart_count} minuutin kuluttua. |||| **%{servername}** on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Olet saanut porttikiellon palvelimelle. Porttikiellon syy: \"%{reason}\". Porttikielto päättyy: %{expiration}.",
         "kick_permanent": "(%{author}) Olet saanut pysyvän porttikiellon palvelimelle. Porttikiellon syy: \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "VAROITUS",
         "warned_by": "Sinua varoitti:",
-        "instruction": "Pidä välilyöntiä pohjassa 10 sekuntia jatkaaksesi."
+        "stale_message": "Tämä varoitus annettiin ennen kuin yhdistit palvelimeen.",
+        "dismiss_key": "välilyönti",
+        "instruction": "Pidä %{key} pohjassa %{smart_count} sekunti jatkaaksesi. |||| Pidä %{key} pohjassa %{smart_count} sekuntia jatkaaksesi."
     },
     "nui_menu": {
         "misc": {
@@ -218,6 +225,13 @@
                 "players": "pelaaja(a)",
                 "search": "Hae",
                 "zero_players": "Pelaajia ei löytynyt"
+            },
+            "filter": {
+                "label": "Filter by",
+                "no_filter": "No Filter",
+                "is_admin": "Is Admin",
+                "is_injured": "Is Injured / Dead",
+                "in_vehicle": "In Vehicle"
             },
             "sort": {
                 "label": "Järjestä",

@@ -7,7 +7,7 @@ import { randomUUID } from 'node:crypto';
 import { Socket } from "socket.io";
 import { parse as cookieParse } from 'cookie';
 import { SetOption as KoaCookieSetOption } from "cookies";
-import { DeepReadonly } from 'utility-types';
+import type { DeepReadonly } from 'utility-types';
 
 //Types
 export type ValidSessionType = {

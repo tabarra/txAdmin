@@ -1,4 +1,5 @@
 import { GenericApiErrorResp } from "genericApiTypes";
+import { BanTemplatesDataType } from "otherTypes";
 
 //Already compliant with new db specs
 export type PlayerHistoryItem = {
@@ -40,6 +41,7 @@ export type PlayerModalPlayerData = {
 
 export type PlayerModalSuccess = {
     serverTime: number; //required to calculate if bans have expired on frontend
+    banTemplates: BanTemplatesDataType[]; //TODO: move this to websocket push
     player: PlayerModalPlayerData;
 }
 export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;
