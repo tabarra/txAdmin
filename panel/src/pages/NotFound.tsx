@@ -4,7 +4,7 @@ import { Link } from "wouter";
 
 type Props = {
     params: {
-        ['*']: string;
+        '*': string;
     };
 };
 export default function NotFound({ params }: Props) {
