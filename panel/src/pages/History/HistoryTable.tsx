@@ -229,7 +229,7 @@ export default function HistoryTable({ search, filterbyType, filterbyAdmin }: Hi
                 sortingKey: sorting.key,
                 sortingDesc: sorting.desc,
             };
-            if (search) {
+            if (search.value) {
                 queryParams.searchValue = search.value;
                 queryParams.searchType = search.type;
             }

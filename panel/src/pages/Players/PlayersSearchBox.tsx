@@ -22,7 +22,7 @@ import { Link } from "wouter";
 /**
  * Helpers
  */
-const availableSearchTypes = [
+export const availableSearchTypes = [
     {
         value: 'playerName',
         label: 'Name',
@@ -43,7 +43,7 @@ const availableSearchTypes = [
     },
 ] as const;
 
-const availableFilters = [
+export const availableFilters = [
     { label: 'Is Admin', value: 'isAdmin' },
     { label: 'Is Online', value: 'isOnline' },
     // { label: 'Is Banned', value: 'isBanned' },
@@ -77,18 +77,14 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
     const inputRef = useRef<HTMLInputElement>(null);
     const [isSearchTypeDropdownOpen, setSearchTypeDropdownOpen] = useState(false);
     const [isFilterDropdownOpen, setFilterDropdownOpen] = useState(false);
-    const [currSearchType, setCurrSearchType] = useState<string>(initialState.search?.type || 'playerName');
+    const [currSearchType, setCurrSearchType] = useState<string>(initialState.search.type);
     const [selectedFilters, setSelectedFilters] = useState<string[]>(initialState.filters);
-    const [hasSearchText, setHasSearchText] = useState(!!initialState.search?.value);
+    const [hasSearchText, setHasSearchText] = useState(!!initialState.search.value);
 
     const updateSearch = () => {
         if (!inputRef.current) return;
         const searchValue = inputRef.current.value.trim();
-        if (searchValue.length) {
-            doSearch({ value: searchValue, type: currSearchType }, selectedFilters);
-        } else {
-            doSearch(null, selectedFilters);
-        }
+        doSearch({ value: searchValue, type: currSearchType }, selectedFilters);
     }
 
     //Call onSearch when params change
@@ -151,6 +147,7 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
                         autoCorrect='off'
                         ref={inputRef}
                         placeholder={selectedSearchType.placeholder}
+                        defaultValue={initialState.search.value}
                         onKeyDown={handleInputKeyDown}
                     />
                     {hasSearchText ? (

@@ -148,8 +148,8 @@ Legend:
 - [x] healthmonitor: write to logger.fxserver the internal reason as marker
 - [x] check compatibility with `sv_enableNetEventReassembly false`
 - [x] update packages
+- [x] update wouter and add search/filters state to URL of the players/history pages
 - [!] check cicd stuff on testing repo before release
-- [ ] update wouter and add search/filters state to URL of the players/history pages
 - [ ] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
     - [ref](/core/components/AdminVault/index.js#L289)
 - [?] add `.yarn.installed` to the dist? even in dev

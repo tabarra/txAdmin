@@ -168,7 +168,7 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
                 sortingKey: sorting.key,
                 sortingDesc: sorting.desc,
             };
-            if (search) {
+            if (search.value) {
                 queryParams.searchValue = search.value;
                 queryParams.searchType = search.type;
             }

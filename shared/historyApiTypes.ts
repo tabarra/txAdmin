@@ -13,7 +13,7 @@ export type HistoryStatsResp = {
 } | GenericApiErrorResp;
 
 
-export type HistoryTableSearchType = null | {
+export type HistoryTableSearchType = {
     value: string;
     type: string;
 }

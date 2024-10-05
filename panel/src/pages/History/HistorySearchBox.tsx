@@ -30,7 +30,7 @@ import { HistoryTableSearchType } from "@shared/historyApiTypes";
 /**
  * Helpers
  */
-const availableSearchTypes = [
+export const availableSearchTypes = [
     {
         value: 'actionId',
         label: 'Action ID',
@@ -51,7 +51,7 @@ const availableSearchTypes = [
     },
 ] as const;
 
-const SEARCH_ANY_STRING = '!any';
+export const SEARCH_ANY_STRING = '!any';
 
 //FIXME: this doesn't require exporting, but HMR doesn't work without it
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, react-refresh/only-export-components
@@ -83,29 +83,21 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
     const { authData } = useAuth();
     const inputRef = useRef<HTMLInputElement>(null);
     const [isSearchTypeDropdownOpen, setSearchTypeDropdownOpen] = useState(false);
-    const [currSearchType, setCurrSearchType] = useState<string>(initialState.search?.type || 'actionId');
-    const [hasSearchText, setHasSearchText] = useState(!!initialState.search?.value);
-    const [typeFilter, setTypeFilter] = useState(initialState.filterbyType ?? SEARCH_ANY_STRING);
-    const [adminNameFilter, setAdminNameFilter] = useState(initialState.filterbyAdmin ?? SEARCH_ANY_STRING);
+    const [currSearchType, setCurrSearchType] = useState<string>(initialState.search.type);
+    const [hasSearchText, setHasSearchText] = useState(!!initialState.search.value);
+    const [typeFilter, setTypeFilter] = useState(initialState.filterbyType);
+    const [adminNameFilter, setAdminNameFilter] = useState(initialState.filterbyAdmin);
 
     const updateSearch = () => {
         if (!inputRef.current) return;
         const searchValue = inputRef.current.value.trim();
         const effectiveTypeFilter = typeFilter !== SEARCH_ANY_STRING ? typeFilter : undefined;
         const effectiveAdminNameFilter = adminNameFilter !== SEARCH_ANY_STRING ? adminNameFilter : undefined;
-        if (searchValue.length) {
-            doSearch(
-                { value: searchValue, type: currSearchType },
-                effectiveTypeFilter,
-                effectiveAdminNameFilter,
-            );
-        } else {
-            doSearch(
-                null,
-                effectiveTypeFilter,
-                effectiveAdminNameFilter,
-            );
-        }
+        doSearch(
+            { value: searchValue, type: currSearchType },
+            effectiveTypeFilter,
+            effectiveAdminNameFilter,
+        );
     }
 
     //Call onSearch when params change
@@ -164,6 +156,7 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
                         autoCorrect='off'
                         ref={inputRef}
                         placeholder={selectedSearchType.placeholder}
+                        defaultValue={initialState.search.value}
                         onKeyDown={handleInputKeyDown}
                     />
                     {hasSearchText ? (
