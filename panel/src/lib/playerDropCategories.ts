@@ -2,6 +2,7 @@ import { color } from "d3";
 
 export type PlayerDropCategoryType = {
     label: string;
+    description: string;
     color: string;
     border: string;
     expected: boolean;
@@ -28,36 +29,42 @@ export const playerDropCategoryDefaultColor = BaseColors.Default;
 export const playerDropCategories: PlayerDropCategoriesType = {
     player: {
         label: 'Player',
+        description: 'Player left by quitting the game, leaving the server or other normal means.',
         color: BaseColors.Green,
         border: border(BaseColors.Green),
         expected: true,
     },
     resource: {
         label: 'Resource',
+        description: 'Player kicked out of the server by a resource.',
         color: BaseColors.Blue,
         border: border(BaseColors.Blue),
         expected: true,
     },
     timeout: {
         label: 'Timeout',
+        description: 'Player connection timed out due to networking issues or client crash.',
         color: BaseColors.Cream,
         border: border(BaseColors.Cream),
         expected: false,
     },
     crash: {
         label: 'Crash',
+        description: 'Player left due to a game crash, but was still able to inform the server the crash reason.',
         color: BaseColors.Orange,
         border: border(BaseColors.Orange),
         expected: false,
     },
     security: {
         label: 'Security',
+        description: 'Player kicked out of the server due to suspect behavior such as sending too many commands or losing connection to the Cfx.re backend services.',
         color: BaseColors.Red,
         border: border(BaseColors.Red),
         expected: false,
     },
     unknown: {
         label: 'Unknown',
+        description: 'Player left the server for an unknown reason.',
         color: BaseColors.Purple,
         border: border(BaseColors.Purple),
         expected: false,
