@@ -1,3 +1,4 @@
+import { setUrlSearchParam } from "@/lib/utils";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithReset } from 'jotai/utils';
 
@@ -13,12 +14,22 @@ export type PlayerModalRefType = {
 };
 export const playerModalOpenAtom = atomWithReset(false);
 export const playerModalRefAtom = atomWithReset<PlayerModalRefType | undefined>(undefined);
+export const playerModalUrlParam = 'playerModal';
+
+//Helper to set the URL search param
+export const setPlayerModalUrlParam = (ref: string | undefined) => {
+    setUrlSearchParam(playerModalUrlParam, ref);
+}
 
 //Hook to open the player modal
 export const useOpenPlayerModal = () => {
     const setModalRef = useSetAtom(playerModalRefAtom);
     const setModalOpen = useSetAtom(playerModalOpenAtom);
     return (data: Exclude<PlayerModalRefType, undefined>) => {
+        const newRef = 'mutex' in data
+            ? `${data.mutex}#${data.netid}`
+            : data.license;
+        setPlayerModalUrlParam(newRef);
         setModalRef(data);
         setModalOpen(true);
     }
@@ -28,6 +39,7 @@ export const useOpenPlayerModal = () => {
 export const useClosePlayerModal = () => {
     const setModalOpen = useSetAtom(playerModalOpenAtom);
     return () => {
+        setPlayerModalUrlParam(undefined);
         setModalOpen(false);
     }
 };
@@ -40,6 +52,9 @@ export const usePlayerModalStateValue = () => {
     return {
         isModalOpen,
         playerRef,
-        closeModal: () => setIsModalOpen(false),
+        closeModal: () => {
+            setPlayerModalUrlParam(undefined);
+            setIsModalOpen(false);
+        },
     }
 }

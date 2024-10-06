@@ -329,3 +329,20 @@ export const banDurationToShortString = (duration: BanDurationType) => {
     }
     return `${duration.value}${suffix}`;
 }
+
+
+/**
+ * Sets a URL search param with a given value, or deletes it if value is undefined
+ */
+export const setUrlSearchParam = (paramName: string, ref: string | undefined) => {
+    if (typeof paramName !== 'string' || !paramName.length) {
+        throw new Error(`setUrlSearchParam: paramName must be a non-empty string`);
+    }
+    const pageUrl = new URL(window.location.toString());
+    if (ref) {
+        pageUrl.searchParams.set(paramName, ref);
+    } else {
+        pageUrl.searchParams.delete(paramName);
+    }
+    window.history.replaceState({}, '', pageUrl);
+}

@@ -4,7 +4,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { usePlayerModalStateValue } from "@/hooks/playerModal";
+import { setPlayerModalUrlParam, usePlayerModalStateValue } from "@/hooks/playerModal";
 import { InfoIcon, ListIcon, HistoryIcon, GavelIcon } from "lucide-react";
 import PlayerInfoTab from "./PlayerInfoTab";
 import { useEffect, useState } from "react";
@@ -72,6 +72,10 @@ export default function PlayerModal() {
                 } else {
                     setModalData(resp);
                     setTsFetch(Math.round(Date.now() / 1000));
+                    //Update the ref param to use a license, if possible
+                    if (!('license' in playerRef) && resp.player.license) {
+                        setPlayerModalUrlParam(resp.player.license)
+                    }
                 }
             },
             error: (error) => {

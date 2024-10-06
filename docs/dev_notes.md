@@ -149,9 +149,12 @@ Legend:
 - [x] check compatibility with `sv_enableNetEventReassembly false`
 - [x] update packages
 - [x] update wouter and add search/filters state to URL of the players/history pages
-- [!] check cicd stuff on testing repo before release
+- [x] drop category tooltips on drops page
+- [x] feat(panel): add player/action modal ref to url search param
 - [ ] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
     - [ref](/core/components/AdminVault/index.js#L289)
+- [ ] buffer fxserver lrstream and strip colors only after that
+- [!] check cicd stuff on testing repo before release
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/components/Logger/handlers/server.js#L148)
