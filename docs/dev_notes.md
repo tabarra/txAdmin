@@ -151,7 +151,7 @@ Legend:
 - [x] update wouter and add search/filters state to URL of the players/history pages
 - [x] drop category tooltips on drops page
 - [x] feat(panel): add player/action modal ref to url search param
-- [ ] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
+- [x] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
     - [ref](/core/components/AdminVault/index.js#L289)
 - [ ] buffer fxserver lrstream and strip colors only after that
 - [!] check cicd stuff on testing repo before release
