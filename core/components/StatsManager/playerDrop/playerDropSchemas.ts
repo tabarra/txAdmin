@@ -44,8 +44,9 @@ export const PDLHourlyRawSchema = z.object({
         PDLGameChangedEventSchema,
         PDLResourcesChangedEventSchema,
     ])),
-    dropTypes: z.array(z.tuple([z.string(), z.number()])),
     crashTypes: z.array(z.tuple([z.string(), z.number()])),
+    dropTypes: z.array(z.tuple([z.string(), z.number()])),
+    resKicks: z.array(z.tuple([z.string(), z.number()])),
 });
 
 export const PDLFileSchema = z.object({
@@ -69,11 +70,13 @@ export type PDLResourcesChangedEventType = z.infer<typeof PDLResourcesChangedEve
 export type PDLChangeEventType = (PDLFxsChangedEventType | PDLGameChangedEventType | PDLResourcesChangedEventType);
 export type PDLHourlyChanges = PDLHourlyRawType['changes'];
 
+//Used after parsing (getCurrentLogHourRef)
 export type PDLHourlyType = {
     hour: DeepReadonly<ReturnType<typeof parseDateHourEnc>>;
     changes: PDLHourlyChanges;
-    dropTypes: MultipleCounter;
     crashTypes: MultipleCounter;
+    dropTypes: MultipleCounter;
+    resKicks: MultipleCounter;
 };
 
 
@@ -94,9 +97,18 @@ export const PDLHourlyRawSchema_v1 = PDLHourlyRawSchema.extend({
         PDLGameChangedEventSchema_v1,
         PDLResourcesChangedEventSchema,
     ])),
+}).omit({
+    resKicks: true,
 });
 export const PDLFileSchema_v1 = PDLFileSchema.extend({
     version: z.literal(1),
     log: z.array(PDLHourlyRawSchema_v1),
 });
 export type PDLFileType_v1 = z.infer<typeof PDLFileSchema_v1>;
+
+//Used only in scripts/dev/makeOldStatsFile.ts
+export type PDLChangeEventType_V1 = (
+    z.infer<typeof PDLFxsChangedEventSchema_v1>
+    | z.infer<typeof PDLGameChangedEventSchema_v1>
+    | PDLResourcesChangedEventType
+);

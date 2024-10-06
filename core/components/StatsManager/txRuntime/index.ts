@@ -53,6 +53,7 @@ export default class TxRuntimeStatsManager {
             close: 0,
             heartBeat: 0,
             healthCheck: 0,
+            both: 0,
         },
     };
 

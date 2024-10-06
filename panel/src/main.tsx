@@ -12,7 +12,7 @@ import AuthShell from './layout/AuthShell.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { isValidRedirectPath, redirectToLogin } from './lib/utils.ts';
 import ThemeProvider from './components/ThemeProvider.tsx';
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { isMobile } from 'is-mobile';
 import { useAtomValue } from 'jotai';
 import { pageTitleWatcher } from './hooks/pages.ts';
@@ -72,33 +72,33 @@ export function AuthContextSwitch() {
     useAtomValue(pageTitleWatcher);
     const isAuthenticated = useIsAuthenticated();
 
-    if (isAuthenticated) {
-        //Replace the current URL with the redirect path if it exists and is valid
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectPath = urlParams.get('r');
-        if (redirectPath) {
-            if (isValidRedirectPath(redirectPath)) {
-                window.history.replaceState(null, '', redirectPath);
-            } else {
+    useEffect(() => {
+        if (isAuthenticated) {
+            //Replace the current URL with the redirect path if it exists and is valid
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectPath = urlParams.get('r');
+            if (redirectPath) {
+                if (isValidRedirectPath(redirectPath)) {
+                    window.history.replaceState(null, '', redirectPath);
+                } else {
+                    window.history.replaceState(null, '', '/');
+                }
+            } else if (isAuthRoute(window.location.pathname)) {
                 window.history.replaceState(null, '', '/');
             }
-        } else if (isAuthRoute(window.location.pathname)) {
-            window.history.replaceState(null, '', '/');
+        } else {
+            //Unless the user is already in the auth pages, redirect to the login page
+            if (!window.txConsts.hasMasterAccount && !window.location.pathname.startsWith('/addMaster')) {
+                console.log('No master account detected. Redirecting to addMaster page.');
+                window.history.replaceState(null, '', '/addMaster/pin');
+            } else if (!isAuthRoute(window.location.pathname)) {
+                console.log('User is not authenticated. Redirecting to login page.');
+                redirectToLogin();
+            }
         }
-
-        return <MainShell />;
-    } else {
-        //Unless the user is already in the auth pages, redirect to the login page
-        if (!window.txConsts.hasMasterAccount && !window.location.pathname.startsWith('/addMaster')) {
-            console.log('No master account detected. Redirecting to addMaster page.');
-            window.history.replaceState(null, '', '/addMaster/pin');
-        } else if (!isAuthRoute(window.location.pathname)) {
-            console.log('User is not authenticated. Redirecting to login page.');
-            redirectToLogin();
-        }
-
-        return <AuthShell />;
-    }
+    }, [isAuthenticated]);
+    
+    return isAuthenticated ? <MainShell /> : <AuthShell />;
 }
 
 //Creating a global query client

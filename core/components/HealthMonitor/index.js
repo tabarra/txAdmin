@@ -69,8 +69,9 @@ export default class HealthMonitor {
      * Restart the FXServer and logs everything
      * @param {string} reasonInternal
      * @param {string} reasonTranslated
+     * @param {string} timesPrefix
      */
-    async restartFXServer(reasonInternal, reasonTranslated) {
+    async restartFXServer(reasonInternal, reasonTranslated, timesPrefix) {
         //sanity check
         if (globals.fxRunner.fxChild === null) {
             console.warn('Server not started, no need to restart');
@@ -79,9 +80,9 @@ export default class HealthMonitor {
 
         //Restart server
         this.isAwaitingRestart = true;
-        const logMessage = `Restarting server (${reasonInternal}).`;
+        const logMessage = `Restarting server: ${reasonInternal} ${timesPrefix}`;
         globals.logger.admin.write('MONITOR', logMessage);
-        //FIXME: write internal reason to logger.fxserver as a marker
+        globals.logger.fxserver.logInformational(logMessage);
         globals.fxRunner.restartServer(reasonTranslated, null);
     }
 
@@ -134,8 +135,8 @@ export default class HealthMonitor {
         };
         try {
             const data = await got.get(requestOptions).json();
-            if (typeof data !== 'object') throw new Error("FXServer's dynamic endpoint didn't return a JSON object.");
-            if (isUndefined(data.hostname) || isUndefined(data.clients)) throw new Error("FXServer's dynamic endpoint didn't return complete data.");
+            if (typeof data !== 'object') throw new Error('FXServer\'s dynamic endpoint didn\'t return a JSON object.');
+            if (isUndefined(data.hostname) || isUndefined(data.clients)) throw new Error('FXServer\'s dynamic endpoint didn\'t return complete data.');
             dynamicResp = data;
         } catch (error) {
             this.lastHealthCheckErrorMessage = error.message;
@@ -191,6 +192,7 @@ export default class HealthMonitor {
         this.lastRefreshStatus = currTimestamp;
 
         //Get elapsed times & process status
+        const anySuccessfulHealthCheck = (this.lastSuccessfulHealthCheck !== null);
         const elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
         const healthCheckFailed = (elapsedHealthCheck > this.hardConfigs.healthCheck.failThreshold);
         const anySuccessfulHeartBeat = (this.lastSuccessfulFD3HeartBeat !== null || this.lastSuccessfulHTTPHeartBeat !== null);
@@ -235,6 +237,7 @@ export default class HealthMonitor {
             this.restartFXServer(
                 'server close detected',
                 globals.translator.t('restarter.crash_detected'),
+                timesPrefix,
             );
             return;
         }
@@ -297,42 +300,57 @@ export default class HealthMonitor {
         }
 
         //Check if already over the limit
-        if (
-            elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit
-            || elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
-        ) {
+        const healthCheckOverLimit = (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit);
+        const heartBeatOverLimit = (elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit);
+        if (healthCheckOverLimit || heartBeatOverLimit) {
             if (anySuccessfulHeartBeat === false) {
                 if (starting.startingElapsedSecs !== null) {
                     //Resource didn't finish starting (if res boot still active)
                     this.restartFXServer(
                         `resource "${starting.startingResName}" failed to start within the ${this.config.resourceStartingTolerance}s time limit`,
                         globals.translator.t('restarter.start_timeout'),
+                        timesPrefix,
                     );
                 } else if (starting.lastStartElapsedSecs !== null) {
                     //Resources started, but no heartbeat whithin limit after that
                     this.restartFXServer(
                         `server failed to start within time limit - ${this.hardConfigs.heartBeat.resStartedCooldown}s after last resource started`,
                         globals.translator.t('restarter.start_timeout'),
+                        timesPrefix,
                     );
                 } else {
                     //No resource started starting, hb over limit
                     this.restartFXServer(
                         `server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`,
                         globals.translator.t('restarter.start_timeout'),
+                        timesPrefix,
                     );
                 }
-            } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
-                //FIXME: se der hang tanto HB quanto HC, ele ainda sim cai nesse caso
-                globals.statsManager.txRuntime.registerFxserverRestart('healthCheck');
+            } else if (anySuccessfulHealthCheck === false) {
+                //HB started, but HC didn't
                 this.restartFXServer(
-                    'server partial hang detected',
-                    globals.translator.t('restarter.hang_detected'),
+                    `server failed to start within time limit - resources running but HTTP endpoint unreachable`,
+                    globals.translator.t('restarter.start_timeout'),
+                    timesPrefix,
                 );
             } else {
-                globals.statsManager.txRuntime.registerFxserverRestart('heartBeat');
+                //Both threads started, but now at least one stopepd
+                let issueMsg, issueSrc;
+                if (healthCheckFailed && heartBeatFailed) {
+                    issueMsg = 'server full hang detected';
+                    issueSrc = 'both';
+                } else if (healthCheckFailed) {
+                    issueMsg = 'server http hang detected';
+                    issueSrc = 'healthCheck';
+                } else {
+                    issueMsg = 'server resources hang detected';
+                    issueSrc = 'heartBeat';
+                }
+                globals.statsManager.txRuntime.registerFxserverRestart(issueSrc);
                 this.restartFXServer(
-                    'server hang detected',
+                    issueMsg,
                     globals.translator.t('restarter.hang_detected'),
+                    timesPrefix,
                 );
             }
         }

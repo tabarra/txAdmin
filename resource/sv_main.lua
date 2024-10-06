@@ -24,6 +24,7 @@ TX_PLAYERLIST = {}
 TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
 TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
+TX_IS_SERVER_SHUTTING_DOWN = false
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
@@ -45,10 +46,6 @@ CreateThread(function()
     debugPrint("Restoring txAdmin-luaComToken for next monitor restart")
     SetConvar("txAdmin-luaComToken", TX_LUACOMTOKEN)
 end)
-
-
--- Local variables
-local isServerShuttingDown = false
 
 
 -- =============================================
@@ -317,7 +314,7 @@ end
 --- Kicks all players and lock joins in preparation for server shutdown
 TX_EVENT_HANDLERS.serverShuttingDown = function(eventData)
     txPrint('Server shutdown imminent. Kicking all players.')
-    isServerShuttingDown = true
+    TX_IS_SERVER_SHUTTING_DOWN = true
     local players = GetPlayers()
     for _, serverID in pairs(players) do
         DropPlayer(serverID, '[txAdmin] ' .. eventData.message)
@@ -352,7 +349,7 @@ end
 -- =============================================
 local function handleConnections(name, setKickReason, d)
     -- if server is shutting down
-    if isServerShuttingDown then
+    if TX_IS_SERVER_SHUTTING_DOWN then
         CancelEvent()
         setKickReason("[txAdmin] Server is shutting down, try again in a few seconds.")
         return

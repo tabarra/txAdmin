@@ -14,20 +14,37 @@ const console = consoleFactory(modulename);
 export const DATABASE_VERSION = 5;
 export const defaultDatabase = {
     version: DATABASE_VERSION,
-    players: [],
     actions: [],
+    players: [],
     whitelistApprovals: [],
     whitelistRequests: [],
 };
 
-export const SAVE_PRIORITY_LOW = 1;
-export const SAVE_PRIORITY_MEDIUM = 2;
-export const SAVE_PRIORITY_HIGH = 3;
-const BACKUP_INTERVAL = 300e3;
-const SAVE_STANDBY = 0;
-const SAVE_TIMES = [300e3, 58e3, 28e3, 13e3];
-// considering a 2 sec skew for the setInterval
-// saving every 5 minutes even if nothing changed
+export enum SavePriority {
+    STANDBY,
+    LOW,
+    MEDIUM,
+    HIGH,
+}
+
+const SAVE_CONFIG = {
+    [SavePriority.STANDBY]: {
+        name: 'standby',
+        interval: 5 * 60 * 1000,
+    },
+    [SavePriority.LOW]: {
+        name: 'low',
+        interval: 60 * 1000,
+    },
+    [SavePriority.MEDIUM]: {
+        name: 'medium',
+        interval: 30 * 1000,
+    },
+    [SavePriority.HIGH]: {
+        name: 'high',
+        interval: 15 * 1000,
+    },
+} as Record<SavePriority, { interval: number; name: string }>;
 
 
 //Reimplementing the adapter to minify json onm prod builds
@@ -69,14 +86,13 @@ export class Database {
     readonly dbPath: string;
     readonly backupPath: string;
     obj: DatabaseObjectType | undefined = undefined;
-    #writePending: 0 | 1 | 2 | 3 = SAVE_STANDBY; //FIXME: enum
+    #writePending: SavePriority = SavePriority.STANDBY;
     lastWrite: number = 0;
     isReady: boolean = false;
 
     constructor() {
         this.dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         this.backupPath = `${globals.info.serverProfilePath}/data/playersDB.backup.json`;
-        this.#writePending = SAVE_STANDBY;
 
         //Start database instance
         this.setupDatabase();
@@ -84,10 +100,10 @@ export class Database {
         //Cron functions
         setInterval(() => {
             this.writeDatabase();
-        }, SAVE_TIMES[SAVE_PRIORITY_HIGH]);
+        }, SAVE_CONFIG[SavePriority.HIGH].interval);
         setInterval(() => {
             this.backupDatabase();
-        }, BACKUP_INTERVAL);
+        }, SAVE_CONFIG[SavePriority.STANDBY].interval);
     }
 
 
@@ -142,8 +158,8 @@ export class Database {
 
             //Checking basic structure integrity
             if (
-                !Array.isArray(this.obj!.data.players)
-                || !Array.isArray(this.obj!.data.actions)
+                !Array.isArray(this.obj!.data.actions)
+                || !Array.isArray(this.obj!.data.players)
                 || !Array.isArray(this.obj!.data.whitelistApprovals)
                 || !Array.isArray(this.obj!.data.whitelistRequests)
             ) {
@@ -184,12 +200,13 @@ export class Database {
     /**
      * Set write pending flag
      */
-    writeFlag(flag = SAVE_PRIORITY_MEDIUM) {
-        if (![SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH].includes(flag)) {
+    writeFlag(flag = SavePriority.MEDIUM) {
+        if (flag < SavePriority.LOW || flag > SavePriority.HIGH) {
             throw new Error('unknown priority flag!');
         }
         if (flag > this.#writePending) {
-            console.verbose.log(`writeFlag > ${['no', 'low', 'med', 'high'][flag]}`);
+            const flagName = SAVE_CONFIG[flag].name;
+            console.verbose.log(`writeFlag > ${flagName}`);
             this.#writePending = flag;
         }
     }
@@ -205,11 +222,11 @@ export class Database {
         const timeStart = Date.now();
         const sinceLastWrite = timeStart - this.lastWrite;
 
-        if (this.#writePending === SAVE_PRIORITY_HIGH || sinceLastWrite > SAVE_TIMES[this.#writePending]) {
+        if (this.#writePending === SavePriority.HIGH || sinceLastWrite > SAVE_CONFIG[this.#writePending].interval) {
             try {
                 await this.obj.write();
                 const timeElapsed = Date.now() - timeStart;
-                this.#writePending = SAVE_STANDBY;
+                this.#writePending = SavePriority.STANDBY;
                 this.lastWrite = timeStart;
                 console.verbose.debug(`DB file saved, took ${timeElapsed}ms.`);
             } catch (error) {

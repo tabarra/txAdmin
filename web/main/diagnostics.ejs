@@ -44,7 +44,8 @@
                 <strong>Monitor Restarts:</strong> 
                     <code>CL <%= txadmin.monitorRestarts.close %></code> /
                     <code>HB <%= txadmin.monitorRestarts.heartBeat %></code> / 
-                    <code>HC <%= txadmin.monitorRestarts.healthCheck %></code> <br>
+                    <code>HC <%= txadmin.monitorRestarts.healthCheck %></code> /
+                    <code>BO <%= txadmin.monitorRestarts.both %></code> <br>
                 <strong>HB Fails:</strong>
                     <code>HTTP <%= txadmin.hbHTTPFails %></code> / <code>FD3 <%= txadmin.hbFD3Fails %></code> <br>
                 <strong>Logs Storage Size:</strong> <code><%= txadmin.logStorageSize %></code> <br>
@@ -54,9 +55,13 @@
                 └─ Server: <code><%= txadmin.loggerStatusServer %></code> <br>
                 <strong>Performance Times (cnt / q5 / q25 / q50 / q75 / q95):</strong> <br>
                 ├─ BanCheck: <code><%= txadmin.banCheckTime %></code> <br>
-                └─ WhitelistCheck: <code><%= txadmin.whitelistCheckTime %></code> <br>
-                └─ PlayersTable: <code><%= txadmin.playersTableSearchTime %></code> <br>
+                ├─ WhitelistCheck: <code><%= txadmin.whitelistCheckTime %></code> <br>
+                ├─ PlayersTable: <code><%= txadmin.playersTableSearchTime %></code> <br>
                 └─ HistoryTable: <code><%= txadmin.historyTableSearchTime %></code> <br>
+                <strong>Memory:</strong> <br>
+                ├─ Heap: <code><%= txadmin.memoryUsage.heap_used %> / <%= txadmin.memoryUsage.heap_limit %> (<%= txadmin.memoryUsage.heap_pct %>%)</code> <br>
+                ├─ Physical: <code><%= txadmin.memoryUsage.physical %></code> <br>
+                └─ Peak. Alloc.: <code><%= txadmin.memoryUsage.peak_malloced %></code> <br>
             </div>
         </div>
 

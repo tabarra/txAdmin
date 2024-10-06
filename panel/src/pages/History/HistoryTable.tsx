@@ -8,6 +8,7 @@ import { Loader2Icon, GavelIcon, AlertTriangleIcon, Undo2Icon, TimerOffIcon, Tim
 import { useBackendApi } from '@/hooks/fetch';
 import { HistoryTableActionType, HistoryTableSearchResp, HistoryTableSearchType, HistoryTableSortingType } from '@shared/historyApiTypes';
 import { useOpenActionModal } from '@/hooks/actionModal';
+import { SEARCH_ANY_STRING } from './HistorySearchBox';
 
 
 /**
@@ -229,14 +230,14 @@ export default function HistoryTable({ search, filterbyType, filterbyAdmin }: Hi
                 sortingKey: sorting.key,
                 sortingDesc: sorting.desc,
             };
-            if (search) {
+            if (search.value) {
                 queryParams.searchValue = search.value;
                 queryParams.searchType = search.type;
             }
-            if (filterbyType && filterbyType !== '!any') {
+            if (filterbyType && filterbyType !== SEARCH_ANY_STRING) {
                 queryParams.filterbyType = filterbyType;
             }
-            if (filterbyAdmin && filterbyAdmin !== '!any') {
+            if (filterbyAdmin && filterbyAdmin !== SEARCH_ANY_STRING) {
                 queryParams.filterbyAdmin = filterbyAdmin;
             }
             if (!resetOffset && history.length) {
@@ -271,7 +272,7 @@ export default function HistoryTable({ search, filterbyType, filterbyAdmin }: Hi
 
     // The virtualizer
     const rowVirtualizer = useVirtualizer({
-        scrollingDelay: 0,
+        isScrollingResetDelay: 0,
         count: history.length + 1,
         getScrollElement: () => (scrollRef.current as HTMLDivElement)?.getElementsByTagName('div')[0],
         estimateSize: () => 38, // border-b

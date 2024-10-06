@@ -5,6 +5,8 @@ export const migratePlayerDropsFile = async (fileData: any): Promise<PDLFileType
     //Migrate from v1 to v2
     //- adding oldVersion to fxsChanged and gameChanged events
     //- remove the "Game crashed: " prefix from crash reasons
+    //- renamed "user-initiated" to "player-initiated"
+    //- add the "resources" counter to hourly log
     if (fileData.version === 1) {
         console.warn('Migrating your player drops stats v1 to v2.');
         const data = PDLFileSchema_v1.parse(fileData);
@@ -27,6 +29,19 @@ export const migratePlayerDropsFile = async (fileData: any): Promise<PDLFileType
                     : reason;
                 return [newReason, count];
             });
+            //@ts-ignore
+            log.dropTypes = log.dropTypes.map(([type, count]): [string, number] | false => {
+                if (type === 'user-initiated') {
+                    return ['player', count]
+                } else if (type === 'server-initiated') {
+                    //Mostly server shutdowns
+                    return false;
+                } else {
+                    return [type, count];
+                }
+            }).filter(Array.isArray);
+            //@ts-ignore
+            log.resKicks = [];
         }
 
         fileData = {

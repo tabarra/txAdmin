@@ -8,6 +8,15 @@ import { PlayerDroppedEventType, PlayerJoiningEventType } from '@shared/socketio
 const console = consoleFactory(modulename);
 
 
+export type PlayerDropEvent = {
+    type: 'txAdminPlayerlistEvent',
+    event: 'playerDropped',
+    id: number,
+    reason: string, //need to check if this is always a string
+    resource?: string,
+    category?: number,
+}
+
 /**
  * The PlayerlistManager will store a ServerPlayer instance for all players that connected to the server.
  * 
@@ -204,18 +213,20 @@ export default class PlayerlistManager {
                 if (!(this.#playerlist[payload.id] instanceof ServerPlayer)) throw new Error(`player id not found`);
                 this.#playerlist[payload.id]!.disconnect();
                 this.joinLeaveLog.push([currTs, false]);
-                const reasonCategory = this.#txAdmin.statsManager.playerDrop.handlePlayerDrop(payload.reason);
-                this.#txAdmin.logger.server.write([{
-                    type: 'playerDropped',
-                    src: payload.id,
-                    ts: currTs,
-                    data: { reason: payload.reason }
-                }], mutex);
+                const reasonCategory = this.#txAdmin.statsManager.playerDrop.handlePlayerDrop(payload);
+                if (reasonCategory !== false) {
+                    this.#txAdmin.logger.server.write([{
+                        type: 'playerDropped',
+                        src: payload.id,
+                        ts: currTs,
+                        data: { reason: payload.reason }
+                    }], mutex);
+                }
                 this.#txAdmin.webServer.webSocket.buffer<PlayerDroppedEventType>('playerlist', {
                     mutex,
                     type: 'playerDropped',
                     netid: this.#playerlist[payload.id]!.netid,
-                    reasonCategory,
+                    reasonCategory: reasonCategory ? reasonCategory : undefined,
                 });
             } catch (error) {
                 console.verbose.warn(`playerDropped event error: ${(error as Error).message}`);

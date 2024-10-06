@@ -52,6 +52,7 @@ const resourceName = GetCurrentResourceName();
 //6185 = added ScanResourceRoot (not yet in use)
 //6508 = unhandledRejection is now handlable, we need this due to discord.js's bug
 //8495 = changed prometheus::Histogram::BucketBoundaries
+//9423 = feat(server): add more infos to playerDropped event
 //9655 = Fixed ScanResourceRoot + latent events
 const minFXServerVersion = 5894;
 const fxsVerParsed = parseFxserverVersion(getConvarString('version'));

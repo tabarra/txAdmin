@@ -42,7 +42,7 @@ Legend:
     - Thought: offline warns need a prop to mark if they have been checked, instead of bool, could be an int for "viewed" and also count up for every join blocked on banned players
     - [x] fix the `nui_warning.instruction` replacer
     - [x] test warn on redm
-- [ ] New player drops page
+- [x] New player drops page
     - [x] remove old player crashes page
     - [x] replace core webroute
     - [x] Page layout
@@ -65,9 +65,12 @@ Legend:
         - change logic of backend to sort by count by default
         - then on the frontend if it's `crashesSortByReason`, then array.slice.sort(...)
         - copy the sort code from [](/core/components/StatsManager/statsUtils.ts#L87)
-    - [ ] adapt code to track resource drops + adjust categories according to the new ones
-        - server shutting down should not be counted
-        - check dashboard player drops chart brightness and "By Resources" overflow
+    - [x] adapt code to track resource drops + adjust categories according to the new ones
+        - [x] server shutting down should not be counted
+        - [x] add migration for `user-initiated`, `server-initiated` and `resources[]`
+        - [x] check dashboard player drops chart brightness and "By Resources" overflow
+        - [x] fix border color calculation on playerDropCategories.ts
+        - [x] add resources stats to player drops page
     - [?] review page layout: 
         - [?] make it less card-y
         - [?] fix crashes table widening the outer shell - is it just the scroll?
@@ -125,10 +128,10 @@ Legend:
 - [x] the WarningBar scrolls up with the pages when they have scroll
 - [x] fix the message `Since this is not a critical file, ...` on first boot without txData
     - from `SvRuntimeStatsManager` and `PlayerDropStatsManager` + persistent cache
-- [!] fix the spam of `[tx:WebServer:AuthMws] Invalid session auth: admin_not_found`
-- [!] fix: doing /tx <disconnected id> shows empty modal
-- [ ] fix: `server partial hang detected` should not be the error for `(HB:0HC:--)`
-- [ ] fix txDiagnostics (and add tx v8 heap data to it)
+- [x] fix: doing /tx <disconnected id> shows empty modal
+- [x] fix the spam of `[tx:WebServer:AuthMws] Invalid session auth: admin_not_found`
+- [x] fix: `server partial hang detected` should not be the error for `(HB:0HC:--)`
+- [x] fix txDiagnostics (and add tx v8 heap data to it)
 
 ## Chores + refactor + boring stuff
 - [x] remove /legacy/dashboard route + handler
@@ -142,13 +145,16 @@ Legend:
 - [x] merge easy PRs
 - [x] check the noLookAlikesAlphabet vs nanoid-dictionary/nolookalikes situation
     - the nanoid version is 49 chars long, and yet it's referenced as dict51
-- [!] check compatibility with `sv_enableNetEventReassembly false`
-- [!] check tx on node 22
-- [!] update packages
+- [x] healthmonitor: write to logger.fxserver the internal reason as marker
+- [x] check compatibility with `sv_enableNetEventReassembly false`
+- [x] update packages
+- [x] update wouter and add search/filters state to URL of the players/history pages
+- [x] drop category tooltips on drops page
+- [x] feat(panel): add player/action modal ref to url search param
+- [x] buffer fxserver lrstream for 5 seconds before stripping colors
+- [x] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
+    - [ref](/core/components/AdminVault/index.js#L289)
 - [!] check cicd stuff on testing repo before release
-- [!] uncommited nui controls stuff
-- [ ] update wouter and add search/filters state to URL of the players/history pages
-- [ ] healthmonitor: write to logger.fxserver the internal reason as marker
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/components/Logger/handlers/server.js#L148)
@@ -166,6 +172,9 @@ Legend:
     - Pass it through so I could use it for the server as well
     - Don't forget to update `development.md`
     - node 22 `process.loadEnvFile(path)`?
+- [?] check tx on node 22
+- [?] see if it's a good idea to replace `getHostStats.js` with si.osInfo()
+    - same for getting process load, instead of fixing the wmic issue
 
 
 ## Tentative Database Changes
@@ -216,6 +225,41 @@ class ErrorOnAccess {
 }
 ```
 
+Refactor:
+- core/components -> core/modules
+- core/webroutes -> core/routes
+- core/types/global.d.ts -> core/global.d.ts
+- UpdateChecker -> CfxUpdateChecker
+- remove core/playerLogic & core/extra
+- core/utils:
+    - fxsVersionParser.ts
+    - getOsDistro.js
+    - got.js
+    - helpers.ts (split)
+    - isIpAddressLocal.ts
+    - MemCache.ts
+    - pidUsageTree.js
+    - testEnv.ts
+    - xss.js
+- core/logic
+    - banner.js
+    - checkPreRelease.ts
+    - console.ts
+    - deployer.js
+    - fxsConfigHelper.ts
+    - playerClasses.ts
+    - playerFinder.ts
+    - playerResolver.ts
+    - recipeEngine.js
+    - serverDataScanner.ts
+    - setupProfile.js
+- webroutes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
+- panel/src/lib/utils.ts - split all time humanization into a separate file
+
+
+
+
+
 ==================================================
 
 # svNetwork (should be 100fps)
@@ -261,6 +305,8 @@ class ErrorOnAccess {
 
 - Boring stuff:
     - [ ] fix the eslint config + tailwind sort
+        - [alternative](https://biomejs.dev/linter/rules/use-sorted-classes/)
+        - search the notes below for "dprint" and "prettier"
     - [ ] build: generate fxmanifest files list dynamically
         - node 22 use fs.glob
     - [ ] fix remaining imgur links
@@ -319,6 +365,23 @@ class ErrorOnAccess {
     - revocation %
     - bans/warns %
 
+### Resources:
+- v1:
+    - should be stateful, with websocket
+    - layout inspired in code editors
+    - left sidebar with resource folders, no resources, with buttons to start/stop/restart/etc
+    - search bar at the top, searches any folder, has filters
+    - filters by default, running, stopped
+    - main content will show the resources of the selected folder OR "recently added"
+- v2:
+    - show "recently added" resources
+    - each resoruce need to have:
+        - warning for outdated, button to update
+        - performance stats
+        - option to add/remove from auto boot
+        - option to auto restart on change (dev mode)
+        - button to see related insights (http calls, events, etc?)
+
 ### Whitelist:
 - remove the wl pending join table
 - add a "latest whitelists" showing both pending and members (query players + pending and join tables)
@@ -347,6 +410,7 @@ class ErrorOnAccess {
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
 - [ ] update stuff that requires WMIC to use PS command directly 
+    - NOTE: perhaps just use `systeminformation.processLoad()` instead
     - issue: https://github.com/tabarra/txAdmin/issues/970#issuecomment-2308462733
     - new lib, same dev: https://www.npmjs.com/package/pidusage-gwmi
     - https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/07-working-with-wmi?view=powershell-7.2
@@ -474,6 +538,7 @@ z-50    shadcn: TooltipContent - doesnt go over the terminal?!
 
 
 ### Linter notes
+- maybe biome?
 - Maybe prettier for all files except ts/js which could be in dprint
 - Use the tailwind sorter plugin
 - When running prettier, add ignore to the imported external files

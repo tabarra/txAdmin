@@ -1,7 +1,7 @@
 {
   "ignore": {
     "open": {
-      "versions": "> 7.1.0",
+      "versions": ">7.1.0",
       "reason": "Doesn't work when powershell is not in PATH or something like that."
     },
     "fs-extra": {
@@ -35,6 +35,14 @@
     "slug": {
       "versions": ">8",
       "reason": "dropped support for node 16"
+    },
+    "boxen": {
+      "versions": ">7",
+      "reason": "dropped support for node 16"
+    },
+    "discord.js": {
+      "versions": ">14.11.0",
+      "reason": "undici sub-dependency dropped support for node 16"
     }
   }
 }

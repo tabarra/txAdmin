@@ -6,42 +6,7 @@ import { useIsDarkMode } from '@/hooks/theme';
 import DebouncedResizeContainer from "@/components/DebouncedResizeContainer";
 import { useAtomValue } from 'jotai';
 import { dashPlayerDropAtom, useGetDashDataAge } from './dashboardHooks';
-
-
-const defaultDropCategoryColor = '#A97CD2';
-export const dropReasonCategories = {
-    'user-initiated': {
-        label: 'By user',
-        color: '#7CD28F', //nivo
-        // color2: '#005F73',
-    },
-    timeout: {
-        label: 'Timeout',
-        color: '#E8A838', //nivo
-        // color2: '#0A9396',
-    },
-    'server-initiated': {
-        label: 'By server',
-        color: '#61CDBB', //nivo
-        // color2: '#94D2BD',
-    },
-    unknown: {
-        label: 'Unknown',
-        color: '#E8C1A0', //nivo
-        // color2: '#E9D8A6',
-        //TODO: switch this to be the purple (#A97CD2) and use this color for resources
-    },
-    security: {
-        label: 'Security',
-        color: '#F47560', //nivo
-        // color2: '#EE9B00',
-    },
-    crash: {
-        label: 'Crash',
-        color: '#F1E15B', //nivo
-        // color2: '#BB3E03',
-    },
-} as { [key: string]: { label: string, color: string } };
+import { playerDropCategories, playerDropCategoryDefaultColor } from '@/lib/playerDropCategories';
 
 
 type PlayerDropChartDatum = {
@@ -112,6 +77,7 @@ const PieCenterText = ({ centerX, centerY, dataWithArc, innerRadius, active }: P
     }
 }
 
+
 type PlayerDropChartProps = {
     data: PlayerDropChartDatum[];
     activeId: DatumId | null;
@@ -150,8 +116,8 @@ const PlayerDropChart = memo(({ data, activeId, setActiveId, width, height }: Pl
             activeOuterRadiusOffset={6}
             borderWidth={1}
             borderColor={isDarkMode ? undefined : {
-                from: 'color',
-                modifiers: [['darker', 0.8]]
+                from: 'data.border',
+                // modifiers: [['darker', 0.8]]
             }}
             valueFormat={'.1%'}
             enableArcLinkLabels={false}
@@ -190,10 +156,11 @@ export default function PlayerDropCard() {
         const totalDrops = playerDropData.summaryLast6h.reduce((acc, d) => acc + d[1], 0);
         return playerDropData.summaryLast6h.map(([reason, count]) => ({
             id: reason,
-            label: dropReasonCategories[reason]?.label ?? reason,
+            label: playerDropCategories[reason]?.label ?? reason,
             count,
             value: count / totalDrops,
-            color: dropReasonCategories[reason]?.color ?? defaultDropCategoryColor,
+            color: playerDropCategories[reason]?.color ?? playerDropCategoryDefaultColor,
+            border: playerDropCategories[reason]?.border ?? playerDropCategoryDefaultColor,
         }));
     }, [playerDropData?.summaryLast6h]);
 
@@ -206,8 +173,9 @@ export default function PlayerDropCard() {
 
         return playerDropData.summaryLast6h.map(([reason, count]) => ({
             id: reason,
-            label: dropReasonCategories[reason]?.label ?? reason,
-            color: dropReasonCategories[reason]?.color ?? defaultDropCategoryColor,
+            label: playerDropCategories[reason]?.label ?? reason,
+            color: playerDropCategories[reason]?.color ?? playerDropCategoryDefaultColor,
+            border: playerDropCategories[reason]?.border ?? playerDropCategoryDefaultColor,
         }));
     }, [playerDropData?.summaryLast6h]);
 
@@ -237,11 +205,11 @@ export default function PlayerDropCard() {
     return (
         <div className="col-span-3 sm:col-span-2 2xl:col-span-3 py-2 md:rounded-xl border bg-card shadow-sm flex flex-col min-w-64 h-[20rem] max-h-[20rem]">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
-                <h3 className="tracking-tight text-sm font-medium line-clamp-1">Player drop reasons (last 6h)</h3>
+                <h3 className="tracking-tight text-sm font-medium line-clamp-1">Player drop cause (last 6h)</h3>
                 <div className='hidden sm:block'><DoorOpenIcon /></div>
             </div>
             {/* <div className='font-mono'>
-                {Object.entries(dropReasonCategories).map(([reason, { label, color }]) => {
+                {Object.entries(playerDropCategories).map(([reason, { label, color }]) => {
                     return (
                         <div key={reason} className='w-full pl-8 text-black' style={{ backgroundColor: color }}>{color} - {label}</div>
                     )
@@ -259,7 +227,13 @@ export default function PlayerDropCard() {
                             className="flex items-center cursor-pointer hover:underline data-[active=true]:underline"
                             onClick={() => setActiveId(activeId === legend.id ? null : legend.id)}
                         >
-                            <div className="size-4 mr-1 rounded-full" style={{ backgroundColor: legend.color }} />
+                            <div
+                                className="size-4 mr-1 rounded-full border dark:border-0"
+                                style={{
+                                    backgroundColor: legend.color,
+                                    borderColor: legend.border,
+                                }}
+                            />
                             <span className="text-sm">{legend.label}</span>
                         </div>
                     )

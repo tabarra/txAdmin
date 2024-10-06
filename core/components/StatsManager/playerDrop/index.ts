@@ -3,7 +3,7 @@ import fsp from 'node:fs/promises';
 import consoleFactory from '@extras/console';
 import type TxAdmin from '@core/txAdmin.js';
 import { PDLChangeEventType, PDLFileSchema, PDLFileType, PDLHourlyRawType, PDLHourlyType, PDLServerBootDataSchema } from './playerDropSchemas';
-import { classifyDropReason } from './classifyDropReason';
+import { classifyDrop } from './classifyDropReason';
 import { PDL_RETENTION, PDL_UNKNOWN_LIST_SIZE_LIMIT } from './config';
 import { ZodError } from 'zod';
 import { getDateHourEnc, parseDateHourEnc } from './playerDropUtils';
@@ -12,6 +12,7 @@ import { throttle } from 'throttle-debounce';
 import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@core/webroutes/playerDrops';
 import { migratePlayerDropsFile } from './playerDropMigrations';
 import { parseFxserverVersion } from '@extras/fxsVersionParser';
+import { PlayerDropEvent } from '@core/components/PlayerlistManager';
 const console = consoleFactory(modulename);
 
 
@@ -85,6 +86,7 @@ export default class PlayerDropStatsManager {
         const allChanges: PDLChangeEventType[] = [];
         const crashTypes = new MultipleCounter();
         const dropTypes = new MultipleCounter();
+        const resKicks = new MultipleCounter();
         const filteredLogs = this.eventLog.filter((entry) => {
             return entry.hour.dateHourTs >= windowStart && entry.hour.dateHourTs <= windowEnd;
         });
@@ -92,11 +94,13 @@ export default class PlayerDropStatsManager {
             allChanges.push(...log.changes);
             crashTypes.merge(log.crashTypes);
             dropTypes.merge(log.dropTypes);
+            resKicks.merge(log.resKicks);
         }
         return {
             changes: allChanges,
             crashTypes: crashTypes.toSortedValuesArray(true),
             dropTypes: dropTypes.toSortedValuesArray(true),
+            resKicks: resKicks.toSortedValuesArray(true),
         };
     }
 
@@ -117,6 +121,7 @@ export default class PlayerDropStatsManager {
             changes: [],
             crashTypes: new MultipleCounter(),
             dropTypes: new MultipleCounter(),
+            resKicks: new MultipleCounter(),
         };
         this.eventLog.push(newHourLog);
         return newHourLog;
@@ -203,21 +208,26 @@ export default class PlayerDropStatsManager {
     /**
      * Handles receiving the player drop event, and returns the category of the drop
      */
-    public handlePlayerDrop(reason: string) {
+    public handlePlayerDrop(event: PlayerDropEvent) {
+        const drop = classifyDrop(event);
+
+        //Ignore server shutdown drops
+        if (drop.category === false) return false;
+
+        //Log the drop
         const logRef = this.getCurrentLogHourRef();
-        const { category, cleanReason } = classifyDropReason(reason);
-        logRef.dropTypes.count(category);
-        if (cleanReason) {
-            if (category === 'crash') {
-                logRef.crashTypes.count(cleanReason);
-            } else if (category === 'unknown') {
-                if (!this.lastUnknownReasons.includes(cleanReason)) {
-                    this.lastUnknownReasons.push(cleanReason);
-                }
+        logRef.dropTypes.count(drop.category);
+        if (drop.category === 'resource' && drop.resource) {
+            logRef.resKicks.count(drop.resource);
+        } else if (drop.category === 'crash' && drop.cleanReason) {
+            logRef.crashTypes.count(drop.cleanReason);
+        } else if (drop.category === 'unknown' && drop.cleanReason) {
+            if (!this.lastUnknownReasons.includes(drop.cleanReason)) {
+                this.lastUnknownReasons.push(drop.cleanReason);
             }
         }
         this.queueSaveEventLog();
-        return category;
+        return drop.category;
     }
 
 
@@ -261,8 +271,9 @@ export default class PlayerDropStatsManager {
                 return {
                     hour: parseDateHourEnc(entry.hour),
                     changes: entry.changes,
-                    dropTypes: new MultipleCounter(entry.dropTypes),
                     crashTypes: new MultipleCounter(entry.crashTypes),
+                    dropTypes: new MultipleCounter(entry.dropTypes),
+                    resKicks: new MultipleCounter(entry.resKicks),
                 }
             });
             console.verbose.debug(`Loaded ${this.eventLog.length} log entries from cache`);
@@ -329,6 +340,7 @@ export default class PlayerDropStatsManager {
                         changes: entry.changes,
                         crashTypes: entry.crashTypes.toArray(),
                         dropTypes: entry.dropTypes.toArray(),
+                        resKicks: entry.resKicks.toArray(),
                     }
                 }),
             };

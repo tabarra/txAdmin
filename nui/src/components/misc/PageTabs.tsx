@@ -7,6 +7,7 @@ import { useIsMenuVisibleValue } from "../../state/visibility.state";
 import { useServerCtxValue } from "../../state/server.state";
 
 const StyledTab = styled(Tab)({
+  letterSpacing: '0.1em',
   minWidth: 100,
 });
 
