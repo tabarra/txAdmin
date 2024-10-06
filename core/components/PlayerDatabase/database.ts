@@ -14,8 +14,8 @@ const console = consoleFactory(modulename);
 export const DATABASE_VERSION = 5;
 export const defaultDatabase = {
     version: DATABASE_VERSION,
-    players: [],
     actions: [],
+    players: [],
     whitelistApprovals: [],
     whitelistRequests: [],
 };
@@ -158,8 +158,8 @@ export class Database {
 
             //Checking basic structure integrity
             if (
-                !Array.isArray(this.obj!.data.players)
-                || !Array.isArray(this.obj!.data.actions)
+                !Array.isArray(this.obj!.data.actions)
+                || !Array.isArray(this.obj!.data.players)
                 || !Array.isArray(this.obj!.data.whitelistApprovals)
                 || !Array.isArray(this.obj!.data.whitelistRequests)
             ) {

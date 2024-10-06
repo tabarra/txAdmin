@@ -93,7 +93,7 @@ export default class FXServerLogger extends LoggerBase {
     private ingest(type: ConsoleLineType, data: string, context?: string) {
         //force line skip to create separation
         if (type === ConsoleLineType.MarkerInfo) {
-            const lineBreak = this.transformer.lastEol ? '\n\n' : '\n';
+            const lineBreak = this.transformer.lastEol ? '\n' : '\n\n';
             this.fileBuffer += lineBreak;
             if (this.recentBuffer.length) {
                 this.txAdmin.webServer.webSocket.buffer('liveconsole', lineBreak);

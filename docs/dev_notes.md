@@ -151,9 +151,9 @@ Legend:
 - [x] update wouter and add search/filters state to URL of the players/history pages
 - [x] drop category tooltips on drops page
 - [x] feat(panel): add player/action modal ref to url search param
+- [x] buffer fxserver lrstream for 5 seconds before stripping colors
 - [x] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
     - [ref](/core/components/AdminVault/index.js#L289)
-- [ ] buffer fxserver lrstream and strip colors only after that
 - [!] check cicd stuff on testing repo before release
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
@@ -225,6 +225,41 @@ class ErrorOnAccess {
 }
 ```
 
+Refactor:
+- core/components -> core/modules
+- core/webroutes -> core/routes
+- core/types/global.d.ts -> core/global.d.ts
+- UpdateChecker -> CfxUpdateChecker
+- remove core/playerLogic & core/extra
+- core/utils:
+    - fxsVersionParser.ts
+    - getOsDistro.js
+    - got.js
+    - helpers.ts (split)
+    - isIpAddressLocal.ts
+    - MemCache.ts
+    - pidUsageTree.js
+    - testEnv.ts
+    - xss.js
+- core/logic
+    - banner.js
+    - checkPreRelease.ts
+    - console.ts
+    - deployer.js
+    - fxsConfigHelper.ts
+    - playerClasses.ts
+    - playerFinder.ts
+    - playerResolver.ts
+    - recipeEngine.js
+    - serverDataScanner.ts
+    - setupProfile.js
+- webroutes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
+- panel/src/lib/utils.ts - split all time humanization into a separate file
+
+
+
+
+
 ==================================================
 
 # svNetwork (should be 100fps)
@@ -270,6 +305,8 @@ class ErrorOnAccess {
 
 - Boring stuff:
     - [ ] fix the eslint config + tailwind sort
+        - [alternative](https://biomejs.dev/linter/rules/use-sorted-classes/)
+        - search the notes below for "dprint" and "prettier"
     - [ ] build: generate fxmanifest files list dynamically
         - node 22 use fs.glob
     - [ ] fix remaining imgur links
@@ -501,6 +538,7 @@ z-50    shadcn: TooltipContent - doesnt go over the terminal?!
 
 
 ### Linter notes
+- maybe biome?
 - Maybe prettier for all files except ts/js which could be in dprint
 - Use the tailwind sorter plugin
 - When running prettier, add ignore to the imported external files
