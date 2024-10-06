@@ -35,13 +35,13 @@ const printDiagnostics = async () => {
 
     const secureStorage = new Set();
     for (let i = 0; i < 100; i++) {
-        const randID = nanoidSecure.customAlphabet(consts.noLookAlikesAlphabet, 4)();
+        const randID = nanoidSecure.customAlphabet(consts.actionIdAlphabet, 4)();
         if (!secureStorage.has(randID)) secureStorage.add(randID);
     }
 
     const nonsecureStorage = new Set();
     for (let i = 0; i < 100; i++) {
-        const randID = nanoidNonSecure.customAlphabet(consts.noLookAlikesAlphabet, 4)();
+        const randID = nanoidNonSecure.customAlphabet(consts.actionIdAlphabet, 4)();
         if (!nonsecureStorage.has(randID)) nonsecureStorage.add(randID);
     }
 
@@ -82,7 +82,7 @@ export const genWhitelistRequestID = (storage: IdStorageTypes) => {
     while (attempts < maxAttempts) {
         attempts++;
         const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
-        const id = 'R' + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
+        const id = 'R' + randFunc.customAlphabet(consts.actionIdAlphabet, 4)();
         if (checkUniqueness(storage, id, 'whitelistRequests')) {
             return id;
         }
@@ -101,9 +101,9 @@ export const genActionID = (storage: IdStorageTypes, actionType: string) => {
         attempts++;
         const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
         const id = actionType[0].toUpperCase()
-            + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 3)()
+            + randFunc.customAlphabet(consts.actionIdAlphabet, 3)()
             + '-'
-            + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
+            + randFunc.customAlphabet(consts.actionIdAlphabet, 4)();
         if (checkUniqueness(storage, id, 'actions')) {
             return id;
         }

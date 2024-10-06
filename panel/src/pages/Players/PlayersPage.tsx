@@ -1,7 +1,12 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { UsersIcon, UserRoundPlusIcon, CalendarPlusIcon } from 'lucide-react';
 import PageCalloutRow, { PageCalloutProps } from '@/components/PageCalloutRow';
-import { PlayerSearchBox, PlayersSearchBoxReturnStateType } from './PlayersSearchBox';
+import {
+    PlayerSearchBox,
+    PlayersSearchBoxReturnStateType,
+    availableFilters,
+    availableSearchTypes,
+} from './PlayersSearchBox';
 import PlayersTable from './PlayersTable';
 import { PlayersStatsResp, PlayersTableFiltersType, PlayersTableSearchType } from '@shared/playerApiTypes';
 import { useBackendApi } from '@/hooks/fetch';
@@ -11,6 +16,42 @@ import { useBackendApi } from '@/hooks/fetch';
 const PlayerSearchBoxMemo = memo(PlayerSearchBox);
 const PlayersTableMemo = memo(PlayersTable);
 const PageCalloutRowMemo = memo(PageCalloutRow);
+
+//Helpers for storing search and filters in URL
+const updateUrlSearchParams = (search: PlayersTableSearchType, filters: PlayersTableFiltersType) => {
+    const newUrl = new URL(window.location.toString());
+    if (search && search.value && search.type) {
+        newUrl.searchParams.set("searchType", search.type);
+        newUrl.searchParams.set("searchQuery", search.value);
+    } else {
+        newUrl.searchParams.delete("searchType");
+        newUrl.searchParams.delete("searchQuery");
+    }
+    if (filters.length) {
+        newUrl.searchParams.set("filters", filters.join(','));
+    } else {
+        newUrl.searchParams.delete("filters");
+    }
+    window.history.replaceState({}, "", newUrl);
+}
+const getInitialState = () => {
+    const params = new URLSearchParams(window.location.search);
+    const validTypes = availableSearchTypes.map(f => f.value) as string[];
+    const searchType = params.get('searchType');
+    const searchQuery = params.get('searchQuery');
+    const validFilters = availableFilters.map(f => f.value) as string[];
+    const searchFilters = params.get('filters')?.split(',').filter(f => validFilters.includes(f));
+    return {
+        search: searchQuery && searchType && validTypes.includes(searchType) ? {
+            type: searchType,
+            value: searchQuery,
+        } : {
+            type: availableSearchTypes[0].value,
+            value: '',
+        },
+        filters: searchFilters ?? [],
+    };
+}
 
 
 export default function PlayersPage() {
@@ -34,13 +75,9 @@ export default function PlayersPage() {
     //PlayerSearchBox handlers
     const doSearch = useCallback((search: PlayersTableSearchType, filters: PlayersTableFiltersType) => {
         setSearchBoxReturn({ search, filters });
+        updateUrlSearchParams(search, filters);
     }, []);
-    const initialState = useMemo(() => {
-        return {
-            search: null,
-            filters: [],
-        } satisfies PlayersSearchBoxReturnStateType;
-    }, []);
+    const initialState = useMemo(getInitialState, []);
 
 
     const calloutRowData = useMemo(() => {

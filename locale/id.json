@@ -1,0 +1,369 @@
+{
+    "$meta": {
+        "label": "Indonesian",
+        "humanizer_language": "id"
+    },
+    "restarter": {
+        "start_timeout": "gagal memulai dalam waktu yang ditentukan",
+        "crash_detected": "crash terdeteksi",
+        "hang_detected": "hang terdeteksi",
+        "partial_hang_warn": "Karena sebagian hang, server ini akan restart dalam 1 menit. Silakan putuskan sambungan sekarang.",
+        "partial_hang_warn_discord": "Karena sebagian hang, **%{servername}** akan restart dalam 1 menit.",
+        "schedule_reason": "restart terjadwal pada %{time}",
+        "schedule_warn": "Server ini dijadwalkan untuk restart dalam %{smart_count} menit. Silakan putuskan sambungan sekarang. |||| Server ini dijadwalkan untuk restart dalam %{smart_count} menit.",
+        "schedule_warn_discord": "**%{servername}** dijadwalkan untuk restart dalam %{smart_count} menit. |||| **%{servername}** dijadwalkan untuk restart dalam %{smart_count} menit."
+    },
+    "kick_messages": {
+        "everyone": "Semua pemain dikeluarkan: %{reason}.",
+        "player": "Anda telah dikeluarkan: %{reason}.",
+        "unknown_reason": "karena alasan yang tidak diketahui"
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Anda telah diblokir dari server ini karena \"%{reason}\". Blokir Anda akan berakhir dalam: %{expiration}.",
+        "kick_permanent": "(%{author}) Anda telah diblokir secara permanen dari server ini karena \"%{reason}\".",
+        "reject": {
+            "title_permanent": "Anda telah diblokir secara permanen dari server ini.",
+            "title_temporary": "Anda telah diblokir sementara dari server ini.",
+            "label_expiration": "Blokir Anda akan berakhir dalam",
+            "label_date": "Tanggal Blokir",
+            "label_author": "Diblokir oleh",
+            "label_reason": "Alasan Blokir",
+            "label_id": "ID Blokir",
+            "note_multiple_bans": "Catatan: Anda memiliki lebih dari satu blokir aktif pada identitas Anda.",
+            "note_diff_license": "Catatan: blokir di atas diterapkan untuk <code>license</code> yang berbeda, yang berarti beberapa ID/HWID Anda cocok dengan yang terkait dengan blokir tersebut."
+        }
+    },
+    "whitelist_messages": {
+        "admin_only": {
+            "mode_title": "Server ini dalam mode <strong>Admin-only</strong>.",
+            "insufficient_ids": "Anda tidak memiliki identifier <code>discord</code> atau <code>fivem</code>, dan setidaknya salah satu dari mereka diperlukan untuk memverifikasi apakah Anda adalah administrator txAdmin.",
+            "deny_message": "Identifier Anda tidak terdaftar sebagai administrator txAdmin."
+        },
+        "guild_member": {
+            "mode_title": "Server ini dalam mode <strong>Whitelist Anggota Discord Guild</strong>.",
+            "insufficient_ids": "Anda tidak memiliki identifier <code>discord</code>, yang diperlukan untuk memverifikasi apakah Anda telah bergabung dengan Discord Guild kami. Silakan buka aplikasi Desktop Discord dan coba lagi (aplikasi Web tidak akan berfungsi).",
+            "deny_title": "Anda diharuskan untuk bergabung dengan Discord Guild kami untuk terhubung.",
+            "deny_message": "Silakan bergabung dengan guild %{guildname} lalu coba lagi."
+        },
+        "guild_roles": {
+            "mode_title": "Server ini dalam mode <strong>Whitelist Role Discord</strong>.",
+            "insufficient_ids": "Anda tidak memiliki identifier <code>discord</code>, yang diperlukan untuk memverifikasi apakah Anda telah bergabung dengan Discord Guild kami. Silakan buka aplikasi Desktop Discord dan coba lagi (aplikasi Web tidak akan berfungsi).",
+            "deny_notmember_title": "Anda diharuskan untuk bergabung dengan Discord Guild kami untuk terhubung.",
+            "deny_notmember_message": "Silakan bergabung dengan %{guildname}, dapatkan salah satu role yang diperlukan, lalu coba lagi.",
+            "deny_noroles_title": "Anda tidak memiliki role whitelist yang diperlukan untuk bergabung.",
+            "deny_noroles_message": "Untuk bergabung dengan server ini Anda diharuskan memiliki setidaknya salah satu role whitelist di guild %{guildname}."
+        },
+        "approved_license": {
+            "mode_title": "Server ini dalam mode <strong>Whitelist Lisensi</strong>.",
+            "insufficient_ids": "Anda tidak memiliki identifier <code>license</code>, yang berarti server memiliki <code>sv_lan</code> diaktifkan. Jika Anda adalah pemilik server, Anda dapat menonaktifkannya di file <code>server.cfg</code>.",
+            "deny_title": "Anda tidak di-whitelist untuk bergabung dengan server ini.",
+            "request_id_label": "ID Permintaan"
+        }
+    },
+    "server_actions": {
+        "restarting": "Server sedang restart (%{reason}).",
+        "restarting_discord": "**%{servername}** sedang restart (%{reason}).",
+        "stopping": "Server sedang dimatikan (%{reason}).",
+        "stopping_discord": "**%{servername}** sedang dimatikan (%{reason}).",
+        "spawning_discord": "**%{servername}** sedang memulai."
+    },
+    "nui_warning": {
+        "title": "PERINGATAN",
+        "warned_by": "Diperingatkan oleh:",
+        "stale_message": "Peringatan ini diterbitkan sebelum Anda terhubung ke server.",
+        "dismiss_key": "SPACE",
+        "instruction": "Tahan %{key} selama %{smart_count} detik untuk mengabaikan pesan ini. |||| Tahan %{key} selama %{smart_count} detik untuk mengabaikan pesan ini."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "Menu txAdmin diaktifkan, ketik /tx untuk membukanya.\nAnda juga dapat mengatur keybind di [Pengaturan Game > Key Bindings > FiveM > Menu: Buka Halaman Utama].",
+            "menu_not_admin": "Identifier Anda tidak cocok dengan admin yang terdaftar di txAdmin.\nJika Anda terdaftar di txAdmin, buka Admin Manager dan pastikan identifier Anda sudah disimpan.",
+            "menu_auth_failed": "Autentikasi Menu txAdmin gagal dengan alasan: %{reason}",
+            "no_perms": "Anda tidak memiliki izin ini.",
+            "unknown_error": "Terjadi kesalahan yang tidak diketahui.",
+            "not_enabled": "Menu txAdmin tidak diaktifkan! Anda dapat mengaktifkannya di halaman pengaturan txAdmin.",
+            "announcement_title": "Pengumuman Server oleh %{author}:",
+            "directmessage_title": "DM dari admin %{author}:",
+            "dialog_empty_input": "Anda tidak dapat memasukkan input kosong.",
+            "onesync_error": "Opsi ini memerlukan OneSync diaktifkan."
+        },
+        "frozen": {
+            "froze_player": "Anda telah membekukan pemain!",
+            "unfroze_player": "Anda telah mencairkan pemain!",
+            "was_frozen": "Anda telah dibekukan oleh admin server!"
+        },
+        "common": {
+            "cancel": "Batalkan",
+            "submit": "Kirim",
+            "error": "Terjadi kesalahan",
+            "copied": "Disalin ke clipboard."
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Gunakan %{key} untuk beralih halaman & tombol panah untuk menavigasi item menu",
+                "tooltip_2": "Beberapa item menu memiliki sub opsi yang dapat dipilih menggunakan tombol panah kiri & kanan"
+            },
+            "player_mode": {
+                "title": "Mode Pemain",
+                "noclip": {
+                    "title": "NoClip",
+                    "label": "Alihkan NoClip, memungkinkan Anda bergerak melalui dinding dan objek lainnya",
+                    "success": "NoClip diaktifkan"
+                },
+                "godmode": {
+                    "title": "Tuhan",
+                    "label": "Alihkan ketidakbisaan mati, mencegah Anda menerima kerusakan",
+                    "success": "Mode Tuhan diaktifkan"
+                },
+                "superjump": {
+                    "title": "Lompat Super",
+                    "label": "Alihkan mode lompat super, pemain juga akan berlari lebih cepat",
+                    "success": "Lompat Super diaktifkan"
+                },
+                "normal": {
+                    "title": "Normal",
+                    "label": "Mengembalikan diri Anda kembali ke mode pemain default/normal",
+                    "success": "Kembali ke mode pemain default."
+                }
+            },
+            "teleport": {
+                "title": "Teleportasi",
+                "generic_success": "Mengirim Anda ke lubang cacing!",
+                "waypoint": {
+                    "title": "Titik Tujuan",
+                    "label": "Teleportasi ke titik tujuan kustom yang ditetapkan di peta",
+                    "error": "Anda tidak memiliki titik tujuan yang ditetapkan."
+                },
+                "coords": {
+                    "title": "Koordinat",
+                    "label": "Teleportasi ke koordinat yang disediakan",
+                    "dialog_title": "Teleportasi",
+                    "dialog_desc": "Berikan koordinat dalam format x, y, z untuk melewati lubang cacing.",
+                    "dialog_error": "Koordinat tidak valid. Harus dalam format: 111, 222, 33"
+                },
+                "back": {
+                    "title": "Kembali",
+                    "label": "Kembali ke lokasi sebelum teleportasi terakhir",
+                    "error": "Anda tidak memiliki lokasi terakhir untuk kembali!"
+                },
+                "copy": {
+                    "title": "Salin Koordinat",
+                    "label": "Salin koordinat dunia saat ini ke clipboard Anda"
+                }
+            },
+            "vehicle": {
+                "title": "Kendaraan",
+                "not_in_veh_error": "Anda saat ini tidak berada di dalam kendaraan!",
+                "spawn": {
+                    "title": "Munculkan",
+                    "label": "Munculkan kendaraan tertentu dari nama modelnya",
+                    "dialog_title": "Munculkan kendaraan",
+                    "dialog_desc": "Masukkan nama model kendaraan yang ingin Anda munculkan.",
+                    "dialog_success": "Kendaraan muncul!",
+                    "dialog_error": "Nama model kendaraan '%{modelName}' tidak ada!",
+                    "dialog_info": "Mencoba untuk munculkan %{modelName}."
+                },
+                "fix": {
+                    "title": "Perbaiki",
+                    "label": "Akan memperbaiki kendaraan hingga kesehatan maksimumnya",
+                    "success": "Kendaraan diperbaiki!"
+                },
+                "delete": {
+                    "title": "Hapus",
+                    "label": "Menghapus kendaraan yang saat ini dinaiki pemain",
+                    "success": "Kendaraan dihapus!"
+                },
+                "boost": {
+                    "title": "Dorong",
+                    "label": "Dorong mobil untuk mencapai kecepatan maksimum (dan mungkin kecepatan)",
+                    "success": "Kendaraan didorong!",
+                    "already_boosted": "Kendaraan ini sudah didorong.",
+                    "unsupported_class": "Kelas kendaraan ini tidak didukung.",
+                    "redm_not_mounted": "Anda hanya bisa mendongkrak saat menunggang kuda."
+                }
+            },
+            "heal": {
+                "title": "Penyembuhan",
+                "myself": {
+                    "title": "Diri Saya",
+                    "label": "Akan menyembuhkan diri Anda hingga maksimum ped saat ini",
+                    "success_0": "Semua sembuh!",
+                    "success_1": "Anda seharusnya merasa baik sekarang!",
+                    "success_2": "Dipulihkan sepenuhnya!",
+                    "success_3": "Luka-luka diperbaiki!"
+                },
+                "everyone": {
+                    "title": "Semua Orang",
+                    "label": "Akan menyembuhkan & menghidupkan kembali semua pemain yang terhubung",
+                    "success": "Menyembuhkan dan menghidupkan kembali semua pemain."
+                }
+            },
+            "announcement": {
+                "title": "Kirim Pengumuman",
+                "label": "Kirim pengumuman ke semua pemain online.",
+                "dialog_desc": "Masukkan pesan yang ingin Anda siarkan ke semua pemain.",
+                "dialog_placeholder": "Pengumuman Anda...",
+                "dialog_success": "Mengirim pengumuman."
+            },
+            "clear_area": {
+                "title": "Reset Area Dunia",
+                "label": "Reset area dunia tertentu ke keadaan defaultnya",
+                "dialog_desc": "Silakan masukkan radius di mana Anda ingin mereset entitas (0-300). Ini tidak akan menghapus entitas yang dihasilkan server side.",
+                "dialog_success": "Membersihkan area dengan radius %{radius}m",
+                "dialog_error": "Input radius tidak valid. Coba lagi."
+            },
+            "player_ids": {
+                "title": "Alihkan ID Pemain",
+                "label": "Alihkan menampilkan ID pemain (dan info lainnya) di atas kepala semua pemain terdekat",
+                "alert_show": "Menampilkan NetIDs pemain terdekat.",
+                "alert_hide": "Menyembunyikan NetIDs pemain terdekat."
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Pemain Online",
+                "players": "Pemain",
+                "search": "Cari",
+                "zero_players": "Tidak ada pemain yang ditemukan."
+            },
+            "filter": {
+                "label": "Filter berdasarkan",
+                "no_filter": "Tanpa Filter",
+                "is_admin": "Adalah Admin",
+                "is_injured": "Terluka / Mati",
+                "in_vehicle": "Di Kendaraan"
+            },
+            "sort": {
+                "label": "Urutkan berdasarkan",
+                "distance": "Jarak",
+                "id": "ID",
+                "joined_first": "Bergabung Pertama",
+                "joined_last": "Bergabung Terakhir",
+                "closest": "Terdekat",
+                "farthest": "Terjauh"
+            },
+            "card": {
+                "health": "%{percentHealth}% kesehatan"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Terjadi kesalahan saat mengambil detail pengguna ini. Kesalahan ditunjukkan di bawah ini:",
+                "target_not_found": "Tidak dapat menemukan pemain online dengan ID atau nama pengguna %{target}"
+            },
+            "tabs": {
+                "actions": "Aksi",
+                "info": "Info",
+                "ids": "ID",
+                "history": "Riwayat",
+                "ban": "Ban"
+            },
+            "actions": {
+                "title": "Aksi Pemain",
+                "command_sent": "Command dikirim!",
+                "moderation": {
+                    "title": "Moderasi",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "Peringatan",
+                        "kick": "Tendang",
+                        "set_admin": "Jadikan Admin"
+                    },
+                    "dm_dialog": {
+                        "title": "Pesan Langsung",
+                        "description": "Apa alasan Anda mengirim DM langsung ke pemain ini?",
+                        "placeholder": "Alasan...",
+                        "success": "Pean lansung terkirim!"
+                    },
+                    "warn_dialog": {
+                        "title": "Peringatan",
+                        "description": "Apa alasan Anda memperingatkan pemain ini?",
+                        "placeholder": "Alasan...",
+                        "success": "Pemain diberi peringatan!"
+                    },
+                    "kick_dialog": {
+                        "title": "Tendang",
+                        "description": "Apa alasan Anda menendang pemain ini?",
+                        "placeholder": "Alasan...",
+                        "success": "Pemain ditendang!"
+                    }
+                },
+                "interaction": {
+                    "title": "Interaksi",
+                    "options": {
+                        "heal": "Sembuhkan",
+                        "go_to": "Pergi ke",
+                        "bring": "Panggil",
+                        "spectate": "Pantau",
+                        "toggle_freeze": "Beralih Bekukan"
+                    },
+                    "notifications": {
+                        "heal_player": "Menyembuhkan pemain",
+                        "tp_player": "Teleportasi ke pemain",
+                        "bring_player": "Membawa pemain",
+                        "spectate_failed": "Pemain tidak ditemukan.",
+                        "spectate_yourself": "Anda tidak dapat memantau diri sendiri.",
+                        "freeze_yourself": "Anda tidak dapat membekukan diri sendiri.",
+                        "spectate_cycle_failed": "Tidak ada pemain lain yang dapat dipantau."
+                    }
+                },
+                "troll": {
+                    "title": "Troll",
+                    "options": {
+                        "drunk": "Buat Mabuk",
+                        "fire": "Bakar",
+                        "wild_attack": "Beri Azab"
+                    }
+                }
+            },
+            "info": {
+                "title": "Info Pemain",
+                "session_time": "Waktu Sesi",
+                "play_time": "Waktu Bermain",
+                "joined": "Bergabung",
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "Belum",
+                "btn_wl_add": "TAMBAH WL",
+                "btn_wl_remove": "HAPUS WL",
+                "btn_wl_success": "Status whitelist diganti.",
+                "log_label": "Log",
+                "log_empty": "Tidak ada ban atau peringatan yang tercatat.",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
+                "log_warn_count": "%{smart_count} peringatan |||| %{smart_count} peringatan",
+                "log_btn": "RINCIAN",
+                "notes_placeholder": "Catatan pemain...",
+                "notes_changed": "Catatan pemain diubah."
+            },
+            "ids": {
+                "current_ids": "Identitas Saat Ini",
+                "previous_ids": "Identitas Sebelumnya",
+                "all_hwids": "Semua HWIDs"
+            },
+            "history": {
+                "title": "Riwayat Pemain",
+                "btn_revoke": "Cabut",
+                "revoked_success": "Ban dicabut.",
+                "banned_by": "BANNED oleh %{author}",
+                "warned_by": "PERINGATAN oleh %{author}",
+                "revoked_by": "Dicabut oleh %{author}.",
+                "expired_at": "Kadaluarsa pada %{date}.",
+                "expires_at": "Kadaluarsa pada %{date}."
+            },
+            "ban": {
+                "title": "Ban player",
+                "reason_placeholder": "Alasan...",
+                "reason_required": "Alasan diperlukan",
+                "duration_placeholder": "Durasi",
+                "success": "Player banned!",
+                "hours": "jam",
+                "days": "hari",
+                "weeks": "minggu",
+                "months": "bulan",
+                "permanent": "Permanen",
+                "custom": "Custom",
+                "helper_text": "Pilih durasi",
+                "submit": "Terapkan ban"
+            }
+        }
+    }
+}

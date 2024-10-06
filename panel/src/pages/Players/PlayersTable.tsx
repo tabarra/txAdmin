@@ -168,7 +168,7 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
                 sortingKey: sorting.key,
                 sortingDesc: sorting.desc,
             };
-            if (search) {
+            if (search.value) {
                 queryParams.searchValue = search.value;
                 queryParams.searchType = search.type;
             }
@@ -207,7 +207,7 @@ export default function PlayersTable({ search, filters }: PlayersTableProps) {
 
     // The virtualizer
     const rowVirtualizer = useVirtualizer({
-        scrollingDelay: 0,
+        isScrollingResetDelay: 0,
         count: players.length + 1,
         getScrollElement: () => (scrollRef.current as HTMLDivElement)?.getElementsByTagName('div')[0],
         estimateSize: () => 38, // border-b

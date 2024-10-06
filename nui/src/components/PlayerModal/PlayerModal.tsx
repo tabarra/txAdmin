@@ -93,7 +93,7 @@ const PlayerModal: React.FC = () => {
     <>
       <DialogTitle style={{ borderBottom: "1px solid rgba(221,221,221,0.54)" }}>
         [{assocPlayer.id}]{" "}
-        {playerDetails?.player?.displayName ?? assocPlayer.name}
+        {playerDetails?.player?.displayName ?? assocPlayer.displayName}
         <StyledCloseButton onClick={handleClose} size="large">
           <Close />
         </StyledCloseButton>

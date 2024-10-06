@@ -13,10 +13,17 @@ type globalHotkeyMessage = {
 
 export declare global {
     interface Window {
+        //NUI stuff
         nuiSystemLanguages?: string | string[];
-        txConsts: InjectedTxConsts;
-        txIsMobile: boolean;
         invokeNative?: (nativeName: string, ...args: any[]) => void;
+
+        //Browser stuff
+        txIsMobile: boolean;
+        txBrowserLocale: string | string[];
+        txBrowserHour12: boolean;
+
+        //Injected stuff
+        txConsts: InjectedTxConsts;
     }
     type TxMessageEvent = MessageEvent<LogoutNoticeMessage>
         | MessageEvent<OpenAccountModalMessage>

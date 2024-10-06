@@ -13,6 +13,11 @@
         "schedule_warn": "En planlagt omstart av serveren vil skje om %{smart_count} minutt. Vennligst koble fra serveren nå. |||| Et planlagt omstart av serveren vil skje om %{smart_count} minutter.",
         "schedule_warn_discord": "**%{servername}** har blitt planlagt om å starte på nytt om %{smart_count} minutt. |||| **%{servername}** skal omstartes om %{smart_count} minutter."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
         "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "ADVARSEL",
         "warned_by": "Advarsel fra:",
-        "instruction": "Vennligst hold [MELLOMROM] for 10 sekunder for å ta bort denne meldingen."
+        "stale_message": "Denne advarselen ble utstedt før du koblet deg til serveren.",
+        "dismiss_key": "MELLOMROM",
+        "instruction": "Vennligst hold %{key} i %{smart_count} sekund for å ta bort denne meldingen. |||| Vennligst hold %{key} i %{smart_count} sekunder for å ta bort denne meldingen."
     },
     "nui_menu": {
         "misc": {
@@ -242,7 +249,7 @@
         "player_modal": {
             "misc": {
                 "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "target_not_found": "Was unable to find an online player with ID or a username of %{target}"
             },
             "tabs": {
                 "actions": "Actions",

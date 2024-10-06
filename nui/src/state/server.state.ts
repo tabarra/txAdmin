@@ -34,24 +34,24 @@ interface AnnounceNotiLocation {
   horizontal: "left" | "right" | "center";
 }
 
-const verifyNotiLocation = (vertical, horizontal) => {
-  if (vertical !== "top" && vertical !== "bottom") {
+const verifyNotiLocation = (pos: { vertical: string, horizontal: string }) => {
+  if (pos.vertical !== "top" && pos.vertical !== "bottom") {
     throw new Error(
-      `Notification vertical position must be "top" or "bottom", but got ${vertical}`
+      `Notification vertical position must be "top" or "bottom", but got ${pos.vertical}`
     );
   }
 
   if (
-    horizontal !== "left" &&
-    horizontal !== "right" &&
-    horizontal !== "center"
+    pos.horizontal !== "left" &&
+    pos.horizontal !== "right" &&
+    pos.horizontal !== "center"
   ) {
     throw new Error(
-      `Notification horizontal position must be "left", "right" or "center", but got ${horizontal}`
+      `Notification horizontal position must be "left", "right" or "center", but got ${pos.horizontal}`
     );
   }
 
-  return { vertical, horizontal };
+  return pos as AnnounceNotiLocation;
 };
 
 const notiLocationSelector = selector<AnnounceNotiLocation>({
@@ -61,10 +61,10 @@ const notiLocationSelector = selector<AnnounceNotiLocation>({
     const [vertical, horizontal] = notiTgtRaw.split("-");
 
     try {
-      return verifyNotiLocation(vertical, horizontal);
+      return verifyNotiLocation({ vertical, horizontal });
     } catch (e) {
       console.error(e);
-      return { vertical: "top", horizontal: "center" };
+      return { vertical: "top", horizontal: "center" } satisfies AnnounceNotiLocation;
     }
   },
 });

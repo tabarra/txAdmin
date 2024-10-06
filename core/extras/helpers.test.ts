@@ -89,9 +89,9 @@ test('calcExpirationFromDuration', () => {
     result = helpers.calcExpirationFromDuration('permanent');
     expect(result?.expiration).toBe(false);
 
-    expect(() => helpers.calcExpirationFromDuration('x day')).toThrowError('multiplier');
-    expect(() => helpers.calcExpirationFromDuration('')).toThrowError('multiplier');
-    expect(() => helpers.calcExpirationFromDuration('-1 day')).toThrowError('multiplier');
+    expect(() => helpers.calcExpirationFromDuration('x day')).toThrowError('duration number');
+    expect(() => helpers.calcExpirationFromDuration('')).toThrowError('duration number');
+    expect(() => helpers.calcExpirationFromDuration('-1 day')).toThrowError('duration number');
 });
 
 test('parsePlayerId', () => {
@@ -137,13 +137,4 @@ test('parseLimitedFloat', () => {
     expect(helpers.parseLimitedFloat(123.4567899999)).toBe(123.45679);
     expect(helpers.parseLimitedFloat(123.4567899999, 2)).toBe(123.46);
     expect(helpers.parseLimitedFloat(0.1 + 0.2)).toBe(0.3);
-});
-
-test('parseFxserverVersion', () => {
-    const fnc = helpers.parseFxserverVersion;
-    expect(() => fnc(1111 as any)).toThrow('expected');
-    expect(fnc('FXServer-master v1.0.0.8202 linux')).toEqual({ build: 8202, platform: 'linux' });
-    expect(fnc('FXServer-master SERVER v1.0.0.8214 win32')).toEqual({ build: 8214, platform: 'windows' });
-    expect(fnc('FXServer-no-version (didn\'t run build tools?)')).toEqual({ build: null, platform: null });
-    expect(fnc('FXServer-master v1.0.0.xxx linux')).toEqual({ build: null, platform: 'linux' });
 });

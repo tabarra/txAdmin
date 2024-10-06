@@ -199,6 +199,12 @@ function checkBan(
             { dateStyle: 'medium', timeStyle: 'medium' }
         )
 
+        //Ban author
+        let authorLine = '';
+        if (!txAdmin.globalConfig.hideAdminInPunishments) {
+            authorLine = `<strong>${textKeys.label_author}:</strong> ${xss(ban.author)} <br>`;
+        }
+
         //Informational notes
         let note = '';
         if (activeBans.length > 1) {
@@ -214,9 +220,9 @@ function checkBan(
             title,
             `${expLine}
             <strong>${textKeys.label_date}:</strong> ${banDate} <br>
-            <strong>${textKeys.label_author}:</strong> ${xss(ban.author)} <br>
             <strong>${textKeys.label_reason}:</strong> ${xss(ban.reason)} <br>
             <strong>${textKeys.label_id}:</strong> <codeid>${ban.id}</codeid> <br>
+            ${authorLine}
             ${prepCustomMessage(txAdmin.playerDatabase.config.banRejectionMessage)}
             <span style="font-style: italic;">${note}</span>`
         );

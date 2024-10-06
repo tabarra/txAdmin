@@ -2,7 +2,6 @@ const modulename = 'WebServer:HistorySearch';
 import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
 import consoleFactory from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
-import cleanPlayerName from '@shared/cleanPlayerName';
 import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
 import { now, parseLaxIdsArrayInput } from '@extras/helpers';
@@ -36,7 +35,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
     const sendTypedResp = (data: HistoryTableSearchResp) => ctx.send(data);
     const searchTime = new TimeCounter();
     const dbo = ctx.txAdmin.playerDatabase.getDb();
-    let chain = dbo.chain.get('actions');
+    let chain = dbo.chain.get('actions').clone(); //shadow clone to avoid sorting the original
 
     //sort the actions by the sortingKey/sortingDesc
     const parsedSortingDesc = sortingDesc === 'true';
@@ -118,7 +117,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
                 if (validIds.length && !validIds.some((id) => a.ids.includes(id))) {
                     return false;
                 }
-                if (validHwids.length && a.hwids !== undefined && !validHwids.some((hwid) => a.hwids!.includes(hwid))) {
+                if (validHwids.length && 'hwids' in a &&  !validHwids.some((hwid) => a.hwids!.includes(hwid))) {
                     return false;
                 }
                 return true;
@@ -134,7 +133,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
     const hasReachedEnd = actions.length <= DEFAULT_LIMIT;
     const currTs = now();
     const processedActions = actions.slice(0, DEFAULT_LIMIT).map((a) => {
-        let banExpiration;
+        let banExpiration, warnAcked;
         if (a.type === 'ban') {
             if (a.expiration === false) {
                 banExpiration = 'permanent' as const;
@@ -143,6 +142,8 @@ export default async function HistorySearch(ctx: AuthedCtx) {
             } else {
                 banExpiration = 'active' as const;
             }
+        } else if (a.type === 'warn') {
+            warnAcked = a.acked;
         }
         return {
             id: a.id,
@@ -153,6 +154,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
             timestamp: a.timestamp,
             isRevoked: !!a.revocation.timestamp,
             banExpiration,
+            warnAcked,
         } satisfies HistoryTableActionType;
     });
 

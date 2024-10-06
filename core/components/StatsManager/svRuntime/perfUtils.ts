@@ -1,9 +1,10 @@
+import pidusage from 'pidusage';
 import { cloneDeep } from 'lodash-es';
 import type { SvRtPerfCountsType } from "./perfSchemas";
 import got from '@core/extras/got.js';
 import { parseRawPerf } from './perfParser';
-import { getProcessesData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
 import { PERF_DATA_BUCKET_COUNT } from './config';
+import { txEnv } from '@core/globalData';
 
 
 //Consts
@@ -107,13 +108,27 @@ export const fetchRawPerfData = async (fxServerHost: string) => {
 
 /**
  * Get the fxserver memory usage
+ * FIXME: migrate to use gwmi on windows by default
  */
-export const fetchFxsMemory = async () => {
-    const allProcsData = await getProcessesData();
-    if (!allProcsData) return;
-
-    const fxProcData = allProcsData.find((proc) => proc.name === 'FXServer');
-    if (!fxProcData) return;
-
-    return parseFloat((fxProcData.memory).toFixed(2));
+export const fetchFxsMemory = async (fxsPid?: number) => {
+    if (!fxsPid) return;
+    try {
+        const pidUsage = await pidusage(fxsPid);
+        const memoryMb = pidUsage.memory / 1024 / 1024;
+        return parseFloat((memoryMb).toFixed(2));
+    } catch (error) {
+        if ((error as any).code = 'ENOENT') {
+            console.error('Failed to get processes tree usage data.');
+            if (txEnv.isWindows) {
+                console.error('This is probably because the `wmic` command is not available in your system.');
+                console.error('If you are on Windows 11 or Windows Server 2025, you can enable it in the "Windows Features" settings.');
+            } else {
+                console.error('This is probably because the `ps` command is not available in your system.');
+                console.error('This command is part of the `procps` package in most Linux distributions.');
+            }
+            return;
+        } else {
+            throw error;
+        }
+    }
 }

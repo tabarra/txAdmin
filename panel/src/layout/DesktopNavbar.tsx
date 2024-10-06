@@ -13,6 +13,7 @@ import MainPageLink from '@/components/MainPageLink';
 import { cva } from 'class-variance-authority';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAdminPerms } from '@/hooks/auth';
+import { DynamicNewItem } from '@/components/DynamicNewBadge';
 
 const buttonVariants = cva(
     `group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 ring-offset-background  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`,
@@ -35,37 +36,45 @@ type HeaderMenuLinkProps = {
 function HeaderMenuLink(props: HeaderMenuLinkProps) {
     const [isActive] = useRoute(props.href);
     return (
-        <NavigationMenuItem>
-            <NavigationMenuLink asChild active={isActive}>
-                {props.disabled ? (
-                    <Tooltip>
-                        <TooltipTrigger className="cursor-help">
-                            <a className={cn(
-                                buttonVariants({ variant: 'default' }),
-                                "pointer-events-none opacity-50",
-                                props.className,
-                            )}>
-                                {props.children}
-                            </a>
-                        </TooltipTrigger>
-                        <TooltipContent side='bottom' className="text-destructive-inline text-center">
-                            You do not have permission <br />
-                            to access this page.
-                        </TooltipContent>
-                    </Tooltip>
-                ) : (
-                    <MainPageLink
-                        href={props.href}
-                        isActive={isActive}
-                        className={cn(
-                            buttonVariants({ variant: isActive ? 'secondary' : 'default' }),
+        <NavigationMenuLink asChild active={isActive}>
+            {props.disabled ? (
+                <Tooltip>
+                    <TooltipTrigger className="cursor-help">
+                        <a className={cn(
+                            buttonVariants({ variant: 'default' }),
+                            "pointer-events-none opacity-50",
                             props.className,
-                        )}
-                    >
-                        {props.children}
-                    </MainPageLink>
-                )}
-            </NavigationMenuLink>
+                        )}>
+                            {props.children}
+                        </a>
+                    </TooltipTrigger>
+                    <TooltipContent side='bottom' className="text-destructive-inline text-center">
+                        You do not have permission <br />
+                        to access this page.
+                    </TooltipContent>
+                </Tooltip>
+            ) : (
+                <MainPageLink
+                    href={props.href}
+                    isActive={isActive}
+                    className={cn(
+                        buttonVariants({ variant: isActive ? 'secondary' : 'default' }),
+                        props.className,
+                    )}
+                >
+                    {props.children}
+                </MainPageLink>
+            )}
+        </NavigationMenuLink>
+    );
+}
+
+function HeaderMenuItem(props: HeaderMenuLinkProps) {
+    return (
+        <NavigationMenuItem>
+            <HeaderMenuLink href={props.href} disabled={props.disabled} className={props.className}>
+                {props.children}
+            </HeaderMenuLink>
         </NavigationMenuItem>
     );
 }
@@ -79,26 +88,39 @@ export default function DesktopHeader() {
         <div className='space-x-1 flex flex-row select-none'>
             <NavigationMenu>
                 <NavigationMenuList>
-                    <HeaderMenuLink href="/players">
+                    {/* TODO: copypaste for new menu items */}
+                    {/* <DynamicNewItem featName='xxxxxxxx' durationDays={7}>
+                        <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
+                    </DynamicNewItem> */}
+                    <HeaderMenuItem href="/players">
                         Players
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/history">
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/history">
                         History
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/whitelist">
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/insights/player-drops">
+                        Player Drops
+                        <DynamicNewItem featName='newPlayerDropsPage' durationDays={7}>
+                            <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
+                        </DynamicNewItem>
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/whitelist">
                         Whitelist
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/admins" disabled={!hasPerm('manage.admins')}>
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/admins" disabled={!hasPerm('manage.admins')}>
                         Admins
-                    </HeaderMenuLink>
-                    <HeaderMenuLink href="/settings" disabled={!hasPerm('settings.view')}>
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="/settings" disabled={!hasPerm('settings.view')}>
                         Settings
-                    </HeaderMenuLink>
+                        <DynamicNewItem featName='hideAdminNames' durationDays={7}>
+                            <div className="ml-1 mb-2 rounded-md size-2 bg-accent" />
+                        </DynamicNewItem>
+                    </HeaderMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
 
             <NavigationMenu>
-                <NavigationMenuList>
+                <NavigationMenuList className='aaaaaaaaaaa'>
                     <NavigationMenuItem>
                         <NavigationMenuTrigger
                             onClick={(e) => {

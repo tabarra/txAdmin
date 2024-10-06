@@ -12,20 +12,23 @@ import TxToaster from '@/components/TxToaster';
 import AccountDialog from '@/components/AccountDialog';
 import { useOpenAccountModal } from '@/hooks/dialogs';
 import PlayerModal from './PlayerModal/PlayerModal';
-import { useOpenPlayerModal } from '@/hooks/playerModal';
-import { navigate as setLocation } from 'wouter/use-location';
+import { playerModalUrlParam, useOpenPlayerModal } from '@/hooks/playerModal';
+import { navigate as setLocation } from 'wouter/use-browser-location';
 import MainSocket from './MainSocket';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useToggleTheme } from '@/hooks/theme';
 import { hotkeyEventListener } from '@/lib/hotkeyEventListener';
 import BreakpointDebugger from '@/components/BreakpointDebugger';
 import ActionModal from './ActionModal/ActionModal';
+import { useEffect } from 'react';
+import { actionModalUrlParam, useOpenActionModal } from '@/hooks/actionModal';
 
 
 export default function MainShell() {
     const expireSession = useExpireAuthData();
     const openAccountModal = useOpenAccountModal();
     const openPlayerModal = useOpenPlayerModal();
+    const openActionModal = useOpenActionModal();
     const toggleTheme = useToggleTheme();
 
     //Listener for messages from child iframes (legacy routes) or other sources
@@ -42,6 +45,33 @@ export default function MainShell() {
             toggleTheme();
         }
     });
+
+    //auto open the player or action modals
+    useEffect(() => {
+        const pageUrl = new URL(window.location.toString());
+        const playerModalRef = pageUrl.searchParams.get(playerModalUrlParam);
+        const actionModalRef = pageUrl.searchParams.get(actionModalUrlParam);
+        if (!playerModalRef && !actionModalRef) return;
+
+        if (playerModalRef) {
+            if (playerModalRef.includes('#')) {
+                const [mutex, rawNetid] = playerModalRef.split('#');
+                const netid = parseInt(rawNetid);
+                if (mutex.length && rawNetid.length && !isNaN(netid)) {
+                    return openPlayerModal({ mutex, netid });
+                }
+            } else if (playerModalRef.length) {
+                return openPlayerModal({ license: playerModalRef });
+            }
+        } else if (actionModalRef && actionModalRef.length) {
+            return openActionModal(actionModalRef);
+        }
+
+        //Remove the query params
+        pageUrl.searchParams.delete(playerModalUrlParam);
+        pageUrl.searchParams.delete(actionModalUrlParam);
+        window.history.replaceState({}, '', pageUrl);
+    }, []);
 
     //Listens to hotkeys
     //NOTE: WILL NOT WORK IF THE FOCUS IS ON THE IFRAME

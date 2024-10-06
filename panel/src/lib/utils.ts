@@ -5,6 +5,7 @@ import { Socket, io } from "socket.io-client";
 import type { HumanizerOptions } from "humanize-duration";
 import type { BanDurationType } from "@shared/otherTypes";
 import { ListenEventsMap } from "@shared/socketioTypes";
+import { LogoutReasonHash } from "@/pages/auth/Login";
 
 //Statically caching the current year
 const currentYear = new Date().getFullYear();
@@ -23,10 +24,23 @@ export function cn(...inputs: ClassValue[]) {
  * To prevent open redirect, we need to make sure the first char is / and the second is not,
  * otherwise //example.com would be a valid redirect to <proto>://example.com
  */
-export function isValidRedirectPath(location: unknown) {
+export function isValidRedirectPath(location: unknown): location is string {
     if (typeof location !== 'string' || !location) return false;
     const url = new URL(location, window.location.href);
     return location.startsWith('/') && !location.startsWith('//') && url.hostname === window.location.hostname;
+}
+
+
+/**
+ * Returns the path/search/hash of the login URL with redirect params
+ * /aaa/bbb?ccc=ddd#eee -> /login?r=%2Faaa%2Fbbb%3Fccc%3Dddd%23eee
+ */
+export function redirectToLogin(reasonHash = LogoutReasonHash.NONE) {
+    const currLocation = window.location.pathname + window.location.search + window.location.hash;
+    const newLocation = currLocation === '/' || currLocation.startsWith('/login')
+        ? `/login${reasonHash}`
+        : `/login?r=${encodeURIComponent(currLocation)}${reasonHash}`;
+    window.history.replaceState(null, '', newLocation);
 }
 
 
@@ -66,6 +80,14 @@ export const msToShortDuration = humanizeDuration.humanizer({
 
 
 /**
+ * Converts a timestamp to Date, detecting if ts is seconds or milliseconds
+ */
+export const tsToDate = (ts: number) => {
+    return new Date(ts < 10000000000 ? ts * 1000 : ts);
+}
+
+
+/**
  * Converts a timestamp to a locale time string
  */
 export const dateToLocaleTimeString = (
@@ -73,10 +95,11 @@ export const dateToLocaleTimeString = (
     hour: 'numeric' | '2-digit' = '2-digit',
     minute: 'numeric' | '2-digit' = '2-digit',
     second?: 'numeric' | '2-digit',
+    hour12?: boolean,
 ) => {
     return time.toLocaleTimeString(
-        window?.nuiSystemLanguages ?? navigator.language,
-        { hour, minute, second }
+        window.txBrowserLocale,
+        { hour, minute, second, hour12 }
     );
 }
 
@@ -89,8 +112,9 @@ export const tsToLocaleTimeString = (
     hour: 'numeric' | '2-digit' = '2-digit',
     minute: 'numeric' | '2-digit' = '2-digit',
     second?: 'numeric' | '2-digit',
+    hour12?: boolean,
 ) => {
-    return dateToLocaleTimeString(new Date(ts * 1000), hour, minute, second);
+    return dateToLocaleTimeString(tsToDate(ts), hour, minute, second, hour12);
 }
 
 
@@ -102,7 +126,7 @@ export const dateToLocaleDateString = (
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
 ) => {
     return time.toLocaleDateString(
-        window?.nuiSystemLanguages ?? navigator.language,
+        window.txBrowserLocale,
         { dateStyle }
     );
 }
@@ -115,7 +139,7 @@ export const tsToLocaleDateString = (
     ts: number,
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
 ) => {
-    return dateToLocaleDateString(new Date(ts * 1000), dateStyle);
+    return dateToLocaleDateString(tsToDate(ts), dateStyle);
 }
 
 
@@ -128,7 +152,7 @@ export const dateToLocaleDateTimeString = (
     timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
 ) => {
     return time.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language,
+        window.txBrowserLocale,
         { dateStyle, timeStyle }
     );
 }
@@ -142,7 +166,7 @@ export const tsToLocaleDateTimeString = (
     dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
     timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
 ) => {
-    return dateToLocaleDateTimeString(new Date(ts * 1000), dateStyle, timeStyle);
+    return dateToLocaleDateTimeString(tsToDate(ts), dateStyle, timeStyle);
 }
 
 
@@ -164,7 +188,7 @@ export const isDateToday = (date: Date) => {
  */
 export const numberToLocaleString = (num: number, decimals = 0) => {
     return num.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language ?? 'en',
+        window.txBrowserLocale,
         { maximumFractionDigits: decimals }
     );
 };
@@ -174,10 +198,10 @@ export const numberToLocaleString = (num: number, decimals = 0) => {
  * Converts a timestamp to a locale time string, considering the current year, shortest unambiguous as possible
  */
 export const convertRowDateTime = (ts: number) => {
-    const date = new Date(ts * 1000);
+    const date = tsToDate(ts);
     const isAnotheryear = date.getFullYear() !== currentYear;
     return date.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language,
+        window.txBrowserLocale,
         {
             year: isAnotheryear ? 'numeric' : undefined,
             month: isAnotheryear ? 'numeric' : 'short',
@@ -304,4 +328,21 @@ export const banDurationToShortString = (duration: BanDurationType) => {
         suffix = duration.unit;
     }
     return `${duration.value}${suffix}`;
+}
+
+
+/**
+ * Sets a URL search param with a given value, or deletes it if value is undefined
+ */
+export const setUrlSearchParam = (paramName: string, ref: string | undefined) => {
+    if (typeof paramName !== 'string' || !paramName.length) {
+        throw new Error(`setUrlSearchParam: paramName must be a non-empty string`);
+    }
+    const pageUrl = new URL(window.location.toString());
+    if (ref) {
+        pageUrl.searchParams.set(paramName, ref);
+    } else {
+        pageUrl.searchParams.delete(paramName);
+    }
+    window.history.replaceState({}, '', pageUrl);
 }

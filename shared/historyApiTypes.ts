@@ -13,7 +13,7 @@ export type HistoryStatsResp = {
 } | GenericApiErrorResp;
 
 
-export type HistoryTableSearchType = null | {
+export type HistoryTableSearchType = {
     value: string;
     type: string;
 }
@@ -45,6 +45,7 @@ export type HistoryTableActionType = {
     timestamp: number;
     isRevoked: boolean;
     banExpiration?: 'expired' | 'active' | 'permanent';
+    warnAcked?: boolean;
 }
 
 export type HistoryTableSearchResp = {

@@ -2,7 +2,7 @@ import { LineChartIcon, Loader2Icon } from 'lucide-react';
 import React, { ReactNode, memo, useEffect, useMemo, useRef, useState } from 'react';
 import DebouncedResizeContainer from '@/components/DebouncedResizeContainer';
 import drawFullPerfChart from './drawFullPerfChart';
-import { BackendApiError, useBackendApi } from '@/hooks/fetch';
+import { useBackendApi } from '@/hooks/fetch';
 import type { PerfChartApiResp, PerfChartApiSuccessResp } from "@shared/otherTypes";
 import useSWR from 'swr';
 import { PerfSnapType, formatTickBoundary, getBucketTicketsEstimatedTime, getServerStatsData, getTimeWeightedHistogram, processPerfLog } from './chartingUtils';
@@ -16,12 +16,13 @@ import { useSetAtom } from 'jotai';
 type FullPerfChartProps = {
     threadName: string;
     apiData: PerfChartApiSuccessResp;
+    apiDataAge: number;
     width: number;
     height: number;
     isDarkMode: boolean;
 };
 
-const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: FullPerfChartProps) => {
+const FullPerfChart = memo(({ threadName, apiData, apiDataAge, width, height, isDarkMode }: FullPerfChartProps) => {
     const setServerStats = useSetAtom(dashServerStatsAtom);
     const svgRef = useRef<SVGSVGElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,7 +30,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: 
     const [errorRetry, setErrorRetry] = useState(0);
     const setCursor = useThrottledSetCursor();
     const margins = {
-        top: 0,
+        top: 8,
         right: 50,
         bottom: 30,
         left: 40,
@@ -38,10 +39,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: 
 
     //Process data only once
     const processedData = useMemo(() => {
-        if (!apiData) {
-            setServerStats(undefined);
-            return null;
-        }
+        if (!apiData) return null;
         const parsed = processPerfLog(apiData.threadPerfLog, (perfLog) => {
             const bucketTicketsEstimatedTime = getBucketTicketsEstimatedTime(apiData.boundaries);
             return getTimeWeightedHistogram(
@@ -49,14 +47,7 @@ const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: 
                 bucketTicketsEstimatedTime
             );
         });
-        if (!parsed) {
-            setServerStats(undefined);
-            return null;
-        }
-
-        //Calculate server stats here because the data comes from SWR instead of jotai
-        const serverStatsData = getServerStatsData(parsed.lifespans, 24);
-        setServerStats(serverStatsData);
+        if (!parsed) return null;
 
         return {
             ...parsed,
@@ -69,7 +60,17 @@ const FullPerfChart = memo(({ threadName, apiData, width, height, isDarkMode }: 
                 });
             },
         }
-    }, [apiData, threadName, isDarkMode, renderError]);
+    }, [apiData, apiDataAge, threadName, isDarkMode, renderError]);
+
+    //Update server stats when data changes
+    useEffect(() => {
+        if (!processedData) {
+            setServerStats(undefined);
+        } else {
+            const serverStatsData = getServerStatsData(processedData.lifespans, 24, apiDataAge);
+            setServerStats(serverStatsData);
+        }
+    }, [processedData, apiDataAge]);
 
 
     //Redraw chart when data or size changes
@@ -176,6 +177,7 @@ export default function FullPerfCard() {
     const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
     const [selectedThread, setSelectedThread] = useState('svMain');
     const [apiFailReason, setApiFailReason] = useState('');
+    const [apiDataAge, setApiDataAge] = useState(0);
     const isDarkMode = useIsDarkMode();
 
     const chartApi = useBackendApi<PerfChartApiResp>({
@@ -183,7 +185,7 @@ export default function FullPerfCard() {
         path: `/perfChartData/:thread/`,
     });
 
-    const swrChartApiResp = useSWR('/perfChartData/:thread', async () => {
+    const swrChartApiResp = useSWR(`/perfChartData/${selectedThread}`, async () => {
         setApiFailReason('');
         const data = await chartApi({
             pathParams: { thread: selectedThread },
@@ -193,13 +195,14 @@ export default function FullPerfCard() {
             setApiFailReason(data.fail_reason);
             return null;
         }
+        setApiDataAge(Date.now());
         return data;
-    }, {});
-
-    useEffect(() => {
-        swrChartApiResp.mutate();
-        //FIXME: should probably clear the data when changing the thread
-    }, [selectedThread]);
+    }, {
+        //the data min interval is 5 mins, so we can safely cache for 1 min
+        revalidateOnMount: true,
+        revalidateOnFocus: false,
+        refreshInterval: 60 * 1000,
+    });
 
     //Rendering
     let contentNode: React.ReactNode = null;
@@ -207,6 +210,7 @@ export default function FullPerfCard() {
         contentNode = <FullPerfChart
             threadName={selectedThread}
             apiData={swrChartApiResp.data as PerfChartApiSuccessResp}
+            apiDataAge={apiDataAge}
             width={chartSize.width}
             height={chartSize.height}
             isDarkMode={isDarkMode}
@@ -220,7 +224,7 @@ export default function FullPerfCard() {
     }
 
     return (
-        <div className="w-full h-[26rem] py-2 md:rounded-xl border bg-card shadow-sm flex flex-col fill-primary">
+        <div className="w-full h-[28rem] pt-2 md:rounded-xl border bg-card shadow-sm flex flex-col fill-primary">
             <div className="px-4 flex flex-row items-center justify-between space-y-0 pb-2 text-muted-foreground">
                 <h3 className="tracking-tight text-sm font-medium line-clamp-1">
                     Server performance

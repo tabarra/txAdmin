@@ -1,13 +1,14 @@
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import TxAnchor from '@/components/TxAnchor';
 import { cn, convertRowDateTime } from '@/lib/utils';
 import { TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2Icon, GavelIcon, AlertTriangleIcon, Undo2Icon, TimerOffIcon, TimerIcon } from 'lucide-react';
+import { Loader2Icon, GavelIcon, AlertTriangleIcon, Undo2Icon, TimerOffIcon, TimerIcon, HourglassIcon } from 'lucide-react';
 import { useBackendApi } from '@/hooks/fetch';
 import { HistoryTableActionType, HistoryTableSearchResp, HistoryTableSearchType, HistoryTableSortingType } from '@shared/historyApiTypes';
 import { useOpenActionModal } from '@/hooks/actionModal';
+import { SEARCH_ANY_STRING } from './HistorySearchBox';
 
 
 /**
@@ -50,6 +51,8 @@ function HistoryRow({ action, modalOpener }: HistoryRowProps) {
         } else if (action.banExpiration === 'active') {
             statusIcon = <TimerIcon className='size-4' />;
         }
+    } else if (action.type === 'warn' && !action.warnAcked) {
+        statusIcon = <HourglassIcon className='size-4' />;
     }
 
     return (
@@ -227,14 +230,14 @@ export default function HistoryTable({ search, filterbyType, filterbyAdmin }: Hi
                 sortingKey: sorting.key,
                 sortingDesc: sorting.desc,
             };
-            if (search) {
+            if (search.value) {
                 queryParams.searchValue = search.value;
                 queryParams.searchType = search.type;
             }
-            if (filterbyType && filterbyType !== '!any') {
+            if (filterbyType && filterbyType !== SEARCH_ANY_STRING) {
                 queryParams.filterbyType = filterbyType;
             }
-            if (filterbyAdmin && filterbyAdmin !== '!any') {
+            if (filterbyAdmin && filterbyAdmin !== SEARCH_ANY_STRING) {
                 queryParams.filterbyAdmin = filterbyAdmin;
             }
             if (!resetOffset && history.length) {
@@ -269,7 +272,7 @@ export default function HistoryTable({ search, filterbyType, filterbyAdmin }: Hi
 
     // The virtualizer
     const rowVirtualizer = useVirtualizer({
-        scrollingDelay: 0,
+        isScrollingResetDelay: 0,
         count: history.length + 1,
         getScrollElement: () => (scrollRef.current as HTMLDivElement)?.getElementsByTagName('div')[0],
         estimateSize: () => 38, // border-b

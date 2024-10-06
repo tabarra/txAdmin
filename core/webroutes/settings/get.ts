@@ -18,9 +18,11 @@ export default async function SettingsPage(ctx: AuthedCtx) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
+    //TODO: when migrating to react show in order: EN, browser language, separator, other languages
     const locales = Object.keys(localeMap).map(code => {
         return { code, label: localeMap[code].$meta.label };
     });
+    locales.sort((a, b) => a.label.localeCompare(b.label));
     locales.push({ code: 'custom', label: 'Custom (txData/locale.json)' });
 
     const renderData = {

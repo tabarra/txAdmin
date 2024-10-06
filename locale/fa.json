@@ -13,6 +13,11 @@
         "schedule_warn": "Server ta %{smart_count} daghighe digar restart mishavad. Lotfan Disconnect Konid. |||| Server ta %{smart_count} daghighe digar restart mishavad.",
         "schedule_warn_discord": "**%{servername}** ta %{smart_count} daghighe digar restart mishavad. |||| **%{servername}** ta %{smart_count} daghighe digar restart mishavad."
     },
+    "kick_messages": {
+        "everyone": "All players kicked: %{reason}.",
+        "player": "You have been kicked: %{reason}.",
+        "unknown_reason": "for unknown reason"
+    },
     "ban_messages": {
         "kick_temporary": "(%{author}) Shoma Az in Server Ban Shodid, Be Dalil: \"%{reason}\". Etmam Ban Shoma: %{expiration}.",
         "kick_permanent": "(%{author}) Shoma Baraye Hamishe Az in Server Ban Shodid, Be Dalil: \"%{reason}\".",
@@ -65,7 +70,9 @@
     "nui_warning": {
         "title": "WARNING",
         "warned_by": "Warned by:",
-        "instruction": "Dokme [SPACE] ro baraye 10 saniye negah darid ta payam rad shavad."
+        "stale_message": "این هشدار قبل از اتصال شما به سرور صادر شده است.",
+        "dismiss_key": "SPACE",
+        "instruction": "Dokme %{key} ro baraye %{smart_count} sanie negah darid ta payam rad shavad. |||| Dokme %{key} ro baraye %{smart_count} sanieha negah darid ta payam rad shavad."
     },
     "nui_menu": {
         "misc": {
@@ -242,7 +249,7 @@
         "player_modal": {
             "misc": {
                 "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "target_not_found": "Was unable to find an online player with ID or a username of %{target}"
             },
             "tabs": {
                 "actions": "Actions",
