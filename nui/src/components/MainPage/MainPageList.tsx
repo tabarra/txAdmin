@@ -40,7 +40,7 @@ import { useNuiEvent } from "@nui/src/hooks/useNuiEvent";
 import { usePlayerModalContext } from "@nui/src/provider/PlayerModalProvider";
 
 const fadeHeight = 20;
-const listHeight = 388;
+const listHeight = 402;
 
 const BoxFadeTop = styled(Box)(({ theme }) => ({
   backgroundImage: `linear-gradient(to top, transparent, ${theme.palette.background.default})`,
@@ -521,7 +521,7 @@ export const MainPageList: React.FC = () => {
 
   return (
     // add pb={2} if we don't have that arrow at the bottom
-    (<Box>
+    (<Box sx={{ pointerEvents: 'none' }}>
       <StyledList>
         {menuListItems.map((item, index) =>
           item.isMultiAction ? (

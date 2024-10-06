@@ -33,12 +33,12 @@ const classes = {
 
 const Root = styled('div')(({ theme }) => ({
   [`& .${classes.root}`]: {
-    borderRadius: 15,
+    borderRadius: 10,
   },
 
   [`& .${classes.rootDisabled}`]: {
-    borderRadius: 15,
-    opacity: 0.3,
+    borderRadius: 10,
+    opacity: 0.35,
   },
 
   [`& .${classes.icon}`]: {
