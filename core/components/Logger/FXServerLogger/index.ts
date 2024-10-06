@@ -33,6 +33,7 @@ export enum ConsoleLineType {
 export default class FXServerLogger extends LoggerBase {
     private readonly txAdmin: TxAdmin;
     private readonly transformer = new ConsoleTransformer();
+    private fileBuffer = '';
     private recentBuffer = '';
     private readonly recentBufferMaxSize = 256 * 1024; //kb
     private readonly recentBufferTrimSliceSize = 32 * 1024; //how much will be cut when overflows
@@ -50,6 +51,10 @@ export default class FXServerLogger extends LoggerBase {
         };
         super(basePath, 'fxserver', lrDefaultOptions, lrProfileConfig);
         this.txAdmin = txAdmin;
+
+        setInterval(() => {
+            this.flushFileBuffer();
+        }, 5000);
     }
 
 
@@ -71,6 +76,17 @@ export default class FXServerLogger extends LoggerBase {
 
 
     /**
+     * Strips color of the file buffer and flushes it.
+     * FIXME: this will still allow colors to be written to the file if the buffer cuts 
+     * in the middle of a color sequence, but less often since we are buffering more data.
+     */
+    flushFileBuffer() {
+        this.lrStream.write(this.fileBuffer.replace(regexColors, ''));
+        this.fileBuffer = '';
+    }
+
+
+    /**
      * Receives the assembled console blocks, stringifies, marks, colors them and dispatches it to
      * lrStream, websocket, and process stdout.
      */
@@ -78,7 +94,7 @@ export default class FXServerLogger extends LoggerBase {
         //force line skip to create separation
         if (type === ConsoleLineType.MarkerInfo) {
             const lineBreak = this.transformer.lastEol ? '\n\n' : '\n';
-            this.lrStream.write(lineBreak);
+            this.fileBuffer += lineBreak;
             if (this.recentBuffer.length) {
                 this.txAdmin.webServer.webSocket.buffer('liveconsole', lineBreak);
                 this.appendRecent(lineBreak);
@@ -89,7 +105,7 @@ export default class FXServerLogger extends LoggerBase {
         const { webBuffer, stdoutBuffer, fileBuffer } = this.transformer.process(type, data, context);
 
         //To file
-        this.lrStream.write(fileBuffer.replace(regexColors, ''));
+        this.fileBuffer += fileBuffer;
 
         //For the terminal
         if (!this.txAdmin.fxRunner.config.quiet) {
