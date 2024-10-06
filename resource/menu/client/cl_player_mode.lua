@@ -178,6 +178,7 @@ local function createPlayerModePtfxLoop(tgtPedId)
         for _, parti in ipairs(particleTbl) do
             StopParticleFxLooped(parti, true)
         end
+        RemoveNamedPtfxAsset(PTFX_DICT)
     end)
 end
 
