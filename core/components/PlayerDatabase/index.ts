@@ -1,6 +1,6 @@
 const modulename = 'PlayerDatabase';
 // eslint-disable-next-line no-unused-vars
-import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
+import { SavePriority, Database } from './database';
 import { genActionID, genWhitelistRequestID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
@@ -124,7 +124,7 @@ export default class PlayerDatabase {
             .value();
         if (found.length) throw new DuplicateKeyError(`this license is already registered`);
 
-        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.writeFlag(SavePriority.LOW);
         this.#db.obj.chain.get('players')
             .push(player)
             .value();
@@ -143,7 +143,7 @@ export default class PlayerDatabase {
 
         const playerDbObj = this.#db.obj.chain.get('players').find({ license });
         if (!playerDbObj.value()) throw new Error('Player not found in database');
-        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.writeFlag(SavePriority.LOW);
         const newData = playerDbObj
             .assign(cloneDeep(srcData))
             .cloneDeep()
@@ -171,7 +171,7 @@ export default class PlayerDatabase {
             }
         });
 
-        this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+        this.#db.writeFlag(SavePriority.HIGH);
         return cntChanged;
     }
 
@@ -272,7 +272,7 @@ export default class PlayerDatabase {
             this.#db.obj.chain.get('actions')
                 .push(toDB)
                 .value();
-            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            this.#db.writeFlag(SavePriority.HIGH);
             return actionID;
         } catch (error) {
             let msg = `Failed to register ban to database with message: ${(error as Error).message}`;
@@ -321,7 +321,7 @@ export default class PlayerDatabase {
             this.#db.obj.chain.get('actions')
                 .push(toDB)
                 .value();
-            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            this.#db.writeFlag(SavePriority.HIGH);
             return actionID;
         } catch (error) {
             let msg = `Failed to register warn to database with message: ${(error as Error).message}`;
@@ -345,7 +345,7 @@ export default class PlayerDatabase {
             if (!action) throw new Error(`action not found`);
             if (action.type !== 'warn') throw new Error(`action is not a warn`);
             action.acked = true;
-            this.#db.writeFlag(SAVE_PRIORITY_MEDIUM);
+            this.#db.writeFlag(SavePriority.MEDIUM);
         } catch (error) {
             const msg = `Failed to ack warn with message: ${(error as Error).message}`;
             console.error(msg);
@@ -382,7 +382,7 @@ export default class PlayerDatabase {
                 timestamp: now(),
                 author,
             };
-            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            this.#db.writeFlag(SavePriority.HIGH);
             return cloneDeep(action);
 
         } catch (error) {
@@ -415,7 +415,7 @@ export default class PlayerDatabase {
         filter: object | Function
     ): DatabaseWhitelistApprovalsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
-        this.#db.writeFlag(SAVE_PRIORITY_MEDIUM);
+        this.#db.writeFlag(SavePriority.MEDIUM);
         return this.#db.obj.chain.get('whitelistApprovals')
             .remove(filter as any)
             .value();
@@ -436,7 +436,7 @@ export default class PlayerDatabase {
         if (found.length) throw new DuplicateKeyError(`this identifier is already whitelisted`);
 
         //Register new
-        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.writeFlag(SavePriority.LOW);
         this.#db.obj.chain.get('whitelistApprovals')
             .push(cloneDeep(approval))
             .value();
@@ -464,7 +464,7 @@ export default class PlayerDatabase {
         filter: object | Function
     ): DatabaseWhitelistRequestsType[] {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
-        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.writeFlag(SavePriority.LOW);
         return this.#db.obj.chain.get('whitelistRequests')
             .remove(filter as any)
             .value();
@@ -483,7 +483,7 @@ export default class PlayerDatabase {
 
         const requestDbObj = this.#db.obj.chain.get('whitelistRequests').find({ license });
         if (!requestDbObj.value()) throw new Error('Request not found in database');
-        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.writeFlag(SavePriority.LOW);
         return requestDbObj
             .assign(cloneDeep(srcData))
             .cloneDeep()
@@ -502,7 +502,7 @@ export default class PlayerDatabase {
         }
 
         const id = genWhitelistRequestID(this.#db.obj);
-        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.writeFlag(SavePriority.LOW);
         this.#db.obj.chain.get('whitelistRequests')
             .push({ id, ...cloneDeep(request) })
             .value();
@@ -617,7 +617,7 @@ export default class PlayerDatabase {
         if (typeof filterFunc !== 'function') throw new Error('filterFunc must be a function.');
 
         try {
-            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            this.#db.writeFlag(SavePriority.HIGH);
             const removed = this.#db.obj.chain.get(tableName)
                 .remove(filterFunc as any)
                 .value();
@@ -644,7 +644,7 @@ export default class PlayerDatabase {
         if (typeof fromPlayers !== 'boolean' || typeof fromBans !== 'boolean') throw new Error('The parameters should be booleans.');
 
         try {
-            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
+            this.#db.writeFlag(SavePriority.HIGH);
             let removed = 0;
             if (fromPlayers) {
                 this.#db.obj.chain.get('players')
@@ -716,7 +716,7 @@ export default class PlayerDatabase {
             console.error(msg);
         }
 
-        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.writeFlag(SavePriority.LOW);
         console.ok(`Internal Database optimized. This applies only for the txAdmin internal database, and does not affect your MySQL or framework (ESX/QBCore/etc) databases.`);
         console.ok(`- ${playerRemoved} players that haven't connected in the past 16 days and had less than 2 hours of playtime.`);
         console.ok(`- ${wlRequestsRemoved} whitelist requests older than a week.`);
