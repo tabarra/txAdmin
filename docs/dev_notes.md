@@ -154,7 +154,7 @@ Legend:
 - [x] buffer fxserver lrstream for 5 seconds before stripping colors
 - [x] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
     - [ref](/core/components/AdminVault/index.js#L289)
-- [!] check cicd stuff on testing repo before release
+- [x] check cicd stuff on testing repo before release
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/components/Logger/handlers/server.js#L148)

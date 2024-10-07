@@ -4,6 +4,7 @@
     "description": "The shared package contains stuff used in more than one package, no build step required.",
     "main": "index.js",
     "scripts": {
+        "test": "echo \"No tests for this workspace. Skipping...\"",
         "typecheck": "tsc -p tsconfig.json --noEmit",
         "license:report": "npx license-report > ../.reports/license/shared.html"
     },

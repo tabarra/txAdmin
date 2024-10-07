@@ -5,6 +5,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
+        "test": "echo \"No tests for this workspace. Skipping...\"",
         "build": "vite build --mode production",
         "dev": "vite build --watch --mode development",
         "browser": "vite dev --port 40121 --strictPort --mode devNuiBrowser",
