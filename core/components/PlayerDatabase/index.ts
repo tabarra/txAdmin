@@ -206,9 +206,12 @@ export default class PlayerDatabase {
         if (hwidsArray && !Array.isArray(hwidsArray)) throw new Error('hwidsArray should be an array or undefined');
         const idsFilter = (action: DatabaseActionType) => idsArray.some((fi) => action.ids.includes(fi))
         const hwidsFilter = (action: DatabaseActionType) => {
-            if (!('hwids' in action)) return false;
-            const count = hwidsArray!.filter((fi) => action.hwids!.includes(fi)).length
-            return count >= this.config.requiredBanHwidMatches;
+            if ('hwids' in action && action.hwids){
+                const count = hwidsArray!.filter((fi) => action.hwids?.includes(fi)).length;
+                return count >= this.config.requiredBanHwidMatches;
+            } else {
+                return false;
+            }
         }
 
         try {

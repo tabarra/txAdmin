@@ -23,6 +23,7 @@ export type DatabaseActionBaseType = {
     author: string;
     timestamp: number;
     //FIXME: the revocation object itself should be optional instead of nullable properties
+    //BUT DO REMEMBER THE `'XXX' IN YYY` ISSUE!
     revocation: {
         timestamp: number | null;
         author: string | null;
@@ -35,7 +36,7 @@ export type DatabaseActionBanType = {
 } & DatabaseActionBaseType;
 export type DatabaseActionWarnType = {
     type: 'warn';
-    expiration: false; //FIXME: remove
+    expiration: false; //FIXME: remove - BUT DO REMEMBER THE `'XXX' IN YYY` ISSUE!
     acked: boolean; //if the player has acknowledged the warning
 } & DatabaseActionBaseType;
 export type DatabaseActionType = DatabaseActionBanType | DatabaseActionWarnType;
