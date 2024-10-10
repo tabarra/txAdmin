@@ -31,8 +31,9 @@ export const KeyboardNavProvider: React.FC<KeyboardNavProviderProps> = ({
     if (!isMenuVisible) return;
 
     if (
-      curPage === txAdminMenuPage.IFrame ||
-      curPage === txAdminMenuPage.Players
+      curPage === txAdminMenuPage.IFrame
+      || curPage === txAdminMenuPage.Players
+      || curPage === txAdminMenuPage.PlayerModalOnly
     ) {
       return setDisabledKeyNav(true);
     }

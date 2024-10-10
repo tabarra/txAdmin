@@ -15,6 +15,7 @@ import {
   usePlayerModalVisibility,
   useSetPlayerModalTab,
 } from "@nui/src/state/playerModal.state";
+import { txAdminMenuPage, usePageValue } from "../state/page.state";
 
 const PlayerContext = createContext<PlayerProviderCtx>({} as PlayerProviderCtx);
 
@@ -49,6 +50,7 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
   const [menuVisible, setMenuVisible] = useIsMenuVisible();
   const setTab = useSetPlayerModalTab();
   const theme = useTheme();
+  const curPage = usePageValue();
 
   useEffect(() => {
     setDisableTabNav(modalOpen);
@@ -87,7 +89,13 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
       <Dialog
         open={modalOpen}
         fullWidth
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          if (curPage === txAdminMenuPage.PlayerModalOnly) {
+            closeMenu();
+          } else {
+            setModalOpen(false);
+          }
+        }}
         maxWidth="md"
         PaperProps={{
           style: {

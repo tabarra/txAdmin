@@ -17,6 +17,7 @@ import { useAnnounceNotiPosValue } from "../state/server.state";
 import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 import cleanPlayerName from "@shared/cleanPlayerName";
 import { usePlayerModalContext } from "../provider/PlayerModalProvider";
+import { fetchNui } from "../utils/fetchNui";
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -142,14 +143,14 @@ export const useHudListenersService = () => {
 
     //Search by ID
     const targetId = parseInt(target);
-    if (target && !isNaN(targetId)) {
+    if (!isNaN(targetId)) {
       targetPlayer = onlinePlayers.find(
         (playerData) => playerData.id === targetId
       );
     }
 
     //Search by pure name
-    if (!targetPlayer && target && typeof target === "string") {
+    if (!targetPlayer && typeof target === "string") {
       const searchInput = cleanPlayerName(target).pureName;
       const foundPlayers = onlinePlayers.filter((playerData) =>
         playerData.pureName?.includes(searchInput)
@@ -166,7 +167,7 @@ export const useHudListenersService = () => {
     }
 
     if (targetPlayer) {
-      setPage(txAdminMenuPage.Main);
+      setPage(txAdminMenuPage.PlayerModalOnly);
       setAssocPlayer(targetPlayer);
       setModalOpen(true);
     } else {
