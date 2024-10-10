@@ -177,6 +177,39 @@
 
     const convErrorType = (x) => x === 'error' ? 'danger' : x;
 
+    //============================================== Page State
+    let collapsedGroups = new Set();
+    try {
+        const storedCollapsedGroups = window.localStorage.resourcesPageCollapsedGroups;
+        if (storedCollapsedGroups) {
+            const parsedCollapsedGroups = JSON.parse(storedCollapsedGroups);
+            if (Array.isArray(parsedCollapsedGroups)) {
+                collapsedGroups = new Set(parsedCollapsedGroups);
+            } else {
+                throw new Error('Invalid storedCollapsedGroups');
+            }
+        } else {
+            window.localStorage.resourcesPageCollapsedGroups = '[]';
+        }
+    } catch (error) {
+        console.warn('Error parsing storedCollapsedGroups:', error);
+        window.localStorage.resourcesPageCollapsedGroups = '[]';
+    }
+    const saveCollapsedGroups = () => {
+        window.localStorage.resourcesPageCollapsedGroups = JSON.stringify([...collapsedGroups.values()]);
+    }
+    
+
+    $('#defResCheckbox').click(() => {
+        window.localStorage.resourcesPageShowDefault = document.getElementById('defResCheckbox').checked;
+        refreshResourceList();
+    });
+
+    $('#stoppedResCheckbox').click(() => {
+        window.localStorage.resourcesPageShowStopped = document.getElementById('stoppedResCheckbox').checked;
+        refreshResourceList();
+    });
+
 
     //============================================== Refresh List
     $('#btnRefresh').click(() => {
@@ -231,6 +264,7 @@
     //============================================== Search function
     function findResource() {
         const inputEl = document.getElementById("resourceInput");
+        localStorage.setItem("resourcesPageFilter", inputEl.value ?? '');
         const filter = inputEl.value.toUpperCase();
 
         resGroupsJS.forEach(folder => {
@@ -254,17 +288,6 @@
         }
     }
 
-    //============================================== Hide defaults
-    $('#defResCheckbox').click(() => {
-        window.localStorage.resourcesPageShowDefault = document.getElementById('defResCheckbox').checked;
-        refreshResourceList();
-    });
-
-    $('#stoppedResCheckbox').click(() => {
-        window.localStorage.resourcesPageShowStopped = document.getElementById('stoppedResCheckbox').checked;
-        refreshResourceList();
-    });
-
     //============================================== Expand/Collapse All
     let isExpandButton = false;
     const btnExpandCollapse = document.getElementById('btnExpandCollapse');
@@ -282,10 +305,10 @@
         });
         if (expandedCount === resGroupsJS.length) {
             isExpandButton = false;
-            btnExpandCollapse.innerHTML = '<i class="icon-size-actual"/> Collapse All';
+            btnExpandCollapse.innerHTML = '<i class="icon-size-actual"></i> Collapse All';
         } else {
             isExpandButton = true;
-            btnExpandCollapse.innerHTML = '<i class="icon-size-fullscreen"/> Expand All';
+            btnExpandCollapse.innerHTML = '<i class="icon-size-fullscreen"></i> Expand All';
         }
     }
     $('#btnExpandCollapse').click(() => {
@@ -341,10 +364,16 @@
                 }
             });
 
+            const card = $(`#resList-card-${folder.divName}`);
             if (folder.resources.length === hidden) {
-                $(`#resList-card-${folder.divName}`).hide();
+                card.hide();
             } else {
-                $(`#resList-card-${folder.divName}`).show();
+                card.show();
+            }
+            if (collapsedGroups.has(folder.divName)) {
+                toggleResGroup(card[0], false, false);
+            } else {
+                toggleResGroup(card[0], false, true);
             }
         });
     }
@@ -356,6 +385,7 @@
         if (show === undefined) {
             show = tbody.classList.contains('collapse');
         }
+        const groupDivName = groupCardElement.id.split('-').pop();
         if (show) {
             tbody.classList.remove('collapse');
             icon.classList.remove('icon-arrow-down');
@@ -363,11 +393,14 @@
             if (single) {
                 groupCardElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+            collapsedGroups.delete(groupDivName);
         } else {
             tbody.classList.add('collapse');
             icon.classList.add('icon-arrow-down');
             icon.classList.remove('icon-arrow-up');
+            collapsedGroups.add(groupDivName);
         }
+        saveCollapsedGroups();
     }
 
     $(() => {
@@ -375,6 +408,11 @@
             document.getElementById('defResCheckbox').checked = (window.localStorage.resourcesPageShowDefault === 'true');
         } else {
             window.localStorage.resourcesPageShowDefault = false;
+        }
+        let hasFilter = false;
+        if (typeof window.localStorage.resourcesPageFilter === 'string' && window.localStorage.resourcesPageFilter.length) {
+            document.getElementById("resourceInput").value = window.localStorage.resourcesPageFilter;
+            hasFilter = true;
         }
 
         document.getElementById('stoppedResCheckbox').checked = window.localStorage.resourcesPageShowStopped === 'true';
@@ -391,5 +429,8 @@
 
         refreshResourceList();
         updateExpandCollapseBtn();
+        if(hasFilter){
+            findResource();
+        }
     });
 </script>
