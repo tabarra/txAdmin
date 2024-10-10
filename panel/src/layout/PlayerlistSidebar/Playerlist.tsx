@@ -202,7 +202,7 @@ export default function Playerlist() {
 
     // The virtualizer
     const rowVirtualizer = useVirtualizer({
-        scrollingDelay: 0,
+        isScrollingResetDelay: 0,
         count: filteredPlayerlist.length,
         getScrollElement: () => (scrollRef.current as HTMLDivElement)?.getElementsByTagName('div')[0],
         estimateSize: () => 30,
