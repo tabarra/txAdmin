@@ -43,7 +43,20 @@ const regexMarker = /^{§[0-9a-f]{8}}/;
 const ANSI_WHITE = '\x1B[0;37m';
 const ANSI_GRAY = '\x1B[1;90m';
 const ANSI_RESET = '\x1B[0m';
-const formatUnixTimestamp = (timestamp: number): string => {
+let timestampDisabled = false;
+let timestampForceHour12: boolean | undefined = undefined;
+try {
+    const localConfig = localStorage.getItem('liveConsoleTimestamp');
+    if (localConfig === '24h') {
+        timestampForceHour12 = false;
+    } else if (localConfig === '12h') {
+        timestampForceHour12 = true;
+    } else if (localConfig === 'off') {
+        timestampDisabled = true;
+    }
+} catch (error) { }
+const getConsolePrefix = (timestamp: number): string => {
+    if (timestampDisabled) return '';
     const time = new Date(timestamp * 1000);
     const str = time.toLocaleTimeString(
         'en-US', //as en-gb uses 4 digits for the am/pm indicator
@@ -51,12 +64,12 @@ const formatUnixTimestamp = (timestamp: number): string => {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
-            hour12: window.txBrowserHour12,
+            hour12: timestampForceHour12 ?? window.txBrowserHour12,
         }
     );
-    return str + ANSI_RESET;
+    return str + ANSI_RESET + ' ';
 }
-const defaultTermPrefix = formatUnixTimestamp(Date.now()).replace(/\w/g, '-');
+const defaultTermPrefix = getConsolePrefix(Date.now()).replace(/\w/g, '-');
 
 //Main component
 export default function LiveConsolePage() {
@@ -256,7 +269,7 @@ export default function LiveConsolePage() {
                     const ts = parseInt(line.slice(2, 10), 16);
                     line = line.slice(11);
                     termPrefixRef.current.ts = ts;
-                    termPrefixRef.current.prefix = formatUnixTimestamp(ts);
+                    termPrefixRef.current.prefix = getConsolePrefix(ts);
                 } catch (error) {
                     termPrefixRef.current.prefix = defaultTermPrefix;
                     console.warn('Failed to parse timestamp from:', line, (error as any).message);
@@ -268,7 +281,7 @@ export default function LiveConsolePage() {
             //Check if it's last line, and if the EOL was stripped
             const prefixColor = isNewTs ? ANSI_WHITE : ANSI_GRAY;
             const prefix = termPrefixRef.current.lastEol
-                ? prefixColor + termPrefixRef.current.prefix + ' '
+                ? prefixColor + termPrefixRef.current.prefix
                 : '';
             if (i < lines.length - 1) {
                 term.writeln(prefix + line);
