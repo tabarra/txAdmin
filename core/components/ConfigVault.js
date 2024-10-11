@@ -163,7 +163,7 @@ export default class ConfigVault {
                 cfgPath: toDefault(cfg.fxRunner.cfgPath, null),
                 commandLine: toDefault(cfg.fxRunner.commandLine, null),
                 logPath: toDefault(cfg.fxRunner.logPath, null), //not in template
-                onesync: toDefault(cfg.fxRunner.onesync, 'legacy'),
+                onesync: toDefault(cfg.fxRunner.onesync, 'on'),
                 autostart: toDefault(cfg.fxRunner.autostart, null),
                 restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
                 shutdownNoticeDelay: toDefault(cfg.fxRunner.shutdownNoticeDelay, null), //not in template
@@ -251,7 +251,7 @@ export default class ConfigVault {
 
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
-            cfg.fxRunner.onesync = cfg.fxRunner.onesync || 'legacy';
+            cfg.fxRunner.onesync = cfg.fxRunner.onesync || 'on';
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 750; //not in template
             cfg.fxRunner.shutdownNoticeDelay = parseInt(cfg.fxRunner.shutdownNoticeDelay) || 5; //not in template
