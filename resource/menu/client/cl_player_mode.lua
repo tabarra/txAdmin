@@ -46,6 +46,26 @@ local function toggleGodMode(enabled)
     SetEntityInvincible(PlayerPedId(), enabled)
 end
 
+local function disableRagdollingWhileFall()
+    CreateThread(function()
+        local ped = PlayerPedId()
+        local initialCanPlayerRagdoll = CanPedRagdoll(ped)
+        SetPedCanRagdoll(ped, false)
+
+        --It takes some time for player to start to fall after noclip disabled
+        --Also, toggleGodMode(false) is called when disabling noclip
+        Wait(250)
+
+        SetEntityInvincible(ped, true)
+        while IsPedFalling(ped) do
+            Wait(50)
+        end
+        Wait(1000)
+        SetPedCanRagdoll(ped, initialCanPlayerRagdoll)
+        SetEntityInvincible(ped, false)
+    end)
+end
+
 local freecamVeh = 0
 local isVehAHorse = false
 local setLocallyInvisibleFunc = IS_FIVEM and SetEntityLocallyInvisible or SetPlayerInvisibleLocally
@@ -121,6 +141,9 @@ local function toggleFreecam(enabled)
     end
 
     local function disableNoClip()
+        if freecamVeh == 0 then
+            disableRagdollingWhileFall()
+        end
         SetFreecamActive(false)
         if IS_FIVEM then
             SetGameplayCamRelativeHeading(0)
