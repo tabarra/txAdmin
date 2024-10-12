@@ -52,6 +52,7 @@ client_scripts {
     'resource/menu/client/cl_main_page.lua',
     'resource/menu/client/cl_vehicle.lua',
     'resource/menu/client/cl_player_ids.lua',
+    'resource/menu/client/cl_ptfx.lua', --must run before cl_player_mode
     'resource/menu/client/cl_player_mode.lua',
     'resource/menu/client/cl_spectate.lua',
     'resource/menu/client/cl_trollactions.lua',

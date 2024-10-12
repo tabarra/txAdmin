@@ -141,54 +141,6 @@ local function toggleFreecam(enabled)
 end
 
 
-local PTFX_DICT, PTFX_ASSET, LOOP_AMOUNT, PTFX_DURATION
-if IS_FIVEM then
-    PTFX_DICT = 'core'
-    PTFX_ASSET = 'ent_dst_elec_fire_sp'
-    LOOP_AMOUNT = 25
-    PTFX_DURATION = 1000
-else
-    PTFX_DICT = 'core'
-    PTFX_ASSET = 'fire_wrecked_hot_air_balloon'
-    LOOP_AMOUNT = 10
-    PTFX_DURATION = 850
-end
-
--- Applies the particle effect to a ped
-local function createPlayerModePtfxLoop(tgtPedId)
-    CreateThread(function()
-        if tgtPedId <= 0 or tgtPedId == nil then return end
-        RequestNamedPtfxAsset(PTFX_DICT)
-
-        -- Wait until it's done loading.
-        while not HasNamedPtfxAssetLoaded(PTFX_DICT) do
-            Wait(0)
-        end
-
-        local particleTbl = {}
-
-        for i = 0, LOOP_AMOUNT do
-            UseParticleFxAsset(PTFX_DICT)
-            local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, tgtPedId, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, false, false, false)
-            particleTbl[#particleTbl + 1] = partiResult
-            Wait(0)
-        end
-
-        Wait(PTFX_DURATION)
-        for _, parti in ipairs(particleTbl) do
-            StopParticleFxLooped(parti, true)
-        end
-        RemoveNamedPtfxAsset(PTFX_DICT)
-    end)
-end
-
-RegisterNetEvent('txcl:showPtfx', function(tgtSrc)
-    debugPrint('Syncing particle effect for target netId')
-    local tgtPlayer = GetPlayerFromServerId(tgtSrc)
-    if tgtPlayer == -1 then return end
-    createPlayerModePtfxLoop(GetPlayerPed(tgtPlayer))
-end)
-
 -- Ask server for playermode change and sends nearby playerlist
 local function askChangePlayerMode(mode)
     debugPrint("Requesting player mode change to " .. mode)
@@ -221,7 +173,7 @@ end)
 -- [[ Player mode changed cb event ]]
 RegisterNetEvent('txcl:setPlayerMode', function(mode, ptfx)
     if ptfx then
-        createPlayerModePtfxLoop(PlayerPedId())
+        CreatePlayerModePtfxLoop(PlayerPedId(), true)
     end
 
     --NOTE: always do the toggleX(true) at the bottom to prevent
