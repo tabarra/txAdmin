@@ -67,11 +67,15 @@ export default async function DeployerStepper(ctx) {
             };
         }
 
+        const knownVarDescriptions = {
+            steam_webApiKey: 'The Steam Web API Key is used to authenticate players when they join.<br/>\nYou can get one at https://steamcommunity.com/dev/apikey.',
+        }
         const recipeVars = globals.deployer.getRecipeVars();
         renderData.inputVars = Object.keys(recipeVars).map((name) => {
             return {
                 name: name,
                 value: recipeVars[name],
+                description: knownVarDescriptions[name] || '',
             };
         });
     } else if (globals.deployer.step === 'run') {

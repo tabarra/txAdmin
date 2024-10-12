@@ -95,6 +95,17 @@ async function handleSetVariables(ctx) {
         return ctx.send({ type: 'danger', message: 'The Server License does not appear to be valid.' });
     }
 
+    //Validating steam api key requirement
+    if (
+        globals.deployer.recipe.steamRequired
+        && (typeof userVars.steam_webApiKey !== 'string' || userVars.steam_webApiKey.length < 24)
+    ) {
+        return ctx.send({
+            type: 'danger',
+            message: 'This recipe requires steam_webApiKey to be set and valid.',
+        });
+    }
+
     //DB Stuff
     if (typeof userVars.dbDelete !== 'undefined') {
         //Testing the db config
