@@ -10,7 +10,7 @@ import { optimizeSvRuntimeLog } from './logOptimizer';
 import { convars } from '@core/globalData';
 import { ZodError } from 'zod';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TICKS } from './config';
-import { PerfChartApiResp } from '@core/webroutes/perfChart';
+import { PerfChartApiResp } from '@routes/perfChart';
 import got from '@extras/got';
 import { throttle } from 'throttle-debounce';
 const console = consoleFactory(modulename);

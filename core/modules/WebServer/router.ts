@@ -2,7 +2,7 @@ import { convars } from '@core/globalData';
 import Router from '@koa/router';
 import KoaRateLimit from 'koa-ratelimit';
 
-import * as webRoutes from '../../webroutes';
+import * as webRoutes from '@routes/index';
 import { apiAuthMw, intercomAuthMw, webAuthMw } from './middlewares/authMws';
 import { WebServerConfigType } from '.';
 

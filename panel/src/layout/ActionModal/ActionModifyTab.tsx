@@ -5,7 +5,7 @@ import { GenericApiOkResp } from "@shared/genericApiTypes";
 import { useAdminPerms } from "@/hooks/auth";
 import { Loader2Icon } from "lucide-react";
 import { useBackendApi } from "@/hooks/fetch";
-import { ApiRevokeActionReqSchema } from "../../../../core/webroutes/history/actions";
+import { ApiRevokeActionReqSchema } from "../../../../core/routes/history/actions";
 
 
 type ActionModifyTabProps = {

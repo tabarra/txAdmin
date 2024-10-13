@@ -78,6 +78,7 @@
       "@shared/*": ["../shared/*"],
       "@extras/*": ["./extras/*"],
       "@modules/*": ["./modules/*"],
+      "@routes/*": ["./routes/*"],
       "@core/*": ["./*"]
     },      
                                 

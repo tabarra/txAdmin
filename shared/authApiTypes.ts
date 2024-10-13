@@ -1,11 +1,11 @@
 import { ApiAuthErrorResp } from "genericApiTypes";
-import { ApiVerifyPasswordReqSchema } from '@core/webroutes/authentication/verifyPassword';
-import { ApiOauthCallbackReqSchema } from "@core/webroutes/authentication/providerCallback";
-import { ApiAddMasterPinReqSchema } from "@core/webroutes/authentication/addMasterPin";
-import { ApiAddMasterCallbackReqSchema } from "@core/webroutes/authentication/addMasterCallback";
-import { ApiAddMasterSaveReqSchema } from "@core/webroutes/authentication/addMasterSave";
-import { ApiChangePasswordReqSchema } from "@core/webroutes/authentication/changePassword";
-import { ApiChangeIdentifiersReqSchema } from "@core/webroutes/authentication/changeIdentifiers";
+import { ApiVerifyPasswordReqSchema } from '@core/routes/authentication/verifyPassword';
+import { ApiOauthCallbackReqSchema } from "@core/routes/authentication/providerCallback";
+import { ApiAddMasterPinReqSchema } from "@core/routes/authentication/addMasterPin";
+import { ApiAddMasterCallbackReqSchema } from "@core/routes/authentication/addMasterCallback";
+import { ApiAddMasterSaveReqSchema } from "@core/routes/authentication/addMasterSave";
+import { ApiChangePasswordReqSchema } from "@core/routes/authentication/changePassword";
+import { ApiChangeIdentifiersReqSchema } from "@core/routes/authentication/changeIdentifiers";
 
 export type ReactAuthDataType = {
     name: string;

@@ -30,7 +30,7 @@ Legend:
         - edit txaEventHandlers.playerDirectMessage
     - [x] hide from: announcement
         - edit txaEventHandlers.announcement
-        - [edit](/core/webroutes/fxserver/commands.ts#L91)
+        - [edit](/core/routes/fxserver/commands.ts#L91)
         - [edit](/core/modules/FxRunner/outputHandler.ts#L148)
 - [x] No more invisible names!
     - [x] rewrite `cleanPlayerName` to better deal with empty names, and better detect invisible characters
@@ -108,9 +108,9 @@ Legend:
 - [x] make server v8 heap reports faster to large changes
 - [x] messages to improve:
     - [x] kick
-        - [edit](/core/webroutes/player/actions.ts#L342)
+        - [edit](/core/routes/player/actions.ts#L342)
     - [x] kick_all
-        - [edit](/core/webroutes/fxserver/commands.ts#L105)
+        - [edit](/core/routes/fxserver/commands.ts#L105)
     - [x] server stop/restart 
         - change to `admin request`
 - [x] separate "announcements" and "dm" permissions
@@ -301,7 +301,7 @@ Refactor:
     - recipeEngine.js
     - serverDataScanner.ts
     - setupProfile.js
-- webroutes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
+- routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
 - panel/src/lib/utils.ts - split all time humanization into a separate file
 
 

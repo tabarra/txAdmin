@@ -25,7 +25,7 @@ import PersistentCache from '@modules/PersistentCache';
 import UpdateChecker from '@modules/UpdateChecker';
 
 import consoleFactory from '@extras/console';
-import { getHostData } from './webroutes/diagnostics/diagnosticsFuncs';
+import { getHostData } from '@routes/diagnostics/diagnosticsFuncs';
 const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
 

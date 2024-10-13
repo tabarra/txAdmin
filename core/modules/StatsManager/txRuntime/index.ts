@@ -3,7 +3,7 @@ import * as jose from 'jose';
 import consoleFactory from '@extras/console';
 import { MultipleCounter, QuantileArray } from '../statsUtils';
 import { convars } from '@core/globalData';
-import { getHostStaticData } from '@core/webroutes/diagnostics/diagnosticsFuncs';
+import { getHostStaticData } from '@routes/diagnostics/diagnosticsFuncs';
 import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);
 

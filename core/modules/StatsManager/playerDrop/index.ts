@@ -9,7 +9,7 @@ import { ZodError } from 'zod';
 import { getDateHourEnc, parseDateHourEnc } from './playerDropUtils';
 import { MultipleCounter } from '../statsUtils';
 import { throttle } from 'throttle-debounce';
-import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@core/webroutes/playerDrops';
+import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@routes/playerDrops';
 import { migratePlayerDropsFile } from './playerDropMigrations';
 import { parseFxserverVersion } from '@extras/fxsVersionParser';
 import { PlayerDropEvent } from '@modules/PlayerlistManager';

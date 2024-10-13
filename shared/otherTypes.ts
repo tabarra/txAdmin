@@ -1,12 +1,12 @@
 import type { ReactAuthDataType } from "./authApiTypes";
-export type { BanTemplatesDataType, BanDurationType } from "@core/webroutes/banTemplates/utils";
-export type { GetBanTemplatesSuccessResp } from "@core/webroutes/banTemplates/getBanTemplates";
-export type { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/webroutes/banTemplates/saveBanTemplates";
-export type { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/webroutes/history/actions";
+export type { BanTemplatesDataType, BanDurationType } from "@core/routes/banTemplates/utils";
+export type { GetBanTemplatesSuccessResp } from "@core/routes/banTemplates/getBanTemplates";
+export type { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/routes/banTemplates/saveBanTemplates";
+export type { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/routes/history/actions";
 export type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@core/modules/StatsManager/svRuntime/perfSchemas";
 export type { SvRtPerfThreadNamesType } from "@core/modules/StatsManager/svRuntime/config";
-export type { PerfChartApiResp, PerfChartApiSuccessResp } from "@core/webroutes/perfChart";
-export type { PlayerDropsApiResp, PlayerDropsApiSuccessResp, PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from "@core/webroutes/playerDrops";
+export type { PerfChartApiResp, PerfChartApiSuccessResp } from "@core/routes/perfChart";
+export type { PlayerDropsApiResp, PlayerDropsApiSuccessResp, PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from "@core/routes/playerDrops";
 export type { PDLChangeEventType } from '@core/modules/StatsManager/playerDrop/playerDropSchemas';
 
 
