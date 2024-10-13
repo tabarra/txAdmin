@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DatabaseActionType } from "../../../../core/components/PlayerDatabase/databaseTypes";
+import { DatabaseActionType } from "../../../../core/modules/PlayerDatabase/databaseTypes";
 import { Button } from "@/components/ui/button";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import { useAdminPerms } from "@/hooks/auth";

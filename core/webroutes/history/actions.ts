@@ -1,11 +1,11 @@
 const modulename = 'WebServer:HistoryActions';
 import { GenericApiOkResp } from '@shared/genericApiTypes';
-import { DatabaseActionType } from '@core/components/PlayerDatabase/databaseTypes';
+import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
 import { calcExpirationFromDuration } from '@core/extras/helpers';
 import consts from '@shared/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import consoleFactory from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
 

@@ -3,9 +3,9 @@ import { cloneDeep }  from 'lodash-es';
 import { convars, txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import { redactApiKeys } from '../../extras/helpers';
-import { defaultEmbedConfigJson, defaultEmbedJson } from '@core/components/DiscordBot/defaultJsons';
+import { defaultEmbedConfigJson, defaultEmbedJson } from '@modules/DiscordBot/defaultJsons';
 import consoleFactory from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 

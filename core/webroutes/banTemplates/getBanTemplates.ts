@@ -1,6 +1,6 @@
 const modulename = 'WebServer:GetBanTemplates';
 import consoleFactory from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import { BanTemplatesDataSchema, BanTemplatesDataType } from './utils';
 const console = consoleFactory(modulename);

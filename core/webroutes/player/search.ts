@@ -1,13 +1,13 @@
 const modulename = 'WebServer:PlayersTableSearch';
 import { PlayersTablePlayerType, PlayersTableSearchResp } from '@shared/playerApiTypes';
-import { DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
+import { DatabasePlayerType } from '@modules/PlayerDatabase/databaseTypes';
 import consoleFactory from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
 import { parseLaxIdsArrayInput } from '@extras/helpers';
-import { TimeCounter } from '@core/components/StatsManager/statsUtils';
+import { TimeCounter } from '@modules/StatsManager/statsUtils';
 const console = consoleFactory(modulename);
 
 //Helpers

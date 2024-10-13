@@ -1,5 +1,5 @@
-import { SvRtPerfThreadNamesType } from "@core/components/StatsManager/svRuntime/config";
-import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/components/StatsManager/svRuntime/perfSchemas";
+import { SvRtPerfThreadNamesType } from "@core/modules/StatsManager/svRuntime/config";
+import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/modules/StatsManager/svRuntime/perfSchemas";
 import type { ReactAuthDataType } from "authApiTypes";
 import type { UpdateDataType } from "otherTypes";
 

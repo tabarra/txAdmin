@@ -1,5 +1,5 @@
 const modulename = 'WebServer:AuthLogout';
-import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
+import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 import { ApiAuthErrorResp } from '@shared/genericApiTypes';
 import consoleFactory from '@extras/console';
 import { ApiLogoutResp } from '@shared/authApiTypes';

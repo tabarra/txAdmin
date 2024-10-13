@@ -1,5 +1,5 @@
 const modulename = 'WebServer:AuthChangePassword';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 import consts from '@shared/consts';
 import { GenericApiResp } from '@shared/genericApiTypes';

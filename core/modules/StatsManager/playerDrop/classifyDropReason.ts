@@ -1,4 +1,4 @@
-import { PlayerDropEvent } from "@core/components/PlayerlistManager";
+import { PlayerDropEvent } from "@modules/PlayerlistManager";
 import { PDL_CRASH_REASON_CHAR_LIMIT, PDL_UNKNOWN_REASON_CHAR_LIMIT } from "./config";
 
 const playerInitiatedRules = [

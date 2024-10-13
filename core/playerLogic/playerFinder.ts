@@ -1,5 +1,5 @@
-import { DatabasePlayerType } from "@core/components/PlayerDatabase/databaseTypes.js";
-import PlayerDatabase from "@core/components/PlayerDatabase/index.js";
+import { DatabasePlayerType } from "@modules/PlayerDatabase/databaseTypes.js";
+import PlayerDatabase from "@modules/PlayerDatabase/index.js";
 import { DatabasePlayer } from "./playerClasses.js"
 
 

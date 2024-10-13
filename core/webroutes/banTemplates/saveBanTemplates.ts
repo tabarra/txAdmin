@@ -1,6 +1,6 @@
 const modulename = 'WebServer:SaveBanTemplates';
 import consoleFactory from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { GenericApiOkResp } from '@shared/genericApiTypes';
 import { z } from 'zod';
 import { BanTemplatesDataSchema, BanTemplatesDataType } from './utils';

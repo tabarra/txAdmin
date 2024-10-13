@@ -12,7 +12,7 @@ import { throttle } from 'throttle-debounce';
 import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@core/webroutes/playerDrops';
 import { migratePlayerDropsFile } from './playerDropMigrations';
 import { parseFxserverVersion } from '@extras/fxsVersionParser';
-import { PlayerDropEvent } from '@core/components/PlayerlistManager';
+import { PlayerDropEvent } from '@modules/PlayerlistManager';
 const console = consoleFactory(modulename);
 
 

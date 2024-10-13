@@ -31,7 +31,7 @@ Legend:
     - [x] hide from: announcement
         - edit txaEventHandlers.announcement
         - [edit](/core/webroutes/fxserver/commands.ts#L91)
-        - [edit](/core/components/FxRunner/outputHandler.ts#L148)
+        - [edit](/core/modules/FxRunner/outputHandler.ts#L148)
 - [x] No more invisible names!
     - [x] rewrite `cleanPlayerName` to better deal with empty names, and better detect invisible characters
     - [x] apply `cleanPlayerName` to the ingame menu playerlist
@@ -64,7 +64,7 @@ Legend:
     - [x] improve crash sorting
         - change logic of backend to sort by count by default
         - then on the frontend if it's `crashesSortByReason`, then array.slice.sort(...)
-        - copy the sort code from [](/core/components/StatsManager/statsUtils.ts#L87)
+        - copy the sort code from [](/core/modules/StatsManager/statsUtils.ts#L87)
     - [x] adapt code to track resource drops + adjust categories according to the new ones
         - [x] server shutting down should not be counted
         - [x] add migration for `user-initiated`, `server-initiated` and `resources[]`
@@ -93,14 +93,14 @@ Legend:
         - [?] don't clear svg on render, use d3 joins
     - StatsManager.svRuntime:
         - [?] write log optimizer and remove the webroute 30h filter
-            - [ref](/core/components/StatsManager/svRuntime/config.ts#L33)
+            - [ref](/core/modules/StatsManager/svRuntime/config.ts#L33)
             - maybe use rounded/aligned times?
             - check how this code works `d3.timeHours(new Date(1715741829000), new Date())[0]`
     - thread perf chart:
         - [?] add the good/bad markers?
         - [?] fix getMinTickIntervalMarker behavior when 0.2
             - maybe just check if it's the hardcoded or color everything blue
-            - [ref](/core/components/WebServer/wsRooms/dashboard.ts#L26)
+            - [ref](/core/modules/WebServer/wsRooms/dashboard.ts#L26)
         - [?] color should change correctly at the min interval marker point
         - [?] change the bg color to the color of the average ticket with heavy transparency?
 
@@ -153,14 +153,14 @@ Legend:
 - [x] feat(panel): add player/action modal ref to url search param
 - [x] buffer fxserver lrstream for 5 seconds before stripping colors
 - [x] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
-    - [ref](/core/components/AdminVault/index.js#L289)
+    - [ref](/core/modules/AdminVault/index.js#L289)
 - [x] check cicd stuff on testing repo before release
 - [x] feat(core): added new permission for server log
 - [x] fix(menu): fixed-ish ragdolling and damage when leaving noclip
 - [x] fix(menu): improved fps drop when using noclip and added sound
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
-    - right now the `mutex#netid` is being calculated on [logger](/core/components/Logger/handlers/server.js#L148)
+    - right now the `mutex#netid` is being calculated on [logger](/core/modules/Logger/handlers/server.js#L148)
     - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
     - increase mutex to 6 digits?
     - `/^(?<mutex>\w{5})#(?<netid>\d{1,6})(?:r(?<rollover>\d{1,3}))?$/`
@@ -180,6 +180,10 @@ Legend:
     - same for getting process load, instead of fixing the wmic issue
 
 
+FIXME: TODO: announce with mockups de mudanças do kick/timeout pra entrarem no banco
+
+
+
 ## Tentative Database Changes
 - [ ] migration to change "revocation" to optional
     - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
@@ -195,6 +199,29 @@ Legend:
 - when sending initial data, send also the number of bytes that have been wiped
 - upon "clear", panel saves to session storage the mutex, the bytes from item above + bytes received
 - use the data above to wipe data udner the offset when joining the session
+
+
+
+
+
+
+index.js que inicia o deployer headless
+mover pra core/deployer
+deployer iniciado pelo TxAdmin ao invés de settings
+status da instancia (booting, noMaster, setup, deployer, ready) calculado pelo TxAdmin
+
+index.js que resolve as configs
+e tentar instanciar todos os modulos antes de instanciar TxAdmin
+
+
+
+
+
+
+
+
+
+
 
 
 This worked, no time to check which. 
@@ -242,7 +269,7 @@ TxModules.xxx
 
 Refactor:
 - core/components -> core/modules
-    - `git mv -k -n core/components/* core/modules/`
+    - `git mv -k -n core/modules/* core/modules/`
 - core/webroutes -> core/routes
     - `git mv -k -n core/webroutes/* core/routes/`
 - core/types/global.d.ts -> core/global.d.ts

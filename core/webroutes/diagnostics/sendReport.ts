@@ -7,7 +7,7 @@ import { redactApiKeys } from '@core/extras/helpers';
 import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@core/extras/serverDataScanner.js';
 import MemCache from '@extras/MemCache';
 import consoleFactory, { getLogBuffer } from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Consts & Helpers

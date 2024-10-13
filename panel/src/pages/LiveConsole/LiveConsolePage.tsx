@@ -29,7 +29,7 @@ const keyDebounceTime = 150; //ms
 //Yoinked from the internet, no good source
 const rtlRangeRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]{3,}/; //ignoring anything less than 3 characters
 
-//Yoinked from core/components/Logger/FXServerLogger/index.ts
+//Yoinked from core/modules/Logger/FXServerLogger/index.ts
 const regexControls = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F]|(?:\x1B\[|\x9B)[\d;]+[@-K]/g;
 const regexColors = /\x1B[^m]*?m/g;
 const cleanTermOutput = (data: string) => {

@@ -1,5 +1,5 @@
 import { getLogBuffer } from '@extras/console';
-import type { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import type { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import type { GenericApiErrorResp } from '@shared/genericApiTypes';
 
 

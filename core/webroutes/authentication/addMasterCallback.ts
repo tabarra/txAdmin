@@ -1,5 +1,5 @@
 const modulename = 'WebServer:AuthAddMasterCallback';
-import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
+import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 import { getIdFromOauthNameid } from '@extras/helpers';
 import { ApiAddMasterCallbackResp } from '@shared/authApiTypes';

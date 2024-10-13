@@ -1,12 +1,12 @@
 const modulename = 'Player';
-import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
+import PlayerDatabase from '@modules/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
-import { DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@core/components/PlayerDatabase/databaseTypes';
+import { DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@modules/PlayerDatabase/databaseTypes';
 import { cloneDeep, union } from 'lodash-es';
 import { parsePlayerIds, now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
 import consts from '@shared/consts';
-import PlayerlistManager from '@core/components/PlayerlistManager';
+import PlayerlistManager from '@modules/PlayerlistManager';
 const console = consoleFactory(modulename);
 
 

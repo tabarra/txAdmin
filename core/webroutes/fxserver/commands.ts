@@ -1,5 +1,5 @@
 const modulename = 'WebServer:FXServerCommands';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 import { ApiToastResp } from '@shared/genericApiTypes';
 const console = consoleFactory(modulename);

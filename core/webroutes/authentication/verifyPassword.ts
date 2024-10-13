@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AuthVerifyPassword';
-import { AuthedAdmin, PassSessAuthType } from '@core/components/WebServer/authLogic';
-import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedAdmin, PassSessAuthType } from '@modules/WebServer/authLogic';
+import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 import { txEnv } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import { ApiVerifyPasswordResp, ReactAuthDataType } from '@shared/authApiTypes';

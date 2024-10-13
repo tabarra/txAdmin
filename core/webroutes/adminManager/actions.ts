@@ -4,7 +4,7 @@ import dict49 from 'nanoid-dictionary/nolookalikes';
 import got from '@core/extras/got.js';
 import consts from '@shared/consts';
 import consoleFactory from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helpers

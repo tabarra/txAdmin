@@ -1,5 +1,5 @@
 const modulename = 'WebServer:AuthAddMasterPin';
-import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
+import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 import { ApiOauthRedirectResp } from '@shared/authApiTypes';
 import { z } from 'zod';

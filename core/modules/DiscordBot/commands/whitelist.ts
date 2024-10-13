@@ -2,7 +2,7 @@ const modulename = 'DiscordBot:cmd:whitelist';
 import { CommandInteraction as ChatInputCommandInteraction, CommandInteraction, CommandInteractionOptionResolver, ImageURLOptions } from 'discord.js';
 import TxAdmin from '@core/txAdmin';
 import { now } from '@core/extras/helpers';
-import { DuplicateKeyError } from '@core/components/PlayerDatabase';
+import { DuplicateKeyError } from '@modules/PlayerDatabase';
 import { embedder, ensurePermission, logDiscordAdminAction } from '../discordHelpers';
 import consoleFactory from '@extras/console';
 const console = consoleFactory(modulename);

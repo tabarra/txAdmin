@@ -7,7 +7,7 @@ import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType, Data
 import { cloneDeep } from 'lodash-es';
 import { now } from '@core/extras/helpers';
 import consoleFactory from '@extras/console';
-import { MultipleCounter } from '@core/components/StatsManager/statsUtils';
+import { MultipleCounter } from '@modules/StatsManager/statsUtils';
 const console = consoleFactory(modulename);
 
 

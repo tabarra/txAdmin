@@ -1,7 +1,7 @@
 const modulename = 'WebServer:AuthProviderCallback';
 import consoleFactory from '@extras/console';
-import { InitializedCtx } from '@core/components/WebServer/ctxTypes';
-import { AuthedAdmin, CfxreSessAuthType } from '@core/components/WebServer/authLogic';
+import { InitializedCtx } from '@modules/WebServer/ctxTypes';
+import { AuthedAdmin, CfxreSessAuthType } from '@modules/WebServer/authLogic';
 import { z } from 'zod';
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackResp, ReactAuthDataType } from '@shared/authApiTypes';
 import { handleOauthCallback } from './oauthMethods';

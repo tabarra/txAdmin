@@ -1,12 +1,12 @@
 const modulename = 'WebServer:WhitelistActions';
 import { GenericApiResp } from '@shared/genericApiTypes';
-import PlayerDatabase, { DuplicateKeyError } from '@core/components/PlayerDatabase';
+import PlayerDatabase, { DuplicateKeyError } from '@modules/PlayerDatabase';
 import { now, parsePlayerId } from '@core/extras/helpers';
-import DiscordBot from '@core/components/DiscordBot';
-import { DatabaseWhitelistRequestsType } from '@core/components/PlayerDatabase/databaseTypes';
-import FXRunner from '@core/components/FxRunner';
+import DiscordBot from '@modules/DiscordBot';
+import { DatabaseWhitelistRequestsType } from '@modules/PlayerDatabase/databaseTypes';
+import FXRunner from '@modules/FxRunner';
 import consoleFactory from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helper functions

@@ -1,5 +1,5 @@
 const modulename = 'WebServer:DevDebug';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { convars } from '@core/globalData';
 import consoleFactory from '@extras/console';
 import { z } from 'zod';

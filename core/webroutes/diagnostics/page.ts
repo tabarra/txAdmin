@@ -1,5 +1,5 @@
 const modulename = 'WebServer:Diagnostics';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import MemCache from '@extras/MemCache';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
 import consoleFactory from '@extras/console';

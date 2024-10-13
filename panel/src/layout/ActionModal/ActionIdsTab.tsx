@@ -2,7 +2,7 @@ import { txToast } from "@/components/TxToaster";
 import { cn, copyToClipboard } from "@/lib/utils";
 import { CopyIcon } from "lucide-react";
 import { useState } from "react";
-import { DatabaseActionType } from "../../../../core/components/PlayerDatabase/databaseTypes";
+import { DatabaseActionType } from "../../../../core/modules/PlayerDatabase/databaseTypes";
 
 
 type IdsBlockProps = {

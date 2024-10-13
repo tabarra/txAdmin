@@ -1,6 +1,6 @@
-import FXRunner from "@core/components/FxRunner/index.js";
-import PlayerDatabase from "@core/components/PlayerDatabase/index.js";
-import PlayerlistManager from "@core/components/PlayerlistManager/index.js";
+import FXRunner from "@modules/FxRunner/index.js";
+import PlayerDatabase from "@modules/PlayerDatabase/index.js";
+import PlayerlistManager from "@modules/PlayerlistManager/index.js";
 import { DatabasePlayer, ServerPlayer } from "./playerClasses.js"
 
 

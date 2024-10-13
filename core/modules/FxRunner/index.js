@@ -13,7 +13,7 @@ import Fd3Handler from './fd3Handler';
 import { customAlphabet } from 'nanoid/non-secure';
 import dict49 from 'nanoid-dictionary/nolookalikes';
 import consoleFactory from '@extras/console';
-import { ConsoleLineType } from '@core/components/Logger/FXServerLogger';
+import { ConsoleLineType } from '@modules/Logger/FXServerLogger';
 const console = consoleFactory(modulename);
 const genMutex = customAlphabet(dict49, 5);
 

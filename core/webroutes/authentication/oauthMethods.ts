@@ -1,11 +1,11 @@
 
 const modulename = 'WebServer:OauthMethods';
-import { InitializedCtx } from "@core/components/WebServer/ctxTypes";
-import { ValidSessionType } from "@core/components/WebServer/middlewares/sessionMws";
+import { InitializedCtx } from "@modules/WebServer/ctxTypes";
+import { ValidSessionType } from "@modules/WebServer/middlewares/sessionMws";
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackResp } from "@shared/authApiTypes";
 import { randomUUID } from "crypto";
 import consoleFactory from '@extras/console';
-import { UserInfoType } from "@core/components/AdminVault/providers/CitizenFX";
+import { UserInfoType } from "@modules/AdminVault/providers/CitizenFX";
 const console = consoleFactory(modulename);
 
 

@@ -5,9 +5,9 @@ import slash from 'slash';
 import { jsonrepair } from 'jsonrepair';
 import { parseSchedule, anyUndefined } from '@core/extras/helpers';
 import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
-import { generateStatusMessage } from '@core/components/DiscordBot/commands/status';
+import { generateStatusMessage } from '@modules/DiscordBot/commands/status';
 import consoleFactory from '@extras/console';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 

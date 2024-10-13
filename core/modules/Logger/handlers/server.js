@@ -1,6 +1,6 @@
 /* eslint-disable padded-blocks */
 const modulename = 'Logger:Server';
-import { QuantileArray, estimateArrayJsonSize } from '@core/components/StatsManager/statsUtils';
+import { QuantileArray, estimateArrayJsonSize } from '@modules/StatsManager/statsUtils';
 import { LoggerBase } from '../LoggerBase';
 import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@extras/console';

@@ -1,5 +1,5 @@
 const modulename = 'WebServer:AuthGetIdentifiers';
-import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@extras/console';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
