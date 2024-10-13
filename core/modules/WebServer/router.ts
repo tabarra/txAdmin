@@ -2,7 +2,7 @@ import { convars } from '@core/globalData';
 import Router from '@koa/router';
 import KoaRateLimit from 'koa-ratelimit';
 
-import * as webRoutes from '@routes/index';
+import * as routes from '@routes/index';
 import { apiAuthMw, intercomAuthMw, webAuthMw } from './middlewares/authMws';
 import { WebServerConfigType } from '.';
 
@@ -29,68 +29,68 @@ export default (config: WebServerConfigType) => {
     });
 
     //Rendered Pages
-    router.get('/legacy/adminManager', webAuthMw, webRoutes.adminManager_page);
-    router.get('/legacy/advanced', webAuthMw, webRoutes.advanced_page);
-    router.get('/legacy/cfgEditor', webAuthMw, webRoutes.cfgEditor_page);
-    router.get('/legacy/diagnostics', webAuthMw, webRoutes.diagnostics_page);
-    router.get('/legacy/masterActions', webAuthMw, webRoutes.masterActions_page);
-    router.get('/legacy/resources', webAuthMw, webRoutes.resources);
-    router.get('/legacy/serverLog', webAuthMw, webRoutes.serverLog);
-    router.get('/legacy/settings', webAuthMw, webRoutes.settings_page);
-    router.get('/legacy/whitelist', webAuthMw, webRoutes.whitelist_page);
-    router.get('/legacy/setup', webAuthMw, webRoutes.setup_get);
-    router.get('/legacy/deployer', webAuthMw, webRoutes.deployer_stepper);
+    router.get('/legacy/adminManager', webAuthMw, routes.adminManager_page);
+    router.get('/legacy/advanced', webAuthMw, routes.advanced_page);
+    router.get('/legacy/cfgEditor', webAuthMw, routes.cfgEditor_page);
+    router.get('/legacy/diagnostics', webAuthMw, routes.diagnostics_page);
+    router.get('/legacy/masterActions', webAuthMw, routes.masterActions_page);
+    router.get('/legacy/resources', webAuthMw, routes.resources);
+    router.get('/legacy/serverLog', webAuthMw, routes.serverLog);
+    router.get('/legacy/settings', webAuthMw, routes.settings_page);
+    router.get('/legacy/whitelist', webAuthMw, routes.whitelist_page);
+    router.get('/legacy/setup', webAuthMw, routes.setup_get);
+    router.get('/legacy/deployer', webAuthMw, routes.deployer_stepper);
 
     //Authentication
-    router.get('/auth/self', apiAuthMw, webRoutes.auth_self);
-    router.post('/auth/password', authLimiter, webRoutes.auth_verifyPassword);
-    router.post('/auth/logout', authLimiter, webRoutes.auth_logout);
-    router.post('/auth/addMaster/pin', authLimiter, webRoutes.auth_addMasterPin);
-    router.post('/auth/addMaster/callback', authLimiter, webRoutes.auth_addMasterCallback);
-    router.post('/auth/addMaster/save', authLimiter, webRoutes.auth_addMasterSave);
-    router.get('/auth/cfxre/redirect', authLimiter, webRoutes.auth_providerRedirect);
-    router.post('/auth/cfxre/callback', authLimiter, webRoutes.auth_providerCallback);
-    router.post('/auth/changePassword', apiAuthMw, webRoutes.auth_changePassword);
-    router.get('/auth/getIdentifiers', apiAuthMw, webRoutes.auth_getIdentifiers);
-    router.post('/auth/changeIdentifiers', apiAuthMw, webRoutes.auth_changeIdentifiers);
+    router.get('/auth/self', apiAuthMw, routes.auth_self);
+    router.post('/auth/password', authLimiter, routes.auth_verifyPassword);
+    router.post('/auth/logout', authLimiter, routes.auth_logout);
+    router.post('/auth/addMaster/pin', authLimiter, routes.auth_addMasterPin);
+    router.post('/auth/addMaster/callback', authLimiter, routes.auth_addMasterCallback);
+    router.post('/auth/addMaster/save', authLimiter, routes.auth_addMasterSave);
+    router.get('/auth/cfxre/redirect', authLimiter, routes.auth_providerRedirect);
+    router.post('/auth/cfxre/callback', authLimiter, routes.auth_providerCallback);
+    router.post('/auth/changePassword', apiAuthMw, routes.auth_changePassword);
+    router.get('/auth/getIdentifiers', apiAuthMw, routes.auth_getIdentifiers);
+    router.post('/auth/changeIdentifiers', apiAuthMw, routes.auth_changeIdentifiers);
 
     //Admin Manager
-    router.post('/adminManager/getModal/:modalType', webAuthMw, webRoutes.adminManager_getModal);
-    router.post('/adminManager/:action', apiAuthMw, webRoutes.adminManager_actions);
+    router.post('/adminManager/getModal/:modalType', webAuthMw, routes.adminManager_getModal);
+    router.post('/adminManager/:action', apiAuthMw, routes.adminManager_actions);
 
     //Settings
-    router.post('/setup/:action', apiAuthMw, webRoutes.setup_post);
-    router.get('/deployer/status', apiAuthMw, webRoutes.deployer_status);
-    router.post('/deployer/recipe/:action', apiAuthMw, webRoutes.deployer_actions);
-    router.post('/settings/save/:scope', apiAuthMw, webRoutes.settings_save);
-    router.get('/settings/banTemplates', apiAuthMw, webRoutes.settings_getBanTemplates);
-    router.post('/settings/banTemplates', apiAuthMw, webRoutes.settings_saveBanTemplates);
+    router.post('/setup/:action', apiAuthMw, routes.setup_post);
+    router.get('/deployer/status', apiAuthMw, routes.deployer_status);
+    router.post('/deployer/recipe/:action', apiAuthMw, routes.deployer_actions);
+    router.post('/settings/save/:scope', apiAuthMw, routes.settings_save);
+    router.get('/settings/banTemplates', apiAuthMw, routes.settings_getBanTemplates);
+    router.post('/settings/banTemplates', apiAuthMw, routes.settings_saveBanTemplates);
 
     //Master Actions
-    router.get('/masterActions/backupDatabase', webAuthMw, webRoutes.masterActions_getBackup);
-    router.post('/masterActions/:action', apiAuthMw, webRoutes.masterActions_actions);
+    router.get('/masterActions/backupDatabase', webAuthMw, routes.masterActions_getBackup);
+    router.post('/masterActions/:action', apiAuthMw, routes.masterActions_actions);
 
     //FXServer
-    router.post('/fxserver/controls', apiAuthMw, webRoutes.fxserver_controls);
-    router.post('/fxserver/commands', apiAuthMw, webRoutes.fxserver_commands);
-    router.get('/fxserver/downloadLog', webAuthMw, webRoutes.fxserver_downloadLog);
-    router.post('/fxserver/schedule', apiAuthMw, webRoutes.fxserver_schedule);
+    router.post('/fxserver/controls', apiAuthMw, routes.fxserver_controls);
+    router.post('/fxserver/commands', apiAuthMw, routes.fxserver_commands);
+    router.get('/fxserver/downloadLog', webAuthMw, routes.fxserver_downloadLog);
+    router.post('/fxserver/schedule', apiAuthMw, routes.fxserver_schedule);
 
     //CFG Editor
-    router.post('/cfgEditor/save', apiAuthMw, webRoutes.cfgEditor_save);
+    router.post('/cfgEditor/save', apiAuthMw, routes.cfgEditor_save);
 
     //Control routes
-    router.post('/intercom/:scope', intercomAuthMw, webRoutes.intercom);
+    router.post('/intercom/:scope', intercomAuthMw, routes.intercom);
 
     //Diagnostic routes
-    router.post('/diagnostics/sendReport', apiAuthMw, webRoutes.diagnostics_sendReport);
-    router.post('/advanced', apiAuthMw, webRoutes.advanced_actions);
+    router.post('/diagnostics/sendReport', apiAuthMw, routes.diagnostics_sendReport);
+    router.post('/advanced', apiAuthMw, routes.advanced_actions);
 
     //Data routes
-    router.get('/serverLog/partial', apiAuthMw, webRoutes.serverLogPartial);
-    router.get('/systemLog/:scope', apiAuthMw, webRoutes.systemLogs);
-    router.get('/perfChartData/:thread', apiAuthMw, webRoutes.perfChart);
-    router.get('/playerDropsData', apiAuthMw, webRoutes.playerDrops);
+    router.get('/serverLog/partial', apiAuthMw, routes.serverLogPartial);
+    router.get('/systemLog/:scope', apiAuthMw, routes.systemLogs);
+    router.get('/perfChartData/:thread', apiAuthMw, routes.perfChart);
+    router.get('/playerDropsData', apiAuthMw, routes.playerDrops);
 
     /*
         FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
@@ -101,24 +101,24 @@ export default (config: WebServerConfigType) => {
     */
 
     //History routes
-    router.get('/history/stats', apiAuthMw, webRoutes.history_stats);
-    router.get('/history/search', apiAuthMw, webRoutes.history_search);
-    router.get('/history/action', apiAuthMw, webRoutes.history_actionModal);
-    router.post('/history/:action', apiAuthMw, webRoutes.history_actions);
+    router.get('/history/stats', apiAuthMw, routes.history_stats);
+    router.get('/history/search', apiAuthMw, routes.history_search);
+    router.get('/history/action', apiAuthMw, routes.history_actionModal);
+    router.post('/history/:action', apiAuthMw, routes.history_actions);
 
     //Player routes
-    router.get('/player', apiAuthMw, webRoutes.player_modal);
-    router.get('/player/stats', apiAuthMw, webRoutes.player_stats);
-    router.get('/player/search', apiAuthMw, webRoutes.player_search);
-    router.post('/player/checkJoin', intercomAuthMw, webRoutes.player_checkJoin);
-    router.post('/player/:action', apiAuthMw, webRoutes.player_actions);
-    router.get('/whitelist/:table', apiAuthMw, webRoutes.whitelist_list);
-    router.post('/whitelist/:table/:action', apiAuthMw, webRoutes.whitelist_actions);
+    router.get('/player', apiAuthMw, routes.player_modal);
+    router.get('/player/stats', apiAuthMw, routes.player_stats);
+    router.get('/player/search', apiAuthMw, routes.player_search);
+    router.post('/player/checkJoin', intercomAuthMw, routes.player_checkJoin);
+    router.post('/player/:action', apiAuthMw, routes.player_actions);
+    router.get('/whitelist/:table', apiAuthMw, routes.whitelist_list);
+    router.post('/whitelist/:table/:action', apiAuthMw, routes.whitelist_actions);
 
     //DevDebug routes - no auth
     if (convars.isDevMode) {
-        router.get('/dev/:scope', webRoutes.dev_get);
-        router.post('/dev/:scope', webRoutes.dev_post);
+        router.get('/dev/:scope', routes.dev_get);
+        router.post('/dev/:scope', routes.dev_post);
     };
 
     //Insights page mock
