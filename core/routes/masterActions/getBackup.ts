@@ -1,7 +1,7 @@
 const modulename = 'WebServer:MasterActions:GetBackup';
 import fsp from 'node:fs/promises';
 import dateFormat from 'dateformat';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

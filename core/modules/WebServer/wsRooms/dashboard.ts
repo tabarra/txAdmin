@@ -1,7 +1,7 @@
 const modulename = 'SocketRoom:Status';
 import TxAdmin from "@core/txAdmin";
 import { RoomType } from "../webSocket";
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { DashboardDataEventType } from "@shared/socketioTypes";
 const console = consoleFactory(modulename);
 

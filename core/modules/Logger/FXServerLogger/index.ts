@@ -2,7 +2,7 @@ const modulename = 'Logger:FXServer';
 import bytes from 'bytes';
 import rfs from 'rotating-file-stream';
 import { getLogDivider } from '../loggerUtils.js';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console.js';
 import { LoggerBase } from '../LoggerBase.js';
 import TxAdmin from '@core/txAdmin.js';
 import ConsoleTransformer from './ConsoleTransformer.js';

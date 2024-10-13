@@ -2,7 +2,7 @@ const modulename = 'Monitor:HostStatus';
 import os from 'node:os';
 import si from 'systeminformation';
 import { txEnv } from '@core/globalData';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 //Const -hopefully

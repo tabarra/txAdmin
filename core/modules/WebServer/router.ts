@@ -4,7 +4,7 @@ import KoaRateLimit from 'koa-ratelimit';
 
 import * as routes from '@routes/index';
 import { apiAuthMw, intercomAuthMw, webAuthMw } from './middlewares/authMws';
-import { WebServerConfigType } from '.';
+import { WebServerConfigType } from './index';
 
 
 /**

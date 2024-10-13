@@ -1,5 +1,5 @@
 import type { PlayerIdsObjectType } from "@shared/otherTypes";
-import consts from "../../shared/consts";
+import consts from "@shared/consts";
 
 /**
  * txAdmin in ASCII

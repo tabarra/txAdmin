@@ -4,10 +4,10 @@ import playerResolver from '@core/playerLogic/playerResolver';
 import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData } from '@shared/playerApiTypes';
 import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
 import { ServerPlayer } from '@core/playerLogic/playerClasses';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import { now } from '@extras/helpers';
-import { getBanTemplatesImpl } from '../banTemplates/getBanTemplates';
+import { now } from '@logic/helpers';
+import { getBanTemplatesImpl } from '@routes/banTemplates/getBanTemplates';
 const console = consoleFactory(modulename);
 
 //Helpers

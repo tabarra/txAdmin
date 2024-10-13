@@ -7,8 +7,8 @@ import stream from 'node:stream';
 import StreamZip from 'node-stream-zip';
 import { cloneDeep, escapeRegExp }  from 'lodash-es';
 import mysql from 'mysql2/promise';
-import got from '@core/extras/got.js';
-import consoleFactory from '@extras/console';
+import got from '@utils/got.js';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 

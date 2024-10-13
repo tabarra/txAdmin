@@ -5,7 +5,7 @@ import { AdsDataType, InjectedTxConsts, ThemeType } from '@shared/otherTypes';
 import { txEnv, convars } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { AuthedAdminType, checkRequestAuth } from "./authLogic";
 const console = consoleFactory(modulename);
 
@@ -114,9 +114,9 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     const injectedConsts = {
         //env
         fxsVersion: displayFxserverVersion,
-        fxsOutdated: ctx.txAdmin.updateChecker.fxsUpdateData,
+        fxsOutdated: ctx.txAdmin.cfxUpdateChecker.fxsUpdateData,
         txaVersion: txEnv.txAdminVersion,
-        txaOutdated: ctx.txAdmin.updateChecker.txaUpdateData,
+        txaOutdated: ctx.txAdmin.cfxUpdateChecker.txaUpdateData,
         serverTimezone,
         isZapHosting: convars.isZapHosting, //not in use
         isPterodactyl: convars.isPterodactyl, //not in use

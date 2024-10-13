@@ -1,6 +1,6 @@
 const modulename = 'WebServer:TopLevelMw';
 import { txEnv } from '@core/globalData';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 import { Next } from "koa";
 import { RawKoaCtx } from '../ctxTypes';

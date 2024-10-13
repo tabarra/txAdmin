@@ -2,8 +2,8 @@ const modulename = 'PlayerlistManager';
 import { cloneDeep } from 'lodash-es';
 import TxAdmin from '@core/txAdmin.js';
 import { ServerPlayer } from '@core/playerLogic/playerClasses.js';
-import { DatabaseActionWarnType, DatabasePlayerType } from '../PlayerDatabase/databaseTypes';
-import consoleFactory from '@extras/console';
+import { DatabaseActionWarnType, DatabasePlayerType } from '@modules/PlayerDatabase/databaseTypes';
+import consoleFactory from '@logic/console';
 import { PlayerDroppedEventType, PlayerJoiningEventType } from '@shared/socketioTypes';
 const console = consoleFactory(modulename);
 

@@ -17,7 +17,7 @@ import dict49 from 'nanoid-dictionary/nolookalikes';
 
 import { convars, txEnv } from '@core/globalData';
 import router from './router';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import TxAdmin from '@core/txAdmin';
 import topLevelMw from './middlewares/topLevelMw';
 import ctxVarsMw from './middlewares/ctxVarsMw';

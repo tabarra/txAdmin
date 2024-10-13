@@ -5,8 +5,8 @@ import { genActionID, genWhitelistRequestID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
 import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from './databaseTypes';
 import { cloneDeep } from 'lodash-es';
-import { now } from '@core/extras/helpers';
-import consoleFactory from '@extras/console';
+import { now } from '@logic/helpers';
+import consoleFactory from '@logic/console';
 import { MultipleCounter } from '@modules/StatsManager/statsUtils';
 const console = consoleFactory(modulename);
 

@@ -1,4 +1,4 @@
-import '@extras/testEnv';
+import '@utils/testEnv';
 import { expect, it, suite } from 'vitest';
 import { diffPerfs, didPerfReset } from './perfUtils';
 

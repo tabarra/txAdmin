@@ -183,6 +183,16 @@ Legend:
 FIXME: TODO: announce with mockups de mudanças do kick/timeout pra entrarem no banco
 
 
+## v8
+- testing
+    - improve and use `list-dependencies.js` as part of the test workflow
+- drop usage of `const console = consoleFactory(modulename);`
+    - instead do `const console = console.scope('xxxx')`
+    - bonus point if it can backtrack the stack or file path to add the context automatically
+- Consider using Blob
+    - https://developer.mozilla.org/en-US/docs/Web/API/Blob
+    - https://chatgpt.com/c/670bf1f6-8ee4-8001-a731-3a219266d4c1
+
 
 ## Tentative Database Changes
 - [ ] migration to change "revocation" to optional
@@ -268,42 +278,39 @@ TxModules.xxx
 > try https://marketplace.visualstudio.com/items?itemName=ambooth.git-rename
 
 Refactor:
-- core/components -> core/modules
-    - `git mv -k -n core/modules/* core/modules/`
-- core/webroutes -> core/routes
-    - `git mv -k -n core/webroutes/* core/routes/`
-- core/types/global.d.ts -> core/global.d.ts
-    - `git mv -k -n core/types/global.d.ts core/global.d.ts`
-- UpdateChecker -> CfxUpdateChecker
-    - `git mv -k -n core/modules/UpdateChecker.ts core/modules/CfxUpdateChecker.ts`
-    - F2 rename class
-    - change all references
-- remove core/playerLogic & core/extra
-- core/utils:
+- [x] core/components -> core/modules
+- [x] core/webroutes -> core/routes
+- [x] core/types/global.d.ts -> core/global.d.ts
+- [x] UpdateChecker -> CfxUpdateChecker
+
+- [ ] core/utils:
     - fxsVersionParser.ts
     - getOsDistro.js
     - got.js
-    - helpers.ts (split)
+    - helpers.ts (split) TODO
     - isIpAddressLocal.ts
     - MemCache.ts
     - pidUsageTree.js
     - testEnv.ts
     - xss.js
-- core/logic
+- [ ] core/logic
     - banner.js
     - checkPreRelease.ts
     - console.ts
-    - deployer.js
+    - deployer.js TODO
     - fxsConfigHelper.ts
     - playerClasses.ts
     - playerFinder.ts
     - playerResolver.ts
-    - recipeEngine.js
+    - recipeEngine.js TODO
     - serverDataScanner.ts
     - setupProfile.js
-- routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
-- panel/src/lib/utils.ts - split all time humanization into a separate file
+- [x] remove core/extra
+- [ ] remove core/playerLogic
+- [ ] routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
+- [ ] panel/src/lib/utils.ts - split all time humanization into a separate file
 
+- [ ] `.git-blame-ignore-revs`?
 
 class AuthedAdmin extends StoredAdmin
 
@@ -441,6 +448,8 @@ configVault.setConfigValue('xxxxx.y', 123);
     - [ ] fix the eslint config + tailwind sort
         - [alternative](https://biomejs.dev/linter/rules/use-sorted-classes/)
         - search the notes below for "dprint" and "prettier"
+        - check how the typescript repo uses dprint
+        - use `.git-blame-ignore-revs`
     - [ ] build: generate fxmanifest files list dynamically
         - node 22 use fs.glob
     - [ ] fix remaining imgur links
@@ -640,7 +649,6 @@ z-50    shadcn: TooltipContent - doesnt go over the terminal?!
 
 ## Next Up
 - After Node 22:
-    - change the gh workflows to use node 22 as well
     - check all `.npm-upgrade.json` for packages that can now be updated
     - Use `/^\p{RGI_Emoji}$/v` to detect emojis 
         - ref: https://v8.dev/features/regexp-v-flag
@@ -648,6 +656,7 @@ z-50    shadcn: TooltipContent - doesnt go over the terminal?!
         - update cleanPlayerNames
     - it will support native bindings, so this might work:
         - https://www.npmjs.com/package/fd-lock
+    - change deployer and some other path manipulations to use `path.matchesGlob`
 
 - [ ] Playerlist: implement basic tag system with filters, sorting and Fuse.js
     - the filter dropdown is written already, check `panel/src/layout/playerlistSidebar/Playerlist.tsx`

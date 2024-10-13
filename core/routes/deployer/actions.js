@@ -5,8 +5,8 @@ import slash from 'slash';
 import mysql from 'mysql2/promise';
 import consts from '@shared/consts';
 import { txEnv, convars } from '@core/globalData';
-import { validateModifyServerConfig } from '../../extras/fxsConfigHelper';
-import consoleFactory from '@extras/console';
+import { validateModifyServerConfig } from '@logic/fxsConfigHelper';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

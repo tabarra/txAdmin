@@ -4,11 +4,11 @@ import open from 'open';
 import { shuffle } from 'd3-array';
 import { z } from 'zod';
 
-import got from '@core/extras/got.js';
-import getOsDistro from '@core/extras/getOsDistro.js';
+import got from '@utils/got.js';
+import getOsDistro from '@utils/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
-import consoleFactory from '@extras/console';
-import { addLocalIpAddress } from './isIpAddressLocal';
+import consoleFactory from '@logic/console';
+import { addLocalIpAddress } from '@utils/isIpAddressLocal';
 const console = consoleFactory();
 
 

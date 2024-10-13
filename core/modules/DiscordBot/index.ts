@@ -4,7 +4,7 @@ import TxAdmin from '@core/txAdmin';
 import slashCommands from './slash';
 import interactionCreateHandler from './interactionCreateHandler';
 import { generateStatusMessage } from './commands/status';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { embedColors } from './discordHelpers';
 const console = consoleFactory(modulename);
 

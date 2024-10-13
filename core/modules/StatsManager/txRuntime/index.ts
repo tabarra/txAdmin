@@ -1,6 +1,6 @@
 const modulename = 'TxRuntimeStatsManager';
 import * as jose from 'jose';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { MultipleCounter, QuantileArray } from '../statsUtils';
 import { convars } from '@core/globalData';
 import { getHostStaticData } from '@routes/diagnostics/diagnosticsFuncs';

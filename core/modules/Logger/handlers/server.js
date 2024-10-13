@@ -3,7 +3,7 @@ const modulename = 'Logger:Server';
 import { QuantileArray, estimateArrayJsonSize } from '@modules/StatsManager/statsUtils';
 import { LoggerBase } from '../LoggerBase';
 import { getBootDivider } from '../loggerUtils';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import bytes from 'bytes';
 const console = consoleFactory(modulename);
 

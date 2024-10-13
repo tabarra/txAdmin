@@ -1,6 +1,6 @@
 const modulename = 'WebServer:MasterActions:Page';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 /**

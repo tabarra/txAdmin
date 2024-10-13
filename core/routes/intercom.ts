@@ -1,7 +1,7 @@
 const modulename = 'WebServer:Intercom';
 import { cloneDeep }  from 'lodash-es';
 import { txEnv } from '@core/globalData';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

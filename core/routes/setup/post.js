@@ -2,10 +2,10 @@ const modulename = 'WebServer:SetupPost';
 import path from 'node:path';
 import fse from 'fs-extra';
 import slash from 'slash';
-import { Deployer, validateTargetPath, parseValidateRecipe } from '@core/extras/deployer';
-import { validateFixServerConfig, findLikelyCFGPath } from '@core/extras/fxsConfigHelper';
-import got from '@core/extras/got.js';
-import consoleFactory from '@extras/console';
+import { Deployer, validateTargetPath, parseValidateRecipe } from '@logic/deployer';
+import { validateFixServerConfig, findLikelyCFGPath } from '@logic/fxsConfigHelper';
+import got from '@utils/got.js';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

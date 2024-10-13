@@ -4,7 +4,7 @@ import path from 'node:path';
 import chalk from 'chalk';
 import dateFormat from 'dateformat';
 import { getBootDivider } from '../loggerUtils';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { LoggerBase } from '../LoggerBase';
 const console = consoleFactory(modulename);
 

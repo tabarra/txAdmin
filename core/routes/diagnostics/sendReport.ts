@@ -1,12 +1,12 @@
 const modulename = 'WebServer:SendDiagnosticsReport';
-import got from '@core/extras/got';
+import got from '@utils/got';
 import { txEnv } from '@core/globalData';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
-import { redactApiKeys } from '@core/extras/helpers';
-import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@core/extras/serverDataScanner.js';
-import MemCache from '@extras/MemCache';
-import consoleFactory, { getLogBuffer } from '@extras/console';
+import { redactApiKeys } from '@logic/helpers';
+import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@logic/serverDataScanner.js';
+import MemCache from '@utils/MemCache';
+import consoleFactory, { getLogBuffer } from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

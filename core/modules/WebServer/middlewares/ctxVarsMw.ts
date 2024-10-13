@@ -1,11 +1,11 @@
 const modulename = 'WebServer:SetupVarsMw';
 import TxAdmin from '@core/txAdmin';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import consts from '@shared/consts';
 const console = consoleFactory(modulename);
 import { Next } from "koa";
 import { CtxWithSession } from '../ctxTypes';
-import { isIpAddressLocal } from '@extras/isIpAddressLocal';
+import { isIpAddressLocal } from '@utils/isIpAddressLocal';
 
 //The custom tx-related vars set to the ctx
 export type CtxTxVars = {

@@ -1,6 +1,6 @@
 const modulename = 'WebServer:PerfChart';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { SvRtLogFilteredType, SvRtPerfBoundariesType } from '@modules/StatsManager/svRuntime/perfSchemas';
 import { z } from 'zod';
 import { DeepReadonly } from 'utility-types';

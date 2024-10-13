@@ -3,8 +3,8 @@ const modulename = 'WebServer:OauthMethods';
 import { InitializedCtx } from "@modules/WebServer/ctxTypes";
 import { ValidSessionType } from "@modules/WebServer/middlewares/sessionMws";
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackResp } from "@shared/authApiTypes";
-import { randomUUID } from "crypto";
-import consoleFactory from '@extras/console';
+import { randomUUID } from "node:crypto";
+import consoleFactory from '@logic/console';
 import { UserInfoType } from "@modules/AdminVault/providers/CitizenFX";
 const console = consoleFactory(modulename);
 

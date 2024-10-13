@@ -2,8 +2,8 @@ const modulename = 'DBMigration';
 import { genActionID } from './idGenerator.js';
 import cleanPlayerName from '@shared/cleanPlayerName.js';
 import { DATABASE_VERSION, defaultDatabase } from './database.js';
-import { now } from '@core/extras/helpers.js';
-import consoleFactory from '@extras/console';
+import { now } from '@logic/helpers.js';
+import consoleFactory from '@logic/console.js';
 const console = consoleFactory(modulename);
 
 

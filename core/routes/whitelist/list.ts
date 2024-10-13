@@ -2,8 +2,8 @@ const modulename = 'WebServer:WhitelistList';
 import Fuse from "fuse.js";
 import { DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from '@modules/PlayerDatabase/databaseTypes';
 import cleanPlayerName from "@shared/cleanPlayerName";
-import { GenericApiErrorResp } from "@core/../shared/genericApiTypes";
-import consoleFactory from '@extras/console';
+import { GenericApiErrorResp } from "@shared/genericApiTypes";
+import consoleFactory from '@logic/console';
 import { AuthedCtx } from "@modules/WebServer/ctxTypes";
 const console = consoleFactory(modulename);
 

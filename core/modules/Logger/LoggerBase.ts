@@ -4,7 +4,7 @@ import path from 'node:path';
 import dateFormat from 'dateformat';
 import * as rfs from 'rotating-file-stream';
 import { cloneDeep, defaultsDeep } from 'lodash-es';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { getLogSizes, getLogDivider } from './loggerUtils';
 import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);

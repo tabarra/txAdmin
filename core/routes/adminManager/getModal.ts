@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AdminManagerGetModal';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 //Separate permissions in general perms and menu perms, and mark the dangerous ones

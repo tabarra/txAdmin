@@ -1,5 +1,5 @@
 const modulename = 'WebServer:WhitelistPage';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

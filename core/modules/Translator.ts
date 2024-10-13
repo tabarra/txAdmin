@@ -4,7 +4,7 @@ import path from 'node:path';
 import Polyglot from 'node-polyglot';
 import { txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);
 

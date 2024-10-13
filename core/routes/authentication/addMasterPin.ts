@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AuthAddMasterPin';
 import { InitializedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { ApiOauthRedirectResp } from '@shared/authApiTypes';
 import { z } from 'zod';
 import { getOauthRedirectUrl } from './oauthMethods';

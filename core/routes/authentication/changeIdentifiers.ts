@@ -1,10 +1,10 @@
 const modulename = 'WebServer:AuthChangeIdentifiers';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import consts from '@shared/consts';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { z } from 'zod';
-import got from '@core/extras/got.js';
+import got from '@utils/got.js';
 const console = consoleFactory(modulename);
 
 //Helpers 

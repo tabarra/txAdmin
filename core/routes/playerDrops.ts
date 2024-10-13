@@ -1,7 +1,7 @@
 const modulename = 'WebServer:PlayerDrops';
 import { PDLHourlyRawType } from '@modules/StatsManager/playerDrop/playerDropSchemas';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { DeepReadonly } from 'utility-types';
 import { z } from 'zod';
 const console = consoleFactory(modulename);

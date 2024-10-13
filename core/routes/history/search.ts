@@ -1,10 +1,10 @@
 const modulename = 'WebServer:HistorySearch';
 import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
-import { now, parseLaxIdsArrayInput } from '@extras/helpers';
+import { now, parseLaxIdsArrayInput } from '@logic/helpers';
 import { HistoryTableActionType, HistoryTableSearchResp } from '@shared/historyApiTypes';
 import { TimeCounter } from '@modules/StatsManager/statsUtils';
 const console = consoleFactory(modulename);

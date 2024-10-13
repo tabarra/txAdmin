@@ -1,9 +1,9 @@
-const modulename = 'UpdateChecker';
+const modulename = 'CfxUpdateChecker';
 import semver from 'semver';
 import { z } from "zod";
-import got from '@core/extras/got.js';
+import got from '@utils/got.js';
 import { txEnv } from '@core/globalData';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { UpdateDataType } from '@shared/otherTypes';
 import TxAdmin from '@core/txAdmin';
 import { UpdateAvailableEventType } from '@shared/socketioTypes';
@@ -31,7 +31,7 @@ const changelogRespSchema = z.object({
 });
 
 
-export default class UpdateChecker {
+export default class CfxUpdateChecker {
     #txAdmin: TxAdmin;
     txaUpdateData?: UpdateDataType;
     fxsUpdateData?: UpdateDataType;

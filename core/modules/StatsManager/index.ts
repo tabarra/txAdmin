@@ -1,5 +1,5 @@
 const modulename = 'StatsManager';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import type TxAdmin from '@core/txAdmin.js';
 import SvRuntimeStatsManager from './svRuntime';
 import TxRuntimeStatsManager from './txRuntime';

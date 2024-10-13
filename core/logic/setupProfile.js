@@ -2,7 +2,7 @@ const modulename = 'SetupProfile';
 import path from 'node:path';
 import fs from 'fs-extra';
 import chalk from 'chalk';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 

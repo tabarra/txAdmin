@@ -4,8 +4,8 @@ import slash from 'slash';
 
 import { txEnv } from '@core/globalData';
 
-import { printBanner } from '@core/extras/banner';
-import setupProfile from '@core/extras/setupProfile';
+import { printBanner } from '@logic/banner';
+import setupProfile from '@logic/setupProfile';
 
 import AdminVault from '@modules/AdminVault';
 import ConfigVault from '@modules/ConfigVault';
@@ -22,9 +22,9 @@ import ResourcesManager from '@modules/ResourcesManager';
 import PlayerlistManager from '@modules/PlayerlistManager';
 import PlayerDatabase from '@modules/PlayerDatabase';
 import PersistentCache from '@modules/PersistentCache';
-import UpdateChecker from '@modules/UpdateChecker';
+import CfxUpdateChecker from '@modules/CfxUpdateChecker';
 
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { getHostData } from '@routes/diagnostics/diagnosticsFuncs';
 const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
@@ -52,7 +52,7 @@ const globalsInternal: Record<string, any> = {
     playerlistManager: null,
     playerDatabase: null,
     deployer: null,
-    updateChecker: null,
+    cfxUpdateChecker: null,
     info: {},
 
     //FIXME: settings:save webroute cannot call txAdmin.refreshConfig for now
@@ -83,7 +83,7 @@ export default class TxAdmin {
     playerlistManager;
     playerDatabase;
     persistentCache;
-    updateChecker;
+    cfxUpdateChecker;
 
     //Runtime
     readonly info: {
@@ -197,8 +197,8 @@ export default class TxAdmin {
             this.persistentCache = new PersistentCache(this);
             globalsInternal.persistentCache = this.persistentCache;
 
-            this.updateChecker = new UpdateChecker(this);
-            globalsInternal.updateChecker = this.updateChecker;
+            this.cfxUpdateChecker = new CfxUpdateChecker(this);
+            globalsInternal.cfxUpdateChecker = this.cfxUpdateChecker;
         } catch (error) {
             console.error(`Error starting main components:`);
             console.dir(error);

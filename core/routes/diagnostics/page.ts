@@ -1,8 +1,8 @@
 const modulename = 'WebServer:Diagnostics';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import MemCache from '@extras/MemCache';
+import MemCache from '@utils/MemCache';
 import * as diagnosticsFuncs from './diagnosticsFuncs';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 const cache = new MemCache(5);
 

@@ -3,8 +3,8 @@ import humanizeDuration, { Unit } from 'humanize-duration';
 import playerResolver from '@core/playerLogic/playerResolver';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { PlayerClass, ServerPlayer } from '@core/playerLogic/playerClasses';
-import { anyUndefined, calcExpirationFromDuration } from '@core/extras/helpers';
-import consoleFactory from '@extras/console';
+import { anyUndefined, calcExpirationFromDuration } from '@logic/helpers';
+import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

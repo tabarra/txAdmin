@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import slash from 'slash';
 
-import consoleFactory, { setConsoleEnvData } from '@extras/console';
-import { addLocalIpAddress } from '@extras/isIpAddressLocal';
-import { parseFxserverVersion } from '@extras/fxsVersionParser';
+import consoleFactory, { setConsoleEnvData } from '@logic/console';
+import { addLocalIpAddress } from '@utils/isIpAddressLocal';
+import { parseFxserverVersion } from '@utils/fxsVersionParser';
 const console = consoleFactory();
 
 

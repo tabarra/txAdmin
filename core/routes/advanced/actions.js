@@ -1,8 +1,8 @@
 const modulename = 'WebServer:AdvancedActions';
 import v8 from 'node:v8';
 import bytes from 'bytes';
-import got from '@core/extras/got.js';
-import consoleFactory from '@extras/console';
+import got from '@utils/got.js';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 //Helper functions

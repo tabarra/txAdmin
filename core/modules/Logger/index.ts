@@ -4,7 +4,7 @@ import AdminLogger from './handlers/admin';
 import FXServerLogger from './FXServerLogger';
 import ServerLogger from './handlers/server';
 import { getLogSizes } from './loggerUtils.js';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);
 

@@ -5,10 +5,10 @@ import dateFormat from 'dateformat';
 import fse from 'fs-extra';
 import open from 'open';
 import YAML from 'js-yaml';
-import getOsDistro from '@core/extras/getOsDistro.js';
+import getOsDistro from '@utils/getOsDistro.js';
 import { txEnv } from '@core/globalData';
 import recipeEngine from './recipeEngine.js';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console.js';
 const console = consoleFactory(modulename);
 
 

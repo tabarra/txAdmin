@@ -1,5 +1,5 @@
 const modulename = 'IpChecker';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 const extendedAllowedLanIps: string[] = [];

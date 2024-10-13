@@ -3,10 +3,10 @@ import fsp from 'node:fs/promises';
 import path from 'node:path';
 import slash from 'slash';
 import { jsonrepair } from 'jsonrepair';
-import { parseSchedule, anyUndefined } from '@core/extras/helpers';
-import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
+import { parseSchedule, anyUndefined } from '@logic/helpers';
+import { resolveCFGFilePath } from '@logic/fxsConfigHelper';
 import { generateStatusMessage } from '@modules/DiscordBot/commands/status';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

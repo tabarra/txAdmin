@@ -1,12 +1,12 @@
 const modulename = 'DiscordBot:cmd:info';
 import { APIEmbedField, CommandInteraction, EmbedBuilder, EmbedData } from 'discord.js';
 import TxAdmin from '@core/txAdmin';
-import { parsePlayerId } from '@core/extras/helpers';
+import { parsePlayerId } from '@logic/helpers';
 import { embedder } from '../discordHelpers';
 import { findPlayersByIdentifier } from '@core/playerLogic/playerFinder';
 import { txEnv } from '@core/globalData';
 import humanizeDuration from 'humanize-duration';
-import consoleFactory from '@extras/console';
+import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
 
