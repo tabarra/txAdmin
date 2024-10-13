@@ -60,6 +60,10 @@ local function disableRagdollingWhileFall()
         while IsPedFalling(ped) do
             Wait(50)
         end
+
+        -- FIXME: The ped will still ragdoll when it hits the ground,
+        -- but I do not know how to fix this, if you do, please open a PR on GitHub!
+
         Wait(1000)
         SetPedCanRagdoll(ped, initialCanPlayerRagdoll)
         SetEntityInvincible(ped, false)

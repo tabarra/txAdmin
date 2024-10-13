@@ -155,6 +155,9 @@ Legend:
 - [x] fix(core): a `EMFILE: too many open files` error on windows will cause the `admins.json` to reset
     - [ref](/core/components/AdminVault/index.js#L289)
 - [x] check cicd stuff on testing repo before release
+- [x] feat(core): added new permission for server log
+- [x] fix(menu): fixed-ish ragdolling and damage when leaving noclip
+- [x] fix(menu): improved fps drop when using noclip and added sound
 - [?] add `.yarn.installed` to the dist? even in dev
 - [?] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/components/Logger/handlers/server.js#L148)
@@ -225,11 +228,29 @@ class ErrorOnAccess {
 }
 ```
 
+TxGlobal.xxxx
+txGlobal.xxx
+TxGlobal.xxx
+TX.xxx
+TxModules.xxx
+
+- create a TxModuleBase class for all modules to inherit from
+- Constructor: dependencies? ConfigKeys
+- preciso registrar de alguma forma quais keys triggam um "configUpdated(configs: {}, keysChanged: string[])" 
+
+> try https://marketplace.visualstudio.com/items?itemName=ambooth.git-rename
+
 Refactor:
 - core/components -> core/modules
+    - `git mv -k -n core/components/* core/modules/`
 - core/webroutes -> core/routes
+    - `git mv -k -n core/webroutes/* core/routes/`
 - core/types/global.d.ts -> core/global.d.ts
+    - `git mv -k -n core/types/global.d.ts core/global.d.ts`
 - UpdateChecker -> CfxUpdateChecker
+    - `git mv -k -n core/modules/UpdateChecker.ts core/modules/CfxUpdateChecker.ts`
+    - F2 rename class
+    - change all references
 - remove core/playerLogic & core/extra
 - core/utils:
     - fxsVersionParser.ts
@@ -255,6 +276,92 @@ Refactor:
     - setupProfile.js
 - webroutes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
 - panel/src/lib/utils.ts - split all time humanization into a separate file
+
+
+class AuthedAdmin extends StoredAdmin
+
+adminvault:
+- migrar admins.json
+- pra cada admin do admins.json
+- const admin = new StoredAdmin(rawObj)
+
+no middleware:
+storedAdmin.getAuthed(csrfToken): AuthedAdmin
+
+StoredAdmin com métodos pra editar o admin
+
+
+
+type RefreshConfigFunc = (newConfig: any, keysUpdated: string[]) => void
+
+class ConfigVault /*does not extend TxModuleBase*/ {
+    private readonly moduleRefreshCallbacks: {
+        keys: string[],
+        callback: RefreshConfigFunc
+    }[] = [
+        //NOTE: aqui os módulos _deveriam_ estar na ordem em que foram inicializados
+    ];
+    constructor() {}
+    getConfigSaved(key: string) {
+        //TODO: get the value that is saved in the config file
+    }
+    getConfigValue(key: string) {
+        //TODO: get the value that is saved, or default if not saved
+    }
+    setBulkValue(changes: {[key: string]: any}) {
+        //TODO: set multiple values in the config file
+        this.processCallbacks(Object.keys(changes));
+    }
+    setConfigValue(key: string, value: any) {
+        //TODO: set the value in the config file
+        this.processCallbacks([key]);
+    }
+    processCallbacks(updatedKeys: string[]) {
+        for (const txModule of this.moduleRefreshCallbacks) {
+            //TODO: check if keys match, allow wildcards
+            const updatedMatchedKeys = updatedKeys.filter(k => txModule.keys.includes(k));
+            txModule.callback({}, updatedMatchedKeys);
+        }
+    }
+    registerUpdateCallback(keys: string[], callback: RefreshConfigFunc) {
+        this.moduleRefreshCallbacks.push({ keys, callback });
+    }
+}
+const configVault = new ConfigVault();
+
+class TxModuleBase {
+    constructor(configKeys: any) {
+        console.log('TxModuleBase constructor:', configKeys);
+        configVault.registerUpdateCallback(['whatever'], this.refreshConfig.bind(this));
+    }
+    refreshConfig(newConfig: any, keysUpdated: string[]) {
+        throw new Error(`refreshConfig not implemented`);
+    }
+}
+
+class WebServer extends TxModuleBase {
+    static readonly dependencies = ['WebPipe'];
+    static readonly configKeys = [
+        'xxxxx.*',
+        'yyyyy',
+    ];
+    constructor(public runtime: any) {
+        super(WebServer.configKeys);
+        console.log('WebServer constructor:', this.constructor.name);
+    }
+    refreshConfig(newConfig: any, keysUpdated: string[]) {
+        console.ok('passed', keysUpdated, this.runtime);
+    }
+}
+
+new WebServer('runtimexxx');
+console.dir(configVault.moduleRefreshCallbacks);
+configVault.setConfigValue('xxxxx.y', 123);
+
+
+
+
+
 
 
 
@@ -333,12 +440,11 @@ Refactor:
 - [ ] Settings
 - [ ] Master Actions
 - [ ] Diagnostics (TODO:)
-- [x] System Logs (TODO:)
+- [x] System Logs
 
 - [x] Dashboard
 - [x] Live Console
 - [ ] Resources
-    - by default show just the "newly added" resources?
 - [ ] Server Log
 - [ ] CFG Editor
 - [ ] Advanced (TODO:)
@@ -374,9 +480,10 @@ Refactor:
     - filters by default, running, stopped
     - main content will show the resources of the selected folder OR "recently added"
 - v2:
-    - show "recently added" resources
+    - by default show only "recently added" resources
     - each resoruce need to have:
         - warning for outdated, button to update
+        - warning for script errors
         - performance stats
         - option to add/remove from auto boot
         - option to auto restart on change (dev mode)

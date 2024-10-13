@@ -6,7 +6,7 @@ Before starting, please make sure you are familiar with the basics of NodeJS & e
 
 ## Requirements
 - Windows, as the `main-builder.js` doesn't work for other OSs;
-- NodeJS v16.x to match the one in FXServer;
+- NodeJS v22.9 or newer;
 - FXServer;
 
 
@@ -83,7 +83,7 @@ npm run typecheck
 npm run build
 ```
 
-## Note regarding the Web UI
+## Note regarding the Legacy UI
 
 **⚠Warning: The /web/ ui is considered legacy and will be migrated to /panel/.**
 
