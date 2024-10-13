@@ -7,6 +7,7 @@
 -- TODO: they should be upper case
 menuIsAccessible = false
 isMenuVisible = false
+tsLastMenuClose = 0
 menuPermissions = {}
 lastTpCoords = false;
 
@@ -186,6 +187,7 @@ end)
 -- When the escape key is pressed in menu
 RegisterSecureNuiCallback('closeMenu', function(_, cb)
   isMenuVisible = false
+  tsLastMenuClose = GetGameTimer()
   debugPrint('Releasing all NUI Focus')
   SetNuiFocus(false)
   SetNuiFocusKeepInput(false)

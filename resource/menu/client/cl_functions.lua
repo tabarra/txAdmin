@@ -87,6 +87,7 @@ function toggleMenuVisibility(visible)
     if not isMenuVisible then
         SetNuiFocus(false)
         SetNuiFocusKeepInput(false)
+        tsLastMenuClose = GetGameTimer()
     end
     playLibrarySound('enter')
 end

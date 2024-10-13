@@ -9,6 +9,7 @@ if not TX_MENU_ENABLED then return end
 -- Vars
 local pipeReturnCallbacks = {}
 local pipeCallbackCounter = 1
+local menuCloseGracePeriod = 750
 
 ---@class StaticCacheEntry
 ---@field body string
@@ -19,14 +20,24 @@ local staticCacheData = {}
 
 -- catching all NUI requests for https://monitor/WebPipe/
 RegisterRawNuiCallback('WebPipe', function(req, cb)
-    if not menuIsAccessible or not isMenuVisible then
-        return txPrint('^1NUI request received while the menu is not accessible or visible.')
-    end
-
     local path = req.path
     local headers = req.headers
     local body = req.body
     local method = req.method
+
+    --Check if the menu is accessible and visible, otherwise it might be a CSRF attempt
+    --Does not trigger within a 750ms grace period after the menu is closed
+    if
+        (not menuIsAccessible or not isMenuVisible)
+        and (GetGameTimer() - tsLastMenuClose) > menuCloseGracePeriod
+    then
+        txPrint('^1NUI WebPipe request received the request below while the menu is not accessible or visible:')
+        txPrint(('^3%s %s'):format(method, string.sub(path, 1, 100)))
+        return cb({
+            status = 403,
+            body = '{}',
+        })
+    end
     debugPrint(("^3WebPipe[^1%d^3]^0 ^2%s ^4%s^0"):format(pipeCallbackCounter, method, path))
 
     -- Check for CSRF attempt
