@@ -1,5 +1,12 @@
+//@ts-nocheck
 import { test, expect, suite, it } from 'vitest';
-import { MultipleCounter, QuantileArray, TimeCounter } from './statsUtils';
+import { 
+    MultipleCounter,
+    QuantileArray,
+    TimeCounter,
+    estimateArrayJsonSize,
+    isWithinMargin,
+} from './statsUtils';
 
 
 suite('MultipleCounter', () => {
@@ -76,41 +83,53 @@ suite('QuantileArray', () => {
     const array = new QuantileArray(4, 2);
     test('min data', () => {
         array.count(0);
-        expect(array.result()).toEqual({ notEnoughData: true });
+        expect(array.result()).toEqual({ enoughData: false });
     });
     test('zeros only', () => {
         array.count(0);
         array.count(0);
         array.count(0);
         expect(array.result()).toEqual({
+            enoughData: true,
             count: 4,
-            q5: 0,
-            q25: 0,
-            q50: 0,
-            q75: 0,
-            q95: 0,
+            p5: 0,
+            p25: 0,
+            p50: 0,
+            p75: 0,
+            p95: 0,
         });
     });
+    const repeatedExpectedResult = {
+        enoughData: true,
+        count: 4,
+        p5: 0,
+        p25: 0,
+        p50: 0.5,
+        p75: 1,
+        p95: 1,
+    }
     test('calc quantile', () => {
         array.count(1);
         array.count(1);
-        expect(array.result()).toEqual({
-            count: 4,
-            q5: 0,
-            q25: 0,
-            q50: 0.5,
-            q75: 1,
-            q95: 1,
-        });
+        expect(array.result()).toEqual(repeatedExpectedResult);
     });
     test('summary', () => {
-        expect(array.resultSummary()).toEqual('(4) p5:0ms/p25:0ms/p50:1ms/p75:1ms/p95:1ms');
-        expect(array.resultSummary('x')).toEqual('(4) p5:0x/p25:0x/p50:1x/p75:1x/p95:1x');
+        expect(array.resultSummary('ms')).toEqual({
+            ...repeatedExpectedResult,
+            summary: '(4) p5:0ms/p25:0ms/p50:1ms/p75:1ms/p95:1ms',
+        });
+        expect(array.resultSummary()).toEqual({
+            ...repeatedExpectedResult,
+            summary: '(4) p5:0/p25:0/p50:1/p75:1/p95:1',
+        });
     });
     test('clear', () => {
         array.clear();
-        expect(array.result()).toEqual({ notEnoughData: true });
-        expect(array.resultSummary()).toEqual('not enough data available');
+        expect(array.result()).toEqual({ enoughData: false });
+        expect(array.resultSummary()).toEqual({
+            enoughData: false,
+            summary: 'not enough data available',
+        });
     });
 });
 
@@ -134,5 +153,46 @@ suite('TimeCounter', async () => {
         expect(duration.seconds * 1000).toSatisfy(isCloseTo50ms);
         expect(duration.milliseconds).toSatisfy(isCloseTo50ms);
         expect(duration.nanoseconds / 1_000_000).toSatisfy(isCloseTo50ms);
+    });
+});
+
+
+suite('estimateArrayJsonSize', () => {
+    test('obeys minimas', () => {
+        const result = estimateArrayJsonSize([], 1);
+        expect(result).toEqual({ enoughData: false });
+
+        const result2 = estimateArrayJsonSize([1], 2);
+        expect(result2).toEqual({ enoughData: false });
+    });
+
+    test('calculates size correctly', () => {
+        const array = Array.from({ length: 1000 }, (_, i) => ({ id: i, value: `value${i}` }));
+        const realFullSize = JSON.stringify(array).length;
+        const realElementSize = realFullSize / array.length;
+        const result = estimateArrayJsonSize(array, 100);
+        expect(result.enoughData).toBe(true);
+        expect(result.bytesTotal).toSatisfy((x: number) => isWithinMargin(x, realFullSize, 0.1));
+        expect(result.bytesPerElement).toSatisfy((x: number) => isWithinMargin(x, realElementSize, 0.1));
+    });
+
+    test('handles small arrays', () => {
+        const array = [{ id: 1, value: 'value1' }];
+        const result = estimateArrayJsonSize(array, 0);
+        expect(result.enoughData).toBe(true);
+        expect(result.bytesTotal).toBeGreaterThan(0);
+        expect(result.bytesTotal).toBeLessThan(100);
+        expect(result.bytesPerElement).toBeGreaterThan(0);
+        expect(result.bytesTotal).toBeLessThan(100);
+    });
+
+    test('handles large arrays', () => {
+        const array = Array.from({ length: 20000 }, (_, i) => ({ id: i, value: `value${i}` }));
+        const realFullSize = JSON.stringify(array).length;
+        const realElementSize = realFullSize / array.length;
+        const result = estimateArrayJsonSize(array, 100);
+        expect(result.enoughData).toBe(true);
+        expect(result.bytesTotal).toSatisfy((x: number) => isWithinMargin(x, realFullSize, 0.1));
+        expect(result.bytesPerElement).toSatisfy((x: number) => isWithinMargin(x, realElementSize, 0.1));
     });
 });

@@ -277,10 +277,10 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
         units: ['d', 'h', 'm'],
     };
 
-    const banCheckTime = txAdmin.statsManager.txRuntime.banCheckTime.resultSummary();
-    const whitelistCheckTime = txAdmin.statsManager.txRuntime.whitelistCheckTime.resultSummary();
-    const playersTableSearchTime = txAdmin.statsManager.txRuntime.playersTableSearchTime.resultSummary();
-    const historyTableSearchTime = txAdmin.statsManager.txRuntime.historyTableSearchTime.resultSummary();
+    const banCheckTime = txAdmin.statsManager.txRuntime.banCheckTime.resultSummary('ms');
+    const whitelistCheckTime = txAdmin.statsManager.txRuntime.whitelistCheckTime.resultSummary('ms');
+    const playersTableSearchTime = txAdmin.statsManager.txRuntime.playersTableSearchTime.resultSummary('ms');
+    const historyTableSearchTime = txAdmin.statsManager.txRuntime.historyTableSearchTime.resultSummary('ms');
     const memoryUsage = getHeapStatistics();
 
     return {

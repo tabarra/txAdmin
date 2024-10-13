@@ -1,8 +1,10 @@
 /* eslint-disable padded-blocks */
 const modulename = 'Logger:Server';
+import { QuantileArray, estimateArrayJsonSize } from '@core/components/StatsManager/statsUtils';
 import { LoggerBase } from '../LoggerBase';
 import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@extras/console';
+import bytes from 'bytes';
 const console = consoleFactory(modulename);
 
 /*
@@ -64,15 +66,34 @@ export default class ServerLogger extends LoggerBase {
 
         this.recentBuffer = [];
         this.recentBufferMaxSize = 32e3;
+
+        //stats stuff
+        this.eventsPerMinute = new QuantileArray(24 * 60, 6 * 60); //max 1d, min 6h
+        this.eventsThisMinute = 0;
+        setInterval(() => {
+            this.eventsPerMinute.count(this.eventsThisMinute);
+            this.eventsThisMinute = 0;
+        }, 60_000);
     }
 
 
     /**
      * Returns a string with short usage stats
-     * TODO: calculate events per minute moving average 10 && peak
      */
     getUsageStats() {
-        return `Buffer: ${this.recentBuffer.length},  lrErrors: ${this.lrErrors}`;
+        // Get events/min
+        const eventsPerMinRes = this.eventsPerMinute.resultSummary();
+        const eventsPerMinStr = eventsPerMinRes.enoughData
+            ? eventsPerMinRes.summary
+            : 'LowCount';
+
+        //Buffer JSON size (8k min buffer, 1k samples)
+        const bufferJsonSizeRes = estimateArrayJsonSize(this.recentBuffer, 4e3);
+        const bufferJsonSizeStr = bufferJsonSizeRes.enoughData
+            ? `${bytes(bufferJsonSizeRes.bytesPerElement)}/e`
+            : 'LowCount';
+
+        return `Buffer: ${this.recentBuffer.length},  lrErrors: ${this.lrErrors}, mem: ${bufferJsonSizeStr}, rate: ${eventsPerMinStr}`;
     }
 
 
@@ -109,6 +130,7 @@ export default class ServerLogger extends LoggerBase {
                 }
 
                 //Add to recent buffer
+                this.eventsThisMinute++;
                 this.recentBuffer.push(eventObject);
                 if (this.recentBuffer.length > this.recentBufferMaxSize) this.recentBuffer.shift();
 
