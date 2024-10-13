@@ -9,7 +9,7 @@ const console = consoleFactory(modulename);
  */
 export default async function ServerLog(ctx) {
     //Check permissions
-    if (!ctx.admin.hasPermission('txadmin.log.view')) {
+    if (!ctx.admin.hasPermission('server.log.view')) {
         return ctx.utils.render('main/message', { message: 'You don\'t have permission to view this page.' });
     }
 

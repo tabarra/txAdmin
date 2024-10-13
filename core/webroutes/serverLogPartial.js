@@ -9,7 +9,7 @@ const console = consoleFactory(modulename);
  */
 export default async function ServerLogPartial(ctx) {
     //Check permissions
-    if (!ctx.admin.hasPermission('txadmin.log.view')) {
+    if (!ctx.admin.hasPermission('server.log.view')) {
         return sendTypedResp({ error: 'You don\'t have permission to call this endpoint.' });
     }
 
