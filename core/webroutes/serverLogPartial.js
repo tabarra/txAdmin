@@ -8,6 +8,11 @@ const console = consoleFactory(modulename);
  * @param {object} ctx
  */
 export default async function ServerLogPartial(ctx) {
+    //Check permissions
+    if (!ctx.admin.hasPermission('txadmin.log.view')) {
+        return sendTypedResp({ error: 'You don\'t have permission to call this endpoint.' });
+    }
+
     const isDigit = /^\d{13}$/;
     const sliceSize = 500;
 

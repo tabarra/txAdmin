@@ -88,7 +88,7 @@ export default function ServerMenu() {
                 <MenuNavLink href="/server/resources">
                     <BoxIcon className="mr-2 h-4 w-4" />Resources
                 </MenuNavLink>
-                <MenuNavLink href="/server/server-log">
+                <MenuNavLink href="/server/server-log" disabled={!hasPerm('txadmin.log.view')}>
                     <EyeIcon className="mr-2 h-4 w-4" />Server Log
                 </MenuNavLink>
                 <MenuNavLink href="/server/cfg-editor" disabled={!hasPerm('server.cfg.editor')}>

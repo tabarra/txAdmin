@@ -11,6 +11,10 @@ import consoleFactory from '@extras/console';
 import chalk from 'chalk';
 const console = consoleFactory(modulename);
 
+//FIXME: The way I'm doing bersioning right now is horrible
+// but for now it's the best I can do
+const ADMIN_SCHEMA_VERSION = 1;
+
 
 //Helpers
 const migrateProviderIdentifiers = (providerName, providerData) => {
@@ -48,6 +52,7 @@ export default class AdminVault {
             'commands.resources': 'Start/Stop Resources',
             'server.cfg.editor': 'Read/Write server.cfg', //FIXME: rename to server.cfg_editor
             'txadmin.log.view': 'View System Logs', //FIXME: rename to system.log.view
+            'server.log.view': 'View Server Logs',
 
             'menu.vehicle': 'Spawn / Fix Vehicles',
             'menu.clear_area': 'Reset world area',
@@ -151,6 +156,7 @@ export default class AdminVault {
             };
         }
         const newAdmin = {
+            $schema: ADMIN_SCHEMA_VERSION,
             name: username,
             master: true,
             password_hash: (isPlainText) ? GetPasswordHash(password) : password,
@@ -326,12 +332,13 @@ export default class AdminVault {
 
         //Preparing admin
         const admin = {
-            name: name,
+            $schema: ADMIN_SCHEMA_VERSION,
+            name,
             master: false,
             password_hash: GetPasswordHash(password),
             password_temporary: true,
             providers: {},
-            permissions: permissions,
+            permissions,
         };
 
         //Check if provider uid already taken and inserting into admin object
@@ -533,13 +540,26 @@ export default class AdminVault {
             return callError('must have exactly 1 master account');
         }
 
-        //Migration (tx v7.3.0): separate DM and Announcement permissions
+        //Migrate admin stuff
         jsonData.forEach((admin) => {
-            if (admin.permissions.includes('players.message')) {
+            //Migration (tx v7.3.0)
+            if (admin.$schema === undefined) {
+                //adding schema version
+                admin.$schema = ADMIN_SCHEMA_VERSION;
                 hasMigration = true;
-                admin.permissions = admin.permissions.filter((perm) => perm !== 'players.message');
-                admin.permissions.push('players.direct_message');
-                admin.permissions.push('announcement');
+                
+                //separate DM and Announcement permissions
+                if (admin.permissions.includes('players.message')) {
+                    hasMigration = true;
+                    admin.permissions = admin.permissions.filter((perm) => perm !== 'players.message');
+                    admin.permissions.push('players.direct_message');
+                    admin.permissions.push('announcement');
+                }
+
+                //Adding the new permission, except if they have no permissions or all of them
+                if (admin.permissions.length && !admin.permissions.includes('all_permissions')) {
+                    admin.permissions.push('server.log.view');
+                }
             }
         });
 
