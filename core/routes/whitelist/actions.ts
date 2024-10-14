@@ -9,7 +9,7 @@ import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 
 //Helper functions
-const anyUndefined = (...args: any) => { return [...args].some((x) => (typeof x === 'undefined')); };
+const anyUndefined = (...args: any) => [...args].some((x) => (typeof x === 'undefined'));
 
 
 

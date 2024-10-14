@@ -30,7 +30,7 @@ const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
 
 //Helpers
-const cleanPath = (x: string) => { return slash(path.normalize(x)); };
+const cleanPath = (x: string) => slash(path.normalize(x));
 
 
 // Long ago I wanted to replace this with dependency injection.

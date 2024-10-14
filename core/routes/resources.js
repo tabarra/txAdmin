@@ -7,7 +7,7 @@ const console = consoleFactory(modulename);
 
 //Helper functions
 const isUndefined = (x) => (x === undefined);
-const breakPath = (inPath) => {return slash(path.normalize(inPath)).split('/').filter(String);};
+const breakPath = (inPath) => slash(path.normalize(inPath)).split('/').filter(String);
 const dynamicSort = (prop) => {
     let sortOrder = 1;
     if (prop[0] === '-') {

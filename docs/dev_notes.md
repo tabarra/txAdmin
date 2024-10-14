@@ -357,7 +357,7 @@ Refactor:
     - utils.ts
     - navigation.ts
     - dateTime.ts
-
+- [x] remove redundant return from one-liners (`\{ ?return` regex)
 - [ ] `.git-blame-ignore-revs`?
 
 class AuthedAdmin extends StoredAdmin

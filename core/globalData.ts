@@ -12,7 +12,7 @@ const console = consoleFactory();
 /**
  * Helpers
  */
-const cleanPath = (x: string) => { return slash(path.normalize(x)); };
+const cleanPath = (x: string) => slash(path.normalize(x));
 const getConvarBool = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim().toLowerCase();
     return ['true', '1', 'on'].includes(cvar);

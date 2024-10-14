@@ -111,7 +111,7 @@ export const genLogPrefix = (currContext: string, color: ChalkInstance) => {
 
 
 //Dir helpers
-const cleanPath = (x: string) => { return slash(path.normalize(x)); };
+const cleanPath = (x: string) => slash(path.normalize(x));
 const ERR_STACK_PREFIX = chalk.redBright('    =>');
 const DIR_DIVIDER = chalk.cyan('================================');
 const specialsColor = chalk.rgb(255, 228, 181).italic;
@@ -260,8 +260,12 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
             error: getLogFunc(currContext, chalk.bgRed, verboseConsole),
             dir: (data: any, options?: InspectOptions) => dirHandler.call(null, data, options, verboseConsole)
         },
-        get isVerbose() { return _verboseFlag },
-        setVerbose: (state: boolean) => { _verboseFlag = !!state; },
+        get isVerbose() { 
+            return _verboseFlag
+        },
+        setVerbose: (state: boolean) => {
+            _verboseFlag = !!state;
+        },
     };
 };
 export default consoleFactory;

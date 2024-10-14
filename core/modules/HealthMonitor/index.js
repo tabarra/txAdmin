@@ -178,7 +178,7 @@ export default class HealthMonitor {
         if (this.isAwaitingRestart) return;
 
         //Helper func
-        const cleanET = (et) => { return (et > 99999) ? '--' : et; };
+        const cleanET = (et) => et > 99999 ? '--' : et;
 
         //Check if process was frozen
         const currTimestamp = now();
