@@ -3,7 +3,8 @@ import {
     DropdownMenuContent,
     DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { cn, openExternalLink } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { openExternalLink } from '@/lib/navigation';
 import { KeyRoundIcon, LogOutIcon, Menu, Monitor, MoonIcon, PersonStanding, SunIcon } from "lucide-react";
 import DesktopHeader from "./DesktopNavbar";
 import Avatar from "@/components/Avatar";

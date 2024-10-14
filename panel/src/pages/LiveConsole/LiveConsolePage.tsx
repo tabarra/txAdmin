@@ -19,7 +19,8 @@ import ScrollDownAddon from "./ScrollDownAddon";
 import terminalOptions from "./xtermOptions";
 import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
-import { getSocket, openExternalLink, tsToLocaleTimeString } from '@/lib/utils';
+import { getSocket } from '@/lib/utils';
+import { openExternalLink } from '@/lib/navigation';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import { txToast } from '@/components/TxToaster';
 

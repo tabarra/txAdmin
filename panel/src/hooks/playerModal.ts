@@ -1,4 +1,4 @@
-import { setUrlSearchParam } from "@/lib/utils";
+import { setUrlSearchParam } from "@/lib/navigation";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithReset } from 'jotai/utils';
 

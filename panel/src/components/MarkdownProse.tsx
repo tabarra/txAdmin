@@ -1,4 +1,5 @@
-import { cn, openExternalLink, stripIndent } from '@/lib/utils';
+import { cn, stripIndent } from '@/lib/utils';
+import { openExternalLink } from '@/lib/navigation';
 import Markdown, { Components } from 'react-markdown';
 import InlineCode from './InlineCode';
 import { ExternalLinkIcon } from 'lucide-react';

@@ -8,7 +8,8 @@ import { useAtomValue } from 'jotai';
 import { dashPerfCursorAtom, dashSvRuntimeAtom, useGetDashDataAge } from './dashboardHooks';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import { SvRtPerfThreadNamesType } from '@shared/otherTypes';
-import { cn, dateToLocaleDateString, dateToLocaleTimeString, isDateToday } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { dateToLocaleDateString, dateToLocaleTimeString, isDateToday } from '@/lib/dateTime';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 

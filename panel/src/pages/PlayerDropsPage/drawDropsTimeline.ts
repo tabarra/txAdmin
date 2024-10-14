@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
-import { msToShortDuration, numberToLocaleString } from '@/lib/utils';
+import { numberToLocaleString } from '@/lib/utils';
+import { msToShortDuration } from '@/lib/dateTime';
 import { playerDropCategories } from "@/lib/playerDropCategories";
 import { PlayerDropsCategoryCount } from './chartingUtils';
 import { TimelineDropsChartData } from './TimelineDropsChart';

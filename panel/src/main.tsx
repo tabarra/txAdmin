@@ -10,7 +10,7 @@ import { AppErrorFallback } from './components/ErrorFallback.tsx';
 import { logoutWatcher, useIsAuthenticated } from './hooks/auth.ts';
 import AuthShell from './layout/AuthShell.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { isValidRedirectPath, redirectToLogin } from './lib/utils.ts';
+import { isValidRedirectPath, redirectToLogin } from '@/lib/navigation';
 import ThemeProvider from './components/ThemeProvider.tsx';
 import { StrictMode, useEffect } from 'react';
 import { isMobile } from 'is-mobile';

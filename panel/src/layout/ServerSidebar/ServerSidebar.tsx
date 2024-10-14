@@ -1,4 +1,5 @@
-import { cn, handleExternalLinkClick } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { handleExternalLinkClick } from "@/lib/navigation";
 import ServerMenu from './ServerMenu';
 import ServerControls from './ServerControls';
 import ServerStatus from './ServerStatus';

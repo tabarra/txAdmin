@@ -9,7 +9,7 @@ import { globalStatusAtom } from './status';
 import { txToast } from '@/components/TxToaster';
 import { actionModalOpenAtom } from './actionModal';
 import { dashDataTsAtom, dashPerfCursorAtom, dashPlayerDropAtom, dashServerStatsAtom, dashSvRuntimeAtom } from '@/pages/Dashboard/dashboardHooks';
-import { redirectToLogin } from '@/lib/utils';
+import { redirectToLogin } from '@/lib/navigation';
 import { LogoutReasonHash } from '@/pages/auth/Login';
 import { mutate } from 'swr'
 

@@ -1,4 +1,5 @@
-import { cn, openExternalLink } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { openExternalLink } from '@/lib/navigation';
 import { ExternalLinkIcon } from "lucide-react";
 import { useLocation } from "wouter";
 

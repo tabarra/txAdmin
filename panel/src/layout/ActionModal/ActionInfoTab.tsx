@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { msToDuration, tsToLocaleDateTimeString } from "@/lib/utils";
+import { msToDuration } from "@/lib/dateTime";
 import { useRef, useState } from "react";
 import { DatabaseActionType } from "../../../../core/modules/PlayerDatabase/databaseTypes";
 import { useOpenPlayerModal } from "@/hooks/playerModal";

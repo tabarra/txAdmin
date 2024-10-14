@@ -308,7 +308,10 @@ Refactor:
 - [x] remove core/extra
 - [ ] remove core/playerLogic
 - [ ] routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
-- [ ] panel/src/lib/utils.ts - split all time humanization into a separate file
+- [x] split panel/src/lib/utils.ts into:
+    - utils.ts
+    - navigation.ts
+    - dateTime.ts
 
 - [ ] `.git-blame-ignore-revs`?
 
