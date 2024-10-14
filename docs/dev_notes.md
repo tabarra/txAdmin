@@ -287,7 +287,6 @@ Refactor:
     - fxsVersionParser.ts
     - getOsDistro.js
     - got.js
-    - helpers.ts (split) TODO
     - isIpAddressLocal.ts
     - MemCache.ts
     - pidUsageTree.js
@@ -305,6 +304,8 @@ Refactor:
     - recipeEngine.js TODO
     - serverDataScanner.ts
     - setupProfile.js
+    - misc.ts
+    - idUtils.ts
 - [x] remove core/extra
 - [ ] remove core/playerLogic
 - [ ] routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts

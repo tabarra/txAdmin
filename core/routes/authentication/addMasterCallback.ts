@@ -1,7 +1,7 @@
 const modulename = 'WebServer:AuthAddMasterCallback';
 import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@logic/console';
-import { getIdFromOauthNameid } from '@logic/helpers';
+import { getIdFromOauthNameid } from '@utils/idUtils';
 import { ApiAddMasterCallbackResp } from '@shared/authApiTypes';
 import { z } from 'zod';
 import { handleOauthCallback } from './oauthMethods';

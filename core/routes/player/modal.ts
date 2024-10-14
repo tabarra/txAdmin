@@ -6,7 +6,7 @@ import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
 import { ServerPlayer } from '@core/playerLogic/playerClasses';
 import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import { now } from '@logic/helpers';
+import { now } from '@utils/misc';
 import { getBanTemplatesImpl } from '@routes/banTemplates/getBanTemplates';
 const console = consoleFactory(modulename);
 

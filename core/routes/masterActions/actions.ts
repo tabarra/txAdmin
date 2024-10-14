@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 const modulename = 'WebServer:MasterActions:Action';
 import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType, DatabasePlayerType } from '@modules/PlayerDatabase/databaseTypes';
-import { now } from '@logic/helpers';
+import { now } from '@utils/misc';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';

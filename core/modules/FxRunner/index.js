@@ -7,7 +7,7 @@ import StreamValues from 'stream-json/streamers/StreamValues';
 
 import { convars, txEnv } from '@core/globalData';
 import { validateFixServerConfig } from '@logic/fxsConfigHelper';
-import { now } from '@logic/helpers';
+import { now } from '@utils/misc';
 import Fd3Handler from './fd3Handler';
 
 import { customAlphabet } from 'nanoid/non-secure';

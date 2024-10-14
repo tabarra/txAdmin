@@ -1,5 +1,5 @@
 const modulename = 'Scheduler';
-import { parseSchedule } from '@logic/helpers';
+import { parseSchedule } from '@utils/misc';
 import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 

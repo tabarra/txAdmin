@@ -6,7 +6,7 @@ import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { chain as createChain } from 'lodash-es';
 import Fuse from 'fuse.js';
-import { parseLaxIdsArrayInput } from '@logic/helpers';
+import { parseLaxIdsArrayInput } from '@utils/idUtils';
 import { TimeCounter } from '@modules/StatsManager/statsUtils';
 const console = consoleFactory(modulename);
 

@@ -1,7 +1,7 @@
 const modulename = 'WebServer:HistoryActions';
 import { GenericApiOkResp } from '@shared/genericApiTypes';
 import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
-import { calcExpirationFromDuration } from '@logic/helpers';
+import { calcExpirationFromDuration } from '@utils/misc';
 import consts from '@shared/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import consoleFactory from '@logic/console';

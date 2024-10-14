@@ -2,7 +2,7 @@ const modulename = 'WebServer:SettingsPage';
 import { cloneDeep }  from 'lodash-es';
 import { convars, txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
-import { redactApiKeys } from '@logic/helpers';
+import { redactApiKeys } from '@utils/misc';
 import { defaultEmbedConfigJson, defaultEmbedJson } from '@modules/DiscordBot/defaultJsons';
 import consoleFactory from '@logic/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';

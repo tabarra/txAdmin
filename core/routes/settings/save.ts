@@ -3,7 +3,7 @@ import fsp from 'node:fs/promises';
 import path from 'node:path';
 import slash from 'slash';
 import { jsonrepair } from 'jsonrepair';
-import { parseSchedule, anyUndefined } from '@logic/helpers';
+import { parseSchedule, anyUndefined } from '@utils/misc';
 import { resolveCFGFilePath } from '@logic/fxsConfigHelper';
 import { generateStatusMessage } from '@modules/DiscordBot/commands/status';
 import consoleFactory from '@logic/console';

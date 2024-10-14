@@ -5,7 +5,7 @@ import { AuthedAdmin, CfxreSessAuthType } from '@modules/WebServer/authLogic';
 import { z } from 'zod';
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackResp, ReactAuthDataType } from '@shared/authApiTypes';
 import { handleOauthCallback } from './oauthMethods';
-import { getIdFromOauthNameid } from '@logic/helpers';
+import { getIdFromOauthNameid } from '@utils/idUtils';
 const console = consoleFactory(modulename);
 
 //Helper functions
