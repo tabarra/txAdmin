@@ -119,7 +119,7 @@ export default class FXServerLogger extends LoggerBase {
 
 
     /**
-     * Writes to the log that the server is booting
+     * Writes to the log an informational message
      */
     public logInformational(msg: string) {
         this.ingest(ConsoleLineType.MarkerInfo, `${msg} \n`);

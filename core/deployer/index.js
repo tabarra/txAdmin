@@ -1,151 +1,24 @@
 const modulename = 'Deployer';
 import path from 'node:path';
 import { cloneDeep } from 'lodash-es';
-import dateFormat from 'dateformat';
 import fse from 'fs-extra';
 import open from 'open';
-import YAML from 'js-yaml';
 import getOsDistro from '@utils/getOsDistro.js';
 import { txEnv } from '@core/globalData';
 import recipeEngine from './recipeEngine.js';
 import consoleFactory from '@logic/console.js';
+import recipeParser from './recipeParser.js';
+import { getTimeHms } from '@utils/misc.js';
+import { makeTemplateRecipe } from './utils.js';
 const console = consoleFactory(modulename);
 
 
-//Helper functions
-const getTimestamp = () => { return dateFormat(new Date(), 'HH:MM:ss'); };
-const isUndefined = (x) => (x === undefined);
-const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : input; };
-const canCreateFile = async (targetPath) => {
-    try {
-        const filePath = path.join(targetPath, '.empty');
-        await fse.outputFile(filePath, '#save_attempt_please_ignore');
-        await fse.remove(filePath);
-        return true;
-    } catch (error) {
-        return false;
-    }
-};
-const makeTemplateRecipe = (serverName, author) => `name: ${serverName}
-author: ${author}
-
-# This is just a placeholder, please don't run it!
-tasks: 
-    - action: waste_time
-      seconds: 5
-    - action: waste_time
-      seconds: 5
-`;
-
 //Constants
-export const engineVersion = 3;
-
-
-/**
- * Perform deployer local target path permission/emptiness checking
- * FIXME: timeout to remove folders, or just autoremove them idk
- * @param {*} path
- */
-export const validateTargetPath = async (deployPath) => {
-    if (await fse.pathExists(deployPath)) {
-        const pathFiles = await fse.readdir(deployPath);
-        if (pathFiles.some((x) => x !== '.empty')) {
-            throw new Error('This folder is not empty!');
-        } else {
-            if (await canCreateFile(deployPath)) {
-                return 'Exists, empty, and writtable!';
-            } else {
-                throw new Error('Path exists, but its not a folder, or its not writtable.');
-            }
-        }
-    } else {
-        if (await canCreateFile(deployPath)) {
-            await fse.remove(deployPath);
-            return 'Path didn\'t existed, we created one (then deleted it).';
-        } else {
-            throw new Error('Path doesn\'t exist, and we could not create it. Please check parent folder permissions.');
-        }
-    }
-};
-
-
-/**
- * Validates a Recipe file
- * TODO: use Joi for schema validaiton
- * @param {*} rawRecipe
- */
-export const parseValidateRecipe = (rawRecipe) => {
-    if (typeof rawRecipe !== 'string') throw new Error('not a string');
-
-    //Loads YAML
-    let recipe;
-    try {
-        recipe = YAML.load(rawRecipe, { schema: YAML.JSON_SCHEMA });
-    } catch (error) {
-        console.verbose.dir(error);
-        throw new Error('invalid yaml');
-    }
-
-    //Basic validation
-    if (typeof recipe !== 'object') throw new Error('invalid YAML, couldn\'t resolve to object');
-    if (!Array.isArray(recipe.tasks)) throw new Error('no tasks array found');
-
-    //Preparing output
-    const outRecipe = {
-        raw: rawRecipe.trim(),
-        name: toDefault(recipe.name, 'unnamed').trim(),
-        author: toDefault(recipe.author, 'unknown').trim(),
-        description: toDefault(recipe.description, '').trim(),
-        variables: {},
-        tasks: [],
-    };
-
-    //Checking/parsing meta tag requirements
-    if (typeof recipe['$onesync'] == 'string') {
-        const onesync = recipe['$onesync'].trim();
-        if (!['off', 'legacy', 'on'].includes(onesync)) throw new Error(`the onesync option selected required for this recipe ("${onesync}") is not supported by this FXServer version.`);
-        outRecipe.onesync = onesync;
-    }
-    if (typeof recipe['$minFxVersion'] == 'number') {
-        if (recipe['$minFxVersion'] > txEnv.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
-        outRecipe.fxserverMinVersion = recipe['$minFxVersion']; //NOTE: currently no downstream use
-    }
-    if (typeof recipe['$engine'] == 'number') {
-        if (recipe['$engine'] < engineVersion) throw new Error(`unsupported '$engine' version ${recipe['$engine']}`);
-        outRecipe.recipeEngineVersion = recipe['$engine']; //NOTE: currently no downstream use
-    }
-    if (recipe['$steamRequired'] === true) {
-        outRecipe.steamRequired = true;
-    }
-
-    //Validate tasks
-    if (!Array.isArray(recipe.tasks)) throw new Error('no tasks array found');
-    recipe.tasks.forEach((task, index) => {
-        if (typeof task.action !== 'string') throw new Error(`[task${index + 1}] no action specified`);
-        if (typeof recipeEngine[task.action] === 'undefined') throw new Error(`[task${index + 1}] unknown action '${task.action}'`);
-        if (!recipeEngine[task.action].validate(task)) throw new Error(`[task${index + 1}:${task.action}] invalid parameters`);
-        outRecipe.tasks.push(task);
-    });
-
-    //Process inputs
-    outRecipe.requireDBConfig = recipe.tasks.some((t) => t.action.includes('database'));
-    const protectedVarNames = ['licenseKey', 'dbHost', 'dbUsername', 'dbPassword', 'dbName', 'dbConnection', 'dbPort'];
-    if (typeof recipe.variables == 'object' && recipe.variables !== null) {
-        const varNames = Object.keys(recipe.variables);
-        if (varNames.some((n) => protectedVarNames.includes(n))) {
-            throw new Error('One or more of the variables declared in the recipe are not allowed.');
-        }
-        Object.assign(outRecipe.variables, recipe.variables);
-    }
-
-    //Output
-    return outRecipe;
-};
+export const RECIPE_DEPLOYER_VERSION = 3;
 
 
 /**
  * The deployer class is responsible for running the recipe and handling status and errors
- * TODO: log everything to deployPath/recipe.log
  */
 export class Deployer {
     /**
@@ -157,7 +30,7 @@ export class Deployer {
         console.log('Deployer instance ready.');
 
         //Setup variables
-        this.step = 'review';
+        this.step = 'review'; //FIXME: transform into an enum
         this.deployFailed = false;
         this.deployPath = deployPath;
         this.isTrustedSource = isTrustedSource;
@@ -172,7 +45,7 @@ export class Deployer {
             ? originalRecipe
             : makeTemplateRecipe(customMetaData.serverName, customMetaData.author);
         try {
-            this.recipe = parseValidateRecipe(impRecipe);
+            this.recipe = recipeParser(impRecipe);
         } catch (error) {
             console.verbose.dir(error);
             throw new Error(`Recipe Error: ${error.message}`);
@@ -181,11 +54,11 @@ export class Deployer {
 
     //Dumb helpers - don't care enough to make this less bad
     customLog(str) {
-        this.logLines.push(`[${getTimestamp()}] ${str}`);
+        this.logLines.push(`[${getTimeHms()}] ${str}`);
         console.log(str);
     }
     customLogError(str) {
-        this.logLines.push(`[${getTimestamp()}] ${str}`);
+        this.logLines.push(`[${getTimeHms()}] ${str}`);
         console.error(str);
     }
     getDeployerLog() {
@@ -201,7 +74,7 @@ export class Deployer {
 
         //Parse/set recipe
         try {
-            this.recipe = parseValidateRecipe(userRecipe);
+            this.recipe = recipeParser(userRecipe);
         } catch (error) {
             throw new Error(`Cannot start() deployer due to a Recipe Error: ${error.message}`);
         }

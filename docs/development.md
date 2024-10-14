@@ -16,6 +16,7 @@ Before starting, please make sure you are familiar with the basics of NodeJS & e
     - `routes`: All the web routes, contain all the logic referenced in the HTTP router.
     - `utils`: Stateles utilities, preferable no business logic in them.
     - `logic`: Utilities that contain business logic.
+    - `deployer`: Responsible for deploying new servers.
 - `resource`: The in-game resource that runs under the `monitor` name. These files will be synchronized with the deploy path when running the `dev:main` npm script;
 - `menu`: React source code for txAdmin's NUI Menu. It is transpiled & built using Vite;
 - `web`: Legacy SSR templates & static assets used for the txAdmin's web panel. It uses EJS as templating engine, and will soon be deprecated in favor of `panel`;
@@ -70,22 +71,20 @@ npm run browser
 Keep in mind that for every change you will need to restart the `monitor` resource, and unless you started the server with `+setr txAdmin-debugMode true` txAdmin will detect that as a crash and restart your server.  
 Also, when running in game mode, it takes between 10 and 30 seconds for the vite builder to finish for you to be able to restart the `monitor` resource ingame.
 
-
 ### Resource event naming rules:
-
 - The event prefix must be `tx<cl|sv>:` indicating where it is registered.
 - Events that request something (like permission) from the server starts with `txsv:req`.
 - Events can have verbs like `txsv:checkAdminStatus` or `txcl:setServerCtx`.
 - Since most events are menu related, scoping events to menu is not required.
 
-
-### Building/Publishing
-First make sure the files are linted properly and that the typecheck is successful, and then run the build command. The output will be on the `dist/` folder.
+### Testing & Building
+The building process is normally done in the GitHub Action workflow only, but if you _must_ build it locally, that can be done with the command below. The output will be on the `dist/` folder.
 ```sh
-npm run lint
-npm run typecheck
-npm run build
+npm run test --workspaces
+GITHUB_REF="refs/tags/v9.9.9" npm run build
 ```
+> FIXME: add linting & typechecking back into the workflow above
+
 
 ## Note regarding the Legacy UI
 

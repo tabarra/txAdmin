@@ -1,7 +1,7 @@
 const modulename = 'WebServer:SetupGet';
 import path from 'node:path';
 import { convars, txEnv } from '@core/globalData';
-import { engineVersion } from '@logic/deployer';
+import { RECIPE_DEPLOYER_VERSION } from '@core/deployer/index';
 import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
@@ -28,7 +28,7 @@ export default async function SetupGet(ctx) {
     const renderData = {
         headerTitle: 'Setup',
         isReset: (globalConfig.serverName !== null),
-        deployerEngineVersion: engineVersion,
+        deployerEngineVersion: RECIPE_DEPLOYER_VERSION,
         serverProfile: globals.info.serverProfile,
         txDataPath: txEnv.dataPath,
         isZapHosting: convars.isZapHosting,

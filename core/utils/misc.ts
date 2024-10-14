@@ -1,3 +1,5 @@
+import dateFormat from 'dateformat';
+
 /**
  * Extracts hours and minutes from an string containing times
  */
@@ -45,6 +47,18 @@ export const redactApiKeys = (src: string) => {
  * Returns the unix timestamp in seconds.
  */
 export const now = () => Math.round(Date.now() / 1000);
+
+
+/**
+ * Returns the current time in HH:MM:ss format
+ */
+export const getTimeHms = (time?: string | number | Date) => dateFormat(time ?? new Date(), 'HH:MM:ss');
+
+
+/**
+ * Returns the current time in filename-friendly format
+ */
+export const getTimeFilename = (time?: string | number | Date) => dateFormat(time ?? new Date(), 'yyyy-mm-dd_HH-MM-ss');
 
 
 /**

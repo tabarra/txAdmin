@@ -187,11 +187,16 @@ FIXME: TODO: announce with mockups de mudanças do kick/timeout pra entrarem no 
 - testing
     - improve and use `list-dependencies.js` as part of the test workflow
 - drop usage of `const console = consoleFactory(modulename);`
-    - instead do `const console = console.scope('xxxx')`
-    - bonus point if it can backtrack the stack or file path to add the context automatically
+    - instead do `const console = console.tag('xxxx')`
+    - need to be careful with the import order, but it's possible
+    - may need to break the globalData.ts into two different files
 - Consider using Blob
     - https://developer.mozilla.org/en-US/docs/Web/API/Blob
     - https://chatgpt.com/c/670bf1f6-8ee4-8001-a731-3a219266d4c1
+- fix double server boot message:
+    - happens when some page starts the server and redirects you to the live console
+    - you join the room and gets initial data (directly from logger)
+    - while the websocket out buffer still haven't sent the boot message
 
 
 ## Tentative Database Changes
@@ -225,13 +230,53 @@ e tentar instanciar todos os modulos antes de instanciar TxAdmin
 
 
 
+Checking if its doable to instantiate without having txAdmin or globals:
+- [x] AdminVault();
+- [x] DiscordBot(this, profileConfig.discordBot);
+- [x] Logger(this, profileConfig.logger);
+- [x] Translator(this);
+- [x] FxRunner(this, profileConfig.fxRunner);
+- [x] DynamicAds();
+- [x] HealthMonitor(profileConfig.monitor);
+- [x] Scheduler(profileConfig.monitor);
+- [x] StatsManager(this);
+- [ ] WebServer(this, profileConfig.webServer);
+    - context middleware factory requires reference to txadmin
+    - same for websocket
+- [x] ResourcesManager();
+- [x] PlayerlistManager(this);
+- [x] PlayerDatabase(this, profileConfig.playerDatabase);
+- [x] PersistentCache(this);
+- [x] CfxUpdateChecker(this);
+
+NOTE: might not be worth doing this, as this is only to solve the problem of bad references,
+which is already being solved other ways.
 
 
+> validator, it will know if web or api to give the correct response type
+> if invalid, it will send the response and return undefined
+```ts
+import { z, ZodSchema, infer as zodInfer } from "zod";
+const checkParse = <T extends ZodSchema<any>>(
+  schema: T,
+  data: unknown
+): zodInfer<T> | undefined => {
+  const result = schema.safeParse(data);
+  return result.success ? result.data : undefined;
+};
+const userSchema = z.object({
+  name: z.string(),
+  age: z.number(),
+});
+const data = { name: "Alice", age: 30 };
+const result = checkParse(userSchema, data);
+//    /\ Type: { name: string; age: number } | undefined
 
-
-
-
-
+//Now, apply that to create something for the ctx
+const params = ctx.getParams(schema: ZodInstance, errorMessage?: string)
+if (!params) return;
+```
+> Ou então migrar pra usar o hono
 
 
 This worked, no time to check which. 
@@ -283,7 +328,7 @@ Refactor:
 - [x] core/types/global.d.ts -> core/global.d.ts
 - [x] UpdateChecker -> CfxUpdateChecker
 
-- [ ] core/utils:
+- [x] core/utils:
     - fxsVersionParser.ts
     - getOsDistro.js
     - got.js
@@ -292,20 +337,19 @@ Refactor:
     - pidUsageTree.js
     - testEnv.ts
     - xss.js
-- [ ] core/logic
+- [x] core/logic
     - banner.js
     - checkPreRelease.ts
     - console.ts
-    - deployer.js TODO
     - fxsConfigHelper.ts
     - playerClasses.ts
     - playerFinder.ts
     - playerResolver.ts
-    - recipeEngine.js TODO
     - serverDataScanner.ts
     - setupProfile.js
     - misc.ts
     - idUtils.ts
+- [x] create core/deployer
 - [x] remove core/extra
 - [ ] remove core/playerLogic
 - [ ] routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts

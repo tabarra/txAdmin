@@ -2,10 +2,12 @@ const modulename = 'WebServer:SetupPost';
 import path from 'node:path';
 import fse from 'fs-extra';
 import slash from 'slash';
-import { Deployer, validateTargetPath, parseValidateRecipe } from '@logic/deployer';
+import { Deployer } from '@core/deployer/index';
 import { validateFixServerConfig, findLikelyCFGPath } from '@logic/fxsConfigHelper';
 import got from '@utils/got.js';
 import consoleFactory from '@logic/console';
+import recipeParser from '@core/deployer/recipeParser';
+import { validateTargetPath } from '@core/deployer/utils';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -114,7 +116,7 @@ async function handleValidateRecipeURL(ctx) {
             timeout: { request: 4500 }
         }).text();
         if (typeof recipeText !== 'string') throw new Error('This URL did not return a string.');
-        const recipe = parseValidateRecipe(recipeText);
+        const recipe = recipeParser(recipeText);
         return ctx.send({success: true, name: recipe.name});
     } catch (error) {
         return ctx.send({success: false, message: `Recipe error: ${error.message}`});

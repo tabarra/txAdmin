@@ -8,7 +8,7 @@ const console = consoleFactory(modulename);
 
 //Helper functions
 const isUndefined = (x) => (x === undefined);
-const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : input; };
+const toDefault = (input, defVal) => isUndefined(input) ? defVal : input;
 const removeNulls = (obj) => {
     const isArray = obj instanceof Array;
     for (let k in obj) {

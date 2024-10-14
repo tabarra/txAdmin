@@ -1,12 +1,11 @@
 const modulename = 'Logger:Base';
 import fs from 'node:fs';
 import path from 'node:path';
-import dateFormat from 'dateformat';
 import * as rfs from 'rotating-file-stream';
 import { cloneDeep, defaultsDeep } from 'lodash-es';
 import consoleFactory from '@logic/console';
 import { getLogSizes, getLogDivider } from './loggerUtils';
-import TxAdmin from '@core/txAdmin';
+import { getTimeFilename } from '@utils/misc';
 const console = consoleFactory(modulename);
 
 
@@ -49,7 +48,7 @@ export class LoggerBase {
 
         const filenameGenerator: rfs.Generator = (time, index) => {
             return time
-                ? `${logName}_${dateFormat(time, 'yyyy-mm-dd_HH-MM-ss')}_${index}.log`
+                ? `${logName}_${getTimeFilename(time)}_${index}.log`
                 : `${logName}.log`;
         };
 

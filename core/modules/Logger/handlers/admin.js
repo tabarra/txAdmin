@@ -2,10 +2,10 @@ const modulename = 'Logger:Admin';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import chalk from 'chalk';
-import dateFormat from 'dateformat';
 import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@logic/console';
 import { LoggerBase } from '../LoggerBase';
+import { getTimeHms } from '@utils/misc';
 const console = consoleFactory(modulename);
 
 
@@ -60,7 +60,7 @@ export default class AdminLogger extends LoggerBase {
             saveMsg = `[${author}] ${action}`;
             console.log(saveMsg);
         }
-        const timestamp = dateFormat(new Date(), 'HH:MM:ss');
+        const timestamp = getTimeHms();
         this.lrStream.write(`[${timestamp}]${saveMsg}\n`);
         this.writeCounter++;
     }
