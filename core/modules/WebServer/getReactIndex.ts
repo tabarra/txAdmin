@@ -2,7 +2,7 @@ const modulename = 'WebCtxUtils';
 import fsp from "node:fs/promises";
 import path from "node:path";
 import { AdsDataType, InjectedTxConsts, ThemeType } from '@shared/otherTypes';
-import { txEnv, convars } from "@core/globalData";
+import { txEnv, convars, txDevEnv } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
 import consoleFactory from '@logic/console';
@@ -22,7 +22,7 @@ const serverTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 let htmlFile: string;
 
 // NOTE: https://vitejs.dev/guide/backend-integration.html
-const viteOrigin = process.env.TXADMIN_DEV_VITE_URL!;
+const viteOrigin = txDevEnv.VITE_URL ?? 'doesnt-matter';
 const devModulesScript = `<script type="module">
         import { injectIntoGlobalHook } from "${viteOrigin}/@react-refresh";
         injectIntoGlobalHook(window);
@@ -73,15 +73,15 @@ export const tmpCustomThemes: ThemeType[] = [
  */
 export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     //Read file if not cached
-    if (convars.isDevMode || !htmlFile) {
+    if (txDevEnv.ENABLED || !htmlFile) {
         try {
-            const indexPath = convars.isDevMode
-                ? path.join(process.env.TXADMIN_DEV_SRC_PATH!, '/panel/index.html')
+            const indexPath = txDevEnv.ENABLED
+                ? path.join(txDevEnv.SRC_PATH, '/panel/index.html')
                 : path.join(txEnv.txAdminResourcePath, 'panel/index.html')
             const rawHtmlFile = await fsp.readFile(indexPath, 'utf-8');
 
             //Remove tagged lines (eg hardcoded entry point) depending on env
-            if (convars.isDevMode) {
+            if (txDevEnv.ENABLED) {
                 htmlFile = rawHtmlFile.replaceAll(/.+data-prod-only.+\r?\n/gm, '');
             } else {
                 htmlFile = rawHtmlFile.replaceAll(/.+data-dev-only.+\r?\n/gm, '');
@@ -121,7 +121,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         isZapHosting: convars.isZapHosting, //not in use
         isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,
-        showAdvanced: (convars.isDevMode || console.isVerbose),
+        showAdvanced: (txDevEnv.ENABLED || console.isVerbose),
         hasMasterAccount: ctx.txAdmin.adminVault.hasAdmins(true),
         defaultTheme: tmpDefaultTheme,
         customThemes: tmpCustomThemes.map(({ name, isDark }) => ({ name, isDark })),
@@ -137,7 +137,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     replacers.ogTitle = `txAdmin - ${serverName}`;
     replacers.ogDescripttion = `Manage & Monitor your FiveM/RedM Server with txAdmin v${txEnv.txAdminVersion} atop FXServer ${txEnv.fxServerVersion}`;
     replacers.txConstsInjection = `<script>window.txConsts = ${JSON.stringify(injectedConsts)};</script>`;
-    replacers.devModules = convars.isDevMode ? devModulesScript : '';
+    replacers.devModules = txDevEnv.ENABLED ? devModulesScript : '';
 
     //Prepare custom themes style tag
     if (tmpCustomThemes.length) {
@@ -181,7 +181,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //If in prod mode and NUI, replace the entry point with the local one
     //This is required because of how badly the WebPipe handles "large" files
-    if (!convars.isDevMode){
+    if (!txDevEnv.ENABLED){
         const base = ctx.txVars.isWebInterface ? `./` : `nui://monitor/panel/`;
         htmlOut = htmlOut.replace(/src="\.\/index-(\w+)\.js"/, `src="${base}index-$1.js"`);
         htmlOut = htmlOut.replace(/href="\.\/index-(\w+)\.css"/, `href="${base}index-$1.css"`);

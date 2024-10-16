@@ -7,7 +7,7 @@ import { SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName, SvRtNodeMemor
 import type { SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtNodeMemoryType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
 import { didPerfReset, diffPerfs, fetchFxsMemory, fetchRawPerfData } from './perfUtils';
 import { optimizeSvRuntimeLog } from './logOptimizer';
-import { convars } from '@core/globalData';
+import { convars, txDevEnv } from '@core/globalData';
 import { ZodError } from 'zod';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TICKS } from './config';
 import { PerfChartApiResp } from '@routes/perfChart';
@@ -173,9 +173,7 @@ export default class SvRuntimeStatsManager {
         if (healthMonitorStatus !== 'ONLINE' && healthMonitorStatus !== 'PARTIAL') return;
 
         //Get performance data
-        const fxServerHost = (convars.debugExternalStatsSource)
-            ? convars.debugExternalStatsSource
-            : this.#txAdmin.fxRunner.fxServerHost;
+        const fxServerHost = txDevEnv.EXT_STATS_HOST ?? this.#txAdmin.fxRunner.fxServerHost;
         if (typeof fxServerHost !== 'string' || !fxServerHost) {
             throw new Error(`Invalid fxServerHost: ${fxServerHost}`);
         }
@@ -241,7 +239,7 @@ export default class SvRuntimeStatsManager {
 
         //Get player count locally or from external source
         let playerCount = this.#txAdmin.playerlistManager.onlineCount;
-        if (convars.debugExternalStatsSource) {
+        if (txDevEnv.EXT_STATS_HOST) {
             try {
                 const playerCountResp = await got(`http://${fxServerHost}/players.json`).json();
                 playerCount = playerCountResp.length;

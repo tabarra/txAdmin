@@ -1,4 +1,3 @@
-import '@utils/testEnv';
 import { test, expect, suite, it } from 'vitest';
 import * as idUtils from './idUtils';
 

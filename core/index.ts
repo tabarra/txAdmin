@@ -1,5 +1,5 @@
 import TxAdmin from './txAdmin';
-import { convars } from './globalData';
+import { txDevEnv } from './globalData';
 import checkPreRelease from '@logic/checkPreRelease';
 import consoleFactory, { setTTYTitle } from '@logic/console';
 const console = consoleFactory();
@@ -68,7 +68,7 @@ process.on('warning', (warning) => {
     //totally ignoring the warning, we know this is bad and shouldn't happen
     if (warning.name === 'UnhandledPromiseRejectionWarning') return;
 
-    if (warning.name !== 'ExperimentalWarning' || convars.isDevMode) {
+    if (warning.name !== 'ExperimentalWarning' || txDevEnv.ENABLED) {
         console.dir(warning);
     }
 });

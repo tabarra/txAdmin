@@ -1,5 +1,4 @@
 //@ts-nocheck
-import '@utils/testEnv';
 import { expect, it, suite } from 'vitest';
 import { classifyDrop } from './classifyDropReason';
 import { PDL_CRASH_REASON_CHAR_LIMIT, PDL_UNKNOWN_REASON_CHAR_LIMIT } from './config';

@@ -1,4 +1,4 @@
-import { convars } from '@core/globalData';
+import { txDevEnv } from '@core/globalData';
 import Router from '@koa/router';
 import KoaRateLimit from 'koa-ratelimit';
 
@@ -116,7 +116,7 @@ export default (config: WebServerConfigType) => {
     router.post('/whitelist/:table/:action', apiAuthMw, routes.whitelist_actions);
 
     //DevDebug routes - no auth
-    if (convars.isDevMode) {
+    if (txDevEnv.ENABLED) {
         router.get('/dev/:scope', routes.dev_get);
         router.post('/dev/:scope', routes.dev_post);
     };

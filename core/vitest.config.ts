@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { defineConfig } from 'vitest/config';
 import type { InlineConfig } from 'vitest/node';
 
+
 //Detect the aliases from the tsconfig.json
 //NOTE: this regex is obviously sensitive to the format of the tsconfig.json
 // but I don't feel like using a jsonc parser in here
@@ -15,6 +16,8 @@ for (const match of tsconfig.matchAll(aliasRegex)) {
 
 export default defineConfig({
     test: {
+        setupFiles: ['./utils/testSetupFile.ts'],
+        globalSetup: './utils/testGlobalSetup.ts',
         alias: resolvedAliases,
     },
 });

@@ -6,6 +6,8 @@ import slash from 'slash';
 import consoleFactory, { setConsoleEnvData } from '@logic/console';
 import { addLocalIpAddress } from '@utils/isIpAddressLocal';
 import { parseFxserverVersion } from '@utils/fxsVersionParser';
+import { parseTxDevEnv, TxDevEnvType } from '@shared/txDevEnv';
+import { Overwrite } from 'utility-types';
 const console = consoleFactory();
 
 
@@ -19,6 +21,7 @@ const getConvarBool = (convarName: string) => {
 };
 const getConvarString = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim();
+    // console.debug(`Convar ${convarName}: ${cvar}`);
     return (cvar === 'false') ? false : cvar;
 };
 
@@ -127,15 +130,34 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
 /**
  * Convars - Debug
  */
-const isDevMode = getConvarBool('txAdminDevMode');
-const verboseConvar = getConvarBool('txAdminVerbose');
-const debugExternalStatsSource = getConvarString('txDebugExternalStatsSource');
-if (isDevMode) {
-    console.warn('Starting txAdmin in DEV mode.');
-    if(!process.env.TXADMIN_DEV_SRC_PATH || !process.env.TXADMIN_DEV_VITE_URL){
-        console.error('Missing TXADMIN_DEV_VITE_URL or TXADMIN_DEV_SRC_PATH env variables.');
+/**
+ * txAdmin Dev Env
+ */
+type TxDevEnvEnabledType = Overwrite<TxDevEnvType, {
+    ENABLED: true;
+    SRC_PATH: string, //required in core/webserver, core/getReactIndex.ts
+    VITE_URL: string, //required in core/getReactIndex.ts
+}>;
+type TxDevEnvDisabledType = Overwrite<TxDevEnvType, {
+    ENABLED: false;
+    SRC_PATH: undefined;
+    VITE_URL: undefined;
+}>;
+let _txDevEnv: TxDevEnvEnabledType | TxDevEnvDisabledType;
+const txDevEnvSrc = parseTxDevEnv();
+if (txDevEnvSrc.ENABLED) {
+    console.log('Starting txAdmin in DEV mode.');
+    if (!txDevEnvSrc.SRC_PATH || !txDevEnvSrc.VITE_URL) {
+        console.error('Missing TXDEV_VITE_URL and/or TXDEV_SRC_PATH env variables.');
         process.exit(108);
     }
+    _txDevEnv = txDevEnvSrc as TxDevEnvEnabledType;
+} else {
+    _txDevEnv = {
+        ...txDevEnvSrc,
+        SRC_PATH: undefined,
+        VITE_URL: undefined,
+    } as TxDevEnvDisabledType;
 }
 
 
@@ -146,7 +168,7 @@ if (isDevMode) {
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
 let isZapHosting: boolean;
 let forceInterface: false | string;
-let forceFXServerPort: false | number ;
+let forceFXServerPort: false | number;
 let txAdminPort: number;
 let loginPageLogo: false | string;
 let defaultMasterAccount: false | { name: string, password_hash: string };
@@ -183,7 +205,7 @@ if (fs.existsSync(zapCfgFile)) {
             };
         }
 
-        if (!isDevMode) fs.unlinkSync(zapCfgFile);
+        if (!_txDevEnv.ENABLED) fs.unlinkSync(zapCfgFile);
     } catch (error) {
         console.error(`Failed to load with ZAP-Hosting configuration error: ${(error as Error).message}`);
         process.exit(109);
@@ -196,7 +218,7 @@ if (fs.existsSync(zapCfgFile)) {
     deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
-    if (!/^\d+$/.test(txAdminPortConvar)){
+    if (!/^\d+$/.test(txAdminPortConvar)) {
         console.error('txAdminPort is not valid.');
         process.exit(110);
     }
@@ -213,10 +235,10 @@ if (fs.existsSync(zapCfgFile)) {
         forceInterface = txAdminInterfaceConvar;
     }
 }
-if(forceInterface){
+if (forceInterface) {
     addLocalIpAddress(forceInterface);
 }
-if (verboseConvar) {
+if (_txDevEnv.VERBOSE) {
     console.dir({ isPterodactyl, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
 }
 
@@ -224,13 +246,15 @@ if (verboseConvar) {
 setConsoleEnvData(
     txAdminVersion,
     txAdminResourcePath,
-    isDevMode,
-    verboseConvar
+    _txDevEnv.ENABLED,
+    _txDevEnv.VERBOSE
 );
 
 /**
  * Exports
  */
+export const txDevEnv = Object.freeze(_txDevEnv);
+
 export const txEnv = Object.freeze({
     osType,
     isWindows,
@@ -238,19 +262,15 @@ export const txEnv = Object.freeze({
     txAdminVersion,
     txAdminResourcePath,
     fxServerPath,
-    dataPath
+    dataPath, //convar txDataPath
 });
 
 export const convars = Object.freeze({
-    //Convars - Debug
-    isDevMode,
-    debugExternalStatsSource,
-    //Convars - zap dependant
     isPterodactyl,
     isZapHosting,
-    forceInterface,
+    forceInterface, //convar txAdminInterface, or zap config
     forceFXServerPort,
-    txAdminPort,
+    txAdminPort, //convar txAdminPort, or zap config
     loginPageLogo,
     defaultMasterAccount,
     deployerDefaults,

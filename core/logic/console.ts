@@ -95,6 +95,7 @@ const verboseConsole = new Console({
 
 /**
  * Returns current ts in h23 format
+ * FIXME: same thing as utils/misc.ts getTimeHms
  */
 export const getTimestamp = () => (new Date).toLocaleString(
     undefined,

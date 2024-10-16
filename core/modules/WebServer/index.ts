@@ -15,7 +15,7 @@ import WebSocket from './webSocket';
 import { customAlphabet } from 'nanoid';
 import dict49 from 'nanoid-dictionary/nolookalikes';
 
-import { convars, txEnv } from '@core/globalData';
+import { convars, txDevEnv, txEnv } from '@core/globalData';
 import router from './router';
 import consoleFactory from '@logic/console';
 import TxAdmin from '@core/txAdmin';
@@ -41,7 +41,7 @@ const koaServeOptions = {
     defer: false,
     //The resource URLs should already contain txVer as a query param to bust cache
     //so setting to 30m should be fine, except in dev mode
-    maxage: !convars.isDevMode ? 30 * 60 * 1000 : 0,
+    maxage: !txDevEnv.ENABLED ? 30 * 60 * 1000 : 0,
 };
 
 export default class WebServer {
@@ -94,7 +94,7 @@ export default class WebServer {
         });
 
         //Disable CORS on dev mode
-        if (convars.isDevMode) {
+        if (txDevEnv.ENABLED) {
             this.app.use(KoaCors());
         }
 
@@ -102,8 +102,8 @@ export default class WebServer {
         this.app.use(topLevelMw);
 
         //Setting up additional middlewares:
-        const panelPublicPath = convars.isDevMode
-            ? path.join(process.env.TXADMIN_DEV_SRC_PATH as string, 'panel/public')
+        const panelPublicPath = txDevEnv.ENABLED
+            ? path.join(txDevEnv.SRC_PATH, 'panel/public')
             : path.join(txEnv.txAdminResourcePath, 'panel');
         this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), koaServeOptions));
         this.app.use(KoaServe(panelPublicPath, koaServeOptions));

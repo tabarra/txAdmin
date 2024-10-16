@@ -1,16 +1,6 @@
 import path from "node:path";
-import { vi } from "vitest";
-
-// Stubbing env vars
-vi.stubEnv('TERM', 'xterm-256color');
-vi.stubEnv('FORCE_COLOR', '3');
-vi.stubEnv('TXADMIN_DEV_SRC_PATH', path.join(process.cwd(), '..'));
-vi.stubEnv('TXADMIN_DEV_VITE_URL', 'http://localhost:40122');
-if (process.env.CI) {
-    const citizenRoot = path.join(process.cwd(), 'alpine/opt/cfx-server/');
-    vi.stubEnv('TXADMIN_DEV_FXSERVER_PATH', citizenRoot);
-}
-
+import { vi, inject } from "vitest";
+import os from "node:os";
 
 // Stubbing globals
 vi.stubGlobal('ExecuteCommand', (commandString: string) => {
@@ -18,9 +8,13 @@ vi.stubGlobal('ExecuteCommand', (commandString: string) => {
 });
 vi.stubGlobal('GetConvar', (varName: string, defaultValue: string) => {
     if (varName === 'version') {
-        return 'v1.0.0.9998';
+        if (os.platform() === 'win32') {
+            return 'FXServer-test/txadmin SERVER v1.0.0.55555 win32';
+        } else {
+            return 'FXServer-test/txadmin v1.0.0.55555 linux';
+        }
     } else if (varName === 'citizen_root') {
-        return path.join(process.env.TXADMIN_DEV_FXSERVER_PATH!,);
+        return inject('fxsPath');
     } else if (varName === 'txAdminDevMode') {
         return 'false';
     } else if (varName === 'txAdminVerbose') {
@@ -28,7 +22,6 @@ vi.stubGlobal('GetConvar', (varName: string, defaultValue: string) => {
     } else {
         return defaultValue;
     }
-
 });
 vi.stubGlobal('GetCurrentResourceName', () => {
     return 'monitor';
@@ -65,3 +58,4 @@ vi.stubGlobal('VerifyPasswordHash', (password: string, hash: string) => {
 vi.stubGlobal('Intl.getCanonicalLocales', (locales?: string | readonly string[] | undefined) => {
     return Array.isArray(locales) ? locales : [locales];
 });
+

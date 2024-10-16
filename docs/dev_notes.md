@@ -185,7 +185,10 @@ FIXME: TODO: announce with mockups de mudanças do kick/timeout pra entrarem no 
 
 ## v8
 - testing
-    - improve and use `list-dependencies.js` as part of the test workflow
+    - include `list-dependencies.js` as part of the test workflow
+        - improve to read the parent package deps
+        - exit 1 on error
+        - detect circular imports
 - drop usage of `const console = consoleFactory(modulename);`
     - instead do `const console = console.tag('xxxx')`
     - need to be careful with the import order, but it's possible
@@ -358,6 +361,9 @@ Refactor:
     - navigation.ts
     - dateTime.ts
 - [x] remove redundant return from one-liners (`\{ ?return` regex)
+- [ ] separate getMutableConvars
+- [ ] rename `./shared/*Types.ts` to `./shared/*.d.ts`
+    - make sure no code in there!
 - [ ] `.git-blame-ignore-revs`?
 
 class AuthedAdmin extends StoredAdmin
@@ -441,8 +447,11 @@ console.dir(configVault.moduleRefreshCallbacks);
 configVault.setConfigValue('xxxxx.y', 123);
 
 
-
-
+https://www.npmjs.com/package/minimatch
+https://www.npmjs.com/package/micromatch
+https://www.npmjs.com/package/picomatch
+https://www.npmjs.com/package/wildcard - super small
+https://www.npmjs.com/package/matcher - super small
 
 
 
@@ -1287,13 +1296,8 @@ https://github.com/pelican-eggs/yolks/commit/57e3ef41ed05109f5e693d2e0d648cf4b16
 ```
 
 ```bash
-# convars
-+set txAdminVerbose true
-+set txDebugExternalStatsSource "x.x.x.x:30120"
-
 # other stuff
-export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
-npx depcheck
+npx knip
 npm-upgrade
 con_miniconChannels script:monitor*
 con_miniconChannels script:runcode

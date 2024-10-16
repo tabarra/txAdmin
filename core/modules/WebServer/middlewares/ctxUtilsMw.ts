@@ -3,7 +3,7 @@ import path from 'node:path';
 import fsp from 'node:fs/promises';
 import ejs from 'ejs';
 import xssInstancer from '@utils/xss.js';
-import { convars, txEnv } from '@core/globalData';
+import { convars, txDevEnv, txEnv } from '@core/globalData';
 import consoleFactory from '@logic/console';
 import getReactIndex, { tmpCustomThemes } from '../getReactIndex';
 import { CtxTxVars } from './ctxVarsMw';
@@ -104,7 +104,7 @@ body {
  * Loads re-usable base templates
  */
 async function loadWebTemplate(name: string) {
-    if (convars.isDevMode || !templateCache.has(name)) {
+    if (txDevEnv.ENABLED || !templateCache.has(name)) {
         try {
             const rawTemplate = await fsp.readFile(getWebViewPath(name), 'utf-8');
             const compiled = ejs.compile(rawTemplate, getEjsOptions(name + '.ejs'));
@@ -140,7 +140,7 @@ async function renderView(
     data.profilePicture = possiblyAuthedAdmin?.profilePicture ?? 'img/default_avatar.png';
     data.isTempPassword = possiblyAuthedAdmin && possiblyAuthedAdmin.isTempPassword;
     data.isLinux = !txEnv.isWindows;
-    data.showAdvanced = (convars.isDevMode || console.isVerbose);
+    data.showAdvanced = (txDevEnv.ENABLED || console.isVerbose);
 
     try {
         return await loadWebTemplate(view).then(template => template(data));

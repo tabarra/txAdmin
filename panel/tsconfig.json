@@ -17,6 +17,7 @@
     /* Linting */
     "strict": true,
     "noFallthroughCasesInSwitch": true,
+    "composite": true,
 
     /* From shadcn docs */
     "baseUrl": ".",
@@ -25,10 +26,13 @@
       "@/*": ["./src/*"],
     }
   },
-  "include": ["src"],
+  "include": [
+    "src/",
+    "../shared/"
+  ],
   "references": [
     { "path": "./tsconfig.node.json" },
     { "path": "../core" },
-    { "path": "../shared" },
+    { "path": "../shared" }
   ]
 }

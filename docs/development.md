@@ -5,7 +5,7 @@ Before starting, please make sure you are familiar with the basics of NodeJS & e
 
 
 ## Requirements
-- Windows, as the `main-builder.js` doesn't work for other OSs;
+- Windows, as the builder doesn't work for other OSs;
 - NodeJS v22.9 or newer;
 - FXServer;
 
@@ -36,24 +36,27 @@ git clone https://github.com/tabarra/txAdmin
 npm install
 npm run prepare
 ```
-3. Add a environment variable `TXADMIN_DEV_FXSERVER_PATH` with the path to your FXServer folder (eg. `E:\\FiveM\\6683\\`).
+3. At the root of the project, create a `.env` file with `TXDEV_FXSERVER_PATH` pointing to the path of your FXServer folder.
+```
+TXDEV_FXSERVER_PATH='E:/FiveM/10309/'
+```
 
 
 ## Development Workflows
 
 ### Core/Panel/Resource
-This workflow is controlled by `main-builder.js`, which is responsible for:
+This workflow is controlled by `scripts/build/*`, which is responsible for:
 - Watching and copying static files (resource, docs, license, entry file, etc) to the deploy path;
 - Watching and re-transpiling the core files, and then bundling and deploying it;
 - Run FXServer (in the same terminal), and restarting it when the core is modified (like `nodemon`, but fancy).
   
-In dev mode, core will redirect the panel `index.html` to use Vite, so you first need to start it, and only then start the `main-builder.js`:
+In dev mode, core will redirect the panel `index.html` to use Vite, so you first need to start it, and only then start the builder:
 ```sh
 # run vite
 cd panel
 npm run dev
 
-# In a new terminal - run main-builder.js
+# In a new terminal - run the builder
 cd core
 npm run dev
 ```

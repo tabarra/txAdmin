@@ -4,7 +4,7 @@ import { ExpChain } from 'lodash';
 import lodash from 'lodash-es';
 import { Low, Adapter } from 'lowdb';
 import { TextFile } from 'lowdb/node';
-import { convars } from '@core/globalData';
+import { txDevEnv } from '@core/globalData';
 import { DatabaseDataType } from './databaseTypes.js';
 import migrations from './migrations.js';
 import consoleFactory from '@logic/console.js';
@@ -54,7 +54,7 @@ class JSONFile<T> implements Adapter<T> {
 
     constructor(filename: string) {
         this.#adapter = new TextFile(filename);
-        this.#serializer = (convars.isDevMode)
+        this.#serializer = (txDevEnv.ENABLED)
             ? (obj: any) => JSON.stringify(obj, null, 4)
             : JSON.stringify;
     }

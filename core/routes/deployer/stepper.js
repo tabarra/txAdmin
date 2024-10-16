@@ -1,6 +1,6 @@
 const modulename = 'WebServer:DeployerStepper';
 import fse from 'fs-extra';
-import { convars } from '@core/globalData';
+import { convars, txDevEnv } from '@core/globalData';
 import consoleFactory from '@logic/console';
 const console = consoleFactory(modulename);
 
@@ -43,7 +43,7 @@ export default async function DeployerStepper(ctx) {
             raw: globals.deployer.recipe.raw,
         };
     } else if (globals.deployer.step === 'input') {
-        renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
+        renderData.defaultLicenseKey = txDevEnv.CFXKEY ?? '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
         if (convars.deployerDefaults) {
             renderData.defaults = {
@@ -58,7 +58,7 @@ export default async function DeployerStepper(ctx) {
         } else {
             renderData.defaults = {
                 autofilled: false,
-                license: process.env.TXADMIN_DEFAULT_LICENSE || '',
+                license: txDevEnv.CFXKEY ?? '',
                 mysqlHost: 'localhost',
                 mysqlUser: 'root',
                 mysqlPort: '3306',

@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "cd ../ && node scripts/main-builder.js publish",
-    "dev": "cd ../ && node scripts/main-builder.js dev",
+    "build": "cd ../ && npx tsx scripts/build/publish.ts",
+    "dev": "cd ../ && npx tsx scripts/build/dev.ts",
     "test": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit | node ../scripts/typecheck-formatter.js",
     "typecheck:full": "tsc -p tsconfig.json --noEmit",
@@ -67,6 +67,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/node": "^16.9.1",
     "@types/bytes": "^3.1.4",
     "@types/d3-array": "^3.2.1",
     "@types/dateformat": "^5.0.2",
@@ -84,8 +85,6 @@
     "@types/slug": "^5.0.9",
     "@types/source-map-support": "^0.5.10",
     "@types/stream-json": "^1.7.7",
-    "utility-types": "^3.11.0",
-    "vitest": "^2.1.2",
     "windows-release": "^4.0.0"
   }
 }

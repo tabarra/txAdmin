@@ -1,6 +1,6 @@
 const modulename = 'WebServer:DevDebug';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import { convars } from '@core/globalData';
+import { txDevEnv } from '@core/globalData';
 import consoleFactory from '@logic/console';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
@@ -19,7 +19,7 @@ let playerJoinCounter = 0;
  */
 export const get = async (ctx: AuthedCtx) => {
     //Sanity check
-    if (!convars.isDevMode) return ctx.send({ error: 'this route is dev mode only' });
+    if (!txDevEnv.ENABLED) return ctx.send({ error: 'this route is dev mode only' });
     const schemaRes = paramsSchema.safeParse(ctx.params);
     if (!schemaRes.success) return ctx.utils.error(400, 'Invalid Request');
     console.warn(devWarningMessage);
@@ -36,7 +36,7 @@ export const get = async (ctx: AuthedCtx) => {
  */
 export const post = async (ctx: AuthedCtx) => {
     //Sanity check
-    if (!convars.isDevMode) return ctx.send({ error: 'this route is dev mode only' });
+    if (!txDevEnv.ENABLED) return ctx.send({ error: 'this route is dev mode only' });
     const schemaRes = paramsSchema.safeParse(ctx.params);
     if (!schemaRes.success) return ctx.utils.error(400, 'Invalid Request');
     console.warn(devWarningMessage);

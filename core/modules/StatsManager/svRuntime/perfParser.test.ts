@@ -1,4 +1,3 @@
-import '@utils/testEnv';
 import { test, expect, it, suite } from 'vitest';
 import { arePerfBoundariesValid, parseRawPerf, revertCumulativeBuckets } from './perfParser';
 
