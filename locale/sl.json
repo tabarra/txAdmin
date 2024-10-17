@@ -54,9 +54,9 @@
             "deny_noroles_message": "Da ste pridružite temu strežniku, potrebujete vsaj eno od whitelistanih rol na discord strežniku %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
+            "mode_title": "Ta strežnik je v <strong>License Whitelist</strong> načinu.",
+            "insufficient_ids": "Nimate ustreznega <code>license</code> identifierja, kar pomeni, da ima server vklopljen <code>sv_lan</code>. Če ste skrbnik strežnika, lahko to izklopite v <code>server.cfg</code> datoteki.",
+            "deny_title": "Nimate whiteliste za dostop do tega strežnika.",
             "request_id_label": "Request ID"
         }
     },
@@ -78,7 +78,7 @@
         "misc": {
             "help_message": "txAdmin Meni omogočen, napiši /tx da ga odpreš.\nTipko za txAdmin Meni lahko tudi spremeniš [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_admin": "Tvoji podatki se ne ujemajo z nobenim obstoječim txAdmin profilom.\nČe si registriran na txAdminu, pojdi v upravitelja administratorjev in se prepričaj, da so tvoji podatki pravilni shranjeni.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
+            "menu_auth_failed": "txAdmin Menu prijava neuspešna z razlogom: %{reason}",
             "no_perms": "Nimaš tega dovoljenja.",
             "unknown_error": "Prišlo je do neznane težave.",
             "not_enabled": "txAdmin Meni ni omogočen! Lahko ga omogočiš v txAdmin nastavitvah.",
@@ -326,23 +326,23 @@
                 "btn_wl_add": "DODAJ WL",
                 "btn_wl_remove": "ODSTRANI WL",
                 "btn_wl_success": "Status WL spremenjen.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "log_label": "Evidenca",
+                "log_empty": "Ni najdenih banov/opozoril",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} banov",
+                "log_warn_count": "%{smart_count} opozorilo |||| %{smart_count} opozoril",
+                "log_btn": "PODROBNOSTI",
+                "notes_changed": "Opombe spremenjene.",
+                "notes_placeholder": "Opombe o igralcu..."
             },
             "history": {
                 "title": "Povezana zgodovina",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "RAZVELJAVI",
+                "revoked_success": "Dejanje preklicano!",
+                "banned_by": "BANNAL %{author}",
+                "warned_by": "OPOZORJEN od %{author}",
+                "revoked_by": "Preklical %{author}.",
+                "expired_at": "Poteče %{date}.",
+                "expires_at": "Poteče %{date}."
             },
             "ban": {
                 "title": "Odstrani igralca",
@@ -356,13 +356,13 @@
                 "custom": "Po meri",
                 "helper_text": "Prosim, izberite trajanje",
                 "submit": "Potrdi odstranitev",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "reason_required": "To polje je obvezno.",
+                "success": "Igralec banan!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "Trenutni identifierji",
+                "previous_ids": "Prej uporabljeni identifierji",
+                "all_hwids": "Strojni IDs"
             }
         }
     }
