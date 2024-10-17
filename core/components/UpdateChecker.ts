@@ -1,5 +1,5 @@
 const modulename = 'UpdateChecker';
-import semver from 'semver';
+import semver, { ReleaseType } from 'semver';
 import { z } from "zod";
 import got from '@core/extras/got.js';
 import { txEnv } from '@core/globalData';
@@ -7,28 +7,48 @@ import consoleFactory from '@extras/console';
 import { UpdateDataType } from '@shared/otherTypes';
 import TxAdmin from '@core/txAdmin';
 import { UpdateAvailableEventType } from '@shared/socketioTypes';
+import { queryChangelogApi } from '@core/updateChangelog';
+import { getUpdateRolloutDelay } from '@core/updateRollout';
 const console = consoleFactory(modulename);
 
 
-//Schemas
-const txVersion = z.string().refine(
-    (x) => x !== '0.0.0',
-    { message: 'must not be 0.0.0' }
-);
-const changelogRespSchema = z.object({
-    recommended: z.coerce.number().positive(),
-    recommended_download: z.string().url(),
-    recommended_txadmin: txVersion,
-    optional: z.coerce.number().positive(),
-    optional_download: z.string().url(),
-    optional_txadmin: txVersion,
-    latest: z.coerce.number().positive(),
-    latest_download: z.string().url(),
-    latest_txadmin: txVersion,
-    critical: z.coerce.number().positive(),
-    critical_download: z.string().url(),
-    critical_txadmin: txVersion,
-});
+type CachedDelayType = {
+    ts: number,
+    diceRoll: number,
+}
+
+/**
+ * Creates a cache string.
+ */
+const createCacheString = (delayData: CachedDelayType) => {
+    return `${delayData.ts},${delayData.diceRoll}`;
+}
+
+
+/**
+ * Parses the cached string.
+ * Format: "ts,diceRoll"
+ */
+const parseCacheString = (raw: any) => {
+    if (typeof raw !== 'string' || !raw) return;
+    const [ts, diceRoll] = raw.split(',');
+    const obj = {
+        ts: parseInt(ts),
+        diceRoll: parseInt(diceRoll),
+    } satisfies CachedDelayType;
+    if (isNaN(obj.ts) || isNaN(obj.diceRoll)) return;
+    return obj;
+}
+
+
+/**
+ * Rolls dice, gets integer between 0 and 100
+ */
+const rollDice = () => {
+    return Math.floor(Math.random() * 101);
+}
+
+const DELAY_CACHE_KEY = 'updateDelay';
 
 
 export default class UpdateChecker {
@@ -53,77 +73,59 @@ export default class UpdateChecker {
      * Check for txAdmin and FXServer updates
      */
     async checkChangelog() {
-        //GET changelog data
-        let apiResponse: z.infer<typeof changelogRespSchema>;
-        try {
-            //perform request - cache busting every ~1.4h
-            const osTypeApiUrl = (txEnv.isWindows) ? 'win32' : 'linux';
-            const cacheBuster = Math.floor(Date.now() / 5_000_000);
-            const reqUrl = `https://changelogs-live.fivem.net/api/changelog/versions/${osTypeApiUrl}/server?${cacheBuster}`;
-            const resp = await got(reqUrl).json()
-            apiResponse = changelogRespSchema.parse(resp);
-        } catch (error) {
-            console.verbose.warn(`Failed to retrieve FXServer/txAdmin update data with error: ${(error as Error).message}`);
-            return;
+        const updates = await queryChangelogApi();
+        if (!updates) return;
+
+        //If fxserver, don't print anything, just update the data
+        if (updates.fxs) {
+            this.fxsUpdateData = {
+                version: updates.fxs.version,
+                isImportant: updates.fxs.isImportant,
+            }
         }
 
-        //Checking txAdmin version
-        try {
-            const isOutdated = semver.lt(txEnv.txAdminVersion, apiResponse.latest_txadmin);
-            if (isOutdated) {
-                const semverDiff = semver.diff(txEnv.txAdminVersion, apiResponse.latest_txadmin);
-                if (semverDiff === 'patch') {
+        //If txAdmin update, check for delay before printing
+        if (updates.txa) {
+            //Setup delay data
+            const currTs = Date.now();
+            let delayData: CachedDelayType;
+            const rawCache = this.#txAdmin.persistentCache.get(DELAY_CACHE_KEY);
+            const cachedData = parseCacheString(rawCache);
+            if (cachedData) {
+                delayData = cachedData;
+            } else {
+                delayData = {
+                    diceRoll: rollDice(),
+                    ts: currTs,
+                }
+                this.#txAdmin.persistentCache.set(DELAY_CACHE_KEY, createCacheString(delayData));
+            }
+
+            //Get the delay
+            const notifDelayDays = getUpdateRolloutDelay(
+                updates.txa.semverDiff,
+                txEnv.txAdminVersion.includes('-'),
+                delayData.diceRoll
+            );
+            const notifDelayMs = notifDelayDays * 24 * 60 * 60 * 1000;
+            console.verbose.debug(`Update available, notification delayed by: ${notifDelayDays} day(s).`);
+            if (currTs - delayData.ts >= notifDelayMs) {
+                this.#txAdmin.persistentCache.delete(DELAY_CACHE_KEY);
+                this.txaUpdateData = {
+                    version: updates.txa.version,
+                    isImportant: updates.txa.isImportant,
+                }
+                if (updates.txa.isImportant) {
+                    console.error('This version of txAdmin is outdated.');
+                    console.error('Please update as soon as possible.');
+                    console.error('For more information: https://discord.gg/uAmsGa2');
+                } else {
                     console.warn('This version of txAdmin is outdated.');
                     console.warn('A patch (bug fix) update is available for txAdmin.');
                     console.warn('If you are experiencing any kind of issue, please update now.');
                     console.warn('For more information: https://discord.gg/uAmsGa2');
-                    this.txaUpdateData = {
-                        version: apiResponse.latest_txadmin,
-                        isImportant: false,
-                    };
-                } else {
-                    console.error('This version of txAdmin is outdated.');
-                    console.error('Please update as soon as possible.');
-                    console.error('For more information: https://discord.gg/uAmsGa2');
-                    this.txaUpdateData = {
-                        version: apiResponse.latest_txadmin,
-                        isImportant: true,
-                    };
                 }
             }
-        } catch (error) {
-            console.verbose.warn('Error checking for txAdmin updates. Enable verbosity for more information.');
-            console.verbose.dir(error);
-        }
-
-        //Checking FXServer version
-        try {
-            if (txEnv.fxServerVersion < apiResponse.critical) {
-                if (apiResponse.critical > apiResponse.recommended) {
-                    this.fxsUpdateData = {
-                        version: apiResponse.critical.toString(),
-                        isImportant: true,
-                    }
-                } else {
-                    this.fxsUpdateData = {
-                        version: apiResponse.recommended.toString(),
-                        isImportant: true,
-                    }
-                }
-            } else if (txEnv.fxServerVersion < apiResponse.recommended) {
-                this.fxsUpdateData = {
-                    version: apiResponse.recommended.toString(),
-                    isImportant: true,
-                };
-            } else if (txEnv.fxServerVersion < apiResponse.optional) {
-                this.fxsUpdateData = {
-                    version: apiResponse.optional.toString(),
-                    isImportant: false,
-                };
-            }
-        } catch (error) {
-            console.warn('Error checking for FXServer updates. Enable verbosity for more information.');
-            console.verbose.dir(error);
         }
 
         //Sending event to the UI
