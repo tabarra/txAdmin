@@ -79,6 +79,14 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
     });
   }, []);
 
+  const handleClose = () => {
+    if (curPage === txAdminMenuPage.PlayerModalOnly) {
+      closeMenu();
+    } else {
+      setModalOpen(false);
+    }
+  }
+
   return (
     <PlayerContext.Provider
       value={{
@@ -89,13 +97,7 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
       <Dialog
         open={modalOpen}
         fullWidth
-        onClose={() => {
-          if (curPage === txAdminMenuPage.PlayerModalOnly) {
-            closeMenu();
-          } else {
-            setModalOpen(false);
-          }
-        }}
+        onClose={handleClose}
         maxWidth="md"
         PaperProps={{
           style: {
@@ -108,7 +110,7 @@ export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
         }}
       >
         <React.Suspense fallback={<LoadingModal />}>
-          <PlayerModal />
+          <PlayerModal onClose={handleClose} />
         </React.Suspense>
       </Dialog>
       {children}
