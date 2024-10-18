@@ -279,6 +279,8 @@
             type: "POST",
             url: `diagnostics/sendReport`,
             timeout: REQ_TIMEOUT_REALLY_LONG,
+            //NOTE: in NUI, empty bodies become GET requests even if you specify POST
+            data: {bugfix:true},
             success: function (data) {
                 els.spinnerBody.classList.add('d-none');
                 els.saveBtn.classList.add('d-none');
