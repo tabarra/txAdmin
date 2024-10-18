@@ -91,16 +91,6 @@ export default class FXServerLogger extends LoggerBase {
      * lrStream, websocket, and process stdout.
      */
     private ingest(type: ConsoleLineType, data: string, context?: string) {
-        //force line skip to create separation
-        if (type === ConsoleLineType.MarkerInfo) {
-            const lineBreak = this.transformer.lastEol ? '\n' : '\n\n';
-            this.fileBuffer += lineBreak;
-            if (this.recentBuffer.length) {
-                this.txAdmin.webServer.webSocket.buffer('liveconsole', lineBreak);
-                this.appendRecent(lineBreak);
-            }
-        }
-
         //Process the data
         const { webBuffer, stdoutBuffer, fileBuffer } = this.transformer.process(type, data, context);
 
@@ -130,8 +120,17 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log that the server is booting
      */
     public logFxserverBoot(pid: string) {
-        const msg = getLogDivider(`[${pid}] FXServer Starting`);
-        this.ingest(ConsoleLineType.MarkerInfo, msg);
+        //force line skip to create separation
+        if(this.recentBuffer.length){
+            const lineBreak = this.transformer.lastEol ? '\n' : '\n\n';
+            this.ingest(ConsoleLineType.MarkerInfo, lineBreak);
+        }
+        //need to break line
+        const multiline = getLogDivider(`[${pid}] FXServer Starting`);
+        for (const line of multiline.split('\n')) {
+            if (!line.length) break;
+            this.ingest(ConsoleLineType.MarkerInfo, `${line} \n`);
+        }
     }
 
 
