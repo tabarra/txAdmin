@@ -1,4 +1,4 @@
-//FIXME: after efactor, move to the correct path (maybe drop the 'update' prefix?)
+//FIXME: after refactor, move to the correct path (maybe drop the 'update' prefix?)
 const modulename = 'UpdateChecker';
 import semver, { ReleaseType } from 'semver';
 import { z } from "zod";

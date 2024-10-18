@@ -8,6 +8,7 @@ import { getServerDataConfigs, getServerDataContent, ServerDataContentType, Serv
 import MemCache from '@extras/MemCache';
 import consoleFactory, { getLogBuffer } from '@extras/console';
 import { AuthedCtx } from '@core/components/WebServer/ctxTypes';
+import checksumMonitorFolder from '@core/checksumMonitorFolder';
 const console = consoleFactory(modulename);
 
 //Consts & Helpers
@@ -111,6 +112,12 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
         perfSvMain = ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary();
     } catch (error) { }
 
+    //Monitor integrity check
+    let monitorContent = undefined;
+    try {
+        monitorContent = await checksumMonitorFolder();
+    } catch (error) { }
+
     //Prepare report object
     const reportData = {
         $schemaVersion: 2,
@@ -128,6 +135,7 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
         adminList,
         serverDataContent,
         cfgFiles,
+        monitorContent,
     };
 
     // //Preparing request

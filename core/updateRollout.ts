@@ -1,4 +1,4 @@
-//FIXME: after efactor, move to the correct path
+//FIXME: after refactor, move to the correct path
 import type { ReleaseType } from 'semver';
 
 type RolloutStrategyType = {
