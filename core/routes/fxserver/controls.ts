@@ -59,7 +59,7 @@ export default async function FXServerControls(ctx: AuthedCtx) {
             });
         }
         ctx.admin.logCommand('START SERVER');
-        const spawnError = fxRunner.spawnServer(true);
+        const spawnError = await fxRunner.spawnServer(true);
         if (spawnError !== null) {
             return ctx.send<ApiToastResp>({ type: 'error', md: true, msg: spawnError });
         } else {

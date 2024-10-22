@@ -14,49 +14,49 @@
         "schedule_warn_discord": "**%{servername}** se bo ponovno zagnal čez %{smart_count} minuto. |||| **%{servername}** se bo ponovno zagnal čez %{smart_count} minut/i/e."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Vsi igralci so bili kick-ani: %{reason}.",
+        "player": "Bili ste kick-ani: %{reason}.",
+        "unknown_reason": "iz neznanega razloga"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Bil si odstranjen iz strežnika zaradi \"%{reason}\". Tvoj BAN se izteče čez: %{expiration}.",
         "kick_permanent": "(%{author}) Bil si odstranjen iz strežnika za vedno  \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
+            "title_permanent": "Trajno ste odstranjeni iz strežnika",
+            "title_temporary": "Iz strežnika ste začasno odstranjeni",
+            "label_expiration": "Vaš ban poteče čez",
+            "label_date": "Datum ban-a",
+            "label_author": "Ban dodeljen iz strani",
+            "label_reason": "Razlog ban-a",
             "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_multiple_bans": "Opomba: Imate več kot en ban na vaših identifierjih.",
+            "note_diff_license": "Opomba: zgoraj omenjen ban, je bil dodeljen drugi <code>licenci</code>, torej se tvoji in njihovi IDs/HWIDs, ki so povezani z banom, ujemajo."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
+            "mode_title": "Ta strežnik je v <strong>Admin-only</strong> načinu.",
+            "insufficient_ids": "Nimate <code>discord</code> ali <code>fivem</code> identifijerjev in vsaj en od teh je potreben, da preverimo, če ste txAdmin administrator.",
             "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Ta strežnik je v <strong>Discord Guild Member Whitelist</strong> načinu.",
+            "insufficient_ids": "Nimate ustreznega <code>discord</code> identifierja, ki je potreben, da preverimo, če ste ste pridružili Discord Strežniku. Odprite Discord namizno aplikacijo in poskusite ponovno (spletna verzija Discorda ne deluje!).",
+            "deny_title": "Pridružiti se morate našemu Discordu, da se lahko povežete.",
+            "deny_message": "Pridružite se %{guildname} in poskusite ponovno."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Ta strežnik je v <strong>Discord Role Whitelist</strong> načinu.",
+            "insufficient_ids": "Nimate ustreznega <code>discord</code> identifierja, ki je potreben, da preverimo, če ste ste pridružili Discord Strežniku. Odprite Discord namizno aplikacijo in poskusite ponovno (spletna verzija Discorda ne deluje!).",
+            "deny_notmember_title": "Pridružiti se morate našemu Discordu, da se lahko povežete.",
+            "deny_notmember_message": "Pridružite se %{guildname}, pridobite eno od zahtevanih rol, in poskusite ponovno.",
+            "deny_noroles_title": "Nimate role potrebne za dostop na strežnik.",
+            "deny_noroles_message": "Da ste pridružite temu strežniku, potrebujete vsaj eno od whitelistanih rol na discord strežniku %{guildname}."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
+            "mode_title": "Ta strežnik je v <strong>License Whitelist</strong> načinu.",
+            "insufficient_ids": "Nimate ustreznega <code>license</code> identifierja, kar pomeni, da ima server vklopljen <code>sv_lan</code>. Če ste skrbnik strežnika, lahko to izklopite v <code>server.cfg</code> datoteki.",
+            "deny_title": "Nimate whiteliste za dostop do tega strežnika.",
             "request_id_label": "Request ID"
         }
     },
@@ -78,14 +78,14 @@
         "misc": {
             "help_message": "txAdmin Meni omogočen, napiši /tx da ga odpreš.\nTipko za txAdmin Meni lahko tudi spremeniš [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_admin": "Tvoji podatki se ne ujemajo z nobenim obstoječim txAdmin profilom.\nČe si registriran na txAdminu, pojdi v upravitelja administratorjev in se prepričaj, da so tvoji podatki pravilni shranjeni.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
+            "menu_auth_failed": "txAdmin Menu prijava neuspešna z razlogom: %{reason}",
             "no_perms": "Nimaš tega dovoljenja.",
             "unknown_error": "Prišlo je do neznane težave.",
             "not_enabled": "txAdmin Meni ni omogočen! Lahko ga omogočiš v txAdmin nastavitvah.",
             "announcement_title": "Obvestilo od %{author}:",
             "dialog_empty_input": "Ne moreš imeti praznega vnosa.",
-            "directmessage_title": "DM from admin %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "directmessage_title": "DM od admina %{author}:",
+            "onesync_error": "To dejanje potrebuje vklopljen OneSync."
         },
         "frozen": {
             "froze_player": "Zamrznil si igralca!",
@@ -174,12 +174,12 @@
                     "success": "Vozilo izbrisano!"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "title": "Pospeši",
+                    "label": "Pospešite vozilo, da dosežete max zabavo (in mogoče hitrost)",
+                    "success": "Vozilo pospeseno!",
+                    "already_boosted": "To vozilo je že pospešeno.",
+                    "unsupported_class": "Ta vrsta vozila ni podprta!",
+                    "redm_not_mounted": "Pospešite lahko, samo ko ste na konju."
                 }
             },
             "heal": {
@@ -227,11 +227,11 @@
                 "zero_players": "Najden ni bil noben igralec"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "Filtrirajte po",
+                "no_filter": "Ni filtra",
+                "is_admin": "Je admin",
+                "is_injured": "Je poškodovan / Mrtev",
+                "in_vehicle": "V vozilu"
             },
             "sort": {
                 "label": "Razvrsti po",
@@ -291,7 +291,7 @@
                 "interaction": {
                     "title": "Interakcija",
                     "options": {
-                        "heal": "Heal",
+                        "heal": "Pozdravi",
                         "go_to": "TP nanj",
                         "bring": "TP sem",
                         "spectate": "Spectate",
@@ -304,7 +304,7 @@
                         "spectate_failed": "Igralca več ni bilo mogoče najti! Izstopam iz Spectate načina.",
                         "spectate_yourself": "Ne moreš spectate-at sam sebe.",
                         "freeze_yourself": "Sam sebe ne moreš zamrzniti.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "Ni igralca, na katerega bi lahko preklopili."
                     }
                 },
                 "troll": {
@@ -322,27 +322,27 @@
                 "play_time": "Čas igranja",
                 "joined": "Vstopil",
                 "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "whitelisted_notyet": "ne še",
+                "btn_wl_add": "DODAJ WL",
+                "btn_wl_remove": "ODSTRANI WL",
+                "btn_wl_success": "Status WL spremenjen.",
+                "log_label": "Evidenca",
+                "log_empty": "Ni najdenih banov/opozoril",
+                "log_ban_count": "%{smart_count} ban |||| %{smart_count} banov",
+                "log_warn_count": "%{smart_count} opozorilo |||| %{smart_count} opozoril",
+                "log_btn": "PODROBNOSTI",
+                "notes_changed": "Opombe spremenjene.",
+                "notes_placeholder": "Opombe o igralcu..."
             },
             "history": {
                 "title": "Povezana zgodovina",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "RAZVELJAVI",
+                "revoked_success": "Dejanje preklicano!",
+                "banned_by": "BANNAL %{author}",
+                "warned_by": "OPOZORJEN od %{author}",
+                "revoked_by": "Preklical %{author}.",
+                "expired_at": "Poteče %{date}.",
+                "expires_at": "Poteče %{date}."
             },
             "ban": {
                 "title": "Odstrani igralca",
@@ -356,13 +356,13 @@
                 "custom": "Po meri",
                 "helper_text": "Prosim, izberite trajanje",
                 "submit": "Potrdi odstranitev",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "reason_required": "To polje je obvezno.",
+                "success": "Igralec banan!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "Trenutni identifierji",
+                "previous_ids": "Prej uporabljeni identifierji",
+                "all_hwids": "Strojni IDs"
             }
         }
     }

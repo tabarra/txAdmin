@@ -22,6 +22,15 @@ type StyleChannelConfig = {
     line?: ChalkInstance;
 }
 
+
+//Precalculating some styles
+const chalkToStr = (color: ChalkInstance) => color('\x00').split('\x00')[0];
+const precalcMarkerAdminCmd = chalkToStr(chalk.bgHex('#e6b863').black);
+const precalcMarkerSystemCmd = chalkToStr(chalk.bgHex('#36383D').hex('#CCCCCC'));
+const precalcMarkerInfo = chalkToStr(chalk.bgBlueBright.black);
+const ANSI_RESET = '\x1B[0m';
+const ANSI_ERASE_LINE = '\x1b[K';
+
 const STYLES = {
     [ConsoleLineType.StdOut]: null, //fully shortcircuited
     [ConsoleLineType.StdErr]: {
@@ -36,23 +45,22 @@ const STYLES = {
     },
     [ConsoleLineType.MarkerAdminCmd]: {
         web: {
-            prefix: chalk.bgYellowBright.bold.black,
-            line: chalk.bold.yellowBright,
+            prefix: chalk.bold,
+            line: x => `${precalcMarkerAdminCmd}${x}${ANSI_ERASE_LINE}${ANSI_RESET}`,
         },
         stdout: false,
     },
     [ConsoleLineType.MarkerSystemCmd]: {
-        //chalk.bgHex('#36383D').bold.hex('#CCCCCC')
         web: {
-            prefix: chalk.bgWhiteBright.bold.black,
-            line: chalk.bold.blackBright,
+            prefix: chalk.bold,
+            line: x => `${precalcMarkerSystemCmd}${x}${ANSI_ERASE_LINE}${ANSI_RESET}`,
         },
         stdout: false,
     },
     [ConsoleLineType.MarkerInfo]: {
         web: {
-            prefix: chalk.bgBlueBright.bold.black,
-            line: chalk.bgBlueBright.bold.black,
+            prefix: chalk.bold,
+            line: x => `${precalcMarkerInfo}${x}${ANSI_ERASE_LINE}${ANSI_RESET}`,
         },
         stdout: {
             prefix: chalk.bgBlueBright.bold.black,

@@ -46,27 +46,85 @@ local function toggleGodMode(enabled)
     SetEntityInvincible(PlayerPedId(), enabled)
 end
 
+-- Calculated in python using sklearn.linear_model.LinearRegression with the points:
+-- H: 10, F: 20
+-- H: 150, F: 250
+local function getFallImpulse(H)
+    local coefficient = 1.6428571428571428
+    local intercept = 3.5714285714285836
+    return coefficient * H + intercept
+end
+
+-- NOTE: this depends on toggleGodMode(false) running _first_ before disabling noclip
 local function disableRagdollingWhileFall()
     CreateThread(function()
+        -- Check if ped is too close to the ground
         local ped = PlayerPedId()
-        local initialCanPlayerRagdoll = CanPedRagdoll(ped)
-        SetPedCanRagdoll(ped, false)
-
-        --It takes some time for player to start to fall after noclip disabled
-        --Also, toggleGodMode(false) is called when disabling noclip
-        Wait(250)
-
-        SetEntityInvincible(ped, true)
-        while IsPedFalling(ped) do
-            Wait(50)
+        local pedHeight = GetEntityHeightAboveGround(ped)
+        if pedHeight == nil or pedHeight < 4.0 then
+            debugPrint('Ped is too close to the ground, returning')
+            return
         end
 
-        -- FIXME: The ped will still ragdoll when it hits the ground,
-        -- but I do not know how to fix this, if you do, please open a PR on GitHub!
+        -- Disable ragdolling
+        local pid = PlayerId()
+        SetEntityInvincible(ped, true)
+        if IS_FIVEM then
+            SetPlayerFallDistance(pid, 9000.0)
+        else
+            SetRagdollBlockingFlags(ped, (1 << 9)) --RBF_FALLING 
+        end
 
-        Wait(1000)
-        SetPedCanRagdoll(ped, initialCanPlayerRagdoll)
+        -- Fall from big heights take forever, so force the ped down
+        -- Note, force is clamped to -250.0 by the engine
+        -- Note2, this needs to be applied before the fall starts
+        local downForce = getFallImpulse(pedHeight)
+        ApplyForceToEntity(
+            ped,
+            3,                             --MaxForceRot2
+            vector3(0.0, 0.0, -downForce), --force
+            vector3(0.0, 0.0, 0.0),        --offset
+            0,                             --boneIndex
+            true,                          --isDirectionRel
+            true,                          --ignoreUpVec
+            true,                          --isForceRel
+            false,                         --p12
+            true                           --p13
+        )
+        debugPrint('Ped should fall, applying down force:', downForce)
+
+        --Await for ped to start falling for up to 1 second
+        --If it doesn't, asume that it is not going to fall and return
+        local fallAwaitLimit = 1000
+        local fallAwaitStep = 25
+        local fallAwaitElapsed = 0
+        while not IsPedFalling(ped) do
+            if fallAwaitElapsed >= fallAwaitLimit then
+                debugPrint('Ped did not fall, returning')
+                SetEntityInvincible(ped, false)
+                SetPlayerFallDistance(pid, -1)
+                return
+            end
+            fallAwaitElapsed = fallAwaitElapsed + fallAwaitStep
+            Wait(fallAwaitStep)
+        end
+        debugPrint('Ped is falling, disabling ragdolling')
+
+        -- Wait until ped stops falling
+        repeat
+            Wait(50)
+        until not IsPedFalling(ped)
+        debugPrint('Ped stopped falling, re-enabling ragdolling')
+
+        -- Re-enable ragdolling
+        Wait(750) --Probably not needed, but just in case
+        debugPrint('Re-enabling ragdolling')
         SetEntityInvincible(ped, false)
+        if IS_FIVEM then
+            SetPlayerFallDistance(pid, -1)
+        else
+            ClearRagdollBlockingFlags(ped, (1 << 9)) --RBF_FALLING 
+        end
     end)
 end
 
@@ -145,14 +203,14 @@ local function toggleFreecam(enabled)
     end
 
     local function disableNoClip()
-        if freecamVeh == 0 then
-            disableRagdollingWhileFall()
-        end
         SetFreecamActive(false)
         if IS_FIVEM then
             SetGameplayCamRelativeHeading(0)
         else
             Citizen.InvokeNative(0x14F3947318CA8AD2, 0.0, 0.0) -- SetThirdPersonCamRelativeHeadingLimitsThisUpdate
+        end
+        if freecamVeh == 0 then
+            disableRagdollingWhileFall()
         end
     end
 
@@ -203,9 +261,18 @@ RegisterNetEvent('txcl:setPlayerMode', function(mode, ptfx)
         CreatePlayerModePtfxLoop(PlayerPedId(), true)
     end
 
+    --FIXME: Refactor this file:
+    -- * keep state of the current game mode in a var
+    -- * when changing mode, disable the current mode
+    -- * and only then enable the new mode
+    -- * separate the noclip enable and disable functions
+    -- * rename "freecam" to "noclip" in the code
+
     --NOTE: always do the toggleX(true) at the bottom to prevent
     --conflict with some other native like toggleGodMode(false) after toggleFreecam(true)
     --which disables the SetEntityInvincible(true)
+
+    --FIXME: for now, always disable godmode before disabling noclip
     if mode == 'godmode' then
         toggleFreecam(false)
         toggleSuperJump(false)
@@ -215,12 +282,12 @@ RegisterNetEvent('txcl:setPlayerMode', function(mode, ptfx)
         toggleSuperJump(false)
         toggleFreecam(true)
     elseif mode == 'superjump' then
-        toggleFreecam(false)
         toggleGodMode(false)
+        toggleFreecam(false)
         toggleSuperJump(true)
     elseif mode == 'none' then
-        toggleFreecam(false)
         toggleGodMode(false)
+        toggleFreecam(false)
         toggleSuperJump(false)
     end
 end)

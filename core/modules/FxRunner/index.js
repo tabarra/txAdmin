@@ -163,7 +163,6 @@ export default class FXRunner {
     /**
      * Spawns the FXServer and sets up all the event handlers
      * @param {boolean} announce
-     * @returns {string} null or error message
      */
     async spawnServer(announce) {
         //If the server is already alive

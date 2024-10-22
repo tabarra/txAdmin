@@ -182,7 +182,7 @@
                                 <li>Player database statistics</li>
                                 <li>txAdmin settings (no bot token)</li>
                                 <li>List of admins (no passwords/hashes)</li>
-                                <li>List of files/folders in server data folder</li>
+                                <li>List of files/folders in server data and monitor folders</li>
                                 <li>Config files in server data folder</li>
                             </ul>
                         </li>
@@ -279,6 +279,8 @@
             type: "POST",
             url: `diagnostics/sendReport`,
             timeout: REQ_TIMEOUT_REALLY_LONG,
+            //NOTE: in NUI, empty bodies become GET requests even if you specify POST
+            data: {bugfix:true},
             success: function (data) {
                 els.spinnerBody.classList.add('d-none');
                 els.saveBtn.classList.add('d-none');
