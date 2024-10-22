@@ -1,6 +1,6 @@
 const modulename = 'PlayerDropStatsManager';
 import fsp from 'node:fs/promises';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import type TxAdmin from '@core/txAdmin.js';
 import { PDLChangeEventType, PDLFileSchema, PDLFileType, PDLHourlyRawType, PDLHourlyType, PDLServerBootDataSchema } from './playerDropSchemas';
 import { classifyDrop } from './classifyDropReason';
@@ -11,7 +11,7 @@ import { MultipleCounter } from '../statsUtils';
 import { throttle } from 'throttle-debounce';
 import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@routes/playerDrops';
 import { migratePlayerDropsFile } from './playerDropMigrations';
-import { parseFxserverVersion } from '@utils/fxsVersionParser';
+import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
 import { PlayerDropEvent } from '@modules/PlayerlistManager';
 const console = consoleFactory(modulename);
 

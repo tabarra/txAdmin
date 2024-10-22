@@ -2,7 +2,7 @@ const modulename = 'Deployer';
 import YAML from 'js-yaml';
 import { txEnv } from '@core/globalData';
 import { default as untypedRecipeEngine } from './recipeEngine.js';
-import consoleFactory from '@logic/console.js';
+import consoleFactory from '@lib/console.js';
 import { RECIPE_DEPLOYER_VERSION } from './index.js';
 const console = consoleFactory(modulename);
 

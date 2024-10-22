@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AuthProviderRedirect';
 import { InitializedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { ApiOauthRedirectResp } from '@shared/authApiTypes';
 import { z } from 'zod';
 import { getOauthRedirectUrl } from './oauthMethods';

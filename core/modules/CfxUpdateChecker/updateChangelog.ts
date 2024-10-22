@@ -1,9 +1,9 @@
 const modulename = 'CfxUpdateChecker';
 import semver, { ReleaseType } from 'semver';
 import { z } from "zod";
-import got from '@utils/got.js';
+import got from '@lib/got';
 import { txEnv } from '@core/globalData';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { UpdateDataType } from '@shared/otherTypes';
 const console = consoleFactory(modulename);
 

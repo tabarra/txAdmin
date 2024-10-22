@@ -1,5 +1,5 @@
 const modulename = 'WebServer:DeployerStatus';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 

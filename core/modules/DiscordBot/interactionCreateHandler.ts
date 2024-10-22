@@ -6,7 +6,7 @@ import statusCommandHandler from './commands/status';
 import whitelistCommandHandler from './commands/whitelist';
 import { embedder } from './discordHelpers';
 import { cloneDeep } from 'lodash-es'; //DEBUG
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 

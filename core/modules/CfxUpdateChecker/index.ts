@@ -1,6 +1,6 @@
 const modulename = 'CfxUpdateChecker';
 import { txEnv } from '@core/globalData';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { UpdateDataType } from '@shared/otherTypes';
 import TxAdmin from '@core/txAdmin';
 import { UpdateAvailableEventType } from '@shared/socketioTypes';

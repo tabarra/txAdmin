@@ -1,7 +1,7 @@
 const modulename = 'Fd3Handler';
-import { anyUndefined } from '@utils/misc';
+import { anyUndefined } from '@lib/misc';
 import TxAdmin from '@core/txAdmin';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 //Helpers

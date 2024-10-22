@@ -4,7 +4,7 @@ import { InitializedCtx } from "@modules/WebServer/ctxTypes";
 import { ValidSessionType } from "@modules/WebServer/middlewares/sessionMws";
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackResp } from "@shared/authApiTypes";
 import { randomUUID } from "node:crypto";
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { UserInfoType } from "@modules/AdminVault/providers/CitizenFX";
 const console = consoleFactory(modulename);
 

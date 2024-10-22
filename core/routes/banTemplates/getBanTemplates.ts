@@ -1,5 +1,5 @@
 const modulename = 'WebServer:GetBanTemplates';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import { BanTemplatesDataSchema, BanTemplatesDataType } from './utils';

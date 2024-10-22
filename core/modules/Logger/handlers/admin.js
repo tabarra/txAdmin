@@ -3,9 +3,9 @@ import fsp from 'node:fs/promises';
 import path from 'node:path';
 import chalk from 'chalk';
 import { getBootDivider } from '../loggerUtils';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { LoggerBase } from '../LoggerBase';
-import { getTimeHms } from '@utils/misc';
+import { getTimeHms } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 

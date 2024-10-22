@@ -1,10 +1,10 @@
 const modulename = 'WebServer:PlayerActions';
 import humanizeDuration, { Unit } from 'humanize-duration';
-import playerResolver from '@core/playerLogic/playerResolver';
+import playerResolver from '@lib/player/playerResolver';
 import { GenericApiResp } from '@shared/genericApiTypes';
-import { PlayerClass, ServerPlayer } from '@core/playerLogic/playerClasses';
-import { anyUndefined, calcExpirationFromDuration } from '@utils/misc';
-import consoleFactory from '@logic/console';
+import { PlayerClass, ServerPlayer } from '@lib/player/playerClasses';
+import { anyUndefined, calcExpirationFromDuration } from '@lib/misc';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

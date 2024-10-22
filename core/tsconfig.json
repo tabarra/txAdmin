@@ -7,13 +7,13 @@
     "target": "es2021",
 
     /* Specify what module code is generated. */
-    "module": "commonjs",
+    "module": "ES2020",
 
     /* Specify the root folder within your source files. */
     "rootDir": "../",
 
     /* Specify how TypeScript looks up a file from a given module specifier. */
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
 
     /* Specify the base directory to resolve non-relative module names. */
     "baseUrl": "./",
@@ -21,8 +21,7 @@
     /* Specify a set of entries that re-map imports to additional lookup locations. */
     "paths": {
       "@shared/*": ["../shared/*"],
-      "@utils/*": ["./utils/*"],
-      "@logic/*": ["./logic/*"],
+      "@lib/*": ["./lib/*"],
       "@modules/*": ["./modules/*"],
       "@routes/*": ["./routes/*"],
       "@core/*": ["./*"]

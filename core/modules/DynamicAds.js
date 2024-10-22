@@ -1,7 +1,7 @@
 const modulename = 'DynamicAds';
 import defaultAds from '../../dynamicAds2.json';
-import got from '@utils/got.js';
-import consoleFactory from '@logic/console';
+import got from '@lib/got';
+import consoleFactory from '@lib/console';
 import { convars } from '@core/globalData';
 const console = consoleFactory(modulename);
 

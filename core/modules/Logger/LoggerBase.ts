@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import * as rfs from 'rotating-file-stream';
 import { cloneDeep, defaultsDeep } from 'lodash-es';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { getLogSizes, getLogDivider } from './loggerUtils';
-import { getTimeFilename } from '@utils/misc';
+import { getTimeFilename } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 

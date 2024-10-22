@@ -1,5 +1,5 @@
 const modulename = 'WebServer:PlayersStats';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { PlayersStatsResp } from '@shared/playerApiTypes';
 const console = consoleFactory(modulename);

@@ -1,11 +1,11 @@
 const modulename = 'WebServer:AuthProviderCallback';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 import { AuthedAdmin, CfxreSessAuthType } from '@modules/WebServer/authLogic';
 import { z } from 'zod';
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackResp, ReactAuthDataType } from '@shared/authApiTypes';
 import { handleOauthCallback } from './oauthMethods';
-import { getIdFromOauthNameid } from '@utils/idUtils';
+import { getIdFromOauthNameid } from '@lib/player/idUtils';
 const console = consoleFactory(modulename);
 
 //Helper functions

@@ -4,10 +4,10 @@ import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import * as nanoidSecure from 'nanoid';
 import * as nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@shared/consts';
-import getOsDistro from '@utils/getOsDistro.js';
+import getOsDistro from '@lib/host/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
 import { DatabaseObjectType } from './database';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 //Consts

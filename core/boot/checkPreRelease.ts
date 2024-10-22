@@ -1,6 +1,6 @@
 import humanizeDuration, { Unit } from 'humanize-duration';
 import chalk from 'chalk';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory('ATTENTION');
 
 

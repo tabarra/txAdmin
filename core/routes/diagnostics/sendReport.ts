@@ -1,14 +1,14 @@
 const modulename = 'WebServer:SendDiagnosticsReport';
-import got from '@utils/got';
+import got from '@lib/got';
 import { txEnv } from '@core/globalData';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
-import * as diagnosticsFuncs from '@logic/diagnostics';
-import { redactApiKeys } from '@utils/misc';
-import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@logic/serverDataScanner.js';
-import MemCache from '@utils/MemCache';
-import consoleFactory, { getLogBuffer } from '@logic/console';
+import * as diagnosticsFuncs from '@lib/diagnostics';
+import { redactApiKeys } from '@lib/misc';
+import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@lib/fxserver/serverDataScanner.js';
+import MemCache from '@lib/MemCache';
+import consoleFactory, { getLogBuffer } from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import checksumMonitorFolder from '@core/checksumMonitorFolder';
+import scanMonitorFiles from '@lib/fxserver/scanMonitorFiles';
 const console = consoleFactory(modulename);
 
 //Consts & Helpers
@@ -115,7 +115,7 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     //Monitor integrity check
     let monitorContent = undefined;
     try {
-        monitorContent = await checksumMonitorFolder();
+        monitorContent = await scanMonitorFiles();
     } catch (error) { }
 
     //Prepare report object

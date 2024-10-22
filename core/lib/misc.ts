@@ -29,7 +29,7 @@ export const parseSchedule = (scheduleTimes: string[]) => {
 
 
 /**
- * Redacts sv_licenseKey, steam_webApiKey, sv_tebexSecret, and rcon_password from a string
+ * Redacts known keys and tokens from a string
  */
 export const redactApiKeys = (src: string) => {
     if (typeof src !== 'string' || !src.length) return src;
@@ -39,7 +39,7 @@ export const redactApiKeys = (src: string) => {
         .replace(/sv_tebexSecret\s+["']?\w{40}["']?.?$/gim, 'sv_tebexSecret [REDACTED]')
         .replace(/rcon_password\s+["']?[^"']+["']?.?$/gim, 'rcon_password [REDACTED]')
         .replace(/mysql_connection_string\s+["']?[^"']+["']?.?$/gim, 'mysql_connection_string [REDACTED]')
-        .replace(/discord\.com\/api\/webhooks\/\d{17,20}\/\w{10,}.?$/gim, 'discord.com/api/webhooks/[REDACTED]/[REDACTED]');
+        .replace(/discord\.com\/api\/webhooks\/\d{17,20}\/[\w\-_./=]{10,}(.*)/gim, 'discord.com/api/webhooks/[REDACTED]/[REDACTED]');
 };
 
 

@@ -1,5 +1,5 @@
 const modulename = 'WebServer:SaveBanTemplates';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { GenericApiOkResp } from '@shared/genericApiTypes';
 import { z } from 'zod';

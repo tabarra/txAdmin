@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AdminManagerPage';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 

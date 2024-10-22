@@ -2,7 +2,6 @@
   "name": "txadmin-core",
   "version": "1.0.0",
   "description": "The core package is the backend of txAdmin and handles running fxserver and the web server and every other internal backend stuff.",
-  "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "cd ../ && npx tsx scripts/build/publish.ts",

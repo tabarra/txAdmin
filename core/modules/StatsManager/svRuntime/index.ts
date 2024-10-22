@@ -1,7 +1,7 @@
 const modulename = 'SvRuntimeStatsManager';
 import fsp from 'node:fs/promises';
 import * as d3array from 'd3-array';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import type TxAdmin from '@core/txAdmin.js';
 import { SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName, SvRtNodeMemorySchema } from './perfSchemas';
 import type { SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtNodeMemoryType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
@@ -11,7 +11,7 @@ import { convars, txDevEnv } from '@core/globalData';
 import { ZodError } from 'zod';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TICKS } from './config';
 import { PerfChartApiResp } from '@routes/perfChart';
-import got from '@utils/got';
+import got from '@lib/got';
 import { throttle } from 'throttle-debounce';
 const console = consoleFactory(modulename);
 

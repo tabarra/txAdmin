@@ -1,7 +1,7 @@
 const modulename = 'WebServer:AuthLogic';
 import { z } from "zod";
 import { convars } from '@core/globalData';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import TxAdmin from "@core/txAdmin";
 import { SessToolsType } from "./middlewares/sessionMws";
 import { ReactAuthDataType } from "@shared/authApiTypes";

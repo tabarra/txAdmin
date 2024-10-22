@@ -1,7 +1,7 @@
 const modulename = 'WebServer:DevDebug';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { txDevEnv } from '@core/globalData';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
 

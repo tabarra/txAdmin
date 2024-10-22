@@ -2,7 +2,7 @@ const modulename = 'ConfigVault';
 import fs from 'node:fs';
 import { cloneDeep } from 'lodash-es';
 import { defaultEmbedJson, defaultEmbedConfigJson } from '@modules/DiscordBot/defaultJsons';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 

@@ -81,6 +81,7 @@ const buildOptions: BuildOptions = {
     outfile: path.join(fxsPaths.monitor, 'core', 'index.js'),
     platform: 'node',
     target: 'node16',
+    format: 'cjs', //typescript builds to esm and esbuild converts it to cjs
     charset: 'utf8',
     define: { TX_PRERELEASE_EXPIRATION: preReleaseExpiration },
 };

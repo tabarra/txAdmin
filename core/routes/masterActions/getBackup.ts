@@ -1,8 +1,8 @@
 const modulename = 'WebServer:MasterActions:GetBackup';
 import fsp from 'node:fs/promises';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import { getTimeFilename } from '@utils/misc';
+import { getTimeFilename } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 

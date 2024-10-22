@@ -21,7 +21,6 @@ export default function setup({ config, provide }: GlobalSetupContext) {
     fs.mkdirSync(fxsPath, { recursive: true });
     fs.mkdirSync(txDataPath, { recursive: true });
 
-
     return () => {
         console.log('Erasing temp folder:', tempFolderPath);
         fs.rmSync(tempFolderPath, { recursive: true });

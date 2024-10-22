@@ -2,7 +2,7 @@ const modulename = 'DiscordBot:cmd';
 import TxAdmin from "@core/txAdmin";
 import orderedEmojis from 'unicode-emoji-json/data-ordered-emoji';
 import { ColorResolvable, CommandInteraction, EmbedBuilder, InteractionReplyOptions } from "discord.js";
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 const allEmojis = new Set(orderedEmojis);
 

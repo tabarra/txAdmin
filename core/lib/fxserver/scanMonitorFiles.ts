@@ -3,7 +3,7 @@ import bytes from 'bytes';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
-import { txEnv } from './globalData';
+import { txEnv } from '../../globalData';
 
 //Hash test
 const hashFile = async (filePath: string) => {
@@ -38,7 +38,7 @@ type ContentFileType = {
     hash: string;
 }
 
-export default async function checksumMonitorFolder() {
+export default async function scanMonitorFiles() {
     const rootPath = txEnv.txAdminResourcePath;
     const allFiles: ContentFileType[] = [];
     let totalFiles = 0;

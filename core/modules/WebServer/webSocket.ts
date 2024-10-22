@@ -1,6 +1,6 @@
 const modulename = 'WebSocket';
 import { Server as SocketIO, Socket, RemoteSocket } from 'socket.io';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import statusRoom from './wsRooms/status';
 import dashboardRoom from './wsRooms/dashboard';
 import playerlistRoom from './wsRooms/playerlist';
@@ -9,7 +9,7 @@ import serverlogRoom from './wsRooms/serverlog';
 import TxAdmin from '@core/txAdmin';
 import { AuthedAdminType, checkRequestAuth } from './authLogic';
 import { SocketWithSession } from './ctxTypes';
-import { isIpAddressLocal } from '@utils/isIpAddressLocal';
+import { isIpAddressLocal } from '@lib/host/isIpAddressLocal';
 import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 

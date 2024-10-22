@@ -1,7 +1,7 @@
 const modulename = 'WebServer:PacketDropper';
 import v8 from 'node:v8';
 import bytes from 'bytes';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 //Config

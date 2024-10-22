@@ -1,4 +1,4 @@
-import { getLogBuffer } from '@logic/console';
+import { getLogBuffer } from '@lib/console';
 import type { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import type { GenericApiErrorResp } from '@shared/genericApiTypes';
 

@@ -3,12 +3,12 @@ import path from 'node:path';
 import { cloneDeep } from 'lodash-es';
 import fse from 'fs-extra';
 import open from 'open';
-import getOsDistro from '@utils/getOsDistro.js';
+import getOsDistro from '@lib/host/getOsDistro.js';
 import { txEnv } from '@core/globalData';
 import recipeEngine from './recipeEngine.js';
-import consoleFactory from '@logic/console.js';
+import consoleFactory from '@lib/console.js';
 import recipeParser from './recipeParser.js';
-import { getTimeHms } from '@utils/misc.js';
+import { getTimeHms } from '@lib/misc.js';
 import { makeTemplateRecipe } from './utils.js';
 const console = consoleFactory(modulename);
 

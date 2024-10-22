@@ -1,6 +1,6 @@
 const modulename = 'WebServer:RateLimiter';
-import consoleFactory from '@logic/console';
-import { isIpAddressLocal } from '@utils/isIpAddressLocal';
+import consoleFactory from '@lib/console';
+import { isIpAddressLocal } from '@lib/host/isIpAddressLocal';
 const console = consoleFactory(modulename);
 
 

@@ -1,6 +1,6 @@
 const modulename = 'WebServer:CFGEditorPage';
-import { resolveCFGFilePath, readRawCFGFile } from '@logic/fxsConfigHelper';
-import consoleFactory from '@logic/console';
+import { resolveCFGFilePath, readRawCFGFile } from '@lib/fxserver/fxsConfigHelper';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 

@@ -1,7 +1,7 @@
 import TxAdmin from './txAdmin';
 import { txDevEnv } from './globalData';
-import checkPreRelease from '@logic/checkPreRelease';
-import consoleFactory, { setTTYTitle } from '@logic/console';
+import checkPreRelease from './boot/checkPreRelease';
+import consoleFactory, { setTTYTitle } from '@lib/console';
 const console = consoleFactory();
 
 

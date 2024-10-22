@@ -1,6 +1,6 @@
 const modulename = 'WebServer:FXServerDownloadLog';
 import fs from 'node:fs';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 

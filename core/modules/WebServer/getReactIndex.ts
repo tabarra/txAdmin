@@ -5,7 +5,7 @@ import { AdsDataType, InjectedTxConsts, ThemeType } from '@shared/otherTypes';
 import { txEnv, convars, txDevEnv } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedAdminType, checkRequestAuth } from "./authLogic";
 const console = consoleFactory(modulename);
 

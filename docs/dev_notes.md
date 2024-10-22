@@ -323,48 +323,17 @@ TxModules.xxx
 - Constructor: dependencies? ConfigKeys
 - preciso registrar de alguma forma quais keys triggam um "configUpdated(configs: {}, keysChanged: string[])" 
 
-> try https://marketplace.visualstudio.com/items?itemName=ambooth.git-rename
 
 Refactor:
-- [x] core/components -> core/modules
-- [x] core/webroutes -> core/routes
-- [x] core/types/global.d.ts -> core/global.d.ts
-- [x] UpdateChecker -> CfxUpdateChecker
-
-- [x] core/utils:
-    - fxsVersionParser.ts
-    - getOsDistro.js
-    - got.js
-    - isIpAddressLocal.ts
-    - MemCache.ts
-    - pidUsageTree.js
-    - testEnv.ts
-    - xss.js
-- [x] core/logic
-    - banner.js
-    - checkPreRelease.ts
-    - console.ts
-    - fxsConfigHelper.ts
-    - playerClasses.ts
-    - playerFinder.ts
-    - playerResolver.ts
-    - serverDataScanner.ts
-    - setupProfile.js
-    - misc.ts
-    - idUtils.ts
-- [x] create core/deployer
-- [x] remove core/extra
-- [ ] remove core/playerLogic
-- [x] routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
-- [x] split panel/src/lib/utils.ts into:
-    - utils.ts
-    - navigation.ts
-    - dateTime.ts
-- [x] remove redundant return from one-liners (`\{ ?return` regex)
 - [ ] separate getMutableConvars
 - [ ] rename `./shared/*Types.ts` to `./shared/*.d.ts`
     - make sure no code in there!
 - [ ] `.git-blame-ignore-revs`?
+- [ ] break down globalData.ts and move to @core/boot
+    - first part runs first and gets all the convars
+    - then a function is called to validate it all
+    - try to already separate the hosting part
+- [ ] switch to `game 'common'` and remove `rdr3_warning`
 
 class AuthedAdmin extends StoredAdmin
 

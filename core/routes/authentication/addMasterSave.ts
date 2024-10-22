@@ -1,8 +1,8 @@
 const modulename = 'WebServer:AuthAddMasterSave';
 import { AuthedAdmin, CfxreSessAuthType } from '@modules/WebServer/authLogic';
 import { InitializedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@logic/console';
-import { getIdFromOauthNameid } from '@utils/idUtils';
+import consoleFactory from '@lib/console';
+import { getIdFromOauthNameid } from '@lib/player/idUtils';
 import { ApiAddMasterSaveResp } from '@shared/authApiTypes';
 import { z } from 'zod';
 import consts from '@shared/consts';

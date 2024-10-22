@@ -5,7 +5,7 @@ import { txEnv } from '@core/globalData';
 import TxAdmin from '@core/txAdmin';
 import { cloneDeep } from 'lodash-es';
 import { embedder, ensurePermission, isValidButtonEmoji, isValidEmbedUrl, logDiscordAdminAction } from '../discordHelpers';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 //Humanizer options

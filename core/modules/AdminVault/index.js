@@ -7,7 +7,7 @@ import { nanoid } from 'nanoid';
 import { convars, txEnv } from '@core/globalData';
 import CitizenFXProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
-import consoleFactory from '@logic/console.js';
+import consoleFactory from '@lib/console.js';
 import chalk from 'chalk';
 const console = consoleFactory(modulename);
 

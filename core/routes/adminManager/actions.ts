@@ -1,9 +1,9 @@
 const modulename = 'WebServer:AdminManagerActions';
 import { customAlphabet } from 'nanoid';
 import dict49 from 'nanoid-dictionary/nolookalikes';
-import got from '@utils/got.js';
+import got from '@lib/got';
 import consts from '@shared/consts';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

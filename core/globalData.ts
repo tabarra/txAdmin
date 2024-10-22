@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import slash from 'slash';
 
-import consoleFactory, { setConsoleEnvData } from '@logic/console';
-import { addLocalIpAddress } from '@utils/isIpAddressLocal';
-import { parseFxserverVersion } from '@utils/fxsVersionParser';
+import consoleFactory, { setConsoleEnvData } from '@lib/console';
+import { addLocalIpAddress } from '@lib/host/isIpAddressLocal';
+import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
 import { parseTxDevEnv, TxDevEnvType } from '@shared/txDevEnv';
 import { Overwrite } from 'utility-types';
 const console = consoleFactory();

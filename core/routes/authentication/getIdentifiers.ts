@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AuthGetIdentifiers';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
 

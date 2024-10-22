@@ -1,5 +1,5 @@
 const modulename = 'WebServer:AuthMws';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { checkRequestAuth } from "../authLogic";
 import { ApiAuthErrorResp, ApiToastResp, GenericApiErrorResp } from "@shared/genericApiTypes";
 import { InitializedCtx } from '../ctxTypes';

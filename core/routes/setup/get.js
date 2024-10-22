@@ -2,7 +2,7 @@ const modulename = 'WebServer:SetupGet';
 import path from 'node:path';
 import { convars, txEnv } from '@core/globalData';
 import { RECIPE_DEPLOYER_VERSION } from '@core/deployer/index';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 

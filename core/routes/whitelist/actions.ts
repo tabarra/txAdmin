@@ -1,10 +1,10 @@
 const modulename = 'WebServer:WhitelistActions';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { DuplicateKeyError } from '@modules/PlayerDatabase';
-import { now } from '@utils/misc';
-import { parsePlayerId } from '@utils/idUtils';
+import { now } from '@lib/misc';
+import { parsePlayerId } from '@lib/player/idUtils';
 import { DatabaseWhitelistRequestsType } from '@modules/PlayerDatabase/databaseTypes';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 

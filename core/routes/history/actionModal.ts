@@ -1,8 +1,8 @@
 const modulename = 'WebServer:HistoryActionModal';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { HistoryActionModalResp } from '@shared/historyApiTypes';
-import { now } from '@utils/misc';
+import { now } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 

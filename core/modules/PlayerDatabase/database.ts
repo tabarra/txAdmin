@@ -7,7 +7,7 @@ import { TextFile } from 'lowdb/node';
 import { txDevEnv } from '@core/globalData';
 import { DatabaseDataType } from './databaseTypes.js';
 import migrations from './migrations.js';
-import consoleFactory from '@logic/console.js';
+import consoleFactory from '@lib/console.js';
 const console = consoleFactory(modulename);
 
 //Consts & helpers

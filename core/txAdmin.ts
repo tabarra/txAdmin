@@ -4,8 +4,8 @@ import slash from 'slash';
 
 import { txEnv } from '@core/globalData';
 
-import { printBanner } from '@logic/banner';
-import setupProfile from '@logic/setupProfile';
+import { printBanner } from './boot/banner';
+import setupProfile from './boot/setupProfile';
 
 import AdminVault from '@modules/AdminVault';
 import ConfigVault from '@modules/ConfigVault';
@@ -24,8 +24,8 @@ import PlayerDatabase from '@modules/PlayerDatabase';
 import PersistentCache from '@modules/PersistentCache';
 import CfxUpdateChecker from '@modules/CfxUpdateChecker';
 
-import consoleFactory from '@logic/console';
-import { getHostData } from '@logic/diagnostics';
+import consoleFactory from '@lib/console';
+import { getHostData } from '@lib/diagnostics';
 const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
 

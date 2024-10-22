@@ -1,12 +1,12 @@
 const modulename = 'WebServer:PlayerModal';
 import dateFormat from 'dateformat';
-import playerResolver from '@core/playerLogic/playerResolver';
+import playerResolver from '@lib/player/playerResolver';
 import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData } from '@shared/playerApiTypes';
 import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
-import { ServerPlayer } from '@core/playerLogic/playerClasses';
-import consoleFactory from '@logic/console';
+import { ServerPlayer } from '@lib/player/playerClasses';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import { now } from '@utils/misc';
+import { now } from '@lib/misc';
 import { getBanTemplatesImpl } from '@routes/banTemplates/getBanTemplates';
 const console = consoleFactory(modulename);
 

@@ -1,5 +1,5 @@
 const modulename = 'WebServer:HistoryStats';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { HistoryStatsResp } from '@shared/historyApiTypes';
 import { union } from 'lodash-es';

@@ -2,8 +2,8 @@ const modulename = 'HealthMonitor';
 import got from 'got'; //we need internal requests to have 127.0.0.1 src
 import { convars } from '@core/globalData';
 import getHostStats from './getHostStats';
-import consoleFactory from '@logic/console';
-import { now } from '@utils/misc';
+import consoleFactory from '@lib/console';
+import { now } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 

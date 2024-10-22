@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AuthSelf';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { ReactAuthDataType } from '@shared/authApiTypes';
 const console = consoleFactory(modulename);
 

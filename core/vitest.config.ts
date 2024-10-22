@@ -16,8 +16,8 @@ for (const match of tsconfig.matchAll(aliasRegex)) {
 
 export default defineConfig({
     test: {
-        setupFiles: ['./utils/testSetupFile.ts'],
-        globalSetup: './utils/testGlobalSetup.ts',
+        globalSetup: './testing/globalSetup.ts',
+        setupFiles: ['./testing/fileSetup.ts'],
         alias: resolvedAliases,
     },
 });

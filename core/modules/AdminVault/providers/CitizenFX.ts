@@ -2,7 +2,7 @@ const modulename = 'AdminVault:CitizenFXProvider';
 import crypto from 'node:crypto';
 import { BaseClient, Issuer, custom } from 'openid-client';
 import { URL } from 'node:url';
-import consoleFactory from '@logic/console';
+import consoleFactory from '@lib/console';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
 

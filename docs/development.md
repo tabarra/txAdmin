@@ -12,11 +12,12 @@ Before starting, please make sure you are familiar with the basics of NodeJS & e
 
 ## Project Structure
 - `core`: Node Backend & Modules. This part is transpiled by `tsc` and then bundled with `esbuild`;
+    - `boot`: Code used/triggered during the boot process.
+    - `deployer`: Responsible for deploying new servers.
+    - `lib`: Collection of stateles utils, helpers and business logic.
     - `modules`: The classes that compose the txAdmin instance, they are stateful, provide specific functionalities and are interconnected with each other.
     - `routes`: All the web routes, contain all the logic referenced in the HTTP router.
-    - `utils`: Stateles utilities, preferable no business logic in them.
-    - `logic`: Utilities that contain business logic.
-    - `deployer`: Responsible for deploying new servers.
+    - `testing`: Contains top-level testing utilities.
 - `resource`: The in-game resource that runs under the `monitor` name. These files will be synchronized with the deploy path when running the `dev:main` npm script;
 - `menu`: React source code for txAdmin's NUI Menu. It is transpiled & built using Vite;
 - `web`: Legacy SSR templates & static assets used for the txAdmin's web panel. It uses EJS as templating engine, and will soon be deprecated in favor of `panel`;
