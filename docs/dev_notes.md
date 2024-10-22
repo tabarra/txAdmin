@@ -355,7 +355,7 @@ Refactor:
 - [x] create core/deployer
 - [x] remove core/extra
 - [ ] remove core/playerLogic
-- [ ] routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
+- [x] routes/diagnostics/diagnosticsFuncs -> core/utils/diagnostics.ts
 - [x] split panel/src/lib/utils.ts into:
     - utils.ts
     - navigation.ts

@@ -2,7 +2,7 @@ const modulename = 'WebServer:SendDiagnosticsReport';
 import got from '@utils/got';
 import { txEnv } from '@core/globalData';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
-import * as diagnosticsFuncs from './diagnosticsFuncs';
+import * as diagnosticsFuncs from '@logic/diagnostics';
 import { redactApiKeys } from '@utils/misc';
 import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@logic/serverDataScanner.js';
 import MemCache from '@utils/MemCache';

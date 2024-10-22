@@ -25,7 +25,7 @@ import PersistentCache from '@modules/PersistentCache';
 import CfxUpdateChecker from '@modules/CfxUpdateChecker';
 
 import consoleFactory from '@logic/console';
-import { getHostData } from '@routes/diagnostics/diagnosticsFuncs';
+import { getHostData } from '@logic/diagnostics';
 const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
 

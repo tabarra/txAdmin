@@ -3,7 +3,7 @@ import * as jose from 'jose';
 import consoleFactory from '@logic/console';
 import { MultipleCounter, QuantileArray } from '../statsUtils';
 import { convars } from '@core/globalData';
-import { getHostStaticData } from '@routes/diagnostics/diagnosticsFuncs';
+import { getHostStaticData } from '@logic/diagnostics';
 import TxAdmin from '@core/txAdmin';
 const console = consoleFactory(modulename);
 
