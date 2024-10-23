@@ -526,7 +526,7 @@ export default class FXRunner {
 
     /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
-     * TODO: make this method accept an array and apply the formatCommand() logic
+     * FIXME: deprecate this method in favor of this.sendCommand()
      * @param {string} command
      */
     srvCmd(command, author) {

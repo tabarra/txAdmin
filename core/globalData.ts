@@ -128,9 +128,6 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
 
 
 /**
- * Convars - Debug
- */
-/**
  * txAdmin Dev Env
  */
 type TxDevEnvEnabledType = Overwrite<TxDevEnvType, {

@@ -1,4 +1,4 @@
-import { ApiAuthErrorResp } from "genericApiTypes";
+import { ApiAuthErrorResp } from "./genericApiTypes";
 import { ApiVerifyPasswordReqSchema } from '@core/routes/authentication/verifyPassword';
 import { ApiOauthCallbackReqSchema } from "@core/routes/authentication/providerCallback";
 import { ApiAddMasterPinReqSchema } from "@core/routes/authentication/addMasterPin";

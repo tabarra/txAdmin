@@ -326,7 +326,7 @@ TxModules.xxx
 
 Refactor:
 - [ ] separate getMutableConvars
-- [ ] rename `./shared/*Types.ts` to `./shared/*.d.ts`
+- [ ] rename `./shared/*Types.ts` to `./shared/*Types.d.ts`
     - make sure no code in there!
 - [ ] `.git-blame-ignore-revs`?
 - [ ] break down globalData.ts and move to @core/boot

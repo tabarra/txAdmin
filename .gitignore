@@ -4,7 +4,7 @@ cache/*
 dist/*
 .reports/*
 license_report/*
-tmp_core_tsc/*
+.tsc/*
 *.ignore.*
 /start_*.bat
 monitor-*.zip

@@ -31,7 +31,7 @@
     "allowJs": true,
 
     /* Specify an output folder for all emitted files. */
-    "outDir": "../tmp_core_tsc",
+    "outDir": "../.tsc/core",
 
     /* Disable emitting files if any type checking errors are reported. */
     "noEmitOnError": true,
