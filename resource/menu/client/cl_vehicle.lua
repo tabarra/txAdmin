@@ -7,21 +7,6 @@ if not TX_MENU_ENABLED then return end
 
 --[[ NUI CALLBACKS ]]
 
-local function getPedVehicle()
-    local ped = PlayerPedId()
-    local veh
-    if IS_REDM and IsPedOnMount(ped) then
-        veh = GetMount(ped)
-    else
-        veh = GetVehiclePedIsIn(ped, false)
-    end
-    if veh and veh > 0 then
-        return veh
-    else
-        return nil
-    end
-end
-
 -- NOTE: this is not a complete list, but most others have the type "automobile"
 local vehClassNamesEnum = {
     [8] = "bike",
