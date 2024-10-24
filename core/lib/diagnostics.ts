@@ -52,7 +52,7 @@ let hostStaticDataCache: HostStaticDataType;
 export const getProcessesData = async () => {
     type ProcDataType = {
         pid: number;
-        ppid: number;
+        ppid: number | string;
         name: string;
         cpu: number;
         memory: number;
@@ -87,7 +87,7 @@ export const getProcessesData = async () => {
 
             procList.push({
                 pid: currPidInt,
-                ppid: (curr.ppid == txProcessId) ? 'txAdmin' : curr.ppid,
+                ppid: (curr.ppid === txProcessId) ? 'txAdmin' : curr.ppid,
                 name: procName,
                 cpu: curr.cpu,
                 memory: curr.memory / MEGABYTE,
@@ -277,27 +277,24 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
         units: ['d', 'h', 'm'],
     };
 
-    const banCheckTime = txAdmin.statsManager.txRuntime.banCheckTime.resultSummary('ms');
-    const whitelistCheckTime = txAdmin.statsManager.txRuntime.whitelistCheckTime.resultSummary('ms');
-    const playersTableSearchTime = txAdmin.statsManager.txRuntime.playersTableSearchTime.resultSummary('ms');
-    const historyTableSearchTime = txAdmin.statsManager.txRuntime.historyTableSearchTime.resultSummary('ms');
+    const stats = txAdmin.statsManager.txRuntime; //shortcut
     const memoryUsage = getHeapStatistics();
 
     return {
         //Stats
         uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
         monitorRestarts: {
-            close: txAdmin.statsManager.txRuntime.monitorStats.restartReasons.close,
-            heartBeat: txAdmin.statsManager.txRuntime.monitorStats.restartReasons.heartBeat,
-            healthCheck: txAdmin.statsManager.txRuntime.monitorStats.restartReasons.healthCheck,
-            both: txAdmin.statsManager.txRuntime.monitorStats.restartReasons.both,
+            close: stats.monitorStats.restartReasons.close,
+            heartBeat: stats.monitorStats.restartReasons.heartBeat,
+            healthCheck: stats.monitorStats.restartReasons.healthCheck,
+            both: stats.monitorStats.restartReasons.both,
         },
-        hbFD3Fails: txAdmin.statsManager.txRuntime.monitorStats.healthIssues.fd3,
-        hbHTTPFails: txAdmin.statsManager.txRuntime.monitorStats.healthIssues.http,
-        banCheckTime,
-        whitelistCheckTime,
-        playersTableSearchTime,
-        historyTableSearchTime,
+        hbFD3Fails: stats.monitorStats.healthIssues.fd3,
+        hbHTTPFails: stats.monitorStats.healthIssues.http,
+        banCheckTime: stats.banCheckTime.resultSummary('ms').summary,
+        whitelistCheckTime: stats.whitelistCheckTime.resultSummary('ms').summary,
+        playersTableSearchTime: stats.playersTableSearchTime.resultSummary('ms').summary,
+        historyTableSearchTime: stats.historyTableSearchTime.resultSummary('ms').summary,
 
         //Log stuff:
         logStorageSize: (await txAdmin.logger.getStorageSize()).total,
@@ -307,9 +304,7 @@ export const getTxAdminData = async (txAdmin: TxAdmin) => {
 
         //Env stuff
         fxServerPath: txEnv.fxServerPath,
-        fxServerHost: (txAdmin.fxRunner.fxServerHost)
-            ? txAdmin.fxRunner.fxServerHost
-            : '--',
+        fxServerHost: txAdmin.fxRunner.fxServerHost ?? '--',
 
         //Usage stuff
         memoryUsage: {
