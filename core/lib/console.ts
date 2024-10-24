@@ -1,3 +1,5 @@
+//NOTE: due to the monkey patching of the console, this should be imported before anything else
+//      which means in this file you cannot import anything from inside txAdmin to prevent cyclical dependencies
 import { Console } from 'node:console';
 import { InspectOptions } from 'node:util';
 import { Writable } from 'node:stream';
@@ -66,6 +68,7 @@ export const setConsoleEnvData = (
 const defaultStream = new Writable({
     decodeStrings: true,
     defaultEncoding: 'utf8',
+    highWaterMark: 64 * 1024,
     write(chunk, encoding, callback) {
         writeToBuffer(chunk)
         process.stdout.write(chunk);
@@ -75,6 +78,7 @@ const defaultStream = new Writable({
 const verboseStream = new Writable({
     decodeStrings: true,
     defaultEncoding: 'utf8',
+    highWaterMark: 64 * 1024,
     write(chunk, encoding, callback) {
         writeToBuffer(chunk)
         if (_verboseFlag) process.stdout.write(chunk);
@@ -82,11 +86,13 @@ const verboseStream = new Writable({
     },
 });
 const defaultConsole = new Console({
+    //@ts-ignore some weird change from node v16 to v22, check after update
     stdout: defaultStream,
     stderr: defaultStream,
     colorMode: true,
 });
 const verboseConsole = new Console({
+    //@ts-ignore some weird change from node v16 to v22, check after update
     stdout: verboseStream,
     stderr: verboseStream,
     colorMode: true,
@@ -276,32 +282,3 @@ export default consoleFactory;
  * Replaces the global console with the new one
  */
 global.console = consoleFactory('Global');
-
-
-/**
- * DEBUG testing code
- */
-
-// const directStdoutPrint = (x: string) => process.stdout.write(x + '\n');
-
-// // const console = consoleFactory('WebServer:ServerLogPartial');
-// // const console = consoleFactory('FXRunner');
-// const console = consoleFactory();
-
-// directStdoutPrint(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> default")
-// console.debug('xxx');
-// console.log('xxx');
-// console.ok('xxx');
-// console.warn('xxx');
-// console.error('xxx');
-// console.dir('xxx');
-// directStdoutPrint(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> verbose only")
-// console.verbose.debug('xxx');
-// console.verbose.log('xxx');
-// console.verbose.ok('xxx');
-// console.verbose.warn('xxx');
-// console.verbose.error('xxx');
-// console.verbose.dir('xxx');
-// directStdoutPrint(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> tag")
-// console.log('root');
-// console.tag('sub1').ok('sub');
