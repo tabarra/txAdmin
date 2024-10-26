@@ -54,7 +54,11 @@
                 <ul class="nav nav-tabs card-header-tabs" id="tabSelector">
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'global' ? 'active' : '' %>" id="nav-global-tab" data-toggle="tab" href="#nav-global"
-                            role="tab" aria-controls="nav-global" aria-selected="true">Global</a>
+                            role="tab" aria-controls="nav-global" aria-selected="true">
+                            Global
+                            <!-- DynamicNewBadge reference, use tag below -->
+                            <!-- <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span> -->
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'fxserver' ? 'active' : '' %>" id="nav-fxserver-tab" data-toggle="tab" href="#nav-fxserver"
@@ -79,8 +83,6 @@
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">
                             Game
-                            <!-- DynamicNewBadge reference, but static -->
-                            <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
                         </a>
                     </li>
                 </ul>
@@ -593,9 +595,7 @@
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">
                                 Hide Admin Name <br>
-                                In Punishments <br>
-                                <!-- DynamicNewBadge reference, but static -->
-                                <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
+                                In Punishments
                             </label>
                             <div class="col-sm-9">
                                 <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
@@ -613,9 +613,7 @@
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">
                                 Hide Admin Name <br>
-                                In Messages <br>
-                                <!-- DynamicNewBadge reference, but static -->
-                                <span class="badge badge-danger" style="padding-left: 0.25rem; padding-right: 0.25rem;">NEW</span>
+                                In Messages
                             </label>
                             <div class="col-sm-9">
                                 <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
