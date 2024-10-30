@@ -5,7 +5,7 @@
     },
     "restarter": {
         "start_timeout": "未能及时启动",
-        "crash_detected": "检测到服务器已崩溃",
+        "crash_detected": "检测到服务器崩溃",
         "hang_detected": "检测到服务器挂起",
         "partial_hang_warn": "由于部分挂起，本服务器将在 1 分钟后重新启动。请立即断开连接。",
         "partial_hang_warn_discord": "由于部分挂起, **%{servername}** 将在1分钟后重启",
@@ -14,9 +14,9 @@
         "schedule_warn_discord": "**%{servername}** 预计 %{smart_count} 分钟后重新启动。 |||| **%{servername}** 预计 %{smart_count} 分钟后重新启动。"
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "已踢出所有玩家。原因: %{reason}.",
+        "player": "您已被踢出。原因: %{reason}.",
+        "unknown_reason": "未知原因"
     },
     "ban_messages": {
         "kick_temporary": "您因 \"%{reason}\" 而被封禁。您可在 %{expiration} 后再次登录服务器。操作人：%{author}",
@@ -41,7 +41,7 @@
         },
         "guild_member": {
             "mode_title": "本服务器处于 <strong>Discord服务器白名单</strong> 模式",
-            "insufficient_ids": "你没有 <code>discord</code> 标识符，这是为了验证您是否加入了我们的Discord服务器，请打开Discord桌面版再试。",
+            "insufficient_ids": "您没有 <code>discord</code> 标识符，这是为了验证您是否加入了我们的Discord服务器，请打开Discord桌面版再试。",
             "deny_title": "您必须加入我们的Discord服务器才能连接。",
             "deny_message": "请加入我们的Discord服务器 %{guildname} 再试。"
         },
@@ -55,9 +55,9 @@
         },
         "approved_license": {
             "mode_title": "本服务器处于 <strong>机器码白名单</strong> 模式",
-            "insufficient_ids": "你没有 <code>license</code> 标识符，这意味着服务器已启用 <code>sv_lan</code> 如果您是服务器所有者，可以在 <code>server.cfg</code> 中禁用。",
+            "insufficient_ids": "您没有 <code>license</code> 标识符，这意味着服务器已启用 <code>sv_lan</code> 如果您是服务器所有者，可以在 <code>server.cfg</code> 中禁用。",
             "deny_title": "您没有加入本服务器的白名单。",
-            "request_id_label": "Request ID"
+            "request_id_label": "请求ID"
         }
     },
     "server_actions": {
@@ -85,10 +85,10 @@
             "announcement_title": "公告%{author}：",
             "dialog_empty_input": "提交内客不能为空，请重新输入。",
             "directmessage_title": "来自管理员 %{author} 的消息:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "此操作需要启用OneSync。"
         },
         "frozen": {
-            "froze_player": "你冻结了玩家！",
+            "froze_player": "您冻结了玩家！",
             "unfroze_player": "您已将玩家解冻！",
             "was_frozen": "您已被管理员冻结！"
         },
@@ -179,7 +179,7 @@
                     "success": "载具已加速！",
                     "already_boosted": "载具已经被加速了",
                     "unsupported_class": "这辆载具不支持加速",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "redm_not_mounted": "只能在骑马时使用加速。"
                 }
             },
             "heal": {
@@ -189,7 +189,7 @@
                     "label": "恢复自己的状态",
                     "success_0": "状态已恢复！",
                     "success_1": "想飞上天和太阳肩并肩~",
-                    "success_2": "I do believe!",
+                    "success_2": "飞起来!",
                     "success_3": "我要飞的更高~飞的更高~"
                 },
                 "everyone": {
@@ -227,11 +227,11 @@
                 "zero_players": "未找到玩家"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "过滤条件",
+                "no_filter": "无过滤",
+                "is_admin": "是管理员",
+                "is_injured": "受伤 / 死亡",
+                "in_vehicle": "在车内"
             },
             "sort": {
                 "label": "排序方式",
@@ -299,7 +299,7 @@
                     },
                     "notifications": {
                         "heal_player": "恢复玩家的状态",
-                        "tp_player": "将你传送到玩家",
+                        "tp_player": "将您传送到玩家",
                         "bring_player": "将玩家召唤过来",
                         "spectate_failed": "无法解析目标！正在退出观看，",
                         "spectate_yourself": "您不能观看您自己",
