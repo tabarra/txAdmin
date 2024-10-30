@@ -64,9 +64,9 @@ export default class WebServer {
 
         //Generate cookie key & luaComToken
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
-            .update(txAdmin.info.serverProfilePath)
+            .update(txEnv.profilePath)
             .digest('hex');
-        this.sessionCookieName = `tx:${txAdmin.info.serverProfile}:${pathHash}`;
+        this.sessionCookieName = `tx:${txEnv.profile}:${pathHash}`;
         this.luaComToken = nanoid();
 
 

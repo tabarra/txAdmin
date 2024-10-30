@@ -6,6 +6,7 @@ import ServerLogger from './handlers/server';
 import { getLogSizes } from './loggerUtils.js';
 import consoleFactory from '@lib/console';
 import TxAdmin from '@core/txAdmin';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 type LoggerConfigType = {
@@ -29,7 +30,7 @@ export default class Logger {
         //Config stuff
         this.txAdmin = txAdmin;
         this.config = config;
-        this.basePath = `${txAdmin.info.serverProfilePath}/logs/`;
+        this.basePath = `${txEnv.profilePath}/logs/`;
 
         //Starting handlers
         this.admin = new AdminLogger(txAdmin, this.basePath, this.config.admin);

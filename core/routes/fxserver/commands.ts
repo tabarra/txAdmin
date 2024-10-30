@@ -2,6 +2,7 @@ const modulename = 'WebServer:FXServerCommands';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@lib/console';
 import { ApiToastResp } from '@shared/genericApiTypes';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -53,7 +54,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         ctx.admin.logAction('Profiling txAdmin instance.');
 
         const profileDuration = 5;
-        const savePath = `${ctx.txAdmin.info.serverProfilePath}/data/txProfile.bin`;
+        const savePath = `${txEnv.profilePath}/data/txProfile.bin`;
         ExecuteCommand('profiler record start');
         await delay(profileDuration * 1000);
         ExecuteCommand('profiler record stop');

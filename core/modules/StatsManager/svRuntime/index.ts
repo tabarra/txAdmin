@@ -7,7 +7,7 @@ import { SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName, SvRtNodeMemor
 import type { SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtNodeMemoryType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
 import { didPerfReset, diffPerfs, fetchFxsMemory, fetchRawPerfData } from './perfUtils';
 import { optimizeSvRuntimeLog } from './logOptimizer';
-import { convars, txDevEnv } from '@core/globalData';
+import { convars, txDevEnv, txEnv } from '@core/globalData';
 import { ZodError } from 'zod';
 import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TICKS } from './config';
 import { PerfChartApiResp } from '@routes/perfChart';
@@ -46,7 +46,7 @@ export default class SvRuntimeStatsManager {
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
-        this.logFilePath = `${txAdmin.info.serverProfilePath}/data/${LOG_DATA_FILE_NAME}`;
+        this.logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
         this.loadStatsHistory();
 
         //Cron functions

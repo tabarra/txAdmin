@@ -13,6 +13,7 @@ import { PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from '@routes/playe
 import { migratePlayerDropsFile } from './playerDropMigrations';
 import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
 import { PlayerDropEvent } from '@modules/PlayerlistManager';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 
@@ -43,7 +44,7 @@ export default class PlayerDropStatsManager {
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
-        this.logFilePath = `${txAdmin.info.serverProfilePath}/data/${LOG_DATA_FILE_NAME}`;
+        this.logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
         this.loadEventLog();
     }
 

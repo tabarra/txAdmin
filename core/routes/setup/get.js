@@ -29,7 +29,7 @@ export default async function SetupGet(ctx) {
         headerTitle: 'Setup',
         isReset: (globalConfig.serverName !== null),
         deployerEngineVersion: RECIPE_DEPLOYER_VERSION,
-        serverProfile: globals.info.serverProfile,
+        serverProfile: txEnv.profile,
         txDataPath: txEnv.dataPath,
         isZapHosting: convars.isZapHosting,
         windowsBatPath: null,
@@ -37,7 +37,7 @@ export default async function SetupGet(ctx) {
 
     if (txEnv.isWindows) {
         const batFolder = path.resolve(txEnv.fxServerPath, '..');
-        renderData.windowsBatPath  = path.join(batFolder, `start_${txEnv.fxServerVersion}_${globals.info.serverProfile}.bat`);
+        renderData.windowsBatPath  = path.join(batFolder, `start_${txEnv.fxServerVersion}_${txEnv.profile}.bat`);
     }
 
     return ctx.utils.render('standalone/setup', renderData);

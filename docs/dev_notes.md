@@ -63,10 +63,11 @@ Legend:
 - [ ] 
 
 ## Refactor + DX
-- [ ] deprecate fxRunner.srvCmd
+- [x] deprecate fxRunner.srvCmd
     - deprecate liveConsoleCmdHandler 
     - turn srvCmd into sendRawCommand
     - use sendRawCommand in sendCommand (leave the fxserver.log*Command in sendRawCommand)
+- [x] setup txData+profile on `index.js` before instantiating TxAdmin
 - [ ] lua file changes (after PR merges)
     - 4 spaces
     - Upper case for globals
@@ -80,7 +81,7 @@ Legend:
     - instead do `const console = console.tag('xxxx')`
     - need to be careful with the import order, but it's possible
 - [ ] headless deployer, without instantiating TxAdmin
-- [ ] (?) resolve config and setup profile on `index.js` before instantiating TxAdmin
+- [ ] (?) resolve config on `index.js` before instantiating TxAdmin
 - [ ] change the TxAdmin class to be the one managing the deployer, instead of the modules
 - [ ] change the TxAdmin class to be the one exposing methods to get the status
     - possibilities: booting, noMaster, setup, deployer, ready

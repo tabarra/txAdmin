@@ -5,7 +5,6 @@ import slash from 'slash';
 import { txEnv } from '@core/globalData';
 
 import { printBanner } from './boot/banner';
-import setupProfile from './boot/setupProfile';
 
 import AdminVault from '@modules/AdminVault';
 import ConfigVault from '@modules/ConfigVault';
@@ -27,10 +26,6 @@ import CfxUpdateChecker from '@modules/CfxUpdateChecker';
 import consoleFactory from '@lib/console';
 import { getHostData } from '@lib/diagnostics';
 const console = consoleFactory(`v${txEnv.txAdminVersion}`);
-
-
-//Helpers
-const cleanPath = (x: string) => slash(path.normalize(x));
 
 
 // Long ago I wanted to replace this with dependency injection.
@@ -86,10 +81,6 @@ export default class TxAdmin {
     cfxUpdateChecker;
 
     //Runtime
-    readonly info: {
-        serverProfile: string;
-        serverProfilePath: string;
-    }
     globalConfig: {
         serverName: string,
         language: string,
@@ -106,32 +97,16 @@ export default class TxAdmin {
     }
 
 
-    constructor(serverProfile: string) {
-        console.log(`Profile '${serverProfile}' starting...`);
+    constructor() {
+        console.log(`Profile '${txEnv.profile}' starting...`);
 
         //FIXME: hacky self reference because some webroutes need to access globals.txAdmin to pass it down
         globalsInternal.txAdmin = this;
 
-        //Check if the profile exists and call setup if it doesn't
-        const profilePath = cleanPath(path.join(txEnv.dataPath, serverProfile));
-        if (!fs.existsSync(profilePath)) {
-            try {
-                setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, serverProfile, profilePath);
-            } catch (error) {
-                console.error(`Failed to create profile '${serverProfile}' with error: ${(error as Error).message}`);
-                process.exit(300);
-            }
-        }
-        this.info = {
-            serverProfile: serverProfile,
-            serverProfilePath: profilePath
-        }
-        globalsInternal.info = this.info;
-
         //Load Config Vault
         let profileConfig;
         try {
-            this.configVault = new ConfigVault(profilePath, serverProfile);
+            this.configVault = new ConfigVault(txEnv.profilePath, txEnv.profile);
             globalsInternal.configVault = this.configVault;
             profileConfig = globalsInternal.configVault.getAll();
             this.globalConfig = profileConfig.global;

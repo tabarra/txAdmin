@@ -1,6 +1,6 @@
 const modulename = 'WebServer:DeployerStepper';
 import fse from 'fs-extra';
-import { convars, txDevEnv } from '@core/globalData';
+import { convars, txDevEnv, txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
@@ -26,7 +26,7 @@ export default async function DeployerStepper(ctx) {
     //Prepare Output
     const renderData = {
         step: globals.deployer.step,
-        serverProfile: globals.info.serverProfile,
+        serverProfile: txEnv.profile,
         deploymentID: globals.deployer.deploymentID,
         requireDBConfig: false,
         defaultLicenseKey: '',

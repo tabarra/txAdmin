@@ -1,26 +1,38 @@
+import fs from 'node:fs';
+import { txDevEnv, txEnv } from './globalData';
 import TxAdmin from './txAdmin';
-import { txDevEnv } from './globalData';
 import checkPreRelease from './boot/checkPreRelease';
 import consoleFactory, { setTTYTitle } from '@lib/console';
+import setupProfile from './boot/setupProfile';
 const console = consoleFactory();
 
 
 /**
- * Starting txAdmin (have fun :p)
+ * Setting up txData
  */
-const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
-if (serverProfile.endsWith('.base')) {
-    console.error(`Looks like the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
-    process.exit(200);
+try {
+    if (!fs.existsSync(txEnv.dataPath)) {
+        fs.mkdirSync(txEnv.dataPath);
+    }
+} catch (error) {
+    console.error(`Failed to check or create '${txEnv.dataPath}' with error: ${(error as Error).message}`);
+    process.exit(202);
 }
-if (!serverProfile.length) {
-    console.error('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
-    process.exit(201);
+try {
+    if (!fs.existsSync(txEnv.profilePath)) {
+        setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, txEnv.profile, txEnv.profilePath);
+    }
+} catch (error) {
+    console.error(`Failed to create profile '${txEnv.profile}' with error: ${(error as Error).message}`);
+    process.exit(203);
 }
 
-setTTYTitle(serverProfile);
+/**
+ * Starting txAdmin (have fun :p)
+ */
+setTTYTitle(txEnv.profile);
 checkPreRelease();
-new TxAdmin(serverProfile);
+new TxAdmin();
 
 
 /**

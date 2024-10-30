@@ -3,6 +3,7 @@ import fsp from 'node:fs/promises';
 import TxAdmin from '@core/txAdmin';
 import throttle from 'lodash-es/throttle.js';
 import consoleFactory from '@lib/console';
+import { txDevEnv, txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 
@@ -29,7 +30,7 @@ export default class PersistentCache {
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
-        this.cacheFilePath = `${txAdmin.info.serverProfilePath}/data/${CACHE_FILE_NAME}`;
+        this.cacheFilePath = `${txEnv.profilePath}/data/${CACHE_FILE_NAME}`;
         this.throttledSaveCache = throttle(
             this.saveCache.bind(this),
             5000,

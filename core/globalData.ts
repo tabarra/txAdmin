@@ -111,12 +111,6 @@ if (!txDataPathConvar) {
 } else {
     dataPath = cleanPath(txDataPathConvar);
 }
-try {
-    if (!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
-} catch (error) {
-    console.error(`Failed to check or create '${dataPath}' with error: ${(error as Error).message}`);
-    process.exit(106);
-}
 
 //Check paths for non-ASCII characters
 //NOTE: Non-ASCII in one of those paths (don't know which) will make NodeJS crash due to a bug in v8 (or something)
@@ -132,6 +126,18 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
     console.log(`txData path: ${dataPath}`);
     process.exit(107);
 }
+
+//Profile
+const profile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
+if (profile.endsWith('.base')) {
+    console.error(`Looks like the folder named '${profile}' is actually a deployed base instead of a profile.`);
+    process.exit(113);
+}
+if (!profile.length) {
+    console.error('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
+    process.exit(114);
+}
+const profilePath = cleanPath(path.join(dataPath, profile));
 
 
 /**
@@ -267,7 +273,12 @@ export const txEnv = Object.freeze({
     txAdminResourcePath,
     fxServerPath,
     dataPath, //convar txDataPath
+    profile, //convar serverProfile
+    profilePath,
 });
+
+//FIXME: there isn't really a clear distinction between these two
+// at least separate the hosting stuff from the rest
 
 export const convars = Object.freeze({
     isPterodactyl,

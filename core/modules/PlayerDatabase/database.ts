@@ -4,7 +4,7 @@ import { ExpChain } from 'lodash';
 import lodash from 'lodash-es';
 import { Low, Adapter } from 'lowdb';
 import { TextFile } from 'lowdb/node';
-import { txDevEnv } from '@core/globalData';
+import { txDevEnv, txEnv } from '@core/globalData';
 import { DatabaseDataType } from './databaseTypes.js';
 import migrations from './migrations.js';
 import consoleFactory from '@lib/console.js';
@@ -91,8 +91,8 @@ export class Database {
     isReady: boolean = false;
 
     constructor() {
-        this.dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
-        this.backupPath = `${globals.info.serverProfilePath}/data/playersDB.backup.json`;
+        this.dbPath = `${txEnv.profilePath}/data/playersDB.json`;
+        this.backupPath = `${txEnv.profilePath}/data/playersDB.backup.json`;
 
         //Start database instance
         this.setupDatabase();
@@ -150,7 +150,7 @@ export class Database {
 
             //If old database
             if (dbo.data.version !== DATABASE_VERSION) {
-                await this.backupDatabase(`${globals.info.serverProfilePath}/data/playersDB.backup.v${dbo.data.version}.json`);
+                await this.backupDatabase(`${txEnv.profilePath}/data/playersDB.backup.v${dbo.data.version}.json`);
                 this.obj = await migrations(dbo);
             } else {
                 this.obj = dbo;
