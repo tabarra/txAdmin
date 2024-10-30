@@ -95,6 +95,13 @@ if (!citizenRootConvar) {
 }
 const fxServerPath = cleanPath(citizenRootConvar as string);
 
+//Check if server is inside WinRar's temp folder
+if (isWindows && /Temp[\\/]+Rar\$/i.test(fxServerPath)) {
+    console.error('It looks like you ran FXServer inside WinRAR without extracting it first.');
+    console.error('Please extract the server files to a proper folder before running it.');
+    process.exit(112);
+}
+
 //Setting data path
 let dataPath;
 const txDataPathConvar = getConvarString('txDataPath');
