@@ -1,5 +1,7 @@
 import TxAdmin from "@core/txAdmin";
 import { RoomType } from "../webSocket";
+import { AuthedAdminType } from "../authLogic";
+
 
 /**
  * The console room is responsible for the server live console page
@@ -13,7 +15,12 @@ export default (txAdmin: TxAdmin): RoomType => ({
     commands: {
         consoleCommand: {
             permission: 'console.write',
-            handler: txAdmin.fxRunner.liveConsoleCmdHandler,
+            handler: (admin: AuthedAdminType, command: string) => {
+                if(typeof command !== 'string' || !command) return;
+                const sanitized = command.replaceAll(/\n/g, ' ');
+                admin.logCommand(sanitized);
+                txAdmin.fxRunner.sendRawCommand(sanitized, admin.name);
+            }
         },
     },
 })

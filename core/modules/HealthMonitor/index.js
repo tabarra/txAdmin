@@ -150,7 +150,7 @@ export default class HealthMonitor {
                 globals.persistentCache.set('fxsRuntime:maxClients', maxClients);
 
                 if (convars.deployerDefaults?.maxClients && maxClients > convars.deployerDefaults.maxClients) {
-                    globals.fxRunner.srvCmd(`sv_maxclients ${convars.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
+                    globals.fxRunner.sendCommand('sv_maxclients', [convars.deployerDefaults.maxClients]);
                     console.error(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
                     globals.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
                 }

@@ -59,7 +59,7 @@ export default async function Resources(ctx) {
     - Check the <strong>Live Console</strong> for any errors which may indicate that some resource has a malformed <code>fxmanifest.lua</code> file.`;
 
     //Send command request
-    const cmdSuccess = globals.fxRunner.srvCmd('txaReportResources');
+    const cmdSuccess = globals.fxRunner.sendCommand('txaReportResources');
     if (!cmdSuccess) {
         return ctx.utils.render('main/message', {message: timeoutMessage});
     }

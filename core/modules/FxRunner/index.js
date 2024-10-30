@@ -19,10 +19,6 @@ const genMutex = customAlphabet(dict49, 5);
 
 
 //Helpers
-const escape = (x) => x.toString().replace(/"/g, '\uff02');
-const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(escape).join('" "') + '"';
-};
 const getMutableConvars = (isCmdLine = false) => {
     const playerDbConfigs = globals.playerDatabase.config;
     const checkPlayerJoin = (playerDbConfigs.onJoinCheckBan || playerDbConfigs.whitelistMode !== 'disabled');
@@ -462,15 +458,9 @@ export default class FXRunner {
      * @param {object} data
      */
     sendEvent(eventType, data = {}) {
-        if (typeof eventType !== 'string') throw new Error('Expected eventType as String!');
+        if (typeof eventType !== 'string' || !eventType) throw new Error('invalid eventType');
         try {
-            const eventCommand = formatCommand(
-                'txaEvent',
-                eventType,
-                JSON.stringify(data),
-            );
-            // console.verbose.dir({ eventType, data});
-            return this.srvCmd(eventCommand);
+            return this.sendCommand('txaEvent', [eventType, data]);
         } catch (error) {
             console.verbose.error(`Error writing firing server event ${eventType}`);
             console.verbose.dir(error);
@@ -482,7 +472,7 @@ export default class FXRunner {
     /**
      * Formats and sends commands to fxserver's stdin.
      * @param {string} cmdName - The name of the command to send.
-     * @param {(string|Object)[]} [cmdArgs=[]] - The arguments for the command (optional).
+     * @param {(string|number|Object)[]} [cmdArgs=[]] - The arguments for the command (optional).
      * @param {string} [author] - The author of the command (optional).
      * @returns {boolean} Success status of the command.
      */
@@ -490,73 +480,61 @@ export default class FXRunner {
         if (this.fxChild === null) return false;
         if (typeof cmdName !== 'string' || !cmdName.length) throw new Error('cmdName is empty');
         if (!Array.isArray(cmdArgs)) throw new Error('cmdArgs is not an array');
+        //NOTE: technically fxserver accepts anything but space and ; in the command name
+        if (!/^\w+$/.test(cmdName)) {
+            throw new Error('invalid cmdName string');
+        }
 
         // Sanitize and format the command and arguments
         const sanitizeArgString = (x) => x.replaceAll(/"/g, '\uff02').replaceAll(/\n/g, ' ');
-        const rawInputParts = [sanitizeArgString(cmdName)];
+        let rawInput = sanitizeArgString(cmdName);
         for (const arg of cmdArgs) {
-            let argAsString;
             if (typeof arg === 'string') {
-                argAsString = arg;
+                if (!arg.length) {
+                    rawInput += ' ""';
+                } else if (/^\w+$/.test(arg)) {
+                    rawInput += ` ${arg}`;
+                } else {
+                    rawInput += ` "${sanitizeArgString(arg)}"`;
+                }
             } else if (typeof arg === 'object' && arg !== null) {
-                argAsString = JSON.stringify(arg);
+                rawInput += ` "${sanitizeArgString(JSON.stringify(arg))}"`;
+            } else if (typeof arg === 'number' && Number.isInteger(arg)) {
+                //everything ends up as string anyways
+                rawInput += ` ${arg}`;
             } else {
                 throw new Error('arg expected to be string or object');
             }
-            rawInputParts.push(`"${sanitizeArgString(argAsString)}"`);
         }
 
         // Send the command to the server
-        try {
-            const rawInputString = rawInputParts.join(' ');
-            const success = this.fxChild.stdin.write(rawInputString + '\n');
-            if (author) {
-                globals.logger.fxserver.logAdminCommand(author, rawInputString);
-            } else {
-                globals.logger.fxserver.logSystemCommand(rawInputString);
-            }
-            return success;
-        } catch (error) {
-            console.verbose.error('Error sending command to fxChild.stdin');
-            console.verbose.dir(error);
-            return false;
-        }
+        return this.sendRawCommand(rawInput, author);
     }
 
 
     /**
-     * Pipe a string into FXServer's stdin (aka executes a cfx's command)
-     * FIXME: deprecate this method in favor of this.sendCommand()
+     * Writes to fxchild's stdin.
+     * NOTE: do not send commands with \n at the end, this function will add it.
      * @param {string} command
+     * @param {string} [author]
      */
-    srvCmd(command, author) {
-        if (typeof command !== 'string') throw new Error('Expected String!');
+    sendRawCommand(command, author) {
+        if (typeof command !== 'string') throw new Error('Expected command as String!');
+        if (typeof author !== 'undefined' && typeof author !== 'string') throw new Error('Expected author as String!');
         if (this.fxChild === null) return false;
-        const sanitized = command.replaceAll(/\n/g, ' ');
         try {
-            const success = this.fxChild.stdin.write(sanitized + '\n');
+            const success = this.fxChild.stdin.write(command + '\n');
             if (author) {
-                globals.logger.fxserver.logAdminCommand(author, sanitized);
+                globals.logger.fxserver.logAdminCommand(author, command);
             } else {
-                globals.logger.fxserver.logSystemCommand(sanitized);
+                globals.logger.fxserver.logSystemCommand(command);
             }
             return success;
         } catch (error) {
-            console.verbose.error('Error writing to fxChild.stdin');
+            console.error('Error writing to fxChild\'s stdin.');
             console.verbose.dir(error);
             return false;
         }
-    }
-
-
-    /**
-     * Handles a live console command input
-     * @param {import('../WebServer/authLogic').AuthedAdminType} admin
-     * @param {string} command
-     */
-    liveConsoleCmdHandler(admin, command) {
-        admin.logCommand(command, 'command');
-        globals.fxRunner.srvCmd(command, admin.name);
     }
 
 
