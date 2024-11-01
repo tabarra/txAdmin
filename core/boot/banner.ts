@@ -1,4 +1,4 @@
-import boxen from 'boxen';
+import boxen, { type Options as BoxenOptions } from 'boxen';
 import chalk from 'chalk';
 import open from 'open';
 import { shuffle } from 'd3-array';
@@ -17,9 +17,9 @@ const getPublicIp = async () => {
     const reqOptions = {
         timeout: { request: 2000 },
     };
-    const httpGetter = async (url, jsonPath) => {
+    const httpGetter = async (url: string, jsonPath: string) => {
         const res = await got(url, reqOptions).json();
-        return zIpValidator.parse(res[jsonPath]);
+        return zIpValidator.parse((res as any)[jsonPath]);
     };
 
     const allApis = shuffle([
@@ -57,7 +57,7 @@ const getOSMessage = async () => {
 const awaitHttp = new Promise((resolve, reject) => {
     const tickLimit = 100; //if over 15 seconds
     let counter = 0;
-    let interval;
+    let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
         if (globals.webServer && globals.webServer.isListening) {
@@ -76,7 +76,7 @@ const awaitHttp = new Promise((resolve, reject) => {
 const awaitMasterPin = new Promise((resolve, reject) => {
     const tickLimit = 100; //if over 15 seconds
     let counter = 0;
-    let interval;
+    let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
         if (globals.adminVault && globals.adminVault.admins !== null) {
@@ -96,7 +96,7 @@ const awaitMasterPin = new Promise((resolve, reject) => {
 const awaitDatabase = new Promise((resolve, reject) => {
     const tickLimit = 100; //if over 15 seconds
     let counter = 0;
-    let interval;
+    let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
         if (globals.playerDatabase && globals.playerDatabase.isReady) {
@@ -117,7 +117,7 @@ export const printBanner = async () => {
     const [publicIpResp, msgRes, adminPinRes] = await Promise.allSettled([
         getPublicIp(),
         getOSMessage(),
-        awaitMasterPin,
+        awaitMasterPin as Promise<undefined | string | false>,
         awaitHttp,
         awaitDatabase,
     ]);
@@ -128,7 +128,7 @@ export const printBanner = async () => {
         addrs = [
             (txEnv.isWindows) ? 'localhost' : 'your-public-ip',
         ];
-        if (publicIpResp.value) {
+        if ('value' in publicIpResp && publicIpResp.value) {
             addrs.push(publicIpResp.value);
             addLocalIpAddress(publicIpResp.value);
         }
@@ -137,13 +137,12 @@ export const printBanner = async () => {
     }
 
     //Admin PIN
-    let adminPinLines = [];
-    if (adminPinRes.value) {
-        adminPinLines = [
-            '', 'Use the PIN below to register:',
-            chalk.inverse(` ${adminPinRes.value} `),
-        ];
-    }
+    const adminMasterPin = 'value' in adminPinRes && adminPinRes.value ? adminPinRes.value : false;
+    const adminPinLines = !adminMasterPin ? [] : [
+        '',
+        'Use the PIN below to register:',
+        chalk.inverse(` ${adminMasterPin} `),
+    ]
 
     //Printing stuff
     const boxOptions = {
@@ -152,20 +151,20 @@ export const printBanner = async () => {
         align: 'center',
         borderStyle: 'bold',
         borderColor: 'cyan',
-    };
+    } satisfies BoxenOptions;
     const boxLines = [
         'All ready! Please access:',
         ...addrs.map((addr) => chalk.inverse(` http://${addr}:${convars.txAdminPort}/ `)),
         ...adminPinLines,
     ];
     console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);
-    if (convars.forceInterface === false) {
+    if (convars.forceInterface === false && 'value' in msgRes && msgRes.value) {
         console.multiline(msgRes.value, chalk.bgBlue);
     }
 
     //Opening page
-    if (txEnv.isWindows && adminPinRes.value) {
-        open(`http://localhost:${convars.txAdminPort}/addMaster/pin#${adminPinRes.value}`).catch((e) => { });
+    if (txEnv.isWindows && adminMasterPin) {
+        open(`http://localhost:${convars.txAdminPort}/addMaster/pin#${adminMasterPin}`).catch((e) => { });
     }
 
     //Starting server
