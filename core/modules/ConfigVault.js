@@ -54,7 +54,6 @@ export default class ConfigVault {
             let cfgData = this.getConfigFromFile();
             this.configFile = this.setupConfigStructure(cfgData);
             this.config = this.setupConfigDefaults(this.configFile);
-            this.setupFolderStructure();
         } catch (error) {
             fatalError.ConfigVault(0, 'Failed to setup ConfigVault', error);
         }
@@ -266,28 +265,6 @@ export default class ConfigVault {
         }
 
         return cfg;
-    }
-
-
-    //================================================================
-    /**
-     * Create server profile folder structure if doesn't exist
-     */
-    setupFolderStructure() {
-        try {
-            let dataPath = `${this.serverProfilePath}/data/`;
-            if (!fs.existsSync(dataPath)) {
-                fs.mkdirSync(dataPath);
-            }
-
-            let logsPath = `${this.serverProfilePath}/logs/`;
-            if (!fs.existsSync(logsPath)) {
-                fs.mkdirSync(logsPath);
-            }
-        } catch (error) {
-            console.error(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`);
-            process.exit(5101);
-        }
     }
 
 

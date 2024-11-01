@@ -1,30 +1,43 @@
-import fs from 'node:fs';
+//NOTE: must be imported first to setup the environment
 import { txDevEnv, txEnv } from './globalData';
+
+import fs from 'node:fs';
 import TxAdmin from './txAdmin';
 import checkPreRelease from './boot/checkPreRelease';
 import consoleFactory, { setTTYTitle } from '@lib/console';
-import setupProfile from './boot/setupProfile';
 import fatalError from '@lib/fatalError';
+import { ensureProfileStructure, setupProfile } from './boot/setup';
 const console = consoleFactory();
 
 
 /**
- * Setting up txData
+ * Setting up txData & Profile
  */
 try {
     if (!fs.existsSync(txEnv.dataPath)) {
         fs.mkdirSync(txEnv.dataPath);
     }
 } catch (error) {
-    fatalError.Boot(2, `Failed to check or create '${txEnv.dataPath}'`, error);
+    fatalError.Boot(2, [
+        `Failed to check or create the data folder.`,
+        `Path: ${txEnv.dataPath}`,
+    ], error);
 }
 try {
-    if (!fs.existsSync(txEnv.profilePath)) {
-        setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, txEnv.profile, txEnv.profilePath);
+    if (fs.existsSync(txEnv.profilePath)) {
+        ensureProfileStructure();
+    }else{
+        setupProfile();
     }
 } catch (error) {
-    fatalError.Boot(3, `Failed to create profile '${txEnv.profile}'`, error);
+    fatalError.Boot(3, [
+        `Failed to check or create the txAdmin profile folder.`,
+        `Profile: ${txEnv.profile}`,
+        `Data Path: ${txEnv.dataPath}`,
+        `Profile Path: ${txEnv.profilePath}`,
+    ], error);
 }
+
 
 /**
  * Starting txAdmin (have fun :p)

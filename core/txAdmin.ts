@@ -1,9 +1,4 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import slash from 'slash';
-
 import { txEnv } from '@core/globalData';
-
 import { printBanner } from './boot/banner';
 
 import AdminVault from '@modules/AdminVault';
