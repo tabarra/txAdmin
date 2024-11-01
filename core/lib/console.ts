@@ -119,7 +119,7 @@ export const genLogPrefix = (currContext: string, color: ChalkInstance) => {
 
 //Dir helpers
 const cleanPath = (x: string) => slash(path.normalize(x));
-const ERR_STACK_PREFIX = chalk.redBright('    =>');
+const ERR_STACK_PREFIX = chalk.redBright('    => ');
 const DIVIDER_SIZE = 60;
 const DIVIDER_CHAR = '=';
 const DIVIDER = DIVIDER_CHAR.repeat(DIVIDER_SIZE);
@@ -133,17 +133,20 @@ const orangeredColor = chalk.rgb(255, 69, 0);
  * Parses an error and returns string with prettified error and stack
  * The stack filters out node modules and aliases monitor folder
  */
-const getPrettyError = (error: Error) => {
+const getPrettyError = (error: Error, multilineError?: boolean) => {
     const out: string[] = [];
-    const prefix = `[${getTimestamp()}][tx]`;
+    const prefixStr = `[${getTimestamp()}][tx]`;
+    const prefixColor = multilineError ? chalk.bgRed.black : chalk.redBright;
+    const prefix = prefixColor(prefixStr) + ' ';
 
     //banner
-    out.push(chalk.redBright(`${prefix} ${error.name}: `) + error.message);
-    if ('type' in error) out.push(chalk.redBright(`${prefix} Type:`) + ` ${error.type}`);
-    if ('code' in error) out.push(chalk.redBright(`${prefix} Code:`) + ` ${error.code}`);
+    out.push(prefix + chalk.redBright(`${error.name}: `) + error.message);
+    if ('type' in error) out.push(prefix + chalk.redBright('Type:') + ` ${error.type}`);
+    if ('code' in error) out.push(prefix + chalk.redBright('Code:') + ` ${error.code}`);
 
     //stack
     if (typeof error.stack === 'string') {
+        const stackPrefix = multilineError ? prefix : ERR_STACK_PREFIX;
         try {
             for (const line of ErrorStackParser.parse(error)) {
                 if (line.fileName && line.fileName.startsWith('node:')) continue;
@@ -153,17 +156,17 @@ const getPrettyError = (error: Error) => {
                 }
                 const outPos = chalk.blueBright(`${line.lineNumber}:${line.columnNumber}`);
                 const outName = chalk.yellowBright(line.functionName || '<unknown>');
-                if(!outPath.startsWith('@monitor/core')){
-                    out.push(chalk.dim(`${ERR_STACK_PREFIX} ${outPath} > ${outPos} > ${outName}`));
-                }else{
-                    out.push(`${ERR_STACK_PREFIX} ${outPath} > ${outPos} > ${outName}`);
+                if (!outPath.startsWith('@monitor/core')) {
+                    out.push(chalk.dim(`${stackPrefix}${outPath} > ${outPos} > ${outName}`));
+                } else {
+                    out.push(`${stackPrefix}${outPath} > ${outPos} > ${outName}`);
                 }
             }
         } catch (error) {
-            out.push(chalk.redBright(prefix) + ` Unnable to parse error stack.`);
+            out.push(`${prefix} Unnable to parse error stack.`);
         }
     } else {
-        out.push(chalk.redBright(prefix) + ` Error stack not available.`);
+        out.push(`${prefix} Error stack not available.`);
     }
     return out.join('\n');
 }
@@ -172,12 +175,12 @@ const getPrettyError = (error: Error) => {
 /**
  * Drop-in replacement for console.dir
  */
-const dirHandler = (data: any, options?: InspectOptions, consoleInstance?: Console) => {
+const dirHandler = (data: any, options?: TxInspectOptions, consoleInstance?: Console) => {
     if (!consoleInstance) consoleInstance = defaultConsole;
 
     if (data instanceof Error) {
-        consoleInstance.log(getPrettyError(data));
-        consoleInstance.log();
+        consoleInstance.log(getPrettyError(data, options?.multilineError));
+        if (!options?.multilineError) consoleInstance.log();
     } else {
         consoleInstance.log(DIR_DIVIDER);
         if (data === undefined) {
@@ -193,6 +196,10 @@ const dirHandler = (data: any, options?: InspectOptions, consoleInstance?: Conso
         }
         consoleInstance.log(DIR_DIVIDER);
     }
+}
+
+type TxInspectOptions = InspectOptions & {
+    multilineError?: boolean;
 }
 
 
@@ -243,7 +250,7 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
         ok: getLogFunc(currContext, chalk.bgGreen),
         warn: getLogFunc(currContext, chalk.bgYellow),
         error: getLogFunc(currContext, chalk.bgRed),
-        dir: (data: any, options?: InspectOptions) => dirHandler.call(null, data, options),
+        dir: (data: any, options?: TxInspectOptions & {}) => dirHandler.call(null, data, options),
         multiline: (text: string | string[], color: ChalkInstance) => {
             if (!Array.isArray(text)) text = text.split('\n');
             const prefix = genLogPrefix(currContext, color);
@@ -261,7 +268,7 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
             const prefix = genLogPrefix(currContext, chalk.bgRed);
             defaultConsole.log(prefix, DIVIDER);
             for (const line of text) {
-                if(line) {
+                if (line) {
                     defaultConsole.log(prefix, line);
                 } else {
                     defaultConsole.log(prefix, DIVIDER);
@@ -276,9 +283,9 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
             ok: getLogFunc(currContext, chalk.bgGreen, verboseConsole),
             warn: getLogFunc(currContext, chalk.bgYellow, verboseConsole),
             error: getLogFunc(currContext, chalk.bgRed, verboseConsole),
-            dir: (data: any, options?: InspectOptions) => dirHandler.call(null, data, options, verboseConsole)
+            dir: (data: any, options?: TxInspectOptions) => dirHandler.call(null, data, options, verboseConsole)
         },
-        get isVerbose() { 
+        get isVerbose() {
             return _verboseFlag
         },
         setVerbose: (state: boolean) => {

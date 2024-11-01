@@ -38,7 +38,10 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
     } else {
         printSingleLine(msg);
     }
-    if (err) console.dir(err);
+    if (err) {
+        console.error('-'.repeat(console.DIVIDER_SIZE));
+        console.dir(err, { multilineError: true });
+    }
     console.error(console.DIVIDER);
     console.error(chalk.inverse(
         padStartEnd('For support: https://discord.gg/txAdmin')
