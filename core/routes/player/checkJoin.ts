@@ -161,7 +161,7 @@ function checkBan(
             && (!action.revocation.timestamp)
         );
     };
-    const activeBans = txAdmin.playerDatabase.getRegisteredActions(validIdsArray, validHwidsArray, filter);
+    const activeBans = txAdmin.playerDatabase.actions.findMany(validIdsArray, validHwidsArray, filter);
     if (activeBans.length) {
         const ban = activeBans[0];
 
@@ -436,13 +436,13 @@ async function checkApprovedLicense(
     const allIdsFilter = (x: DatabaseWhitelistApprovalsType) => {
         return validIdsArray.includes(x.identifier);
     }
-    const approvals = txAdmin.playerDatabase.getWhitelistApprovals(allIdsFilter);
+    const approvals = txAdmin.playerDatabase.whitelist.findManyApprovals(allIdsFilter);
     if (approvals.length) {
         //update or register player
         if (typeof player !== 'undefined' && player.license) {
             player.setWhitelist(true);
         } else {
-            txAdmin.playerDatabase.registerPlayer({
+            txAdmin.playerDatabase.players.register({
                 license: validIdsObject.license,
                 ids: validIdsArray,
                 hwids: validHwidsArray,
@@ -456,8 +456,8 @@ async function checkApprovedLicense(
         }
 
         //Remove entries from whitelistApprovals & whitelistRequests
-        txAdmin.playerDatabase.removeWhitelistApprovals(allIdsFilter);
-        txAdmin.playerDatabase.removeWhitelistRequests({ license: validIdsObject.license });
+        txAdmin.playerDatabase.whitelist.removeManyApprovals(allIdsFilter);
+        txAdmin.playerDatabase.whitelist.removeManyRequests({ license: validIdsObject.license });
 
         //return allow join
         return { allow: true };
@@ -478,10 +478,10 @@ async function checkApprovedLicense(
     //Check if this player has an active wl request
     //NOTE: it could return multiple, but we are not dealing with it
     let wlRequestId: string;
-    const requests = txAdmin.playerDatabase.getWhitelistRequests({ license: validIdsObject.license });
+    const requests = txAdmin.playerDatabase.whitelist.findManyRequests({ license: validIdsObject.license });
     if (requests.length) {
         wlRequestId = requests[0].id; //just getting the first
-        txAdmin.playerDatabase.updateWhitelistRequests(validIdsObject.license, {
+        txAdmin.playerDatabase.whitelist.updateRequest(validIdsObject.license, {
             playerDisplayName: displayName,
             playerPureName: pureName,
             discordTag,
@@ -489,7 +489,7 @@ async function checkApprovedLicense(
             tsLastAttempt: ts,
         });
     } else {
-        wlRequestId = txAdmin.playerDatabase.registerWhitelistRequests({
+        wlRequestId = txAdmin.playerDatabase.whitelist.registerRequest({
             license: validIdsObject.license,
             playerDisplayName: displayName,
             playerPureName: pureName,

@@ -1,6 +1,7 @@
 const modulename = 'Database';
 import fsp from 'node:fs/promises';
 import { ExpChain } from 'lodash';
+//@ts-ignore: I haven o idea why this errors, but I couldn't solve it
 import lodash from 'lodash-es';
 import { Low, Adapter } from 'lowdb';
 import { TextFile } from 'lowdb/node';

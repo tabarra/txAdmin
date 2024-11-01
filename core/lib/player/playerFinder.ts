@@ -11,7 +11,7 @@ export const findPlayersByIdentifier = (identifier: string): DatabasePlayer[] =>
     if(typeof identifier !== 'string' || !identifier.length) throw new Error(`invalid identifier`);
 
     const filter = (player: DatabasePlayerType) => player.ids.includes(identifier);
-    const playersData = playerDatabase.getPlayersByFilter(filter);
+    const playersData = playerDatabase.players.findMany(filter);
 
     return playersData.map((dbData) => new DatabasePlayer(dbData.license, playerDatabase, dbData))
 } 

@@ -104,7 +104,7 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     //Database & perf stats
     let dbStats = {};
     try {
-        dbStats = ctx.txAdmin.playerDatabase.getDatabaseStats();
+        dbStats = ctx.txAdmin.playerDatabase.stats.getDatabaseStats();
     } catch (error) { }
 
     let perfSvMain: ReturnType<typeof ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary> = null;

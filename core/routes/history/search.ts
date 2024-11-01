@@ -35,8 +35,8 @@ export default async function HistorySearch(ctx: AuthedCtx) {
     } = ctx.query;
     const sendTypedResp = (data: HistoryTableSearchResp) => ctx.send(data);
     const searchTime = new TimeCounter();
-    const dbo = ctx.txAdmin.playerDatabase.getDb();
-    let chain = dbo.chain.get('actions').clone(); //shadow clone to avoid sorting the original
+    const dbo = ctx.txAdmin.playerDatabase.getDboRef();
+    let chain = dbo.chain.get('actions').clone(); //shallow clone to avoid sorting the original
 
     //sort the actions by the sortingKey/sortingDesc
     const parsedSortingDesc = sortingDesc === 'true';

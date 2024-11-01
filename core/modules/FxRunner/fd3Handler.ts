@@ -113,7 +113,7 @@ export default class Fd3Handler {
                 } else if (data.payload.type === 'txAdminCommandBridge') {
                     this.bridgeCommand(data.payload);
                 } else if (data.payload.type === 'txAdminAckWarning') {
-                    this.#txAdmin.playerDatabase.ackWarnAction(data.payload.actionId);
+                    this.#txAdmin.playerDatabase.actions.ackWarn(data.payload.actionId);
                 }
             }
         } catch (error) {

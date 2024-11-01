@@ -99,7 +99,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     //Register action
     let actionId;
     try {
-        actionId = ctx.txAdmin.playerDatabase.registerWarnAction(
+        actionId = ctx.txAdmin.playerDatabase.actions.registerWarn(
             allIds,
             ctx.admin.name,
             reason,
@@ -169,7 +169,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     //Register action
     let actionId;
     try {
-        actionId = ctx.txAdmin.playerDatabase.registerBanAction(
+        actionId = ctx.txAdmin.playerDatabase.actions.registerBan(
             allIds,
             ctx.admin.name,
             reason,

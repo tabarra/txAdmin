@@ -12,7 +12,7 @@ const console = consoleFactory(modulename);
 export default async function HistoryStats(ctx: AuthedCtx) {
     const sendTypedResp = (data: HistoryStatsResp) => ctx.send(data);
     try {
-        const dbStats = ctx.txAdmin.playerDatabase.getActionStats();
+        const dbStats = ctx.txAdmin.playerDatabase.stats.getActionStats();
         const dbAdmins = Object.keys(dbStats.groupedByAdmins);
         // @ts-ignore i don't wanna type this
         const vaultAdmins = ctx.txAdmin.adminVault.getAdminsList().map(a => a.name);

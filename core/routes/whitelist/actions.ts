@@ -1,6 +1,6 @@
 const modulename = 'WebServer:WhitelistActions';
 import { GenericApiResp } from '@shared/genericApiTypes';
-import { DuplicateKeyError } from '@modules/PlayerDatabase';
+import { DuplicateKeyError } from '@modules/PlayerDatabase/dbUtils';
 import { now } from '@lib/misc';
 import { parsePlayerId } from '@lib/player/idUtils';
 import { DatabaseWhitelistRequestsType } from '@modules/PlayerDatabase/databaseTypes';
@@ -70,7 +70,7 @@ async function handleApprovals(ctx: AuthedCtx, action: any): Promise<GenericApiR
 
         //Registering approval
         try {
-            ctx.txAdmin.playerDatabase.registerWhitelistApprovals({
+            ctx.txAdmin.playerDatabase.whitelist.registerApproval({
                 identifier: idlowerCased,
                 playerName,
                 playerAvatar,
@@ -91,7 +91,7 @@ async function handleApprovals(ctx: AuthedCtx, action: any): Promise<GenericApiR
 
     } else if (action === 'remove') {
         try {
-            ctx.txAdmin.playerDatabase.removeWhitelistApprovals({ identifier: idlowerCased });
+            ctx.txAdmin.playerDatabase.whitelist.removeManyApprovals({ identifier: idlowerCased });
             ctx.txAdmin.fxRunner.sendEvent('whitelistPreApproval', {
                 action: 'removed',
                 identifier: idlowerCased,
@@ -122,7 +122,7 @@ async function handleRequests(ctx: AuthedCtx, action: any): Promise<GenericApiRe
 
         try {
             const filter = (req: DatabaseWhitelistRequestsType) => req.tsLastAttempt <= cutoff;
-            ctx.txAdmin.playerDatabase.removeWhitelistRequests(filter);
+            ctx.txAdmin.playerDatabase.whitelist.removeManyRequests(filter);
             ctx.txAdmin.fxRunner.sendEvent('whitelistRequest', {
                 action: 'deniedAll',
                 adminName: ctx.admin.name,
@@ -142,7 +142,7 @@ async function handleRequests(ctx: AuthedCtx, action: any): Promise<GenericApiRe
 
     if (action === 'approve') {
         //Find request
-        const requests = ctx.txAdmin.playerDatabase.getWhitelistRequests({ id: reqId });
+        const requests = ctx.txAdmin.playerDatabase.whitelist.findManyRequests({ id: reqId });
         if (!requests.length) {
             return { error: `Whitelist request ID ${reqId} not found.` };
         }
@@ -152,7 +152,7 @@ async function handleRequests(ctx: AuthedCtx, action: any): Promise<GenericApiRe
         const playerName = req.discordTag ?? req.playerDisplayName;
         const identifier = `license:${req.license}`;
         try {
-            ctx.txAdmin.playerDatabase.registerWhitelistApprovals({
+            ctx.txAdmin.playerDatabase.whitelist.registerApproval({
                 identifier,
                 playerName,
                 playerAvatar: (req.discordAvatar) ? req.discordAvatar : null,
@@ -175,7 +175,7 @@ async function handleRequests(ctx: AuthedCtx, action: any): Promise<GenericApiRe
 
         //Remove record from whitelistRequests
         try {
-            ctx.txAdmin.playerDatabase.removeWhitelistRequests({ id: reqId });
+            ctx.txAdmin.playerDatabase.whitelist.removeManyRequests({ id: reqId });
         } catch (error) {
             return { error: `Failed to remove wl request: ${(error as Error).message}` };
         }
@@ -183,7 +183,7 @@ async function handleRequests(ctx: AuthedCtx, action: any): Promise<GenericApiRe
 
     } else if (action === 'deny') {
         try {
-            const requests = ctx.txAdmin.playerDatabase.removeWhitelistRequests({ id: reqId });
+            const requests = ctx.txAdmin.playerDatabase.whitelist.removeManyRequests({ id: reqId });
             if(requests.length){
                 const req = requests[0]; //just getting the first
                 ctx.txAdmin.fxRunner.sendEvent('whitelistRequest', {

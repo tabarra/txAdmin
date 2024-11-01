@@ -174,21 +174,21 @@ async function handleCleanDatabase(ctx: AuthedCtx) {
     const tsStart = Date.now();
     let playersRemoved = 0;
     try {
-        playersRemoved = ctx.txAdmin.playerDatabase.cleanDatabase('players', playersFilter);
+        playersRemoved = ctx.txAdmin.playerDatabase.cleanup.bulkRemove('players', playersFilter);
     } catch (error) {
         return sendTypedResp({error: `<b>Failed to clean players with error:</b><br>${(error as Error).message}`});
     }
 
     let actionsRemoved = 0;
     try {
-        actionsRemoved = ctx.txAdmin.playerDatabase.cleanDatabase('actions', actionsFilter);
+        actionsRemoved = ctx.txAdmin.playerDatabase.cleanup.bulkRemove('actions', actionsFilter);
     } catch (error) {
         return sendTypedResp({error: `<b>Failed to clean actions with error:</b><br>${(error as Error).message}`});
     }
 
     let hwidsRemoved = 0;
     try {
-        hwidsRemoved = ctx.txAdmin.playerDatabase.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
+        hwidsRemoved = ctx.txAdmin.playerDatabase.cleanup.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
     } catch (error) {
         return sendTypedResp({error: `<b>Failed to clean HWIDs with error:</b><br>${(error as Error).message}`});
     }
@@ -233,7 +233,7 @@ async function handleRevokeWhitelists(ctx: AuthedCtx) {
 
     try {
         const tsStart = Date.now();
-        const cntRemoved = ctx.txAdmin.playerDatabase.bulkRevokePlayerWhitelist(filterFunc);
+        const cntRemoved = ctx.txAdmin.playerDatabase.players.bulkRevokeWhitelist(filterFunc);
         const msElapsed = Date.now() - tsStart;
         return sendTypedResp({msElapsed, cntRemoved});
     } catch (error) {

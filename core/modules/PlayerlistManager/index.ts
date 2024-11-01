@@ -97,7 +97,7 @@ export default class PlayerlistManager {
 
     /**
      * To guarantee multiple instances of the same player license have their dbData synchronized,
-     * this function (called by playerDatabase.updatePlayer) goes through every matching player 
+     * this function (called by playerDatabase.players.update) goes through every matching player 
      * (except the source itself) to update their dbData.
      */
     handleDbDataSync(dbData: DatabasePlayerType, srcUniqueId: Symbol) {

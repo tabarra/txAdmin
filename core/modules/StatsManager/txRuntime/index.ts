@@ -205,7 +205,7 @@ export default class TxRuntimeStatsManager {
                 ].filter(x => x),
 
                 //Processed stuff
-                playerDb: this.#txAdmin.playerDatabase.getDatabaseStats(),
+                playerDb: this.#txAdmin.playerDatabase.stats.getDatabaseStats(),
                 perfSummary: this.#txAdmin.statsManager.svRuntime.getServerPerfSummary(),
             };
             tmpDurationDebugLog('prepared object');

@@ -39,7 +39,7 @@ async function handleRequests(ctx: AuthedCtx) {
     } | GenericApiErrorResp;
     const sendTypedResp = (data: resp) => ctx.send(data);
 
-    const requests = ctx.txAdmin.playerDatabase.getWhitelistRequests().reverse();
+    const requests = ctx.txAdmin.playerDatabase.whitelist.findManyRequests().reverse();
 
     //Filter by player name, discord tag and req id
     let filtered = requests;
@@ -88,6 +88,6 @@ async function handleRequests(ctx: AuthedCtx) {
 async function handleApprovals(ctx: AuthedCtx) {
     const sendTypedResp = (data: DatabaseWhitelistApprovalsType[]) => ctx.send(data);
 
-    const approvals = ctx.txAdmin.playerDatabase.getWhitelistApprovals().reverse();
+    const approvals = ctx.txAdmin.playerDatabase.whitelist.findManyApprovals().reverse();
     return sendTypedResp(approvals);
 }

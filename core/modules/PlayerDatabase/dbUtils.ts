@@ -57,25 +57,28 @@ const printDiagnostics = async () => {
     console.error(`Unique Test: secure ${secureStorage.size}/100, non-secure ${nonsecureStorage.size}/100`);
 };
 
+
 /**
  * Check in a storage weather the ID is unique or not.
- * @param {Set|Object} storage the Set or lowdb instance
- * @param {String} id
- * @param {String} lowdbTable
- * @returns {Boolean} if is unique
+ * @param storage the Set or lowdb instance
+ * @param id the ID to check
+ * @param lowdbTable the lowdb table to check
+ * @returns if is unique
  */
 const checkUniqueness = (storage: IdStorageTypes, id: string, lowdbTable: string) => {
     if (storage instanceof Set) {
         return !storage.has(id);
     } else {
+        //@ts-ignore: typing as ('actions' | 'whitelistRequests') did not work
         return !storage.chain.get(lowdbTable).find({ id }).value();
     }
 };
 
+
 /**
  * Generates an unique whitelist ID, or throws an error
- * @param {Set|Object} storage set or lowdb instance
- * @returns {String} id
+ * @param storage set or lowdb instance
+ * @returns id
  */
 export const genWhitelistRequestID = (storage: IdStorageTypes) => {
     let attempts = 0;
@@ -88,9 +91,10 @@ export const genWhitelistRequestID = (storage: IdStorageTypes) => {
         }
     }
 
-    printDiagnostics().catch((e) => {});
+    printDiagnostics().catch((e) => { });
     throw new Error(noIdErrorMessage);
 };
+
 
 /**
  * Generates an unique action ID, or throws an error
@@ -109,6 +113,17 @@ export const genActionID = (storage: IdStorageTypes, actionType: string) => {
         }
     }
 
-    printDiagnostics().catch((e) => {});
+    printDiagnostics().catch((e) => { });
     throw new Error(noIdErrorMessage);
 };
+
+
+/**
+ * Error class for key uniqueness violations
+ */
+export class DuplicateKeyError extends Error {
+    readonly code = 'DUPLICATE_KEY';
+    constructor(message: string) {
+        super(message);
+    }
+}

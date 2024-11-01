@@ -33,7 +33,7 @@ export class BasePlayer {
      */
     protected mutateDbData(srcData: object) {
         if (!this.license) throw new Error(`cannot mutate database for a player that has no license`);
-        this.dbData = this.dbInstance.updatePlayer(this.license, srcData, this.uniqueId);
+        this.dbData = this.dbInstance.players.update(this.license, srcData, this.uniqueId);
     }
 
     /**
@@ -65,7 +65,7 @@ export class BasePlayer {
      */
     getHistory() {
         if (!this.ids.length) return [];
-        return this.dbInstance.getRegisteredActions(
+        return this.dbInstance.actions.findMany(
             this.getAllIdentifiers(),
             this.getAllHardwareIdentifiers()
         );
@@ -100,8 +100,8 @@ export class BasePlayer {
         const allIdsFilter = (x: DatabaseWhitelistApprovalsType) => {
             return this.ids.includes(x.identifier);
         }
-        this.dbInstance.removeWhitelistApprovals(allIdsFilter);
-        this.dbInstance.removeWhitelistRequests({ license: this.license });
+        this.dbInstance.whitelist.removeManyApprovals(allIdsFilter);
+        this.dbInstance.whitelist.removeManyRequests({ license: this.license });
     }
 }
 
@@ -184,7 +184,7 @@ export class ServerPlayer extends BasePlayer {
 
         //Check if player is already on the database
         try {
-            const dbPlayer = this.dbInstance.getPlayerData(this.license);
+            const dbPlayer = this.dbInstance.players.findOne(this.license);
             if (dbPlayer) {
                 //Updates database data
                 this.dbData = dbPlayer;
@@ -207,7 +207,7 @@ export class ServerPlayer extends BasePlayer {
                     tsLastConnection: this.tsConnected,
                     tsJoined: this.tsConnected,
                 };
-                this.dbInstance.registerPlayer(toRegister);
+                this.dbInstance.players.register(toRegister);
                 this.dbData = toRegister;
                 console.verbose.ok(`Adding '${this.displayName}' to players database.`);
             }
@@ -260,7 +260,7 @@ export class ServerPlayer extends BasePlayer {
         if (this.dbData) {
             return cloneDeep(this.dbData);
         } else if (this.license && this.isRegistered) {
-            const dbPlayer = this.dbInstance.getPlayerData(this.license);
+            const dbPlayer = this.dbInstance.players.findOne(this.license);
             if (!dbPlayer) return false;
 
             this.dbData = dbPlayer;
@@ -336,7 +336,7 @@ export class DatabasePlayer extends BasePlayer {
         if (srcPlayerData) {
             this.dbData = srcPlayerData;
         } else {
-            const foundData = this.dbInstance.getPlayerData(license);
+            const foundData = this.dbInstance.players.findOne(license);
             if (!foundData) {
                 throw new Error(`player not found in database`);
             } else {

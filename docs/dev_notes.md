@@ -71,8 +71,8 @@ Legend:
 - [x] process.exit reorg into lib/fatalError
 - [x] move `ConfigVault.setupFolderStructure();` to index
 - [x] improve db downgrade message
+- [x] txGlobal.database.[players/actions/whitelist/cleanup].*
 - [ ] txGlobal/globals
-- [ ] txGlobal.database.[players/actions/whitelist/cleanup].*
 - [ ] do I need to import from `lodash-es`? What changed?
 - [ ] lua file changes (after PR merges)
     - 4 spaces

@@ -1,5 +1,5 @@
 const modulename = 'DBMigration';
-import { genActionID } from './idGenerator.js';
+import { genActionID } from './dbUtils.js';
 import cleanPlayerName from '@shared/cleanPlayerName.js';
 import { DATABASE_VERSION, defaultDatabase } from './database.js';
 import { now } from '@lib/misc.js';

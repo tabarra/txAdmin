@@ -43,7 +43,7 @@ export default async function AdvancedActions(ctx) {
         const message = JSON.stringify(globals.playerlistManager.getPlayerList(), null, 2);
         return ctx.send({ type: 'success', message });
     } else if (action == 'show_db') {
-        const dbo = globals.playerDatabase.getDb();
+        const dbo = globals.playerDatabase.getDboRef();
         console.dir(dbo);
         return ctx.send({ type: 'success', message: JSON.stringify(dbo, null, 2) });
     } else if (action == 'show_log') {
