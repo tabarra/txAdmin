@@ -27,7 +27,7 @@ export default async function Intercom(ctx: InitializedCtx) {
             return ctx.send(ctx.txAdmin.statsManager.txRuntime.currHbData);
         } catch (error) {
             return ctx.send({
-                txAdminVersion: txEnv.txAdminVersion,
+                txAdminVersion: txEnv.txaVersion,
                 success: false,
             });
         }
@@ -44,7 +44,7 @@ export default async function Intercom(ctx: InitializedCtx) {
     }
 
     return ctx.send({
-        txAdminVersion: txEnv.txAdminVersion,
+        txAdminVersion: txEnv.txaVersion,
         success: false,
     });
 };

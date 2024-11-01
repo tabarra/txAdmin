@@ -101,7 +101,7 @@ export default class CfxUpdateChecker {
             //Get the delay
             const notifDelayDays = getUpdateRolloutDelay(
                 updates.txa.semverDiff,
-                txEnv.txAdminVersion.includes('-'),
+                txEnv.txaVersion.includes('-'),
                 delayData.diceRoll
             );
             const notifDelayMs = notifDelayDays * 24 * 60 * 60 * 1000;

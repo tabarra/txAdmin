@@ -71,7 +71,7 @@ export const setupProfile = () => {
 
     //Saving start.bat (yes, I also wish this didn't exist)
     if (txEnv.osType == 'windows') {
-        const batFilename = `start_${txEnv.fxServerVersion}_${txEnv.profile}.bat`;
+        const batFilename = `start_${txEnv.fxsVersion}_${txEnv.profile}.bat`;
         try {
             const fxsPath = path.join(txEnv.fxServerPath, 'FXServer.exe');
             const batLines = [

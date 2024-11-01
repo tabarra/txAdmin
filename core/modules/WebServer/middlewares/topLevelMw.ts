@@ -34,7 +34,7 @@ const timeoutLimit = 47 * 1000; //REQ_TIMEOUT_REALLY_REALLY_LONG is 45s
  * Middleware responsible for timeout/error/no-output/413
  */
 const topLevelMw = async (ctx: RawKoaCtx, next: Next) => {
-    ctx.set('Server', `txAdmin v${txEnv.txAdminVersion}`);
+    ctx.set('Server', `txAdmin v${txEnv.txaVersion}`);
     let timerId;
     const timeout = new Promise((_, reject) => {
         timerId = setTimeout(() => {
@@ -49,7 +49,7 @@ const topLevelMw = async (ctx: RawKoaCtx, next: Next) => {
         }
     } catch (e) {
         const error = e as any; //this has all been previously validated
-        const prefix = `[txAdmin v${txEnv.txAdminVersion}]`;
+        const prefix = `[txAdmin v${txEnv.txaVersion}]`;
         const reqPath = (ctx.path.length > 80) ? `${ctx.path.slice(0, 77)}...` : ctx.path;
         const methodName = (error.stack && error.stack[0] && error.stack[0].name) ? error.stack[0].name : 'anonym';
 

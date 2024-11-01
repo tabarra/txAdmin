@@ -7,11 +7,11 @@ type ResourceEventType = {
     type: 'txAdminResourceEvent';
     resource: string;
     event: 'onResourceStarting'
-        | 'onResourceStart'
-        | 'onServerResourceStart'
-        | 'onResourceListRefresh'
-        | 'onResourceStop'
-        | 'onServerResourceStop';
+    | 'onResourceStart'
+    | 'onServerResourceStart'
+    | 'onResourceListRefresh'
+    | 'onResourceStop'
+    | 'onServerResourceStop';
 };
 
 type ResourceReportType = {

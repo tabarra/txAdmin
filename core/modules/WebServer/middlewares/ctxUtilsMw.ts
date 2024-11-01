@@ -66,9 +66,6 @@ function getEjsOptions(filePath: string) {
 const templateCache = new Map();
 const RESOURCE_PATH = 'nui://monitor/web/public/';
 
-const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
-const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
-
 const legacyNavigateHtmlTemplate = `<style>
 body {
     margin: 0;
@@ -183,8 +180,8 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
             serverProfile: txEnv.profile,
             serverName: txAdmin.globalConfig.serverName || txEnv.profile,
             uiTheme: legacyTheme,
-            fxServerVersion: displayFxserverVersion,
-            txAdminVersion: txEnv.txAdminVersion,
+            fxServerVersion: txEnv.fxsVersionDisplay,
+            txAdminVersion: txEnv.txaVersion,
             jsInjection: getJavascriptConsts({
                 isZapHosting: convars.isZapHosting, //not in use
                 isPterodactyl: convars.isPterodactyl, //not in use

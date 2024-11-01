@@ -14,8 +14,6 @@ const console = consoleFactory(modulename);
 // Therefore, it was necessary to tag it with `data-prod-only` so it can be removed in dev mode.
 
 //Consts
-const displayFxserverVersionPrefix = convars.isZapHosting && '/ZAP' || convars.isPterodactyl && '/Ptero' || '';
-const displayFxserverVersion = `${txEnv.fxServerVersion}${displayFxserverVersionPrefix}`;
 const serverTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 //Cache the index.html file unless in dev mode
@@ -113,9 +111,9 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     const serverName = ctx.txAdmin.globalConfig.serverName || txEnv.profile;
     const injectedConsts = {
         //env
-        fxsVersion: displayFxserverVersion,
+        fxsVersion: txEnv.fxsVersionDisplay,
         fxsOutdated: ctx.txAdmin.cfxUpdateChecker.fxsUpdateData,
-        txaVersion: txEnv.txAdminVersion,
+        txaVersion: txEnv.txaVersion,
         txaOutdated: ctx.txAdmin.cfxUpdateChecker.txaUpdateData,
         serverTimezone,
         isZapHosting: convars.isZapHosting, //not in use
@@ -135,7 +133,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     const replacers: { [key: string]: string } = {};
     replacers.basePath = `<base href="${basePath}">`;
     replacers.ogTitle = `txAdmin - ${serverName}`;
-    replacers.ogDescripttion = `Manage & Monitor your FiveM/RedM Server with txAdmin v${txEnv.txAdminVersion} atop FXServer ${txEnv.fxServerVersion}`;
+    replacers.ogDescripttion = `Manage & Monitor your FiveM/RedM Server with txAdmin v${txEnv.txaVersion} atop FXServer ${txEnv.fxsVersion}`;
     replacers.txConstsInjection = `<script>window.txConsts = ${JSON.stringify(injectedConsts)};</script>`;
     replacers.devModules = txDevEnv.ENABLED ? devModulesScript : '';
 

@@ -154,7 +154,7 @@ export const getFXServerData = async (txAdmin: TxAdmin) => {
             statusColor: 'success',
             status: ' ONLINE ',
             version: ver.valid ? `${ver.platform}:${ver.branch}:${ver.build}` : `${ver.platform ?? 'unknown'}:INVALID`,
-            versionMismatch: (ver.build !== txEnv.fxServerVersion),
+            versionMismatch: (ver.build !== txEnv.fxsVersion),
             resources: infoData.resources.length,
             onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true') ? 'enabled' : 'disabled',
             maxClients: (infoData.vars && infoData.vars.sv_maxClients) ? infoData.vars.sv_maxClients : '--',

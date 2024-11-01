@@ -6,7 +6,7 @@ export default got.extend({
         request: 5000
     },
     headers: {
-        'User-Agent': `txAdmin ${txEnv.txAdminVersion}`,
+        'User-Agent': `txAdmin ${txEnv.txaVersion}`,
     },
     localAddress: convars.forceInterface ? convars.forceInterface : undefined,
 });

@@ -121,8 +121,8 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     //Prepare report object
     const reportData = {
         $schemaVersion: 2,
-        $txVersion: txEnv.txAdminVersion,
-        $fxVersion: txEnv.fxServerVersion,
+        $txVersion: txEnv.txaVersion,
+        $fxVersion: txEnv.fxsVersion,
         diagnostics,
         txSystemLog,
         txActionLog,

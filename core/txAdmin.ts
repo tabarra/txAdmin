@@ -94,7 +94,7 @@ export default class TxAdmin {
 
 
     constructor() {
-        console.log(`Starting profile '${txEnv.profile}' on v${txEnv.txAdminVersion}/b${txEnv.fxsVersionDisplay}`);
+        console.log(`Starting profile '${txEnv.profile}' on v${txEnv.txaVersion}/b${txEnv.fxsVersionDisplay}`);
 
         //FIXME: hacky self reference because some webroutes need to access globals.txAdmin to pass it down
         globalsInternal.txAdmin = this;

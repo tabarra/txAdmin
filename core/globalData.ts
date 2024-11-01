@@ -56,17 +56,17 @@ const resourceName = GetCurrentResourceName();
 //8495 = changed prometheus::Histogram::BucketBoundaries
 //9423 = feat(server): add more infos to playerDropped event
 //9655 = Fixed ScanResourceRoot + latent events
-const minFXServerVersion = 5894;
+const minFxsVersion = 5894;
 const fxsVerParsed = parseFxserverVersion(getConvarString('version'));
-const fxServerVersion = fxsVerParsed.valid ? fxsVerParsed.build : 99999;
+const fxsVersion = fxsVerParsed.valid ? fxsVerParsed.build : 99999;
 if (!fxsVerParsed.valid) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
-} else if (fxsVerParsed.build < minFXServerVersion) {
+} else if (fxsVerParsed.build < minFxsVersion) {
     fatalError.GlobalData(2, [
         'This version of FXServer is too outdated and NOT compatible with txAdmin',
         ['Current FXServer version', fxsVerParsed.build.toString()],
-        ['Minimum required version', minFXServerVersion.toString()],
+        ['Minimum required version', minFxsVersion.toString()],
         'Please update your FXServer to a newer version.',
     ]);
 } else if (fxsVerParsed.branch !== 'master') {
@@ -74,11 +74,11 @@ if (!fxsVerParsed.valid) {
 }
 
 //Getting txAdmin version
-const txAdminVersion = GetResourceMetadata(resourceName, 'version', 0);
-if (typeof txAdminVersion !== 'string' || txAdminVersion == 'null') {
+const txaVersion = GetResourceMetadata(resourceName, 'version', 0);
+if (typeof txaVersion !== 'string' || txaVersion == 'null') {
     fatalError.GlobalData(3, [
         'txAdmin version not set or in the wrong format.',
-        ['Detected version', txAdminVersion],
+        ['Detected version', txaVersion],
     ]);
 }
 
@@ -130,7 +130,7 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
         'Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.',
         'Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.',
         'Please make sure FXServer is not in a path contaning those characters.',
-        `If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxServerVersion}/".`,
+        `If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxsVersion}/".`,
         ['FXServer path', fxServerPath],
         ['txData path', dataPath],
     ]);
@@ -265,11 +265,29 @@ if (_txDevEnv.VERBOSE) {
 
 //Setting the variables in console without it having to importing from here (cyclical dependency)
 setConsoleEnvData(
-    txAdminVersion,
+    txaVersion,
     txAdminResourcePath,
     _txDevEnv.ENABLED,
     _txDevEnv.VERBOSE
 );
+
+//FXServer Display Version
+let fxsVersionDisplay = fxsVersion.toString();
+if (fxsVerParsed.branch && fxsVerParsed.branch !== 'master') {
+    fxsVersionDisplay += '-ft';
+}
+if (isZapHosting) {
+    fxsVersionDisplay += '/ZAP';
+} else if (isPterodactyl) {
+    fxsVersionDisplay += '/Ptero';
+} else if (isWindows && fxsVerParsed.platform === 'windows') {
+    fxsVersionDisplay += '/Win';
+} else if (!isWindows && fxsVerParsed.platform === 'linux') {
+    fxsVersionDisplay += '/Lin';
+} else {
+    fxsVersionDisplay += '/Unk';
+}
+
 
 /**
  * MARK: Exports
@@ -279,8 +297,9 @@ export const txDevEnv = Object.freeze(_txDevEnv);
 export const txEnv = Object.freeze({
     osType,
     isWindows,
-    fxServerVersion,
-    txAdminVersion,
+    fxsVersionDisplay,
+    fxsVersion,
+    txaVersion,
     txAdminResourcePath,
     fxServerPath,
     dataPath, //convar txDataPath

@@ -120,7 +120,7 @@ export default class WebSocket {
      */
     handleConnection(socket: SocketWithSession) {
         //Check the UI version
-        if (socket.handshake.query.uiVersion && socket.handshake.query.uiVersion !== txEnv.txAdminVersion) {
+        if (socket.handshake.query.uiVersion && socket.handshake.query.uiVersion !== txEnv.txaVersion) {
             return forceUiReload(socket);
         }
 

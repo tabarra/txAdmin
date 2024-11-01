@@ -20,7 +20,7 @@ export type ApiVerifyPasswordReqSchema = z.infer<typeof bodySchema>;
 export default async function AuthVerifyPassword(ctx: InitializedCtx) {
     //Check UI version
     const { uiVersion } = ctx.request.query;
-    if(uiVersion && uiVersion !== txEnv.txAdminVersion){
+    if(uiVersion && uiVersion !== txEnv.txaVersion){
         return ctx.send<ApiVerifyPasswordResp>({
             error: `refreshToUpdate`,
         });

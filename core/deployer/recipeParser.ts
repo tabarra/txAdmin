@@ -88,7 +88,7 @@ const recipeParser = (rawRecipe: string) => {
         outRecipe.onesync = onesync;
     }
     if (typeof recipe.$minFxVersion == 'number') {
-        if (recipe.$minFxVersion > txEnv.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe.$minFxVersion} or above`);
+        if (recipe.$minFxVersion > txEnv.fxsVersion) throw new Error(`this recipe requires FXServer v${recipe.$minFxVersion} or above`);
         outRecipe.fxserverMinVersion = recipe.$minFxVersion; //NOTE: currently no downstream use
     }
     if (typeof recipe.$engine == 'number') {

@@ -168,7 +168,7 @@ export const generateStatusMessage = (
         embed.setTimestamp();
         embed.setFooter({
             iconURL: 'https://cdn.discordapp.com/emojis/1062339910654246964.webp?size=96&quality=lossless',
-            text: `txAdmin ${txEnv.txAdminVersion} • Updated every minute`,
+            text: `txAdmin ${txEnv.txaVersion} • Updated every minute`,
 
         });
     } catch (error) {

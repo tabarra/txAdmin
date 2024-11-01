@@ -74,7 +74,10 @@ export default class PersistentCache {
     async saveCache() {
         if (!(this.#cache instanceof Map)) return false;
         try {
-            const toSave = JSON.stringify([...this.#cache.entries()]);
+            const serializer = (txDevEnv.ENABLED)
+                ? (obj: any) => JSON.stringify(obj, null, 4)
+                : JSON.stringify
+            const toSave = serializer([...this.#cache.entries()]);
             // console.debug('Saving:', toSave)
             await fsp.writeFile(this.cacheFilePath, toSave);
             // console.debug('Finished saving:', toSave)

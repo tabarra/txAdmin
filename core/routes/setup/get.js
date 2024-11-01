@@ -37,7 +37,7 @@ export default async function SetupGet(ctx) {
 
     if (txEnv.isWindows) {
         const batFolder = path.resolve(txEnv.fxServerPath, '..');
-        renderData.windowsBatPath  = path.join(batFolder, `start_${txEnv.fxServerVersion}_${txEnv.profile}.bat`);
+        renderData.windowsBatPath  = path.join(batFolder, `start_${txEnv.fxsVersion}_${txEnv.profile}.bat`);
     }
 
     return ctx.utils.render('standalone/setup', renderData);
