@@ -20,7 +20,7 @@ try {
 } catch (error) {
     fatalError.Boot(2, [
         `Failed to check or create the data folder.`,
-        `Path: ${txEnv.dataPath}`,
+        ['Path', txEnv.dataPath],
     ], error);
 }
 try {
@@ -32,9 +32,9 @@ try {
 } catch (error) {
     fatalError.Boot(3, [
         `Failed to check or create the txAdmin profile folder.`,
-        `Profile: ${txEnv.profile}`,
-        `Data Path: ${txEnv.dataPath}`,
-        `Profile Path: ${txEnv.profilePath}`,
+        ['Profile', txEnv.profile],
+        ['Data Path', txEnv.dataPath],
+        ['Profile Path', txEnv.profilePath],
     ], error);
 }
 

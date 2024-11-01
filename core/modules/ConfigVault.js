@@ -41,22 +41,10 @@ export default class ConfigVault {
         this.configFile = null;
         this.config = null;
 
-        this.setupVault();
-    }
-
-
-    //================================================================
-    /**
-     * Setup Vault
-     */
-    setupVault() {
-        try {
-            let cfgData = this.getConfigFromFile();
-            this.configFile = this.setupConfigStructure(cfgData);
-            this.config = this.setupConfigDefaults(this.configFile);
-        } catch (error) {
-            fatalError.ConfigVault(0, 'Failed to setup ConfigVault', error);
-        }
+        //Setup
+        let cfgData = this.getConfigFromFile();
+        this.configFile = this.setupConfigStructure(cfgData);
+        this.config = this.setupConfigDefaults(this.configFile);
     }
 
 
@@ -67,20 +55,28 @@ export default class ConfigVault {
     getConfigFromFile() {
         //Try to load config file
         //TODO: create a lock file to prevent starting twice the same config file?
-        let rawFile = null;
+        let rawFile;
         try {
             rawFile = fs.readFileSync(this.configFilePath, 'utf8');
         } catch (error) {
-            throw new Error(`Unable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`);
+            fatalError.ConfigVault(10, [
+                'Unable to read configuration file (filesystem error).',
+                ['Path', this.configFilePath],
+                ['Error', error.message],
+            ]);
         }
 
         //Try to parse config file
-        let cfgData = null;
+        let cfgData;
         try {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
-            if (rawFile.includes('\\')) console.error(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
-            throw new Error(`Unable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
+            fatalError.ConfigVault(11, [
+                'Unable to parse configuration file (invalid JSON).',
+                'This means the file somehow got corrupted and is not a valid anymore.',
+                ['Path', this.configFilePath],
+                ['Error', error.message],
+            ]);
         }
 
         return cfgData;
@@ -187,8 +183,13 @@ export default class ConfigVault {
                 }
             }
         } catch (error) {
-            console.verbose.dir(error);
-            throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
+            fatalError.ConfigVault(12, [
+                'Unable to load configuration file (invalid configuration).',
+                'This means the file somehow got corrupted and is not a valid anymore.',
+                'Make sure your txAdmin is updated!',
+                ['Path', this.configFilePath],
+                ['Error', error.message],
+            ]);
         }
 
         return out;
@@ -260,8 +261,17 @@ export default class ConfigVault {
             //FIXME: this should be validated here, no module to do it
             cfg.banTemplates = cfg.banTemplates ?? [];
         } catch (error) {
-            console.verbose.dir(error);
-            throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);
+            //If this is the first run, that is a fatal error
+            if (!this.config){
+                fatalError.ConfigVault(13, [
+                    'Unknown error while loading the configuration file!',
+                    'Make sure your txAdmin is updated!',
+                    ['Path', this.configFilePath],
+                ], error);
+            } else {
+                console.verbose.dir(error);
+                throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);
+            }
         }
 
         return cfg;

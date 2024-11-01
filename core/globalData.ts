@@ -66,8 +66,8 @@ if (!fxsVerParsed.valid) {
 } else if (fxsVerParsed.build < minFXServerVersion) {
     fatalError.GlobalData(2, [
         'This version of FXServer is too outdated and NOT compatible with txAdmin',
-        `Current FXServer version: ${fxsVerParsed.build}`,
-        `Minimum required version ${minFXServerVersion}`,
+        ['Current FXServer version', fxsVerParsed.build.toString()],
+        ['Minimum required version', minFXServerVersion.toString()],
         'Please update your FXServer to a newer version.',
     ]);
 } else if (fxsVerParsed.branch !== 'master') {
@@ -79,7 +79,7 @@ const txAdminVersion = GetResourceMetadata(resourceName, 'version', 0);
 if (typeof txAdminVersion !== 'string' || txAdminVersion == 'null') {
     fatalError.GlobalData(3, [
         'txAdmin version not set or in the wrong format.',
-        `Detected version: ${txAdminVersion}`,
+        ['Detected version', txAdminVersion],
     ]);
 }
 
@@ -89,7 +89,7 @@ const txAdminResourcePathConvar = GetResourcePath(resourceName);
 if (typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null') {
     fatalError.GlobalData(4, [
         'Could not resolve txAdmin resource path.',
-        `Convar: ${txAdminResourcePathConvar}`,
+        ['Convar', txAdminResourcePathConvar],
     ]);
 } else {
     txAdminResourcePath = cleanPath(txAdminResourcePathConvar);
@@ -107,7 +107,7 @@ if (isWindows && /Temp[\\/]+Rar\$/i.test(fxServerPath)) {
     fatalError.GlobalData(12, [
         'It looks like you ran FXServer inside WinRAR without extracting it first.',
         'Please extract the server files to a proper folder before running it.',
-        'Server path: ' + fxServerPath.replace(/\\/g, '/').replace(/\/$/, ''),
+        ['Server path', fxServerPath.replace(/\\/g, '/').replace(/\/$/, '')],
     ]);
 }
 
@@ -132,8 +132,8 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
         'Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.',
         'Please make sure FXServer is not in a path contaning those characters.',
         `If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxServerVersion}/".`,
-        `FXServer path: ${fxServerPath}`,
-        `txData path: ${dataPath}`,
+        ['FXServer path', fxServerPath],
+        ['txData path', dataPath],
     ]);
 }
 
@@ -141,7 +141,7 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
 const profile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
 if (profile.endsWith('.base')) {
     fatalError.GlobalData(13, [
-        `Invalid server profile name: ${profile}`,
+        ['Invalid server profile name', profile],
         'Profile names cannot end with ".base".',
         'It looks like you are trying to point to a server folder instead of a profile.',
     ]);

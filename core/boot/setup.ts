@@ -62,7 +62,10 @@ export const setupProfile = () => {
         );
         ensureProfileStructure();
     } catch (error) {
-        fatalError.Boot(4, `Failed to set up folder structure in '${txEnv.profilePath}'`, error);
+        fatalError.Boot(4, [
+            'Failed to set up folder structure for the new profile.',
+            ['Path', txEnv.profilePath],
+        ], error);
     }
     console.ok(`Server profile was saved in '${txEnv.profilePath}'`);
 

@@ -3,6 +3,9 @@ import chalk from "chalk";
 import consoleFactory from "./console";
 const console = consoleFactory();
 
+type ErrorLineSkipType = null | undefined | false;
+type ErrorLineType = string | [desc: string, value: string] | ErrorLineSkipType;
+type ErrorMsgType = ErrorLineType | ErrorLineType[];
 
 const padStartEnd = (str: string): string => {
     str = ` ${str} `;
@@ -10,7 +13,18 @@ const padStartEnd = (str: string): string => {
     return str.padStart(padStart, '-').padEnd(console.DIVIDER_SIZE, '-');
 }
 
-type ErrorMsgType = string | string[];
+const printSingleLine = (line: ErrorLineType): void => {
+    if (Array.isArray(line)) {
+        if (line.length === 2 && typeof line[0] === 'string' && typeof line[1] === 'string') {
+            console.error(`${line[0]}: ${chalk.dim(line[1])}`);
+        } else {
+            console.error(JSON.stringify(line));
+        }
+    } else if (typeof line === 'string') {
+        console.error(line);
+    }
+}
+
 function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
     console.error(console.DIVIDER);
     console.error(chalk.inverse(
@@ -19,10 +33,10 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
     console.error(console.DIVIDER);
     if (Array.isArray(msg)) {
         for (const line of msg) {
-            console.error(line);
+            printSingleLine(line);
         }
     } else {
-        console.error(msg);
+        printSingleLine(msg);
     }
     if (err) console.dir(err);
     console.error(console.DIVIDER);

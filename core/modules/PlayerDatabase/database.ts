@@ -132,9 +132,9 @@ export class Database {
                 fatalError.Database(0, [
                     errTitle,
                     'It was also not possible to load the automatic backup file.',
-                    `Main error: '${(errorMain as Error).message}'`,
-                    `Backup error: '${(errorBackup as Error).message}'`,
-                    `Database path: '${this.dbPath}'`,
+                    ['Main error', (errorMain as Error).message],
+                    ['Backup error', (errorBackup as Error).message],
+                    ['Database path', this.dbPath],
                     'If there is a file in that location, you may try to delete or restore it manually.',
                 ]);
             }
@@ -167,7 +167,7 @@ export class Database {
                     'Your txAdmin player/actions database is corrupted!',
                     'It is missing one of the required arrays (players, actions, whitelistApprovals, whitelistRequests).',
                     'If you modified the database file manually, you may try to restore it from the automatic backup file.',
-                    `Database path: '${this.dbPath}'`,
+                    ['Database path', this.dbPath],
                 ]);
             }
 

@@ -486,9 +486,9 @@ export default class AdminVault {
                 ];
             }
             fatalError.AdminVault(0, [
-                `Unable to load admins.json: ${reason}`,
+                ['Unable to load admins.json', reason],
                 ...details,
-                `Admin File Path: ${this.adminsFile}`,
+                ['Admin File Path', this.adminsFile],
             ]);
         };
 
