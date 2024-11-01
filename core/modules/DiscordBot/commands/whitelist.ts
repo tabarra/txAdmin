@@ -18,7 +18,7 @@ const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, 
         return await interaction.reply(embedder.danger(`Failed to resolve member ID.`));
     }
     const identifier = `discord:${member.id}`;
-    const playerName = `${member.nickname ?? member.user.username}#${member.user.discriminator}`;
+    const playerName = member.nickname ?? member.user.username;
     const avatarOptions: ImageURLOptions = { size: 64, forceStatic: true };
     const playerAvatar = member.displayAvatarURL(avatarOptions) ?? member.user.displayAvatarURL(avatarOptions);
 

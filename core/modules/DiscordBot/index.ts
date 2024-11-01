@@ -421,7 +421,7 @@ export default class DiscordBot {
 
             if (member) {
                 return {
-                    tag: `${member.nickname ?? member.user.username}#${member.user.discriminator}`,
+                    tag: member.nickname ?? member.user.username,
                     avatar: member.displayAvatarURL(avatarOptions) ?? member.user.displayAvatarURL(avatarOptions),
                 };
             }
@@ -433,7 +433,7 @@ export default class DiscordBot {
         const user = await this.#client.users.fetch(uid);
         if (user) {
             return {
-                tag: `${user.username}#${user.discriminator}`,
+                tag: user.username,
                 avatar: user.displayAvatarURL(avatarOptions),
             };
         } else {
