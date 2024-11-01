@@ -1,6 +1,3 @@
-import FXRunner from "@modules/FxRunner/index.js";
-import PlayerDatabase from "@modules/PlayerDatabase/index.js";
-import PlayerlistManager from "@modules/PlayerlistManager/index.js";
 import { DatabasePlayer, ServerPlayer } from "./playerClasses.js"
 
 
@@ -13,11 +10,6 @@ import { DatabasePlayer, ServerPlayer } from "./playerClasses.js"
  * FIXME: pass serverInstance when multiserver
  */
 export default (mutex: any, netid: any, license: any) => {
-    //TODO: remove when removing globals
-    const fxRunner = (globals.fxRunner as FXRunner);
-    const playerlistManager = (globals.playerlistManager as PlayerlistManager);
-    const playerDatabase = (globals.playerDatabase as PlayerDatabase);
-
     const parsedNetid = parseInt(netid);
     let searchLicense = license;
 
@@ -27,9 +19,9 @@ export default (mutex: any, netid: any, license: any) => {
     //If mutex+netid provided
     if (typeof mutex === 'string' && typeof netid === 'number' && !isNaN(parsedNetid)) {
         hasMutex = true;
-        if (mutex === fxRunner?.currentMutex) {
+        if (mutex === globals.fxRunner?.currentMutex) {
             //If the mutex is from the server currently online
-            const player = playerlistManager.getPlayerById(netid);
+            const player = globals.playerlistManager.getPlayerById(netid);
             if (player instanceof ServerPlayer) {
                 return player;
             } else {
@@ -38,18 +30,18 @@ export default (mutex: any, netid: any, license: any) => {
         } else {
             // If mutex is from previous server, overwrite any given license
             const searchRef = `${mutex}#${netid}`;
-            const found = playerlistManager.licenseCache.find(c => c[0] === searchRef);
+            const found = globals.playerlistManager.licenseCache.find(c => c[0] === searchRef);
             if (found) searchLicense = found[1];
         }
     }
 
     //If license provided or resolved through licenseCache, search in the database
     if (typeof searchLicense === 'string' && searchLicense.length) {
-        const onlineMatches = playerlistManager.getOnlinePlayersByLicense(searchLicense);
+        const onlineMatches = globals.playerlistManager.getOnlinePlayersByLicense(searchLicense);
         if(onlineMatches.length){
             return onlineMatches.at(-1) as ServerPlayer;
         }else{
-            return new DatabasePlayer(searchLicense, playerDatabase);
+            return new DatabasePlayer(searchLicense, globals.playerDatabase);
         }
     }
 

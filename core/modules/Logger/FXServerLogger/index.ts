@@ -121,7 +121,7 @@ export default class FXServerLogger extends LoggerBase {
      */
     public logFxserverBoot(pid: string) {
         //force line skip to create separation
-        if(this.recentBuffer.length){
+        if (this.recentBuffer.length) {
             const lineBreak = this.transformer.lastEol ? '\n' : '\n\n';
             this.ingest(ConsoleLineType.MarkerInfo, lineBreak);
         }

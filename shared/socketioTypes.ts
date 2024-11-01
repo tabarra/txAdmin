@@ -39,9 +39,6 @@ export type DashboardSvRuntimeDataType = {
     perfBucketCounts?: {
         [key in SvRtPerfThreadNamesType]: number[];
     };
-    perfMinTickTime: {
-        [key in SvRtPerfThreadNamesType]: number;
-    };
 }
 export type DashboardPleyerDropDataType = {
     summaryLast6h: [reasonCategory: string, count: number][];

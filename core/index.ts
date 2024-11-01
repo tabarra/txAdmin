@@ -26,7 +26,7 @@ try {
 try {
     if (fs.existsSync(txEnv.profilePath)) {
         ensureProfileStructure();
-    }else{
+    } else {
         setupProfile();
     }
 } catch (error) {

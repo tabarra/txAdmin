@@ -12,7 +12,9 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { BackendApiError, useBackendApi } from "@/hooks/fetch";
 import { Loader2Icon } from "lucide-react";
 import useSWR from "swr";
-import { nanoid } from "nanoid";
+import { alphanumeric } from 'nanoid-dictionary';
+import { customAlphabet } from "nanoid";
+const nanoid = customAlphabet(alphanumeric, 21);
 
 
 export type BanTemplatesInputData = {

@@ -24,7 +24,6 @@ type PlayerDbConfigType = {
 
 /**
  * Provide a central database for players, as well as assist with access control.
- * TODO: maybe after finishing the parts, move them to xxx.controller.ts dividing it by the tables?
  */
 export default class PlayerDatabase {
     readonly #db: Database;
@@ -80,7 +79,6 @@ export default class PlayerDatabase {
      */
     getDboRef() {
         if (!this.#db.obj) throw new Error(`database not ready yet`);
-        // throw new Error(`dev note: not validated yet`);
         return this.#db.obj;
     }
 };

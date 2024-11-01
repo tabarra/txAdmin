@@ -56,7 +56,7 @@ Legend:
     - if storing in a linear UInt16Array, 100k players * 120d * 4bytes per date = 48mb
 
 ## Fixes
-- [ ] fix double server boot message:
+- [x] fix double server boot message:
     - happens when some page starts the server and redirects you to the live console
     - you join the room and gets initial data (directly from logger)
     - while the websocket out buffer still haven't sent the boot message
@@ -73,7 +73,6 @@ Legend:
 - [x] improve db downgrade message
 - [x] txGlobal.database.[players/actions/whitelist/cleanup].*
 - [ ] txGlobal/globals
-- [ ] do I need to import from `lodash-es`? What changed?
 - [ ] lua file changes (after PR merges)
     - 4 spaces
     - Upper case for globals
@@ -114,7 +113,6 @@ Legend:
 - [ ] see if it's a good idea to replace `getHostStats.js` with si.osInfo()
     - same for getting process load, instead of fixing the wmic issue
 
-
 ## other stuff
 - Consider using Blob
     - https://developer.mozilla.org/en-US/docs/Web/API/Blob
@@ -144,7 +142,7 @@ NOTE: might not be worth doing this, as this is only to solve the problem of bad
 
 
 #### txGlobal todos
-- [ ] remover `const globals: any;`
+- [ ] remover `declare const globals` do `global.d.ts`
 - [ ] remover todas as menções de `globals`
 - [ ] checar por `globals?.`
 - [ ] 

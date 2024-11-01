@@ -98,19 +98,38 @@ export default async function AdvancedActions(ctx) {
             console.warn(`Heap snapshot written to: ${snapFile}`);
         }, 50);
         return ctx.send({ type: 'success', message: 'terminal' });
-    } else if (action == 'gc') {
+    } else if (action === 'gc') {
         if (typeof global.gc === 'function') {
             global.gc();
             return ctx.send({ type: 'success', message: 'done' });
         } else {
             return ctx.send({ type: 'danger', message: 'GC is not exposed' });
         }
+    } else if (action === 'safeEnsureMonitor') {
+        const setCmdResult = globals.fxRunner.sendCommand(
+            'set',
+            [
+                'txAdmin-luaComToken',
+                globals.webServer.luaComToken,
+            ]
+        );
+        if (!setCmdResult) {
+            return ctx.send({ type: 'danger', message: 'Failed to reset luaComToken.' });
+        }
+        const ensureCmdResult = globals.fxRunner.sendCommand(
+            'ensure',
+            ['monitor']
+        );
+        if (ensureCmdResult) {
+            return ctx.send({ type: 'success', message: 'done' });
+        } else {
+            return ctx.send({ type: 'danger', message: 'Failed to ensure monitor.' });
+        }
     } else if (action.startsWith('playerDrop')) {
         const reason = action.split(' ', 2)[1];
         const category = globals.statsManager.playerDrop.handlePlayerDrop(reason);
         return ctx.send({ type: 'success', message: category });
     } else if (action == 'xxxxxx') {
-        // const res = globals.playerDatabase.xxxxx();
         // console.dir(res);
         return ctx.send({ type: 'success', message: 'terminal' });
     }

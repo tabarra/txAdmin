@@ -32,6 +32,25 @@ type ThreadPerfChartProps = {
 
 
 /**
+ * Constants
+ */
+//NOTE: numbers from fivem/code/components/citizen-server-impl/src/GameServer.cpp
+const PERF_MIN_TICK_TIME = {
+    //svMain - 20fps, 50ms/tick
+    //svNetwork - 100fps, 10ms/tick
+    //svSync - 120fps, 8.3ms/tick
+
+    svMain: (1000 / 20) / 1000,
+    // svNetwork: (1000 / 100) / 1000,
+    // svSync: (1000 / 120) / 1000,
+
+    //NOTE: forcing wrong numbers because the chart colors are wrong
+    svNetwork: (1000 / 40) / 1000, //25ms/tick
+    svSync: (1000 / 40) / 1000, //25ms/tick
+};
+
+
+/**
  * Memoized nivo bar chart component
  */
 const ThreadPerfChart = memo(({ data, minTickIntervalMarker, width, height }: ThreadPerfChartProps) => {
@@ -166,7 +185,7 @@ export default function ThreadPerfCard() {
         if (!svRuntimeData || getDashDataAge().isExpired) return null;
 
         //Data completeness check
-        if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts || !svRuntimeData.perfMinTickTime) {
+        if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts) {
             return 'incomplete';
         }
 
@@ -175,8 +194,8 @@ export default function ThreadPerfCard() {
             : selectedThread
             ?? 'svMain') as SvRtPerfThreadNamesType;
 
-        const { perfBoundaries, perfBucketCounts, perfMinTickTime } = svRuntimeData;
-        const minTickInterval = perfMinTickTime[threadName];
+        const { perfBoundaries, perfBucketCounts } = svRuntimeData;
+        const minTickInterval = PERF_MIN_TICK_TIME[threadName];
         const minTickIntervalMarker = getMinTickIntervalMarker(perfBoundaries, minTickInterval);
         const minTickIntervalIndex = perfBoundaries.findIndex(b => b === minTickIntervalMarker);
         let colorFunc: (bucketNum: number) => string;
@@ -221,7 +240,7 @@ export default function ThreadPerfCard() {
         if (!svRuntimeData || dataAge.isExpired) return null;
 
         //Data completeness check
-        if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts || !svRuntimeData.perfMinTickTime) {
+        if (!svRuntimeData.perfBoundaries || !svRuntimeData.perfBucketCounts) {
             return null;
         }
 

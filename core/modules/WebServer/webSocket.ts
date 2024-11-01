@@ -116,7 +116,6 @@ export default class WebSocket {
 
     /**
      * Handles incoming connection requests,
-     * NOTE: For now the user MUST join a room, needs additional logic for 'web' room
      */
     handleConnection(socket: SocketWithSession) {
         //Check the UI version
@@ -153,6 +152,11 @@ export default class WebSocket {
             if (!requestedRooms.length) {
                 return terminateSession(socket, 'no valid room requested');
             }
+
+            //To prevent user from receiving data duplicated in initial data and buffer data
+            //we need to flush the buffers first. This is a bit hacky, but performance shouldn't
+            //really be an issue since we are first validating the user auth.
+            this.flushBuffers();
 
             //For each valid requested room
             for (const requestedRoomName of requestedRooms) {

@@ -68,6 +68,7 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
     220 - configvault throw
     221 - modules constructor throw
     222 - global placeholder
+    223 - TxAdmin.setRef called
 5100 - config vault
 5300 - admin vault
 5400 - fxrunner

@@ -24,8 +24,7 @@ import fatalError from '@lib/fatalError';
 const console = consoleFactory();
 
 
-// Long ago I wanted to replace this with dependency injection.
-// I Totally gave up.
+// FIXME: replace with GlobalPlaceholder
 const globalsInternal: Record<string, any> = {
     txAdmin: null, //self reference for webroutes that need to access it from the globals
 

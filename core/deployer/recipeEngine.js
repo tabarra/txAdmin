@@ -5,7 +5,7 @@ import fsp from 'node:fs/promises';
 import path from 'node:path';
 import stream from 'node:stream';
 import StreamZip from 'node-stream-zip';
-import { cloneDeep, escapeRegExp }  from 'lodash-es';
+import { cloneDeep, escapeRegExp } from 'lodash-es';
 import mysql from 'mysql2/promise';
 import got from '@lib/got';
 import consoleFactory from '@lib/console';
@@ -453,7 +453,7 @@ const taskFailTest = async (options, basePath, deployerCtx) => {
  */
 const taskDumpVars = async (options, basePath, deployerCtx) => {
     const toDump = cloneDeep(deployerCtx);
-    toDump.dbConnection = (toDump.dbConnection && toDump.dbConnection.constructor && toDump.dbConnection.constructor.name) ? toDump.dbConnection.constructor.name : undefined;
+    toDump.dbConnection = toDump?.dbConnection?.constructor?.name;
     console.dir(toDump);
 };
 
