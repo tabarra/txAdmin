@@ -19,9 +19,16 @@ export default async (dbo) => {
         fatalError.Database(50, 'Your players database version is not a number!');
     }
     if (dbo.data.version > DATABASE_VERSION) {
-        console.error(`Your players database is on v${dbo.data.version}, and this txAdmin supports up to v${DATABASE_VERSION}.`);
-        console.error('This means you likely downgraded your txAdmin version. Please update txAdmin.');
-        process.exit(5651);
+        fatalError.Database(51, [
+            `Your players database is on v${dbo.data.version}, and this txAdmin supports up to v${DATABASE_VERSION}.`,
+            'This means you likely downgraded your txAdmin or FXServer.',
+            'Please make sure your txAdmin is updated!',
+            '',
+            'If you want to downgrade FXServer (the "artifact") but keep txAdmin updated,',
+            'you can move the updated "citizen/system_resources/monitor" folder',
+            'to older FXserver artifact, replacing the old files.',
+            `Alternatively, you can restore the database v${dbo.data.version} backup on the data folder.`,
+        ]);
     }
 
     //Migrate database

@@ -69,7 +69,8 @@ Legend:
     - use sendRawCommand in sendCommand (leave the fxserver.log*Command in sendRawCommand)
 - [x] setup txData+profile on `index.js` before instantiating TxAdmin
 - [x] process.exit reorg into lib/fatalError
-- [ ] move `ConfigVault.setupFolderStructure();` to index
+- [x] move `ConfigVault.setupFolderStructure();` to index
+- [x] improve db downgrade message
 - [ ] txGlobal/globals
 - [ ] txGlobal.database.[players/actions/whitelist/cleanup].*
 - [ ] do I need to import from `lodash-es`? What changed?
@@ -142,48 +143,13 @@ NOTE: might not be worth doing this, as this is only to solve the problem of bad
 - [ ] CfxUpdateChecker(this);
 
 
-TxGlobal.xxxx
-txGlobal.xxx
-TxGlobal.xxx
-TX.xxx
-TxModules.xxx
-
-This worked, no time to check which. 
-Note it's in the core root and not in the `types` folder, also it has an `export` before the declaration.
-```js
-//file: core/global.d.ts
-export declare global {
-    const globals: any;
-    namespace globalThis {
-        interface Console {
-            xxxx: any
-        }
-    }
-    namespace NodeJS {
-        interface Global {
-            xxxx: any
-        }
-    }
-    interface Console {
-        //FIXME: when adding this globals, 
-        // move console.ts to be the first thing imported in tx
-        // and then replace all const console = consoleFactory() to
-        // const console = console.tag('xxx')
-        // and drop the const moduleName for all files
-        exampleProperty: string;
-    }
-}
-
-// pra garantir que nada no primeiro tick use global tx instance, antes de instanciar a classe txAdmin,
-// fazer global.xxxxx ser uma classe com um getter pras vars do txAdmin, mas throw new error
-class ErrorOnAccess {
-    constructor() { }
-    get xxxxxx(): any {
-        throw new Error(`initial tick`);
-    }
-}
-```
-
+#### txGlobal todos
+- [ ] remover `const globals: any;`
+- [ ] remover todas as menções de `globals`
+- [ ] checar por `globals?.`
+- [ ] 
+- [ ] 
+- [ ] 
 
 
 ## Refactor: AdminVault
@@ -230,6 +196,8 @@ if (!params) return;
 - Save only what changed? Or save all in the settings page
 - Do not make template config.json file on setup, only an empty-ish file
 - Use dot notation, save it flat
+- FIXME: not compatible with ban templates
+    - perhaps use array format `banTemplates[0].id=...`
 - Only acceptable values are json types except objects to prevent accidental mutations
 - Maybe don't even json the file, make something closer to a `.env`, line separated
 - Allow registerUpdateCallback to pass wildcards
@@ -385,6 +353,7 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - it will support native bindings, so this might work:
         - https://www.npmjs.com/package/fd-lock
     - change deployer and some other path manipulations to use `path.matchesGlob`
+    - replace all `global.*` to `globalThis.*`
 
 - [ ] checar se outros resources conseguem chamar 'txaLogger:menuEvent'?
 - [ ] Migrate all log routes

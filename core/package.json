@@ -66,7 +66,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^16.9.1",
     "@types/bytes": "^3.1.4",
     "@types/d3-array": "^3.2.1",
     "@types/dateformat": "^5.0.2",
@@ -79,6 +78,7 @@
     "@types/koa-bodyparser": "^4.3.12",
     "@types/koa-ratelimit": "^5.0.5",
     "@types/nanoid-dictionary": "^4.2.3",
+    "@types/node": "^16.9.1",
     "@types/pidusage": "^2.0.5",
     "@types/semver": "^7.5.8",
     "@types/slug": "^5.0.9",

@@ -22,13 +22,12 @@ const getConvarBool = (convarName: string) => {
 };
 const getConvarString = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim();
-    // console.debug(`Convar ${convarName}: ${cvar}`);
     return (cvar === 'false') ? false : cvar;
 };
 
 
 /**
- * txAdmin Env
+ * MARK: txAdmin Env
  */
 //Get OSType
 const osTypeVar = os.type();
@@ -112,7 +111,7 @@ if (isWindows && /Temp[\\/]+Rar\$/i.test(fxServerPath)) {
 }
 
 //Setting data path
-let dataPath;
+let dataPath: string;
 const txDataPathConvar = getConvarString('txDataPath');
 if (!txDataPathConvar) {
     const dataPathSuffix = (isWindows) ? '..' : '../../../';
@@ -157,7 +156,7 @@ const profilePath = cleanPath(path.join(dataPath, profile));
 
 
 /**
- * txAdmin Dev Env
+ * MARK: txAdmin Dev Env
  */
 type TxDevEnvEnabledType = Overwrite<TxDevEnvType, {
     ENABLED: true;
@@ -187,7 +186,7 @@ if (txDevEnvSrc.ENABLED) {
 
 
 /**
- * Host type check
+ * MARK: Host type check
  */
 //Checking for ZAP Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
@@ -273,7 +272,7 @@ setConsoleEnvData(
 );
 
 /**
- * Exports
+ * MARK: Exports
  */
 export const txDevEnv = Object.freeze(_txDevEnv);
 

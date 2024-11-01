@@ -32,6 +32,8 @@ export type InitializedCtx = CtxWithVars & CtxTxUtils;
 //After some auth middleware
 export type AuthedCtx = InitializedCtx & {
     admin: AuthedAdminType;
+    // params: any;
+    // request: any;
 }
 
 //The socket.io version of "context"

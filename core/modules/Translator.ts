@@ -111,7 +111,7 @@ export default class Translator {
      * Perform a translation (polyglot.t)
      */
     t(key: string, options = {}) {
-        if(!this.#polyglot) throw new Error(`polyglot not yet loaded`);
+        if (!this.#polyglot) throw new Error(`polyglot not yet loaded`);
 
         try {
             return this.#polyglot.t(key, options);

@@ -21,7 +21,7 @@ import CfxUpdateChecker from '@modules/CfxUpdateChecker';
 import consoleFactory from '@lib/console';
 import { getHostData } from '@lib/diagnostics';
 import fatalError from '@lib/fatalError';
-const console = consoleFactory(`v${txEnv.txAdminVersion}`);
+const console = consoleFactory();
 
 
 // Long ago I wanted to replace this with dependency injection.
@@ -94,7 +94,7 @@ export default class TxAdmin {
 
 
     constructor() {
-        console.log(`Profile '${txEnv.profile}' starting...`);
+        console.log(`Starting profile '${txEnv.profile}' on v${txEnv.txAdminVersion}/b${txEnv.fxsVersionDisplay}`);
 
         //FIXME: hacky self reference because some webroutes need to access globals.txAdmin to pass it down
         globalsInternal.txAdmin = this;
