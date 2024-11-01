@@ -5,6 +5,7 @@ import { MultipleCounter, QuantileArray } from '../statsUtils';
 import { convars } from '@core/globalData';
 import { getHostStaticData } from '@lib/diagnostics';
 import TxAdmin from '@core/txAdmin';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 
 
@@ -80,8 +81,7 @@ export default class TxRuntimeStatsManager {
         try {
             this.#publicKey = await jose.importSPKI(statsPublicKeyPem, 'RS256');
         } catch (error) {
-            console.dir(error);
-            process.exit(5700);
+            fatalError.StatsTxRuntime(0, 'Failed to load stats public key.', error);
         }
     }
 

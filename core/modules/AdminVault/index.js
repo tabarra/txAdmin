@@ -9,6 +9,7 @@ import CitizenFXProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@lib/console.js';
 import chalk from 'chalk';
+import fatalError from '@lib/fatalError.js';
 const console = consoleFactory(modulename);
 
 //FIXME: The way I'm doing bersioning right now is horrible
@@ -475,15 +476,20 @@ export default class AdminVault {
         let hasMigration = false;
 
         const callError = (reason) => {
-            console.error(`Unable to load admins.json: ${reason}`);
+            let details;
             if (reason === 'cannot read file') {
-                console.error('This means the file  doesn\'t exist or txAdmin doesn\'t have permission to read it.');
+                details = ['This means the file  doesn\'t exist or txAdmin doesn\'t have permission to read it.'];
             } else {
-                console.error('This likely means the file got somehow corrupted.');
-                console.error('You can try restoring it or you can delete it and let txAdmin create a new one.');
+                details = [
+                    'This likely means the file got somehow corrupted.',
+                    'You can try restoring it or you can delete it and let txAdmin create a new one.',
+                ];
             }
-            console.error(`Admin File Path: ${this.adminsFile}`);
-            process.exit(5300);
+            fatalError.AdminVault(0, [
+                `Unable to load admins.json: ${reason}`,
+                ...details,
+                `Admin File Path: ${this.adminsFile}`,
+            ]);
         };
 
         try {
@@ -547,7 +553,7 @@ export default class AdminVault {
                 //adding schema version
                 admin.$schema = ADMIN_SCHEMA_VERSION;
                 hasMigration = true;
-                
+
                 //separate DM and Announcement permissions
                 if (admin.permissions.includes('players.message')) {
                     hasMigration = true;

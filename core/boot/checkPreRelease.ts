@@ -1,6 +1,7 @@
 import humanizeDuration, { Unit } from 'humanize-duration';
 import chalk from 'chalk';
 import consoleFactory from '@lib/console';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory('ATTENTION');
 
 
@@ -10,6 +11,11 @@ const humanizeOptions = {
     round: true,
     units: ['d', 'h', 'm'] as Unit[],
 };
+
+const expiredError = [
+    'This pre-release version has expired, please update your txAdmin.',
+    'Bye bye 👋',
+]
 
 const printExpirationBanner = (timeUntilExpiration: number) => {
     const timeLeft = humanizeDuration(timeUntilExpiration, humanizeOptions)
@@ -26,10 +32,7 @@ const cronCheckExpiration = () => {
 
     const timeUntilExpiration = PRERELEASE_EXPIRATION - Date.now();
     if (timeUntilExpiration < 0) {
-        console.error('This pre-release version has expired, please update your txAdmin.');
-        console.error('For more information: https://discord.gg/txAdmin.');
-        console.error('Bye bye 👋');
-        process.exit(400);
+        fatalError.Boot(11, expiredError);
     } else if (timeUntilExpiration < 24 * 60 * 60 * 1000) {
         printExpirationBanner(timeUntilExpiration);
     }
@@ -40,9 +43,7 @@ export default () => {
 
     const timeUntilExpiration = PRERELEASE_EXPIRATION - Date.now();
     if (timeUntilExpiration < 0) {
-        console.error('This pre-release version has expired, please update your txAdmin.');
-        console.error('For more information: https://discord.gg/txAdmin.');
-        process.exit(401);
+        fatalError.Boot(10, expiredError);
     }
 
     //First warning

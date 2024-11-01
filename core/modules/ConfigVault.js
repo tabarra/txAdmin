@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { cloneDeep } from 'lodash-es';
 import { defaultEmbedJson, defaultEmbedConfigJson } from '@modules/DiscordBot/defaultJsons';
 import consoleFactory from '@lib/console';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 
 
@@ -55,8 +56,7 @@ export default class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             this.setupFolderStructure();
         } catch (error) {
-            console.error(error);
-            process.exit(5100);
+            fatalError.ConfigVault(0, 'Failed to setup ConfigVault', error);
         }
     }
 

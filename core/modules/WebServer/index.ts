@@ -26,6 +26,7 @@ import { SessionMemoryStorage, koaSessMw, socketioSessMw } from './middlewares/s
 import checkRateLimit from './middlewares/globalRateLimiter';
 import checkHttpLoad from './middlewares/httpLoadMonitor';
 import cacheControlMw from './middlewares/cacheControlMw';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict49, 32);
 
@@ -189,11 +190,12 @@ export default class WebServer {
         try {
             const listenErrorHandler = (error: any) => {
                 if (error.code !== 'EADDRINUSE') return;
-                console.error(`Failed to start HTTP server, port ${error.port} is already in use.`);
-                console.error('Maybe you already have another txAdmin running in this port.');
-                console.error('If you want to run multiple txAdmin instances, check the documentation for the port convar.');
-                console.error('You can also try restarting the host machine.');
-                process.exit(5800);
+                fatalError.WebServer(0, [
+                    `Failed to start HTTP server, port ${error.port} is already in use.`,
+                    'Maybe you already have another txAdmin running in this port.',
+                    'If you want to run multiple txAdmin instances, check the documentation for the port convar.',
+                    'You can also try restarting the host machine.',
+                ]);
             };
             //@ts-ignore
             this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this));
@@ -226,9 +228,7 @@ export default class WebServer {
                 this.isListening = true;
             });
         } catch (error) {
-            console.error('Failed to start HTTP server with error:');
-            console.dir(error);
-            process.exit(5801);
+            fatalError.WebServer(1, 'Failed to start HTTP server.', error);
         }
     }
 

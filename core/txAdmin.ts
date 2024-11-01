@@ -25,6 +25,7 @@ import CfxUpdateChecker from '@modules/CfxUpdateChecker';
 
 import consoleFactory from '@lib/console';
 import { getHostData } from '@lib/diagnostics';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory(`v${txEnv.txAdminVersion}`);
 
 
@@ -114,9 +115,7 @@ export default class TxAdmin {
             //FIXME: hacky fix for settings:save to be able to update this
             globalsInternal.func_txAdminRefreshConfig = this.refreshConfig.bind(this);
         } catch (error) {
-            console.error(`Error starting ConfigVault:`);
-            console.dir(error);
-            process.exit(301);
+            fatalError.Boot(20, 'Failed to start ConfigVault', error);
         }
 
         //Start all modules
@@ -175,9 +174,7 @@ export default class TxAdmin {
             this.cfxUpdateChecker = new CfxUpdateChecker(this);
             globalsInternal.cfxUpdateChecker = this.cfxUpdateChecker;
         } catch (error) {
-            console.error(`Error starting main components:`);
-            console.dir(error);
-            process.exit(302);
+            fatalError.Boot(21, 'Failed to start modules', error);
         }
 
         //Once they all finish loading, the function below will print the banner

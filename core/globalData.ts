@@ -8,6 +8,7 @@ import { addLocalIpAddress } from '@lib/host/isIpAddressLocal';
 import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
 import { parseTxDevEnv, TxDevEnvType } from '@shared/txDevEnv';
 import { Overwrite } from 'utility-types';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory();
 
 
@@ -39,8 +40,7 @@ if (osTypeVar == 'Windows_NT') {
     osType = 'linux';
     isWindows = false;
 } else {
-    console.error(`OS type not supported: ${osTypeVar}`);
-    process.exit(100);
+    fatalError.GlobalData(0, `OS type not supported: ${osTypeVar}`);
 }
 
 //Get resource name
@@ -64,8 +64,12 @@ if (!fxsVerParsed.valid) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
 } else if (fxsVerParsed.build < minFXServerVersion) {
-    console.error(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
-    process.exit(102);
+    fatalError.GlobalData(2, [
+        'This version of FXServer is too outdated and NOT compatible with txAdmin',
+        `Current FXServer version: ${fxsVerParsed.build}`,
+        `Minimum required version ${minFXServerVersion}`,
+        'Please update your FXServer to a newer version.',
+    ]);
 } else if (fxsVerParsed.branch !== 'master') {
     console.warn(`You are running a custom branch of FXServer: ${fxsVerParsed.branch}`);
 }
@@ -73,16 +77,20 @@ if (!fxsVerParsed.valid) {
 //Getting txAdmin version
 const txAdminVersion = GetResourceMetadata(resourceName, 'version', 0);
 if (typeof txAdminVersion !== 'string' || txAdminVersion == 'null') {
-    console.error('txAdmin version not set or in the wrong format');
-    process.exit(103);
+    fatalError.GlobalData(3, [
+        'txAdmin version not set or in the wrong format.',
+        `Detected version: ${txAdminVersion}`,
+    ]);
 }
 
 //Get txAdmin Resource Path
 let txAdminResourcePath: string;
 const txAdminResourcePathConvar = GetResourcePath(resourceName);
 if (typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null') {
-    console.error('Could not resolve txAdmin resource path');
-    process.exit(104);
+    fatalError.GlobalData(4, [
+        'Could not resolve txAdmin resource path.',
+        `Convar: ${txAdminResourcePathConvar}`,
+    ]);
 } else {
     txAdminResourcePath = cleanPath(txAdminResourcePathConvar);
 }
@@ -90,16 +98,17 @@ if (typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar =
 //Get citizen Root
 const citizenRootConvar = getConvarString('citizen_root');
 if (!citizenRootConvar) {
-    console.error('citizen_root convar not set');
-    process.exit(105);
+    fatalError.GlobalData(5, 'citizen_root convar not set');
 }
 const fxServerPath = cleanPath(citizenRootConvar as string);
 
 //Check if server is inside WinRar's temp folder
 if (isWindows && /Temp[\\/]+Rar\$/i.test(fxServerPath)) {
-    console.error('It looks like you ran FXServer inside WinRAR without extracting it first.');
-    console.error('Please extract the server files to a proper folder before running it.');
-    process.exit(112);
+    fatalError.GlobalData(12, [
+        'It looks like you ran FXServer inside WinRAR without extracting it first.',
+        'Please extract the server files to a proper folder before running it.',
+        'Server path: ' + fxServerPath.replace(/\\/g, '/').replace(/\/$/, ''),
+    ]);
 }
 
 //Setting data path
@@ -118,24 +127,31 @@ if (!txDataPathConvar) {
 //      There was also an issue with the slash() lib and with the +exec on FXServer
 const nonASCIIRegex = /[^\x00-\x80]+/;
 if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
-    console.error('Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.');
-    console.error('Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.');
-    console.error('Please make sure FXServer is not in a path contaning those characters.');
-    console.error(`If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxServerVersion}/".`);
-    console.log(`FXServer path: ${fxServerPath}`);
-    console.log(`txData path: ${dataPath}`);
-    process.exit(107);
+    fatalError.GlobalData(7, [
+        'Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.',
+        'Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.',
+        'Please make sure FXServer is not in a path contaning those characters.',
+        `If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxServerVersion}/".`,
+        `FXServer path: ${fxServerPath}`,
+        `txData path: ${dataPath}`,
+    ]);
 }
 
 //Profile
 const profile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
 if (profile.endsWith('.base')) {
-    console.error(`Looks like the folder named '${profile}' is actually a deployed base instead of a profile.`);
-    process.exit(113);
+    fatalError.GlobalData(13, [
+        `Invalid server profile name: ${profile}`,
+        'Profile names cannot end with ".base".',
+        'It looks like you are trying to point to a server folder instead of a profile.',
+    ]);
 }
 if (!profile.length) {
-    console.error('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
-    process.exit(114);
+    fatalError.GlobalData(14, [
+        'Invalid server profile name.',
+        'If you are using Google Translator on the instructions page,',
+        'make sure there are no additional spaces in your command.',
+    ]);
 }
 const profilePath = cleanPath(path.join(dataPath, profile));
 
@@ -158,8 +174,7 @@ const txDevEnvSrc = parseTxDevEnv();
 if (txDevEnvSrc.ENABLED) {
     console.log('Starting txAdmin in DEV mode.');
     if (!txDevEnvSrc.SRC_PATH || !txDevEnvSrc.VITE_URL) {
-        console.error('Missing TXDEV_VITE_URL and/or TXDEV_SRC_PATH env variables.');
-        process.exit(108);
+        fatalError.GlobalData(8, 'Missing TXDEV_VITE_URL and/or TXDEV_SRC_PATH env variables.');
     }
     _txDevEnv = txDevEnvSrc as TxDevEnvEnabledType;
 } else {
@@ -217,8 +232,7 @@ if (fs.existsSync(zapCfgFile)) {
 
         if (!_txDevEnv.ENABLED) fs.unlinkSync(zapCfgFile);
     } catch (error) {
-        console.error(`Failed to load with ZAP-Hosting configuration error: ${(error as Error).message}`);
-        process.exit(109);
+        fatalError.GlobalData(9, 'Failed to load with ZAP-Hosting configuration.', error);
     }
 } else {
     isZapHosting = false;
@@ -229,8 +243,7 @@ if (fs.existsSync(zapCfgFile)) {
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
     if (!/^\d+$/.test(txAdminPortConvar)) {
-        console.error('txAdminPort is not valid.');
-        process.exit(110);
+        fatalError.GlobalData(10, 'txAdminPort is not valid.');
     }
     txAdminPort = parseInt(txAdminPortConvar);
 
@@ -239,8 +252,7 @@ if (fs.existsSync(zapCfgFile)) {
         forceInterface = false;
     } else {
         if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) {
-            console.error('txAdminInterface is not valid.');
-            process.exit(111);
+            fatalError.GlobalData(11, 'txAdminInterface is not valid.');
         }
         forceInterface = txAdminInterfaceConvar;
     }

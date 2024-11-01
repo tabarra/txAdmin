@@ -6,6 +6,7 @@ import { txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import consoleFactory from '@lib/console';
 import TxAdmin from '@core/txAdmin';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 
 
@@ -53,8 +54,11 @@ export default class Translator {
             };
             this.#polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
-            console.dir(error);
-            if (isFirstTime) process.exit(5200);
+            if (isFirstTime) {
+                fatalError.Translator(0, 'Failed to load initial language file', error);
+            } else {
+                console.dir(error);
+            }
         }
     }
 

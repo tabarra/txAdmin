@@ -3,6 +3,7 @@ import path from 'node:path';
 import fs from 'fs-extra';
 import chalk from 'chalk';
 import consoleFactory from '@lib/console';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 
 
@@ -51,9 +52,7 @@ export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePat
         fs.mkdirSync(`${profilePath}/data/`);
         fs.writeFileSync(`${profilePath}/config.json`, jsonConfig);
     } catch (error) {
-        console.error(`Failed to set up folder structure in '${profilePath}' with error:`);
-        console.dir(error);
-        process.exit(501);
+        fatalError.Boot(4, `Failed to set up folder structure in '${profilePath}'`, error);
     }
     console.ok(`Server profile was saved in '${profilePath}'`);
 

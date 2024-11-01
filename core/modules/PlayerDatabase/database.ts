@@ -8,6 +8,7 @@ import { txDevEnv, txEnv } from '@core/globalData';
 import { DatabaseDataType } from './databaseTypes.js';
 import migrations from './migrations.js';
 import consoleFactory from '@lib/console.js';
+import fatalError from '@lib/fatalError.js';
 const console = consoleFactory(modulename);
 
 //Consts & helpers
@@ -128,7 +129,7 @@ export class Database {
                 console.warn('The database file was restored with the automatic backup file.');
                 console.warn('A five minute rollback is expected.');
             } catch (errorBackup) {
-                console.majorMultilineError([
+                fatalError.Database(0, [
                     errTitle,
                     'It was also not possible to load the automatic backup file.',
                     `Main error: '${(errorMain as Error).message}'`,
@@ -136,7 +137,6 @@ export class Database {
                     `Database path: '${this.dbPath}'`,
                     'If there is a file in that location, you may try to delete or restore it manually.',
                 ]);
-                process.exit(5600);
             }
         }
 
@@ -163,22 +163,18 @@ export class Database {
                 || !Array.isArray(this.obj!.data.whitelistApprovals)
                 || !Array.isArray(this.obj!.data.whitelistRequests)
             ) {
-                console.majorMultilineError([
+                fatalError.Database(2, [
                     'Your txAdmin player/actions database is corrupted!',
                     'It is missing one of the required arrays (players, actions, whitelistApprovals, whitelistRequests).',
                     'If you modified the database file manually, you may try to restore it from the automatic backup file.',
                     `Database path: '${this.dbPath}'`,
-                    'For further support: https://discord.gg/txAdmin',
                 ]);
-                process.exit(5602);
             }
 
             this.lastWrite = Date.now();
             this.isReady = true;
         } catch (error) {
-            console.error('Failed to setup database object.');
-            console.dir(error);
-            process.exit(5601);
+            fatalError.Database(1, 'Failed to setup database object.', error);
         }
     }
 

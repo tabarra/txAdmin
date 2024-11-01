@@ -68,6 +68,11 @@ Legend:
     - turn srvCmd into sendRawCommand
     - use sendRawCommand in sendCommand (leave the fxserver.log*Command in sendRawCommand)
 - [x] setup txData+profile on `index.js` before instantiating TxAdmin
+- [x] process.exit reorg into lib/fatalError
+- [ ] move `ConfigVault.setupFolderStructure();` to index
+- [ ] txGlobal/globals
+- [ ] txGlobal.database.[players/actions/whitelist/cleanup].*
+- [ ] do I need to import from `lodash-es`? What changed?
 - [ ] lua file changes (after PR merges)
     - 4 spaces
     - Upper case for globals

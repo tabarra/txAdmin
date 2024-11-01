@@ -120,7 +120,10 @@ export const genLogPrefix = (currContext: string, color: ChalkInstance) => {
 //Dir helpers
 const cleanPath = (x: string) => slash(path.normalize(x));
 const ERR_STACK_PREFIX = chalk.redBright('    =>');
-const DIR_DIVIDER = chalk.cyan('================================');
+const DIVIDER_SIZE = 60;
+const DIVIDER_CHAR = '=';
+const DIVIDER = DIVIDER_CHAR.repeat(DIVIDER_SIZE);
+const DIR_DIVIDER = chalk.cyan(DIVIDER);
 const specialsColor = chalk.rgb(255, 228, 181).italic;
 const lawngreenColor = chalk.rgb(124, 252, 0);
 const orangeredColor = chalk.rgb(255, 69, 0);
@@ -248,15 +251,23 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
                 defaultConsole.log(prefix, line);
             }
         },
-        majorMultilineError: (text: string | string[]) => {
+
+        /**
+         * Prints a multiline error message with a red background
+         * @param text 
+         */
+        majorMultilineError: (text: string | (string | null)[]) => {
             if (!Array.isArray(text)) text = text.split('\n');
             const prefix = genLogPrefix(currContext, chalk.bgRed);
-            const sep = '='.repeat(60);
-            defaultConsole.log(prefix, sep);
+            defaultConsole.log(prefix, DIVIDER);
             for (const line of text) {
-                defaultConsole.log(prefix, line);
+                if(line) {
+                    defaultConsole.log(prefix, line);
+                } else {
+                    defaultConsole.log(prefix, DIVIDER);
+                }
             }
-            defaultConsole.log(prefix, sep);
+            defaultConsole.log(prefix, DIVIDER);
         },
 
         verbose: {
@@ -273,6 +284,9 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
         setVerbose: (state: boolean) => {
             _verboseFlag = !!state;
         },
+        DIVIDER,
+        DIVIDER_CHAR,
+        DIVIDER_SIZE,
     };
 };
 export default consoleFactory;

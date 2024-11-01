@@ -4,6 +4,7 @@ import TxAdmin from './txAdmin';
 import checkPreRelease from './boot/checkPreRelease';
 import consoleFactory, { setTTYTitle } from '@lib/console';
 import setupProfile from './boot/setupProfile';
+import fatalError from '@lib/fatalError';
 const console = consoleFactory();
 
 
@@ -15,16 +16,14 @@ try {
         fs.mkdirSync(txEnv.dataPath);
     }
 } catch (error) {
-    console.error(`Failed to check or create '${txEnv.dataPath}' with error: ${(error as Error).message}`);
-    process.exit(202);
+    fatalError.Boot(2, `Failed to check or create '${txEnv.dataPath}'`, error);
 }
 try {
     if (!fs.existsSync(txEnv.profilePath)) {
         setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, txEnv.profile, txEnv.profilePath);
     }
 } catch (error) {
-    console.error(`Failed to create profile '${txEnv.profile}' with error: ${(error as Error).message}`);
-    process.exit(203);
+    fatalError.Boot(3, `Failed to create profile '${txEnv.profile}'`, error);
 }
 
 /**

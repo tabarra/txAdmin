@@ -4,6 +4,7 @@ import cleanPlayerName from '@shared/cleanPlayerName.js';
 import { DATABASE_VERSION, defaultDatabase } from './database.js';
 import { now } from '@lib/misc.js';
 import consoleFactory from '@lib/console.js';
+import fatalError from '@lib/fatalError.js';
 const console = consoleFactory(modulename);
 
 
@@ -15,8 +16,7 @@ export default async (dbo) => {
         return dbo;
     }
     if (typeof dbo.data.version !== 'number') {
-        console.error('Your players database version is not a number!');
-        process.exit(5650);
+        fatalError.Database(50, 'Your players database version is not a number!');
     }
     if (dbo.data.version > DATABASE_VERSION) {
         console.error(`Your players database is on v${dbo.data.version}, and this txAdmin supports up to v${DATABASE_VERSION}.`);
@@ -155,10 +155,11 @@ export default async (dbo) => {
     }
 
     if (dbo.data.version !== DATABASE_VERSION) {
-        console.error(`Your players database is on v${dbo.data.version}, which is different from this version of txAdmin (v${DATABASE_VERSION}).`);
-        console.error('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');
-        console.error('Please make sure your txAdmin is on the most updated version!');
-        process.exit(5652);
+        fatalError.Database(52, [
+            'Unexpected migration error: Did not reach the expected database version.',
+            `Your players database is on v${dbo.data.version}, but the expected version is v${DATABASE_VERSION}.`,
+            'Please make sure your txAdmin is on the most updated version!',
+        ]);
     }
     console.ok('Database migrated successfully');
     return dbo;

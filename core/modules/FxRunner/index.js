@@ -237,39 +237,31 @@ export default class FXRunner {
         }
 
         //Starting server
-        let pid;
-        let historyIndex;
-        try {
-            this.fxChild = spawn(
-                this.spawnVariables.command,
-                this.spawnVariables.args,
-                {
-                    cwd: this.config.serverDataPath,
-                    stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
-                },
-            );
-            if (typeof this.fxChild.pid === 'undefined') {
-                throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
-            }
-            pid = this.fxChild.pid.toString();
-            console.ok(`>> [${pid}] FXServer Started!`);
-            globals.logger.fxserver.logFxserverBoot(pid);
-            this.history.push({
-                pid,
-                timestamps: {
-                    start: now(),
-                    kill: false,
-                    exit: false,
-                    close: false,
-                },
-            });
-            historyIndex = this.history.length - 1;
-            globals.webServer?.webSocket.pushRefresh('status');
-        } catch (error) {
-            console.error('Failed to start FXServer with the following error:');
-            console.dir(error);
-            process.exit(5400);
+        this.fxChild = spawn(
+            this.spawnVariables.command,
+            this.spawnVariables.args,
+            {
+                cwd: this.config.serverDataPath,
+                stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
+            },
+        );
+        if (typeof this.fxChild.pid === 'undefined') {
+            throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
         }
+        const pid = this.fxChild.pid.toString();
+        console.ok(`>> [${pid}] FXServer Started!`);
+        globals.logger.fxserver.logFxserverBoot(pid);
+        this.history.push({
+            pid,
+            timestamps: {
+                start: now(),
+                kill: false,
+                exit: false,
+                close: false,
+            },
+        });
+        const historyIndex = this.history.length - 1;
+        globals.webServer?.webSocket.pushRefresh('status');
 
         //Setting up stream handlers
         this.fxChild.stdout.setEncoding('utf8');
