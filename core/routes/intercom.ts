@@ -23,7 +23,7 @@ export default async function Intercom(ctx: InitializedCtx) {
     //Delegate to the specific scope functions
     if (scope == 'monitor') {
         try {
-            ctx.txAdmin.healthMonitor.handleHeartBeat('http', postData);
+            ctx.txAdmin.healthMonitor.handleHeartBeat('http');
             return ctx.send(ctx.txAdmin.statsManager.txRuntime.currHbData);
         } catch (error) {
             return ctx.send({

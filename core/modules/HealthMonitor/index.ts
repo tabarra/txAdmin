@@ -1,44 +1,65 @@
 const modulename = 'HealthMonitor';
 import got from 'got'; //we need internal requests to have 127.0.0.1 src
 import { convars } from '@core/globalData';
-import getHostStats from './getHostStats';
+import { getHostStats, Stopwatch } from './utils';
 import consoleFactory from '@lib/console';
 import { now } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 
-//Helper functions
-const isUndefined = (x) => (x === undefined);
+//Hardcoded Configs
+const HC_CONFIG = {
+    failThreshold: 15,
+    failLimit: 300,
+    requestTimeout: 1500,
+};
+const HB_CONFIG = {
+    failThreshold: 15,
+    failLimit: 60,
+    //wait for HB up to 45 seconds after last resource started
+    resStartedCooldown: 45,
+};
+
+
+//Helpers
+const cleanET = (et: number) => et > 99999 ? '--' : et;
+enum HealthStatus {
+    OFFLINE = 'OFFLINE',
+    ONLINE = 'ONLINE',
+    PARTIAL = 'PARTIAL',
+}
 
 export default class HealthMonitor {
-    constructor(config) {
+    public config: any; //FIXME: type
+    public hostStats: null | Awaited<ReturnType<typeof getHostStats>> = null;
+
+    //Status tracking
+    public currentStatus: HealthStatus = HealthStatus.OFFLINE;
+    private lastHealthCheckErrorMessage: string | null = null; //to print warning
+    private hasServerStartedYet = false;
+    private isAwaitingRestart = false; //to prevent spamming while the server restarts (5s)
+
+    //to prevent DDoS crash false positive
+    private readonly swLastRefreshStatus = new Stopwatch();
+
+    //to prevent spamming
+    private readonly swLastStatusWarning = new Stopwatch();
+    private readonly swLastRestartWarning = new Stopwatch();
+
+    //to see if its above limit
+    private readonly swLastHealthCheck = new Stopwatch();
+    private readonly swLastFD3 = new Stopwatch();
+    private readonly swLastHTTP = new Stopwatch();
+
+
+    constructor(config: any) {
         this.config = config;
 
         //Checking config validity
         if (this.config.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
         if (this.config.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
 
-        //Hardcoded Configs
-        //NOTE: done mainly because the timeout/limit was never useful, and makes things more complicated
-        this.hardConfigs = {
-            timeout: 1500,
-
-            //HTTP GET /dynamic.json from txAdmin to sv_main.lua
-            healthCheck: {
-                failThreshold: 15,
-                failLimit: 300,
-            },
-
-            //HTTP POST /intercom/monitor from sv_main.lua to txAdmin
-            heartBeat: {
-                failThreshold: 15,
-                failLimit: 60,
-                resStartedCooldown: 45, //wait for HB up to 45 seconds after last resource started
-            },
-        };
-
         //Setting up
-        this.hostStats = null;
         this.resetMonitorStats();
 
         //Cron functions
@@ -62,16 +83,13 @@ export default class HealthMonitor {
      */
     refreshConfig() {
         this.config = globals.configVault.getScoped('monitor');
-    }//Final refreshConfig()
+    }
 
 
     /**
      * Restart the FXServer and logs everything
-     * @param {string} reasonInternal
-     * @param {string} reasonTranslated
-     * @param {string} timesPrefix
      */
-    async restartFXServer(reasonInternal, reasonTranslated, timesPrefix) {
+    async restartFxChild(reasonInternal: string, reasonTranslated: string, timesPrefix: string) {
         //sanity check
         if (globals.fxRunner.fxChild === null) {
             console.warn('Server not started, no need to restart');
@@ -83,12 +101,14 @@ export default class HealthMonitor {
         const logMessage = `Restarting server: ${reasonInternal} ${timesPrefix}`;
         globals.logger.admin.write('MONITOR', logMessage);
         globals.logger.fxserver.logInformational(logMessage);
-        globals.fxRunner.restartServer(reasonTranslated, null);
+        globals.fxRunner.restartServer(reasonTranslated);
     }
 
 
-    //================================================================
-    setCurrentStatus(newStatus) {
+    /**
+     * FIXME: descrição
+     */
+    setCurrentStatus(newStatus: HealthStatus) {
         if (newStatus !== this.currentStatus) {
             this.currentStatus = newStatus;
             globals.discordBot.updateStatus().catch((e) => { });
@@ -97,26 +117,28 @@ export default class HealthMonitor {
     }
 
 
-    //================================================================
+    /**
+     * Reset Health Monitor Stats
+     */
     resetMonitorStats() {
-        this.setCurrentStatus('OFFLINE'); // options: OFFLINE, ONLINE, PARTIAL
-        this.lastRefreshStatus = null; //to prevent DDoS crash false positive
-        this.lastSuccessfulHealthCheck = null; //to see if its above limit
-        this.lastStatusWarningMessage = null; //to prevent spamming
-        this.lastHealthCheckErrorMessage = null; //to print warning
-        this.healthCheckRestartWarningIssued = false; //to prevent spamming
-        this.isAwaitingRestart = false; //to prevent spamming while the server restarts (5s)
-
-        //to track http vs fd3
-        //to see if its above limit
-        this.lastSuccessfulFD3HeartBeat = null;
-        this.lastSuccessfulHTTPHeartBeat = null;
-        //to collect statistics
+        this.setCurrentStatus(HealthStatus.OFFLINE);
+        this.lastHealthCheckErrorMessage = null;
+        this.isAwaitingRestart = false;
         this.hasServerStartedYet = false;
+
+        this.swLastRefreshStatus.reset();
+        this.swLastRestartWarning.reset();
+        this.swLastStatusWarning.reset();
+
+        this.swLastHealthCheck.reset();
+        this.swLastFD3.reset();
+        this.swLastHTTP.reset();
     }
 
 
-    //================================================================
+    /**
+     * Sends a HTTP GET request to the /dynamic.json endpoint of FXServer to check if it's healthy.
+     */
     async sendHealthCheck() {
         //Check if the server is supposed to be offline
         if (globals.fxRunner.fxChild === null || globals.fxRunner.fxServerHost === null) return;
@@ -127,19 +149,20 @@ export default class HealthMonitor {
             url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
             maxRedirects: 0,
             timeout: {
-                request: this.hardConfigs.timeout,
+                request: HC_CONFIG.requestTimeout,
             },
             retry: {
                 limit: 0,
             },
         };
         try {
-            const data = await got.get(requestOptions).json();
-            if (typeof data !== 'object') throw new Error('FXServer\'s dynamic endpoint didn\'t return a JSON object.');
-            if (isUndefined(data.hostname) || isUndefined(data.clients)) throw new Error('FXServer\'s dynamic endpoint didn\'t return complete data.');
+            const data = await got.get(requestOptions).json<any>(); //FIXME: any
+            if (typeof data !== 'object') throw new Error('/dynamic.json response is not valid JSON.');
+            if (typeof data?.hostname !== 'string') throw new Error('/dynamic.json response without hostname string.');
+            if (typeof data?.clients !== 'number') throw new Error('/dynamic.json response without clients number.');
             dynamicResp = data;
         } catch (error) {
-            this.lastHealthCheckErrorMessage = error.message;
+            this.lastHealthCheckErrorMessage = (error as Error).message;
             return;
         }
 
@@ -158,13 +181,12 @@ export default class HealthMonitor {
         }
 
         //Set variables
-        this.healthCheckRestartWarningIssued = false;
-        this.lastHealthCheckErrorMessage = false;
-        this.lastSuccessfulHealthCheck = now();
+        this.swLastRestartWarning.reset();
+        this.lastHealthCheckErrorMessage = null;
+        this.swLastHealthCheck.restart();
     }
 
 
-    //================================================================
     /**
      * Refreshes the Server Status and calls for a restart if neccessary.
      *  - HealthCheck: performing an GET to the /dynamic.json file
@@ -177,38 +199,36 @@ export default class HealthMonitor {
         //Ignore check while server is restarting
         if (this.isAwaitingRestart) return;
 
-        //Helper func
-        const cleanET = (et) => et > 99999 ? '--' : et;
-
         //Check if process was frozen
-        const currTimestamp = now();
-        const elapsedRefreshStatus = currTimestamp - this.lastRefreshStatus;
-        if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
-            console.error(`FXServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
+        if (this.swLastRefreshStatus.isOver(10)) {
+            console.error(`FXServer was frozen for ${this.swLastRefreshStatus.elapsed - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
             console.error('Don\'t worry, txAdmin is preventing the server from being restarted.');
-            this.lastRefreshStatus = currTimestamp;
+            this.swLastRefreshStatus.restart();
             return;
         }
-        this.lastRefreshStatus = currTimestamp;
+        this.swLastRefreshStatus.restart();
 
         //Get elapsed times & process status
-        const anySuccessfulHealthCheck = (this.lastSuccessfulHealthCheck !== null);
-        const elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
-        const healthCheckFailed = (elapsedHealthCheck > this.hardConfigs.healthCheck.failThreshold);
-        const anySuccessfulHeartBeat = (this.lastSuccessfulFD3HeartBeat !== null || this.lastSuccessfulHTTPHeartBeat !== null);
-        const elapsedHeartBeat = currTimestamp - Math.max(this.lastSuccessfulFD3HeartBeat, this.lastSuccessfulHTTPHeartBeat);
-        const heartBeatFailed = (elapsedHeartBeat > this.hardConfigs.heartBeat.failThreshold);
+        const anySuccessfulHealthCheck = this.swLastHealthCheck.started;
+        const elapsedHealthCheck = this.swLastHealthCheck.elapsed;
+        const healthCheckFailed = this.swLastHealthCheck.isOver(HC_CONFIG.failThreshold);
+        const anySuccessfulHeartBeat = (this.swLastFD3.started || this.swLastFD3.started);
+        const elapsedHeartBeat = Math.min(
+            this.swLastFD3.elapsed,
+            this.swLastHTTP.elapsed,
+        );
+        const heartBeatFailed = anySuccessfulHeartBeat && elapsedHeartBeat > HB_CONFIG.failThreshold;
         const processUptime = globals.fxRunner.getUptime();
 
         //Check if its online and return
         if (
-            this.lastSuccessfulHealthCheck
+            anySuccessfulHealthCheck
             && !healthCheckFailed
             && anySuccessfulHeartBeat
             && !heartBeatFailed
         ) {
-            this.setCurrentStatus('ONLINE');
-            if (this.hasServerStartedYet == false) {
+            this.setCurrentStatus(HealthStatus.ONLINE);
+            if (this.hasServerStartedYet === false) {
                 this.hasServerStartedYet = true;
                 globals.statsManager.txRuntime.registerFxserverBoot(processUptime);
                 globals.statsManager.svRuntime.logServerBoot(processUptime);
@@ -217,24 +237,24 @@ export default class HealthMonitor {
         }
 
         //Now to the (un)fun part: if the status != healthy
-        this.setCurrentStatus((healthCheckFailed && heartBeatFailed) ? 'OFFLINE' : 'PARTIAL');
+        const currentStatusString = (healthCheckFailed && heartBeatFailed) ? HealthStatus.OFFLINE : HealthStatus.PARTIAL
+        this.setCurrentStatus(currentStatusString);
         const timesPrefix = `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)})`;
-        const elapsedLastWarning = currTimestamp - this.lastStatusWarningMessage;
 
         //Check if still in cooldown
         if (processUptime < this.config.cooldown) {
-            if (console.isVerbose && processUptime > 10 && elapsedLastWarning > 10) {
-                console.warn(`${timesPrefix} FXServer is not responding. Still in cooldown of ${this.config.cooldown}s.`);
-                this.lastStatusWarningMessage = currTimestamp;
+            if (console.isVerbose && processUptime > 10 && this.swLastStatusWarning.isOver(10)) {
+                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${this.config.cooldown}s.`);
+                this.swLastStatusWarning.restart();
             }
             return;
         }
 
         //Check if fxChild is closed, in this case no need to wait the failure count
         const processStatus = globals.fxRunner.getStatus();
-        if (processStatus == 'closed') {
+        if (processStatus === 'closed') {
             globals.statsManager.txRuntime.registerFxserverRestart('close');
-            this.restartFXServer(
+            this.restartFxChild(
                 'server close detected',
                 globals.translator.t('restarter.crash_detected'),
                 timesPrefix,
@@ -243,31 +263,41 @@ export default class HealthMonitor {
         }
 
         //Log failure message
-        if (elapsedLastWarning >= 15) {
-            const msg = (healthCheckFailed)
-                ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})`
-                : `${timesPrefix} FXServer is not responding. (HB Failed)`;
-            this.lastStatusWarningMessage = currTimestamp;
-            console.warn(msg);
+        if (this.swLastStatusWarning.isOver(15)) {
+            this.swLastStatusWarning.restart();
+            let reason = 'Unknown';
+            if (healthCheckFailed && heartBeatFailed) {
+                reason = 'Full Hang';
+            } else if (healthCheckFailed) {
+                reason = this.lastHealthCheckErrorMessage ?? 'Unknown HC failure';
+            } else if (heartBeatFailed) {
+                reason = 'HB Failed';
+            }
+            console.warn(`${timesPrefix} FXServer is not responding. (${reason})`);
         }
 
-        //If http partial crash, warn 1 minute before
+        //If http-only hang, warn 1 minute before restart
         if (
-            !(elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit)
-            && !this.healthCheckRestartWarningIssued
-            && elapsedHealthCheck > (this.hardConfigs.healthCheck.failLimit - 60)
+            !(elapsedHeartBeat > HB_CONFIG.failLimit)
+            && !this.swLastRestartWarning.started
+            && elapsedHealthCheck > (HC_CONFIG.failLimit - 60)
         ) {
-            globals.discordBot.sendAnnouncement(globals.translator.t(
-                'restarter.partial_hang_warn_discord',
-                { servername: globals.txAdmin.globalConfig.serverName },
-            ));
+            this.swLastRestartWarning.restart();
+
+            //Sending discord announcement
+            globals.discordBot.sendAnnouncement({
+                type: 'danger',
+                description: {
+                    key: 'restarter.partial_hang_warn_discord',
+                    data: { servername: globals.txAdmin.globalConfig.serverName },
+                },
+            });
+
             // Dispatch `txAdmin:events:announcement`
             const _cmdOk = globals.fxRunner.sendEvent('announcement', {
                 author: 'txAdmin',
                 message: globals.translator.t('restarter.partial_hang_warn'),
             });
-
-            this.healthCheckRestartWarningIssued = currTimestamp;
         }
 
         //Give a bit more time to the very very slow servers to come up
@@ -279,7 +309,7 @@ export default class HealthMonitor {
             && starting.startingElapsedSecs !== null
             && starting.startingElapsedSecs < this.config.resourceStartingTolerance
         ) {
-            if (processUptime % 15 == 0) {
+            if (processUptime % 15 === 0) {
                 console.warn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
                 console.warn(`The server is currently starting ${starting.startingResName} (${starting.startingElapsedSecs}s ago).`);
             }
@@ -290,9 +320,9 @@ export default class HealthMonitor {
         if (
             anySuccessfulHeartBeat === false
             && starting.lastStartElapsedSecs !== null
-            && starting.lastStartElapsedSecs < this.hardConfigs.heartBeat.resStartedCooldown
+            && starting.lastStartElapsedSecs < HB_CONFIG.resStartedCooldown
         ) {
-            if (processUptime % 15 == 0) {
+            if (processUptime % 15 === 0) {
                 console.warn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
                 console.warn(`No resource start pending, last resource started ${starting.lastStartElapsedSecs}s ago.`);
             }
@@ -300,35 +330,35 @@ export default class HealthMonitor {
         }
 
         //Check if already over the limit
-        const healthCheckOverLimit = (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit);
-        const heartBeatOverLimit = (elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit);
+        const healthCheckOverLimit = (elapsedHealthCheck > HC_CONFIG.failLimit);
+        const heartBeatOverLimit = (elapsedHeartBeat > HB_CONFIG.failLimit);
         if (healthCheckOverLimit || heartBeatOverLimit) {
             if (anySuccessfulHeartBeat === false) {
                 if (starting.startingElapsedSecs !== null) {
                     //Resource didn't finish starting (if res boot still active)
-                    this.restartFXServer(
+                    this.restartFxChild(
                         `resource "${starting.startingResName}" failed to start within the ${this.config.resourceStartingTolerance}s time limit`,
                         globals.translator.t('restarter.start_timeout'),
                         timesPrefix,
                     );
                 } else if (starting.lastStartElapsedSecs !== null) {
                     //Resources started, but no heartbeat whithin limit after that
-                    this.restartFXServer(
-                        `server failed to start within time limit - ${this.hardConfigs.heartBeat.resStartedCooldown}s after last resource started`,
+                    this.restartFxChild(
+                        `server failed to start within time limit - ${HB_CONFIG.resStartedCooldown}s after last resource started`,
                         globals.translator.t('restarter.start_timeout'),
                         timesPrefix,
                     );
                 } else {
                     //No resource started starting, hb over limit
-                    this.restartFXServer(
-                        `server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`,
+                    this.restartFxChild(
+                        `server failed to start within time limit - ${HB_CONFIG.failLimit}s, no onResourceStarting received`,
                         globals.translator.t('restarter.start_timeout'),
                         timesPrefix,
                     );
                 }
             } else if (anySuccessfulHealthCheck === false) {
                 //HB started, but HC didn't
-                this.restartFXServer(
+                this.restartFxChild(
                     `server failed to start within time limit - resources running but HTTP endpoint unreachable`,
                     globals.translator.t('restarter.start_timeout'),
                     timesPrefix,
@@ -338,16 +368,16 @@ export default class HealthMonitor {
                 let issueMsg, issueSrc;
                 if (healthCheckFailed && heartBeatFailed) {
                     issueMsg = 'server full hang detected';
-                    issueSrc = 'both';
+                    issueSrc = 'both' as const;
                 } else if (healthCheckFailed) {
                     issueMsg = 'server http hang detected';
-                    issueSrc = 'healthCheck';
+                    issueSrc = 'healthCheck' as const;
                 } else {
                     issueMsg = 'server resources hang detected';
-                    issueSrc = 'heartBeat';
+                    issueSrc = 'heartBeat' as const;
                 }
                 globals.statsManager.txRuntime.registerFxserverRestart(issueSrc);
-                this.restartFXServer(
+                this.restartFxChild(
                     issueMsg,
                     globals.translator.t('restarter.hang_detected'),
                     timesPrefix,
@@ -357,27 +387,29 @@ export default class HealthMonitor {
     }
 
 
-    //================================================================
-    handleHeartBeat(source, postData) {
+    /**
+     * Handles the HeartBeat event from the server.
+     */
+    handleHeartBeat(source: 'fd3' | 'http') {
         const tsNow = now();
         if (source === 'fd3') {
             if (
-                this.lastSuccessfulHTTPHeartBeat
-                && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
-                && tsNow - this.lastSuccessfulFD3HeartBeat < 5
+                this.swLastHTTP.started
+                && this.swLastHTTP.elapsed > 15
+                && this.swLastFD3.elapsed < 5
             ) {
-                globals.statsManager.txRuntime.registerFxserverRestart('http');
+                globals.statsManager.txRuntime.registerFxserverHealthIssue('http');
             }
-            this.lastSuccessfulFD3HeartBeat = tsNow;
+            this.swLastFD3.restart();
         } else if (source === 'http') {
             if (
-                this.lastSuccessfulFD3HeartBeat
-                && tsNow - this.lastSuccessfulFD3HeartBeat > 15
-                && tsNow - this.lastSuccessfulHTTPHeartBeat < 5
+                this.swLastFD3.started
+                && this.swLastFD3.elapsed > 15
+                && this.swLastHTTP.elapsed < 5
             ) {
-                globals.statsManager.txRuntime.registerFxserverRestart('fd3');
+                globals.statsManager.txRuntime.registerFxserverHealthIssue('fd3');
             }
-            this.lastSuccessfulHTTPHeartBeat = tsNow;
+            this.swLastHTTP.restart();
         }
     }
 };
