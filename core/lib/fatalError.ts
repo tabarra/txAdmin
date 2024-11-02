@@ -70,8 +70,9 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
     211 - expired cron
     220 - configvault throw
     221 - modules constructor throw
-    222 - global placeholder
-    223 - TxAdmin.setRef called
+    222 - txGlobal placeholder getter error
+    223 - txGlobal placeholder setter error
+    225 - txGlobal access before initial tick
 5100 - config vault
 5300 - admin vault
 5400 - fxrunner

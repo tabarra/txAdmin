@@ -395,8 +395,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
         //Check sv_maxClients against ZAP config
         const isMaxClientsString = cmd.getSetForVariable('sv_maxclients');
         if (
-            typeof convars.deployerDefaults === 'object'
-            && convars.deployerDefaults?.maxClients
+            convars.deployerDefaults?.maxClients
             && isMaxClientsString
         ) {
             const maxClients = parseInt(isMaxClientsString);

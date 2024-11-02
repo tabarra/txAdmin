@@ -48,7 +48,6 @@ export default class ConfigVault {
     }
 
 
-    //================================================================
     /**
      * Returns the config file data
      */
@@ -83,7 +82,6 @@ export default class ConfigVault {
     }
 
 
-    //================================================================
     /**
      * ????????????
      * @param {object} cfgData
@@ -196,7 +194,6 @@ export default class ConfigVault {
     }
 
 
-    //================================================================
     /**
      * Setup the this.config variable based on the config file data
      * FIXME: rename this function
@@ -262,7 +259,7 @@ export default class ConfigVault {
             cfg.banTemplates = cfg.banTemplates ?? [];
         } catch (error) {
             //If this is the first run, that is a fatal error
-            if (!this.config){
+            if (!this.config) {
                 fatalError.ConfigVault(13, [
                     'Unknown error while loading the configuration file!',
                     'Make sure your txAdmin is updated!',
@@ -278,7 +275,6 @@ export default class ConfigVault {
     }
 
 
-    //================================================================
     /**
      * Return configs for a specific scope (reconstructed and freezed)
      */
@@ -287,7 +283,6 @@ export default class ConfigVault {
     }
 
 
-    //================================================================
     /**
      * Return configs for a specific scope (reconstructed and freezed)
      */
@@ -296,7 +291,6 @@ export default class ConfigVault {
     }
 
 
-    //================================================================
     /**
      * Return configs for a specific scope (reconstructed and freezed)
      */
@@ -305,7 +299,6 @@ export default class ConfigVault {
     }
 
 
-    //================================================================
     /**
      * Return all configs individually reconstructed and freezed
      */
@@ -323,7 +316,6 @@ export default class ConfigVault {
     }
 
 
-    //================================================================
     /**
      * Save the new scope to this context, then saves it to the configFile
      * @param {string} scope

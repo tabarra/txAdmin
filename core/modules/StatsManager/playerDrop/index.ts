@@ -30,7 +30,7 @@ const LOG_DATA_FILE_NAME = 'stats_playerDrop.json';
  */
 export default class PlayerDropStatsManager {
     readonly #txAdmin: TxAdmin;
-    private readonly logFilePath: string;
+    private readonly logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
     private eventLog: PDLHourlyType[] = [];
     private lastGameVersion: string | undefined;
     private lastServerVersion: string | undefined;
@@ -44,7 +44,6 @@ export default class PlayerDropStatsManager {
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
-        this.logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
         this.loadEventLog();
     }
 

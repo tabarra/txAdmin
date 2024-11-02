@@ -61,7 +61,7 @@ const chanEventBlackHole = (...args) => {
     }
 };
 
-export default class FXRunner {
+export default class FxRunner {
     constructor(txAdmin, config) {
         this.config = config;
 
@@ -579,7 +579,7 @@ export default class FXRunner {
      */
     getUptime() {
         if (!this.history.length) return 0;
-        let curr = this.history[this.history.length - 1];
+        const curr = this.history[this.history.length - 1];
 
         return now() - curr.timestamps.start;
     }

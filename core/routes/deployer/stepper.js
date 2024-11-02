@@ -48,12 +48,12 @@ export default async function DeployerStepper(ctx) {
         if (convars.deployerDefaults) {
             renderData.defaults = {
                 autofilled: true,
-                license: convars.deployerDefaults.license || '',
-                mysqlHost: convars.deployerDefaults.mysqlHost || 'localhost',
-                mysqlPort: convars.deployerDefaults.mysqlPort || '3306',
-                mysqlUser: convars.deployerDefaults.mysqlUser || 'root',
-                mysqlPassword: convars.deployerDefaults.mysqlPassword || '',
-                mysqlDatabase: convars.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
+                license: convars.deployerDefaults.license ?? '',
+                mysqlHost: convars.deployerDefaults.mysqlHost ?? 'localhost',
+                mysqlPort: convars.deployerDefaults.mysqlPort ?? '3306',
+                mysqlUser: convars.deployerDefaults.mysqlUser ?? 'root',
+                mysqlPassword: convars.deployerDefaults.mysqlPassword ?? '',
+                mysqlDatabase: convars.deployerDefaults.mysqlDatabase ?? globals.deployer.deploymentID,
             };
         } else {
             renderData.defaults = {

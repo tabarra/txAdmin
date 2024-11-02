@@ -57,11 +57,16 @@ const resourceName = GetCurrentResourceName();
 //9423 = feat(server): add more infos to playerDropped event
 //9655 = Fixed ScanResourceRoot + latent events
 const minFxsVersion = 5894;
-const fxsVerParsed = parseFxserverVersion(getConvarString('version'));
+const fxsVerConvar = getConvarString('version');
+const fxsVerParsed = parseFxserverVersion(fxsVerConvar);
 const fxsVersion = fxsVerParsed.valid ? fxsVerParsed.build : 99999;
 if (!fxsVerParsed.valid) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
+    console.error(`Convar: ${fxsVerConvar}`);
+    console.error(`Parsed Build: ${fxsVerParsed.build}`);
+    console.error(`Parsed Branch: ${fxsVerParsed.branch}`);
+    console.error(`Parsed Platform: ${fxsVerParsed.platform}`);
 } else if (fxsVerParsed.build < minFxsVersion) {
     fatalError.GlobalData(2, [
         'This version of FXServer is too outdated and NOT compatible with txAdmin',
@@ -187,6 +192,7 @@ if (txDevEnvSrc.ENABLED) {
 
 /**
  * MARK: Host type check
+ * TODO: move all the hosting stuff to another file
  */
 //Checking for ZAP Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
@@ -196,7 +202,18 @@ let forceFXServerPort: false | number;
 let txAdminPort: number;
 let loginPageLogo: false | string;
 let defaultMasterAccount: false | { name: string, password_hash: string };
-let deployerDefaults: false | Record<string, string>;
+
+type DeployerDefaultsType = {
+    license?: string,
+    maxClients?: number,
+    mysqlHost?: string,
+    mysqlPort?: string,
+    mysqlUser?: string,
+    mysqlPassword?: string,
+    mysqlDatabase?: string,
+}
+
+let deployerDefaults: undefined | DeployerDefaultsType;
 const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
 if (fs.existsSync(zapCfgFile)) {
     isZapHosting = !isPterodactyl;
@@ -209,6 +226,7 @@ if (fs.existsSync(zapCfgFile)) {
         txAdminPort = zapCfgData.txAdminPort;
         loginPageLogo = zapCfgData.loginPageLogo;
         defaultMasterAccount = false;
+        //FIXME: add validation
         deployerDefaults = {
             license: zapCfgData.defaults.license,
             maxClients: zapCfgData.defaults.maxClients,
@@ -238,7 +256,6 @@ if (fs.existsSync(zapCfgFile)) {
     forceFXServerPort = false;
     loginPageLogo = false;
     defaultMasterAccount = false;
-    deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
     if (!/^\d+$/.test(txAdminPortConvar)) {

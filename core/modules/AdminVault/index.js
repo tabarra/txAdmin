@@ -12,7 +12,7 @@ import chalk from 'chalk';
 import fatalError from '@lib/fatalError.js';
 const console = consoleFactory(modulename);
 
-//FIXME: The way I'm doing bersioning right now is horrible
+//FIXME: The way I'm doing versioning right now is horrible
 // but for now it's the best I can do
 const ADMIN_SCHEMA_VERSION = 1;
 

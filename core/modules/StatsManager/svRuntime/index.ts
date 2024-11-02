@@ -27,7 +27,7 @@ const LOG_DATA_FILE_NAME = 'stats_svRuntime.json';
  */
 export default class SvRuntimeStatsManager {
     readonly #txAdmin: TxAdmin;
-    private readonly logFilePath: string;
+    private readonly logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
     private statsLog: SvRtLogType = [];
     private lastFxsMemory: number | undefined;
     private lastNodeMemory: SvRtNodeMemoryType | undefined;
@@ -46,7 +46,6 @@ export default class SvRuntimeStatsManager {
 
     constructor(txAdmin: TxAdmin) {
         this.#txAdmin = txAdmin;
-        this.logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
         this.loadStatsHistory();
 
         //Cron functions
@@ -241,7 +240,7 @@ export default class SvRuntimeStatsManager {
         let playerCount = this.#txAdmin.playerlistManager.onlineCount;
         if (txDevEnv.EXT_STATS_HOST) {
             try {
-                const playerCountResp = await got(`http://${fxServerHost}/players.json`).json();
+                const playerCountResp = await got(`http://${fxServerHost}/players.json`).json<any[]>();
                 playerCount = playerCountResp.length;
             } catch (error) { }
         }
