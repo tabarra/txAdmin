@@ -153,16 +153,12 @@ export default class ServerLogger extends LoggerBase {
      * @param {String} mutex
      */
     processEvent(eventData, mutex) {
-        //Get source + handle playerJoining
+        //Get source
         let srcObject; //to be sent to the UI
         let srcString; //to ve saved to the log file
         if (eventData.src === 'tx') {
             srcObject = { id: false, name: 'txAdmin' };
             srcString = 'txAdmin';
-
-        } else if (typeof eventData.src === 0) {
-            srcObject = { id: false, name: 'CONSOLE' };
-            srcString = 'CONSOLE';
 
         } else if (typeof eventData.src === 'number' && eventData.src > 0) {
             const player = globals.playerlistManager.getPlayerById(eventData.src);
@@ -182,8 +178,7 @@ export default class ServerLogger extends LoggerBase {
             srcString = 'UNKNOWN';
         }
 
-
-        //Process event types (except playerJoining)
+        //Process event types
         //TODO: normalize/padronize actions
         let eventMessage; //to be sent to the UI + saved to the log
         if (eventData.type === 'playerJoining') {
@@ -193,6 +188,10 @@ export default class ServerLogger extends LoggerBase {
         } else if (eventData.type === 'playerDropped') {
             const reason = eventData.data.reason || 'UNKNOWN REASON';
             eventMessage = `disconnected (${reason})`;
+
+        } else if (eventData.type === 'playerJoinDenied') {
+            const reason = eventData.data.reason ?? 'UNKNOWN REASON';
+            eventMessage = `player join denied due to ${reason}`;
 
         } else if (eventData.type === 'ChatMessage') {
             const text = (typeof eventData.data.text === 'string') ? eventData.data.text.replace(/\^([0-9])/g, '') : 'unknown message';

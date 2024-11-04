@@ -228,6 +228,23 @@ function checkBan(
             <span style="font-style: italic;">${note}</span>`
         );
 
+        //Send serverlog message
+        const matchingIds = ban.ids.filter(id => validIdsArray.includes(id));
+        const matchingHwids = ('hwids' in ban && ban.hwids)
+            ? ban.hwids.filter(hw => validHwidsArray.includes(hw))
+            : [];
+        const summarizedIds = [
+            ...matchingIds.map(shortenId),
+            ...matchingHwids.map(shortenId)
+        ];
+        const loggerReason = `active ban (${ban.id}) for identifiers [${summarizedIds.join(', ')}]`;
+        txAdmin.logger.server.write([{
+            src: 'tx',
+            type: 'playerJoinDenied',
+            ts,
+            data: { reason: loggerReason }
+        }]);
+
         return { allow: false, reason };
     } else {
         return { allow: true };
