@@ -134,3 +134,24 @@ export const getIdFromOauthNameid = (nameid: string) => {
         return false;
     }
 }
+
+
+/**
+ * Shortens an ID/HWID string to just leading and trailing 4 characters
+ */
+export const shortenId = (id: string) => {
+    if (typeof id !== 'string') throw new Error(`id is not a string`);
+    
+    const [idType, idValue] = id.split(':', 2);
+    if (!idType || !idValue) {
+        return id; // Invalid format, return as is
+    }
+    
+    if (idValue.length <= 10) {
+        return id; // Do not shorten if ID value is 10 characters or fewer
+    }
+    
+    const start = idValue.slice(0, 4);
+    const end = idValue.slice(-4);
+    return `${idType}:${start}...${end}`;
+}
