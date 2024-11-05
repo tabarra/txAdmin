@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash-es';
-import TxAdmin from "@core/txAdmin";
 import { Database, SavePriority } from "../database";
 import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType } from "../databaseTypes";
 import { genActionID } from "../dbUtils";
@@ -9,10 +8,7 @@ const console = consoleFactory('PlayerDatabase');
 
 
 export default class ActionsDao {
-    constructor(
-        private readonly txAdmin: TxAdmin,
-        private readonly db: Database,
-    ) { }
+    constructor(private readonly db: Database) { }
 
     private get dbo() {
         if (!this.db.obj || !this.db.isReady) throw new Error(`database not ready yet`);
@@ -44,11 +40,11 @@ export default class ActionsDao {
      * Searches for any registered action in the database by a list of identifiers and optional filters
      * Usage example: findMany(['license:xxx'], undefined, {type: 'ban', revocation.timestamp: null})
      */
-    findMany(
+    findMany<T extends DatabaseActionType>(
         idsArray: string[],
         hwidsArray?: string[],
-        customFilter: object | Function = {}
-    ): DatabaseActionType[] {
+        customFilter: ((action: DatabaseActionType) => action is T) | object = {}
+    ): T[] {
         if (!Array.isArray(idsArray)) throw new Error('idsArray should be an array');
         if (hwidsArray && !Array.isArray(hwidsArray)) throw new Error('hwidsArray should be an array or undefined');
         const config = txConfig.playerDatabase; //shortcut
@@ -69,7 +65,7 @@ export default class ActionsDao {
                 : (a: DatabaseActionType) => idsFilter(a)
 
             return this.chain.get('actions')
-                .filter(customFilter as any)
+                .filter(customFilter as (a: DatabaseActionType) => a is T)
                 .filter(idsMatchFilter)
                 .cloneDeep()
                 .value();

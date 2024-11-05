@@ -39,6 +39,12 @@
     /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     "esModuleInterop": true,
 
+    /* Specify library files to be included in the compilation. */
+    "lib": ["ES2021"], //@tsconfig/node16
+
+    /* Specify type declaration files to be included in compilation. */
+    "types": ["node"],
+
     /* Ensure that casing is correct in imports. */
     "forceConsistentCasingInFileNames": true,
 
@@ -51,6 +57,7 @@
   "include": [
     "**/*",
     "../shared/",
+    "../dynamicAds2.json",
   ],
   "references": [
     { "path": "../shared" }

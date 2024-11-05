@@ -273,11 +273,11 @@ export default class PlayerDropStatsManager {
                     resKicks: new MultipleCounter(entry.resKicks),
                 }
             });
-            console.verbose.debug(`Loaded ${this.eventLog.length} log entries from cache`);
+            console.verbose.ok(`Loaded ${this.eventLog.length} log entries from cache`);
             this.optimizeStatsLog();
         } catch (error) {
             if ((error as any)?.code === 'ENOENT') {
-                console.verbose.debug(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
+                console.verbose.warn(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
                 this.resetLog('File was just created, no data yet');
                 return;
             }

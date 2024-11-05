@@ -203,7 +203,7 @@ export class Database {
         }
         if (flag > this.#writePending) {
             const flagName = SAVE_CONFIG[flag].name;
-            console.verbose.log(`writeFlag > ${flagName}`);
+            console.verbose.debug(`writeFlag > ${flagName}`);
             this.#writePending = flag;
         }
     }

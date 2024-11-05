@@ -176,7 +176,7 @@ type TxDevEnvDisabledType = Overwrite<TxDevEnvType, {
 let _txDevEnv: TxDevEnvEnabledType | TxDevEnvDisabledType;
 const txDevEnvSrc = parseTxDevEnv();
 if (txDevEnvSrc.ENABLED) {
-    console.log('Starting txAdmin in DEV mode.');
+    console.debug('Starting txAdmin in DEV mode.');
     if (!txDevEnvSrc.SRC_PATH || !txDevEnvSrc.VITE_URL) {
         fatalError.GlobalData(8, 'Missing TXDEV_VITE_URL and/or TXDEV_SRC_PATH env variables.');
     }
@@ -276,9 +276,9 @@ if (fs.existsSync(zapCfgFile)) {
 if (forceInterface) {
     addLocalIpAddress(forceInterface);
 }
-if (_txDevEnv.VERBOSE) {
-    console.dir({ isPterodactyl, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
-}
+// if (_txDevEnv.VERBOSE) {
+//     console.dir({ isPterodactyl, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
+// }
 
 //Setting the variables in console without it having to importing from here (cyclical dependency)
 setConsoleEnvData(

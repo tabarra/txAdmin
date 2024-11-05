@@ -275,11 +275,11 @@ export default class SvRuntimeStatsManager {
             this.lastPerfBoundaries = statsData.lastPerfBoundaries;
             this.statsLog = statsData.log;
             this.resetPerfState();
-            console.verbose.debug(`Loaded ${this.statsLog.length} performance snapshots from cache`);
+            console.verbose.ok(`Loaded ${this.statsLog.length} performance snapshots from cache`);
             await optimizeSvRuntimeLog(this.statsLog);
         } catch (error) {
             if ((error as any)?.code === 'ENOENT') {
-                console.verbose.debug(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
+                console.verbose.warn(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
                 return;
             }
             if (error instanceof ZodError) {

@@ -1,5 +1,4 @@
 const modulename = 'AdminVault';
-import fse from 'fs-extra';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
@@ -171,7 +170,7 @@ export default class AdminVault {
         try {
             const jsonData = JSON.stringify(this.admins);
             this.adminsFileHash = createHash('sha1').update(jsonData).digest('hex');
-            fse.writeFileSync(this.adminsFile, jsonData, { encoding: 'utf8', flag: 'wx' });
+            fs.writeFileSync(this.adminsFile, jsonData, { encoding: 'utf8', flag: 'wx' });
             this.setupRefreshRoutine();
             return newAdmin;
         } catch (error) {
@@ -304,7 +303,7 @@ export default class AdminVault {
             }
         };
         try {
-            const jsonData = await fse.readFile(this.adminsFile, 'utf8');
+            const jsonData = await fsp.readFile(this.adminsFile, 'utf8');
             const inboundHash = createHash('sha1').update(jsonData).digest('hex');
             if (this.adminsFileHash !== inboundHash) {
                 console.warn('The admins.json file was modified or deleted by an external source, txAdmin will try to restore it.');

@@ -1,6 +1,5 @@
 const modulename = 'DiscordBot';
 import Discord, { ActivityType, ChannelType, Client, EmbedBuilder, GatewayIntentBits } from 'discord.js';
-import TxAdmin from '@core/txAdmin';
 import slashCommands from './slash';
 import interactionCreateHandler from './interactionCreateHandler';
 import { generateStatusMessage } from './commands/status';
@@ -223,9 +222,9 @@ export default class DiscordBot {
             }
 
             //State check
-            if (this.#client?.ws.status !== 3 && this.#client?.ws.status !== 5) {
+            if (this.#client && this.#client.ws.status !== 3 && this.#client.ws.status !== 5) {
                 console.verbose.warn('Destroying client before restart.');
-                this.#client?.destroy();
+                this.#client.destroy();
             }
 
             //Setting up client object
@@ -311,8 +310,8 @@ export default class DiscordBot {
 
 
                 // if previously registered by tx before v6 or other bot
-                this.guild.commands.set(slashCommands).catch(console.error);
-                this.#client.application?.commands.set([]).catch(console.error);
+                this.guild.commands.set(slashCommands).catch(console.dir);
+                this.#client.application?.commands.set([]).catch(console.dir);
 
                 this.updateStatus().catch((e) => { });
 

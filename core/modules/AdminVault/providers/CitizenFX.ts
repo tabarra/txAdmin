@@ -36,7 +36,6 @@ export default class CitizenFXProvider {
         custom.setHttpOptionsDefaults({
             timeout: 10000,
         });
-        console.verbose.log('CitizenFX Provider configured.');
     }
 
 
