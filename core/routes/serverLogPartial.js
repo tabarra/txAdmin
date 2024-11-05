@@ -17,13 +17,13 @@ export default async function ServerLogPartial(ctx) {
     const sliceSize = 500;
 
     if (ctx.request.query.dir === 'older' && isDigit.test(ctx.request.query.ref)) {
-        const log = globals.logger.server.readPartialOlder(ctx.request.query.ref, sliceSize);
+        const log = txCore.logger.server.readPartialOlder(ctx.request.query.ref, sliceSize);
         return ctx.send({
             boundry: log.length < sliceSize,
             log,
         });
     } else if (ctx.request.query.dir === 'newer' && isDigit.test(ctx.request.query.ref)) {
-        const log = globals.logger.server.readPartialNewer(ctx.request.query.ref, sliceSize);
+        const log = txCore.logger.server.readPartialNewer(ctx.request.query.ref, sliceSize);
         return ctx.send({
             boundry: log.length < sliceSize,
             log,
@@ -31,7 +31,7 @@ export default async function ServerLogPartial(ctx) {
     } else {
         return ctx.send({
             boundry: true,
-            log: globals.logger.server.getRecentBuffer(),
+            log: txCore.logger.server.getRecentBuffer(),
         });
     }
 };

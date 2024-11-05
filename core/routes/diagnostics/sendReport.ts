@@ -47,20 +47,20 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     let diagnostics;
     try {
         const [host, txadmin, fxserver, proccesses] = await Promise.all([
-            diagnosticsFuncs.getHostData(ctx.txAdmin),
-            diagnosticsFuncs.getTxAdminData(ctx.txAdmin),
-            diagnosticsFuncs.getFXServerData(ctx.txAdmin),
+            diagnosticsFuncs.getHostData(),
+            diagnosticsFuncs.getTxAdminData(),
+            diagnosticsFuncs.getFXServerData(),
             diagnosticsFuncs.getProcessesData(),
         ]);
         diagnostics = { host, txadmin, fxserver, proccesses };
     } catch (error) { }
 
     //Admins
-    const adminList = (ctx.txAdmin.adminVault.getRawAdminsList() as any[])
+    const adminList = (txCore.adminVault.getRawAdminsList() as any[])
         .map(a => ({ ...a, password_hash: '[REDACTED]' }));
 
     //Settings
-    const settings = (ctx.txAdmin.configVault.getRawFile() as any);
+    const settings = (txCore.configVault.getRawFile() as any);
     if (settings?.discordBot?.token) {
         settings.discordBot.token = '[REDACTED]';
     }
@@ -83,14 +83,14 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     //Remove IP from logs
     const txSystemLog = maskIps(getLogBuffer());
 
-    const rawTxActionLog = await ctx.txAdmin.logger.admin.getRecentBuffer();
+    const rawTxActionLog = await txCore.logger.admin.getRecentBuffer();
     const txActionLog = (typeof rawTxActionLog !== 'string')
         ? 'error reading log file'
         : maskIps(rawTxActionLog).split('\n').slice(-500).join('\n');
 
-    const serverLog = (ctx.txAdmin.logger.server.getRecentBuffer(500) as ServerLogType[])
+    const serverLog = (txCore.logger.server.getRecentBuffer(500) as ServerLogType[])
         .map((l) => ({ ...l, msg: maskIps(l.msg) }));
-    const fxserverLog = maskIps(ctx.txAdmin.logger.fxserver.getRecentBuffer());
+    const fxserverLog = maskIps(txCore.logger.fxserver.getRecentBuffer());
 
     //Getting server data content
     let serverDataContent: ServerDataContentType = [];
@@ -104,12 +104,12 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     //Database & perf stats
     let dbStats = {};
     try {
-        dbStats = ctx.txAdmin.playerDatabase.stats.getDatabaseStats();
+        dbStats = txCore.playerDatabase.stats.getDatabaseStats();
     } catch (error) { }
 
-    let perfSvMain: ReturnType<typeof ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary> = null;
+    let perfSvMain: ReturnType<typeof txCore.statsManager.svRuntime.getServerPerfSummary> = null;
     try {
-        perfSvMain = ctx.txAdmin.statsManager.svRuntime.getServerPerfSummary();
+        perfSvMain = txCore.statsManager.svRuntime.getServerPerfSummary();
     } catch (error) { }
 
     //Monitor integrity check

@@ -22,7 +22,7 @@ export default async function SystemLogs(ctx: AuthedCtx) {
             data: getLogBuffer(),
         });
     } else if (scope === 'action') {
-        const rawActions = await ctx.txAdmin.logger.admin.getRecentBuffer();
+        const rawActions = await txCore.logger.admin.getRecentBuffer();
         if (!rawActions) return sendTypedResp({ error: 'Error fetching actions' });
         return sendTypedResp({
             data: rawActions,

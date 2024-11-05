@@ -45,7 +45,7 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
 
     //Check & Login user
     try {
-        const vaultAdmin = ctx.txAdmin.adminVault.getAdminByIdentifiers([fivemIdentifier]);
+        const vaultAdmin = txCore.adminVault.getAdminByIdentifiers([fivemIdentifier]);
         if (!vaultAdmin) {
             ctx.sessTools.destroy();
             return ctx.send<ApiOauthCallbackResp>({
@@ -62,7 +62,7 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
         const sessData = {
             type: 'cfxre',
             username: vaultAdmin.name,
-            csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
+            csrfToken: txCore.adminVault.genCsrfToken(),
             expiresAt: Date.now() + 86_400_000, //24h,
             identifier: fivemIdentifier,
         } satisfies CfxreSessAuthType;
@@ -70,13 +70,13 @@ export default async function AuthProviderCallback(ctx: InitializedCtx) {
 
         //If the user has a picture, save it to the cache
         if (userInfo.picture) {
-            ctx.txAdmin.persistentCache.set(`admin:picture:${vaultAdmin.name}`, userInfo.picture);
+            txCore.persistentCache.set(`admin:picture:${vaultAdmin.name}`, userInfo.picture);
         }
 
-        const authedAdmin = new AuthedAdmin(ctx.txAdmin, vaultAdmin, sessData.csrfToken);
+        const authedAdmin = new AuthedAdmin(vaultAdmin, sessData.csrfToken);
         authedAdmin.logAction(`logged in from ${ctx.ip} via cfxre`);
-        ctx.txAdmin.statsManager.txRuntime.loginOrigins.count(ctx.txVars.hostType);
-        ctx.txAdmin.statsManager.txRuntime.loginMethods.count('citizenfx');
+        txCore.statsManager.txRuntime.loginOrigins.count(ctx.txVars.hostType);
+        txCore.statsManager.txRuntime.loginMethods.count('citizenfx');
         return ctx.send<ReactAuthDataType>(authedAdmin.getAuthData());
     } catch (error) {
         ctx.sessTools.destroy();

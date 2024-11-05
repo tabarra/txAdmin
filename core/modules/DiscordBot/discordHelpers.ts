@@ -1,5 +1,4 @@
 const modulename = 'DiscordBot:cmd';
-import TxAdmin from "@core/txAdmin";
 import orderedEmojis from 'unicode-emoji-json/data-ordered-emoji';
 import { ColorResolvable, CommandInteraction, EmbedBuilder, InteractionReplyOptions } from "discord.js";
 import consoleFactory from '@lib/console';
@@ -44,8 +43,8 @@ export const embedder = {
 /**
  * Ensure that the discord interaction author has the required permission
  */
-export const ensurePermission = async (interaction: CommandInteraction, txAdmin: TxAdmin, reqPerm: string) => {
-    const admin = txAdmin.adminVault.getAdminByProviderUID(interaction.user.id);
+export const ensurePermission = async (interaction: CommandInteraction, reqPerm: string) => {
+    const admin = txCore.adminVault.getAdminByProviderUID(interaction.user.id);
     if (!admin) {
         await interaction.reply(
             embedder.warning(`**Your account does not have txAdmin access.** :face_with_monocle:\nIf you are already registered in txAdmin, visit the Admin Manager page, and make sure the Discord ID for your user is set to \`${interaction.user.id}\`.`, true)
@@ -58,7 +57,7 @@ export const ensurePermission = async (interaction: CommandInteraction, txAdmin:
         && !admin.permissions.includes(reqPerm)
     ) {
         //@ts-ignore: not important
-        const permName = txAdmin.adminVault.registeredPermissions[reqPerm] ?? 'Unknown';
+        const permName = txCore.adminVault.registeredPermissions[reqPerm] ?? 'Unknown';
         await interaction.reply(
             embedder.danger(`Your txAdmin account does not have the "${permName}" permissions required for this action.`, true)
         );
@@ -72,8 +71,8 @@ export const ensurePermission = async (interaction: CommandInteraction, txAdmin:
 /**
  * Equivalent to ctx.admin.logAction()
  */
-export const logDiscordAdminAction = async (txAdmin: TxAdmin, adminName: string, message: string) => {
-    txAdmin.logger.admin.write(adminName, message);
+export const logDiscordAdminAction = async (adminName: string, message: string) => {
+    txCore.logger.admin.write(adminName, message);
 }
 
 

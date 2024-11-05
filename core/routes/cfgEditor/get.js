@@ -15,7 +15,7 @@ export default async function CFGEditorPage(ctx) {
     }
 
     //Check if file is set
-    if (globals.fxRunner.config.cfgPath === null) {
+    if (txConfig.fxRunner.cfgPath === null) {
         let message = 'Your CFG Path is not set. Configure it in the settings page first.';
         return ctx.utils.render('main/message', {message});
     }
@@ -23,7 +23,7 @@ export default async function CFGEditorPage(ctx) {
     //Read cfg file
     let rawFile;
     try {
-        let cfgFilePath = resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
+        let cfgFilePath = resolveCFGFilePath(txConfig.fxRunner.cfgPath, txConfig.fxRunner.serverDataPath);
         rawFile = await readRawCFGFile(cfgFilePath);
     } catch (error) {
         let message = `Failed to read CFG File with error: ${error.message}`;

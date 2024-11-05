@@ -59,7 +59,7 @@ export default async function AdminManagerGetModal(ctx: AuthedCtx) {
     }
 
     //If it's a modal for new admin, all fields will be empty
-    const allPermissions = Object.entries(ctx.txAdmin.adminVault.getPermissionsList());
+    const allPermissions = Object.entries(txCore.adminVault.getPermissionsList());
     if (isNewAdmin) {
         const [permsGeneral, permsMenu] = getPerms([], allPermissions);
         const renderData = {
@@ -80,7 +80,7 @@ export default async function AdminManagerGetModal(ctx: AuthedCtx) {
     const name = ctx.request.body.name.trim();
 
     //Get admin data
-    const admin = ctx.txAdmin.adminVault.getAdminByName(name);
+    const admin = txCore.adminVault.getAdminByName(name);
     if (!admin) return ctx.send('Admin not found');
 
     //Check if editing an master admin

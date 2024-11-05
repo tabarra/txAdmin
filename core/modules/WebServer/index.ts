@@ -18,7 +18,6 @@ import dict49 from 'nanoid-dictionary/nolookalikes';
 import { convars, txDevEnv, txEnv } from '@core/globalData';
 import router from './router';
 import consoleFactory from '@lib/console';
-import TxAdmin from '@core/txAdmin';
 import topLevelMw from './middlewares/topLevelMw';
 import ctxVarsMw from './middlewares/ctxVarsMw';
 import ctxUtilsMw from './middlewares/ctxUtilsMw';
@@ -27,6 +26,7 @@ import checkRateLimit from './middlewares/globalRateLimiter';
 import checkHttpLoad from './middlewares/httpLoadMonitor';
 import cacheControlMw from './middlewares/cacheControlMw';
 import fatalError from '@lib/fatalError';
+import { isProxy } from 'node:util/types';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict49, 32);
 
@@ -46,7 +46,6 @@ const koaServeOptions = {
 };
 
 export default class WebServer {
-    readonly #txAdmin: TxAdmin;
     public isListening = false;
     private sessionCookieName: string;
     public luaComToken: string;
@@ -60,9 +59,7 @@ export default class WebServer {
     //setupServerCallbacks
     private httpServer?: HttpClass.Server;
 
-    constructor(txAdmin: TxAdmin, public config: WebServerConfigType) {
-        this.#txAdmin = txAdmin;
-
+    constructor() {
         //Generate cookie key & luaComToken
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
             .update(txEnv.profilePath)
@@ -82,6 +79,7 @@ export default class WebServer {
         // this.app.proxy = true;
 
         //Setting up app
+        //@ts-ignore: no clue what this error is, but i'd bet it's just bad koa types
         this.app.on('error', (error, ctx) => {
             if (!(
                 error.code?.startsWith('HPE_')
@@ -119,11 +117,11 @@ export default class WebServer {
         this.sessionStore = new SessionMemoryStorage();
         this.app.use(cacheControlMw);
         this.app.use(koaSessMw(this.sessionCookieName, this.sessionStore));
-        this.app.use(ctxVarsMw(txAdmin));
+        this.app.use(ctxVarsMw);
         this.app.use(ctxUtilsMw);
 
         //Setting up routes
-        const txRouter = router(this.config);
+        const txRouter = router();
         this.app.use(txRouter.routes());
         this.app.use(txRouter.allowedMethods());
         this.app.use(async (ctx) => {
@@ -148,7 +146,7 @@ export default class WebServer {
         // ===================
         this.io = new SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(socketioSessMw(this.sessionCookieName, this.sessionStore));
-        this.webSocket = new WebSocket(this.#txAdmin, this.io);
+        this.webSocket = new WebSocket(this.io);
         //@ts-ignore
         this.io.on('connection', this.webSocket.handleConnection.bind(this.webSocket));
 
@@ -224,6 +222,20 @@ export default class WebServer {
             }
 
             this.httpServer.listen(convars.txAdminPort, iface, async () => {
+                //Sanity check on globals, to _guarantee_ all routes will have access to them
+                if (!txCore || isProxy(txCore) || !txConfig || !txManager) {
+                    console.dir({
+                        txCore: Boolean(txCore),
+                        txCoreType: isProxy(txCore) ? 'proxy' : 'not proxy',
+                        txConfig: Boolean(txConfig),
+                        txManager: Boolean(txManager),
+                    });
+                    fatalError.WebServer(2, [
+                        'The HTTP server started before the globals were ready.',
+                        'This error should NEVER happen.',
+                        'Please report it to the developers.',
+                    ]);
+                }
                 console.ok(`Listening on ${iface}.`);
                 this.isListening = true;
             });

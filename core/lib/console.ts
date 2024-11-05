@@ -16,6 +16,7 @@ const headBufferLimit = 8 * 1024; //4kb
 const bodyBufferLimit = 64 * 1024; //64kb
 const bodyTrimSliceSize = 8 * 1024;
 const BUFFER_CUT_WARNING = chalk.bgRgb(255, 69, 0)('[!] The log body was sliced to prevent memory exhaustion. [!]');
+const DEBUG_COLOR = chalk.bgHex('#FF45FF');
 let headBuffer = '';
 let bodyBuffer = '';
 
@@ -136,13 +137,20 @@ const orangeredColor = chalk.rgb(255, 69, 0);
 const getPrettyError = (error: Error, multilineError?: boolean) => {
     const out: string[] = [];
     const prefixStr = `[${getTimestamp()}][tx]`;
-    const prefixColor = multilineError ? chalk.bgRed.black : chalk.redBright;
+    let prefixColor = chalk.redBright;
+    let nameColor = chalk.redBright;
+    if (error.name === 'ExperimentalWarning') {
+        prefixColor = chalk.bgYellow.black;
+        nameColor = chalk.yellowBright;
+    } else if (multilineError) {
+        prefixColor = chalk.bgRed.black;
+    }
     const prefix = prefixColor(prefixStr) + ' ';
 
     //banner
-    out.push(prefix + chalk.redBright(`${error.name}: `) + error.message);
-    if ('type' in error) out.push(prefix + chalk.redBright('Type:') + ` ${error.type}`);
-    if ('code' in error) out.push(prefix + chalk.redBright('Code:') + ` ${error.code}`);
+    out.push(prefix + nameColor(`${error.name}: `) + error.message);
+    if ('type' in error) out.push(prefix + nameColor('Type:') + ` ${error.type}`);
+    if ('code' in error) out.push(prefix + nameColor('Code:') + ` ${error.code}`);
 
     //stack
     if (typeof error.stack === 'string') {
@@ -245,7 +253,7 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
     return {
         ...defaultConsole,
         tag: (subCtx: string) => consoleFactory(ctx, subCtx),
-        debug: getLogFunc(currContext, chalk.bgMagenta),
+        debug: getLogFunc(currContext, DEBUG_COLOR),
         log: getLogFunc(currContext, chalk.bgBlue),
         ok: getLogFunc(currContext, chalk.bgGreen),
         warn: getLogFunc(currContext, chalk.bgYellow),
@@ -278,7 +286,7 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
         },
 
         verbose: {
-            debug: getLogFunc(currContext, chalk.bgMagenta, verboseConsole),
+            debug: getLogFunc(currContext, DEBUG_COLOR, verboseConsole),
             log: getLogFunc(currContext, chalk.bgBlue, verboseConsole),
             ok: getLogFunc(currContext, chalk.bgGreen, verboseConsole),
             warn: getLogFunc(currContext, chalk.bgYellow, verboseConsole),

@@ -23,7 +23,7 @@ export const getOauthRedirectUrl = (ctx: InitializedCtx, purpose: 'login' | 'add
     ctx.sessTools.set(sessData);
 
     //Generate CitizenFX provider Auth URL
-    const idmsAuthUrl = ctx.txAdmin.adminVault.providers.citizenfx.getAuthURL(
+    const idmsAuthUrl = txCore.adminVault.providers.citizenfx.getAuthURL(
         callbackUrl,
         sessData.tmpOauthLoginStateKern,
     );
@@ -47,7 +47,7 @@ export const handleOauthCallback = async (ctx: InitializedCtx, redirectUri: stri
     //Exchange code for access token
     let tokenSet;
     try {
-        tokenSet = await ctx.txAdmin.adminVault.providers.citizenfx.processCallback(
+        tokenSet = await txCore.adminVault.providers.citizenfx.processCallback(
             inboundSession.tmpOauthLoginCallbackUri,
             inboundSession.tmpOauthLoginStateKern,
             redirectUri,
@@ -79,7 +79,7 @@ export const handleOauthCallback = async (ctx: InitializedCtx, redirectUri: stri
 
     //Get userinfo
     try {
-        return await ctx.txAdmin.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
+        return await txCore.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         console.verbose.error(`Get UserInfo error: ${(error as Error).message}`);
         return {

@@ -1,6 +1,5 @@
 const modulename = 'StatsManager';
 import consoleFactory from '@lib/console';
-import type TxAdmin from '@core/txAdmin.js';
 import SvRuntimeStatsManager from './svRuntime';
 import TxRuntimeStatsManager from './txRuntime';
 import PlayerDropStatsManager from './playerDrop';
@@ -17,9 +16,9 @@ export default class StatsManager {
     public readonly txRuntime: TxRuntimeStatsManager;
     public readonly playerDrop: PlayerDropStatsManager;
 
-    constructor(txAdmin: TxAdmin) {
-        this.svRuntime = new SvRuntimeStatsManager(txAdmin);
-        this.txRuntime = new TxRuntimeStatsManager(txAdmin);
-        this.playerDrop = new PlayerDropStatsManager(txAdmin);
+    constructor() {
+        this.svRuntime = new SvRuntimeStatsManager();
+        this.txRuntime = new TxRuntimeStatsManager();
+        this.playerDrop = new PlayerDropStatsManager();
     }
 };

@@ -45,7 +45,7 @@ body {
 export const intercomAuthMw = async (ctx: InitializedCtx, next: Function) => {
     if (
         typeof ctx.request.body?.txAdminToken !== 'string'
-        || ctx.request.body.txAdminToken !== ctx.txAdmin.webServer.luaComToken
+        || ctx.request.body.txAdminToken !== txCore.webServer.luaComToken
     ) {
         return ctx.send({ error: 'invalid token' });
     }
@@ -59,7 +59,6 @@ export const intercomAuthMw = async (ctx: InitializedCtx, next: Function) => {
 export const webAuthMw = async (ctx: InitializedCtx, next: Function) => {
     //Check auth
     const authResult = checkRequestAuth(
-        ctx.txAdmin,
         ctx.request.headers,
         ctx.ip,
         ctx.txVars.isLocalRequest,
@@ -86,7 +85,6 @@ export const apiAuthMw = async (ctx: InitializedCtx, next: Function) => {
 
     //Check auth
     const authResult = checkRequestAuth(
-        ctx.txAdmin,
         ctx.request.headers,
         ctx.ip,
         ctx.txVars.isLocalRequest,

@@ -14,7 +14,7 @@ export default async function AdminManagerPage(ctx: AuthedCtx) {
     }
 
     //Prepare admin array
-    const admins = ctx.txAdmin.adminVault.getAdminsList().map((admin) => {
+    const admins = txCore.adminVault.getAdminsList().map((admin) => {
         let perms;
         if (admin.master == true) {
             perms = 'master account';

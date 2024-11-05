@@ -24,7 +24,7 @@ export default async function AuthProviderRedirect(ctx: InitializedCtx) {
     const { origin } = schemaRes.data;
 
     //Check if there are already admins set up
-    if (!ctx.txAdmin.adminVault.hasAdmins()) {
+    if (!txCore.adminVault.hasAdmins()) {
         return ctx.send<ApiOauthRedirectResp>({
             error: `no_admins_setup`,
         });

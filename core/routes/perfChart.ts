@@ -34,7 +34,7 @@ export default async function perfChart(ctx: AuthedCtx) {
         return sendTypedResp({ fail_reason: 'bad_request' });
     }
 
-    const chartData = ctx.txAdmin.statsManager.svRuntime.getChartData(schemaRes.data.thread);
+    const chartData = txCore.statsManager.svRuntime.getChartData(schemaRes.data.thread);
     if ('fail_reason' in chartData) {
         return sendTypedResp(chartData);
     }

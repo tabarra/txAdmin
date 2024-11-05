@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash-es';
-import TxAdmin from "@core/txAdmin";
 import { Database, SavePriority } from "../database";
 import { DatabasePlayerType } from "../databaseTypes";
 import { DuplicateKeyError } from "../dbUtils";
@@ -8,10 +7,7 @@ const console = consoleFactory('PlayerDatabase');
 
 
 export default class PlayersDao {
-    constructor(
-        private readonly txAdmin: TxAdmin,
-        private readonly db: Database,
-    ) { }
+    constructor(private readonly db: Database) { }
 
     private get dbo() {
         if (!this.db.obj || !this.db.isReady) throw new Error(`database not ready yet`);
@@ -87,7 +83,7 @@ export default class PlayersDao {
             .assign(cloneDeep(srcData))
             .cloneDeep()
             .value();
-        this.txAdmin.playerlistManager.handleDbDataSync(newData, srcUniqueId);
+        txCore.playerlistManager.handleDbDataSync(newData, srcUniqueId);
         return newData;
     }
 
@@ -105,7 +101,7 @@ export default class PlayersDao {
             if (player.tsWhitelisted && filterFunc(player)) {
                 cntChanged++;
                 player.tsWhitelisted = undefined;
-                this.txAdmin.playerlistManager.handleDbDataSync(cloneDeep(player), srcSymbol);
+                txCore.playerlistManager.handleDbDataSync(cloneDeep(player), srcSymbol);
             }
         });
 

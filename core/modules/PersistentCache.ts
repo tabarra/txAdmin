@@ -1,6 +1,5 @@
 const modulename = 'PersistentCache';
 import fsp from 'node:fs/promises';
-import TxAdmin from '@core/txAdmin';
 import throttle from 'lodash-es/throttle.js';
 import consoleFactory from '@lib/console';
 import { txDevEnv, txEnv } from '@core/globalData';
@@ -23,14 +22,11 @@ const CACHE_FILE_NAME = 'cachedData.json';
  * and it will reset the cache in case it fails to load.
  */
 export default class PersistentCache {
-    #txAdmin: TxAdmin;
     #cache: Map<string, AcceptedCachedTypes> | undefined;
-    readonly cacheFilePath: string;
+    readonly cacheFilePath = `${txEnv.profilePath}/data/${CACHE_FILE_NAME}`;
     readonly throttledSaveCache: Function;
 
-    constructor(txAdmin: TxAdmin) {
-        this.#txAdmin = txAdmin;
-        this.cacheFilePath = `${txEnv.profilePath}/data/${CACHE_FILE_NAME}`;
+    constructor() {
         this.throttledSaveCache = throttle(
             this.saveCache.bind(this),
             5000,

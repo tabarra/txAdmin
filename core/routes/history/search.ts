@@ -35,7 +35,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
     } = ctx.query;
     const sendTypedResp = (data: HistoryTableSearchResp) => ctx.send(data);
     const searchTime = new TimeCounter();
-    const dbo = ctx.txAdmin.playerDatabase.getDboRef();
+    const dbo = txCore.playerDatabase.getDboRef();
     let chain = dbo.chain.get('actions').clone(); //shallow clone to avoid sorting the original
 
     //sort the actions by the sortingKey/sortingDesc
@@ -159,7 +159,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
         } satisfies HistoryTableActionType;
     });
 
-    ctx.txAdmin.statsManager.txRuntime.historyTableSearchTime.count(searchTime.stop().milliseconds);
+    txCore.statsManager.txRuntime.historyTableSearchTime.count(searchTime.stop().milliseconds);
     return sendTypedResp({
         history: processedActions,
         hasReachedEnd,

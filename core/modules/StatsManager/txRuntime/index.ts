@@ -4,7 +4,6 @@ import consoleFactory from '@lib/console';
 import { MultipleCounter, QuantileArray } from '../statsUtils';
 import { convars } from '@core/globalData';
 import { getHostStaticData } from '@lib/diagnostics';
-import TxAdmin from '@core/txAdmin';
 import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 
@@ -31,7 +30,6 @@ const jweHeader = {
  * NOTE: the register functions don't throw because we rather break stats than txAdmin itself
  */
 export default class TxRuntimeStatsManager {
-    readonly #txAdmin: TxAdmin;
     #publicKey: jose.KeyLike | undefined;
 
     #fxServerBootSeconds: number | false = false;
@@ -58,8 +56,7 @@ export default class TxRuntimeStatsManager {
         },
     };
 
-    constructor(txAdmin: TxAdmin) {
-        this.#txAdmin = txAdmin;
+    constructor() {
         this.loadStatsPublicKey();
 
         //Delaying this because host static data takes 10+ seconds to be set
@@ -148,20 +145,11 @@ export default class TxRuntimeStatsManager {
             return;
         }
 
-        const tmpDurationDebugLog = (msg: string) => {
-            // @ts-expect-error
-            if (globals?.tmpSetHbDataTracking) {
-                console.verbose.debug(`refreshHbData: ${msg}`);
-            }
-        }
-
         //Generate HB data
-        tmpDurationDebugLog('started');
         try {
             const hostData = getHostStaticData();
-            tmpDurationDebugLog('got host static data');
-            const playerDbConfig = this.#txAdmin.playerDatabase.config;
-            const globalConfig = this.#txAdmin.globalConfig;
+            const playerDbConfig = txConfig.playerDatabase;
+            const globalConfig = txConfig.global;
 
             //Prepare stats data
             const statsData = {
@@ -175,7 +163,7 @@ export default class TxRuntimeStatsManager {
                 fxServerBootSeconds: this.#fxServerBootSeconds,
                 loginOrigins: this.loginOrigins,
                 loginMethods: this.loginMethods,
-                botCommands: this.#txAdmin.discordBot.config.enabled
+                botCommands: txConfig.discordBot.enabled
                     ? this.botCommands
                     : false,
                 menuCommands: globalConfig.menuEnabled
@@ -191,10 +179,10 @@ export default class TxRuntimeStatsManager {
                 historyTableSearchTime: this.historyTableSearchTime,
 
                 //Settings & stuff
-                adminCount: Array.isArray(this.#txAdmin.adminVault.admins) ? this.#txAdmin.adminVault.admins.length : 1,
-                banCheckingEnabled: this.#txAdmin.playerDatabase.config.onJoinCheckBan,
-                whitelistMode: this.#txAdmin.playerDatabase.config.whitelistMode,
-                recipeName: this.#txAdmin.persistentCache.get('deployer:recipe') ?? 'not_in_persistentCache',
+                adminCount: Array.isArray(txCore.adminVault.admins) ? txCore.adminVault.admins.length : 1,
+                banCheckingEnabled: txConfig.playerDatabase.onJoinCheckBan,
+                whitelistMode: txConfig.playerDatabase.whitelistMode,
+                recipeName: txCore.persistentCache.get('deployer:recipe') ?? 'not_in_persistentCache',
                 tmpConfigFlags: [
                     globalConfig.hideDefaultAnnouncement && 'global.hideDefaultAnnouncement',
                     globalConfig.hideDefaultDirectMessage && 'global.hideDefaultDirectMessage',
@@ -205,10 +193,9 @@ export default class TxRuntimeStatsManager {
                 ].filter(x => x),
 
                 //Processed stuff
-                playerDb: this.#txAdmin.playerDatabase.stats.getDatabaseStats(),
-                perfSummary: this.#txAdmin.statsManager.svRuntime.getServerPerfSummary(),
+                playerDb: txCore.playerDatabase.stats.getDatabaseStats(),
+                perfSummary: txCore.statsManager.svRuntime.getServerPerfSummary(),
             };
-            tmpDurationDebugLog('prepared object');
 
             //Prepare output
             const encodedHbData = new TextEncoder().encode(JSON.stringify(statsData));
@@ -216,8 +203,6 @@ export default class TxRuntimeStatsManager {
                 .setProtectedHeader(jweHeader)
                 .encrypt(this.#publicKey);
             this.currHbData = JSON.stringify({ '$statsVersion': JWE_VERSION, jwe });
-            tmpDurationDebugLog('finished');
-
         } catch (error) {
             console.verbose.error('Error while updating stats data.');
             console.verbose.dir(error);

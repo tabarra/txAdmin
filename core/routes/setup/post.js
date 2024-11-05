@@ -63,8 +63,8 @@ export default async function SetupPost(ctx) {
 
     //Check if this is the correct state for the setup page
     if (
-        globals.deployer !== null
-        || (globals.fxRunner.config.serverDataPath && globals.fxRunner.config.cfgPath)
+        txManager.deployer !== null
+        || (txConfig.fxRunner.serverDataPath && txConfig.fxRunner.cfgPath)
     ) {
         return ctx.send({
             success: false,
@@ -269,15 +269,15 @@ async function handleSaveLocal(ctx) {
     }
 
     //Preparing & saving config
-    const newGlobalConfig = globals.configVault.getScopedStructure('global');
+    const newGlobalConfig = txCore.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = cfg.name;
-    const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
+    const newFXRunnerConfig = txCore.configVault.getScopedStructure('fxRunner');
     newFXRunnerConfig.serverDataPath = cfg.dataFolder;
     newFXRunnerConfig.cfgPath = cfg.cfgFile;
     try {
-        globals.configVault.saveProfile('global', newGlobalConfig);
-        globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
-        globals.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+        txCore.configVault.saveProfile('global', newGlobalConfig);
+        txCore.configVault.saveProfile('fxRunner', newFXRunnerConfig);
+        txCore.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global/fxserver settings via setup stepper.`);
         console.verbose.dir(error);
@@ -289,15 +289,14 @@ async function handleSaveLocal(ctx) {
     }
 
     //Refreshing config
-    globals.txAdmin.refreshConfig();
-    globals.fxRunner.refreshConfig();
-    globals.persistentCache.set('deployer:recipe', 'none');
+    txCore.fxRunner.refreshConfig();
+    txCore.persistentCache.set('deployer:recipe', 'none');
 
     //Logging
     ctx.admin.logAction('Changing global/fxserver settings via setup stepper.');
 
     //Starting server
-    const spawnError = await globals.fxRunner.spawnServer(false);
+    const spawnError = await txCore.fxRunner.spawnServer(false);
     if (spawnError !== null) {
         return ctx.send({success: false, markdown: true, message: spawnError});
     } else {
@@ -308,7 +307,7 @@ async function handleSaveLocal(ctx) {
 
 /**
  * Handle Save settings for remote recipe importing
- * Actions: download recipe, globals.deployer = new Deployer(recipe)
+ * Actions: download recipe, txManager.deployer = new Deployer(recipe)
  * @param {object} ctx
  */
 async function handleSaveDeployerImport(ctx) {
@@ -341,10 +340,10 @@ async function handleSaveDeployerImport(ctx) {
     }
 
     //Preparing & saving config
-    const newGlobalConfig = globals.configVault.getScopedStructure('global');
+    const newGlobalConfig = txCore.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = serverName;
     try {
-        globals.configVault.saveProfile('global', newGlobalConfig);
+        txCore.configVault.saveProfile('global', newGlobalConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);
@@ -354,13 +353,12 @@ async function handleSaveDeployerImport(ctx) {
             message: `**Error saving the configuration file:** ${error.message}`
         });
     }
-    globals.txAdmin.refreshConfig();
     ctx.admin.logAction('Changing global settings via setup stepper and started Deployer.');
 
     //Start deployer (constructor will validate the recipe)
     try {
-        globals.deployer = new Deployer(recipeText, deploymentID, targetPath, isTrustedSource, {serverName});
-        globals.webServer?.webSocket.pushRefresh('status');
+        txManager.deployer = new Deployer(recipeText, deploymentID, targetPath, isTrustedSource, {serverName});
+        txCore.webServer.webSocket.pushRefresh('status');
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }
@@ -370,7 +368,7 @@ async function handleSaveDeployerImport(ctx) {
 
 /**
  * Handle Save settings for custom recipe
- * Actions: download recipe, globals.deployer = new Deployer(recipe)
+ * Actions: download recipe, txManager.deployer = new Deployer(recipe)
  * @param {object} ctx
  */
 async function handleSaveDeployerCustom(ctx) {
@@ -387,10 +385,10 @@ async function handleSaveDeployerCustom(ctx) {
     const deploymentID = ctx.request.body.deploymentID;
 
     //Preparing & saving config
-    const newGlobalConfig = globals.configVault.getScopedStructure('global');
+    const newGlobalConfig = txCore.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = serverName;
     try {
-        globals.configVault.saveProfile('global', newGlobalConfig);
+        txCore.configVault.saveProfile('global', newGlobalConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);
@@ -400,7 +398,6 @@ async function handleSaveDeployerCustom(ctx) {
             message: `**Error saving the configuration file:** ${error.message}`
         });
     }
-    globals.txAdmin.refreshConfig();
     ctx.admin.logAction('Changing global settings via setup stepper and started Deployer.');
 
     //Start deployer (constructor will create the recipe template)
@@ -409,8 +406,8 @@ async function handleSaveDeployerCustom(ctx) {
         serverName,
     };
     try {
-        globals.deployer = new Deployer(false, deploymentID, targetPath, false, customMetaData);
-        globals.webServer?.webSocket.pushRefresh('status');
+        txManager.deployer = new Deployer(false, deploymentID, targetPath, false, customMetaData);
+        txCore.webServer.webSocket.pushRefresh('status');
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }

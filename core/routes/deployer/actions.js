@@ -30,7 +30,7 @@ export default async function DeployerActions(ctx) {
     }
 
     //Check if this is the correct state for the deployer
-    if (globals.deployer == null) {
+    if (txManager.deployer == null) {
         return ctx.send({ success: false, refresh: true });
     }
 
@@ -66,7 +66,7 @@ async function handleConfirmRecipe(ctx) {
 
     try {
         ctx.admin.logAction('Setting recipe.');
-        await globals.deployer.confirmRecipe(userEditedRecipe);
+        await txManager.deployer.confirmRecipe(userEditedRecipe);
     } catch (error) {
         return ctx.send({ type: 'danger', message: error.message });
     }
@@ -97,7 +97,7 @@ async function handleSetVariables(ctx) {
 
     //Validating steam api key requirement
     if (
-        globals.deployer.recipe.steamRequired
+        txManager.deployer.recipe.steamRequired
         && (typeof userVars.steam_webApiKey !== 'string' || userVars.steam_webApiKey.length < 24)
     ) {
         return ctx.send({
@@ -166,7 +166,7 @@ async function handleSetVariables(ctx) {
     }
 
     //Setting identifiers array
-    const admin = globals.adminVault.getAdminByName(ctx.admin.name);
+    const admin = txCore.adminVault.getAdminByName(ctx.admin.name);
     if (!admin) return ctx.send({ type: 'danger', message: 'Admin not found.' });
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach((providerName) => {
@@ -181,7 +181,7 @@ async function handleSetVariables(ctx) {
     //Start deployer
     try {
         ctx.admin.logAction('Running recipe.');
-        globals.deployer.start(userVars);
+        txManager.deployer.start(userVars);
     } catch (error) {
         return ctx.send({ type: 'danger', message: error.message });
     }
@@ -201,12 +201,12 @@ async function handleSaveConfig(ctx) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const serverCFG = ctx.request.body.serverCFG;
-    const cfgFilePath = path.join(globals.deployer.deployPath, 'server.cfg');
-    globals.persistentCache.set('deployer:recipe', globals.deployer?.recipe?.name ?? 'unknown');
+    const cfgFilePath = path.join(txManager.deployer.deployPath, 'server.cfg');
+    txCore.persistentCache.set('deployer:recipe', txManager.deployer?.recipe?.name ?? 'unknown');
 
     //Validating config contents + saving file and backup
     try {
-        const result = await validateModifyServerConfig(serverCFG, cfgFilePath, globals.deployer.deployPath);
+        const result = await validateModifyServerConfig(serverCFG, cfgFilePath, txManager.deployer.deployPath);
         if (result.errors) {
             return ctx.send({
                 type: 'danger',
@@ -225,14 +225,14 @@ async function handleSaveConfig(ctx) {
     }
 
     //Preparing & saving config
-    const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
-    newFXRunnerConfig.serverDataPath = slash(path.normalize(globals.deployer.deployPath));
+    const newFXRunnerConfig = txCore.configVault.getScopedStructure('fxRunner');
+    newFXRunnerConfig.serverDataPath = slash(path.normalize(txManager.deployer.deployPath));
     newFXRunnerConfig.cfgPath = slash(path.normalize(cfgFilePath));
-    if (typeof globals.deployer.recipe.onesync !== 'undefined') {
-        newFXRunnerConfig.onesync = globals.deployer.recipe.onesync;
+    if (typeof txManager.deployer.recipe.onesync !== 'undefined') {
+        newFXRunnerConfig.onesync = txManager.deployer.recipe.onesync;
     }
     try {
-        globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
+        txCore.configVault.saveProfile('fxRunner', newFXRunnerConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing fxserver settings via deployer.`);
         console.verbose.dir(error);
@@ -243,12 +243,12 @@ async function handleSaveConfig(ctx) {
         });
     }
 
-    globals.fxRunner.refreshConfig();
-    globals.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+    txCore.fxRunner.refreshConfig();
+    txCore.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     ctx.admin.logAction('Completed and committed server deploy.');
 
     //Starting server
-    const spawnError = await globals.fxRunner.spawnServer(false);
+    const spawnError = await txCore.fxRunner.spawnServer(false);
     if (spawnError !== null) {
         return ctx.send({
             type: 'danger',
@@ -256,8 +256,8 @@ async function handleSaveConfig(ctx) {
             message: `Config file saved, but faied to start server with error:\n${spawnError}`,
         });
     } else {
-        globals.deployer = null;
-        globals.webServer?.webSocket.pushRefresh('status');
+        txManager.deployer = null;
+        txCore.webServer.webSocket.pushRefresh('status');
         return ctx.send({ success: true });
     }
 }
@@ -269,7 +269,7 @@ async function handleSaveConfig(ctx) {
  * @param {object} ctx
  */
 async function handleCancel(ctx) {
-    globals.deployer = null;
-    globals.webServer?.webSocket.pushRefresh('status');
+    txManager.deployer = null;
+    txCore.webServer.webSocket.pushRefresh('status');
     return ctx.send({ success: true });
 }

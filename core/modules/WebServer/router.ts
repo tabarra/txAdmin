@@ -4,26 +4,24 @@ import KoaRateLimit from 'koa-ratelimit';
 
 import * as routes from '@routes/index';
 import { apiAuthMw, intercomAuthMw, webAuthMw } from './middlewares/authMws';
-import { WebServerConfigType } from './index';
 
 
 /**
  * Router factory
- * @param {object} config
  */
-export default (config: WebServerConfigType) => {
+export default () => {
     const router = new Router();
     const authLimiter = KoaRateLimit({
         driver: 'memory',
         db: new Map(),
-        duration: config.limiterMinutes * 60 * 1000, // 15 minutes
+        duration: txConfig.webServer.limiterMinutes * 60 * 1000, // 15 minutes
         errorMessage: JSON.stringify({
             //Duplicated to maintain compatibility with all auth api routes
-            error: `Too many attempts. Blocked for ${config.limiterMinutes} minutes.`,
+            error: `Too many attempts. Blocked for ${txConfig.webServer.limiterMinutes} minutes.`,
             errorTitle: 'Too many attempts.',
-            errorMessage: `Blocked for ${config.limiterMinutes} minutes.`,
+            errorMessage: `Blocked for ${txConfig.webServer.limiterMinutes} minutes.`,
         }),
-        max: config.limiterAttempts,
+        max: txConfig.webServer.limiterAttempts,
         disableHeader: true,
         id: (ctx: any) => ctx.txVars.realIP,
     });

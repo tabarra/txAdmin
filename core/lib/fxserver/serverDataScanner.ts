@@ -52,7 +52,7 @@ export const getServerDataContent = async (serverDataPath: string): Promise<Serv
             throw new Error(`Scanning above the limit of ${RES_CATEGORIES_LIMIT} resource categories.`);
         }
         resourceCategories++;
-        const currCategory = categoriesToScan.shift() as string;
+        const currCategory = categoriesToScan.shift()!;
         const currCatDirEntries = await fsp.readdir(currCategory, { withFileTypes: true });
 
         for (const catDirEntry of currCatDirEntries) {

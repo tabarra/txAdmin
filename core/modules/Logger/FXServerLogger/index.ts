@@ -1,10 +1,9 @@
 const modulename = 'Logger:FXServer';
 import bytes from 'bytes';
-import rfs from 'rotating-file-stream';
+import type { Options as RfsOptions } from 'rotating-file-stream';
 import { getLogDivider } from '../loggerUtils.js';
 import consoleFactory from '@lib/console.js';
 import { LoggerBase } from '../LoggerBase.js';
-import TxAdmin from '@core/txAdmin.js';
 import ConsoleTransformer from './ConsoleTransformer.js';
 const console = consoleFactory(modulename);
 
@@ -31,14 +30,13 @@ export enum ConsoleLineType {
 }
 
 export default class FXServerLogger extends LoggerBase {
-    private readonly txAdmin: TxAdmin;
     private readonly transformer = new ConsoleTransformer();
     private fileBuffer = '';
     private recentBuffer = '';
     private readonly recentBufferMaxSize = 256 * 1024; //kb
     private readonly recentBufferTrimSliceSize = 32 * 1024; //how much will be cut when overflows
 
-    constructor(txAdmin: TxAdmin, basePath: string, lrProfileConfig: rfs.Options) {
+    constructor(basePath: string, lrProfileConfig: RfsOptions) {
         const lrDefaultOptions = {
             path: basePath,
             intervalBoundary: true,
@@ -50,7 +48,6 @@ export default class FXServerLogger extends LoggerBase {
             maxSize: '5G',
         };
         super(basePath, 'fxserver', lrDefaultOptions, lrProfileConfig);
-        this.txAdmin = txAdmin;
 
         setInterval(() => {
             this.flushFileBuffer();
@@ -98,12 +95,12 @@ export default class FXServerLogger extends LoggerBase {
         this.fileBuffer += fileBuffer;
 
         //For the terminal
-        if (!this.txAdmin.fxRunner.config.quiet) {
+        if (!txConfig.fxRunner.quiet) {
             process.stdout.write(stdoutBuffer);
         }
 
         //For the live console
-        this.txAdmin.webServer.webSocket.buffer('liveconsole', webBuffer);
+        txCore.webServer.webSocket.buffer('liveconsole', webBuffer);
         this.appendRecent(webBuffer);
     }
 

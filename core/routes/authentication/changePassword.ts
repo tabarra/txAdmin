@@ -38,7 +38,7 @@ export default async function AuthChangePassword(ctx: AuthedCtx) {
     }
 
     //Get vault admin
-    const vaultAdmin = ctx.txAdmin.adminVault.getAdminByName(ctx.admin.name);
+    const vaultAdmin = txCore.adminVault.getAdminByName(ctx.admin.name);
     if (!vaultAdmin) throw new Error('Wait, what? Where is that admin?');
     if (!ctx.admin.isTempPassword) {
         if (!oldPassword || !VerifyPasswordHash(oldPassword, vaultAdmin.password_hash)) {
@@ -48,7 +48,7 @@ export default async function AuthChangePassword(ctx: AuthedCtx) {
 
     //Edit admin and give output
     try {
-        const newHash = await ctx.txAdmin.adminVault.editAdmin(ctx.admin.name, newPassword);
+        const newHash = await txCore.adminVault.editAdmin(ctx.admin.name, newPassword);
 
         //Update session hash if logged in via password
         const currSess = ctx.sessTools.get();

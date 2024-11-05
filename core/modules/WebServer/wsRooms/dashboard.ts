@@ -1,5 +1,4 @@
 const modulename = 'SocketRoom:Status';
-import TxAdmin from "@core/txAdmin";
 import { RoomType } from "../webSocket";
 import consoleFactory from '@lib/console';
 import { DashboardDataEventType } from "@shared/socketioTypes";
@@ -9,13 +8,13 @@ const console = consoleFactory(modulename);
 /**
  * Returns the dashboard stats data
  */
-const getInitialData = (txAdmin: TxAdmin): DashboardDataEventType => {
-    const svRuntimeStats = txAdmin.statsManager.svRuntime.getRecentStats();
+const getInitialData = (): DashboardDataEventType => {
+    const svRuntimeStats = txCore.statsManager.svRuntime.getRecentStats();
 
     return {
-        // joinLeaveTally30m: txAdmin.playerlistManager.joinLeaveTally,
+        // joinLeaveTally30m: txCore.playerlistManager.joinLeaveTally,
         playerDrop: {
-            summaryLast6h: txAdmin.statsManager.playerDrop.getRecentDropTally(6),
+            summaryLast6h: txCore.statsManager.playerDrop.getRecentDropTally(6),
         },
         svRuntime: {
             fxsMemory: svRuntimeStats.fxsMemory,
@@ -38,12 +37,12 @@ const getInitialData = (txAdmin: TxAdmin): DashboardDataEventType => {
  *   updated when the user refreshes the page.
  *   Same goes for "last 6h" not expiring old data if the server is not online pushing new perfs.
  */
-export default (txAdmin: TxAdmin): RoomType => ({
+export default {
     permission: true, //everyone can see it
     eventName: 'dashboard',
     cumulativeBuffer: false,
     outBuffer: null,
     initialData: () => {
-        return getInitialData(txAdmin);
+        return getInitialData();
     },
-})
+} satisfies RoomType;

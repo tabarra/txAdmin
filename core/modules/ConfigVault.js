@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash-es';
 import { defaultEmbedJson, defaultEmbedConfigJson } from '@modules/DiscordBot/defaultJsons';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 
@@ -34,17 +35,24 @@ const deepFreeze = (obj) => {
 };
 
 export default class ConfigVault {
-    constructor(profilePath, serverProfile) {
-        this.serverProfile = serverProfile;
-        this.serverProfilePath = profilePath;
-        this.configFilePath = `${this.serverProfilePath}/config.json`;
-        this.configFile = null;
-        this.config = null;
+    configFilePath = `${txEnv.profilePath}/config.json`;
+    configFile;
+    #config; //the private one
+    // config;  //the public mirror - done this way to protect against accidental changes
 
-        //Setup
-        let cfgData = this.getConfigFromFile();
-        this.configFile = this.setupConfigStructure(cfgData);
-        this.config = this.setupConfigDefaults(this.configFile);
+    constructor() {
+        const fileData = this.getConfigFromFile();
+        this.configFile = this.getConfigStructure(fileData);
+        this.#config = this.getConfigDefaults(this.configFile);
+        this.updatePublicConfig();
+    }
+
+    /**
+     * Mirrors the #config object to the public deep frozen config object
+     */
+    updatePublicConfig() {
+        // this.config = deepFreeze(cloneDeep(this.#config));
+        globalThis.txConfig = deepFreeze(cloneDeep(this.#config));
     }
 
 
@@ -86,9 +94,9 @@ export default class ConfigVault {
      * ????????????
      * @param {object} cfgData
      */
-    setupConfigStructure(cfgData) {
-        let cfg = cloneDeep(cfgData);
-        let out = {
+    getConfigStructure(cfgData) {
+        const cfg = cloneDeep(cfgData);
+        const out = {
             global: null,
             logger: null,
             monitor: null,
@@ -195,12 +203,12 @@ export default class ConfigVault {
 
 
     /**
-     * Setup the this.config variable based on the config file data
+     * Setup the this.#config variable based on the config file data
      * FIXME: rename this function
      * @param {object} cfgData
      */
-    setupConfigDefaults(cfgData) {
-        let cfg = cloneDeep(cfgData);
+    getConfigDefaults(cfgData) {
+        const cfg = cloneDeep(cfgData);
         //NOTE: the bool trick in fxRunner.autostart won't work if we want the default to be true
         try {
             //Global
@@ -247,7 +255,7 @@ export default class ConfigVault {
             cfg.discordBot.embedConfigJson = cfg.discordBot.embedConfigJson || defaultEmbedConfigJson;
 
             //FXRunner
-            cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
+            cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${txEnv.profilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.onesync = cfg.fxRunner.onesync || 'on';
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 750; //not in template
@@ -259,7 +267,7 @@ export default class ConfigVault {
             cfg.banTemplates = cfg.banTemplates ?? [];
         } catch (error) {
             //If this is the first run, that is a fatal error
-            if (!this.config) {
+            if (!this.#config) {
                 fatalError.ConfigVault(13, [
                     'Unknown error while loading the configuration file!',
                     'Make sure your txAdmin is updated!',
@@ -279,7 +287,7 @@ export default class ConfigVault {
      * Return configs for a specific scope (reconstructed and freezed)
      */
     getScoped(scope) {
-        return cloneDeep(this.config[scope]);
+        return cloneDeep(this.#config[scope]);
     }
 
 
@@ -303,7 +311,7 @@ export default class ConfigVault {
      * Return all configs individually reconstructed and freezed
      */
     getAll() {
-        let cfg = cloneDeep(this.config);
+        const cfg = cloneDeep(this.#config);
         return deepFreeze({
             global: cfg.global,
             logger: cfg.logger,
@@ -327,6 +335,7 @@ export default class ConfigVault {
         toSave = removeNulls(toSave);
         fs.writeFileSync(this.configFilePath, JSON.stringify(toSave, null, 2), 'utf8');
         this.configFile = toSave;
-        this.config = this.setupConfigDefaults(this.configFile);
+        this.#config = this.getConfigDefaults(this.configFile);
+        this.updatePublicConfig();
     }
 };

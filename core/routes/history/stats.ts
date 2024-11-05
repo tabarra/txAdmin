@@ -12,10 +12,10 @@ const console = consoleFactory(modulename);
 export default async function HistoryStats(ctx: AuthedCtx) {
     const sendTypedResp = (data: HistoryStatsResp) => ctx.send(data);
     try {
-        const dbStats = ctx.txAdmin.playerDatabase.stats.getActionStats();
+        const dbStats = txCore.playerDatabase.stats.getActionStats();
         const dbAdmins = Object.keys(dbStats.groupedByAdmins);
         // @ts-ignore i don't wanna type this
-        const vaultAdmins = ctx.txAdmin.adminVault.getAdminsList().map(a => a.name);
+        const vaultAdmins = txCore.adminVault.getAdminsList().map(a => a.name);
         const adminStats = union(dbAdmins, vaultAdmins)
             .sort((a, b) => a.localeCompare(b))
             .map(admin => ({

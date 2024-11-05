@@ -42,7 +42,7 @@ export default async function SaveBanTemplates(ctx: AuthedCtx) {
 
     //Preparing & saving config
     try {
-        ctx.txAdmin.configVault.saveProfile('banTemplates', filteredBanTemplates);
+        txCore.configVault.saveProfile('banTemplates', filteredBanTemplates);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing banTemplates settings.`);
         console.verbose.dir(error);

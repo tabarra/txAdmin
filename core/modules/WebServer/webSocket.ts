@@ -6,7 +6,6 @@ import dashboardRoom from './wsRooms/dashboard';
 import playerlistRoom from './wsRooms/playerlist';
 import liveconsoleRoom from './wsRooms/liveconsole';
 import serverlogRoom from './wsRooms/serverlog';
-import TxAdmin from '@core/txAdmin';
 import { AuthedAdminType, checkRequestAuth } from './authLogic';
 import { SocketWithSession } from './ctxTypes';
 import { isIpAddressLocal } from '@lib/host/isIpAddressLocal';
@@ -54,20 +53,18 @@ const forceUiReload = (socket: SocketWithSession) => {
 };
 
 export default class WebSocket {
-    readonly #txAdmin: TxAdmin;
     readonly #io: SocketIO;
     readonly #rooms: Record<RoomNames, RoomType>;
     #eventBuffer: { name: string, data: any }[] = [];
 
-    constructor(txAdmin: TxAdmin, io: SocketIO) {
-        this.#txAdmin = txAdmin;
+    constructor(io: SocketIO) {
         this.#io = io;
         this.#rooms = {
-            status: statusRoom(txAdmin),
-            dashboard: dashboardRoom(txAdmin),
-            playerlist: playerlistRoom(txAdmin),
-            liveconsole: liveconsoleRoom(txAdmin),
-            serverlog: serverlogRoom(txAdmin),
+            status: statusRoom,
+            dashboard: dashboardRoom,
+            playerlist: playerlistRoom,
+            liveconsole: liveconsoleRoom,
+            serverlog: serverlogRoom,
         };
 
         setInterval(this.flushBuffers.bind(this), 250);
@@ -86,7 +83,6 @@ export default class WebSocket {
             //@ts-ignore
             const reqIp = getIP(socket);
             const authResult = checkRequestAuth(
-                this.#txAdmin,
                 socket.handshake.headers,
                 reqIp,
                 isIpAddressLocal(reqIp),
@@ -127,7 +123,6 @@ export default class WebSocket {
             //Checking for session auth
             const reqIp = getIP(socket);
             const authResult = checkRequestAuth(
-                this.#txAdmin,
                 socket.handshake.headers,
                 reqIp,
                 isIpAddressLocal(reqIp),

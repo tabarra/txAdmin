@@ -23,9 +23,9 @@ export default async function Diagnostics(ctx: AuthedCtx) {
         message: '',
     };
     [data.host, data.txadmin, data.fxserver, data.proccesses] = await Promise.all([
-        diagnosticsFuncs.getHostData(ctx.txAdmin),
-        diagnosticsFuncs.getTxAdminData(ctx.txAdmin),
-        diagnosticsFuncs.getFXServerData(ctx.txAdmin),
+        diagnosticsFuncs.getHostData(),
+        diagnosticsFuncs.getTxAdminData(),
+        diagnosticsFuncs.getFXServerData(),
         diagnosticsFuncs.getProcessesData(),
     ]);
 

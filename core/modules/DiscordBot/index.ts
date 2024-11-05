@@ -32,7 +32,7 @@ type AnnouncementType = {
 
 
 export default class DiscordBot {
-    readonly #txAdmin: TxAdmin;
+    public config: DiscordBotConfigType;
     readonly #clientOptions: Discord.ClientOptions = {
         intents: [
             GatewayIntentBits.Guilds,
@@ -58,8 +58,8 @@ export default class DiscordBot {
     #lastGuildMembersCacheRefresh: number = 0; //ms
 
 
-    constructor(txAdmin: TxAdmin, public config: DiscordBotConfigType) {
-        this.#txAdmin = txAdmin;
+    constructor() {
+        this.config = txConfig.discordBot as any;
 
         if (this.config.enabled) {
             this.startBot().catch((e) => { });
@@ -88,7 +88,7 @@ export default class DiscordBot {
      */
     async refreshConfig() {
         this.#lastGuildMembersCacheRefresh = 0;
-        this.config = this.#txAdmin.configVault.getScoped('discordBot');
+        this.config = txCore.configVault.getScoped('discordBot');
         if (this.#client) {
             console.warn('Stopping Discord Bot');
             this.#client.destroy();
@@ -138,13 +138,13 @@ export default class DiscordBot {
             if (content.title) {
                 title = (typeof content.title === 'string')
                     ? content.title
-                    : this.#txAdmin.translator.t(content.title.key, content.title.data);
+                    : txCore.translator.t(content.title.key, content.title.data);
             }
             let description;
             if (content.description) {
                 description = (typeof content.description === 'string')
                     ? content.description
-                    : this.#txAdmin.translator.t(content.description.key, content.description.data);
+                    : txCore.translator.t(content.description.key, content.description.data);
             }
 
             const embed = new EmbedBuilder({ title, description }).setColor(embedColors[content.type]);
@@ -166,9 +166,9 @@ export default class DiscordBot {
 
         //Updating bot activity
         try {
-            const serverClients = this.#txAdmin.playerlistManager.onlineCount;
-            const serverMaxClients = this.#txAdmin.persistentCache.get('fxsRuntime:maxClients') ?? '??';
-            const serverName = this.#txAdmin.globalConfig.serverName;
+            const serverClients = txCore.playerlistManager.onlineCount;
+            const serverMaxClients = txCore.persistentCache.get('fxsRuntime:maxClients') ?? '??';
+            const serverName = txConfig.global.serverName;
             const message = `[${serverClients}/${serverMaxClients}] on ${serverName}`;
             this.#client.user.setActivity(message, { type: ActivityType.Watching });
         } catch (error) {
@@ -177,8 +177,8 @@ export default class DiscordBot {
 
         //Updating server status embed
         try {
-            const oldChannelId = this.#txAdmin.persistentCache.get('discord:status:channelId');
-            const oldMessageId = this.#txAdmin.persistentCache.get('discord:status:messageId');
+            const oldChannelId = txCore.persistentCache.get('discord:status:channelId');
+            const oldMessageId = txCore.persistentCache.get('discord:status:messageId');
 
             if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
                 const oldChannel = await this.#client.channels.fetch(oldChannelId);
@@ -186,7 +186,7 @@ export default class DiscordBot {
                 if (oldChannel.type !== ChannelType.GuildText && oldChannel.type !== ChannelType.GuildAnnouncement) {
                     throw new Error(`oldChannel is not guild text or announcement channel`);
                 }
-                await oldChannel.messages.edit(oldMessageId, generateStatusMessage(this.#txAdmin));
+                await oldChannel.messages.edit(oldMessageId, generateStatusMessage());
             }
 
         } catch (error) {
@@ -330,7 +330,7 @@ export default class DiscordBot {
                 console.verbose.ok('Connection with Discord API server resumed');
                 this.updateStatus().catch((e) => { });
             });
-            this.#client.on('interactionCreate', interactionCreateHandler.bind(null, this.#txAdmin));
+            this.#client.on('interactionCreate', interactionCreateHandler.bind(null, txCore));
             // this.#client.on('debug', console.verbose.debug);
 
             //Start bot

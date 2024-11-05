@@ -1,6 +1,5 @@
 const modulename = 'Fd3Handler';
 import { anyUndefined } from '@lib/misc';
-import TxAdmin from '@core/txAdmin';
 import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
@@ -27,11 +26,7 @@ type StructuredTraceType = {
  * Handles all the FD3 traces from the FXServer
  */
 export default class Fd3Handler {
-    readonly #txAdmin: TxAdmin;
-
-    constructor(txAdmin: TxAdmin) {
-        this.#txAdmin = txAdmin;
-    }
+    constructor() { }
 
 
     /**
@@ -47,20 +42,20 @@ export default class Fd3Handler {
     public write(mutex: string, trace: StructuredTraceType) {
         try {
             //Filter valid and fresh packages
-            if (mutex !== this.#txAdmin.fxRunner.currentMutex) return;
+            if (mutex !== txCore.fxRunner.currentMutex) return;
             if (anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
             const { channel, data } = trace.value;
 
             //Handle bind errors
             if (channel === 'citizen-server-impl' && data?.type === 'bind_error') {
                 try {
-                    if (!this.#txAdmin.fxRunner.restartDelayOverride) {
-                        this.#txAdmin.fxRunner.restartDelayOverride = 10000;
-                    } else if (this.#txAdmin.fxRunner.restartDelayOverride <= 45000) {
-                        this.#txAdmin.fxRunner.restartDelayOverride += 5000;
+                    if (!txCore.fxRunner.restartDelayOverride) {
+                        txCore.fxRunner.restartDelayOverride = 10000;
+                    } else if (txCore.fxRunner.restartDelayOverride <= 45000) {
+                        txCore.fxRunner.restartDelayOverride += 5000;
                     }
                     const [_ip, port] = data.address.split(':');
-                    deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${this.#txAdmin.fxRunner.restartDelayOverride}.`);
+                    deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${txCore.fxRunner.restartDelayOverride}.`);
                 } catch (e) { }
                 return;
             }
@@ -73,8 +68,8 @@ export default class Fd3Handler {
                     try {
                         const matches = /^(https:\/\/)?.*-([0-9a-z]{6,})\.users\.cfx\.re\/?$/.exec(data.url);
                         if (!matches || !matches[2]) throw new Error(`invalid cfxid`);
-                        this.#txAdmin.fxRunner.cfxId = matches[2];
-                        this.#txAdmin.persistentCache.set('fxsRuntime:cfxId', matches[2]);
+                        txCore.fxRunner.cfxId = matches[2];
+                        txCore.persistentCache.set('fxsRuntime:cfxId', matches[2]);
                     } catch (error) {
                         console.error(`Error decoding server nucleus URL.`);
                     }
@@ -101,19 +96,19 @@ export default class Fd3Handler {
                 && data.resource === 'monitor'
             ) {
                 if (data.payload.type === 'txAdminHeartBeat') {
-                    this.#txAdmin.healthMonitor.handleHeartBeat('fd3');
+                    txCore.healthMonitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
-                    this.#txAdmin.logger.server.write(data.payload.logs, mutex);
+                    txCore.logger.server.write(data.payload.logs, mutex);
                 } else if (data.payload.type === 'txAdminLogNodeHeap') {
-                    this.#txAdmin.statsManager.svRuntime.logServerNodeMemory(data.payload);
+                    txCore.statsManager.svRuntime.logServerNodeMemory(data.payload);
                 } else if (data.payload.type === 'txAdminResourceEvent') {
-                    this.#txAdmin.resourcesManager.handleServerEvents(data.payload, mutex);
+                    txCore.resourcesManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminPlayerlistEvent') {
-                    this.#txAdmin.playerlistManager.handleServerEvents(data.payload, mutex);
+                    txCore.playerlistManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminCommandBridge') {
                     this.bridgeCommand(data.payload);
                 } else if (data.payload.type === 'txAdminAckWarning') {
-                    this.#txAdmin.playerDatabase.actions.ackWarn(data.payload.actionId);
+                    txCore.playerDatabase.actions.ackWarn(data.payload.actionId);
                 }
             }
         } catch (error) {
@@ -138,14 +133,14 @@ export default class Fd3Handler {
 
                 //Resolve admin
                 const author = payload.author;
-                this.#txAdmin.logger.admin.write(author, `Sending announcement: ${message}`);
+                txCore.logger.admin.write(author, `Sending announcement: ${message}`);
 
                 // Dispatch `txAdmin:events:announcement`
-                this.#txAdmin.fxRunner.sendEvent('announcement', { message, author });
+                txCore.fxRunner.sendEvent('announcement', { message, author });
 
                 // Sending discord announcement
-                const publicAuthor = this.#txAdmin.adminVault.getAdminPublicName(payload.author, 'message');
-                this.#txAdmin.discordBot.sendAnnouncement({
+                const publicAuthor = txCore.adminVault.getAdminPublicName(payload.author, 'message');
+                txCore.discordBot.sendAnnouncement({
                     type: 'info',
                     title: {
                         key: 'nui_menu.misc.announcement_title',

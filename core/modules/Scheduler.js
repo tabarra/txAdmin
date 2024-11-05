@@ -31,17 +31,16 @@ const getNextScheduled = (parsedSchedule) => {
 
 
 export default class Scheduler {
-    constructor(config) {
-        this.config = config;
+    constructor() {
+        this.config = txConfig.monitor;
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.calculatedNextRestartMinuteFloorTs = false;
-        this.checkSchedule();
 
         //Cron Function 
         setInterval(() => {
             this.checkSchedule();
-            globals.webServer?.webSocket.pushRefresh('status');
+            txCore.webServer.webSocket.pushRefresh('status');
         }, 60 * 1000);
     }
 
@@ -50,11 +49,11 @@ export default class Scheduler {
      * Refresh configs, resets skip and temp scheduled, runs checkSchedule.
      */
     refreshConfig() {
-        this.config = globals.configVault.getScoped('monitor');
+        this.config = txCore.configVault.getScoped('monitor');
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.checkSchedule();
-        globals.webServer?.webSocket.pushRefresh('status');
+        txCore.webServer.webSocket.pushRefresh('status');
     }
 
     /**
@@ -99,7 +98,7 @@ export default class Scheduler {
             }
 
             //Dispatch `txAdmin:events:skippedNextScheduledRestart`
-            globals.fxRunner.sendEvent('skippedNextScheduledRestart', {
+            txCore.fxRunner.sendEvent('skippedNextScheduledRestart', {
                 secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
                 temporary
             });
@@ -111,7 +110,7 @@ export default class Scheduler {
         this.checkSchedule();
 
         //Refresh UI
-        globals.webServer?.webSocket.pushRefresh('status');
+        txCore.webServer.webSocket.pushRefresh('status');
     }
 
 
@@ -169,7 +168,7 @@ export default class Scheduler {
         this.checkSchedule();
 
         //Refresh UI
-        globals.webServer?.webSocket.pushRefresh('status');
+        txCore.webServer.webSocket.pushRefresh('status');
     }
 
 
@@ -207,7 +206,7 @@ export default class Scheduler {
             //restart server
             this.restartFXServer(
                 `scheduled restart at ${nextRestart.string}`,
-                globals.translator.t('restarter.schedule_reason', { time: nextRestart.string }),
+                txCore.translator.t('restarter.schedule_reason', { time: nextRestart.string }),
             );
 
             //reset next scheduled
@@ -216,11 +215,11 @@ export default class Scheduler {
         } else if (scheduleWarnings.includes(nextDistMins)) {
             const tOptions = {
                 smart_count: nextDistMins,
-                servername: globals.txAdmin.globalConfig.serverName,
+                servername: txConfig.global.serverName,
             };
 
             //Send discord warning
-            globals.discordBot.sendAnnouncement({
+            txCore.discordBot.sendAnnouncement({
                 type: 'warning',
                 description: {
                     key: 'restarter.schedule_warn_discord',
@@ -229,9 +228,9 @@ export default class Scheduler {
             });
 
             //Dispatch `txAdmin:events:scheduledRestart` 
-            globals.fxRunner.sendEvent('scheduledRestart', {
+            txCore.fxRunner.sendEvent('scheduledRestart', {
                 secondsRemaining: nextDistMins * 60,
-                translatedMessage: globals.translator.t('restarter.schedule_warn', tOptions)
+                translatedMessage: txCore.translator.t('restarter.schedule_warn', tOptions)
             });
         }
     }
@@ -244,14 +243,14 @@ export default class Scheduler {
      */
     async restartFXServer(reasonInternal, reasonTranslated) {
         //sanity check
-        if (globals.fxRunner.fxChild === null) {
+        if (txCore.fxRunner.fxChild === null) {
             console.warn('Server not started, no need to restart');
             return false;
         }
 
         //Restart server
         const logMessage = `Restarting server (${reasonInternal}).`;
-        globals.logger.admin.write('SCHEDULER', logMessage);
-        globals.fxRunner.restartServer(reasonTranslated, null);
+        txCore.logger.admin.write('SCHEDULER', logMessage);
+        txCore.fxRunner.restartServer(reasonTranslated, null);
     }
 };

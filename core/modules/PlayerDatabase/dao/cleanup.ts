@@ -1,4 +1,3 @@
-import TxAdmin from "@core/txAdmin";
 import { Database, SavePriority } from "../database";
 import consoleFactory from '@lib/console';
 import { DatabasePlayerType, DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from '../databaseTypes';
@@ -7,10 +6,7 @@ const console = consoleFactory('PlayerDatabase');
 
 
 export default class CleanupDao {
-    constructor(
-        private readonly txAdmin: TxAdmin,
-        private readonly db: Database,
-    ) { }
+    constructor(private readonly db: Database) { }
 
     private get dbo() {
         if (!this.db.obj || !this.db.isReady) throw new Error(`database not ready yet`);
@@ -121,12 +117,12 @@ export default class CleanupDao {
             const wlRequestsFilter = (req: DatabaseWhitelistRequestsType) => {
                 return (req.tsLastAttempt < sevenDaysAgo);
             }
-            wlRequestsRemoved = this.txAdmin.playerDatabase.whitelist.removeManyRequests(wlRequestsFilter).length;
+            wlRequestsRemoved = txCore.playerDatabase.whitelist.removeManyRequests(wlRequestsFilter).length;
 
             const wlApprovalsFilter = (req: DatabaseWhitelistApprovalsType) => {
                 return (req.tsApproved < sevenDaysAgo);
             }
-            wlApprovalsRemoved = this.txAdmin.playerDatabase.whitelist.removeManyApprovals(wlApprovalsFilter).length;
+            wlApprovalsRemoved = txCore.playerDatabase.whitelist.removeManyApprovals(wlApprovalsFilter).length;
         } catch (error) {
             const msg = `Failed to optimize players database with error: ${(error as Error).message}`;
             console.error(msg);

@@ -36,15 +36,15 @@ export default class HealthMonitor {
     //Status tracking
     public currentStatus: HealthStatus = HealthStatus.OFFLINE;
     private lastHealthCheckErrorMessage: string | null = null; //to print warning
-    private hasServerStartedYet = false;
     private isAwaitingRestart = false; //to prevent spamming while the server restarts (5s)
+    private hasServerStartedYet = false;
 
     //to prevent DDoS crash false positive
     private readonly swLastRefreshStatus = new Stopwatch();
 
     //to prevent spamming
-    private readonly swLastStatusWarning = new Stopwatch();
     private readonly swLastRestartWarning = new Stopwatch();
+    private readonly swLastStatusWarning = new Stopwatch();
 
     //to see if its above limit
     private readonly swLastHealthCheck = new Stopwatch();
@@ -52,15 +52,12 @@ export default class HealthMonitor {
     private readonly swLastHTTP = new Stopwatch();
 
 
-    constructor(config: any) {
-        this.config = config;
+    constructor() {
+        this.config = txConfig.monitor;
 
         //Checking config validity
         if (this.config.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
         if (this.config.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
-
-        //Setting up
-        this.resetMonitorStats();
 
         //Cron functions
         setInterval(() => {
@@ -73,7 +70,7 @@ export default class HealthMonitor {
         //relies on this event every 5 seconds
         setInterval(async () => {
             this.hostStats = await getHostStats();
-            globals.webServer?.webSocket.pushRefresh('status');
+            txCore.webServer.webSocket.pushRefresh('status');
         }, 5000);
     }
 
@@ -82,7 +79,7 @@ export default class HealthMonitor {
      * Refresh Monitor configurations
      */
     refreshConfig() {
-        this.config = globals.configVault.getScoped('monitor');
+        this.config = txCore.configVault.getScoped('monitor');
     }
 
 
@@ -91,7 +88,7 @@ export default class HealthMonitor {
      */
     async restartFxChild(reasonInternal: string, reasonTranslated: string, timesPrefix: string) {
         //sanity check
-        if (globals.fxRunner.fxChild === null) {
+        if (txCore.fxRunner.fxChild === null) {
             console.warn('Server not started, no need to restart');
             return false;
         }
@@ -99,20 +96,20 @@ export default class HealthMonitor {
         //Restart server
         this.isAwaitingRestart = true;
         const logMessage = `Restarting server: ${reasonInternal} ${timesPrefix}`;
-        globals.logger.admin.write('MONITOR', logMessage);
-        globals.logger.fxserver.logInformational(logMessage);
-        globals.fxRunner.restartServer(reasonTranslated);
+        txCore.logger.admin.write('MONITOR', logMessage);
+        txCore.logger.fxserver.logInformational(logMessage);
+        txCore.fxRunner.restartServer(reasonTranslated);
     }
 
 
     /**
-     * FIXME: descrição
+     * Sets the current status and propagates the change to the Discord Bot and WebServer
      */
     setCurrentStatus(newStatus: HealthStatus) {
         if (newStatus !== this.currentStatus) {
             this.currentStatus = newStatus;
-            globals.discordBot.updateStatus().catch((e) => { });
-            globals.webServer?.webSocket.pushRefresh('status');
+            txCore.discordBot.updateStatus().catch((e) => { });
+            txCore.webServer.webSocket.pushRefresh('status');
         }
     }
 
@@ -141,12 +138,12 @@ export default class HealthMonitor {
      */
     async sendHealthCheck() {
         //Check if the server is supposed to be offline
-        if (globals.fxRunner.fxChild === null || globals.fxRunner.fxServerHost === null) return;
+        if (txCore.fxRunner.fxChild === null || txCore.fxRunner.fxServerHost === null) return;
 
         //Make request
         let dynamicResp;
         const requestOptions = {
-            url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
+            url: `http://${txCore.fxRunner.fxServerHost}/dynamic.json`,
             maxRedirects: 0,
             timeout: {
                 request: HC_CONFIG.requestTimeout,
@@ -170,12 +167,12 @@ export default class HealthMonitor {
         if (dynamicResp && dynamicResp.sv_maxclients !== undefined) {
             const maxClients = parseInt(dynamicResp.sv_maxclients);
             if (!isNaN(maxClients)) {
-                globals.persistentCache.set('fxsRuntime:maxClients', maxClients);
+                txCore.persistentCache.set('fxsRuntime:maxClients', maxClients);
 
                 if (convars.deployerDefaults?.maxClients && maxClients > convars.deployerDefaults.maxClients) {
-                    globals.fxRunner.sendCommand('sv_maxclients', [convars.deployerDefaults.maxClients]);
+                    txCore.fxRunner.sendCommand('sv_maxclients', [convars.deployerDefaults.maxClients]);
                     console.error(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
-                    globals.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
+                    txCore.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
                 }
             }
         }
@@ -194,7 +191,7 @@ export default class HealthMonitor {
      */
     refreshServerStatus() {
         //Check if the server is supposed to be offline
-        if (globals.fxRunner.fxChild === null) return this.resetMonitorStats();
+        if (txCore.fxRunner.fxChild === null) return this.resetMonitorStats();
 
         //Ignore check while server is restarting
         if (this.isAwaitingRestart) return;
@@ -218,7 +215,7 @@ export default class HealthMonitor {
             this.swLastHTTP.elapsed,
         );
         const heartBeatFailed = anySuccessfulHeartBeat && elapsedHeartBeat > HB_CONFIG.failThreshold;
-        const processUptime = globals.fxRunner.getUptime();
+        const processUptime = txCore.fxRunner.getUptime();
 
         //Check if its online and return
         if (
@@ -230,8 +227,8 @@ export default class HealthMonitor {
             this.setCurrentStatus(HealthStatus.ONLINE);
             if (this.hasServerStartedYet === false) {
                 this.hasServerStartedYet = true;
-                globals.statsManager.txRuntime.registerFxserverBoot(processUptime);
-                globals.statsManager.svRuntime.logServerBoot(processUptime);
+                txCore.statsManager.txRuntime.registerFxserverBoot(processUptime);
+                txCore.statsManager.svRuntime.logServerBoot(processUptime);
             }
             return;
         }
@@ -251,12 +248,12 @@ export default class HealthMonitor {
         }
 
         //Check if fxChild is closed, in this case no need to wait the failure count
-        const processStatus = globals.fxRunner.getStatus();
+        const processStatus = txCore.fxRunner.getStatus();
         if (processStatus === 'closed') {
-            globals.statsManager.txRuntime.registerFxserverRestart('close');
+            txCore.statsManager.txRuntime.registerFxserverRestart('close');
             this.restartFxChild(
                 'server close detected',
-                globals.translator.t('restarter.crash_detected'),
+                txCore.translator.t('restarter.crash_detected'),
                 timesPrefix,
             );
             return;
@@ -285,25 +282,25 @@ export default class HealthMonitor {
             this.swLastRestartWarning.restart();
 
             //Sending discord announcement
-            globals.discordBot.sendAnnouncement({
+            txCore.discordBot.sendAnnouncement({
                 type: 'danger',
                 description: {
                     key: 'restarter.partial_hang_warn_discord',
-                    data: { servername: globals.txAdmin.globalConfig.serverName },
+                    data: { servername: txConfig.global.serverName },
                 },
             });
 
             // Dispatch `txAdmin:events:announcement`
-            const _cmdOk = globals.fxRunner.sendEvent('announcement', {
+            const _cmdOk = txCore.fxRunner.sendEvent('announcement', {
                 author: 'txAdmin',
-                message: globals.translator.t('restarter.partial_hang_warn'),
+                message: txCore.translator.t('restarter.partial_hang_warn'),
             });
         }
 
         //Give a bit more time to the very very slow servers to come up
         //They usually start replying to healthchecks way before sending heartbeats
         //Only logWarn/skip if there is a resource start pending
-        const starting = globals.resourcesManager.tmpGetPendingStart();
+        const starting = txCore.resourcesManager.tmpGetPendingStart();
         if (
             anySuccessfulHeartBeat === false
             && starting.startingElapsedSecs !== null
@@ -338,21 +335,21 @@ export default class HealthMonitor {
                     //Resource didn't finish starting (if res boot still active)
                     this.restartFxChild(
                         `resource "${starting.startingResName}" failed to start within the ${this.config.resourceStartingTolerance}s time limit`,
-                        globals.translator.t('restarter.start_timeout'),
+                        txCore.translator.t('restarter.start_timeout'),
                         timesPrefix,
                     );
                 } else if (starting.lastStartElapsedSecs !== null) {
                     //Resources started, but no heartbeat whithin limit after that
                     this.restartFxChild(
                         `server failed to start within time limit - ${HB_CONFIG.resStartedCooldown}s after last resource started`,
-                        globals.translator.t('restarter.start_timeout'),
+                        txCore.translator.t('restarter.start_timeout'),
                         timesPrefix,
                     );
                 } else {
                     //No resource started starting, hb over limit
                     this.restartFxChild(
                         `server failed to start within time limit - ${HB_CONFIG.failLimit}s, no onResourceStarting received`,
-                        globals.translator.t('restarter.start_timeout'),
+                        txCore.translator.t('restarter.start_timeout'),
                         timesPrefix,
                     );
                 }
@@ -360,7 +357,7 @@ export default class HealthMonitor {
                 //HB started, but HC didn't
                 this.restartFxChild(
                     `server failed to start within time limit - resources running but HTTP endpoint unreachable`,
-                    globals.translator.t('restarter.start_timeout'),
+                    txCore.translator.t('restarter.start_timeout'),
                     timesPrefix,
                 );
             } else {
@@ -376,10 +373,10 @@ export default class HealthMonitor {
                     issueMsg = 'server resources hang detected';
                     issueSrc = 'heartBeat' as const;
                 }
-                globals.statsManager.txRuntime.registerFxserverRestart(issueSrc);
+                txCore.statsManager.txRuntime.registerFxserverRestart(issueSrc);
                 this.restartFxChild(
                     issueMsg,
-                    globals.translator.t('restarter.hang_detected'),
+                    txCore.translator.t('restarter.hang_detected'),
                     timesPrefix,
                 );
             }
@@ -398,7 +395,7 @@ export default class HealthMonitor {
                 && this.swLastHTTP.elapsed > 15
                 && this.swLastFD3.elapsed < 5
             ) {
-                globals.statsManager.txRuntime.registerFxserverHealthIssue('http');
+                txCore.statsManager.txRuntime.registerFxserverHealthIssue('http');
             }
             this.swLastFD3.restart();
         } else if (source === 'http') {
@@ -407,7 +404,7 @@ export default class HealthMonitor {
                 && this.swLastFD3.elapsed > 15
                 && this.swLastHTTP.elapsed < 5
             ) {
-                globals.statsManager.txRuntime.registerFxserverHealthIssue('fd3');
+                txCore.statsManager.txRuntime.registerFxserverHealthIssue('fd3');
             }
             this.swLastHTTP.restart();
         }

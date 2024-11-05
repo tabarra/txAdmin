@@ -28,7 +28,7 @@ export default async function AuthAddMasterSave(ctx: InitializedCtx) {
     const { password, discordId } = schemaRes.data;
 
     //Check if there are already admins set up
-    if (ctx.txAdmin.adminVault.hasAdmins()) {
+    if (txCore.adminVault.hasAdmins()) {
         return ctx.send<ApiAddMasterSaveResp>({
             error: `master_already_set`,
         });
@@ -60,7 +60,7 @@ export default async function AuthAddMasterSave(ctx: InitializedCtx) {
 
     //Create admins file and log in admin
     try {
-        const vaultAdmin = ctx.txAdmin.adminVault.createAdminsFile(
+        const vaultAdmin = txCore.adminVault.createAdminsFile(
             userInfo.name,
             fivemIdentifier,
             userInfo,
@@ -71,20 +71,20 @@ export default async function AuthAddMasterSave(ctx: InitializedCtx) {
 
         //If the user has a picture, save it to the cache
         if (userInfo.picture) {
-            ctx.txAdmin.persistentCache.set(`admin:picture:${userInfo.name}`, userInfo.picture);
+            txCore.persistentCache.set(`admin:picture:${userInfo.name}`, userInfo.picture);
         }
 
         //Setting session
         const sessData = {
             type: 'cfxre',
             username: userInfo.name,
-            csrfToken: ctx.txAdmin.adminVault.genCsrfToken(),
+            csrfToken: txCore.adminVault.genCsrfToken(),
             expiresAt: Date.now() + 86_400_000, //24h,
             identifier: fivemIdentifier,
         } satisfies CfxreSessAuthType;
         ctx.sessTools.set({ auth: sessData });
 
-        const authedAdmin = new AuthedAdmin(ctx.txAdmin, vaultAdmin, sessData.csrfToken);
+        const authedAdmin = new AuthedAdmin(vaultAdmin, sessData.csrfToken);
         authedAdmin.logAction(`created admins file`);
         return ctx.send<ApiAddMasterSaveResp>(authedAdmin.getAuthData());
     } catch (error) {

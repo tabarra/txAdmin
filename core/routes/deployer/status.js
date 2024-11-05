@@ -14,18 +14,18 @@ export default async function DeployerStatus(ctx) {
     }
 
     //Check if this is the correct state for the deployer
-    if (globals.deployer == null) {
+    if (txManager.deployer == null) {
         return ctx.send({success: false, refresh: true});
     }
 
     //Prepare data
     const outData = {
-        progress: globals.deployer.progress,
-        log: globals.deployer.getDeployerLog(),
+        progress: txManager.deployer.progress,
+        log: txManager.deployer.getDeployerLog(),
     };
-    if (globals.deployer.step == 'configure') {
+    if (txManager.deployer.step == 'configure') {
         outData.status = 'done';
-    } else if (globals.deployer.deployFailed) {
+    } else if (txManager.deployer.deployFailed) {
         outData.status = 'failed';
     } else {
         outData.status = 'running';

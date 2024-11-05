@@ -25,7 +25,7 @@ export default class ResourcesManager {
     lastResourceStartTime: Date | null = null;
     resourceReport?: ResourceReportType;
 
-    constructor() {}
+    constructor() { }
 
 
     /**

@@ -1,7 +1,6 @@
 const modulename = 'PlayerDropStatsManager';
 import fsp from 'node:fs/promises';
 import consoleFactory from '@lib/console';
-import type TxAdmin from '@core/txAdmin.js';
 import { PDLChangeEventType, PDLFileSchema, PDLFileType, PDLHourlyRawType, PDLHourlyType, PDLServerBootDataSchema } from './playerDropSchemas';
 import { classifyDrop } from './classifyDropReason';
 import { PDL_RETENTION, PDL_UNKNOWN_LIST_SIZE_LIMIT } from './config';
@@ -29,7 +28,6 @@ const LOG_DATA_FILE_NAME = 'stats_playerDrop.json';
  * NOTE: PDL = PlayerDropLog
  */
 export default class PlayerDropStatsManager {
-    readonly #txAdmin: TxAdmin;
     private readonly logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
     private eventLog: PDLHourlyType[] = [];
     private lastGameVersion: string | undefined;
@@ -42,8 +40,7 @@ export default class PlayerDropStatsManager {
         { noLeading: true }
     );
 
-    constructor(txAdmin: TxAdmin) {
-        this.#txAdmin = txAdmin;
+    constructor() {
         this.loadEventLog();
     }
 

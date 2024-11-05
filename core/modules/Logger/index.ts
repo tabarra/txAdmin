@@ -1,42 +1,38 @@
 const modulename = 'Logger';
-import rfs from 'rotating-file-stream';
+import type { Options as RfsOptions } from 'rotating-file-stream';
 import AdminLogger from './handlers/admin';
 import FXServerLogger from './FXServerLogger';
 import ServerLogger from './handlers/server';
 import { getLogSizes } from './loggerUtils.js';
 import consoleFactory from '@lib/console';
-import TxAdmin from '@core/txAdmin';
 import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 type LoggerConfigType = {
-    admin: rfs.Options;
-    fxserver: rfs.Options;
-    server: rfs.Options;
+    admin: RfsOptions;
+    fxserver: RfsOptions;
+    server: RfsOptions;
 }
 
 /**
  * Main logger component that holds all the loggers.
  */
 export default class Logger {
-    private readonly txAdmin: TxAdmin;
     private readonly config: LoggerConfigType;
-    private readonly basePath: string;
+    private readonly basePath = `${txEnv.profilePath}/logs/`;
     public readonly admin: AdminLogger;
     public readonly fxserver: FXServerLogger;
     public readonly server: ServerLogger;
 
-    constructor(txAdmin: TxAdmin, config: LoggerConfigType) {
-        //Config stuff
-        this.txAdmin = txAdmin;
-        this.config = config;
-        this.basePath = `${txEnv.profilePath}/logs/`;
+    constructor() {
+        this.config = txConfig.logger as any;
 
         //Starting handlers
-        this.admin = new AdminLogger(txAdmin, this.basePath, this.config.admin);
-        this.fxserver = new FXServerLogger(txAdmin, this.basePath, this.config.fxserver);
-        this.server = new ServerLogger(txAdmin, this.basePath, this.config.server);
+        this.admin = new AdminLogger(this.basePath, this.config.admin);
+        this.fxserver = new FXServerLogger(this.basePath, this.config.fxserver);
+        this.server = new ServerLogger(this.basePath, this.config.server);
     }
+
 
     /**
      * Returns the total size of the log files used.

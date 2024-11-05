@@ -5,7 +5,6 @@ import Polyglot from 'node-polyglot';
 import { txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import consoleFactory from '@lib/console';
-import TxAdmin from '@core/txAdmin';
 import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 
@@ -16,15 +15,13 @@ const console = consoleFactory(modulename);
  * For the future, its probably a good idea to upgrade to i18next
  */
 export default class Translator {
-    readonly #txAdmin: TxAdmin;
     language: string;
     canonical: string = 'en-GB';
     readonly customLocalePath: string;
     #polyglot: Polyglot | null = null;
 
-    constructor(txAdmin: TxAdmin) {
-        this.#txAdmin = txAdmin;
-        this.language = txAdmin.globalConfig.language;
+    constructor() {
+        this.language = txConfig.global.language;
         this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');
 
         //Load language
@@ -68,12 +65,12 @@ export default class Translator {
      */
     refreshConfig() {
         //Change config and restart polyglot
-        this.language = this.#txAdmin.globalConfig.language;
+        this.language = txConfig.global.language;
         this.setupTranslator(false);
 
         //Rebuild Monitor's schedule with new text and refreshes fxserver convars
         try {
-            this.#txAdmin.fxRunner.resetConvars();
+            txCore.fxRunner.resetConvars();
         } catch (error) {
             console.verbose.dir(error);
         }

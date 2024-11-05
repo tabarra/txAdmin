@@ -1,8 +1,10 @@
-import { txEnv } from '@core/globalData';
-import { printBanner } from './boot/banner';
+import consoleFactory from '@lib/console';
+import fatalError from '@lib/fatalError';
+import { getCoreProxy } from './boot/globalPlaceholder';
 
-import AdminVault from '@modules/AdminVault';
+import TxManager from './txManager';
 import ConfigVault from '@modules/ConfigVault';
+import AdminVault from '@modules/AdminVault';
 import DiscordBot from '@modules/DiscordBot';
 import DynamicAds from '@modules/DynamicAds';
 import FxRunner from '@modules/FxRunner';
@@ -17,177 +19,94 @@ import PlayerlistManager from '@modules/PlayerlistManager';
 import PlayerDatabase from '@modules/PlayerDatabase';
 import PersistentCache from '@modules/PersistentCache';
 import CfxUpdateChecker from '@modules/CfxUpdateChecker';
-
-import consoleFactory from '@lib/console';
-import { getHostData } from '@lib/diagnostics';
-import fatalError from '@lib/fatalError';
 const console = consoleFactory();
 
 
-// FIXME: replace with GlobalPlaceholder
-const globalsInternal: Record<string, any> = {
-    txAdmin: null, //self reference for webroutes that need to access it from the globals
+export type TxCoreType = {
+    configVault: ConfigVault;
+    adminVault: AdminVault;
+    discordBot: DiscordBot;
+    logger: Logger;
+    translator: Translator;
+    fxRunner: FxRunner;
+    dynamicAds: DynamicAds;
+    healthMonitor: HealthMonitor;
+    scheduler: Scheduler;
+    statsManager: StatsManager;
+    webServer: WebServer;
+    resourcesManager: ResourcesManager;
+    playerlistManager: PlayerlistManager;
+    playerDatabase: PlayerDatabase;
+    persistentCache: PersistentCache;
+    cfxUpdateChecker: CfxUpdateChecker;
+}
 
-    adminVault: null,
-    discordBot: null,
-    fxRunner: null,
-    logger: null,
-    dynamicAds: null,
-    healthMonitor: null,
-    scheduler: null,
-    statsManager: null,
-    translator: null,
-    webServer: null,
-    resourcesManager: null,
-    playerlistManager: null,
-    playerDatabase: null,
-    deployer: null,
-    cfxUpdateChecker: null,
-    info: {},
-
-    //FIXME: settings:save webroute cannot call txAdmin.refreshConfig for now
-    //so this hack allows it to call it
-    func_txAdminRefreshConfig: () => { },
-};
-
-//@ts-ignore: yes i know this is wrong
-global.globals = globalsInternal;
+// FIXME: figure out how to deal with the banner
+// talvez isso seja responsabilidade do txManager?
 
 
-/**
- * Main APP
- */
-export default class TxAdmin {
-    configVault;
-    adminVault;
-    discordBot;
-    logger;
-    translator;
-    fxRunner;
-    dynamicAds;
-    healthMonitor;
-    scheduler;
-    statsManager;
-    webServer;
-    resourcesManager;
-    playerlistManager;
-    playerDatabase;
-    persistentCache;
-    cfxUpdateChecker;
+export default function bootTxAdmin() {
+    /**
+     * MARK: Setting up Globals
+     */
+    //Initialize the global txCore object
+    const _txCore = {
+        configVault: new ConfigVault(),
+    } as TxCoreType;
 
-    //Runtime
-    globalConfig: {
-        serverName: string,
-        language: string,
-        menuEnabled: boolean,
-        menuAlignRight: boolean,
-        menuPageKey: string,
+    //Setting up the global txCore object as a Proxy
+    (globalThis as any).txCore = getCoreProxy(_txCore);
 
-        hideDefaultAnnouncement: boolean,
-        hideDefaultDirectMessage: boolean,
-        hideDefaultWarning: boolean,
-        hideDefaultScheduledRestartWarning: boolean,
-        hideAdminInPunishments: boolean,
-        hideAdminInMessages: boolean,
+    //Setting up & Validating txConfig
+    if (!txConfig || typeof txConfig !== 'object' || txConfig === null) {
+        throw new Error('txConfig is not defined');
     }
 
+    //Initialize the txManager
+    (globalThis as any).txManager = new TxManager();
 
-    constructor() {
-        console.log(`Starting profile '${txEnv.profile}' on v${txEnv.txaVersion}/b${txEnv.fxsVersionDisplay}`);
-
-        //FIXME: hacky self reference because some webroutes need to access globals.txAdmin to pass it down
-        globalsInternal.txAdmin = this;
-
-        //Load Config Vault
-        let profileConfig;
-        try {
-            this.configVault = new ConfigVault(txEnv.profilePath, txEnv.profile);
-            globalsInternal.configVault = this.configVault;
-            profileConfig = globalsInternal.configVault.getAll();
-            this.globalConfig = profileConfig.global;
-
-            //FIXME: hacky fix for settings:save to be able to update this
-            globalsInternal.func_txAdminRefreshConfig = this.refreshConfig.bind(this);
-        } catch (error) {
-            fatalError.Boot(20, 'Failed to start ConfigVault', error);
-        }
-
-        //Start all modules
-        //NOTE: dependency order
-        //  - translator before fxrunner (for the locale string)
-        //  - translator before scheduler (in case it tries to send translated msg immediately)
-        //  - adminVault before webserver
-        //  - logger before fxrunner
-        //FIXME: After the migration, delete the globalsInternal.
-
-        //FIXME: group the modules into two groups, one is the "core stuff" (server running, web open, banner, database, etc)
-        //FIXME: and the other group can start on the next tick
-        try {
-            this.adminVault = new AdminVault();
-            globalsInternal.adminVault = this.adminVault;
-
-            this.discordBot = new DiscordBot(this, profileConfig.discordBot);
-            globalsInternal.discordBot = this.discordBot;
-
-            this.logger = new Logger(this, profileConfig.logger);
-            globalsInternal.logger = this.logger;
-
-            this.translator = new Translator(this);
-            globalsInternal.translator = this.translator;
-
-            this.fxRunner = new FxRunner(this, profileConfig.fxRunner);
-            globalsInternal.fxRunner = this.fxRunner;
-
-            this.dynamicAds = new DynamicAds();
-            globalsInternal.dynamicAds = this.dynamicAds;
-
-            this.healthMonitor = new HealthMonitor(profileConfig.monitor);
-            globalsInternal.healthMonitor = this.healthMonitor;
-
-            this.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
-            globalsInternal.scheduler = this.scheduler;
-
-            this.statsManager = new StatsManager(this);
-            globalsInternal.statsManager = this.statsManager;
-
-            this.webServer = new WebServer(this, profileConfig.webServer);
-            globalsInternal.webServer = this.webServer;
-
-            this.resourcesManager = new ResourcesManager();
-            globalsInternal.resourcesManager = this.resourcesManager;
-
-            this.playerlistManager = new PlayerlistManager(this);
-            globalsInternal.playerlistManager = this.playerlistManager;
-
-            this.playerDatabase = new PlayerDatabase(this, profileConfig.playerDatabase);
-            globalsInternal.playerDatabase = this.playerDatabase;
-
-            this.persistentCache = new PersistentCache(this);
-            globalsInternal.persistentCache = this.persistentCache;
-
-            this.cfxUpdateChecker = new CfxUpdateChecker(this);
-            globalsInternal.cfxUpdateChecker = this.cfxUpdateChecker;
-        } catch (error) {
-            fatalError.Boot(21, 'Failed to start modules', error);
-        }
-
-        //Once they all finish loading, the function below will print the banner
-        try {
-            printBanner();
-        } catch (error) {
-            console.dir(error);
-        }
-
-        //Pre-calculate static data
-        setTimeout(() => {
-            getHostData(this).catch((e) => { });
-        }, 10_000);
-    }
 
     /**
-     * Refreshes the global config
+     * MARK: Booting Modules
      */
-    refreshConfig() {
-        this.globalConfig = this.configVault.getScoped('global');
-    }
-};
+    //Helper function to start the modules
+    const startModule = <T>(Class: GenericTxModule<T>, prop: keyof TxCoreType): T => {
+        const instance = new Class();
+        //TODO: add config keys registration
+        return instance;
+    };
+
+    //FIXME: voltar fazendo um double check fo first tick
+
+    //High Priority (required for banner) 
+    /*[ ]*/_txCore.adminVault = startModule(AdminVault, 'adminVault');
+    /*[ ]*/_txCore.webServer = startModule(WebServer, 'webServer');
+    /*[ ]*/_txCore.playerDatabase = startModule(PlayerDatabase, 'playerDatabase');
+
+    //Required for signalStartReady() NOTE: renomear pra "auto start" e os low priority pra "manual start"?
+    /*[ ]*/_txCore.healthMonitor = startModule(HealthMonitor, 'healthMonitor');
+    /*[ ]*/_txCore.discordBot = startModule(DiscordBot, 'discordBot');
+    /*[ ]*/_txCore.logger = startModule(Logger, 'logger');
+    /*[ ]*/_txCore.fxRunner = startModule(FxRunner, 'fxRunner');
+
+    //FIXME: do signalStartReady()?
+
+    //Low Priority
+    /*[ ]*/_txCore.translator = startModule(Translator, 'translator');
+    /*[ ]*/_txCore.scheduler = startModule(Scheduler, 'scheduler');
+    /*[ ]*/_txCore.statsManager = startModule(StatsManager, 'statsManager');
+    /*[ ]*/_txCore.resourcesManager = startModule(ResourcesManager, 'resourcesManager'); //FIXME: melhor ser antes?
+    /*[ ]*/_txCore.playerlistManager = startModule(PlayerlistManager, 'playerlistManager'); //FIXME: melhor ser antes?
+    /*[ ]*/_txCore.persistentCache = startModule(PersistentCache, 'persistentCache');
+
+    //Very Low Priority
+    /*[ ]*/_txCore.dynamicAds = startModule(DynamicAds, 'dynamicAds');
+    /*[ ]*/_txCore.cfxUpdateChecker = startModule(CfxUpdateChecker, 'cfxUpdateChecker');
+
+
+    /**
+     * MARK: Finalizing Boot
+     */
+    delete (globalThis as any).txCore;
+    (globalThis as any).txCore = _txCore;
+}

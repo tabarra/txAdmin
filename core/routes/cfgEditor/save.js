@@ -29,7 +29,7 @@ export default async function CFGEditorSave(ctx) {
     }
 
     //Check if file is set
-    if (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath) {
+    if (!txConfig.fxRunner.cfgPath || !txConfig.fxRunner.serverDataPath) {
         const message = 'CFG or Base Path not defined. Configure it in the settings page first.';
         return ctx.send({type: 'danger', message});
     }
@@ -40,8 +40,8 @@ export default async function CFGEditorSave(ctx) {
     try {
         result = await validateModifyServerConfig(
             ctx.request.body.cfgData,
-            globals.fxRunner.config.cfgPath,
-            globals.fxRunner.config.serverDataPath,
+            txConfig.fxRunner.cfgPath,
+            txConfig.fxRunner.serverDataPath,
         );
     } catch (error) {
         return ctx.send({

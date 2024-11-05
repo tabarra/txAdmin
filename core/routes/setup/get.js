@@ -17,14 +17,14 @@ export default async function SetupGet(ctx) {
     }
 
     // Check if this is the correct state for the setup page
-    if (globals.deployer !== null) {
+    if (txManager.deployer !== null) {
         return ctx.utils.legacyNavigateToPage('/server/deployer');
     }
-    if (globals.fxRunner.config.serverDataPath && globals.fxRunner.config.cfgPath) {
+    if (txConfig.fxRunner.serverDataPath && txConfig.fxRunner.cfgPath) {
         return ctx.utils.legacyNavigateToPage('/');
     }
 
-    const globalConfig = globals.configVault.getScopedStructure('global');
+    const globalConfig = txCore.configVault.getScopedStructure('global');
     const renderData = {
         headerTitle: 'Setup',
         isReset: (globalConfig.serverName !== null),

@@ -1,4 +1,3 @@
-import TxAdmin from "@core/txAdmin";
 import { Database } from "../database";
 import consoleFactory from '@lib/console';
 import { MultipleCounter } from '@modules/StatsManager/statsUtils';
@@ -7,10 +6,7 @@ const console = consoleFactory('PlayerDatabase');
 
 
 export default class StatsDao {
-    constructor(
-        private readonly txAdmin: TxAdmin,
-        private readonly db: Database,
-    ) { }
+    constructor(private readonly db: Database) { }
 
     private get dbo() {
         if (!this.db.obj || !this.db.isReady) throw new Error(`database not ready yet`);

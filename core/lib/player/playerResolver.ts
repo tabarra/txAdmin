@@ -19,9 +19,9 @@ export default (mutex: any, netid: any, license: any) => {
     //If mutex+netid provided
     if (typeof mutex === 'string' && typeof netid === 'number' && !isNaN(parsedNetid)) {
         hasMutex = true;
-        if (mutex === globals.fxRunner?.currentMutex) {
+        if (mutex === txCore.fxRunner.currentMutex) {
             //If the mutex is from the server currently online
-            const player = globals.playerlistManager.getPlayerById(netid);
+            const player = txCore.playerlistManager.getPlayerById(netid);
             if (player instanceof ServerPlayer) {
                 return player;
             } else {
@@ -30,18 +30,18 @@ export default (mutex: any, netid: any, license: any) => {
         } else {
             // If mutex is from previous server, overwrite any given license
             const searchRef = `${mutex}#${netid}`;
-            const found = globals.playerlistManager.licenseCache.find(c => c[0] === searchRef);
+            const found = txCore.playerlistManager.licenseCache.find(c => c[0] === searchRef);
             if (found) searchLicense = found[1];
         }
     }
 
     //If license provided or resolved through licenseCache, search in the database
     if (typeof searchLicense === 'string' && searchLicense.length) {
-        const onlineMatches = globals.playerlistManager.getOnlinePlayersByLicense(searchLicense);
+        const onlineMatches = txCore.playerlistManager.getOnlinePlayersByLicense(searchLicense);
         if(onlineMatches.length){
             return onlineMatches.at(-1) as ServerPlayer;
         }else{
-            return new DatabasePlayer(searchLicense, globals.playerDatabase);
+            return new DatabasePlayer(searchLicense);
         }
     }
 

@@ -2,7 +2,6 @@ const modulename = 'SvRuntimeStatsManager';
 import fsp from 'node:fs/promises';
 import * as d3array from 'd3-array';
 import consoleFactory from '@lib/console';
-import type TxAdmin from '@core/txAdmin.js';
 import { SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName, SvRtNodeMemorySchema } from './perfSchemas';
 import type { SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtNodeMemoryType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
 import { didPerfReset, diffPerfs, fetchFxsMemory, fetchRawPerfData } from './perfUtils';
@@ -26,7 +25,6 @@ const LOG_DATA_FILE_NAME = 'stats_svRuntime.json';
  * Most of those will be displayed on the Dashboard.
  */
 export default class SvRuntimeStatsManager {
-    readonly #txAdmin: TxAdmin;
     private readonly logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
     private statsLog: SvRtLogType = [];
     private lastFxsMemory: number | undefined;
@@ -44,8 +42,7 @@ export default class SvRuntimeStatsManager {
         { noLeading: true }
     );
 
-    constructor(txAdmin: TxAdmin) {
-        this.#txAdmin = txAdmin;
+    constructor() {
         this.loadStatsHistory();
 
         //Cron functions
@@ -83,7 +80,7 @@ export default class SvRuntimeStatsManager {
     public logServerBoot(duration: number) {
         this.resetPerfState();
         this.resetMemoryState();
-        this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
+        txCore.webServer.webSocket.pushRefresh('dashboard');
 
         //If last log is a boot, remove it as the server didn't really start 
         // otherwise it would have lived long enough to have stats logged
@@ -105,7 +102,7 @@ export default class SvRuntimeStatsManager {
     public logServerClose(reason: string) {
         this.resetPerfState();
         this.resetMemoryState();
-        this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
+        txCore.webServer.webSocket.pushRefresh('dashboard');
 
         if (this.statsLog.length) {
             if (this.statsLog.at(-1)!.type === 'svClose') {
@@ -140,7 +137,7 @@ export default class SvRuntimeStatsManager {
             used: payload.used,
             limit: payload.limit,
         };
-        this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
+        txCore.webServer.webSocket.pushRefresh('dashboard');
     }
 
 
@@ -166,19 +163,18 @@ export default class SvRuntimeStatsManager {
      */
     private async collectStats() {
         //Precondition checks - try even when partially online
-        if (this.#txAdmin.fxRunner.fxChild === null) return;
-        if (this.#txAdmin.playerlistManager === null) return;
-        const healthMonitorStatus = this.#txAdmin.healthMonitor.currentStatus;
+        if (txCore.fxRunner.fxChild === null) return;
+        const healthMonitorStatus = txCore.healthMonitor.currentStatus;
         if (healthMonitorStatus !== 'ONLINE' && healthMonitorStatus !== 'PARTIAL') return;
 
         //Get performance data
-        const fxServerHost = txDevEnv.EXT_STATS_HOST ?? this.#txAdmin.fxRunner.fxServerHost;
+        const fxServerHost = txDevEnv.EXT_STATS_HOST ?? txCore.fxRunner.fxServerHost;
         if (typeof fxServerHost !== 'string' || !fxServerHost) {
             throw new Error(`Invalid fxServerHost: ${fxServerHost}`);
         }
         const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
             fetchRawPerfData(fxServerHost),
-            fetchFxsMemory(this.#txAdmin.fxRunner.fxChild.pid),
+            fetchFxsMemory(txCore.fxRunner.fxChild.pid),
         ]);
         if (fetchFxsMemoryRes.status === 'fulfilled') {
             this.lastFxsMemory = fetchFxsMemoryRes.value;
@@ -224,7 +220,7 @@ export default class SvRuntimeStatsManager {
         this.lastRawPerfData = perfMetrics;
 
         //Push the updated data to the dashboard ws room
-        this.#txAdmin.webServer.webSocket.pushRefresh('dashboard');
+        txCore.webServer.webSocket.pushRefresh('dashboard');
 
         //Check if enough time passed since last collection
         const now = Date.now();
@@ -237,7 +233,7 @@ export default class SvRuntimeStatsManager {
         if (!perfToSave) return;
 
         //Get player count locally or from external source
-        let playerCount = this.#txAdmin.playerlistManager.onlineCount;
+        let playerCount = txCore.playerlistManager.onlineCount;
         if (txDevEnv.EXT_STATS_HOST) {
             try {
                 const playerCountResp = await got(`http://${fxServerHost}/players.json`).json<any[]>();

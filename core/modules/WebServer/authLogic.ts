@@ -2,7 +2,6 @@ const modulename = 'WebServer:AuthLogic';
 import { z } from "zod";
 import { convars } from '@core/globalData';
 import consoleFactory from '@lib/console';
-import TxAdmin from "@core/txAdmin";
 import { SessToolsType } from "./middlewares/sessionMws";
 import { ReactAuthDataType } from "@shared/authApiTypes";
 const console = consoleFactory(modulename);
@@ -18,17 +17,15 @@ export class AuthedAdmin {
     public readonly isTempPassword: boolean;
     public readonly profilePicture: string | undefined;
     public readonly csrfToken?: string;
-    readonly #txAdmin: TxAdmin;
 
-    constructor(txAdmin: TxAdmin, vaultAdmin: any, csrfToken?: string) {
-        this.#txAdmin = txAdmin;
+    constructor(vaultAdmin: any, csrfToken?: string) {
         this.name = vaultAdmin.name;
         this.isMaster = vaultAdmin.master;
         this.permissions = vaultAdmin.permissions;
         this.isTempPassword = (typeof vaultAdmin.password_temporary !== 'undefined');
         this.csrfToken = csrfToken;
 
-        const cachedPfp = txAdmin.persistentCache.get(`admin:picture:${vaultAdmin.name}`);
+        const cachedPfp = txCore.persistentCache.get(`admin:picture:${vaultAdmin.name}`);
         this.profilePicture = typeof cachedPfp === 'string' ? cachedPfp : undefined;
     }
 
@@ -36,14 +33,14 @@ export class AuthedAdmin {
      * Logs an action to the console and the action logger
      */
     public logAction(action: string): void {
-        this.#txAdmin.logger.admin.write(this.name, action);
+        txCore.logger.admin.write(this.name, action);
     };
 
     /**
      * Logs a command to the console and the action logger
      */
     public logCommand(data: string): void {
-        this.#txAdmin.logger.admin.write(this.name, data, 'command');
+        txCore.logger.admin.write(this.name, data, 'command');
     };
 
     /**
@@ -104,9 +101,9 @@ type AuthLogicReturnType = {
     success: false;
     rejectReason?: string;
 };
-const successResp = (txAdmin: TxAdmin, vaultAdmin: any, csrfToken?: string) => ({
+const successResp = (vaultAdmin: any, csrfToken?: string) => ({
     success: true,
-    admin: new AuthedAdmin(txAdmin, vaultAdmin, csrfToken),
+    admin: new AuthedAdmin(vaultAdmin, csrfToken),
 } as const)
 const failResp = (reason?: string) => ({
     success: false,
@@ -145,15 +142,14 @@ const validSessAuthSchema = z.discriminatedUnion('type', [
  * Autentication logic used in both websocket and webserver, for both web and nui requests.
  */
 export const checkRequestAuth = (
-    txAdmin: TxAdmin,
     reqHeader: { [key: string]: unknown },
     reqIp: string,
     isLocalRequest: boolean,
     sessTools: SessToolsType,
 ) => {
     return typeof reqHeader['x-txadmin-token'] === 'string'
-        ? nuiAuthLogic(txAdmin, reqIp, isLocalRequest, reqHeader)
-        : normalAuthLogic(txAdmin, sessTools);
+        ? nuiAuthLogic(reqIp, isLocalRequest, reqHeader)
+        : normalAuthLogic(sessTools);
 }
 
 
@@ -161,7 +157,6 @@ export const checkRequestAuth = (
  * Autentication logic used in both websocket and webserver
  */
 export const normalAuthLogic = (
-    txAdmin: TxAdmin,
     sessTools: SessToolsType
 ): AuthLogicReturnType => {
     try {
@@ -184,7 +179,7 @@ export const normalAuthLogic = (
         }
 
         // Searching for admin in AdminVault
-        const vaultAdmin = txAdmin.adminVault.getAdminByName(sessAuth.username);
+        const vaultAdmin = txCore.adminVault.getAdminByName(sessAuth.username);
         if (!vaultAdmin) {
             return failResp(`Admin '${sessAuth.username}' not found.`);
         }
@@ -194,7 +189,7 @@ export const normalAuthLogic = (
             if (vaultAdmin.password_hash !== sessAuth.password_hash) {
                 return failResp(`Password hash doesn't match for '${sessAuth.username}'.`);
             }
-            return successResp(txAdmin, vaultAdmin, sessAuth.csrfToken);
+            return successResp(vaultAdmin, sessAuth.csrfToken);
         } else if (sessAuth.type === 'cfxre') {
             if (
                 typeof vaultAdmin.providers.citizenfx !== 'object'
@@ -202,7 +197,7 @@ export const normalAuthLogic = (
             ) {
                 return failResp(`Cfxre identifier doesn't match for '${sessAuth.username}'.`);
             }
-            return successResp(txAdmin, vaultAdmin, sessAuth.csrfToken);
+            return successResp(vaultAdmin, sessAuth.csrfToken);
         } else {
             return failResp('Invalid auth type.');
         }
@@ -217,7 +212,6 @@ export const normalAuthLogic = (
  * Autentication & authorization logic used in for nui requests
  */
 export const nuiAuthLogic = (
-    txAdmin: TxAdmin,
     reqIp: string,
     isLocalRequest: boolean,
     reqHeader: { [key: string]: unknown }
@@ -227,7 +221,7 @@ export const nuiAuthLogic = (
         if (
             !isLocalRequest
             && !convars.isZapHosting
-            && !txAdmin.webServer.config.disableNuiSourceCheck
+            && !txConfig.webServer.disableNuiSourceCheck
         ) {
             console.verbose.warn(`NUI Auth Failed: reqIp "${reqIp}" not a local or allowed address.`);
             return failResp('Invalid Request: source');
@@ -242,8 +236,8 @@ export const nuiAuthLogic = (
         }
 
         // Check token value
-        if (reqHeader['x-txadmin-token'] !== txAdmin.webServer.luaComToken) {
-            const expected = txAdmin.webServer.luaComToken;
+        if (reqHeader['x-txadmin-token'] !== txCore.webServer.luaComToken) {
+            const expected = txCore.webServer.luaComToken;
             const censoredExpected = expected.slice(0, 6) + '...' + expected.slice(-6);
             console.verbose.warn(`NUI Auth Failed: token received '${reqHeader['x-txadmin-token']}' !== expected '${censoredExpected}'.`);
             return failResp('Unauthorized: token value');
@@ -258,7 +252,7 @@ export const nuiAuthLogic = (
         }
 
         // Searching for admin in AdminVault
-        const vaultAdmin = txAdmin.adminVault.getAdminByIdentifiers(identifiers);
+        const vaultAdmin = txCore.adminVault.getAdminByIdentifiers(identifiers);
         if (!vaultAdmin) {
             if(!reqHeader['x-txadmin-identifiers'].includes('license:')) {
                 return failResp('Unauthorized: you do not have a license identifier, which means the server probably has sv_lan enabled. Please disable sv_lan and restart the server to use the in-game menu.');
@@ -267,7 +261,7 @@ export const nuiAuthLogic = (
                 return failResp('nui_admin_not_found');
             }
         }
-        return successResp(txAdmin, vaultAdmin, undefined);
+        return successResp(vaultAdmin, undefined);
     } catch (error) {
         console.debug(`Error validating session data: ${(error as Error).message}`);
         return failResp('Error validating auth header');

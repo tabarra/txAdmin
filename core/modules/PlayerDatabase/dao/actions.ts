@@ -51,7 +51,7 @@ export default class ActionsDao {
     ): DatabaseActionType[] {
         if (!Array.isArray(idsArray)) throw new Error('idsArray should be an array');
         if (hwidsArray && !Array.isArray(hwidsArray)) throw new Error('hwidsArray should be an array or undefined');
-        const config = this.txAdmin.playerDatabase.config; //shortcut
+        const config = txConfig.playerDatabase; //shortcut
         const idsFilter = (action: DatabaseActionType) => idsArray.some((fi) => action.ids.includes(fi))
         const hwidsFilter = (action: DatabaseActionType) => {
             if ('hwids' in action && action.hwids) {

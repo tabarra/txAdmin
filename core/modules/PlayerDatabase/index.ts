@@ -1,6 +1,5 @@
 const modulename = 'PlayerDatabase';
 import { Database } from './database';
-import TxAdmin from '@core/txAdmin.js';
 import consoleFactory from '@lib/console';
 
 import PlayersDao from './dao/players';
@@ -12,7 +11,7 @@ const console = consoleFactory(modulename);
 
 
 //Types
-type PlayerDbConfigType = {
+export type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     whitelistMode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
     whitelistedDiscordRoles: string[];
@@ -26,8 +25,8 @@ type PlayerDbConfigType = {
  * Provide a central database for players, as well as assist with access control.
  */
 export default class PlayerDatabase {
+    public config: PlayerDbConfigType;
     readonly #db: Database;
-    readonly #txAdmin: TxAdmin;
 
     //Database Methods
     readonly players: PlayersDao;
@@ -36,19 +35,19 @@ export default class PlayerDatabase {
     readonly stats: StatsDao;
     readonly cleanup: CleanupDao;
 
-    constructor(txAdmin: TxAdmin, public config: PlayerDbConfigType) {
-        this.#txAdmin = txAdmin;
+    constructor() {
+        this.config = txConfig.playerDatabase;
         //Checking config validity
         if (this.config.requiredBanHwidMatches < 0 || this.config.requiredBanHwidMatches > 6) {
             throw new Error('The playerDatabase.requiredBanHwidMatches setting must be between 0 (disabled) and 6.');
         }
 
         this.#db = new Database();
-        this.players = new PlayersDao(txAdmin, this.#db);
-        this.actions = new ActionsDao(txAdmin, this.#db);
-        this.whitelist = new WhitelistDao(txAdmin, this.#db);
-        this.stats = new StatsDao(txAdmin, this.#db);
-        this.cleanup = new CleanupDao(txAdmin, this.#db);
+        this.players = new PlayersDao(this.#db);
+        this.actions = new ActionsDao(this.#db);
+        this.whitelist = new WhitelistDao(this.#db);
+        this.stats = new StatsDao(this.#db);
+        this.cleanup = new CleanupDao(this.#db);
 
         //Database optimization cron function
         setTimeout(() => {
@@ -71,7 +70,7 @@ export default class PlayerDatabase {
      * Refresh configurations
      */
     refreshConfig() {
-        this.config = this.#txAdmin.configVault.getScoped('playerDatabase');
+        this.config = txCore.configVault.getScoped('playerDatabase');
     }
 
     /**

@@ -153,7 +153,6 @@ async function renderView(
 export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
     //Shortcuts
     const isWebInterface = ctx.txVars.isWebInterface;
-    const txAdmin = ctx.txAdmin;
 
     //Functions
     const renderUtil = async (view: string, data?: { headerTitle?: string, [key: string]: any }) => {
@@ -178,7 +177,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
             basePath: (isWebInterface) ? '/' : consts.nuiWebpipePath,
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
             serverProfile: txEnv.profile,
-            serverName: txAdmin.globalConfig.serverName || txEnv.profile,
+            serverName: txConfig.global.serverName || txEnv.profile,
             uiTheme: legacyTheme,
             fxServerVersion: txEnv.fxsVersionDisplay,
             txAdminVersion: txEnv.txaVersion,

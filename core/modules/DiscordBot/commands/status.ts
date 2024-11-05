@@ -2,7 +2,6 @@ const modulename = 'DiscordBot:cmd:status';
 import humanizeDuration from 'humanize-duration';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, ColorResolvable, EmbedBuilder } from 'discord.js';
 import { txEnv } from '@core/globalData';
-import TxAdmin from '@core/txAdmin';
 import { cloneDeep } from 'lodash-es';
 import { embedder, ensurePermission, isValidButtonEmoji, isValidEmbedUrl, logDiscordAdminAction } from '../discordHelpers';
 import consoleFactory from '@lib/console';
@@ -50,9 +49,8 @@ To get the full emoji code, insert it into discord, and add \`\\\` before it the
 
 
 export const generateStatusMessage = (
-    txAdmin: TxAdmin,
-    rawEmbedJson: string = txAdmin.discordBot.config.embedJson,
-    rawEmbedConfigJson: string = txAdmin.discordBot.config.embedConfigJson
+    rawEmbedJson: string = txConfig.discordBot.embedJson,
+    rawEmbedConfigJson: string = txConfig.discordBot.embedConfigJson
 ) => {
     //Parsing decoded JSONs
     let embedJson;
@@ -73,24 +71,24 @@ export const generateStatusMessage = (
 
     //Prepare placeholders
     //NOTE: serverCfxId can be undefined, breaking the URLs, but there is no easy clean way to deal with this issue
-    const serverCfxId = txAdmin.persistentCache.get('fxsRuntime:cfxId');
+    const serverCfxId = txCore.persistentCache.get('fxsRuntime:cfxId');
     const placeholders = {
-        serverName: txAdmin.globalConfig.serverName,
+        serverName: txConfig.global.serverName,
         statusString: 'Unknown',
         statusColor: '#4C3539',
         serverCfxId,
         serverBrowserUrl: `https://servers.fivem.net/servers/detail/${serverCfxId}`,
         serverJoinUrl: `https://cfx.re/join/${serverCfxId}`,
-        serverMaxClients: txAdmin.persistentCache.get('fxsRuntime:maxClients') ?? 'unknown',
-        serverClients: txAdmin.playerlistManager.onlineCount,
+        serverMaxClients: txCore.persistentCache.get('fxsRuntime:maxClients') ?? 'unknown',
+        serverClients: txCore.playerlistManager.onlineCount,
         nextScheduledRestart: 'unknown',
-        uptime: (txAdmin.healthMonitor.currentStatus === 'ONLINE')
-            ? humanizer(txAdmin.fxRunner.getUptime() * 1000)
+        uptime: (txCore.healthMonitor.currentStatus === 'ONLINE')
+            ? humanizer(txCore.fxRunner.getUptime() * 1000)
             : '--',
     }
 
     //Prepare scheduler placeholder
-    const schedule = txAdmin.scheduler.getStatus();
+    const schedule = txCore.scheduler.getStatus();
     if (typeof schedule.nextRelativeMs !== 'number') {
         placeholders.nextScheduledRestart = 'not scheduled';
     } else if (schedule.nextSkip) {
@@ -107,13 +105,13 @@ export const generateStatusMessage = (
     }
 
     //Prepare status placeholders
-    if (txAdmin.healthMonitor.currentStatus === 'ONLINE') {
+    if (txCore.healthMonitor.currentStatus === 'ONLINE') {
         placeholders.statusString = embedConfigJson?.onlineString ?? '🟢 Online';
         placeholders.statusColor = embedConfigJson?.onlineColor ?? "#0BA70B";
-    } else if (txAdmin.healthMonitor.currentStatus === 'PARTIAL') {
+    } else if (txCore.healthMonitor.currentStatus === 'PARTIAL') {
         placeholders.statusString = embedConfigJson?.partialString ?? '🟡 Partial';
         placeholders.statusColor = embedConfigJson?.partialColor ?? "#FFF100";
-    } else if (txAdmin.healthMonitor.currentStatus === 'OFFLINE') {
+    } else if (txCore.healthMonitor.currentStatus === 'OFFLINE') {
         placeholders.statusString = embedConfigJson?.offlineString ?? '🔴 Offline';
         placeholders.statusColor = embedConfigJson?.offlineColor ?? "#A70B28";
     }
@@ -228,9 +226,9 @@ export const generateStatusMessage = (
     };
 }
 
-export const removeOldEmbed = async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin) => {
-    const oldChannelId = txAdmin.persistentCache.get('discord:status:channelId');
-    const oldMessageId = txAdmin.persistentCache.get('discord:status:messageId');
+export const removeOldEmbed = async (interaction: ChatInputCommandInteraction) => {
+    const oldChannelId = txCore.persistentCache.get('discord:status:channelId');
+    const oldMessageId = txCore.persistentCache.get('discord:status:messageId');
     if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
         const oldChannel = await interaction.client.channels.fetch(oldChannelId);
         if (oldChannel?.type === ChannelType.GuildText || oldChannel?.type === ChannelType.GuildAnnouncement) {
@@ -243,20 +241,20 @@ export const removeOldEmbed = async (interaction: ChatInputCommandInteraction, t
     }
 }
 
-export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin) => {
+export default async (interaction: ChatInputCommandInteraction) => {
     //Check permissions
-    const adminName = await ensurePermission(interaction, txAdmin, 'settings.write');
+    const adminName = await ensurePermission(interaction, 'settings.write');
     if (typeof adminName !== 'string') return;
 
     //Attempt to remove old message
     const isRemoveOnly = (interaction.options.getSubcommand() === 'remove');
     try {
-        await removeOldEmbed(interaction, txAdmin);
-        txAdmin.persistentCache.delete('discord:status:channelId');
-        txAdmin.persistentCache.delete('discord:status:messageId');
+        await removeOldEmbed(interaction);
+        txCore.persistentCache.delete('discord:status:channelId');
+        txCore.persistentCache.delete('discord:status:messageId');
         if (isRemoveOnly) {
             const msg = `Old status embed removed.`;
-            logDiscordAdminAction(txAdmin, adminName, msg);
+            logDiscordAdminAction(adminName, msg);
             return await interaction.reply(embedder.success(msg, true));
         }
     } catch (error) {
@@ -270,7 +268,7 @@ export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin
     //Generate new message
     let newStatusMessage;
     try {
-        newStatusMessage = generateStatusMessage(txAdmin);
+        newStatusMessage = generateStatusMessage();
     } catch (error) {
         return await interaction.reply(
             embedder.warning(`**Failed to generate new embed:**\n${(error as Error).message}`, true)
@@ -287,8 +285,8 @@ export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin
         })
         const newMessage = await interaction.channel.send({ embeds: [placeholderEmbed] });
         await newMessage.edit(newStatusMessage);
-        txAdmin.persistentCache.set('discord:status:channelId', interaction.channelId);
-        txAdmin.persistentCache.set('discord:status:messageId', newMessage.id);
+        txCore.persistentCache.set('discord:status:channelId', interaction.channelId);
+        txCore.persistentCache.set('discord:status:messageId', newMessage.id);
     } catch (error) {
         let msg: string;
         if((error as any).code === 50013){
@@ -303,6 +301,6 @@ export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin
     }
 
     const msg = `Status embed saved.`;
-    logDiscordAdminAction(txAdmin, adminName, msg);
+    logDiscordAdminAction(adminName, msg);
     return await interaction.reply(embedder.success(msg, true));
 }

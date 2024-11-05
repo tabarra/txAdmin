@@ -95,7 +95,6 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //Checking if already logged in
     const authResult = checkRequestAuth(
-        ctx.txAdmin,
         ctx.request.headers,
         ctx.ip,
         ctx.txVars.isLocalRequest,
@@ -108,22 +107,22 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //Preparing vars
     const basePath = (ctx.txVars.isWebInterface) ? '/' : consts.nuiWebpipePath;
-    const serverName = ctx.txAdmin.globalConfig.serverName || txEnv.profile;
+    const serverName = txConfig.global.serverName || txEnv.profile;
     const injectedConsts = {
         //env
         fxsVersion: txEnv.fxsVersionDisplay,
-        fxsOutdated: ctx.txAdmin.cfxUpdateChecker.fxsUpdateData,
+        fxsOutdated: txCore.cfxUpdateChecker.fxsUpdateData,
         txaVersion: txEnv.txaVersion,
-        txaOutdated: ctx.txAdmin.cfxUpdateChecker.txaUpdateData,
+        txaOutdated: txCore.cfxUpdateChecker.txaUpdateData,
         serverTimezone,
         isZapHosting: convars.isZapHosting, //not in use
         isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,
         showAdvanced: (txDevEnv.ENABLED || console.isVerbose),
-        hasMasterAccount: ctx.txAdmin.adminVault.hasAdmins(true),
+        hasMasterAccount: txCore.adminVault.hasAdmins(true),
         defaultTheme: tmpDefaultTheme,
         customThemes: tmpCustomThemes.map(({ name, isDark }) => ({ name, isDark })),
-        adsData: ctx.txAdmin.dynamicAds.adData as AdsDataType,
+        adsData: txCore.dynamicAds.adData as AdsDataType,
 
         //auth
         preAuth: authedAdmin && authedAdmin.getAuthData(),

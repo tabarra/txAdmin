@@ -590,10 +590,8 @@ export default class AdminVault {
      */
     async refreshOnlineAdmins() {
         //Refresh auth of all admins connected to socket.io
-        globals.webServer.webSocket.reCheckAdminAuths().catch((e) => { });
+        txCore.webServer.webSocket.reCheckAdminAuths().catch((e) => { });
 
-        //Refresh in-game auth of all admins connected to the server
-        if (globals.playerlistManager === null) return;
         try {
             //Getting all admin identifiers
             const adminIDs = this.admins.reduce((ids, adm) => {
@@ -602,12 +600,12 @@ export default class AdminVault {
             }, []);
 
             //Finding online admins
-            const playerList = globals.playerlistManager.getPlayerList();
+            const playerList = txCore.playerlistManager.getPlayerList();
             const onlineIDs = playerList.filter((p) => {
                 return p.ids.some((i) => adminIDs.includes(i));
             }).map((p) => p.netid);
 
-            globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
+            txCore.fxRunner.sendEvent('adminsUpdated', onlineIDs);
         } catch (error) {
             console.verbose.error('Failed to refreshOnlineAdmins() with error:');
             console.verbose.dir(error);
@@ -645,12 +643,12 @@ export default class AdminVault {
      */
     getAdminPublicName(name, purpose) {
         if (!name || !purpose) throw new Error('Invalid parameters');
-        const replacer = globals.txAdmin.globalConfig.serverName ?? 'txAdmin';
+        const replacer = txConfig.global.serverName ?? 'txAdmin';
 
         if (purpose === 'punishment') {
-            return globals.txAdmin.globalConfig.hideAdminInPunishments ? replacer : name;
+            return txConfig.global.hideAdminInPunishments ? replacer : name;
         } else if (purpose === 'message') {
-            return globals.txAdmin.globalConfig.hideAdminInMessages ? replacer : name;
+            return txConfig.global.hideAdminInMessages ? replacer : name;
         } else {
             throw new Error(`Invalid purpose: ${purpose}`);
         }

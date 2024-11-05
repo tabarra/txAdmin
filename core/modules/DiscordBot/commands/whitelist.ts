@@ -1,6 +1,5 @@
 const modulename = 'DiscordBot:cmd:whitelist';
 import { CommandInteraction as ChatInputCommandInteraction, ImageURLOptions } from 'discord.js';
-import TxAdmin from '@core/txAdmin';
 import { now } from '@lib/misc';
 import { DuplicateKeyError } from '@modules/PlayerDatabase/dbUtils';
 import { embedder, ensurePermission, logDiscordAdminAction } from '../discordHelpers';
@@ -11,7 +10,7 @@ const console = consoleFactory(modulename);
 /**
  * Command /whitelist member <mention>
  */
-const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin, adminName: string) => {
+const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, adminName: string) => {
     //Preparing player id/name/avatar
     const member = interaction.options.getMember('member');
     if(!member || !('user' in member)){
@@ -24,14 +23,14 @@ const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, 
 
     //Registering approval
     try {
-        txAdmin.playerDatabase.whitelist.registerApproval({
+        txCore.playerDatabase.whitelist.registerApproval({
             identifier,
             playerName,
             playerAvatar,
             tsApproved: now(),
             approvedBy: adminName,
         });
-        txAdmin.fxRunner.sendEvent('whitelistPreApproval', {
+        txCore.fxRunner.sendEvent('whitelistPreApproval', {
             action: 'added',
             identifier,
             playerName,
@@ -42,7 +41,7 @@ const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, 
     }
 
     const msg = `Added whitelist approval for ${playerName}.`;
-    logDiscordAdminAction(txAdmin, adminName, msg);
+    logDiscordAdminAction(adminName, msg);
     return await interaction.reply(embedder.success(msg));
 }
 
@@ -50,7 +49,7 @@ const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, 
 /**
  * Command /whitelist request <id>
  */
-const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin, adminName: string) => {
+const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction, adminName: string) => {
     //@ts-ignore: somehow vscode is resolving interaction as CommandInteraction
     const input = interaction.options.getString('id', true);
     const reqId = input.trim().toUpperCase();
@@ -59,7 +58,7 @@ const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction,
     }
 
     //Find request
-    const requests = txAdmin.playerDatabase.whitelist.findManyRequests({ id: reqId });
+    const requests = txCore.playerDatabase.whitelist.findManyRequests({ id: reqId });
     if (!requests.length) {
         return await interaction.reply(embedder.warning(`Whitelist request ID \`${reqId}\` not found.`));
     }
@@ -69,14 +68,14 @@ const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction,
     const identifier = `license:${req.license}`;
     const playerName = req.discordTag ?? req.playerDisplayName;
     try {
-        txAdmin.playerDatabase.whitelist.registerApproval({
+        txCore.playerDatabase.whitelist.registerApproval({
             identifier,
             playerName,
             playerAvatar: (req.discordAvatar) ? req.discordAvatar : null,
             tsApproved: now(),
             approvedBy: adminName,
         });
-        txAdmin.fxRunner.sendEvent('whitelistRequest', {
+        txCore.fxRunner.sendEvent('whitelistRequest', {
             action: 'approved',
             playerName,
             requestId: req.id,
@@ -91,13 +90,13 @@ const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction,
 
     //Remove record from whitelistRequests
     try {
-        txAdmin.playerDatabase.whitelist.removeManyRequests({ id: reqId });
+        txCore.playerDatabase.whitelist.removeManyRequests({ id: reqId });
     } catch (error) {
         return await interaction.reply(embedder.danger(`Failed to remove wl request: ${(error as Error).message}`));
     }
 
     const msg = `Approved whitelist request \`${reqId}\` from ${playerName}.`;
-    logDiscordAdminAction(txAdmin, adminName, msg);
+    logDiscordAdminAction(adminName, msg);
     return await interaction.reply(embedder.success(msg));
 }
 
@@ -105,17 +104,17 @@ const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction,
 /**
  * Handler for /whitelist
  */
-export default async (interaction: ChatInputCommandInteraction, txAdmin: TxAdmin) => {
+export default async (interaction: ChatInputCommandInteraction) => {
     //Check permissions
-    const adminName = await ensurePermission(interaction, txAdmin, 'players.whitelist');
+    const adminName = await ensurePermission(interaction, 'players.whitelist');
     if (typeof adminName !== 'string') return;
 
     //@ts-ignore: somehow vscode is resolving interaction as CommandInteraction
     const subcommand = interaction.options.getSubcommand();
     if (subcommand === 'member') {
-        return await handleMemberSubcommand(interaction, txAdmin, adminName);
+        return await handleMemberSubcommand(interaction, adminName);
     } else if (subcommand === 'request') {
-        return await handleRequestSubcommand(interaction, txAdmin, adminName);
+        return await handleRequestSubcommand(interaction, adminName);
     }
     throw new Error(`Subcommand ${subcommand} not found.`);
 }

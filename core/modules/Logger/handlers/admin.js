@@ -10,7 +10,7 @@ const console = consoleFactory(modulename);
 
 
 export default class AdminLogger extends LoggerBase {
-    constructor(txAdmin, basePath, lrProfileConfig) {
+    constructor(basePath, lrProfileConfig) {
         const lrDefaultOptions = {
             path: basePath,
             intervalBoundary: true,

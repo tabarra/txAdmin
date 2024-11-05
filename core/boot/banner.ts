@@ -60,7 +60,7 @@ const awaitHttp = new Promise((resolve, reject) => {
     let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
-        if (globals.webServer && globals.webServer.isListening) {
+        if (txCore.webServer && txCore.webServer.isListening) {
             clearInterval(interval);
             resolve(true);
         } else if (counter == tickLimit) {
@@ -79,9 +79,9 @@ const awaitMasterPin = new Promise((resolve, reject) => {
     let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
-        if (globals.adminVault && globals.adminVault.admins !== null) {
+        if (txCore.adminVault && txCore.adminVault.admins !== null) {
             clearInterval(interval);
-            const pin = (globals.adminVault.admins === false) ? globals.adminVault.addMasterPin : false;
+            const pin = (txCore.adminVault.admins === false) ? txCore.adminVault.addMasterPin : false;
             resolve(pin);
         } else if (counter == tickLimit) {
             clearInterval(interval);
@@ -99,7 +99,7 @@ const awaitDatabase = new Promise((resolve, reject) => {
     let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
-        if (globals.playerDatabase && globals.playerDatabase.isReady) {
+        if (txCore.playerDatabase && txCore.playerDatabase.isReady) {
             clearInterval(interval);
             resolve(true);
         } else if (counter == tickLimit) {
@@ -113,7 +113,7 @@ const awaitDatabase = new Promise((resolve, reject) => {
 });
 
 
-export const printBanner = async () => {
+export const startReadyWatcher = async () => {
     const [publicIpResp, msgRes, adminPinRes] = await Promise.allSettled([
         getPublicIp(),
         getOSMessage(),
@@ -168,5 +168,5 @@ export const printBanner = async () => {
     }
 
     //Starting server
-    globals.fxRunner.signalStartReady();
+    txCore.fxRunner.signalStartReady();
 };

@@ -20,25 +20,27 @@ const genMutex = customAlphabet(dict49, 5);
 
 //Helpers
 const getMutableConvars = (isCmdLine = false) => {
-    const playerDbConfigs = globals.playerDatabase.config;
-    const checkPlayerJoin = (playerDbConfigs.onJoinCheckBan || playerDbConfigs.whitelistMode !== 'disabled');
+    const checkPlayerJoin = (
+        txConfig.playerDatabase.onJoinCheckBan
+        || txConfig.playerDatabase.whitelistMode !== 'disabled'
+    );
 
     //type, name, value
     const convars = [
-        ['set', 'txAdmin-serverName', globals.txAdmin.globalConfig.serverName ?? 'txAdmin'],
-        ['setr', 'txAdmin-locale', globals.translator.language ?? 'en'],
-        ['set', 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
+        ['set', 'txAdmin-serverName', txConfig.global.serverName ?? 'txAdmin'],
+        ['setr', 'txAdmin-locale', txConfig.global.language ?? 'en'],
+        ['set', 'txAdmin-localeFile', txCore.translator.customLocalePath ?? false],
         ['setr', 'txAdmin-verbose', console.isVerbose],
         ['set', 'txAdmin-checkPlayerJoin', checkPlayerJoin],
-        ['set', 'txAdmin-menuAlignRight', globals.txAdmin.globalConfig.menuAlignRight],
-        ['set', 'txAdmin-menuPageKey', globals.txAdmin.globalConfig.menuPageKey],
-        ['set', 'txAdmin-hideAdminInPunishments', globals.txAdmin.globalConfig.hideAdminInPunishments],
-        ['set', 'txAdmin-hideAdminInMessages', globals.txAdmin.globalConfig.hideAdminInMessages],
-        ['set', 'txAdmin-hideDefaultAnnouncement', globals.txAdmin.globalConfig.hideDefaultAnnouncement],
-        ['set', 'txAdmin-hideDefaultDirectMessage', globals.txAdmin.globalConfig.hideDefaultDirectMessage],
-        ['set', 'txAdmin-hideDefaultWarning', globals.txAdmin.globalConfig.hideDefaultWarning],
-        ['set', 'txAdmin-hideDefaultScheduledRestartWarning', globals.txAdmin.globalConfig.hideDefaultScheduledRestartWarning],
-    ];
+        ['set', 'txAdmin-menuAlignRight', txConfig.global.menuAlignRight],
+        ['set', 'txAdmin-menuPageKey', txConfig.global.menuPageKey],
+        ['set', 'txAdmin-hideAdminInPunishments', txConfig.global.hideAdminInPunishments],
+        ['set', 'txAdmin-hideAdminInMessages', txConfig.global.hideAdminInMessages],
+        ['set', 'txAdmin-hideDefaultAnnouncement', txConfig.global.hideDefaultAnnouncement],
+        ['set', 'txAdmin-hideDefaultDirectMessage', txConfig.global.hideDefaultDirectMessage],
+        ['set', 'txAdmin-hideDefaultWarning', txConfig.global.hideDefaultWarning],
+        ['set', 'txAdmin-hideDefaultScheduledRestartWarning', txConfig.global.hideDefaultScheduledRestartWarning],
+    ]; //satisfies [set: string, name: string, value: any][]
 
     const prefix = isCmdLine ? '+' : '';
     return convars.map((c) => ([
@@ -62,8 +64,10 @@ const chanEventBlackHole = (...args) => {
 };
 
 export default class FxRunner {
-    constructor(txAdmin, config) {
-        this.config = config;
+    config;
+
+    constructor() {
+        this.config = txConfig.fxRunner;
 
         //Checking config validity
         if (this.config.shutdownNoticeDelay < 0 || this.config.shutdownNoticeDelay > 30) {
@@ -78,7 +82,7 @@ export default class FxRunner {
         this.fxServerHost = null;
         this.currentMutex = null;
         this.cfxId = null;
-        this.fd3Handler = new Fd3Handler(txAdmin);
+        this.fd3Handler = new Fd3Handler();
     }
 
 
@@ -86,7 +90,7 @@ export default class FxRunner {
      * Refresh fxRunner configurations
      */
     refreshConfig() {
-        this.config = globals.configVault.getScoped('fxRunner');
+        this.config = txCore.configVault.getScoped('fxRunner');
     }
 
 
@@ -100,7 +104,7 @@ export default class FxRunner {
             return console.warn('Please open txAdmin on the browser to configure your server.');
         }
 
-        if (!globals.adminVault?.hasAdmins()) {
+        if (!txCore.adminVault.hasAdmins()) {
             return console.warn('The server will not auto start because there are no admins configured.');
         }
 
@@ -127,9 +131,9 @@ export default class FxRunner {
             extraArgs,
             '+set', 'onesync', this.config.onesync,
             '+sets', 'txAdmin-version', txEnv.txaVersion,
-            '+setr', 'txAdmin-menuEnabled', globals.txAdmin.globalConfig.menuEnabled,
+            '+setr', 'txAdmin-menuEnabled', txConfig.global.menuEnabled,
             '+set', 'txAdmin-luaComHost', txAdminInterface,
-            '+set', 'txAdmin-luaComToken', globals.webServer.luaComToken,
+            '+set', 'txAdmin-luaComToken', txCore.webServer.luaComToken,
             '+set', 'txAdminServerMode', 'true', //Can't change this one due to fxserver code compatibility
             '+exec', this.config.cfgPath,
         ].flat(2);
@@ -169,7 +173,7 @@ export default class FxRunner {
         }
 
         //Setup variables
-        globals.webServer.resetToken();
+        txCore.webServer.resetToken();
         this.currentMutex = genMutex();
         this.setupVariables();
         console.verbose.log('Spawn Variables: ' + this.spawnVariables.args.join(' '));
@@ -216,10 +220,10 @@ export default class FxRunner {
         }
 
         //Reseting monitor stats
-        globals.healthMonitor.resetMonitorStats();
+        txCore.healthMonitor.resetMonitorStats();
 
         //Resetting frontend playerlist
-        globals.webServer.webSocket.buffer('playerlist', {
+        txCore.webServer.webSocket.buffer('playerlist', {
             mutex: this.currentMutex,
             type: 'fullPlayerlist',
             playerlist: [],
@@ -227,11 +231,11 @@ export default class FxRunner {
 
         //Announcing
         if (announce === 'true' || announce === true) {
-            globals.discordBot.sendAnnouncement({
+            txCore.discordBot.sendAnnouncement({
                 type: 'success',
                 description: {
                     key: 'server_actions.spawning_discord',
-                    data: { servername: globals.txAdmin.globalConfig.serverName },
+                    data: { servername: txConfig.global.serverName },
                 },
             });
         }
@@ -250,7 +254,7 @@ export default class FxRunner {
         }
         const pid = this.fxChild.pid.toString();
         console.ok(`>> [${pid}] FXServer Started!`);
-        globals.logger.fxserver.logFxserverBoot(pid);
+        txCore.logger.fxserver.logFxserverBoot(pid);
         this.history.push({
             pid,
             timestamps: {
@@ -261,7 +265,7 @@ export default class FxRunner {
             },
         });
         const historyIndex = this.history.length - 1;
-        globals.webServer?.webSocket.pushRefresh('status');
+        txCore.webServer.webSocket.pushRefresh('status');
 
         //Setting up stream handlers
         this.fxChild.stdout.setEncoding('utf8');
@@ -276,7 +280,7 @@ export default class FxRunner {
             }
             console.warn(`>> [${pid}] FXServer Closed (${printableCode}).`);
             this.history[historyIndex].timestamps.close = now();
-            globals.webServer?.webSocket.pushRefresh('status');
+            txCore.webServer.webSocket.pushRefresh('status');
         }.bind(this));
         this.fxChild.on('disconnect', function () {
             console.warn(`>> [${pid}] FXServer Disconnected.`);
@@ -289,7 +293,7 @@ export default class FxRunner {
             process.stdout.write('\n'); //Make sure this isn't concatenated with the last line
             console.warn(`>> [${pid}] FXServer Exited.`);
             this.history[historyIndex].timestamps.exit = now();
-            globals.webServer?.webSocket.pushRefresh('status');
+            txCore.webServer.webSocket.pushRefresh('status');
             if (this.history[historyIndex].timestamps.exit - this.history[historyIndex].timestamps.start <= 5) {
                 setTimeout(() => {
                     console.warn('FXServer didn\'t start. This is not an issue with txAdmin.');
@@ -299,14 +303,14 @@ export default class FxRunner {
 
         //Default channel handlers
         this.fxChild.stdout.on('data',
-            globals.logger.fxserver.writeFxsOutput.bind(
-                globals.logger.fxserver,
+            txCore.logger.fxserver.writeFxsOutput.bind(
+                txCore.logger.fxserver,
                 ConsoleLineType.StdOut,
             ),
         );
         this.fxChild.stderr.on('data',
-            globals.logger.fxserver.writeFxsOutput.bind(
-                globals.logger.fxserver,
+            txCore.logger.fxserver.writeFxsOutput.bind(
+                txCore.logger.fxserver,
                 ConsoleLineType.StdErr,
             ),
         );
@@ -382,15 +386,15 @@ export default class FxRunner {
             const messageType = isRestarting ? 'restarting' : 'stopping';
             const messageColor = isRestarting ? 'warning' : 'danger';
             const tOptions = {
-                servername: globals.txAdmin.globalConfig.serverName,
+                servername: txConfig.global.serverName,
                 reason: reasonString,
             };
             this.sendEvent('serverShuttingDown', {
                 delay: this.config.shutdownNoticeDelay * 1000,
                 author: author ?? 'txAdmin',
-                message: globals.translator.t(`server_actions.${messageType}`, tOptions),
+                message: txCore.translator.t(`server_actions.${messageType}`, tOptions),
             });
-            globals.discordBot.sendAnnouncement({
+            txCore.discordBot.sendAnnouncement({
                 type: messageColor,
                 description: {
                     key: `server_actions.${messageType}_discord`,
@@ -408,9 +412,9 @@ export default class FxRunner {
                 this.fxChild = null;
                 this.history[this.history.length - 1].timestamps.kill = now();
             }
-            globals.resourcesManager.handleServerStop();
-            globals.playerlistManager.handleServerStop(this.currentMutex);
-            globals.statsManager.svRuntime.logServerClose(reasonString);
+            txCore.resourcesManager.handleServerStop();
+            txCore.playerlistManager.handleServerStop(this.currentMutex);
+            txCore.statsManager.svRuntime.logServerClose(reasonString);
             return null;
         } catch (error) {
             const msg = `Couldn't kill the server. Perhaps What Is Dead May Never Die.`;
@@ -517,9 +521,9 @@ export default class FxRunner {
         try {
             const success = this.fxChild.stdin.write(command + '\n');
             if (author) {
-                globals.logger.fxserver.logAdminCommand(author, command);
+                txCore.logger.fxserver.logAdminCommand(author, command);
             } else {
-                globals.logger.fxserver.logSystemCommand(command);
+                txCore.logger.fxserver.logSystemCommand(command);
             }
             return success;
         } catch (error) {

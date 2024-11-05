@@ -9,7 +9,7 @@ export const findPlayersByIdentifier = (identifier: string): DatabasePlayer[] =>
     if(typeof identifier !== 'string' || !identifier.length) throw new Error(`invalid identifier`);
 
     const filter = (player: DatabasePlayerType) => player.ids.includes(identifier);
-    const playersData = globals.playerDatabase.players.findMany(filter);
+    const playersData = txCore.playerDatabase.players.findMany(filter);
 
-    return playersData.map((dbData) => new DatabasePlayer(dbData.license, globals.playerDatabase, dbData))
+    return playersData.map((dbData) => new DatabasePlayer(dbData.license, dbData))
 } 

@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash-es';
-import TxAdmin from "@core/txAdmin";
 import { Database, SavePriority } from "../database";
 import consoleFactory from '@lib/console';
 import { DatabaseWhitelistApprovalsType, DatabaseWhitelistRequestsType } from '../databaseTypes';
@@ -8,10 +7,7 @@ const console = consoleFactory('PlayerDatabase');
 
 
 export default class WhitelistDao {
-    constructor(
-        private readonly txAdmin: TxAdmin,
-        private readonly db: Database,
-    ) { }
+    constructor(private readonly db: Database) { }
 
     private get dbo() {
         if (!this.db.obj || !this.db.isReady) throw new Error(`database not ready yet`);

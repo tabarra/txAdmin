@@ -25,7 +25,7 @@ export default async function HistoryActionModal(ctx: AuthedCtx) {
     //Getting the action data
     let actionData;
     try {
-        actionData = ctx.txAdmin.playerDatabase.actions.findOne(actionId)
+        actionData = txCore.playerDatabase.actions.findOne(actionId)
         if (!actionData) return sendTypedResp({ error: 'Action not found' });
     } catch (error) {
         return sendTypedResp({ error: `Getting history action failed with error: ${(error as Error).message}` });

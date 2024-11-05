@@ -24,7 +24,7 @@ export default async function PlayerActions(ctx: AuthedCtx) {
     //Finding the player
     let player;
     try {
-        const refMutex = (mutex === 'current') ? ctx.txAdmin.fxRunner.currentMutex : mutex;
+        const refMutex = (mutex === 'current') ? txCore.fxRunner.currentMutex : mutex;
         player = playerResolver(refMutex, parseInt((netid as string)), license);
     } catch (error) {
         return sendTypedResp({ error: (error as Error).message });
@@ -99,7 +99,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     //Register action
     let actionId;
     try {
-        actionId = ctx.txAdmin.playerDatabase.actions.registerWarn(
+        actionId = txCore.playerDatabase.actions.registerWarn(
             allIds,
             ctx.admin.name,
             reason,
@@ -111,7 +111,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     ctx.admin.logAction(`Warned player ${player.displayName}: ${reason}`);
 
     // Dispatch `txAdmin:events:playerWarned`
-    const cmdOk = ctx.txAdmin.fxRunner.sendEvent('playerWarned', {
+    const cmdOk = txCore.fxRunner.sendEvent('playerWarned', {
         author: ctx.admin.name,
         reason,
         actionId,
@@ -169,7 +169,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     //Register action
     let actionId;
     try {
-        actionId = ctx.txAdmin.playerDatabase.actions.registerBan(
+        actionId = txCore.playerDatabase.actions.registerBan(
             allIds,
             ctx.admin.name,
             reason,
@@ -183,32 +183,32 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     ctx.admin.logAction(`Banned player ${player.displayName}: ${reason}`);
 
     //No need to dispatch events if server is not online
-    if (ctx.txAdmin.fxRunner.fxChild === null) {
+    if (txCore.fxRunner.fxChild === null) {
         return { success: true };
     }
 
     //Prepare and send command
     let kickMessage, durationTranslated;
     const tOptions: any = {
-        author: ctx.txAdmin.adminVault.getAdminPublicName(ctx.admin.name, 'punishment'),
+        author: txCore.adminVault.getAdminPublicName(ctx.admin.name, 'punishment'),
         reason: reason,
     };
     if (expiration !== false && duration) {
         const humanizeOptions = {
-            language: ctx.txAdmin.translator.t('$meta.humanizer_language'),
+            language: txCore.translator.t('$meta.humanizer_language'),
             round: true,
             units: ['d', 'h'] as Unit[],
         };
         durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
         tOptions.expiration = durationTranslated;
-        kickMessage = ctx.txAdmin.translator.t('ban_messages.kick_temporary', tOptions);
+        kickMessage = txCore.translator.t('ban_messages.kick_temporary', tOptions);
     } else {
         durationTranslated = null;
-        kickMessage = ctx.txAdmin.translator.t('ban_messages.kick_permanent', tOptions);
+        kickMessage = txCore.translator.t('ban_messages.kick_permanent', tOptions);
     }
 
     // Dispatch `txAdmin:events:playerBanned`
-    const cmdOk = ctx.txAdmin.fxRunner.sendEvent('playerBanned', {
+    const cmdOk = txCore.fxRunner.sendEvent('playerBanned', {
         author: ctx.admin.name,
         reason,
         actionId,
@@ -257,11 +257,11 @@ async function handleSetWhitelist(ctx: AuthedCtx, player: PlayerClass): Promise<
         }
 
         //No need to dispatch events if server is not online
-        if (ctx.txAdmin.fxRunner.fxChild === null) {
+        if (txCore.fxRunner.fxChild === null) {
             return { success: true };
         }
 
-        ctx.txAdmin.fxRunner.sendEvent('whitelistPlayer', {
+        txCore.fxRunner.sendEvent('whitelistPlayer', {
             action: status ? 'added' : 'removed',
             license: player.license,
             playerName: player.displayName,
@@ -297,7 +297,7 @@ async function handleDirectMessage(ctx: AuthedCtx, player: PlayerClass): Promise
     }
 
     //Validating server & player
-    if (ctx.txAdmin.fxRunner.fxChild === null) {
+    if (txCore.fxRunner.fxChild === null) {
         return { error: 'The server is not online.' };
     }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
@@ -308,7 +308,7 @@ async function handleDirectMessage(ctx: AuthedCtx, player: PlayerClass): Promise
         ctx.admin.logAction(`DM to ${player.displayName}: ${message}`);
 
         // Dispatch `txAdmin:events:playerDirectMessage`
-        ctx.txAdmin.fxRunner.sendEvent('playerDirectMessage', {
+        txCore.fxRunner.sendEvent('playerDirectMessage', {
             target: player.netid,
             author: ctx.admin.name,
             message,
@@ -332,7 +332,7 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
     )) {
         return { error: 'Invalid request.' };
     }
-    const kickReason = ctx.request.body.reason.trim() || ctx.txAdmin.translator.t('kick_messages.unknown_reason');
+    const kickReason = ctx.request.body.reason.trim() || txCore.translator.t('kick_messages.unknown_reason');
 
     //Check permissions
     if (!ctx.admin.testPermission('players.kick', modulename)) {
@@ -340,7 +340,7 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
     }
 
     //Validating server & player
-    if (ctx.txAdmin.fxRunner.fxChild === null) {
+    if (txCore.fxRunner.fxChild === null) {
         return { error: 'The server is offline.' };
     }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
@@ -349,13 +349,13 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
 
     try {
         ctx.admin.logAction(`Kicked ${player.displayName}: ${kickReason}`);
-        const fullReason = ctx.txAdmin.translator.t(
+        const fullReason = txCore.translator.t(
             'kick_messages.player',
             { reason: kickReason }
         );
 
         // Dispatch `txAdmin:events:playerKicked`
-        ctx.txAdmin.fxRunner.sendEvent('playerKicked', {
+        txCore.fxRunner.sendEvent('playerKicked', {
             target: player.netid,
             author: ctx.admin.name,
             reason: fullReason,

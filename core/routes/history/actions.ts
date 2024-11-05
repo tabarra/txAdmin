@@ -92,7 +92,7 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
     //Register action
     let actionId;
     try {
-        actionId = ctx.txAdmin.playerDatabase.actions.registerBan(
+        actionId = txCore.playerDatabase.actions.registerBan(
             identifiers,
             ctx.admin.name,
             reason,
@@ -105,7 +105,7 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
     ctx.admin.logAction(`Banned <${identifiers.join(';')}>: ${reason}`);
 
     //No need to dispatch events if server is not online
-    if (ctx.txAdmin.fxRunner.fxChild === null) {
+    if (txCore.fxRunner.fxChild === null) {
         return { success: true };
     }
 
@@ -118,20 +118,20 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
         };
         if (expiration !== false && duration) {
             const humanizeOptions = {
-                language: ctx.txAdmin.translator.t('$meta.humanizer_language'),
+                language: txCore.translator.t('$meta.humanizer_language'),
                 round: true,
                 units: ['d', 'h'] as Unit[],
             };
             durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
             tOptions.expiration = durationTranslated;
-            kickMessage = ctx.txAdmin.translator.t('ban_messages.kick_temporary', tOptions);
+            kickMessage = txCore.translator.t('ban_messages.kick_temporary', tOptions);
         } else {
             durationTranslated = null;
-            kickMessage = ctx.txAdmin.translator.t('ban_messages.kick_permanent', tOptions);
+            kickMessage = txCore.translator.t('ban_messages.kick_permanent', tOptions);
         }
 
         // Dispatch `txAdmin:events:playerBanned`
-        ctx.txAdmin.fxRunner.sendEvent('playerBanned', {
+        txCore.fxRunner.sendEvent('playerBanned', {
             author: ctx.admin.name,
             reason,
             actionId,
@@ -168,20 +168,20 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiOkResp> {
 
     let action;
     try {
-        action = ctx.txAdmin.playerDatabase.actions.revoke(actionId, ctx.admin.name, perms) as DatabaseActionType;
+        action = txCore.playerDatabase.actions.revoke(actionId, ctx.admin.name, perms) as DatabaseActionType;
         ctx.admin.logAction(`Revoked ${action.type} id ${actionId} from ${action.playerName ?? 'identifiers'}`);
     } catch (error) {
         return { error: `Failed to revoke action: ${(error as Error).message}` };
     }
 
     //No need to dispatch events if server is not online
-    if (ctx.txAdmin.fxRunner.fxChild === null) {
+    if (txCore.fxRunner.fxChild === null) {
         return { success: true };
     }
 
     try {
         // Dispatch `txAdmin:events:actionRevoked`
-        ctx.txAdmin.fxRunner.sendEvent('actionRevoked', {
+        txCore.fxRunner.sendEvent('actionRevoked', {
             actionId: action.id,
             actionType: action.type,
             actionReason: action.reason,

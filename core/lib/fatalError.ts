@@ -61,18 +61,19 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
 
 
 /*
-100 - global data
-200 - boot
-    202 - txdata
-    203 - setup profile throw
-    204 - setup profile mkdir/writefile
-    210 - expired
-    211 - expired cron
-    220 - configvault throw
-    221 - modules constructor throw
-    222 - txGlobal placeholder getter error
-    223 - txGlobal placeholder setter error
-    225 - txGlobal access before initial tick
+NOTE: Going above 1000 to avoid collision with default nodejs error codes
+ref: https://nodejs.org/docs/latest-v22.x/api/process.html#exit-codes
+
+1000 - global data
+2000 - boot
+    2001 - txdata
+    2002 - setup profile throw
+    2003 - boot throw
+    2010 - expired
+    2011 - expired cron
+    2022 - txCore placeholder getter error
+    2023 - txCore placeholder setter error
+
 5100 - config vault
 5300 - admin vault
 5400 - fxrunner
@@ -81,8 +82,9 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
 5800 - webserver
 */
 
-fatalError.GlobalData = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(100 + code, msg, err);
-fatalError.Boot = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(200 + code, msg, err);
+
+fatalError.GlobalData = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(1000 + code, msg, err);
+fatalError.Boot = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(2000 + code, msg, err);
 
 fatalError.ConfigVault = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5100 + code, msg, err);
 fatalError.Translator = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5200 + code, msg, err);

@@ -1,6 +1,5 @@
 const modulename = 'DiscordBot:interactionHandler';
 import { Interaction, InteractionType } from 'discord.js';
-import TxAdmin from '@core/txAdmin.js';
 import infoCommandHandler from './commands/info';
 import statusCommandHandler from './commands/status';
 import whitelistCommandHandler from './commands/whitelist';
@@ -29,7 +28,7 @@ const noHandlerResponse = async (interaction: Interaction) => {
 }
 
 
-export default async (txAdmin: TxAdmin, interaction: Interaction) => {
+export default async (interaction: Interaction) => {
     //DEBUG
     // const copy = Object.assign(cloneDeep(interaction), { user: false, member: false });
     // console.dir(copy);
@@ -47,7 +46,7 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
         //     console.error(`No handler available for button interaction ${interaction.customId}`);
         //     return;
         // }
-        // txAdmin.statsManager.txRuntime.botCommands.count(???);
+        // txCore.statsManager.txRuntime.botCommands.count(???);
         // //Executes interaction
         // try {
         //     return await handler.execute(interaction, args, txChungus);
@@ -64,11 +63,11 @@ export default async (txAdmin: TxAdmin, interaction: Interaction) => {
             noHandlerResponse(interaction).catch((e) => {});
             return;
         }
-        txAdmin.statsManager.txRuntime.botCommands.count(interaction.commandName);
+        txCore.statsManager.txRuntime.botCommands.count(interaction.commandName);
 
         //Executes interaction
         try {
-            await handler(interaction, txAdmin);
+            await handler(interaction);
             return;
         } catch (error) {
             const msg = `Error executing ${interaction.commandName}: ${(error as Error).message}`;

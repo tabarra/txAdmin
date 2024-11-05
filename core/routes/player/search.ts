@@ -36,9 +36,9 @@ export default async function PlayerSearch(ctx: AuthedCtx) {
     } = ctx.query;
     const sendTypedResp = (data: PlayersTableSearchResp) => ctx.send(data);
     const searchTime = new TimeCounter();
-    const adminsIdentifiers = ctx.txAdmin.adminVault.getAdminsIdentifiers();
-    const onlinePlayersLicenses = ctx.txAdmin.playerlistManager.getOnlinePlayersLicenses();
-    const dbo = ctx.txAdmin.playerDatabase.getDboRef();
+    const adminsIdentifiers = txCore.adminVault.getAdminsIdentifiers();
+    const onlinePlayersLicenses = txCore.playerlistManager.getOnlinePlayersLicenses();
+    const dbo = txCore.playerDatabase.getDboRef();
     let chain = dbo.chain.get('players').clone(); //shallow clone to avoid sorting the original
     /*
         In order:
@@ -176,7 +176,7 @@ export default async function PlayerSearch(ctx: AuthedCtx) {
         };
     });
 
-    ctx.txAdmin.statsManager.txRuntime.playersTableSearchTime.count(searchTime.stop().milliseconds);
+    txCore.statsManager.txRuntime.playersTableSearchTime.count(searchTime.stop().milliseconds);
     return sendTypedResp({
         players: processedPlayers,
         hasReachedEnd,

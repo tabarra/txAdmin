@@ -2,7 +2,6 @@ const modulename = 'CfxUpdateChecker';
 import { txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import { UpdateDataType } from '@shared/otherTypes';
-import TxAdmin from '@core/txAdmin';
 import { UpdateAvailableEventType } from '@shared/socketioTypes';
 import { queryChangelogApi } from './updateChangelog';
 import { getUpdateRolloutDelay } from './updateRollout';
@@ -49,13 +48,10 @@ const DELAY_CACHE_KEY = 'updateDelay';
 
 
 export default class CfxUpdateChecker {
-    #txAdmin: TxAdmin;
     txaUpdateData?: UpdateDataType;
     fxsUpdateData?: UpdateDataType;
 
-    constructor(txAdmin: TxAdmin) {
-        this.#txAdmin = txAdmin;
-
+    constructor() {
         //Check for updates ASAP
         this.checkChangelog();
 
@@ -86,7 +82,7 @@ export default class CfxUpdateChecker {
             //Setup delay data
             const currTs = Date.now();
             let delayData: CachedDelayType;
-            const rawCache = this.#txAdmin.persistentCache.get(DELAY_CACHE_KEY);
+            const rawCache = txCore.persistentCache.get(DELAY_CACHE_KEY);
             const cachedData = parseCacheString(rawCache);
             if (cachedData) {
                 delayData = cachedData;
@@ -95,7 +91,7 @@ export default class CfxUpdateChecker {
                     diceRoll: rollDice(),
                     ts: currTs,
                 }
-                this.#txAdmin.persistentCache.set(DELAY_CACHE_KEY, createCacheString(delayData));
+                txCore.persistentCache.set(DELAY_CACHE_KEY, createCacheString(delayData));
             }
 
             //Get the delay
@@ -107,7 +103,7 @@ export default class CfxUpdateChecker {
             const notifDelayMs = notifDelayDays * 24 * 60 * 60 * 1000;
             console.verbose.debug(`Update available, notification delayed by: ${notifDelayDays} day(s).`);
             if (currTs - delayData.ts >= notifDelayMs) {
-                this.#txAdmin.persistentCache.delete(DELAY_CACHE_KEY);
+                txCore.persistentCache.delete(DELAY_CACHE_KEY);
                 this.txaUpdateData = {
                     version: updates.txa.version,
                     isImportant: updates.txa.isImportant,
@@ -127,7 +123,7 @@ export default class CfxUpdateChecker {
 
         //Sending event to the UI
         if (this.txaUpdateData || this.fxsUpdateData) {
-            this.#txAdmin.webServer.webSocket.pushEvent<UpdateAvailableEventType>('updateAvailable', {
+            txCore.webServer.webSocket.pushEvent<UpdateAvailableEventType>('updateAvailable', {
                 fxserver: this.fxsUpdateData,
                 txadmin: this.txaUpdateData,
             });

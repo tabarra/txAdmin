@@ -43,20 +43,20 @@ export default async function MasterActionsAction(ctx: AuthedCtx) {
  * Handle FXServer settings reset nad resurn to setup
  */
 async function handleResetFXServer(ctx: AuthedCtx) {
-    if (ctx.txAdmin.fxRunner.fxChild !== null) {
+    if (txCore.fxRunner.fxChild !== null) {
         ctx.admin.logCommand('STOP SERVER');
-        ctx.txAdmin.fxRunner.killServer('resetting fxserver config', ctx.admin.name, false).catch((e) => { });
+        txCore.fxRunner.killServer('resetting fxserver config', ctx.admin.name, false).catch((e) => { });
     }
 
     //Making sure the deployer is not running
-    globals.deployer = null;
+    txManager.deployer = null;
 
     //Preparing & saving config
-    const newConfig = ctx.txAdmin.configVault.getScopedStructure('fxRunner');
+    const newConfig = txCore.configVault.getScopedStructure('fxRunner');
     newConfig.serverDataPath = null;
     newConfig.cfgPath = null;
     try {
-        ctx.txAdmin.configVault.saveProfile('fxRunner', newConfig);
+        txCore.configVault.saveProfile('fxRunner', newConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing FXServer settings.`);
         console.verbose.dir(error);
@@ -68,10 +68,10 @@ async function handleResetFXServer(ctx: AuthedCtx) {
     }
 
     //technically not required, but faster than fxRunner.killServer()
-    ctx.txAdmin.webServer?.webSocket.pushRefresh('status');
+    txCore.webServer.webSocket.pushRefresh('status');
 
     //Sending output
-    ctx.txAdmin.fxRunner.refreshConfig();
+    txCore.fxRunner.refreshConfig();
     ctx.admin.logAction('Resetting fxRunner settings.');
     return ctx.send({ success: true });
 }
@@ -173,21 +173,21 @@ async function handleCleanDatabase(ctx: AuthedCtx) {
     const tsStart = Date.now();
     let playersRemoved = 0;
     try {
-        playersRemoved = ctx.txAdmin.playerDatabase.cleanup.bulkRemove('players', playersFilter);
+        playersRemoved = txCore.playerDatabase.cleanup.bulkRemove('players', playersFilter);
     } catch (error) {
         return sendTypedResp({ error: `<b>Failed to clean players with error:</b><br>${(error as Error).message}` });
     }
 
     let actionsRemoved = 0;
     try {
-        actionsRemoved = ctx.txAdmin.playerDatabase.cleanup.bulkRemove('actions', actionsFilter);
+        actionsRemoved = txCore.playerDatabase.cleanup.bulkRemove('actions', actionsFilter);
     } catch (error) {
         return sendTypedResp({ error: `<b>Failed to clean actions with error:</b><br>${(error as Error).message}` });
     }
 
     let hwidsRemoved = 0;
     try {
-        hwidsRemoved = ctx.txAdmin.playerDatabase.cleanup.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
+        hwidsRemoved = txCore.playerDatabase.cleanup.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
     } catch (error) {
         return sendTypedResp({ error: `<b>Failed to clean HWIDs with error:</b><br>${(error as Error).message}` });
     }
@@ -232,7 +232,7 @@ async function handleRevokeWhitelists(ctx: AuthedCtx) {
 
     try {
         const tsStart = Date.now();
-        const cntRemoved = ctx.txAdmin.playerDatabase.players.bulkRevokeWhitelist(filterFunc);
+        const cntRemoved = txCore.playerDatabase.players.bulkRevokeWhitelist(filterFunc);
         const msElapsed = Date.now() - tsStart;
         return sendTypedResp({ msElapsed, cntRemoved });
     } catch (error) {

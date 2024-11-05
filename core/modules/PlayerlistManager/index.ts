@@ -1,6 +1,5 @@
 const modulename = 'PlayerlistManager';
 import { cloneDeep } from 'lodash-es';
-import TxAdmin from '@core/txAdmin.js';
 import { ServerPlayer } from '@lib/player/playerClasses.js';
 import { DatabaseActionWarnType, DatabasePlayerType } from '@modules/PlayerDatabase/databaseTypes';
 import consoleFactory from '@lib/console';
@@ -31,16 +30,13 @@ export type PlayerDropEvent = {
  * A list with 50k connected players will weight around 26mb, meaning no optimization is required there.
  */
 export default class PlayerlistManager {
-    readonly #txAdmin: TxAdmin;
     #playerlist: (ServerPlayer | undefined)[] = [];
     licenseCache: [mutexid: string, license: string][] = [];
     licenseCacheLimit = 50_000; //mutex+id+license * 50_000 = ~4mb
     joinLeaveLog: [ts: number, isJoin: boolean][] = [];
     joinLeaveLogLimitTime = 30 * 60 * 1000; //30 mins, [ts+isJoin] * 100_000 = ~4.3mb
 
-    constructor(txAdmin: TxAdmin) {
-        this.#txAdmin = txAdmin;
-    }
+    constructor() { }
 
 
     /**
@@ -87,7 +83,7 @@ export default class PlayerlistManager {
         this.licenseCache = this.licenseCache.slice(-this.licenseCacheLimit);
         this.#playerlist = [];
         this.joinLeaveLog = [];
-        this.#txAdmin.webServer.webSocket!.buffer('playerlist', {
+        txCore.webServer.webSocket!.buffer('playerlist', {
             mutex: oldMutex,
             type: 'fullPlayerlist',
             playerlist: [],
@@ -170,7 +166,7 @@ export default class PlayerlistManager {
                 targetName: pendingWarn.playerName,
             }
         }
-        this.#txAdmin.fxRunner.sendCommand('txaInitialData', [cmdData]);
+        txCore.fxRunner.sendCommand('txaInitialData', [cmdData]);
     }
 
 
@@ -185,16 +181,16 @@ export default class PlayerlistManager {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
                 if (this.#playerlist[payload.id] !== undefined) throw new Error(`duplicated player id`);
                 //TODO: pass serverInstance instead of playerDatabase
-                const svPlayer = new ServerPlayer(payload.id, payload.player, this, this.#txAdmin.playerDatabase);
+                const svPlayer = new ServerPlayer(payload.id, payload.player, this);
                 this.#playerlist[payload.id] = svPlayer;
                 this.joinLeaveLog.push([currTs, true]);
-                this.#txAdmin.logger.server.write([{
+                txCore.logger.server.write([{
                     type: 'playerJoining',
                     src: payload.id,
                     ts: currTs,
                     data: { ids: this.#playerlist[payload.id]!.ids }
                 }], mutex);
-                this.#txAdmin.webServer.webSocket.buffer<PlayerJoiningEventType>('playerlist', {
+                txCore.webServer.webSocket.buffer<PlayerJoiningEventType>('playerlist', {
                     mutex,
                     type: 'playerJoining',
                     netid: svPlayer.netid,
@@ -213,16 +209,16 @@ export default class PlayerlistManager {
                 if (!(this.#playerlist[payload.id] instanceof ServerPlayer)) throw new Error(`player id not found`);
                 this.#playerlist[payload.id]!.disconnect();
                 this.joinLeaveLog.push([currTs, false]);
-                const reasonCategory = this.#txAdmin.statsManager.playerDrop.handlePlayerDrop(payload);
+                const reasonCategory = txCore.statsManager.playerDrop.handlePlayerDrop(payload);
                 if (reasonCategory !== false) {
-                    this.#txAdmin.logger.server.write([{
+                    txCore.logger.server.write([{
                         type: 'playerDropped',
                         src: payload.id,
                         ts: currTs,
                         data: { reason: payload.reason }
                     }], mutex);
                 }
-                this.#txAdmin.webServer.webSocket.buffer<PlayerDroppedEventType>('playerlist', {
+                txCore.webServer.webSocket.buffer<PlayerDroppedEventType>('playerlist', {
                     mutex,
                     type: 'playerDropped',
                     netid: this.#playerlist[payload.id]!.netid,

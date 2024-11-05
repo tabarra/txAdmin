@@ -23,7 +23,7 @@ const getResourceSubPath = (resPath) => {
     if (resPath.indexOf('system_resources') >= 0) return 'system_resources';
     if (!path.isAbsolute(resPath)) return resPath;
 
-    let serverDataPathArr = breakPath(`${globals.fxRunner.config.serverDataPath}/resources`);
+    let serverDataPathArr = breakPath(`${txConfig.fxRunner.serverDataPath}/resources`);
     let resPathArr = breakPath(resPath);
     for (let i = 0; i < serverDataPathArr.length; i++) {
         if (isUndefined(resPathArr[i])) break;
@@ -46,7 +46,7 @@ const getResourceSubPath = (resPath) => {
  * @param {object} ctx
  */
 export default async function Resources(ctx) {
-    if (globals.fxRunner.fxChild === null) {
+    if (txCore.fxRunner.fxChild === null) {
         return ctx.utils.render('main/message', {
             message: '<strong>The resources list is only available when the server is online.</strong>',
         });
@@ -59,7 +59,7 @@ export default async function Resources(ctx) {
     - Check the <strong>Live Console</strong> for any errors which may indicate that some resource has a malformed <code>fxmanifest.lua</code> file.`;
 
     //Send command request
-    const cmdSuccess = globals.fxRunner.sendCommand('txaReportResources');
+    const cmdSuccess = txCore.fxRunner.sendCommand('txaReportResources');
     if (!cmdSuccess) {
         return ctx.utils.render('main/message', {message: timeoutMessage});
     }
@@ -70,13 +70,13 @@ export default async function Resources(ctx) {
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
             if (
-                globals.resourcesManager.resourceReport
-                && (new Date() - globals.resourcesManager.resourceReport.ts) <= 1000
-                && Array.isArray(globals.resourcesManager.resourceReport.resources)
+                txCore.resourcesManager.resourceReport
+                && (new Date() - txCore.resourcesManager.resourceReport.ts) <= 1000
+                && Array.isArray(txCore.resourcesManager.resourceReport.resources)
             ) {
                 clearTimeout(tListTimer);
                 clearTimeout(tErrorTimer);
-                const resGroups = processResources(globals.resourcesManager.resourceReport.resources);
+                const resGroups = processResources(txCore.resourcesManager.resourceReport.resources);
                 const renderData = {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),
