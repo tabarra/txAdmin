@@ -113,6 +113,10 @@ export default function ServerStatus() {
             discordStatusText = 'READY';
             discordStatusColor = 'default';
             discordStatusDescription = 'Discord bot is ready.';
+        } else if (globalStatus.discord === 3) {
+            discordStatusText = 'IDLE';
+            discordStatusColor = 'warning';
+            discordStatusDescription = 'Discord bot is ready.';
         } else {
             discordStatusText = `CODE-${globalStatus.discord}`;
             discordStatusColor = 'destructive';

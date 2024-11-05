@@ -43,7 +43,9 @@ export default class SvRuntimeStatsManager {
     );
 
     constructor() {
-        this.loadStatsHistory();
+        setImmediate(() => {
+            this.loadStatsHistory();
+        });
 
         //Cron functions
         setInterval(() => {

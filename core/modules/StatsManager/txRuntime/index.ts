@@ -57,7 +57,9 @@ export default class TxRuntimeStatsManager {
     };
 
     constructor() {
-        this.loadStatsPublicKey();
+        setImmediate(() => {
+            this.loadStatsPublicKey();
+        });
 
         //Delaying this because host static data takes 10+ seconds to be set
         setTimeout(() => {

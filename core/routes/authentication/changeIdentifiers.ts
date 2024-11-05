@@ -38,7 +38,7 @@ export default async function AuthChangeIdentifiers(ctx: AuthedCtx) {
         try {
             if (consts.validIdentifiers.fivem.test(cfxreId)) {
                 const id = cfxreId.split(':')[1];
-                const res = await got(`https://policy-live.fivem.net/api/getUserInfo/${id}`, cfxHttpReqOptions).json();
+                const res = await got(`https://policy-live.fivem.net/api/getUserInfo/${id}`, cfxHttpReqOptions).json<any>();
                 if (!res.username || !res.username.length) {
                     return ctx.send<GenericApiResp>({
                         error: `(ERR1) Invalid CitizenFX ID`,

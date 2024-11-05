@@ -53,7 +53,9 @@ export default class CfxUpdateChecker {
 
     constructor() {
         //Check for updates ASAP
-        this.checkChangelog();
+        setImmediate(() => {
+            this.checkChangelog();
+        });
 
         //Check again every 15 mins
         setInterval(() => {

@@ -7,6 +7,7 @@ Legend:
 ## Previous bugs
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
+- [ ] reported cases of crash reason too big without word break causing page to scroll horizontal 
 
 ## Highlights
 - [x] New player drops page
@@ -85,6 +86,7 @@ Legend:
 - [ ] drop usage of `const console = consoleFactory(modulename);`
     - instead do `const console = console.tag('xxxx')`
     - need to be careful with the import order, but it's possible
+- [ ] remove `fs-extra` - right now only used in deployer and setup
 - [ ] headless deployer, without instantiating TxAdmin
 - [ ] (?) resolve config on `index.js` before instantiating TxAdmin
 - [ ] change the TxAdmin class to be the one managing the deployer, instead of the modules
@@ -352,6 +354,7 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
         - https://www.npmjs.com/package/fd-lock
     - change deployer and some other path manipulations to use `path.matchesGlob`
     - replace all `global.*` to `globalThis.*`
+    - use `@tsconfig/node22`
 
 - [ ] checar se outros resources conseguem chamar 'txaLogger:menuEvent'?
 - [ ] Migrate all log routes
@@ -576,6 +579,11 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 - provide an export to trigger a setAdmin removing the perms
 
 
+### Reporting system
+- Definitely worth to do discord integration, with good embeds (with buttons?)
+- Need to show both ingame and on web
+- Automatically pull all logs from a player, and the world log from around that time
+- Notify admins ingame
 
 ### txBanana
 - code prototype with ItsANoBrainer#1337 (https://github.com/tabarra/txBanana)
@@ -690,4 +698,10 @@ seq 50000 | parallel --max-args 0 --jobs 10000 "curl -s http://xxxxxxxxxxx:40120
 cdt
 cd web/public/
 curl -o svMain.json http://localhost:40120/chartData/svMain
+
+# check changes
+git diff --unified=0 --no-color | grep '^+' | grep --color 'NOTE'
+git diff --unified=0 --no-color | grep '^+' | grep --color 'TODO'
+git diff --unified=0 --no-color | grep '^+' | grep --color 'FIXME'
+git diff --unified=0 --no-color | grep '^+' | grep --color '!NC'
 ```

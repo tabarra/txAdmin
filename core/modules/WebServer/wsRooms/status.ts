@@ -18,8 +18,7 @@ const getInitialData = (): GlobalStatusType => {
     }
 
     return {
-        // @ts-ignore simplifying the status enum to a string
-        discord: txCore.discordBot.wsStatus, //no push events, only passively updated
+        discord: txCore.discordBot.wsStatus,
         server: {
             configPendingStep,
             status: txCore.healthMonitor.currentStatus || '??',
@@ -29,7 +28,7 @@ const getInitialData = (): GlobalStatusType => {
             whitelist: txConfig.playerDatabase.whitelistMode,
         },
         // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
-        scheduler: txCore.scheduler.getStatus(), //no push events, only passively updated
+        scheduler: txCore.scheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()
     }
 }
 

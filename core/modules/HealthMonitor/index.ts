@@ -1,7 +1,7 @@
 const modulename = 'HealthMonitor';
 import got from 'got'; //we need internal requests to have 127.0.0.1 src
 import { convars } from '@core/globalData';
-import { getHostStats, Stopwatch } from './utils';
+import { Stopwatch } from './utils';
 import consoleFactory from '@lib/console';
 import { now } from '@lib/misc';
 const console = consoleFactory(modulename);
@@ -31,7 +31,6 @@ enum HealthStatus {
 
 export default class HealthMonitor {
     public config: any; //FIXME: type
-    public hostStats: null | Awaited<ReturnType<typeof getHostStats>> = null;
 
     //Status tracking
     public currentStatus: HealthStatus = HealthStatus.OFFLINE;
@@ -64,14 +63,6 @@ export default class HealthMonitor {
             this.sendHealthCheck();
             this.refreshServerStatus();
         }, 1000);
-
-        //NOTE: if ever changing this, need to make sure the other data
-        //in the status event will be pushed, since right some of now it
-        //relies on this event every 5 seconds
-        setInterval(async () => {
-            this.hostStats = await getHostStats();
-            txCore.webServer.webSocket.pushRefresh('status');
-        }, 5000);
     }
 
 
@@ -108,7 +99,7 @@ export default class HealthMonitor {
     setCurrentStatus(newStatus: HealthStatus) {
         if (newStatus !== this.currentStatus) {
             this.currentStatus = newStatus;
-            txCore.discordBot.updateStatus().catch((e) => { });
+            txCore.discordBot.updateBotStatus().catch((e) => { });
             txCore.webServer.webSocket.pushRefresh('status');
         }
     }

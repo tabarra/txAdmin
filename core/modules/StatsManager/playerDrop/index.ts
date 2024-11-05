@@ -41,7 +41,9 @@ export default class PlayerDropStatsManager {
     );
 
     constructor() {
-        this.loadEventLog();
+        setImmediate(() => {
+            this.loadEventLog();
+        });
     }
 
 

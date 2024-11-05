@@ -8,7 +8,6 @@ import fatalError from '@lib/fatalError';
 import { ensureProfileStructure, setupProfile } from './boot/setup';
 import setupProcessHandlers from './boot/setupProcessHandlers';
 import bootTxAdmin from './txAdmin';
-import { startReadyWatcher } from './boot/banner';
 const console = consoleFactory();
 
 
@@ -48,7 +47,6 @@ try {
 //Start txAdmin (have fun 😀)
 console.log(`Starting profile '${txEnv.profile}' on v${txEnv.txaVersion}/b${txEnv.fxsVersionDisplay}`);
 try {
-    startReadyWatcher(); //FIXME: mover pra dentro do TxManager
     bootTxAdmin();
 } catch (error) {
     fatalError.Boot(3, 'Failed to start txAdmin.', error);

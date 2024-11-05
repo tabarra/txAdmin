@@ -76,32 +76,28 @@ export default function bootTxAdmin() {
         return instance;
     };
 
-    //FIXME: voltar fazendo um double check fo first tick
-
     //High Priority (required for banner) 
-    /*[ ]*/_txCore.adminVault = startModule(AdminVault, 'adminVault');
-    /*[ ]*/_txCore.webServer = startModule(WebServer, 'webServer');
-    /*[ ]*/_txCore.playerDatabase = startModule(PlayerDatabase, 'playerDatabase');
+    _txCore.adminVault = startModule(AdminVault, 'adminVault');
+    _txCore.webServer = startModule(WebServer, 'webServer');
+    _txCore.playerDatabase = startModule(PlayerDatabase, 'playerDatabase');
 
-    //Required for signalStartReady() NOTE: renomear pra "auto start" e os low priority pra "manual start"?
-    /*[ ]*/_txCore.healthMonitor = startModule(HealthMonitor, 'healthMonitor');
-    /*[ ]*/_txCore.discordBot = startModule(DiscordBot, 'discordBot');
-    /*[ ]*/_txCore.logger = startModule(Logger, 'logger');
-    /*[ ]*/_txCore.fxRunner = startModule(FxRunner, 'fxRunner');
-
-    //FIXME: do signalStartReady()?
+    //Required for signalStartReady()
+    _txCore.healthMonitor = startModule(HealthMonitor, 'healthMonitor');
+    _txCore.discordBot = startModule(DiscordBot, 'discordBot');
+    _txCore.logger = startModule(Logger, 'logger');
+    _txCore.fxRunner = startModule(FxRunner, 'fxRunner');
 
     //Low Priority
-    /*[ ]*/_txCore.translator = startModule(Translator, 'translator');
-    /*[ ]*/_txCore.scheduler = startModule(Scheduler, 'scheduler');
-    /*[ ]*/_txCore.statsManager = startModule(StatsManager, 'statsManager');
-    /*[ ]*/_txCore.resourcesManager = startModule(ResourcesManager, 'resourcesManager'); //FIXME: melhor ser antes?
-    /*[ ]*/_txCore.playerlistManager = startModule(PlayerlistManager, 'playerlistManager'); //FIXME: melhor ser antes?
-    /*[ ]*/_txCore.persistentCache = startModule(PersistentCache, 'persistentCache');
+    _txCore.translator = startModule(Translator, 'translator');
+    _txCore.scheduler = startModule(Scheduler, 'scheduler');
+    _txCore.statsManager = startModule(StatsManager, 'statsManager');
+    _txCore.resourcesManager = startModule(ResourcesManager, 'resourcesManager');
+    _txCore.playerlistManager = startModule(PlayerlistManager, 'playerlistManager');
+    _txCore.persistentCache = startModule(PersistentCache, 'persistentCache');
 
     //Very Low Priority
-    /*[ ]*/_txCore.dynamicAds = startModule(DynamicAds, 'dynamicAds');
-    /*[ ]*/_txCore.cfxUpdateChecker = startModule(CfxUpdateChecker, 'cfxUpdateChecker');
+    _txCore.dynamicAds = startModule(DynamicAds, 'dynamicAds');
+    _txCore.cfxUpdateChecker = startModule(CfxUpdateChecker, 'cfxUpdateChecker');
 
 
     /**

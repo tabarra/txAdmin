@@ -89,8 +89,3 @@ declare module 'unicode-emoji-json/data-ordered-emoji' {
 // interface ProcessEnv {
 //     [x: string]: string | undefined;
 // }
-
-//FIXME: checar se posso remover
-// declare namespace Intl {
-//     function getCanonicalLocales(locales: string | string[]): string[];
-// }

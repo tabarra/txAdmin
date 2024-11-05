@@ -40,6 +40,7 @@ export default class AdminVault {
         this.refreshRoutine = null;
 
         //Not alphabetical order, but that's fine
+        //FIXME: mover pra arquivos separado
         this.registeredPermissions = {
             'all_permissions': 'All Permissions',
             'manage.admins': 'Manage Admins', //will enable the "set admin" button in the player modal
@@ -69,12 +70,14 @@ export default class AdminVault {
             'players.teleport': 'Teleport', //self teleport, and the bring/go to on player modal
             'players.troll': 'Troll Actions', //all the troll options in the player modal
         };
+        //FIXME: pode remover, hardcode na cron function
         this.hardConfigs = {
             refreshInterval: 15e3,
         };
 
 
         //Load providers
+        //FIXME: mover pro escopo da classe - acho que não precisa de try/catch
         try {
             this.providers = {
                 discord: false,
@@ -376,9 +379,9 @@ export default class AdminVault {
      * Edit admin and save to the admins file
      * @param {string} name
      * @param {string|null} password
-     * @param {object|undefined} citizenfxData or false
-     * @param {object|undefined} discordData or false
-     * @param {array|undefined} permissions
+     * @param {object|false} [citizenfxData] or false
+     * @param {object|false} [discordData] or false
+     * @param {string[]} [permissions]
      */
     async editAdmin(name, password, citizenfxData, discordData, permissions) {
         if (this.admins == false) throw new Error('Admins not set');
@@ -569,8 +572,6 @@ export default class AdminVault {
         });
 
         this.admins = jsonData;
-        //NOTE: since this runs only at the start, nobody is online yet
-        // this.refreshOnlineAdmins().catch((e) => { });
         if (hasMigration) {
             try {
                 await this.writeAdminsFile();

@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import got from '@lib/got';
 import getOsDistro from '@lib/host/getOsDistro.js';
-import { convars, txEnv } from '@core/globalData';
+import { convars, txDevEnv, txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import { addLocalIpAddress } from '@lib/host/isIpAddressLocal';
 const console = consoleFactory();
@@ -23,10 +23,11 @@ const getPublicIp = async () => {
     };
 
     const allApis = shuffle([
-        ['http://ip-api.com/json/', 'query'],
         ['https://api.ipify.org?format=json', 'ip'],
         ['https://api.myip.com', 'ip'],
-        ['https://ip.seeip.org/json', 'ip'],
+        ['https://ipv4.jsonip.com/', 'ip'],
+        ['https://api.my-ip.io/v2/ip.json', 'ip'],
+        ['https://www.l2.io/ip.json', 'ip'],
     ]);
     for await (const [url, jsonPath] of allApis) {
         try {
@@ -113,7 +114,7 @@ const awaitDatabase = new Promise((resolve, reject) => {
 });
 
 
-export const startReadyWatcher = async () => {
+export const startReadyWatcher = async (cb: () => void) => {
     const [publicIpResp, msgRes, adminPinRes] = await Promise.allSettled([
         getPublicIp(),
         getOSMessage(),
@@ -158,7 +159,7 @@ export const startReadyWatcher = async () => {
         ...adminPinLines,
     ];
     console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);
-    if (convars.forceInterface === false && 'value' in msgRes && msgRes.value) {
+    if (!txDevEnv.ENABLED && convars.forceInterface === false && 'value' in msgRes && msgRes.value) {
         console.multiline(msgRes.value, chalk.bgBlue);
     }
 
@@ -167,6 +168,6 @@ export const startReadyWatcher = async () => {
         open(`http://localhost:${convars.txAdminPort}/addMaster/pin#${adminMasterPin}`).catch((e) => { });
     }
 
-    //Starting server
-    txCore.fxRunner.signalStartReady();
+    //Callback
+    cb();
 };

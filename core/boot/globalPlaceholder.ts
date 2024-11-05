@@ -16,16 +16,16 @@ const MSG_ERR_PARTIAL = 'Attempted to access txCore before it was initialized!';
 export const getCoreProxy = (refSrc: any) => {
     return new Proxy(refSrc, {
         get: function (target, prop) {
-            if (!txDevEnv.ENABLED && Reflect.has(target, prop)) {
-                if (console.isVerbose) {
-                    console.majorMultilineError([
-                        MSG_VIOLATION,
-                        MSG_CONTACT_DEV,
-                        `Getter for ${String(prop)}`,
-                    ]);
-                }
-                return Reflect.get(target, prop).deref();
-            }
+            // if (!txDevEnv.ENABLED && Reflect.has(target, prop)) {
+            //     if (console.isVerbose) {
+            //         console.majorMultilineError([
+            //             MSG_VIOLATION,
+            //             MSG_CONTACT_DEV,
+            //             `Getter for ${String(prop)}`,
+            //         ]);
+            //     }
+            //     return Reflect.get(target, prop).deref();
+            // }
             fatalError.Boot(
                 22,
                 [

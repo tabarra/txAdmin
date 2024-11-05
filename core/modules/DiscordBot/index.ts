@@ -55,14 +55,17 @@ export default class DiscordBot {
     announceChannel: Discord.TextBasedChannel | undefined;
     #lastDisallowedIntentsError: number = 0; //ms
     #lastGuildMembersCacheRefresh: number = 0; //ms
+    #lastWsStatus: Discord.Status | false = false;
 
 
     constructor() {
         this.config = txConfig.discordBot as any;
 
-        if (this.config.enabled) {
-            this.startBot().catch((e) => { });
-        }
+        setImmediate(() => {
+            if (this.config.enabled) {
+                this.startBot().catch((e) => { });
+            }
+        });
 
         // FIXME: Hacky solution to fix the issue with disallowed intents
         // Remove this when issue below is fixed 
@@ -76,9 +79,14 @@ export default class DiscordBot {
         //Cron
         setInterval(() => {
             if (this.config.enabled) {
-                this.updateStatus().catch((e) => { });
+                this.updateBotStatus().catch((e) => { });
             }
-        }, 60_000)
+        }, 60_000);
+        //Not sure how often do we want to do this, or if we need to do this at all,
+        //but previously this was indirectly refreshed every 5 seconds by the health monitor
+        setInterval(() => {
+            this.refreshWsStatus();
+        }, 7500);
     }
 
 
@@ -91,6 +99,7 @@ export default class DiscordBot {
         if (this.#client) {
             console.warn('Stopping Discord Bot');
             this.#client.destroy();
+            this.refreshWsStatus();
             setTimeout(() => {
                 if (!this.config.enabled) this.#client = undefined;
             }, 1000);
@@ -115,6 +124,16 @@ export default class DiscordBot {
      */
     get wsStatus() {
         return (this.#client) ? this.#client.ws.status : false;
+    }
+
+    /**
+     * Updates the bot client status and pushes to the websocket
+     */
+    refreshWsStatus() {
+        if (this.#lastWsStatus !== this.wsStatus) {
+            this.#lastWsStatus = this.wsStatus;
+            txCore.webServer.webSocket.pushRefresh('status');
+        }
     }
 
 
@@ -157,7 +176,7 @@ export default class DiscordBot {
     /**
      * Update persistent status and activity
      */
-    async updateStatus() {
+    async updateBotStatus() {
         if (!this.#client?.isReady() || !this.#client.user) {
             console.verbose.warn('not ready yet to update status');
             return false;
@@ -211,6 +230,7 @@ export default class DiscordBot {
                 console.warn('Stopping Discord Bot');
                 this.#client?.destroy();
                 setImmediate(() => {
+                    this.refreshWsStatus();
                     this.#client = undefined;
                 });
                 return reject(e);
@@ -313,7 +333,8 @@ export default class DiscordBot {
                 this.guild.commands.set(slashCommands).catch(console.dir);
                 this.#client.application?.commands.set([]).catch(console.dir);
 
-                this.updateStatus().catch((e) => { });
+                this.updateBotStatus().catch((e) => { });
+                this.refreshWsStatus();
 
                 console.ok(`Started and logged in as '${this.#client.user.tag}'`);
                 return resolve();
@@ -321,19 +342,23 @@ export default class DiscordBot {
 
             //Setup remaining event listeners
             this.#client.on('error', (error) => {
+                this.refreshWsStatus();
                 clearInterval(disallowedIntentsWatcherId);
                 console.error(`Error from Discord.js client: ${error.message}`);
                 return reject(error);
             });
             this.#client.on('resume', () => {
                 console.verbose.ok('Connection with Discord API server resumed');
-                this.updateStatus().catch((e) => { });
+                this.updateBotStatus().catch((e) => { });
+                this.refreshWsStatus();
             });
-            this.#client.on('interactionCreate', interactionCreateHandler.bind(null, txCore));
+            this.#client.on('interactionCreate', interactionCreateHandler);
             // this.#client.on('debug', console.verbose.debug);
 
             //Start bot
+            this.refreshWsStatus();
             this.#client.login(this.config.token).catch((error) => {
+                this.refreshWsStatus();
                 clearInterval(disallowedIntentsWatcherId);
 
                 //for some reason, this is not throwing unhandled rejection anymore /shrug

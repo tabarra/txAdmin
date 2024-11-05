@@ -3,6 +3,7 @@ import os from 'node:os';
 import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import got from '@lib/got';
 import getOsDistro from '@lib/host/getOsDistro.js';
+import getHostUsage from '@lib/host/getHostUsage';
 import pidUsageTree from '@lib/host/pidUsageTree.js';
 import { txEnv } from '@core/globalData';
 import si from 'systeminformation';
@@ -216,7 +217,10 @@ export const getHostData = async (): Promise<HostDataReturnType> => {
 
     //Get dynamic info (mem/cpu usage) and prepare output
     try {
-        const stats = txCore.healthMonitor.hostStats;
+        const stats = await Promise.race([
+            getHostUsage(),
+            new Promise<null>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2500))
+        ]);
         if (stats) {
             return {
                 static: _hostStaticDataCache,
