@@ -1,6 +1,7 @@
 import { useGlobalStatus } from '@/hooks/status';
 import { VariantProps, cva } from 'class-variance-authority';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { DiscordBotStatus } from '@shared/enums';
 
 
 const statusBadgeVariants = cva(
@@ -41,18 +42,29 @@ function StatusBadge({ children, tooltip, type }: StatusBadgeProps) {
     </Tooltip>
 }
 
-//Ref: https://discord.js.org/#/docs/discord.js/main/typedef/Status
-const discordStatusMap = [
-    'READY',
-    'CONNECTING',
-    'RECONNECTING',
-    'IDLE',
-    'NEARLY',
-    'DISCONNECTED',
-    'WAITING_FOR_GUILDS',
-    'IDENTIFYING',
-    'RESUMING',
-] as const;
+
+const discordStatusMap = {
+    [DiscordBotStatus.Disabled]: {
+        text: 'DISABLED',
+        color: 'default',
+        description: 'Discord bot is disabled.',
+    },
+    [DiscordBotStatus.Starting]: {
+        text: 'STARTING',
+        color: 'warning',
+        description: 'Discord bot is starting.',
+    },
+    [DiscordBotStatus.Ready]: {
+        text: 'READY',
+        color: 'default',
+        description: 'Discord bot is ready.',
+    },
+    [DiscordBotStatus.Error]: {
+        text: 'ERROR',
+        color: 'destructive',
+        description: 'Discord bot is in an error state.',
+    },
+} as const;
 
 export default function ServerStatus() {
     const globalStatus = useGlobalStatus();
@@ -105,24 +117,14 @@ export default function ServerStatus() {
         }
 
         //Bot status - too long to show all the text, so just show the code
-        if (globalStatus.discord === false) {
-            discordStatusText = 'DISABLED';
-            discordStatusColor = 'default';
-            discordStatusDescription = 'Discord bot is disabled.';
-        } else if (globalStatus.discord === 0) {
-            discordStatusText = 'READY';
-            discordStatusColor = 'default';
-            discordStatusDescription = 'Discord bot is ready.';
-        } else if (globalStatus.discord === 3) {
-            discordStatusText = 'IDLE';
-            discordStatusColor = 'warning';
-            discordStatusDescription = 'Discord bot is ready.';
+        if (globalStatus.discord in discordStatusMap) {
+            discordStatusText = discordStatusMap[globalStatus.discord].text;
+            discordStatusColor = discordStatusMap[globalStatus.discord].color;
+            discordStatusDescription = discordStatusMap[globalStatus.discord].description;
         } else {
             discordStatusText = `CODE-${globalStatus.discord}`;
             discordStatusColor = 'destructive';
-            discordStatusDescription = discordStatusMap[globalStatus.discord]
-                ? `Bot ws status: ${discordStatusMap[globalStatus.discord]}`
-                : 'Unknown status code';
+            discordStatusDescription = 'Unknown status code';
         }
     }
 

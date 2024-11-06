@@ -8,6 +8,7 @@ import got from '@lib/got';
 import consoleFactory from '@lib/console';
 import recipeParser from '@core/deployer/recipeParser';
 import { validateTargetPath } from '@core/deployer/utils';
+import { TxConfigState } from '@shared/enums';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -61,11 +62,8 @@ export default async function SetupPost(ctx) {
         });
     }
 
-    //Check if this is the correct state for the setup page
-    if (
-        txManager.deployer !== null
-        || (txConfig.fxRunner.serverDataPath && txConfig.fxRunner.cfgPath)
-    ) {
+    //Ensure the correct state for the setup page
+    if (txManager.configState !== TxConfigState.Setup) {
         return ctx.send({
             success: false,
             refresh: true,
@@ -259,7 +257,7 @@ async function handleSaveLocal(ctx) {
         cfgFile: slash(path.normalize(ctx.request.body.cfgFile)),
     };
 
-    //Validating Base Path
+    //Validating Server Data Path
     try {
         if (!fse.existsSync(path.join(cfg.dataFolder, 'resources'))) {
             throw new Error('Invalid path');
@@ -307,7 +305,7 @@ async function handleSaveLocal(ctx) {
 
 /**
  * Handle Save settings for remote recipe importing
- * Actions: download recipe, txManager.deployer = new Deployer(recipe)
+ * Actions: download recipe, starts deployer
  * @param {object} ctx
  */
 async function handleSaveDeployerImport(ctx) {
@@ -357,7 +355,7 @@ async function handleSaveDeployerImport(ctx) {
 
     //Start deployer (constructor will validate the recipe)
     try {
-        txManager.deployer = new Deployer(recipeText, deploymentID, targetPath, isTrustedSource, {serverName});
+        txManager.startDeployer(recipeText, deploymentID, targetPath, isTrustedSource, {serverName});
         txCore.webServer.webSocket.pushRefresh('status');
     } catch (error) {
         return ctx.send({success: false, message: error.message});
@@ -368,7 +366,7 @@ async function handleSaveDeployerImport(ctx) {
 
 /**
  * Handle Save settings for custom recipe
- * Actions: download recipe, txManager.deployer = new Deployer(recipe)
+ * Actions: download recipe, starts deployer
  * @param {object} ctx
  */
 async function handleSaveDeployerCustom(ctx) {
@@ -406,7 +404,7 @@ async function handleSaveDeployerCustom(ctx) {
         serverName,
     };
     try {
-        txManager.deployer = new Deployer(false, deploymentID, targetPath, false, customMetaData);
+        txManager.startDeployer(false, deploymentID, targetPath, false, customMetaData);
         txCore.webServer.webSocket.pushRefresh('status');
     } catch (error) {
         return ctx.send({success: false, message: error.message});

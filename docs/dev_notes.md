@@ -73,7 +73,16 @@ Legend:
 - [x] move `ConfigVault.setupFolderStructure();` to index
 - [x] improve db downgrade message
 - [x] txGlobal.database.[players/actions/whitelist/cleanup].*
-- [ ] txGlobal/globals
+- [x] txGlobal/globals
+- [x] txManager should be managing the deployer, not the modules
+- [x] txManager should be exposing methods to get the status
+- [ ] em vários módilos eu fiz `this.config = txConfig.xxxxx`, mas tem que checar se o módulo não exige que o config não mude sem o this.refreshConfig
+    - provavelmente melhor esperar o refactor das configs
+- [ ] drop usage of `const console = consoleFactory(modulename);`
+    - instead do `const console = console.tag('xxxx')`
+    - need to be careful with the import order, but it's possible
+- [ ] remove `fs-extra` - right now only used in deployer and setup
+- [ ] headless deployer, without instantiating TxAdmin
 - [ ] lua file changes (after PR merges)
     - 4 spaces
     - Upper case for globals
@@ -83,15 +92,6 @@ Legend:
     - [x] convert builders to use txDevEnv
     - [x] convert tx code use txDevEnv
     - [ ] use chokidar on `scripts/build/dev.ts` to restart on `.env` changes
-- [ ] drop usage of `const console = consoleFactory(modulename);`
-    - instead do `const console = console.tag('xxxx')`
-    - need to be careful with the import order, but it's possible
-- [ ] remove `fs-extra` - right now only used in deployer and setup
-- [ ] headless deployer, without instantiating TxAdmin
-- [ ] (?) resolve config on `index.js` before instantiating TxAdmin
-- [ ] change the TxAdmin class to be the one managing the deployer, instead of the modules
-- [ ] change the TxAdmin class to be the one exposing methods to get the status
-    - possibilities: booting, noMaster, setup, deployer, ready
 - [ ] include `list-dependencies.js` as part of the test workflow
     - improve to read the parent package deps
     - exit 1 on error
@@ -121,35 +121,25 @@ Legend:
     - https://chatgpt.com/c/670bf1f6-8ee4-8001-a731-3a219266d4c1
 
 
-## Refactor: Instantiation + Globals
-Instantiate module without having txAdmin or globals:
-NOTE: might not be worth doing this, as this is only to solve the problem of bad references, which is already being solved other ways.
-- [!] WebServer(this, profileConfig.webServer);
-    - context middleware factory requires reference to txadmin
-    - same for websocket
-- [ ] AdminVault();
-- [ ] DiscordBot(this, profileConfig.discordBot);
-- [ ] Logger(this, profileConfig.logger);
-- [ ] Translator(this);
-- [ ] FxRunner(this, profileConfig.fxRunner);
-- [ ] DynamicAds();
-- [ ] HealthMonitor(profileConfig.monitor);
-- [ ] Scheduler(profileConfig.monitor);
-- [ ] StatsManager(this);
-- [ ] ResourcesManager();
-- [ ] PlayerlistManager(this);
-- [ ] PlayerDatabase(this, profileConfig.playerDatabase);
-- [ ] PersistentCache(this);
-- [ ] CfxUpdateChecker(this);
 
+## Refactor: New Config
+- NOTE: check stash `refactor settings-modules`
+- Save only what changed? Or save all in the settings page
+- Do not make template config.json file on setup, only an empty-ish file
+- Use dot notation, save it flat
+- FIXME: not compatible with ban templates
+    - perhaps use array format `banTemplates[0].id=...`
+- Only acceptable values are json types except objects to prevent accidental mutations
+- Maybe don't even json the file, make something closer to a `.env`, line separated
+- Allow registerUpdateCallback to pass wildcards
+    - https://www.npmjs.com/package/minimatch - used by node itself
+    - https://www.npmjs.com/package/micromatch
+    - https://www.npmjs.com/package/picomatch
+    - https://www.npmjs.com/package/wildcard - super small
+    - https://www.npmjs.com/package/matcher - super small
+- Maybe components don't even need to hold a `this.config`? couldn't we just access it directly from the vault? Maybe something like `<globaltx>.config.get(key)`? Keep in mind some configs live in the scope of multiple modules.
+- Config file definitely needs versioning and migrations
 
-#### txGlobal todos
-- [ ] remover `declare const globals` do `global.d.ts`
-- [ ] remover todas as menções de `globals`
-- [ ] checar por `globals?.`
-- [ ] 
-- [ ] 
-- [ ] 
 
 
 ## Refactor: AdminVault
@@ -190,93 +180,6 @@ const params = ctx.getParams(schema: ZodInstance, errorMessage?: string)
 if (!params) return;
 ```
 
-
-## Refactor: New Config
-- NOTE: check stash `refactor settings-modules`
-- Save only what changed? Or save all in the settings page
-- Do not make template config.json file on setup, only an empty-ish file
-- Use dot notation, save it flat
-- FIXME: not compatible with ban templates
-    - perhaps use array format `banTemplates[0].id=...`
-- Only acceptable values are json types except objects to prevent accidental mutations
-- Maybe don't even json the file, make something closer to a `.env`, line separated
-- Allow registerUpdateCallback to pass wildcards
-    - https://www.npmjs.com/package/minimatch - used by node itself
-    - https://www.npmjs.com/package/micromatch
-    - https://www.npmjs.com/package/picomatch
-    - https://www.npmjs.com/package/wildcard - super small
-    - https://www.npmjs.com/package/matcher - super small
-- Maybe components don't even need to hold a `this.config`? couldn't we just access it directly from the vault? Maybe something like `<globaltx>.config.get(key)`? Keep in mind some configs live in the scope of multiple modules.
-- Config file definitely needs versioning and migrations
-
-```ts
-type RefreshConfigFunc = (newConfig: any, keysUpdated: string[]) => void
-
-class ConfigVault /*does not extend TxModuleBase*/ {
-    private readonly moduleRefreshCallbacks: {
-        keys: string[],
-        callback: RefreshConfigFunc
-    }[] = [
-        //NOTE: aqui os módulos _deveriam_ estar na ordem em que foram inicializados
-    ];
-    constructor() {}
-    getConfigSaved(key: string) {
-        //TODO: get the value that is saved in the config file
-    }
-    getConfigValue(key: string) {
-        //TODO: get the value that is saved, or default if not saved
-    }
-    saveConfigBulk(changes: {[key: string]: any}) {
-        //TODO: set multiple values in the config file
-        this.processCallbacks(Object.keys(changes));
-    }
-    saveConfig(key: string, value: any) {
-        //TODO: set the value in the config file
-        this.processCallbacks([key]);
-    }
-    processCallbacks(updatedKeys: string[]) {
-        for (const txModule of this.moduleRefreshCallbacks) {
-            //TODO: check if keys match, allow wildcards
-            const updatedMatchedKeys = updatedKeys.filter(k => txModule.keys.includes(k));
-            txModule.callback({}, updatedMatchedKeys);
-        }
-    }
-    registerUpdateCallback(keys: string[], callback: RefreshConfigFunc) {
-        this.moduleRefreshCallbacks.push({ keys, callback });
-    }
-}
-const configVault = new ConfigVault();
-
-// For all modules to inherit from
-class TxModuleBase {
-    constructor(configKeys: any) {
-        console.log('TxModuleBase constructor:', configKeys);
-        configVault.registerUpdateCallback(['whatever.*'], this.refreshConfig.bind(this));
-    }
-    refreshConfig(newConfig: any, keysUpdated: string[]) {
-        throw new Error(`refreshConfig not implemented`);
-    }
-}
-
-class WebServer extends TxModuleBase {
-    static readonly dependencies = ['WebPipe'];
-    static readonly configKeys = [
-        'xxxxx.*',
-        'yyyyy',
-    ];
-    constructor(public runtime: any) {
-        super(WebServer.configKeys);
-        console.log('WebServer constructor:', this.constructor.name);
-    }
-    refreshConfig(newConfig: any, keysUpdated: string[]) {
-        console.ok('passed', keysUpdated, this.runtime);
-    }
-}
-
-new WebServer('runtimexxx');
-console.dir(configVault.moduleRefreshCallbacks);
-configVault.saveConfig('xxxxx.y', 123);
-```
 
 
 ## Refactor: Formatting + Linting
@@ -371,7 +274,7 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - Ref: https://github.com/tabarra/txAdmin/issues/751
 
 - [ ] maybe use [this lib](https://www.npmjs.com/package/ntp-time-sync) to check for clock skew so I can remove the complexity of dealing with possible desync between core and ui on player modal, scheduler, etc;
-    - even better: clients2.google.com/time/1/current
+    - even better: clients2.google.com/time/1/current - there are alternatives
 - [ ] slide gesture to open/close the sidebars on mobile
 - [ ] new restart schedule in status card
 - [ ] ask framework owners to use `txAdmin-locale`

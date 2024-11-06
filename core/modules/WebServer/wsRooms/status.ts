@@ -1,36 +1,4 @@
-const modulename = 'SocketRoom:Status';
 import { RoomType } from "../webSocket";
-import consoleFactory from '@lib/console';
-import { GlobalStatusType, ServerConfigPendingStepType } from "@shared/socketioTypes";
-const console = consoleFactory(modulename);
-
-
-/**
- * Returns the fxserver's data
- */
-const getInitialData = (): GlobalStatusType => {
-    // Check if the deployer is running or setup is pending
-    let configPendingStep: ServerConfigPendingStepType;
-    if (txManager.deployer !== null) {
-        configPendingStep = 'deployer';
-    } else if (!txConfig.fxRunner.serverDataPath || !txConfig.fxRunner.cfgPath) {
-        configPendingStep = 'setup';
-    }
-
-    return {
-        discord: txCore.discordBot.wsStatus,
-        server: {
-            configPendingStep,
-            status: txCore.healthMonitor.currentStatus || '??',
-            process: txCore.fxRunner.getStatus(),
-            instantiated: !!txCore.fxRunner.fxChild, //used to disable the control buttons
-            name: txConfig.global.serverName,
-            whitelist: txConfig.playerDatabase.whitelistMode,
-        },
-        // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
-        scheduler: txCore.scheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()
-    }
-}
 
 
 /**
@@ -48,6 +16,6 @@ export default {
     cumulativeBuffer: false,
     outBuffer: null,
     initialData: () => {
-        return getInitialData();
+        return txManager.globalStatus;
     },
 } satisfies RoomType;

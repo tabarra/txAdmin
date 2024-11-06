@@ -1,9 +1,10 @@
 import { MenuNavLink } from '@/components/MainPageLink';
 import TxAnchor from '@/components/TxAnchor';
 import { useAdminPerms } from '@/hooks/auth';
-import { serverConfigPendingStepAtom, serverNameAtom } from '@/hooks/status';
+import { serverNameAtom, txConfigStateAtom } from '@/hooks/status';
 import { cn } from '@/lib/utils';
-import { ServerConfigPendingStepType } from '@shared/socketioTypes';
+import { TxConfigState } from '@shared/enums';
+import { GlobalStatusType } from '@shared/socketioTypes';
 import { useAtomValue } from 'jotai';
 import { BoxIcon, ChevronRightSquareIcon, DnaIcon, EyeIcon, FileEditIcon, HourglassIcon, LayoutDashboardIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -16,10 +17,10 @@ function ServerName() {
 }
 
 type PendingServerConfigureProps = {
-    pendingStep?: Exclude<ServerConfigPendingStepType, undefined>;
+    txConfigState?: Exclude<TxConfigState, TxConfigState.Ready>;
 }
 
-function PendingServerConfigure({ pendingStep }: PendingServerConfigureProps) {
+function PendingServerConfigure({ txConfigState }: PendingServerConfigureProps) {
     const [currLocation] = useLocation();
     const [linkHref, setLinkHref] = useState('');
     const linkText = useRef('');
@@ -28,10 +29,10 @@ function PendingServerConfigure({ pendingStep }: PendingServerConfigureProps) {
     // and the pendingStep state atom being updated from the socket.io event
     useEffect(() => {
         let newHref = '';
-        if (pendingStep === 'setup' && !currLocation.startsWith('/server/setup')) {
+        if (txConfigState === TxConfigState.Setup && !currLocation.startsWith('/server/setup')) {
             newHref = '/server/setup';
             linkText.current = 'Go to the setup page!';
-        } else if (pendingStep === 'deployer' && !currLocation.startsWith('/server/deployer')) {
+        } else if (txConfigState === TxConfigState.Deployer && !currLocation.startsWith('/server/deployer')) {
             newHref = '/server/deployer';
             linkText.current = 'Go to the deployer page!';
         } else {
@@ -47,7 +48,7 @@ function PendingServerConfigure({ pendingStep }: PendingServerConfigureProps) {
             }, 500);
             return () => clearTimeout(timeout);
         }
-    }, [currLocation, pendingStep]);
+    }, [currLocation, txConfigState]);
 
     return (
         <div className='absolute inset-0 flex flex-col items-center justify-center gap-4'>
@@ -69,12 +70,13 @@ function PendingServerConfigure({ pendingStep }: PendingServerConfigureProps) {
 }
 
 export default function ServerMenu() {
-    const serverConfigPendingStep = useAtomValue(serverConfigPendingStepAtom);
+    const txConfigState = useAtomValue(txConfigStateAtom);
     const { hasPerm } = useAdminPerms();
 
+    const isConfigPending = txConfigState !== TxConfigState.Ready;
     return <div className='relative'>
-        {serverConfigPendingStep && <PendingServerConfigure pendingStep={serverConfigPendingStep} />}
-        <div className={cn(serverConfigPendingStep && 'opacity-0 pointer-events-none')}>
+        {isConfigPending && <PendingServerConfigure txConfigState={txConfigState} />}
+        <div className={cn(isConfigPending && 'opacity-0 pointer-events-none')}>
             <h2 className="mb-1.5 text-lg font-semibold tracking-tight line-clamp-1">
                 <ServerName />
             </h2>

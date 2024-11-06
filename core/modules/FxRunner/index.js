@@ -100,7 +100,7 @@ export default class FxRunner {
     signalStartReady() {
         if (!this.config.autostart) return;
 
-        if (this.config.serverDataPath === null || this.config.cfgPath === null) {
+        if (!this.isConfigured) {
             return console.warn('Please open txAdmin on the browser to configure your server.');
         }
 
@@ -188,7 +188,7 @@ export default class FxRunner {
             return msg;
         }
         //If there is any FXServer configuration missing
-        if (this.config.serverDataPath === null || this.config.cfgPath === null) {
+        if (!this.isConfigured) {
             const msg = `Cannot start the server with missing configuration (serverDataPath || cfgPath).`;
             console.error(msg);
             return msg;
@@ -586,5 +586,13 @@ export default class FxRunner {
         const curr = this.history[this.history.length - 1];
 
         return now() - curr.timestamps.start;
+    }
+
+
+    /**
+     * True if both the serverDataPath and cfgPath are configured
+     */
+    get isConfigured() {
+        return Boolean(this.config.serverDataPath) && Boolean(this.config.cfgPath);
     }
 };

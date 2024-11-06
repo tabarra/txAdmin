@@ -1,13 +1,16 @@
 import { getHostData } from "@lib/diagnostics";
 import { isProxy } from "util/types";
 import { startReadyWatcher } from "./boot/startReadyWatcher";
+import { Deployer } from "./deployer";
+import { TxConfigState } from "@shared/enums";
+import { GlobalStatusType } from "@shared/socketioTypes";
 
 
 /**
  * This class is for "high order" logic and methods that shouldn't live inside any specific component.
  */
 export default class TxManager {
-    public deployer: any = null; //FIXME: implementar o deployer
+    public deployer: Deployer | null = null; //FIXME: implementar o deployer
 
     //TODO: add event bus?!
     //TODO: move txRuntime here?!
@@ -35,26 +38,70 @@ export default class TxManager {
             txCore.webServer.webSocket.pushRefresh('status');
         }, 5000);
 
-        //FIXME:
         //Pre-calculate static data
         setTimeout(() => {
             getHostData().catch((e) => { });
         }, 10_000);
     }
 
+    // isDeployerRunning(): this is { deployer: Deployer } {
+    //     return this.deployer !== null;
+    // }
+
     // public gracefulShutdown(signal: NodeJS.Signals) {
     //     console.debug(`[TXM] Received ${signal}, shutting down gracefully...`);
     //     //TODO: implementar lógica de shutdown
     // }
 
-    // get status() {
-    //     if (isProxy(txCore)) {
-    //         return 'idk';
-    //     }
+    /**
+     * Starts the deployer (TODO: rewrite deployer)
+     */
+    startDeployer(
+        recipeText: string | false,
+        deploymentID: string,
+        targetPath: string,
+        isTrustedSource: boolean,
+        customMetaData: Record<string, string> = {},
+    ) {
+        if (this.deployer) {
+            throw new Error('Deployer is already running');
+        }
+        this.deployer = new Deployer(recipeText, deploymentID, targetPath, isTrustedSource, customMetaData);
+    }
 
-    //     //tem que lidar com isProxy(txCore)
-    //     return 'idk';
-    // }
+    /**
+     * Unknown, Deployer, Setup, Ready
+     */
+    get configState() {
+        if (isProxy(txCore)) {
+            return TxConfigState.Unkown;
+        } else if (this.deployer) {
+            return TxConfigState.Deployer;
+        } else if (!txCore.fxRunner.isConfigured) {
+            return TxConfigState.Setup;
+        } else {
+            return TxConfigState.Ready;
+        }
+    }
+
+    /**
+     * Returns the global status object that is sent to the clients
+     */
+    get globalStatus(): GlobalStatusType {
+        return {
+            configState: txManager.configState,
+            discord: txCore.discordBot.status,
+            server: {
+                status: txCore.healthMonitor.currentStatus,
+                process: txCore.fxRunner.getStatus(),
+                instantiated: !!txCore.fxRunner.fxChild, //used to disable the control buttons
+                name: txConfig.global.serverName,
+                whitelist: txConfig.playerDatabase.whitelistMode,
+            },
+            // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
+            scheduler: txCore.scheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()
+        }
+    }
 }
 
 export type TxManagerType = InstanceType<typeof TxManager>;

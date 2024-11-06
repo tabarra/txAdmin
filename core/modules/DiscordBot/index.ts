@@ -5,6 +5,7 @@ import interactionCreateHandler from './interactionCreateHandler';
 import { generateStatusMessage } from './commands/status';
 import consoleFactory from '@lib/console';
 import { embedColors } from './discordHelpers';
+import { DiscordBotStatus } from '@shared/enums';
 const console = consoleFactory(modulename);
 
 
@@ -55,7 +56,8 @@ export default class DiscordBot {
     announceChannel: Discord.TextBasedChannel | undefined;
     #lastDisallowedIntentsError: number = 0; //ms
     #lastGuildMembersCacheRefresh: number = 0; //ms
-    #lastWsStatus: Discord.Status | false = false;
+    #lastStatus = DiscordBotStatus.Disabled;
+    #lastExplicitStatus = DiscordBotStatus.Disabled;
 
 
     constructor() {
@@ -122,16 +124,22 @@ export default class DiscordBot {
     /**
      * Passthrough to discord.js websocket status
      */
-    get wsStatus() {
-        return (this.#client) ? this.#client.ws.status : false;
+    get status(): DiscordBotStatus {
+        if (!this.config.enabled) {
+            return DiscordBotStatus.Disabled;
+        } else if (this.#client?.ws.status === Discord.Status.Ready) {
+            return DiscordBotStatus.Ready;
+        } else {
+            return this.#lastExplicitStatus;
+        }
     }
 
     /**
      * Updates the bot client status and pushes to the websocket
      */
     refreshWsStatus() {
-        if (this.#lastWsStatus !== this.wsStatus) {
-            this.#lastWsStatus = this.wsStatus;
+        if (this.#lastStatus !== this.status) {
+            this.#lastStatus = this.status;
             txCore.webServer.webSocket.pushRefresh('status');
         }
     }
@@ -230,6 +238,7 @@ export default class DiscordBot {
                 console.warn('Stopping Discord Bot');
                 this.#client?.destroy();
                 setImmediate(() => {
+                    this.#lastExplicitStatus = DiscordBotStatus.Error;
                     this.refreshWsStatus();
                     this.#client = undefined;
                 });
@@ -248,6 +257,8 @@ export default class DiscordBot {
             }
 
             //Setting up client object
+            this.#lastExplicitStatus = DiscordBotStatus.Starting;
+            this.refreshWsStatus();
             this.#client = new Client(this.#clientOptions);
 
             //Setup disallowed intents unhandled rejection watcher
@@ -356,9 +367,7 @@ export default class DiscordBot {
             // this.#client.on('debug', console.verbose.debug);
 
             //Start bot
-            this.refreshWsStatus();
             this.#client.login(this.config.token).catch((error) => {
-                this.refreshWsStatus();
                 clearInterval(disallowedIntentsWatcherId);
 
                 //for some reason, this is not throwing unhandled rejection anymore /shrug
@@ -368,6 +377,10 @@ export default class DiscordBot {
                         { code: 'DisallowedIntents' }
                     );
                 }
+
+                //set status to error
+                this.#lastExplicitStatus = DiscordBotStatus.Error;
+                this.refreshWsStatus();
 
                 //if no message, create one
                 if (!('message' in error) || !error.message) {

@@ -1,8 +1,5 @@
-const modulename = 'SocketRoom:Status';
 import { RoomType } from "../webSocket";
-import consoleFactory from '@lib/console';
 import { DashboardDataEventType } from "@shared/socketioTypes";
-const console = consoleFactory(modulename);
 
 
 /**

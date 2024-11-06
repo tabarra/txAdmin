@@ -1,8 +1,5 @@
-const modulename = 'SocketRoom:Playerlist';
 import { RoomType } from "../webSocket";
-import consoleFactory from '@lib/console';
 import { FullPlayerlistEventType } from "@shared/socketioTypes";
-const console = consoleFactory(modulename);
 
 
 /**

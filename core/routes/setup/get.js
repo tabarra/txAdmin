@@ -3,6 +3,7 @@ import path from 'node:path';
 import { convars, txEnv } from '@core/globalData';
 import { RECIPE_DEPLOYER_VERSION } from '@core/deployer/index';
 import consoleFactory from '@lib/console';
+import { TxConfigState } from '@shared/enums';
 const console = consoleFactory(modulename);
 
 
@@ -16,11 +17,10 @@ export default async function SetupGet(ctx) {
         return ctx.utils.render('main/message', {message: 'You need to be the admin master to use the setup page.'});
     }
 
-    // Check if this is the correct state for the setup page
-    if (txManager.deployer !== null) {
+    // Ensure correct state for the setup page
+    if(txManager.configState === TxConfigState.Deployer) {
         return ctx.utils.legacyNavigateToPage('/server/deployer');
-    }
-    if (txConfig.fxRunner.serverDataPath && txConfig.fxRunner.cfgPath) {
+    } else if(txManager.configState !== TxConfigState.Setup) {
         return ctx.utils.legacyNavigateToPage('/');
     }
 

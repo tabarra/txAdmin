@@ -15,8 +15,8 @@ export default async function CFGEditorPage(ctx) {
     }
 
     //Check if file is set
-    if (txConfig.fxRunner.cfgPath === null) {
-        let message = 'Your CFG Path is not set. Configure it in the settings page first.';
+    if (!txCore.fxRunner.isConfigured) {
+        let message = 'You need to configure your server data path before being able to edit the CFG file.';
         return ctx.utils.render('main/message', {message});
     }
 

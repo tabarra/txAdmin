@@ -142,12 +142,12 @@ async function handleFXServer(ctx: AuthedCtx) {
         quiet: (ctx.request.body.quiet === 'true'),
     };
 
-    //Validating Base Path
+    //Validating Server Data Path
     try {
         const resPath = path.join(cfg.serverDataPath, 'resources');
         const resStat = await fsp.stat(resPath);
         if (!resStat.isDirectory()) {
-            throw new Error("Couldn't locate or read a resources folder inside of the base path.");
+            throw new Error("Couldn't locate or read a resources folder inside of the server data path.");
         }
     } catch (error) {
         const msg = cfg.serverDataPath.includes('resources')

@@ -22,9 +22,10 @@ export const RECIPE_DEPLOYER_VERSION = 3;
  */
 export class Deployer {
     /**
-     * @param {string} originalRecipe
+     * @param {string|false} originalRecipe
      * @param {string} deployPath
      * @param {boolean} isTrustedSource
+     * @param {object} customMetaData
      */
     constructor(originalRecipe, deploymentID, deployPath, isTrustedSource, customMetaData = {}) {
         console.log('Deployer instance ready.');

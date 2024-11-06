@@ -29,8 +29,8 @@ export default async function CFGEditorSave(ctx) {
     }
 
     //Check if file is set
-    if (!txConfig.fxRunner.cfgPath || !txConfig.fxRunner.serverDataPath) {
-        const message = 'CFG or Base Path not defined. Configure it in the settings page first.';
+    if (!txCore.fxRunner.isConfigured) {
+        const message = 'CFG or Server Data Path not defined. Configure it in the settings page first.';
         return ctx.send({type: 'danger', message});
     }
 

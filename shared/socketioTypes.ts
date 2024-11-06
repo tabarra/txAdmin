@@ -2,15 +2,15 @@ import { SvRtPerfThreadNamesType } from "@core/modules/StatsManager/svRuntime/co
 import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/modules/StatsManager/svRuntime/perfSchemas";
 import type { ReactAuthDataType } from "./authApiTypes";
 import type { UpdateDataType } from "./otherTypes";
+import { DiscordBotStatus, TxConfigState } from "./enums";
 
 /**
  * Status channel
  */
-export type ServerConfigPendingStepType = 'setup' | 'deployer' | undefined;
 export type GlobalStatusType = {
-    discord: false | number;
+    configState: TxConfigState;
+    discord: DiscordBotStatus;
     server: {
-        configPendingStep: ServerConfigPendingStepType;
         status: string;
         process: string;
         instantiated: boolean;

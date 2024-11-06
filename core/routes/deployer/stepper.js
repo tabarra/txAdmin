@@ -2,6 +2,7 @@ const modulename = 'WebServer:DeployerStepper';
 import fse from 'fs-extra';
 import { convars, txDevEnv, txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
+import { TxConfigState } from '@shared/enums';
 const console = consoleFactory(modulename);
 
 
@@ -15,12 +16,13 @@ export default async function DeployerStepper(ctx) {
         return ctx.utils.render('main/message', { message: 'You need to be the admin master to use the deployer.' });
     }
 
-    //Check if this is the correct state for the deployer
-    if (txManager.deployer == null) {
-        const redirPath = (!txConfig.fxRunner.cfgPath || !txConfig.fxRunner.serverDataPath)
-            ? '/server/setup'
-            : '/';
-        return ctx.utils.legacyNavigateToPage(redirPath);
+    //Ensure the correct state for the deployer
+    if(txManager.configState === TxConfigState.Setup) {
+        return ctx.utils.legacyNavigateToPage('/server/setup');
+    } else if(txManager.configState !== TxConfigState.Deployer) {
+        return ctx.utils.legacyNavigateToPage('/');
+    } else if(!txManager.deployer?.step){
+        throw new Error(`txManager.configState is Deployer but txManager.deployer is not defined`);
     }
 
     //Prepare Output
