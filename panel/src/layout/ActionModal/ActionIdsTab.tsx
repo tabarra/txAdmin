@@ -2,7 +2,7 @@ import { txToast } from "@/components/TxToaster";
 import { cn, copyToClipboard } from "@/lib/utils";
 import { CopyIcon } from "lucide-react";
 import { useState } from "react";
-import { DatabaseActionType } from "../../../../core/modules/PlayerDatabase/databaseTypes";
+import type { DatabaseActionType } from "../../../../core/modules/Database/databaseTypes";
 
 
 type IdsBlockProps = {
@@ -68,7 +68,7 @@ export default function ActionIdsTab({ action }: { action: DatabaseActionType })
         <IdsBlock
             title="Target Hardware IDs"
             emptyMessage="This action targets no hardware IDs."
-            ids={action.hwids}
+            ids={('hwids' in action && action.hwids) ? action.hwids : undefined}
             isSmaller
         />
     </div>;

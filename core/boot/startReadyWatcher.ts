@@ -80,15 +80,15 @@ const awaitMasterPin = new Promise((resolve, reject) => {
     let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
-        if (txCore.adminVault && txCore.adminVault.admins !== null) {
+        if (txCore.adminStore && txCore.adminStore.admins !== null) {
             clearInterval(interval);
-            const pin = (txCore.adminVault.admins === false) ? txCore.adminVault.addMasterPin : false;
+            const pin = (txCore.adminStore.admins === false) ? txCore.adminStore.addMasterPin : false;
             resolve(pin);
         } else if (counter == tickLimit) {
             clearInterval(interval);
             interval = setInterval(check, 2500);
         } else if (counter > tickLimit) {
-            console.warn('The AdminVault is taking too long to start.');
+            console.warn('The AdminStore is taking too long to start.');
         }
     };
     interval = setInterval(check, 150);
@@ -100,14 +100,14 @@ const awaitDatabase = new Promise((resolve, reject) => {
     let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
-        if (txCore.playerDatabase && txCore.playerDatabase.isReady) {
+        if (txCore.database && txCore.database.isReady) {
             clearInterval(interval);
             resolve(true);
         } else if (counter == tickLimit) {
             clearInterval(interval);
             interval = setInterval(check, 2500);
         } else if (counter > tickLimit) {
-            console.warn('The PlayerDatabase is taking too long to start.');
+            console.warn('The Database is taking too long to start.');
         }
     };
     interval = setInterval(check, 150);

@@ -1,5 +1,5 @@
 const modulename = 'WebServer:PlayerDrops';
-import { PDLHourlyRawType } from '@modules/StatsManager/playerDrop/playerDropSchemas';
+import { PDLHourlyRawType } from '@modules/Metrics/playerDrop/playerDropSchemas';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@lib/console';
 import { DeepReadonly } from 'utility-types';
@@ -56,7 +56,7 @@ export default async function playerDrops(ctx: AuthedCtx) {
     const lookupTs = Date.now();
 
     //Get the summary for the last 2 weeks
-    const summary = txCore.statsManager.playerDrop.getRecentSummary(SUMMARY_DEFAULT_HOURS);
+    const summary = txCore.metrics.playerDrop.getRecentSummary(SUMMARY_DEFAULT_HOURS);
 
     //Get the detailed data for the requested window or 1d by default
     let detailedWindowStart, detailedWindowEnd;
@@ -86,7 +86,7 @@ export default async function playerDrops(ctx: AuthedCtx) {
         detailedWindowStart = startDate.setHours(startDate.getHours() - (windowHours), 0, 0, 0);
         detailedWindowEnd = lookupTs;
     }
-    const detailed = txCore.statsManager.playerDrop.getWindowData(detailedWindowStart, detailedWindowEnd);
+    const detailed = txCore.metrics.playerDrop.getWindowData(detailedWindowStart, detailedWindowEnd);
 
     return sendTypedResp({
         ts: lookupTs,

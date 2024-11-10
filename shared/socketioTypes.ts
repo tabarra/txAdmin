@@ -1,5 +1,5 @@
-import { SvRtPerfThreadNamesType } from "@core/modules/StatsManager/svRuntime/config";
-import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/modules/StatsManager/svRuntime/perfSchemas";
+import { SvRtPerfThreadNamesType } from "@core/modules/Metrics/svRuntime/config";
+import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/modules/Metrics/svRuntime/perfSchemas";
 import type { ReactAuthDataType } from "./authApiTypes";
 import type { UpdateDataType } from "./otherTypes";
 import { DiscordBotStatus, TxConfigState } from "./enums";

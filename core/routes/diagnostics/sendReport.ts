@@ -56,11 +56,11 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     } catch (error) { }
 
     //Admins
-    const adminList = (txCore.adminVault.getRawAdminsList() as any[])
+    const adminList = (txCore.adminStore.getRawAdminsList() as any[])
         .map(a => ({ ...a, password_hash: '[REDACTED]' }));
 
     //Settings
-    const settings = (txCore.configVault.getRawFile() as any);
+    const settings = (txCore.configStore.getRawFile() as any);
     if (settings?.discordBot?.token) {
         settings.discordBot.token = '[REDACTED]';
     }
@@ -104,12 +104,12 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     //Database & perf stats
     let dbStats = {};
     try {
-        dbStats = txCore.playerDatabase.stats.getDatabaseStats();
+        dbStats = txCore.database.stats.getDatabaseStats();
     } catch (error) { }
 
-    let perfSvMain: ReturnType<typeof txCore.statsManager.svRuntime.getServerPerfSummary> = null;
+    let perfSvMain: ReturnType<typeof txCore.metrics.svRuntime.getServerPerfSummary> = null;
     try {
-        perfSvMain = txCore.statsManager.svRuntime.getServerPerfSummary();
+        perfSvMain = txCore.metrics.svRuntime.getServerPerfSummary();
     } catch (error) { }
 
     //Monitor integrity check

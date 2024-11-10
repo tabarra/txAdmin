@@ -30,7 +30,7 @@ export default class TxManager {
             txCore.fxRunner.signalStartReady();
         });
 
-        //FIXME: mover o cron do HealthMonitor (getHostStats() + websocket push) para cá
+        //FIXME: mover o cron do FxMonitor (getHostStats() + websocket push) para cá
         //FIXME: if ever changing this, need to make sure the other data
         //in the status event will be pushed, since right some of now it
         //relies on this event every 5 seconds
@@ -92,14 +92,14 @@ export default class TxManager {
             configState: txManager.configState,
             discord: txCore.discordBot.status,
             server: {
-                status: txCore.healthMonitor.currentStatus,
+                status: txCore.fxMonitor.currentStatus,
                 process: txCore.fxRunner.getStatus(),
                 instantiated: !!txCore.fxRunner.fxChild, //used to disable the control buttons
                 name: txConfig.global.serverName,
                 whitelist: txConfig.playerDatabase.whitelistMode,
             },
             // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
-            scheduler: txCore.scheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()
+            scheduler: txCore.fxScheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()
         }
     }
 }

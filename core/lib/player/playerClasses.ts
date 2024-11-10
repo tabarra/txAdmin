@@ -1,13 +1,13 @@
 const modulename = 'Player';
-import PlayerDatabase from '@modules/PlayerDatabase/index.js';
+import Database from '@modules/Database/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
-import { DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@modules/PlayerDatabase/databaseTypes';
+import { DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@modules/Database/databaseTypes';
 import { cloneDeep, union } from 'lodash-es';
 import { now } from '@lib/misc';
 import { parsePlayerIds } from '@lib/player/idUtils';
 import consoleFactory from '@lib/console';
 import consts from '@shared/consts';
-import PlayerlistManager from '@modules/PlayerlistManager';
+import FxPlayerlist from '@modules/FxPlayerlist';
 const console = consoleFactory(modulename);
 
 
@@ -33,7 +33,7 @@ export class BasePlayer {
      */
     protected mutateDbData(srcData: object) {
         if (!this.license) throw new Error(`cannot mutate database for a player that has no license`);
-        this.dbData = txCore.playerDatabase.players.update(this.license, srcData, this.uniqueId);
+        this.dbData = txCore.database.players.update(this.license, srcData, this.uniqueId);
     }
 
     /**
@@ -65,7 +65,7 @@ export class BasePlayer {
      */
     getHistory() {
         if (!this.ids.length) return [];
-        return txCore.playerDatabase.actions.findMany(
+        return txCore.database.actions.findMany(
             this.getAllIdentifiers(),
             this.getAllHardwareIdentifiers()
         );
@@ -100,8 +100,8 @@ export class BasePlayer {
         const allIdsFilter = (x: DatabaseWhitelistApprovalsType) => {
             return this.ids.includes(x.identifier);
         }
-        txCore.playerDatabase.whitelist.removeManyApprovals(allIdsFilter);
-        txCore.playerDatabase.whitelist.removeManyRequests({ license: this.license });
+        txCore.database.whitelist.removeManyApprovals(allIdsFilter);
+        txCore.database.whitelist.removeManyRequests({ license: this.license });
     }
 }
 
@@ -116,7 +116,7 @@ type PlayerDataType = {
  * Class to represent a player that is or was connected to the currently running server process.
  */
 export class ServerPlayer extends BasePlayer {
-    readonly #playerlistManager: PlayerlistManager;
+    readonly #fxPlayerlist: FxPlayerlist;
     // readonly psid: string; //TODO: calculate player session id (sv mutex, netid, rollover id) here
     readonly netid: number;
     readonly tsConnected = now();
@@ -127,10 +127,10 @@ export class ServerPlayer extends BasePlayer {
     constructor(
         netid: number,
         playerData: PlayerDataType,
-        playerlistManager: PlayerlistManager
+        fxPlayerlist: FxPlayerlist
     ) {
         super(Symbol(`netid${netid}`));
-        this.#playerlistManager = playerlistManager;
+        this.#fxPlayerlist = fxPlayerlist;
         this.netid = netid;
         this.isConnected = true;
         if (
@@ -176,14 +176,14 @@ export class ServerPlayer extends BasePlayer {
         if (!this.license || !this.isConnected) return;
 
         //Make sure the database is ready - this should be impossible
-        if (!txCore.playerDatabase.isReady) {
+        if (!txCore.database.isReady) {
             console.error(`Players database not yet ready, cannot read db status for player id ${this.displayName}.`);
             return;
         }
 
         //Check if player is already on the database
         try {
-            const dbPlayer = txCore.playerDatabase.players.findOne(this.license);
+            const dbPlayer = txCore.database.players.findOne(this.license);
             if (dbPlayer) {
                 //Updates database data
                 this.dbData = dbPlayer;
@@ -206,7 +206,7 @@ export class ServerPlayer extends BasePlayer {
                     tsLastConnection: this.tsConnected,
                     tsJoined: this.tsConnected,
                 };
-                txCore.playerDatabase.players.register(toRegister);
+                txCore.database.players.register(toRegister);
                 this.dbData = toRegister;
                 console.verbose.ok(`Adding '${this.displayName}' to players database.`);
             }
@@ -218,7 +218,7 @@ export class ServerPlayer extends BasePlayer {
     }
 
     /**
-     * Prepares the initial player data and reports to playerlistManager, which will dispatch to the server via command.
+     * Prepares the initial player data and reports to FxPlayerlist, which will dispatch to the server via command.
      * TODO: adapt to be used for admin auth and player tags.
      */
     #sendInitialData() {
@@ -236,7 +236,7 @@ export class ServerPlayer extends BasePlayer {
         }
 
         if (oldestPendingWarn) {
-            this.#playerlistManager.dispatchInitialPlayerData(this.netid, oldestPendingWarn);
+            this.#fxPlayerlist.dispatchInitialPlayerData(this.netid, oldestPendingWarn);
         }
     }
 
@@ -259,7 +259,7 @@ export class ServerPlayer extends BasePlayer {
         if (this.dbData) {
             return cloneDeep(this.dbData);
         } else if (this.license && this.isRegistered) {
-            const dbPlayer = txCore.playerDatabase.players.findOne(this.license);
+            const dbPlayer = txCore.database.players.findOne(this.license);
             if (!dbPlayer) return false;
 
             this.dbData = dbPlayer;
@@ -335,7 +335,7 @@ export class DatabasePlayer extends BasePlayer {
         if (srcPlayerData) {
             this.dbData = srcPlayerData;
         } else {
-            const foundData = txCore.playerDatabase.players.findOne(license);
+            const foundData = txCore.database.players.findOne(license);
             if (!foundData) {
                 throw new Error(`player not found in database`);
             } else {

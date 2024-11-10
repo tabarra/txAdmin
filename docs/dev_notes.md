@@ -27,9 +27,9 @@ Legend:
         - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to when hovering
         - [ ] show server close reason
         - [ ] don't clear svg on render, use d3 joins
-    - StatsManager.svRuntime:
+    - Metrics.svRuntime:
         - [ ] write log optimizer and remove the webroute 30h filter
-            - [ref](/core/modules/StatsManager/svRuntime/config.ts#L33)
+            - [ref](/core/modules/Metrics/svRuntime/config.ts#L33)
             - maybe use rounded/aligned times?
             - check how this code works `d3.timeHours(new Date(1715741829000), new Date())[0]`
     - thread perf chart:
@@ -211,7 +211,7 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - Add a "timeout" button that brings a prompt with 1/5/15/30 mins buttons
     - Add a checkbox to the kick modal to mark it as a punishment
 
-- [ ] add average session time tracking to statsManager.playerDrop
+- [ ] add average session time tracking to Metrics.playerDrop
 
 - [ ] locale file optimization - build 8201 and above
 - [ ] easter egg???

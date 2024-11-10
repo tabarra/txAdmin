@@ -15,7 +15,7 @@ export type GetBanTemplatesSuccessResp = BanTemplatesDataType[];
  * NOTE: i'm doing validation here because really nowhere else to do at boot time
  */
 export const getBanTemplatesImpl = (ctx: AuthedCtx): BanTemplatesDataType[] => {
-    const savedTemplates = txCore.configVault.getScopedStructure('banTemplates');
+    const savedTemplates = txCore.configStore.getScopedStructure('banTemplates');
 
     //Validating saved data
     if (!Array.isArray(savedTemplates)) {

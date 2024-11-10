@@ -47,7 +47,7 @@ export default async (interaction: CommandInteraction) => {
     //@ts-ignore: somehow vscode is resolving interaction as CommandInteraction
     const adminInfoFlag = interaction.options.getBoolean('admininfo');
     if (adminInfoFlag) {
-        const admin = txCore.adminVault.getAdminByProviderUID(interaction.user.id);
+        const admin = txCore.adminStore.getAdminByProviderUID(interaction.user.id);
         if (!admin) {
             return await interaction.reply(embedder.danger('You cannot use the `admininfo` option if you are not a txAdmin admin.'));
         } else {

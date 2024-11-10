@@ -40,10 +40,10 @@ export default async function AdvancedActions(ctx) {
         txCore.fxRunner.resetConvars();
         return ctx.send({ refresh: true });
     } else if (action == 'perform_magic') {
-        const message = JSON.stringify(txCore.playerlistManager.getPlayerList(), null, 2);
+        const message = JSON.stringify(txCore.fxPlayerlist.getPlayerList(), null, 2);
         return ctx.send({ type: 'success', message });
     } else if (action == 'show_db') {
-        const dbo = txCore.playerDatabase.getDboRef();
+        const dbo = txCore.database.getDboRef();
         console.dir(dbo);
         return ctx.send({ type: 'success', message: JSON.stringify(dbo, null, 2) });
     } else if (action == 'show_log') {
@@ -124,7 +124,7 @@ export default async function AdvancedActions(ctx) {
         }
     } else if (action.startsWith('playerDrop')) {
         const reason = action.split(' ', 2)[1];
-        const category = txCore.statsManager.playerDrop.handlePlayerDrop(reason);
+        const category = txCore.metrics.playerDrop.handlePlayerDrop(reason);
         return ctx.send({ type: 'success', message: category });
     } else if (action == 'xxxxxx') {
         // console.dir(res);

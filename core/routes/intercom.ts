@@ -23,8 +23,8 @@ export default async function Intercom(ctx: InitializedCtx) {
     //Delegate to the specific scope functions
     if (scope == 'monitor') {
         try {
-            txCore.healthMonitor.handleHeartBeat('http');
-            return ctx.send(txCore.statsManager.txRuntime.currHbData);
+            txCore.fxMonitor.handleHeartBeat('http');
+            return ctx.send(txCore.metrics.txRuntime.currHbData);
         } catch (error) {
             return ctx.send({
                 txAdminVersion: txEnv.txaVersion,
@@ -35,7 +35,7 @@ export default async function Intercom(ctx: InitializedCtx) {
         if (!Array.isArray(postData.resources)) {
             return ctx.utils.error(400, 'Invalid Request');
         }
-        txCore.resourcesManager.tmpUpdateResourceList(postData.resources);
+        txCore.fxResources.tmpUpdateResourceList(postData.resources);
     } else {
         return ctx.send({
             type: 'danger',

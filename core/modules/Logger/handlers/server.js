@@ -1,6 +1,6 @@
 /* eslint-disable padded-blocks */
 const modulename = 'Logger:Server';
-import { QuantileArray, estimateArrayJsonSize } from '@modules/StatsManager/statsUtils';
+import { QuantileArray, estimateArrayJsonSize } from '@modules/Metrics/statsUtils';
 import { LoggerBase } from '../LoggerBase';
 import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@lib/console';
@@ -162,7 +162,7 @@ export default class ServerLogger extends LoggerBase {
             srcString = 'txAdmin';
 
         } else if (typeof eventData.src === 'number' && eventData.src > 0) {
-            const player = txCore.playerlistManager.getPlayerById(eventData.src);
+            const player = txCore.fxPlayerlist.getPlayerById(eventData.src);
             if (player) {
                 //FIXME: playermutex must be a ServerPlayer prop, already considering mutex, netid and rollover
                 const playerID = `${mutex}#${eventData.src}`;
@@ -203,7 +203,7 @@ export default class ServerLogger extends LoggerBase {
         } else if (eventData.type === 'DeathNotice') {
             const cause = eventData.data.cause || 'unknown';
             if (typeof eventData.data.killer === 'number' && eventData.data.killer > 0) {
-                const killer = txCore.playerlistManager.getPlayerById(eventData.data.killer);
+                const killer = txCore.fxPlayerlist.getPlayerById(eventData.data.killer);
                 if (killer) {
                     eventMessage = `died from ${cause} by ${killer.displayName}`;
                 } else {
@@ -223,9 +223,9 @@ export default class ServerLogger extends LoggerBase {
 
         } else if (eventData.type === 'LoggerStarted') {
             eventMessage = 'Logger started';
-            txCore.statsManager.playerDrop.handleServerBootData(eventData.data);
+            txCore.metrics.playerDrop.handleServerBootData(eventData.data);
             if (typeof eventData.data?.projectName === 'string' && eventData.data.projectName.length) {
-                txCore.persistentCache.set('fxsRuntime:projectName', eventData.data.projectName);
+                txCore.cacheStore.set('fxsRuntime:projectName', eventData.data.projectName);
             }
 
         } else if (eventData.type === 'DebugMessage') {
@@ -234,7 +234,7 @@ export default class ServerLogger extends LoggerBase {
                 : 'Debug Message: unknown';
 
         } else if (eventData.type === 'MenuEvent') {
-            txCore.statsManager.txRuntime.menuCommands.count(eventData.data?.action ?? 'unknown');
+            txCore.metrics.txRuntime.menuCommands.count(eventData.data?.action ?? 'unknown');
             eventMessage = (typeof eventData.data.message === 'string')
                 ? `${eventData.data.message}`
                 : 'did unknown action';

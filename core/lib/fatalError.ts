@@ -86,9 +86,9 @@ ref: https://nodejs.org/docs/latest-v22.x/api/process.html#exit-codes
 fatalError.GlobalData = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(1000 + code, msg, err);
 fatalError.Boot = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(2000 + code, msg, err);
 
-fatalError.ConfigVault = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5100 + code, msg, err);
+fatalError.ConfigStore = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5100 + code, msg, err);
 fatalError.Translator = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5200 + code, msg, err);
-fatalError.AdminVault = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5300 + code, msg, err);
+fatalError.AdminStore = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5300 + code, msg, err);
 // fatalError.FxRunner = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5400 + code, msg, err);
 fatalError.Database = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5600 + code, msg, err);
 fatalError.StatsTxRuntime = (code: number, msg: ErrorMsgType, err?: any): never => fatalError(5700 + code, msg, err);

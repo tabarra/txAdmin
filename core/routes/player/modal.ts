@@ -2,7 +2,7 @@ const modulename = 'WebServer:PlayerModal';
 import dateFormat from 'dateformat';
 import playerResolver from '@lib/player/playerResolver';
 import { PlayerHistoryItem, PlayerModalResp, PlayerModalPlayerData } from '@shared/playerApiTypes';
-import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
+import { DatabaseActionType } from '@modules/Database/databaseTypes';
 import { ServerPlayer } from '@lib/player/playerClasses';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';

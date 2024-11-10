@@ -2,47 +2,50 @@ import consoleFactory from '@lib/console';
 import { getCoreProxy } from './boot/globalPlaceholder';
 
 import TxManager from './txManager';
-import ConfigVault from '@modules/ConfigVault';
-import AdminVault from '@modules/AdminVault';
+import ConfigStore from '@modules/ConfigStore';
+import AdminStore from '@modules/AdminStore';
 import DiscordBot from '@modules/DiscordBot';
 import DynamicAds from '@modules/DynamicAds';
 import FxRunner from '@modules/FxRunner';
 import Logger from '@modules/Logger';
-import HealthMonitor from '@modules/HealthMonitor';
-import Scheduler from '@modules/Scheduler';
-import StatsManager from '@modules/StatsManager';
+import FxMonitor from '@modules/FxMonitor';
+import FxScheduler from '@modules/FxScheduler';
+import Metrics from '@modules/Metrics';
 import Translator from '@modules/Translator';
 import WebServer from '@modules/WebServer';
-import ResourcesManager from '@modules/ResourcesManager';
-import PlayerlistManager from '@modules/PlayerlistManager';
-import PlayerDatabase from '@modules/PlayerDatabase';
-import PersistentCache from '@modules/PersistentCache';
-import CfxUpdateChecker from '@modules/CfxUpdateChecker';
+import FxResources from '@modules/FxResources';
+import FxPlayerlist from '@modules/FxPlayerlist';
+import Database from '@modules/Database';
+import CacheStore from '@modules/CacheStore';
+import UpdateChecker from '@modules/UpdateChecker';
 const console = consoleFactory();
 
 
 export type TxCoreType = {
-    configVault: ConfigVault;
-    adminVault: AdminVault;
-    discordBot: DiscordBot;
+    //Storage
+    adminStore: AdminStore;
+    cacheStore: CacheStore;
+    configStore: ConfigStore;
+    database: Database;
     logger: Logger;
-    translator: Translator;
+    metrics: Metrics;
+
+    //FXServer
+    fxMonitor: FxMonitor;
+    fxPlayerlist: FxPlayerlist;
+    fxResources: FxResources;
     fxRunner: FxRunner;
-    dynamicAds: DynamicAds;
-    healthMonitor: HealthMonitor;
-    scheduler: Scheduler;
-    statsManager: StatsManager;
+    fxScheduler: FxScheduler;
+
+    //Other
+    discordBot: DiscordBot;
+    translator: Translator;
+    updateChecker: UpdateChecker;
     webServer: WebServer;
-    resourcesManager: ResourcesManager;
-    playerlistManager: PlayerlistManager;
-    playerDatabase: PlayerDatabase;
-    persistentCache: PersistentCache;
-    cfxUpdateChecker: CfxUpdateChecker;
+
+    //FIXME: this one should not be a module
+    dynamicAds: DynamicAds;
 }
-
-// FIXME: figure out how to deal with the banner
-// talvez isso seja responsabilidade do txManager?
-
 
 export default function bootTxAdmin() {
     /**
@@ -50,7 +53,7 @@ export default function bootTxAdmin() {
      */
     //Initialize the global txCore object
     const _txCore = {
-        configVault: new ConfigVault(),
+        configStore: new ConfigStore(),
     } as TxCoreType;
 
     //Setting up the global txCore object as a Proxy
@@ -76,27 +79,27 @@ export default function bootTxAdmin() {
     };
 
     //High Priority (required for banner) 
-    _txCore.adminVault = startModule(AdminVault);
+    _txCore.adminStore = startModule(AdminStore);
     _txCore.webServer = startModule(WebServer);
-    _txCore.playerDatabase = startModule(PlayerDatabase);
+    _txCore.database = startModule(Database);
 
     //Required for signalStartReady()
-    _txCore.healthMonitor = startModule(HealthMonitor);
+    _txCore.fxMonitor = startModule(FxMonitor);
     _txCore.discordBot = startModule(DiscordBot);
     _txCore.logger = startModule(Logger);
     _txCore.fxRunner = startModule(FxRunner);
 
     //Low Priority
     _txCore.translator = startModule(Translator);
-    _txCore.scheduler = startModule(Scheduler);
-    _txCore.statsManager = startModule(StatsManager);
-    _txCore.resourcesManager = startModule(ResourcesManager);
-    _txCore.playerlistManager = startModule(PlayerlistManager);
-    _txCore.persistentCache = startModule(PersistentCache);
+    _txCore.fxScheduler = startModule(FxScheduler);
+    _txCore.metrics = startModule(Metrics);
+    _txCore.fxResources = startModule(FxResources);
+    _txCore.fxPlayerlist = startModule(FxPlayerlist);
+    _txCore.cacheStore = startModule(CacheStore);
 
     //Very Low Priority
     _txCore.dynamicAds = startModule(DynamicAds);
-    _txCore.cfxUpdateChecker = startModule(CfxUpdateChecker);
+    _txCore.updateChecker = startModule(UpdateChecker);
 
 
     /**

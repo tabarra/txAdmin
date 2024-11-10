@@ -11,7 +11,7 @@ const console = consoleFactory(modulename);
 export default async function PlayersStats(ctx: AuthedCtx) {
     const sendTypedResp = (data: PlayersStatsResp) => ctx.send(data);
     try {
-        const stats = txCore.playerDatabase.stats.getPlayersStats();
+        const stats = txCore.database.stats.getPlayersStats();
         return sendTypedResp(stats);
     } catch (error) {
         const msg = `getStats failed with error: ${(error as Error).message}`;

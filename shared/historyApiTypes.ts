@@ -1,4 +1,4 @@
-import { DatabaseActionType } from "@core/modules/PlayerDatabase/databaseTypes";
+import { DatabaseActionType } from "@modules/Database/databaseTypes";
 import { GenericApiErrorResp } from "./genericApiTypes";
 
 export type HistoryStatsResp = {

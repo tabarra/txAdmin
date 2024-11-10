@@ -1,7 +1,7 @@
 const modulename = 'WebServer:PerfChart';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@lib/console';
-import { SvRtLogFilteredType, SvRtPerfBoundariesType } from '@modules/StatsManager/svRuntime/perfSchemas';
+import { SvRtLogFilteredType, SvRtPerfBoundariesType } from '@modules/Metrics/svRuntime/perfSchemas';
 import { z } from 'zod';
 import { DeepReadonly } from 'utility-types';
 const console = consoleFactory(modulename);
@@ -34,7 +34,7 @@ export default async function perfChart(ctx: AuthedCtx) {
         return sendTypedResp({ fail_reason: 'bad_request' });
     }
 
-    const chartData = txCore.statsManager.svRuntime.getChartData(schemaRes.data.thread);
+    const chartData = txCore.metrics.svRuntime.getChartData(schemaRes.data.thread);
     if ('fail_reason' in chartData) {
         return sendTypedResp(chartData);
     }

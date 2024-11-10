@@ -35,7 +35,7 @@ declare type TxAdminConfigs = {
     },
     logger: AnythingButConfig,
     monitor: AnythingButConfig,
-    playerDatabase: import('@modules/PlayerDatabase').PlayerDbConfigType,
+    playerDatabase: import('@modules/Database').PlayerDbConfigType,
     webServer: import('@modules/WebServer').WebServerConfigType,
     discordBot: import('@modules/DiscordBot').DiscordBotConfigType,
     fxRunner: AnythingButConfig,

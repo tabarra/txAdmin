@@ -136,7 +136,7 @@ async function handleAdd(ctx: AuthedCtx) {
 
     //Add admin and give output
     try {
-        await txCore.adminVault.addAdmin(name, citizenfxData, discordData, password, permissions);
+        await txCore.adminStore.addAdmin(name, citizenfxData, discordData, password, permissions);
         ctx.admin.logAction(`Adding admin '${name}'.`);
         return ctx.send({type: 'showPassword', password});
     } catch (error) {
@@ -223,7 +223,7 @@ async function handleEdit(ctx: AuthedCtx) {
     }
 
     //Check if admin exists
-    const admin = txCore.adminVault.getAdminByName(name);
+    const admin = txCore.adminStore.getAdminByName(name);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
@@ -244,7 +244,7 @@ async function handleEdit(ctx: AuthedCtx) {
 
     //Add admin and give output
     try {
-        await txCore.adminVault.editAdmin(name, null, citizenfxData, discordData, permissions);
+        await txCore.adminStore.editAdmin(name, null, citizenfxData, discordData, permissions);
         ctx.admin.logAction(`Editing user '${name}'.`);
         return ctx.send({type: 'success', refresh: true});
     } catch (error) {
@@ -269,7 +269,7 @@ async function handleDelete(ctx: AuthedCtx) {
     }
 
     //Check if admin exists
-    const admin = txCore.adminVault.getAdminByName(name);
+    const admin = txCore.adminStore.getAdminByName(name);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
@@ -279,7 +279,7 @@ async function handleDelete(ctx: AuthedCtx) {
 
     //Delete admin and give output
     try {
-        await txCore.adminVault.deleteAdmin(name);
+        await txCore.adminStore.deleteAdmin(name);
         ctx.admin.logAction(`Deleting user '${name}'.`);
         return ctx.send({type: 'success', refresh: true});
     } catch (error) {

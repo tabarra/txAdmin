@@ -3,11 +3,11 @@ export type { BanTemplatesDataType, BanDurationType } from "@core/routes/banTemp
 export type { GetBanTemplatesSuccessResp } from "@core/routes/banTemplates/getBanTemplates";
 export type { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/routes/banTemplates/saveBanTemplates";
 export type { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/routes/history/actions";
-export type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@core/modules/StatsManager/svRuntime/perfSchemas";
-export type { SvRtPerfThreadNamesType } from "@core/modules/StatsManager/svRuntime/config";
+export type { SvRtLogFilteredType, SvRtPerfCountsThreadType } from "@core/modules/Metrics/svRuntime/perfSchemas";
+export type { SvRtPerfThreadNamesType } from "@core/modules/Metrics/svRuntime/config";
 export type { PerfChartApiResp, PerfChartApiSuccessResp } from "@core/routes/perfChart";
 export type { PlayerDropsApiResp, PlayerDropsApiSuccessResp, PlayerDropsDetailedWindow, PlayerDropsSummaryHour } from "@core/routes/playerDrops";
-export type { PDLChangeEventType } from '@core/modules/StatsManager/playerDrop/playerDropSchemas';
+export type { PDLChangeEventType } from '@core/modules/Metrics/playerDrop/playerDropSchemas';
 
 
 export type UpdateDataType = {

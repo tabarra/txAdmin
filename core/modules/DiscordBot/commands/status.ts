@@ -71,7 +71,7 @@ export const generateStatusMessage = (
 
     //Prepare placeholders
     //NOTE: serverCfxId can be undefined, breaking the URLs, but there is no easy clean way to deal with this issue
-    const serverCfxId = txCore.persistentCache.get('fxsRuntime:cfxId');
+    const serverCfxId = txCore.cacheStore.get('fxsRuntime:cfxId');
     const placeholders = {
         serverName: txConfig.global.serverName,
         statusString: 'Unknown',
@@ -79,16 +79,16 @@ export const generateStatusMessage = (
         serverCfxId,
         serverBrowserUrl: `https://servers.fivem.net/servers/detail/${serverCfxId}`,
         serverJoinUrl: `https://cfx.re/join/${serverCfxId}`,
-        serverMaxClients: txCore.persistentCache.get('fxsRuntime:maxClients') ?? 'unknown',
-        serverClients: txCore.playerlistManager.onlineCount,
+        serverMaxClients: txCore.cacheStore.get('fxsRuntime:maxClients') ?? 'unknown',
+        serverClients: txCore.fxPlayerlist.onlineCount,
         nextScheduledRestart: 'unknown',
-        uptime: (txCore.healthMonitor.currentStatus === 'ONLINE')
+        uptime: (txCore.fxMonitor.currentStatus === 'ONLINE')
             ? humanizer(txCore.fxRunner.getUptime() * 1000)
             : '--',
     }
 
     //Prepare scheduler placeholder
-    const schedule = txCore.scheduler.getStatus();
+    const schedule = txCore.fxScheduler.getStatus();
     if (typeof schedule.nextRelativeMs !== 'number') {
         placeholders.nextScheduledRestart = 'not scheduled';
     } else if (schedule.nextSkip) {
@@ -105,13 +105,13 @@ export const generateStatusMessage = (
     }
 
     //Prepare status placeholders
-    if (txCore.healthMonitor.currentStatus === 'ONLINE') {
+    if (txCore.fxMonitor.currentStatus === 'ONLINE') {
         placeholders.statusString = embedConfigJson?.onlineString ?? '🟢 Online';
         placeholders.statusColor = embedConfigJson?.onlineColor ?? "#0BA70B";
-    } else if (txCore.healthMonitor.currentStatus === 'PARTIAL') {
+    } else if (txCore.fxMonitor.currentStatus === 'PARTIAL') {
         placeholders.statusString = embedConfigJson?.partialString ?? '🟡 Partial';
         placeholders.statusColor = embedConfigJson?.partialColor ?? "#FFF100";
-    } else if (txCore.healthMonitor.currentStatus === 'OFFLINE') {
+    } else if (txCore.fxMonitor.currentStatus === 'OFFLINE') {
         placeholders.statusString = embedConfigJson?.offlineString ?? '🔴 Offline';
         placeholders.statusColor = embedConfigJson?.offlineColor ?? "#A70B28";
     }
@@ -227,8 +227,8 @@ export const generateStatusMessage = (
 }
 
 export const removeOldEmbed = async (interaction: ChatInputCommandInteraction) => {
-    const oldChannelId = txCore.persistentCache.get('discord:status:channelId');
-    const oldMessageId = txCore.persistentCache.get('discord:status:messageId');
+    const oldChannelId = txCore.cacheStore.get('discord:status:channelId');
+    const oldMessageId = txCore.cacheStore.get('discord:status:messageId');
     if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
         const oldChannel = await interaction.client.channels.fetch(oldChannelId);
         if (oldChannel?.type === ChannelType.GuildText || oldChannel?.type === ChannelType.GuildAnnouncement) {
@@ -250,8 +250,8 @@ export default async (interaction: ChatInputCommandInteraction) => {
     const isRemoveOnly = (interaction.options.getSubcommand() === 'remove');
     try {
         await removeOldEmbed(interaction);
-        txCore.persistentCache.delete('discord:status:channelId');
-        txCore.persistentCache.delete('discord:status:messageId');
+        txCore.cacheStore.delete('discord:status:channelId');
+        txCore.cacheStore.delete('discord:status:messageId');
         if (isRemoveOnly) {
             const msg = `Old status embed removed.`;
             logDiscordAdminAction(adminName, msg);
@@ -285,8 +285,8 @@ export default async (interaction: ChatInputCommandInteraction) => {
         })
         const newMessage = await interaction.channel.send({ embeds: [placeholderEmbed] });
         await newMessage.edit(newStatusMessage);
-        txCore.persistentCache.set('discord:status:channelId', interaction.channelId);
-        txCore.persistentCache.set('discord:status:messageId', newMessage.id);
+        txCore.cacheStore.set('discord:status:channelId', interaction.channelId);
+        txCore.cacheStore.set('discord:status:messageId', newMessage.id);
     } catch (error) {
         let msg: string;
         if((error as any).code === 50013){

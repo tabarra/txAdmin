@@ -4,7 +4,7 @@ import { DatabasePlayer, ServerPlayer } from "./playerClasses.js"
 /**
  * Resolves a ServerPlayer or DatabasePlayer based on mutex, netid and license.
  * When mutex#netid is present, it takes precedence over license.
- * If the mutex is not from the current server, search for the license in playerlistManager.licenseCache[]
+ * If the mutex is not from the current server, search for the license in FxPlayerlist.licenseCache[]
  * and then search for the license in the database.
  * 
  * FIXME: pass serverInstance when multiserver
@@ -21,7 +21,7 @@ export default (mutex: any, netid: any, license: any) => {
         hasMutex = true;
         if (mutex === txCore.fxRunner.currentMutex) {
             //If the mutex is from the server currently online
-            const player = txCore.playerlistManager.getPlayerById(netid);
+            const player = txCore.fxPlayerlist.getPlayerById(netid);
             if (player instanceof ServerPlayer) {
                 return player;
             } else {
@@ -30,14 +30,14 @@ export default (mutex: any, netid: any, license: any) => {
         } else {
             // If mutex is from previous server, overwrite any given license
             const searchRef = `${mutex}#${netid}`;
-            const found = txCore.playerlistManager.licenseCache.find(c => c[0] === searchRef);
+            const found = txCore.fxPlayerlist.licenseCache.find(c => c[0] === searchRef);
             if (found) searchLicense = found[1];
         }
     }
 
     //If license provided or resolved through licenseCache, search in the database
     if (typeof searchLicense === 'string' && searchLicense.length) {
-        const onlineMatches = txCore.playerlistManager.getOnlinePlayersByLicense(searchLicense);
+        const onlineMatches = txCore.fxPlayerlist.getOnlinePlayersByLicense(searchLicense);
         if(onlineMatches.length){
             return onlineMatches.at(-1) as ServerPlayer;
         }else{

@@ -188,8 +188,8 @@ export default class DiscordBot {
 
         //Updating bot activity
         try {
-            const serverClients = txCore.playerlistManager.onlineCount;
-            const serverMaxClients = txCore.persistentCache.get('fxsRuntime:maxClients') ?? '??';
+            const serverClients = txCore.fxPlayerlist.onlineCount;
+            const serverMaxClients = txCore.cacheStore.get('fxsRuntime:maxClients') ?? '??';
             const serverName = txConfig.global.serverName;
             const message = `[${serverClients}/${serverMaxClients}] on ${serverName}`;
             this.#client.user.setActivity(message, { type: ActivityType.Watching });
@@ -199,8 +199,8 @@ export default class DiscordBot {
 
         //Updating server status embed
         try {
-            const oldChannelId = txCore.persistentCache.get('discord:status:channelId');
-            const oldMessageId = txCore.persistentCache.get('discord:status:messageId');
+            const oldChannelId = txCore.cacheStore.get('discord:status:channelId');
+            const oldMessageId = txCore.cacheStore.get('discord:status:messageId');
 
             if (typeof oldChannelId === 'string' && typeof oldMessageId === 'string') {
                 const oldChannel = await this.#client.channels.fetch(oldChannelId);

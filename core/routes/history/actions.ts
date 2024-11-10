@@ -1,6 +1,6 @@
 const modulename = 'WebServer:HistoryActions';
 import { GenericApiOkResp } from '@shared/genericApiTypes';
-import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
+import { DatabaseActionType } from '@modules/Database/databaseTypes';
 import { calcExpirationFromDuration } from '@lib/misc';
 import consts from '@shared/consts';
 import humanizeDuration, { Unit } from 'humanize-duration';
@@ -92,7 +92,7 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
     //Register action
     let actionId;
     try {
-        actionId = txCore.playerDatabase.actions.registerBan(
+        actionId = txCore.database.actions.registerBan(
             identifiers,
             ctx.admin.name,
             reason,
@@ -168,7 +168,7 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiOkResp> {
 
     let action;
     try {
-        action = txCore.playerDatabase.actions.revoke(actionId, ctx.admin.name, perms) as DatabaseActionType;
+        action = txCore.database.actions.revoke(actionId, ctx.admin.name, perms) as DatabaseActionType;
         ctx.admin.logAction(`Revoked ${action.type} id ${actionId} from ${action.playerName ?? 'identifiers'}`);
     } catch (error) {
         return { error: `Failed to revoke action: ${(error as Error).message}` };

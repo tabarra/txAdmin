@@ -69,7 +69,7 @@ export default class Fd3Handler {
                         const matches = /^(https:\/\/)?.*-([0-9a-z]{6,})\.users\.cfx\.re\/?$/.exec(data.url);
                         if (!matches || !matches[2]) throw new Error(`invalid cfxid`);
                         txCore.fxRunner.cfxId = matches[2];
-                        txCore.persistentCache.set('fxsRuntime:cfxId', matches[2]);
+                        txCore.cacheStore.set('fxsRuntime:cfxId', matches[2]);
                     } catch (error) {
                         console.error(`Error decoding server nucleus URL.`);
                     }
@@ -96,19 +96,19 @@ export default class Fd3Handler {
                 && data.resource === 'monitor'
             ) {
                 if (data.payload.type === 'txAdminHeartBeat') {
-                    txCore.healthMonitor.handleHeartBeat('fd3');
+                    txCore.fxMonitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
                     txCore.logger.server.write(data.payload.logs, mutex);
                 } else if (data.payload.type === 'txAdminLogNodeHeap') {
-                    txCore.statsManager.svRuntime.logServerNodeMemory(data.payload);
+                    txCore.metrics.svRuntime.logServerNodeMemory(data.payload);
                 } else if (data.payload.type === 'txAdminResourceEvent') {
-                    txCore.resourcesManager.handleServerEvents(data.payload, mutex);
+                    txCore.fxResources.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminPlayerlistEvent') {
-                    txCore.playerlistManager.handleServerEvents(data.payload, mutex);
+                    txCore.fxPlayerlist.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminCommandBridge') {
                     this.bridgeCommand(data.payload);
                 } else if (data.payload.type === 'txAdminAckWarning') {
-                    txCore.playerDatabase.actions.ackWarn(data.payload.actionId);
+                    txCore.database.actions.ackWarn(data.payload.actionId);
                 }
             }
         } catch (error) {
@@ -139,7 +139,7 @@ export default class Fd3Handler {
                 txCore.fxRunner.sendEvent('announcement', { message, author });
 
                 // Sending discord announcement
-                const publicAuthor = txCore.adminVault.getAdminPublicName(payload.author, 'message');
+                const publicAuthor = txCore.adminStore.getAdminPublicName(payload.author, 'message');
                 txCore.discordBot.sendAnnouncement({
                     type: 'info',
                     title: {

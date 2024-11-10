@@ -111,15 +111,15 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     const injectedConsts = {
         //env
         fxsVersion: txEnv.fxsVersionDisplay,
-        fxsOutdated: txCore.cfxUpdateChecker.fxsUpdateData,
+        fxsOutdated: txCore.updateChecker.fxsUpdateData,
         txaVersion: txEnv.txaVersion,
-        txaOutdated: txCore.cfxUpdateChecker.txaUpdateData,
+        txaOutdated: txCore.updateChecker.txaUpdateData,
         serverTimezone,
         isZapHosting: convars.isZapHosting, //not in use
         isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,
         showAdvanced: (txDevEnv.ENABLED || console.isVerbose),
-        hasMasterAccount: txCore.adminVault.hasAdmins(true),
+        hasMasterAccount: txCore.adminStore.hasAdmins(true),
         defaultTheme: tmpDefaultTheme,
         customThemes: tmpCustomThemes.map(({ name, isDark }) => ({ name, isDark })),
         adsData: txCore.dynamicAds.adData as AdsDataType,

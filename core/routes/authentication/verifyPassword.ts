@@ -36,7 +36,7 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
     const postBody = schemaRes.data;
 
     //Check if there are already admins set up
-    if (!txCore.adminVault.hasAdmins()) {
+    if (!txCore.adminStore.hasAdmins()) {
         return ctx.send<ApiVerifyPasswordResp>({
             error: `no_admins_setup`,
         });
@@ -44,7 +44,7 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
 
     try {
         //Checking admin
-        const vaultAdmin = txCore.adminVault.getAdminByName(postBody.username);
+        const vaultAdmin = txCore.adminStore.getAdminByName(postBody.username);
         if (!vaultAdmin) {
             console.warn(`Wrong username from: ${ctx.ip}`);
             return ctx.send<ApiVerifyPasswordResp>({
@@ -64,13 +64,13 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
             username: vaultAdmin.name,
             password_hash: vaultAdmin.password_hash,
             expiresAt: false,
-            csrfToken: txCore.adminVault.genCsrfToken(),
+            csrfToken: txCore.adminStore.genCsrfToken(),
         } satisfies PassSessAuthType;
         ctx.sessTools.set({ auth: sessData });
 
         txCore.logger.admin.write(vaultAdmin.name, `logged in from ${ctx.ip} via password`);
-        txCore.statsManager.txRuntime.loginOrigins.count(ctx.txVars.hostType);
-        txCore.statsManager.txRuntime.loginMethods.count('password');
+        txCore.metrics.txRuntime.loginOrigins.count(ctx.txVars.hostType);
+        txCore.metrics.txRuntime.loginMethods.count('password');
 
         const authedAdmin = new AuthedAdmin(vaultAdmin, sessData.csrfToken)
         return ctx.send<ReactAuthDataType>(authedAdmin.getAuthData());

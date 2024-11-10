@@ -6,7 +6,7 @@ import { RoomType } from "../webSocket";
  * It relays tx and server status data.
  * 
  * NOTE: 
- * - active push event for HealthMonitor, HostData, fxserver process
+ * - active push event for FxMonitor, HostData, fxserver process
  * - passive update for discord status, scheduler
  * - the passive ones will be sent every 5 seconds anyways due to HostData updates
  */

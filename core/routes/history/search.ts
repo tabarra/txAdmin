@@ -1,5 +1,5 @@
 const modulename = 'WebServer:HistorySearch';
-import { DatabaseActionType } from '@modules/PlayerDatabase/databaseTypes';
+import { DatabaseActionType } from '@modules/Database/databaseTypes';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { chain as createChain } from 'lodash-es';
@@ -7,7 +7,7 @@ import Fuse from 'fuse.js';
 import { now } from '@lib/misc';
 import { parseLaxIdsArrayInput } from '@lib/player/idUtils';
 import { HistoryTableActionType, HistoryTableSearchResp } from '@shared/historyApiTypes';
-import { TimeCounter } from '@modules/StatsManager/statsUtils';
+import { TimeCounter } from '@modules/Metrics/statsUtils';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -35,7 +35,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
     } = ctx.query;
     const sendTypedResp = (data: HistoryTableSearchResp) => ctx.send(data);
     const searchTime = new TimeCounter();
-    const dbo = txCore.playerDatabase.getDboRef();
+    const dbo = txCore.database.getDboRef();
     let chain = dbo.chain.get('actions').clone(); //shallow clone to avoid sorting the original
 
     //sort the actions by the sortingKey/sortingDesc
@@ -159,7 +159,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
         } satisfies HistoryTableActionType;
     });
 
-    txCore.statsManager.txRuntime.historyTableSearchTime.count(searchTime.stop().milliseconds);
+    txCore.metrics.txRuntime.historyTableSearchTime.count(searchTime.stop().milliseconds);
     return sendTypedResp({
         history: processedActions,
         hasReachedEnd,

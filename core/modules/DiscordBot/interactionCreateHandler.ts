@@ -46,7 +46,7 @@ export default async (interaction: Interaction) => {
         //     console.error(`No handler available for button interaction ${interaction.customId}`);
         //     return;
         // }
-        // txCore.statsManager.txRuntime.botCommands.count(???);
+        // txCore.metrics.txRuntime.botCommands.count(???);
         // //Executes interaction
         // try {
         //     return await handler.execute(interaction, args, txChungus);
@@ -63,7 +63,7 @@ export default async (interaction: Interaction) => {
             noHandlerResponse(interaction).catch((e) => {});
             return;
         }
-        txCore.statsManager.txRuntime.botCommands.count(interaction.commandName);
+        txCore.metrics.txRuntime.botCommands.count(interaction.commandName);
 
         //Executes interaction
         try {

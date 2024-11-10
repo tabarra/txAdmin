@@ -100,7 +100,7 @@ export default class FxRunner {
             return console.warn('Please open txAdmin on the browser to configure your server.');
         }
 
-        if (!txCore.adminVault.hasAdmins()) {
+        if (!txCore.adminStore.hasAdmins()) {
             return console.warn('The server will not auto start because there are no admins configured.');
         }
 
@@ -216,7 +216,7 @@ export default class FxRunner {
         }
 
         //Reseting monitor stats
-        txCore.healthMonitor.resetMonitorStats();
+        txCore.fxMonitor.resetMonitorStats();
 
         //Resetting frontend playerlist
         txCore.webServer.webSocket.buffer('playerlist', {
@@ -408,9 +408,9 @@ export default class FxRunner {
                 this.fxChild = null;
                 this.history[this.history.length - 1].timestamps.kill = now();
             }
-            txCore.resourcesManager.handleServerStop();
-            txCore.playerlistManager.handleServerStop(this.currentMutex);
-            txCore.statsManager.svRuntime.logServerClose(reasonString);
+            txCore.fxResources.handleServerStop();
+            txCore.fxPlayerlist.handleServerStop(this.currentMutex);
+            txCore.metrics.svRuntime.logServerClose(reasonString);
             return null;
         } catch (error) {
             const msg = `Couldn't kill the server. Perhaps What Is Dead May Never Die.`;

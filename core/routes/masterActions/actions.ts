@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const modulename = 'WebServer:MasterActions:Action';
-import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType, DatabasePlayerType } from '@modules/PlayerDatabase/databaseTypes';
+import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType, DatabasePlayerType } from '@modules/Database/databaseTypes';
 import { now } from '@lib/misc';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import consoleFactory from '@lib/console';
@@ -52,11 +52,11 @@ async function handleResetFXServer(ctx: AuthedCtx) {
     txManager.deployer = null;
 
     //Preparing & saving config
-    const newConfig = txCore.configVault.getScopedStructure('fxRunner');
+    const newConfig = txCore.configStore.getScopedStructure('fxRunner');
     newConfig.serverDataPath = null;
     newConfig.cfgPath = null;
     try {
-        txCore.configVault.saveProfile('fxRunner', newConfig);
+        txCore.configStore.saveProfile('fxRunner', newConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing FXServer settings.`);
         console.verbose.dir(error);
@@ -173,21 +173,21 @@ async function handleCleanDatabase(ctx: AuthedCtx) {
     const tsStart = Date.now();
     let playersRemoved = 0;
     try {
-        playersRemoved = txCore.playerDatabase.cleanup.bulkRemove('players', playersFilter);
+        playersRemoved = txCore.database.cleanup.bulkRemove('players', playersFilter);
     } catch (error) {
         return sendTypedResp({ error: `<b>Failed to clean players with error:</b><br>${(error as Error).message}` });
     }
 
     let actionsRemoved = 0;
     try {
-        actionsRemoved = txCore.playerDatabase.cleanup.bulkRemove('actions', actionsFilter);
+        actionsRemoved = txCore.database.cleanup.bulkRemove('actions', actionsFilter);
     } catch (error) {
         return sendTypedResp({ error: `<b>Failed to clean actions with error:</b><br>${(error as Error).message}` });
     }
 
     let hwidsRemoved = 0;
     try {
-        hwidsRemoved = txCore.playerDatabase.cleanup.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
+        hwidsRemoved = txCore.database.cleanup.wipeHwids(hwidsWipePlayers, hwidsWipeBans);
     } catch (error) {
         return sendTypedResp({ error: `<b>Failed to clean HWIDs with error:</b><br>${(error as Error).message}` });
     }
@@ -232,7 +232,7 @@ async function handleRevokeWhitelists(ctx: AuthedCtx) {
 
     try {
         const tsStart = Date.now();
-        const cntRemoved = txCore.playerDatabase.players.bulkRevokeWhitelist(filterFunc);
+        const cntRemoved = txCore.database.players.bulkRevokeWhitelist(filterFunc);
         const msElapsed = Date.now() - tsStart;
         return sendTypedResp({ msElapsed, cntRemoved });
     } catch (error) {

@@ -5,7 +5,7 @@ import { ValidSessionType } from "@modules/WebServer/middlewares/sessionMws";
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackResp } from "@shared/authApiTypes";
 import { randomUUID } from "node:crypto";
 import consoleFactory from '@lib/console';
-import { UserInfoType } from "@modules/AdminVault/providers/CitizenFX";
+import { UserInfoType } from "@modules/AdminStore/providers/CitizenFX";
 const console = consoleFactory(modulename);
 
 
@@ -23,7 +23,7 @@ export const getOauthRedirectUrl = (ctx: InitializedCtx, purpose: 'login' | 'add
     ctx.sessTools.set(sessData);
 
     //Generate CitizenFX provider Auth URL
-    const idmsAuthUrl = txCore.adminVault.providers.citizenfx.getAuthURL(
+    const idmsAuthUrl = txCore.adminStore.providers.citizenfx.getAuthURL(
         callbackUrl,
         sessData.tmpOauthLoginStateKern,
     );
@@ -47,7 +47,7 @@ export const handleOauthCallback = async (ctx: InitializedCtx, redirectUri: stri
     //Exchange code for access token
     let tokenSet;
     try {
-        tokenSet = await txCore.adminVault.providers.citizenfx.processCallback(
+        tokenSet = await txCore.adminStore.providers.citizenfx.processCallback(
             inboundSession.tmpOauthLoginCallbackUri,
             inboundSession.tmpOauthLoginStateKern,
             redirectUri,
@@ -79,7 +79,7 @@ export const handleOauthCallback = async (ctx: InitializedCtx, redirectUri: stri
 
     //Get userinfo
     try {
-        return await txCore.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
+        return await txCore.adminStore.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         console.verbose.error(`Get UserInfo error: ${(error as Error).message}`);
         return {

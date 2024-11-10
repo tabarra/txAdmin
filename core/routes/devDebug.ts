@@ -49,7 +49,7 @@ export const post = async (ctx: AuthedCtx) => {
             }
             if (ctx.request.body.id === null) {
                 if (ctx.request.body.event === 'playerDropped') {
-                    const onlinePlayers = txCore.playerlistManager.getPlayerList();
+                    const onlinePlayers = txCore.fxPlayerlist.getPlayerList();
                     if (onlinePlayers.length){
                         ctx.request.body.id = onlinePlayers[0].netid;
                     }
@@ -60,7 +60,7 @@ export const post = async (ctx: AuthedCtx) => {
             if (ctx.request.body.event === 'playerJoining') {
                 playerJoinCounter++;
             }
-            txCore.playerlistManager.handleServerEvents(ctx.request.body, txCore.fxRunner.currentMutex);
+            txCore.fxPlayerlist.handleServerEvents(ctx.request.body, txCore.fxRunner.currentMutex);
             return ctx.send({ success: true });
         } catch (error) {
             console.dir(error);

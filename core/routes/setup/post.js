@@ -267,15 +267,15 @@ async function handleSaveLocal(ctx) {
     }
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configVault.getScopedStructure('global');
+    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
     newGlobalConfig.serverName = cfg.name;
-    const newFXRunnerConfig = txCore.configVault.getScopedStructure('fxRunner');
+    const newFXRunnerConfig = txCore.configStore.getScopedStructure('fxRunner');
     newFXRunnerConfig.serverDataPath = cfg.dataFolder;
     newFXRunnerConfig.cfgPath = cfg.cfgFile;
     try {
-        txCore.configVault.saveProfile('global', newGlobalConfig);
-        txCore.configVault.saveProfile('fxRunner', newFXRunnerConfig);
-        txCore.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+        txCore.configStore.saveProfile('global', newGlobalConfig);
+        txCore.configStore.saveProfile('fxRunner', newFXRunnerConfig);
+        txCore.metrics.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global/fxserver settings via setup stepper.`);
         console.verbose.dir(error);
@@ -288,7 +288,7 @@ async function handleSaveLocal(ctx) {
 
     //Refreshing config
     txCore.fxRunner.refreshConfig();
-    txCore.persistentCache.set('deployer:recipe', 'none');
+    txCore.cacheStore.set('deployer:recipe', 'none');
 
     //Logging
     ctx.admin.logAction('Changing global/fxserver settings via setup stepper.');
@@ -338,10 +338,10 @@ async function handleSaveDeployerImport(ctx) {
     }
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configVault.getScopedStructure('global');
+    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
     newGlobalConfig.serverName = serverName;
     try {
-        txCore.configVault.saveProfile('global', newGlobalConfig);
+        txCore.configStore.saveProfile('global', newGlobalConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);
@@ -383,10 +383,10 @@ async function handleSaveDeployerCustom(ctx) {
     const deploymentID = ctx.request.body.deploymentID;
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configVault.getScopedStructure('global');
+    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
     newGlobalConfig.serverName = serverName;
     try {
-        txCore.configVault.saveProfile('global', newGlobalConfig);
+        txCore.configStore.saveProfile('global', newGlobalConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);

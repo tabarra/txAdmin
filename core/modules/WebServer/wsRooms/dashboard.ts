@@ -6,12 +6,12 @@ import { DashboardDataEventType } from "@shared/socketioTypes";
  * Returns the dashboard stats data
  */
 const getInitialData = (): DashboardDataEventType => {
-    const svRuntimeStats = txCore.statsManager.svRuntime.getRecentStats();
+    const svRuntimeStats = txCore.metrics.svRuntime.getRecentStats();
 
     return {
-        // joinLeaveTally30m: txCore.playerlistManager.joinLeaveTally,
+        // joinLeaveTally30m: txCore.FxPlayerlist.joinLeaveTally,
         playerDrop: {
-            summaryLast6h: txCore.statsManager.playerDrop.getRecentDropTally(6),
+            summaryLast6h: txCore.metrics.playerDrop.getRecentDropTally(6),
         },
         svRuntime: {
             fxsMemory: svRuntimeStats.fxsMemory,
@@ -28,8 +28,8 @@ const getInitialData = (): DashboardDataEventType => {
  * It relays server performance stuff and drop reason categories.
  * 
  * NOTE: 
- * - active push event for only from StatsManager.svRuntime
- * - StatsManager.playerDrop does not push events, those are sent alongside the playerlist drop event
+ * - active push event for only from Metrics.svRuntime
+ * - Metrics.playerDrop does not push events, those are sent alongside the playerlist drop event
  *   which means that if accessing from NUI (ie not joining playerlist room), the chart will only be
  *   updated when the user refreshes the page.
  *   Same goes for "last 6h" not expiring old data if the server is not online pushing new perfs.

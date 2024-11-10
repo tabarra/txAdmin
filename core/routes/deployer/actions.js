@@ -166,7 +166,7 @@ async function handleSetVariables(ctx) {
     }
 
     //Setting identifiers array
-    const admin = txCore.adminVault.getAdminByName(ctx.admin.name);
+    const admin = txCore.adminStore.getAdminByName(ctx.admin.name);
     if (!admin) return ctx.send({ type: 'danger', message: 'Admin not found.' });
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach((providerName) => {
@@ -202,7 +202,7 @@ async function handleSaveConfig(ctx) {
     }
     const serverCFG = ctx.request.body.serverCFG;
     const cfgFilePath = path.join(txManager.deployer.deployPath, 'server.cfg');
-    txCore.persistentCache.set('deployer:recipe', txManager.deployer?.recipe?.name ?? 'unknown');
+    txCore.cacheStore.set('deployer:recipe', txManager.deployer?.recipe?.name ?? 'unknown');
 
     //Validating config contents + saving file and backup
     try {
@@ -225,14 +225,14 @@ async function handleSaveConfig(ctx) {
     }
 
     //Preparing & saving config
-    const newFXRunnerConfig = txCore.configVault.getScopedStructure('fxRunner');
+    const newFXRunnerConfig = txCore.configStore.getScopedStructure('fxRunner');
     newFXRunnerConfig.serverDataPath = slash(path.normalize(txManager.deployer.deployPath));
     newFXRunnerConfig.cfgPath = slash(path.normalize(cfgFilePath));
     if (typeof txManager.deployer.recipe.onesync !== 'undefined') {
         newFXRunnerConfig.onesync = txManager.deployer.recipe.onesync;
     }
     try {
-        txCore.configVault.saveProfile('fxRunner', newFXRunnerConfig);
+        txCore.configStore.saveProfile('fxRunner', newFXRunnerConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing fxserver settings via deployer.`);
         console.verbose.dir(error);
@@ -244,7 +244,7 @@ async function handleSaveConfig(ctx) {
     }
 
     txCore.fxRunner.refreshConfig();
-    txCore.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+    txCore.metrics.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     ctx.admin.logAction('Completed and committed server deploy.');
 
     //Starting server

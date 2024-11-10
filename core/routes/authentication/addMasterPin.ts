@@ -26,14 +26,14 @@ export default async function AuthAddMasterPin(ctx: InitializedCtx) {
     const { pin, origin } = schemaRes.data;
 
     //Check if there are already admins set up
-    if (txCore.adminVault.hasAdmins()) {
+    if (txCore.adminStore.hasAdmins()) {
         return ctx.send<ApiOauthRedirectResp>({
             error: `master_already_set`,
         });
     }
 
     //Checking the PIN
-    if (!pin.length || pin !== txCore.adminVault.addMasterPin) {
+    if (!pin.length || pin !== txCore.adminStore.addMasterPin) {
         return ctx.send<ApiOauthRedirectResp>({
             error: `Wrong PIN.`,
         });

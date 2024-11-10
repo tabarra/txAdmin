@@ -70,13 +70,13 @@ export default async function Resources(ctx) {
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
             if (
-                txCore.resourcesManager.resourceReport
-                && (new Date() - txCore.resourcesManager.resourceReport.ts) <= 1000
-                && Array.isArray(txCore.resourcesManager.resourceReport.resources)
+                txCore.fxResources.resourceReport
+                && (new Date() - txCore.fxResources.resourceReport.ts) <= 1000
+                && Array.isArray(txCore.fxResources.resourceReport.resources)
             ) {
                 clearTimeout(tListTimer);
                 clearTimeout(tErrorTimer);
-                const resGroups = processResources(txCore.resourcesManager.resourceReport.resources);
+                const resGroups = processResources(txCore.fxResources.resourceReport.resources);
                 const renderData = {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),

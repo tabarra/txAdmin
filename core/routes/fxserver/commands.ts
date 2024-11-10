@@ -80,7 +80,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         ctx.admin.logAction(`Sending announcement: ${parameter}`);
 
         // Sending discord announcement
-        const publicAuthor = txCore.adminVault.getAdminPublicName(ctx.admin.name, 'message');
+        const publicAuthor = txCore.adminStore.getAdminPublicName(ctx.admin.name, 'message');
         txCore.discordBot.sendAnnouncement({
             type: 'info',
             title: {

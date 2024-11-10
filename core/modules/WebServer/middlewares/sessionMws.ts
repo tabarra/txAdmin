@@ -1,4 +1,4 @@
-import { UserInfoType } from "@modules/AdminVault/providers/CitizenFX";
+import { UserInfoType } from "@modules/AdminStore/providers/CitizenFX";
 import { CfxreSessAuthType, PassSessAuthType } from "../authLogic";
 import { LRUCacheWithDelete } from "mnemonist";
 import { RawKoaCtx } from "../ctxTypes";

@@ -24,7 +24,7 @@ export default async function SetupGet(ctx) {
         return ctx.utils.legacyNavigateToPage('/');
     }
 
-    const globalConfig = txCore.configVault.getScopedStructure('global');
+    const globalConfig = txCore.configStore.getScopedStructure('global');
     const renderData = {
         headerTitle: 'Setup',
         isReset: (globalConfig.serverName !== null),

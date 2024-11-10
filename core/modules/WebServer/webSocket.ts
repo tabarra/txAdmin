@@ -74,11 +74,11 @@ export default class WebSocket {
      * Refreshes the auth data for all connected admins
      * If an admin is not authed anymore, they will be disconnected
      * If an admin lost permission to a room, they will be kicked out of it
-     * This is called from AdminVault.refreshOnlineAdmins()
+     * This is called from AdminStore.refreshOnlineAdmins()
      */
     async reCheckAdminAuths() {
         const sockets = await this.#io.fetchSockets();
-        console.verbose.warn(`SocketIO`, `AdminVault changed, refreshing auth for ${sockets.length} sockets.`);
+        console.verbose.warn(`SocketIO`, `AdminStore changed, refreshing auth for ${sockets.length} sockets.`);
         for (const socket of sockets) {
             //@ts-ignore
             const reqIp = getIP(socket);

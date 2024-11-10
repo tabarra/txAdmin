@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { msToDuration } from "@/lib/dateTime";
 import { useRef, useState } from "react";
-import { DatabaseActionType } from "../../../../core/modules/PlayerDatabase/databaseTypes";
+import type { DatabaseActionType } from "../../../../core/modules/Database/databaseTypes";
 import { useOpenPlayerModal } from "@/hooks/playerModal";
 import DateTimeCorrected from "@/components/DateTimeCorrected";
 

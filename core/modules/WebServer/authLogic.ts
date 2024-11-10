@@ -25,7 +25,7 @@ export class AuthedAdmin {
         this.isTempPassword = (typeof vaultAdmin.password_temporary !== 'undefined');
         this.csrfToken = csrfToken;
 
-        const cachedPfp = txCore.persistentCache.get(`admin:picture:${vaultAdmin.name}`);
+        const cachedPfp = txCore.cacheStore.get(`admin:picture:${vaultAdmin.name}`);
         this.profilePicture = typeof cachedPfp === 'string' ? cachedPfp : undefined;
     }
 
@@ -178,8 +178,8 @@ export const normalAuthLogic = (
             return failResp(`Expired session from '${sess.auth?.username}'.`);
         }
 
-        // Searching for admin in AdminVault
-        const vaultAdmin = txCore.adminVault.getAdminByName(sessAuth.username);
+        // Searching for admin in AdminStore
+        const vaultAdmin = txCore.adminStore.getAdminByName(sessAuth.username);
         if (!vaultAdmin) {
             return failResp(`Admin '${sessAuth.username}' not found.`);
         }
@@ -251,8 +251,8 @@ export const nuiAuthLogic = (
             return failResp('Unauthorized: empty identifier array');
         }
 
-        // Searching for admin in AdminVault
-        const vaultAdmin = txCore.adminVault.getAdminByIdentifiers(identifiers);
+        // Searching for admin in AdminStore
+        const vaultAdmin = txCore.adminStore.getAdminByIdentifiers(identifiers);
         if (!vaultAdmin) {
             if(!reqHeader['x-txadmin-identifiers'].includes('license:')) {
                 return failResp('Unauthorized: you do not have a license identifier, which means the server probably has sv_lan enabled. Please disable sv_lan and restart the server to use the in-game menu.');

@@ -93,11 +93,11 @@ async function handleGlobal(ctx: AuthedCtx) {
     }
 
     //Preparing & saving config
-    const newConfig = txCore.configVault.getScopedStructure('global');
+    const newConfig = txCore.configStore.getScopedStructure('global');
     newConfig.serverName = cfg.serverName;
     newConfig.language = cfg.language;
     try {
-        txCore.configVault.saveProfile('global', newConfig);
+        txCore.configStore.saveProfile('global', newConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings.`);
         console.verbose.dir(error);
@@ -168,7 +168,7 @@ async function handleFXServer(ctx: AuthedCtx) {
     }
 
     //Preparing & saving config
-    const newConfig = txCore.configVault.getScopedStructure('fxRunner');
+    const newConfig = txCore.configStore.getScopedStructure('fxRunner');
     const hasServerDataPathChanged = (newConfig.serverDataPath !== cfg.serverDataPath);
     newConfig.serverDataPath = cfg.serverDataPath;
     const hasCfgPathChanged = (newConfig.cfgPath !== cfg.cfgPath);
@@ -178,7 +178,7 @@ async function handleFXServer(ctx: AuthedCtx) {
     newConfig.quiet = cfg.quiet;
     newConfig.commandLine = cfg.commandLine;
     try {
-        txCore.configVault.saveProfile('fxRunner', newConfig);
+        txCore.configStore.saveProfile('fxRunner', newConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing FXServer settings.`);
         console.verbose.dir(error);
@@ -191,7 +191,7 @@ async function handleFXServer(ctx: AuthedCtx) {
 
     //Sending output
     if(hasServerDataPathChanged || hasCfgPathChanged){
-        txCore.statsManager.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+        txCore.metrics.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     }
     txCore.fxRunner.refreshConfig();
     ctx.admin.logAction('Changing fxRunner settings.');
@@ -267,7 +267,7 @@ async function handlePlayerDatabase(ctx: AuthedCtx) {
     }
 
     //Preparing & saving config
-    const newConfig = txCore.configVault.getScopedStructure('playerDatabase');
+    const newConfig = txCore.configStore.getScopedStructure('playerDatabase');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
     newConfig.whitelistMode = cfg.whitelistMode;
     newConfig.whitelistedDiscordRoles = cfg.whitelistedDiscordRoles;
@@ -275,7 +275,7 @@ async function handlePlayerDatabase(ctx: AuthedCtx) {
     newConfig.requiredBanHwidMatches = cfg.requiredBanHwidMatches;
     newConfig.banRejectionMessage = cfg.banRejectionMessage;
     try {
-        txCore.configVault.saveProfile('playerDatabase', newConfig);
+        txCore.configStore.saveProfile('playerDatabase', newConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing Player Manager settings.`);
         console.verbose.dir(error);
@@ -287,8 +287,8 @@ async function handlePlayerDatabase(ctx: AuthedCtx) {
     }
 
     //Sending output
-    txCore.statsManager.txRuntime.whitelistCheckTime.clear();
-    txCore.playerDatabase.refreshConfig();
+    txCore.metrics.txRuntime.whitelistCheckTime.clear();
+    txCore.database.refreshConfig();
     txCore.fxRunner.resetConvars();
     ctx.admin.logAction('Changing Player Manager settings.');
     return ctx.send({
@@ -332,11 +332,11 @@ async function handleMonitor(ctx: AuthedCtx) {
     }
 
     //Preparing & saving config
-    const newConfig = txCore.configVault.getScopedStructure('monitor');
+    const newConfig = txCore.configStore.getScopedStructure('monitor');
     newConfig.restarterSchedule = validRestartTimes.map(t => t.string);
     newConfig.resourceStartingTolerance = cfg.resourceStartingTolerance;
     try {
-        txCore.configVault.saveProfile('monitor', newConfig);
+        txCore.configStore.saveProfile('monitor', newConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing Restarter settings.`);
         console.verbose.dir(error);
@@ -348,8 +348,8 @@ async function handleMonitor(ctx: AuthedCtx) {
     }
 
     //Sending output
-    txCore.healthMonitor.refreshConfig();
-    txCore.scheduler.refreshConfig();
+    txCore.fxMonitor.refreshConfig();
+    txCore.fxScheduler.refreshConfig();
     ctx.admin.logAction('Changing monitor settings.');
     return ctx.send({
         type: 'success',
@@ -414,7 +414,7 @@ async function handleDiscord(ctx: AuthedCtx) {
     };
 
     //Preparing & saving config
-    const newConfig = txCore.configVault.getScopedStructure('discordBot');
+    const newConfig = txCore.configStore.getScopedStructure('discordBot');
     newConfig.enabled = cfg.enabled;
     newConfig.token = cfg.token;
     newConfig.guild = (cfg.guild.length) ? cfg.guild : false;
@@ -422,7 +422,7 @@ async function handleDiscord(ctx: AuthedCtx) {
     newConfig.embedJson = cfg.embedJson;
     newConfig.embedConfigJson = cfg.embedConfigJson;
     try {
-        txCore.configVault.saveProfile('discordBot', newConfig);
+        txCore.configStore.saveProfile('discordBot', newConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing Discord settings.`);
         console.verbose.dir(error);
@@ -517,7 +517,7 @@ async function handleMenu(ctx: AuthedCtx) {
     };
 
     //Preparing & saving config
-    const newConfig = txCore.configVault.getScopedStructure('global');
+    const newConfig = txCore.configStore.getScopedStructure('global');
     newConfig.menuEnabled = cfg.menuEnabled;
     newConfig.menuAlignRight = cfg.menuAlignRight;
     newConfig.menuPageKey = cfg.menuPageKey;
@@ -528,7 +528,7 @@ async function handleMenu(ctx: AuthedCtx) {
     newConfig.hideDefaultWarning = cfg.hideDefaultWarning;
     newConfig.hideDefaultScheduledRestartWarning = cfg.hideDefaultScheduledRestartWarning;
     try {
-        txCore.configVault.saveProfile('global', newConfig);
+        txCore.configStore.saveProfile('global', newConfig);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing Global settings.`);
         console.verbose.dir(error);

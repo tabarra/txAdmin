@@ -1,7 +1,7 @@
 const modulename = 'WebServer:PlayerCheckJoin';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
-import { DatabaseActionBanType, DatabaseActionType, DatabaseWhitelistApprovalsType } from '@modules/PlayerDatabase/databaseTypes';
+import { DatabaseActionBanType, DatabaseActionType, DatabaseWhitelistApprovalsType } from '@modules/Database/databaseTypes';
 import { anyUndefined, now } from '@lib/misc';
 import { filterPlayerHwids, parsePlayerIds, shortenId } from '@lib/player/idUtils';
 import type { PlayerIdsObjectType } from "@shared/otherTypes";
@@ -9,7 +9,7 @@ import xssInstancer from '@lib/xss';
 import playerResolver from '@lib/player/playerResolver';
 import humanizeDuration, { Unit } from 'humanize-duration';
 import consoleFactory from '@lib/console';
-import { TimeCounter } from '@modules/StatsManager/statsUtils';
+import { TimeCounter } from '@modules/Metrics/statsUtils';
 import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 const console = consoleFactory(modulename);
 const xss = xssInstancer();
@@ -100,7 +100,7 @@ export default async function PlayerCheckJoin(ctx: InitializedCtx) {
         if (txConfig.playerDatabase.onJoinCheckBan) {
             const checkTime = new TimeCounter();
             const result = checkBan(validIdsArray, validIdsObject, validHwidsArray);
-            txCore.statsManager.txRuntime.banCheckTime.count(checkTime.stop().milliseconds);
+            txCore.metrics.txRuntime.banCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
         }
 
@@ -108,25 +108,25 @@ export default async function PlayerCheckJoin(ctx: InitializedCtx) {
         if (txConfig.playerDatabase.whitelistMode === 'adminOnly') {
             const checkTime = new TimeCounter();
             const result = await checkAdminOnlyMode(validIdsArray, validIdsObject, playerName);
-            txCore.statsManager.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
+            txCore.metrics.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
 
         } else if (txConfig.playerDatabase.whitelistMode === 'approvedLicense') {
             const checkTime = new TimeCounter();
             const result = await checkApprovedLicense(validIdsArray, validIdsObject, validHwidsArray, playerName);
-            txCore.statsManager.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
+            txCore.metrics.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
 
         } else if (txConfig.playerDatabase.whitelistMode === 'guildMember') {
             const checkTime = new TimeCounter();
             const result = await checkGuildMember(validIdsArray, validIdsObject, playerName);
-            txCore.statsManager.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
+            txCore.metrics.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
 
         } else if (txConfig.playerDatabase.whitelistMode === 'guildRoles') {
             const checkTime = new TimeCounter();
             const result = await checkGuildRoles(validIdsArray, validIdsObject, playerName);
-            txCore.statsManager.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
+            txCore.metrics.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
         }
 
@@ -159,7 +159,7 @@ function checkBan(
             && (!action.revocation.timestamp)
         );
     };
-    const activeBans = txCore.playerDatabase.actions.findMany(validIdsArray, validHwidsArray, filter);
+    const activeBans = txCore.database.actions.findMany(validIdsArray, validHwidsArray, filter);
     if (activeBans.length) {
         const ban = activeBans[0];
 
@@ -276,7 +276,7 @@ async function checkAdminOnlyMode(
     }
 
     //Looking for admin
-    const admin = txCore.adminVault.getAdminByIdentifiers(validIdsArray);
+    const admin = txCore.adminStore.getAdminByIdentifiers(validIdsArray);
     if (admin) return { allow: true };
 
     //Prepare rejection message
@@ -447,13 +447,13 @@ async function checkApprovedLicense(
     const allIdsFilter = (x: DatabaseWhitelistApprovalsType) => {
         return validIdsArray.includes(x.identifier);
     }
-    const approvals = txCore.playerDatabase.whitelist.findManyApprovals(allIdsFilter);
+    const approvals = txCore.database.whitelist.findManyApprovals(allIdsFilter);
     if (approvals.length) {
         //update or register player
         if (typeof player !== 'undefined' && player.license) {
             player.setWhitelist(true);
         } else {
-            txCore.playerDatabase.players.register({
+            txCore.database.players.register({
                 license: validIdsObject.license,
                 ids: validIdsArray,
                 hwids: validHwidsArray,
@@ -467,8 +467,8 @@ async function checkApprovedLicense(
         }
 
         //Remove entries from whitelistApprovals & whitelistRequests
-        txCore.playerDatabase.whitelist.removeManyApprovals(allIdsFilter);
-        txCore.playerDatabase.whitelist.removeManyRequests({ license: validIdsObject.license });
+        txCore.database.whitelist.removeManyApprovals(allIdsFilter);
+        txCore.database.whitelist.removeManyRequests({ license: validIdsObject.license });
 
         //return allow join
         return { allow: true };
@@ -489,10 +489,10 @@ async function checkApprovedLicense(
     //Check if this player has an active wl request
     //NOTE: it could return multiple, but we are not dealing with it
     let wlRequestId: string;
-    const requests = txCore.playerDatabase.whitelist.findManyRequests({ license: validIdsObject.license });
+    const requests = txCore.database.whitelist.findManyRequests({ license: validIdsObject.license });
     if (requests.length) {
         wlRequestId = requests[0].id; //just getting the first
-        txCore.playerDatabase.whitelist.updateRequest(validIdsObject.license, {
+        txCore.database.whitelist.updateRequest(validIdsObject.license, {
             playerDisplayName: displayName,
             playerPureName: pureName,
             discordTag,
@@ -500,7 +500,7 @@ async function checkApprovedLicense(
             tsLastAttempt: ts,
         });
     } else {
-        wlRequestId = txCore.playerDatabase.whitelist.registerRequest({
+        wlRequestId = txCore.database.whitelist.registerRequest({
             license: validIdsObject.license,
             playerDisplayName: displayName,
             playerPureName: pureName,

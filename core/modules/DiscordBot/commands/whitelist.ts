@@ -1,7 +1,7 @@
 const modulename = 'DiscordBot:cmd:whitelist';
 import { CommandInteraction as ChatInputCommandInteraction, ImageURLOptions } from 'discord.js';
 import { now } from '@lib/misc';
-import { DuplicateKeyError } from '@modules/PlayerDatabase/dbUtils';
+import { DuplicateKeyError } from '@modules/Database/dbUtils';
 import { embedder, ensurePermission, logDiscordAdminAction } from '../discordHelpers';
 import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
@@ -23,7 +23,7 @@ const handleMemberSubcommand = async (interaction: ChatInputCommandInteraction, 
 
     //Registering approval
     try {
-        txCore.playerDatabase.whitelist.registerApproval({
+        txCore.database.whitelist.registerApproval({
             identifier,
             playerName,
             playerAvatar,
@@ -58,7 +58,7 @@ const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction,
     }
 
     //Find request
-    const requests = txCore.playerDatabase.whitelist.findManyRequests({ id: reqId });
+    const requests = txCore.database.whitelist.findManyRequests({ id: reqId });
     if (!requests.length) {
         return await interaction.reply(embedder.warning(`Whitelist request ID \`${reqId}\` not found.`));
     }
@@ -68,7 +68,7 @@ const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction,
     const identifier = `license:${req.license}`;
     const playerName = req.discordTag ?? req.playerDisplayName;
     try {
-        txCore.playerDatabase.whitelist.registerApproval({
+        txCore.database.whitelist.registerApproval({
             identifier,
             playerName,
             playerAvatar: (req.discordAvatar) ? req.discordAvatar : null,
@@ -90,7 +90,7 @@ const handleRequestSubcommand = async (interaction: ChatInputCommandInteraction,
 
     //Remove record from whitelistRequests
     try {
-        txCore.playerDatabase.whitelist.removeManyRequests({ id: reqId });
+        txCore.database.whitelist.removeManyRequests({ id: reqId });
     } catch (error) {
         return await interaction.reply(embedder.danger(`Failed to remove wl request: ${(error as Error).message}`));
     }

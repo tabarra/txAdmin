@@ -266,7 +266,7 @@ export const getTxAdminData = async () => {
         units: ['d', 'h', 'm'],
     };
 
-    const stats = txCore.statsManager.txRuntime; //shortcut
+    const stats = txCore.metrics.txRuntime; //shortcut
     const memoryUsage = getHeapStatistics();
 
     return {

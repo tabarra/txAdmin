@@ -9,7 +9,7 @@ import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 
-//FIXME: deprecate this - do @modules/ConfigVault/utils.ts > encodeConfig() or something like that
+//FIXME: deprecate this - do @modules/ConfigStore/utils.ts > encodeConfig() or something like that
 const CONFIG_STRUCTURE = {
     global: {
         serverName: null,

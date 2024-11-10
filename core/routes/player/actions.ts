@@ -99,7 +99,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     //Register action
     let actionId;
     try {
-        actionId = txCore.playerDatabase.actions.registerWarn(
+        actionId = txCore.database.actions.registerWarn(
             allIds,
             ctx.admin.name,
             reason,
@@ -169,7 +169,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     //Register action
     let actionId;
     try {
-        actionId = txCore.playerDatabase.actions.registerBan(
+        actionId = txCore.database.actions.registerBan(
             allIds,
             ctx.admin.name,
             reason,
@@ -190,7 +190,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     //Prepare and send command
     let kickMessage, durationTranslated;
     const tOptions: any = {
-        author: txCore.adminVault.getAdminPublicName(ctx.admin.name, 'punishment'),
+        author: txCore.adminStore.getAdminPublicName(ctx.admin.name, 'punishment'),
         reason: reason,
     };
     if (expiration !== false && duration) {

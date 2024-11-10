@@ -14,7 +14,7 @@ export default {
         return [{
             mutex: txCore.fxRunner.currentMutex,
             type: 'fullPlayerlist',
-            playerlist: txCore.playerlistManager.getPlayerList(),
+            playerlist: txCore.fxPlayerlist.getPlayerList(),
         } satisfies FullPlayerlistEventType];
     },
 } satisfies RoomType;
