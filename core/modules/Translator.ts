@@ -9,10 +9,9 @@ import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 
 
-
 /**
- * Small translation module built around Polyglot.js.
- * For the future, its probably a good idea to upgrade to i18next
+ * Translation module built around Polyglot.js.
+ * The locale files are indexed by the localeMap in the shared folder.
  */
 export default class Translator {
     canonical: string = 'en-GB';

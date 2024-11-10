@@ -29,6 +29,10 @@ enum HealthStatus {
     PARTIAL = 'PARTIAL',
 }
 
+
+/**
+ * Module responsible for monitoring the FXServer health and status, restarting it if necessary.
+ */
 export default class FxMonitor {
     //Status tracking
     public currentStatus: HealthStatus = HealthStatus.OFFLINE;

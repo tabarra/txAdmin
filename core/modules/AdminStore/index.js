@@ -32,6 +32,9 @@ const migrateProviderIdentifiers = (providerName, providerData) => {
 };
 
 
+/**
+ * Module responsible for storing, retrieving and validating admins data.
+ */
 export default class AdminStore {
     constructor() {
         this.adminsFile = `${txEnv.dataPath}/admins.json`;

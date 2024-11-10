@@ -34,6 +34,10 @@ const deepFreeze = (obj) => {
     return obj;
 };
 
+
+/**
+ * Module to handle the configuration file, validation, defaults and retrieval.
+ */
 export default class ConfigStore {
     configFilePath = `${txEnv.profilePath}/config.json`;
     configFile;

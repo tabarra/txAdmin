@@ -19,6 +19,12 @@ type ResourceReportType = {
     resources: any[]
 }
 
+
+/**
+ * Module responsible to track FXServer resource states.  
+ * NOTE: currently it is not tracking the state during runtime, and it is just being used
+ * to assist with tracking the boot process.
+ */
 export default class FxResources {
     activeStartingTime: Date | null = null;
     activeStartingResource: string | null = null;

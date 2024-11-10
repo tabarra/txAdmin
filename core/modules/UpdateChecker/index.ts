@@ -47,6 +47,9 @@ const rollDice = () => {
 const DELAY_CACHE_KEY = 'updateDelay';
 
 
+/**
+ * Module to check for updates and notify the user according to a rollout strategy randomly picked.
+ */
 export default class UpdateChecker {
     txaUpdateData?: UpdateDataType;
     fxsUpdateData?: UpdateDataType;

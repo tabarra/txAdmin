@@ -6,6 +6,9 @@ import { DuplicateKeyError, genWhitelistRequestID } from '../dbUtils';
 const console = consoleFactory('DatabaseDao');
 
 
+/**
+ * Data access object for the database whitelist collections.
+ */
 export default class WhitelistDao {
     constructor(private readonly db: DbInstance) { }
 

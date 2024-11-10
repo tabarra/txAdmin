@@ -31,6 +31,10 @@ type AnnouncementType = {
 }
 
 
+/**
+ * Module that handles the discord bot, provides methods to resolve members and send announcements, as well as
+ * providing discord slash commands.
+ */
 export default class DiscordBot {
     readonly #clientOptions: Discord.ClientOptions = {
         intents: [

@@ -63,6 +63,10 @@ const chanEventBlackHole = (...args) => {
     }
 };
 
+
+/**
+ * Module responsible for handling the FXServer process.
+ */
 export default class FxRunner {
     constructor() {
         //Checking config validity

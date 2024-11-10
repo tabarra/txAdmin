@@ -45,6 +45,11 @@ const koaServeOptions = {
     maxage: !txDevEnv.ENABLED ? 30 * 60 * 1000 : 0,
 };
 
+
+/**
+ * Module for the web server and socket.io.
+ * It defines behaviors through middlewares, and instantiates the Koa app and the SocketIO server.
+ */
 export default class WebServer {
     public isListening = false;
     private sessionCookieName: string;

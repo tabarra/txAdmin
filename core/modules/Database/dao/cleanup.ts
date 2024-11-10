@@ -5,6 +5,9 @@ import { now } from '@lib/misc';
 const console = consoleFactory('DatabaseDao');
 
 
+/**
+ * Data access object for cleaning up the database.
+ */
 export default class CleanupDao {
     constructor(private readonly db: DbInstance) { }
 

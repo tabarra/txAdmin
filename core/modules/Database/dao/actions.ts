@@ -7,6 +7,9 @@ import consoleFactory from '@lib/console';
 const console = consoleFactory('DatabaseDao');
 
 
+/**
+ * Data access object for the database "actions" collection.
+ */
 export default class ActionsDao {
     constructor(private readonly db: DbInstance) { }
 

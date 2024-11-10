@@ -16,8 +16,10 @@ export type PlayerDropEvent = {
     category?: number,
 }
 
+
 /**
- * The FxPlayerlist will store a ServerPlayer instance for all players that connected to the server.
+ * Module that holds the server playerlist to mirrors FXServer's internal playerlist state, as well as recently
+ * disconnected players' licenses for quick searches. This also handles the playerJoining and playerDropped events.
  * 
  * NOTE: licenseCache will keep an array of ['mutex#id', license], to be used for searches from server log clicks.
  * The licenseCache will contain only the licenses from last 50k disconnected players, which should be one entire

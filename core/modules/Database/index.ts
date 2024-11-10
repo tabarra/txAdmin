@@ -22,7 +22,7 @@ export type PlayerDbConfigType = {
 
 
 /**
- * Provide a central database for players, as well as assist with access control.
+ * This module is a hub for all database-related operations.
  */
 export default class Database {
     readonly #db: DbInstance;

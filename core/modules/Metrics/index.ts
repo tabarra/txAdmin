@@ -7,9 +7,9 @@ const console = consoleFactory(modulename);
 
 
 /**
- * Module responsible to collect statistics and data.
- * It is broken down into sub-modules for each specific area.
- * NOTE: yes, this could just have been an object, but who cares.
+ * Module responsible to collect statistics and data.  
+ * It is broken down into sub-modules for each specific area.  
+ * NOTE: This could just be an object, but keeping it as a class for consistency.
  */
 export default class Metrics {
     public readonly svRuntime: SvRuntimeMetrics;

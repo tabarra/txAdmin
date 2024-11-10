@@ -16,8 +16,9 @@ const isAcceptedType = (val: any) => {
 
 const CACHE_FILE_NAME = 'cachedData.json';
 
+
 /**
- * Dead-simple Map-based persistent cache, saved in txData/<profile>/cachedData.json.
+ * Dead-simple Map-based persistent cache, saved in txData/<profile>/cachedData.json.  
  * This is not meant to store anything super important, the async save does not throw in case of failure,
  * and it will reset the cache in case it fails to load.
  */

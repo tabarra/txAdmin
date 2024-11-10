@@ -30,6 +30,10 @@ const getNextScheduled = (parsedSchedule) => {
 };
 
 
+/**
+ * Module responsible for restarting the FXServer on a schedule defined in the config,
+ * or a temporary schedule set by the user at runtime.
+ */
 export default class FxScheduler {
     constructor() {
         this.nextSkip = false;

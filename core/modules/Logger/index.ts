@@ -8,14 +8,9 @@ import consoleFactory from '@lib/console';
 import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
-type LoggerConfigType = {
-    admin: RfsOptions;
-    fxserver: RfsOptions;
-    server: RfsOptions;
-}
 
 /**
- * Main logger component that holds all the loggers.
+ * Logger module that holds the scope-specific loggers and provides some utility functions.
  */
 export default class Logger {
     private readonly basePath = `${txEnv.profilePath}/logs/`;

@@ -5,6 +5,9 @@ import { now } from '@lib/misc';
 const console = consoleFactory('DatabaseDao');
 
 
+/**
+ * Data access object for collecting stats from the database.
+ */
 export default class StatsDao {
     constructor(private readonly db: DbInstance) { }
 
