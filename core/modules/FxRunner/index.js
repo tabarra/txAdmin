@@ -64,13 +64,9 @@ const chanEventBlackHole = (...args) => {
 };
 
 export default class FxRunner {
-    config;
-
     constructor() {
-        this.config = txConfig.fxRunner;
-
         //Checking config validity
-        if (this.config.shutdownNoticeDelay < 0 || this.config.shutdownNoticeDelay > 30) {
+        if (txConfig.fxRunner.shutdownNoticeDelay < 0 || txConfig.fxRunner.shutdownNoticeDelay > 30) {
             throw new Error('The fxRunner.shutdownNoticeDelay setting must be between 0 and 30 seconds.');
         }
 
@@ -90,7 +86,7 @@ export default class FxRunner {
      * Refresh fxRunner configurations
      */
     refreshConfig() {
-        this.config = txCore.configVault.getScoped('fxRunner');
+        // ???
     }
 
 
@@ -98,7 +94,7 @@ export default class FxRunner {
      * Receives the signal that all the start banner was already printed and other modules loaded
      */
     signalStartReady() {
-        if (!this.config.autostart) return;
+        if (!txConfig.fxRunner.autostart) return;
 
         if (!this.isConfigured) {
             return console.warn('Please open txAdmin on the browser to configure your server.');
@@ -118,8 +114,8 @@ export default class FxRunner {
     setupVariables() {
         // Prepare extra args
         let extraArgs = [];
-        if (typeof this.config.commandLine === 'string' && this.config.commandLine.length) {
-            extraArgs = parseArgsStringToArgv(this.config.commandLine);
+        if (typeof txConfig.fxRunner.commandLine === 'string' && txConfig.fxRunner.commandLine.length) {
+            extraArgs = parseArgsStringToArgv(txConfig.fxRunner.commandLine);
         }
 
         // Prepare default args (these convars can't change without restart)
@@ -129,13 +125,13 @@ export default class FxRunner {
         const cmdArgs = [
             getMutableConvars(true),
             extraArgs,
-            '+set', 'onesync', this.config.onesync,
+            '+set', 'onesync', txConfig.fxRunner.onesync,
             '+sets', 'txAdmin-version', txEnv.txaVersion,
             '+setr', 'txAdmin-menuEnabled', txConfig.global.menuEnabled,
             '+set', 'txAdmin-luaComHost', txAdminInterface,
             '+set', 'txAdmin-luaComToken', txCore.webServer.luaComToken,
             '+set', 'txAdminServerMode', 'true', //Can't change this one due to fxserver code compatibility
-            '+exec', this.config.cfgPath,
+            '+exec', txConfig.fxRunner.cfgPath,
         ].flat(2);
 
         // Configure spawn parameters according to the environment
@@ -196,7 +192,7 @@ export default class FxRunner {
 
         //Validating server.cfg & configuration
         try {
-            const result = await validateFixServerConfig(this.config.cfgPath, this.config.serverDataPath);
+            const result = await validateFixServerConfig(txConfig.fxRunner.cfgPath, txConfig.fxRunner.serverDataPath);
             if (result.errors) {
                 const msg = `**Unable to start the server due to error(s) in your config file(s):**\n${result.errors}`;
                 console.error(msg);
@@ -245,7 +241,7 @@ export default class FxRunner {
             this.spawnVariables.command,
             this.spawnVariables.args,
             {
-                cwd: this.config.serverDataPath,
+                cwd: txConfig.fxRunner.serverDataPath,
                 stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
             },
         );
@@ -351,7 +347,7 @@ export default class FxRunner {
                 console.warn(`Restarting the fxserver with delay override ${this.restartDelayOverride}`);
                 await sleep(this.restartDelayOverride);
             } else {
-                await sleep(this.config.restartDelay);
+                await sleep(txConfig.fxRunner.restartDelay);
             }
 
             //Start server again :)
@@ -375,7 +371,7 @@ export default class FxRunner {
         try {
             //Prevent concurrent restart request
             const msTimestamp = Date.now();
-            if (msTimestamp - this.lastKillRequest < this.config.shutdownNoticeDelay * 1000) {
+            if (msTimestamp - this.lastKillRequest < txConfig.fxRunner.shutdownNoticeDelay * 1000) {
                 return 'Restart already in progress.';
             } else {
                 this.lastKillRequest = msTimestamp;
@@ -390,7 +386,7 @@ export default class FxRunner {
                 reason: reasonString,
             };
             this.sendEvent('serverShuttingDown', {
-                delay: this.config.shutdownNoticeDelay * 1000,
+                delay: txConfig.fxRunner.shutdownNoticeDelay * 1000,
                 author: author ?? 'txAdmin',
                 message: txCore.translator.t(`server_actions.${messageType}`, tOptions),
             });
@@ -404,7 +400,7 @@ export default class FxRunner {
 
             //Awaiting restart delay
             //The 250 is so at least everyone is kicked from the server
-            await sleep(250 + this.config.shutdownNoticeDelay * 1000);
+            await sleep(250 + txConfig.fxRunner.shutdownNoticeDelay * 1000);
 
             //Stopping server
             if (this.fxChild !== null) {
@@ -593,6 +589,6 @@ export default class FxRunner {
      * True if both the serverDataPath and cfgPath are configured
      */
     get isConfigured() {
-        return Boolean(this.config.serverDataPath) && Boolean(this.config.cfgPath);
+        return Boolean(txConfig.fxRunner.serverDataPath) && Boolean(txConfig.fxRunner.cfgPath);
     }
 };

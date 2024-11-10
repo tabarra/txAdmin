@@ -32,7 +32,6 @@ const getNextScheduled = (parsedSchedule) => {
 
 export default class Scheduler {
     constructor() {
-        this.config = txConfig.monitor;
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.calculatedNextRestartMinuteFloorTs = false;
@@ -49,7 +48,6 @@ export default class Scheduler {
      * Refresh configs, resets skip and temp scheduled, runs checkSchedule.
      */
     refreshConfig() {
-        this.config = txCore.configVault.getScoped('monitor');
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.checkSchedule();
@@ -150,8 +148,8 @@ export default class Scheduler {
         }
 
         //Check validity
-        if (Array.isArray(this.config.restarterSchedule) && this.config.restarterSchedule.length) {
-            const { valid } = parseSchedule(this.config.restarterSchedule);
+        if (Array.isArray(txConfig.monitor.restarterSchedule) && txConfig.monitor.restarterSchedule.length) {
+            const { valid } = parseSchedule(txConfig.monitor.restarterSchedule);
             const nextSettingRestart = getNextScheduled(valid);
             if (nextSettingRestart.minuteFloorTs < scheduledMinuteFloorTs) {
                 throw new Error(`You already have one restart scheduled for ${nextSettingRestart.string}, which is before the time you specified.`);
@@ -180,8 +178,8 @@ export default class Scheduler {
         let nextRestart;
         if (this.nextTempSchedule) {
             nextRestart = this.nextTempSchedule;
-        } else if (Array.isArray(this.config.restarterSchedule) && this.config.restarterSchedule.length) {
-            const { valid } = parseSchedule(this.config.restarterSchedule);
+        } else if (Array.isArray(txConfig.monitor.restarterSchedule) && txConfig.monitor.restarterSchedule.length) {
+            const { valid } = parseSchedule(txConfig.monitor.restarterSchedule);
             nextRestart = getNextScheduled(valid);
         } else {
             //nothing scheduled

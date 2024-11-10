@@ -1,9 +1,10 @@
 //NOTE: must be imported first to setup the environment
 import { txEnv } from './globalData';
+import consoleFactory, { setTTYTitle } from '@lib/console';
 
+//Can be imported after
 import fs from 'node:fs';
 import checkPreRelease from './boot/checkPreRelease';
-import consoleFactory, { setTTYTitle } from '@lib/console';
 import fatalError from '@lib/fatalError';
 import { ensureProfileStructure, setupProfile } from './boot/setup';
 import setupProcessHandlers from './boot/setupProcessHandlers';

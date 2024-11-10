@@ -25,7 +25,6 @@ export type PlayerDbConfigType = {
  * Provide a central database for players, as well as assist with access control.
  */
 export default class PlayerDatabase {
-    public config: PlayerDbConfigType;
     readonly #db: Database;
 
     //Database Methods
@@ -36,9 +35,8 @@ export default class PlayerDatabase {
     readonly cleanup: CleanupDao;
 
     constructor() {
-        this.config = txConfig.playerDatabase;
         //Checking config validity
-        if (this.config.requiredBanHwidMatches < 0 || this.config.requiredBanHwidMatches > 6) {
+        if (txConfig.playerDatabase.requiredBanHwidMatches < 0 || txConfig.playerDatabase.requiredBanHwidMatches > 6) {
             throw new Error('The playerDatabase.requiredBanHwidMatches setting must be between 0 (disabled) and 6.');
         }
 
@@ -70,7 +68,7 @@ export default class PlayerDatabase {
      * Refresh configurations
      */
     refreshConfig() {
-        this.config = txCore.configVault.getScoped('playerDatabase');
+        // ???
     }
 
     /**

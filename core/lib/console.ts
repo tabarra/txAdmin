@@ -231,7 +231,11 @@ export const setTTYTitle = (title: string) => {
 /**
  * Generates a custom log function with custom context and specific Console
  */
-const getLogFunc = (currContext: string, color: ChalkInstance, consoleInstance?: Console) => {
+const getLogFunc = (
+    currContext: string,
+    color: ChalkInstance,
+    consoleInstance?: Console,
+): LogFunction => {
     return (message?: any, ...optParams: any) => {
         if (!consoleInstance) consoleInstance = defaultConsole;
         const prefix = genLogPrefix(currContext, color);
@@ -243,11 +247,13 @@ const getLogFunc = (currContext: string, color: ChalkInstance, consoleInstance?:
     }
 }
 
+type LogFunction = (message?: any, ...optParams: any) => void
+
 
 /**
  * Factory for console.log drop-ins
  */
-const consoleFactory = (ctx?: string, subCtx?: string) => {
+const consoleFactory = (ctx?: string, subCtx?: string): CombinedConsole => {
     const currContext = [header, ctx, subCtx].filter(x => x).join(':');
 
     return {
@@ -306,8 +312,37 @@ const consoleFactory = (ctx?: string, subCtx?: string) => {
 };
 export default consoleFactory;
 
+interface CombinedConsole extends TxConsole, Console {
+    dir: LogFunction;
+}
+
+export interface TxConsole {
+    tag: (subCtx: string) => TxConsole;
+    debug: LogFunction;
+    log: LogFunction;
+    ok: LogFunction;
+    warn: LogFunction;
+    error: LogFunction;
+    dir: (data: any, options?: TxInspectOptions) => void;
+    multiline: (text: string | string[], color: ChalkInstance) => void;
+    majorMultilineError: (text: string | (string | null)[]) => void;
+    verbose: {
+        debug: LogFunction;
+        log: LogFunction;
+        ok: LogFunction;
+        warn: LogFunction;
+        error: LogFunction;
+        dir: (data: any, options?: TxInspectOptions) => void;
+    };
+    readonly isVerbose: boolean;
+    setVerbose: (state: boolean) => void;
+    DIVIDER: string;
+    DIVIDER_CHAR: string;
+    DIVIDER_SIZE: number;
+}
+
 
 /**
  * Replaces the global console with the new one
  */
-global.console = consoleFactory('Global');
+global.console = consoleFactory();

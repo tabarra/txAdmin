@@ -15,13 +15,11 @@ const console = consoleFactory(modulename);
  * For the future, its probably a good idea to upgrade to i18next
  */
 export default class Translator {
-    language: string;
     canonical: string = 'en-GB';
     readonly customLocalePath: string;
     #polyglot: Polyglot | null = null;
 
     constructor() {
-        this.language = txConfig.global.language;
         this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');
 
         //Load language
@@ -34,13 +32,13 @@ export default class Translator {
      */
     setupTranslator(isFirstTime = false) {
         try {
-            this.canonical = Intl.getCanonicalLocales(this.language.replace(/_/g, '-'))[0];
+            this.canonical = Intl.getCanonicalLocales(txConfig.global.language.replace(/_/g, '-'))[0];
         } catch (error) {
             this.canonical = 'en-GB';
         }
 
         try {
-            const phrases = this.getLanguagePhrases(this.language);
+            const phrases = this.getLanguagePhrases(txConfig.global.language);
             const polyglotOptions = {
                 allowMissing: false,
                 onMissingKey: (key: string) => {
@@ -65,7 +63,6 @@ export default class Translator {
      */
     refreshConfig() {
         //Change config and restart polyglot
-        this.language = txConfig.global.language;
         this.setupTranslator(false);
 
         //Rebuild Monitor's schedule with new text and refreshes fxserver convars

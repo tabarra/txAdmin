@@ -30,8 +30,6 @@ enum HealthStatus {
 }
 
 export default class HealthMonitor {
-    public config: any; //FIXME: type
-
     //Status tracking
     public currentStatus: HealthStatus = HealthStatus.OFFLINE;
     private lastHealthCheckErrorMessage: string | null = null; //to print warning
@@ -52,11 +50,9 @@ export default class HealthMonitor {
 
 
     constructor() {
-        this.config = txConfig.monitor;
-
         //Checking config validity
-        if (this.config.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
-        if (this.config.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
+        if (txConfig.monitor.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
+        if (txConfig.monitor.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
 
         //Cron functions
         setInterval(() => {
@@ -70,7 +66,7 @@ export default class HealthMonitor {
      * Refresh Monitor configurations
      */
     refreshConfig() {
-        this.config = txCore.configVault.getScoped('monitor');
+        // ???
     }
 
 
@@ -230,9 +226,9 @@ export default class HealthMonitor {
         const timesPrefix = `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)})`;
 
         //Check if still in cooldown
-        if (processUptime < this.config.cooldown) {
+        if (processUptime < txConfig.monitor.cooldown) {
             if (console.isVerbose && processUptime > 10 && this.swLastStatusWarning.isOver(10)) {
-                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${this.config.cooldown}s.`);
+                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${txConfig.monitor.cooldown}s.`);
                 this.swLastStatusWarning.restart();
             }
             return;
@@ -295,7 +291,7 @@ export default class HealthMonitor {
         if (
             anySuccessfulHeartBeat === false
             && starting.startingElapsedSecs !== null
-            && starting.startingElapsedSecs < this.config.resourceStartingTolerance
+            && starting.startingElapsedSecs < txConfig.monitor.resourceStartingTolerance
         ) {
             if (processUptime % 15 === 0) {
                 console.warn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
@@ -325,7 +321,7 @@ export default class HealthMonitor {
                 if (starting.startingElapsedSecs !== null) {
                     //Resource didn't finish starting (if res boot still active)
                     this.restartFxChild(
-                        `resource "${starting.startingResName}" failed to start within the ${this.config.resourceStartingTolerance}s time limit`,
+                        `resource "${starting.startingResName}" failed to start within the ${txConfig.monitor.resourceStartingTolerance}s time limit`,
                         txCore.translator.t('restarter.start_timeout'),
                         timesPrefix,
                     );

@@ -18,19 +18,15 @@ type LoggerConfigType = {
  * Main logger component that holds all the loggers.
  */
 export default class Logger {
-    private readonly config: LoggerConfigType;
     private readonly basePath = `${txEnv.profilePath}/logs/`;
     public readonly admin: AdminLogger;
     public readonly fxserver: FXServerLogger;
     public readonly server: ServerLogger;
 
     constructor() {
-        this.config = txConfig.logger as any;
-
-        //Starting handlers
-        this.admin = new AdminLogger(this.basePath, this.config.admin);
-        this.fxserver = new FXServerLogger(this.basePath, this.config.fxserver);
-        this.server = new ServerLogger(this.basePath, this.config.server);
+        this.admin = new AdminLogger(this.basePath, txConfig.logger.admin);
+        this.fxserver = new FXServerLogger(this.basePath, txConfig.logger.fxserver);
+        this.server = new ServerLogger(this.basePath, txConfig.logger.server);
     }
 
 

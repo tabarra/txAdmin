@@ -12,7 +12,6 @@ declare const txCore: TxCoreType;
 declare type TxManagerType = import('./txManager').TxManagerType;
 declare const txManager: TxManagerType;
 
-
 //FIXME: temporary
 type AnythingButConfig = {
     config: never;
@@ -38,21 +37,16 @@ declare type TxAdminConfigs = {
     monitor: AnythingButConfig,
     playerDatabase: import('@modules/PlayerDatabase').PlayerDbConfigType,
     webServer: import('@modules/WebServer').WebServerConfigType,
-    discordBot: AnythingButConfig,
+    discordBot: import('@modules/DiscordBot').DiscordBotConfigType,
     fxRunner: AnythingButConfig,
     banTemplates: AnythingButConfig,
 };
 declare let txConfig: TxAdminConfigs;
 
-//FIXME: prepare console
-// interface Console {
-//     bbb: Example<'toplevel.no-declare.Console'>;
-// }
-// declare namespace globalThis {
-//     interface Console {
-//         aaa: Example<'globalThis.no-declare.Console'>;
-//     }
-// }
+declare type TxConsole = import('./lib/console').TxConsole;
+declare namespace globalThis {
+    interface Console extends TxConsole {}
+}
 
 
 /**

@@ -76,11 +76,15 @@ Legend:
 - [x] txGlobal/globals
 - [x] txManager should be managing the deployer, not the modules
 - [x] txManager should be exposing methods to get the status
-- [ ] em vários módilos eu fiz `this.config = txConfig.xxxxx`, mas tem que checar se o módulo não exige que o config não mude sem o this.refreshConfig
+- [x] em vários módilos eu fiz `this.config = txConfig.xxxxx`, mas tem que checar se o módulo não exige que o config não mude sem o this.refreshConfig
     - provavelmente melhor esperar o refactor das configs
-- [ ] drop usage of `const console = consoleFactory(modulename);`
-    - instead do `const console = console.tag('xxxx')`
-    - need to be careful with the import order, but it's possible
+    - [x] discord bot
+    - [x] fxrunner
+    - [x] health monitor
+    - [x] logger(s)
+    - [x] player database
+    - [x] scheduler
+    - [x] REFERENCIAS EXTERNAS?
 - [ ] remove `fs-extra` - right now only used in deployer and setup
 - [ ] headless deployer, without instantiating TxAdmin
 - [ ] lua file changes (after PR merges)
@@ -104,12 +108,13 @@ Legend:
 ## Chores + boring stuff
 - [ ] switch to `game 'common'` and remove `rdr3_warning`
 - [ ] add `.yarn.installed` to the dist? even in dev
-- [ ] check netid uint16 overflow
+- [!] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/modules/Logger/handlers/server.js#L148)
     - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
     - increase mutex to 6 digits?
     - `/^(?<mutex>\w{5})#(?<netid>\d{1,6})(?:r(?<rollover>\d{1,3}))?$/`
     - write parser, which will return the groups, defaulting rollover to 0
+    - NOTE: semver major is good opportunity for this change 
 - [ ] check if it makes sense to allow the txAdmin thread to run more than every 50ms
     - node 22 branch -> code/components/citizen-server-monitor/src/MonitorInstance.cpp:307
 - [ ] see if it's a good idea to replace `getHostStats.js` with si.osInfo()
@@ -128,7 +133,7 @@ Legend:
 - Do not make template config.json file on setup, only an empty-ish file
 - Use dot notation, save it flat
 - FIXME: not compatible with ban templates
-    - perhaps use array format `banTemplates[0].id=...`
+    - perhaps use array format `banTemplates[0]=<json>`
 - Only acceptable values are json types except objects to prevent accidental mutations
 - Maybe don't even json the file, make something closer to a `.env`, line separated
 - Allow registerUpdateCallback to pass wildcards
