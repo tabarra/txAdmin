@@ -72,21 +72,31 @@ export const createRandomHslColor = (alpha?: number) => {
 
 /**
  * Copy text to clipboard.
+ * Only if on web, attempt to use the Clipboard API. If it fails, fallback to the old method.
  * Because we don't have access to Clipboard API in FiveM's CEF, as well as on
  * non-localhost origins without https, we need to use the old school method.
- * FIXME: literally not working
  */
-export const copyToClipboard = async (value: string) => {
-    if (navigator?.clipboard) {
-        return navigator.clipboard.writeText(value);
-    } else {
+export const copyToClipboard = async (value: string, surrogate: HTMLDivElement) => {
+    const copyViaApi = () => navigator.clipboard.writeText(value);
+    const copyViaInput = () => {
         const clipElem = document.createElement("textarea");
         clipElem.value = value;
-        document.body.appendChild(clipElem);
+        surrogate.appendChild(clipElem);
         clipElem.select();
         const result = document.execCommand("copy");
-        document.body.removeChild(clipElem);
+        surrogate.removeChild(clipElem);
         return result;
+    }
+
+    //try to prevent printing error on devtools
+    if(window.txConsts.isWebInterface) {
+        try {
+            return await copyViaApi();
+        } catch (error1) {
+            return copyViaInput();
+        }
+    } else {
+        return copyViaInput();
     }
 }
 

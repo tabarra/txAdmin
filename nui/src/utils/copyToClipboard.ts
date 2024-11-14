@@ -4,7 +4,8 @@
 // currently targeting the wrapper element for where it appends
 
 export const copyToClipboard = (value: string, isPlayerModal?: boolean): void => {
-  const targetElement = isPlayerModal ? document.getElementById('player-modal-container') : document.body
+  const targetElement = isPlayerModal ? document.getElementById('player-modal-container') : document.body;
+  if(!targetElement) return;
   const clipElem = document.createElement("input");
   clipElem.value = value;
   targetElement.appendChild(clipElem);

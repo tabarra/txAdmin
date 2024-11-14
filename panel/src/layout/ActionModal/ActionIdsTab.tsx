@@ -1,7 +1,7 @@
 import { txToast } from "@/components/TxToaster";
 import { cn, copyToClipboard } from "@/lib/utils";
 import { CopyIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { DatabaseActionType } from "../../../../core/modules/Database/databaseTypes";
 
 
@@ -12,11 +12,14 @@ type IdsBlockProps = {
     isSmaller?: boolean,
 }
 function IdsBlock({ title, emptyMessage, ids, isSmaller }: IdsBlockProps) {
+    const divRef = useRef<HTMLDivElement>(null);
     const [hasCopiedIds, setHasCopiedIds] = useState(false);
+    const hasIdsAvailable = Array.isArray(ids) && ids.length;
 
     const handleCopyIds = () => {
-        if (!ids) return;
-        copyToClipboard(ids.join('\n')).then((res) => {
+        if (!ids || !divRef.current) throw new Error(`ids or divRef.current undefined`);
+        const strToCopy = ids.join('\n');
+        copyToClipboard(strToCopy, divRef.current).then((res) => {
             if (res !== false) {
                 setHasCopiedIds(true);
             } else {
@@ -29,20 +32,22 @@ function IdsBlock({ title, emptyMessage, ids, isSmaller }: IdsBlockProps) {
             });
         });
     }
-    const hasIdsAvailable = Array.isArray(ids) && ids.length;
 
     return <div className="px-1 mb-1 md:mb-4">
-        <div className="flex justify-between items-center pb-1">
+        <div className="flex justify-between items-center pb-1" ref={divRef}>
             <h3 className="text-xl">{title}</h3>
-            {/* {hasCopiedIds ? (
+            {hasCopiedIds ? (
                 <span className="text-sm text-success-inline">Copied!</span>
             ) : (
                 // TODO: a button to erase the ids from the database can be added here,
                 // requires tooltip and confirm modal though
-                <button onClick={handleCopyIds}>
+                // <button onClick={handleWipeIds} className={cn(!hasIdsAvailable && 'hidden')}>
+                //     <Trash2Icon className="h-4 text-secondary hover:text-destructive" />
+                // </button>
+                <button onClick={handleCopyIds} className={cn(!hasIdsAvailable && 'hidden')}>
                     <CopyIcon className="h-4 text-secondary hover:text-primary" />
                 </button>
-            )} */}
+            )}
         </div>
         <p className={cn(
             "font-mono break-all whitespace-pre-wrap border rounded divide-y divide-border/50 text-muted-foreground",
