@@ -3,7 +3,7 @@ import cleanPlayerName from '@shared/cleanPlayerName';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import { DatabaseActionBanType, DatabaseActionType, DatabaseWhitelistApprovalsType } from '@modules/Database/databaseTypes';
 import { anyUndefined, now } from '@lib/misc';
-import { filterPlayerHwids, parsePlayerIds, shortenId } from '@lib/player/idUtils';
+import { filterPlayerHwids, parsePlayerIds, shortenId, summarizeIdsArray } from '@lib/player/idUtils';
 import type { PlayerIdsObjectType } from "@shared/otherTypes";
 import xssInstancer from '@lib/xss';
 import playerResolver from '@lib/player/playerResolver';
@@ -231,11 +231,9 @@ function checkBan(
         const matchingHwids = ('hwids' in ban && ban.hwids)
             ? ban.hwids.filter(hw => validHwidsArray.includes(hw))
             : [];
-        const summarizedIds = [
-            ...matchingIds.map(shortenId),
-            ...matchingHwids.map(shortenId)
-        ];
-        const loggerReason = `active ban (${ban.id}) for identifiers [${summarizedIds.join(', ')}]`;
+        const combined = [...matchingIds, ...matchingHwids];
+        const summarizedIds = summarizeIdsArray(combined);
+        const loggerReason = `active ban (${ban.id}) for identifiers ${summarizedIds}`;
         txCore.logger.server.write([{
             src: 'tx',
             type: 'playerJoinDenied',

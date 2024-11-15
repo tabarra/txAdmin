@@ -5,6 +5,7 @@ import { LoggerBase } from '../LoggerBase';
 import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@lib/console';
 import bytes from 'bytes';
+import { summarizeIdsArray } from '@lib/player/idUtils';
 const console = consoleFactory(modulename);
 
 /*
@@ -183,8 +184,8 @@ export default class ServerLogger extends LoggerBase {
         //TODO: normalize/padronize actions
         let eventMessage; //to be sent to the UI + saved to the log
         if (eventData.type === 'playerJoining') {
-            const idsString = eventData?.data?.ids.join('; ') ?? '';
-            eventMessage = `joined with identifiers [${idsString}]`;
+            const idsString = summarizeIdsArray(eventData?.data?.ids);
+            eventMessage = `joined with identifiers ${idsString}`;
 
         } else if (eventData.type === 'playerDropped') {
             const reason = eventData.data.reason || 'UNKNOWN REASON';

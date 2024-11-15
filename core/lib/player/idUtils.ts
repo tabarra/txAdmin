@@ -137,7 +137,8 @@ export const getIdFromOauthNameid = (nameid: string) => {
 
 
 /**
- * Shortens an ID/HWID string to just leading and trailing 4 characters
+ * Shortens an ID/HWID string to just leading and trailing 4 characters.
+ * Unicode symbol alternatives: ‥,…,~,≈,-,•,◇
  */
 export const shortenId = (id: string) => {
     if (typeof id !== 'string') throw new Error(`id is not a string`);
@@ -153,5 +154,16 @@ export const shortenId = (id: string) => {
     
     const start = idValue.slice(0, 4);
     const end = idValue.slice(-4);
-    return `${idType}:${start}...${end}`;
+    return `${idType}:${start}…${end}`;
+}
+
+
+/**
+ * Returns a string of shortened IDs/HWIDs
+ */
+export const summarizeIdsArray = (ids: string[]) => {
+    if (!Array.isArray(ids)) return '<invalid list>';
+    if (ids.length === 0) return '<empty list>';
+    const shortList = ids.map(shortenId).join(', ');
+    return `[${shortList}]`;
 }
