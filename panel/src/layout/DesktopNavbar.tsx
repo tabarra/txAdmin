@@ -80,7 +80,7 @@ function HeaderMenuItem(props: HeaderMenuLinkProps) {
 
 
 //NOTE: breaking NavigationMenuItem into a separate menu because the dropdown is positioned wrong otherwise
-export default function DesktopHeader() {
+export default function DesktopNavbar() {
     const { hasPerm } = useAdminPerms();
 
     return (

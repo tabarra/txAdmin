@@ -14,19 +14,20 @@ module.exports = {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
     },
     extend: {
       fontSize: {
         '2xs': '0.625rem', // 10px
       },
       spacing: {
+        navbarvh: "var(--navbar-vh)", //navbar height (including border)
+        contentoffset: "var(--content-offset)", // screen - navbar - pt
+        contentvh: "var(--content-vh)", // screen - navbar - pt - pb
         sidebar: "16rem", //256px
       },
       screens: {
         xs: "480px",
+        "2xl": "1400px",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],

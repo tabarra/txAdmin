@@ -17,61 +17,63 @@ export function GlobalMenuSheet() {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent
                 side='left'
-                className="flex flex-col gap-6 w-full xs:w-3/4 select-none"
+                className="p-0 flex flex-col gap-0 w-full xs:w-3/4 select-none"
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
-                <SheetHeader>
-                    <SheetTitle>
-                        <NavLink href="/">
-                            <LogoFullSquareGreen className="h-9 hover:scale-105 hover:brightness-110" />
-                        </NavLink>
-                    </SheetTitle>
-                </SheetHeader>
+                <ScrollArea className="h-full px-6 [&_svg]:shrink-0">
+                    <SheetHeader>
+                        <SheetTitle className="py-6">
+                            <NavLink href="/">
+                                <LogoFullSquareGreen className="h-9 hover:scale-105 hover:brightness-110" />
+                            </NavLink>
+                        </SheetTitle>
+                    </SheetHeader>
 
-                <div>
-                    <h2 className="mb-1.5 text-lg font-semibold tracking-tight">
-                        Global Menu
-                    </h2>
-                    <div className="grid grid-cols-2 gap-4">
-                        <MenuNavLink href="/players">
-                            <UsersIcon className="mr-2 h-4 w-4" />Players
-                        </MenuNavLink>
-                        <MenuNavLink href="/history">
-                            <ScrollIcon className="mr-2 h-4 w-4" />History
-                        </MenuNavLink>
-                        <MenuNavLink href="/insights/player-drops">
-                            <DoorOpenIcon className="mr-2 h-4 w-4" />Player Drops
-                        </MenuNavLink>
-                        <MenuNavLink href="/whitelist">
-                            <ClipboardCheckIcon className="mr-2 h-4 w-4" />Whitelist
-                        </MenuNavLink>
-                        <MenuNavLink href="/admins" disabled={!hasPerm('manage.admins')}>
-                            <UserSquare2Icon className="mr-2 h-4 w-4" />Admins
-                        </MenuNavLink>
-                        <MenuNavLink href="/settings" disabled={!hasPerm('settings.view')}>
-                            <SettingsIcon className="mr-2 h-4 w-4" />Settings
-                        </MenuNavLink>
+                    <div className="mb-4">
+                        <h2 className="mb-1.5 text-lg font-semibold tracking-tight">
+                            Global Menu
+                        </h2>
+                        <div className="flex flex-wrap flex-row xs:grid grid-cols-2 gap-4">
+                            <MenuNavLink href="/players">
+                                <UsersIcon className="mr-2 h-4 w-4" />Players
+                            </MenuNavLink>
+                            <MenuNavLink href="/history">
+                                <ScrollIcon className="mr-2 h-4 w-4" />History
+                            </MenuNavLink>
+                            <MenuNavLink href="/insights/player-drops">
+                                <DoorOpenIcon className="mr-2 h-4 w-4" />Player Drops
+                            </MenuNavLink>
+                            <MenuNavLink href="/whitelist">
+                                <ClipboardCheckIcon className="mr-2 h-4 w-4" />Whitelist
+                            </MenuNavLink>
+                            <MenuNavLink href="/admins" disabled={!hasPerm('manage.admins')}>
+                                <UserSquare2Icon className="mr-2 h-4 w-4" />Admins
+                            </MenuNavLink>
+                            <MenuNavLink href="/settings" disabled={!hasPerm('settings.view')}>
+                                <SettingsIcon className="mr-2 h-4 w-4" />Settings
+                            </MenuNavLink>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <h2 className="mb-1.5 text-lg font-semibold tracking-tight">
-                        System Menu
-                    </h2>
-                    <div className="grid grid-cols-2 gap-4">
-                        <MenuNavLink href="/system/master-actions">
-                            <ZapIcon className="mr-2 h-4 w-4" />Master Actions
-                        </MenuNavLink>
-                        <MenuNavLink href="/system/diagnostics">
-                            <PieChartIcon className="mr-2 h-4 w-4" />Diagnostics
-                        </MenuNavLink>
-                        <MenuNavLink href="/system/console-log" disabled={!hasPerm('txadmin.log.view')}>
-                            <ListIcon className="mr-2 h-4 w-4" />Console Log
-                        </MenuNavLink>
-                        <MenuNavLink href="/system/action-log" disabled={!hasPerm('txadmin.log.view')}>
-                            <ListIcon className="mr-2 h-4 w-4" />Action Log
-                        </MenuNavLink>
+                    <div className="mb-4">
+                        <h2 className="mb-1.5 text-lg font-semibold tracking-tight">
+                            System Menu
+                        </h2>
+                        <div className="flex flex-wrap flex-row xs:grid grid-cols-2 gap-4">
+                            <MenuNavLink href="/system/master-actions">
+                                <ZapIcon className="mr-2 h-4 w-4" />Master Actions
+                            </MenuNavLink>
+                            <MenuNavLink href="/system/diagnostics">
+                                <PieChartIcon className="mr-2 h-4 w-4" />Diagnostics
+                            </MenuNavLink>
+                            <MenuNavLink href="/system/console-log" disabled={!hasPerm('txadmin.log.view')}>
+                                <ListIcon className="mr-2 h-4 w-4" />Console Log
+                            </MenuNavLink>
+                            <MenuNavLink href="/system/action-log" disabled={!hasPerm('txadmin.log.view')}>
+                                <ListIcon className="mr-2 h-4 w-4" />Action Log
+                            </MenuNavLink>
+                        </div>
                     </div>
-                </div>
+                </ScrollArea>
             </SheetContent>
         </Sheet>
     );
@@ -83,7 +85,7 @@ export function ServerSidebarSheet() {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent
                 side='left'
-                className="w-full xs:w-3/4"
+                className="w-full xs:w-3/4 p-0"
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <ScrollArea className="h-full">
@@ -100,7 +102,7 @@ export function PlayersSidebarSheet() {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent
                 side='right'
-                className="w-full xs:w-3/4"
+                className="w-full xs:w-3/4 p-0"
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <ScrollArea className="h-full">

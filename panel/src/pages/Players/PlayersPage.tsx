@@ -109,8 +109,7 @@ export default function PlayersPage() {
     }, [calloutData]);
 
     return (<div
-        className='flex flex-col min-w-96 w-full'
-        style={{ height: 'calc(100vh - 3.5rem - 1px - 2rem)' }}
+        className='flex flex-col min-w-96 w-full h-contentvh'
     >
         {/* <div
             //DEBUG component state

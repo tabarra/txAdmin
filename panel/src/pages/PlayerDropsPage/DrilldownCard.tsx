@@ -20,7 +20,7 @@ export function DrilldownCardLoading({ isError }: { isError?: boolean }) {
                 <span>Loading...</span>
             </div>
             <div className="pb-2 md:rounded-xl border bg-cardx shadow-sm flex flex-col">
-                <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-xl bg-secondary/35">
+                <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b md:rounded-t-[inherit] bg-secondary/35">
                     <div className="flex items-center space-x-2">
                         <div className='hidden xs:block'><FolderOpenIcon className="size-4" /></div>
                         <h2 className="font-mono text-sm">Overview</h2>
@@ -89,7 +89,7 @@ const DrilldownCardInner = function DrilldownCard({
             </div>
             <div className="md:rounded-xl border bg-cardx shadow-sm flex flex-col">
                 <div className="">
-                    <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-xl bg-secondary/35">
+                    <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-[inherit] bg-secondary/35">
                         <div className="flex items-center space-x-2">
                             <div className='hidden xs:block'><FolderOpenIcon className="size-4" /></div>
                             <h2 className="font-mono text-sm">Period Overview</h2>

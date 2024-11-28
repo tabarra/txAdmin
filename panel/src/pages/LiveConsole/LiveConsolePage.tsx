@@ -380,7 +380,7 @@ export default function LiveConsolePage() {
 
 
     return (
-        <div className="dark text-primary flex flex-col h-full w-full bg-card border md:rounded-xl overflow-clip">
+        <div className="dark text-primary flex flex-col h-contentvh w-full bg-card border md:rounded-xl overflow-clip">
             <LiveConsoleHeader />
 
             <div className="flex flex-col relative grow overflow-hidden">
