@@ -74,8 +74,8 @@ ref: https://nodejs.org/docs/latest-v22.x/api/process.html#exit-codes
     2022 - txCore placeholder getter error
     2023 - txCore placeholder setter error
 
-5100 - config vault
-5300 - admin vault
+5100 - config store
+5300 - admin store
 5400 - fxrunner
 5600 - database
 5700 - stats txruntime

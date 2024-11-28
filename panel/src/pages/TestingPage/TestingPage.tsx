@@ -9,11 +9,16 @@ import TmpApi from "./TmpApi";
 import TmpFiller from "./TmpFiller";
 import TmpDndSortable from "./TmpDndSortable";
 import TmpSwr from "./TmpSwr";
+import { useEffect } from "react";
 
 
 export default function TestingPage() {
     const setPageTitle = useSetPageTitle();
     setPageTitle();
+
+    // useEffect(() => {
+    //     return () => console.clear();
+    // }, []);
 
     return <div className="flex flex-col gap-4 w-full">
         <TmpFiller />

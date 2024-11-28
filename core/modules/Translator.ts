@@ -14,7 +14,7 @@ const console = consoleFactory(modulename);
  * The locale files are indexed by the localeMap in the shared folder.
  */
 export default class Translator {
-    canonical: string = 'en-GB';
+    canonical: string = 'en-GB'; //Using GB instead of US due to date/time formats 
     readonly customLocalePath: string;
     #polyglot: Polyglot | null = null;
 

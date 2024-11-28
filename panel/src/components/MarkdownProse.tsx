@@ -32,20 +32,20 @@ const customComponents: Components = {
 }
 
 
-type Props = {
+type MarkdownProseProps = {
     md: string;
     isSmall?: boolean;
     isTitle?: boolean;
 };
-export default function MarkdownProse({ md, isSmall, isTitle }: Props) {
+export default function MarkdownProse({ md, isSmall, isTitle }: MarkdownProseProps) {
     return (
         <Markdown
-        components={customComponents}
-        className={cn(
-            'prose prose-zinc dark:prose-invert',
-            isSmall && 'prose-sm',
-            isTitle && 'tracking-wide',
-        )}
+            components={customComponents}
+            className={cn(
+                'prose prose-zinc dark:prose-invert',
+                isSmall && 'prose-sm',
+                isTitle && 'tracking-wide',
+            )}
         >
             {stripIndent(md.replace(/\n/g, '  \n'))}
         </Markdown>

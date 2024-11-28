@@ -140,7 +140,7 @@ export default function drawDropsTimeline({
         ctx.fillStyle = canvasBackgroundStyle;
         ctx.fillRect(0, 0, drawableAreaWidth, drawableAreaHeight);
 
-        //Drawing horizontal ticks - trycatcking because it's a bit fragile
+        //Drawing horizontal ticks - trycatching because it's a bit fragile
         ctx.strokeStyle = canvasTicksStyle;
         ctx.setLineDash([2, 2]);
         try {

@@ -45,7 +45,7 @@ Legend:
     - [ ] if socket connects but no data received, add a warning to the console and wipe it after first write
     - [ ] persistent cls via ts offsets
     - [ ] improve the bufferization to allow just loading most recent "block" and loading prev blocks via button
-- [ ] 
+- [ ] separate server log join/leave filter, and shorten the IDs of the joins, and copy ids button on the modal
 
 ## Database Changes
 - [ ] migration to change "revocation" to optional
@@ -61,7 +61,8 @@ Legend:
     - happens when some page starts the server and redirects you to the live console
     - you join the room and gets initial data (directly from logger)
     - while the websocket out buffer still haven't sent the boot message
-- [ ] 
+- [ ] maybe update xterm to v5.6
+    - https://github.com/xtermjs/xterm.js/issues/3864
 
 ## Refactor + DX
 - [x] deprecate fxRunner.srvCmd
@@ -85,6 +86,10 @@ Legend:
     - [x] player database
     - [x] scheduler
     - [x] REFERENCIAS EXTERNAS?
+- [x] .env
+    - [x] convert builders to use txDevEnv
+    - [x] convert tx code use txDevEnv
+
 - [ ] remove `fs-extra` - right now only used in deployer and setup
 - [ ] headless deployer, without instantiating TxAdmin
 - [ ] lua file changes (after PR merges)

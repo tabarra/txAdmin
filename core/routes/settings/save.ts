@@ -54,9 +54,8 @@ export default async function SettingsSave(ctx: AuthedCtx) {
 };
 
 
-//================================================================
 /**
- * Handle Global settings
+ * MARK: Global settings
  */
 async function handleGlobal(ctx: AuthedCtx) {
     //Sanity check
@@ -115,9 +114,8 @@ async function handleGlobal(ctx: AuthedCtx) {
 }
 
 
-//================================================================
 /**
- * Handle FXServer settings
+ * MARK: FXServer settings
  */
 async function handleFXServer(ctx: AuthedCtx) {
     //Sanity check
@@ -204,9 +202,8 @@ async function handleFXServer(ctx: AuthedCtx) {
 }
 
 
-//================================================================
 /**
- * Handle Player Database settings
+ * MARK: Player Database settings
  */
 async function handlePlayerDatabase(ctx: AuthedCtx) {
     //Sanity check
@@ -299,9 +296,8 @@ async function handlePlayerDatabase(ctx: AuthedCtx) {
 }
 
 
-//================================================================
 /**
- * Handle Monitor settings
+ * MARK: Monitor settings
  */
 async function handleMonitor(ctx: AuthedCtx) {
     //Sanity check
@@ -359,9 +355,8 @@ async function handleMonitor(ctx: AuthedCtx) {
 }
 
 
-//================================================================
 /**
- * Handle Discord settings
+ * MARK: Discord settings
  */
 async function handleDiscord(ctx: AuthedCtx) {
     //Sanity check
@@ -482,9 +477,8 @@ async function handleDiscord(ctx: AuthedCtx) {
 }
 
 
-//================================================================
 /**
- * Handle Menu settings
+ * MARK: Menu settings
  * NOTE: scoped inside global settings
  */
 async function handleMenu(ctx: AuthedCtx) {
