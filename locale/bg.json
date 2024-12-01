@@ -14,9 +14,9 @@
         "schedule_warn_discord": "**%{servername}** ще се рестартира след %{smart_count} минути. |||| **%{servername}** ще се рестартира след %{smart_count} минути."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Всички играчи бяха изритани: %{reason}.",
+        "player": "Вие бяхте изритан: %{reason}.",
+        "unknown_reason": "по неизвестна причина"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Вие бяхте баннат: \"%{reason}\". Твоята забрана ще изтече след: %{expiration}.",
@@ -85,7 +85,7 @@
             "announcement_title": "Сървърно съобщение от %{author}:",
             "dialog_empty_input": "Полето е празно.",
             "directmessage_title": "ЛС от администратор %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "Това действие изисква OneSync да бъде включен."
         },
         "frozen": {
             "froze_player": "Ти замрази играч!",
@@ -227,11 +227,11 @@
                 "zero_players": "Няма намерени играчи"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "Филтриране по",
+                "no_filter": "Без филтър",
+                "is_admin": "Е администратор",
+                "is_injured": "Е Ранен / Мъртъв",
+                "in_vehicle": "В превозно средство"
             },
             "sort": {
                 "label": "Сортирай",
@@ -249,7 +249,7 @@
         "player_modal": {
             "misc": {
                 "error": "Възникна грешка, когато се поитваем да извлечем списъкът с играчи. Грешката е показана по-долу:",
-                "target_not_found": "Не можахме да намерим играч с ИД или име на %{target}"
+                "target_not_found": "Не можахме да намерим играч с ID или име на %{target}"
             },
             "tabs": {
                 "actions": "Действия",
