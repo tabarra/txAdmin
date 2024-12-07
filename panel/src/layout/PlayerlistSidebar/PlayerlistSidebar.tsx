@@ -18,8 +18,8 @@ export function PlayerlistSidebar({ isSheet }: PlayerSidebarProps) {
                 className={cn(
                     'text-card-foreground shrink-0 p-4',
                     isSheet ? 'pr-12 border-b' : 'rounded-xl border bg-card',
-            )}
-        >
+                )}
+            >
                 <PlayerlistSummary />
             </div>
             <div

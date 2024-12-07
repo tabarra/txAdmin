@@ -17,9 +17,8 @@ import { isMobile } from 'is-mobile';
 import { useAtomValue } from 'jotai';
 import { pageTitleWatcher } from './hooks/pages.ts';
 
-//If inside NUI, silence console.* calls
+//If inside NUI, silence console.* calls to prevent confusion.
 if (!window.txConsts.isWebInterface) {
-    console.log('Silencing txAdmin Web UI console.* calls inside NUI to prevent confusion.');
     console.log = () => { };
     console.info = () => { };
     console.warn = () => { };
@@ -48,7 +47,7 @@ try {
     window.txBrowserLocale = 'en';
 }
 try {
-    const localeOption = Intl.DateTimeFormat(window.txBrowserLocale,  { hour: 'numeric' }).resolvedOptions().hour12
+    const localeOption = Intl.DateTimeFormat(window.txBrowserLocale, { hour: 'numeric' }).resolvedOptions().hour12
     window.txBrowserHour12 = localeOption ?? true;
 } catch (error) {
     window.txBrowserHour12 = true;
@@ -97,7 +96,7 @@ export function AuthContextSwitch() {
             }
         }
     }, [isAuthenticated]);
-    
+
     return isAuthenticated ? <MainShell /> : <AuthShell />;
 }
 

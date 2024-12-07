@@ -90,6 +90,33 @@ Legend:
     - [x] convert builders to use txDevEnv
     - [x] convert tx code use txDevEnv
 
+- [ ] Layout refactor:
+    - não ter espaço em branco abaixo do header
+    - `2xl:mx-8 min-w-96` for all pages? (change on MainShell)
+    - checar tudo com iframe
+    - checar live console (e layers)
+    - checar modais
+    - checar sheets
+    - checar warning bar
+    - tirar o servername do menu de server?
+    - tirar servername do mobile header?
+    - 390x670 resolução mais comum
+    - 360x
+- NOTE: resoluções mobile
+    - 360x510 menor razoável
+    - 390x670 mais comum
+    
+- [ ] new txConfig
+- [ ] remove dynamicAds from the modules
+
+> Alright, so what I'm gonna do:
+> 1. default continues being "on"
+> 2. the dropdown will be hidden under advanced 
+> 3. the dropdown will still have all 3 options (having only 2 would be annoying due to code)
+> 4. Once we have data on legacy usage, if the number is below 20% or something like that, I can remove the dropdown entirely but the option  would still be configurable by editing config.json
+
+
+
 - [ ] remove `fs-extra` - right now only used in deployer and setup
 - [ ] headless deployer, without instantiating TxAdmin
 - [ ] lua file changes (after PR merges)
@@ -97,10 +124,11 @@ Legend:
     - Upper case for globals
     - alt+shift+f
     - `.git-blame-ignore-revs`
-- [ ] .env
-    - [x] convert builders to use txDevEnv
-    - [x] convert tx code use txDevEnv
-    - [ ] use chokidar on `scripts/build/dev.ts` to restart on `.env` changes
+- [ ] xterm changes:
+    - ref: https://github.com/xtermjs/xterm.js/issues/4779
+    - ref: https://github.com/xtermjs/xterm.js/milestone/78
+    - [ ] deprecate canvas renderer and use the webgl instead
+    - [ ] check compatibility with text scaling - `window.devicePixelRatio`
 - [ ] include `list-dependencies.js` as part of the test workflow
     - improve to read the parent package deps
     - exit 1 on error
@@ -133,22 +161,23 @@ Legend:
 
 
 ## Refactor: New Config
-- NOTE: check stash `refactor settings-modules`
-- Save only what changed? Or save all in the settings page
+- FIXME: cfg file name should be hidden, just default to server.cfg
+- Save only what changed? Or save all in the settings page?
 - Do not make template config.json file on setup, only an empty-ish file
-- Use dot notation, save it flat
-- FIXME: not compatible with ban templates
+- File Format:
+    - Use dot notation, save it flat
     - perhaps use array format `banTemplates[0]=<json>`
-- Only acceptable values are json types except objects to prevent accidental mutations
-- Maybe don't even json the file, make something closer to a `.env`, line separated
+    - perhaps use toml
+    - Only acceptable values are json types except objects to prevent accidental mutations?
+    - Maybe don't even json the file, make something closer to a `.env`, line separated
+    - NOTE: check [ref](../core/configParser.tmp.ts)
+- Config needs versioning and migrations
 - Allow registerUpdateCallback to pass wildcards
     - https://www.npmjs.com/package/minimatch - used by node itself
     - https://www.npmjs.com/package/micromatch
     - https://www.npmjs.com/package/picomatch
     - https://www.npmjs.com/package/wildcard - super small
     - https://www.npmjs.com/package/matcher - super small
-- Maybe components don't even need to hold a `this.config`? couldn't we just access it directly from the vault? Maybe something like `<globaltx>.config.get(key)`? Keep in mind some configs live in the scope of multiple modules.
-- Config file definitely needs versioning and migrations
 
 
 
@@ -218,6 +247,9 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
 
 - [ ] add average session time tracking to Metrics.playerDrop
 
+- [ ] fazer validação dos dados do banco usando a versão compilada do zod
+    - acho que tem essa ferramenta no playground do https://github.com/sinclairzx81/typebox
+
 - [ ] locale file optimization - build 8201 and above
 - [ ] easter egg???
     - some old music? https://www.youtube.com/watch?v=nNoaXej0Jeg
@@ -244,7 +276,6 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
 
 - [ ] use `ScanResourceRoot()`
     - `ScanResourceRoot('xxx/resources/', (data: object) => {...});`
-- [ ] `2xl:mx-8` for all pages? (change on MainShell)
 - [ ] console nav button to jump to server start or errors? 
     - Or maybe filter just error lines (with margin)
     - Or maybe even detect all channels and allow you to filter them, show dropdown sorted by frequency
