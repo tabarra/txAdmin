@@ -176,7 +176,8 @@ CreateThread(function()
         '/txAdmin-menuAlignRight',
         '/txAdmin-menuPageKey',
         '/txAdmin-menuPlayerIdDistance',
-        '/txAdmin-menuDrunkDuration'
+        '/txAdmin-menuDrunkDuration',
+        '/tx2faSecret'
     }
 
     for _, suggestion in ipairs(suggestionsToRemove) do

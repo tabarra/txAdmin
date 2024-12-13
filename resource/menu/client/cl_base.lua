@@ -14,10 +14,13 @@ lastTpCoords = false;
 -- Locals
 local noMenuReason = 'unknown reason'
 local awaitingReauth = false
+local passHelpMessage = 'To authenticate to txAdmin, use the command /txAdmin-reauth <password>.'
 
 --- Logic to displaying the menu auth rejected snackbar
 local function displayAuthRejectedError()
-  if noMenuReason == 'nui_admin_not_found' then
+  if noMenuReason == 'password_required' then
+    sendSnackbarMessage('error', passHelpMessage, false)
+  elseif noMenuReason == 'nui_admin_not_found' then
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_admin', true)
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_auth_failed', true, { reason = noMenuReason })
@@ -130,15 +133,25 @@ end)
 
 --[[ Debug Events / Commands ]]
 -- Command/event to trigger a authentication attempt
+local authPassword = false
 local function retryAuthentication()
+  if type(authPassword) ~= 'string' then
+    return
+  end
   debugPrint("^5[AUTH] Retrying menu authentication.")
   menuIsAccessible = false
   menuPermissions = {}
   sendMenuMessage('setPermissions', menuPermissions)
-  TriggerServerEvent('txsv:checkIfAdmin')
+  TriggerServerEvent('txsv:checkIfAdmin', authPassword)
 end
 RegisterNetEvent('txcl:reAuth', retryAuthentication)
-RegisterCommand('txAdmin-reauth', function()
+RegisterCommand('txAdmin-reauth', function(_, args)
+  if type(args[1]) ~= 'string' then
+    sendSnackbarMessage('error', passHelpMessage, false)
+    return
+  end
+
+  authPassword = args[1]
   sendSnackbarMessage('info', 'Retrying menu authentication.', false)
   awaitingReauth = true
   retryAuthentication()
@@ -158,7 +171,8 @@ CreateThread(function()
   TriggerEvent(
     'chat:addSuggestion',
     '/txAdmin-reauth',
-    'Retries to authenticate the menu NUI.'
+    'Retries to authenticate the menu NUI.',
+    { { name = "password", help = "2fa secret" } }
   )
 end)
 

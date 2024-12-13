@@ -35,14 +35,28 @@ local function handleAuthFail(src, reason)
 end
 
 -- Handle menu auth requests
-RegisterNetEvent('txsv:checkIfAdmin', function()
+RegisterNetEvent('txsv:checkIfAdmin', function(authPassword)
     local src = source
     local srcString = tostring(source)
+
+    --Early return if no password
+    if type(authPassword) ~= 'string' or authPassword == '' then
+        return TriggerClientEvent('txcl:setAdmin', src, false, false, 'password_required')
+    end
     debugPrint('Handling authentication request from player #'..srcString)
 
     -- Rate Limiter
     if type(failedAuths[srcString]) == 'number' and failedAuths[srcString] + attemptCooldown > GetGameTimer() then
         return handleAuthFail(source, "too many auth attempts")
+    end
+
+    -- Check Password
+    local expectedPassword = GetConvar('tx2faSecret', 'invalid')
+    if expectedPassword == 'invalid' then
+        return handleAuthFail(src, "invalid server 2FA configuration")
+    end
+    if authPassword ~= expectedPassword then
+        return handleAuthFail(src, "invalid 2FA password")
     end
 
     -- Prepping http request

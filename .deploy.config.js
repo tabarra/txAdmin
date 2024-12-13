@@ -1,6 +1,6 @@
 export default {
     debouncerInterval: 250,
-    preReleaseExpirationDays: 21,
+    preReleaseExpirationDays: 60,
 
     //NOTE: to test the panel from LAN, change localhost to your LAN IP
     //but the NUI will not work due to HTTPS->HTTP restrictions
