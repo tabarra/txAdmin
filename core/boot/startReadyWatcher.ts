@@ -61,14 +61,18 @@ const awaitHttp = new Promise((resolve, reject) => {
     let interval: NodeJS.Timeout;
     const check = () => {
         counter++;
-        if (txCore.webServer && txCore.webServer.isListening) {
+        if (txCore.webServer && txCore.webServer.isListening && txCore.webServer.isServing) {
             clearInterval(interval);
             resolve(true);
         } else if (counter == tickLimit) {
             clearInterval(interval);
             interval = setInterval(check, 2500);
         } else if (counter > tickLimit) {
-            console.warn('The WebServer is taking too long to start.');
+            console.warn('The WebServer is taking too long to start:', {
+                module: !!txCore.webServer,
+                listening: txCore?.webServer?.isListening,
+                serving: txCore?.webServer?.isServing,
+            });
         }
     };
     interval = setInterval(check, 150);
@@ -88,7 +92,10 @@ const awaitMasterPin = new Promise((resolve, reject) => {
             clearInterval(interval);
             interval = setInterval(check, 2500);
         } else if (counter > tickLimit) {
-            console.warn('The AdminStore is taking too long to start.');
+            console.warn('The AdminStore is taking too long to start:', {
+                module: !!txCore.adminStore,
+                admins: txCore?.adminStore?.admins === null ? 'null' : 'not null',
+            });
         }
     };
     interval = setInterval(check, 150);
@@ -107,7 +114,10 @@ const awaitDatabase = new Promise((resolve, reject) => {
             clearInterval(interval);
             interval = setInterval(check, 2500);
         } else if (counter > tickLimit) {
-            console.warn('The Database is taking too long to start.');
+            console.warn('The Database is taking too long to start:', {
+                module: !!txCore.database,
+                ready: !!txCore?.database?.isReady,
+            });
         }
     };
     interval = setInterval(check, 150);
