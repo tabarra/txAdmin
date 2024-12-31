@@ -5,8 +5,6 @@ import HttpClass from 'node:http';
 
 import Koa from 'koa';
 import KoaBodyParser from 'koa-bodyparser';
-//@ts-ignore
-import KoaServe from 'koa-static';
 import KoaCors from '@koa/cors';
 
 import { Server as SocketIO } from 'socket.io';
@@ -27,6 +25,7 @@ import checkHttpLoad from './middlewares/httpLoadMonitor';
 import cacheControlMw from './middlewares/cacheControlMw';
 import fatalError from '@lib/fatalError';
 import { isProxy } from 'node:util/types';
+import serveStaticMw from './middlewares/serveStaticMw';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict49, 32);
 
@@ -37,14 +36,6 @@ export type WebServerConfigType = {
     limiterAttempts: number;
 }
 
-const koaServeOptions = {
-    index: false,
-    defer: false,
-    //The resource URLs should already contain txVer as a query param to bust cache
-    //so setting to 30m should be fine, except in dev mode
-    maxage: !txDevEnv.ENABLED ? 30 * 60 * 1000 : 0,
-};
-
 
 /**
  * Module for the web server and socket.io.
@@ -52,6 +43,7 @@ const koaServeOptions = {
  */
 export default class WebServer {
     public isListening = false;
+    public isServing = false;
     private sessionCookieName: string;
     public luaComToken: string;
     //setupKoa
@@ -106,11 +98,27 @@ export default class WebServer {
         this.app.use(topLevelMw);
 
         //Setting up additional middlewares:
-        const panelPublicPath = txDevEnv.ENABLED
-            ? path.join(txDevEnv.SRC_PATH, 'panel/public')
-            : path.join(txEnv.txAdminResourcePath, 'panel');
-        this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), koaServeOptions));
-        this.app.use(KoaServe(panelPublicPath, koaServeOptions));
+        this.app.use(serveStaticMw({
+            noCaching: txDevEnv.ENABLED,
+            cacheMaxAge: 30 * 60, //30 minutes
+            //Scan Limits: (v8-dev prod build: 56 files, 11.25MB)
+            limits: {
+                MAX_BYTES: 75 * 1024 * 1024, //75MB
+                MAX_FILES: 300,
+                MAX_DEPTH: 10,
+                MAX_TIME: 2 * 60 * 1000, //2 minutes
+            },
+            roots: [
+                txDevEnv.ENABLED
+                ? path.join(txDevEnv.SRC_PATH, 'panel/public')
+                : path.join(txEnv.txAdminResourcePath, 'panel'),
+                path.join(txEnv.txAdminResourcePath, 'web/public'),
+            ],
+            onReady: () => {
+                this.isServing = true;
+            },
+        }));
+
         this.app.use(KoaBodyParser({
             // Heavy bodies can cause v8 mem exhaustion during a POST DDoS.
             // The heaviest JSON is the /intercom/resources endpoint.

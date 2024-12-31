@@ -39,7 +39,6 @@
     "koa": "^2.15.3",
     "koa-bodyparser": "^4.4.1",
     "koa-ratelimit": "^5.1.0",
-    "koa-static": "^5.0.0",
     "lodash": "^4.17.21",
     "lowdb": "^6.1.0",
     "mnemonist": "^0.39.8",
