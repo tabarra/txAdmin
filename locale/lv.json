@@ -1,63 +1,63 @@
 {
     "$meta": {
-        "label": "Latvian",
+        "label": "Latviešu",
         "humanizer_language": "lv"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
-        "crash_detected": "konstatēta avārija",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
-        "schedule_reason": "ieplānotais restarts %{time}",
-        "schedule_warn": "Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtes. Lūdzu atvienojies tagad. |||| Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtēm.",
-        "schedule_warn_discord": "**%{servername}** ir ieplānots restarts pēc %{smart_count} minūtes. |||| **%{servername}** ir ieplānots restarts pēc %{smart_count} minūtēm."
+        "start_timeout": "Neizdevās palaist laikā",
+        "crash_detected": "Konstatēta avārija",
+        "hang_detected": "Konstatēta pakāršanās",
+        "partial_hang_warn": "Nepilnīgas pakāršanās dēļ šis serveris tiks restartēts pēc 1 minūtes. Lūdzu, atvienojieties tagad.",
+        "partial_hang_warn_discord": "Nepilnīgas pakāršanās dēļ, **%{servername}** tiks restartēts pēc 1 minūtes.",
+        "schedule_reason": "Ieplānotais restarts %{time}",
+        "schedule_warn": "Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtes. Lūdzu, atvienojieties tagad. |||| Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtēm.",
+        "schedule_warn_discord": "**%{servername}** ir ieplānots restarts pēc %{smart_count} minūtēm(s). |||| **%{servername}** ir ieplānots restarts pēc %{smart_count} minūtēm."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Visi spēlētāji tika izmesti: %{reason}.",
+        "player": "Tu tiki izmests no servera: %{reason}.",
+        "unknown_reason": "nezināma iemesla dēļ"
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
+        "kick_temporary": "(%{author}) Tu esi uz laiku bloķēts no šī servera par \"%{reason}\". Tava bloķēšana beigsies pēc: %{expiration}.",
+        "kick_permanent": "(%{author}) Tu esi mūžīgi bloķēts no šī servera par \"%{reason}\".",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
+            "title_permanent": "Tu esi mūžīgi bloķēts no šī servera.",
+            "title_temporary": "Tu esi bloķēts no šī servera.",
+            "label_expiration": "Tava bloķēšana beigsies pēc",
+            "label_date": "Bloķēšanas datums",
+            "label_author": "Administrātors",
+            "label_reason": "Bloķēšanas iemesls",
             "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_multiple_bans": "Piezīme: Tev ir vairāk nekā viena aktīva bloķēšana taviem identifikatoriem.",
+            "note_diff_license": "Piezīme: augstāk redzamā bloķēšana tika piemērota citai <code>license</code>, kas nozīmē, ka daži no taviem ID/HWID sakrīt ar tiem, kas saistīti ar šo bloķēšanu."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "Šim serverim ir ieslēgts <strong>Tikai administratoriem</strong> režīms.",
+            "insufficient_ids": "Tev nav <code>discord</code> vai <code>fivem</code> identifikatoru, un vismaz viens no tiem ir nepieciešams, lai pārbaudītu, vai esi txAdmin administrators.",
+            "deny_message": "Tavi identifikatori nav piesaistīti nevienam txAdmin administratoram."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "You are required to join our Discord Guild to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "Šim serverim ir ieslēgts <strong>Discord Guild Member Whitelist</strong> režīms.",
+            "insufficient_ids": "Tev nav <code>discord</code> identifikators, kas ir nepieciešams, lai pārbaudītu, vai esi pievienojies mūsu Discord Serverim. Lūdzu, atver Discord un mēģini vēlreiz (tīmekļa lietotne nedarbosies).",
+            "deny_title": "Tev ir jāpievienojas mūsu Discord Guild, lai pieslēgtos.",
+            "deny_message": "Lūdzu, pievienojies %{guildname}, tad mēģini vēlreiz."
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "Šim serverim ir ieslēgts <strong>Discord Role Whitelist</strong> režīms.",
+            "insufficient_ids": "Tev nav <code>discord</code> identifikators, kas ir nepieciešams, lai pārbaudītu, vai esi pievienojies mūsu Discord Serverim. Lūdzu, atver Discord un mēģini vēlreiz (tīmekļa lietotne nedarbosies).",
+            "deny_notmember_title": "Tev ir jāpievienojas mūsu Discord Serverim, lai pieslēgtos.",
+            "deny_notmember_message": "Lūdzu, pievienojies %{guildname}, iegūsti vienu no nepieciešamajiem roles un tad mēģini vēlreiz.",
+            "deny_noroles_title": "Tev nav nepieciešamo whitelisted roles, lai pievienotos.",
+            "deny_noroles_message": "Lai pievienotos šim serverim, tev ir jābūt vismaz vienai no whitelisted roles, iekš %{guildname} Serverim."
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "Šim serverim ir ieslēgts <strong>License Whitelist</strong> režīms.",
+            "insufficient_ids": "Tev nav <code>license</code> identifikators, kas nozīmē, ka serverim ir ieslēgts <code>sv_lan</code>. Ja esi servera īpašnieks, vari to atspējot <code>server.cfg</code> failā.",
+            "deny_title": "Tev nav piešķirts whitelists, lai pievienotos šim serverim.",
+            "request_id_label": "Pieprasījuma ID"
         }
     },
     "server_actions": {
@@ -68,301 +68,301 @@
         "spawning_discord": "**%{servername}** tiek ieslēgts"
     },
     "nui_warning": {
-        "title": "WARNING",
-        "warned_by": "Warned by:",
-        "stale_message": "Šis brīdinājums tika izdots pirms jūs pievienojāties serverim.",
+        "title": "BRĪDINĀJUMS",
+        "warned_by": "Brīdinājumu izdeva:",
+        "stale_message": "Šis brīdinājums tika izdots, pirms tu pievienojies serverim.",
         "dismiss_key": "SPACE",
         "instruction": "Turiet %{key} %{smart_count} sekundi, lai noraidītu šo ziņojumu. |||| Turiet %{key} %{smart_count} sekundes, lai noraidītu šo ziņojumu."
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_admin": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
-            "no_perms": "You do not have this permission.",
-            "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "dialog_empty_input": "You cannot have an empty input.",
-            "directmessage_title": "DM from admin %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "help_message": "txAdmin Menu ir iespējots, ieraksti /tx, lai to atvērtu.\nTu vari arī iestatīt taustiņu pats uzejot [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
+            "menu_not_admin": "Tavi identifikatori neatbilst nevienam txAdmin reģistrētam administratoram.\nJa esi reģistrēts txAdmin, dodies uz Admin Manager un pārliecinies, ka tavi identifikatori ir saglabāti.",
+            "menu_auth_failed": "txAdmin Menu autentifikācija neizdevās ar iemeslu: %{reason}",
+            "no_perms": "Tev nav šīs atļaujas.",
+            "unknown_error": "Radās nezināma kļūda.",
+            "not_enabled": "txAdmin Menu nav iespējots! Tu vari to iespējot txAdmin iestatījumu lapā.",
+            "announcement_title": "Servera paziņojums no %{author}:",
+            "dialog_empty_input": "Ievade nevar būt tukša.",
+            "directmessage_title": "DM no admina %{author}:",
+            "onesync_error": "Šai darbībai ir nepieciešams iespējot OneSync."
         },
         "frozen": {
-            "froze_player": "You have frozen the player!",
-            "unfroze_player": "You have unfrozen the player!",
-            "was_frozen": "You have been frozen by a server admin!"
+            "froze_player": "Tu iefreezoji spēlētāju!",
+            "unfroze_player": "Tu atfreezoji spēlētāju!",
+            "was_frozen": "Tevi iefreezoja servera administrators!"
         },
         "common": {
-            "cancel": "Cancel",
-            "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "cancel": "Atcelt",
+            "submit": "Apstiprināt",
+            "error": "Radās kļūda",
+            "copied": "Teksts nokopēts."
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
-                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+                "tooltip_1": "Izmanto %{key}, lai pārslēgtu lapas, un bulttaustiņus, lai pārvietotos pa izvēlnes vienībām",
+                "tooltip_2": "Dažiem izvēlnes vienumiem ir papildu iespējas, kuras var izvēlēties, izmantojot kreiso un labo bulttaustiņu"
             },
             "player_mode": {
-                "title": "Player Mode",
+                "title": "Spēlētāja režīmi",
                 "noclip": {
                     "title": "NoClip",
-                    "label": "Fly around",
-                    "success": "NoClip enabled"
+                    "label": "NoClip",
+                    "success": "NoClip ieslēgts"
                 },
                 "godmode": {
-                    "title": "God",
-                    "label": "Invincible",
-                    "success": "God Mode enabled"
+                    "title": "Godmode",
+                    "label": "Godmode",
+                    "success": "Godmode režīms ieslēgts"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "Superjump",
+                    "label": "Pārslēdz superjump režīmu, spēlētājs arī skries ātrāk",
+                    "success": "Superjump ieslēgts"
                 },
                 "normal": {
-                    "title": "Normal",
-                    "label": "Default mode",
-                    "success": "Returned to default player mode."
+                    "title": "Default",
+                    "label": "Noklusējuma režīms",
+                    "success": "Atgriezti noklusējuma režīmi."
                 }
             },
             "teleport": {
                 "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "generic_success": "Tu tiki nosūtīts uz lokāciju!",
                 "waypoint": {
                     "title": "Waypoint",
-                    "label": "Go to waypoint set",
-                    "error": "You have no waypoint set."
+                    "label": "Doties uz iestatīto waypointu",
+                    "error": "Tev nav iestatīts neviens waypoints."
                 },
                 "coords": {
                     "title": "Coords",
-                    "label": "Go to specified coords",
-                    "dialog_title": "Teleport",
-                    "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
-                    "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                    "label": "Doties uz norādītajām koordinātēm",
+                    "dialog_title": "Teleportēties",
+                    "dialog_desc": "Norādi koordinātes x, y, z formātā, lai teleportētos uz koordinātēm.",	
+                    "dialog_error": "Nederīgas koordinātes. Tām jābūt šādā formātā: 111, 222, 33"
                 },
                 "back": {
-                    "title": "Back",
-                    "label": "Go back to last location",
-                    "error": "You don't have a last location to go back to!"
+                    "title": "Atpakaļ",
+                    "label": "Doties atpakaļ uz pēdējo atrašanās vietu",
+                    "error": "Nav pēdējās atrašanās vietas, kur atgriezties!"
                 },
                 "copy": {
-                    "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "title": "Kopēt koordinātes",
+                    "label": "Kopēt koordinātes."
                 }
             },
             "vehicle": {
                 "title": "Vehicle",
-                "not_in_veh_error": "You are not currently in a vehicle!",
+                "not_in_veh_error": "Tu pašlaik neesi transportlīdzeklī!",
                 "spawn": {
                     "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
-                    "dialog_title": "Spawn vehicle",
-                    "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
-                    "dialog_success": "Vehicle spawned!",
-                    "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                    "dialog_info": "Trying to spawn %{modelName}."
+                    "label": "Iespawnot transportlīdzekli pēc modeļa nosaukuma",
+                    "dialog_title": "Iespawnot transportlīdzekli",
+                    "dialog_desc": "Ievadi transportlīdzekļa modeļa nosaukumu, kuru vēlies iespawnot.",
+                    "dialog_success": "Transportlīdzeklis iespawnots!",
+                    "dialog_error": "Transportlīdzekļa modelis '%{modelName}' neeksistē!",
+                    "dialog_info": "Mēģina iespawnot %{modelName}."
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "Salabot",
+                    "label": "Salabot pašreizējo transportlīdzekli",
+                    "success": "Transportlīdzeklis salabots!"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "Dzēst",
+                    "label": "Dzēst pašreizējo transportlīdzekli",
+                    "success": "Transportlīdzeklis dzēsts!"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "title": "Pastiprināt",
+                    "label": "Pastiprināt transportlīdzekli, lai sasniegtu maksimālu jautrību (un varbūt ātrumu)",
+                    "success": "Transportlīdzeklis pastiprināts!",
+                    "already_boosted": "Šis transportlīdzeklis jau bija pastiprināts.",
+                    "unsupported_class": "Šī transportlīdzekļa klase netiek atbalstīta.",
+                    "redm_not_mounted": "Tu vari pastiprināt tikai tad, ja esi uz zirga."
                 }
             },
             "heal": {
-                "title": "Heal",
+                "title": "Izārstēt",
                 "myself": {
-                    "title": "Myself",
-                    "label": "Restores your health",
-                    "success_0": "All healed up!",
-                    "success_1": "You should be feeling good now!",
-                    "success_2": "Restored to full!",
-                    "success_3": "Ouchies fixed!"
+                    "title": "Sevi",
+                    "label": "Atjaunot veselību",
+                    "success_0": "Pilnībā izārstēts!",
+                    "success_1": "Tagad tev vajadzētu justies labi!",
+                    "success_2": "Viss atjaunots!",
+                    "success_3": "Sāpes novērstas!"
                 },
                 "everyone": {
-                    "title": "Everyone",
-                    "label": "Will heal & revive all players",
-                    "success": "Healed and revived all players."
+                    "title": "Visi",
+                    "label": "Izārstēt un atdzīvināt visus spēlētājus",
+                    "success": "Visi spēlētāji izārstēti un atdzīvināti."
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "label": "Send an announcement to all online players.",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "Sūtīt paziņojumu",
+                "label": "Sūtīt paziņojumu visiem tiešsaistē esošajiem spēlētājiem.",
+                "dialog_desc": "Sūtīt paziņojumu visiem tiešsaistē esošajiem spēlētājiem.",
+                "dialog_placeholder": "Tavs paziņojums...",
+                "dialog_success": "Paziņojums tika nosūtīts."
             },
             "clear_area": {
-                "title": "Reset World Area",
-                "label": "Reset a specified world area to its default state",
-                "dialog_desc": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side.",
-                "dialog_success": "Clearing area with radius of %{radius}m",
-                "dialog_error": "Invalid radius input. Try again."
+                "title": "Atiestatīt pasaules apgabalu",
+                "label": "Atiestatīt konkrētu pasaules apgabalu uz tā noklusējuma stāvokli",
+                "dialog_desc": "Lūdzu, ievadi rādiusu (0-300), kurā vēlies atiestatīt objektus. Tas neizdzēsīs objektus, kas izsaukti servera pusē.",
+                "dialog_success": "Tīru apgabalu ar rādiusu %{radius}m",
+                "dialog_error": "Nederīga rādiusa vērtība. Mēģini vēlreiz."
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "Pārslēgt spēlētāju ID",
+                "label": "Pārslēgt spēlētāju ID (un citu informāciju) rādīšanu virs tuvāko spēlētāju galvām",
+                "alert_show": "Parādu tuvāko spēlētāju NetID.",
+                "alert_hide": "Slēpju tuvāko spēlētāju NetID."
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online Players",
-                "players": "Players",
-                "search": "Search",
-                "zero_players": "No players found."
+                "online_players": "Tiešsaistes spēlētāji",
+                "players": "Spēlētāji",
+                "search": "Meklēt",
+                "zero_players": "Nav atrasts neviens spēlētājs."
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "Filtrēt pēc",
+                "no_filter": "Bez filtra",
+                "is_admin": "Ir administrators",
+                "is_injured": "Savainots / miris",
+                "in_vehicle": "Transportlīdzeklī"
             },
             "sort": {
-                "label": "Sort by",
-                "distance": "Distance",
+                "label": "Kārtot pēc",
+                "distance": "Attālums",
                 "id": "ID",
-                "joined_first": "Joined First",
-                "joined_last": "Joined Last",
-                "closest": "Closest",
-                "farthest": "Farthest"
+                "joined_first": "Pievienojās pirmais",
+                "joined_last": "Pievienojās pēdējais",
+                "closest": "Tuvākais",
+                "farthest": "Tālākais"
             },
             "card": {
-                "health": "%{percentHealth}% health"
+                "health": "%{percentHealth}% veselība"
             }
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or a username of %{target}"
+                "error": "Radās kļūda, iegūstot šī lietotāja informāciju. Kļūda ir redzama zemāk:",
+                "target_not_found": "Neizdevās atrast tiešsaistē spēlētāju ar ID vai lietotājvārdu %{target}"
             },
             "tabs": {
-                "actions": "Actions",
-                "info": "Info",
-                "ids": "IDs",
-                "history": "History",
+                "actions": "Darbības",
+                "info": "Informācija",
+                "ids": "ID",
+                "history": "Vēsture",
                 "ban": "Ban"
             },
             "actions": {
-                "title": "Player Actions",
-                "command_sent": "Command sent!",
+                "title": "Spēlētāja darbības",
+                "command_sent": "Komanda nosūtīta!",
                 "moderation": {
-                    "title": "Moderation",
+                    "title": "Moderācija",
                     "options": {
                         "dm": "DM",
-                        "warn": "Warn",
-                        "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "warn": "Brīdināt",
+                        "kick": "Izmest",
+                        "set_admin": "Iedot Admin"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
-                        "description": "What is the reason for direct messaging this player?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "title": "Privātā Ziņa",
+                        "description": "Kāds ir iemesls, kādēļ vēlies nosūtīt privāto ziņu šim spēlētājam?",
+                        "placeholder": "Iemesls...",
+                        "success": "Tava privātā ziņa ir nosūtīta!"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
-                        "description": "What is the reason for direct warning this player?",
-                        "placeholder": "Reason...",
-                        "success": "Player warned!"
+                        "title": "Brīdināt",
+                        "description": "Kāds ir iemesls, kādēļ vēlies brīdināt šo spēlētāju?",
+                        "placeholder": "Iemesls...",
+                        "success": "Spēlētājs brīdināts!"
                     },
                     "kick_dialog": {
-                        "title": "Kick",
-                        "description": "What is the reason for kicking this player?",
-                        "placeholder": "Reason...",
-                        "success": "Player kicked!"
+                        "title": "Izmest",
+                        "description": "Kāds ir iemesls, kādēļ vēlies izmest šo spēlētāju?",
+                        "placeholder": "Iemesls...",
+                        "success": "Spēlētājs izmests!"
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "Interakcijas",
                     "options": {
                         "heal": "Heal",
                         "go_to": "Go to",
                         "bring": "Bring",
-                        "spectate": "Spectate",
+                        "spectate": "Specatate",
                         "toggle_freeze": "Toggle Freeze"
                     },
                     "notifications": {
-                        "heal_player": "Healing player",
-                        "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                        "spectate_yourself": "You cannot spectate yourself.",
-                        "freeze_yourself": "You cannot freeze yourself.",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "heal_player": "Spēlētājs tiek izārstēts",
+                        "tp_player": "Teleportēties pie spēlētāja",
+                        "bring_player": "Atvilkt spēlētāju",
+                        "spectate_failed": "Neizdevās atrast spēlētāju! Beidz vērošanu.",
+                        "spectate_yourself": "Tu nevari vērot sevi.",
+                        "freeze_yourself": "Tu nevari iesaldēt sevi.",
+                        "spectate_cycle_failed": "Nav neviena cita spēlētāja, ko vērot."
                     }
                 },
                 "troll": {
                     "title": "Troll",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
-                        "wild_attack": "Wild attack"
+                        "drunk": "Padarīt reibuma stāvoklī",
+                        "fire": "Aizdedzināt",
+                        "wild_attack": "Dzivnieku Uzbrukšana"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
-                "joined": "Joined",
+                "title": "Spēlētāja informācija",
+                "session_time": "Sesijas laiks",
+                "play_time": "Nospēlētais laiks",
+                "joined": "Pievienojās",
                 "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "whitelisted_notyet": "vēl nav",
+                "btn_wl_add": "PIEVIENOT WL",
+                "btn_wl_remove": "NOŅEMT WL",
+                "btn_wl_success": "Whitelist statuss mainīts.",
+                "log_label": "Logi",
+                "log_empty": "Nav atrasti bloķējumi vai brīdinājumi.",
+                "log_ban_count": "%{smart_count} bans |||| %{smart_count} bani",
+                "log_warn_count": "%{smart_count} brīdinājums |||| %{smart_count} brīdinājumi",
+                "log_btn": "SĪKĀK",
+                "notes_changed": "Spēlētāja piezīmes ir mainītas.",
+                "notes_placeholder": "Piezīmes par šo spēlētāju..."
             },
             "history": {
-                "title": "Related history",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "title": "Saistītā vēsture",
+                "btn_revoke": "Atcelt",
+                "revoked_success": "Darbība atsaukta!",
+                "banned_by": "BLOĶĒJA %{author}",
+                "warned_by": "BRĪDINĀJA %{author}",
+                "revoked_by": "Atsaukta: %{author}.",
+                "expired_at": "Beidzās %{date}.",
+                "expires_at": "Beigsies %{date}."
             },
             "ban": {
-                "title": "Ban player",
-                "reason_placeholder": "Reason",
-                "duration_placeholder": "Duration",
-                "hours": "hours",
-                "days": "days",
-                "weeks": "weeks",
-                "months": "months",
-                "permanent": "Permanent",
-                "custom": "Custom",
-                "helper_text": "Please select a duration",
-                "submit": "Apply ban",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "title": "Banot spēlētāju",
+                "reason_placeholder": "Iemesls",
+                "duration_placeholder": "Ilgums",
+                "hours": "stundas",
+                "days": "dienas",
+                "weeks": "nedēļas",
+                "months": "mēneši",
+                "permanent": "Neatgriezeniski",
+                "custom": "Pielāgots",
+                "helper_text": "Lūdzu, izvēlies ilgumu",
+                "submit": "Apstiprināt Banu",
+                "reason_required": "Iemesla lauks ir obligāts.",
+                "success": "Spēlētājs bloķēts!"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "Pašreizējie identifikatori",
+                "previous_ids": "Iepriekš izmantotie identifikatori",
+                "all_hwids": "Visi HWID ID"
             }
         }
     }
