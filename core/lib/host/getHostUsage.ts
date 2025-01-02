@@ -20,7 +20,6 @@ export default async () => {
         memory: { usage: 0, used: 0, total: 0 },
         cpu: {
             count: cpus.length,
-            speed: cpus[0].speed,
             usage: 0,
         },
     };

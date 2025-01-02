@@ -182,7 +182,7 @@ export const getHostData = async (): Promise<HostDataReturnType> => {
 
         try {
             const cpuStats = await si.cpu();
-            const cpuSpeed = cpuStats.speedMin || cpuStats.speed;
+            const cpuSpeed = cpuStats.speedMin ?? cpuStats.speed;
 
             //TODO: move this to frontend
             let clockWarning = '';
