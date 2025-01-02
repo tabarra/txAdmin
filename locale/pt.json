@@ -15,57 +15,57 @@
     },
     "kick_messages": {
         "everyone": "Todos os jogadores foram expulsos: %{reason}.",
-        "player": "Você foi expulso: %{reason}.",
+        "player": "Foste expulso(a): %{reason}.",
         "unknown_reason": "razão desconhecida"
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Você foi banido deste servidor por \"%{reason}\". Seu ban vai expirar em: %{expiration}.",
-        "kick_permanent": "(%{author}) Você foi permanentemente banido deste servidor por \"%{reason}\".",
+        "kick_temporary": "(%{author}) Foste banido(a) deste servidor por \"%{reason}\". O teu banimento vai expirar em: %{expiration}.",
+        "kick_permanent": "(%{author}) Foste permanentemente banido(a) deste servidor por \"%{reason}\".",
         "reject": {
-            "title_permanent": "Você foi permanentemente banido deste servidor.",
-            "title_temporary": "Você foi temporariamente banido deste servidor.",
-            "label_expiration": "Seu ban vai expirar em",
-            "label_date": "Data do ban",
+            "title_permanent": "Foste permanentemente banido(a) deste servidor.",
+            "title_temporary": "Foste temporariamente banido(a) deste servidor.",
+            "label_expiration": "O teu banimento vai expirar em",
+            "label_date": "Data do banimento",
             "label_author": "Autor",
             "label_reason": "Motivo",
-            "label_id": "ID do ban",
-            "note_multiple_bans": "Nota: você tem mais de um ban ativo em seus ids.",
-            "note_diff_license": "Nota: o ban acima foi aplicado em outra <code>license</code>, o que significa que um de seus IDs/HWIDs condiz com algum deste ban."
+            "label_id": "ID do banimento",
+            "note_multiple_bans": "Nota: tens mais de um banimento ativo nos teus IDs.",
+            "note_diff_license": "Nota: o banimento acima foi aplicado noutra <code>license</code>, o que significa que um dos teus IDs/HWIDs coincide com este banimento."
         }
     },
     "whitelist_messages": {
         "admin_only": {
             "mode_title": "Este servidor está em modo <strong>Manutenção</strong>.",
-            "insufficient_ids": "Você não tem um ID <code>discord</code> ou <code>fivem</code>, e é necessário ter ao menos um deles para validar se você é um administrador.",
-            "deny_message": "Seus IDs não estão associados a nenhum administrador."
+            "insufficient_ids": "Tu não tens um ID <code>discord</code> ou <code>fivem</code>, e é necessário ter pelo menos um deles para validar se és um administrador.",
+            "deny_message": "Os teus IDs não estão associados a nenhum administrador."
         },
         "guild_member": {
             "mode_title": "Este servidor está em modo <strong>Whitelist por Discord</strong>.",
-            "insufficient_ids": "Você não tem um ID <code>discord</code>, que é necessário para validar se você entrou no nosso Discord. Por favor abra o Discord Desktop e tente novamente (a versão Web não vai funcionar).",
-            "deny_title": "Você precisa entrar em nosso Discord para poder se conectar.",
-            "deny_message": "Por favor entre no %{guildname} e tente novamente."
+            "insufficient_ids": "Tu não tens um ID <code>discord</code>, que é necessário para validar se entraste no nosso Discord. Por favor, abre o Discord Desktop e tenta novamente (a versão Web não vai funcionar).",
+            "deny_title": "Precisas de entrar no nosso Discord para te poderes ligar.",
+            "deny_message": "Por favor, entra no %{guildname} e tenta novamente."
         },
         "guild_roles": {
             "mode_title": "Este servidor está em modo <strong>Whitelist por grupo de Discord</strong>.",
-            "insufficient_ids": "Você não tem um ID <code>discord</code>, que é necessário para validar se você entrou no nosso Discord. Por favor abra o Discord Desktop e tente novamente (a versão Web não vai funcionar).",
-            "deny_notmember_title": "Você precisa entrar em nosso Discord para poder se conectar.",
-            "deny_notmember_message": "Por favor entre no %{guildname}, adquira um dos grupos necessários e tente novamente.",
-            "deny_noroles_title": "Você não tem um dos grupos de Discord necessários para se conectar.",
-            "deny_noroles_message": "Para se conectar, você precisa ter pelo menos um dos grupos de whitelist no servidor do Discord %{guildname}."
+            "insufficient_ids": "Tu não tens um ID <code>discord</code>, que é necessário para validar se entraste no nosso Discord. Por favor, abre o Discord Desktop e tenta novamente (a versão Web não funciona).",
+            "deny_notmember_title": "Precisas de entrar no nosso Discord para te poderes ligar.",
+            "deny_notmember_message": "Por favor, entra no %{guildname}, adquire um dos grupos necessários e tenta novamente.",
+            "deny_noroles_title": "Não tens um dos grupos de Discord necessários para te ligares.",
+            "deny_noroles_message": "Para te ligares, precisas de ter pelo menos um dos grupos de whitelist no servidor do Discord %{guildname}."
         },
         "approved_license": {
             "mode_title": "Este servidor está em modo <strong>Whitelist por Licença</strong>.",
-            "insufficient_ids": "Você não tem o ID <code>license</code>, o que significa que o servidor habilitou <code>sv_lan</code>. Se você é o dono do servidor, você pode desabilitar este modo modificando o <code>server.cfg</code>.",
-            "deny_title": "Você não foi aprovado(a) para entrar neste servidor.",
+            "insufficient_ids": "Tu não tens o ID <code>license</code>, o que significa que o servidor ativou <code>sv_lan</code>. Se és o dono do servidor, podes desativar este modo modificando o <code>server.cfg</code>.",
+            "deny_title": "Não foste aprovado(a) para entrares neste servidor.",
             "request_id_label": "ID de Requisição"
         }
     },
     "server_actions": {
-        "restarting": "Servidor reiniciando (%{reason}).",
-        "restarting_discord": "**%{servername}** está reiniciando (%{reason}).",
-        "stopping": "Servidor desligando (%{reason}).",
-        "stopping_discord": "**%{servername}** está desligando (%{reason}).",
-        "spawning_discord": "**%{servername}** está iniciando."
+        "restarting": "Servidor a reiniciar (%{reason}).",
+        "restarting_discord": "**%{servername}** está a reiniciar (%{reason}).",
+        "stopping": "Servidor a desligar (%{reason}).",
+        "stopping_discord": "**%{servername}** está a desligar (%{reason}).",
+        "spawning_discord": "**%{servername}** está a iniciar."
     },
     "nui_warning": {
         "title": "ADVERTÊNCIA",
@@ -128,7 +128,7 @@
             },
             "teleport": {
                 "title": "Teleportar",
-                "generic_success": "Entrando no buraco negro!",
+                "generic_success": "A entrar no buraco negro!",
                 "waypoint": {
                     "title": "Marcador",
                     "label": "Ir para posição no mapa",
@@ -143,12 +143,12 @@
                 },
                 "back": {
                     "title": "Voltar",
-                    "label": "Voltar para última posição",
-                    "error": "Você não possui nenhuma posição anterior salva."
+                    "label": "Voltar para a última posição",
+                    "error": "Não tens nenhuma posição anterior guardada."
                 },
                 "copy": {
                     "title": "Copiar Coords",
-                    "label": "Copiar coordenadas para área de transferência"
+                    "label": "Copiar coordenadas para a área de transferência"
                 }
             },
             "vehicle": {
@@ -188,12 +188,12 @@
                     "title": "Eu Mesmo",
                     "label": "Restaura a sua vida.",
                     "success_0": "Personagem curado!",
-                    "success_1": "Você já deve estar se sentindo melhor!",
+                    "success_1": "Já deves estar a sentir-te melhor!!",
                     "success_2": "Vida restaurada!",
-                    "success_3": "Dodói já passou!"
+                    "success_3": "Ferimento tratado!"
                 },
                 "everyone": {
-                    "title": "Todo Mundo",
+                    "title": "Todos",
                     "label": "Cura e revive todos os jogadores",
                     "success": "Todos os jogadores foram curados."
                 }
@@ -265,8 +265,8 @@
                     "title": "Moderação",
                     "options": {
                         "dm": "DM",
-                        "warn": "Advertir",
-                        "kick": "Kickar",
+                        "warn": "Avisar",
+                        "kick": "Expulsar",
                         "set_admin": "Dar Admin"
                     },
                     "dm_dialog": {
@@ -277,9 +277,9 @@
                     },
                     "warn_dialog": {
                         "title": "Advertir",
-                        "description": "Qual a razão para advertir este jogador?",
+                        "description": "Qual a razão para o aviso deste jogador?",
                         "placeholder": "Razão...",
-                        "success": "O jogador foi advertido!"
+                        "success": "O jogador foi avisado!"
                     },
                     "kick_dialog": {
                         "title": "Kickar (expulsar)",
