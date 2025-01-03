@@ -110,8 +110,8 @@ export default class WebServer {
             },
             roots: [
                 txDevEnv.ENABLED
-                ? path.join(txDevEnv.SRC_PATH, 'panel/public')
-                : path.join(txEnv.txAdminResourcePath, 'panel'),
+                    ? path.join(txDevEnv.SRC_PATH, 'panel/public')
+                    : path.join(txEnv.txAdminResourcePath, 'panel'),
                 path.join(txEnv.txAdminResourcePath, 'web/public'),
             ],
             onReady: () => {

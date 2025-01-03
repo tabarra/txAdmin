@@ -73,8 +73,7 @@ export default function MainShell() {
         window.history.replaceState({}, '', pageUrl);
     }, []);
 
-    //Listens to hotkeys
-    //NOTE: WILL NOT WORK IF THE FOCUS IS ON THE IFRAME
+    //Listens to hotkeys (doesn't work if the focus is on an iframe)
     useEventListener('keydown', hotkeyEventListener);
 
     return <>

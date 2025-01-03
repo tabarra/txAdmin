@@ -56,7 +56,7 @@ export const handleExternalLinkClick = (event: React.MouseEvent<HTMLElement, Mou
 
 
 /**
- * Sets a URL search param with a given value, or deletes it if value is undefined
+ * Sets the window URL search param with a given value, or deletes it if value is undefined
  */
 export const setUrlSearchParam = (paramName: string, ref: string | undefined) => {
     if (typeof paramName !== 'string' || !paramName.length) {

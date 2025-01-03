@@ -301,7 +301,7 @@ export default function drawFullPerfChart({
         const playerLineGenerator = d3.line<PerfSnapType>(
             (d) => timeScale(d.end),
             (d) => playersScale(d.players),
-        ).curve(d3.curveNatural);
+        ).curve(d3.curveNatural); //FIXME: overflows the canvas on extreme changes
         lifespanGSel.selectAll('path.players-line-bg')
             .data(prepareLifespanDataItem)
             .join('path')

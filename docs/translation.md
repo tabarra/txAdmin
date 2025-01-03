@@ -1,5 +1,5 @@
 # Translation Support
-txAdmin supports translation  in over 25 languages for the in-game interface (menu/warn) and chat messages, as well as discord warnings.  
+txAdmin supports translation for over 30 languages for the in-game interface (menu/warn) and chat messages, as well as discord warnings.  
 
 
 ## Custom locales:
@@ -23,4 +23,3 @@ For that you will need to:
 > **Pro Tip2:** To make sure you didn't miss anything in the locale file, you can download the txAdmin source code, execute `npm i`, move the `locale.json` to inside the `txAdmin/locale` folder and run `npm run locale:check`. This will tell you about missing or extra keys.
 
 > **Note:** The performance of custom locale for big servers may not be ideal due to the way we need to sync dynamic content to clients. So it is strongly encouraged that you contribute with translations in our GitHub so it gets packed with the rest of txAdmin.
-

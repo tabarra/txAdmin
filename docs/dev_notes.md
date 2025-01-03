@@ -9,11 +9,12 @@ Legend:
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
 - [ ] reported cases of crash reason too big without word break causing page to scroll horizontal 
 
-## Highlights
-- [x] New player drops page
+## Pending Improvements
+- [ ] Player drops page
+    - [!] fix: blurred chart lines
+    - [!] fix: crashes table overflowing (DrilldownCrashesSubcard.tsx)
     - [ ] review page layout: 
         - [ ] make it less card-y
-        - [ ] fix crashes table widening the outer shell - is it just the scroll?
         - [ ] fix crashes table is not responsive
         - [ ] fix scroll popping in/out
     - [ ] add drilldown interval buttons
@@ -21,6 +22,7 @@ Legend:
     - [ ] add testing for getServerStatsData
     - [ ] warning for top servers
     - full perf chart:
+        - [ ] disable `<...>.curve(d3.curveNatural)` on `playerLineGenerator` if more than 20 players?
         - [ ] buttons to show memory usage, maybe hide player count
         - [ ] calculate initial zoom of 30h
             - Initial zoom code: https://observablehq.com/@d3/zoomable-area-chart?intent=fork
@@ -41,11 +43,19 @@ Legend:
         - [ ] change the bg color to the color of the average ticket with heavy transparency?
 
 ## Small feat
+- [x] improve UX for debugging bans
+    - tweak: improved readability on player join/leave events on server log
+    - feat(core): added server log for blocked joins of banned players
+    - feat(panel): added button to compare player/action ids
+    - feat(panel): added copy IDs button to player and action modals
+- [x] feat(core): implement custom serveStatic middleware
 - [ ] live console 
+    - [x] feat(panel/console): added hidden copy options
     - [ ] if socket connects but no data received, add a warning to the console and wipe it after first write
     - [ ] persistent cls via ts offsets
     - [ ] improve the bufferization to allow just loading most recent "block" and loading prev blocks via button
-- [ ] separate server log join/leave filter, and shorten the IDs of the joins, and copy ids button on the modal
+    - [ ] options dropdown?
+
 
 ## Database Changes
 - [ ] migration to change "revocation" to optional
@@ -61,8 +71,13 @@ Legend:
     - happens when some page starts the server and redirects you to the live console
     - you join the room and gets initial data (directly from logger)
     - while the websocket out buffer still haven't sent the boot message
-- [ ] maybe update xterm to v5.6
-    - https://github.com/xtermjs/xterm.js/issues/3864
+- [ ] xterm changes
+    - [ ] deprecate canvas renderer and use the webgl instead
+    - [ ] check compatibility with text scaling - `window.devicePixelRatio`
+    - [ ] maybe update xterm to v5.6
+    - ref: https://github.com/xtermjs/xterm.js/issues/3864
+    - ref: https://github.com/xtermjs/xterm.js/issues/4779
+    - ref: https://github.com/xtermjs/xterm.js/milestone/78
 
 ## Refactor + DX
 - [x] deprecate fxRunner.srvCmd
@@ -89,6 +104,16 @@ Legend:
 - [x] .env
     - [x] convert builders to use txDevEnv
     - [x] convert tx code use txDevEnv
+- [ ] New Settings Page:
+    - [ ] hide onesync
+    - [ ] new layout
+    - [ ] move all options from old page to new page (no code just yet)
+    - [ ] ?????
+    - [ ] ?????
+    - [ ] ?????
+    - [ ] double check:
+        - check if all text fields and selects have the `htmlFor`
+        - check if all textarea fields are auto-sized
 
 - [ ] Layout refactor:
     - não ter espaço em branco abaixo do header
@@ -100,8 +125,6 @@ Legend:
     - checar warning bar
     - tirar o servername do menu de server?
     - tirar servername do mobile header?
-    - 390x670 resolução mais comum
-    - 360x
 - NOTE: resoluções mobile
     - 360x510 menor razoável
     - 390x670 mais comum
@@ -109,34 +132,7 @@ Legend:
 - [ ] new txConfig
 - [ ] remove dynamicAds from the modules
 
-> Alright, so what I'm gonna do:
-> 1. default continues being "on"
-> 2. the dropdown will be hidden under advanced 
-> 3. the dropdown will still have all 3 options (having only 2 would be annoying due to code)
-> 4. Once we have data on legacy usage, if the number is below 20% or something like that, I can remove the dropdown entirely but the option  would still be configurable by editing config.json
 
-
-
-- [ ] remove `fs-extra` - right now only used in deployer and setup
-- [ ] headless deployer, without instantiating TxAdmin
-- [ ] lua file changes (after PR merges)
-    - 4 spaces
-    - Upper case for globals
-    - alt+shift+f
-    - `.git-blame-ignore-revs`
-- [ ] xterm changes:
-    - ref: https://github.com/xtermjs/xterm.js/issues/4779
-    - ref: https://github.com/xtermjs/xterm.js/milestone/78
-    - [ ] deprecate canvas renderer and use the webgl instead
-    - [ ] check compatibility with text scaling - `window.devicePixelRatio`
-- [ ] include `list-dependencies.js` as part of the test workflow
-    - improve to read the parent package deps
-    - exit 1 on error
-    - detect circular imports
-- [ ] testing
-    - use playwright
-    - [ ] use https://mswjs.io/docs/getting-started
-    - [ ] write some automated tests for the auth logic and middlewares
 
 ## Chores + boring stuff
 - [ ] switch to `game 'common'` and remove `rdr3_warning`
@@ -186,7 +182,6 @@ Legend:
     - migrar admins.json
     - pra cada admin do admins.json
     - const admin = new StoredAdmin(rawObj)
-    - 
 - Middleware:
     storedAdmin.getAuthed(csrfToken): AuthedAdmin
 - class AuthedAdmin extends StoredAdmin
@@ -221,6 +216,18 @@ if (!params) return;
 
 
 
+## Other annoying stuff to do
+- [ ] remove `fs-extra` - right now only used in deployer and setup
+- [ ] headless deployer, without instantiating TxAdmin
+- [ ] include `list-dependencies.js` as part of the test workflow
+    - improve to read the parent package deps
+    - exit 1 on error
+    - detect circular imports
+- [ ] testing
+    - use playwright
+    - [ ] use https://mswjs.io/docs/getting-started
+    - [ ] write some automated tests for the auth logic and middlewares
+
 ## Refactor: Formatting + Linting
 - [ ] fix the eslint config + tailwind sort
         - [alternative](https://biomejs.dev/linter/rules/use-sorted-classes/)
@@ -233,8 +240,11 @@ if (!params) return;
 - When running prettier, add ignore to the imported external files
 https://prettier.io/docs/en/integrating-with-linters.html
 https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
-
-
+- [ ] lua file changes (after PR merges)
+    - 4 spaces
+    - Upper case for globals
+    - alt+shift+f
+    - `.git-blame-ignore-revs`
 
 =======================================================================
 
@@ -282,11 +292,14 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
-- [ ] update stuff that requires WMIC to use PS command directly 
-    - NOTE: perhaps just use `systeminformation.processLoad()` instead
-    - issue: https://github.com/tabarra/txAdmin/issues/970#issuecomment-2308462733
-    - new lib, same dev: https://www.npmjs.com/package/pidusage-gwmi
-    - https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/07-working-with-wmi?view=powershell-7.2
+- [ ] Try to replace all the host stats/data with stuff from the SI lib (eg `systeminformation.processLoad()`).
+    - They are already using GWMI: https://github.com/sebhildebrandt/systeminformation/issues/616
+    - Pay attention to the boot and shutdown comments
+    - NOTE: Old ref:
+        - update stuff that requires WMIC to use PS command directly
+        - issue: https://github.com/tabarra/txAdmin/issues/970#issuecomment-2308462733
+        - new lib, same dev: https://www.npmjs.com/package/pidusage-gwmi
+        - https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/07-working-with-wmi?view=powershell-7.2
 
 - After Node 22:
     - check all `.npm-upgrade.json` for packages that can now be updated
