@@ -10,17 +10,6 @@ import CleanupDao from './dao/cleanup';
 const console = consoleFactory(modulename);
 
 
-//Types
-export type PlayerDbConfigType = {
-    onJoinCheckBan: boolean;
-    whitelistMode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
-    whitelistedDiscordRoles: string[];
-    whitelistRejectionMessage: string;
-    requiredBanHwidMatches: number;
-    banRejectionMessage: string;
-}
-
-
 /**
  * This module is a hub for all database-related operations.
  */
@@ -36,7 +25,7 @@ export default class Database {
 
     constructor() {
         //Checking config validity
-        if (txConfig.playerDatabase.requiredBanHwidMatches < 0 || txConfig.playerDatabase.requiredBanHwidMatches > 6) {
+        if (txConfig.banlist.requiredHwidMatches < 0 || txConfig.banlist.requiredHwidMatches > 6) {
             throw new Error('The playerDatabase.requiredBanHwidMatches setting must be between 0 (disabled) and 6.');
         }
 

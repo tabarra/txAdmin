@@ -120,13 +120,24 @@ Legend:
 - [x] .env
     - [x] convert builders to use txDevEnv
     - [x] convert tx code use txDevEnv
+- [ ] Config migrations:
+    - [x] commit renaming wip
+    - [ ] decide on the REVIEW_SAVE_EMPTY_STRING vars 
+    - [ ] migrate txConfig.logger 
+    - [ ] migrate txConfig.banTemplates 
+    - [ ] migrate txConfig.discordBot.embed*Json 
+    - [ ] migrate txConfig.gameFeatures.playerModePtfx
+    - [ ] 
+    - [ ] 
+    - [ ] 
+    - [ ] ?????
+    - [ ] remove `./core/configMapping.tmp.ts` (was committed)
+    - [ ] check all ConfigStore methods (including txCore.configStore.getRawFile())
+    - [ ] core/routes/diagnostics/sendReport.ts
 - [ ] New Settings Page:
     - [x] hide onesync
     - [x] new layout
     - [x] move all options from old page to new page (no code just yet)
-    - [ ] ?????
-    - [ ] ?????
-    - [ ] ?????
     - [ ] double check:
         - check if all text fields and selects have the `htmlFor`
         - check if all textarea fields are auto-sized

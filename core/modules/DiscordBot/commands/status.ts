@@ -73,7 +73,7 @@ export const generateStatusMessage = (
     //NOTE: serverCfxId can be undefined, breaking the URLs, but there is no easy clean way to deal with this issue
     const serverCfxId = txCore.cacheStore.get('fxsRuntime:cfxId');
     const placeholders = {
-        serverName: txConfig.global.serverName,
+        serverName: txConfig.general.serverName,
         statusString: 'Unknown',
         statusColor: '#4C3539',
         serverCfxId,

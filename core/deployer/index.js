@@ -38,7 +38,7 @@ export class Deployer {
         this.originalRecipe = originalRecipe;
         this.deploymentID = deploymentID;
         this.progress = 0;
-        this.serverName = customMetaData.serverName || txConfig.global.serverName || '';
+        this.serverName = customMetaData.serverName || txConfig.general.serverName || '';
         this.logLines = [];
 
         //Load recipe

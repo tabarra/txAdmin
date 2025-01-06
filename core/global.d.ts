@@ -4,6 +4,8 @@
 declare interface GenericTxModule<T> {
     new(): T;
     // configKeys: string[]; //TODO
+    // refreshConfig?: (newConfig: any, keysUpdated: string[]) => void;
+    // measureMemory?: () => { [key: string]: number };
 }
 
 declare type TxCoreType = import('./txAdmin').TxCoreType;
@@ -17,7 +19,7 @@ type AnythingButConfig = {
     config: never;
     [key: string]: any;
 };
-declare type TxAdminConfigs = {
+declare type TxAdminConfigsOld = {
     config: never,
     global: {
         serverName: string,
@@ -35,17 +37,68 @@ declare type TxAdminConfigs = {
     },
     logger: AnythingButConfig,
     monitor: AnythingButConfig,
-    playerDatabase: import('@modules/Database').PlayerDbConfigType,
+    playerDatabase: {
+        onJoinCheckBan: boolean;
+        banRejectionMessage: string;
+        banRequiredHwidMatches: number;
+
+        whitelistMode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
+        whitelistDiscordRoles: string[];
+        whitelistRejectionMessage: string;
+    },
     webServer: import('@modules/WebServer').WebServerConfigType,
-    discordBot: import('@modules/DiscordBot').DiscordBotConfigType,
+    discordBot: {
+        enabled: boolean;
+        token: string;
+        guild: string;
+        announceChannel: string;
+        embedJson: string;
+        embedConfigJson: string;
+    },
     fxRunner: AnythingButConfig,
     banTemplates: AnythingButConfig,
+};
+
+declare type TxAdminConfigs = {
+    config: never,
+    general: {
+        serverName: string,
+        language: string,
+    },
+    gameFeatures: {
+        menuEnabled: boolean,
+        menuAlignRight: boolean,
+        menuPageKey: string,
+        hideDefaultAnnouncement: boolean,
+        hideDefaultDirectMessage: boolean,
+        hideDefaultWarning: boolean,
+        hideDefaultScheduledRestartWarning: boolean,
+        hideAdminInPunishments: boolean,
+        hideAdminInMessages: boolean,
+    }
+    banlist: {
+        enabled: boolean;
+        rejectionMessage: string;
+        requiredHwidMatches: number;
+        banTemplates: AnythingButConfig,
+    },
+    whitelist: {
+        mode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
+        rejectionMessage: string;
+        discordRoles: string[];
+    }
+    restarter: AnythingButConfig,
+    fxRunner: AnythingButConfig,
+    discordBot: import('@modules/DiscordBot').DiscordBotConfigType,
+    webServer: import('@modules/WebServer').WebServerConfigType,
+
+    logger: AnythingButConfig,
 };
 declare let txConfig: TxAdminConfigs;
 
 declare type TxConsole = import('./lib/console').TxConsole;
 declare namespace globalThis {
-    interface Console extends TxConsole {}
+    interface Console extends TxConsole { }
 }
 
 

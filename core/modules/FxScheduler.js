@@ -152,8 +152,8 @@ export default class FxScheduler {
         }
 
         //Check validity
-        if (Array.isArray(txConfig.monitor.restarterSchedule) && txConfig.monitor.restarterSchedule.length) {
-            const { valid } = parseSchedule(txConfig.monitor.restarterSchedule);
+        if (Array.isArray(txConfig.restarter.schedule) && txConfig.restarter.schedule.length) {
+            const { valid } = parseSchedule(txConfig.restarter.schedule);
             const nextSettingRestart = getNextScheduled(valid);
             if (nextSettingRestart.minuteFloorTs < scheduledMinuteFloorTs) {
                 throw new Error(`You already have one restart scheduled for ${nextSettingRestart.string}, which is before the time you specified.`);
@@ -183,8 +183,8 @@ export default class FxScheduler {
         let nextRestart;
         if (this.nextTempSchedule) {
             nextRestart = this.nextTempSchedule;
-        } else if (Array.isArray(txConfig.monitor.restarterSchedule) && txConfig.monitor.restarterSchedule.length) {
-            const { valid } = parseSchedule(txConfig.monitor.restarterSchedule);
+        } else if (Array.isArray(txConfig.restarter.schedule) && txConfig.restarter.schedule.length) {
+            const { valid } = parseSchedule(txConfig.restarter.schedule);
             nextRestart = getNextScheduled(valid);
         } else {
             //nothing scheduled
@@ -218,7 +218,7 @@ export default class FxScheduler {
         } else if (scheduleWarnings.includes(nextDistMins)) {
             const tOptions = {
                 smart_count: nextDistMins,
-                servername: txConfig.global.serverName,
+                servername: txConfig.general.serverName,
             };
 
             //Send discord warning

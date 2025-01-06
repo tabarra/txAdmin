@@ -27,11 +27,11 @@ export default async function FXServerControls(ctx: AuthedCtx) {
         ctx.admin.logCommand('RESTART SERVER');
         //TODO: delay override message logic should be on fxserver, but for now keep here
         // as it messages with the sync notification on the UI
-        if (txCore.fxRunner.restartDelayOverride && txCore.fxRunner.restartDelayOverride <= 4000) {
+        if (txCore.fxRunner.restartSpawnDelayOverride && txCore.fxRunner.restartSpawnDelayOverride <= 4000) {
             txCore.fxRunner.restartServer('admin request', ctx.admin.name); 
             return ctx.send<ApiToastResp>({
                 type: 'success',
-                msg: `The server is now restarting with delay override ${txCore.fxRunner.restartDelayOverride}.`
+                msg: `The server is now restarting with delay override ${txCore.fxRunner.restartSpawnDelayOverride}.`
             });
         } else {
             const restartError = await txCore.fxRunner.restartServer('admin request', ctx.admin.name);

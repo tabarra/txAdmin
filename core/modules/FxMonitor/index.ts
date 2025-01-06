@@ -55,8 +55,8 @@ export default class FxMonitor {
 
     constructor() {
         //Checking config validity
-        if (txConfig.monitor.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
-        if (txConfig.monitor.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
+        if (txConfig.restarter.bootCooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
+        if (txConfig.restarter.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
 
         //Cron functions
         setInterval(() => {
@@ -230,9 +230,9 @@ export default class FxMonitor {
         const timesPrefix = `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)})`;
 
         //Check if still in cooldown
-        if (processUptime < txConfig.monitor.cooldown) {
+        if (processUptime < txConfig.restarter.bootCooldown) {
             if (console.isVerbose && processUptime > 10 && this.swLastStatusWarning.isOver(10)) {
-                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${txConfig.monitor.cooldown}s.`);
+                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${txConfig.restarter.bootCooldown}s.`);
                 this.swLastStatusWarning.restart();
             }
             return;
@@ -277,7 +277,7 @@ export default class FxMonitor {
                 type: 'danger',
                 description: {
                     key: 'restarter.partial_hang_warn_discord',
-                    data: { servername: txConfig.global.serverName },
+                    data: { servername: txConfig.general.serverName },
                 },
             });
 
@@ -295,11 +295,11 @@ export default class FxMonitor {
         if (
             anySuccessfulHeartBeat === false
             && starting.startingElapsedSecs !== null
-            && starting.startingElapsedSecs < txConfig.monitor.resourceStartingTolerance
+            && starting.startingElapsedSecs < txConfig.restarter.resourceStartingTolerance
         ) {
             if (processUptime % 15 === 0) {
                 console.warn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
-                console.warn(`The server is currently starting ${starting.startingResName} (${starting.startingElapsedSecs}s ago).`);
+                console.warn(`The server is currently starting "${starting.startingResName}" (${starting.startingElapsedSecs}s ago).`);
             }
             return;
         }
@@ -325,7 +325,7 @@ export default class FxMonitor {
                 if (starting.startingElapsedSecs !== null) {
                     //Resource didn't finish starting (if res boot still active)
                     this.restartFxChild(
-                        `resource "${starting.startingResName}" failed to start within the ${txConfig.monitor.resourceStartingTolerance}s time limit`,
+                        `resource "${starting.startingResName}" failed to start within the ${txConfig.restarter.resourceStartingTolerance}s time limit`,
                         txCore.translator.t('restarter.start_timeout'),
                         timesPrefix,
                     );

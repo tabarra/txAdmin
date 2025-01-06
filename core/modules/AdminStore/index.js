@@ -646,12 +646,12 @@ export default class AdminStore {
      */
     getAdminPublicName(name, purpose) {
         if (!name || !purpose) throw new Error('Invalid parameters');
-        const replacer = txConfig.global.serverName ?? 'txAdmin';
+        const replacer = txConfig.general.serverName ?? 'txAdmin';
 
         if (purpose === 'punishment') {
-            return txConfig.global.hideAdminInPunishments ? replacer : name;
+            return txConfig.gameFeatures.hideAdminInPunishments ? replacer : name;
         } else if (purpose === 'message') {
-            return txConfig.global.hideAdminInMessages ? replacer : name;
+            return txConfig.gameFeatures.hideAdminInMessages ? replacer : name;
         } else {
             throw new Error(`Invalid purpose: ${purpose}`);
         }

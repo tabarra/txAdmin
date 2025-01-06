@@ -107,7 +107,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //Preparing vars
     const basePath = (ctx.txVars.isWebInterface) ? '/' : consts.nuiWebpipePath;
-    const serverName = txConfig.global.serverName || txEnv.profile;
+    const serverName = txConfig.general.serverName || txEnv.profile;
     const injectedConsts = {
         //env
         fxsVersion: txEnv.fxsVersionDisplay,

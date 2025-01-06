@@ -31,13 +31,13 @@ export default class Translator {
      */
     setupTranslator(isFirstTime = false) {
         try {
-            this.canonical = Intl.getCanonicalLocales(txConfig.global.language.replace(/_/g, '-'))[0];
+            this.canonical = Intl.getCanonicalLocales(txConfig.general.language.replace(/_/g, '-'))[0];
         } catch (error) {
             this.canonical = 'en-GB';
         }
 
         try {
-            const phrases = this.getLanguagePhrases(txConfig.global.language);
+            const phrases = this.getLanguagePhrases(txConfig.general.language);
             const polyglotOptions = {
                 allowMissing: false,
                 onMissingKey: (key: string) => {

@@ -177,7 +177,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
             basePath: (isWebInterface) ? '/' : consts.nuiWebpipePath,
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
             serverProfile: txEnv.profile,
-            serverName: txConfig.global.serverName || txEnv.profile,
+            serverName: txConfig.general.serverName || txEnv.profile,
             uiTheme: legacyTheme,
             fxServerVersion: txEnv.fxsVersionDisplay,
             txAdminVersion: txEnv.txaVersion,

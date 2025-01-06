@@ -5,6 +5,7 @@ import { defaultEmbedJson, defaultEmbedConfigJson } from '@modules/DiscordBot/de
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
 import { txEnv } from '@core/globalData';
+import { tmpMapOldConfigToNew } from '@core/configMapping.tmp';
 const console = consoleFactory(modulename);
 
 
@@ -42,7 +43,6 @@ export default class ConfigStore {
     configFilePath = `${txEnv.profilePath}/config.json`;
     configFile;
     #config; //the private one
-    // config;  //the public mirror - done this way to protect against accidental changes
 
     constructor() {
         const fileData = this.getConfigFromFile();
@@ -55,8 +55,9 @@ export default class ConfigStore {
      * Mirrors the #config object to the public deep frozen config object
      */
     updatePublicConfig() {
-        // this.config = deepFreeze(cloneDeep(this.#config));
-        globalThis.txConfig = deepFreeze(cloneDeep(this.#config));
+        const old = deepFreeze(cloneDeep(this.#config));
+        const newSchema = tmpMapOldConfigToNew(old);
+        globalThis.txConfig = newSchema;
     }
 
 
@@ -217,7 +218,7 @@ export default class ConfigStore {
         try {
             //Global
             cfg.global.serverName = cfg.global.serverName || 'change-me';
-            cfg.global.language = cfg.global.language || 'en'; //TODO: move to GlobalData
+            cfg.global.language = cfg.global.language || 'en';
             cfg.global.menuEnabled = (cfg.global.menuEnabled === 'true' || cfg.global.menuEnabled === true);
             cfg.global.menuAlignRight = (cfg.global.menuAlignRight === 'true' || cfg.global.menuAlignRight === true);
             cfg.global.menuPageKey = cfg.global.menuPageKey || 'Tab';
@@ -334,6 +335,7 @@ export default class ConfigStore {
      * @param {object} newConfig
      */
     saveProfile(scope, newConfig) {
+        throw new Error(`implement new system`);
         let toSave = cloneDeep(this.configFile);
         toSave[scope] = newConfig;
         toSave = removeNulls(toSave);

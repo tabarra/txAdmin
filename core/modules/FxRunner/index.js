@@ -21,25 +21,25 @@ const genMutex = customAlphabet(dict49, 5);
 //Helpers
 const getMutableConvars = (isCmdLine = false) => {
     const checkPlayerJoin = (
-        txConfig.playerDatabase.onJoinCheckBan
-        || txConfig.playerDatabase.whitelistMode !== 'disabled'
+        txConfig.banlist.enabled
+        || txConfig.whitelist.mode !== 'disabled'
     );
 
     //type, name, value
     const convars = [
-        ['set', 'txAdmin-serverName', txConfig.global.serverName ?? 'txAdmin'],
-        ['setr', 'txAdmin-locale', txConfig.global.language ?? 'en'],
+        ['set', 'txAdmin-serverName', txConfig.general.serverName ?? 'txAdmin'],
+        ['setr', 'txAdmin-locale', txConfig.general.language ?? 'en'],
         ['set', 'txAdmin-localeFile', txCore.translator.customLocalePath ?? false],
         ['setr', 'txAdmin-verbose', console.isVerbose],
         ['set', 'txAdmin-checkPlayerJoin', checkPlayerJoin],
-        ['set', 'txAdmin-menuAlignRight', txConfig.global.menuAlignRight],
-        ['set', 'txAdmin-menuPageKey', txConfig.global.menuPageKey],
-        ['set', 'txAdmin-hideAdminInPunishments', txConfig.global.hideAdminInPunishments],
-        ['set', 'txAdmin-hideAdminInMessages', txConfig.global.hideAdminInMessages],
-        ['set', 'txAdmin-hideDefaultAnnouncement', txConfig.global.hideDefaultAnnouncement],
-        ['set', 'txAdmin-hideDefaultDirectMessage', txConfig.global.hideDefaultDirectMessage],
-        ['set', 'txAdmin-hideDefaultWarning', txConfig.global.hideDefaultWarning],
-        ['set', 'txAdmin-hideDefaultScheduledRestartWarning', txConfig.global.hideDefaultScheduledRestartWarning],
+        ['set', 'txAdmin-menuAlignRight', txConfig.gameFeatures.menuAlignRight],
+        ['set', 'txAdmin-menuPageKey', txConfig.gameFeatures.menuPageKey],
+        ['set', 'txAdmin-hideAdminInPunishments', txConfig.gameFeatures.hideAdminInPunishments],
+        ['set', 'txAdmin-hideAdminInMessages', txConfig.gameFeatures.hideAdminInMessages],
+        ['set', 'txAdmin-hideDefaultAnnouncement', txConfig.gameFeatures.hideDefaultAnnouncement],
+        ['set', 'txAdmin-hideDefaultDirectMessage', txConfig.gameFeatures.hideDefaultDirectMessage],
+        ['set', 'txAdmin-hideDefaultWarning', txConfig.gameFeatures.hideDefaultWarning],
+        ['set', 'txAdmin-hideDefaultScheduledRestartWarning', txConfig.gameFeatures.hideDefaultScheduledRestartWarning],
     ]; //satisfies [set: string, name: string, value: any][]
 
     const prefix = isCmdLine ? '+' : '';
@@ -70,14 +70,14 @@ const chanEventBlackHole = (...args) => {
 export default class FxRunner {
     constructor() {
         //Checking config validity
-        if (txConfig.fxRunner.shutdownNoticeDelay < 0 || txConfig.fxRunner.shutdownNoticeDelay > 30) {
-            throw new Error('The fxRunner.shutdownNoticeDelay setting must be between 0 and 30 seconds.');
+        if (txConfig.fxRunner.shutdownNoticeDelayMs < 0 || txConfig.fxRunner.shutdownNoticeDelayMs > 30_000) {
+            throw new Error('The fxRunner.shutdownNoticeDelayMs setting must be between 0 and 30_000 milliseconds.');
         }
 
         this.spawnVariables = null;
         this.fxChild = null;
-        this.restartDelayOverride = 0;
-        this.history = [];
+        this.restartSpawnDelayOverride = 0;
+        this.history = []; //FIXME: abstract this into a separate class, and add a "shutting down" state triggered by the scheduledRestart event
         this.lastKillRequest = 0;
         this.fxServerHost = null;
         this.currentMutex = null;
@@ -98,7 +98,7 @@ export default class FxRunner {
      * Receives the signal that all the start banner was already printed and other modules loaded
      */
     signalStartReady() {
-        if (!txConfig.fxRunner.autostart) return;
+        if (!txConfig.fxRunner.autoStart) return;
 
         if (!this.isConfigured) {
             return console.warn('Please open txAdmin on the browser to configure your server.');
@@ -117,9 +117,9 @@ export default class FxRunner {
      */
     setupVariables() {
         // Prepare extra args
-        let extraArgs = [];
-        if (typeof txConfig.fxRunner.commandLine === 'string' && txConfig.fxRunner.commandLine.length) {
-            extraArgs = parseArgsStringToArgv(txConfig.fxRunner.commandLine);
+        let startupArgs = [];
+        if (typeof txConfig.fxRunner.startupArgs === 'string' && txConfig.fxRunner.startupArgs.length) {
+            startupArgs = parseArgsStringToArgv(txConfig.fxRunner.startupArgs);
         }
 
         // Prepare default args (these convars can't change without restart)
@@ -128,10 +128,10 @@ export default class FxRunner {
             : `127.0.0.1:${convars.txAdminPort}`;
         const cmdArgs = [
             getMutableConvars(true),
-            extraArgs,
+            startupArgs,
             '+set', 'onesync', txConfig.fxRunner.onesync,
             '+sets', 'txAdmin-version', txEnv.txaVersion,
-            '+setr', 'txAdmin-menuEnabled', txConfig.global.menuEnabled,
+            '+setr', 'txAdmin-menuEnabled', txConfig.gameFeatures.menuEnabled,
             '+set', 'txAdmin-luaComHost', txAdminInterface,
             '+set', 'txAdmin-luaComToken', txCore.webServer.luaComToken,
             '+set', 'txAdminServerMode', 'true', //Can't change this one due to fxserver code compatibility
@@ -196,7 +196,7 @@ export default class FxRunner {
 
         //Validating server.cfg & configuration
         try {
-            const result = await validateFixServerConfig(txConfig.fxRunner.cfgPath, txConfig.fxRunner.serverDataPath);
+            const result = await validateFixServerConfig(txConfig.fxRunner.cfgPath, txConfig.fxRunner.dataPath);
             if (result.errors) {
                 const msg = `**Unable to start the server due to error(s) in your config file(s):**\n${result.errors}`;
                 console.error(msg);
@@ -235,7 +235,7 @@ export default class FxRunner {
                 type: 'success',
                 description: {
                     key: 'server_actions.spawning_discord',
-                    data: { servername: txConfig.global.serverName },
+                    data: { servername: txConfig.general.serverName },
                 },
             });
         }
@@ -245,7 +245,7 @@ export default class FxRunner {
             this.spawnVariables.command,
             this.spawnVariables.args,
             {
-                cwd: txConfig.fxRunner.serverDataPath,
+                cwd: txConfig.fxRunner.dataPath,
                 stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
             },
         );
@@ -347,11 +347,11 @@ export default class FxRunner {
             if (killError) return killError;
 
             //If delay override
-            if (this.restartDelayOverride) {
-                console.warn(`Restarting the fxserver with delay override ${this.restartDelayOverride}`);
-                await sleep(this.restartDelayOverride);
+            if (this.restartSpawnDelayOverride) {
+                console.warn(`Restarting the fxserver with delay override ${this.restartSpawnDelayOverride}`);
+                await sleep(this.restartSpawnDelayOverride);
             } else {
-                await sleep(txConfig.fxRunner.restartDelay);
+                await sleep(txConfig.fxRunner.restartSpawnDelayMs);
             }
 
             //Start server again :)
@@ -375,7 +375,7 @@ export default class FxRunner {
         try {
             //Prevent concurrent restart request
             const msTimestamp = Date.now();
-            if (msTimestamp - this.lastKillRequest < txConfig.fxRunner.shutdownNoticeDelay * 1000) {
+            if (msTimestamp - this.lastKillRequest < txConfig.fxRunner.shutdownNoticeDelayMs) {
                 return 'Restart already in progress.';
             } else {
                 this.lastKillRequest = msTimestamp;
@@ -386,11 +386,11 @@ export default class FxRunner {
             const messageType = isRestarting ? 'restarting' : 'stopping';
             const messageColor = isRestarting ? 'warning' : 'danger';
             const tOptions = {
-                servername: txConfig.global.serverName,
+                servername: txConfig.general.serverName,
                 reason: reasonString,
             };
             this.sendEvent('serverShuttingDown', {
-                delay: txConfig.fxRunner.shutdownNoticeDelay * 1000,
+                delay: txConfig.fxRunner.shutdownNoticeDelayMs,
                 author: author ?? 'txAdmin',
                 message: txCore.translator.t(`server_actions.${messageType}`, tOptions),
             });
@@ -404,7 +404,7 @@ export default class FxRunner {
 
             //Awaiting restart delay
             //The 250 is so at least everyone is kicked from the server
-            await sleep(250 + txConfig.fxRunner.shutdownNoticeDelay * 1000);
+            await sleep(Math.max(txConfig.fxRunner.shutdownNoticeDelayMs, 250));
 
             //Stopping server
             if (this.fxChild !== null) {
@@ -593,6 +593,6 @@ export default class FxRunner {
      * True if both the serverDataPath and cfgPath are configured
      */
     get isConfigured() {
-        return Boolean(txConfig.fxRunner.serverDataPath) && Boolean(txConfig.fxRunner.cfgPath);
+        return Boolean(txConfig.fxRunner.dataPath) && Boolean(txConfig.fxRunner.cfgPath);
     }
 };

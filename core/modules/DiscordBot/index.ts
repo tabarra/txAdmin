@@ -14,7 +14,7 @@ export type DiscordBotConfigType = {
     enabled: boolean;
     token: string;
     guild: string;
-    announceChannel: string;
+    warningsChannel: string;
     embedJson: string;
     embedConfigJson: string;
 }
@@ -151,7 +151,7 @@ export default class DiscordBot {
     async sendAnnouncement(content: AnnouncementType) {
         if (!txConfig.discordBot.enabled) return;
         if (
-            !txConfig.discordBot.announceChannel
+            !txConfig.discordBot.warningsChannel
             || !this.#client?.isReady()
             || !this.announceChannel
         ) {
@@ -194,7 +194,7 @@ export default class DiscordBot {
         try {
             const serverClients = txCore.fxPlayerlist.onlineCount;
             const serverMaxClients = txCore.cacheStore.get('fxsRuntime:maxClients') ?? '??';
-            const serverName = txConfig.global.serverName;
+            const serverName = txConfig.general.serverName;
             const message = `[${serverClients}/${serverMaxClients}] on ${serverName}`;
             this.#client.user.setActivity(message, { type: ActivityType.Watching });
         } catch (error) {
@@ -328,12 +328,12 @@ export default class DiscordBot {
                 }
 
                 //Fetching announcements channel
-                if (txConfig.discordBot.announceChannel) {
-                    const fetchedChannel = this.#client.channels.cache.find((x) => x.id === txConfig.discordBot.announceChannel);
+                if (txConfig.discordBot.warningsChannel) {
+                    const fetchedChannel = this.#client.channels.cache.find((x) => x.id === txConfig.discordBot.warningsChannel);
                     if (!fetchedChannel) {
-                        return sendError(`Channel ${txConfig.discordBot.announceChannel} not found.`);
+                        return sendError(`Channel ${txConfig.discordBot.warningsChannel} not found.`);
                     } else if (fetchedChannel.type !== ChannelType.GuildText && fetchedChannel.type !== ChannelType.GuildAnnouncement) {
-                        return sendError(`Channel ${txConfig.discordBot.announceChannel} - ${(fetchedChannel as any)?.name} is not a text or announcement channel.`);
+                        return sendError(`Channel ${txConfig.discordBot.warningsChannel} - ${(fetchedChannel as any)?.name} is not a text or announcement channel.`);
                     } else {
                         this.announceChannel = fetchedChannel;
                     }

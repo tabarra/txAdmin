@@ -39,6 +39,10 @@ Convars configured in the settings page should not be set manually.
 - Description: Will change the key used for changing pages in the menu. This value must be the exact browser key code for your preferred key. You can use [this](https://keycode.info/) website and the `event.code` section to find it.
 - Default: `Tab`
 
+**txAdmin-menuPtfxDisable**
+- Description: Determine whether to not play particles effects whenever an admin's player mode is changed.
+- Default: `false`
+
 **txAdmin-hideAdminInPunishments**
 - Description: Never show to the players the admin name on Bans or Warns.
 - Default: `true`
@@ -78,11 +82,6 @@ Convars configured in the settings page should not be set manually.
 - Description: How many seconds the drunk effect (troll action) should last.
 - Default: 30
 - Usage: `+setr txAdmin-menuDrunkDuration 120`
-
-**txAdmin-menuPtfxDisable**
-- Description: Determine whether to not play particles effects whenever an admin's player mode is changed.
-- Default: `false`
-- Usage: `+set txAdmin-menuPtfxDisable true`
 
 **txAdmin-menuAnnounceNotiPos**
 - Description: Determines the location of the txAdmin announcement notification. This **must** use one of the following valid 

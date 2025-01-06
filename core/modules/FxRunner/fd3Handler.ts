@@ -49,13 +49,13 @@ export default class Fd3Handler {
             //Handle bind errors
             if (channel === 'citizen-server-impl' && data?.type === 'bind_error') {
                 try {
-                    if (!txCore.fxRunner.restartDelayOverride) {
-                        txCore.fxRunner.restartDelayOverride = 10000;
-                    } else if (txCore.fxRunner.restartDelayOverride <= 45000) {
-                        txCore.fxRunner.restartDelayOverride += 5000;
+                    if (!txCore.fxRunner.restartSpawnDelayOverride) {
+                        txCore.fxRunner.restartSpawnDelayOverride = 10000;
+                    } else if (txCore.fxRunner.restartSpawnDelayOverride <= 45000) {
+                        txCore.fxRunner.restartSpawnDelayOverride += 5000;
                     }
                     const [_ip, port] = data.address.split(':');
-                    deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${txCore.fxRunner.restartDelayOverride}.`);
+                    deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${txCore.fxRunner.restartSpawnDelayOverride}.`);
                 } catch (e) { }
                 return;
             }
