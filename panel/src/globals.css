@@ -242,4 +242,14 @@
             }
         }
     }
+
+    /* Blurs the text input when filled and not focused */
+    .blur-input:not(:focus):not(:placeholder-shown) {
+        color: transparent !important;
+        text-shadow: 0 0 5px rgba(0,0,0,0.5) !important;
+    }
+    .dark .blur-input:not(:focus):not(:placeholder-shown) {
+        color: transparent !important;
+        text-shadow: 0 0 5px rgba(235, 235, 235, 0.5) !important;
+    }
 }

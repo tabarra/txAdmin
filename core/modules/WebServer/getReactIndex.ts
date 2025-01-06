@@ -115,6 +115,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         txaVersion: txEnv.txaVersion,
         txaOutdated: txCore.updateChecker.txaUpdateData,
         serverTimezone,
+        isWindows: txEnv.isWindows,
         isZapHosting: convars.isZapHosting, //not in use
         isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,

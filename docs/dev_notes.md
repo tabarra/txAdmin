@@ -55,6 +55,20 @@ Legend:
     - [ ] persistent cls via ts offsets
     - [ ] improve the bufferization to allow just loading most recent "block" and loading prev blocks via button
     - [ ] options dropdown?
+- [ ] custom login page
+    - [ ] FxMonitor:
+        - `setCurrentStatus()`: when it becoems online trigger `tmpRefreshServerIcon()`
+        - `tmpRefreshServerIcon()`: if diff mutex, GET `/info.json`
+        - cache new icon URL
+    - [ ] drop `projectName` from `sv_logger.lua` & `Logger/handlers/server.js`?
+    - [ ] add icon/name to login page
+    - [ ] make sure it's responsive and has default behavior
+- [ ] rethink the flow of opening the menu `/tx <id>` and teleporting to targets
+    - need to use mouse, would be better if keyboardo nly
+    - the buttons need to be bigger, and tab-selectable, or hotkeys
+    - 💡 E se na main window do tx tivesse um <Command>, então vc pode só `F1 > tp 123 > enter` e seria tão rápido quanto usar o chat?
+    - 💡 Se abrir o menu via /tx e não for redm, avisar que é melhor fazer bind
+- [ ] being able to /goto, /tpm while on noclip
 
 
 ## Database Changes
@@ -71,6 +85,8 @@ Legend:
     - happens when some page starts the server and redirects you to the live console
     - you join the room and gets initial data (directly from logger)
     - while the websocket out buffer still haven't sent the boot message
+- [!] radix select/dropdown inside dialog
+    - test the settings one as well as the ban form inside the player modal
 - [ ] xterm changes
     - [ ] deprecate canvas renderer and use the webgl instead
     - [ ] check compatibility with text scaling - `window.devicePixelRatio`
@@ -105,9 +121,9 @@ Legend:
     - [x] convert builders to use txDevEnv
     - [x] convert tx code use txDevEnv
 - [ ] New Settings Page:
-    - [ ] hide onesync
-    - [ ] new layout
-    - [ ] move all options from old page to new page (no code just yet)
+    - [x] hide onesync
+    - [x] new layout
+    - [x] move all options from old page to new page (no code just yet)
     - [ ] ?????
     - [ ] ?????
     - [ ] ?????
