@@ -13,6 +13,8 @@ import { AutosizeTextarea } from "@/components/ui/autosize-textarea"
 export function MainGroup() {
     const [whitelistMode, setWhitelistMode] = useState('disabled');
 
+    // FIXME: adicionar um warning no whitelistedDiscordRoles se o whitelistMode não for guildRoles
+
     return (<>
         <SettingItem label="Whitelist Mode">
             <RadioGroup defaultValue={whitelistMode} onValueChange={setWhitelistMode}>

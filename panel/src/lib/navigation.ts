@@ -70,3 +70,17 @@ export const setUrlSearchParam = (paramName: string, ref: string | undefined) =>
     }
     window.history.replaceState({}, '', pageUrl);
 }
+
+
+/**
+ * Sets the window URL hash to a given value, or deletes it if value is undefined
+ */
+export const setUrlHash = (hash: string | undefined) => {
+    const pageUrl = new URL(window.location.href);
+    if (hash) {
+        pageUrl.hash = hash;
+    } else {
+        pageUrl.hash = '';
+    }
+    window.history.replaceState(null, '', pageUrl.toString());
+}

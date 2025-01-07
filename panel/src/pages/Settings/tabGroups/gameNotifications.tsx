@@ -1,7 +1,7 @@
-import TxAnchor from '@/components/TxAnchor'
-import SwitchText from '@/components/SwitchText'
-import InlineCode from '@/components/InlineCode'
-import { SettingItem, SettingItemDesc } from '../settingsItems'
+import TxAnchor from '@/components/TxAnchor';
+import SwitchText from '@/components/SwitchText';
+import InlineCode from '@/components/InlineCode';
+import { SettingItem, SettingItemDesc } from '../settingsItems';
 
 
 export function MainGroup() {

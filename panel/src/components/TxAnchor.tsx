@@ -30,7 +30,7 @@ type TxAnchorType = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 export default function TxAnchor({ children, href, className, rel, ...rest }: TxAnchorType) {
     const setLocation = useLocation()[1];
-    const isExternal = href?.startsWith('http');
+    const isExternal = href?.startsWith('http') || href?.startsWith('//');
     const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         if (!href) return;
         e.preventDefault();

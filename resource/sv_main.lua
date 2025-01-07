@@ -313,7 +313,7 @@ end
 --- Handler for the imminent shutdown event
 --- Kicks all players and lock joins in preparation for server shutdown
 TX_EVENT_HANDLERS.serverShuttingDown = function(eventData)
-    txPrint('Server shutdown imminent. Kicking all players.')
+    txPrint('Server shutting down. Kicking all players.')
     TX_IS_SERVER_SHUTTING_DOWN = true
     local players = GetPlayers()
     for _, serverID in pairs(players) do

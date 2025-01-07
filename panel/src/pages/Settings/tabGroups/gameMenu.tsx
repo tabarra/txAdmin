@@ -3,8 +3,6 @@ import SwitchText from '@/components/SwitchText'
 import InlineCode from '@/components/InlineCode'
 import { SettingItem, SettingItemDesc } from '../settingsItems'
 import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import TxAnchor from "@/components/TxAnchor";
 
 
 export function MainGroup() {
@@ -73,24 +71,6 @@ export function AdvancedGroup() {
             <SettingItemDesc>
                 Play a particle effect and sound when an admin uses NoClip, God Mode, etc. <br />
                 <strong className="text-warning-inline">Warning:</strong> This options help prevent admin abuse during PvP by making it visible/audible to all players that an admin is using a special mode. We recommend keeping it enabled.
-            </SettingItemDesc>
-        </SettingItem>
-        <SettingItem label="Announcement Position" required>
-            <Select>
-                <SelectTrigger id="announcementPosition">
-                    <SelectValue placeholder="Select position" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="top-center">Top Center (default)</SelectItem>
-                    <SelectItem value="top-left">Top Left</SelectItem>
-                    <SelectItem value="top-right">Top Right</SelectItem>
-                    <SelectItem value="bottom-center">Bottom Center</SelectItem>
-                    <SelectItem value="bottom-left">Bottom Left</SelectItem>
-                    <SelectItem value="bottom-right">Bottom Right</SelectItem>
-                </SelectContent>
-            </Select>
-            <SettingItemDesc>
-                The location of the announcement and direct message cards on the game screen.
             </SettingItemDesc>
         </SettingItem>
     </>)
