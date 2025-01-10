@@ -28,12 +28,27 @@ RegisterNetEvent('txcl:freezePlayerOk', function(isFrozen)
   sendSnackbarMessage('info', localeKey, true)
 end)
 
-RegisterNetEvent('txcl:setFrozen', function(isFrozen)
-  debugPrint('Frozen: ' .. tostring(isFrozen))
-  --NOTE: removed the check for vehicle, but could be done with 
-  -- IsPedInAnyVehicle for vehicles and IsPedOnMount for horses
+local isPlayerFrozen = false
+RegisterNetEvent('txcl:setFrozen', function(setFrozen)
+  debugPrint('Frozen: ' .. tostring(setFrozen))
+  isPlayerFrozen = setFrozen
+
+  -- Freeze player
   local playerPed = PlayerPedId()
   TaskLeaveAnyVehicle(playerPed, 0, 16)
-  FreezeEntityPosition(playerPed, isFrozen)
-  sendFreezeAlert(isFrozen)
+  FreezeEntityPosition(playerPed, setFrozen)
+  sendFreezeAlert(setFrozen)
+
+  -- If frozen, prevent the player from spawning a vehicle
+  if setFrozen then
+    CreateThread(function()
+      while isPlayerFrozen do
+        local vehicleOrMount = getPedVehicle()
+        if vehicleOrMount ~= nil then
+          DeleteEntity(vehicleOrMount)
+        end
+        Wait(100)
+      end
+    end)
+  end
 end)

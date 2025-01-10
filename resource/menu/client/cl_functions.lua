@@ -163,3 +163,19 @@ function playLibrarySound(sound)
         PlaySoundFrontend(redmSoundLibrary[sound][1], redmSoundLibrary[sound][2], true, 1);
     end
 end
+
+-- Get vehicle that player is in
+function getPedVehicle()
+    local ped = PlayerPedId()
+    local veh
+    if IS_REDM and IsPedOnMount(ped) then
+        veh = GetMount(ped)
+    else
+        veh = GetVehiclePedIsIn(ped, false)
+    end
+    if veh and veh > 0 then
+        return veh
+    else
+        return nil
+    end
+end
