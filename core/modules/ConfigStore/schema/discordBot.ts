@@ -28,16 +28,26 @@ const warningsChannel = typeNullableConfig({
     fixer: SYM_FIXER_DEFAULT,
 });
 
+
+//We are not validating the JSON, only that it is a string
+export const attemptMinifyJsonString = (input: string) => {
+    try {
+        return JSON.stringify(JSON.parse(input));
+    } catch (error) {
+        return input;
+    }
+};
+
 const embedJson = typeDefinedConfig({
     default: defaultEmbedJson,
-    validator: z.string().min(1),
+    validator: z.string().min(1).transform(attemptMinifyJsonString),
     //NOTE: no true valiation in here, done in the module only
     fixer: SYM_FIXER_DEFAULT,
 });
 
 const embedConfigJson = typeDefinedConfig({
     default: defaultEmbedConfigJson,
-    validator: z.string().min(1),
+    validator: z.string().min(1).transform(attemptMinifyJsonString),
     //NOTE: no true valiation in here, done in the module only
     fixer: SYM_FIXER_DEFAULT,
 });
