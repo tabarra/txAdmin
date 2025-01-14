@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ConfigScope, ListOf } from "./utils";
 import general from "./general";
-import fxRunner from "./fxRunner";
+import server from "./server";
 import restarter from "./restarter";
 import banlist from "./banlist";
 import whitelist from "./whitelist";
@@ -19,7 +19,7 @@ type IferConfigValues<S extends ConfigScope> = {
 //Exporting the schemas
 export const ConfigSchemas_v2 = {
     general,
-    fxRunner,
+    server,
     restarter,
     banlist,
     whitelist,

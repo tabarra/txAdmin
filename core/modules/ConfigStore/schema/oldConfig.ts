@@ -35,7 +35,7 @@ export const restructureOldConfig = (old: any) => {
             embedJson: old?.discordBot?.embedJson,
             embedConfigJson: old?.discordBot?.embedConfigJson,
         },
-        fxRunner: {//FIXME: rename
+        server: {//NOTE:renamed
             dataPath: old?.fxRunner?.serverDataPath, //NOTE:renamed
             cfgPath: old?.fxRunner?.cfgPath,
             startupArgs: old?.fxRunner?.commandLine, //NOTE:renamed

@@ -95,7 +95,7 @@ export default class FXServerLogger extends LoggerBase {
         this.fileBuffer += fileBuffer;
 
         //For the terminal
-        if (!txConfig.fxRunner.quiet) {
+        if (!txConfig.server.quiet) {
             process.stdout.write(stdoutBuffer);
         }
 

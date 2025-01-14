@@ -77,18 +77,18 @@ export const migrateConfigFile = (fileData: any): ConfigFileData => {
             //@ts-ignore
             remapped.restarter.bootCooldown = Math.round(remapped.restarter.bootCooldown);
         }
-        if (typeof remapped.fxRunner?.shutdownNoticeDelayMs === 'number') {
+        if (typeof remapped.server?.shutdownNoticeDelayMs === 'number') {
             //@ts-ignore
-            remapped.fxRunner.shutdownNoticeDelayMs *= 1000;
+            remapped.server.shutdownNoticeDelayMs *= 1000;
         }
-        if (remapped.fxRunner?.restartSpawnDelayMs === 750) {
+        if (remapped.server?.restartSpawnDelayMs === 750) {
             //@ts-ignore
-            remapped.fxRunner.restartSpawnDelayMs = 500;
+            remapped.server.restartSpawnDelayMs = 500;
         }
-        if (typeof remapped.fxRunner?.startupArgs === 'string') {
+        if (typeof remapped.server?.startupArgs === 'string') {
             //@ts-ignore
-            remapped.fxRunner.startupArgs = remapped.fxRunner.startupArgs.length
-                ? parseArgsStringToArgv(remapped.fxRunner.startupArgs)
+            remapped.server.startupArgs = remapped.server.startupArgs.length
+                ? parseArgsStringToArgv(remapped.server.startupArgs)
                 : [];
         }
 

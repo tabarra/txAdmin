@@ -23,7 +23,7 @@ const getResourceSubPath = (resPath) => {
     if (resPath.indexOf('system_resources') >= 0) return 'system_resources';
     if (!path.isAbsolute(resPath)) return resPath;
 
-    let serverDataPathArr = breakPath(`${txConfig.fxRunner.dataPath}/resources`);
+    let serverDataPathArr = breakPath(`${txConfig.server.dataPath}/resources`);
     let resPathArr = breakPath(resPath);
     for (let i = 0; i < serverDataPathArr.length; i++) {
         if (isUndefined(resPathArr[i])) break;

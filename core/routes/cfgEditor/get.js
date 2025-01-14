@@ -23,7 +23,7 @@ export default async function CFGEditorPage(ctx) {
     //Read cfg file
     let rawFile;
     try {
-        let cfgFilePath = resolveCFGFilePath(txConfig.fxRunner.cfgPath, txConfig.fxRunner.dataPath);
+        let cfgFilePath = resolveCFGFilePath(txConfig.server.cfgPath, txConfig.server.dataPath);
         rawFile = await readRawCFGFile(cfgFilePath);
     } catch (error) {
         let message = `Failed to read CFG File with error: ${error.message}`;
