@@ -72,7 +72,11 @@ export const restructureOldConfig = (old: any) => {
             hideDefaultWarning: old?.global?.hideDefaultWarning,
             hideDefaultScheduledRestartWarning: old?.global?.hideDefaultScheduledRestartWarning,
         },
-        logger: old?.logger,
+        logger: {
+            admin: old?.logger?.admin,
+            fxserver: old?.logger?.fxserver,
+            server: old?.logger?.server,
+        },
     }
 
     return remapped;

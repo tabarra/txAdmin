@@ -28,14 +28,14 @@ export class LoggerBase {
         lrProfileConfig: rfs.Options | false = false
     ) {
         //Sanity check
-        if (!basePath || !logName) throw new Error('Missing LoggerBase constructor parameters');
+        if (!basePath || !logName) throw new Error('Missing constructor parameters');
         this.basePath = basePath;
         this.activeFilePath = path.join(basePath, `${logName}.log`);
         this.logNameRegex = new RegExp(`^${logName}(_\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}(_\\d+)?)?.log$`);
 
         //If disabled
         if (lrProfileConfig === false) {
-            console.warn(`${logName} persistent logging disabled.`, logName);
+            console.warn('persistent logging disabled for:', logName);
             this.lrStream = {
                 write: () => { },
             } as any as rfs.RotatingFileStream;

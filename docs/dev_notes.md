@@ -129,8 +129,8 @@ Legend:
     - [x] decide on the REVIEW_SAVE_EMPTY_STRING vars
     - [x] write schemas
     - [x] write parser + migration
-    - [ ] migrate the scope `fxRunner` -> `server`
-    - [ ] migrate txConfig.logger 
+    - [x] migrate the scope `fxRunner` -> `server`
+    - [x] migrate txConfig.logger 
     - [ ] migrate txConfig.banTemplates
     - [ ] migrate txConfig.gameFeatures.playerModePtfx
     - [ ] 

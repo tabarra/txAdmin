@@ -8,6 +8,7 @@ import whitelist from "./whitelist";
 import discordBot from "./discordBot";
 import gameFeatures from "./gameFeatures";
 import webServer from "./webServer";
+import logger from "./logger";
 
 
 //Type inference utils
@@ -26,6 +27,7 @@ export const ConfigSchemas_v2 = {
     discordBot,
     gameFeatures,
     webServer,
+    logger,
 } satisfies ListOf<ConfigScope>;
 
 //Exporting the types

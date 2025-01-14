@@ -36,7 +36,7 @@ export default class FXServerLogger extends LoggerBase {
     private readonly recentBufferMaxSize = 256 * 1024; //kb
     private readonly recentBufferTrimSliceSize = 32 * 1024; //how much will be cut when overflows
 
-    constructor(basePath: string, lrProfileConfig: RfsOptions) {
+    constructor(basePath: string, lrProfileConfig: RfsOptions | false) {
         const lrDefaultOptions = {
             path: basePath,
             intervalBoundary: true,
