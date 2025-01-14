@@ -132,7 +132,7 @@ Legend:
     - [x] migrate the scope `fxRunner` -> `server`
     - [x] migrate txConfig.logger 
     - [x] implement config saving
-    - [ ] migrate txConfig.banTemplates
+    - [x] migrate txConfig.banTemplates
     - [ ] migrate txConfig.gameFeatures.playerModePtfx
     - [x] implement changelog
     - [ ] implement the refreshConfig() stuff

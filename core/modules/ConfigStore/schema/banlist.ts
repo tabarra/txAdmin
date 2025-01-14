@@ -1,10 +1,19 @@
 import { z } from "zod";
 import { typeDefinedConfig, SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from "./utils";
 
+import { alphanumeric } from 'nanoid-dictionary';
+import { customAlphabet } from "nanoid";
+
+
+
 
 /**
  * MARK: Ban templates
  */
+export const BAN_TEMPLATE_ID_LENGTH = 21;
+
+export const genBanTemplateId = customAlphabet(alphanumeric, BAN_TEMPLATE_ID_LENGTH);
+
 export const BanDurationTypeSchema = z.union([
     z.literal('permanent'),
     z.object({
@@ -15,11 +24,30 @@ export const BanDurationTypeSchema = z.union([
 export type BanDurationType = z.infer<typeof BanDurationTypeSchema>;
 
 export const BanTemplatesDataSchema = z.object({
-    id: z.string().length(21), //nanoid fixed at 21 chars
+    id: z.string().length(BAN_TEMPLATE_ID_LENGTH), //nanoid fixed at 21 chars
     reason: z.string().min(3).max(2048), //should be way less, but just in case
     duration: BanDurationTypeSchema,
 });
 export type BanTemplatesDataType = z.infer<typeof BanTemplatesDataSchema>;
+
+//Ensure all templates have unique ids
+export const polishBanTemplatesArray = (input: BanTemplatesDataType[]) => {
+    const ids = new Set();
+    const unique: BanTemplatesDataType[] = [];
+    for (const template of input) {
+        if (ids.has(template.id)) {
+            unique.push({
+                ...template,
+                id: genBanTemplateId(),
+            });
+        } else {
+            unique.push(template);
+        }
+        ids.add(template.id);
+    }
+    return unique;
+}
+
 
 
 /**
@@ -45,7 +73,7 @@ const requiredHwidMatches = typeDefinedConfig({
 
 const templates = typeDefinedConfig({
     default: [],
-    validator: BanTemplatesDataSchema.array(),
+    validator: BanTemplatesDataSchema.array().transform(polishBanTemplatesArray),
     //NOTE: if someone messed with their templates and broke it, we don't want to wipe it all out
     fixer: SYM_FIXER_FATAL,
 });
