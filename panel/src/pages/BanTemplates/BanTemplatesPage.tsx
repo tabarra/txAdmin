@@ -98,7 +98,6 @@ export default function BanTemplatesPage() {
     }
 
     const handleOnSave = ({ id, reason, duration }: BanTemplatesInputData) => {
-        console.log('Save item', id, reason, duration);
         if (id) {
             updateBackend((prev) =>
                 prev.map((item) =>

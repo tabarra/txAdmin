@@ -12,6 +12,8 @@ Legend:
 ## Pending Improvements
 - [ ] Player drops page
     - [!] fix: blurred chart lines
+        - `imageRendering: 'pixelated'` might fix it
+        - try messing with the canvas size +- 0.5
     - [!] fix: crashes table overflowing (DrilldownCrashesSubcard.tsx)
     - [ ] review page layout: 
         - [ ] make it less card-y
@@ -69,6 +71,8 @@ Legend:
     - 💡 E se na main window do tx tivesse um <Command>, então vc pode só `F1 > tp 123 > enter` e seria tão rápido quanto usar o chat?
     - 💡 Se abrir o menu via /tx e não for redm, avisar que é melhor fazer bind
 - [ ] being able to /goto, /tpm while on noclip
+- [ ] add stats tracking for runtime usage
+    - fw team request, probably a new native `GetResourceRuntimes(resName)`
 
 
 ## Database Changes
@@ -122,10 +126,12 @@ Legend:
     - [x] convert tx code use txDevEnv
 - [ ] Config migrations:
     - [x] commit renaming wip
-    - [ ] decide on the REVIEW_SAVE_EMPTY_STRING vars 
+    - [x] decide on the REVIEW_SAVE_EMPTY_STRING vars
+    - [x] write schemas
+    - [x] write parser + migration
+    - [ ] migrate the scope `fxRunner` -> `server`
     - [ ] migrate txConfig.logger 
-    - [ ] migrate txConfig.banTemplates 
-    - [ ] migrate txConfig.discordBot.embed*Json 
+    - [ ] migrate txConfig.banTemplates
     - [ ] migrate txConfig.gameFeatures.playerModePtfx
     - [ ] 
     - [ ] 
@@ -141,6 +147,11 @@ Legend:
     - [ ] double check:
         - check if all text fields and selects have the `htmlFor`
         - check if all textarea fields are auto-sized
+        - If shutdownNoticeDelayMs & restartSpawnDelayMs are really ms, and being migrated from secs for the case of shutdownNoticeDelay
+
+- [ ] track resource download times?
+
+
 
 - [ ] Layout refactor:
     - não ter espaço em branco abaixo do header
@@ -155,8 +166,6 @@ Legend:
 - NOTE: resoluções mobile
     - 360x510 menor razoável
     - 390x670 mais comum
-    
-- [ ] new txConfig
 - [ ] remove dynamicAds from the modules
 
 
@@ -180,28 +189,6 @@ Legend:
 - Consider using Blob
     - https://developer.mozilla.org/en-US/docs/Web/API/Blob
     - https://chatgpt.com/c/670bf1f6-8ee4-8001-a731-3a219266d4c1
-
-
-
-## Refactor: New Config
-- FIXME: cfg file name should be hidden, just default to server.cfg
-- Save only what changed? Or save all in the settings page?
-- Do not make template config.json file on setup, only an empty-ish file
-- File Format:
-    - Use dot notation, save it flat
-    - perhaps use array format `banTemplates[0]=<json>`
-    - perhaps use toml
-    - Only acceptable values are json types except objects to prevent accidental mutations?
-    - Maybe don't even json the file, make something closer to a `.env`, line separated
-    - NOTE: check [ref](../core/configParser.tmp.ts)
-- Config needs versioning and migrations
-- Allow registerUpdateCallback to pass wildcards
-    - https://www.npmjs.com/package/minimatch - used by node itself
-    - https://www.npmjs.com/package/micromatch
-    - https://www.npmjs.com/package/picomatch
-    - https://www.npmjs.com/package/wildcard - super small
-    - https://www.npmjs.com/package/matcher - super small
-
 
 
 ## Refactor: AdminVault
@@ -322,6 +309,9 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
 - [ ] Try to replace all the host stats/data with stuff from the SI lib (eg `systeminformation.processLoad()`).
     - They are already using GWMI: https://github.com/sebhildebrandt/systeminformation/issues/616
     - Pay attention to the boot and shutdown comments
+    - NOTE: keep in mind the processor time vs utility difference:
+        - https://github.com/citizenfx/fivem/commit/034acc7ed47ec12ca4cfb64a83570cad7dde8f0c
+        - https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/cpu-usage-exceeds-100
     - NOTE: Old ref:
         - update stuff that requires WMIC to use PS command directly
         - issue: https://github.com/tabarra/txAdmin/issues/970#issuecomment-2308462733

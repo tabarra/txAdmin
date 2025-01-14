@@ -34,7 +34,7 @@ export const defaultEmbedJson = JSON.stringify({
     "thumbnail": {
         "url": "https://forum-cfx-re.akamaized.net/original/5X/9/b/d/7/9bd744dc2b21804e18c3bb331e8902c930624e44.png"
     }
-}, null, 2);
+});
 
 export const defaultEmbedConfigJson = JSON.stringify({
     "onlineString": "🟢 Online",
@@ -60,4 +60,4 @@ export const defaultEmbedConfigJson = JSON.stringify({
             "url": "https://zap-hosting.com/txadmin6"
         }
     ]
-}, null, 2);
+});

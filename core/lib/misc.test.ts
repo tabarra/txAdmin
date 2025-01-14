@@ -4,12 +4,12 @@ import * as misc from './misc';
 
 suite('parseSchedule', () => {
     it('should parse a valid schedule', () => {
-        const result = misc.parseSchedule(['00:00', '00:15', '12:30', '1:30']);
+        const result = misc.parseSchedule(['00:00', '00:15', '1:30', '12:30']);
         expect(result.valid).toEqual([
             { string: '00:00', hours: 0, minutes: 0 },
             { string: '00:15', hours: 0, minutes: 15 },
-            { string: '12:30', hours: 12, minutes: 30 },
             { string: '01:30', hours: 1, minutes: 30 },
+            { string: '12:30', hours: 12, minutes: 30 },
         ]);
         expect(result.invalid).toEqual([]);
     });
@@ -29,6 +29,28 @@ suite('parseSchedule', () => {
             { string: '12:34', hours: 12, minutes: 34 },
         ]);
         expect(result.invalid).toEqual(['invalid', '1030', '25:00', '1', '01']);
+    });
+
+    it('should remove duplicates', () => {
+        const result = misc.parseSchedule(['02:00', '02:00', '05:55', '13:55']);
+        expect(result.valid).toEqual([
+            { string: '02:00', hours: 2, minutes: 0 },
+            { string: '05:55', hours: 5, minutes: 55 },
+            { string: '13:55', hours: 13, minutes: 55 },
+        ]);
+        expect(result.invalid).toEqual([]);
+    });
+
+    it('should sort the times', () => {
+        const result = misc.parseSchedule(['00:00', '00:01', '23:59', '01:01', '01:00']);
+        expect(result.valid).toEqual([
+            { string: '00:00', hours: 0, minutes: 0 },
+            { string: '00:01', hours: 0, minutes: 1 },
+            { string: '01:00', hours: 1, minutes: 0 },
+            { string: '01:01', hours: 1, minutes: 1 },
+            { string: '23:59', hours: 23, minutes: 59 },
+        ]);
+        expect(result.invalid).toEqual([]);
     });
 });
 

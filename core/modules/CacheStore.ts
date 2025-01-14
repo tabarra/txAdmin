@@ -9,7 +9,7 @@ const console = consoleFactory(modulename);
 //NOTE: due to limitations on how we compare value changes we can only accept these types
 //This is to prevent saving the same value repeatedly (eg sv_maxClients every 3 seconds)
 type AcceptedCachedTypes = string | boolean | number | null;
-const isAcceptedType = (val: any) => {
+const isAcceptedType = (val: any): val is AcceptedCachedTypes => {
     const valType = typeof val;
     return (val === null || valType === 'string' || valType === 'boolean' || valType === 'number');
 }

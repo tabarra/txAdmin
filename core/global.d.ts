@@ -75,7 +75,7 @@ declare type TxAdminConfigs = {
         hideDefaultScheduledRestartWarning: boolean,
         hideAdminInPunishments: boolean,
         hideAdminInMessages: boolean,
-    }
+    },
     banlist: {
         enabled: boolean;
         rejectionMessage: string;
@@ -86,7 +86,7 @@ declare type TxAdminConfigs = {
         mode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
         rejectionMessage: string;
         discordRoles: string[];
-    }
+    },
     restarter: AnythingButConfig,
     fxRunner: AnythingButConfig,
     discordBot: import('@modules/DiscordBot').DiscordBotConfigType,
