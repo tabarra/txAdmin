@@ -35,11 +35,10 @@ export type TxConfigScopes = keyof typeof ConfigSchemas_v2;
 export type TxConfigs = {
     [K in TxConfigScopes]: InferConfigScopes<typeof ConfigSchemas_v2[K]>
 };
-export type PartialTxConfigs = {
+export type PartialTxConfigs = Partial<{
     [K in TxConfigScopes]: Partial<InferConfigScopes<typeof ConfigSchemas_v2[K]>>
-};
+}>;
+export type ConfigFileData = PartialTxConfigs & { version: number };
 
 //Allow unknown scopes/keys
 export type ConfigScaffold = ListOf<ListOf<any>>;
-export type StoredTxConfigs = PartialTxConfigs & ConfigScaffold;
-export type ConfigFileData = PartialTxConfigs & { version: number };

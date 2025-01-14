@@ -131,12 +131,14 @@ Legend:
     - [x] write parser + migration
     - [x] migrate the scope `fxRunner` -> `server`
     - [x] migrate txConfig.logger 
+    - [x] implement config saving
     - [ ] migrate txConfig.banTemplates
     - [ ] migrate txConfig.gameFeatures.playerModePtfx
+    - [x] implement changelog
+    - [ ] implement the refreshConfig() stuff
+    - [ ] migrate all cfg mutation routes
     - [ ] 
-    - [ ] 
-    - [ ] 
-    - [ ] ?????
+    - [ ] check all typescript errors in all files
     - [ ] remove `./core/configMapping.tmp.ts` (was committed)
     - [ ] check all ConfigStore methods (including txCore.configStore.getRawFile())
     - [ ] core/routes/diagnostics/sendReport.ts

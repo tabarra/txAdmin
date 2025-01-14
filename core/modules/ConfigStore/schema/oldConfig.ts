@@ -1,9 +1,12 @@
+import { compact, isEqual } from "lodash";
+import parseArgsStringToArgv from "string-argv";
+import { ConfigSchemas_v2 } from ".";
+import { ListOf } from "./utils";
+import { genBanTemplateId } from "./banlist";
+import { getConfigDefaults } from "../configParser";
+import { confx } from "../confx";
 
-
-import type { StoredTxConfigs } from "./index";
-
-
-export const restructureOldConfig = (old: any) => {
+const restructureOldConfig = (old: any) => {
     //Apply the legacy migrations (mutation)
     old.playerDatabase ??= old.playerDatabase ?? old.playerController ?? {};
     if (old.global.language === 'pt_PT' || old.global.language === 'pt_BR') {
@@ -17,7 +20,7 @@ export const restructureOldConfig = (old: any) => {
     }
 
     //Remap the old config to the new structure
-    const remapped: StoredTxConfigs = {
+    const remapped: TxConfigs = {
         general: { //NOTE:renamed
             serverName: old?.global?.serverName,
             language: old?.global?.language,
@@ -65,6 +68,7 @@ export const restructureOldConfig = (old: any) => {
             menuEnabled: old?.global?.menuEnabled,
             menuAlignRight: old?.global?.menuAlignRight,
             menuPageKey: old?.global?.menuPageKey,
+            playerModePtfx: true, //NOTE: new config
             hideAdminInPunishments: old?.global?.hideAdminInPunishments,
             hideAdminInMessages: old?.global?.hideAdminInMessages,
             hideDefaultAnnouncement: old?.global?.hideDefaultAnnouncement,
@@ -81,3 +85,52 @@ export const restructureOldConfig = (old: any) => {
 
     return remapped;
 };
+
+
+export const migrateOldConfig = (old: any) => {
+    //Get the old configs in the new structure
+    const remapped = restructureOldConfig(old) as any;
+
+    //Some migrations before comparing because defaults changed
+    if (typeof remapped.restarter?.bootCooldown === 'number') {
+        remapped.restarter.bootCooldown = Math.round(remapped.restarter.bootCooldown);
+    }
+    if (typeof remapped.server?.shutdownNoticeDelayMs === 'number') {
+        remapped.server.shutdownNoticeDelayMs *= 1000;
+    }
+    if (remapped.server?.restartSpawnDelayMs === 750) {
+        remapped.server.restartSpawnDelayMs = 500;
+    }
+    if (typeof remapped.server?.startupArgs === 'string') {
+        remapped.server.startupArgs = remapped.server.startupArgs.length
+            ? parseArgsStringToArgv(remapped.server.startupArgs)
+            : [];
+    }
+
+    //Extract just the non-default values
+    const baseConfigs = getConfigDefaults(ConfigSchemas_v2) as TxConfigs;
+    const justNonDefaults: ListOf<any> = {};
+    for (const [scopeName, scopeConfigs] of Object.entries(baseConfigs)) {
+        for (const [configKey, configDefault] of Object.entries(scopeConfigs)) {
+            const configValue = confx(remapped).get(scopeName, configKey);
+            if (configValue === undefined) continue;
+            if (!isEqual(configValue, configDefault)) {
+                confx(justNonDefaults).set(scopeName, configKey, configValue);
+            }
+        }
+    }
+
+    //Last migrations
+    if (typeof justNonDefaults.general?.serverName === 'string') {
+        justNonDefaults.general.serverName = justNonDefaults.general.serverName.slice(0, 18);
+    }
+    if (Array.isArray(justNonDefaults.banlist?.templates)) {
+        for (const tpl of justNonDefaults.banlist.templates) {
+            if (typeof tpl.id !== 'string') continue;
+            tpl.id = genBanTemplateId();
+        }
+    }
+
+    //Final object
+    return justNonDefaults;
+}
