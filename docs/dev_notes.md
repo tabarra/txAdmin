@@ -135,7 +135,7 @@ Legend:
     - [x] migrate txConfig.banTemplates
     - [ ] migrate txConfig.gameFeatures.playerModePtfx
     - [x] implement changelog
-    - [ ] implement the refreshConfig() stuff
+    - [x] implement the refreshConfig() stuff
     - [ ] migrate all cfg mutation routes
     - [ ] 
     - [ ] check all typescript errors in all files

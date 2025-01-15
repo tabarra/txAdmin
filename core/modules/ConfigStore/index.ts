@@ -18,6 +18,7 @@ const console = consoleFactory(modulename);
 export type RefreshConfigKey = { scope: string, key: string };
 export type RefreshConfigFunc = (updatedConfigs: RefreshConfigKey[]) => void;
 type RefreshConfigRegistry = {
+    moduleName: string,
     callback: RefreshConfigFunc,
     rules: RefreshConfigKey[],
 }[];
@@ -169,7 +170,7 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
     /**
      * Saves the config.json file, maintaining the unknown configs
      */
-    public saveFile(toStore: PartialTxConfigs) {
+    private saveFile(toStore: PartialTxConfigs) {
         const outFile = {
             version: CONFIG_VERSION,
             ...this.unknownConfigs,
@@ -241,7 +242,12 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
 
                 if (changesMatched) {
                     setImmediate(() => {
-                        txModule.callback(updatedConfigs);
+                        try {
+                            txModule.callback(updatedConfigs);
+                        } catch (error) {
+                            console.error(`Error in config update callback for module ${txModule.moduleName}: ${(error as any).message}`);
+                            console.verbose.dir(error);
+                        }
                     });
                     break; // Break the loop once the callback is called for this module
                 }
@@ -249,11 +255,13 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
         }
     }
 
+
     /**
      * Register a callback to be called when the config is updated
      */
-    public registerUpdateCallback(rules: string[], callback: RefreshConfigFunc) {
+    public registerUpdateCallback(moduleName: string, rules: string[], callback: RefreshConfigFunc) {
         this.moduleRefreshCallbacks.push({
+            moduleName,
             callback,
             rules: rules.map(rule => {
                 const [scope, key] = rule.split('.');

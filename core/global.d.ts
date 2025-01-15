@@ -1,12 +1,19 @@
 /**
  * MARK: txAdmin stuff
  */
-declare interface GenericTxModule<T> {
-    new(): T;
-    // configKeys: string[]; //TODO
-    // refreshConfig?: (newConfig: any, keysUpdated: string[]) => void;
-    // measureMemory?: () => { [key: string]: number };
+type RefreshConfigKey = import('@modules/ConfigStore/').RefreshConfigKey;
+type RefreshConfigFunc = import('@modules/ConfigStore/').RefreshConfigFunc;
+interface GenericTxModuleInstance {
+    public handleConfigUpdate?: RefreshConfigFunc;
+    // public measureMemory?: () => { [key: string]: number };
 }
+declare interface GenericTxModule<T> {
+    new(): InstanceType<T> & GenericTxModuleInstance;
+    static readonly configKeysWatched?: string[];
+}
+
+declare type TxConfigs = import('@modules/ConfigStore/schema').TxConfigs
+declare const txConfig: TxConfigs;
 
 declare type TxCoreType = import('./txAdmin').TxCoreType;
 declare const txCore: TxCoreType;

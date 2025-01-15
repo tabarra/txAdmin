@@ -74,8 +74,18 @@ export default function bootTxAdmin() {
     //Helper function to start the modules
     const startModule = <T>(Class: GenericTxModule<T>): T => {
         const instance = new Class();
-        //TODO: add config keys registration
-        return instance;
+        if(Array.isArray(Class.configKeysWatched) && Class.configKeysWatched.length > 0){
+            if(!('handleConfigUpdate' in instance) || typeof instance?.handleConfigUpdate !== 'function'){
+                throw new Error(`Module '${Class.constructor.name}' has configKeysWatched but no handleConfigUpdate function`);
+            }
+            _txCore.configStore.registerUpdateCallback(
+                Class.name,
+                Class.configKeysWatched,
+                instance.handleConfigUpdate.bind(instance),
+            );
+        }
+        
+        return instance as T;
     };
 
     //High Priority (required for banner) 
