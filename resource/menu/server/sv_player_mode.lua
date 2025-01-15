@@ -3,7 +3,7 @@ if not TX_SERVER_MODE then return end
 -- Prevent running if menu is disabled
 if not TX_MENU_ENABLED then return end
 
-local IS_PTFX_DISABLED = GetConvarBool('txAdmin-menuPtfxDisable')
+local IS_PTFX_ENABLED = GetConvarBool('txAdmin-playerModePtfx', true)
 
 RegisterNetEvent('txsv:req:changePlayerMode', function(mode, nearbyPlayers)
   local src = source
@@ -15,9 +15,9 @@ RegisterNetEvent('txsv:req:changePlayerMode', function(mode, nearbyPlayers)
   local allow = PlayerHasTxPermission(src, 'players.playermode')
   TriggerEvent('txsv:logger:menuEvent', src, "playerModeChanged", allow, mode)
   if allow then
-    TriggerClientEvent('txcl:setPlayerMode', src, mode, not IS_PTFX_DISABLED)
+    TriggerClientEvent('txcl:setPlayerMode', src, mode, IS_PTFX_ENABLED)
 
-    if not IS_PTFX_DISABLED then
+    if IS_PTFX_ENABLED then
       for _, v in ipairs(nearbyPlayers) do
         TriggerClientEvent('txcl:showPtfx', v, src)
       end

@@ -133,7 +133,7 @@ Legend:
     - [x] migrate txConfig.logger 
     - [x] implement config saving
     - [x] migrate txConfig.banTemplates
-    - [ ] migrate txConfig.gameFeatures.playerModePtfx
+    - [x] migrate txConfig.gameFeatures.playerModePtfx
     - [x] implement changelog
     - [x] implement the refreshConfig() stuff
     - [x] migrate the old uses of refreshConfig to new config watcher

@@ -39,9 +39,9 @@ Convars configured in the settings page should not be set manually.
 - Description: Will change the key used for changing pages in the menu. This value must be the exact browser key code for your preferred key. You can use [this](https://keycode.info/) website and the `event.code` section to find it.
 - Default: `Tab`
 
-**txAdmin-menuPtfxDisable**
-- Description: Determine whether to not play particles effects whenever an admin's player mode is changed.
-- Default: `false`
+**txAdmin-playerModePtfx**
+- Description: Determine whether to play particles effects and sound whenever an admin's player mode is changed, such as when enabling god mode or noclip.
+- Default: `true`
 
 **txAdmin-hideAdminInPunishments**
 - Description: Never show to the players the admin name on Bans or Warns.

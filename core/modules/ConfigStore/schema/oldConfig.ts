@@ -101,7 +101,22 @@ export const migrateOldConfig = (old: any) => {
     if (remapped.server?.restartSpawnDelayMs === 750) {
         remapped.server.restartSpawnDelayMs = 500;
     }
+
+    //Migrating the menu ptfx convar (can't do anything about it being set in server.cfg tho)
     if (typeof remapped.server?.startupArgs === 'string') {
+        try {
+            const str = remapped.server.startupArgs.trim();
+            const convarSetRegex = /\+setr?\s+['"]?txAdmin-menuPtfxDisable['"]?\s+['"]?(?<value>\w+)['"]?\s?/g;
+            const matches = [...str.matchAll(convarSetRegex)];
+            if (matches.length) {
+                const valueSet = matches[matches.length - 1].groups?.value;
+                remapped.gameFeatures.playerModePtfx = valueSet !== 'true';
+                remapped.server.startupArgs = str.replaceAll(convarSetRegex, '');
+            }
+        } catch (error) {
+            console.warn('Failed to migrate the menuPtfxDisable convar. Assuming it\'s unset.');
+            console.verbose.dir(error);
+        }
         remapped.server.startupArgs = remapped.server.startupArgs.length
             ? parseArgsStringToArgv(remapped.server.startupArgs)
             : [];
