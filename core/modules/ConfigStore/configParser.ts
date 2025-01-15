@@ -1,9 +1,9 @@
 const modulename = 'ConfigStore:Parser';
 import consoleFactory from "@lib/console";
-import { ConfigFileData, ConfigScaffold, PartialTxConfigs } from "./schema";
+import { ConfigFileData, ConfigScaffold } from "./schema";
 import { ConfigScope, ListOf, ScopeConfigItem, SYM_FIXER_DEFAULT, SYM_RESET_CONFIG } from "./schema/utils";
-import { confx } from "./confx";
-import { RefreshConfigKey } from ".";
+import { confx, UpdateConfigKeySet } from "./utils";
+import { RefreshConfigKey } from "./index";
 import { cloneDeep, isEqual } from "lodash";
 const console = consoleFactory(modulename);
 
@@ -154,8 +154,8 @@ export const runtimeConfigProcessor = (
     activeConfigs: ConfigScaffold,
 ) => {
     //Scaffold the objects
-    const storedKeysChanges: RefreshConfigKey[] = [];
-    const activeKeysChanges: RefreshConfigKey[] = [];
+    const storedKeysChanges = new UpdateConfigKeySet();
+    const activeKeysChanges = new UpdateConfigKeySet();
     const thisStoredCopy = cloneDeep(storedConfigs);
     const thisActiveCopy = cloneDeep(activeConfigs);
 
@@ -179,7 +179,7 @@ export const runtimeConfigProcessor = (
 
         //Check if the value is different from the stored value
         if (newValue !== confx(thisStoredCopy).get(scope, key)) {
-            storedKeysChanges.push({ scope, key });
+            storedKeysChanges.add(scope, key);
             confx(thisStoredCopy).set(scope, key, newValue);
         }
 
@@ -190,7 +190,7 @@ export const runtimeConfigProcessor = (
 
         //Check if the value is different from the active value
         if (!isEqual(newValue, confx(thisActiveCopy).get(scope, key))) {
-            activeKeysChanges.push({ scope, key });
+            activeKeysChanges.add(scope, key);
             confx(thisActiveCopy).set(scope, key, newValue);
         }
     }

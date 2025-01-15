@@ -137,7 +137,11 @@ Legend:
     - [x] implement changelog
     - [x] implement the refreshConfig() stuff
     - [ ] migrate all cfg mutation routes
+    - [ ] update `./core/boot/setup.ts` to use `public static ConfigStore.getEmptyConfigFile()`
+        - maybe pick hostname as default?
     - [ ] 
+    - [ ] test `txConfig.server.startupArgs`
+        - [ ] test if `server.startupArgs = ['+set']`, invalidates the next 2 args 
     - [ ] check all typescript errors in all files
     - [ ] remove `./core/configMapping.tmp.ts` (was committed)
     - [ ] check all ConfigStore methods (including txCore.configStore.getRawFile())

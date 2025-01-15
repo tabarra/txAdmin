@@ -37,7 +37,8 @@ export default async function AdvancedActions(ctx) {
     //Action: Change Verbosity
     if (action == 'change_verbosity') {
         console.setVerbose(parameter == 'true');
-        txCore.fxRunner.resetConvars();
+        //temp disabled because the verbosity convar is not being set by this method
+        // txCore.fxRunner.updateMutableConvars();
         return ctx.send({ refresh: true });
     } else if (action == 'perform_magic') {
         const message = JSON.stringify(txCore.fxPlayerlist.getPlayerList(), null, 2);
@@ -63,8 +64,8 @@ export default async function AdvancedActions(ctx) {
     } else if (action == 'freeze') {
         console.warn('Freezing process for 50 seconds.');
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50 * 1000);
-    } else if (action == 'resetConvars') {
-        txCore.fxRunner.resetConvars();
+    } else if (action == 'updateMutableConvars') {
+        txCore.fxRunner.updateMutableConvars();
         return ctx.send({ refresh: true });
     } else if (action == 'reauth') {
         // txaEvent "adminsUpdated" "[1,5,7]"

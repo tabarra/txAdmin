@@ -1,3 +1,4 @@
+import { RefreshConfigKey } from ".";
 import { ConfigScaffold } from "./schema";
 
 
@@ -69,3 +70,51 @@ export const confxTyped = <T extends ConfigScaffold>(cfg: T) => {
         },
     };
 };
+
+
+/**
+ * Helper class to deal with config keys
+ */
+export class UpdateConfigKeySet {
+    public readonly raw: RefreshConfigKey[] = [];
+
+    public add(input1: string, input2?: string) {
+        let full, scope, key;
+        if (input2) {
+            full = `${input1}.${input2}`;
+            scope = input1;
+            key = input2;
+        } else {
+            full = input1;
+            [scope, key] = input1.split('.');
+        }
+        if (full.includes('*')) {
+            throw new Error('Wildcards are not allowed when adding config keys');
+        }
+        this.raw.push({ full, scope, key });
+    }
+
+    private _hasMatch(rule: string) {
+        const [inputScope, inputKey] = rule.split('.');
+        return this.raw.some(rawCfg =>
+            (inputScope === '*' || rawCfg.scope === inputScope) &&
+            (inputKey === '*' || rawCfg.key === inputKey)
+        );
+    }
+
+    public hasMatch(rule: string | string[]) {
+        if (Array.isArray(rule)) {
+            return rule.some(f => this._hasMatch(f));
+        } else {
+            return this._hasMatch(rule);
+        }
+    }
+
+    get size() {
+        return this.raw.length;
+    }
+
+    get list() {
+        return this.raw.map(x => x.full);
+    }
+}

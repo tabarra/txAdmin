@@ -67,14 +67,6 @@ export default class FxMonitor {
 
 
     /**
-     * Refresh Monitor configurations
-     */
-    refreshConfig() {
-        // ???
-    }
-
-
-    /**
      * Restart the FXServer and logs everything
      */
     async restartFxChild(reasonInternal: string, reasonTranslated: string, timesPrefix: string) {

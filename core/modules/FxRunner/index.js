@@ -14,41 +14,13 @@ import { customAlphabet } from 'nanoid/non-secure';
 import dict49 from 'nanoid-dictionary/nolookalikes';
 import consoleFactory from '@lib/console';
 import { ConsoleLineType } from '@modules/Logger/FXServerLogger';
+import { getMutableConvars, mutableConvarConfigDependencies } from './utils';
 const console = consoleFactory(modulename);
 const genMutex = customAlphabet(dict49, 5);
 
 
 //Helpers
-const getMutableConvars = (isCmdLine = false) => {
-    const checkPlayerJoin = (
-        txConfig.banlist.enabled
-        || txConfig.whitelist.mode !== 'disabled'
-    );
 
-    //type, name, value
-    const convars = [
-        ['set', 'txAdmin-serverName', txConfig.general.serverName ?? 'txAdmin'],
-        ['setr', 'txAdmin-locale', txConfig.general.language ?? 'en'],
-        ['set', 'txAdmin-localeFile', txCore.translator.customLocalePath ?? false],
-        ['setr', 'txAdmin-verbose', console.isVerbose],
-        ['set', 'txAdmin-checkPlayerJoin', checkPlayerJoin],
-        ['set', 'txAdmin-menuAlignRight', txConfig.gameFeatures.menuAlignRight],
-        ['set', 'txAdmin-menuPageKey', txConfig.gameFeatures.menuPageKey],
-        ['set', 'txAdmin-hideAdminInPunishments', txConfig.gameFeatures.hideAdminInPunishments],
-        ['set', 'txAdmin-hideAdminInMessages', txConfig.gameFeatures.hideAdminInMessages],
-        ['set', 'txAdmin-hideDefaultAnnouncement', txConfig.gameFeatures.hideDefaultAnnouncement],
-        ['set', 'txAdmin-hideDefaultDirectMessage', txConfig.gameFeatures.hideDefaultDirectMessage],
-        ['set', 'txAdmin-hideDefaultWarning', txConfig.gameFeatures.hideDefaultWarning],
-        ['set', 'txAdmin-hideDefaultScheduledRestartWarning', txConfig.gameFeatures.hideDefaultScheduledRestartWarning],
-    ]; //satisfies [set: string, name: string, value: any][]
-
-    const prefix = isCmdLine ? '+' : '';
-    return convars.map((c) => ([
-        prefix + c[0],
-        c[1],
-        c[2].toString(),
-    ]));
-};
 
 //Blackhole event logger
 let lastBlackHoleSpewTime = 0;
@@ -68,6 +40,9 @@ const chanEventBlackHole = (...args) => {
  * Module responsible for handling the FXServer process.
  */
 export default class FxRunner {
+    //FIXME: add readonly prop when moving to typescript
+    static configKeysWatched = [...mutableConvarConfigDependencies];
+
     constructor() {
         //Checking config validity
         if (txConfig.fxRunner.shutdownNoticeDelayMs < 0 || txConfig.fxRunner.shutdownNoticeDelayMs > 30_000) {
@@ -87,10 +62,10 @@ export default class FxRunner {
 
 
     /**
-     * Refresh fxRunner configurations
+     * Triggers a convar update
      */
-    refreshConfig() {
-        // ???
+    handleConfigUpdate(updatedConfigs) {
+        this.updateMutableConvars();
     }
 
 
@@ -98,7 +73,7 @@ export default class FxRunner {
      * Receives the signal that all the start banner was already printed and other modules loaded
      */
     signalStartReady() {
-        if (!txConfig.fxRunner.autoStart) return;
+        if (!txConfig.server.autoStart) return;
 
         if (!this.isConfigured) {
             return console.warn('Please open txAdmin on the browser to configure your server.');
@@ -116,26 +91,20 @@ export default class FxRunner {
      * Setup the spawn parameters
      */
     setupVariables() {
-        // Prepare extra args
-        let startupArgs = [];
-        if (typeof txConfig.fxRunner.startupArgs === 'string' && txConfig.fxRunner.startupArgs.length) {
-            startupArgs = parseArgsStringToArgv(txConfig.fxRunner.startupArgs);
-        }
-
-        // Prepare default args (these convars can't change without restart)
         const txAdminInterface = (convars.forceInterface)
             ? `${convars.forceInterface}:${convars.txAdminPort}`
             : `127.0.0.1:${convars.txAdminPort}`;
+
         const cmdArgs = [
-            getMutableConvars(true),
-            startupArgs,
-            '+set', 'onesync', txConfig.fxRunner.onesync,
+            getMutableConvars(true), //those are the ones that can change without restart
+            txConfig.server.startupArgs,
+            '+set', 'onesync', txConfig.server.onesync,
             '+sets', 'txAdmin-version', txEnv.txaVersion,
             '+setr', 'txAdmin-menuEnabled', txConfig.gameFeatures.menuEnabled,
             '+set', 'txAdmin-luaComHost', txAdminInterface,
             '+set', 'txAdmin-luaComToken', txCore.webServer.luaComToken,
             '+set', 'txAdminServerMode', 'true', //Can't change this one due to fxserver code compatibility
-            '+exec', txConfig.fxRunner.cfgPath,
+            '+exec', txConfig.server.cfgPath,
         ].flat(2);
 
         // Configure spawn parameters according to the environment
@@ -196,7 +165,7 @@ export default class FxRunner {
 
         //Validating server.cfg & configuration
         try {
-            const result = await validateFixServerConfig(txConfig.fxRunner.cfgPath, txConfig.fxRunner.dataPath);
+            const result = await validateFixServerConfig(txConfig.server.cfgPath, txConfig.server.dataPath);
             if (result.errors) {
                 const msg = `**Unable to start the server due to error(s) in your config file(s):**\n${result.errors}`;
                 console.error(msg);
@@ -245,7 +214,7 @@ export default class FxRunner {
             this.spawnVariables.command,
             this.spawnVariables.args,
             {
-                cwd: txConfig.fxRunner.dataPath,
+                cwd: txConfig.server.dataPath,
                 stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
             },
         );
@@ -351,7 +320,7 @@ export default class FxRunner {
                 console.warn(`Restarting the fxserver with delay override ${this.restartSpawnDelayOverride}`);
                 await sleep(this.restartSpawnDelayOverride);
             } else {
-                await sleep(txConfig.fxRunner.restartSpawnDelayMs);
+                await sleep(txConfig.server.restartSpawnDelayMs);
             }
 
             //Start server again :)
@@ -375,7 +344,7 @@ export default class FxRunner {
         try {
             //Prevent concurrent restart request
             const msTimestamp = Date.now();
-            if (msTimestamp - this.lastKillRequest < txConfig.fxRunner.shutdownNoticeDelayMs) {
+            if (msTimestamp - this.lastKillRequest < txConfig.server.shutdownNoticeDelayMs) {
                 return 'Restart already in progress.';
             } else {
                 this.lastKillRequest = msTimestamp;
@@ -390,7 +359,7 @@ export default class FxRunner {
                 reason: reasonString,
             };
             this.sendEvent('serverShuttingDown', {
-                delay: txConfig.fxRunner.shutdownNoticeDelayMs,
+                delay: txConfig.server.shutdownNoticeDelayMs,
                 author: author ?? 'txAdmin',
                 message: txCore.translator.t(`server_actions.${messageType}`, tOptions),
             });
@@ -404,7 +373,7 @@ export default class FxRunner {
 
             //Awaiting restart delay
             //The 250 is so at least everyone is kicked from the server
-            await sleep(Math.max(txConfig.fxRunner.shutdownNoticeDelayMs, 250));
+            await sleep(Math.max(txConfig.server.shutdownNoticeDelayMs, 250));
 
             //Stopping server
             if (this.fxChild !== null) {
@@ -431,17 +400,16 @@ export default class FxRunner {
      * Useful for when we change txAdmin settings and want it to reflect on the server.
      * This will also fire the `txAdmin:event:configChanged`
      */
-    resetConvars() {
-        console.log('Refreshing fxserver convars.');
+    updateMutableConvars() {
+        console.log('Updating FXServer ConVars.');
         try {
             const convarList = getMutableConvars(false);
-            console.verbose.dir(convarList);
             for (const [set, convar, value] of convarList) {
                 this.sendCommand(set, [convar, value]);
             }
             return this.sendEvent('configChanged');
         } catch (error) {
-            console.verbose.error('Error resetting server convars');
+            console.verbose.error('Error updating FXServer ConVars');
             console.verbose.dir(error);
             return false;
         }
@@ -593,6 +561,6 @@ export default class FxRunner {
      * True if both the serverDataPath and cfgPath are configured
      */
     get isConfigured() {
-        return Boolean(txConfig.fxRunner.dataPath) && Boolean(txConfig.fxRunner.cfgPath);
+        return Boolean(txConfig.server.dataPath) && Boolean(txConfig.server.cfgPath);
     }
 };

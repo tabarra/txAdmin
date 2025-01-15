@@ -11,16 +11,17 @@ import { deepFreeze } from '@lib/misc';
 import { parseConfigFileData, bootstrapConfigProcessor, runtimeConfigProcessor, getConfigDefaults } from './configParser';
 import { ListOf, SYM_RESET_CONFIG } from './schema/utils';
 import { CCLOG_VERSION, ConfigChangelogEntry, ConfigChangelogFileSchema, truncateConfigChangelog } from './changelog';
+import { UpdateConfigKeySet } from './utils';
 const console = consoleFactory(modulename);
 
 
 //Types
-export type RefreshConfigKey = { scope: string, key: string };
-export type RefreshConfigFunc = (updatedConfigs: RefreshConfigKey[]) => void;
+export type RefreshConfigKey = { full: string, scope: string, key: string };
+export type RefreshConfigFunc = (updatedConfigs: UpdateConfigKeySet) => void;
 type RefreshConfigRegistry = {
     moduleName: string,
     callback: RefreshConfigFunc,
-    rules: RefreshConfigKey[],
+    rules: string[],
 }[];
 
 //Consts
@@ -183,8 +184,8 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
     /**
      * Logs changes to logger and changelog file
      */
-    private async logChanges(author: string, updatedConfigs: RefreshConfigKey[]) {
-        const updatedKeys = updatedConfigs.map(c => `${c.scope}.${c.key}`);
+    private async logChanges(author: string, updatedConfigs: UpdateConfigKeySet) {
+        const updatedKeys = updatedConfigs.raw.map(c => c.full);
         txCore.logger.admin.write(author, `Config changes: ${updatedKeys.join(', ')}`);
         this.changelog.push({
             author,
@@ -230,28 +231,17 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
     /**
      * Process the callbacks for the modules that registered for config changes
      */
-    private processCallbacks(updatedConfigs: RefreshConfigKey[]) {
+    private processCallbacks(updatedConfigs: UpdateConfigKeySet) {
         for (const txModule of this.moduleRefreshCallbacks) {
-            for (const updatedConfig of updatedConfigs) {
-                const changesMatched = txModule.rules.some(
-                    rule => (
-                        rule.scope === updatedConfig.scope &&
-                        (rule.key === updatedConfig.key || rule.key === '*')
-                    )
-                );
-
-                if (changesMatched) {
-                    setImmediate(() => {
-                        try {
-                            txModule.callback(updatedConfigs);
-                        } catch (error) {
-                            console.error(`Error in config update callback for module ${txModule.moduleName}: ${(error as any).message}`);
-                            console.verbose.dir(error);
-                        }
-                    });
-                    break; // Break the loop once the callback is called for this module
+            if(!updatedConfigs.hasMatch(txModule.rules)) continue;
+            setImmediate(() => {
+                try {
+                    txModule.callback(updatedConfigs);
+                } catch (error) {
+                    console.error(`Error in config update callback for module ${txModule.moduleName}: ${(error as any).message}`);
+                    console.verbose.dir(error);
                 }
-            }
+            });
         }
     }
 
@@ -263,10 +253,7 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
         this.moduleRefreshCallbacks.push({
             moduleName,
             callback,
-            rules: rules.map(rule => {
-                const [scope, key] = rule.split('.');
-                return { scope, key };
-            }),
+            rules,
         });
     }
 }

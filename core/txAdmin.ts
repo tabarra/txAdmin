@@ -76,7 +76,7 @@ export default function bootTxAdmin() {
         const instance = new Class();
         if(Array.isArray(Class.configKeysWatched) && Class.configKeysWatched.length > 0){
             if(!('handleConfigUpdate' in instance) || typeof instance?.handleConfigUpdate !== 'function'){
-                throw new Error(`Module '${Class.constructor.name}' has configKeysWatched but no handleConfigUpdate function`);
+                throw new Error(`Module '${Class.name}' has configKeysWatched[] but no handleConfigUpdate()`);
             }
             _txCore.configStore.registerUpdateCallback(
                 Class.name,

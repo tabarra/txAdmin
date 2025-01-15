@@ -53,12 +53,6 @@ export default class Database {
         return this.#db.isReady;
     }
 
-    /**
-     * Refresh configurations
-     */
-    refreshConfig() {
-        // ???
-    }
 
     /**
      * Returns the entire lowdb object. Please be careful with it :)

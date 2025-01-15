@@ -1,7 +1,6 @@
 /**
  * MARK: txAdmin stuff
  */
-type RefreshConfigKey = import('@modules/ConfigStore/').RefreshConfigKey;
 type RefreshConfigFunc = import('@modules/ConfigStore/').RefreshConfigFunc;
 interface GenericTxModuleInstance {
     public handleConfigUpdate?: RefreshConfigFunc;

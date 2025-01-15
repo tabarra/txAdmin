@@ -35,6 +35,8 @@ const getNextScheduled = (parsedSchedule) => {
  * or a temporary schedule set by the user at runtime.
  */
 export default class FxScheduler {
+    static configKeysWatched = ['restarter.schedule']; //FIXME: add readonly prop when moving to typescript
+
     constructor() {
         this.nextSkip = false;
         this.nextTempSchedule = false;
@@ -51,7 +53,7 @@ export default class FxScheduler {
     /**
      * Refresh configs, resets skip and temp scheduled, runs checkSchedule.
      */
-    refreshConfig() {
+    handleConfigUpdate(updatedConfigs) {
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.checkSchedule();

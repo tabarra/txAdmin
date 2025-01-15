@@ -1,11 +1,11 @@
 const modulename = 'Translator';
 import fs from 'node:fs';
-import path from 'node:path';
 import Polyglot from 'node-polyglot';
 import { txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
+import type { UpdateConfigKeySet } from './ConfigStore/utils';
 const console = consoleFactory(modulename);
 
 
@@ -14,13 +14,13 @@ const console = consoleFactory(modulename);
  * The locale files are indexed by the localeMap in the shared folder.
  */
 export default class Translator {
-    canonical: string = 'en-GB'; //Using GB instead of US due to date/time formats 
-    readonly customLocalePath: string;
+    static readonly configKeysWatched = ['general.language'];
+
+    public readonly customLocalePath = `${txEnv.dataPath}/locale.json`;
+    public canonical: string = 'en-GB'; //Using GB instead of US due to date/time formats 
     #polyglot: Polyglot | null = null;
 
     constructor() {
-        this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');
-
         //Load language
         this.setupTranslator(true);
     }
@@ -58,18 +58,10 @@ export default class Translator {
 
 
     /**
-     * Refresh translator configurations
+     * Handle updates to the config by resetting the translator
      */
-    refreshConfig() {
-        //Change config and restart polyglot
+    public handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
         this.setupTranslator(false);
-
-        //Rebuild Monitor's schedule with new text and refreshes fxserver convars
-        try {
-            txCore.fxRunner.resetConvars();
-        } catch (error) {
-            console.verbose.dir(error);
-        }
     }
 
 

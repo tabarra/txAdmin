@@ -287,7 +287,6 @@ async function handleSaveLocal(ctx) {
     }
 
     //Refreshing config
-    txCore.fxRunner.refreshConfig();
     txCore.cacheStore.set('deployer:recipe', 'none');
 
     //Logging

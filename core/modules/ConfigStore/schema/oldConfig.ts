@@ -4,7 +4,7 @@ import { ConfigSchemas_v2 } from ".";
 import { ListOf } from "./utils";
 import { genBanTemplateId } from "./banlist";
 import { getConfigDefaults } from "../configParser";
-import { confx } from "../confx";
+import { confx } from "../utils";
 
 const restructureOldConfig = (old: any) => {
     //Apply the legacy migrations (mutation)

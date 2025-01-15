@@ -243,7 +243,6 @@ async function handleSaveConfig(ctx) {
         });
     }
 
-    txCore.fxRunner.refreshConfig();
     txCore.metrics.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     ctx.admin.logAction('Completed and committed server deploy.');
 

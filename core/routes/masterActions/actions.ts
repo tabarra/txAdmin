@@ -71,7 +71,6 @@ async function handleResetFXServer(ctx: AuthedCtx) {
     txCore.webServer.webSocket.pushRefresh('status');
 
     //Sending output
-    txCore.fxRunner.refreshConfig();
     ctx.admin.logAction('Resetting fxRunner settings.');
     return ctx.send({ success: true });
 }

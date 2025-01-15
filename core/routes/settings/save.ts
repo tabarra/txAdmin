@@ -108,7 +108,6 @@ async function handleGlobal(ctx: AuthedCtx) {
     }
 
     //Sending output
-    txCore.translator.refreshConfig();
     ctx.admin.logAction('Changing global settings.');
     return ctx.send({ type: 'success', markdown: true, message: '**Global configuration saved!**' });
 }
@@ -188,10 +187,6 @@ async function handleFXServer(ctx: AuthedCtx) {
     }
 
     //Sending output
-    if(hasServerDataPathChanged || hasCfgPathChanged){
-        txCore.metrics.playerDrop.resetLog('Server Data Path or CFG Path changed.');
-    }
-    txCore.fxRunner.refreshConfig();
     ctx.admin.logAction('Changing fxRunner settings.');
     return ctx.send({
         type: 'success',
@@ -284,9 +279,6 @@ async function handlePlayerDatabase(ctx: AuthedCtx) {
     }
 
     //Sending output
-    txCore.metrics.txRuntime.whitelistCheckTime.clear();
-    txCore.database.refreshConfig();
-    txCore.fxRunner.resetConvars();
     ctx.admin.logAction('Changing Player Manager settings.');
     return ctx.send({
         type: 'success',
@@ -344,8 +336,6 @@ async function handleMonitor(ctx: AuthedCtx) {
     }
 
     //Sending output
-    txCore.fxMonitor.refreshConfig();
-    txCore.fxScheduler.refreshConfig();
     ctx.admin.logAction('Changing monitor settings.');
     return ctx.send({
         type: 'success',
@@ -534,7 +524,6 @@ async function handleMenu(ctx: AuthedCtx) {
     }
 
     //Sending output
-    txCore.fxRunner.resetConvars();
     ctx.admin.logAction('Changing menu settings.');
     return ctx.send({
         type: 'success',

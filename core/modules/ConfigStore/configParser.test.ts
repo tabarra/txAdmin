@@ -190,8 +190,8 @@ suite('runtimeConfigProcessor', () => {
         expect(result.stored.example.serverName).toBe('NewServer');
         expect(result.active.example.serverName).toBe('NewServer');
         expect(result.active.server.dataPath).toBe('/active/path');
-        expect(result.storedKeysChanges).toEqual([{ scope: 'example', key: 'serverName' }]);
-        expect(result.activeKeysChanges).toEqual([{ scope: 'example', key: 'serverName' }]);
+        expect(result.storedKeysChanges.list).toEqual(['example.serverName']);
+        expect(result.activeKeysChanges.list).toEqual(['example.serverName']);
     });
 
     it('should reset config to default', () => {
@@ -201,8 +201,8 @@ suite('runtimeConfigProcessor', () => {
         const result = runtimeConfigProcessor(parsedInput, allConfigScopes, storedConfigs, activeConfigs);
         expect(result.stored.example.serverName).toBeUndefined();
         expect(result.active.example.serverName).toBe('change-me');
-        expect(result.storedKeysChanges).toEqual([{ scope: 'example', key: 'serverName' }]);
-        expect(result.activeKeysChanges).toEqual([{ scope: 'example', key: 'serverName' }]);
+        expect(result.storedKeysChanges.list).toEqual(['example.serverName']);
+        expect(result.activeKeysChanges.list).toEqual(['example.serverName']);
     });
 
     it('should list the correct changes', () => {
@@ -211,8 +211,8 @@ suite('runtimeConfigProcessor', () => {
             { scope: 'server', key: 'dataPath', value: '/active/path' },
         ];
         const result = runtimeConfigProcessor(parsedInput, allConfigScopes, storedConfigs, activeConfigs);
-        expect(result.storedKeysChanges).toEqual([{ scope: 'server', key: 'dataPath' }]);
-        expect(result.activeKeysChanges).toEqual([{ scope: 'example', key: 'serverName' }]);
+        expect(result.storedKeysChanges.list).toEqual(['server.dataPath']);
+        expect(result.activeKeysChanges.list).toEqual(['example.serverName']);
     });
 
     it('should throw error for invalid config changes', () => {
