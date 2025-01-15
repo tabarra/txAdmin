@@ -135,5 +135,7 @@ export const deepFreeze = <T extends Record<string, any>>(obj: T) => {
             deepFreeze(obj[prop] as object);
         }
     });
-    return obj as DeepReadonly<T>;
+    return obj;
+    //FIXME: using DeepReadonly<T> will cause ts errors in ConfigStore
+    // return obj as DeepReadonly<T>;
 };

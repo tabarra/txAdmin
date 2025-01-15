@@ -245,7 +245,10 @@ export default class DiscordBot {
                 return reject(e);
             }
 
-            //Check for guild id
+            //Check for configs
+            if (typeof txConfig.discordBot.token !== 'string' || !txConfig.discordBot.token.length) {
+                return sendError('Discord bot enabled while token is not set.');
+            }
             if (typeof txConfig.discordBot.guild !== 'string' || !txConfig.discordBot.guild.length) {
                 return sendError('Discord bot enabled while guild id is not set.');
             }

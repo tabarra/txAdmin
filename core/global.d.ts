@@ -1,3 +1,5 @@
+//NOTE: don't import anything at the root of this file or it breaks the type definitions
+
 /**
  * MARK: txAdmin stuff
  */
@@ -19,88 +21,6 @@ declare const txCore: TxCoreType;
 
 declare type TxManagerType = import('./txManager').TxManagerType;
 declare const txManager: TxManagerType;
-
-//FIXME: temporary
-type AnythingButConfig = {
-    config: never;
-    [key: string]: any;
-};
-declare type TxAdminConfigsOld = {
-    config: never,
-    global: {
-        serverName: string,
-        language: string,
-        menuEnabled: boolean,
-        menuAlignRight: boolean,
-        menuPageKey: string,
-
-        hideDefaultAnnouncement: boolean,
-        hideDefaultDirectMessage: boolean,
-        hideDefaultWarning: boolean,
-        hideDefaultScheduledRestartWarning: boolean,
-        hideAdminInPunishments: boolean,
-        hideAdminInMessages: boolean,
-    },
-    logger: AnythingButConfig,
-    monitor: AnythingButConfig,
-    playerDatabase: {
-        onJoinCheckBan: boolean;
-        banRejectionMessage: string;
-        banRequiredHwidMatches: number;
-
-        whitelistMode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
-        whitelistDiscordRoles: string[];
-        whitelistRejectionMessage: string;
-    },
-    webServer: import('@modules/WebServer').WebServerConfigType,
-    discordBot: {
-        enabled: boolean;
-        token: string;
-        guild: string;
-        announceChannel: string;
-        embedJson: string;
-        embedConfigJson: string;
-    },
-    fxRunner: AnythingButConfig,
-    banTemplates: AnythingButConfig,
-};
-
-declare type TxAdminConfigs = {
-    config: never,
-    general: {
-        serverName: string,
-        language: string,
-    },
-    gameFeatures: {
-        menuEnabled: boolean,
-        menuAlignRight: boolean,
-        menuPageKey: string,
-        hideDefaultAnnouncement: boolean,
-        hideDefaultDirectMessage: boolean,
-        hideDefaultWarning: boolean,
-        hideDefaultScheduledRestartWarning: boolean,
-        hideAdminInPunishments: boolean,
-        hideAdminInMessages: boolean,
-    },
-    banlist: {
-        enabled: boolean;
-        rejectionMessage: string;
-        requiredHwidMatches: number;
-        banTemplates: AnythingButConfig,
-    },
-    whitelist: {
-        mode: 'disabled' | 'adminOnly' | 'guildMember' | 'guildRoles' | 'approvedLicense';
-        rejectionMessage: string;
-        discordRoles: string[];
-    },
-    restarter: AnythingButConfig,
-    fxRunner: AnythingButConfig,
-    discordBot: import('@modules/DiscordBot').DiscordBotConfigType,
-    webServer: import('@modules/WebServer').WebServerConfigType,
-
-    logger: AnythingButConfig,
-};
-declare let txConfig: TxAdminConfigs;
 
 declare type TxConsole = import('./lib/console').TxConsole;
 declare namespace globalThis {

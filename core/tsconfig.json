@@ -19,6 +19,7 @@
     "baseUrl": "./",
 
     /* Specify a set of entries that re-map imports to additional lookup locations. */
+    // WARNING: do not break the array into lines as it will break the parser in ./vitest.config.ts
     "paths": {
       "@shared/*": ["../shared/*"],
       "@lib/*": ["./lib/*"],

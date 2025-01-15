@@ -136,6 +136,7 @@ Legend:
     - [ ] migrate txConfig.gameFeatures.playerModePtfx
     - [x] implement changelog
     - [x] implement the refreshConfig() stuff
+    - [x] migrate the old uses of refreshConfig to new config watcher
     - [ ] migrate all cfg mutation routes
     - [ ] update `./core/boot/setup.ts` to use `public static ConfigStore.getEmptyConfigFile()`
         - maybe pick hostname as default?
@@ -146,6 +147,7 @@ Legend:
     - [ ] remove `./core/configMapping.tmp.ts` (was committed)
     - [ ] check all ConfigStore methods (including txCore.configStore.getRawFile())
     - [ ] core/routes/diagnostics/sendReport.ts
+    - [ ] test setting up new profile from scratch
 - [ ] New Settings Page:
     - [x] hide onesync
     - [x] new layout
@@ -154,8 +156,10 @@ Legend:
         - check if all text fields and selects have the `htmlFor`
         - check if all textarea fields are auto-sized
         - If shutdownNoticeDelayMs & restartSpawnDelayMs are really ms, and being migrated from secs for the case of shutdownNoticeDelay
+- [ ] create a global (or console?) `emsg(e: unknown)` that gets the message from an Error, and returns its message
+    - replace all `(error as Error).message` and `(error as any).message`
 
-- [ ] track resource download times?
+
 
 
 
@@ -276,6 +280,7 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - Add a checkbox to the kick modal to mark it as a punishment
 
 - [ ] add average session time tracking to Metrics.playerDrop
+- [ ] track resource download times?
 
 - [ ] fazer validação dos dados do banco usando a versão compilada do zod
     - acho que tem essa ferramenta no playground do https://github.com/sinclairzx81/typebox
