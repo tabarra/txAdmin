@@ -62,7 +62,8 @@
     "throttle-debounce": "^5.0.2",
     "unicode-emoji-json": "^0.8.0",
     "xss": "^1.0.15",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
     "@types/bytes": "^3.1.4",

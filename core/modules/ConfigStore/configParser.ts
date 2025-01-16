@@ -5,6 +5,7 @@ import { ConfigScope, ListOf, ScopeConfigItem, SYM_FIXER_DEFAULT, SYM_RESET_CONF
 import { confx, UpdateConfigKeySet } from "./utils";
 import { RefreshConfigKey } from "./index";
 import { cloneDeep, isEqual } from "lodash";
+import { fromZodError } from "zod-validation-error";
 const console = consoleFactory(modulename);
 
 
@@ -136,7 +137,7 @@ export const bootstrapConfigProcessor = (
             active[scope][key] = fResult.value;
         } else {
             console.warn(`Invalid value for '${scope}.${key}': ${(zResult.error as any).message}`);
-            throw fResult?.error ?? zResult.error;
+            throw fResult?.error ?? fromZodError(zResult.error, { prefix: `${scope}.${key}` });
         }
     }
 
@@ -172,7 +173,7 @@ export const runtimeConfigProcessor = (
         } else {
             const zResult = configSchema.validator.safeParse(value);
             if (!zResult.success) {
-                throw new Error(`Invalid value for '${scope}.${key}': ${(zResult.error as any).message}`);
+                throw fromZodError(zResult.error, { prefix: `${scope}.${key}` });
             }
             newValue = zResult.data;
         }

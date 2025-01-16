@@ -259,30 +259,36 @@ async function handleSaveLocal(ctx) {
 
     //Validating Server Data Path
     try {
-        if (!fse.existsSync(path.join(cfg.dataFolder, 'resources'))) {
-            throw new Error('Invalid path');
+        const stat = await fsp.stat(path.join(cfg.dataFolder, 'resources'))
+        if (!stat.isDirectory()) {
+            throw new Error('not a directory');
         }
     } catch (error) {
-        return ctx.send({success: false, message: `<strong>Server Data Folder error:</strong> ${error.message}`});
+        let msg = error?.message ?? 'unknown error';
+        if (error?.code === 'ENOENT') {
+            msg = 'The server data folder does not exist.';
+        }
+        return ctx.send({success: false, message: `<strong>Server Data Folder error:</strong> ${msg}`});
     }
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
-    newGlobalConfig.serverName = cfg.name;
-    const newFXRunnerConfig = txCore.configStore.getScopedStructure('fxRunner');
-    newFXRunnerConfig.serverDataPath = cfg.dataFolder;
-    newFXRunnerConfig.cfgPath = cfg.cfgFile;
     try {
-        txCore.configStore.saveProfile('global', newGlobalConfig);
-        txCore.configStore.saveProfile('fxRunner', newFXRunnerConfig);
-        txCore.metrics.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+        txCore.configStore.saveConfigs({
+            general: {
+                serverName: cfg.name,
+            },
+            server: {
+                dataPath: cfg.dataFolder,
+                cfgPath: cfg.cfgFile,
+            }
+        }, ctx.admin.name);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global/fxserver settings via setup stepper.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `**Error saving the configuration file:** ${error.message}`
+            message: `**Error saving the configuration file:**\n${error.message}`
         });
     }
 

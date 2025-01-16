@@ -37,6 +37,9 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
     public static Schema = ConfigSchemas_v2;
     public static SchemaDefaults = getConfigDefaults(ConfigSchemas_v2);
     public static SYM_RESET_CONFIG = SYM_RESET_CONFIG;
+    public static getEmptyConfigFile() {
+        return { version: CONFIG_VERSION };
+    }
 
     //Instance
     private readonly changelogFilePath = `${txEnv.profilePath}/data/configChangelog.json`;
@@ -93,7 +96,7 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
         //Parse & validate
         try {
             const configItems = parseConfigFileData(fileData);
-            if (!configItems.length) throw new Error(`Empty config file`);
+            if (!configItems.length) console.verbose.debug('Empty configuration file.');
             const config = bootstrapConfigProcessor(configItems, ConfigSchemas_v2, ConfigStore.SchemaDefaults);
             this.unknownConfigs = config.unknown;
             this.storedConfigs = config.stored as PartialTxConfigs;

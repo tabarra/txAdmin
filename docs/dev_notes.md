@@ -137,10 +137,16 @@ Legend:
     - [x] implement changelog
     - [x] implement the refreshConfig() stuff
     - [x] migrate the old uses of refreshConfig to new config watcher
-    - [ ] migrate all cfg mutation routes
-    - [ ] update `./core/boot/setup.ts` to use `public static ConfigStore.getEmptyConfigFile()`
-        - maybe pick hostname as default?
+    - [x] update `./core/boot/setup.ts` to use `public static ConfigStore.getEmptyConfigFile()`
+    - [x] migrate setup webroute
+    - [ ] migrate deployer webroute
+    - [ ] migrate masterActions->reset webroute
     - [ ] 
+    - [ ] i actually do need to change how the setup and deployer works to set the cfgPath to relative
+    - [ ] migrate discord bot `refreshConfig()` and settings save
+    - [ ] migrate all cfg mutation routes
+    - [ ] check all modules to remove their config validation at constructor
+    - [ ] check all modules to remove their config type definitions
     - [ ] test `txConfig.server.startupArgs`
         - [ ] test if `server.startupArgs = ['+set']`, invalidates the next 2 args 
     - [ ] check all typescript errors in all files
@@ -148,6 +154,17 @@ Legend:
     - [ ] check all ConfigStore methods (including txCore.configStore.getRawFile())
     - [ ] core/routes/diagnostics/sendReport.ts
     - [ ] test setting up new profile from scratch
+- [ ] FXRunner ts refactor
+    - [ ] remove `this.spawnVariables` and move the method to the `utils.ts`
+    - [ ] abstract `this.history` into a separate class, and add a "shutting down" state triggered by the scheduledRestart event
+        - use the Stopwatch class?
+        - fully convert to millisecond precision
+        - status should be an enum
+    - [ ] move `this.fxServerHost` and `this.cfxId` to txManager?
+    - [ ] abstract all external references to `txCore.fxRunner.fxChild`, specially checking if null
+    - [ ] `getUptime()` as getter
+    - [ ] maybe if closed & exited, set `this.fxChild = null`? **This impacts FxMonitor!**
+    - [ ] clean up every `typeof xxx === 'undefined'`
 - [ ] New Settings Page:
     - [x] hide onesync
     - [x] new layout
