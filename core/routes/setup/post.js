@@ -344,10 +344,10 @@ async function handleSaveDeployerImport(ctx) {
     }
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
-    newGlobalConfig.serverName = serverName;
     try {
-        txCore.configStore.saveProfile('global', newGlobalConfig);
+        txCore.configStore.saveConfigs({
+            general: { serverName },
+        }, ctx.admin.name);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);
@@ -389,10 +389,10 @@ async function handleSaveDeployerCustom(ctx) {
     const deploymentID = ctx.request.body.deploymentID;
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
-    newGlobalConfig.serverName = serverName;
     try {
-        txCore.configStore.saveProfile('global', newGlobalConfig);
+        txCore.configStore.saveConfigs({
+            general: { serverName },
+        }, ctx.admin.name);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);

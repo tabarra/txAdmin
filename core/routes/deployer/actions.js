@@ -7,6 +7,7 @@ import consts from '@shared/consts';
 import { txEnv, convars } from '@core/globalData';
 import { validateModifyServerConfig } from '@lib/fxserver/fxsConfigHelper';
 import consoleFactory from '@lib/console';
+import { SYM_RESET_CONFIG } from '@modules/ConfigStore/configSymbols';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -225,14 +226,18 @@ async function handleSaveConfig(ctx) {
     }
 
     //Preparing & saving config
-    const newFXRunnerConfig = txCore.configStore.getScopedStructure('fxRunner');
-    newFXRunnerConfig.serverDataPath = slash(path.normalize(txManager.deployer.deployPath));
-    newFXRunnerConfig.cfgPath = slash(path.normalize(cfgFilePath));
-    if (typeof txManager.deployer.recipe.onesync !== 'undefined') {
-        newFXRunnerConfig.onesync = txManager.deployer.recipe.onesync;
+    let onesync = SYM_RESET_CONFIG;
+    if (typeof txManager.deployer?.recipe?.onesync === 'string' && txManager.deployer.recipe.onesync.length) {
+        onesync = txManager.deployer.recipe.onesync;
     }
     try {
-        txCore.configStore.saveProfile('fxRunner', newFXRunnerConfig);
+        txCore.configStore.saveConfigs({
+            server: {
+                dataPath: slash(path.normalize(txManager.deployer.deployPath)),
+                cfgPath: slash(path.normalize(cfgFilePath)),
+                onesync,
+            }
+        }, ctx.admin.name);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing fxserver settings via deployer.`);
         console.verbose.dir(error);
@@ -243,7 +248,6 @@ async function handleSaveConfig(ctx) {
         });
     }
 
-    txCore.metrics.playerDrop.resetLog('Server Data Path or CFG Path changed.');
     ctx.admin.logAction('Completed and committed server deploy.');
 
     //Starting server

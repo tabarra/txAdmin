@@ -139,7 +139,7 @@ Legend:
     - [x] migrate the old uses of refreshConfig to new config watcher
     - [x] update `./core/boot/setup.ts` to use `public static ConfigStore.getEmptyConfigFile()`
     - [x] migrate setup webroute
-    - [ ] migrate deployer webroute
+    - [x] migrate deployer webroute
     - [x] migrate masterActions->reset webroute
     - [ ] 
     - [ ] i actually do need to change how the setup and deployer works to set the cfgPath to relative
