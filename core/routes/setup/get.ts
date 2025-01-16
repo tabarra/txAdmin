@@ -33,7 +33,7 @@ export default async function SetupGet(ctx: AuthedCtx) {
     const storedConfig = txCore.configStore.getStoredConfig();
     const renderData = {
         headerTitle: 'Setup',
-        isReset: !!(storedConfig.general?.serverName), //FIXME: testar
+        isReset: !!(storedConfig.general?.serverName),
         deployerEngineVersion: RECIPE_DEPLOYER_VERSION,
         serverProfile: txEnv.profile,
         txDataPath: txEnv.dataPath,

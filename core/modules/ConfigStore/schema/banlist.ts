@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { typeDefinedConfig, SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from "./utils";
+import { typeDefinedConfig } from "./utils";
 
 import { alphanumeric } from 'nanoid-dictionary';
 import { customAlphabet } from "nanoid";
+import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from "../configSymbols";
 
 
 

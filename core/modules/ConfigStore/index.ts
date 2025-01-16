@@ -5,11 +5,11 @@ import { cloneDeep } from 'lodash-es';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
 import { txEnv } from '@core/globalData';
-import { ConfigFileData, ConfigSchemas_v2, PartialTxConfigs, TxConfigs } from './schema';
+import { ConfigFileData, ConfigSchemas_v2, PartialTxConfigs, PartialTxConfigsToSave, TxConfigs } from './schema';
 import { migrateConfigFile } from './configMigrations';
 import { deepFreeze } from '@lib/misc';
 import { parseConfigFileData, bootstrapConfigProcessor, runtimeConfigProcessor, getConfigDefaults } from './configParser';
-import { ListOf, SYM_RESET_CONFIG } from './schema/utils';
+import { ListOf } from './schema/utils';
 import { CCLOG_VERSION, ConfigChangelogEntry, ConfigChangelogFileSchema, truncateConfigChangelog } from './changelog';
 import { UpdateConfigKeySet } from './utils';
 const console = consoleFactory(modulename);
@@ -34,9 +34,8 @@ export const CONFIG_VERSION = 2;
  */
 export default class ConfigStore /*does not extend TxModuleBase*/ {
     //Statics
-    public static Schema = ConfigSchemas_v2;
-    public static SchemaDefaults = getConfigDefaults(ConfigSchemas_v2);
-    public static SYM_RESET_CONFIG = SYM_RESET_CONFIG;
+    public static readonly Schema = ConfigSchemas_v2;
+    public static readonly SchemaDefaults = getConfigDefaults(ConfigSchemas_v2);
     public static getEmptyConfigFile() {
         return { version: CONFIG_VERSION };
     }
@@ -148,7 +147,7 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
     /**
      * Applies an input config object to the stored and active configs, then saves it to the file
      */
-    public saveConfigs(inputConfig: PartialTxConfigs, author: string | null) {
+    public saveConfigs(inputConfig: PartialTxConfigsToSave, author: string | null) {
         //Process each item
         const parsedInput = parseConfigFileData(inputConfig);
         const processed = runtimeConfigProcessor(

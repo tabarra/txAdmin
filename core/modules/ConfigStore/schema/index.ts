@@ -9,12 +9,17 @@ import discordBot from "./discordBot";
 import gameFeatures from "./gameFeatures";
 import webServer from "./webServer";
 import logger from "./logger";
+import { SYM_RESET_CONFIG } from "../configSymbols";
 
 
 //Type inference utils
 type InferConfigScopes<S extends ConfigScope> = IferConfigValues<S>;
 type IferConfigValues<S extends ConfigScope> = {
     [K in keyof S]: S[K]['default'] | z.infer<S[K]['validator']>;
+};
+type InferConfigScopesToSave<S extends ConfigScope> = IferConfigValuesToSave<S>;
+type IferConfigValuesToSave<S extends ConfigScope> = {
+    [K in keyof S]: S[K]['default'] | z.infer<S[K]['validator']> | typeof SYM_RESET_CONFIG;
 };
 
 //Exporting the schemas
@@ -37,6 +42,9 @@ export type TxConfigs = {
 };
 export type PartialTxConfigs = Partial<{
     [K in TxConfigScopes]: Partial<InferConfigScopes<typeof ConfigSchemas_v2[K]>>
+}>;
+export type PartialTxConfigsToSave = Partial<{
+    [K in TxConfigScopes]: Partial<InferConfigScopesToSave<typeof ConfigSchemas_v2[K]>>
 }>;
 export type ConfigFileData = PartialTxConfigs & { version: number };
 

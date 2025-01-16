@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { typeDefinedConfig, typeNullableConfig, SYM_FIXER_DEFAULT } from "./utils";
+import { typeDefinedConfig, typeNullableConfig } from "./utils";
 import consts from "@shared/consts";
 import { defaultEmbedConfigJson, defaultEmbedJson } from "@modules/DiscordBot/defaultJsons";
+import { SYM_FIXER_DEFAULT } from "../configSymbols";
 
 
 const enabled = typeDefinedConfig({

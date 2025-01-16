@@ -140,7 +140,7 @@ Legend:
     - [x] update `./core/boot/setup.ts` to use `public static ConfigStore.getEmptyConfigFile()`
     - [x] migrate setup webroute
     - [ ] migrate deployer webroute
-    - [ ] migrate masterActions->reset webroute
+    - [x] migrate masterActions->reset webroute
     - [ ] 
     - [ ] i actually do need to change how the setup and deployer works to set the cfgPath to relative
     - [ ] migrate discord bot `refreshConfig()` and settings save

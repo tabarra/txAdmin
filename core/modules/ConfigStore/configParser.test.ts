@@ -1,8 +1,9 @@
 import { suite, it, expect } from 'vitest';
 import { parseConfigFileData, bootstrapConfigProcessor, getConfigDefaults, runtimeConfigProcessor } from './configParser';
 import { z } from 'zod';
-import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL, typeDefinedConfig, typeNullableConfig, SYM_RESET_CONFIG } from './schema/utils';
+import { typeDefinedConfig, typeNullableConfig } from './schema/utils';
 import ConfigStore from '.';
+import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL, SYM_RESET_CONFIG } from './configSymbols';
 
 
 suite('parseConfigFileData', () => {

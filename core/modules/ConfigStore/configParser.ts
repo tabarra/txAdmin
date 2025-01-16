@@ -1,11 +1,12 @@
 const modulename = 'ConfigStore:Parser';
 import consoleFactory from "@lib/console";
 import { ConfigFileData, ConfigScaffold } from "./schema";
-import { ConfigScope, ListOf, ScopeConfigItem, SYM_FIXER_DEFAULT, SYM_RESET_CONFIG } from "./schema/utils";
+import { ConfigScope, ListOf, ScopeConfigItem } from "./schema/utils";
 import { confx, UpdateConfigKeySet } from "./utils";
 import { RefreshConfigKey } from "./index";
 import { cloneDeep, isEqual } from "lodash";
 import { fromZodError } from "zod-validation-error";
+import { SYM_FIXER_DEFAULT, SYM_RESET_CONFIG } from "./configSymbols";
 const console = consoleFactory(modulename);
 
 

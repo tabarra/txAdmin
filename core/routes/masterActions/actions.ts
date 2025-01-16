@@ -5,6 +5,7 @@ import { now } from '@lib/misc';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
+import { SYM_RESET_CONFIG } from '@modules/ConfigStore/configSymbols';
 const console = consoleFactory(modulename);
 
 
@@ -52,18 +53,20 @@ async function handleResetFXServer(ctx: AuthedCtx) {
     txManager.deployer = null;
 
     //Preparing & saving config
-    const newConfig = txCore.configStore.getScopedStructure('fxRunner');
-    newConfig.serverDataPath = null;
-    newConfig.cfgPath = null;
     try {
-        txCore.configStore.saveProfile('fxRunner', newConfig);
+        txCore.configStore.saveConfigs({
+            server: {
+                dataPath: SYM_RESET_CONFIG,
+                cfgPath: SYM_RESET_CONFIG,
+            }
+        }, ctx.admin.name);
     } catch (error) {
-        console.warn(`[${ctx.admin.name}] Error changing FXServer settings.`);
+        console.warn(`[${ctx.admin.name}] Error resetting FXServer settings.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `**Error saving the configuration file:** ${(error as Error).message}`
+            message: `**Error saving the configuration file:**\n${(error as Error).message}`
         });
     }
 

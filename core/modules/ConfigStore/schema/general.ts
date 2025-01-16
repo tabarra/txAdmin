@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { typeDefinedConfig, SYM_FIXER_DEFAULT } from "./utils";
+import { typeDefinedConfig } from "./utils";
+import { SYM_FIXER_DEFAULT } from "../configSymbols";
 import localeMap from "@shared/localeMap";
 
 

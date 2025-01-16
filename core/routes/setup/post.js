@@ -1,6 +1,7 @@
 const modulename = 'WebServer:SetupPost';
 import path from 'node:path';
 import fse from 'fs-extra';
+import fsp from 'node:fs/promises';
 import slash from 'slash';
 import { Deployer } from '@core/deployer/index';
 import { validateFixServerConfig, findLikelyCFGPath } from '@lib/fxserver/fxsConfigHelper';

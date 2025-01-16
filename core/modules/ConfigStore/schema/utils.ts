@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ConfigScaffold } from './index';
+import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from '../configSymbols';
 
 
 /**
@@ -26,12 +26,3 @@ export type ScopeConfigItem = DefinedConfigItem | NulledConfigItem;
 //NOTE: Split into two just because I couldn't figure out how to make the default value be null
 export const typeDefinedConfig = <T>(config: DefinedConfigItem<T>): DefinedConfigItem<T> => config;
 export const typeNullableConfig = <T>(config: NulledConfigItem<T>): NulledConfigItem<T> => config;
-
-
-/**
- * MARK: Schema Symbols
- */
-//Symbol used to mark the validation fail behavior
-export const SYM_FIXER_FATAL = Symbol('ConfigFixerFatalError');
-export const SYM_FIXER_DEFAULT = Symbol('ConfigFixerFallbackDefault');
-export const SYM_RESET_CONFIG = Symbol('ConfigSaverResetConfig');
