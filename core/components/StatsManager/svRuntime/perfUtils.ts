@@ -5,6 +5,7 @@ import got from '@core/extras/got.js';
 import { parseRawPerf } from './perfParser';
 import { PERF_DATA_BUCKET_COUNT } from './config';
 import { txEnv } from '@core/globalData';
+import { exec } from 'child_process';
 
 
 //Consts
@@ -108,14 +109,23 @@ export const fetchRawPerfData = async (fxServerHost: string) => {
 
 /**
  * Get the fxserver memory usage
- * FIXME: migrate to use gwmi on windows by default
  */
 export const fetchFxsMemory = async (fxsPid?: number) => {
     if (!fxsPid) return;
     try {
+        if (txEnv.isWindows) {
+            // TODO: Create a way that doesn't involve `exec`
+            const { stdout } = await exec(`Get-WmiObject -Query "SELECT * FROM Win32_Process WHERE ProcessId = ${fxsPid}" | Select-Object WorkingSetSize`);
+            if (stdout) {
+                const stdoutString = stdout.toString();
+                const memoryMb = parseInt(stdoutString.split('\n')[1]) / 1024 / 1024;
+                return parseFloat((memoryMb).toFixed(2));
+            }
+        } else { /* Not running Windows so we can use the normal method */
         const pidUsage = await pidusage(fxsPid);
         const memoryMb = pidUsage.memory / 1024 / 1024;
         return parseFloat((memoryMb).toFixed(2));
+    }
     } catch (error) {
         if ((error as any).code = 'ENOENT') {
             console.error('Failed to get processes tree usage data.');
