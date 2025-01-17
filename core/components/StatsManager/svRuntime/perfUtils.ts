@@ -115,7 +115,7 @@ export const fetchFxsMemory = async (fxsPid?: number) => {
     try {
         if (txEnv.isWindows) {
             // TODO: Create a way that doesn't involve `exec`
-            const { stdout } = await exec(`Get-WmiObject -Query "SELECT * FROM Win32_Process WHERE ProcessId = ${fxsPid}" | Select-Object WorkingSetSize`);
+            const { stdout } = await exec(`Get-WmiObject -Query "SELECT * FROM Win32_Process WHERE ProcessId = ${fxsPid}" | Select-Object WorkingSetSize`, { shell: 'powershell.exe' });
             if (stdout) {
                 const stdoutString = stdout.toString();
                 const memoryMb = parseInt(stdoutString.split('\n')[1]) / 1024 / 1024;
