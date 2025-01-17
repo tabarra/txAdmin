@@ -114,11 +114,11 @@ export const fetchFxsMemory = async (fxsPid?: number) => {
     if (!fxsPid) return;
     try {
         if (txEnv.isWindows) {
-            // TODO: Create a way that doesn't involve `exec`
-            const { stdout } = await exec(`Get-WmiObject -Query "SELECT * FROM Win32_Process WHERE ProcessId = ${fxsPid}" | Select-Object WorkingSetSize`, { shell: 'powershell' });
+            //TODO: Is there a way we don't have to use exec?
+            const { stdout } = await exec(`Get-WmiObject -Query "SELECT * FROM Win32_Process WHERE ProcessId = ${fxsPid}" |  Select-Object -ExpandProperty WorkingSetSize`, { shell: 'powershell' });
             if (stdout) {
                 const stdoutString = stdout.toString();
-                const memoryMb = parseInt(stdoutString.split('\n')[1]) / 1024 / 1024;
+                const memoryMb = parseInt(stdoutString) / 1024 / 1024;
                 return parseFloat((memoryMb).toFixed(2));
             }
         } else { /* Not running Windows so we can use the normal method */
