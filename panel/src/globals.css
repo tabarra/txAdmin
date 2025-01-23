@@ -165,7 +165,7 @@
         --destructive: 0 91.3% 68.4%;
         --destructive-foreground: 0 0% 100%;
         --destructive-hint: 0 74.7% 15.5%;
-        --destructive-inline:0 91.3% 68.4%;
+        --destructive-inline: 0 91.3% 68.4%;
         --warning: 47.2 75.9% 62.5%;
         --warning-foreground: 48.9 77.1% 6.9%;
         --warning-hint: 21.9 72.2% 14.1%;
@@ -185,14 +185,38 @@
     * {
         @apply border-border;
     }
+    html {
+        scrollbar-width: thin;
+        scrollbar-gutter: stable;
+        scrollbar-color: hsl(var(--secondary)) hsl(var(--background));
+
+        /*
+            Sizing Vars:
+            - Header: 3.5rem + 1px = h-14 + border
+            - Page Padding: 2rem = py-4
+        */
+        --page-pt: 1rem;
+        --page-pb: 0rem;
+        @media (min-width: 768px) {
+            --page-pb: 1rem;
+        }
+        --navbar-vh: calc(3.5rem + 1px); /* h-14 + border */
+        --content-offset: calc(var(--navbar-vh) + var(--page-pt)); /* navbar + pt */
+        --content-vh: calc(100vh - var(--content-offset) - var(--page-pb)); /* navbar + pt + pb */
+    }
     body {
         @apply bg-background text-foreground antialiased;
     }
 
+    /* TODO: remove once this issue is fixed: https://github.com/radix-ui/primitives/issues/3251 */
+    html body[data-scroll-locked] {
+        margin-right: 0 !important;
+        padding-right: 0 !important;
+        --removed-body-scroll-bar-size: 0 !important;
+    }
+
     .tx-sidebar {
-        @apply self-start sticky shrink-0 w-sidebar z-0;
-        /* 3.5rem + 1px + 1rem = header + border + padding */
-        top: calc(4.5rem + 1px);
+        @apply self-start sticky shrink-0 w-sidebar z-0 top-contentoffset;
     }
 
     /* Since this is going to be repeated a lot, better to externalize the style */
@@ -201,10 +225,10 @@
             @apply absolute top-0 left-0 w-full px-2 py-1 overflow-clip;
             @apply cursor-pointer text-sm whitespace-nowrap text-ellipsis;
             @apply hover:bg-secondary hover:text-secondary-foreground transition-colors duration-75;
-    
+
             & > .pid-block {
                 @apply inline-block text-right;
-    
+
                 & > .pid-badge {
                     @apply px-1 pt-0.5 ml-auto border rounded-[0.35rem];
                     @apply font-mono tracking-wider;
@@ -212,11 +236,10 @@
                     @apply text-zinc-500 border-zinc-300 bg-zinc-100;
                 }
             }
-    
+
             & > .pname {
-                @apply ml-2 font-semibold
+                @apply ml-2 font-semibold;
             }
         }
     }
-    
 }

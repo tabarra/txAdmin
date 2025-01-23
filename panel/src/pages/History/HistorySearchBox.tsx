@@ -213,7 +213,6 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
                             <SelectItem value={SEARCH_ANY_STRING} className="cursor-pointer">
                                 Any type
                             </SelectItem>
-                            <SelectSeparator />
                             <SelectItem value={'ban'} className="cursor-pointer">
                                 Bans
                             </SelectItem>

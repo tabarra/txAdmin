@@ -10,16 +10,15 @@ import { AppErrorFallback } from './components/ErrorFallback.tsx';
 import { logoutWatcher, useIsAuthenticated } from './hooks/auth.ts';
 import AuthShell from './layout/AuthShell.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { isValidRedirectPath, redirectToLogin } from './lib/utils.ts';
+import { isValidRedirectPath, redirectToLogin } from '@/lib/navigation';
 import ThemeProvider from './components/ThemeProvider.tsx';
 import { StrictMode, useEffect } from 'react';
 import { isMobile } from 'is-mobile';
 import { useAtomValue } from 'jotai';
 import { pageTitleWatcher } from './hooks/pages.ts';
 
-//If inside NUI, silence console.* calls
+//If inside NUI, silence console.* calls to prevent confusion.
 if (!window.txConsts.isWebInterface) {
-    console.log('Silencing txAdmin Web UI console.* calls inside NUI to prevent confusion.');
     console.log = () => { };
     console.info = () => { };
     console.warn = () => { };
@@ -48,7 +47,7 @@ try {
     window.txBrowserLocale = 'en';
 }
 try {
-    const localeOption = Intl.DateTimeFormat(window.txBrowserLocale,  { hour: 'numeric' }).resolvedOptions().hour12
+    const localeOption = Intl.DateTimeFormat(window.txBrowserLocale, { hour: 'numeric' }).resolvedOptions().hour12
     window.txBrowserHour12 = localeOption ?? true;
 } catch (error) {
     window.txBrowserHour12 = true;
@@ -97,7 +96,7 @@ export function AuthContextSwitch() {
             }
         }
     }, [isAuthenticated]);
-    
+
     return isAuthenticated ? <MainShell /> : <AuthShell />;
 }
 

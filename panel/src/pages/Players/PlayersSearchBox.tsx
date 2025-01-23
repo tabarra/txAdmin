@@ -237,7 +237,7 @@ export function PlayerSearchBox({ doSearch, initialState }: PlayerSearchBoxProps
 
                     <div className="flex justify-end flex-grow">
                         <DropdownMenu>
-                            <DropdownMenuTrigger className="">
+                            <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="grow md:grow-0">
                                     More
                                     <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />

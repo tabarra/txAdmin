@@ -70,7 +70,7 @@ CreateThread(function()
     end
 
     logger('tx', 'LoggerStarted', {
-        --txAdmin.statsManager.playerDrops data
+        --txAdmin.metrics.playerDrops data
         gameName = GetConvar('gamename', 'gta5'),
         gameBuild = GetConvar('sv_enforceGameBuild', 'invalid'),
         fxsVersion = GetConvar('version', 'invalid'),

@@ -400,10 +400,12 @@ mark {background-color: #ffeaa7;}
 }
 
 /* Necessary for the scrollbar  */
-#mainbody {
-    /* 56+50 = 106 +4 */
-    position: relative;
-    height: calc(100vh - 110px);
+.c-body {
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+}
+
+.c-main {
     padding-top: unset;
 }
 

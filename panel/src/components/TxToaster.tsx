@@ -1,5 +1,6 @@
 import MarkdownProse from "@/components/MarkdownProse";
-import { cn, handleExternalLinkClick } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { handleExternalLinkClick } from "@/lib/navigation";
 import { cva } from "class-variance-authority";
 import { AlertCircleIcon, AlertOctagonIcon, CheckCircleIcon, ChevronRightCircle, InfoIcon, Loader2Icon, XIcon } from "lucide-react";
 import toast, { Toast, Toaster } from "react-hot-toast";
@@ -140,7 +141,7 @@ export default function TxToaster() {
     return <Toaster
         reverseOrder={true}
         containerStyle={{
-            top: 'calc(4.5rem + 1px)',
+            top: 'var(--content-offset)',
             zIndex: 60,
         }}
     />

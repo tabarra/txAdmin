@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { DatabaseActionType } from "../../../../core/components/PlayerDatabase/databaseTypes";
+import type { DatabaseActionType } from "../../../../core/modules/Database/databaseTypes";
 import { Button } from "@/components/ui/button";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import { useAdminPerms } from "@/hooks/auth";
 import { Loader2Icon } from "lucide-react";
 import { useBackendApi } from "@/hooks/fetch";
-import { ApiRevokeActionReqSchema } from "../../../../core/webroutes/history/actions";
+import type { ApiRevokeActionReqSchema } from "../../../../core/routes/history/actions";
 
 
 type ActionModifyTabProps = {

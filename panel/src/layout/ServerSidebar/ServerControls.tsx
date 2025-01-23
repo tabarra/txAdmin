@@ -1,5 +1,5 @@
 import { KickAllIcon } from '@/components/KickIcons';
-import { processInstantiatedAtom, serverConfigPendingStepAtom } from '@/hooks/status';
+import { processInstantiatedAtom, txConfigStateAtom } from '@/hooks/status';
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
 import { useAtomValue } from 'jotai';
@@ -9,6 +9,7 @@ import { useOpenConfirmDialog, useOpenPromptDialog } from '@/hooks/dialogs';
 import { useBackendApi } from '@/hooks/fetch';
 import { useCloseAllSheets } from '@/hooks/sheets';
 import { useAdminPerms } from '@/hooks/auth';
+import { TxConfigState } from '@shared/enums';
 
 
 const controlButtonsVariants = cva(
@@ -34,7 +35,7 @@ const controlButtonsVariants = cva(
 );
 
 export default function ServerControls() {
-    const serverConfigPendingStep = useAtomValue(serverConfigPendingStepAtom);
+    const txConfigState = useAtomValue(txConfigStateAtom);
     const processInstantiated = useAtomValue(processInstantiatedAtom);
     const openConfirmDialog = useOpenConfirmDialog();
     const openPromptDialog = useOpenPromptDialog();
@@ -119,7 +120,7 @@ export default function ServerControls() {
     const hasControlPerms = hasPerm('control.server');
     const hasAnnouncementPerm = hasPerm('announcement');
 
-    if (serverConfigPendingStep) {
+    if (txConfigState !== TxConfigState.Ready) {
         return (
             <div className='w-full h-8 text-center tracking-wider font-light opacity-75'>
                 Server not configured.

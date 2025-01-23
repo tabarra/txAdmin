@@ -73,16 +73,15 @@ export default function MainShell() {
         window.history.replaceState({}, '', pageUrl);
     }, []);
 
-    //Listens to hotkeys
-    //NOTE: WILL NOT WORK IF THE FOCUS IS ON THE IFRAME
+    //Listens to hotkeys (doesn't work if the focus is on an iframe)
     useEventListener('keydown', hotkeyEventListener);
 
     return <>
         <TooltipProvider delayDuration={300} disableHoverableContent={true}>
             <Header />
-            <div className="md:px-3 min-h-full pt-2 md:py-4 w-full max-w-[1920px] mx-auto flex flex-row gap-4">
+            <div className="md:px-3 min-h-full pt-[var(--page-pt)] pb-[var(--page-pb)] w-full max-w-[1920px] mx-auto flex flex-row gap-4">
                 <ServerSidebar />
-                <main className="flex flex-1 min-h-[calc(100vh-4rem-1px)] md:min-h-[calc(100vh-5.5rem-1px)]">
+                <main className="flex flex-1 min-h-contentvh min-w-[360px]">
                     <MainRouter />
                 </main>
                 {window.txConsts.isWebInterface && <PlayerlistSidebar />}

@@ -6,7 +6,7 @@ import AddMasterCallback from "../pages/auth/AddMasterCallback";
 import { Card } from "../components/ui/card";
 import { LogoFullSquareGreen } from "@/components/Logos";
 import { useTheme } from "@/hooks/theme";
-import { handleExternalLinkClick } from "@/lib/utils";
+import { handleExternalLinkClick } from "@/lib/navigation";
 
 
 export default function AuthShell() {

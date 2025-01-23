@@ -6,7 +6,7 @@ import { ReactElement } from "react";
 
 
 /**
- * Account Modal Stuff
+ * MARK: Account Modal Stuff
  */
 export const accountModalOpenAtom = atom(false);
 const accountModalTabAtom = atom<undefined | string>(undefined);
@@ -40,7 +40,7 @@ export const useCloseAccountModal = () => {
 
 
 /**
- * Confirm Dialog Stuff
+ * MARK: Confirm Dialog Stuff
  */
 type ConfirmDialogType = {
     title: string;
@@ -88,7 +88,7 @@ export const useConfirmDialogState = () => {
 
 
 /**
- * Prompt Dialog Stuff
+ * MARK: Prompt Dialog Stuff
  */
 type PromptDialogType = {
     title: string;
@@ -97,6 +97,7 @@ type PromptDialogType = {
     required?: boolean;
     suggestions?: string[];
     isWide?: boolean;
+    isMultiline?: boolean;
     cancelLabel?: string;
     submitLabel?: string;
     submitBtnVariant?: VariantProps<typeof buttonVariants>['variant'];
