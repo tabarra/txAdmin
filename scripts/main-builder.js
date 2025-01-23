@@ -193,7 +193,6 @@ class txAdminRunner {
  */
 const runDevTask = async (txVersion, preReleaseExpiration) => {
     //Extract paths and validate them
-    console.log(process.env)
     if (typeof process.env.TXADMIN_DEV_FXSERVER_PATH !== 'string') {
         console.error('process.env.TXADMIN_DEV_FXSERVER_PATH is not defined.');
         process.exit(1);
