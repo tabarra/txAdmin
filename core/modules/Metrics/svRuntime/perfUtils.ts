@@ -1,7 +1,7 @@
 import pidusage from 'pidusage';
 import { cloneDeep } from 'lodash-es';
 import type { SvRtPerfCountsType } from "./perfSchemas";
-import got from '@core/extras/got.js';
+import got from '@lib/got';
 import { parseRawPerf } from './perfParser';
 import { PERF_DATA_BUCKET_COUNT } from './config';
 import { txEnv } from '@core/globalData';
