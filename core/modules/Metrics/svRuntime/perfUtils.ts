@@ -1,12 +1,10 @@
-import pidusage from 'pidusage';
+import si from 'systeminformation';
 import { cloneDeep } from 'lodash-es';
 import type { SvRtPerfCountsType } from "./perfSchemas";
 import got from '@lib/got';
 import { parseRawPerf } from './perfParser';
 import { PERF_DATA_BUCKET_COUNT } from './config';
 import { txEnv } from '@core/globalData';
-import { exec } from 'child_process';
-
 
 //Consts
 const perfDataRawThreadsTemplate: SvRtPerfCountsType = {
@@ -113,19 +111,11 @@ export const fetchRawPerfData = async (fxServerHost: string) => {
 export const fetchFxsMemory = async (fxsPid?: number) => {
     if (!fxsPid) return;
     try {
-        if (txEnv.isWindows) {
-            //TODO: Is there a way we don't have to use exec?
-            const { stdout } = await exec(`Get-WmiObject -Query "SELECT * FROM Win32_Process WHERE ProcessId = ${fxsPid}" |  Select-Object -ExpandProperty WorkingSetSize`, { shell: 'powershell' });
-            if (stdout) {
-                const stdoutString = stdout.toString();
-                const memoryMb = parseInt(stdoutString) / 1024 / 1024;
-                return parseFloat((memoryMb).toFixed(2));
-            }
-        } else { /* Not running Windows so we can use the normal method */
-        const pidUsage = await pidusage(fxsPid);
-        const memoryMb = pidUsage.memory / 1024 / 1024;
+        const totalMem = (await si.mem()).total
+        const pidUsage = (await si.processLoad("fxServer.exe"))[0].mem /* Limitations only allow us to use process names to get memory */
+        const memoryMb = (totalMem * (pidUsage / 100)) / (1024 * 1024);
         return parseFloat((memoryMb).toFixed(2));
-    }
+    
     } catch (error) {
         if ((error as any).code = 'ENOENT') {
             console.error('Failed to get processes tree usage data.');
