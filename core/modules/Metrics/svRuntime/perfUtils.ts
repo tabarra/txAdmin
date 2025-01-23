@@ -112,7 +112,7 @@ export const fetchFxsMemory = async (fxsPid?: number) => {
     if (!fxsPid) return;
     try {
         const totalMem = (await si.mem()).total
-        const pidUsage = (await si.processLoad("fxServer.exe"))[0].mem /* Limitations only allow us to use process names to get memory */
+        const pidUsage = (await si.processLoad("fxServer"))[0].mem /* Limitations only allow us to use process names to get memory */
         const memoryMb = (totalMem * (pidUsage / 100)) / (1024 * 1024);
         return parseFloat((memoryMb).toFixed(2));
     
