@@ -108,7 +108,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     } catch (error) {
         return { error: `Failed to warn player: ${(error as Error).message}` };
     }
-    ctx.admin.logAction(`Warned player ${player.displayName}: ${reason}`);
+    ctx.admin.logAction(`Warned player "${player.displayName}": ${reason}`);
 
     // Dispatch `txAdmin:events:playerWarned`
     const cmdOk = txCore.fxRunner.sendEvent('playerWarned', {
@@ -180,7 +180,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     } catch (error) {
         return { error: `Failed to ban player: ${(error as Error).message}` };
     }
-    ctx.admin.logAction(`Banned player ${player.displayName}: ${reason}`);
+    ctx.admin.logAction(`Banned player "${player.displayName}": ${reason}`);
 
     //No need to dispatch events if server is not online
     if (txCore.fxRunner.fxChild === null) {
@@ -305,7 +305,7 @@ async function handleDirectMessage(ctx: AuthedCtx, player: PlayerClass): Promise
     }
 
     try {
-        ctx.admin.logAction(`DM to ${player.displayName}: ${message}`);
+        ctx.admin.logAction(`DM to "${player.displayName}": ${message}`);
 
         // Dispatch `txAdmin:events:playerDirectMessage`
         txCore.fxRunner.sendEvent('playerDirectMessage', {
@@ -348,7 +348,7 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
     }
 
     try {
-        ctx.admin.logAction(`Kicked ${player.displayName}: ${kickReason}`);
+        ctx.admin.logAction(`Kicked "${player.displayName}": ${kickReason}`);
         const fullReason = txCore.translator.t(
             'kick_messages.player',
             { reason: kickReason }

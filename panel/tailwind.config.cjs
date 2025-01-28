@@ -122,6 +122,23 @@ module.exports = {
           '0%': { transform: 'scale(1)', opacity: 1 },
           '100%': { transform: 'scale(0.9)', opacity: 0 },
         },
+        //NOTE: added these while testing stuff, never used, idk if they work
+        // "fade-left": {
+        //   "0%": { transform: "translateX(2rem)", opacity: "0" },
+        //   "100%": { transform: "translateX(0)", opacity: "1" }
+        // },
+        // "fade-down": {
+        //   "0%": { transform: "translateY(-2rem)", opacity: "0" },
+        //   "100%": { transform: "translateY(0)", opacity: "1" }
+        // },
+        // "fade-right": {
+        //   "0%": { transform: "translateX(-2rem)", opacity: "0" },
+        //   "100%": { transform: "translateX(0)", opacity: "1" }
+        // },
+        // "fade-right-out": {
+        //   "0%": { transform: "translateX(0)", opacity: "1" },
+        //   "100%": { transform: "translateX(2rem)", opacity: "0" }
+        // },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -129,6 +146,11 @@ module.exports = {
         "toastbar-icon": 'toastbar-icon 350ms ease-out',
         "toastbar-enter": 'toastbar-enter 200ms ease-out',
         "toastbar-leave": 'toastbar-leave 150ms ease-in forwards',
+        //NOTE: added these while testing stuff, never used, idk if they work
+        // "fade-left": "fade-left 0.2s ease",
+        // "fade-down": "fade-down 0.2s ease",
+        // "fade-right": "fade-right 0.2s ease forwards",
+        // "fade-right-out": "fade-right-out 0.2s ease forwards",
       },
     },
   },

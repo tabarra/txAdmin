@@ -131,12 +131,12 @@ export default class FxRunner {
 
     /**
      * Spawns the FXServer and sets up all the event handlers
-     * @param {boolean} announce
+     * @param {boolean} shouldAnnounce
      */
-    async spawnServer(announce) {
+    async spawnServer(shouldAnnounce = false) {
         //If the server is already alive
         if (this.fxChild !== null) {
-            const msg = `The server is already started.`;
+            const msg = `The server has already started.`;
             console.error(msg);
             return msg;
         }
@@ -199,7 +199,7 @@ export default class FxRunner {
         });
 
         //Announcing
-        if (announce === 'true' || announce === true) {
+        if (shouldAnnounce) {
             txCore.discordBot.sendAnnouncement({
                 type: 'success',
                 description: {
@@ -221,7 +221,7 @@ export default class FxRunner {
         if (typeof this.fxChild.pid === 'undefined') {
             throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
         }
-        const pid = this.fxChild.pid.toString();
+        const pid = this.fxChild.pid.toString(); //FIXME: why string?!
         console.ok(`>> [${pid}] FXServer Started!`);
         txCore.logger.fxserver.logFxserverBoot(pid);
         this.history.push({
@@ -240,19 +240,16 @@ export default class FxRunner {
         this.fxChild.stdout.setEncoding('utf8');
 
         //Setting up event handlers
-        this.fxChild.on('close', function (code) {
+        this.fxChild.on('close', function (code, signal) {
             let printableCode;
             if (typeof code === 'number') {
                 printableCode = `0x${code.toString(16).toUpperCase()}`;
             } else {
                 printableCode = new String(code).toUpperCase();
             }
-            console.warn(`>> [${pid}] FXServer Closed (${printableCode}).`);
+            console.warn(`>> [${pid}] FXServer Closed (${printableCode}, ${signal}).`);
             this.history[historyIndex].timestamps.close = now();
             txCore.webServer.webSocket.pushRefresh('status');
-        }.bind(this));
-        this.fxChild.on('disconnect', function () {
-            console.warn(`>> [${pid}] FXServer Disconnected.`);
         }.bind(this));
         this.fxChild.on('error', function (err) {
             console.warn(`>> [${pid}] FXServer Errored:`);

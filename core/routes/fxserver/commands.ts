@@ -48,6 +48,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
 
     //==============================================
     //DEBUG: Only available in the /advanced page
+    //FIXME: move to the advanced route, give button for profiling, saving mem snapshot, verbose, etc.
     if (action == 'profile_monitor') {
         if (!ensurePermission(ctx, 'all_permissions')) return false;
         ctx.admin.logAction('Profiling txAdmin instance.');

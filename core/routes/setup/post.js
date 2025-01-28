@@ -46,6 +46,8 @@ const getPotentialServerDataFolders = (source) => {
 
 /**
  * Handle all the server control actions
+ * FIXME: separate into validate.ts, saveDeployer.ts, and saveLocal.ts files
+ * FIXME: or maybe postDeployer.ts, and postLocal.ts files
  * @param {object} ctx
  */
 export default async function SetupPost(ctx) {

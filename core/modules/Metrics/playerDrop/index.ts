@@ -279,7 +279,7 @@ export default class PlayerDropMetrics {
             this.optimizeStatsLog();
         } catch (error) {
             if ((error as any)?.code === 'ENOENT') {
-                console.verbose.warn(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
+                console.verbose.debug(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
                 this.resetLog('File was just created, no data yet');
                 return;
             }

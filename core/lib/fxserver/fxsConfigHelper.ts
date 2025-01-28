@@ -53,7 +53,7 @@ class Command {
     }
 
     //Kinda confusing name, but it returns the value of a set if it's for that ne var
-    getSetForVariable(varname: string) {
+    isConvarSetterFor(varname: string) {
         if (
             ['set', 'sets', 'setr'].includes(this.command)
             && this.args.length === 2
@@ -393,7 +393,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
         }
 
         //Check sv_maxClients against ZAP config
-        const isMaxClientsString = cmd.getSetForVariable('sv_maxclients');
+        const isMaxClientsString = cmd.isConvarSetterFor('sv_maxclients');
         if (
             convars.deployerDefaults?.maxClients
             && isMaxClientsString
@@ -410,7 +410,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
         }
 
         //Comment out any onesync sets
-        if (cmd.getSetForVariable('onesync')) {
+        if (cmd.isConvarSetterFor('onesync')) {
             toCommentOut.add(
                 cmd.file,
                 cmd.line,

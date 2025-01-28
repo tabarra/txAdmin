@@ -281,7 +281,7 @@ export default class SvRuntimeMetrics {
             await optimizeSvRuntimeLog(this.statsLog);
         } catch (error) {
             if ((error as any)?.code === 'ENOENT') {
-                console.verbose.warn(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
+                console.verbose.debug(`${LOG_DATA_FILE_NAME} not found, starting with empty stats.`);
                 return;
             }
             if (error instanceof ZodError) {

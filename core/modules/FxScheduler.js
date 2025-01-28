@@ -249,7 +249,7 @@ export default class FxScheduler {
     async restartFXServer(reasonInternal, reasonTranslated) {
         //sanity check
         if (txCore.fxRunner.fxChild === null) {
-            console.warn('Server not started, no need to restart');
+            console.verbose.warn('Server not running, skippping scheduled restart.');
             return false;
         }
 

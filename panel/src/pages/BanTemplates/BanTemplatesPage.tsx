@@ -14,6 +14,7 @@ import { Loader2Icon } from "lucide-react";
 import useSWR from "swr";
 import { alphanumeric } from 'nanoid-dictionary';
 import { customAlphabet } from "nanoid";
+import SettingsHeader from "../Settings/SettingsHeader";
 const nanoid = customAlphabet(alphanumeric, 21);
 
 
@@ -253,3 +254,15 @@ export default function BanTemplatesPage() {
         />
     </>;
 }
+
+
+// export default function BanTemplatesPage () {
+//     return (
+//         <div className="w-full mb-10">
+//             <SettingsHeader changelogData={[{author: 'aaaaaa', keys:[], ts: 111111111111}]} />
+//             <div className="px-0 xs:px-3 md:px-0 flex flex-row gap-2 w-full">
+//                 <BanTemplatesPageInner />
+//             </div>
+//         </div>
+//     )
+// }

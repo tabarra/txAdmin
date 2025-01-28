@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { Socket, io } from "socket.io-client";
 import type { BanDurationType } from "@shared/otherTypes";
 import { ListenEventsMap } from "@shared/socketioTypes";
+import { useId } from "react";
 
 
 /**
@@ -67,6 +68,20 @@ export const createRandomHslColor = (alpha?: number) => {
     return typeof alpha === 'number'
         ? `hsla(${hue}, 100%, 50%, ${alpha})`
         : `hsl(${hue}, 100%, 50%)`
+}
+
+
+/**
+ * Returns a deterministic hsl() color based on a seed string
+ */
+export const createSeedHslColor = (seed: string, alpha?: number) => {
+    const hash = seed.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0) | 0;
+    }, 0);
+    const hue = Math.abs(hash % 360);
+    return typeof alpha === 'number'
+        ? `hsla(${hue}, 100%, 50%, ${alpha})`
+        : `hsl(${hue}, 100%, 50%)`;
 }
 
 

@@ -12,7 +12,7 @@ const playerInitiatedRules = [
     `reloading game`,
 ];
 
-//FIXME: remover essa categoria, checar com heron se os security podem vir como security ao invés de server-initiated
+//FIXME: remover essa categoria, checar com XXXX se os security podem vir como security ao invés de server-initiated
 const serverInitiatedRules = [
     //NOTE: this is not a real drop reason prefix, but something that the client sees only
     `disconnected by server:`,
