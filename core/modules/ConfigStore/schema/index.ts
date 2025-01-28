@@ -17,8 +17,8 @@ type InferConfigScopes<S extends ConfigScope> = IferConfigValues<S>;
 type IferConfigValues<S extends ConfigScope> = {
     [K in keyof S]: S[K]['default'] | z.infer<S[K]['validator']>;
 };
-type InferConfigScopesToSave<S extends ConfigScope> = IferConfigValuesToSave<S>;
-type IferConfigValuesToSave<S extends ConfigScope> = {
+type InferConfigScopesToSave<S extends ConfigScope> = InferConfigValuesToSave<S>;
+type InferConfigValuesToSave<S extends ConfigScope> = {
     [K in keyof S]: S[K]['default'] | z.infer<S[K]['validator']> | typeof SYM_RESET_CONFIG;
 };
 

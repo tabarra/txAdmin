@@ -3,7 +3,6 @@ import consoleFactory from "@lib/console";
 import { ConfigFileData, ConfigScaffold } from "./schema";
 import { ConfigScope, ListOf, ScopeConfigItem } from "./schema/utils";
 import { confx, UpdateConfigKeySet } from "./utils";
-import { RefreshConfigKey } from "./index";
 import { cloneDeep, isEqual } from "lodash";
 import { fromZodError } from "zod-validation-error";
 import { SYM_FIXER_DEFAULT, SYM_RESET_CONFIG } from "./configSymbols";
@@ -45,6 +44,7 @@ export const parseConfigFileData = (configFileData: ConfigScaffold | ConfigFileD
     for (const [scope, values] of Object.entries(configFileData)) {
         if (scope === 'version') continue;
         for (const [key, value] of Object.entries(values)) {
+            if (value === undefined) continue;
             parsedConfigItems.push({ scope, key, value });
         }
     }

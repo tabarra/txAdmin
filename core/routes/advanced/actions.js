@@ -10,8 +10,7 @@ const isUndefined = (x) => (x === undefined);
 
 
 /**
- *
- * @param {object} ctx
+ * Endpoint for running advanced commands - basically, should not ever be used
  */
 export default async function AdvancedActions(ctx) {
     //Sanity check
@@ -127,9 +126,25 @@ export default async function AdvancedActions(ctx) {
         const reason = action.split(' ', 2)[1];
         const category = txCore.metrics.playerDrop.handlePlayerDrop(reason);
         return ctx.send({ type: 'success', message: category });
+
+    } else if (action.startsWith('set')) {
+        // set general.language pt
+        // set general.language en
+        // set server.onesync on
+        // set server.onesync legacy
+        const [_, scopeKey, value] = action.split(' ', 3);
+        const [scope, key] = scopeKey.split('.');
+        const configUpdate = { [scope]: { [key]: value } };
+        const storedKeysChanges = txCore.configStore.saveConfigs(configUpdate, ctx.admin.name);
+        const outParts = [
+            'Keys Updated: ' + JSON.stringify(storedKeysChanges ?? 'not set', null, 2),
+            '-'.repeat(16),
+            'Stored:' + JSON.stringify(txCore.configStore.getStoredConfig(), null, 2),
+        ];
+        return ctx.send({ type: 'success', message: outParts.join('\n') });
+
     } else if (action == 'xxxxxx') {
-        // console.dir(res);
-        return ctx.send({ type: 'success', message: 'terminal' });
+        return ctx.send({ type: 'success', message: '👍' });
     }
 
     //Catch all

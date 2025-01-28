@@ -68,7 +68,7 @@ const rejectionMessage = typeDefinedConfig({
 
 const requiredHwidMatches = typeDefinedConfig({
     default: 1,
-    validator: z.number().int().min(1),
+    validator: z.number().int().min(0),
     fixer: SYM_FIXER_DEFAULT,
 });
 

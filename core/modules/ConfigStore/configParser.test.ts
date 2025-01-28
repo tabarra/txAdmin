@@ -45,6 +45,19 @@ suite('parseConfigFileData', () => {
         expect(result).toEqual([]);
     });
 
+    it('should handle undefined items', () => {
+        const configFileData = {
+            example: {
+                aaa: 'whatever',
+                bbb: undefined,
+            },
+        };
+        const result = parseConfigFileData(configFileData);
+        expect(result).toEqual([
+            { scope: 'example', key: 'aaa', value: 'whatever' },
+        ]);
+    });
+
     it('should handle nested scopes', () => {
         const configFileData = {
             version: 1,
