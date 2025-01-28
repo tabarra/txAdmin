@@ -1,5 +1,7 @@
 /* eslint-disable */
 const { fontFamily } = require("tailwindcss/defaultTheme");
+const colors = require('tailwindcss/colors');
+
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -16,6 +18,38 @@ module.exports = {
       padding: "2rem",
     },
     extend: {
+      typography: {
+        toast: {
+          css: [
+            {
+              '--tw-prose-body': colors.zinc[800],
+              '--tw-prose-invert-body': colors.zinc[200],
+              '--tw-prose-bullets': colors.zinc[600],
+              '--tw-prose-invert-bullets': colors.zinc[400],
+              a: {
+                letterSpacing: '0.025em',
+                fontWeight: '700',
+              },
+              p: {
+                marginTop: '0.571em',
+                marginBottom: '0.571em',
+              },
+              ul: {
+                marginTop: '0.571em',
+                marginBottom: '0.571em',
+              },
+            },
+            {
+              '> :first-child': {
+                marginTop: '0',
+              },
+              '> :last-child': {
+                marginBottom: '0',
+              },
+            },
+          ],
+        },
+      },
       fontSize: {
         '2xs': '0.625rem', // 10px
       },

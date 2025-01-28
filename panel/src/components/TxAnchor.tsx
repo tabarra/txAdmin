@@ -16,7 +16,7 @@ function InnerExternal({ text }: { text: string }) {
             <span className="whitespace-nowrap">
                 {lastWord}
                 <ExternalLinkIcon
-                    className="inline ml-1 mb-1 h-5 [.text-sm_&]:h-4 [.text-sm_&]:ml-0 selection:bg-inherit"
+                    className="inline ml-1 mb-1 h-5 [.text-sm_&]:h-4 [.text-sm_&]:ml-0 [.prose-sm_&]:h-4 [.prose-sm_&]:ml-0 selection:bg-inherit"
                 />
             </span>
         </>

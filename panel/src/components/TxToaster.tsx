@@ -103,8 +103,8 @@ export const CustomToast = ({ t, type, data }: CustomToastProps) => {
                     <span className="block whitespace-pre-line">{data}</span>
                 ) : data.md ? (
                     <>
-                        {data.title ? <MarkdownProse md={`**${data.title}**`} isSmall isTitle /> : null}
-                        <MarkdownProse md={data.msg} isSmall />
+                        {data.title ? <MarkdownProse md={`**${data.title}**`} isSmall isTitle isToast /> : null}
+                        <MarkdownProse md={data.msg} isSmall isToast />
                     </>
                 ) : (
                     <>

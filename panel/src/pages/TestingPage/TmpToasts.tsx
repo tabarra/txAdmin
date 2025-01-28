@@ -12,6 +12,22 @@ export default function TmpToasts() {
         txToast.error('error');
     }
 
+    const openMarkdownColors = () => {
+        const data = {
+            title: 'Error saving whatever',
+            md: true,
+            msg: `The bot requires the \`GUILD_MEMBERS\` intent.
+            - Go to the [Discord Dev Portal](https://discord.com/developers/applications)
+            - Navigate to \`Bot > Privileged Gateway Intents\`.
+            - Enable the \`GUILD_MEMBERS\` intent.`,
+        }
+        txToast.default(data, { duration: 10_000 });
+        txToast.info(data, { duration: 10_000 });
+        txToast.success(data, { duration: 10_000 });
+        txToast.warning(data, { duration: 10_000 });
+        txToast.error(data, { duration: 10_000 });
+    }
+
     const openSpecial = () => {
         txToast.loading('long simulated loading', { duration: 15_000 });
         txToast.default('longer duration', { duration: 10_000 });
@@ -19,15 +35,6 @@ export default function TmpToasts() {
         txToast.default({
             title: 'Object message',
             msg: 'Simple message **without** markdown\nbut auto line break.',
-        });
-        txToast.error({
-            title: 'Error: The bot requires the `GUILD_MEMBERS` intent:',
-            msg: `- Go to the [Discord Dev Portal](https://discord.com/developers/applications)
-            - Navigate to \`Bot > Privileged Gateway Intents\`.
-            - Enable the \`GUILD_MEMBERS\` intent.
-            - Save on the dev portal.
-            - Go to the \`txAdmin > Settings > Discord Bot\` and press save.`,
-            md: true,
         });
     }
 
@@ -76,6 +83,13 @@ export default function TmpToasts() {
                 onClick={openDefault}
             >
                 Default
+            </Button>
+            <Button
+                size={'lg'}
+                variant="default"
+                onClick={openMarkdownColors}
+            >
+                Markdown
             </Button>
             <Button
                 size={'lg'}
