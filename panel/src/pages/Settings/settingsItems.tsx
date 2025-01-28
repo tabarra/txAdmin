@@ -47,14 +47,12 @@ export function SettingItem({
     required: isRequired,
     showOptional,
     showNew,
+    showIf,
     children
 }: SettingItemProps) {
+    if (showIf !== undefined && !showIf) return null;
     return (
-        <div
-            className={cn(
-                'max-w-4xl space-y-2 sm:grid sm:grid-cols-8 sm:gap-4 sm:space-y-0 sm:items-start group/item',
-            )}
-        >
+        <div className='max-w-4xl space-y-2 sm:grid sm:grid-cols-8 sm:gap-4 sm:space-y-0 sm:items-start group/item'>
             <div className="sm:col-span-2">
                 <Label className="flex flex-col text-sm font-medium leading-6" htmlFor={htmlFor}>
                     {label}
@@ -63,7 +61,7 @@ export function SettingItem({
                     {showOptional && <LabelOptional />}
                 </Label>
             </div>
-            <div className="sm:col-span-6 space-y-2 ">
+            <div className="sm:col-span-6 space-y-2">
                 {children}
             </div>
         </div>
@@ -76,5 +74,25 @@ type SettingItemProps = {
     required?: boolean;
     showOptional?: boolean;
     showNew?: boolean;
+    showIf?: boolean;
     children: React.ReactNode;
+}
+
+
+/**
+ * A divider for advanced options.
+ */
+export function AdvancedDivider() {
+    return (
+        <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+                <hr className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center tracking-wider text-xs">
+                <span className="bg-background px-2 text-muted-foreground/75">
+                    Advanced Options
+                </span>
+            </div>
+        </div>
+    )
 }

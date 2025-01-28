@@ -369,6 +369,8 @@ async function handleDiscord(ctx: AuthedCtx) {
 
         whichJson = 'Embed Config JSON';
         embedConfigJson = jsonrepair(ctx.request.body.embedConfigJson.trim());
+
+        //FIXME: save without whitespaces
     } catch (error) {
         return ctx.send({
             type: 'danger',
@@ -427,7 +429,7 @@ async function handleDiscord(ctx: AuthedCtx) {
         let extraContext = '';
         if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
             extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
-            - Go to the Discord Dev Portal (https://discord.com/developers/applications)
+            - Go to the [Discord Dev Portal](https://discord.com/developers/applications)
             - Navigate to \`Bot > Privileged Gateway Intents\`.
             - Enable the \`GUILD_MEMBERS\` intent.
             - Press save on the developer portal.

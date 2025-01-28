@@ -8,7 +8,7 @@ type BigRadioItemProps = {
     value: string;
     title: string;
     desc: React.ReactNode;
-    groupValue: string;
+    groupValue: string | undefined;
 }
 
 export default function BigRadioItem(props: BigRadioItemProps) {

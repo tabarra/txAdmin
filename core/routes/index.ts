@@ -29,9 +29,9 @@ export { default as deployer_stepper } from './deployer/stepper';
 export { default as deployer_status } from './deployer/status';
 export { default as deployer_actions } from './deployer/actions';
 
-export { default as settings_page } from './settings/get';
-export { default as settings_save } from './settings/save';
-
+//FIXME juntar bantemplates com settings
+export { default as settings_getConfigs } from './settings/getConfigs';
+export { default as settings_saveConfigs } from './settings/saveConfigs';
 export { default as settings_getBanTemplates } from './banTemplates/getBanTemplates.js';
 export { default as settings_saveBanTemplates } from './banTemplates/saveBanTemplates.js';
 

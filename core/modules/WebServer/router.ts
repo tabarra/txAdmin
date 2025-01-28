@@ -34,7 +34,6 @@ export default () => {
     router.get('/legacy/masterActions', webAuthMw, routes.masterActions_page);
     router.get('/legacy/resources', webAuthMw, routes.resources);
     router.get('/legacy/serverLog', webAuthMw, routes.serverLog);
-    router.get('/legacy/settings', webAuthMw, routes.settings_page);
     router.get('/legacy/whitelist', webAuthMw, routes.whitelist_page);
     router.get('/legacy/setup', webAuthMw, routes.setup_get);
     router.get('/legacy/deployer', webAuthMw, routes.deployer_stepper);
@@ -60,7 +59,8 @@ export default () => {
     router.post('/setup/:action', apiAuthMw, routes.setup_post);
     router.get('/deployer/status', apiAuthMw, routes.deployer_status);
     router.post('/deployer/recipe/:action', apiAuthMw, routes.deployer_actions);
-    router.post('/settings/save/:scope', apiAuthMw, routes.settings_save);
+    router.get('/settings/configs', apiAuthMw, routes.settings_getConfigs);
+    router.post('/settings/configs/:card', apiAuthMw, routes.settings_saveConfigs);
     router.get('/settings/banTemplates', apiAuthMw, routes.settings_getBanTemplates);
     router.post('/settings/banTemplates', apiAuthMw, routes.settings_saveBanTemplates);
 

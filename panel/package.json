@@ -50,6 +50,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "d3": "^7.9.0",
+    "dequal": "^2.0.3",
     "is-mobile": "^4.0.0",
     "jotai": "^2.10.0",
     "jotai-effect": "^1.0.3",

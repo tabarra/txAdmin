@@ -35,7 +35,7 @@ export const CONFIG_VERSION = 2;
 export default class ConfigStore /*does not extend TxModuleBase*/ {
     //Statics
     public static readonly Schema = ConfigSchemas_v2;
-    public static readonly SchemaDefaults = getConfigDefaults(ConfigSchemas_v2);
+    public static readonly SchemaDefaults = getConfigDefaults(ConfigSchemas_v2) as TxConfigs;
     public static getEmptyConfigFile() {
         return { version: CONFIG_VERSION };
     }
@@ -145,6 +145,17 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
 
 
     /**
+     * Returns the changelog
+     * TODO: add filters to be used in pages like ban templates
+     * TODO: increase CCLOG_SIZE_LIMIT to a few hundred
+     * TODO: increase CCLOG_RETENTION to a year, or deprecate it in favor of a full log
+     */
+    public getChangelog() {
+        return cloneDeep(this.changelog);
+    }
+
+
+    /**
      * Applies an input config object to the stored and active configs, then saves it to the file
      */
     public saveConfigs(inputConfig: PartialTxConfigsToSave, author: string | null) {
@@ -161,11 +172,9 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
         this.saveFile(processed.stored);
         this.storedConfigs = processed.stored as PartialTxConfigs;
         this.activeConfigs = processed.active as TxConfigs;
-        this.updatePublicConfig();
+        this.logChanges(author ?? 'txAdmin', processed.storedKeysChanges.list);
+        this.updatePublicConfig(); //before callbacks
         this.processCallbacks(processed.activeKeysChanges);
-        setImmediate(() => {
-            this.logChanges(author ?? 'txAdmin', processed.storedKeysChanges).catch(() => { });
-        });
         return processed.storedKeysChanges;
     }
 
@@ -185,25 +194,27 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
 
     /**
      * Logs changes to logger and changelog file
+     * FIXME: ignore banlist.templates? or join consequent changes?
      */
-    private async logChanges(author: string, updatedConfigs: UpdateConfigKeySet) {
-        const updatedKeys = updatedConfigs.raw.map(c => c.full);
-        txCore.logger.admin.write(author, `Config changes: ${updatedKeys.join(', ')}`);
+    private logChanges(author: string, keysUpdated: string[]) {
+        txCore.logger.admin.write(author, `Config changes: ${keysUpdated.join(', ')}`);
         this.changelog.push({
             author,
             ts: Date.now(),
-            keys: updatedKeys,
+            keys: keysUpdated,
         });
         this.changelog = truncateConfigChangelog(this.changelog);
-        try {
-            const json = JSON.stringify({
-                version: CCLOG_VERSION,
-                log: this.changelog,
-            });
-            await fsp.writeFile(this.changelogFilePath, json);
-        } catch (error) {
-            console.warn(`Failed to save ${this.changelogFilePath} with message: ${(error as any).message}`);
-        }
+        setImmediate(async () => {
+            try {
+                const json = JSON.stringify({
+                    version: CCLOG_VERSION,
+                    log: this.changelog,
+                });
+                await fsp.writeFile(this.changelogFilePath, json);
+            } catch (error) {
+                console.warn(`Failed to save ${this.changelogFilePath} with message: ${(error as any).message}`);
+            }
+        });
     }
 
     /**
@@ -235,9 +246,10 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
      */
     private processCallbacks(updatedConfigs: UpdateConfigKeySet) {
         for (const txModule of this.moduleRefreshCallbacks) {
-            if(!updatedConfigs.hasMatch(txModule.rules)) continue;
+            if (!updatedConfigs.hasMatch(txModule.rules)) continue;
             setImmediate(() => {
                 try {
+                    console.verbose.debug(`Triggering update callback for module ${txModule.moduleName}`);
                     txModule.callback(updatedConfigs);
                 } catch (error) {
                     console.error(`Error in config update callback for module ${txModule.moduleName}: ${(error as any).message}`);

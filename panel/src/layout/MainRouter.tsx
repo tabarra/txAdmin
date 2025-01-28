@@ -16,6 +16,7 @@ import SystemLogPage from "@/pages/SystemLogPage";
 import AddLegacyBanPage from "@/pages/AddLegacyBanPage";
 import DashboardPage from "@/pages/Dashboard/DashboardPage";
 import PlayerDropsPage from "@/pages/PlayerDropsPage/PlayerDropsPage";
+import SettingsPage from "@/pages/Settings/SettingsPage";
 
 
 type RouteType = {
@@ -54,7 +55,7 @@ const allRoutes: RouteType[] = [
     {
         path: '/settings',
         title: 'Settings',
-        children: <Iframe legacyUrl="settings" />
+        children: <SettingsPage />
     },
     {
         path: '/system/master-actions',

@@ -1,156 +1,232 @@
+import { useState } from "react";
+import useSWR from "swr";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarIcon, Settings2Icon, UserIcon } from "lucide-react";
-
-import TxAnchor from '@/components/TxAnchor';
-import { useMemo } from "react";
 import { setUrlHash } from "@/lib/navigation";
+
+import { ApiTimeout, useBackendApi } from "@/hooks/fetch";
+import { useOpenConfirmDialog } from "@/hooks/dialogs";
+import { txToast } from "@/components/TxToaster";
+import { useAdminPerms } from "@/hooks/auth";
+import type { SettingsCardContext, SettingsCardInfo, SettingsCardProps, SettingsTabInfo } from "./utils";
+import type { GetConfigsResp, PartialTxConfigs, SaveConfigsReq, SaveConfigsResp } from "@shared/otherTypes";
+
 import SettingsTab from "./SettingsTab";
+import SettingsHeader from "./SettingsHeader";
+import ConfigCardBans from "./tabCards/bans";
+import ConfigCardDiscord from "./tabCards/discord";
+import ConfigCardFxserver from "./tabCards/fxserver";
+import ConfigCardGameMenu from "./tabCards/gameMenu";
+import ConfigCardGameNotifications from "./tabCards/gameNotifications";
+import ConfigCardGeneral from "./tabCards/general";
+import ConfigCardWhitelist from "./tabCards/whitelist";
 
-import * as generalGroup from "./tabGroups/general";
-import * as fxserverGroup from "./tabGroups/fxserver";
-import * as bansGroup from "./tabGroups/bans";
-import * as whitelistGroup from "./tabGroups/whitelistTab";
-import * as discordGroup from "./tabGroups/discord";
-import * as gameMenuGroup from "./tabGroups/gameMenu";
-import * as gameNotificationsGroup from "./tabGroups/gameNotifications";
 
-
-type SettingGroup = {
-    id: string;
-    name: string;
-    MainGroup: React.FC;
-    AdvancedGroup?: React.FC;
-};
-
-export type SettingTabMulti = {
-    id: string;
-    name: string;
-    groups: SettingGroup[];
-};
-export type SettingTabSingle = SettingGroup;
-export type SettingTabsDatum = SettingTabSingle | SettingTabMulti;
-
-export const settingsTabs: SettingTabsDatum[] = [
+//Tab configuration
+const settingsTabsBase = [
+    { name: 'General', Component: ConfigCardGeneral }, //TODO: cards [Server Listing, txAdmin]
+    { name: 'FXServer', Component: ConfigCardFxserver },
+    { name: 'Bans', Component: ConfigCardBans },
+    { name: 'Whitelist', Component: ConfigCardWhitelist },
+    { name: 'Discord', Component: ConfigCardDiscord },
     {
-        id: 'tab-general',
-        name: 'General',
-        ...generalGroup,
-        //TODO: subgroups [Server Listing, txAdmin]
-    },
-    {
-        id: 'tab-fxserver',
-        name: 'FXServer',
-        ...fxserverGroup
-    },
-    {
-        id: 'tab-bans',
-        name: 'Bans',
-        ...bansGroup
-    },
-    {
-        id: 'tab-whitelist',
-        name: 'Whitelist',
-        ...whitelistGroup
-    },
-    {
-        id: 'tab-discord',
-        name: 'Discord',
-        ...discordGroup
-    },
-    {
-        id: 'tab-game',
         name: 'Game',
-        groups: [
-            {
-                id: 'menu',
-                name: 'Menu',
-                ...gameMenuGroup
-            },
-            {
-                id: 'notifications',
-                name: 'Notifications',
-                ...gameNotificationsGroup
-            }
+        cards: [
+            { name: 'Menu', Component: ConfigCardGameMenu },
+            { name: 'Notifications', Component: ConfigCardGameNotifications },
         ]
     },
-];
+    //Dev only
+    // { name: 'Template', Component: SettingsCardTemplate },
+    // { name: 'Blank', Component: SettingsCardBlank },
+]
 
-function HeaderChangelog() {
-    return (
-        <div className='flex flex-col px-2 py-1 rounded-lg  text-muted-foreground hover:bg-muted hover:text-primary cursor-pointer'>
-            <div className='tracking-wider leading-3 font-semibold'>
-                <Settings2Icon className='size-4 inline-block align-text-bottom' /> Last Updated
-            </div>
-            <div className='text-xs'>
-                <CalendarIcon className='size-4 inline-block align-text-bottom' /> 2021-09-01 12:00:00
-            </div>
-            <div className='text-xs'>
-                <UserIcon className='size-4 inline-block align-text-bottom' /> Jon Doe
-            </div>
-        </div>
-    )
-}
-function HeaderLinks() {
-    return (
-        <div className='flex flex-col px-2 py-1 rounded-lg  text-muted-foreground hover:bg-muted hover:text-primary cursor-pointer'>
-            <TxAnchor href='https://github.com/tabarra/txAdmin' className='text-sm'>Documentation</TxAnchor>
-            <TxAnchor href='https://github.com/tabarra/txAdmin' className='text-sm'>Support</TxAnchor>
-        </div>
-    )
-}
 
-function PageHeader() {
-    return (
-        <header className='border-b mb-4'>
-            <div className='flex justify-between items-center px-4 py-2'>
-                <h1 className='text-2xl font-semibold'>
-                    <Settings2Icon className="size-6 mt-0.5 inline-block align-text-top text-muted-foreground" /> Settings
-                    {/* Settings */}
-                </h1>
-                {/* <Button size='sm'>Save Changes</Button> */}
-                <HeaderChangelog />
-                {/* <HeaderLinks /> */}
-            </div>
-        </header>
-    )
-}
+//Types
+type SettingGroup = {
+    ctx: SettingsTabInfo & SettingsCardInfo;
+    Component: React.FC<SettingsCardProps>;
+};
+type SettingTabMulti = {
+    ctx: SettingsTabInfo;
+    cards: SettingGroup[];
+};
+type SettingTabSingle = SettingGroup;
+export type SettingTabsDatum = SettingTabMulti | SettingTabSingle;
 
+
+//Massaging the data into the expected format
+const nameToId = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+export const settingsTabs: SettingTabsDatum[] = settingsTabsBase.map((tab) => {
+    const tabCtx = {
+        tabId: nameToId(tab.name),
+        tabName: tab.name,
+    } satisfies SettingsTabInfo;
+    if ('cards' in tab && tab.cards) {
+        return {
+            ctx: tabCtx,
+            cards: tab.cards.map((card) => ({
+                ctx: {
+                    ...tabCtx,
+                    cardId: `${tabCtx.tabId}-${nameToId(card.name)}`,
+                    cardName: card.name,
+                    cardTitle: `${tabCtx.tabName} ${card.name}`,
+                },
+                Component: card.Component,
+            } satisfies SettingGroup)),
+        } satisfies SettingTabMulti;
+    } else {
+        return {
+            ctx: {
+                ...tabCtx,
+                cardId: tabCtx.tabId,
+                cardName: tabCtx.tabName,
+                cardTitle: tabCtx.tabName,
+            },
+            Component: tab.Component,
+        } satisfies SettingTabSingle;
+    }
+});
 
 
 export default function SettingsPage() {
-    const defaultTab = useMemo(() => {
+    const [cardPendingSave, setCardPendingSave] = useState<SettingsCardContext | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const openConfirmDialog = useOpenConfirmDialog();
+    const { hasPerm } = useAdminPerms();
+
+    //Check for default tab in URL hash
+    const [tab, setTab] = useState(() => {
         const pageHash = window.location?.hash.slice(1);
-        return settingsTabs.find(tab => tab.id === pageHash)?.id ?? settingsTabs[0].id;
-    }, [settingsTabs]);
+        return settingsTabs.find(tab => tab.ctx.tabId === pageHash)?.ctx.tabId ?? settingsTabs[0].ctx.tabId;
+    });
+
+
+    //API stuff
+    const queryApi = useBackendApi<GetConfigsResp>({
+        method: 'GET',
+        path: `/settings/configs`,
+        throwGenericErrors: true,
+    });
+    const saveApi = useBackendApi<SaveConfigsResp, SaveConfigsReq>({
+        method: 'POST',
+        path: `/settings/configs/:card`,
+        throwGenericErrors: true,
+    });
+
+    const swr = useSWR('/settings/configs', async () => {
+        const data = await queryApi({});
+        if (!data) throw new Error('No data returned');
+        return data;
+    }, {
+        revalidateOnMount: true,
+        revalidateOnFocus: false,
+    });
+
+
+    //Handlers
+    const saveChanges = async (source: SettingsCardContext, changes: PartialTxConfigs) => {
+        if (isSaving) return;
+        const toastId = txToast.loading(`Saving ${source.cardTitle} settings...`, { id: 'settingsSave' });
+        setIsSaving(true);
+        try {
+            if (!swr.data) throw new Error('Cannot save changes without swr.data.');
+            const saveResp = await saveApi({
+                pathParams: {
+                    card: source.cardId,
+                },
+                data: changes,
+                timeout: source.cardId === 'discord' ? ApiTimeout.REALLY_REALLY_LONG : ApiTimeout.LONG,
+                toastId,
+            });
+            if (!saveResp) throw new Error('empty_response');
+            if (saveResp.type === 'error') return; //the fetcher will handle the error
+            if (!saveResp.stored) throw new Error('no_stored_data');
+            if (!saveResp.changelog) throw new Error('no_changelog_data');
+            swr.mutate({
+                ...swr.data,
+                storedConfigs: saveResp.stored,
+                changelog: saveResp.changelog,
+            }, false);
+            setCardPendingSave(null);
+        } catch (error) {
+            txToast.error({
+                title: `Error saving ${source.cardTitle} settings:`,
+                msg: (error as any).message,
+            }, { id: toastId });
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
+    const switchTab = (newTab: string) => {
+        setCardPendingSave(null);
+        setTab(newTab);
+        setUrlHash(newTab);
+    }
+
+    //If switching tabs with unsaved changes, ask for confirmation
+    const handleTabChange = (newTab: string) => {
+        if (cardPendingSave && newTab && newTab !== cardPendingSave?.tabId) {
+            openConfirmDialog({
+                title: 'Discard Changes',
+                actionLabel: 'Discard',
+                confirmBtnVariant: 'destructive',
+                message: (<>
+                    You have unsaved <strong>{cardPendingSave.cardTitle}</strong> changes. <br />
+                    Are you sure you want to discard them?
+                </>),
+                onConfirm: () => {
+                    switchTab(newTab);
+                },
+            });
+        } else {
+            switchTab(newTab);
+        }
+    }
+
 
     return (
         <div className="w-full mb-10">
-            <PageHeader />
+            <SettingsHeader changelogData={swr?.data?.changelog} />
             <div className="px-0 xs:px-3 md:px-0 flex flex-row gap-2 w-full">
-
-                <Tabs defaultValue={defaultTab} onValueChange={setUrlHash} className="w-full">
+                <Tabs
+                    value={tab}
+                    onValueChange={handleTabChange}
+                    className="w-full"
+                >
                     <TabsList
                         className="max-xs:sticky max-xs:top-navbarvh z-10 flex-wrap h-[unset] max-xs:w-full max-xs:rounded-none"
                     >
-                        {settingsTabs.map((group) => (
+                        {settingsTabs.map((tab) => (
                             <TabsTrigger
-                                key={group.id}
-                                value={group.id}
+                                key={tab.ctx.tabId}
+                                value={tab.ctx.tabId}
                                 className="hover:text-primary"
                             >
-                                {group.name}
+                                {tab.ctx.tabName}
                                 {/* <TriangleAlertIcon className="inline-block size-4 mt-0.5 ml-1 text-destructive self-center" /> */}
                                 {/* <DynamicNewBadge size='xs' featName="ignore" /> */}
                             </TabsTrigger>
                         ))}
                     </TabsList>
                     {settingsTabs.map((tab) => (
-                        <TabsContent value={tab.id} key={tab.id} className="mt-6">
-                            <SettingsTab tab={tab} />
+                        <TabsContent value={tab.ctx.tabId} key={tab.ctx.tabId} className="mt-6">
+                            <SettingsTab
+                                tab={tab}
+                                pageCtx={{
+                                    apiData: swr.data,
+                                    isReadOnly: swr.isLoading || isSaving || !swr.data || !hasPerm('settings.write'),
+                                    isLoading: swr.isLoading,
+                                    isSaving,
+                                    swrError: swr.error ? swr.error.message : undefined,
+                                    cardPendingSave: cardPendingSave,
+                                    setCardPendingSave: setCardPendingSave,
+                                    saveChanges,
+                                }}
+                            />
                         </TabsContent>
                     ))}
                 </Tabs>
-
             </div>
         </div>
     )

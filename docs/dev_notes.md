@@ -4,46 +4,6 @@ Legend:
 - [!] -> Release Blocker
 - [?] -> Lower priority or pending investigation
 
-## Previous bugs
-- [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
-    - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
-- [ ] reported cases of crash reason too big without word break causing page to scroll horizontal 
-
-## Pending Improvements
-- [ ] Player drops page
-    - [!] fix: blurred chart lines
-        - `imageRendering: 'pixelated'` might fix it
-        - try messing with the canvas size +- 0.5
-    - [!] fix: crashes table overflowing (DrilldownCrashesSubcard.tsx)
-    - [ ] review page layout: 
-        - [ ] make it less card-y
-        - [ ] fix crashes table is not responsive
-        - [ ] fix scroll popping in/out
-    - [ ] add drilldown interval buttons
-- Dashboard stuff:
-    - [ ] add testing for getServerStatsData
-    - [ ] warning for top servers
-    - full perf chart:
-        - [ ] disable `<...>.curve(d3.curveNatural)` on `playerLineGenerator` if more than 20 players?
-        - [ ] buttons to show memory usage, maybe hide player count
-        - [ ] calculate initial zoom of 30h
-            - Initial zoom code: https://observablehq.com/@d3/zoomable-area-chart?intent=fork
-        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to when hovering
-        - [ ] show server close reason
-        - [ ] don't clear svg on render, use d3 joins
-    - Metrics.svRuntime:
-        - [ ] write log optimizer and remove the webroute 30h filter
-            - [ref](/core/modules/Metrics/svRuntime/config.ts#L33)
-            - maybe use rounded/aligned times?
-            - check how this code works `d3.timeHours(new Date(1715741829000), new Date())[0]`
-    - thread perf chart:
-        - [ ] add the good/bad markers?
-        - [ ] fix getMinTickIntervalMarker behavior when 0.2
-            - maybe just check if it's the hardcoded or color everything blue
-            - [ref](/core/modules/WebServer/wsRooms/dashboard.ts#L26)
-        - [ ] color should change correctly at the min interval marker point
-        - [ ] change the bg color to the color of the average ticket with heavy transparency?
-
 ## Small feat
 - [x] improve UX for debugging bans
     - tweak: improved readability on player join/leave events on server log
@@ -51,53 +11,17 @@ Legend:
     - feat(panel): added button to compare player/action ids
     - feat(panel): added copy IDs button to player and action modals
 - [x] feat(core): implement custom serveStatic middleware
-- [ ] live console 
-    - [x] feat(panel/console): added hidden copy options
-    - [ ] if socket connects but no data received, add a warning to the console and wipe it after first write
-    - [ ] persistent cls via ts offsets
-    - [ ] improve the bufferization to allow just loading most recent "block" and loading prev blocks via button
-    - [ ] options dropdown?
-- [ ] custom login page
-    - [ ] FxMonitor:
-        - `setCurrentStatus()`: when it becoems online trigger `tmpRefreshServerIcon()`
-        - `tmpRefreshServerIcon()`: if diff mutex, GET `/info.json`
-        - cache new icon URL
-    - [ ] drop `projectName` from `sv_logger.lua` & `Logger/handlers/server.js`?
-    - [ ] add icon/name to login page
-    - [ ] make sure it's responsive and has default behavior
-- [ ] rethink the flow of opening the menu `/tx <id>` and teleporting to targets
-    - need to use mouse, would be better if keyboardo nly
-    - the buttons need to be bigger, and tab-selectable, or hotkeys
-    - 💡 E se na main window do tx tivesse um <Command>, então vc pode só `F1 > tp 123 > enter` e seria tão rápido quanto usar o chat?
-    - 💡 Se abrir o menu via /tx e não for redm, avisar que é melhor fazer bind
-- [ ] being able to /goto, /tpm while on noclip
-- [ ] add stats tracking for runtime usage
-    - fw team request, probably a new native `GetResourceRuntimes(resName)`
-
-
-## Database Changes
-- [ ] migration to change "revocation" to optional
-    - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
-- [ ] add player name history
-- [ ] add player session time tracking
-    - [ref](/core/playerLogic/playerClasses.ts#L281)
-    - [ ] create simple page to list top 100 players by playtime in the last 30d, 14d, 7d, yesterday, today
-    - if storing in a linear UInt16Array, 100k players * 120d * 4bytes per date = 48mb
+- [x] feat(panel/console): added hidden copy options
 
 ## Fixes
 - [x] fix double server boot message:
     - happens when some page starts the server and redirects you to the live console
     - you join the room and gets initial data (directly from logger)
     - while the websocket out buffer still haven't sent the boot message
+- [!] fix: crashes table overflowing (DrilldownCrashesSubcard.tsx)
+    - [ ] reported cases of crash reason too big without word break causing page to scroll horizontal 
 - [!] radix select/dropdown inside dialog
     - test the settings one as well as the ban form inside the player modal
-- [ ] xterm changes
-    - [ ] deprecate canvas renderer and use the webgl instead
-    - [ ] check compatibility with text scaling - `window.devicePixelRatio`
-    - [ ] maybe update xterm to v5.6
-    - ref: https://github.com/xtermjs/xterm.js/issues/3864
-    - ref: https://github.com/xtermjs/xterm.js/issues/4779
-    - ref: https://github.com/xtermjs/xterm.js/milestone/78
 
 ## Refactor + DX
 - [x] deprecate fxRunner.srvCmd
@@ -141,7 +65,29 @@ Legend:
     - [x] migrate setup webroute
     - [x] migrate deployer webroute
     - [x] migrate masterActions->reset webroute
+    - [ ] New Settings Page:
+        - [x] hide onesync
+        - [x] new layout
+        - [x] move all options from old page to new page (no code just yet)
+        - [x] make route to get all settings
+        - [x] create template tab for easy copy paste
+        - [x] figure out the use of id/names in the pathParams, confirm modal, error msg
+        - [x] apply template to all tabs
+        - [ ] json input modals
+        - [ ] write down the client-side validations
+        - [ ] write saveConfigs.ts
+        - [ ] perms: message if no settings.view perms
+        - [ ] perms: message if no settings.write perms
+        - [ ] 
+        - [ ] double check:
+            - FIXME:NC
+            - check if all disabled={pageCtx.isReadOnly} were applied
+            - check if all text fields and selects have the `htmlFor`
+            - check if all textarea fields are auto-sized
+            - If shutdownNoticeDelayMs & restartSpawnDelayMs are really ms, and being migrated from secs for the case of shutdownNoticeDelay
+            - censoring tokens in case of view perms only (getConfigs.ts)
     - [ ] 
+    - [ ] remove `settings.ejs` and `core/routes/settings/get-old.ts`
     - [ ] i actually do need to change how the setup and deployer works to set the cfgPath to relative
     - [ ] migrate discord bot `refreshConfig()` and settings save
     - [ ] migrate all cfg mutation routes
@@ -154,28 +100,32 @@ Legend:
     - [ ] check all ConfigStore methods (including txCore.configStore.getRawFile())
     - [ ] core/routes/diagnostics/sendReport.ts
     - [ ] test setting up new profile from scratch
-- [ ] FXRunner ts refactor
-    - [ ] remove `this.spawnVariables` and move the method to the `utils.ts`
-    - [ ] abstract `this.history` into a separate class, and add a "shutting down" state triggered by the scheduledRestart event
-        - use the Stopwatch class?
-        - fully convert to millisecond precision
-        - status should be an enum
-    - [ ] move `this.fxServerHost` and `this.cfxId` to txManager?
-    - [ ] abstract all external references to `txCore.fxRunner.fxChild`, specially checking if null
-    - [ ] `getUptime()` as getter
-    - [ ] maybe if closed & exited, set `this.fxChild = null`? **This impacts FxMonitor!**
-    - [ ] clean up every `typeof xxx === 'undefined'`
-- [ ] New Settings Page:
-    - [x] hide onesync
-    - [x] new layout
-    - [x] move all options from old page to new page (no code just yet)
-    - [ ] double check:
-        - check if all text fields and selects have the `htmlFor`
-        - check if all textarea fields are auto-sized
-        - If shutdownNoticeDelayMs & restartSpawnDelayMs are really ms, and being migrated from secs for the case of shutdownNoticeDelay
-- [ ] create a global (or console?) `emsg(e: unknown)` that gets the message from an Error, and returns its message
-    - replace all `(error as Error).message` and `(error as any).message`
+    - [!] write dev notes on the config system (README.md in the panel settigns and core configstore?)
 
+## Other stuff
+- [!] add stats tracking for the framework team (ask them, idk)
+- [!] package updates - test radix stuff
+- [!] new env vars
+- [!] remove dynamicAds from the modules
+- [!] commit stashed stuff
+- [!] fix custom locale
+
+
+
+
+
+
+### MARK: Config Docs
+- DEFAULT_NULL é apenas para valores que de fato não tem uma definição padrão, tipo fxRunner.dataPath, discordBot.token, etc.
+- Todos schemas tem default, mesmo que seja null.
+- Fixer só tenta corrigir valores inválidos, não faltantes.
+- Fixer só tenta corrigir valores no boot, não durante save.
+- SYM_FIXER_FATAL apenas para configs que são muito importantes pro servidor
+- Objetivo do schema é garantir que o valor é do tipo certo e faz sentido, mas não checar nada dinâmico como existencia de arquivos, etc.
+- Validator transformers only to "polish" the value, like removing duplicates and sorting values, not to fix invalid values.
+
+
+=======================================================================
 
 
 
@@ -193,14 +143,17 @@ Legend:
 - NOTE: resoluções mobile
     - 360x510 menor razoável
     - 390x670 mais comum
-- [ ] remove dynamicAds from the modules
+
 
 
 
 ## Chores + boring stuff
+- [ ] replace lodash's cloneDeep with one of:
+    - https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone (node 17+)
+    - https://www.npmjs.com/package/rfdc
 - [ ] switch to `game 'common'` and remove `rdr3_warning`
 - [ ] add `.yarn.installed` to the dist? even in dev
-- [!] check netid uint16 overflow
+- [ ] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/modules/Logger/handlers/server.js#L148)
     - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
     - increase mutex to 6 digits?
@@ -211,6 +164,77 @@ Legend:
     - node 22 branch -> code/components/citizen-server-monitor/src/MonitorInstance.cpp:307
 - [ ] see if it's a good idea to replace `getHostStats.js` with si.osInfo()
     - same for getting process load, instead of fixing the wmic issue
+- [ ] xterm changes
+    - [ ] deprecate canvas renderer and use the webgl instead
+    - [ ] check compatibility with text scaling - `window.devicePixelRatio`
+    - [ ] maybe update xterm to v5.6
+    - ref: https://github.com/xtermjs/xterm.js/issues/3864
+    - ref: https://github.com/xtermjs/xterm.js/issues/4779
+    - ref: https://github.com/xtermjs/xterm.js/milestone/78
+
+## Previous bugs
+- [ ] use `ScanResourceRoot()`
+    - `ScanResourceRoot('xxx/resources/', (data: object) => {...});`
+
+## Pending Improvements
+- [ ] Player drops page
+    - [ ] fix: blurred chart lines
+        - `imageRendering: 'pixelated'` might fix it
+        - try messing with the canvas size +- 0.5px
+    - [ ] review page layout: 
+        - [ ] make it less card-y
+        - [ ] fix crashes table is not responsive
+        - [ ] fix scroll popping in/out
+    - [ ] switch from `useSWRImmutable` to `useSWR`
+    - [ ] add drilldown interval buttons
+- Dashboard stuff:
+    - [ ] add testing for getServerStatsData
+    - full perf chart:
+        - [ ] disable `<...>.curve(d3.curveNatural)` on `playerLineGenerator` if more than 20 players?
+        - [ ] buttons to show memory usage, maybe hide player count
+        - [ ] calculate initial zoom of 30h
+            - Initial zoom code: https://observablehq.com/@d3/zoomable-area-chart?intent=fork
+        - [ ] use semi-transparent arrows on the sides to indicate there is more to pan to when hovering
+        - [ ] show server close reason
+        - [ ] don't clear svg on render, use d3 joins
+    - Metrics.svRuntime:
+        - [ ] write log optimizer and remove the webroute 30h filter
+            - [ref](/core/modules/Metrics/svRuntime/config.ts#L33)
+            - maybe use rounded/aligned times?
+            - check how this code works `d3.timeHours(new Date(1715741829000), new Date())[0]`
+    - thread perf chart:
+        - [ ] add the good/bad markers?
+        - [ ] fix getMinTickIntervalMarker behavior when 0.2
+            - maybe just check if it's the hardcoded or color everything blue
+            - [ref](/core/modules/WebServer/wsRooms/dashboard.ts#L26)
+        - [ ] color should change correctly at the min interval marker point
+        - [ ] change the bg color to the color of the average ticket with heavy transparency?
+- [ ] being able to /goto, /tpm while on noclip
+- [ ] add stats tracking for runtime usage
+    - fw team request, probably a new native `GetResourceRuntimes(resName)`
+
+## Database Changes
+- [ ] migration to change "revocation" to optional
+    - [ ] test the `getRegisteredActions()` filter as object, doing `{revocation: undefined}`
+- [ ] add player name history
+- [ ] add player session time tracking
+    - [ref](/core/playerLogic/playerClasses.ts#L281)
+    - [ ] create simple page to list top 100 players by playtime in the last 30d, 14d, 7d, yesterday, today
+    - if storing in a linear UInt16Array, 100k players * 120d * 4bytes per date = 48mb
+
+- [ ] FXRunner ts refactor
+    - [ ] remove `this.spawnVariables` and move the method to the `utils.ts`
+    - [ ] abstract `this.history` into a separate class, and add a "shutting down" state triggered by the scheduledRestart event
+        - use the Stopwatch class?
+        - fully convert to millisecond precision
+        - status should be an enum
+    - [ ] move `this.fxServerHost` and `this.cfxId` to txManager?
+    - [ ] abstract all external references to `txCore.fxRunner.fxChild`, specially checking if null
+    - [ ] `getUptime()` as getter
+    - [ ] maybe if closed & exited, set `this.fxChild = null`? **This impacts FxMonitor!**
+    - [ ] clean up every `typeof xxx === 'undefined'`
+
+
 
 ## other stuff
 - Consider using Blob
@@ -258,8 +282,10 @@ if (!params) return;
 
 
 ## Other annoying stuff to do
-- [ ] remove `fs-extra` - right now only used in deployer and setup
 - [ ] headless deployer, without instantiating TxAdmin
+- [ ] remove `fs-extra` - right now only used in deployer and setup
+- [ ] create a global (or console?) `emsg(e: unknown)` that gets the message from an Error, and returns its message
+    - replace all `(error as Error).message` and `(error as any).message`
 - [ ] include `list-dependencies.js` as part of the test workflow
     - improve to read the parent package deps
     - exit 1 on error
@@ -268,6 +294,9 @@ if (!params) return;
     - use playwright
     - [ ] use https://mswjs.io/docs/getting-started
     - [ ] write some automated tests for the auth logic and middlewares
+- [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
+    - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
+- [ ] add support for `sv_prometheusBasicAuthUser` & `sv_prometheusBasicAuthPassword`
 
 ## Refactor: Formatting + Linting
 - [ ] fix the eslint config + tailwind sort
@@ -296,6 +325,33 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - Add a "timeout" button that brings a prompt with 1/5/15/30 mins buttons
     - Add a checkbox to the kick modal to mark it as a punishment
 
+- [ ] Settings Page:
+    - [ ] bake in the defaults, so so SwitchText's don't show fale initial value
+    - [ ] check for pending changes on the navigate-away buttons
+
+- [ ] custom login page
+    - [ ] FxMonitor:
+        - `setCurrentStatus()`: when it becoems online trigger `tmpRefreshServerIcon()`
+        - `tmpRefreshServerIcon()`: if diff mutex, GET `/info.json`
+        - cache new icon URL
+    - [ ] drop `projectName` from `sv_logger.lua` & `Logger/handlers/server.js`?
+    - [ ] add icon/name to login page
+    - [ ] make sure it's responsive and has default behavior
+- [ ] rethink the flow of opening the menu `/tx <id>` and teleporting to targets
+    - need to use mouse, would be better if keyboardo nly
+    - the buttons need to be bigger, and tab-selectable, or hotkeys
+    - 💡 E se na main window do tx tivesse um <Command>, então vc pode só `F1 > tp 123 > enter` e seria tão rápido quanto usar o chat?
+    - 💡 Se abrir o menu via /tx e não for redm, avisar que é melhor fazer bind
+
+- [ ] live console 
+    - [ ] if socket connects but no data received, add a warning to the console and wipe it after first write
+    - [ ] persistent cls via ts offsets
+    - [ ] improve the bufferization to allow just loading most recent "block" and loading prev blocks via button
+    - [ ] options dropdown?
+    - [ ] console nav button to jump to server start or errors? 
+        - Or maybe filter just error lines (with margin)
+        - Or maybe even detect all channels and allow you to filter them, show dropdown sorted by frequency
+
 - [ ] add average session time tracking to Metrics.playerDrop
 - [ ] track resource download times?
 
@@ -312,7 +368,6 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
 - [ ] remove more pending DynamicNewBadge/DynamicNewItem (settings page as well)
 - [ ] reevaluate globals?.tmpSetHbDataTracking
 - [ ] fix socket.io multiple connections - start a single instance when page opens, commands to switch rooms
-- [ ] evaluate and maybe add event bus
 - [ ] switch tx to lua54
 
 - [ ] build: generate fxmanifest files list dynamically
@@ -326,11 +381,6 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - check if the menu -> tx -> iframe -> legacy iframe is not working
     - check both canary and prod builds
 
-- [ ] use `ScanResourceRoot()`
-    - `ScanResourceRoot('xxx/resources/', (data: object) => {...});`
-- [ ] console nav button to jump to server start or errors? 
-    - Or maybe filter just error lines (with margin)
-    - Or maybe even detect all channels and allow you to filter them, show dropdown sorted by frequency
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin
@@ -358,7 +408,7 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - replace all `global.*` to `globalThis.*`
     - use `@tsconfig/node22`
 
-- [ ] checar se outros resources conseguem chamar 'txaLogger:menuEvent'?
+
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
 
