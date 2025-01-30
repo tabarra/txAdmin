@@ -1,9 +1,9 @@
-import { Input } from "@/components/ui/input"
-import SwitchText from '@/components/SwitchText'
-import InlineCode from '@/components/InlineCode'
-import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
+import { Input } from "@/components/ui/input";
+import SwitchText from '@/components/SwitchText';
+import InlineCode from '@/components/InlineCode';
+import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems';
 import { useEffect, useState } from "react";
-import { diffConfig, SettingsCardProps, useConfAccessor } from "../utils";
+import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils";
 import SettingsCardShell from "../SettingsCardShell";
 
 
@@ -19,26 +19,30 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
 
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
 
-        const diff = diffConfig([
-            //FIXME: add config accessors here
+        const res = processConfigStates([
             [menuEnabled, menuEnabled.state.value],
             [alignRight, alignRight.state.value],
             [pageKey, pageKey.state.value],
             [playerModePtfx, playerModePtfx.state.value],
         ]);
-        pageCtx.setCardPendingSave(diff ? cardCtx : null);
-        return diff;
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
-
-        //FIXME:NC do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
+        //NOTE: nothing to validate
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes
@@ -93,7 +97,7 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
                     When enabled, admins will be able to open the menu by typing <InlineCode>/tx</InlineCode> or using the keybind configured in the FiveM/RedM settings.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Align Right">
+            <SettingItem label="Align Menu Right">
                 <SwitchText
                     id={alignRight.eid}
                     checkedLabel="Right aligned"
@@ -106,7 +110,7 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
                     Move menu to the right side of the screen.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Menu Page Switch Key" htmlFor={pageKey.eid}>
+            <SettingItem label="Menu Page Switch Key" htmlFor={pageKey.eid} required>
                 <Input
                     id={pageKey.eid}
                     value={pageKey.state.value}

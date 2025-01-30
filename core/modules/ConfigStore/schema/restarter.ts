@@ -8,6 +8,7 @@ export const polishScheduleTimesArray = (input: string[]) => {
 };
 
 const schedule = typeDefinedConfig({
+    name: 'Restart Schedule',
     default: [],
     validator: z.string().regex(regexHoursMinutes).array().transform(polishScheduleTimesArray),
     fixer: (input: any) => {
@@ -17,12 +18,14 @@ const schedule = typeDefinedConfig({
 });
 
 const bootCooldown = typeDefinedConfig({
+    name: 'Boot Cooldown',
     default: 15,
     validator: z.number().int().min(15),
     fixer: SYM_FIXER_DEFAULT,
 });
 
 const resourceStartingTolerance = typeDefinedConfig({
+    name: 'Resource Starting Tolerance',
     default: 120,
     validator: z.number().int().min(30),
     fixer: SYM_FIXER_DEFAULT,

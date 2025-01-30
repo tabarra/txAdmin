@@ -9,19 +9,33 @@ import { SYM_FIXER_FATAL } from "../configSymbols";
     The only exception is setting it to false for disabling the specific logger.
     Ref: https://github.com/iccicci/rotating-file-stream#options
 */
-const rfsOptionSchema = typeDefinedConfig({
-    default: {},
-    validator: z.union([
-        z.literal(false),
-        z.object({}).passthrough(),
-    ]),
-    //NOTE: don't fallback to default because storage issues might crash the server
-    fixer: SYM_FIXER_FATAL,
-});
+const rfsOptionValidator = z.union([
+    z.literal(false),
+    z.object({}).passthrough(),
+]);
 
 
+//NOTE: don't fallback to default because storage issues might crash the server
 export default {
-    admin: rfsOptionSchema, //admin & some system logs
-    fxserver: rfsOptionSchema, //fxserver output
-    server: rfsOptionSchema, //in-game logs
+    //admin & some system logs
+    admin: typeDefinedConfig({
+        name: 'Admin Logs',
+        default: {},
+        validator: rfsOptionValidator,
+        fixer: SYM_FIXER_FATAL,
+    }),
+    //fxserver output
+    fxserver: typeDefinedConfig({
+        name: 'FXServer Logs',
+        default: {},
+        validator: rfsOptionValidator,
+        fixer: SYM_FIXER_FATAL,
+    }),
+    //in-game logs
+    server: typeDefinedConfig({
+        name: 'Server Logs',
+        default: {},
+        validator: rfsOptionValidator,
+        fixer: SYM_FIXER_FATAL,
+    }),
 } as const;

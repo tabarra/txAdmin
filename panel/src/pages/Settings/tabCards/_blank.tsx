@@ -1,9 +1,9 @@
 /**
  * This template is used to serve as a starting point for creating new settings cards or copying components.
  */
-import { useState, useEffect } from "react"
-import { diffConfig, SettingsCardProps, useConfAccessor } from "../utils"
-import SettingsCardShell from "../SettingsCardShell"
+import { useState, useEffect } from "react";
+import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils";
+import SettingsCardShell from "../SettingsCardShell";
 import { AdvancedDivider } from "../settingsItems";
 
 
@@ -19,22 +19,28 @@ export default function SettingsCardBlank({ cardCtx, pageCtx }: SettingsCardProp
 
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
 
-        const diff = diffConfig([
+        const diff = processConfigStates([
             //FIXME: add config accessors here
         ]);
         pageCtx.setCardPendingSave(diff ? cardCtx : null);
         return diff;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
 
         //FIXME: do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes

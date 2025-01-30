@@ -1,31 +1,34 @@
 import { z } from "zod";
-import { typeDefinedConfig, typeNullableConfig } from "./utils";
-import consts from "@shared/consts";
+import { discordSnowflakeSchema, typeDefinedConfig, typeNullableConfig } from "./utils";
 import { defaultEmbedConfigJson, defaultEmbedJson } from "@modules/DiscordBot/defaultJsons";
 import { SYM_FIXER_DEFAULT } from "../configSymbols";
 
 
 const enabled = typeDefinedConfig({
+    name: 'Bot Enabled',
     default: false,
     validator: z.boolean(),
     fixer: SYM_FIXER_DEFAULT,
 });
 
 const token = typeNullableConfig({
+    name: 'Bot Token',
     default: null,
     validator: z.string().min(1).nullable(),
     fixer: SYM_FIXER_DEFAULT,
 });
 
 const guild = typeNullableConfig({
+    name: 'Server ID',
     default: null,
-    validator: z.string().regex(consts.regexDiscordSnowflake).nullable(),
+    validator: discordSnowflakeSchema.nullable(),
     fixer: SYM_FIXER_DEFAULT,
 });
 
 const warningsChannel = typeNullableConfig({
+    name: 'Warnings Channel ID',
     default: null,
-    validator: z.string().regex(consts.regexDiscordSnowflake).nullable(),
+    validator: discordSnowflakeSchema.nullable(),
     fixer: SYM_FIXER_DEFAULT,
 });
 
@@ -40,6 +43,7 @@ export const attemptMinifyJsonString = (input: string) => {
 };
 
 const embedJson = typeDefinedConfig({
+    name: 'Status Embed JSON',
     default: defaultEmbedJson,
     validator: z.string().min(1).transform(attemptMinifyJsonString),
     //NOTE: no true valiation in here, done in the module only
@@ -47,6 +51,7 @@ const embedJson = typeDefinedConfig({
 });
 
 const embedConfigJson = typeDefinedConfig({
+    name: 'Status Config JSON',
     default: defaultEmbedConfigJson,
     validator: z.string().min(1).transform(attemptMinifyJsonString),
     //NOTE: no true valiation in here, done in the module only

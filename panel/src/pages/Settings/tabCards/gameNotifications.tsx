@@ -2,8 +2,8 @@ import TxAnchor from '@/components/TxAnchor';
 import SwitchText from '@/components/SwitchText';
 import InlineCode from '@/components/InlineCode';
 import { SettingItem, SettingItemDesc } from '../settingsItems';
-import { useEffect, useState } from 'react';
-import { diffConfig, SettingsCardProps, useConfAccessor } from '../utils';
+import { useEffect } from 'react';
+import { processConfigStates, SettingsCardProps, useConfAccessor } from '../utils';
 import SettingsCardShell from '../SettingsCardShell';
 
 export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: SettingsCardProps) {
@@ -18,9 +18,15 @@ export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: Settin
 
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
 
-        const diff = diffConfig([
+        const res = processConfigStates([
             [hideAdminInPunishments, hideAdminInPunishments.state.value],
             [hideAdminInMessages, hideAdminInMessages.state.value],
             [hideDefaultAnnouncement, hideDefaultAnnouncement.state.value],
@@ -28,17 +34,16 @@ export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: Settin
             [hideDefaultWarning, hideDefaultWarning.state.value],
             [hideScheduledRestartWarnings, hideScheduledRestartWarnings.state.value],
         ]);
-        pageCtx.setCardPendingSave(diff ? cardCtx : null);
-        return diff;
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
-
-        //FIXME:NC do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
+        //NOTE: nothing to validate
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes

@@ -1,14 +1,15 @@
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import TxAnchor from '@/components/TxAnchor'
 import InlineCode from '@/components/InlineCode'
-import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
+import { SettingItem, SettingItemDesc } from '../settingsItems'
 import { RadioGroup } from "@/components/ui/radio-group"
 import BigRadioItem from "@/components/BigRadioItem"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { AutosizeTextarea, AutosizeTextAreaRef } from "@/components/ui/autosize-textarea"
-import { diffConfig, SettingsCardProps, useConfAccessor } from "../utils"
+import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
+import { txToast } from "@/components/TxToaster"
+import consts from "@shared/consts"
 
 
 export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardProps) {
@@ -22,34 +23,84 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
 
     //Marshalling Utils
     const inputArrayUtil = {
-        toUi: (args?: string[]) => args ? args.join(' ') : undefined,
-        toCfg: (str?: string) => str ? str.trim().split(/\s+/) : undefined,
+        toUi: (args?: string[]) => args ? args.join(', ') : undefined,
+        toCfg: (str?: string) => str ? str.split(/[,;]\s*/).map(x => x.trim()).filter(x => x.length) : undefined,
     }
 
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
 
         let currDiscordRoles;
         if (discordRolesRef.current) {
             currDiscordRoles = inputArrayUtil.toCfg(discordRolesRef.current.value);
         }
-        const diff = diffConfig([
+        const res = processConfigStates([
             [whitelistMode, whitelistMode.state.value],
             [rejectionMessage, rejectionMessageRef.current?.textArea.value],
             [discordRoles, currDiscordRoles],
         ]);
-        pageCtx.setCardPendingSave(diff ? cardCtx : null);
-        return diff;
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
 
-        //FIXME:NC do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        if (
+            localConfigs.whitelist?.rejectionMessage
+            && localConfigs.whitelist.rejectionMessage.length > 512
+        ) {
+            return txToast.error({
+                title: 'The Whitelist Rejection Message is too big.',
+                md: true,
+                msg: 'The message must be 512 characters or less.',
+            });
+        }
+        if (
+            localConfigs.whitelist?.mode === 'guildMember'
+            || localConfigs.whitelist?.mode === 'guildRoles'
+        ) {
+            if (pageCtx.apiData?.storedConfigs.discordBot?.enabled !== true) {
+                return txToast.warning({
+                    title: 'Discord Bot is required.',
+                    msg: 'You need to enable the Discord Bot in the Discord tab to use Discord-based whitelist modes.',
+                });
+            }
+            if (
+                localConfigs.whitelist?.mode === 'guildRoles'
+                && (
+                    !Array.isArray(localConfigs.whitelist?.discordRoles)
+                    || !localConfigs.whitelist?.discordRoles.length
+                )
+            ) {
+                return txToast.warning({
+                    title: 'Discord Roles are required.',
+                    msg: 'You need to specify at least one Discord Role ID to use the "Discord Guild Roles" whitelist mode.',
+                });
+            }
+        }
+        if (Array.isArray(localConfigs.whitelist?.discordRoles)) {
+            const invalidRoles = localConfigs.whitelist.discordRoles
+                .filter(x => !consts.regexDiscordSnowflake.test(x))
+                .map(x => `- \`${x.slice(0, 20)}\``);
+            if (invalidRoles.length) {
+                return txToast.error({
+                    title: 'Invalid Discord Role ID(s).',
+                    md: true,
+                    msg: 'The following Discord Role ID(s) are invalid: \n' + invalidRoles.join('\n'),
+                });
+            }
+        }
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes

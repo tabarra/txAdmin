@@ -1,11 +1,12 @@
 import { Input } from "@/components/ui/input"
 import { SettingItem, SettingItemDesc } from '../settingsItems'
-import { diffConfig, SettingsCardProps, useConfAccessor } from "../utils"
+import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
 import { useEffect, useMemo, useRef } from "react"
 import SettingsCardShell from "../SettingsCardShell"
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
 import InlineCode from "@/components/InlineCode"
 import TxAnchor from "@/components/TxAnchor"
+import { txToast } from "@/components/TxToaster"
 
 
 const detectBrowserLanguage = () => {
@@ -62,22 +63,34 @@ export default function ConfigCardGeneral({ cardCtx, pageCtx }: SettingsCardProp
 
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
-        const diff = diffConfig([
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
+
+        const res = processConfigStates([
             [serverName, serverNameRef.current?.value],
             [language, language.state.value],
         ]);
-        pageCtx.setCardPendingSave(diff ? cardCtx : null);
-        return diff;
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
 
-        //FIXME:NC do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        if (!localConfigs.general?.serverName) {
+            return txToast.error('The Server Name is required.');
+        }
+        if (localConfigs.general?.serverName?.length > 18) {
+            return txToast.error('The Server Name is too big.');
+        }
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes
@@ -103,7 +116,8 @@ export default function ConfigCardGeneral({ cardCtx, pageCtx }: SettingsCardProp
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
-                    A <strong>short</strong> server name to be used in the txAdmin interface and Server/Discord messages.
+                    A <strong>short</strong> server name to be used in the txAdmin interface and Server/Discord messages. <br />
+                    The name must be between 1 and 18 characters.
                 </SettingItemDesc>
             </SettingItem>
             <SettingItem label="Language" htmlFor={language.eid} required>

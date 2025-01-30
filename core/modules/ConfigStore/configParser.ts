@@ -3,7 +3,8 @@ import consoleFactory from "@lib/console";
 import { ConfigFileData, ConfigScaffold } from "./schema";
 import { ConfigScope, ListOf, ScopeConfigItem } from "./schema/utils";
 import { confx, UpdateConfigKeySet } from "./utils";
-import { cloneDeep, isEqual } from "lodash";
+import { cloneDeep } from "lodash";
+import { dequal } from 'dequal/lite';
 import { fromZodError } from "zod-validation-error";
 import { SYM_FIXER_DEFAULT, SYM_RESET_CONFIG } from "./configSymbols";
 const console = consoleFactory(modulename);
@@ -174,24 +175,24 @@ export const runtimeConfigProcessor = (
         } else {
             const zResult = configSchema.validator.safeParse(value);
             if (!zResult.success) {
-                throw fromZodError(zResult.error, { prefix: `${scope}.${key}` });
+                throw fromZodError(zResult.error, { prefix: configSchema.name });
             }
             newValue = zResult.data;
         }
 
         //Check if the value is different from the stored value
-        if (newValue !== confx(thisStoredCopy).get(scope, key)) {
+        if (!dequal(newValue, confx(thisStoredCopy).get(scope, key))) {
             storedKeysChanges.add(scope, key);
             confx(thisStoredCopy).set(scope, key, newValue);
         }
 
         //If the value is the default, remove
-        if (isEqual(newValue, configSchema.default)) {
+        if (dequal(newValue, configSchema.default)) {
             confx(thisStoredCopy).unset(scope, key);
         }
 
         //Check if the value is different from the active value
-        if (!isEqual(newValue, confx(thisActiveCopy).get(scope, key))) {
+        if (!dequal(newValue, confx(thisActiveCopy).get(scope, key))) {
             activeKeysChanges.add(scope, key);
             confx(thisActiveCopy).set(scope, key, newValue);
         }

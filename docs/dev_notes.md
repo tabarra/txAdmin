@@ -73,8 +73,8 @@ Legend:
         - [x] create template tab for easy copy paste
         - [x] figure out the use of id/names in the pathParams, confirm modal, error msg
         - [x] apply template to all tabs
-        - [ ] json input modals
-        - [ ] write down the client-side validations
+        - [ish] json input modals
+        - [x] write down the client-side validations
         - [ ] write saveConfigs.ts
         - [ ] perms: message if no settings.view perms
         - [ ] perms: message if no settings.write perms
@@ -411,6 +411,8 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
 
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
+
+- [ ] Migrate freecam to use IsRawKeyPressed instead of the GTA references
 
 - [ ] Playerlist: implement basic tag system with filters, sorting and Fuse.js
     - the filter dropdown is written already, check `panel/src/layout/playerlistSidebar/Playerlist.tsx`

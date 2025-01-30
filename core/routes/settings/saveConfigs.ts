@@ -13,6 +13,17 @@ export type SaveConfigsResp = ApiToastResp & {
     changelog?: ConfigChangelogEntry[];
 };
 
+const cardNames = {
+    general: 'General',
+    fxserver: 'FXServer',
+    bans: 'Bans',
+    whitelist: 'Whitelist',
+    discord: 'Discord',
+    'game-menu': 'Game Menu',
+    'game-notifications': 'Game Notifications',
+
+}
+
 
 /**
  * Returns the output page containing the live console
@@ -46,7 +57,7 @@ export default async function SettingsPage(ctx: AuthedCtx) {
         return sendTypedResp({
             type: 'error',
             md: true,
-            title: 'Error saving settings',
+            title: `Error saving the ${cardNames[ctx.params.card as keyof typeof cardNames] ?? 'unknown'} settings.`,
             msg: (error as any).message,
         });
     }

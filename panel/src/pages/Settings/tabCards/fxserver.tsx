@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button"
 import { TimeInputDialog } from "@/components/TimeInputDialog"
 import TxAnchor from "@/components/TxAnchor"
 import { useAutoAnimate } from "@formkit/auto-animate/react"
-import { diffConfig, SettingsCardProps, useConfAccessor } from "../utils"
+import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
 import { cn } from "@/lib/utils"
+import { txToast } from "@/components/TxToaster"
 
 
 // Remove duplicates and sort times
@@ -181,7 +182,6 @@ function TimeZoneWarning() {
 
 export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardProps) {
     const [showAdvanced, setShowAdvanced] = useState(false);
-    const [banana, setBanana] = useState(null);
 
     //Config accessors
     const conf = useConfAccessor(pageCtx.apiData);
@@ -209,13 +209,19 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
 
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
 
         let currStartupArgs;
         if (startupArgsRef.current) {
             currStartupArgs = inputArrayUtil.toCfg(startupArgsRef.current.value);
         }
-        const diff = diffConfig([
+        const res = processConfigStates([
             [dataPath, dataPathRef.current?.value],
             [restarterSchedule, restarterSchedule.state.value],
             [quietMode, quietMode.state.value],
@@ -225,17 +231,40 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
             [autoStart, autoStart.state.value],
             [resourceTolerance, resourceTolerance.state.value],
         ]);
-        pageCtx.setCardPendingSave(diff ? cardCtx : null);
-        return diff;
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
 
-        //FIXME:NC do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        if (!localConfigs.server?.dataPath) {
+            return txToast.error({
+                title: 'The Server Data Folder is required.',
+                md: true,
+                msg: 'If you want to return to the Setup page, go to:\n `System > Master Actions > Reset FXServer`',
+            });
+        }
+        if (localConfigs.server.cfgPath !== undefined && !localConfigs.server.cfgPath) {
+            return txToast.error({
+                title: 'The CFG File Path is required.',
+                md: true,
+                msg: 'The value should probably be `server.cfg`.',
+            });
+        }
+        if (
+            Array.isArray(localConfigs.server?.startupArgs)
+            && localConfigs.server.startupArgs.some((arg) => arg.toLowerCase() === 'onesync')
+        ) {
+            return txToast.error({
+                title: 'You cannot set OneSync in Startup Arguments.',
+                md: true,
+                msg: 'Please use the selectbox below it.',
+            });
+        }
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes

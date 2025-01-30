@@ -55,24 +55,28 @@ export const polishBanTemplatesArray = (input: BanTemplatesDataType[]) => {
  * MARK: Default
  */
 const enabled = typeDefinedConfig({
+    name: 'Ban Checking Enabled',
     default: true,
     validator: z.boolean(),
     fixer: SYM_FIXER_DEFAULT,
 });
 
 const rejectionMessage = typeDefinedConfig({
+    name: 'Ban Rejection Message',
     default: 'You can join http://discord.gg/example to appeal this ban.',
     validator: z.string(),
     fixer: SYM_FIXER_DEFAULT,
 });
 
 const requiredHwidMatches = typeDefinedConfig({
+    name: 'Required Ban HWID Matches',
     default: 1,
     validator: z.number().int().min(0),
     fixer: SYM_FIXER_DEFAULT,
 });
 
 const templates = typeDefinedConfig({
+    name: 'Ban Templates',
     default: [],
     validator: BanTemplatesDataSchema.array().transform(polishBanTemplatesArray),
     //NOTE: if someone messed with their templates and broke it, we don't want to wipe it all out

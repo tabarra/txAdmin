@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from '../configSymbols';
+import consts from '@shared/consts';
 
 
 /**
@@ -9,6 +10,7 @@ import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from '../configSymbols';
 export type ConfigScope = ListOf<DefinedConfigItem | NulledConfigItem>;
 export type ConfigItemFixer<T> = (value: any) => T;
 interface BaseConfigItem<T = unknown> {
+    name: string;
     validator: z.Schema<T>;
     fixer: typeof SYM_FIXER_FATAL | typeof SYM_FIXER_DEFAULT | ConfigItemFixer<T>;
 }
@@ -26,3 +28,12 @@ export type ScopeConfigItem = DefinedConfigItem | NulledConfigItem;
 //NOTE: Split into two just because I couldn't figure out how to make the default value be null
 export const typeDefinedConfig = <T>(config: DefinedConfigItem<T>): DefinedConfigItem<T> => config;
 export const typeNullableConfig = <T>(config: NulledConfigItem<T>): NulledConfigItem<T> => config;
+
+
+/**
+ * MARK: Common Schemas
+ */
+export const discordSnowflakeSchema = z.string().regex(
+    consts.regexDiscordSnowflake,
+    'The ID should be a 17-20 digit number.'
+);

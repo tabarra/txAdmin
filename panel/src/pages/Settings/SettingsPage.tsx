@@ -19,6 +19,8 @@ import ConfigCardGameMenu from "./tabCards/gameMenu";
 import ConfigCardGameNotifications from "./tabCards/gameNotifications";
 import ConfigCardGeneral from "./tabCards/general";
 import ConfigCardWhitelist from "./tabCards/whitelist";
+import SettingsCardTemplate from "./tabCards/_template";
+import SettingsCardBlank from "./tabCards/_blank";
 
 
 //Tab configuration
@@ -172,7 +174,7 @@ export default function SettingsPage() {
                 actionLabel: 'Discard',
                 confirmBtnVariant: 'destructive',
                 message: (<>
-                    You have unsaved <strong>{cardPendingSave.cardTitle}</strong> changes. <br />
+                    You have unsaved changes in the <strong>{cardPendingSave.cardTitle}</strong> tab. <br />
                     Are you sure you want to discard them?
                 </>),
                 onConfirm: () => {

@@ -1,4 +1,4 @@
-import { compact, isEqual } from "lodash";
+import { dequal } from 'dequal/lite';
 import parseArgsStringToArgv from "string-argv";
 import { ConfigSchemas_v2 } from ".";
 import { ListOf } from "./utils";
@@ -129,7 +129,7 @@ export const migrateOldConfig = (old: any) => {
         for (const [configKey, configDefault] of Object.entries(scopeConfigs)) {
             const configValue = confx(remapped).get(scopeName, configKey);
             if (configValue === undefined) continue;
-            if (!isEqual(configValue, configDefault)) {
+            if (!dequal(configValue, configDefault)) {
                 confx(justNonDefaults).set(scopeName, configKey, configValue);
             }
         }

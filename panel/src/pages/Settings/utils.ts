@@ -109,11 +109,17 @@ type ConfigValueAccessor = {
 /**
  * Helper function to diff the current value against the stored value and return a PartialTxConfigs object
  */
-export const diffConfig = (configs: DiffConfigInput[]) => {
-    const diff: any = {};
+export const processConfigStates = (configs: ConfigStateReference[]) => {
+    const localConfigs: any = {};
+    const changedConfigs: any = {};
     let hasChanges = false;
     console.groupCollapsed('Settings Diffing:');
-    for (const [config, newVal] of configs) {
+    for (let [config, newVal] of configs) {
+        if (newVal === undefined) continue;
+        if (typeof newVal === 'string') newVal = newVal.trim();
+        localConfigs[config.scope] ??= {};
+        localConfigs[config.scope][config.key] = newVal;
+
         const hasChanged = config.hasChanged(newVal);
         console.log(
             hasChanged,
@@ -124,20 +130,24 @@ export const diffConfig = (configs: DiffConfigInput[]) => {
                 current: newVal
             }
         );
-        if (!config.hasChanged(newVal)) continue;
-        hasChanges = true;
-        diff[config.scope] ??= {};
-        diff[config.scope][config.key] = newVal;
+        if (config.hasChanged(newVal)) {
+            hasChanges = true;
+            changedConfigs[config.scope] ??= {};
+            changedConfigs[config.scope][config.key] = newVal;
+        }
+
     }
-    console.log('Final diff:', diff);
+    console.log('Final changedConfigs:', changedConfigs);
     console.groupEnd();
 
-    return hasChanges
-        ? diff as PartialTxConfigs
-        : undefined;
+    return {
+        hasChanges,
+        localConfigs: localConfigs as PartialTxConfigs,
+        changedConfigs: changedConfigs as PartialTxConfigs,
+    };
 }
 
-type DiffConfigInput = [
+type ConfigStateReference = [
     config: ConfigValueAccessor,
     newVal: any
 ];
