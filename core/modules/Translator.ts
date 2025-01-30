@@ -7,6 +7,7 @@ import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
 import type { UpdateConfigKeySet } from './ConfigStore/utils';
 import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
+import { msToDuration } from '@lib/misc';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
 
@@ -35,6 +36,14 @@ export default class Translator {
     constructor() {
         //Load language
         this.setupTranslator(true);
+    }
+
+
+    /**
+     * Handle updates to the config by resetting the translator
+     */
+    public handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
+        this.setupTranslator(false);
     }
 
 
@@ -70,19 +79,10 @@ export default class Translator {
 
 
     /**
-     * Handle updates to the config by resetting the translator
-     */
-    public handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
-        this.setupTranslator(false);
-    }
-
-
-    /**
      * Loads a language file or throws Error.
-     * @param {string} lang
      */
     getLanguagePhrases(lang: string) {
-        if (typeof localeMap[lang] === 'object') {
+        if (localeMap[lang]?.$meta) {
             //If its a known language
             return localeMap[lang];
 
@@ -115,6 +115,22 @@ export default class Translator {
         } catch (error) {
             console.error(`Error performing a translation with key '${key}'`);
             return key;
+        }
+    }
+
+
+    /**
+     * Humanizes & translates a duration in ms
+     */
+    tDuration(ms: number, options: HumanizerOptions = {}) {
+        if (!this.#polyglot) throw new Error(`polyglot not yet loaded`);
+
+        try {
+            const lang = this.#polyglot.t('$meta.humanizer_language')
+            return msToDuration(ms, { ...options, language: lang });
+        } catch (error) {
+            console.error(`Error humanizing duration`, error);
+            return String(ms)+'ms';
         }
     }
 };

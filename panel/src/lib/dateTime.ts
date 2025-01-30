@@ -11,6 +11,7 @@ const currentYear = new Date().getFullYear();
  */
 export const msToDuration = humanizeDuration.humanizer({
     round: true,
+    fallbacks: ['en'],
 } satisfies HumanizerOptions);
 
 
@@ -23,6 +24,7 @@ export const msToShortDuration = humanizeDuration.humanizer({
     round: true,
     spacer: '',
     language: 'shortEn',
+    fallbacks: ['en'],
 } satisfies HumanizerOptions);
 
 

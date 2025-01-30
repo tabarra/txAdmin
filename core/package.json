@@ -35,7 +35,6 @@
     "is-localhost-ip": "^2.0.0",
     "jose": "^4.15.4",
     "js-yaml": "^4.1.0",
-    "jsonrepair": "^3.8.1",
     "koa": "^2.15.3",
     "koa-bodyparser": "^4.4.1",
     "koa-ratelimit": "^5.1.0",

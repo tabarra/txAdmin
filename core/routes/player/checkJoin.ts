@@ -175,19 +175,18 @@ function checkBan(
             note_multiple_bans: txCore.translator.t('ban_messages.reject.note_multiple_bans'),
             note_diff_license: txCore.translator.t('ban_messages.reject.note_diff_license'),
         };
-        const language = txCore.translator.t('$meta.humanizer_language');
 
         //Ban data
         let title;
         let expLine = '';
         if (ban.expiration) {
-            const humanizeOptions = {
-                language,
-                largest: 2,
-                round: true,
-                units: ['d', 'h', 'm'] as Unit[],
-            };
-            const duration = humanizeDuration((ban.expiration - ts) * 1000, humanizeOptions);
+            const duration = txCore.translator.tDuration(
+                (ban.expiration - ts) * 1000,
+                {
+                    largest: 2,
+                    units: ['d', 'h', 'm'] as Unit[],
+                },
+            );
             expLine = `<strong>${textKeys.label_expiration}:</strong> ${duration} <br>`;
             title = textKeys.title_temporary;
         } else {

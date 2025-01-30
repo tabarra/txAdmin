@@ -1,4 +1,5 @@
 import dateFormat from 'dateformat';
+import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import { DeepReadonly } from 'utility-types';
 
 export const regexHoursMinutes = /^(?<hours>[01]?[0-9]|2[0-4]):(?<minutes>[0-5][0-9])$/;
@@ -71,6 +72,41 @@ export const getTimeHms = (time?: string | number | Date) => dateFormat(time ?? 
  * Returns the current time in filename-friendly format
  */
 export const getTimeFilename = (time?: string | number | Date) => dateFormat(time ?? new Date(), 'yyyy-mm-dd_HH-MM-ss');
+
+
+/**
+ * Converts a number of milliseconds to english words
+ * Accepts a humanizeDuration config object
+ * eg: msToDuration(ms, { units: ['h', 'm'] });
+ */
+export const msToDuration = humanizeDuration.humanizer({
+    round: true,
+    units: ['d', 'h', 'm'],
+    fallbacks: ['en'],
+} satisfies HumanizerOptions);
+
+
+/**
+ * Converts a number of milliseconds to short-ish english words
+ */
+export const msToShortishDuration = humanizeDuration.humanizer({
+    round: true,
+    units: ['d', 'h', 'm'],
+    largest: 2,
+    language: 'shortishEn',
+    languages: {
+        shortishEn: {
+            y: (c) => 'year' + (c === 1 ? '' : 's'),
+            mo: (c) => 'month' + (c === 1 ? '' : 's'),
+            w: (c) => 'week' + (c === 1 ? '' : 's'),
+            d: (c) => 'day' + (c === 1 ? '' : 's'),
+            h: (c) => 'hr' + (c === 1 ? '' : 's'),
+            m: (c) => 'min' + (c === 1 ? '' : 's'),
+            s: (c) => 'sec' + (c === 1 ? '' : 's'),
+            ms: (c) => 'ms',
+        },
+    },
+});
 
 
 /**

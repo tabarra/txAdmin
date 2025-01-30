@@ -11,6 +11,7 @@ import consoleFactory from '@lib/console';
 import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
 import { getHeapStatistics } from 'node:v8';
 import bytes from 'bytes';
+import { msToDuration } from './misc';
 const console = consoleFactory(modulename);
 
 
@@ -261,17 +262,12 @@ export const getHostStaticData = (): HostStaticDataType => {
  * Gets txAdmin Data
  */
 export const getTxAdminData = async () => {
-    const humanizeOptions: HumanizerOptions = {
-        round: true,
-        units: ['d', 'h', 'm'],
-    };
-
     const stats = txCore.metrics.txRuntime; //shortcut
     const memoryUsage = getHeapStatistics();
 
     return {
         //Stats
-        uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
+        uptime: msToDuration(process.uptime() * 1000),
         monitorRestarts: {
             close: stats.monitorStats.restartReasons.close,
             heartBeat: stats.monitorStats.restartReasons.heartBeat,

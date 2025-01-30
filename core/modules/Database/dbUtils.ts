@@ -8,6 +8,7 @@ import getOsDistro from '@lib/host/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData';
 import { DatabaseObjectType } from './instance';
 import consoleFactory from '@lib/console';
+import { msToDuration } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 //Consts
@@ -20,14 +21,10 @@ const noIdErrorMessage = 'Unnable to generate new Random ID possibly due to the 
  * Prints a diagnostics message to the console that should help us identify what is the problem and the potential solution
  */
 const printDiagnostics = async () => {
-    const humanizeOptions: HumanizerOptions = {
-        round: true,
-        units: ['d', 'h', 'm'],
-    };
     let uptime;
     let entropy;
     try {
-        uptime = humanizeDuration(process.uptime() * 1000, humanizeOptions);
+        uptime = msToDuration(process.uptime() * 1000);
         entropy = (await fsp.readFile('/proc/sys/kernel/random/entropy_avail', 'utf8')).trim();
     } catch (error) {
         entropy = (error as Error).message;

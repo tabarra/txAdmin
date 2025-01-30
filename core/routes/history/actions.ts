@@ -117,12 +117,10 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
             reason: reason,
         };
         if (expiration !== false && duration) {
-            const humanizeOptions = {
-                language: txCore.translator.t('$meta.humanizer_language'),
-                round: true,
-                units: ['d', 'h'] as Unit[],
-            };
-            durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
+            durationTranslated = txCore.translator.tDuration(
+                duration * 1000,
+                { units: ['d', 'h'] },
+            );
             tOptions.expiration = durationTranslated;
             kickMessage = txCore.translator.t('ban_messages.kick_temporary', tOptions);
         } else {

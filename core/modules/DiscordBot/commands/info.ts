@@ -6,25 +6,11 @@ import { findPlayersByIdentifier } from '@lib/player/playerFinder';
 import { txEnv } from '@core/globalData';
 import humanizeDuration from 'humanize-duration';
 import consoleFactory from '@lib/console';
+import { msToShortishDuration } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 
-//Helpers
-const humanizer = humanizeDuration.humanizer({
-    round: true,
-    units: ['d', 'h', 'm'],
-    largest: 2,
-    // spacer: '',
-    language: 'shortEn',
-    languages: {
-        shortEn: {
-            d: (c) => "day" + (c === 1 ? "" : "s"),
-            h: (c) => "hr" + (c === 1 ? "" : "s"),
-            m: (c) => "min" + (c === 1 ? "" : "s"),
-        },
-    },
-});
-
+//Consts
 const footer = {
     iconURL: 'https://cdn.discordapp.com/emojis/1062339910654246964.webp?size=96&quality=lossless',
     text: `txAdmin ${txEnv.txaVersion}`,
@@ -106,7 +92,7 @@ export default async (interaction: CommandInteraction) => {
 
         //Basic data
         const bodyText: Record<string, string> = {
-            'Play time': humanizer(dbData.playTime * 60 * 1000),
+            'Play time': msToShortishDuration(dbData.playTime * 60 * 1000),
             'Join date': tsToLocaleDate(dbData.tsJoined),
             'Last connection': tsToLocaleDate(dbData.tsLastConnection),
             'Whitelisted': (dbData.tsWhitelisted)
