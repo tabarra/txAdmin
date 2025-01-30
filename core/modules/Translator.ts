@@ -6,7 +6,18 @@ import localeMap from '@shared/localeMap';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
 import type { UpdateConfigKeySet } from './ConfigStore/utils';
+import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
+import { z } from 'zod';
 const console = consoleFactory(modulename);
+
+
+//Schema for the custom locale file
+export const localeFileSchema = z.object({
+    $meta: z.object({
+        label: z.string().min(1),
+        humanizer_language: z.string().min(1),
+    }),
+}).passthrough();
 
 
 /**
@@ -15,6 +26,7 @@ const console = consoleFactory(modulename);
  */
 export default class Translator {
     static readonly configKeysWatched = ['general.language'];
+    static readonly humanizerLanguages: string[] = humanizeDuration.getSupportedLanguages();
 
     public readonly customLocalePath = `${txEnv.dataPath}/locale.json`;
     public canonical: string = 'en-GB'; //Using GB instead of US due to date/time formats 

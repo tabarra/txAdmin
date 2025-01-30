@@ -76,9 +76,9 @@ Legend:
         - [ish] json input modals
         - [x] write down the client-side validations
         - [ ] write saveConfigs.ts
-        - [ ] perms: message if no settings.view perms
-        - [ ] perms: message if no settings.write perms
-        - [ ] 
+        - [ ] perms: message if no settings.view perms (page error)
+        - [ ] perms: message if no settings.write perms (no token)
+        - [ ] write the reset fxserver button
         - [ ] double check:
             - FIXME:NC
             - check if all disabled={pageCtx.isReadOnly} were applied
@@ -264,7 +264,7 @@ const checkParse = <T extends ZodSchema<any>>(
   data: unknown
 ): zodInfer<T> | undefined => {
   const result = schema.safeParse(data);
-  return result.success ? result.data : undefined;
+  return result.success ? result.data : undefined; //maybe return ZodError instead
 };
 const userSchema = z.object({
   name: z.string(),
@@ -275,8 +275,26 @@ const result = checkParse(userSchema, data);
 //    /\ Type: { name: string; age: number } | undefined
 
 //Now, apply that to create something for the ctx
-const params = ctx.getParams(schema: ZodInstance, errorMessage?: string)
-if (!params) return;
+const params = ctx.getParams(schema: ZodInstance, errorMessage?: string | false) //false means no auto resp
+const query = ctx.getQuery(/*...*/)
+const body = ctx.getBody(/*...*/)
+if (!params || !query || !body) return; //error resp already sent
+```
+```ts
+// NOTE: current code
+const paramsSchemaRes = paramsSchema.safeParse(ctx.params);
+const bodySchemaRes = bodySchema.safeParse(ctx.request.body);
+if (!paramsSchemaRes.success || !bodySchemaRes.success) {
+    return sendTypedResp({
+        type: 'error',
+        md: true,
+        title: 'Invalid Request',
+        msg: fromZodError(
+            paramsSchemaRes.error ?? bodySchemaRes.error,
+            { prefix: null }
+        ).message,
+    });
+}
 ```
 
 
@@ -328,6 +346,7 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
 - [ ] Settings Page:
     - [ ] bake in the defaults, so so SwitchText's don't show fale initial value
     - [ ] check for pending changes on the navigate-away buttons
+    - [ ] use jsonForgivingParse for embed jsons and custom locale
 
 - [ ] custom login page
     - [ ] FxMonitor:

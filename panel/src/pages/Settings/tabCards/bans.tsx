@@ -7,7 +7,8 @@ import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
 import { AutosizeTextarea, AutosizeTextAreaRef } from "@/components/ui/autosize-textarea"
 import { useEffect, useRef, useState } from "react"
 import SettingsCardShell from "../SettingsCardShell"
-import { diffConfig, SettingsCardProps, useConfAccessor } from "../utils"
+import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
+import { txToast } from "@/components/TxToaster"
 
 
 export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) {
@@ -28,24 +29,39 @@ export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) 
 
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
 
-        const diff = diffConfig([
+        const res = processConfigStates([
             [checkingEnabled, checkingEnabled.state.value],
             [rejectionMessage, rejectionMessageRef.current?.textArea.value],
             [requiredHwids, requiredHwids.state.value],
         ]);
-        pageCtx.setCardPendingSave(diff ? cardCtx : null);
-        return diff;
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
 
-        //FIXME:NC do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        if (
+            localConfigs.banlist?.rejectionMessage
+            && localConfigs.banlist.rejectionMessage.length > 512
+        ) {
+            return txToast.error({
+                title: 'The Ban Rejection Message is too big.',
+                md: true,
+                msg: 'The message must be 512 characters or less.',
+            });
+        }
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes

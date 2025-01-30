@@ -16,11 +16,14 @@ import { SYM_RESET_CONFIG } from "../configSymbols";
 type InferConfigScopes<S extends ConfigScope> = IferConfigValues<S>;
 type IferConfigValues<S extends ConfigScope> = {
     [K in keyof S]: S[K]['default'] | z.infer<S[K]['validator']>;
+}
+type WritableValues<T> = {
+    -readonly [P in keyof T]: T[P]
 };
-type InferConfigScopesToSave<S extends ConfigScope> = InferConfigValuesToSave<S>;
-type InferConfigValuesToSave<S extends ConfigScope> = {
+type InferConfigScopesToSave<S extends ConfigScope> = InferConfigValuesToSave<WritableValues<S>>;
+type InferConfigValuesToSave<S extends ConfigScope> = WritableValues<{
     [K in keyof S]: S[K]['default'] | z.infer<S[K]['validator']> | typeof SYM_RESET_CONFIG;
-};
+}>;
 
 //Exporting the schemas
 export const ConfigSchemas_v2 = {

@@ -1,16 +1,15 @@
 import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
 import TxAnchor from '@/components/TxAnchor'
-import { PencilIcon, RotateCcwIcon, XIcon } from 'lucide-react'
+import { RotateCcwIcon, XIcon } from 'lucide-react'
 import SwitchText from '@/components/SwitchText'
 import InlineCode from '@/components/InlineCode'
 import { SettingItem, SettingItemDesc } from '../settingsItems'
 import { useEffect, useRef } from "react"
 import SettingsCardShell from "../SettingsCardShell"
-import { SettingsCardProps, useConfAccessor, diffConfig } from "../utils"
-import { AutosizeTextarea, AutosizeTextAreaRef } from "@/components/ui/autosize-textarea"
-import TmpFiller from "@/pages/TestingPage/TmpFiller"
+import { SettingsCardProps, useConfAccessor, processConfigStates } from "../utils"
 import { Textarea } from "@/components/ui/textarea"
+import { txToast } from "@/components/TxToaster"
 
 
 //We are not validating the JSON, only that it is a string
@@ -33,34 +32,55 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
     const discordGuildRef = useRef<HTMLInputElement | null>(null);
     const warningsChannel = conf('discordBot', 'warningsChannel');
     const warningsChannelRef = useRef<HTMLInputElement | null>(null);
-
     const embedJson = conf('discordBot', 'embedJson');
     const embedConfigJson = conf('discordBot', 'embedConfigJson');
 
+    //Marshalling Utils
+    const emptyToNull = (str?: string) => {
+        if (str === undefined) return undefined;
+        const trimmed = str.trim();
+        return trimmed.length ? trimmed : null;
+    };
+
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
 
-        const diff = diffConfig([
-            //FIXME: add config accessors here
+        const res = processConfigStates([
             [botEnabled, botEnabled.state.value],
-            [botToken, botTokenRef.current?.value],
-            [discordGuild, discordGuildRef.current?.value],
-            [warningsChannel, warningsChannelRef.current?.value],
+            [botToken, emptyToNull(botTokenRef.current?.value)],
+            [discordGuild, emptyToNull(discordGuildRef.current?.value)],
+            [warningsChannel, emptyToNull(warningsChannelRef.current?.value)],
             [embedJson, embedJson.state.value],
             [embedConfigJson, embedConfigJson.state.value],
         ]);
-        pageCtx.setCardPendingSave(diff ? cardCtx : null);
-        return diff;
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
 
-        //FIXME:NC do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        if (localConfigs.discordBot?.enabled) {
+            if (!localConfigs.discordBot?.token) {
+                return txToast.error('You must provide a Discord Bot Token to enable the bot.');
+            }
+            if (!localConfigs.discordBot?.guild) {
+                return txToast.error('You must provide a Server ID to enable the bot.');
+            }
+            if (!localConfigs.discordBot?.embedJson || !localConfigs.discordBot?.embedConfigJson) {
+                return txToast.error('You must provide both the Embed JSON and Config JSON to enable the bot.');
+            }
+        }
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes
@@ -92,7 +112,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     Enable Discord Integration.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Token" htmlFor={botToken.eid} required>
+            <SettingItem label="Token" htmlFor={botToken.eid} required={botEnabled.state.value}>
                 <Input
                     id={botToken.eid}
                     ref={botTokenRef}
@@ -113,7 +133,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     <TxAnchor href="https://discord.com/developers/applications">Discord Developer Portal</TxAnchor>.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Guild/Server ID" htmlFor={discordGuild.eid}>
+            <SettingItem label="Guild/Server ID" htmlFor={discordGuild.eid} required={botEnabled.state.value}>
                 <Input
                     id={discordGuild.eid}
                     ref={discordGuildRef}
@@ -123,8 +143,8 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     placeholder='000000000000000000'
                 />
                 <SettingItemDesc>
-                    The ID of the Discord Guild (also known as Discord Server). <br />
-                    To get the Guild ID, go to Discord's settings and
+                    The ID of the Discord Server (also known as Discord Guild). <br />
+                    To get the Server ID, go to Discord's settings and
                     <TxAnchor href="https://support.discordapp.com/hc/article_attachments/115002742731/mceclip0.png"> enable developer mode</TxAnchor>, then right-click on the guild icon select "Copy ID".
                 </SettingItemDesc>
             </SettingItem>
@@ -168,7 +188,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     <strong>Note:</strong> Use the command <InlineCode>/status add</InlineCode> on a channel that the bot has the "Send Message" permission to setup the embed.
                 </SettingItemDesc>
             </SettingItem> */}
-            <SettingItem label="Status Embed JSON" htmlFor={embedJson.eid} showOptional>
+            <SettingItem label="Status Embed JSON" htmlFor={embedJson.eid} required={botEnabled.state.value}>
                 <div className="flex flex-col gap-2">
                     <Textarea
                         id={embedJson.eid}
@@ -202,7 +222,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     <strong>Note:</strong> Use the command <InlineCode>/status add</InlineCode> on a channel that the bot has the "Send Message" permission to setup the embed.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Status Config JSON" htmlFor={embedConfigJson.eid} showOptional>
+            <SettingItem label="Status Config JSON" htmlFor={embedConfigJson.eid} required={botEnabled.state.value}>
                 <div className="flex flex-col gap-2">
                     <Textarea
                         id={embedConfigJson.eid}

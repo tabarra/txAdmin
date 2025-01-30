@@ -7,13 +7,12 @@ import SwitchText from '@/components/SwitchText'
 import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
 import React, { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { diffConfig, SettingsCardProps, useConfAccessor } from "../utils"
+import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
 import { AutosizeTextarea, AutosizeTextAreaRef } from "@/components/ui/autosize-textarea"
 import { RadioGroup } from "@/components/ui/radio-group"
 import BigRadioItem from "@/components/BigRadioItem"
 import InlineCode from "@/components/InlineCode"
-import { txToast } from "@/components/TxToaster"
 
 
 type ItemWithStateProps = {
@@ -49,13 +48,15 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
     const conf = useConfAccessor(pageCtx.apiData);
     const booleanSwitch = conf('server', 'quiet');
     const selectString = conf('server', 'onesync');
-    const normalInput = conf('server', 'dataPath');
+    const normalInput = conf('general', 'serverName');
     const normalInputRef = useRef<HTMLInputElement | null>(null);
     const textareaInput = conf('whitelist', 'rejectionMessage');
     const textareaInputRef = useRef<AutosizeTextAreaRef | null>(null);
     const selectNumber = conf('restarter', 'resourceStartingTolerance');
     const inputArray = conf('server', 'startupArgs');
     const inputArrayRef = useRef<HTMLInputElement | null>(null);
+    const nullableInput = conf('server', 'dataPath');
+    const nullableInputRef = useRef<HTMLInputElement | null>(null);
     const customComponent = conf('restarter', 'bootCooldown');
     const bigRadio = conf('whitelist', 'mode');
 
@@ -68,22 +69,34 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
         toUi: (args?: string[]) => args ? args.join(' ') : undefined,
         toCfg: (str?: string) => str ? str.trim().split(/\s+/) : undefined,
     }
+    const emptyToNull = (str?: string) => {
+        if (str === undefined) return undefined;
+        const trimmed = str.trim();
+        return trimmed.length ? trimmed : null;
+    };
 
     //Check against stored value and sets the page state
     const processChanges = () => {
-        if (!pageCtx.apiData) return;
+        if (!pageCtx.apiData) {
+            return {
+                changedConfigs: {},
+                hasChanges: false,
+                localConfigs: {},
+            }
+        }
 
         let currInputArray;
         if (inputArrayRef.current) {
             currInputArray = inputArrayUtil.toCfg(inputArrayRef.current.value);
         }
-        const diff = diffConfig([
+        const diff = processConfigStates([
             [booleanSwitch, booleanSwitch.state.value],
             [selectString, selectString.state.value],
             [normalInput, normalInputRef.current?.value],
             [textareaInput, textareaInputRef.current?.textArea.value],
             [selectNumber, selectNumber.state.value],
             [inputArray, currInputArray],
+            [nullableInput, emptyToNull(nullableInputRef.current?.value)],
             [customComponent, customComponent.state.value],
             [bigRadio, bigRadio.state.value],
         ]);
@@ -91,13 +104,13 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
         return diff;
     }
 
-    //Validate changes and trigger the save API
+    //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const changes = processChanges();
-        if (!changes) return;
+        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        if (!hasChanges) return;
 
         //FIXME: do validation
-        pageCtx.saveChanges(cardCtx, changes);
+        pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
     //Triggers handleChanges for state changes
@@ -229,6 +242,20 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                     placeholder="example1, example2"
                     onChange={processChanges}
                     disabled={pageCtx.isReadOnly}
+                />
+                <SettingItemDesc>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </SettingItemDesc>
+            </SettingItem>
+
+            <SettingItem label="Nullable Input" htmlFor={nullableInput.eid}>
+                <Input
+                    id={nullableInput.eid}
+                    ref={nullableInputRef}
+                    defaultValue={nullableInput.initialValue}
+                    onChange={processChanges}
+                    disabled={pageCtx.isReadOnly}
+                    placeholder={'example'}
                 />
                 <SettingItemDesc>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
