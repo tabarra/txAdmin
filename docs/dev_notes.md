@@ -77,7 +77,7 @@ Legend:
         - [x] write down the client-side validations
         - [x] perms: message if no settings.write perms (no token)
         - [x] write saveConfigs.ts
-        - [ ] perms: message if no settings.view perms (page error)
+        - [x] perms: message if no settings.view perms (page error)
         - [ ] write the reset fxserver button
         - [ ] double check:
             - FIXME:NC

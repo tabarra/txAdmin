@@ -29,7 +29,7 @@ export { default as deployer_stepper } from './deployer/stepper';
 export { default as deployer_status } from './deployer/status';
 export { default as deployer_actions } from './deployer/actions';
 
-//FIXME juntar bantemplates com settings
+//FIXME join bantemplates with settings
 export { default as settings_getConfigs } from './settings/getConfigs';
 export { default as settings_saveConfigs } from './settings/saveConfigs';
 export { default as settings_getBanTemplates } from './banTemplates/getBanTemplates.js';
