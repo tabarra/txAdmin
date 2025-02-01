@@ -140,7 +140,7 @@ export default class ConfigStore /*does not extend TxModuleBase*/ {
      * Returns the stored config object, with only the known keys
      */
     public getStoredConfig() {
-        return deepFreeze(cloneDeep(this.storedConfigs));
+        return cloneDeep(this.storedConfigs);
     }
 
 

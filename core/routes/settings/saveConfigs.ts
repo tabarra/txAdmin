@@ -12,7 +12,10 @@ import { fromError } from 'zod-validation-error';
 import Translator, { localeFileSchema } from '@modules/Translator';
 import ConfigStore from '@modules/ConfigStore';
 import { resolveCFGFilePath } from '@lib/fxserver/fxsConfigHelper';
-import { txEnv } from '@core/globalData';
+import { findPotentialServerDataPaths, isValidServerDataPath } from '@lib/fxserver/serverData';
+import { getFsErrorMdMessage } from '@lib/fs';
+import { generateStatusMessage } from '@modules/DiscordBot/commands/status';
+import { getSchemaChainError } from '@modules/ConfigStore/schema/utils';
 const console = consoleFactory(modulename);
 
 
@@ -109,8 +112,7 @@ export default async function SettingsPage(ctx: AuthedCtx) {
 
     //Save the changes
     try {
-        const storedKeysChanges = txCore.configStore.saveConfigs(ctx.request.body, ctx.admin.name);
-        console.dir(storedKeysChanges.list);
+        txCore.configStore.saveConfigs(ctx.request.body, ctx.admin.name);
         return sendTypedResp({
             type: 'success',
             msg: `${cardName} Settings saved!`,
@@ -181,7 +183,34 @@ const handleFxserverCard: CardHandler = async (inputConfig, sendTypedResp) => {
         throw new Error(`Unexpected data for the 'fxserver' card.`);
     }
 
+
+    //Validating Server Data Path
     const dataPath = inputConfig.server.dataPath;
+    try {
+        const isValid = await isValidServerDataPath(dataPath);
+        if (!isValid) throw new Error(`unexpected isValidServerDataPath response`);
+    } catch (error) {
+        try {
+            const potentialFix = await findPotentialServerDataPaths(dataPath);
+            if (potentialFix) {
+                return sendTypedResp({
+                    type: 'error',
+                    title: 'Server Data Folder Error',
+                    md: true,
+                    msg: `The path provided is not valid.\n\nDid you mean this path?\n\`${cleanPath(potentialFix)}\``,
+                });
+            }
+        } catch (error2) { }
+        return sendTypedResp({
+            type: 'error',
+            title: 'Server Data Folder Error',
+            md: true,
+            msg: (error as any).message,
+        });
+    }
+
+
+    //Validating CFG Path
     let cfgPath = txConfig.server.cfgPath;
     if (inputConfig.server?.cfgPath !== undefined) {
         const res = ConfigStore.Schema.server.cfgPath.validator.safeParse(inputConfig.server.cfgPath);
@@ -196,57 +225,28 @@ const handleFxserverCard: CardHandler = async (inputConfig, sendTypedResp) => {
         cfgPath = res.data;
     }
 
-    //Validating Server Data Path
     try {
-        const resPath = path.join(dataPath, 'resources');
-        const resStat = await fsp.stat(resPath);
-        if (!resStat.isDirectory()) {
-            throw new Error("Couldn't locate or read a resources folder inside of the server data path.");
-        }
-    } catch (err) {
-        const error = err as Error;
-        let msg = error.message;
-        if (dataPath.includes('resources')) {
-            msg = `Looks like this path is the \`resources\` folder, but the server data path must be the folder that contains the resources folder instead of the resources folder itself.\n**Try removing the \`resources\` part at the end of the path.**`;
-        } else if (!txEnv.isWindows && /^[a-zA-Z]:[\\/]/.test(dataPath)) {
-            msg = `Looks like you're using a Windows path on a Linux server.\nThis likely means you are attempting to use a path from your Windows machine on a remote server.\nIf you want to use your local files, you will first need to upload them to the server.`;
-        } else if (error.message?.includes('ENOENT')) {
-            msg = `The path provided does not exist:\n\`${dataPath}\``;
-        } else if (error.message?.includes('EACCES') || error.message?.includes('EPERM')) {
-            msg = `The path provided is not accessible:\n\`${dataPath}\``;
-        }
-        return sendTypedResp({
-            type: 'error',
-            title: 'Server Data Folder Error',
-            md: true,
-            msg,
-        });
-    }
-
-    //Validating CFG Path
-    try {
-        const cfgFilePath = resolveCFGFilePath(cfgPath, dataPath);
-        const cfgFileStat = await fsp.stat(cfgFilePath);
+        cfgPath = resolveCFGFilePath(cfgPath, dataPath);
+        const cfgFileStat = await fsp.stat(cfgPath);
         if (!cfgFileStat.isFile()) {
             throw new Error('The path provided is not a file');
         }
-    } catch (err) {
-        const error = err as Error;
-        let msg = error.message;
-        if (error.message?.includes('ENOENT')) {
-            msg = `The path provided does not exist:\n\`${dataPath}\``;
-        } else if (error.message?.includes('EACCES') || error.message?.includes('EPERM')) {
-            msg = `The path provided is not accessible:\n\`${dataPath}\``;
-        }
+    } catch (error) {
         return sendTypedResp({
             type: 'error',
             title: 'CFG Path Error',
             md: true,
-            msg,
+            msg: getFsErrorMdMessage(error, cleanPath(cfgPath)),
         });
     }
 
+    //FIXME: implement findLikelyCFGPath in here
+
+
     //Final cleanup
+    if (typeof inputConfig.server?.dataPath === 'string') {
+        inputConfig.server.dataPath = cleanPath(inputConfig.server.dataPath);
+    }
     if (typeof inputConfig.server?.cfgPath === 'string') {
         inputConfig.server.cfgPath = cleanPath(inputConfig.server.cfgPath);
     }
@@ -266,5 +266,115 @@ const handleFxserverCard: CardHandler = async (inputConfig, sendTypedResp) => {
  * Discord card handler
  */
 const handleDiscordCard: CardHandler = async (inputConfig, sendTypedResp) => {
-    return undefined; //FIXME: implement
+    if (!inputConfig.discordBot) throw new Error(`Unexpected data for the 'discord' card.`);
+
+    //Validating embed JSONs
+    //NOTE: need this before checking if enabled, or while disabled one could save invalid JSON
+    if (typeof inputConfig.discordBot.embedJson === 'string' || typeof inputConfig.discordBot.embedConfigJson === 'string') {
+        try {
+            generateStatusMessage(
+                inputConfig.discordBot.embedJson as string | undefined ?? txConfig.discordBot.embedJson,
+                inputConfig.discordBot.embedConfigJson as string | undefined ?? txConfig.discordBot.embedConfigJson,
+            );
+        } catch (error) {
+            return sendTypedResp({
+                type: 'error',
+                title: 'Embed validation failed:',
+                md: true,
+                msg: (error as Error).message,
+            });
+        }
+    }
+
+    //If bot disabled, kill the bot and don't validate anything
+    if (!inputConfig.discordBot?.enabled) {
+        await txCore.discordBot.attemptBotReset(false);
+        return { processedConfig: inputConfig };
+    }
+
+    //Validating fields manually before trying to start the bot
+    const baseError = {
+        type: 'error',
+        title: 'Discord Bot Error',
+        md: true,
+    } as const;
+    const schemas = ConfigStore.Schema.discordBot;
+    const validationError = getSchemaChainError([
+        [schemas.enabled, inputConfig.discordBot.enabled],
+        [schemas.token, inputConfig.discordBot.token],
+        [schemas.guild, inputConfig.discordBot.guild],
+        [schemas.warningsChannel, inputConfig.discordBot.warningsChannel],
+    ]);
+    if (validationError) {
+        return sendTypedResp({
+            ...baseError,
+            msg: validationError,
+        });
+    }
+
+    //Checking if required fields are present (frontend should have done this already)
+    if (
+        !inputConfig.discordBot.token
+        || !inputConfig.discordBot.guild
+    ) {
+        return sendTypedResp({
+            ...baseError,
+            msg: 'Missing required fields to enable the bot.',
+        });
+    }
+
+    //Restarting discord bot
+    let successMsg;
+    try {
+        successMsg = await txCore.discordBot.attemptBotReset({
+            enabled: true,
+            //They have been validated, so this is fine
+            token: inputConfig.discordBot.token as any,
+            guild: inputConfig.discordBot.guild as any,
+            warningsChannel: inputConfig.discordBot.warningsChannel as any,
+        });
+    } catch (error) {
+        const errorCode = (error as any).code;
+        let extraContext = '';
+        if (errorCode === 'DisallowedIntents' || errorCode === 4014) {
+            extraContext = `**The bot requires the \`GUILD_MEMBERS\` intent.**
+            - Go to the [Discord Dev Portal](https://discord.com/developers/applications)
+            - Navigate to \`Bot > Privileged Gateway Intents\`.
+            - Enable the \`GUILD_MEMBERS\` intent.
+            - Press save on the developer portal.
+            - Go to the \`txAdmin > Settings > Discord Bot\` and press save.`;
+        } else if (errorCode === 'CustomNoGuild') {
+            const inviteUrl = ('clientId' in (error as any))
+                ? `https://discord.com/oauth2/authorize?client_id=${(error as any).clientId}&scope=bot&permissions=0`
+                : `https://discordapi.com/permissions.html#0`
+            extraContext = `**This usually mean one of the issues below:**
+            - **Wrong server ID:** read the description of the server ID setting for more information.
+            - **Bot is not in the server:** you need to [INVITE THE BOT](${inviteUrl}) to join the server.
+            - **Wrong bot:** you may be using the token of another discord bot.`;
+        } else if (errorCode === 'DangerousPermission') {
+            extraContext = `You need to remove the permissions listed above to be able to enable this bot.
+            This should be done in the Discord Server role configuration page and not in the Dev Portal.
+            Check every single role that the bot has in the server.
+
+            Please keep in mind that:
+            - These permissions are dangerous because if the bot token leaks, an attacker can cause permanent damage to your server.
+            - No bot should have more permissions than strictly needed, especially \`Administrator\`.
+            - You should never have multiple bots using the same token, create a new one for each bot.`;
+        }
+        return sendTypedResp({
+            ...baseError,
+            title: 'Error starting the bot:',
+            msg: `${(error as Error).message}\n${extraContext}`.trim(),
+        });
+    }
+
+    return {
+        processedConfig: inputConfig,
+        successToast: {
+            type: 'success',
+            md: true,
+            title: 'FXServer Settings Saved!',
+            msg: `${successMsg}\nIf _(and only if)_ the status embed is not being updated, check the \`System > Console Log\` page to look for embed errors.`,
+        }
+    };
 }

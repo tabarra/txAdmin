@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from '../configSymbols';
 import consts from '@shared/consts';
+import { fromError } from 'zod-validation-error';
 
 
 /**
@@ -37,3 +38,16 @@ export const discordSnowflakeSchema = z.string().regex(
     consts.regexDiscordSnowflake,
     'The ID should be a 17-20 digit number.'
 );
+
+
+/**
+ * MARK: Utilities
+ */
+export const getSchemaChainError = (chain: [schema: ScopeConfigItem, val: any][]) => {
+    for (const [schema, val] of chain) {
+        const res = schema.validator.safeParse(val);
+        if (!res.success) {
+            return fromError(res.error, { prefix: schema.name }).message;
+        }
+    }
+}

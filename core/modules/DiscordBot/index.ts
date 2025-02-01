@@ -6,29 +6,25 @@ import { generateStatusMessage } from './commands/status';
 import consoleFactory from '@lib/console';
 import { embedColors } from './discordHelpers';
 import { DiscordBotStatus } from '@shared/enums';
+import { UpdateConfigKeySet } from '@modules/ConfigStore/utils';
 const console = consoleFactory(modulename);
 
 
-//Helpers
-export type DiscordBotConfigType = {
-    enabled: boolean;
-    token: string;
-    guild: string;
-    warningsChannel: string;
-    embedJson: string;
-    embedConfigJson: string;
-}
-
+//Types
 type MessageTranslationType = {
     key: string;
     data?: object;
 }
-
 type AnnouncementType = {
     title?: string | MessageTranslationType;
     description: string | MessageTranslationType;
     type: keyof typeof embedColors;
 }
+
+type SpawnConfig = Pick<
+    TxConfigs['discordBot'],
+    'enabled' | 'token' | 'guild' | 'warningsChannel'
+>;
 
 
 /**
@@ -36,6 +32,12 @@ type AnnouncementType = {
  * providing discord slash commands.
  */
 export default class DiscordBot {
+    //NOTE: only listening to embed changes, as the settings page boots the bot if enabled
+    static readonly configKeysWatched = [
+        'discordBot.embedJson',
+        'discordBot.embedConfigJson',
+    ];
+
     readonly #clientOptions: Discord.ClientOptions = {
         intents: [
             GatewayIntentBits.Guilds,
@@ -64,18 +66,18 @@ export default class DiscordBot {
 
 
     constructor() {
-        setImmediate(() => {
-            if (txConfig.discordBot.enabled) {
-                this.startBot().catch((e) => { });
-            }
-        });
-
         // FIXME: Hacky solution to fix the issue with disallowed intents
         // Remove this when issue below is fixed 
         // https://github.com/discordjs/discord.js/issues/9621
         process.on('unhandledRejection', (error: Error) => {
             if (error.message === 'Used disallowed intents') {
                 this.#lastDisallowedIntentsError = Date.now();
+            }
+        });
+
+        setImmediate(() => {
+            if (txConfig.discordBot.enabled) {
+                this.startBot()?.catch((e) => { });
             }
         });
 
@@ -94,21 +96,29 @@ export default class DiscordBot {
 
 
     /**
-     * Refresh discordBot configurations
+     * Handle updates to the config by resetting the required metrics
      */
-    async refreshConfig() {
+    public handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
+        return this.updateBotStatus();
+    }
+
+
+    /**
+     * Called by settings save to attempt to restart the bot with new settings
+     */
+    async attemptBotReset(botCfg: SpawnConfig | false) {
         this.#lastGuildMembersCacheRefresh = 0;
         if (this.#client) {
             console.warn('Stopping Discord Bot');
             this.#client.destroy();
             this.refreshWsStatus();
             setTimeout(() => {
-                if (!txConfig.discordBot.enabled) this.#client = undefined;
+                if (!botCfg || !botCfg.enabled) this.#client = undefined;
             }, 1000);
         }
 
-        if (txConfig.discordBot.enabled) {
-            return this.startBot();
+        if (botCfg && botCfg.enabled) {
+            return await this.startBot(botCfg);
         } else {
             return true;
         }
@@ -214,7 +224,6 @@ export default class DiscordBot {
                 }
                 await oldChannel.messages.edit(oldMessageId, generateStatusMessage());
             }
-
         } catch (error) {
             console.verbose.warn(`Failed to update status embed: ${(error as Error).message}`);
         }
@@ -224,8 +233,17 @@ export default class DiscordBot {
     /**
      * Starts the discord client
      */
-    startBot() {
-        return new Promise<void>((resolve, reject) => {
+    startBot(botCfg?: SpawnConfig) {
+        const isConfigSaveAttempt = !!botCfg;
+        botCfg ??= {
+            enabled: txConfig.discordBot.enabled,
+            token: txConfig.discordBot.token,
+            guild: txConfig.discordBot.guild,
+            warningsChannel: txConfig.discordBot.warningsChannel,
+        }
+        if (!botCfg.enabled) return;
+
+        return new Promise<string|void>((resolve, reject) => {
             type ErrorOptData = {
                 code?: string;
                 clientId?: string;
@@ -246,10 +264,10 @@ export default class DiscordBot {
             }
 
             //Check for configs
-            if (typeof txConfig.discordBot.token !== 'string' || !txConfig.discordBot.token.length) {
+            if (typeof botCfg.token !== 'string' || !botCfg.token.length) {
                 return sendError('Discord bot enabled while token is not set.');
             }
-            if (typeof txConfig.discordBot.guild !== 'string' || !txConfig.discordBot.guild.length) {
+            if (typeof botCfg.guild !== 'string' || !botCfg.guild.length) {
                 return sendError('Discord bot enabled while guild id is not set.');
             }
 
@@ -283,10 +301,10 @@ export default class DiscordBot {
                 if (!this.#client?.isReady() || !this.#client.user) throw new Error(`ready event while not being ready`);
 
                 //Fetching guild
-                const guild = this.#client.guilds.cache.find((guild) => guild.id === txConfig.discordBot.guild);
+                const guild = this.#client.guilds.cache.find((guild) => guild.id === botCfg.guild);
                 if (!guild) {
                     return sendError(
-                        `Discord bot could not resolve guild/server ID ${txConfig.discordBot.guild}.`,
+                        `Discord bot could not resolve guild/server ID ${botCfg.guild}.`,
                         {
                             code: 'CustomNoGuild',
                             clientId: this.#client.user.id
@@ -331,27 +349,30 @@ export default class DiscordBot {
                 }
 
                 //Fetching announcements channel
-                if (txConfig.discordBot.warningsChannel) {
-                    const fetchedChannel = this.#client.channels.cache.find((x) => x.id === txConfig.discordBot.warningsChannel);
+                if (botCfg.warningsChannel) {
+                    const fetchedChannel = this.#client.channels.cache.find((x) => x.id === botCfg.warningsChannel);
                     if (!fetchedChannel) {
-                        return sendError(`Channel ${txConfig.discordBot.warningsChannel} not found.`);
+                        return sendError(`Channel ${botCfg.warningsChannel} not found.`);
                     } else if (fetchedChannel.type !== ChannelType.GuildText && fetchedChannel.type !== ChannelType.GuildAnnouncement) {
-                        return sendError(`Channel ${txConfig.discordBot.warningsChannel} - ${(fetchedChannel as any)?.name} is not a text or announcement channel.`);
+                        return sendError(`Channel ${botCfg.warningsChannel} - ${(fetchedChannel as any)?.name} is not a text or announcement channel.`);
                     } else {
                         this.announceChannel = fetchedChannel;
                     }
                 }
 
-
                 // if previously registered by tx before v6 or other bot
                 this.guild.commands.set(slashCommands).catch(console.dir);
                 this.#client.application?.commands.set([]).catch(console.dir);
 
-                this.updateBotStatus().catch((e) => { });
-                this.refreshWsStatus();
+                //The settings save will the updateBotStatus, so no need to call it here
+                if (!isConfigSaveAttempt) {
+                    this.updateBotStatus().catch((e) => { });
+                }
 
-                console.ok(`Started and logged in as '${this.#client.user.tag}'`);
-                return resolve();
+                const successMsg = `Discord bot running as \`${this.#client.user.tag}\` on \`${guild.name}\`.`;
+                console.ok(successMsg);
+                this.refreshWsStatus();
+                return resolve(successMsg);
             });
 
             //Setup remaining event listeners
@@ -370,7 +391,7 @@ export default class DiscordBot {
             // this.#client.on('debug', console.verbose.debug);
 
             //Start bot
-            this.#client.login(txConfig.discordBot.token).catch((error) => {
+            this.#client.login(botCfg.token).catch((error) => {
                 clearInterval(disallowedIntentsWatcherId);
 
                 //for some reason, this is not throwing unhandled rejection anymore /shrug

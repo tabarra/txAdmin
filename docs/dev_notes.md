@@ -75,9 +75,9 @@ Legend:
         - [x] apply template to all tabs
         - [ish] json input modals
         - [x] write down the client-side validations
-        - [ ] write saveConfigs.ts
+        - [x] perms: message if no settings.write perms (no token)
+        - [x] write saveConfigs.ts
         - [ ] perms: message if no settings.view perms (page error)
-        - [ ] perms: message if no settings.write perms (no token)
         - [ ] write the reset fxserver button
         - [ ] double check:
             - FIXME:NC
