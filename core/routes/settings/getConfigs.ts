@@ -6,6 +6,7 @@ import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import ConfigStore from '@modules/ConfigStore';
 import { PartialTxConfigs, TxConfigs } from '@modules/ConfigStore/schema';
 import { ConfigChangelogEntry } from '@modules/ConfigStore/changelog';
+import { redactApiKeys, redactStartupSecrets } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 
@@ -50,13 +51,12 @@ export default async function GetSettingsConfigs(ctx: AuthedCtx) {
 
     //Redact sensitive data if the user doesn't have the write permission
     if (!ctx.admin.hasPermission('settings.write')) {
-        //FIXME:NC redact the keys from the startupArgs
+        const toRedact = outData.storedConfigs as any; //dont want to type this
         if(outData.storedConfigs.server?.startupArgs) {
-            // outData.storedConfigs.server.startupArgs = redactApiKeys(outData.storedConfigs.server.startupArgs);
+            toRedact.server.startupArgs = redactStartupSecrets(outData.storedConfigs.server.startupArgs);
         }
-        //FIXME:NC redact the discord bot token
         if(outData.storedConfigs.discordBot?.token) {
-            // outData.storedConfigs.discordBot.token = '[redacted by txAdmin]';
+            toRedact.discordBot.token = '[redacted by txAdmin]';
         }
     }
 

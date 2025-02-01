@@ -3,8 +3,8 @@ import got from '@lib/got';
 import { txEnv } from '@core/globalData';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import * as diagnosticsFuncs from '@lib/diagnostics';
-import { redactApiKeys } from '@lib/misc';
 import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@lib/fxserver/serverDataScanner.js';
+import { redactApiKeys, redactStartupSecrets } from '@lib/misc';
 import MemCache from '@lib/MemCache';
 import consoleFactory, { getLogBuffer } from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
@@ -64,8 +64,8 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     if (settings?.discordBot?.token) {
         settings.discordBot.token = '[REDACTED]';
     }
-    if (settings?.fxRunner?.commandLine) {
-        settings.fxRunner.commandLine = redactApiKeys(settings.fxRunner.commandLine);
+    if (settings?.server?.startupArgs) {
+        settings.server.startupArgs = redactStartupSecrets(settings.server.startupArgs);
     }
 
     //Env vars

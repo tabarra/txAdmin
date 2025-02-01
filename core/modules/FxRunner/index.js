@@ -2,7 +2,6 @@ const modulename = 'FXRunner';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { parseArgsStringToArgv } from 'string-argv';
 import StreamValues from 'stream-json/streamers/StreamValues';
 
 import { convars, txEnv } from '@core/globalData';
@@ -14,7 +13,7 @@ import { customAlphabet } from 'nanoid/non-secure';
 import dict49 from 'nanoid-dictionary/nolookalikes';
 import consoleFactory from '@lib/console';
 import { ConsoleLineType } from '@modules/Logger/FXServerLogger';
-import { getMutableConvars, mutableConvarConfigDependencies } from './utils';
+import { debugPrintSpawnVars, getMutableConvars, mutableConvarConfigDependencies } from './utils';
 const console = consoleFactory(modulename);
 const genMutex = customAlphabet(dict49, 5);
 
@@ -110,13 +109,13 @@ export default class FxRunner {
         // Configure spawn parameters according to the environment
         if (txEnv.isWindows) {
             this.spawnVariables = {
-                command: `${txEnv.fxServerPath}/FXServer.exe`,
+                bin: `${txEnv.fxServerPath}/FXServer.exe`,
                 args: cmdArgs,
             };
         } else {
             const alpinePath = path.resolve(txEnv.fxServerPath, '../../');
             this.spawnVariables = {
-                command: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
+                bin: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
                 args: [
                     '--library-path', `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
                     '--',
@@ -145,11 +144,12 @@ export default class FxRunner {
         txCore.webServer.resetToken();
         this.currentMutex = genMutex();
         this.setupVariables();
-        console.verbose.log('Spawn Variables: ' + this.spawnVariables.args.join(' '));
+        debugPrintSpawnVars(this.spawnVariables);
+
         //Sanity Check
         if (
             this.spawnVariables == null
-            || typeof this.spawnVariables.command == 'undefined'
+            || typeof this.spawnVariables.bin == 'undefined'
             || typeof this.spawnVariables.args == 'undefined'
         ) {
             const msg = `this.spawnVariables is not set.`;
@@ -211,7 +211,7 @@ export default class FxRunner {
 
         //Starting server
         this.fxChild = spawn(
-            this.spawnVariables.command,
+            this.spawnVariables.bin,
             this.spawnVariables.args,
             {
                 cwd: txConfig.server.dataPath,
@@ -219,7 +219,7 @@ export default class FxRunner {
             },
         );
         if (typeof this.fxChild.pid === 'undefined') {
-            throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
+            throw new Error(`Executon of "${this.spawnVariables.bin}" failed.`);
         }
         const pid = this.fxChild.pid.toString(); //FIXME: why string?!
         console.ok(`>> [${pid}] FXServer Started!`);

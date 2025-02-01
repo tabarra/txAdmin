@@ -43,6 +43,7 @@ export const parseSchedule = (scheduleTimes: string[]) => {
 
 /**
  * Redacts known keys and tokens from a string
+ * @deprecated Use redactApiKeysArr instead
  */
 export const redactApiKeys = (src: string) => {
     if (typeof src !== 'string' || !src.length) return src;
@@ -54,6 +55,89 @@ export const redactApiKeys = (src: string) => {
         .replace(/mysql_connection_string\s+["']?[^"']+["']?.?$/gim, 'mysql_connection_string [REDACTED]')
         .replace(/discord\.com\/api\/webhooks\/\d{17,20}\/[\w\-_./=]{10,}(.*)/gim, 'discord.com/api/webhooks/[REDACTED]/[REDACTED]');
 };
+
+
+/**
+ * Redacts known keys and tokens from an array of startup arguments.
+ */
+export const redactStartupSecrets = (args: string[]): string[] => {
+    if (!Array.isArray(args) || args.length === 0) return args;
+
+    const redactionRules: ApiRedactionRuleset = {
+        sv_licenseKey: {
+            regex: /^cfxk_\w{1,60}_(\w+)$/i,
+            replacement: (_match, p1) => `[REDACTED cfxk...${p1}]`,
+        },
+        steam_webApiKey: {
+            regex: /^\w{32}$/i,
+            replacement: '[REDACTED]',
+        },
+        sv_tebexSecret: {
+            regex: /^\w{40}$/i,
+            replacement: '[REDACTED]',
+        },
+        rcon_password: {
+            replacement: '[REDACTED]',
+        },
+        mysql_connection_string: {
+            replacement: '[REDACTED]',
+        },
+        tx2faSecret: {
+            replacement: '[REDACTED]',
+        },
+        'txAdmin-luaComToken': {
+            replacement: '[REDACTED]',
+        },
+    };
+
+
+    let outArgs: string[] = [];
+    for (let i = 0; i < args.length; i++) {
+        const currElem = args[i];
+        const currElemLower = currElem.toLocaleLowerCase();
+        const ruleMatchingPrefix = Object.keys(redactionRules).find((key) =>
+            currElemLower.includes(key.toLocaleLowerCase())
+        );
+        // If no rule matches or there is no subsequent element, just push the current element.
+        if (!ruleMatchingPrefix || i + 1 >= args.length) {
+            outArgs.push(currElem);
+            continue;
+        }
+        const rule = redactionRules[ruleMatchingPrefix];
+        const nextElem = args[i + 1];
+        // If the secret doesn't match the expected regex, treat it as a normal argument.
+        if (rule.regex && !nextElem.match(rule.regex)) {
+            outArgs.push(currElem);
+            continue;
+        }
+        // Push the key and then the redacted secret.
+        outArgs.push(currElem);
+        if (typeof rule.replacement === 'string') {
+            outArgs.push(rule.replacement);
+        } else if (rule.regex) {
+            outArgs.push(nextElem.replace(rule.regex, rule.replacement));
+        }
+        // Skip the secret value we just processed.
+        i++;
+    }
+
+    //Apply standalone redaction rules
+    outArgs = outArgs.map((arg) => arg
+        .replace(/discord\.com\/api\/webhooks\/\d{17,20}\/[\w\-_./=]{10,}(.*)/gim, 'discord.com/api/webhooks/[REDACTED]/[REDACTED]')
+    );
+
+    if (args.length !== outArgs.length) {
+        throw new Error('Input and output lengths are different after redaction.');
+    }
+    return outArgs;
+};
+
+type ApiRedactionRule = {
+    regex?: RegExp;
+    replacement: string | ((...args: any[]) => string);
+};
+
+type ApiRedactionRuleset = Record<string, ApiRedactionRule>;
 
 
 /**

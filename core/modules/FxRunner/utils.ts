@@ -1,3 +1,5 @@
+import { redactStartupSecrets } from "@lib/misc";
+
 type RawConvarSetTuple = [setter: string, name: string, value: any];
 type ConvarSetTuple = [setter: string, name: string, value: string];
 
@@ -38,3 +40,25 @@ export const mutableConvarConfigDependencies = [
     'banlist.enabled',
     'whitelist.mode',
 ];
+
+
+export const debugPrintSpawnVars = (spawnVars: { bin: string, args: (string | boolean)[] }) => {
+    if(!console.verbose) return; //can't console.verbose.table
+
+    console.debug('Spawn Bin: ' + spawnVars.bin);
+    const args = redactStartupSecrets(spawnVars.args.map(String))
+    console.debug('Spawn Args:');
+    const argsTable = [];
+    let currArgs: string[] | undefined;
+    for (const arg of args) {
+        if (arg.startsWith('+')) {
+            if (currArgs) argsTable.push(currArgs);
+            currArgs = [arg];
+        } else {
+            if (!currArgs) currArgs = []; 
+            currArgs.push(arg);
+        }
+    }
+    if (currArgs) argsTable.push(currArgs);
+    console.table(argsTable);
+}
