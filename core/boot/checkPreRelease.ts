@@ -2,15 +2,12 @@ import humanizeDuration, { Unit } from 'humanize-duration';
 import chalk from 'chalk';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
+import { msToDuration } from '@lib/misc';
 const console = consoleFactory('ATTENTION');
 
 
 //@ts-ignore esbuild will replace TX_PRERELEASE_EXPIRATION with a string
 const PRERELEASE_EXPIRATION = parseInt(TX_PRERELEASE_EXPIRATION)
-const humanizeOptions = {
-    round: true,
-    units: ['d', 'h', 'm'] as Unit[],
-};
 
 const expiredError = [
     'This pre-release version has expired, please update your txAdmin.',
@@ -18,7 +15,7 @@ const expiredError = [
 ]
 
 const printExpirationBanner = (timeUntilExpiration: number) => {
-    const timeLeft = humanizeDuration(timeUntilExpiration, humanizeOptions)
+    const timeLeft = msToDuration(timeUntilExpiration)
     const timeLeftStyled = chalk.inverse(` ${timeLeft} `);
     console.error('This is a pre-release version of txAdmin!');
     console.error('This build is meant to be used by txAdmin beta testers.');

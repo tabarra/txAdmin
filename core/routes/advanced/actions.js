@@ -128,20 +128,26 @@ export default async function AdvancedActions(ctx) {
         return ctx.send({ type: 'success', message: category });
 
     } else if (action.startsWith('set')) {
-        // set general.language pt
-        // set general.language en
-        // set server.onesync on
-        // set server.onesync legacy
-        const [_, scopeKey, value] = action.split(' ', 3);
-        const [scope, key] = scopeKey.split('.');
-        const configUpdate = { [scope]: { [key]: value } };
-        const storedKeysChanges = txCore.configStore.saveConfigs(configUpdate, ctx.admin.name);
-        const outParts = [
-            'Keys Updated: ' + JSON.stringify(storedKeysChanges ?? 'not set', null, 2),
-            '-'.repeat(16),
-            'Stored:' + JSON.stringify(txCore.configStore.getStoredConfig(), null, 2),
-        ];
-        return ctx.send({ type: 'success', message: outParts.join('\n') });
+        // set general.language "pt"
+        // set general.language "en"
+        // set server.onesync "on"
+        // set server.onesync "legacy"
+        try {
+            const [_, scopeKey, valueJson] = action.split(' ', 3);
+            if (!scopeKey || !valueJson) throw new Error(`Invalid set command: ${action}`);
+            const [scope, key] = scopeKey.split('.');
+            if (!scope || !key) throw new Error(`Invalid set command: ${action}`);
+            const configUpdate = { [scope]: { [key]: JSON.parse(valueJson) } };
+            const storedKeysChanges = txCore.configStore.saveConfigs(configUpdate, ctx.admin.name);
+            const outParts = [
+                'Keys Updated: ' + JSON.stringify(storedKeysChanges ?? 'not set', null, 2),
+                '-'.repeat(16),
+                'Stored:' + JSON.stringify(txCore.configStore.getStoredConfig(), null, 2),
+            ];
+            return ctx.send({ type: 'success', message: outParts.join('\n') });
+        } catch (error) {
+            return ctx.send({ type: 'danger', message: error.message });
+        }
 
     } else if (action == 'xxxxxx') {
         return ctx.send({ type: 'success', message: '👍' });

@@ -43,11 +43,6 @@ export default class FxRunner {
     static configKeysWatched = [...mutableConvarConfigDependencies];
 
     constructor() {
-        //Checking config validity
-        if (txConfig.fxRunner.shutdownNoticeDelayMs < 0 || txConfig.fxRunner.shutdownNoticeDelayMs > 30_000) {
-            throw new Error('The fxRunner.shutdownNoticeDelayMs setting must be between 0 and 30_000 milliseconds.');
-        }
-
         this.spawnVariables = null;
         this.fxChild = null;
         this.restartSpawnDelayOverride = 0;

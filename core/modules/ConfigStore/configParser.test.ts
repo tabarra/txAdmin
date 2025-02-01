@@ -83,11 +83,13 @@ suite('bootstrapConfigProcessor', () => {
     const allConfigScopes = {
         example: {
             serverName: typeDefinedConfig({
+                name: 'Server Name',
                 default: 'change-me',
                 validator: z.string().min(1).max(18),
                 fixer: SYM_FIXER_DEFAULT,
             }),
             enabled: typeDefinedConfig({
+                name: 'Enabled',
                 default: true,
                 validator: z.boolean(),
                 fixer: SYM_FIXER_DEFAULT,
@@ -95,6 +97,7 @@ suite('bootstrapConfigProcessor', () => {
         },
         server: {
             dataPath: typeNullableConfig({
+                name: 'Data Path',
                 default: null,
                 validator: z.string().min(1).nullable(),
                 fixer: SYM_FIXER_FATAL,
@@ -154,11 +157,13 @@ suite('runtimeConfigProcessor', () => {
     const allConfigScopes = {
         example: {
             serverName: typeDefinedConfig({
+                name: 'Server Name',
                 default: 'change-me',
                 validator: z.string().min(1).max(18),
                 fixer: SYM_FIXER_DEFAULT,
             }),
             enabled: typeDefinedConfig({
+                name: 'Enabled',
                 default: true,
                 validator: z.boolean(),
                 fixer: SYM_FIXER_DEFAULT,
@@ -166,11 +171,13 @@ suite('runtimeConfigProcessor', () => {
         },
         server: {
             dataPath: typeNullableConfig({
+                name: 'Data Path',
                 default: null,
                 validator: z.string().min(1).nullable(),
                 fixer: SYM_FIXER_FATAL,
             }),
             scheduledRestarts: typeDefinedConfig({
+                name: 'Scheduled Restarts',
                 default: [],
                 validator: z.array(z.number().int()).default([]),
                 fixer: SYM_FIXER_DEFAULT,

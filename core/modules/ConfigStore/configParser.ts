@@ -59,7 +59,7 @@ type ParsedConfigItem = {
 
 
 /**
- * Attempt to fix the value
+ * Attempt to fix the value - USED DURING BOOTSTRAP ONLY
  */
 const attemptConfigFix = (scope: string, key: string, value: any, configSchema: ScopeConfigItem) => {
     const shouldBeArray = Array.isArray(configSchema.default);

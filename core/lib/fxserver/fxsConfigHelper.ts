@@ -147,8 +147,8 @@ export const findLikelyCFGPath = (serverDataPath: string) => {
 /**
  * Returns the absolute path of the given CFG Path
  */
-export const resolveCFGFilePath = (cfgPath: string, serverDataPath: string) => {
-    return (path.isAbsolute(cfgPath)) ? path.normalize(cfgPath) : path.resolve(serverDataPath, cfgPath);
+export const resolveCFGFilePath = (cfgPath: string, dataPath: string) => {
+    return (path.isAbsolute(cfgPath)) ? path.normalize(cfgPath) : path.resolve(dataPath, cfgPath);
 };
 
 
@@ -418,6 +418,8 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
             );
             continue;
         }
+
+        //FIXME: add isConvarSetterFor for all "Settings page only" convars
 
         //Extract & process endpoint validity
         if (cmd.command === 'endpoint_add_tcp' || cmd.command === 'endpoint_add_udp') {
