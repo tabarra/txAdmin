@@ -123,7 +123,7 @@ export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) 
                     ref={rejectionMessageRef}
                     placeholder='You can join http://discord.gg/example to appeal this ban.'
                     defaultValue={rejectionMessage.initialValue}
-                    onChange={processChanges}
+                    onInput={processChanges}
                     autoComplete="off"
                     minHeight={60}
                     maxHeight={180}
@@ -137,7 +137,7 @@ export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) 
 
             {showAdvanced && <AdvancedDivider />}
 
-            <SettingItem label="Required Ban HWID Matches" showIf={showAdvanced}>
+            <SettingItem label="Required Ban HWID Matches" htmlFor={requiredHwids.eid} showIf={showAdvanced}>
                 <Select
                     value={selectNumberUtil.toUi(requiredHwids.state.value)}
                     onValueChange={(val) => requiredHwids.state.set(selectNumberUtil.toCfg(val))}

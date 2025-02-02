@@ -181,13 +181,24 @@ export const runtimeConfigProcessor = (
         }
 
         //Check if the value is different from the stored value
-        if (!dequal(newValue, confx(thisStoredCopy).get(scope, key))) {
+        const defaultValue = configSchema.default;
+        const storedValue = confx(thisStoredCopy).get(scope, key);
+        const isNewValueDefault = dequal(newValue, defaultValue);
+        if (storedValue === undefined) {
+            if (!isNewValueDefault) {
+                storedKeysChanges.add(scope, key);
+                confx(thisStoredCopy).set(scope, key, newValue);
+            }
+        } else if (!dequal(newValue, storedValue)) {
             storedKeysChanges.add(scope, key);
-            confx(thisStoredCopy).set(scope, key, newValue);
+            if (!isNewValueDefault) {
+                //NOTE: if default, it's being removed below already
+                confx(thisStoredCopy).set(scope, key, newValue);
+            }
         }
 
         //If the value is the default, remove
-        if (dequal(newValue, configSchema.default)) {
+        if (isNewValueDefault) {
             confx(thisStoredCopy).unset(scope, key);
         }
 

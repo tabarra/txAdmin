@@ -137,7 +137,9 @@ export default function SettingsPage() {
                     card: source.cardId,
                 },
                 data: changes,
-                timeout: source.cardId === 'discord' ? ApiTimeout.REALLY_REALLY_LONG : ApiTimeout.LONG,
+                timeout: source.cardId === 'discord'
+                    ? ApiTimeout.REALLY_REALLY_LONG
+                    : ApiTimeout.LONG,
                 toastId,
             });
             if (!saveResp) throw new Error('empty_response');

@@ -185,7 +185,7 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                     id={normalInput.eid}
                     ref={normalInputRef}
                     defaultValue={normalInput.initialValue}
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                     placeholder={'example'}
                 />
@@ -200,7 +200,7 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                     ref={textareaInputRef}
                     placeholder='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
                     defaultValue={textareaInput.initialValue}
-                    onChange={processChanges}
+                    onChange={processChanges} //FIXME: test this vs onInput on AutosizeTextarea
                     autoComplete="off"
                     minHeight={60}
                     maxHeight={180}
@@ -240,7 +240,7 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                     ref={inputArrayRef}
                     defaultValue={inputArrayUtil.toUi(inputArray.initialValue)}
                     placeholder="example1, example2"
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -253,7 +253,7 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                     id={nullableInput.eid}
                     ref={nullableInputRef}
                     defaultValue={nullableInput.initialValue}
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                     placeholder={'example'}
                 />

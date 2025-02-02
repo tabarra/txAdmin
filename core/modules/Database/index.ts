@@ -24,11 +24,6 @@ export default class Database {
     readonly cleanup: CleanupDao;
 
     constructor() {
-        //Checking config validity
-        if (txConfig.banlist.requiredHwidMatches < 0 || txConfig.banlist.requiredHwidMatches > 6) {
-            throw new Error('The playerDatabase.requiredBanHwidMatches setting must be between 0 (disabled) and 6.');
-        }
-
         this.#db = new DbInstance();
         this.players = new PlayersDao(this.#db);
         this.actions = new ActionsDao(this.#db);

@@ -168,7 +168,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                     ref={rejectionMessageRef}
                     placeholder='Please join http://discord.gg/example and request to be whitelisted.'
                     defaultValue={rejectionMessage.initialValue}
-                    onChange={processChanges}
+                    onInput={processChanges}
                     autoComplete="off"
                     minHeight={60}
                     maxHeight={180}
@@ -186,7 +186,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                     ref={discordRolesRef}
                     defaultValue={inputArrayUtil.toUi(discordRoles.initialValue)}
                     placeholder="000000000000000000, 000000000000000000"
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>

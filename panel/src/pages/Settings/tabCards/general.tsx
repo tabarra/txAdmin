@@ -112,7 +112,7 @@ export default function ConfigCardGeneral({ cardCtx, pageCtx }: SettingsCardProp
                     ref={serverNameRef}
                     defaultValue={serverName.initialValue}
                     placeholder={'Example RP'}
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>

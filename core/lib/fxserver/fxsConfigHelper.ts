@@ -123,20 +123,19 @@ class FilesInfoList {
  * Returns the first likely server.cfg given a server data path, or false
  */
 export const findLikelyCFGPath = (serverDataPath: string) => {
-    const attempts = [
+    const commonCfgFileNames = [
         'server.cfg',
         'server.cfg.txt',
         'server.cfg.cfg',
         'server.txt',
         'server',
-        '../server.cfg',
     ];
 
-    for (const attempt of attempts) {
-        const cfgPath = path.join(serverDataPath, attempt);
+    for (const cfgFileName of commonCfgFileNames) {
+        const absoluteCfgPath = path.join(serverDataPath, cfgFileName);
         try {
-            if (fs.lstatSync(cfgPath).isFile()) {
-                return cfgPath;
+            if (fs.lstatSync(absoluteCfgPath).isFile()) {
+                return cfgFileName;
             }
         } catch (error) { }
     }

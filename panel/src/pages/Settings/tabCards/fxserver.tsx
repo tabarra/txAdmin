@@ -60,8 +60,8 @@ function RestartScheduleBox({ restartTimes, setRestartTimes, disabled }: Restart
 
     return (
         <div className="py-3 px-2 min-h-[4.5rem] flex items-center border rounded-lg">
-            <div className="w-full flex items-center gap-2">
-                <div className="flex flex-wrap gap-2 grow" ref={animationParent}>
+            <div className={cn("w-full flex items-center gap-2", disabled && 'cursor-not-allowed')}>
+                <div className="flex flex-wrap gap-2 grow" ref={animationParent} >
                     {restartTimes && restartTimes.length === 0 && (
                         <div className="text-sm text-muted-foreground">
                             <span>
@@ -102,14 +102,14 @@ function RestartScheduleBox({ restartTimes, setRestartTimes, disabled }: Restart
                     {restartTimes && restartTimes.map((time, index) => (
                         <div key={time} className="flex items-center space-x-1 bg-secondary text-secondary-foreground px-3 py-1 rounded-md select-none">
                             <span className="font-mono">{time}</span>
-                            <button
+                            {!disabled && <button
                                 onClick={() => removeTime(index)}
                                 className="ml-2 text-secondary-foreground/50 hover:text-destructive"
                                 aria-label="Remove"
                                 disabled={disabled}
                             >
                                 <XIcon className="size-4" />
-                            </button>
+                            </button>}
                         </div>
                     ))}
                 </div>
@@ -357,7 +357,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                     ref={cfgPathRef}
                     defaultValue={cfgPath.initialValue}
                     placeholder="server.cfg"
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                     required
                 />
@@ -372,7 +372,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                     ref={startupArgsRef}
                     defaultValue={inputArrayUtil.toUi(startupArgs.initialValue)}
                     placeholder="--trace-warning"
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>

@@ -117,7 +117,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     id={botToken.eid}
                     ref={botTokenRef}
                     defaultValue={botToken.initialValue}
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                     placeholder="xxxxxxxxxxxxxxxxxxxxxxxx.xxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxx"
                     maxLength={96}
@@ -138,7 +138,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     id={discordGuild.eid}
                     ref={discordGuildRef}
                     defaultValue={discordGuild.initialValue}
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                     placeholder='000000000000000000'
                 />
@@ -153,7 +153,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     id={warningsChannel.eid}
                     ref={warningsChannelRef}
                     defaultValue={warningsChannel.initialValue}
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                     placeholder='000000000000000000'
                 />
@@ -205,6 +205,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                             className="grow"
                             variant="outline"
                             onClick={() => embedJson.state.discard()}
+                            disabled={pageCtx.isReadOnly}
                         >
                             <XIcon className="mr-2 h-4 w-4" /> Discard Changes
                         </Button>
@@ -212,6 +213,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                             className="grow border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
                             variant="outline"
                             onClick={() => embedJson.state.default()}
+                            disabled={pageCtx.isReadOnly}
                         >
                             <RotateCcwIcon className="mr-2 h-4 w-4" /> Reset to Default
                         </Button>
@@ -239,6 +241,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                             className="grow"
                             variant="outline"
                             onClick={() => embedConfigJson.state.discard()}
+                            disabled={pageCtx.isReadOnly}
                         >
                             <XIcon className="mr-2 h-4 w-4" /> Discard Changes
                         </Button>
@@ -246,6 +249,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                             className="grow border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
                             variant="outline"
                             onClick={() => embedConfigJson.state.default()}
+                            disabled={pageCtx.isReadOnly}
                         >
                             <RotateCcwIcon className="mr-2 h-4 w-4" /> Reset to Default
                         </Button>

@@ -12,7 +12,7 @@ const dataPath = typeNullableConfig({
 
 const cfgPath = typeDefinedConfig({
     name: 'CFG File Path',
-    default: './server.cfg',
+    default: 'server.cfg',
     validator: z.string().min(1),
     fixer: SYM_FIXER_FATAL,
 });

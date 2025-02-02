@@ -3,8 +3,8 @@ import got from '@lib/got';
 import { txEnv } from '@core/globalData';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import * as diagnosticsFuncs from '@lib/diagnostics';
-import { getServerDataConfigs, getServerDataContent, ServerDataContentType, ServerDataConfigsType } from '@lib/fxserver/serverDataScanner.js';
 import { redactApiKeys, redactStartupSecrets } from '@lib/misc';
+import { type ServerDataContentType, type ServerDataConfigsType, getServerDataContent, getServerDataConfigs } from '@lib/fxserver/serverData';
 import MemCache from '@lib/MemCache';
 import consoleFactory, { getLogBuffer } from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
@@ -60,12 +60,12 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
         .map(a => ({ ...a, password_hash: '[REDACTED]' }));
 
     //Settings
-    const settings = (txCore.configStore.getRawFile() as any);
-    if (settings?.discordBot?.token) {
-        settings.discordBot.token = '[REDACTED]';
+    const storedConfigs = txCore.configStore.getStoredConfig() as any;
+    if (storedConfigs?.discordBot?.token) {
+        storedConfigs.discordBot.token = '[REDACTED]';
     }
-    if (settings?.server?.startupArgs) {
-        settings.server.startupArgs = redactStartupSecrets(settings.server.startupArgs);
+    if (storedConfigs?.server?.startupArgs) {
+        storedConfigs.server.startupArgs = redactStartupSecrets(storedConfigs.server.startupArgs);
     }
 
     //Env vars
@@ -95,9 +95,10 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     //Getting server data content
     let serverDataContent: ServerDataContentType = [];
     let cfgFiles: ServerDataConfigsType = [];
-    if (settings.fxRunner.serverDataPath) {
-        serverDataContent = await getServerDataContent(settings.fxRunner.serverDataPath);
-        const rawCfgFiles = await getServerDataConfigs(settings.fxRunner.serverDataPath, serverDataContent);
+    //FIXME: use txCore.fxRunner.serverPaths
+    if (storedConfigs.server?.dataPath) {
+        serverDataContent = await getServerDataContent(storedConfigs.server.dataPath);
+        const rawCfgFiles = await getServerDataConfigs(storedConfigs.server.dataPath, serverDataContent);
         cfgFiles = rawCfgFiles.map(([fName, fData]) => [fName, redactApiKeys(fData)]);
     }
 
@@ -113,7 +114,7 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
     } catch (error) { }
 
     //Monitor integrity check
-    let monitorContent = undefined;
+    let monitorContent = null;
     try {
         monitorContent = await scanMonitorFiles();
     } catch (error) { }
@@ -131,7 +132,7 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
         envVars,
         perfSvMain,
         dbStats,
-        settings,
+        settings: storedConfigs,
         adminList,
         serverDataContent,
         cfgFiles,

@@ -54,10 +54,6 @@ export default class FxMonitor {
 
 
     constructor() {
-        //Checking config validity
-        if (txConfig.restarter.bootCooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
-        if (txConfig.restarter.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
-
         //Cron functions
         setInterval(() => {
             this.sendHealthCheck();

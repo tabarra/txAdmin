@@ -48,7 +48,7 @@ Legend:
 - [x] .env
     - [x] convert builders to use txDevEnv
     - [x] convert tx code use txDevEnv
-- [ ] Config migrations:
+- [x] Config migrations:
     - [x] commit renaming wip
     - [x] decide on the REVIEW_SAVE_EMPTY_STRING vars
     - [x] write schemas
@@ -65,7 +65,7 @@ Legend:
     - [x] migrate setup webroute
     - [x] migrate deployer webroute
     - [x] migrate masterActions->reset webroute
-    - [ ] New Settings Page:
+    - [x] New Settings Page:
         - [x] hide onesync
         - [x] new layout
         - [x] move all options from old page to new page (no code just yet)
@@ -78,29 +78,27 @@ Legend:
         - [x] perms: message if no settings.write perms (no token)
         - [x] write saveConfigs.ts
         - [x] perms: message if no settings.view perms (page error)
-        - [ ] write the reset fxserver button
-        - [ ] double check:
-            - FIXME:NC
-            - check if all disabled={pageCtx.isReadOnly} were applied
-            - check if all text fields and selects have the `htmlFor`
-            - check if all textarea fields are auto-sized
-            - If shutdownNoticeDelayMs & restartSpawnDelayMs are really ms, and being migrated from secs for the case of shutdownNoticeDelay
-            - censoring tokens in case of view perms only (getConfigs.ts)
-    - [ ] 
-    - [ ] remove `settings.ejs` and `core/routes/settings/get-old.ts`
-    - [ ] i actually do need to change how the setup and deployer works to set the cfgPath to relative
-    - [ ] migrate discord bot `refreshConfig()` and settings save
-    - [ ] migrate all cfg mutation routes
-    - [ ] check all modules to remove their config validation at constructor
-    - [ ] check all modules to remove their config type definitions
-    - [ ] test `txConfig.server.startupArgs`
-        - [ ] test if `server.startupArgs = ['+set']`, invalidates the next 2 args 
-    - [ ] check all typescript errors in all files
-    - [ ] remove `./core/configMapping.tmp.ts` (was committed)
-    - [ ] check all ConfigStore methods (including txCore.configStore.getRawFile())
-    - [ ] core/routes/diagnostics/sendReport.ts
-    - [ ] test setting up new profile from scratch
-    - [!] write dev notes on the config system (README.md in the panel settigns and core configstore?)
+        - [x] double check:
+            - [x] FIXME:NC
+            - [x] check if all disabled={pageCtx.isReadOnly} were applied
+            - [x] check if all text fields and selects have the `htmlFor`
+            - [x] check if all textarea fields are auto-sized
+            - [x] If shutdownNoticeDelayMs & restartSpawnDelayMs are really ms, and being migrated from secs for the case of shutdownNoticeDelay
+    - [x] remove `settings.ejs` and `core/routes/settings/get-old.ts`
+    - [x] migrate discord bot `refreshConfig()` and settings save
+    - [x] remove `./core/configMapping.tmp.ts` (was committed)
+    - [x] test `txConfig.server.startupArgs`
+        - [x] test if `server.startupArgs = ['+set']`, breaks the next 2 args 
+    - [x] check all ConfigStore methods (including txCore.configStore.getRawFile())
+    - [x] remap configs in `core/routes/diagnostics/sendReport.ts` and test it
+    - [x] change setup & deployer page to suggest relative `server.cfg`
+    - [x] check all modules to remove their
+        - [x] config validation at constructor
+        - [x] type definitions
+    - [x] check all typescript errors in all files
+    - [x] test setting up new profile from scratch
+    - [x] disable the "view changelog" button, or write the modal code
+    - [x] write dev notes on the config system (README.md in the panel settings and core configstore?)
 
 ## Other stuff
 - [!] add stats tracking for the framework team (ask them, idk)
@@ -109,20 +107,8 @@ Legend:
 - [!] remove dynamicAds from the modules
 - [!] commit stashed stuff
 - [!] fix custom locale
+- [!] check txAdmin-private
 
-
-
-
-
-
-### MARK: Config Docs
-- DEFAULT_NULL é apenas para valores que de fato não tem uma definição padrão, tipo fxRunner.dataPath, discordBot.token, etc.
-- Todos schemas tem default, mesmo que seja null.
-- Fixer só tenta corrigir valores inválidos, não faltantes.
-- Fixer só tenta corrigir valores no boot, não durante save.
-- SYM_FIXER_FATAL apenas para configs que são muito importantes pro servidor
-- Objetivo do schema é garantir que o valor é do tipo certo e faz sentido, mas não checar nada dinâmico como existencia de arquivos, etc.
-- Validator transformers only to "polish" the value, like removing duplicates and sorting values, not to fix invalid values.
 
 
 =======================================================================
@@ -177,6 +163,13 @@ Legend:
     - `ScanResourceRoot('xxx/resources/', (data: object) => {...});`
 
 ## Pending Improvements
+- [ ] Settings Page:
+    - [ ] bake in the defaults, so so SwitchText's don't show fale initial value
+    - [ ] check for pending changes on the navigate-away buttons
+    - [ ] use jsonForgivingParse for embed jsons and custom locale
+    - [ ] use the standalone json editor page
+    - [ ] write the reset fxserver button
+        - requires changing the webroute permissions and updating the MainRouter
 - [ ] Player drops page
     - [ ] fix: blurred chart lines
         - `imageRendering: 'pixelated'` might fix it
@@ -342,11 +335,6 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - Allow for ban minutes
     - Add a "timeout" button that brings a prompt with 1/5/15/30 mins buttons
     - Add a checkbox to the kick modal to mark it as a punishment
-
-- [ ] Settings Page:
-    - [ ] bake in the defaults, so so SwitchText's don't show fale initial value
-    - [ ] check for pending changes on the navigate-away buttons
-    - [ ] use jsonForgivingParse for embed jsons and custom locale
 
 - [ ] custom login page
     - [ ] FxMonitor:

@@ -234,7 +234,7 @@ async function handleSaveConfig(ctx) {
         txCore.configStore.saveConfigs({
             server: {
                 dataPath: slash(path.normalize(txManager.deployer.deployPath)),
-                cfgPath: slash(path.normalize(cfgFilePath)),
+                cfgPath: 'server.cfg',
                 onesync,
             }
         }, ctx.admin.name);

@@ -118,7 +118,7 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
                     onKeyDown={handlePageKey}
                     className="font-mono"
                     readOnly
-                    onChange={processChanges}
+                    onInput={processChanges}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>

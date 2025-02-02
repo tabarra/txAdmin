@@ -4,12 +4,12 @@ import { cn } from "@/lib/utils";
 
 function LabelRequired() {
     return (
-        <span className="tracking-widest text-2xs text-destructive-inline opacity-65 group-hover/item:opacity-100">REQUIRED</span>
+        <span className="tracking-widest text-2xs text-destructive-inline opacity-65 group-hover/cfgCardItem:opacity-100">REQUIRED</span>
     )
 }
 function LabelOptional() {
     return (
-        <span className="tracking-widest text-2xs text-info-inline opacity-0 group-hover/item:opacity-85 group-hover/item:dark:opacity-35">OPTIONAL</span>
+        <span className="tracking-widest text-2xs text-info-inline opacity-0 group-hover/cfgCardItem:opacity-85 group-hover/cfgCardItem:dark:opacity-35">OPTIONAL</span>
     )
 }
 function LabelNew() {
@@ -52,7 +52,7 @@ export function SettingItem({
 }: SettingItemProps) {
     if (showIf !== undefined && !showIf) return null;
     return (
-        <div className='max-w-4xl space-y-2 sm:grid sm:grid-cols-8 sm:gap-4 sm:space-y-0 sm:items-start group/item'>
+        <div className='max-w-4xl space-y-2 sm:grid sm:grid-cols-8 sm:gap-4 sm:space-y-0 sm:items-start group/cfgCardItem'>
             <div className="sm:col-span-2">
                 <Label className="flex flex-col text-sm font-medium leading-6" htmlFor={htmlFor}>
                     {label}
