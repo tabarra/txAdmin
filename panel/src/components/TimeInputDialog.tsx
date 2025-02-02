@@ -13,10 +13,10 @@ type StyledHourOptionProps = {
 
 export function StyledHourOption({ value, label24h, label12h }: StyledHourOptionProps) {
     return (
-        <SelectItem value={value} className="">
+        <SelectItem value={value} className="group/timeOption">
             <div className="flex justify-around gap-2 items-center">
                 <div className="font-medium min-w-[2ch]">{label24h}</div>
-                <div className="text-muted-foreground text-sm min-w-[4ch] text-right">{label12h}</div>
+                <div className="text-muted-foreground group-focus/timeOption:text-primary-foreground group-focus/timeOption:dark:text-primary text-sm min-w-[5ch] text-right">{label12h}</div>
             </div>
         </SelectItem>
     )
@@ -50,7 +50,7 @@ export function TimeInputDialog({ title, isOpen, onClose, onSubmit }: TimeInputD
         return {
             value: h,
             label24h: h,
-            label12h: `${h12}${ampm}`,
+            label12h: `${h12} ${ampm}`,
         } satisfies StyledHourOptionProps
     }), []);
 

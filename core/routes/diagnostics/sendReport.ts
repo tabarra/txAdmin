@@ -13,7 +13,7 @@ const console = consoleFactory(modulename);
 
 //Consts & Helpers
 const reportIdCache = new MemCache<string>(60);
-const maskedKeywords = ['key', 'license', 'pass', 'private', 'secret', 'token'];
+const maskedKeywords = ['key', 'license', 'pass', 'private', 'secret', 'token', 'webhook'];
 const maskString = (input: string) => input.replace(/\w/gi, 'x');
 const maskIps = (input: string) => input.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/gi, 'x.x.x.x');
 type ServerLogType = {

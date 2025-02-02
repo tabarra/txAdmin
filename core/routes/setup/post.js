@@ -156,6 +156,7 @@ async function handleValidateLocalDataFolder(ctx) {
     }
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim() + '/'));
 
+    //FIXME: replace with stuff in core/routes/settings/saveConfigs.ts > handleFxserverCard
     try {
         if (!fse.existsSync(path.join(dataFolderPath, 'resources'))) {
             const recoveryTemplate = `The path provided is invalid. <br>
@@ -232,7 +233,7 @@ async function handleValidateCFGFile(ctx) {
             return ctx.send({success: true});
         }
     } catch (error) {
-        const message = `The file path is correct, but: <br>\n ${error.message}.`;
+        const message = `Error:\n ${error.message}.`;
         return ctx.send({success: false, message});
     }
 }

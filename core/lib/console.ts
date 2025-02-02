@@ -246,8 +246,7 @@ const getLogFunc = (
         }
     }
 }
-
-type LogFunction = (message?: any, ...optParams: any) => void
+type LogFunction = typeof Console.prototype.log;
 
 
 /**
