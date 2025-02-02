@@ -5,7 +5,7 @@ import * as path from 'node:path';
 
 const IGNORED_DIRS = ['cache', 'db', 'node_modules', '.git', '.idea', '.vscode'];
 const MANIFEST_FILES = ['fxmanifest.lua', '__resource.lua'];
-const RES_CATEGORIES_LIMIT = 100;
+const RES_CATEGORIES_LIMIT = 250; //Some servers go over 100
 const CFG_SIZE_LIMIT = 32 * 1024; //32kb
 
 
