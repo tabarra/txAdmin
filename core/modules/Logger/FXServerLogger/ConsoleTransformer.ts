@@ -69,10 +69,11 @@ const STYLES = {
     },
 } as StylesLibrary;
 
-
-
-const getConsoleLinePrefix = (prefix: string) => `[${prefix.padStart(20, ' ')}]`;
 export const FORCED_EOL = '\u21A9\n'; //used in test file only
+
+//NOTE: [jan/2025] Changed from [] to make it easier to find tx stdin in the log files
+const prefixChar = '║' //Alternatives: | & ┇
+const getConsoleLinePrefix = (prefix: string) => prefixChar + prefix.padStart(20, ' ') + prefixChar;
 
 //NOTE: the \n must come _after_ the color so LiveConsolePage.tsx can know when it's an incomplete line
 const colorLines = (str: string, color: ChalkInstance | undefined) => {
