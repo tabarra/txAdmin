@@ -1,14 +1,15 @@
 import { KickAllIcon } from '@/components/KickIcons';
-import { processInstantiatedAtom, serverConfigPendingStepAtom } from '@/hooks/status';
+import { fxRunnerStateAtom, txConfigStateAtom } from '@/hooks/status';
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
 import { useAtomValue } from 'jotai';
 import { MegaphoneIcon, PowerIcon, PowerOffIcon, RotateCcwIcon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useOpenConfirmDialog, useOpenPromptDialog } from '@/hooks/dialogs';
-import { useBackendApi } from '@/hooks/fetch';
+import { ApiTimeout, useBackendApi } from '@/hooks/fetch';
 import { useCloseAllSheets } from '@/hooks/sheets';
 import { useAdminPerms } from '@/hooks/auth';
+import { TxConfigState } from '@shared/enums';
 
 
 const controlButtonsVariants = cva(
@@ -34,8 +35,8 @@ const controlButtonsVariants = cva(
 );
 
 export default function ServerControls() {
-    const serverConfigPendingStep = useAtomValue(serverConfigPendingStepAtom);
-    const processInstantiated = useAtomValue(processInstantiatedAtom);
+    const txConfigState = useAtomValue(txConfigStateAtom);
+    const fxRunnerState = useAtomValue(fxRunnerStateAtom);
     const openConfirmDialog = useOpenConfirmDialog();
     const openPromptDialog = useOpenPromptDialog();
     const closeAllSheets = useCloseAllSheets();
@@ -61,6 +62,7 @@ export default function ServerControls() {
             fxsControlApi({
                 data: { action },
                 toastLoadingMessage,
+                timeout: ApiTimeout.LONG,
             });
         }
         if (action === 'start') {
@@ -74,15 +76,15 @@ export default function ServerControls() {
         }
     }
     const handleStartStop = () => {
-        handleServerControl(processInstantiated ? 'stop' : 'start');
+        handleServerControl(fxRunnerState.isIdle ? 'start' : 'stop');
     }
     const handleRestart = () => {
-        if (!processInstantiated) return;
+        if (!fxRunnerState.isChildAlive) return;
         handleServerControl('restart');
     }
 
     const handleAnnounce = () => {
-        if (!processInstantiated) return;
+        if (!fxRunnerState.isChildAlive) return;
         openPromptDialog({
             title: 'Send Announcement',
             message: 'Type the message to be broadcasted to all players.',
@@ -100,7 +102,7 @@ export default function ServerControls() {
     }
 
     const handleKickAll = () => {
-        if (!processInstantiated) return;
+        if (!fxRunnerState.isChildAlive) return;
         openPromptDialog({
             title: 'Kick All Players',
             message: 'Type the kick reason or leave it blank (press enter)',
@@ -119,7 +121,7 @@ export default function ServerControls() {
     const hasControlPerms = hasPerm('control.server');
     const hasAnnouncementPerm = hasPerm('announcement');
 
-    if (serverConfigPendingStep) {
+    if (txConfigState !== TxConfigState.Ready) {
         return (
             <div className='w-full h-8 text-center tracking-wider font-light opacity-75'>
                 Server not configured.
@@ -130,15 +132,8 @@ export default function ServerControls() {
         <div className="flex flex-row justify-between gap-2">
             <Tooltip>
                 <TooltipTrigger asChild>
-                    {processInstantiated
-                        ? <button
-                            onClick={handleStartStop}
-                            className={controlButtonsVariants({ type: 'destructive' })}
-                            disabled={!hasControlPerms}
-                        >
-                            <PowerOffIcon className='h-5' />
-                        </button>
-                        : <div className="relative flex flex-grow inset-0">
+                    {fxRunnerState.isIdle ? (
+                        <div className="relative flex flex-grow inset-0">
                             <div className='absolute inset-0 bg-success animate-pulse rounded blur-sm'></div>
                             <button
                                 onClick={handleStartStop}
@@ -148,11 +143,19 @@ export default function ServerControls() {
                                 <PowerIcon className='h-5' />
                             </button>
                         </div>
-                    }
+                    ) : (
+                        <button
+                            onClick={handleStartStop}
+                            className={controlButtonsVariants({ type: 'destructive' })}
+                            disabled={!hasControlPerms}
+                        >
+                            <PowerOffIcon className='h-5' />
+                        </button>
+                    )}
                 </TooltipTrigger>
                 <TooltipContent className={cn(!hasControlPerms && 'text-destructive-inline text-center')}>
                     {hasControlPerms ? (
-                        <p>{processInstantiated ? 'Stop the server' : 'Start the server! 🚀'}</p>
+                        <p>{fxRunnerState.isIdle ? 'Start the server! 🚀' : 'Stop the server'}</p>
                     ) : (
                         <p>
                             You do not have permission <br />
@@ -166,7 +169,7 @@ export default function ServerControls() {
                     <button
                         onClick={handleRestart}
                         className={cn(controlButtonsVariants({ type: 'warning' }))}
-                        disabled={!hasControlPerms || !processInstantiated}
+                        disabled={!hasControlPerms || !fxRunnerState.isChildAlive}
                     >
                         <RotateCcwIcon className='h-5' />
                     </button>
@@ -187,7 +190,7 @@ export default function ServerControls() {
                     <button
                         onClick={handleKickAll}
                         className={controlButtonsVariants()}
-                        disabled={!hasControlPerms || !processInstantiated}
+                        disabled={!hasControlPerms || !fxRunnerState.isChildAlive}
                     >
                         <KickAllIcon style={{ height: '1.25rem', width: '1.5rem', fill: 'currentcolor' }} />
                     </button>
@@ -208,7 +211,7 @@ export default function ServerControls() {
                     <button
                         onClick={handleAnnounce}
                         className={controlButtonsVariants()}
-                        disabled={!hasAnnouncementPerm || !processInstantiated}
+                        disabled={!hasAnnouncementPerm || !fxRunnerState.isChildAlive}
                     >
                         <MegaphoneIcon className='h-5' />
                     </button>

@@ -14,23 +14,23 @@
         "schedule_warn_discord": "**%{servername}** se restarta za %{smart_count} minutu. |||| **%{servername}** se restarta za %{smart_count} minuta."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Svi igrači izbačeni: %{reason}.",
+        "player": "Izbačen si: %{reason}.",
+        "unknown_reason": "iz nepoznatog razloga"
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Banani ste sa servera zbog \"%{reason}\". Vaš ban ističe za: %{expiration}.",
-        "kick_permanent": "(%{author}) Banani ste sa servera zauvijek zbog \"%{reason}\".",
+        "kick_temporary": "(%{author}) Zabranjeni ste sa servera zbog \"%{reason}\". Vaša zabrana ističe za: %{expiration}.",
+        "kick_permanent": "(%{author}) Zabranjeni ste sa servera zauvijek zbog \"%{reason}\".",
         "reject": {
-            "title_permanent": "Banani ste sa servera zauvijek.",
-            "title_temporary": "Privremeno ste banani sa servera.",
-            "label_expiration": "Vaš ban će isteči za",
-            "label_date": "Datum bana",
-            "label_author": "Banan od",
-            "label_reason": "Razlog bana",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Poruka: Imaš više od jednog bana na ovom profilu.",
-            "note_diff_license": "Poruka: Gornji ban je stavljen na <code>license</code>, što znači da jedan od tvojih IDova/HWIDova se slažu sa tim koji ima ban."
+            "title_permanent": "Zabranjeni ste sa servera zauvijek.",
+            "title_temporary": "Privremeno ste zabranjeni sa servera.",
+            "label_expiration": "Vaša zabrana će isteči za",
+            "label_date": "Datum zabrane",
+            "label_author": "Zabranjen od",
+            "label_reason": "Razlog zabrane",
+            "label_id": "ID zabrane",
+            "note_multiple_bans": "Poruka: Imaš više od jedne zabrane na ovom profilu.",
+            "note_diff_license": "Poruka: Gornja zabrana je stavljen na <code>license</code>, što znači da jedan od tvojih IDova/HWIDova se slažu sa tim koji ima zabranu."
         }
     },
     "whitelist_messages": {
@@ -56,7 +56,7 @@
         "approved_license": {
             "mode_title": "Ovaj server je u <strong>License Whitelist</strong> modu.",
             "insufficient_ids": "Nemaš <code>fivem</code> profil, što znači da server ima <code>sv_lan</code> upaljen. Ako si vlasnik servera, mozes ga ugasit u <code>server.cfg</code> fajlu.",
-            "deny_title": "Nisi whitelistan da bi usao na server.",
+            "deny_title": "Nisi whitelistan da bi ušao na server.",
             "request_id_label": "Zatraženi ID"
         }
     },
@@ -70,22 +70,22 @@
     "nui_warning": {
         "title": "UPOZORENJE",
         "warned_by": "Vas je upozorio",
-        "stale_message": "Ovo upozorenje je izdano prije nego što ste se spojili na poslužitelj.",
+        "stale_message": "Ovo upozorenje je izdano prije nego što ste se spojili na server.",
         "dismiss_key": "SPACE",
-        "instruction": "Držite %{key} %{smart_count} sekundu da vam se skine ova poruka. |||| Držite %{key} %{smart_count} sekunde da vam se skine ova poruka."
+        "instruction": "Držite %{key} na %{smart_count} sekundu da vam se skine ova poruka. |||| Držite %{key} na %{smart_count} sekunde da vam se skine ova poruka."
     },
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Meni upaljen, napiši /tx da bi ga otvorio.\nIsto tako možeš staviti svoji keybind u  [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_admin": "Tvoji profili ne odgovaraju niti jednom registriranom adminu na txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
+            "menu_not_admin": "Vaši profili ne odgovaraju niti jednom registriranom adminu na txAdmin.\nAko ste registrirani na txAdmin, idite na Admin Manager i provjerite jesu li vaši identifikatori spremljeni.",
             "menu_auth_failed": "Provjera autentičnosti izbornika txAdmin nije uspjela s razlogom: %{reason}",
-            "no_perms": "Nemas permisiju.",
+            "no_perms": "Nemaš permisiju.",
             "unknown_error": "Nepoznata greška se desila.",
-            "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
+            "not_enabled": "txAdmin Meni nije omogučen! Možete ga omogučiti u txAdmin web postavkama.",
             "announcement_title": "Server obavještenje od %{author}:",
             "dialog_empty_input": "Ne možete imati prazan unos.",
             "directmessage_title": "DM od admina %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "Ova akcija zahtjeva da OneSnyc bude omogučen."
         },
         "frozen": {
             "froze_player": "Zaledio si igrača!",
@@ -111,14 +111,14 @@
                     "success": "NoClip upaljen"
                 },
                 "godmode": {
-                    "title": "God",
-                    "label": "Nepobjediv",
-                    "success": "God Mode upaljen"
+                    "title": "Nepobjediv",
+                    "label": "Nepobjedivi mod",
+                    "success": "Nepobjedivi mod upaljen"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Upali Super Jump mod, igrač će također brže trčati",
-                    "success": "Super Jump upaljen"
+                    "title": "Super Moći",
+                    "label": "Upali Super Moći, igrač će također brže trčati i skakati",
+                    "success": "Super Moći upaljene"
                 },
                 "normal": {
                     "title": "Normalan",
@@ -130,9 +130,9 @@
                 "title": "Teleport",
                 "generic_success": "Poslan u svemir!",
                 "waypoint": {
-                    "title": "Waypoint",
-                    "label": "Idi na waypoint",
-                    "error": "Nemaš postavljeni waypoint."
+                    "title": "Putna Točka",
+                    "label": "Idi do putne točke",
+                    "error": "Nemaš postavljenu putnu točku."
                 },
                 "coords": {
                     "title": "Kordinate",
@@ -186,14 +186,14 @@
                 "title": "Izliječi",
                 "myself": {
                     "title": "Sebe",
-                    "label": "Puni vaš helt",
-                    "success_0": "Svi su hilani!",
+                    "label": "Puni vaše zdravlje",
+                    "success_0": "Svi su izliječeni!",
                     "success_1": "Sada bi se trebao osječati puno bolje!",
                     "success_2": "Napunjen do kraja!",
                     "success_3": "Bolovi uklonjeni!"
                 },
                 "everyone": {
-                    "title": "Svi",
+                    "title": "Sve",
                     "label": "Će izlječiti i oživiti sve igrače",
                     "success": "Izlječeni i oživljeni su svi igrači."
                 }
@@ -227,11 +227,11 @@
                 "zero_players": "Nema pronađenih igrača"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "Filtriraj po",
+                "no_filter": "Bez Filtera",
+                "is_admin": "Je Admin",
+                "is_injured": "Je Ranjen/ Mrtav",
+                "in_vehicle": "U Vozilu"
             },
             "sort": {
                 "label": "Poredaj po",
@@ -243,7 +243,7 @@
                 "farthest": "Najdalji"
             },
             "card": {
-                "health": "%{percentHealth}% helta"
+                "health": "%{percentHealth}% zdravlja"
             }
         },
         "player_modal": {
@@ -256,7 +256,7 @@
                 "info": "Info",
                 "ids": "ID-ovi",
                 "history": "Povijest",
-                "ban": "Ban"
+                "ban": "Zabrane"
             },
             "actions": {
                 "title": "Akcije igrača",
@@ -320,32 +320,32 @@
                 "title": "Info igrača",
                 "session_time": "Trenutno vrijeme na serveru",
                 "play_time": "Vrijeme igranja",
-                "joined": "Usao",
+                "joined": "Ušao",
                 "whitelisted_label": "Whitelistan",
                 "whitelisted_notyet": "ne još",
                 "btn_wl_add": "DAJ WL",
                 "btn_wl_remove": "MAKNI WL",
                 "btn_wl_success": "Status Whiteliste promijenjen.",
                 "log_label": "Log",
-                "log_empty": "Nema bana/upozorenja pronađenih.",
-                "log_ban_count": "%{smart_count} banaj |||| %{smart_count} banova",
+                "log_empty": "Nema zabrana/upozorenja pronađenih.",
+                "log_ban_count": "%{smart_count} zabrani |||| %{smart_count} zabrana",
                 "log_warn_count": "%{smart_count} upozori |||| %{smart_count} upozorenja",
                 "log_btn": "DETALJI",
                 "notes_changed": "Bilješka promijenjena.",
-                "notes_placeholder": "Bilješke o tom igraču..."
+                "notes_placeholder": "Bilješke o igraču..."
             },
             "history": {
                 "title": "Povezana povijest",
                 "btn_revoke": "MAKNI",
                 "revoked_success": "Akcija maknuta!",
-                "banned_by": "BANAN od %{author}",
+                "banned_by": "Zabrana data od %{author}",
                 "warned_by": "UPOZOREN od %{author}",
                 "revoked_by": "Maknut od %{author}.",
                 "expired_at": "Isteko u %{date}.",
                 "expires_at": "Ističe u %{date}."
             },
             "ban": {
-                "title": "Banuj igrača",
+                "title": "Zabrani ulazak igraču",
                 "reason_placeholder": "Razlog",
                 "duration_placeholder": "Duljina",
                 "hours": "sati",
@@ -354,10 +354,10 @@
                 "months": "mjeseca",
                 "permanent": "Zauvijek",
                 "custom": "Custom",
-                "helper_text": "Odaberi duljinu",
-                "submit": "Potvrdi ban",
+                "helper_text": "Odaberi dužinu",
+                "submit": "Potvrdi zabranu",
                 "reason_required": "Polje za razlog mora biti popunjeno.",
-                "success": "Igrač banan!"
+                "success": "Igraču zabranjen ulazak!"
             },
             "ids": {
                 "current_ids": "Trenutni profili",

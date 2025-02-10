@@ -1,5 +1,5 @@
-import { GenericApiErrorResp } from "genericApiTypes";
-import { BanTemplatesDataType } from "otherTypes";
+import { GenericApiErrorResp } from "./genericApiTypes";
+import { BanTemplatesDataType } from "./otherTypes";
 
 //Already compliant with new db specs
 export type PlayerHistoryItem = {
@@ -58,7 +58,7 @@ export type PlayersStatsResp = {
 } | GenericApiErrorResp;
 
 
-export type PlayersTableSearchType = null | {
+export type PlayersTableSearchType = {
     value: string;
     type: string;
 }

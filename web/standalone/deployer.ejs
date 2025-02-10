@@ -226,6 +226,11 @@
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control customRecipeVars" id="step2-customVar<%= key %>" 
                                                     data-varName="<%= inputVar.name %>" placeholder="<%= inputVar.value %>" value="<%= inputVar.value %>">
+                                                    <% if (inputVar.description) { %>
+                                                        <span class="form-text text-muted">
+                                                            <%- inputVar.description %>
+                                                        </span>
+                                                    <% } %>
                                             </div>
                                         </div>
                                     <% } %>

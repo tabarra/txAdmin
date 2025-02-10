@@ -7,6 +7,21 @@ if not TX_MENU_ENABLED then return end
 
 --[[ NUI CALLBACKS ]]
 
+local function getPedVehicle()
+    local ped = PlayerPedId()
+    local veh
+    if IS_REDM and IsPedOnMount(ped) then
+        veh = GetMount(ped)
+    else
+        veh = GetVehiclePedIsIn(ped, false)
+    end
+    if veh and veh > 0 then
+        return veh
+    else
+        return nil
+    end
+end
+
 -- NOTE: this is not a complete list, but most others have the type "automobile"
 local vehClassNamesEnum = {
     [8] = "bike",
@@ -98,53 +113,92 @@ RegisterSecureNuiCallback('spawnVehicle', function(data, cb)
     end
     if not IsModelValid(data.model) then
         debugPrint("^1Invalid vehicle/horse model requested: " .. data.model)
-        return cb({ e = true })
-    end
-
-    local spawnReqDone = gameSpawnReqHandler(data.model)
-    cb(spawnReqDone and {} or { e = true })
-end)
-
-RegisterSecureNuiCallback("deleteVehicle", function(data, cb)
-    local ped = PlayerPedId()
-    local veh = GetVehiclePedIsIn(ped, false)
-    if IS_REDM and IsPedOnMount(ped) then
-        veh = GetMount(ped)
-    end
-    if veh and veh > 0 then
-        local vehNetId = NetworkGetNetworkIdFromEntity(veh)
-        TriggerServerEvent("txsv:req:vehicle:delete", vehNetId)
-        cb({})
+        sendSnackbarMessage(
+            'error',
+            'nui_menu.page_main.vehicle.spawn.dialog_error',
+            true,
+            { modelName = data.model }
+        )
+    elseif not gameSpawnReqHandler(data.model) then
+        sendSnackbarMessage(
+            'error',
+            'nui_menu.page_main.vehicle.spawn.dialog_error',
+            true,
+            { modelName = data.model }
+        )
     else
-        cb({ e = true })
+        sendSnackbarMessage(
+            'info',
+            'nui_menu.page_main.vehicle.spawn.dialog_info',
+            true,
+            { modelName = data.model }
+        )
     end
-end)
-
-
-RegisterSecureNuiCallback('fixVehicle', function(_, cb)
-    local ped = PlayerPedId()
-    local veh = GetVehiclePedIsIn(ped, false)
-    if (veh == 0) and not IsPedOnMount(ped) then
-        return cb({ e = true })
-    end
-
-    TriggerServerEvent('txsv:req:vehicle:fix')
     cb({})
 end)
+RegisterCommand('txAdmin:menu:spawnVehicle', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'menu.vehicle') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    toggleMenuVisibility(true)
+    SetNuiFocus(true, true)
+    sendMenuMessage('openSpawnVehicleDialog', {})
+end)
 
 
-RegisterSecureNuiCallback('boostVehicle', function(_, cb)
-    local ped = PlayerPedId()
-    local veh = GetVehiclePedIsIn(ped, false)
-    if IS_REDM and IsPedOnMount(ped) then
-        veh = GetMount(ped)
+local function reqVehicleDelete(_, cb)
+    local veh = getPedVehicle()
+    if veh == nil then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.not_in_veh_error', true)
     end
-    if veh and veh > 0 then
-        TriggerServerEvent('txsv:req:vehicle:boost')
-        cb({})
-    else
-        cb({ e = true })
+    local vehNetId = NetworkGetNetworkIdFromEntity(veh)
+    TriggerServerEvent("txsv:req:vehicle:delete", vehNetId)
+    if cb then cb({ success = true }) end
+end
+RegisterSecureNuiCallback('deleteVehicle', reqVehicleDelete)
+RegisterCommand('txAdmin:menu:deleteVehicle', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'menu.vehicle') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
     end
+    reqVehicleDelete()
+end)
+
+
+local function reqVehicleFix(_, cb)
+    local veh = getPedVehicle()
+    if veh == nil then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.not_in_veh_error', true)
+    end
+    TriggerServerEvent('txsv:req:vehicle:fix')
+    if cb then cb({}) end
+end
+RegisterSecureNuiCallback('fixVehicle', reqVehicleFix)
+RegisterCommand('txAdmin:menu:fixVehicle', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'menu.vehicle') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    reqVehicleFix()
+end)
+
+
+local function reqVehicleBoost(_, cb)
+    local veh = getPedVehicle()
+    if veh == nil then
+        return sendSnackbarMessage('error', 'nui_menu.page_main.vehicle.not_in_veh_error', true)
+    end
+    TriggerServerEvent('txsv:req:vehicle:boost')
+    if cb then cb({}) end
+end
+RegisterSecureNuiCallback('boostVehicle', reqVehicleBoost)
+RegisterCommand('txAdmin:menu:boostVehicle', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'menu.vehicle') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    reqVehicleBoost()
 end)
 
 
@@ -161,29 +215,29 @@ local function setVehicleHandlingModifier(veh, field, multiplier)
 end
 
 local boostableVehicleClasses = {
-    [0]='Compacts',
-    [1]='Sedans',
-    [2]='SUVs',
-    [3]='Coupes',
-    [4]='Muscle',
-    [5]='Sports Classics',
-    [6]='Sports',
-    [7]='Super',
+    [0] = 'Compacts',
+    [1] = 'Sedans',
+    [2] = 'SUVs',
+    [3] = 'Coupes',
+    [4] = 'Muscle',
+    [5] = 'Sports Classics',
+    [6] = 'Sports',
+    [7] = 'Super',
     -- [8]='Motorcycles',
-    [9]='Off-road',
+    [9] = 'Off-road',
     -- [10]='Industrial',
-    [11]='Utility',
-    [12]='Vans',
+    [11] = 'Utility',
+    [12] = 'Vans',
     -- [13]='Cycles',
     -- [14]='Boats',
     -- [15]='Helicopters',
     -- [16]='Planes',
-    [17]='Service',
-    [18]='Emergency',
-    [19]='Military',
-    [20]='Commercial',
+    [17] = 'Service',
+    [18] = 'Emergency',
+    [19] = 'Military',
+    [20] = 'Commercial',
     -- [21]='Trains',
-    [22]='Open Wheel'
+    [22] = 'Open Wheel'
 }
 
 local function boostVehicleFivem()
@@ -219,24 +273,24 @@ local function boostVehicleFivem()
     setVehicleHandlingValue(veh, 'fInitialDragCoeff', 10.0);
 
     SetVehicleHandlingVector(veh, 'CHandlingData', 'vecInertiaMultiplier', vector3(0.1, 0.1, 0.1))
-    setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001); --testar, o certo é 0~1
-    setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001); --testar, o certo é >1
+    setVehicleHandlingValue(veh, 'fAntiRollBarForce', 0.0001);   --testar, o certo é 0~1
+    setVehicleHandlingValue(veh, 'fTractionLossMult', 0.00001);  --testar, o certo é >1
     setVehicleHandlingValue(veh, 'fRollCentreHeightFront', 0.5); --testar, o certo é 0~1
-    setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5); --testar, o certo é 0~1
+    setVehicleHandlingValue(veh, 'fRollCentreHeightRear', 0.5);  --testar, o certo é 0~1
 
     playLibrarySound('confirm')
-    SetVehicleCanBreak(veh, false) -- If this is set to false, the vehicle simply can't break
+    SetVehicleCanBreak(veh, false)         -- If this is set to false, the vehicle simply can't break
     SetVehicleEngineCanDegrade(veh, false) -- Engine strong
-    SetVehicleMod(veh, 15, 3, false) -- Max Suspension
-    SetVehicleMod(veh, 11, 3, false) -- Max Engine
-    SetVehicleMod(veh, 16, 4, false) -- Max Armor
-    SetVehicleMod(veh, 12, 2, false) -- Max Brakes
-    SetVehicleMod(veh, 13, 2, false) -- Max Transmission
-    ToggleVehicleMod(veh, 18, true) -- modTurbo
-    SetVehicleMod(veh, 18, 0, false) -- Turbo
-    SetVehicleNitroEnabled(veh, true) -- Gives the vehicle a nitro boost
-    SetVehicleTurboPressure(veh, 100.0) -- Pressure of the turbo is 100%
-    EnableVehicleExhaustPops(veh, true) -- This forces the exhaust to always "pop"
+    SetVehicleMod(veh, 15, 3, false)       -- Max Suspension
+    SetVehicleMod(veh, 11, 3, false)       -- Max Engine
+    SetVehicleMod(veh, 16, 4, false)       -- Max Armor
+    SetVehicleMod(veh, 12, 2, false)       -- Max Brakes
+    SetVehicleMod(veh, 13, 2, false)       -- Max Transmission
+    ToggleVehicleMod(veh, 18, true)        -- modTurbo
+    SetVehicleMod(veh, 18, 0, false)       -- Turbo
+    SetVehicleNitroEnabled(veh, true)      -- Gives the vehicle a nitro boost
+    SetVehicleTurboPressure(veh, 100.0)    -- Pressure of the turbo is 100%
+    EnableVehicleExhaustPops(veh, true)    -- This forces the exhaust to always "pop"
     SetVehicleCheatPowerIncrease(veh, 1.8) -- Torque multiplier
 
     sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.boost.success', true)
@@ -287,6 +341,7 @@ RegisterNetEvent('txcl:vehicle:fix', function()
         Citizen.InvokeNative(0xC6258F41D86676E0, horse, 1, 100) -- SetAttributeCoreValue
         Citizen.InvokeNative(0xC6258F41D86676E0, horse, 2, 100) -- SetAttributeCoreValue
     end
+    sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.fix.success', true)
 end)
 
 -- Spawn vehicle - used in redm
@@ -331,7 +386,7 @@ RegisterNetEvent('txcl:vehicle:spawn:redm', function(model)
     else
         newVeh = CreatePed(modelHash, playerCoords, playerHeading, true, false)
         -- Citizen.InvokeNative(0x77FF8D35EEC6BBC4, newVeh, 1, 0) --EquipMetaPedOutfitPreset
-        Citizen.InvokeNative(0x283978A15512B2FE, newVeh, true) --SetRandomOutfitVariation
+        Citizen.InvokeNative(0x283978A15512B2FE, newVeh, true)          --SetRandomOutfitVariation
         Citizen.InvokeNative(0x028F76B6E78246EB, playerPed, newVeh, -1) --SetPedOntoMount
     end
 
@@ -340,6 +395,7 @@ RegisterNetEvent('txcl:vehicle:spawn:redm', function(model)
         SetEntityVelocity(newVeh, currentVehVelocity)
     end
     SetModelAsNoLongerNeeded(modelHash)
+    sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.spawn.dialog_success', true)
 end)
 
 
@@ -366,6 +422,7 @@ RegisterNetEvent('txcl:seatInVehicle', function(vehNetID, seat, oldVehVelocity)
             if type(oldVehVelocity) ~= 'vector3' then
                 SetEntityVelocity(veh, oldVehVelocity)
             end
+            sendSnackbarMessage('success', 'nui_menu.page_main.vehicle.spawn.dialog_success', true)
         end
     end
 end)

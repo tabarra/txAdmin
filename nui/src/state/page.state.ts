@@ -9,6 +9,7 @@ export enum txAdminMenuPage {
   Main,
   Players,
   IFrame,
+  PlayerModalOnly,
 }
 
 const pageState = atom<txAdminMenuPage>({

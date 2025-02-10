@@ -14,9 +14,9 @@
         "schedule_warn_discord": "**%{servername}** wird in einer Minute neu gestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Alle Spieler wurden gekickt: %{reason}.",
+        "player": "Du wurdest gekickt: %{reason}.",
+        "unknown_reason": "aus unbekanntem Grund"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Du wurdest von diesem Server für %{expiration} gebannt. Grund: \"%{reason}\".",

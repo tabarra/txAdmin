@@ -1,14 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import humanizeDuration from '@/lib/humanizeDuration';
 import { Socket, io } from "socket.io-client";
-import type { HumanizerOptions } from "humanize-duration";
 import type { BanDurationType } from "@shared/otherTypes";
 import { ListenEventsMap } from "@shared/socketioTypes";
-import { LogoutReasonHash } from "@/pages/auth/Login";
-
-//Statically caching the current year
-const currentYear = new Date().getFullYear();
+import { useId } from "react";
 
 
 /**
@@ -16,31 +11,6 @@ const currentYear = new Date().getFullYear();
  */
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
-}
-
-
-/**
- * Validates if a redirect path is valid or not.
- * To prevent open redirect, we need to make sure the first char is / and the second is not,
- * otherwise //example.com would be a valid redirect to <proto>://example.com
- */
-export function isValidRedirectPath(location: unknown): location is string {
-    if (typeof location !== 'string' || !location) return false;
-    const url = new URL(location, window.location.href);
-    return location.startsWith('/') && !location.startsWith('//') && url.hostname === window.location.hostname;
-}
-
-
-/**
- * Returns the path/search/hash of the login URL with redirect params
- * /aaa/bbb?ccc=ddd#eee -> /login?r=%2Faaa%2Fbbb%3Fccc%3Dddd%23eee
- */
-export function redirectToLogin(reasonHash = LogoutReasonHash.NONE) {
-    const currLocation = window.location.pathname + window.location.search + window.location.hash;
-    const newLocation = currLocation === '/' || currLocation.startsWith('/login')
-        ? `/login${reasonHash}`
-        : `/login?r=${encodeURIComponent(currLocation)}${reasonHash}`;
-    window.history.replaceState(null, '', newLocation);
 }
 
 
@@ -58,157 +28,14 @@ export const stripIndent = (src: string) => {
 
 
 /**
- * Converts a number of milliseconds to english words
- * Accepts a humanizeDuration config object
- * eg: msToDuration(ms, { units: ['h', 'm'] });
- */
-export const msToDuration = humanizeDuration.humanizer({
-    round: true,
-} satisfies HumanizerOptions);
-
-
-/**
- * Converts a number of milliseconds to short english words
- * Accepts a humanizeDuration config object
- * eg: msToDuration(ms, { units: ['h', 'm'] });
- */
-export const msToShortDuration = humanizeDuration.humanizer({
-    round: true,
-    spacer: '',
-    language: 'shortEn',
-} satisfies HumanizerOptions);
-
-
-/**
- * Converts a timestamp to Date, detecting if ts is seconds or milliseconds
- */
-export const tsToDate = (ts: number) => {
-    return new Date(ts < 10000000000 ? ts * 1000 : ts);
-}
-
-
-/**
- * Converts a timestamp to a locale time string
- */
-export const dateToLocaleTimeString = (
-    time: Date,
-    hour: 'numeric' | '2-digit' = '2-digit',
-    minute: 'numeric' | '2-digit' = '2-digit',
-    second?: 'numeric' | '2-digit',
-) => {
-    return time.toLocaleTimeString(
-        window?.nuiSystemLanguages ?? navigator.language,
-        { hour, minute, second }
-    );
-}
-
-
-/**
- * Converts a timestamp to a locale time string
- */
-export const tsToLocaleTimeString = (
-    ts: number,
-    hour: 'numeric' | '2-digit' = '2-digit',
-    minute: 'numeric' | '2-digit' = '2-digit',
-    second?: 'numeric' | '2-digit',
-) => {
-    return dateToLocaleTimeString(tsToDate(ts), hour, minute, second);
-}
-
-
-/**
- * Converts a timestamp to a locale date string
- */
-export const dateToLocaleDateString = (
-    time: Date,
-    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
-) => {
-    return time.toLocaleDateString(
-        window?.nuiSystemLanguages ?? navigator.language,
-        { dateStyle }
-    );
-}
-
-
-/**
- * Converts a timestamp to a locale date string
- */
-export const tsToLocaleDateString = (
-    ts: number,
-    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
-) => {
-    return dateToLocaleDateString(tsToDate(ts), dateStyle);
-}
-
-
-/**
- * Translates a timestamp into a localized date time string
- */
-export const dateToLocaleDateTimeString = (
-    time: Date,
-    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
-    timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
-) => {
-    return time.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language,
-        { dateStyle, timeStyle }
-    );
-}
-
-
-/**
- * Translates a timestamp into a localized date time string
- */
-export const tsToLocaleDateTimeString = (
-    ts: number,
-    dateStyle: 'full' | 'long' | 'medium' | 'short' = 'long',
-    timeStyle: 'full' | 'long' | 'medium' | 'short' = 'medium',
-) => {
-    return dateToLocaleDateTimeString(tsToDate(ts), dateStyle, timeStyle);
-}
-
-
-/**
- * Checks if a date is today
- */
-export const isDateToday = (date: Date) => {
-    const today = new Date();
-    return (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-    );
-};
-
-
-/**
  * Converts a number to a locale string with commas and decimals
  */
 export const numberToLocaleString = (num: number, decimals = 0) => {
     return num.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language ?? 'en',
+        window.txBrowserLocale,
         { maximumFractionDigits: decimals }
     );
 };
-
-
-/**
- * Converts a timestamp to a locale time string, considering the current year, shortest unambiguous as possible
- */
-export const convertRowDateTime = (ts: number) => {
-    const date = tsToDate(ts);
-    const isAnotheryear = date.getFullYear() !== currentYear;
-    return date.toLocaleString(
-        window?.nuiSystemLanguages ?? navigator.language,
-        {
-            year: isAnotheryear ? 'numeric' : undefined,
-            month: isAnotheryear ? 'numeric' : 'short',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-        }
-    );
-}
 
 
 /**
@@ -234,35 +61,6 @@ export const getSocket = (rooms: string[] | string) => {
 
 
 /**
- * Opens a link in a new tab, or calls the native function to open a link in the default browser
- */
-export const openExternalLink = (url: string) => {
-    if (!url) return;
-    if (window.invokeNative) {
-        window.invokeNative('openUrl', url);
-    } else {
-        window.open(url, '_blank');
-    }
-}
-
-
-/**
- * Overwrites the href behavior in NUI to open external links
- */
-export const handleExternalLinkClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    if (window.txConsts.isWebInterface) return;
-    const target = event.target as HTMLElement;
-    const anchor = target.closest('a');
-    if (!anchor) return;
-    const href = anchor.getAttribute('href');
-    if (!href) return;
-
-    event.preventDefault();
-    openExternalLink(href);
-}
-
-
-/**
  * Returns a random hsl() color - useful for testing react rendering stuff
  */
 export const createRandomHslColor = (alpha?: number) => {
@@ -274,22 +72,46 @@ export const createRandomHslColor = (alpha?: number) => {
 
 
 /**
+ * Returns a deterministic hsl() color based on a seed string
+ */
+export const createSeedHslColor = (seed: string, alpha?: number) => {
+    const hash = seed.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0) | 0;
+    }, 0);
+    const hue = Math.abs(hash % 360);
+    return typeof alpha === 'number'
+        ? `hsla(${hue}, 100%, 50%, ${alpha})`
+        : `hsl(${hue}, 100%, 50%)`;
+}
+
+
+/**
  * Copy text to clipboard.
+ * Only if on web, attempt to use the Clipboard API. If it fails, fallback to the old method.
  * Because we don't have access to Clipboard API in FiveM's CEF, as well as on
  * non-localhost origins without https, we need to use the old school method.
- * FIXME: literally not working
  */
-export const copyToClipboard = async (value: string) => {
-    if (navigator?.clipboard) {
-        return navigator.clipboard.writeText(value);
-    } else {
+export const copyToClipboard = async (value: string, surrogate: HTMLDivElement) => {
+    const copyViaApi = () => navigator.clipboard.writeText(value);
+    const copyViaInput = () => {
         const clipElem = document.createElement("textarea");
         clipElem.value = value;
-        document.body.appendChild(clipElem);
+        surrogate.appendChild(clipElem);
         clipElem.select();
         const result = document.execCommand("copy");
-        document.body.removeChild(clipElem);
+        surrogate.removeChild(clipElem);
         return result;
+    }
+
+    //try to prevent printing error on devtools
+    if(window.txConsts.isWebInterface) {
+        try {
+            return await copyViaApi();
+        } catch (error1) {
+            return copyViaInput();
+        }
+    } else {
+        return copyViaInput();
     }
 }
 

@@ -44,6 +44,7 @@ const DialogInfoView: React.FC = () => {
       language,
       round: true,
       units: ["d", "h", "m"] as Unit[],
+      fallbacks: ["en"],
     });
   }
 

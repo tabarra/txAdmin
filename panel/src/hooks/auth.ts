@@ -9,8 +9,9 @@ import { globalStatusAtom } from './status';
 import { txToast } from '@/components/TxToaster';
 import { actionModalOpenAtom } from './actionModal';
 import { dashDataTsAtom, dashPerfCursorAtom, dashPlayerDropAtom, dashServerStatsAtom, dashSvRuntimeAtom } from '@/pages/Dashboard/dashboardHooks';
-import { redirectToLogin } from '@/lib/utils';
+import { redirectToLogin } from '@/lib/navigation';
 import { LogoutReasonHash } from '@/pages/auth/Login';
+import { mutate } from 'swr'
 
 
 /**
@@ -51,7 +52,7 @@ export const useSetAuthData = () => {
 };
 
 //Admin permissions hook, only re-renders on perms change or login/logout
-//Perms logic from core/components/WebServer/authLogic.ts
+//Perms logic from core/modules/WebServer/authLogic.ts
 export const useAdminPerms = () => {
     const permsData = useAtomValue(adminPermissionsAtom);
 
@@ -138,6 +139,9 @@ export const logoutWatcher = atomEffect((get, set) => {
     set(dashPerfCursorAtom, undefined);
     set(dashDataTsAtom, 0);
     txToast.dismiss(); //making sure we don't have any pending toasts
+
+    //Force invalidation of all cached data in SWR
+    mutate(() => true, undefined, { revalidate: false });
 
     //TODO: maybe also erase playerlist/mutex?
 });

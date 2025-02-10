@@ -31,15 +31,16 @@ import { PlayerMode, usePlayerMode } from "../../state/playermode.state";
 import { useIsMenuVisibleValue } from "../../state/visibility.state";
 import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
-import { arrayRandom } from "../../utils/miscUtils";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { useServerCtxValue } from "../../state/server.state";
 import { VehicleMode, useVehicleMode } from "../../state/vehiclemode.state";
 import { useIsRedmValue } from "@nui/src/state/isRedm.state";
 import { getVehicleSpawnDialogData, vehiclePlaceholderReplacer } from "@nui/src/utils/vehicleSpawnDialogHelper";
+import { useNuiEvent } from "@nui/src/hooks/useNuiEvent";
+import { usePlayerModalContext } from "@nui/src/provider/PlayerModalProvider";
 
 const fadeHeight = 20;
-const listHeight = 388;
+const listHeight = 402;
 
 const BoxFadeTop = styled(Box)(({ theme }) => ({
   backgroundImage: `linear-gradient(to top, transparent, ${theme.palette.background.default})`,
@@ -83,6 +84,7 @@ export const MainPageList: React.FC = () => {
   const serverCtx = useServerCtxValue();
   const menuVisible = useIsMenuVisibleValue();
   const isRedm = useIsRedmValue()
+  const { closeMenu } = usePlayerModalContext();
 
   //FIXME: this is so the menu resets multi selectors when we close it
   // but it is not working, and when I do this the first time we press
@@ -131,7 +133,7 @@ export const MainPageList: React.FC = () => {
   };
 
   //=============================================
-  const handleTeleportCoords = () => {
+  const handleTeleportCoords = (autoClose = false) => {
     openDialog({
       title: t("nui_menu.page_main.teleport.coords.dialog_title"),
       description: t("nui_menu.page_main.teleport.coords.dialog_desc"),
@@ -161,20 +163,18 @@ export const MainPageList: React.FC = () => {
           { variant: "success" }
         );
         fetchNui("tpToCoords", { x, y, z });
+        if (autoClose) {
+          closeMenu()
+        }
       },
     });
   };
+  useNuiEvent("openTeleportCoordsDialog", () => {
+    handleTeleportCoords(true);
+  });
 
   const handleTeleportBack = () => {
-    fetchNui("tpBack").then(({ e }) => {
-      e
-        ? enqueueSnackbar(t("nui_menu.page_main.teleport.back.error"), {
-            variant: "error",
-          })
-        : enqueueSnackbar(t("nui_menu.page_main.teleport.generic_success"), {
-            variant: "success",
-          });
-    });
+    fetchNui("tpBack");
   };
 
   const handleCopyCoords = () => {
@@ -185,7 +185,7 @@ export const MainPageList: React.FC = () => {
   };
 
   //=============================================
-  const handleSpawnVehicle = () => {
+  const handleSpawnVehicle = (autoClose = false) => {
     // Requires onesync because the vehicle is spawned on the server
     if (!serverCtx.oneSync.status) {
       return enqueueSnackbar(t("nui_menu.misc.onesync_error"), {
@@ -201,35 +201,19 @@ export const MainPageList: React.FC = () => {
       suggestions: dialogData.shortcuts,
       onSubmit: (modelName: string) => {
         modelName = vehiclePlaceholderReplacer(modelName, dialogData.shortcutsData);
-        fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
-          e
-            ? enqueueSnackbar(
-                t("nui_menu.page_main.vehicle.spawn.dialog_error", { modelName }),
-                { variant: "error" }
-              )
-            : enqueueSnackbar(
-                t("nui_menu.page_main.vehicle.spawn.dialog_success"),
-                { variant: "success" }
-              );
-        });
+        fetchNui("spawnVehicle", { model: modelName });
+        if (autoClose) {
+          closeMenu()
+        }
       },
     });
   };
+  useNuiEvent("openSpawnVehicleDialog", () => {
+    handleSpawnVehicle(true);
+  });
 
   const handleFixVehicle = () => {
-    fetchNui("fixVehicle").then(({ e }) => {
-      if (e) {
-        return enqueueSnackbar(
-          t("nui_menu.page_main.vehicle.not_in_veh_error"),
-          {
-            variant: "error",
-          }
-        );
-      }
-      enqueueSnackbar(t("nui_menu.page_main.vehicle.fix.success"), {
-        variant: "info",
-      });
-    });
+    fetchNui("fixVehicle");
   };
 
   const handleDeleteVehicle = () => {
@@ -239,48 +223,23 @@ export const MainPageList: React.FC = () => {
         variant: "error",
       });
     }
-
-    fetchNui("deleteVehicle").then(({ e }) => {
-      if (e) {
-        return enqueueSnackbar(
-          t("nui_menu.page_main.vehicle.not_in_veh_error"),
-          {
-            variant: "error",
-          }
-        );
+    fetchNui("deleteVehicle").then(({ success }) => {
+      //NOTE: since there is no client action for deleting the car, the success message is triggered here
+      if (success) {
+        return enqueueSnackbar(t("nui_menu.page_main.vehicle.delete.success"), {
+          variant: "info",
+        });
       }
-      enqueueSnackbar(t("nui_menu.page_main.vehicle.delete.success"), {
-        variant: "info",
-      });
     });
   };
 
   const handleBoostVehicle = () => {
-    fetchNui("boostVehicle").then(({ e }) => {
-      if (e) {
-        return enqueueSnackbar(
-          t("nui_menu.page_main.vehicle.not_in_veh_error"),
-          {
-            variant: "error",
-          }
-        );
-      }
-    });
+    fetchNui("boostVehicle");
   };
 
   //=============================================
   const handleHealMyself = () => {
     fetchNui("healMyself");
-    const messages = [
-      t("nui_menu.page_main.heal.myself.success_0"),
-      t("nui_menu.page_main.heal.myself.success_1"),
-      t("nui_menu.page_main.heal.myself.success_2"),
-      t("nui_menu.page_main.heal.myself.success_3"),
-    ].filter((v) => !!(v && v.length));
-    const msg = messages[Math.round((messages.length - 1) * Math.random())];
-    enqueueSnackbar(msg, {
-      variant: "success",
-    });
   };
 
   const handleHealAllPlayers = () => {
@@ -305,7 +264,7 @@ export const MainPageList: React.FC = () => {
     });
   };
 
-  const handleClearArea = () => {
+  const handleClearArea = (autoClose = false) => {
     if (isRedm) {
       return enqueueSnackbar(
         'This option is not yet available for RedM.',
@@ -327,19 +286,16 @@ export const MainPageList: React.FC = () => {
           );
         }
 
-        fetchNui("clearArea", parsedRadius).then(() => {
-          enqueueSnackbar(
-            t("nui_menu.page_main.clear_area.dialog_success", {
-              radius: parsedRadius,
-            }),
-            {
-              variant: "success",
-            }
-          );
-        });
+        fetchNui("clearArea", parsedRadius);
+        if (autoClose) {
+          closeMenu()
+        }
       },
     });
   };
+  useNuiEvent("openClearAreaDialog", () => {
+    handleClearArea(true);
+  });
 
   const handleTogglePlayerIds = () => {
     fetchNui("togglePlayerIDs");
@@ -565,23 +521,23 @@ export const MainPageList: React.FC = () => {
 
   return (
     // add pb={2} if we don't have that arrow at the bottom
-    <Box>
+    (<Box sx={{ pointerEvents: 'none' }}>
       <StyledList>
         {menuListItems.map((item, index) =>
           item.isMultiAction ? (
             // @ts-ignore
-            <MenuListItemMulti
+            (<MenuListItemMulti
               key={index}
               selected={curSelected === index}
               {...item}
-            />
+            />)
           ) : (
             // @ts-ignore
-            <MenuListItem
+            (<MenuListItem
               key={index}
               selected={curSelected === index}
               {...item}
-            />
+            />)
           )
         )}
       </StyledList>
@@ -601,6 +557,6 @@ export const MainPageList: React.FC = () => {
       >
         v{serverCtx.txAdminVersion}
       </Typography>  */}
-    </Box>
+    </Box>)
   );
 };

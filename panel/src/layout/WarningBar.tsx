@@ -56,7 +56,7 @@ export function InnerWarningBar({ titleIcon, title, description, isImportant, ca
 
     if (canPostpone && !checkPostponeStatus(isImportant)) return null;
     return (
-        <div className='fixed top-[calc(3.5rem+1px)] w-full flex justify-center z-40'>
+        <div className='fixed top-navbarvh w-full flex justify-center z-40'>
             <div className={cn(
                 "w-full sm:w-[28rem] h-9 hover:h-32 overflow-hidden sm:rounded-b-md",
                 "flex flex-col justify-center items-center p-2",

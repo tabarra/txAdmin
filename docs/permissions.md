@@ -15,6 +15,7 @@ The permissions are saved in the `txData/admins.json` file and can be edited thr
 - `commands.resources`: Start/Stop Resources;
 - `server.cfg.editor`: Read/Write server.cfg;
 - `txadmin.log.view`: View txAdmin Log;
+- `server.log.view`: View Server Log;
 - `menu.vehicle`: Spawn / Fix Vehicles;
 - `players.direct_message`: Send a direct message to a player;
 - `players.whitelist`: Whitelist player;

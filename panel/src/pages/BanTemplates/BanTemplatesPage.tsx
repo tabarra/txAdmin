@@ -12,7 +12,10 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { BackendApiError, useBackendApi } from "@/hooks/fetch";
 import { Loader2Icon } from "lucide-react";
 import useSWR from "swr";
-import { nanoid } from "nanoid";
+import { alphanumeric } from 'nanoid-dictionary';
+import { customAlphabet } from "nanoid";
+import SettingsHeader from "../Settings/SettingsHeader";
+const nanoid = customAlphabet(alphanumeric, 21);
 
 
 export type BanTemplatesInputData = {
@@ -96,7 +99,6 @@ export default function BanTemplatesPage() {
     }
 
     const handleOnSave = ({ id, reason, duration }: BanTemplatesInputData) => {
-        console.log('Save item', id, reason, duration);
         if (id) {
             updateBackend((prev) =>
                 prev.map((item) =>
@@ -252,3 +254,15 @@ export default function BanTemplatesPage() {
         />
     </>;
 }
+
+
+// export default function BanTemplatesPage () {
+//     return (
+//         <div className="w-full mb-10">
+//             <SettingsHeader changelogData={[{author: 'aaaaaa', keys:[], ts: 111111111111}]} />
+//             <div className="px-0 xs:px-3 md:px-0 flex flex-row gap-2 w-full">
+//                 <BanTemplatesPageInner />
+//             </div>
+//         </div>
+//     )
+// }

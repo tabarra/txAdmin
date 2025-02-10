@@ -11,7 +11,7 @@ import { ChevronsDownIcon, Loader2Icon } from "lucide-react";
 
 import './LiveConsole/xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
-import { openExternalLink } from '@/lib/utils';
+import { openExternalLink } from '@/lib/navigation';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import terminalOptions from './LiveConsole/xtermOptions';
 import ScrollDownAddon from './LiveConsole/ScrollDownAddon';

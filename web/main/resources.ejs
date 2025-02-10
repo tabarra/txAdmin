@@ -1,34 +1,64 @@
 <%- await include('parts/header.ejs', locals) %>
 
+<style>
+    .collapsed {
+        height: 0;
+    }
+    .head-hover:hover {
+        cursor: pointer;
+        text-decoration: underline;
+        text-decoration-color: #d8dbe0;
+    }
+    .fix-pill-form {
+        min-width: 65px;
+    }
+</style>
 
 <div class="row justify-content-center">
     <div class="col-md-8 mw-col6">
         <div class="card card-accent-info">
-            <div class="card-header float-left">
-                <span class="h5">All Resources</span>
-                <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" <%= disableActions %>>
-                    <i class="icon-refresh"></i> Reload & Refresh
-                </button>
-                <input class="form-control mt-3" type="text" name="resource" id="resourceInput" onkeyup="findResource()"
-                    placeholder="Find resource by name...">
-                <div class="row justify-content-center pt-2">
-                    <span class="form-text text-muted mr-1">
-                        Default resources:
-                    </span>
+            <div class="card-body py-3">
+                <input
+                    class="form-control my-1"
+                    type="text"
+                    name="resource"
+                    id="resourceInput"
+                    onkeyup="findResource()"
+                    placeholder="Find resource by name..."
+                >
+                <div class="d-flex flex-wrap justify-content-xs-center justify-content-between pt-2" style="gap: 1rem;">
+                    <div class="d-flex flex-grow-1x" style="gap: 1rem;">
+                        <div class="d-flex flex-column flex-lg-row align-items-center" style="gap: 0.5rem;">
+                            <span class="form-text text-muted text-center">
+                                Default resources:
+                            </span>
+                            <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input type="checkbox" id="defResCheckbox" class="c-switch-input">
+                                <span class="c-switch-slider" data-checked="Show" data-unchecked="Hide"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex flex-column flex-lg-row align-items-center" style="gap: 0.5rem;">
+                            <span class="form-text text-muted text-center">
+                                Only stopped resources:
+                            </span>
+                            <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input type="checkbox" id="stoppedResCheckbox" class="c-switch-input">
+                                <span class="c-switch-slider" data-checked="Show" data-unchecked="Hide"></span>
+                            </label>
+                        </div>
+                    </div>
                     
-                    <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                        <input type="checkbox" id="defResCheckbox" class="c-switch-input">
-                        <span class="c-switch-slider" data-checked="Show" data-unchecked="Hide"></span>
-                    </label>
-                    
-                    <span class="form-text text-muted ml-3 mr-1">
-                        Only stopped resources:
-                    </span>
-                    
-                    <label class="switch-lg c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                        <input type="checkbox" id="stoppedResCheckbox" class="c-switch-input">
-                        <span class="c-switch-slider" data-checked="Show" data-unchecked="Hide"></span>
-                    </label>
+                    <div class="d-flex" style="gap: 0.75rem;">
+                        <button 
+                            class="btn btn-sm btn-outline-secondary float-right" 
+                            type="button"
+                            id="btnExpandCollapse"
+                        />
+                        <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" <%= disableActions %>>
+                            <i class="icon-refresh"></i> Reload & Refresh
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,16 +66,21 @@
 </div>
 <div class="row justify-content-center">
     <div class="col-sm-12 col-lg-8 mw-col8">
-        <div class="card card-accent-info table-responsive-sm">
-            <table class="table table-hover table-outline mb-0">
-                <% for (const resGroup of resGroups) { %>
-                    <thead class="thead-light" id="resList-card-<%= resGroup.divName %>">
+        <% for (const resGroup of resGroups) { %>
+            <div class="card table-responsive-sm" style="margin: 1em 0; border-radius: 0;" id="resList-card-<%= resGroup.divName %>">
+                <!-- Table class is responsible for the sharper edges -->
+                <table class="table table-hover table-outline mb-0">
+                    <thead class="thead-light head-hover">
                         <tr>
-                            <th class="text-break text-center" colspan="2"><%= resGroup.subPath %></th>
+                            <th class="text-break text-center" colspan="2">
+                                <%= resGroup.subPath %>
+                                <span class="toggle-icon" id="icon-<%= resGroup.divName %>">
+                                    <i class="icon-arrow-down" style="font-size: 75%; font-weight: bold;"></i>
+                                </span>
+                            </th>
                         </tr>
                     </thead>
-                    <tbody id="resList-cardBody-<%= resGroup.divName %>"
-                        aria-labelledby="resList-cardHeader-<%= resGroup.divName %>">
+                    <tbody id="resList-cardBody-<%= resGroup.divName %>" aria-labelledby="resList-cardHeader-<%= resGroup.divName %>" class="mb-1">
                         <% for (const resource of resGroup.resources) { %>
                             <tr id="res-<%= resource.divName %>">
                                 <td>
@@ -61,7 +96,6 @@
                                         <%= resource.description %>
                                     <% } %>
                                 </td>
-
                                 <td class="tableActions">
                                     <% if (resource.status === 'started') { %>
                                     <a class="btn btn-sm btn-outline-warning d-block d-md-inline-block mr-md-1 mb-1 mb-md-0 <%= disableActions %>"
@@ -83,13 +117,11 @@
                                     <% } %>
                                 </td>
                             </tr>
-                        <% } %> 
-                        <%# End individual resource loop %>
+                        <% } %>
                     </tbody>
-                <% } %>
-                <%# End resource group loop %>
-            </table>
-        </div>
+                </table>
+            </div>
+        <% } %>
     </div>
 </div>
 
@@ -145,6 +177,39 @@
 
     const convErrorType = (x) => x === 'error' ? 'danger' : x;
 
+    //============================================== Page State
+    let collapsedGroups = new Set();
+    try {
+        const storedCollapsedGroups = window.localStorage.resourcesPageCollapsedGroups;
+        if (storedCollapsedGroups) {
+            const parsedCollapsedGroups = JSON.parse(storedCollapsedGroups);
+            if (Array.isArray(parsedCollapsedGroups)) {
+                collapsedGroups = new Set(parsedCollapsedGroups);
+            } else {
+                throw new Error('Invalid storedCollapsedGroups');
+            }
+        } else {
+            window.localStorage.resourcesPageCollapsedGroups = '[]';
+        }
+    } catch (error) {
+        console.warn('Error parsing storedCollapsedGroups:', error);
+        window.localStorage.resourcesPageCollapsedGroups = '[]';
+    }
+    const saveCollapsedGroups = () => {
+        window.localStorage.resourcesPageCollapsedGroups = JSON.stringify([...collapsedGroups.values()]);
+    }
+    
+
+    $('#defResCheckbox').click(() => {
+        window.localStorage.resourcesPageShowDefault = document.getElementById('defResCheckbox').checked;
+        refreshResourceList();
+    });
+
+    $('#stoppedResCheckbox').click(() => {
+        window.localStorage.resourcesPageShowStopped = document.getElementById('stoppedResCheckbox').checked;
+        refreshResourceList();
+    });
+
 
     //============================================== Refresh List
     $('#btnRefresh').click(() => {
@@ -199,6 +264,7 @@
     //============================================== Search function
     function findResource() {
         const inputEl = document.getElementById("resourceInput");
+        localStorage.setItem("resourcesPageFilter", inputEl.value ?? '');
         const filter = inputEl.value.toUpperCase();
 
         resGroupsJS.forEach(folder => {
@@ -222,27 +288,61 @@
         }
     }
 
-    //============================================== Hide defaults
-    $('#defResCheckbox').click(() => {
-        window.localStorage.resourcesPageShowDefault = document.getElementById('defResCheckbox').checked;
-        refreshResourceList();
-    });
-
-    $('#stoppedResCheckbox').click(() => {
-        window.localStorage.resourcesPageShowStopped = document.getElementById('stoppedResCheckbox').checked;
-        refreshResourceList();
+    //============================================== Expand/Collapse All
+    let isExpandButton = false;
+    const btnExpandCollapse = document.getElementById('btnExpandCollapse');
+    const btnExpandCollapseIcon = btnExpandCollapse.querySelector('i');
+    function updateExpandCollapseBtn() {
+        let expandedCount = 0;
+        let collapsedCount = 0;
+        resGroupsJS.forEach(folder => {
+            const card = document.getElementById(`resList-card-${folder.divName}`);
+            if (card.querySelector('tbody').classList.contains('collapse')) {
+                collapsedCount++;
+            } else {
+                expandedCount++;
+            }
+        });
+        if (expandedCount === resGroupsJS.length) {
+            isExpandButton = false;
+            btnExpandCollapse.innerHTML = '<i class="icon-size-actual"></i> Collapse All';
+        } else {
+            isExpandButton = true;
+            btnExpandCollapse.innerHTML = '<i class="icon-size-fullscreen"></i> Expand All';
+        }
+    }
+    $('#btnExpandCollapse').click(() => {
+        if (isExpandButton) {
+            resGroupsJS.forEach(folder => {
+                const card = document.getElementById(`resList-card-${folder.divName}`);
+                toggleResGroup(card, false, true);
+            });
+        } else {
+            resGroupsJS.forEach(folder => {
+                const card = document.getElementById(`resList-card-${folder.divName}`);
+                toggleResGroup(card, false, false);
+            });
+        }
+        updateExpandCollapseBtn();
     })
 
+    //============================================== Utils
     function refreshResourceList() {
         if ($('#defResCheckbox').is(':checked')) {
             defaultResources.forEach(defRes => {
                 $(`#res-${defRes}`).show();
                 $(`#res-${defRes}`).removeClass("defaultRes");
+
+                $(`#res-${defRes}`).closest('div').show();
             })
         } else {
             defaultResources.forEach(defRes => {
-                $(`#res-${defRes}`).hide();
-                $(`#res-${defRes}`).addClass("defaultRes");
+                const trElement = $(`#res-${defRes}`);
+
+                trElement.hide();
+                trElement.addClass("defaultRes");
+
+                $(`#res-${defRes}`).closest('div').hide();
             })
         }
 
@@ -264,12 +364,43 @@
                 }
             });
 
+            const card = $(`#resList-card-${folder.divName}`);
             if (folder.resources.length === hidden) {
-                $(`#resList-card-${folder.divName}`).hide();
+                card.hide();
             } else {
-                $(`#resList-card-${folder.divName}`).show();
+                card.show();
+            }
+            if (collapsedGroups.has(folder.divName)) {
+                toggleResGroup(card[0], false, false);
+            } else {
+                toggleResGroup(card[0], false, true);
             }
         });
+    }
+
+
+    function toggleResGroup(groupCardElement, single, show) {
+        const tbody = groupCardElement.querySelector("tbody");
+        const icon = groupCardElement.querySelector('.toggle-icon i');
+        if (show === undefined) {
+            show = tbody.classList.contains('collapse');
+        }
+        const groupDivName = groupCardElement.id.split('-').pop();
+        if (show) {
+            tbody.classList.remove('collapse');
+            icon.classList.remove('icon-arrow-down');
+            icon.classList.add('icon-arrow-up');
+            if (single) {
+                groupCardElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            collapsedGroups.delete(groupDivName);
+        } else {
+            tbody.classList.add('collapse');
+            icon.classList.add('icon-arrow-down');
+            icon.classList.remove('icon-arrow-up');
+            collapsedGroups.add(groupDivName);
+        }
+        saveCollapsedGroups();
     }
 
     $(() => {
@@ -278,9 +409,28 @@
         } else {
             window.localStorage.resourcesPageShowDefault = false;
         }
+        let hasFilter = false;
+        if (typeof window.localStorage.resourcesPageFilter === 'string' && window.localStorage.resourcesPageFilter.length) {
+            document.getElementById("resourceInput").value = window.localStorage.resourcesPageFilter;
+            hasFilter = true;
+        }
 
-        document.getElementById('stoppedResCheckbox').checked = window.localStorage.resourcesPageShowStopped === 'true'
+        document.getElementById('stoppedResCheckbox').checked = window.localStorage.resourcesPageShowStopped === 'true';
+
+        //Make the theads clickable
+        resGroupsJS.forEach(folder => {
+            const card = document.getElementById(`resList-card-${folder.divName}`);
+            const thead = card.querySelector('thead');
+            thead.addEventListener('click', () => {
+                toggleResGroup(card, true);
+                updateExpandCollapseBtn();
+            });
+        });
 
         refreshResourceList();
+        updateExpandCollapseBtn();
+        if(hasFilter){
+            findResource();
+        }
     });
 </script>

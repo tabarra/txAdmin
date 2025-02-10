@@ -19,33 +19,86 @@ import ScrollDownAddon from "./ScrollDownAddon";
 import terminalOptions from "./xtermOptions";
 import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
-import { getSocket, openExternalLink } from '@/lib/utils';
+import { getSocket } from '@/lib/utils';
+import { openExternalLink } from '@/lib/navigation';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import { txToast } from '@/components/TxToaster';
+import { copyTermLine, extractTermLineTimestamp, formatTermTimestamp, hasRtlChars, sanitizeTermLine } from './liveConsoleUtils';
 
-//Helpers
-const keyDebounceTime = 150; //ms
 
-//Yoinked from the internet, no good source
-const rtlRangeRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]{3,}/; //ignoring anything less than 3 characters
-
-//Yoinked from core/components/Logger/handlers/fxserver.js
-const regexConsole = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F\x80-\x9F]/g;
-const regexCsi = /(\u001b\[|\u009B)[\d;]+[@-K]/g;
-const regexColors = /\u001b[^m]*?m/g;
-const cleanTermOutput = (data: string) => {
-    return data
-        .replace(regexConsole, '')
-        .replace(regexCsi, '')
-        .replace(regexColors, '');
+//Options
+export type LiveConsoleOptions = {
+    timestampDisabled: boolean;
+    timestampForceHour12: boolean | undefined;
+    copyTimestamp: boolean;
+    copyTag: boolean;
 }
 
+//Loading local storage configs
+//FIXME: this is hacky, maybe use atomWithStorage
+let timestampDisabled = false;
+let timestampForceHour12: boolean | undefined = undefined;
+try {
+    const localConfig = localStorage.getItem('liveConsoleTimestamp');
+    if (localConfig === '24h') {
+        timestampForceHour12 = false;
+    } else if (localConfig === '12h') {
+        timestampForceHour12 = true;
+    } else if (localConfig === 'off') {
+        timestampDisabled = true;
+    }
+} catch (error) { }
+let copyTimestamp = false;
+let copyTag = true;
+try {
+    const localConfig = localStorage.getItem('liveConsoleCopyOpts');
+    if (typeof localConfig === 'string') {
+        const parts = localConfig.split(',');
+        copyTimestamp = parts.includes('ts');
+        copyTag = parts.includes('tag');
+    }
+} catch (error) { }
+
+
+//Consts
+const keyDebounceTime = 150; //ms
+const ANSI_WHITE = '\x1B[0;37m';
+const ANSI_GRAY = '\x1B[1;90m';
+
+//FIXME: move to inside the component
+const defaultTermPrefix = formatTermTimestamp(
+    Date.now(),
+    {
+        timestampDisabled,
+        timestampForceHour12,
+        copyTimestamp,
+        copyTag,
+    }
+).replace(/\w/g, '-');
+
+//Main component
 export default function LiveConsolePage() {
     const [isSaveSheetOpen, setIsSaveSheetOpen] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const termInputRef = useRef<HTMLInputElement>(null);
+    const termPrefixRef = useRef({
+        ts: 0, //so we can clear the console
+        lastEol: true,
+        //FIXME: defaultTermPrefix depends on options, deal with it when options change
+        prefix: defaultTermPrefix,
+    });
     const refreshPage = useContentRefresh();
+
+    //FIXME: maybe use atomWithStorage
+    const consoleOptions: LiveConsoleOptions = useMemo(() => {
+        return {
+            timestampDisabled,
+            timestampForceHour12,
+            copyTimestamp,
+            copyTag,
+        };
+    }, []);
 
 
     /**
@@ -145,7 +198,19 @@ export default function LiveConsolePage() {
                 } else if (e.code === 'F3') {
                     return false;
                 } else if (e.code === 'KeyC' && (e.ctrlKey || e.metaKey)) {
-                    document.execCommand('copy');
+                    const selection = term.getSelection();
+                    if (!selection) return false;
+                    copyTermLine(selection, term.element as any, consoleOptions).then((res) => {
+                        //undefined if no error
+                        if (res === false) {
+                            txToast.error('Failed to copy to clipboard :(');
+                        }
+                    }).catch((error) => {
+                        txToast.error({
+                            title: 'Failed to copy to clipboard:',
+                            msg: error.message,
+                        });
+                    });
                     term.clearSelection();
                     return false;
                 } else if (e.code === 'PageUp') {
@@ -213,16 +278,51 @@ export default function LiveConsolePage() {
     const writeToTerminal = (data: string) => {
         const lines = data.split(/\r?\n/);
         //check if last line isn't empty
-        //NOTE: i'm not trimming because having multiple \n at the end is valid
+        // NOTE: i'm not trimming because having multiple \n at the end is valid
+        let wasEolStripped = false;
         if (lines.length && !lines[lines.length - 1]) {
             lines.pop();
+            wasEolStripped = true;
         }
-        //print each line
-        for (const line of lines) {
-            if(rtlRangeRegex.test(line)) {
-                registerBidiMarker(cleanTermOutput(line));
+
+        //extracts timestamp & print each line
+        let isNewTs = false;
+        for (let i = 0; i < lines.length; i++) {
+            isNewTs = false;
+            let line = lines[i];
+            //tries to extract timestamp
+            try {
+                const { ts, content } = extractTermLineTimestamp(line);
+                if (ts) {
+                    isNewTs = true;
+                    line = content;
+                    termPrefixRef.current.ts = ts;
+                    termPrefixRef.current.prefix = formatTermTimestamp(ts, consoleOptions);
+                }
+            } catch (error) {
+                termPrefixRef.current.prefix = defaultTermPrefix;
+                console.warn('Failed to parse timestamp from:', line, (error as any).message);
             }
-            term.writeln(line);
+            if (hasRtlChars(line)) {
+                registerBidiMarker(sanitizeTermLine(line));
+            }
+            //Check if it's last line, and if the EOL was stripped
+            const prefixColor = isNewTs ? ANSI_WHITE : ANSI_GRAY;
+            const prefix = termPrefixRef.current.lastEol
+                ? prefixColor + termPrefixRef.current.prefix
+                : '';
+            if (i < lines.length - 1) {
+                term.writeln(prefix + line);
+                termPrefixRef.current.lastEol = true;
+            } else {
+                if (wasEolStripped) {
+                    term.writeln(prefix + line);
+                    termPrefixRef.current.lastEol = true;
+                } else {
+                    term.write(prefix + line);
+                    termPrefixRef.current.lastEol = false;
+                }
+            }
         }
     }
 
@@ -307,7 +407,7 @@ export default function LiveConsolePage() {
 
 
     return (
-        <div className="dark text-primary flex flex-col h-full w-full bg-card border md:rounded-xl overflow-clip">
+        <div className="dark text-primary flex flex-col h-contentvh w-full bg-card border md:rounded-xl overflow-clip">
             <LiveConsoleHeader />
 
             <div className="flex flex-col relative grow overflow-hidden">

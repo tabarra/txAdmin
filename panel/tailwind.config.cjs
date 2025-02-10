@@ -1,5 +1,7 @@
 /* eslint-disable */
 const { fontFamily } = require("tailwindcss/defaultTheme");
+const colors = require('tailwindcss/colors');
+
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -14,19 +16,52 @@ module.exports = {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
     },
     extend: {
+      typography: {
+        toast: {
+          css: [
+            {
+              '--tw-prose-body': colors.zinc[800],
+              '--tw-prose-invert-body': colors.zinc[200],
+              '--tw-prose-bullets': colors.zinc[600],
+              '--tw-prose-invert-bullets': colors.zinc[400],
+              a: {
+                letterSpacing: '0.025em',
+                fontWeight: '700',
+              },
+              p: {
+                marginTop: '0.571em',
+                marginBottom: '0.571em',
+              },
+              ul: {
+                marginTop: '0.571em',
+                marginBottom: '0.571em',
+              },
+            },
+            {
+              '> :first-child': {
+                marginTop: '0',
+              },
+              '> :last-child': {
+                marginBottom: '0',
+              },
+            },
+          ],
+        },
+      },
       fontSize: {
         '2xs': '0.625rem', // 10px
       },
       spacing: {
+        navbarvh: "var(--navbar-vh)", //navbar height (including border)
+        contentoffset: "var(--content-offset)", // screen - navbar - pt
+        contentvh: "var(--content-vh)", // screen - navbar - pt - pb
         sidebar: "16rem", //256px
       },
       screens: {
         xs: "480px",
+        "2xl": "1400px",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
@@ -121,6 +156,23 @@ module.exports = {
           '0%': { transform: 'scale(1)', opacity: 1 },
           '100%': { transform: 'scale(0.9)', opacity: 0 },
         },
+        //NOTE: added these while testing stuff, never used, idk if they work
+        // "fade-left": {
+        //   "0%": { transform: "translateX(2rem)", opacity: "0" },
+        //   "100%": { transform: "translateX(0)", opacity: "1" }
+        // },
+        // "fade-down": {
+        //   "0%": { transform: "translateY(-2rem)", opacity: "0" },
+        //   "100%": { transform: "translateY(0)", opacity: "1" }
+        // },
+        // "fade-right": {
+        //   "0%": { transform: "translateX(-2rem)", opacity: "0" },
+        //   "100%": { transform: "translateX(0)", opacity: "1" }
+        // },
+        // "fade-right-out": {
+        //   "0%": { transform: "translateX(0)", opacity: "1" },
+        //   "100%": { transform: "translateX(2rem)", opacity: "0" }
+        // },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -128,6 +180,11 @@ module.exports = {
         "toastbar-icon": 'toastbar-icon 350ms ease-out',
         "toastbar-enter": 'toastbar-enter 200ms ease-out',
         "toastbar-leave": 'toastbar-leave 150ms ease-in forwards',
+        //NOTE: added these while testing stuff, never used, idk if they work
+        // "fade-left": "fade-left 0.2s ease",
+        // "fade-down": "fade-down 0.2s ease",
+        // "fade-right": "fade-right 0.2s ease forwards",
+        // "fade-right-out": "fade-right-out 0.2s ease forwards",
       },
     },
   },

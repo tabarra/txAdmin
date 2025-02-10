@@ -113,10 +113,19 @@
                 <div class='filter-controls-container' id='filter-control-container'>
                     <h4>Logger Filters</h4>
                     <div class="form-group row mb-1">
-                        <label class="col-sm-8 col-form-label">Player join/leave</label>
+                        <label class="col-sm-8 col-form-label">Player Joins</label>
                         <div class="col-sm-4">
                             <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="PlayerJoinLeave">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="PlayerJoin">
+                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-8 col-form-label">Player Leaves</label>
+                        <div class="col-sm-4">
+                            <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="playerDropped">
                                 <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                             </label>
                         </div>
@@ -371,7 +380,7 @@
         const getShowTypes = () => Object.keys(eventFilters)
             .filter(fn => eventFilters[fn])
             .flatMap(fn => {
-                if (fn === 'PlayerJoinLeave') return ['playerJoining', 'playerDropped'];
+                if (fn === 'PlayerJoin') return ['playerJoining', 'playerJoinDenied'];
                 if(fn === 'System') return ['LoggerStarted', 'DebugMessage'];
                 return fn;
             });

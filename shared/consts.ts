@@ -1,4 +1,7 @@
-const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ'; //i,o removed
+//All uppercase and [0,I,O] removed
+const actionIdAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+
+const regexDiscordSnowflake = /^\d{17,20}$/;
 
 export default {
     //Identifier stuff
@@ -15,7 +18,7 @@ export default {
         xbl: /^xbl:\d{14,20}$/,
     },
     validIdentifierParts: {
-        discord: /^\d{17,20}$/,
+        discord: regexDiscordSnowflake,
         fivem: /^\d{1,8}$/,
         license: /^[0-9A-Fa-f]{40}$/,
         license2: /^[0-9A-Fa-f]{40}$/,
@@ -27,14 +30,15 @@ export default {
     // Database stuff
     adminPasswordMinLength: 6,
     adminPasswordMaxLength: 128,
-    regexActionID: new RegExp(`^[${noLookAlikesAlphabet}]{4}-[${noLookAlikesAlphabet}]{4}$`),
-    regexWhitelistReqID: new RegExp(`R[${noLookAlikesAlphabet}]{4}`),
+    regexActionID: new RegExp(`^[${actionIdAlphabet}]{4}-[${actionIdAlphabet}]{4}$`),
+    regexWhitelistReqID: new RegExp(`R[${actionIdAlphabet}]{4}`),
 
     //Other stuff
+    regexDiscordSnowflake,
     regexSvLicenseOld: /^\w{32}$/,
     regexSvLicenseNew: /^cfxk_\w{1,60}_\w{1,20}$/,
     regexValidIP: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
-    noLookAlikesAlphabet,
+    actionIdAlphabet,
     nuiWebpipePath: 'https://monitor/WebPipe/',
     regexCustomThemeName: /^[a-z0-9]+(-[a-z0-9]+)*$/
 } as const;

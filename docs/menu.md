@@ -39,6 +39,10 @@ Convars configured in the settings page should not be set manually.
 - Description: Will change the key used for changing pages in the menu. This value must be the exact browser key code for your preferred key. You can use [this](https://keycode.info/) website and the `event.code` section to find it.
 - Default: `Tab`
 
+**txAdmin-playerModePtfx**
+- Description: Determine whether to play particles effects and sound whenever an admin's player mode is changed, such as when enabling god mode or noclip.
+- Default: `true`
+
 **txAdmin-hideAdminInPunishments**
 - Description: Never show to the players the admin name on Bans or Warns.
 - Default: `true`
@@ -67,28 +71,23 @@ Convars configured in the settings page should not be set manually.
 **txAdmin-debugMode**
 - Description: Will toggle debug printing on the server and client.
 - Default: `false`
-- Usage: `+setr txAdmin-debugMode true`
+- Usage: `setr txAdmin-debugMode true`
 
 **txAdmin-menuPlayerIdDistance**
 - Description: The distance in which Player IDs become visible, if toggled on. Note that the game engine limits to show tags that are only closer than ~300m, so increasing the number above that might be useless. 
 - Default: 150
-- Usage: `+setr txAdmin-menuPlayerIdDistance 100`
+- Usage: `setr txAdmin-menuPlayerIdDistance 100`
 
 **txAdmin-menuDrunkDuration**
 - Description: How many seconds the drunk effect (troll action) should last.
 - Default: 30
-- Usage: `+setr txAdmin-menuDrunkDuration 120`
-
-**txAdmin-menuPtfxDisable**
-- Description: Determine whether to not play particles effects whenever an admin's player mode is changed.
-- Default: `false`
-- Usage: `+set txAdmin-menuPtfxDisable true`
+- Usage: `setr txAdmin-menuDrunkDuration 120`
 
 **txAdmin-menuAnnounceNotiPos**
 - Description: Determines the location of the txAdmin announcement notification. This **must** use one of the following valid 
 positions, `top-center`, `top-left`, `top-right`, `bottom-center`, `bottom-left`, `bottom-right`.
 - Default: `top-center`
-- Usage: `+set txAdmin-menuAnnounceNotiPos top-right`
+- Usage: `set txAdmin-menuAnnounceNotiPos top-right`
 
 
 ## Commands

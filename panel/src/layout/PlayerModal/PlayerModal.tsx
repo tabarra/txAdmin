@@ -4,7 +4,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { usePlayerModalStateValue } from "@/hooks/playerModal";
+import { setPlayerModalUrlParam, usePlayerModalStateValue } from "@/hooks/playerModal";
 import { InfoIcon, ListIcon, HistoryIcon, GavelIcon } from "lucide-react";
 import PlayerInfoTab from "./PlayerInfoTab";
 import { useEffect, useState } from "react";
@@ -72,6 +72,10 @@ export default function PlayerModal() {
                 } else {
                     setModalData(resp);
                     setTsFetch(Math.round(Date.now() / 1000));
+                    //Update the ref param to use a license, if possible
+                    if (!('license' in playerRef) && resp.player.license) {
+                        setPlayerModalUrlParam(resp.player.license)
+                    }
                 }
             },
             error: (error) => {
@@ -164,6 +168,7 @@ export default function PlayerModal() {
                         ))}
                     </div>
                     {/* NOTE: consistent height: sm:h-[16.5rem] */}
+                    {/* FIXME: the number below is based off mobile screen sizes, and should be h-full while the modal content controls the actual height  */}
                     <ScrollArea className="w-full max-h-[calc(100vh-3.125rem-4rem-5rem)] min-h-[16.5rem] md:max-h-[50vh] px-4 py-2 md:py-0">
                         {!modalData ? (
                             <ModalCentralMessage>
@@ -190,6 +195,7 @@ export default function PlayerModal() {
                                 />}
                                 {selectedTab === 'IDs' && <PlayerIdsTab
                                     player={modalData.player}
+                                    refreshModalData={refreshModalData}
                                 />}
                                 {selectedTab === 'Ban' && <PlayerBanTab
                                     banTemplates={modalData.banTemplates}

@@ -1,19 +1,21 @@
-import { SvRtPerfThreadNamesType } from "@core/components/StatsManager/svRuntime/config";
-import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/components/StatsManager/svRuntime/perfSchemas";
-import type { ReactAuthDataType } from "authApiTypes";
-import type { UpdateDataType } from "otherTypes";
+import { SvRtPerfThreadNamesType } from "@core/modules/Metrics/svRuntime/config";
+import { SvRtNodeMemoryType, SvRtPerfBoundariesType } from "@core/modules/Metrics/svRuntime/perfSchemas";
+import type { ReactAuthDataType } from "./authApiTypes";
+import type { UpdateDataType } from "./otherTypes";
+import { DiscordBotStatus, TxConfigState } from "./enums";
 
 /**
  * Status channel
  */
-export type ServerConfigPendingStepType = 'setup' | 'deployer' | undefined;
 export type GlobalStatusType = {
-    discord: false | number;
+    configState: TxConfigState;
+    discord: DiscordBotStatus;
+    runner: {
+        isIdle: boolean;
+        isChildAlive: boolean;
+    };
     server: {
-        configPendingStep: ServerConfigPendingStepType;
         status: string;
-        process: string;
-        instantiated: boolean;
         name: string;
         whitelist: "disabled" | "adminOnly" | "guildMember" | "guildRoles" | "approvedLicense";
     };
@@ -38,9 +40,6 @@ export type DashboardSvRuntimeDataType = {
     perfBoundaries?: SvRtPerfBoundariesType;
     perfBucketCounts?: {
         [key in SvRtPerfThreadNamesType]: number[];
-    };
-    perfMinTickTime: {
-        [key in SvRtPerfThreadNamesType]: number;
     };
 }
 export type DashboardPleyerDropDataType = {
@@ -78,7 +77,7 @@ export type PlayerDroppedEventType = {
     mutex: string,
     type: 'playerDropped',
     netid: number,
-    reasonCategory: string,
+    reasonCategory?: string, //missing in case of server shutdown
 }
 
 export type PlayerJoiningEventType = {

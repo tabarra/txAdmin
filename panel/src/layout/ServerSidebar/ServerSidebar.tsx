@@ -1,4 +1,5 @@
-import { cn, handleExternalLinkClick } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { handleExternalLinkClick } from "@/lib/navigation";
 import ServerMenu from './ServerMenu';
 import ServerControls from './ServerControls';
 import ServerStatus from './ServerStatus';
@@ -13,19 +14,17 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
         <aside
             className={cn(
                 'flex flex-col gap-4 z-10',
-                isSheet ? 'mr-4 pl-2' : 'tx-sidebar hidden lg:flex',
+                isSheet ? 'px-4 py-6' : 'tx-sidebar hidden lg:flex',
             )}
         >
             <div className={cn(
-                !isSheet && 'rounded-xl border border-border bg-card text-card-foreground shadow-sm p-4',
-                // !isSheet && 'rounded-xl borderx border-border bg-cardx text-card-foreground shadow-sm px-2',
+                !isSheet && 'rounded-xl border bg-card text-card-foreground shadow-sm p-4',
             )}>
                 <ServerMenu />
             </div>
             <hr className={isSheet ? 'block' : 'hidden'} />
             <div className={cn(
-                !isSheet && 'rounded-xl border border-border bg-card text-card-foreground shadow-sm p-4',
-                // !isSheet && 'rounded-xl borderx border-border bg-cardx text-card-foreground shadow-sm px-2',
+                !isSheet && 'rounded-xl border bg-card text-card-foreground shadow-sm p-4',
                 'flex flex-col gap-4'
             )}>
                 {/* <h2 className="text-lg font-semibold tracking-tight overflow-hidden text-ellipsis">

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { SvRtFileType } from '../../core/components/StatsManager/svRuntime/perfSchemas';
+import { SvRtFileType } from '../../core/modules/Metrics/svRuntime/perfSchemas';
 import * as d3 from 'd3';
 
 type SourceFileDataType = {

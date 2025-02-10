@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useNuiEvent } from "./useNuiEvent";
 import { Box, Typography } from "@mui/material";
@@ -16,6 +16,8 @@ import { txAdminMenuPage, useSetPage } from "../state/page.state";
 import { useAnnounceNotiPosValue } from "../state/server.state";
 import { useSetPlayerModalVisibility } from "@nui/src/state/playerModal.state";
 import cleanPlayerName from "@shared/cleanPlayerName";
+import { usePlayerModalContext } from "../provider/PlayerModalProvider";
+import { fetchNui } from "../utils/fetchNui";
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -76,6 +78,7 @@ export const useHudListenersService = () => {
   const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
   const setPage = useSetPage();
   const notiPos = useAnnounceNotiPosValue();
+  const { closeMenu } = usePlayerModalContext();
 
   const snackFormat = (m: string) => (
     <span style={{ whiteSpace: "pre-wrap" }}>{m}</span>
@@ -140,14 +143,14 @@ export const useHudListenersService = () => {
 
     //Search by ID
     const targetId = parseInt(target);
-    if (target && !isNaN(targetId)) {
+    if (!isNaN(targetId)) {
       targetPlayer = onlinePlayers.find(
         (playerData) => playerData.id === targetId
       );
     }
 
     //Search by pure name
-    if (!targetPlayer && target && typeof target === "string") {
+    if (!targetPlayer && typeof target === "string") {
       const searchInput = cleanPlayerName(target).pureName;
       const foundPlayers = onlinePlayers.filter((playerData) =>
         playerData.pureName?.includes(searchInput)
@@ -164,15 +167,17 @@ export const useHudListenersService = () => {
     }
 
     if (targetPlayer) {
-      setPage(txAdminMenuPage.Players);
+      setPage(txAdminMenuPage.PlayerModalOnly);
       setAssocPlayer(targetPlayer);
+      setModalOpen(true);
     } else {
+      closeMenu();
+      setModalOpen(false);
       enqueueSnackbar(
         t("nui_menu.player_modal.misc.target_not_found", { target }),
         { variant: "error" }
       );
     }
-    setModalOpen(true);
   });
 
   useNuiEvent<AddAnnounceData>("addAnnounceMessage", ({ message, author }) => {

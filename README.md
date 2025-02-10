@@ -9,7 +9,7 @@
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over <strong>21.000</strong> servers worldwide at any given time.
+		<b>txAdmin</b> is _the_ <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over <strong>29.000</strong> servers worldwide at any given time.
 	</p>
 	<p align="center">
 		<a href="https://zap-hosting.com/txadmin4" target="_blank" rel="noopener">
@@ -80,7 +80,6 @@ txAdmin requires to be launched from *inside* FXServer in monitor mode, to do th
 - **txAdminPort:** The TCP port to use as HTTP Server. The default is `40120`.
 - **txAdminInterface:** The interface to use as HTTP Server. The default is `0.0.0.0`.
 - **txDataPath:** The path of the data folder. The default on Windows is `<citizen_root>/../txData` and on Linux `<citizen_root>/../../../txData`.
-- **txAdminVerbose:** Set to `true` to print on the console more detailed information about errors and events. The default is `false`.
   
 ConVar usage **example** for different port and profile:  
 ```bash

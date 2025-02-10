@@ -40,11 +40,12 @@
                     <code>v<%= txAdminVersion %></code> / <code><%= fxServerVersion %></code> <br>
                 <strong>Uptime:</strong> <code><%= txadmin.uptime %></code> <br>
                 <strong>FXServer Path:</strong> <code><%= txadmin.fxServerPath %></code> <br>
-                <strong>Connect Endpoint:</strong> <code><%= txadmin.fxServerHost %></code> <br>
+                <strong>FXServer Endpoint:</strong> <code><%= txadmin.fxServerHost %></code> <br>
                 <strong>Monitor Restarts:</strong> 
                     <code>CL <%= txadmin.monitorRestarts.close %></code> /
                     <code>HB <%= txadmin.monitorRestarts.heartBeat %></code> / 
-                    <code>HC <%= txadmin.monitorRestarts.healthCheck %></code> <br>
+                    <code>HC <%= txadmin.monitorRestarts.healthCheck %></code> /
+                    <code>BO <%= txadmin.monitorRestarts.both %></code> <br>
                 <strong>HB Fails:</strong>
                     <code>HTTP <%= txadmin.hbHTTPFails %></code> / <code>FD3 <%= txadmin.hbFD3Fails %></code> <br>
                 <strong>Logs Storage Size:</strong> <code><%= txadmin.logStorageSize %></code> <br>
@@ -54,9 +55,13 @@
                 └─ Server: <code><%= txadmin.loggerStatusServer %></code> <br>
                 <strong>Performance Times (cnt / q5 / q25 / q50 / q75 / q95):</strong> <br>
                 ├─ BanCheck: <code><%= txadmin.banCheckTime %></code> <br>
-                └─ WhitelistCheck: <code><%= txadmin.whitelistCheckTime %></code> <br>
-                └─ PlayersTable: <code><%= txadmin.playersTableSearchTime %></code> <br>
+                ├─ WhitelistCheck: <code><%= txadmin.whitelistCheckTime %></code> <br>
+                ├─ PlayersTable: <code><%= txadmin.playersTableSearchTime %></code> <br>
                 └─ HistoryTable: <code><%= txadmin.historyTableSearchTime %></code> <br>
+                <strong>Memory:</strong> <br>
+                ├─ Heap: <code><%= txadmin.memoryUsage.heap_used %> / <%= txadmin.memoryUsage.heap_limit %> (<%= txadmin.memoryUsage.heap_pct %>%)</code> <br>
+                ├─ Physical: <code><%= txadmin.memoryUsage.physical %></code> <br>
+                └─ Peak. Alloc.: <code><%= txadmin.memoryUsage.peak_malloced %></code> <br>
             </div>
         </div>
 
@@ -177,13 +182,13 @@
                                 <li>Player database statistics</li>
                                 <li>txAdmin settings (no bot token)</li>
                                 <li>List of admins (no passwords/hashes)</li>
-                                <li>List of files/folders in server data folder</li>
+                                <li>List of files/folders in server data and monitor folders</li>
                                 <li>Config files in server data folder</li>
                             </ul>
                         </li>
                         <li>
                             <strong>Who can access the data?</strong> <br>
-                            The data will be available for only 2 hours for the txAdmin support team (identified by role), as well as the Cfx.re team.
+                            The data will be available for up to 24 hours to the txAdmin support team, as well as the Cfx.re team.
                         </li>
                         <li>
                             <strong>Sensitive Information Protection:</strong> <br>
@@ -274,6 +279,8 @@
             type: "POST",
             url: `diagnostics/sendReport`,
             timeout: REQ_TIMEOUT_REALLY_LONG,
+            //NOTE: in NUI, empty bodies become GET requests even if you specify POST
+            data: {bugfix:true},
             success: function (data) {
                 els.spinnerBody.classList.add('d-none');
                 els.saveBtn.classList.add('d-none');

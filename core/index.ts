@@ -1,74 +1,73 @@
-import TxAdmin from './txAdmin';
-import { convars } from './globalData';
-import checkPreRelease from '@core/extras/checkPreRelease';
-import consoleFactory, { setTTYTitle } from '@extras/console';
+//NOTE: must be imported first to setup the environment
+import { txEnv } from './globalData';
+import consoleFactory, { setTTYTitle } from '@lib/console';
+
+//Can be imported after
+import fs from 'node:fs';
+import checkPreRelease from './boot/checkPreRelease';
+import fatalError from '@lib/fatalError';
+import { ensureProfileStructure, setupProfile } from './boot/setup';
+import setupProcessHandlers from './boot/setupProcessHandlers';
+import bootTxAdmin from './txAdmin';
 const console = consoleFactory();
 
 
-/**
- * Starting txAdmin (have fun :p)
- */
-const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
-if (serverProfile.endsWith('.base')) {
-    console.error(`Looks like the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
-    process.exit(200);
-}
-if (!serverProfile.length) {
-    console.error('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
-    process.exit(201);
-}
-
-setTTYTitle(serverProfile);
+//Early process stuff
+setupProcessHandlers();
+setTTYTitle(txEnv.profile);
 checkPreRelease();
-new TxAdmin(serverProfile);
 
 
-/**
- * Process handling stuff
- */
-//Freeze detector - starts after 10 seconds
+//Setting up txData & Profile
+try {
+    if (!fs.existsSync(txEnv.dataPath)) {
+        fs.mkdirSync(txEnv.dataPath);
+    }
+} catch (error) {
+    fatalError.Boot(1, [
+        `Failed to check or create the data folder.`,
+        ['Path', txEnv.dataPath],
+    ], error);
+}
+try {
+    if (fs.existsSync(txEnv.profilePath)) {
+        ensureProfileStructure();
+    } else {
+        setupProfile();
+    }
+} catch (error) {
+    fatalError.Boot(2, [
+        `Failed to check or create the txAdmin profile folder.`,
+        ['Profile', txEnv.profile],
+        ['Data Path', txEnv.dataPath],
+        ['Profile Path', txEnv.profilePath],
+    ], error);
+}
+
+
+//Start txAdmin (have fun 😀)
+console.log(`Starting profile '${txEnv.profile}' on v${txEnv.txaVersion}/b${txEnv.fxsVersionDisplay}`);
+try {
+    bootTxAdmin();
+} catch (error) {
+    fatalError.Boot(3, 'Failed to start txAdmin.', error);
+}
+
+
+//Freeze detector - starts after 10 seconds due to the initial bootup lag
+const bootGracePeriod = 15_000;
+const loopInterval = 500;
+const loopElapsedLimit = 2_000;
 setTimeout(() => {
     let hdTimer = Date.now();
     setInterval(() => {
         const now = Date.now();
-        if (now - hdTimer > 2000) {
+        if (now - hdTimer > loopElapsedLimit) {
             console.majorMultilineError([
                 'Major VPS freeze/lag detected!',
                 'THIS IS NOT AN ERROR CAUSED BY TXADMIN!',
             ]);
         }
         hdTimer = now;
-    }, 500);
-}, 10_000);
-
-//Handle any stdio error
-process.stdin.on('error', (data) => { });
-process.stdout.on('error', (data) => { });
-process.stderr.on('error', (data) => { });
-
-//Handle "the unexpected"
-process.on('unhandledRejection', (err: Error) => {
-    //We are handling this inside the DiscordBot component
-    if (err.message === 'Used disallowed intents') return;
-
-    console.error('Ohh nooooo - unhandledRejection');
-    console.dir(err);
-});
-process.on('uncaughtException', function (err: Error) {
-    console.error('Ohh nooooo - uncaughtException');
-    console.error(err.message);
-    console.dir(err.stack);
-});
-process.on('exit', (_code) => {
-    console.warn('Stopping txAdmin');
-});
-Error.stackTraceLimit = 25;
-process.removeAllListeners('warning');
-process.on('warning', (warning) => {
-    //totally ignoring the warning, we know this is bad and shouldn't happen
-    if (warning.name === 'UnhandledPromiseRejectionWarning') return;
-
-    if (warning.name !== 'ExperimentalWarning' || convars.isDevMode) {
-        console.dir(warning);
-    }
-});
+    }, loopInterval);
+}, bootGracePeriod);

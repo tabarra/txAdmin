@@ -119,7 +119,12 @@ export type PrefixedString = {
 /**
  * Compress MultipleCounter array up to a desired length by dropping the elements with fewer counts
  */
-export const compressMultipleCounter = (data: [string, number][], targetLength: number) => {
+export const compressMultipleCounter = (
+    data: [reasonType: string, count: number][],
+    targetLength: number,
+    crashesGroupReasons: boolean
+) => {
+    //Cutoff count
     if (data.length <= targetLength) {
         return {
             filteredIn: data,
@@ -131,16 +136,18 @@ export const compressMultipleCounter = (data: [string, number][], targetLength: 
 
     let filteredOutTypes = 0;
     let filteredOutCounts = 0;
-    const filteredIn: [string, number][] = [];
-    for (const [key, count] of data) {
-        if (count >= cutoff) {
+    const filteredIn: [reasonType: string, count: number][] = [];
+    for (let i = 0; i < data.length; i++) {
+        const [key, count] = data[i];
+        const shouldDisplay = crashesGroupReasons ? count >= cutoff : i < targetLength;
+        if (shouldDisplay) {
             filteredIn.push([key, count]);
         } else {
             filteredOutTypes++;
             filteredOutCounts += count;
         }
     }
-    filteredIn.sort((a, b) => a[0].localeCompare(b[0]));
+
     return {
         filteredIn,
         filteredOut: !!filteredOutTypes && {

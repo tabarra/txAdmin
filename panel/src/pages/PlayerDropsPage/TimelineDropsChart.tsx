@@ -158,6 +158,7 @@ function TimelineDropsChart({ chartData, chartName, width, height, rangeSelected
                 position: 'absolute',
                 top: `${margins.top}px`,
                 left: `${margins.left}px`,
+                // imageRendering: 'pixelated',
             }}
         />
     </>);

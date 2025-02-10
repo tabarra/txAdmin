@@ -1,4 +1,5 @@
-import { cn, tsToLocaleDateTimeString } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { tsToLocaleDateTimeString } from "@/lib/dateTime";
 import { PlayerHistoryItem } from "@shared/playerApiTypes";
 import InlineCode from "@/components/InlineCode";
 import { useOpenActionModal } from "@/hooks/actionModal";
