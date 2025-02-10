@@ -63,8 +63,8 @@ const STYLES = {
             line: x => `${precalcMarkerInfo}${x}${ANSI_ERASE_LINE}${ANSI_RESET}`,
         },
         stdout: {
-            prefix: chalk.bgBlueBright.bold.black,
-            line: chalk.bgBlueBright.bold.black,
+            prefix: chalk.bgBlueBright.black,
+            line: chalk.bgBlueBright.black,
         },
     },
 } as StylesLibrary;
@@ -93,8 +93,6 @@ export default class ConsoleTransformer {
     private STYLES = STYLES;
     private PREFIX_SYSTEM = getConsoleLinePrefix('TXADMIN');
     private PREFIX_STDERR = getConsoleLinePrefix('STDERR');
-
-    constructor() { }
 
     public process(type: ConsoleLineType, data: string, context?: string): MultiBuffer {
         //Shortcircuiting for empty strings

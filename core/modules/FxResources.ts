@@ -31,8 +31,6 @@ export default class FxResources {
     lastResourceStartTime: Date | null = null;
     resourceReport?: ResourceReportType;
 
-    constructor() { }
-
 
     /**
      * Handler for all txAdminResourceEvent structured trace events

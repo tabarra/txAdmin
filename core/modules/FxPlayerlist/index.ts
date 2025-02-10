@@ -39,8 +39,6 @@ export default class FxPlayerlist {
     joinLeaveLog: [ts: number, isJoin: boolean][] = [];
     joinLeaveLogLimitTime = 30 * 60 * 1000; //30 mins, [ts+isJoin] * 100_000 = ~4.3mb
 
-    constructor() { }
-
 
     /**
      * Number of online/connected players.

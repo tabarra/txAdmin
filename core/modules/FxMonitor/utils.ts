@@ -5,7 +5,6 @@
 export class Stopwatch {
     #tsStart: number | null = null;
 
-    constructor() { }
 
     /**
      * Reset the stopwatch (stop and clear).

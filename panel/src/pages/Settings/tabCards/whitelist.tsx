@@ -84,7 +84,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
             ) {
                 return txToast.warning({
                     title: 'Discord Roles are required.',
-                    msg: 'You need to specify at least one Discord Role ID to use the "Discord Guild Roles" whitelist mode.',
+                    msg: 'You need to specify at least one Discord Role ID to use the "Discord Server Roles" whitelist mode.',
                 });
             }
         }
@@ -139,17 +139,17 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                     <BigRadioItem
                         groupValue={whitelistMode.state.value}
                         value="guildMember"
-                        title="Discord Guild Member"
+                        title="Discord Server Member"
                         desc={(<>
-                            Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord guild configured in the Discord Tab.
+                            Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord server configured in the Discord Tab.
                         </>)}
                     />
                     <BigRadioItem
                         groupValue={whitelistMode.state.value}
                         value="guildRoles"
-                        title="Discord Guild Roles"
+                        title="Discord Server Roles"
                         desc={(<>
-                            Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord guild configured in the Discord Tab and has at least one of the roles specified below.
+                            Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord server configured in the Discord Tab and has at least one of the roles specified below.
                         </>)}
                     />
                     <BigRadioItem
@@ -176,7 +176,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                 />
                 <SettingItemDesc>
                     Optional message to display to a player on the rejection message that shows when they try to connect while not being whitelisted. <br />
-                    If you have a Discord whitelisting process, you can put here links to your guild.
+                    If you have a Discord whitelisting process, include here a invite link.
                 </SettingItemDesc>
             </SettingItem>
             <SettingItem label="Whitelisted Discord Roles" htmlFor={discordRoles.eid}>
@@ -192,7 +192,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                 <SettingItemDesc>
                     The ID of the Discord roles that are whitelisted to join the server. <br />
                     This field supports multiple roles, separated by comma. <br />
-                    <strong>Note:</strong> Requires the whitelist mode to be set to "Discord Guild Roles".
+                    <strong>Note:</strong> Requires the whitelist mode to be set to "Discord Server Roles".
                 </SettingItemDesc>
             </SettingItem>
         </SettingsCardShell>
