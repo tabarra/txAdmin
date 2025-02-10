@@ -42,67 +42,82 @@ local vTypeMap = {
 }
 
 
---[[ Refresh player list data ]]
+--[[ Wrapper to refresh player list data ]]
+local function refreshPlayerList()
+    -- For each player
+    local players = GetPlayers()
+    for yieldCounter, serverID in pairs(players) do
+        -- Updating player vehicle/health
+        local health = -1
+        local vType = -1
+        local xCoord = nil
+        local yCoord = nil
+        if onesyncEnabled == true then
+            local ped = GetPlayerPed(serverID)
+            if ped and DoesEntityExist(ped) then
+                health = GetPedHealthPercent(ped)
+                local veh = GetVehiclePedIsIn(ped)
+                if veh ~= 0 and DoesEntityExist(veh) then
+                   vType = vTypeMap[tostring(GetVehicleType(veh))]
+                else
+                   vType = vTypeMap["walking"]
+                end
+                local coords = GetEntityCoords(ped)
+                xCoord = math.floor(coords.x)
+                yCoord = math.floor(coords.y)
+            end
+        end
+
+        -- Updating TX_PLAYERLIST
+        if type(TX_PLAYERLIST[serverID]) ~= 'table' then
+            TX_PLAYERLIST[serverID] = {
+                name = sub(GetPlayerName(serverID) or "unknown", 1, 75),
+                health = health,
+                vType = vType,
+                xCoord = xCoord,
+                yCoord = yCoord,
+            }
+        else
+            TX_PLAYERLIST[serverID].health = health
+            TX_PLAYERLIST[serverID].vType = vType
+            TX_PLAYERLIST[serverID].xCoord = xCoord
+            TX_PLAYERLIST[serverID].yCoord = yCoord
+        end
+
+        -- Mark as refreshed
+        TX_PLAYERLIST[serverID].foundLastCheck = true
+
+        -- Yield to prevent hitches
+        if yieldCounter % intervalYieldLimit == 0 then
+            Wait(0)
+        end
+    end --end for players
+
+
+    --Check if player disconnected
+    local playersOnline = 0
+    for playerID, playerData in pairs(TX_PLAYERLIST) do
+        if playerData.foundLastCheck == true then
+            playersOnline = playersOnline + 1
+            playerData.foundLastCheck = false
+        else
+            TX_PLAYERLIST[playerID] = nil
+        end
+    end
+    return playersOnline
+end
+
+
+--[[ Thread to refresh player list ]]
 CreateThread(function()
     while true do
-        -- For each player
-        local players = GetPlayers()
-        for yieldCounter, serverID in pairs(players) do
-            -- Updating player vehicle/health
-            -- NOTE: after testing this seem not to need any error handling
-            local health = -1
-            local vType = -1
-            local xCoord = nil
-            local yCoord = nil
-            if onesyncEnabled == true then
-                local ped = GetPlayerPed(serverID)
-                if ped and DoesEntityExist(ped) then
-                    health = GetPedHealthPercent(ped)
-                    local veh = GetVehiclePedIsIn(ped)
-                    if veh ~= 0 then
-                       vType = vTypeMap[tostring(GetVehicleType(veh))]
-                    else
-                       vType = vTypeMap["walking"]
-                    end
-                    local coords = GetEntityCoords(ped)
-                    xCoord = math.floor(coords.x)
-                    yCoord = math.floor(coords.y)
-                end
-            end
-
-            -- Updating TX_PLAYERLIST
-            if type(TX_PLAYERLIST[serverID]) ~= 'table' then
-                TX_PLAYERLIST[serverID] = {
-                    name = sub(GetPlayerName(serverID) or "unknown", 1, 75),
-                    health = health,
-                    vType = vType,
-                    xCoord = xCoord,
-                    yCoord = yCoord,
-                }
-            else
-                TX_PLAYERLIST[serverID].health = health
-                TX_PLAYERLIST[serverID].vType = vType
-                TX_PLAYERLIST[serverID].xCoord = xCoord
-                TX_PLAYERLIST[serverID].yCoord = yCoord
-            end
-
-            -- Mark as refreshed
-            TX_PLAYERLIST[serverID].foundLastCheck = true
-
-            -- Yield to prevent hitches
-            if yieldCounter % intervalYieldLimit == 0 then
-                Wait(0)
-            end
-        end --end for players
-
-
-        --Check if player disconnected
-        for playerID, playerData in pairs(TX_PLAYERLIST) do
-            if playerData.foundLastCheck == true then
-                playerData.foundLastCheck = false
-            else
-                TX_PLAYERLIST[playerID] = nil
-            end
+        -- Attempt to refresh player list
+        local callSuccess, callOutput = pcall(refreshPlayerList)
+        local playersOnline = 0
+        if callSuccess then
+            playersOnline = callOutput
+        else
+            logError("failed to update playerlist")
         end
 
         -- DEBUG
@@ -112,7 +127,7 @@ CreateThread(function()
 
         -- Refresh interval with linear function
         local hDiff = refreshMaxDelay - refreshMinDelay
-        local calcDelay = (hDiff / maxPlayersDelayCeil) * (#players) + refreshMinDelay
+        local calcDelay = (hDiff / maxPlayersDelayCeil) * (playersOnline) + refreshMinDelay
         local delay = floor(min(calcDelay, refreshMaxDelay))
         Wait(delay)
     end --end while true
