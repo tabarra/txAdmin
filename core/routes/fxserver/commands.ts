@@ -29,7 +29,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
     const parameter = ctx.request.body.parameter;
 
     //Ignore commands when the server is offline
-    if (txCore.fxRunner.fxChild === null) {
+    if (!txCore.fxRunner.child?.isAlive) {
         return ctx.send<ApiToastResp>({
             type: 'error',
             msg: 'Cannot execute this action with the server offline.',

@@ -5,7 +5,7 @@ import { now } from '@lib/misc';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
-import { SYM_RESET_CONFIG } from '@modules/ConfigStore/configSymbols';
+import { SYM_RESET_CONFIG } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 
@@ -44,9 +44,10 @@ export default async function MasterActionsAction(ctx: AuthedCtx) {
  * Handle FXServer settings reset nad resurn to setup
  */
 async function handleResetFXServer(ctx: AuthedCtx) {
-    if (txCore.fxRunner.fxChild !== null) {
+    //Kill the server async
+    if (!txCore.fxRunner.isIdle) {
         ctx.admin.logCommand('STOP SERVER');
-        txCore.fxRunner.killServer('resetting fxserver config', ctx.admin.name, false).catch((e) => { });
+        txCore.fxRunner.killServer('new server set up', ctx.admin.name, false).catch((e) => { });
     }
 
     //Making sure the deployer is not running

@@ -68,8 +68,8 @@ export const generateStatusMessage = (
         serverMaxClients: txCore.cacheStore.get('fxsRuntime:maxClients') ?? 'unknown',
         serverClients: txCore.fxPlayerlist.onlineCount,
         nextScheduledRestart: 'unknown',
-        uptime: (txCore.fxMonitor.currentStatus === 'ONLINE')
-            ? msToShortishDuration(txCore.fxRunner.getUptime() * 1000)
+        uptime: (txCore.fxMonitor.currentStatus === 'ONLINE' && txCore.fxRunner.child?.isAlive)
+            ? msToShortishDuration(txCore.fxRunner.child.uptime)
             : '--',
     }
 

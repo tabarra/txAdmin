@@ -302,6 +302,12 @@ async function handleSaveLocal(ctx) {
     //Logging
     ctx.admin.logAction('Changing global/fxserver settings via setup stepper.');
 
+    //If running (for some reason), kill it first 
+    if (!txCore.fxRunner.isIdle) {
+        ctx.admin.logCommand('STOP SERVER');
+        await txCore.fxRunner.killServer('new server set up', ctx.admin.name, true);
+    }
+
     //Starting server
     const spawnError = await txCore.fxRunner.spawnServer(false);
     if (spawnError !== null) {

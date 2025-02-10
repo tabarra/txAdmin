@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { discordSnowflakeSchema, typeDefinedConfig } from "./utils";
-import { SYM_FIXER_DEFAULT } from "../configSymbols";
+import { SYM_FIXER_DEFAULT } from "@lib/symbols";
 import consts from "@shared/consts";
 
 

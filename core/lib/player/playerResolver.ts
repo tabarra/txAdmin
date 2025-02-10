@@ -1,3 +1,4 @@
+import { SYM_CURRENT_MUTEX } from "@lib/symbols.js";
 import { DatabasePlayer, ServerPlayer } from "./playerClasses.js"
 
 
@@ -6,20 +7,26 @@ import { DatabasePlayer, ServerPlayer } from "./playerClasses.js"
  * When mutex#netid is present, it takes precedence over license.
  * If the mutex is not from the current server, search for the license in FxPlayerlist.licenseCache[]
  * and then search for the license in the database.
- * 
- * FIXME: pass serverInstance when multiserver
  */
 export default (mutex: any, netid: any, license: any) => {
     const parsedNetid = parseInt(netid);
     let searchLicense = license;
 
     //For error clarification only
-    let hasMutex = false; 
+    let hasMutex = false;
+
+    //Attempt to resolve current mutex, if needed
+    if(mutex === SYM_CURRENT_MUTEX){
+        mutex = txCore.fxRunner.child?.mutex;
+        if (!mutex) {
+            throw new Error(`current mutex not available`);
+        }
+    }
 
     //If mutex+netid provided
     if (typeof mutex === 'string' && typeof netid === 'number' && !isNaN(parsedNetid)) {
         hasMutex = true;
-        if (mutex === txCore.fxRunner.currentMutex) {
+        if (mutex && mutex === txCore.fxRunner.child?.mutex) {
             //If the mutex is from the server currently online
             const player = txCore.fxPlayerlist.getPlayerById(netid);
             if (player instanceof ServerPlayer) {

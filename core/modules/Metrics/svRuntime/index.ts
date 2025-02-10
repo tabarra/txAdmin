@@ -165,18 +165,16 @@ export default class SvRuntimeMetrics {
      */
     private async collectStats() {
         //Precondition checks - try even when partially online
-        if (txCore.fxRunner.fxChild === null) return;
+        if (!txCore.fxRunner.child?.isAlive) return;
         const healthMonitorStatus = txCore.fxMonitor.currentStatus;
         if (healthMonitorStatus !== 'ONLINE' && healthMonitorStatus !== 'PARTIAL') return;
 
         //Get performance data
-        const fxServerHost = txDevEnv.EXT_STATS_HOST ?? txCore.fxRunner.fxServerHost;
-        if (typeof fxServerHost !== 'string' || !fxServerHost) {
-            throw new Error(`Invalid fxServerHost: ${fxServerHost}`);
-        }
+        const netEndpoint = txDevEnv.EXT_STATS_HOST ?? txCore.fxRunner.child.netEndpoint;
+        if (!netEndpoint) throw new Error(`Invalid netEndpoint: ${netEndpoint}`);
         const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
-            fetchRawPerfData(fxServerHost),
-            fetchFxsMemory(txCore.fxRunner.fxChild.pid),
+            fetchRawPerfData(netEndpoint),
+            fetchFxsMemory(txCore.fxRunner.child.pid),
         ]);
         if (fetchFxsMemoryRes.status === 'fulfilled') {
             this.lastFxsMemory = fetchFxsMemoryRes.value;
@@ -238,7 +236,7 @@ export default class SvRuntimeMetrics {
         let playerCount = txCore.fxPlayerlist.onlineCount;
         if (txDevEnv.EXT_STATS_HOST) {
             try {
-                const playerCountResp = await got(`http://${fxServerHost}/players.json`).json<any[]>();
+                const playerCountResp = await got(`http://${netEndpoint}/players.json`).json<any[]>();
                 playerCount = playerCountResp.length;
             } catch (error) { }
         }

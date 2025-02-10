@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { typeDefinedConfig } from "./utils";
-import { SYM_FIXER_DEFAULT } from "../configSymbols";
+import { SYM_FIXER_DEFAULT } from "@lib/symbols";
 import { parseSchedule, regexHoursMinutes } from "@lib/misc";
 
 export const polishScheduleTimesArray = (input: string[]) => {

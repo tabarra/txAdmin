@@ -91,14 +91,16 @@ export default class TxManager {
         return {
             configState: txManager.configState,
             discord: txCore.discordBot.status,
+            runner: {
+                isIdle: txCore.fxRunner.isIdle,
+                isChildAlive: txCore.fxRunner.child?.isAlive ?? false,
+            },
             server: {
                 status: txCore.fxMonitor.currentStatus,
-                process: txCore.fxRunner.getStatus(),
-                instantiated: !!txCore.fxRunner.fxChild, //used to disable the control buttons
                 name: txConfig.general.serverName,
                 whitelist: txConfig.whitelist.mode,
             },
-            // @ts-ignore scheduler type narrowing id wrong because cant use "as const" in javascript
+            // @ts-ignore scheduler type narrowing is wrong because cant use "as const" in javascript
             scheduler: txCore.fxScheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()
         }
     }

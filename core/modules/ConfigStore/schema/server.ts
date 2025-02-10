@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { typeDefinedConfig, typeNullableConfig } from "./utils";
-import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from "../configSymbols";
+import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from "@lib/symbols";
 
 
 const dataPath = typeNullableConfig({

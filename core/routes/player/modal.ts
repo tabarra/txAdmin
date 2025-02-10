@@ -7,6 +7,7 @@ import { ServerPlayer } from '@lib/player/playerClasses';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { now } from '@lib/misc';
+import { SYM_CURRENT_MUTEX } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 //Helpers
@@ -46,7 +47,7 @@ export default async function PlayerModal(ctx: AuthedCtx) {
     //Finding the player
     let player;
     try {
-        const refMutex = (mutex === 'current') ? txCore.fxRunner.currentMutex : mutex;
+        const refMutex = mutex === 'current' ? SYM_CURRENT_MUTEX : mutex;
         player = playerResolver(refMutex, parseInt((netid as string)), license);
     } catch (error) {
         return sendTypedResp({ error: (error as Error).message });

@@ -2,7 +2,7 @@ const modulename = 'Logger:FXServer';
 import bytes from 'bytes';
 import type { Options as RfsOptions } from 'rotating-file-stream';
 import { getLogDivider } from '../loggerUtils.js';
-import consoleFactory from '@lib/console.js';
+import consoleFactory, { processStdioWriteRaw } from '@lib/console.js';
 import { LoggerBase } from '../LoggerBase.js';
 import ConsoleTransformer from './ConsoleTransformer.js';
 const console = consoleFactory(modulename);
@@ -96,7 +96,7 @@ export default class FXServerLogger extends LoggerBase {
 
         //For the terminal
         if (!txConfig.server.quiet) {
-            process.stdout.write(stdoutBuffer);
+            processStdioWriteRaw(stdoutBuffer);
         }
 
         //For the live console
@@ -116,7 +116,7 @@ export default class FXServerLogger extends LoggerBase {
     /**
      * Writes to the log that the server is booting
      */
-    public logFxserverBoot(pid: string) {
+    public logFxserverSpawn(pid: string) {
         //force line skip to create separation
         if (this.recentBuffer.length) {
             const lineBreak = this.transformer.lastEol ? '\n' : '\n\n';

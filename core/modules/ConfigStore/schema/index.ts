@@ -9,7 +9,7 @@ import discordBot from "./discordBot";
 import gameFeatures from "./gameFeatures";
 import webServer from "./webServer";
 import logger from "./logger";
-import { SYM_RESET_CONFIG } from "../configSymbols";
+import { SYM_RESET_CONFIG } from "@lib/symbols";
 
 
 //Type inference utils

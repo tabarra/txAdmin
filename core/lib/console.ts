@@ -64,6 +64,24 @@ export const setConsoleEnvData = (
 
 
 /**
+ * STDOUT EOL helper
+ */
+let stdioEolPending = false;
+export const processStdioWriteRaw = (buffer: Uint8Array | string) => {
+    if (!buffer.length) return;
+    const comparator = typeof buffer === 'string' ? '\n' : 10;
+    stdioEolPending = buffer[buffer.length - 1] !== comparator;
+    process.stdout.write(buffer);
+}
+export const processStdioEnsureEol = () => {
+    if (stdioEolPending) {
+        process.stdout.write('\n');
+        stdioEolPending = false;
+    }
+}
+
+
+/**
  * New console and streams
  */
 const defaultStream = new Writable({

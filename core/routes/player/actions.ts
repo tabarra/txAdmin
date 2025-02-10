@@ -6,6 +6,7 @@ import { PlayerClass, ServerPlayer } from '@lib/player/playerClasses';
 import { anyUndefined, calcExpirationFromDuration } from '@lib/misc';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
+import { SYM_CURRENT_MUTEX } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 
@@ -24,7 +25,7 @@ export default async function PlayerActions(ctx: AuthedCtx) {
     //Finding the player
     let player;
     try {
-        const refMutex = (mutex === 'current') ? txCore.fxRunner.currentMutex : mutex;
+        const refMutex = mutex === 'current' ? SYM_CURRENT_MUTEX : mutex;
         player = playerResolver(refMutex, parseInt((netid as string)), license);
     } catch (error) {
         return sendTypedResp({ error: (error as Error).message });
@@ -111,7 +112,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     ctx.admin.logAction(`Warned player "${player.displayName}": ${reason}`);
 
     // Dispatch `txAdmin:events:playerWarned`
-    const cmdOk = txCore.fxRunner.sendEvent('playerWarned', {
+    const eventSent = txCore.fxRunner.sendEvent('playerWarned', {
         author: ctx.admin.name,
         reason,
         actionId,
@@ -120,7 +121,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
         targetName: player.displayName,
     });
 
-    if (cmdOk) {
+    if (eventSent) {
         return { success: true };
     } else {
         return { error: `Warn saved, but likely failed to send the warn in game (stdin error).` };
@@ -183,7 +184,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     ctx.admin.logAction(`Banned player "${player.displayName}": ${reason}`);
 
     //No need to dispatch events if server is not online
-    if (txCore.fxRunner.fxChild === null) {
+    if (txCore.fxRunner.isIdle) {
         return { success: true };
     }
 
@@ -206,7 +207,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     }
 
     // Dispatch `txAdmin:events:playerBanned`
-    const cmdOk = txCore.fxRunner.sendEvent('playerBanned', {
+    const eventSent = txCore.fxRunner.sendEvent('playerBanned', {
         author: ctx.admin.name,
         reason,
         actionId,
@@ -220,7 +221,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
         kickMessage,
     });
 
-    if (cmdOk) {
+    if (eventSent) {
         return { success: true };
     } else {
         return { error: `Player banned, but likely failed to kick player (stdin error).` };
@@ -254,11 +255,7 @@ async function handleSetWhitelist(ctx: AuthedCtx, player: PlayerClass): Promise<
             ctx.admin.logAction(`Removed ${player.license} from the whitelist.`);
         }
 
-        //No need to dispatch events if server is not online
-        if (txCore.fxRunner.fxChild === null) {
-            return { success: true };
-        }
-
+        // Dispatch `txAdmin:events:whitelistPlayer`
         txCore.fxRunner.sendEvent('whitelistPlayer', {
             action: status ? 'added' : 'removed',
             license: player.license,
@@ -295,8 +292,8 @@ async function handleDirectMessage(ctx: AuthedCtx, player: PlayerClass): Promise
     }
 
     //Validating server & player
-    if (txCore.fxRunner.fxChild === null) {
-        return { error: 'The server is not online.' };
+    if (!txCore.fxRunner.child?.isAlive) {
+        return { error: 'The server is not running.' };
     }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
@@ -338,8 +335,8 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
     }
 
     //Validating server & player
-    if (txCore.fxRunner.fxChild === null) {
-        return { error: 'The server is offline.' };
+    if (!txCore.fxRunner.child?.isAlive) {
+        return { error: 'The server is not running.' };
     }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };

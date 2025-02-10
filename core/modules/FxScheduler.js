@@ -1,6 +1,7 @@
 const modulename = 'FxScheduler';
 import { parseSchedule } from '@lib/misc';
 import consoleFactory from '@lib/console';
+import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 
@@ -209,7 +210,7 @@ export default class FxScheduler {
         //Checking if server restart or warning time
         if (nextDistMins === 0) {
             //restart server
-            this.restartFXServer(
+            this.triggerServerRestart(
                 `scheduled restart at ${nextRestart.string}`,
                 txCore.translator.t('restarter.schedule_reason', { time: nextRestart.string }),
             );
@@ -242,20 +243,21 @@ export default class FxScheduler {
 
 
     /**
-     * Restart the FXServer and logs everything
+     * Triggers FXServer restart and logs the reason.
      * @param {string} reasonInternal
      * @param {string} reasonTranslated
      */
-    async restartFXServer(reasonInternal, reasonTranslated) {
-        //sanity check
-        if (txCore.fxRunner.fxChild === null) {
-            console.verbose.warn('Server not running, skippping scheduled restart.');
+    async triggerServerRestart(reasonInternal, reasonTranslated) {
+        //Sanity check
+        if (txCore.fxRunner.isIdle) {
+            console.verbose.warn('Server not running, skipping scheduled restart.');
             return false;
         }
 
         //Restart server
-        const logMessage = `Restarting server (${reasonInternal}).`;
+        const logMessage = `Restarting server: ${reasonInternal}`;
         txCore.logger.admin.write('SCHEDULER', logMessage);
-        txCore.fxRunner.restartServer(reasonTranslated, null);
+        txCore.logger.fxserver.logInformational(logMessage); //just for better visibility
+        txCore.fxRunner.restartServer(reasonTranslated, SYM_SYSTEM_AUTHOR);
     }
 };

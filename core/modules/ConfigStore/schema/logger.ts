@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { typeDefinedConfig } from "./utils";
-import { SYM_FIXER_FATAL } from "../configSymbols";
+import { SYM_FIXER_FATAL } from "@lib/symbols";
 
 
 /*

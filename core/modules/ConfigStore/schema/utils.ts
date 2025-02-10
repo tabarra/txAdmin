@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from '../configSymbols';
+import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from '@lib/symbols';
 import consts from '@shared/consts';
 import { fromError } from 'zod-validation-error';
 

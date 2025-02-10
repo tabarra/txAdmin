@@ -141,7 +141,8 @@ export default function ServerStatus() {
                 Process:
                 <StatusBadge
                     tooltip='Status of the FXServer process.'
-                >{globalStatus?.server.process.toUpperCase() ?? '--'}</StatusBadge>
+                >{globalStatus?.runner.isChildAlive ? 'ALIVE' : 'DEAD'}</StatusBadge>
+                {/* TODO: replace with uptime, just need to figure it out how to keep pushing it */}
             </div>
             <div className="flex justify-between items-center text-muted-foreground text-sm gap-1.5">
                 Whitelist:

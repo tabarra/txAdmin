@@ -100,8 +100,8 @@ export const didPerfReset = (newPerf: SvRtPerfCountsType, oldPerf: SvRtPerfCount
 /**
  * Requests /perf/, parses it and returns the raw perf data
  */
-export const fetchRawPerfData = async (fxServerHost: string) => {
-    const currPerfRaw = await got(`http://${fxServerHost}/perf/`).text();
+export const fetchRawPerfData = async (netEndpoint: string) => {
+    const currPerfRaw = await got(`http://${netEndpoint}/perf/`).text();
     return parseRawPerf(currPerfRaw);
 }
 

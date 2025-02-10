@@ -3,7 +3,7 @@ import { typeDefinedConfig } from "./utils";
 
 import { alphanumeric } from 'nanoid-dictionary';
 import { customAlphabet } from "nanoid";
-import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from "../configSymbols";
+import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from "@lib/symbols";
 
 
 

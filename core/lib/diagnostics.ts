@@ -122,14 +122,18 @@ export const getProcessesData = async () => {
  * Gets the FXServer Data.
  */
 export const getFXServerData = async () => {
-    //Sanity Check
-    if (txCore.fxRunner.fxChild === null || txCore.fxRunner.fxServerHost === null) {
+    //Check runner child state
+    const childState = txCore.fxRunner.child;
+    if (!childState?.isAlive) {
         return { error: 'Server Offline' };
+    }
+    if (!childState?.netEndpoint) {
+        return { error: 'Server is has no network endpoint' };
     }
 
     //Preparing request
     const requestOptions = {
-        url: `http://${txCore.fxRunner.fxServerHost}/info.json`,
+        url: `http://${childState.netEndpoint}/info.json`,
         maxRedirects: 0,
         timeout: { request: 1500 },
         retry: { limit: 0 },
@@ -289,7 +293,7 @@ export const getTxAdminData = async () => {
 
         //Env stuff
         fxServerPath: txEnv.fxServerPath,
-        fxServerHost: txCore.fxRunner.fxServerHost ?? '--',
+        fxServerHost: txCore.fxRunner.child?.netEndpoint ?? '--',
 
         //Usage stuff
         memoryUsage: {

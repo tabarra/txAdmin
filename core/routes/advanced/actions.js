@@ -3,6 +3,7 @@ import v8 from 'node:v8';
 import bytes from 'bytes';
 import got from '@lib/got';
 import consoleFactory from '@lib/console';
+import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -108,14 +109,16 @@ export default async function AdvancedActions(ctx) {
             [
                 'txAdmin-luaComToken',
                 txCore.webServer.luaComToken,
-            ]
+            ],
+            SYM_SYSTEM_AUTHOR
         );
         if (!setCmdResult) {
             return ctx.send({ type: 'danger', message: 'Failed to reset luaComToken.' });
         }
         const ensureCmdResult = txCore.fxRunner.sendCommand(
             'ensure',
-            ['monitor']
+            ['monitor'],
+            SYM_SYSTEM_AUTHOR
         );
         if (ensureCmdResult) {
             return ctx.send({ type: 'success', message: 'done' });
@@ -149,8 +152,12 @@ export default async function AdvancedActions(ctx) {
             return ctx.send({ type: 'danger', message: error.message });
         }
 
+    } else if (action == 'printFxRunnerChildHistory') {
+        const message = JSON.stringify(txCore.fxRunner.history, null, 2)
+        return ctx.send({ type: 'success', message });
+
     } else if (action == 'xxxxxx') {
-        return ctx.send({ type: 'success', message: '👍' });
+        return ctx.send({ type: 'success', message: '😀👍' });
     }
 
     //Catch all

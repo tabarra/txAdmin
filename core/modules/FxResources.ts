@@ -53,7 +53,7 @@ export default class FxResources {
     /**
      * Handler for server restart
      */
-    handleServerStop() {
+    handleServerClose() {
         this.activeStartingResource = null;
         this.activeStartingTime = null;
     }

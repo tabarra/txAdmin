@@ -3,6 +3,7 @@ import path from 'node:path';
 import slash from 'slash';
 import slug from 'slug';
 import consoleFactory from '@lib/console';
+import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -46,9 +47,9 @@ const getResourceSubPath = (resPath) => {
  * @param {object} ctx
  */
 export default async function Resources(ctx) {
-    if (txCore.fxRunner.fxChild === null) {
+    if (!txCore.fxRunner.child?.isAlive) {
         return ctx.utils.render('main/message', {
-            message: '<strong>The resources list is only available when the server is online.</strong>',
+            message: '<strong>The resources list is only available when the server is running.</strong>',
         });
     }
 
@@ -59,7 +60,7 @@ export default async function Resources(ctx) {
     - Check the <strong>Live Console</strong> for any errors which may indicate that some resource has a malformed <code>fxmanifest.lua</code> file.`;
 
     //Send command request
-    const cmdSuccess = txCore.fxRunner.sendCommand('txaReportResources');
+    const cmdSuccess = txCore.fxRunner.sendCommand('txaReportResources', [], SYM_SYSTEM_AUTHOR);
     if (!cmdSuccess) {
         return ctx.utils.render('main/message', {message: timeoutMessage});
     }

@@ -7,7 +7,7 @@ import consts from '@shared/consts';
 import { txEnv, convars } from '@core/globalData';
 import { validateModifyServerConfig } from '@lib/fxserver/fxsConfigHelper';
 import consoleFactory from '@lib/console';
-import { SYM_RESET_CONFIG } from '@modules/ConfigStore/configSymbols';
+import { SYM_RESET_CONFIG } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -250,13 +250,19 @@ async function handleSaveConfig(ctx) {
 
     ctx.admin.logAction('Completed and committed server deploy.');
 
+    //If running (for some reason), kill it first 
+    if (!txCore.fxRunner.isIdle) {
+        ctx.admin.logCommand('STOP SERVER');
+        await txCore.fxRunner.killServer('new server deployed', ctx.admin.name, true);
+    }
+
     //Starting server
     const spawnError = await txCore.fxRunner.spawnServer(false);
     if (spawnError !== null) {
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `Config file saved, but faied to start server with error:\n${spawnError}`,
+            message: `Config file saved, but failed to start server with error:\n${spawnError}`,
         });
     } else {
         txManager.deployer = null;

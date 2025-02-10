@@ -10,10 +10,12 @@ import { DiscordBotStatus, TxConfigState } from "./enums";
 export type GlobalStatusType = {
     configState: TxConfigState;
     discord: DiscordBotStatus;
+    runner: {
+        isIdle: boolean;
+        isChildAlive: boolean;
+    };
     server: {
         status: string;
-        process: string;
-        instantiated: boolean;
         name: string;
         whitelist: "disabled" | "adminOnly" | "guildMember" | "guildRoles" | "approvedLicense";
     };

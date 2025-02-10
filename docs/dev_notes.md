@@ -99,6 +99,7 @@ Legend:
     - [x] test setting up new profile from scratch
     - [x] disable the "view changelog" button, or write the modal code
     - [x] write dev notes on the config system (README.md in the panel settings and core configstore?)
+- [x] Full FXRunner rewrite
 
 ## Other stuff
 - [!] add stats tracking for the framework team (ask them, idk)
@@ -107,6 +108,9 @@ Legend:
 - [!] remove dynamicAds from the modules
 - [!] commit stashed stuff
 - [!] fix custom locale
+    - see if it's viable to use `fsp.link()` or `fsp.symlink()`
+    - https://nodejs.org/docs/latest-v16.x/api/fs.html#fspromiseslinkexistingpath-newpath
+    - https://nodejs.org/docs/latest-v16.x/api/fs.html#fspromisessymlinktarget-path-type
 - [!] check txAdmin-private
 
 
@@ -170,6 +174,13 @@ Legend:
     - [ ] use the standalone json editor page
     - [ ] write the reset fxserver button
         - requires changing the webroute permissions and updating the MainRouter
+    - [ ] Add a "Dev Server Mode" (`general.devServerMode`), which:
+        - [ ] changes the txAdmin logo and maybe some other styling changes to make it easier for devs to see notice if they are on the prod or dev txAdmins
+        - [ ] disables `server.shutdownNoticeDelayMs`
+        - [ ] disables prompt to confirm on server controls and resetting fxserver
+        - [ ] maybe some other slight
+        - [ ] allows runcode
+        - [ ] maybe BigRadio group with Dev, Normal, and Lockdown mode, which blocks some stuff from the NUI
 - [ ] Player drops page
     - [ ] fix: blurred chart lines
         - `imageRendering: 'pixelated'` might fix it
@@ -214,18 +225,6 @@ Legend:
     - [ref](/core/playerLogic/playerClasses.ts#L281)
     - [ ] create simple page to list top 100 players by playtime in the last 30d, 14d, 7d, yesterday, today
     - if storing in a linear UInt16Array, 100k players * 120d * 4bytes per date = 48mb
-
-- [ ] FXRunner ts refactor
-    - [ ] remove `this.spawnVariables` and move the method to the `utils.ts`
-    - [ ] abstract `this.history` into a separate class, and add a "shutting down" state triggered by the scheduledRestart event
-        - use the Stopwatch class?
-        - fully convert to millisecond precision
-        - status should be an enum
-    - [ ] move `this.fxServerHost` and `this.cfxId` to txManager?
-    - [ ] abstract all external references to `txCore.fxRunner.fxChild`, specially checking if null
-    - [ ] `getUptime()` as getter
-    - [ ] maybe if closed & exited, set `this.fxChild = null`? **This impacts FxMonitor!**
-    - [ ] clean up every `typeof xxx === 'undefined'`
 
 
 
@@ -311,10 +310,10 @@ if (!paramsSchemaRes.success || !bodySchemaRes.success) {
 
 ## Refactor: Formatting + Linting
 - [ ] fix the eslint config + tailwind sort
-        - [alternative](https://biomejs.dev/linter/rules/use-sorted-classes/)
-        - search the notes below for "dprint" and "prettier"
-        - check how the typescript repo uses dprint
-        - use `.git-blame-ignore-revs`
+    - [alternative](https://biomejs.dev/linter/rules/use-sorted-classes/)
+    - search the notes below for "dprint" and "prettier"
+    - check how the typescript repo uses dprint
+    - use `.git-blame-ignore-revs`
 - maybe biome?
 - Maybe prettier for all files except ts/js which could be in dprint
 - Use the tailwind sorter plugin
@@ -387,7 +386,8 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
 - [ ] enable nui strict mode
     - check if the menu -> tx -> iframe -> legacy iframe is not working
     - check both canary and prod builds
-
+- [ ] Implement `GET_RESOURCE_COMMANDS` available in b12739
+    - Ref: https://github.com/citizenfx/fivem/pull/3012
 - [ ] cfg parser: resource relative read errors shouldn't trigger warnings
 - [ ] check again for the need of lazy loading
 - [ ] put in server name in the login page, to help lost admins notice they are in the wrong txAdmin

@@ -3,7 +3,7 @@ import { parseConfigFileData, bootstrapConfigProcessor, getConfigDefaults, runti
 import { z } from 'zod';
 import { typeDefinedConfig, typeNullableConfig } from './schema/utils';
 import ConfigStore from '.';
-import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL, SYM_RESET_CONFIG } from './configSymbols';
+import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL, SYM_RESET_CONFIG } from '@lib/symbols';
 
 
 suite('parseConfigFileData', () => {

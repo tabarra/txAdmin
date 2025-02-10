@@ -6,7 +6,7 @@ import { confx, UpdateConfigKeySet } from "./utils";
 import { cloneDeep } from "lodash";
 import { dequal } from 'dequal/lite';
 import { fromZodError } from "zod-validation-error";
-import { SYM_FIXER_DEFAULT, SYM_RESET_CONFIG } from "./configSymbols";
+import { SYM_FIXER_DEFAULT, SYM_RESET_CONFIG } from "@lib/symbols";
 const console = consoleFactory(modulename);
 
 
