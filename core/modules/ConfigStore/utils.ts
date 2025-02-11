@@ -1,4 +1,4 @@
-import { RefreshConfigKey } from ".";
+import type { RefreshConfigKey } from "./index";
 import { ConfigScaffold } from "./schema";
 
 

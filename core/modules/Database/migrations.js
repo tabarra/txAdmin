@@ -1,7 +1,7 @@
 const modulename = 'DBMigration';
 import { genActionID } from './dbUtils.js';
 import cleanPlayerName from '@shared/cleanPlayerName.js';
-import { DATABASE_VERSION, defaultDatabase } from './instance.js';
+import { DATABASE_VERSION, defaultDatabase } from './instance.js'; //FIXME: circular_dependency
 import { now } from '@lib/misc.js';
 import consoleFactory from '@lib/console.js';
 import fatalError from '@lib/fatalError.js';

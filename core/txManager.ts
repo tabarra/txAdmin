@@ -3,7 +3,7 @@ import { isProxy } from "util/types";
 import { startReadyWatcher } from "./boot/startReadyWatcher";
 import { Deployer } from "./deployer";
 import { TxConfigState } from "@shared/enums";
-import { GlobalStatusType } from "@shared/socketioTypes";
+import type { GlobalStatusType } from "@shared/socketioTypes";
 
 
 /**

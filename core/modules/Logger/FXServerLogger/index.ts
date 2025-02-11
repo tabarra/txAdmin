@@ -5,6 +5,7 @@ import { getLogDivider } from '../loggerUtils.js';
 import consoleFactory, { processStdioWriteRaw } from '@lib/console.js';
 import { LoggerBase } from '../LoggerBase.js';
 import ConsoleTransformer from './ConsoleTransformer.js';
+import ConsoleLineEnum from './ConsoleLineEnum.js';
 const console = consoleFactory(modulename);
 
 
@@ -20,14 +21,6 @@ const console = consoleFactory(modulename);
 const regexControls = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F]|(?:\x1B\[|\x9B)[\d;]+[@-K]/g;
 const regexColors = /\x1B[^m]*?m/g;
 
-
-export enum ConsoleLineType {
-    StdOut,
-    StdErr,
-    MarkerAdminCmd,
-    MarkerSystemCmd,
-    MarkerInfo,
-}
 
 export default class FXServerLogger extends LoggerBase {
     private readonly transformer = new ConsoleTransformer();
@@ -87,7 +80,7 @@ export default class FXServerLogger extends LoggerBase {
      * Receives the assembled console blocks, stringifies, marks, colors them and dispatches it to
      * lrStream, websocket, and process stdout.
      */
-    private ingest(type: ConsoleLineType, data: string, context?: string) {
+    private ingest(type: ConsoleLineEnum, data: string, context?: string) {
         //Process the data
         const { webBuffer, stdoutBuffer, fileBuffer } = this.transformer.process(type, data, context);
 
@@ -109,7 +102,7 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log an informational message
      */
     public logInformational(msg: string) {
-        this.ingest(ConsoleLineType.MarkerInfo, `${msg} \n`);
+        this.ingest(ConsoleLineEnum.MarkerInfo, `${msg} \n`);
     }
 
 
@@ -120,13 +113,13 @@ export default class FXServerLogger extends LoggerBase {
         //force line skip to create separation
         if (this.recentBuffer.length) {
             const lineBreak = this.transformer.lastEol ? '\n' : '\n\n';
-            this.ingest(ConsoleLineType.MarkerInfo, lineBreak);
+            this.ingest(ConsoleLineEnum.MarkerInfo, lineBreak);
         }
         //need to break line
         const multiline = getLogDivider(`[${pid}] FXServer Starting`);
         for (const line of multiline.split('\n')) {
             if (!line.length) break;
-            this.ingest(ConsoleLineType.MarkerInfo, `${line} \n`);
+            this.ingest(ConsoleLineEnum.MarkerInfo, `${line} \n`);
         }
     }
 
@@ -135,7 +128,7 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log an admin command
      */
     public logAdminCommand(author: string, cmd: string) {
-        this.ingest(ConsoleLineType.MarkerAdminCmd, `${cmd} \n`, author);
+        this.ingest(ConsoleLineEnum.MarkerAdminCmd, `${cmd} \n`, author);
     }
 
 
@@ -143,7 +136,7 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log a system command
      */
     public logSystemCommand(cmd: string) {
-        this.ingest(ConsoleLineType.MarkerSystemCmd, `${cmd} \n`);
+        this.ingest(ConsoleLineEnum.MarkerSystemCmd, `${cmd} \n`);
     }
 
 
@@ -151,7 +144,7 @@ export default class FXServerLogger extends LoggerBase {
      * Handles all stdio data.
      */
     public writeFxsOutput(
-        source: ConsoleLineType.StdOut | ConsoleLineType.StdErr,
+        source: ConsoleLineEnum.StdOut | ConsoleLineEnum.StdErr,
         data: string | Buffer
     ) {
         if (typeof data !== 'string') {

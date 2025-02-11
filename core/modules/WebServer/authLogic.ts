@@ -2,7 +2,7 @@ const modulename = 'WebServer:AuthLogic';
 import { z } from "zod";
 import { convars } from '@core/globalData';
 import consoleFactory from '@lib/console';
-import { SessToolsType } from "./middlewares/sessionMws";
+import type { SessToolsType } from "./middlewares/sessionMws";
 import { ReactAuthDataType } from "@shared/authApiTypes";
 const console = consoleFactory(modulename);
 

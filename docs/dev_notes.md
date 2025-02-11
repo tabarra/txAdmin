@@ -161,6 +161,9 @@ Legend:
     - ref: https://github.com/xtermjs/xterm.js/issues/3864
     - ref: https://github.com/xtermjs/xterm.js/issues/4779
     - ref: https://github.com/xtermjs/xterm.js/milestone/78
+- [ ] fix circular dependencies
+    - search for `circular_dependency`
+    - use `madge` (command at the bottom of file)
 
 ## Previous bugs
 - [ ] use `ScanResourceRoot()`
@@ -180,7 +183,7 @@ Legend:
         - [ ] disables prompt to confirm on server controls and resetting fxserver
         - [ ] maybe some other slight
         - [ ] allows runcode
-        - [ ] maybe BigRadio group with Dev, Normal, and Lockdown mode, which blocks some stuff from the NUI
+        - [ ] maybe BigRadio group with Dev, Normal, and Lockdown mode, which blocks some stuff from the NUI, secure mode blocks runcode and force system chat?
 - [ ] Player drops page
     - [ ] fix: blurred chart lines
         - `imageRendering: 'pixelated'` might fix it
@@ -733,9 +736,12 @@ cfxui colors:
 ```
 
 ```bash
-# other stuff
+# repo stuff
 npx knip
 npm-upgrade
+bunx madge --warning --circular --ts-config="core/tsconfig.json" core/index.ts
+
+# other stuff
 con_miniconChannels script:monitor*
 con_miniconChannels script:runcode
 +setr txAdmin-debugMode true

@@ -49,6 +49,7 @@ const getOSMessage = async () => {
         'We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.',
     ];
 
+    //FIXME: use si.osInfo() instead
     const distro = await getOsDistro();
     return (distro && distro.includes('Linux') || distro.includes('Server'))
         ? serverMessage
@@ -153,7 +154,7 @@ export const startReadyWatcher = async (cb: () => void) => {
         '',
         'Use the PIN below to register:',
         chalk.inverse(` ${adminMasterPin} `),
-    ]
+    ];
 
     //Printing stuff
     const boxOptions = {

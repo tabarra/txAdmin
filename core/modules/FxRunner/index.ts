@@ -7,11 +7,11 @@ import consoleFactory from '@lib/console';
 import { validateFixServerConfig } from '@lib/fxserver/fxsConfigHelper';
 import { msToShortishDuration } from '@lib/misc';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
-import { ConsoleLineType } from '@modules/Logger/FXServerLogger';
 import { UpdateConfigKeySet } from '@modules/ConfigStore/utils';
 import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isValidChildProcess, mutableConvarConfigDependencies } from './utils';
 import ProcessManager, { ChildProcessStateInfo } from './ProcessManager';
 import handleFd3Messages from './handleFd3Messages';
+import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
 const console = consoleFactory('FXRunner');
 const genMutex = customAlphabet(dict49, 5);
 
@@ -72,7 +72,9 @@ export default class FxRunner {
                 45_000
             );
         } else {
+            if(this.restartSpawnBackoffDelay){
             console.verbose.debug('Server booted successfully, resetting spawn backoff delay.');
+            }
             this.restartSpawnBackoffDelay = 0;
         }
         return this.restartSpawnBackoffDelay;
@@ -187,13 +189,13 @@ export default class FxRunner {
         childProc.stdout.on('data',
             txCore.logger.fxserver.writeFxsOutput.bind(
                 txCore.logger.fxserver,
-                ConsoleLineType.StdOut,
+                ConsoleLineEnum.StdOut,
             ),
         );
         childProc.stderr.on('data',
             txCore.logger.fxserver.writeFxsOutput.bind(
                 txCore.logger.fxserver,
-                ConsoleLineType.StdErr,
+                ConsoleLineEnum.StdErr,
             ),
         );
         const jsoninPipe = childProc.stdio[3].pipe(StreamValues.withParser() as any);

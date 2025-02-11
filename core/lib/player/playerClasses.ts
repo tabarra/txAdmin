@@ -1,5 +1,4 @@
 const modulename = 'Player';
-import Database from '@modules/Database/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@modules/Database/databaseTypes';
 import { cloneDeep, union } from 'lodash-es';
@@ -7,7 +6,7 @@ import { now } from '@lib/misc';
 import { parsePlayerIds } from '@lib/player/idUtils';
 import consoleFactory from '@lib/console';
 import consts from '@shared/consts';
-import FxPlayerlist from '@modules/FxPlayerlist';
+import type FxPlayerlist from '@modules/FxPlayerlist';
 const console = consoleFactory(modulename);
 
 

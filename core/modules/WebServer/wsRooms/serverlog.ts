@@ -1,4 +1,4 @@
-import { RoomType } from "../webSocket";
+import type { RoomType } from "../webSocket";
 
 /**
  * The console room is responsible for the server log page

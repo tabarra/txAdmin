@@ -1,4 +1,4 @@
-import { LOG_DATA_FILE_VERSION } from './index';
+import { LOG_DATA_FILE_VERSION } from './index'; //FIXME: circular_dependency
 import { PDLChangeEventType, PDLFileSchema, PDLFileSchema_v1, type PDLFileType } from './playerDropSchemas';
 
 export const migratePlayerDropsFile = async (fileData: any): Promise<PDLFileType> => {

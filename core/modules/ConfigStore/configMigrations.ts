@@ -4,7 +4,7 @@ import { ConfigFileData, PartialTxConfigs } from './schema/index';
 import { txEnv } from '@core/globalData';
 import { cloneDeep } from 'lodash-es';
 import fatalError from '@lib/fatalError';
-import { CONFIG_VERSION } from '.';
+import { CONFIG_VERSION } from './index'; //FIXME: circular_dependency
 import { migrateOldConfig } from './schema/oldConfig';
 import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);

@@ -1,4 +1,4 @@
-import { RoomType } from "../webSocket";
+import type { RoomType } from "../webSocket";
 import { FullPlayerlistEventType } from "@shared/socketioTypes";
 
 

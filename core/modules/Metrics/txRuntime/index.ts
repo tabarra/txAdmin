@@ -23,7 +23,7 @@ const jweHeader = {
     alg: 'RSA-OAEP-256',
     enc: 'A256GCM',
     kid: '2023-05-21_stats'
-};
+} satisfies jose.CompactJWEHeaderParameters;
 
 /**
  * Responsible for collecting server runtime statistics
