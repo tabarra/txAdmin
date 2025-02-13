@@ -252,4 +252,10 @@
         color: transparent !important;
         text-shadow: 0 0 5px rgba(235, 235, 235, 0.5) !important;
     }
+
+    /* Attempts to break line without breaking words, but will break if needed */
+    .attempt-word-wrap {
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
 }

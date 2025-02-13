@@ -87,6 +87,7 @@ const DialogTitle = React.forwardRef<
     ref={ref}
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
+      'attempt-word-wrap', //TX CUSTOM - prevents overflow of long words
       className
     )}
     {...props}
