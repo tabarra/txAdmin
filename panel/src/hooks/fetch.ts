@@ -149,11 +149,6 @@ export const useBackendApi = <
     }, []);
 
     return async (opts: ApiCallOpts<RespType, ReqType>) => {
-        //Clearing any previous lingering toast
-        if (currentToastId.current) {
-            txToast.dismiss(currentToastId.current);
-            currentToastId.current = undefined;
-        }
         //The abort controller is not aborted, just forgotten
         abortController.current = new AbortController();
 
@@ -161,7 +156,12 @@ export const useBackendApi = <
         let fetchUrl = hookOpts.path;
         if (opts.pathParams) {
             for (const [key, val] of Object.entries(opts.pathParams)) {
-                fetchUrl = fetchUrl.replace(`/:${key}/`, `/${val.toString()}/`);
+                const pattern = new RegExp(`/:${key}(/|$)`);
+                const replaced = fetchUrl.replace(pattern, `/${val}$1`);
+                if (replaced === fetchUrl) {
+                    throw new Error(`[useBackendApi] pathParam '${key}' not found in path '${hookOpts.path}'`);
+                }
+                fetchUrl = replaced;
             }
         }
         if (opts.queryParams) {
@@ -191,13 +191,16 @@ export const useBackendApi = <
             }
         }
 
-        //Setting up new toast
+        //Setting up new toast or clear any previous lingering toast
         if (opts.toastId && opts.toastLoadingMessage) {
             throw new Error(`[useBackendApi] toastId and toastLoadingMessage are mutually exclusive.`);
         } else if (opts.toastLoadingMessage) {
             currentToastId.current = txToast.loading(opts.toastLoadingMessage);
         } else if (opts.toastId) {
             currentToastId.current = opts.toastId;
+        } else if (currentToastId.current) {
+            txToast.dismiss(currentToastId.current);
+            currentToastId.current = undefined;
         }
 
         //Starting request timeout
@@ -223,7 +226,7 @@ export const useBackendApi = <
                 throw new BackendApiError('API Error', data.error);
             }
 
-            //Auto handler for GenericApiOkResp genericHandler
+            //Auto handler for GenericApiErrorResp & GenericApiOkResp if genericHandler is set
             if (opts.genericHandler && currentToastId.current) {
                 if ('error' in data) {
                     txToast.error({
