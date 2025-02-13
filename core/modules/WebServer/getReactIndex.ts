@@ -154,12 +154,12 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //Setting the theme class from the cookie
     const themeCookie = ctx.cookies.get('txAdmin-theme');
-    if(themeCookie){
-        if(tmpDefaultThemes.includes(themeCookie)){
+    if (themeCookie) {
+        if (tmpDefaultThemes.includes(themeCookie)) {
             replacers.htmlClasses = themeCookie;
         } else {
             const selectedCustomTheme = tmpCustomThemes.find((theme) => theme.name === themeCookie);
-            if(!selectedCustomTheme){
+            if (!selectedCustomTheme) {
                 replacers.htmlClasses = tmpDefaultTheme;
             } else {
                 const lightDarkSelector = selectedCustomTheme.isDark ? 'dark' : 'light';
@@ -179,7 +179,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //If in prod mode and NUI, replace the entry point with the local one
     //This is required because of how badly the WebPipe handles "large" files
-    if (!txDevEnv.ENABLED){
+    if (!txDevEnv.ENABLED) {
         const base = ctx.txVars.isWebInterface ? `./` : `nui://monitor/panel/`;
         htmlOut = htmlOut.replace(/src="\.\/index-(\w+)\.js"/, `src="${base}index-$1.js"`);
         htmlOut = htmlOut.replace(/href="\.\/index-(\w+)\.css"/, `href="${base}index-$1.css"`);

@@ -300,6 +300,7 @@ if (!paramsSchemaRes.success || !bodySchemaRes.success) {
 - [ ] create a global (or console?) `emsg(e: unknown)` that gets the message from an Error, and returns its message
     - replace all `(error as Error).message` and `(error as any).message`
 - [ ] include `list-dependencies.js` as part of the test workflow
+    - https://bun.sh/docs/api/transpiler#scan
     - improve to read the parent package deps
     - exit 1 on error
     - detect circular imports
@@ -310,6 +311,7 @@ if (!paramsSchemaRes.success || !bodySchemaRes.success) {
 - [ ] ctrl+f doesn't work in the player modal anymore, if on the player or history pages
     - criar um estado "any modal open" pra desabilitar todos hotkeys das páginas?
 - [ ] add support for `sv_prometheusBasicAuthUser` & `sv_prometheusBasicAuthPassword`
+- [ ] update tailwind
 
 ## Refactor: Formatting + Linting
 - [ ] fix the eslint config + tailwind sort
@@ -360,6 +362,14 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - [ ] console nav button to jump to server start or errors? 
         - Or maybe filter just error lines (with margin)
         - Or maybe even detect all channels and allow you to filter them, show dropdown sorted by frequency
+
+- [ ] Create txCore.logger.system
+    - replaces the configChangelog.json
+    - implements server.cfg changelog
+    - maybe use jsonl, or maybe literally use SQLite
+    - kinda replaces txCore.logger.admin
+    - on txadmin.exe, maybe implement some type of file signature
+    - for sure create a logs page with filter by admin, but dont overcomplicate
 
 - [ ] add average session time tracking to Metrics.playerDrop
 - [ ] track resource download times?
@@ -740,6 +750,9 @@ cfxui colors:
 npx knip
 npm-upgrade
 bunx madge --warning --circular --ts-config="core/tsconfig.json" core/index.ts
+
+# react renderin visualizer
+<script src="https://unpkg.com/react-scan/dist/auto.global.js"></script>
 
 # other stuff
 con_miniconChannels script:monitor*

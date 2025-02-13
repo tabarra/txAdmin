@@ -73,7 +73,7 @@ export default class FxRunner {
             );
         } else {
             if(this.restartSpawnBackoffDelay){
-            console.verbose.debug('Server booted successfully, resetting spawn backoff delay.');
+                console.verbose.debug('Server booted successfully, resetting spawn backoff delay.');
             }
             this.restartSpawnBackoffDelay = 0;
         }
