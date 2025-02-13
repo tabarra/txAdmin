@@ -80,10 +80,15 @@ Event Data: this event has no data.
 At the moment, this is only used to signal the txAdmin in-game Menu if the configured language has changed, and can be used to easily test custom language files without requiring a server restart. 
 
 ## txAdmin:events:healedPlayer (v4.8)
+This event was deprecated on v8.0, and soon will stop being triggered.  
+Please use `txAdmin:events:playerHealed` instead.
+
+## txAdmin:events:playerHealed (v8.0)
 Broadcasted when a heal event is triggered for a player/whole server.  
 This is most useful for servers running "ambulance job" or other resources that keep a player unconscious even after the health being restored to 100%.  
 Event Data:
-- `id`: The ID of the healed player, or `-1` if the entire server was healed.
+- `target`: The ID of the healed player, or `-1` if the entire server was healed.
+- `author`: The name of the admin that triggered the heal.
 
 ## txAdmin:events:announcement (v4.8)
 Broadcasted when an announcement is made using txAdmin.  
@@ -121,10 +126,15 @@ Event Data:
 - `revokedBy`: The name of the admin that revoked the action.
 
 ## txAdmin:events:skippedNextScheduledRestart (v5.2)
+This event was deprecated on v8.0, and soon will stop being triggered.  
+Please use `txAdmin:events:scheduledRestartSkipped` instead.
+
+## txAdmin:events:scheduledRestartSkipped (v8.0)
 Broadcasted when an admin skips the next scheduled restart.  
 Event Data:
 - `secondsRemaining`: The number of seconds before the previously scheduled restart.  
 - `temporary`: If it was a temporary scheduled restart or one configured in the settings page.
+- `author`: The name of the admin that skipped the restart.
 
 ## txAdmin:events:whitelistPlayer (v5.2)
 Broadcasted when a player is whitelisted, or has the whitelisted status revoked.  

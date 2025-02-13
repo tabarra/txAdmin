@@ -53,10 +53,14 @@ RegisterNetEvent('txsv:req:healEveryone', function()
   local allow = PlayerHasTxPermission(src, 'players.heal')
   TriggerEvent('txsv:logger:menuEvent', src, 'healAll', true)
   if allow then
+    TriggerClientEvent('txcl:heal', -1)
     -- For use with third party resources that handle players
     -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
-    TriggerEvent('txAdmin:events:healedPlayer', {id = -1})
-    TriggerClientEvent('txcl:heal', -1)
+    TriggerEvent('txAdmin:events:healedPlayer', {id = -1}) -- FIXME: deprecate
+    TriggerEvent('txAdmin:events:playerHealed', {
+      target = -1,
+      author = TX_ADMINS[tostring(src)].username,
+    })
   end
 end)
 
@@ -65,10 +69,14 @@ RegisterNetEvent('txsv:req:healMyself', function()
   local allow = PlayerHasTxPermission(src, 'players.heal')
   TriggerEvent('txsv:logger:menuEvent', src, 'healSelf', allow)
   if allow then
+    TriggerClientEvent('txcl:heal', src)
     -- For use with third party resources that handle players
     -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
-    TriggerEvent('txAdmin:events:healedPlayer', {id = src})
-    TriggerClientEvent('txcl:heal', src)
+    TriggerEvent('txAdmin:events:healedPlayer', {id = src}) -- FIXME: deprecate
+    TriggerEvent('txAdmin:events:playerHealed', {
+      target = src,
+      author = TX_ADMINS[tostring(src)].username,
+    })
   end
 end)
 
@@ -82,11 +90,14 @@ RegisterNetEvent('txsv:req:healPlayer', function(id)
   if allow then
     local ped = GetPlayerPed(id)
     if ped then
+      TriggerClientEvent('txcl:heal', id)
       -- For use with third party resources that handle players
       -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
-      -- TriggerEvent('txAdmin:healedPlayer', id)
-      TriggerEvent('txAdmin:events:healedPlayer', {id = id})
-      TriggerClientEvent('txcl:heal', id)
+      TriggerEvent('txAdmin:events:healedPlayer', {id = id}) -- FIXME: deprecate
+      TriggerEvent('txAdmin:events:playerHealed', {
+        target = id,
+        author = TX_ADMINS[tostring(src)].username,
+      })
     end
   end
   TriggerEvent('txsv:logger:menuEvent', src, 'healPlayer', allow, id)

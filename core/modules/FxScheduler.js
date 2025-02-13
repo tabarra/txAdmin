@@ -87,9 +87,10 @@ export default class FxScheduler {
      * Sets this.nextSkip.
      * Cancel scheduled button -> setNextSkip(true)
      * Enable scheduled button -> setNextSkip(false)
-     * @param {Boolean} enabled
+     * @param {boolean} enabled
+     * @param {string} author
      */
-    setNextSkip(enabled) {
+    setNextSkip(enabled, author) {
         if (enabled) {
             let prevMinuteFloorTs, temporary;
             if (this.nextTempSchedule) {
@@ -102,7 +103,14 @@ export default class FxScheduler {
                 this.nextSkip = this.calculatedNextRestartMinuteFloorTs;
             }
 
-            //Dispatch `txAdmin:events:skippedNextScheduledRestart`
+            //Dispatch `txAdmin:events:scheduledRestartSkipped`
+            txCore.fxRunner.sendEvent('scheduledRestartSkipped', {
+                secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
+                temporary,
+                author,
+            });
+
+            //FIXME: deprecate
             txCore.fxRunner.sendEvent('skippedNextScheduledRestart', {
                 secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
                 temporary
