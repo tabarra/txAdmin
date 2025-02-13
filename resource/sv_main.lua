@@ -96,21 +96,6 @@ local function txaPing(source, args)
 end
 
 
---- Kick all players
-local function txaKickAll(source, args)
-    if args[1] == nil then
-        args[1] = 'no reason provided'
-    else
-        args[1] = unDeQuote(args[1])
-    end
-    txPrint("Kicking all players: "..args[1])
-    for _, pid in pairs(GetPlayers()) do
-        DropPlayer(pid, '[txAdmin] ' .. args[1])
-    end
-    CancelEvent()
-end
-
-
 --- Get all resources/statuses and report back to txAdmin
 local function txaReportResources(source, args)
     --Prepare resources list
@@ -213,8 +198,25 @@ end
 
 --- Handler for player kicked event
 TX_EVENT_HANDLERS.playerKicked = function(eventData)
+    -- sanity check
+    if
+        type(eventData.target) ~= 'number'
+        or type(eventData.reason) ~= 'string'
+        or type(eventData.dropMessage) ~= 'string'
+    then
+        return txPrintError('[playerKicked] invalid eventData', eventData)
+    end
+
     Wait(0) -- give other resources a chance to read player data
-    DropPlayer(eventData.target, '[txAdmin] ' .. eventData.reason)
+    if eventData.target == -1 then
+        txPrint("Kicking everyone: "..eventData.reason)
+        for _, pid in pairs(GetPlayers()) do
+            DropPlayer(pid, '[txAdmin] ' .. eventData.dropMessage)
+        end
+    else
+        txPrint("Kicking: #"..eventData.target..": "..eventData.reason)
+        DropPlayer(eventData.target, '[txAdmin] ' .. eventData.dropMessage)
+    end
 end
 
 

@@ -33,10 +33,12 @@ end)
 
 ## txAdmin:events:playerKicked (v3.7)
 Broadcasted when a player is kicked using txAdmin.  
+Note: starting on v8.0, the `target` parameter might be `-1`, and `dropMessage` was introduced.
 Event Data:
-- `target`: The id of the player that was kicked.
+- `target`: The ID of the player that was kicked, or `-1` if kicking everyone.
 - `author`: The name of the admin.
 - `reason`: The reason of the kick.
+- `dropMessage`: The translated message the players will see when kicked.
 
 
 ## txAdmin:events:playerWarned (v3.7)

@@ -344,7 +344,7 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
 
     try {
         ctx.admin.logAction(`Kicked "${player.displayName}": ${kickReason}`);
-        const fullReason = txCore.translator.t(
+        const dropMessage = txCore.translator.t(
             'kick_messages.player',
             { reason: kickReason }
         );
@@ -353,7 +353,8 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
         txCore.fxRunner.sendEvent('playerKicked', {
             target: player.netid,
             author: ctx.admin.name,
-            reason: fullReason,
+            reason: kickReason,
+            dropMessage,
         });
 
         return { success: true };

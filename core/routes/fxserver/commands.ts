@@ -100,12 +100,18 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
     } else if (action == 'kick_all') {
         if (!ensurePermission(ctx, 'control.server')) return false;
         const kickReason = (parameter ?? '').trim() || txCore.translator.t('kick_messages.unknown_reason');
-        const fullReason = txCore.translator.t(
+        const dropMessage = txCore.translator.t(
             'kick_messages.everyone',
             { reason: kickReason }
         );
         ctx.admin.logAction(`Kicking all players: ${kickReason}`);
-        txCore.fxRunner.sendCommand('txaKickAll', [fullReason], ctx.admin.name);
+        // Dispatch `txAdmin:events:playerKicked`
+        txCore.fxRunner.sendEvent('playerKicked', {
+            target: -1,
+            author: ctx.admin.name,
+            reason: kickReason,
+            dropMessage,
+        });
         return ctx.send<ApiToastResp>({
             type: 'success',
             msg: 'Kick All command sent.',
