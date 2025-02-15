@@ -5,8 +5,12 @@ if not TX_SERVER_MODE then return end
 local function logError(x)
     txPrint("^1" .. x)
 end
-function unDeQuote(x)
-    local new, count = string.gsub(x, utf8.char(65282), '"')
+-- function unDeQuote(x)
+--     local new, count = string.gsub(x, utf8.char(0xFF02), '"')
+--     return new
+-- end
+function replaceSemicolon(x)
+    local new, count = string.gsub(x, utf8.char(0x037E), ';')
     return new
 end
 
@@ -162,7 +166,23 @@ local cvHideAnnouncement = GetConvarBool('txAdmin-hideDefaultAnnouncement')
 local cvHideDirectMessage = GetConvarBool('txAdmin-hideDefaultDirectMessage')
 local cvHideWarning = GetConvarBool('txAdmin-hideDefaultWarning')
 local cvHideScheduledRestartWarning = GetConvarBool('txAdmin-hideDefaultScheduledRestartWarning')
-TX_EVENT_HANDLERS = {}
+-- Adding all known events to the list so txaEvent can do whitelist checking
+TX_EVENT_HANDLERS = {
+    -- Handled by another file
+    adminsUpdated = false, -- sv_admins.lua
+    configChanged = false, -- sv_ctx.lua
+
+    -- Known NO-OP
+    actionRevoked = false,
+    adminAuth = false,
+    healedPlayer = false,
+    playerHealed = false,
+    playerWhitelisted = false,
+    skippedNextScheduledRestart = false,
+    whitelistPlayer = false,
+    whitelistPreApproval = false,
+    whitelistRequest = false,
+}
 
 --- Handler for announcement events
 --- Broadcast admin message to all players
@@ -198,6 +218,8 @@ end
 
 --- Handler for player kicked event
 TX_EVENT_HANDLERS.playerKicked = function(eventData)
+    Wait(0) -- give other resources a chance to read player data
+
     -- sanity check
     if
         type(eventData.target) ~= 'number'
@@ -207,7 +229,7 @@ TX_EVENT_HANDLERS.playerKicked = function(eventData)
         return txPrintError('[playerKicked] invalid eventData', eventData)
     end
 
-    Wait(0) -- give other resources a chance to read player data
+    -- kicking
     if eventData.target == -1 then
         txPrint("Kicking everyone: "..eventData.reason)
         for _, pid in pairs(GetPlayers()) do
@@ -230,7 +252,7 @@ TX_EVENT_HANDLERS.playerWarned = function(eventData, isWarningNew)
 
     if not DoesPlayerExist(eventData.targetNetId) then
         txPrint(string.format(
-            'handleWarnEvent: ignoring warning for disconnected player (#%s) %s',
+            '[handleWarnEvent] ignoring warning for disconnected player (#%s) %s',
             eventData.targetNetId,
             eventData.targetName
         ))
@@ -295,7 +317,7 @@ TX_EVENT_HANDLERS.playerBanned = function(eventData)
 
                 for _, playerIdentifier in pairs(identifiers) do
                     if searchIdentifier == playerIdentifier then
-                        txPrint("handleBanEvent: Kicking #"..playerID..": "..eventData.reason)
+                        txPrint("[handleBanEvent] Kicking #"..playerID..": "..eventData.reason)
                         kickCount = kickCount + 1
                         DropPlayer(playerID, '[txAdmin] ' .. eventData.kickMessage)
                         found = true
@@ -307,7 +329,7 @@ TX_EVENT_HANDLERS.playerBanned = function(eventData)
     end
 
     if kickCount == 0 then
-        txPrint("handleBanEvent: No players found to kick")
+        txPrint("[handleBanEvent] No players found to kick")
     end
 end
 
@@ -324,25 +346,45 @@ TX_EVENT_HANDLERS.serverShuttingDown = function(eventData)
 end
 
 
---- Command that receives all incoming tx events and dispatches 
+--- Command that receives all incoming tx events and dispatches
 --- it to the respective event handler
 local function txaEvent(source, args)
     -- sanity check
     if type(args[1]) ~= 'string' or type(args[2]) ~= 'string' then
-        return logError('Invalid arguments for txaEvent')
+        return txPrintError('[txaEvent] invalid argument types', type(args[1]), type(args[2]))
     end
+
     -- prevent execution from admins or resources
-    if source ~= 0 or GetInvokingResource() ~= nil then return end
+    if source ~= 0 then
+        return txPrintError('[txaEvent] unexpected source', source)
+    end
+    if GetInvokingResource() ~= nil then
+        return txPrintError('[txaEvent] unexpected invoking resource', GetInvokingResource())
+    end
 
     -- processing event
-    local eventName = unDeQuote(args[1])
-    local eventData = json.decode(unDeQuote(args[2]))
-    TriggerEvent('txAdmin:events:' .. eventName, eventData)
-
-    if TX_EVENT_HANDLERS[eventName] ~= nil then
-        return TX_EVENT_HANDLERS[eventName](eventData)
+    local eventName = args[1]
+    local eventHandler = TX_EVENT_HANDLERS[eventName]
+    if eventHandler == nil then
+        return txPrintError("[txaEvent] No event handler exists for \"" .. eventName .. "\" event")
     end
-    CancelEvent()
+    local eventData = json.decode(replaceSemicolon(args[2]))
+    if type(eventData) ~= 'table' then
+        return txPrintError('[txaEvent] invalid eventData', type(eventData))
+    end
+
+    -- print('~~~~~~~~~~~~~~~~~~~~~ txaEvent')
+    -- print('Name:', eventName)
+    -- print('Source:', json.encode(source))
+    -- print('Resource:', json.encode(GetInvokingResource()))
+    -- print('Data:', json.encode(eventData))
+    -- print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+    -- need to trigger the event first, call handler after
+    TriggerEvent('txAdmin:events:' .. eventName, eventData)
+    if eventHandler ~= false then
+        eventHandler(eventData)
+    end
 end
 
 
@@ -428,7 +470,6 @@ end
 
 -- All commands & handlers
 RegisterCommand("txaPing", txaPing, true)
-RegisterCommand("txaKickAll", txaKickAll, true)
 RegisterCommand("txaEvent", txaEvent, true)
 RegisterCommand("txaReportResources", txaReportResources, true)
 RegisterCommand("txaSetDebugMode", txaSetDebugMode, true)

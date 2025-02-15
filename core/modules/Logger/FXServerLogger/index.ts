@@ -102,7 +102,7 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log an informational message
      */
     public logInformational(msg: string) {
-        this.ingest(ConsoleLineEnum.MarkerInfo, `${msg} \n`);
+        this.ingest(ConsoleLineEnum.MarkerInfo, msg + '\n');
     }
 
 
@@ -119,7 +119,7 @@ export default class FXServerLogger extends LoggerBase {
         const multiline = getLogDivider(`[${pid}] FXServer Starting`);
         for (const line of multiline.split('\n')) {
             if (!line.length) break;
-            this.ingest(ConsoleLineEnum.MarkerInfo, `${line} \n`);
+            this.ingest(ConsoleLineEnum.MarkerInfo, line + '\n');
         }
     }
 
@@ -128,15 +128,19 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log an admin command
      */
     public logAdminCommand(author: string, cmd: string) {
-        this.ingest(ConsoleLineEnum.MarkerAdminCmd, `${cmd} \n`, author);
+        this.ingest(ConsoleLineEnum.MarkerAdminCmd, cmd + '\n', author);
     }
 
 
     /**
-     * Writes to the log a system command
+     * Writes to the log a system command.
      */
     public logSystemCommand(cmd: string) {
-        this.ingest(ConsoleLineEnum.MarkerSystemCmd, `${cmd} \n`);
+        // if (/^txaEvent \w+ /.test(cmd)) {
+        //     const [event, payload] = cmd.substring(9).split(' ', 2);
+        //     cmd = chalk.italic(`<broadcasting txAdmin:events:${event}>`);
+        // }
+        this.ingest(ConsoleLineEnum.MarkerSystemCmd, cmd + '\n');
     }
 
 

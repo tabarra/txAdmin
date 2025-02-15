@@ -8,7 +8,7 @@ import { validateFixServerConfig } from '@lib/fxserver/fxsConfigHelper';
 import { msToShortishDuration } from '@lib/misc';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 import { UpdateConfigKeySet } from '@modules/ConfigStore/utils';
-import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isValidChildProcess, mutableConvarConfigDependencies } from './utils';
+import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isValidChildProcess, mutableConvarConfigDependencies, stringifyConsoleArgs } from './utils';
 import ProcessManager, { ChildProcessStateInfo } from './ProcessManager';
 import handleFd3Messages from './handleFd3Messages';
 import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
@@ -66,13 +66,13 @@ export default class FxRunner {
      * @returns the new backoff delay in ms
      */
     public signalSpawnBackoffRequired(required: boolean) {
-        if(required) {
+        if (required) {
             this.restartSpawnBackoffDelay = Math.min(
                 this.restartSpawnBackoffDelay + 5_000,
                 45_000
             );
         } else {
-            if(this.restartSpawnBackoffDelay){
+            if (this.restartSpawnBackoffDelay) {
                 console.verbose.debug('Server booted successfully, resetting spawn backoff delay.');
             }
             this.restartSpawnBackoffDelay = 0;
@@ -234,8 +234,8 @@ export default class FxRunner {
             if (killError) return killError;
 
             //Give time for the OS to release the ports
-            
-            if(respawnDelay.isBackoff) {
+
+            if (respawnDelay.isBackoff) {
                 console.warn(`Restarting the fxserver with backoff delay of ${respawnDelay.ms}ms`);
             }
             this.isAwaitingRestartSpawnDelay = true;
@@ -380,29 +380,8 @@ export default class FxRunner {
             throw new Error('invalid cmdName string');
         }
 
-        // Sanitize and format the command and arguments
-        const sanitizeArgString = (x: string) => x.replaceAll(/"/g, '\uff02').replaceAll(/\n/g, ' ');
-        let rawInput = sanitizeArgString(cmdName);
-        for (const arg of cmdArgs) {
-            if (typeof arg === 'string') {
-                if (!arg.length) {
-                    rawInput += ' ""';
-                } else if (/^\w+$/.test(arg)) {
-                    rawInput += ` ${arg}`;
-                } else {
-                    rawInput += ` "${sanitizeArgString(arg)}"`;
-                }
-            } else if (typeof arg === 'object' && arg !== null) {
-                rawInput += ` "${sanitizeArgString(JSON.stringify(arg))}"`;
-            } else if (typeof arg === 'number' && Number.isInteger(arg)) {
-                //everything ends up as string anyways
-                rawInput += ` ${arg}`;
-            } else {
-                throw new Error('arg expected to be string or object');
-            }
-        }
-
         // Send the command to the server
+        const rawInput = `${cmdName} ${stringifyConsoleArgs(cmdArgs)}`;
         return this.sendRawCommand(rawInput, author);
     }
 

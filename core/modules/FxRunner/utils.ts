@@ -178,3 +178,45 @@ export type ValidChildProcess = ChildProcessWithoutNullStreams & {
         Readable | Writable | null | undefined, // extra
     ];
 };
+
+
+/**
+ * Sanitizes an argument for console input.
+ */
+export const sanitizeConsoleArgString = (arg: string) => {
+    if (typeof arg !== 'string') throw new Error('unexpected type');
+    return arg.replaceAll(/(?<!\\)"/g, '\"')
+        .replaceAll(/;/g, '\u037e')
+        .replaceAll(/\n/g, ' ');
+}
+
+
+/**
+ * Stringifies the command arguments for console output.  
+ * Arguments are wrapped in double quotes.
+ * Double quotes are replaced by unicode equivalent.
+ * Objects are JSON.stringified.  
+ *   
+ * NOTE: We expect the other side to know they have to parse non-string arguments.  
+ *   
+ * NOTE: Escaping double quotes is working, but escaping semicolon is bugged
+ * and doesn't happen when there is an odd number of escaped double quotes in the argument.
+ */
+export const stringifyConsoleArgs = (args: (string | number | object)[]) => {
+    const cleanArgs: string[] = [];
+    for (const arg of args) {
+        if (typeof arg === 'string') {
+            cleanArgs.push(sanitizeConsoleArgString(JSON.stringify(arg)));
+        } else if (typeof arg === 'number') {
+            cleanArgs.push(sanitizeConsoleArgString(JSON.stringify(arg.toString())));
+        } else if (typeof arg === 'object' && arg !== null) {
+            const json = JSON.stringify(arg);
+            const escaped = json.replaceAll(/"/g, '\\"');
+            cleanArgs.push(`"${sanitizeConsoleArgString(escaped)}"`);
+        } else {
+            throw new Error('arg expected to be string or object');
+        }
+    }
+
+    return cleanArgs.join(' ');
+}
