@@ -175,6 +175,7 @@ TX_EVENT_HANDLERS = {
     -- Known NO-OP
     actionRevoked = false,
     adminAuth = false,
+    consoleCommand = false,
     healedPlayer = false,
     playerHealed = false,
     playerWhitelisted = false,

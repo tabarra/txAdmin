@@ -136,6 +136,7 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log a system command.
      */
     public logSystemCommand(cmd: string) {
+        if(cmd.startsWith('txaEvent "consoleCommand"')) return;
         // if (/^txaEvent \w+ /.test(cmd)) {
         //     const [event, payload] = cmd.substring(9).split(' ', 2);
         //     cmd = chalk.italic(`<broadcasting txAdmin:events:${event}>`);

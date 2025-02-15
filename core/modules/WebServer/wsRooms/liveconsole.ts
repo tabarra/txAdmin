@@ -19,6 +19,11 @@ export default {
                 const sanitized = command.replaceAll(/\n/g, ' ');
                 admin.logCommand(sanitized);
                 txCore.fxRunner.sendRawCommand(sanitized, admin.name);
+                txCore.fxRunner.sendEvent('consoleCommand', {
+                    channel: 'txAdmin',
+                    command: sanitized,
+                    author: admin.name,
+                });
             }
         },
     },

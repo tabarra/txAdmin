@@ -176,6 +176,12 @@ Broadcasted when the txAdmin settings change in a way that could be relevant for
 Event Data: this event has no data.  
 At the moment, this is only used to signal the txAdmin in-game Menu if the configured language has changed, and can be used to easily test custom language files without requiring a server restart. 
 
+### txAdmin:events:consoleCommand
+Broadcasted whenever an admin sends a command through the Live Console.  
+Event Data:
+- `author`: The txAdmin username of the admin that sent the command.
+- `channel`: For now this will always be `txAdmin`, but in the future it might be `rcon` and `game` as well.
+- `command`: The command that was executed.
 
 ## Deprecated Events
 
