@@ -32,7 +32,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
     if (!txCore.fxRunner.child?.isAlive) {
         return ctx.send<ApiToastResp>({
             type: 'error',
-            msg: 'Cannot execute this action with the server offline.',
+            msg: 'The server is not running.',
         });
     }
 

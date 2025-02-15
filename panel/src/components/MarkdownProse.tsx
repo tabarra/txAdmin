@@ -9,7 +9,7 @@ import TxAnchor from './TxAnchor';
 const customComponents: Components = {
     // blockquote: ({ children }) => <blockquote className="border-l-4 border-pink-600 pl-2">{children}</blockquote>,
     code: ({ children }) => <InlineCode className="not-prose">{children}</InlineCode>,
-    pre: ({ children }) => <pre className="not-prose bg-muted p-2 rounded">{children}</pre>,
+    pre: ({ children }) => <pre className="not-prose p-2 rounded bg-muted [.prose-toast_&]:bg-inherit [.prose-toast_&>*]:bg-inherit [.prose-toast_&]:px-0">{children}</pre>,
     a: ({ children, href }) => <TxAnchor href={href!}>{children}</TxAnchor>,
 }
 

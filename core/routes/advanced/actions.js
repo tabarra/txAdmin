@@ -67,9 +67,11 @@ export default async function AdvancedActions(ctx) {
     } else if (action == 'updateMutableConvars') {
         txCore.fxRunner.updateMutableConvars();
         return ctx.send({ refresh: true });
-    } else if (action == 'reauth') {
-        // txaEvent "adminsUpdated" "[1,5,7]"
-        return txCore.fxRunner.sendEvent('adminsUpdated', [1, 5, 7]);
+    } else if (action == 'reauthLast10Players') {
+        // force refresh the admin status of the last 10 players to join
+        const lastPlayers = txCore.fxPlayerlist.getPlayerList().map((p) => p.netid).slice(-10);
+        txCore.fxRunner.sendEvent('adminsUpdated', lastPlayers);
+        return ctx.send({ type: 'success', message: `refreshed: ${JSON.stringify(lastPlayers)}` });
     } else if (action == 'getLoggerErrors') {
         const outData = {
             admin: txCore.logger.admin.lrLastError,
