@@ -50,23 +50,6 @@
 
                     <!-- General Tab -->
                     <div class="tab-pane fade active show" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
-                        <!-- Reset FXServer -->
-                        <div class="row text-center pb-2">
-                            <div class="col-lg-9 text-lg-left">
-                                <h5>Reset FXServer</h5>
-                                In the FXServer tab you can change the server data path, but if you want to use
-                                the Deployer again, you will need to use this option. <br>
-                                None of your files or databases will be deleted by this action.
-                            </div>
-                            <div class="col-lg-3 text-lg-right">
-                                <button class="btn btn-sm btn-outline-danger" type="button" 
-                                id="general-btnResetFXServer" <%= disableActions %>>
-                                    Reset FXServer
-                                </button>
-                            </div>
-                        </div>
-                        <hr class="m-1">
-
                         <!-- Backup Database -->
                         <div class="row text-center pt-2">
                             <div class="col-lg-9 text-lg-left">
@@ -226,39 +209,8 @@
     })();
     (()=>{
         const generalBtnBackupDatabase = document.getElementById('general-btnBackupDatabase');
-        const generalBtnResetFXServer = document.getElementById('general-btnResetFXServer');
-
         generalBtnBackupDatabase.onclick = async () => {
             window.location = 'masterActions/backupDatabase';
-        }
-
-        generalBtnResetFXServer.onclick = async () => {
-            const confirmOptions = {content: `Are you sure you would like to Reset FXServer settings?`};
-            if(!await txAdminConfirm(confirmOptions)){
-                return;
-            }
-
-            const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-            txAdminAPI({
-                type: "POST",
-                url: `/masterActions/reset_fxserver`,
-                data: {},
-                timeout: REQ_TIMEOUT_LONG,
-                success: function (data) {
-                    if (checkApiLogoutRefresh(data)) return;
-                    if(data.success == true){
-                        navigateParentTo('/server/setup');
-                        return;
-                    }else{
-                        updateMarkdownNotification(data, notify);
-                    }
-                },
-                error: function (xmlhttprequest, textstatus, message) {
-                    notify.update('progress', 0);
-                    notify.update('type', 'danger');
-                    notify.update('message', message);
-                }
-            });
         }
     })();
 

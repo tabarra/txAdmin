@@ -57,10 +57,10 @@ const cleanPath = (x: string) => slash(path.normalize(x));
 
 
 /**
- * Returns the output page containing the live console
+ * Processes a settings save request
  * NOTE: the UI trims all strings
  */
-export default async function SettingsPage(ctx: AuthedCtx) {
+export default async function SaveSettingsConfigs(ctx: AuthedCtx) {
     const sendTypedResp = (data: SaveConfigsResp) => ctx.send(data);
 
     //Check permissions
@@ -112,7 +112,10 @@ export default async function SettingsPage(ctx: AuthedCtx) {
 
     //Save the changes
     try {
-        txCore.configStore.saveConfigs(ctx.request.body, ctx.admin.name);
+        const changes = txCore.configStore.saveConfigs(ctx.request.body, ctx.admin.name);
+        if(changes.hasMatch(['server.dataPath', 'server.cfgPath'])) {
+            txCore.webServer.webSocket.pushRefresh('status');
+        }
         return sendTypedResp({
             type: 'success',
             msg: `${cardName} Settings saved!`,

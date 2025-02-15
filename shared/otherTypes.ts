@@ -6,6 +6,7 @@ export type { ConfigChangelogEntry } from "@core/modules/ConfigStore/changelog";
 export type { GetConfigsResp } from "@core/routes/settings/getConfigs";
 export type { SaveConfigsReq, SaveConfigsResp } from "@core/routes/settings/saveConfigs";
 export type { BanTemplatesDataType, BanDurationType } from "@core/modules/ConfigStore/schema/banlist";
+export type { ResetServerDataPathResp } from "@core/routes/settings/resetServerDataPath";
 export type { GetBanTemplatesSuccessResp } from "@core/routes/banTemplates/getBanTemplates";
 export type { SaveBanTemplatesResp, SaveBanTemplatesReq } from "@core/routes/banTemplates/saveBanTemplates";
 

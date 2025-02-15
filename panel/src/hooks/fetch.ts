@@ -128,6 +128,7 @@ type ApiCallOpts<RespType, ReqType> = {
     }
     success?: (data: RespType, toastId?: string) => void;
     error?: (message: string, toastId?: string) => void;
+    finally?: () => void;
 }
 
 export const useBackendApi = <
@@ -279,6 +280,14 @@ export const useBackendApi = <
             } else {
                 console.error('[ERROR]', apiCallDesc, errorMessage);
                 handleError('Request Error', errorMessage);
+            }
+        } finally {
+            if (opts.finally) {
+                try {
+                    opts.finally();
+                } catch (error) {
+                    console.log('[FINALLY CB ERROR]', apiCallDesc, error);
+                }
             }
         }
     }

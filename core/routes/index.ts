@@ -32,8 +32,9 @@ export { default as deployer_actions } from './deployer/actions';
 //FIXME join bantemplates with settings
 export { default as settings_getConfigs } from './settings/getConfigs';
 export { default as settings_saveConfigs } from './settings/saveConfigs';
-export { default as settings_getBanTemplates } from './banTemplates/getBanTemplates.js';
-export { default as settings_saveBanTemplates } from './banTemplates/saveBanTemplates.js';
+export { default as settings_getBanTemplates } from './banTemplates/getBanTemplates';
+export { default as settings_saveBanTemplates } from './banTemplates/saveBanTemplates';
+export { default as settings_resetServerDataPath } from './settings/resetServerDataPath';
 
 export { default as masterActions_page } from './masterActions/page';
 export { default as masterActions_getBackup } from './masterActions/getBackup';

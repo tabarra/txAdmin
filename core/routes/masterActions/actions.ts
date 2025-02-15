@@ -28,9 +28,7 @@ export default async function MasterActionsAction(ctx: AuthedCtx) {
     }
 
     //Delegate to the specific action functions
-    if (action == 'reset_fxserver') {
-        return await handleResetFXServer(ctx);
-    } else if (action == 'cleanDatabase') {
+    if (action == 'cleanDatabase') {
         return handleCleanDatabase(ctx);
     } else if (action == 'revokeWhitelists') {
         return handleRevokeWhitelists(ctx);
@@ -38,46 +36,6 @@ export default async function MasterActionsAction(ctx: AuthedCtx) {
         return ctx.send({ error: 'Unknown settings action.' });
     }
 };
-
-
-/**
- * Handle FXServer settings reset nad resurn to setup
- */
-async function handleResetFXServer(ctx: AuthedCtx) {
-    //Kill the server async
-    if (!txCore.fxRunner.isIdle) {
-        ctx.admin.logCommand('STOP SERVER');
-        txCore.fxRunner.killServer('new server set up', ctx.admin.name, false).catch((e) => { });
-    }
-
-    //Making sure the deployer is not running
-    txManager.deployer = null;
-
-    //Preparing & saving config
-    try {
-        txCore.configStore.saveConfigs({
-            server: {
-                dataPath: SYM_RESET_CONFIG,
-                cfgPath: SYM_RESET_CONFIG,
-            }
-        }, ctx.admin.name);
-    } catch (error) {
-        console.warn(`[${ctx.admin.name}] Error resetting FXServer settings.`);
-        console.verbose.dir(error);
-        return ctx.send({
-            type: 'danger',
-            markdown: true,
-            message: `**Error saving the configuration file:**\n${(error as Error).message}`
-        });
-    }
-
-    //technically not required, but faster than fxRunner.killServer()
-    txCore.webServer.webSocket.pushRefresh('status');
-
-    //Sending output
-    ctx.admin.logAction('Resetting fxRunner settings.');
-    return ctx.send({ success: true });
-}
 
 
 /**

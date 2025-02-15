@@ -4,7 +4,7 @@ import SwitchText from '@/components/SwitchText'
 import InlineCode from '@/components/InlineCode'
 import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
 import React, { useState, useEffect, useMemo, useRef } from "react"
-import { PlusIcon, TrashIcon, XIcon } from "lucide-react"
+import { PlusIcon, TrashIcon, Undo2Icon, XIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TimeInputDialog } from "@/components/TimeInputDialog"
 import TxAnchor from "@/components/TxAnchor"
@@ -13,6 +13,11 @@ import { processConfigStates, SettingsCardProps, useConfAccessor } from "../util
 import SettingsCardShell from "../SettingsCardShell"
 import { cn } from "@/lib/utils"
 import { txToast } from "@/components/TxToaster"
+import { useBackendApi } from "@/hooks/fetch"
+import { useAdminPerms } from "@/hooks/auth"
+import { useLocation } from "wouter"
+import type { ResetServerDataPathResp } from "@shared/otherTypes"
+import { useOpenConfirmDialog } from "@/hooks/dialogs"
 
 
 // Remove duplicates and sort times
@@ -182,6 +187,10 @@ function TimeZoneWarning() {
 
 export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardProps) {
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const [isResettingServerData, setIsResettingServerData] = useState(false);
+    const { hasPerm } = useAdminPerms();
+    const setLocation = useLocation()[1];
+    const openConfirmDialog = useOpenConfirmDialog();
 
     //Config accessors
     const conf = useConfAccessor(pageCtx.apiData);
@@ -244,7 +253,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
             return txToast.error({
                 title: 'The Server Data Folder is required.',
                 md: true,
-                msg: 'If you want to return to the Setup page, go to:\n `System > Master Actions > Reset FXServer`',
+                msg: 'If you want to return to the Setup page, click on the "Reset" button instead.',
             });
         }
         if (localConfigs.server.cfgPath !== undefined && !localConfigs.server.cfgPath) {
@@ -296,6 +305,40 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
         []
     );
 
+    //Reset server server data button
+    const resetServerDataApi = useBackendApi<ResetServerDataPathResp>({
+        method: 'POST',
+        path: `/settings/resetServerDataPath`,
+        throwGenericErrors: true,
+    });
+    const handleResetServerData = () => {
+        openConfirmDialog({
+            title: 'Reset Server Data Path',
+            message: (<>
+                Are you sure you want to reset the server data path? <br />
+                <br />
+                <strong>This will not delete any resource files or database</strong>, but just reset the txAdmin configuration, allowing you to go back to the Setup page. <br />
+                If you want, you can set the path back to the current value later. <br />
+                <br />
+                <strong className="text-warning-inline">Warning:</strong> take note of the current path before proceeding, so you can set it back later if you need to. Current path:
+                <Input value={dataPath.initialValue} className="mt-2" readOnly />
+            </>),
+            onConfirm: () => {
+                setIsResettingServerData(true);
+                resetServerDataApi({
+                    toastLoadingMessage: 'Resetting server data path...',
+                    success: (data, toastId) => {
+                        if (data.type === 'success') {
+                            setLocation('/server/setup');
+                        }
+                    },
+                    finally: () => setIsResettingServerData(false),
+                });
+            },
+        });
+
+    }
+
 
     return (
         <SettingsCardShell
@@ -308,18 +351,28 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
             }}
         >
             <SettingItem label="Server Data Folder" htmlFor={dataPath.eid} required>
-                {/* FIXME: remover required pra que seja mais fácil resetar fxserver? */}
-                <Input
-                    id={dataPath.eid}
-                    ref={dataPathRef}
-                    defaultValue={dataPath.initialValue}
-                    placeholder={serverDataPlaceholder}
-                    onChange={processChanges}
-                    disabled={pageCtx.isReadOnly}
-                    required
-                />
+                <div className="flex gap-2">
+                    <Input
+                        id={dataPath.eid}
+                        ref={dataPathRef}
+                        defaultValue={dataPath.initialValue}
+                        placeholder={serverDataPlaceholder}
+                        onInput={processChanges}
+                        disabled={pageCtx.isReadOnly}
+                        required
+                    />
+                    <Button
+                        className="grow border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                        variant="outline"
+                        disabled={pageCtx.isReadOnly || !hasPerm('all_permissions') || isResettingServerData}
+                        onClick={handleResetServerData}
+                    >
+                        <Undo2Icon className="mr-2 h-4 w-4" /> Reset
+                    </Button>
+                </div>
                 <SettingItemDesc>
-                    The full path of the folder that <strong>contains</strong> the <InlineCode>resources</InlineCode> folder, usually it's the same place that contains your <InlineCode>server.cfg</InlineCode>.
+                    The full path of the folder that <strong>contains</strong> the <InlineCode>resources</InlineCode> folder, usually it's the same place that contains your <InlineCode>server.cfg</InlineCode>. <br />
+                    Resetting this value will allow you to go back to the Setup page, without deleting any files.
                 </SettingItemDesc>
             </SettingItem>
             <SettingItem label="Restart Schedule" showOptional>

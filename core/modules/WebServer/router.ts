@@ -63,6 +63,7 @@ export default () => {
     router.post('/settings/configs/:card', apiAuthMw, routes.settings_saveConfigs);
     router.get('/settings/banTemplates', apiAuthMw, routes.settings_getBanTemplates);
     router.post('/settings/banTemplates', apiAuthMw, routes.settings_saveBanTemplates);
+    router.post('/settings/resetServerDataPath', apiAuthMw, routes.settings_resetServerDataPath);
 
     //Master Actions
     router.get('/masterActions/backupDatabase', webAuthMw, routes.masterActions_getBackup);
