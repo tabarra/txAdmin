@@ -20,6 +20,7 @@
     "@fontsource-variable/inter": "^5.1.0",
     "@fontsource-variable/jetbrains-mono": "^5.1.0",
     "@formkit/auto-animate": "^0.8.2",
+    "@monaco-editor/react": "^4.6.0",
     "@nivo/bar": "^0.87.0",
     "@nivo/pie": "^0.87.0",
     "@radix-ui/react-alert-dialog": "^1.1.4",

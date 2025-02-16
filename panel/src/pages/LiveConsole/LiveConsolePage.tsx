@@ -190,7 +190,7 @@ export default function LiveConsolePage() {
 
             term.attachCustomKeyEventHandler((e: KeyboardEvent) => {
                 // Some are handled by the live console element
-                if (e.code === 'F5') {
+                if (e.code === 'F5' && !e.ctrlKey) {
                     return false;
                 } else if (e.code === 'Escape') {
                     return false;
@@ -235,7 +235,7 @@ export default function LiveConsolePage() {
     }, [term]);
 
     useEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.code === 'F5') {
+        if (e.code === 'F5' && !e.ctrlKey) {
             if (isConnected) {
                 refreshPage();
                 e.preventDefault();

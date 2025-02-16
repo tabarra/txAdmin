@@ -22,6 +22,9 @@ Legend:
     - [ ] reported cases of crash reason too big without word break causing page to scroll horizontal 
 - [!] radix select/dropdown inside dialog
     - test the settings one as well as the ban form inside the player modal
+- [ ] the console lines are shorter on first full render (ctrl+f5) and on f5 it fixes itself
+    - didn't happen in v7.2.2, not sure about v7.3.2
+    - doesn't seem to be neither fontSize nor lineHeight
 
 ## Refactor + DX
 - [x] deprecate fxRunner.srvCmd
@@ -354,7 +357,7 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - 💡 E se na main window do tx tivesse um <Command>, então vc pode só `F1 > tp 123 > enter` e seria tão rápido quanto usar o chat?
     - 💡 Se abrir o menu via /tx e não for redm, avisar que é melhor fazer bind
 
-- [ ] live console 
+- [ ] live console
     - [ ] if socket connects but no data received, add a warning to the console and wipe it after first write
     - [ ] persistent cls via ts offsets
     - [ ] improve the bufferization to allow just loading most recent "block" and loading prev blocks via button
