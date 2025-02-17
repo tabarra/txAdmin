@@ -44,7 +44,7 @@ function CrashTypeRow({ datum, isLast, isOdd }: CrashTypeRowProps) {
             <td className="min-w-[4ch] px-2 py-1 border-r text-right" title="Crash count">
                 {datum.cntStr ?? '--'}
             </td>
-            <td className="px-2 py-1 break-words line-clamp-4">
+            <td className="px-2 py-1 attempt-word-wrap line-clamp-4">
                 {dataCellNode}
             </td>
         </tr>

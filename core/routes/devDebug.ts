@@ -44,7 +44,7 @@ export const post = async (ctx: AuthedCtx) => {
 
     if (scope === 'event') {
         try {
-            if(!txCore.fxRunner.currentMutex){
+            if(!txCore.fxRunner.child?.isAlive){
                 return ctx.send({ error: 'server not ready' });
             }
             if (ctx.request.body.id === null) {
@@ -60,7 +60,7 @@ export const post = async (ctx: AuthedCtx) => {
             if (ctx.request.body.event === 'playerJoining') {
                 playerJoinCounter++;
             }
-            txCore.fxPlayerlist.handleServerEvents(ctx.request.body, txCore.fxRunner.currentMutex);
+            txCore.fxPlayerlist.handleServerEvents(ctx.request.body, txCore.fxRunner.child.mutex);
             return ctx.send({ success: true });
         } catch (error) {
             console.dir(error);

@@ -1,6 +1,6 @@
 import { useBackendApi } from "@/hooks/fetch";
 import type { PlayerDropsApiResp, PlayerDropsApiSuccessResp } from "@shared/otherTypes";
-import useSWRImmutable from "swr/immutable";
+import useSWR from "swr";
 import DrilldownCard, { DrilldownCardLoading } from "./DrilldownCard";
 import TimelineCard from "./TimelineCard";
 import { useState } from "react";
@@ -51,13 +51,15 @@ export default function PlayerDropsPage() {
         method: 'GET',
         path: `/playerDropsData`,
     });
-    const swrDataApiResp = useSWRImmutable(`/playerDropsData?${queryKey}`, async () => {
+    const swrDataApiResp = useSWR(`/playerDropsData?${queryKey}`, async () => {
         const data = await playerDropsApi({ queryParams });
         if (!data) throw new Error('empty_response');
         if ('fail_reason' in data) {
             throw new Error(data.fail_reason);
         }
         return data as PlayerDropsApiSuccessResp;
+    },{
+        revalidateOnFocus: false,
     });
     const displayLodSetter = (lod: DisplayLodType) => {
         setDisplayLod(lod);

@@ -1,34 +1,16 @@
 import { cn, stripIndent } from '@/lib/utils';
-import { openExternalLink } from '@/lib/navigation';
 import Markdown, { Components } from 'react-markdown';
 import InlineCode from './InlineCode';
-import { ExternalLinkIcon } from 'lucide-react';
-import { useLocation } from 'wouter';
+import TxAnchor from './TxAnchor';
 
-function CustomAnchor({ href, children }: { href?: string, children: React.ReactNode }) {
-    const setLocation = useLocation()[1];
-    const isExternal = href?.startsWith('http');
-    const onClick = () => {
-        if (!href) return;
-        if (isExternal) {
-            openExternalLink(href);
-        } else {
-            setLocation(href ?? '/');
-        }
-    }
-    return <button onClick={onClick} className="text-accent no-underline hover:underline m-0">
-        {children}
-        {isExternal && <ExternalLinkIcon className="inline ml-1 mb-1 h-5 [.prose-sm_&]:h-4 [.prose-sm_&]:ml-0" />}
-    </button>
-}
 
 // NOTE: we might not even need this
 // https://tailwindcss.com/docs/typography-plugin#advanced-topics
 const customComponents: Components = {
     // blockquote: ({ children }) => <blockquote className="border-l-4 border-pink-600 pl-2">{children}</blockquote>,
     code: ({ children }) => <InlineCode className="not-prose">{children}</InlineCode>,
-    pre: ({ children }) => <pre className="not-prose bg-muted p-2 rounded">{children}</pre>,
-    a: ({ children, href }) => <CustomAnchor href={href}>{children}</CustomAnchor>,
+    pre: ({ children }) => <pre className="not-prose p-2 rounded bg-muted [.prose-toast_&]:bg-inherit [.prose-toast_&>*]:bg-inherit [.prose-toast_&]:px-0">{children}</pre>,
+    a: ({ children, href }) => <TxAnchor href={href!}>{children}</TxAnchor>,
 }
 
 
@@ -36,15 +18,17 @@ type MarkdownProseProps = {
     md: string;
     isSmall?: boolean;
     isTitle?: boolean;
+    isToast?: boolean;
 };
-export default function MarkdownProse({ md, isSmall, isTitle }: MarkdownProseProps) {
+export default function MarkdownProse({ md, isSmall, isTitle, isToast }: MarkdownProseProps) {
     return (
         <Markdown
             components={customComponents}
             className={cn(
-                'prose prose-zinc dark:prose-invert',
+                'prose dark:prose-invert prose-zinc',
                 isSmall && 'prose-sm',
                 isTitle && 'tracking-wide',
+                isToast && 'prose-toast',
             )}
         >
             {stripIndent(md.replace(/\n/g, '  \n'))}

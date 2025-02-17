@@ -11,7 +11,7 @@ export default async function WhitelistPage(ctx: AuthedCtx) {
     const respData = {
         headerTitle: 'Whitelist',
         hasWhitelistPermission: ctx.admin.hasPermission('players.whitelist'),
-        currentWhitelistMode: txConfig.playerDatabase.whitelistMode,
+        currentWhitelistMode: txConfig.whitelist.mode,
     };
     return ctx.utils.render('main/whitelist', respData);
 };

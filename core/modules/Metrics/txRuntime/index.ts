@@ -23,7 +23,7 @@ const jweHeader = {
     alg: 'RSA-OAEP-256',
     enc: 'A256GCM',
     kid: '2023-05-21_stats'
-};
+} satisfies jose.CompactJWEHeaderParameters;
 
 /**
  * Responsible for collecting server runtime statistics
@@ -150,8 +150,6 @@ export default class TxRuntimeMetrics {
         //Generate HB data
         try {
             const hostData = getHostStaticData();
-            const playerDbConfig = txConfig.playerDatabase;
-            const globalConfig = txConfig.global;
 
             //Prepare stats data
             const statsData = {
@@ -168,13 +166,13 @@ export default class TxRuntimeMetrics {
                 botCommands: txConfig.discordBot.enabled
                     ? this.botCommands
                     : false,
-                menuCommands: globalConfig.menuEnabled
+                menuCommands: txConfig.gameFeatures.menuEnabled
                     ? this.menuCommands
                     : false,
-                banCheckTime: playerDbConfig.onJoinCheckBan
+                banCheckTime: txConfig.banlist.enabled
                     ? this.banCheckTime
                     : false,
-                whitelistCheckTime: playerDbConfig.whitelistMode && playerDbConfig.whitelistMode !== 'disabled'
+                whitelistCheckTime: txConfig.whitelist.mode !== 'disabled'
                     ? this.whitelistCheckTime
                     : false,
                 playersTableSearchTime: this.playersTableSearchTime,
@@ -182,16 +180,16 @@ export default class TxRuntimeMetrics {
 
                 //Settings & stuff
                 adminCount: Array.isArray(txCore.adminStore.admins) ? txCore.adminStore.admins.length : 1,
-                banCheckingEnabled: txConfig.playerDatabase.onJoinCheckBan,
-                whitelistMode: txConfig.playerDatabase.whitelistMode,
+                banCheckingEnabled: txConfig.banlist.enabled,
+                whitelistMode: txConfig.whitelist.mode,
                 recipeName: txCore.cacheStore.get('deployer:recipe') ?? 'not_in_cache',
                 tmpConfigFlags: [
-                    globalConfig.hideDefaultAnnouncement && 'global.hideDefaultAnnouncement',
-                    globalConfig.hideDefaultDirectMessage && 'global.hideDefaultDirectMessage',
-                    globalConfig.hideDefaultScheduledRestartWarning && 'global.hideDefaultScheduledRestartWarning',
-                    globalConfig.hideDefaultWarning && 'global.hideDefaultWarning',
-                    globalConfig.hideAdminInPunishments && 'global.hideAdminInPunishments',
-                    globalConfig.hideAdminInMessages && 'global.hideAdminInMessages',
+                    txConfig.gameFeatures.hideDefaultAnnouncement && 'global.hideDefaultAnnouncement',
+                    txConfig.gameFeatures.hideDefaultDirectMessage && 'global.hideDefaultDirectMessage',
+                    txConfig.gameFeatures.hideDefaultScheduledRestartWarning && 'global.hideDefaultScheduledRestartWarning',
+                    txConfig.gameFeatures.hideDefaultWarning && 'global.hideDefaultWarning',
+                    txConfig.gameFeatures.hideAdminInPunishments && 'global.hideAdminInPunishments',
+                    txConfig.gameFeatures.hideAdminInMessages && 'global.hideAdminInMessages',
                 ].filter(x => x),
 
                 //Processed stuff

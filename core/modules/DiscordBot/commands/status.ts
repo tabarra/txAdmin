@@ -5,23 +5,9 @@ import { txEnv } from '@core/globalData';
 import { cloneDeep } from 'lodash-es';
 import { embedder, ensurePermission, isValidButtonEmoji, isValidEmbedUrl, logDiscordAdminAction } from '../discordHelpers';
 import consoleFactory from '@lib/console';
+import { msToShortishDuration } from '@lib/misc';
 const console = consoleFactory(modulename);
 
-//Humanizer options
-const humanizer = humanizeDuration.humanizer({
-    round: true,
-    units: ['d', 'h', 'm'],
-    largest: 2,
-    // spacer: '',
-    language: 'shortEn',
-    languages: {
-        shortEn: {
-            d: (c) => "day" + (c === 1 ? "" : "s"),
-            h: (c) => "hr" + (c === 1 ? "" : "s"),
-            m: (c) => "min" + (c === 1 ? "" : "s"),
-        },
-    },
-});
 
 const isValidButtonConfig = (btn: any) => {
     const btnType = typeof btn;
@@ -73,7 +59,7 @@ export const generateStatusMessage = (
     //NOTE: serverCfxId can be undefined, breaking the URLs, but there is no easy clean way to deal with this issue
     const serverCfxId = txCore.cacheStore.get('fxsRuntime:cfxId');
     const placeholders = {
-        serverName: txConfig.global.serverName,
+        serverName: txConfig.general.serverName,
         statusString: 'Unknown',
         statusColor: '#4C3539',
         serverCfxId,
@@ -82,8 +68,8 @@ export const generateStatusMessage = (
         serverMaxClients: txCore.cacheStore.get('fxsRuntime:maxClients') ?? 'unknown',
         serverClients: txCore.fxPlayerlist.onlineCount,
         nextScheduledRestart: 'unknown',
-        uptime: (txCore.fxMonitor.currentStatus === 'ONLINE')
-            ? humanizer(txCore.fxRunner.getUptime() * 1000)
+        uptime: (txCore.fxMonitor.currentStatus === 'ONLINE' && txCore.fxRunner.child?.isAlive)
+            ? msToShortishDuration(txCore.fxRunner.child.uptime)
             : '--',
     }
 
@@ -95,7 +81,7 @@ export const generateStatusMessage = (
         placeholders.nextScheduledRestart = 'skipped';
     } else {
         const tempFlag = (schedule.nextIsTemp) ? '(tmp)' : '';
-        const relativeTime = humanizer(schedule.nextRelativeMs);
+        const relativeTime = msToShortishDuration(schedule.nextRelativeMs);
         const isLessThanMinute = schedule.nextRelativeMs < 60_000;
         if (isLessThanMinute) {
             placeholders.nextScheduledRestart = `right now ${tempFlag}`;

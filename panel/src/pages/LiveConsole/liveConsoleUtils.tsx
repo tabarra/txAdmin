@@ -1,18 +1,10 @@
 import { copyToClipboard } from "@/lib/utils";
 import { LiveConsoleOptions } from "./LiveConsolePage";
 
-//Yoinked from the internet, no good source
-const rtlRangeRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]{3,}/; //ignoring anything less than 3 characters
 
 //Yoinked from core/modules/Logger/FXServerLogger/index.ts
 const regexControls = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F]|(?:\x1B\[|\x9B)[\d;]+[@-K]/g;
 const regexColors = /\x1B[^m]*?m/g;
-
-
-/**
- * Checks if a string contains RTL characters
- */
-export const hasRtlChars = (str: string) => rtlRangeRegex.test(str);
 
 
 /**

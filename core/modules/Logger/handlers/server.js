@@ -36,7 +36,7 @@ before sending it to fd3
 // setInterval(() => {
 //     cnt++;
 //     if (cnt > 84) cnt = 1;
-//     const mtx = txCore.fxRunner.currentMutex || 'lmao';
+//     const mtx = txCore.fxRunner.child?.mutex ?? 'UNKNW';
 //     const payload = [
 //         {
 //             src: 'tx',
@@ -119,7 +119,7 @@ export default class ServerLogger extends LoggerBase {
             console.verbose.warn(`write() expected array, got ${typeof data}`);
             return false;
         }
-        mutex ??= txCore.fxRunner.currentMutex;
+        mutex ??= txCore.fxRunner.child.mutex ?? 'UNKNW';
 
         //Processing events
         for (let i = 0; i < data.length; i++) {

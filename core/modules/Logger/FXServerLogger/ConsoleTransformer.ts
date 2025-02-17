@@ -1,5 +1,5 @@
+import ConsoleLineEnum from './ConsoleLineEnum';
 import { prefixMultiline, splitFirstLine, stripLastEol } from './fxsLoggerUtils';
-import { ConsoleLineType } from './index';
 import chalk, { ChalkInstance } from 'chalk';
 
 
@@ -11,7 +11,7 @@ export type MultiBuffer = {
 }
 
 type StylesLibrary = {
-    [key in ConsoleLineType]: StyleConfig | null;
+    [key in ConsoleLineEnum]: StyleConfig | null;
 };
 type StyleConfig = {
     web: StyleChannelConfig;
@@ -32,8 +32,8 @@ const ANSI_RESET = '\x1B[0m';
 const ANSI_ERASE_LINE = '\x1b[K';
 
 const STYLES = {
-    [ConsoleLineType.StdOut]: null, //fully shortcircuited
-    [ConsoleLineType.StdErr]: {
+    [ConsoleLineEnum.StdOut]: null, //fully shortcircuited
+    [ConsoleLineEnum.StdErr]: {
         web: {
             prefix: chalk.bgRedBright.bold.black,
             line: chalk.bold.redBright,
@@ -43,36 +43,37 @@ const STYLES = {
             line: chalk.bold.redBright,
         },
     },
-    [ConsoleLineType.MarkerAdminCmd]: {
+    [ConsoleLineEnum.MarkerAdminCmd]: {
         web: {
             prefix: chalk.bold,
             line: x => `${precalcMarkerAdminCmd}${x}${ANSI_ERASE_LINE}${ANSI_RESET}`,
         },
         stdout: false,
     },
-    [ConsoleLineType.MarkerSystemCmd]: {
+    [ConsoleLineEnum.MarkerSystemCmd]: {
         web: {
             prefix: chalk.bold,
             line: x => `${precalcMarkerSystemCmd}${x}${ANSI_ERASE_LINE}${ANSI_RESET}`,
         },
         stdout: false,
     },
-    [ConsoleLineType.MarkerInfo]: {
+    [ConsoleLineEnum.MarkerInfo]: {
         web: {
             prefix: chalk.bold,
             line: x => `${precalcMarkerInfo}${x}${ANSI_ERASE_LINE}${ANSI_RESET}`,
         },
         stdout: {
-            prefix: chalk.bgBlueBright.bold.black,
-            line: chalk.bgBlueBright.bold.black,
+            prefix: chalk.bgBlueBright.black,
+            line: chalk.bgBlueBright.black,
         },
     },
 } as StylesLibrary;
 
-
-
-const getConsoleLinePrefix = (prefix: string) => `[${prefix.padStart(20, ' ')}]`;
 export const FORCED_EOL = '\u21A9\n'; //used in test file only
+
+//NOTE: [jan/2025] Changed from [] to make it easier to find tx stdin in the log files
+const prefixChar = '║' //Alternatives: | & ┇
+const getConsoleLinePrefix = (prefix: string) => prefixChar + prefix.padStart(20, ' ') + prefixChar;
 
 //NOTE: the \n must come _after_ the color so LiveConsolePage.tsx can know when it's an incomplete line
 const colorLines = (str: string, color: ChalkInstance | undefined) => {
@@ -93,9 +94,7 @@ export default class ConsoleTransformer {
     private PREFIX_SYSTEM = getConsoleLinePrefix('TXADMIN');
     private PREFIX_STDERR = getConsoleLinePrefix('STDERR');
 
-    constructor() { }
-
-    public process(type: ConsoleLineType, data: string, context?: string): MultiBuffer {
+    public process(type: ConsoleLineEnum, data: string, context?: string): MultiBuffer {
         //Shortcircuiting for empty strings
         if (!data.length) return { webBuffer: '', stdoutBuffer: '', fileBuffer: '' };
         const src = `${type}:${context}`;
@@ -170,7 +169,7 @@ export default class ConsoleTransformer {
         return '';
     }
 
-    private prefixChunk(type: ConsoleLineType, chunk: string, context?: string): MultiBuffer {
+    private prefixChunk(type: ConsoleLineEnum, chunk: string, context?: string): MultiBuffer {
         //NOTE: as long as stdout is shortcircuited, the other ones don't need to be micro-optimized
         const style = this.STYLES[type];
         if (style === null) {
@@ -183,13 +182,13 @@ export default class ConsoleTransformer {
 
         //selecting prefix and color
         let prefix = '';
-        if (type === ConsoleLineType.StdErr) {
+        if (type === ConsoleLineEnum.StdErr) {
             prefix = this.PREFIX_STDERR;
-        } else if (type === ConsoleLineType.MarkerAdminCmd) {
+        } else if (type === ConsoleLineEnum.MarkerAdminCmd) {
             prefix = getConsoleLinePrefix(context ?? '?');
-        } else if (type === ConsoleLineType.MarkerSystemCmd) {
+        } else if (type === ConsoleLineEnum.MarkerSystemCmd) {
             prefix = this.PREFIX_SYSTEM;
-        } else if (type === ConsoleLineType.MarkerInfo) {
+        } else if (type === ConsoleLineEnum.MarkerInfo) {
             prefix = this.PREFIX_SYSTEM;
         }
 

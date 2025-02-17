@@ -16,7 +16,7 @@ function InnerExternal({ text }: { text: string }) {
             <span className="whitespace-nowrap">
                 {lastWord}
                 <ExternalLinkIcon
-                    className="inline ml-1 mb-1 h-5 [.text-sm_&]:h-4 [.text-sm_&]:ml-0 selection:bg-inherit"
+                    className="inline ml-1 mb-1 h-5 [.text-sm_&]:h-4 [.text-sm_&]:ml-0 [.prose-sm_&]:h-4 [.prose-sm_&]:ml-0 selection:bg-inherit"
                 />
             </span>
         </>
@@ -30,7 +30,7 @@ type TxAnchorType = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 export default function TxAnchor({ children, href, className, rel, ...rest }: TxAnchorType) {
     const setLocation = useLocation()[1];
-    const isExternal = href?.startsWith('http');
+    const isExternal = href?.startsWith('http') || href?.startsWith('//');
     const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         if (!href) return;
         e.preventDefault();

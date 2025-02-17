@@ -137,7 +137,7 @@ async function handleAdd(ctx: AuthedCtx) {
     //Add admin and give output
     try {
         await txCore.adminStore.addAdmin(name, citizenfxData, discordData, password, permissions);
-        ctx.admin.logAction(`Adding admin '${name}'.`);
+        ctx.admin.logAction(`Adding user '${name}'.`);
         return ctx.send({type: 'showPassword', password});
     } catch (error) {
         return ctx.send({type: 'danger', message: (error as Error).message});

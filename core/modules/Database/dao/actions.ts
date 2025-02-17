@@ -50,12 +50,11 @@ export default class ActionsDao {
     ): T[] {
         if (!Array.isArray(idsArray)) throw new Error('idsArray should be an array');
         if (hwidsArray && !Array.isArray(hwidsArray)) throw new Error('hwidsArray should be an array or undefined');
-        const config = txConfig.playerDatabase; //shortcut
         const idsFilter = (action: DatabaseActionType) => idsArray.some((fi) => action.ids.includes(fi))
         const hwidsFilter = (action: DatabaseActionType) => {
             if ('hwids' in action && action.hwids) {
                 const count = hwidsArray!.filter((fi) => action.hwids?.includes(fi)).length;
-                return count >= config.requiredBanHwidMatches;
+                return count >= txConfig.banlist.requiredHwidMatches;
             } else {
                 return false;
             }
@@ -63,7 +62,7 @@ export default class ActionsDao {
 
         try {
             //small optimization
-            const idsMatchFilter = hwidsArray && hwidsArray.length && config.requiredBanHwidMatches
+            const idsMatchFilter = hwidsArray && hwidsArray.length && txConfig.banlist.requiredHwidMatches
                 ? (a: DatabaseActionType) => idsFilter(a) || hwidsFilter(a)
                 : (a: DatabaseActionType) => idsFilter(a)
 

@@ -10,6 +10,7 @@ import TmpFiller from "./TmpFiller";
 import TmpDndSortable from "./TmpDndSortable";
 import TmpSwr from "./TmpSwr";
 import { useEffect } from "react";
+import TmpJsonEditor from "./TmpJsonEditor";
 
 
 export default function TestingPage() {
@@ -32,5 +33,9 @@ export default function TestingPage() {
         {/* <TmpColors /> */}
         {/* <TmpDndSortable /> */}
         {/* <TmpSwr /> */}
+        {/* <div className="mx-auto">
+            <TmpServerCard />
+        </div> */}
+        {/* <TmpJsonEditor /> */}
     </div>;
 }

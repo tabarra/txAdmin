@@ -3,7 +3,7 @@ import { txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import { UpdateDataType } from '@shared/otherTypes';
 import { UpdateAvailableEventType } from '@shared/socketioTypes';
-import { queryChangelogApi } from './updateChangelog';
+import { queryChangelogApi } from './queryChangelogApi';
 import { getUpdateRolloutDelay } from './updateRollout';
 const console = consoleFactory(modulename);
 

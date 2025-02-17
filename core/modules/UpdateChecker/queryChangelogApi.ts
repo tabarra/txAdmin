@@ -5,6 +5,7 @@ import got from '@lib/got';
 import { txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import { UpdateDataType } from '@shared/otherTypes';
+import { fromError } from 'zod-validation-error';
 const console = consoleFactory(modulename);
 
 
@@ -46,7 +47,11 @@ export const queryChangelogApi = async () => {
         const resp = await got(reqUrl).json()
         apiResponse = changelogRespSchema.parse(resp);
     } catch (error) {
-        console.verbose.warn(`Failed to retrieve FXServer/txAdmin update data with error: ${(error as Error).message}`);
+        let msg = (error as Error).message;
+        if(error instanceof z.ZodError){
+            msg = fromError(error, { prefix: null }).message
+        }
+        console.verbose.warn(`Failed to retrieve FXServer/txAdmin update data with error: ${msg}`);
         return;
     }
 

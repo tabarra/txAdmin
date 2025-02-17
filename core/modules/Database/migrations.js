@@ -1,7 +1,7 @@
 const modulename = 'DBMigration';
 import { genActionID } from './dbUtils.js';
 import cleanPlayerName from '@shared/cleanPlayerName.js';
-import { DATABASE_VERSION, defaultDatabase } from './instance.js';
+import { DATABASE_VERSION, defaultDatabase } from './instance.js'; //FIXME: circular_dependency
 import { now } from '@lib/misc.js';
 import consoleFactory from '@lib/console.js';
 import fatalError from '@lib/fatalError.js';
@@ -33,7 +33,7 @@ export default async (dbo) => {
 
     //Migrate database
     if (dbo.data.version < 1) {
-        console.warn(`Migrating your players database from v${dbo.data.version} to v1. Wiping all the data.`);
+        console.warn(`Updating your players database from v${dbo.data.version} to v1. Wiping all the data.`);
         dbo.data = lodash.cloneDeep(defaultDatabase);
         dbo.data.version = 1;
         await dbo.write();
@@ -41,7 +41,7 @@ export default async (dbo) => {
 
 
     if (dbo.data.version === 1) {
-        console.warn('Migrating your players database from v1 to v2.');
+        console.warn('Updating your players database from v1 to v2.');
         console.warn('This process will change any duplicated action ID and wipe pending whitelist.');
         const actionIDStore = new Set();
         const actionsToFix = [];
@@ -64,7 +64,7 @@ export default async (dbo) => {
     }
 
     if (dbo.data.version === 2) {
-        console.warn('Migrating your players database from v2 to v3.');
+        console.warn('Updating your players database from v2 to v3.');
         console.warn('This process will:');
         console.warn('\t- process player names for better readability/searchability');
         console.warn('\t- allow txAdmin to save old player identifiers');
@@ -125,7 +125,7 @@ export default async (dbo) => {
     }
 
     if (dbo.data.version === 3) {
-        console.warn('Migrating your players database from v3 to v4.');
+        console.warn('Updating your players database from v3 to v4.');
         console.warn('This process will add a HWIDs array to the player data.');
         console.warn('As well as rename \'action[].identifiers\' to \'action[].ids\'.');
 
@@ -146,7 +146,7 @@ export default async (dbo) => {
     }
 
     if (dbo.data.version === 4) {
-        console.warn('Migrating your players database from v4 to v5.');
+        console.warn('Updating your players database from v4 to v5.');
         console.warn('This process will allow for offline warns.');
 
         //Migrating actions

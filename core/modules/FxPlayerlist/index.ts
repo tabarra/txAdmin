@@ -4,6 +4,7 @@ import { ServerPlayer } from '@lib/player/playerClasses.js';
 import { DatabaseActionWarnType, DatabasePlayerType } from '@modules/Database/databaseTypes';
 import consoleFactory from '@lib/console';
 import { PlayerDroppedEventType, PlayerJoiningEventType } from '@shared/socketioTypes';
+import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 
@@ -38,8 +39,6 @@ export default class FxPlayerlist {
     joinLeaveLog: [ts: number, isJoin: boolean][] = [];
     joinLeaveLogLimitTime = 30 * 60 * 1000; //30 mins, [ts+isJoin] * 100_000 = ~4.3mb
 
-    constructor() { }
-
 
     /**
      * Number of online/connected players.
@@ -73,7 +72,7 @@ export default class FxPlayerlist {
      * We MUST do .disconnect() for all players to clear the timers.
      * NOTE: it's ok for us to overfill before slicing the licenseCache because it's at most ~4mb
      */
-    handleServerStop(oldMutex: string) {
+    handleServerClose(oldMutex: string) {
         for (const player of this.#playerlist) {
             if (player) {
                 player.disconnect();
@@ -168,7 +167,7 @@ export default class FxPlayerlist {
                 targetName: pendingWarn.playerName,
             }
         }
-        txCore.fxRunner.sendCommand('txaInitialData', [cmdData]);
+        txCore.fxRunner.sendCommand('txaInitialData', [cmdData], SYM_SYSTEM_AUTHOR);
     }
 
 

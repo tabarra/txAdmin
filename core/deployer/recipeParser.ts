@@ -3,7 +3,7 @@ import YAML from 'js-yaml';
 import { txEnv } from '@core/globalData';
 import { default as untypedRecipeEngine } from './recipeEngine.js';
 import consoleFactory from '@lib/console.js';
-import { RECIPE_DEPLOYER_VERSION } from './index.js';
+import { RECIPE_DEPLOYER_VERSION } from './index.js'; //FIXME: circular_dependency
 const console = consoleFactory(modulename);
 
 

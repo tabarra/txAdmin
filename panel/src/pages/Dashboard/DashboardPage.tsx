@@ -80,9 +80,11 @@ export default function DashboardPage() {
         setLocation('/server/deployer');
         return null;
     } else if (txConfigState !== TxConfigState.Ready) {
-        return <ModalCentralMessage>
-            <GenericSpinner msg="Unknown Config State" />
-        </ModalCentralMessage>;
+        return <div className='size-full'>
+            <ModalCentralMessage>
+            <GenericSpinner msg={`Unknown Config State: ${String(txConfigState)}`} />
+        </ModalCentralMessage>
+        </div>;
     } else {
         return <DashboardPageInner />;
     }

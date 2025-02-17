@@ -1,8 +1,8 @@
-import { ParameterizedContext } from "koa";
-import { CtxTxVars } from "./middlewares/ctxVarsMw";
-import { CtxTxUtils } from "./middlewares/ctxUtilsMw";
-import { AuthedAdminType } from "./authLogic";
-import { SessToolsType } from "./middlewares/sessionMws";
+import type { ParameterizedContext } from "koa";
+import type { CtxTxVars } from "./middlewares/ctxVarsMw";
+import type { CtxTxUtils } from "./middlewares/ctxUtilsMw";
+import type { AuthedAdminType } from "./authLogic";
+import type { SessToolsType } from "./middlewares/sessionMws";
 import { Socket } from "socket.io";
 
 

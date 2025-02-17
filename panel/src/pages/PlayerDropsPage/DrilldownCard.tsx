@@ -87,8 +87,8 @@ const DrilldownCardInner = function DrilldownCard({
             )}>
                 <span>Period from <InlineCode title={windowStartDate.toISOString()}>{windowStartStr}</InlineCode> to <InlineCode title={windowEndDate.toISOString()}>{windowEndStr}</InlineCode>.</span>
             </div>
-            <div className="md:rounded-xl border bg-cardx shadow-sm flex flex-col">
-                <div className="">
+            <div className="md:rounded-xl border shadow-sm flex flex-col">
+                <div className="rounded-t-[inherit]">
                     <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-[inherit] bg-secondary/35">
                         <div className="flex items-center space-x-2">
                             <div className='hidden xs:block'><FolderOpenIcon className="size-4" /></div>

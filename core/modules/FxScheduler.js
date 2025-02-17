@@ -1,10 +1,11 @@
 const modulename = 'FxScheduler';
 import { parseSchedule } from '@lib/misc';
 import consoleFactory from '@lib/console';
+import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 
-//Helpers
+//Consts
 const scheduleWarnings = [30, 15, 10, 5, 4, 3, 2, 1];
 
 /**
@@ -35,6 +36,8 @@ const getNextScheduled = (parsedSchedule) => {
  * or a temporary schedule set by the user at runtime.
  */
 export default class FxScheduler {
+    static configKeysWatched = ['restarter.schedule']; //FIXME: add readonly prop when moving to typescript
+
     constructor() {
         this.nextSkip = false;
         this.nextTempSchedule = false;
@@ -51,7 +54,7 @@ export default class FxScheduler {
     /**
      * Refresh configs, resets skip and temp scheduled, runs checkSchedule.
      */
-    refreshConfig() {
+    handleConfigUpdate(updatedConfigs) {
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.checkSchedule();
@@ -84,9 +87,10 @@ export default class FxScheduler {
      * Sets this.nextSkip.
      * Cancel scheduled button -> setNextSkip(true)
      * Enable scheduled button -> setNextSkip(false)
-     * @param {Boolean} enabled
+     * @param {boolean} enabled
+     * @param {string} author
      */
-    setNextSkip(enabled) {
+    setNextSkip(enabled, author) {
         if (enabled) {
             let prevMinuteFloorTs, temporary;
             if (this.nextTempSchedule) {
@@ -99,7 +103,14 @@ export default class FxScheduler {
                 this.nextSkip = this.calculatedNextRestartMinuteFloorTs;
             }
 
-            //Dispatch `txAdmin:events:skippedNextScheduledRestart`
+            //Dispatch `txAdmin:events:scheduledRestartSkipped`
+            txCore.fxRunner.sendEvent('scheduledRestartSkipped', {
+                secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
+                temporary,
+                author,
+            });
+
+            //FIXME: deprecate
             txCore.fxRunner.sendEvent('skippedNextScheduledRestart', {
                 secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
                 temporary
@@ -152,8 +163,8 @@ export default class FxScheduler {
         }
 
         //Check validity
-        if (Array.isArray(txConfig.monitor.restarterSchedule) && txConfig.monitor.restarterSchedule.length) {
-            const { valid } = parseSchedule(txConfig.monitor.restarterSchedule);
+        if (Array.isArray(txConfig.restarter.schedule) && txConfig.restarter.schedule.length) {
+            const { valid } = parseSchedule(txConfig.restarter.schedule);
             const nextSettingRestart = getNextScheduled(valid);
             if (nextSettingRestart.minuteFloorTs < scheduledMinuteFloorTs) {
                 throw new Error(`You already have one restart scheduled for ${nextSettingRestart.string}, which is before the time you specified.`);
@@ -183,8 +194,8 @@ export default class FxScheduler {
         let nextRestart;
         if (this.nextTempSchedule) {
             nextRestart = this.nextTempSchedule;
-        } else if (Array.isArray(txConfig.monitor.restarterSchedule) && txConfig.monitor.restarterSchedule.length) {
-            const { valid } = parseSchedule(txConfig.monitor.restarterSchedule);
+        } else if (Array.isArray(txConfig.restarter.schedule) && txConfig.restarter.schedule.length) {
+            const { valid } = parseSchedule(txConfig.restarter.schedule);
             nextRestart = getNextScheduled(valid);
         } else {
             //nothing scheduled
@@ -207,7 +218,7 @@ export default class FxScheduler {
         //Checking if server restart or warning time
         if (nextDistMins === 0) {
             //restart server
-            this.restartFXServer(
+            this.triggerServerRestart(
                 `scheduled restart at ${nextRestart.string}`,
                 txCore.translator.t('restarter.schedule_reason', { time: nextRestart.string }),
             );
@@ -218,7 +229,7 @@ export default class FxScheduler {
         } else if (scheduleWarnings.includes(nextDistMins)) {
             const tOptions = {
                 smart_count: nextDistMins,
-                servername: txConfig.global.serverName,
+                servername: txConfig.general.serverName,
             };
 
             //Send discord warning
@@ -240,20 +251,21 @@ export default class FxScheduler {
 
 
     /**
-     * Restart the FXServer and logs everything
+     * Triggers FXServer restart and logs the reason.
      * @param {string} reasonInternal
      * @param {string} reasonTranslated
      */
-    async restartFXServer(reasonInternal, reasonTranslated) {
-        //sanity check
-        if (txCore.fxRunner.fxChild === null) {
-            console.warn('Server not started, no need to restart');
+    async triggerServerRestart(reasonInternal, reasonTranslated) {
+        //Sanity check
+        if (txCore.fxRunner.isIdle) {
+            console.verbose.warn('Server not running, skipping scheduled restart.');
             return false;
         }
 
         //Restart server
-        const logMessage = `Restarting server (${reasonInternal}).`;
+        const logMessage = `Restarting server: ${reasonInternal}`;
         txCore.logger.admin.write('SCHEDULER', logMessage);
-        txCore.fxRunner.restartServer(reasonTranslated, null);
+        txCore.logger.fxserver.logInformational(logMessage); //just for better visibility
+        txCore.fxRunner.restartServer(reasonTranslated, SYM_SYSTEM_AUTHOR);
     }
 };

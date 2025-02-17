@@ -1,12 +1,24 @@
 const modulename = 'Translator';
 import fs from 'node:fs';
-import path from 'node:path';
 import Polyglot from 'node-polyglot';
 import { txEnv } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
+import type { UpdateConfigKeySet } from './ConfigStore/utils';
+import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
+import { msToDuration } from '@lib/misc';
+import { z } from 'zod';
 const console = consoleFactory(modulename);
+
+
+//Schema for the custom locale file
+export const localeFileSchema = z.object({
+    $meta: z.object({
+        label: z.string().min(1),
+        humanizer_language: z.string().min(1),
+    }),
+}).passthrough();
 
 
 /**
@@ -14,15 +26,24 @@ const console = consoleFactory(modulename);
  * The locale files are indexed by the localeMap in the shared folder.
  */
 export default class Translator {
-    canonical: string = 'en-GB'; //Using GB instead of US due to date/time formats 
-    readonly customLocalePath: string;
+    static readonly configKeysWatched = ['general.language'];
+    static readonly humanizerLanguages: string[] = humanizeDuration.getSupportedLanguages();
+
+    public readonly customLocalePath = `${txEnv.dataPath}/locale.json`;
+    public canonical: string = 'en-GB'; //Using GB instead of US due to date/time formats 
     #polyglot: Polyglot | null = null;
 
     constructor() {
-        this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');
-
         //Load language
         this.setupTranslator(true);
+    }
+
+
+    /**
+     * Handle updates to the config by resetting the translator
+     */
+    public handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
+        this.setupTranslator(false);
     }
 
 
@@ -31,13 +52,13 @@ export default class Translator {
      */
     setupTranslator(isFirstTime = false) {
         try {
-            this.canonical = Intl.getCanonicalLocales(txConfig.global.language.replace(/_/g, '-'))[0];
+            this.canonical = Intl.getCanonicalLocales(txConfig.general.language.replace(/_/g, '-'))[0];
         } catch (error) {
             this.canonical = 'en-GB';
         }
 
         try {
-            const phrases = this.getLanguagePhrases(txConfig.global.language);
+            const phrases = this.getLanguagePhrases(txConfig.general.language);
             const polyglotOptions = {
                 allowMissing: false,
                 onMissingKey: (key: string) => {
@@ -58,27 +79,10 @@ export default class Translator {
 
 
     /**
-     * Refresh translator configurations
-     */
-    refreshConfig() {
-        //Change config and restart polyglot
-        this.setupTranslator(false);
-
-        //Rebuild Monitor's schedule with new text and refreshes fxserver convars
-        try {
-            txCore.fxRunner.resetConvars();
-        } catch (error) {
-            console.verbose.dir(error);
-        }
-    }
-
-
-    /**
      * Loads a language file or throws Error.
-     * @param {string} lang
      */
     getLanguagePhrases(lang: string) {
-        if (typeof localeMap[lang] === 'object') {
+        if (localeMap[lang]?.$meta) {
             //If its a known language
             return localeMap[lang];
 
@@ -111,6 +115,22 @@ export default class Translator {
         } catch (error) {
             console.error(`Error performing a translation with key '${key}'`);
             return key;
+        }
+    }
+
+
+    /**
+     * Humanizes & translates a duration in ms
+     */
+    tDuration(ms: number, options: HumanizerOptions = {}) {
+        if (!this.#polyglot) throw new Error(`polyglot not yet loaded`);
+
+        try {
+            const lang = this.#polyglot.t('$meta.humanizer_language')
+            return msToDuration(ms, { ...options, language: lang });
+        } catch (error) {
+            console.error(`Error humanizing duration`, error);
+            return String(ms)+'ms';
         }
     }
 };

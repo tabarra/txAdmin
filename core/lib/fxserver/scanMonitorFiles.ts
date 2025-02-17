@@ -1,5 +1,4 @@
 //FIXME: after refactor, move to the correct path
-import bytes from 'bytes';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -16,8 +15,8 @@ const hashFile = async (filePath: string) => {
 
 // Limits
 const MAX_FILES = 300;
-const MAX_TOTAL_SIZE = bytes('50MB');
-const MAX_FILE_SIZE = bytes('20MB');
+const MAX_TOTAL_SIZE = 52_428_800; // 50MB
+const MAX_FILE_SIZE = 20_971_520; // 20MB
 const MAX_DEPTH = 10;
 const MAX_EXECUTION_TIME = 30 * 1000;
 const IGNORED_FOLDERS = [

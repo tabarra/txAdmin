@@ -90,6 +90,17 @@ GITHUB_REF="refs/tags/v9.9.9" npm run build
 > FIXME: add linting & typechecking back into the workflow above
 
 
+## Notes regarding the Settings system
+- `config.json` now only contains the changed, non-default values.
+- `DEFAULT_NULL` is only for values that cannot and should not have defaults, like `fxRunner.dataPath`, `discordBot.token`, etc. Note how `fxRunner.cfgPath` does have a default.
+- All schemas must have a default, even if `null`.
+- The objective of the `schema.fixer` is to fix invalid values, not apply defaults for missing values.
+- The `schema.fixer` is only used during boot, not during any saves.
+- Only use `SYM_FIXER_FATAL` for settings that are very important, so txAdmin rather not boot than to boot with an unexpected config.
+- The objective of the schema is to guarantee that the values are of the correct type (shouldn't cause TypeErrors), but does not check anything dynamic like existence of files, or anything that goes beyond one schema (eg. if bot enabled, token is required).
+- Validator transformers are only to "polish" the value, like removing duplicates and sorting values, not to fix invalid values.
+
+
 ## Note regarding the Legacy UI
 
 **⚠Warning: The /web/ ui is considered legacy and will be migrated to /panel/.**

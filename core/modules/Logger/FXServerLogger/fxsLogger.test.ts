@@ -2,7 +2,7 @@
 import { test, expect, suite, it, vitest, vi } from 'vitest';
 import { prefixMultiline, splitFirstLine, stripLastEol } from './fxsLoggerUtils';
 import ConsoleTransformer, { FORCED_EOL } from './ConsoleTransformer';
-import { ConsoleLineType } from './index';
+import ConsoleLineEnum from './ConsoleLineEnum';
 
 
 //MARK: splitFirstLine
@@ -92,11 +92,11 @@ suite('prefixMultiline', () => {
 suite('transformer: prefixChunk', () => {
     const transformer = new ConsoleTransformer();
     test('shortcut stdout string', () => {
-        const result = transformer.prefixChunk(ConsoleLineType.StdOut, 'xxxx\nxxx\n');
+        const result = transformer.prefixChunk(ConsoleLineEnum.StdOut, 'xxxx\nxxx\n');
         expect(result.fileBuffer).toEqual('xxxx\nxxx\n');
     });
     test('empty string', () => {
-        const result = transformer.prefixChunk(ConsoleLineType.StdOut, '');
+        const result = transformer.prefixChunk(ConsoleLineEnum.StdOut, '');
         expect(result.fileBuffer).toEqual('');
     });
 });
@@ -142,11 +142,11 @@ const jp = (arr: string[]) => arr.join('');
 const getPatchedTransformer = () => {
     const t = new ConsoleTransformer();
     t.STYLES = {
-        [ConsoleLineType.StdOut]: null,
-        [ConsoleLineType.StdErr]: { web: {} },
-        [ConsoleLineType.MarkerAdminCmd]: { web: {} },
-        [ConsoleLineType.MarkerSystemCmd]: { web: {} },
-        [ConsoleLineType.MarkerInfo]: { web: {} },
+        [ConsoleLineEnum.StdOut]: null,
+        [ConsoleLineEnum.StdErr]: { web: {} },
+        [ConsoleLineEnum.MarkerAdminCmd]: { web: {} },
+        [ConsoleLineEnum.MarkerSystemCmd]: { web: {} },
+        [ConsoleLineEnum.MarkerInfo]: { web: {} },
     };
     t.PREFIX_SYSTEM = '-';
     t.PREFIX_STDERR = '-';
@@ -157,37 +157,37 @@ suite('transformer: source', () => {
         test('StdOut', () => {
             const transformer = getPatchedTransformer();
             transformer.lastEol = false;
-            transformer.process(ConsoleLineType.StdOut, 'x');
+            transformer.process(ConsoleLineEnum.StdOut, 'x');
             expect(transformer.lastSrc).toEqual('0:undefined');
         });
         test('StdErr', () => {
             const transformer = getPatchedTransformer();
             transformer.lastEol = false;
-            transformer.process(ConsoleLineType.StdErr, 'x');
+            transformer.process(ConsoleLineEnum.StdErr, 'x');
             expect(transformer.lastSrc).toEqual('1:undefined');
         });
     });
     suite('no context', () => {
         test('StdOut', () => {
             const transformer = getPatchedTransformer();
-            transformer.process(ConsoleLineType.StdOut, 'x');
+            transformer.process(ConsoleLineEnum.StdOut, 'x');
             expect(transformer.lastSrc).toEqual('0:undefined');
         });
         test('StdErr', () => {
             const transformer = getPatchedTransformer();
-            transformer.process(ConsoleLineType.StdErr, 'x');
+            transformer.process(ConsoleLineEnum.StdErr, 'x');
             expect(transformer.lastSrc).toEqual('1:undefined');
         });
     });
     suite('context', () => {
         test('StdOut', () => {
             const transformer = getPatchedTransformer();
-            transformer.process(ConsoleLineType.StdOut, 'x', 'y');
+            transformer.process(ConsoleLineEnum.StdOut, 'x', 'y');
             expect(transformer.lastSrc).toEqual('0:y');
         });
         test('StdErr', () => {
             const transformer = getPatchedTransformer();
-            transformer.process(ConsoleLineType.StdErr, 'x', 'y');
+            transformer.process(ConsoleLineEnum.StdErr, 'x', 'y');
             expect(transformer.lastSrc).toEqual('1:y');
         });
     });
@@ -195,17 +195,17 @@ suite('transformer: source', () => {
 suite('transformer: shortcuts', () => {
     test('empty string', () => {
         const transformer = getPatchedTransformer();
-        const result = transformer.process(ConsoleLineType.StdOut, '');
+        const result = transformer.process(ConsoleLineEnum.StdOut, '');
         expect(result.webBuffer).toEqual('');
     });
     test('\\n', () => {
         const transformer = getPatchedTransformer();
-        const result = transformer.process(ConsoleLineType.StdErr, '\n');
+        const result = transformer.process(ConsoleLineEnum.StdErr, '\n');
         expect(result.webBuffer).toEqual('\n');
     });
     test('\\r\\n', () => {
         const transformer = getPatchedTransformer();
-        const result = transformer.process(ConsoleLineType.StdErr, '\r\n');
+        const result = transformer.process(ConsoleLineEnum.StdErr, '\r\n');
         expect(result.webBuffer).toEqual('\n');
     });
 });
@@ -215,25 +215,25 @@ suite('transformer: new line', () => {
 
     test('single line same src', () => {
         const transformer = getPatchedTransformer();
-        const result = transformer.process(ConsoleLineType.StdOut, 'test');
+        const result = transformer.process(ConsoleLineEnum.StdOut, 'test');
         expect(result.webBuffer).toEqual(jp([expectedTimeMarker, 'test']));
         expect(transformer.lastEol).toEqual(false);
     });
     test('single line diff src', () => {
         const transformer = getPatchedTransformer();
-        const result = transformer.process(ConsoleLineType.StdErr, 'test');
+        const result = transformer.process(ConsoleLineEnum.StdErr, 'test');
         expect(result.webBuffer).toEqual(jp([expectedTimeMarker, '- ', 'test']));
         expect(transformer.lastEol).toEqual(false);
     });
     test('multi line same src', () => {
         const transformer = getPatchedTransformer();
-        const result = transformer.process(ConsoleLineType.StdOut, 'test\ntest2');
+        const result = transformer.process(ConsoleLineEnum.StdOut, 'test\ntest2');
         expect(result.webBuffer).toEqual(jp([expectedTimeMarker, 'test\ntest2']));
         expect(transformer.lastEol).toEqual(false);
     });
     test('multi line diff src', () => {
         const transformer = getPatchedTransformer();
-        const result = transformer.process(ConsoleLineType.StdErr, 'test\ntest2');
+        const result = transformer.process(ConsoleLineEnum.StdErr, 'test\ntest2');
         expect(result.webBuffer).toEqual(jp([expectedTimeMarker, '- ', 'test\n', '- ', 'test2']));
         expect(transformer.lastEol).toEqual(false);
     });
@@ -246,21 +246,21 @@ suite('transformer: postfix', () => {
     test('same source incomplete line', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
-        const result = transformer.process(ConsoleLineType.StdOut, 'test');
+        const result = transformer.process(ConsoleLineEnum.StdOut, 'test');
         expect(result.webBuffer).toEqual(jp(['test']));
         expect(transformer.lastEol).toEqual(false);
     });
     test('same source complete line', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
-        const result = transformer.process(ConsoleLineType.StdOut, 'test\n');
+        const result = transformer.process(ConsoleLineEnum.StdOut, 'test\n');
         expect(result.webBuffer).toEqual(jp(['test\n']));
         expect(transformer.lastEol).toEqual(true);
     });
     test('same source multi line', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
-        const result = transformer.process(ConsoleLineType.StdOut, 'test\nxx\n');
+        const result = transformer.process(ConsoleLineEnum.StdOut, 'test\nxx\n');
         // console.dir(result); return;
         expect(result.webBuffer).toEqual(jp(['test\n', expectedTimeMarker, 'xx\n']));
         expect(transformer.lastEol).toEqual(true);
@@ -269,21 +269,21 @@ suite('transformer: postfix', () => {
     test('diff source incomplete line', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
-        const result = transformer.process(ConsoleLineType.StdErr, 'test');
+        const result = transformer.process(ConsoleLineEnum.StdErr, 'test');
         expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '- ', 'test']));
         expect(transformer.lastEol).toEqual(false);
     });
     test('diff source complete line', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
-        const result = transformer.process(ConsoleLineType.StdErr, 'test\n');
+        const result = transformer.process(ConsoleLineEnum.StdErr, 'test\n');
         expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '- ', 'test\n']));
         expect(transformer.lastEol).toEqual(true);
     });
     test('diff source multi line', () => {
         const transformer = getPatchedTransformer();
         transformer.lastEol = false;
-        const result = transformer.process(ConsoleLineType.StdErr, 'test\nabcde\n');
+        const result = transformer.process(ConsoleLineEnum.StdErr, 'test\nabcde\n');
         expect(result.webBuffer).toEqual(jp([FORCED_EOL, expectedTimeMarker, '- ', 'test\n', '- ', 'abcde\n']));
         expect(transformer.lastEol).toEqual(true);
     });

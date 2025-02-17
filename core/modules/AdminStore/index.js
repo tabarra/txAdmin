@@ -11,8 +11,8 @@ import chalk from 'chalk';
 import fatalError from '@lib/fatalError.js';
 const console = consoleFactory(modulename);
 
-//FIXME: The way I'm doing versioning right now is horrible
-// but for now it's the best I can do
+//NOTE: The way I'm doing versioning right now is horrible but for now it's the best I can do
+//NOTE: I do not need to version every admin, just the file itself
 const ADMIN_SCHEMA_VERSION = 1;
 
 
@@ -43,7 +43,11 @@ export default class AdminStore {
         this.refreshRoutine = null;
 
         //Not alphabetical order, but that's fine
-        //FIXME: mover pra arquivos separado
+        //FIXME: move to a separate file
+        //TODO: maybe put in @shared so the frontend's UnauthorizedPage can use it
+        //TODO: when migrating the admins page to react, definitely put this in @shared so the front rendering doesn't depend on the backend response - lessons learned from the settings page.
+        //FIXME: if not using enums, definitely use so other type of type safety
+        //FIXME: maybe rename all_permissions to `administrator` (just like discord) or `super_admin` and rename the `Admins` page to `Users`. This fits better with how people use txAdmin as "mods" are not really admins
         this.registeredPermissions = {
             'all_permissions': 'All Permissions',
             'manage.admins': 'Manage Admins', //will enable the "set admin" button in the player modal
@@ -646,12 +650,12 @@ export default class AdminStore {
      */
     getAdminPublicName(name, purpose) {
         if (!name || !purpose) throw new Error('Invalid parameters');
-        const replacer = txConfig.global.serverName ?? 'txAdmin';
+        const replacer = txConfig.general.serverName ?? 'txAdmin';
 
         if (purpose === 'punishment') {
-            return txConfig.global.hideAdminInPunishments ? replacer : name;
+            return txConfig.gameFeatures.hideAdminInPunishments ? replacer : name;
         } else if (purpose === 'message') {
-            return txConfig.global.hideAdminInMessages ? replacer : name;
+            return txConfig.gameFeatures.hideAdminInMessages ? replacer : name;
         } else {
             throw new Error(`Invalid purpose: ${purpose}`);
         }

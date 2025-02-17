@@ -40,8 +40,8 @@ export default async function CFGEditorSave(ctx) {
     try {
         result = await validateModifyServerConfig(
             ctx.request.body.cfgData,
-            txConfig.fxRunner.cfgPath,
-            txConfig.fxRunner.serverDataPath,
+            txConfig.server.cfgPath,
+            txConfig.server.dataPath,
         );
     } catch (error) {
         return ctx.send({

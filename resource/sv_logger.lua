@@ -78,7 +78,7 @@ CreateThread(function()
 
         --not being used anywhere for now
         projectName = GetConvar('sv_projectName', 'invalid')
-        --NOTE: unmfortunately its not possible to retrieve the server icon
+        --NOTE: unfortunately its not possible to retrieve the server icon
     })
 end)
 

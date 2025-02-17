@@ -1,15 +1,18 @@
+import { txEnv } from '@core/globalData';
+import { getFsErrorMdMessage, getPathSubdirs } from '@lib/fs';
 import * as fsp from 'node:fs/promises';
 import * as path from 'node:path';
 
 const IGNORED_DIRS = ['cache', 'db', 'node_modules', '.git', '.idea', '.vscode'];
 const MANIFEST_FILES = ['fxmanifest.lua', '__resource.lua'];
-const RES_CATEGORIES_LIMIT = 100;
+const RES_CATEGORIES_LIMIT = 250; //Some servers go over 100
 const CFG_SIZE_LIMIT = 32 * 1024; //32kb
 
 
 //Types
 export type ServerDataContentType = [string, number | boolean][];
 export type ServerDataConfigsType = [string, string][];
+
 
 /**
  * Scans a server data folder and lists all files, up to the first level of each resource.
@@ -117,7 +120,6 @@ export const getServerDataContent = async (serverDataPath: string): Promise<Serv
 }
 
 
-
 /**
  * Returns the content of all .cfg files based on a server data content scan.
  */
@@ -139,3 +141,96 @@ export const getServerDataConfigs = async (serverDataPath: string, serverDataCon
 
     return configs;
 }
+
+
+/**
+ * Validate server data path for the 
+ */
+export const isValidServerDataPath = async (dataPath: string) => {
+    //Check if root folder is valid
+    try {
+        const rootEntries = await getPathSubdirs(dataPath);
+        if (!rootEntries.some(e => e.name === 'resources')) {
+            throw new Error('The provided directory does not contain a \`resources\` subdirectory.');
+        }
+    } catch (err) {
+        const error = err as Error;
+        let msg = getFsErrorMdMessage(error, dataPath);
+        if (dataPath.includes('resources')) {
+            msg = `Looks like this path is the \`resources\` folder, but the server data path must be the folder that contains the resources folder instead of the resources folder itself.\n**Try removing the \`resources\` part at the end of the path.**`;
+        }
+        throw new Error(msg);
+    }
+
+    //Check if resources folder is valid
+    try {
+        const resourceEntries = await getPathSubdirs(path.join(dataPath, 'resources'));
+        if (!resourceEntries.length) {
+            throw new Error('The \`resources\` directory is empty.');
+        }
+    } catch (err) {
+        const error = err as Error;
+        let msg = error.message;
+        if (error.message?.includes('ENOENT')) {
+            msg = `The \`resources\` directory does not exist inside the provided Server Data Folder:\n\`${dataPath}\``;
+        } else if (error.message?.includes('EACCES') || error.message?.includes('EPERM')) {
+            msg = `The \`resources\` directory is not accessible inside the provided Server Data Folder:\n\`${dataPath}\``;
+        }
+        throw new Error(msg);
+    }
+    return true;
+};
+
+
+/**
+ * Look for a potential server data folder in/around the provided path.
+ * Forgiving behavior:
+ *  - Ignore trailing slashes, as well as fix backslashes
+ *  - Check if its the parent folder
+ *  - Check if its a sibling folder
+ *  - Check if its a child folder
+ *  - Check if current path is a resource folder deep inside a server data folder
+ */
+export const findPotentialServerDataPaths = async (initialPath: string) => {
+    const checkTarget = async (target: string) => {
+        try {
+            return await isValidServerDataPath(target);
+        } catch (error) {
+            return false;
+        }
+    };
+
+    //Recovery if parent folder
+    const parentPath = path.join(initialPath, '..');
+    const isParentPath = await checkTarget(parentPath);
+    if (isParentPath) return parentPath;
+
+    //Recovery if sibling folder
+    try {
+        const siblingPaths = await getPathSubdirs(parentPath);
+        for (const sibling of siblingPaths) {
+            const siblingPath = path.join(parentPath, sibling.name);
+            if (siblingPath === initialPath) continue;
+            if (await checkTarget(siblingPath)) return siblingPath;
+        }
+    } catch (error) { }
+
+    //Recovery if children folder
+    try {
+        const childPaths = await getPathSubdirs(initialPath);
+        for (const child of childPaths) {
+            const childPath = path.join(initialPath, child.name);
+            if (await checkTarget(childPath)) return childPath;
+        }
+    } catch (error) { }
+
+    //Recovery if current path is a resources folder
+    const resourceSplitAttempt = initialPath.split(/[/\\]resources(?:[/\\]?|$)/, 2);
+    if (resourceSplitAttempt.length === 2) {
+        const potentialServerDataPath = resourceSplitAttempt[0];
+        if (await checkTarget(potentialServerDataPath)) return potentialServerDataPath;
+    }
+
+    //Really couldn't find anything
+    return false;
+};

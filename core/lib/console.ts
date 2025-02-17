@@ -64,6 +64,24 @@ export const setConsoleEnvData = (
 
 
 /**
+ * STDOUT EOL helper
+ */
+let stdioEolPending = false;
+export const processStdioWriteRaw = (buffer: Uint8Array | string) => {
+    if (!buffer.length) return;
+    const comparator = typeof buffer === 'string' ? '\n' : 10;
+    stdioEolPending = buffer[buffer.length - 1] !== comparator;
+    process.stdout.write(buffer);
+}
+export const processStdioEnsureEol = () => {
+    if (stdioEolPending) {
+        process.stdout.write('\n');
+        stdioEolPending = false;
+    }
+}
+
+
+/**
  * New console and streams
  */
 const defaultStream = new Writable({
@@ -247,7 +265,17 @@ const getLogFunc = (
     }
 }
 
-type LogFunction = (message?: any, ...optParams: any) => void
+//Reused types
+type LogFunction = typeof Console.prototype.log;
+type DirFunction = (data: any, options?: TxInspectOptions) => void;
+interface TxBaseLogTypes {
+    debug: LogFunction;
+    log: LogFunction;
+    ok: LogFunction;
+    warn: LogFunction;
+    error: LogFunction;
+    dir: DirFunction;
+}
 
 
 /**
@@ -255,16 +283,19 @@ type LogFunction = (message?: any, ...optParams: any) => void
  */
 const consoleFactory = (ctx?: string, subCtx?: string): CombinedConsole => {
     const currContext = [header, ctx, subCtx].filter(x => x).join(':');
-
-    return {
-        ...defaultConsole,
-        tag: (subCtx: string) => consoleFactory(ctx, subCtx),
+    const baseLogs: TxBaseLogTypes = {
         debug: getLogFunc(currContext, DEBUG_COLOR),
         log: getLogFunc(currContext, chalk.bgBlue),
         ok: getLogFunc(currContext, chalk.bgGreen),
         warn: getLogFunc(currContext, chalk.bgYellow),
         error: getLogFunc(currContext, chalk.bgRed),
         dir: (data: any, options?: TxInspectOptions & {}) => dirHandler.call(null, data, options),
+    };
+
+    return {
+        ...defaultConsole,
+        ...baseLogs,
+        tag: (subCtx: string) => consoleFactory(ctx, subCtx),
         multiline: (text: string | string[], color: ChalkInstance) => {
             if (!Array.isArray(text)) text = text.split('\n');
             const prefix = genLogPrefix(currContext, color);
@@ -291,20 +322,35 @@ const consoleFactory = (ctx?: string, subCtx?: string): CombinedConsole => {
             defaultConsole.log(prefix, DIVIDER);
         },
 
+        //Returns a set of log functions that will be executed after a delay
+        defer: (ms = 250) => ({
+            debug: (...args) => setTimeout(() => baseLogs.debug(...args), ms),
+            log: (...args) => setTimeout(() => baseLogs.log(...args), ms),
+            ok: (...args) => setTimeout(() => baseLogs.ok(...args), ms),
+            warn: (...args) => setTimeout(() => baseLogs.warn(...args), ms),
+            error: (...args) => setTimeout(() => baseLogs.error(...args), ms),
+            dir: (...args) => setTimeout(() => baseLogs.dir(...args), ms),
+        }),
+
+        //Log functions that will output tothe verbose stream
         verbose: {
             debug: getLogFunc(currContext, DEBUG_COLOR, verboseConsole),
             log: getLogFunc(currContext, chalk.bgBlue, verboseConsole),
             ok: getLogFunc(currContext, chalk.bgGreen, verboseConsole),
             warn: getLogFunc(currContext, chalk.bgYellow, verboseConsole),
             error: getLogFunc(currContext, chalk.bgRed, verboseConsole),
-            dir: (data: any, options?: TxInspectOptions) => dirHandler.call(null, data, options, verboseConsole)
+            dir: (...args) => dirHandler.call(null, ...args, verboseConsole)
         },
+
+        //Verbosity getter and explicit setter
         get isVerbose() {
             return _verboseFlag
         },
         setVerbose: (state: boolean) => {
             _verboseFlag = !!state;
         },
+
+        //Consts used by the fatalError util
         DIVIDER,
         DIVIDER_CHAR,
         DIVIDER_SIZE,
@@ -313,27 +359,15 @@ const consoleFactory = (ctx?: string, subCtx?: string): CombinedConsole => {
 export default consoleFactory;
 
 interface CombinedConsole extends TxConsole, Console {
-    dir: LogFunction;
+    dir: DirFunction;
 }
 
-export interface TxConsole {
+export interface TxConsole extends TxBaseLogTypes {
     tag: (subCtx: string) => TxConsole;
-    debug: LogFunction;
-    log: LogFunction;
-    ok: LogFunction;
-    warn: LogFunction;
-    error: LogFunction;
-    dir: (data: any, options?: TxInspectOptions) => void;
     multiline: (text: string | string[], color: ChalkInstance) => void;
     majorMultilineError: (text: string | (string | null)[]) => void;
-    verbose: {
-        debug: LogFunction;
-        log: LogFunction;
-        ok: LogFunction;
-        warn: LogFunction;
-        error: LogFunction;
-        dir: (data: any, options?: TxInspectOptions) => void;
-    };
+    defer: (ms?: number) => TxBaseLogTypes;
+    verbose: TxBaseLogTypes;
     readonly isVerbose: boolean;
     setVerbose: (state: boolean) => void;
     DIVIDER: string;

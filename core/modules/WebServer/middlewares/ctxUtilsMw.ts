@@ -177,7 +177,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
             basePath: (isWebInterface) ? '/' : consts.nuiWebpipePath,
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
             serverProfile: txEnv.profile,
-            serverName: txConfig.global.serverName || txEnv.profile,
+            serverName: txConfig.general.serverName || txEnv.profile,
             uiTheme: legacyTheme,
             fxServerVersion: txEnv.fxsVersionDisplay,
             txAdminVersion: txEnv.txaVersion,
@@ -185,7 +185,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
                 isZapHosting: convars.isZapHosting, //not in use
                 isPterodactyl: convars.isPterodactyl, //not in use
                 isWebInterface: isWebInterface,
-                csrfToken: (possiblyAuthedAdmin?.csrfToken) ? possiblyAuthedAdmin.csrfToken : 'not_set',
+                csrfToken: possiblyAuthedAdmin?.csrfToken ?? 'not_set',
                 TX_BASE_PATH: (isWebInterface) ? '' : consts.nuiWebpipePath,
                 PAGE_TITLE: data?.headerTitle ?? 'txAdmin',
             }),

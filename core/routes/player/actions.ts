@@ -6,6 +6,7 @@ import { PlayerClass, ServerPlayer } from '@lib/player/playerClasses';
 import { anyUndefined, calcExpirationFromDuration } from '@lib/misc';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
+import { SYM_CURRENT_MUTEX } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 
@@ -24,7 +25,7 @@ export default async function PlayerActions(ctx: AuthedCtx) {
     //Finding the player
     let player;
     try {
-        const refMutex = (mutex === 'current') ? txCore.fxRunner.currentMutex : mutex;
+        const refMutex = mutex === 'current' ? SYM_CURRENT_MUTEX : mutex;
         player = playerResolver(refMutex, parseInt((netid as string)), license);
     } catch (error) {
         return sendTypedResp({ error: (error as Error).message });
@@ -108,10 +109,10 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
     } catch (error) {
         return { error: `Failed to warn player: ${(error as Error).message}` };
     }
-    ctx.admin.logAction(`Warned player ${player.displayName}: ${reason}`);
+    ctx.admin.logAction(`Warned player "${player.displayName}": ${reason}`);
 
     // Dispatch `txAdmin:events:playerWarned`
-    const cmdOk = txCore.fxRunner.sendEvent('playerWarned', {
+    const eventSent = txCore.fxRunner.sendEvent('playerWarned', {
         author: ctx.admin.name,
         reason,
         actionId,
@@ -120,7 +121,7 @@ async function handleWarning(ctx: AuthedCtx, player: PlayerClass): Promise<Gener
         targetName: player.displayName,
     });
 
-    if (cmdOk) {
+    if (eventSent) {
         return { success: true };
     } else {
         return { error: `Warn saved, but likely failed to send the warn in game (stdin error).` };
@@ -180,10 +181,10 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     } catch (error) {
         return { error: `Failed to ban player: ${(error as Error).message}` };
     }
-    ctx.admin.logAction(`Banned player ${player.displayName}: ${reason}`);
+    ctx.admin.logAction(`Banned player "${player.displayName}": ${reason}`);
 
     //No need to dispatch events if server is not online
-    if (txCore.fxRunner.fxChild === null) {
+    if (txCore.fxRunner.isIdle) {
         return { success: true };
     }
 
@@ -194,12 +195,10 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
         reason: reason,
     };
     if (expiration !== false && duration) {
-        const humanizeOptions = {
-            language: txCore.translator.t('$meta.humanizer_language'),
-            round: true,
-            units: ['d', 'h'] as Unit[],
-        };
-        durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
+        durationTranslated = txCore.translator.tDuration(
+            duration * 1000,
+            { units: ['d', 'h'] },
+        );
         tOptions.expiration = durationTranslated;
         kickMessage = txCore.translator.t('ban_messages.kick_temporary', tOptions);
     } else {
@@ -208,7 +207,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
     }
 
     // Dispatch `txAdmin:events:playerBanned`
-    const cmdOk = txCore.fxRunner.sendEvent('playerBanned', {
+    const eventSent = txCore.fxRunner.sendEvent('playerBanned', {
         author: ctx.admin.name,
         reason,
         actionId,
@@ -222,7 +221,7 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
         kickMessage,
     });
 
-    if (cmdOk) {
+    if (eventSent) {
         return { success: true };
     } else {
         return { error: `Player banned, but likely failed to kick player (stdin error).` };
@@ -256,11 +255,7 @@ async function handleSetWhitelist(ctx: AuthedCtx, player: PlayerClass): Promise<
             ctx.admin.logAction(`Removed ${player.license} from the whitelist.`);
         }
 
-        //No need to dispatch events if server is not online
-        if (txCore.fxRunner.fxChild === null) {
-            return { success: true };
-        }
-
+        // Dispatch `txAdmin:events:whitelistPlayer`
         txCore.fxRunner.sendEvent('whitelistPlayer', {
             action: status ? 'added' : 'removed',
             license: player.license,
@@ -297,15 +292,15 @@ async function handleDirectMessage(ctx: AuthedCtx, player: PlayerClass): Promise
     }
 
     //Validating server & player
-    if (txCore.fxRunner.fxChild === null) {
-        return { error: 'The server is not online.' };
+    if (!txCore.fxRunner.child?.isAlive) {
+        return { error: 'The server is not running.' };
     }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
     }
 
     try {
-        ctx.admin.logAction(`DM to ${player.displayName}: ${message}`);
+        ctx.admin.logAction(`DM to "${player.displayName}": ${message}`);
 
         // Dispatch `txAdmin:events:playerDirectMessage`
         txCore.fxRunner.sendEvent('playerDirectMessage', {
@@ -340,16 +335,16 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
     }
 
     //Validating server & player
-    if (txCore.fxRunner.fxChild === null) {
-        return { error: 'The server is offline.' };
+    if (!txCore.fxRunner.child?.isAlive) {
+        return { error: 'The server is not running.' };
     }
     if (!(player instanceof ServerPlayer) || !player.isConnected) {
         return { error: 'This player is not connected to the server.' };
     }
 
     try {
-        ctx.admin.logAction(`Kicked ${player.displayName}: ${kickReason}`);
-        const fullReason = txCore.translator.t(
+        ctx.admin.logAction(`Kicked "${player.displayName}": ${kickReason}`);
+        const dropMessage = txCore.translator.t(
             'kick_messages.player',
             { reason: kickReason }
         );
@@ -358,7 +353,8 @@ async function handleKick(ctx: AuthedCtx, player: PlayerClass): Promise<GenericA
         txCore.fxRunner.sendEvent('playerKicked', {
             target: player.netid,
             author: ctx.admin.name,
-            reason: fullReason,
+            reason: kickReason,
+            dropMessage,
         });
 
         return { success: true };

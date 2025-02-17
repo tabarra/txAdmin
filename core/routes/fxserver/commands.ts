@@ -29,10 +29,10 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
     const parameter = ctx.request.body.parameter;
 
     //Ignore commands when the server is offline
-    if (txCore.fxRunner.fxChild === null) {
+    if (!txCore.fxRunner.child?.isAlive) {
         return ctx.send<ApiToastResp>({
             type: 'error',
-            msg: 'Cannot execute this action with the server offline.',
+            msg: 'The server is not running.',
         });
     }
 
@@ -48,6 +48,7 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
 
     //==============================================
     //DEBUG: Only available in the /advanced page
+    //FIXME: move to the advanced route, give button for profiling, saving mem snapshot, verbose, etc.
     if (action == 'profile_monitor') {
         if (!ensurePermission(ctx, 'all_permissions')) return false;
         ctx.admin.logAction('Profiling txAdmin instance.');
@@ -99,12 +100,18 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
     } else if (action == 'kick_all') {
         if (!ensurePermission(ctx, 'control.server')) return false;
         const kickReason = (parameter ?? '').trim() || txCore.translator.t('kick_messages.unknown_reason');
-        const fullReason = txCore.translator.t(
+        const dropMessage = txCore.translator.t(
             'kick_messages.everyone',
             { reason: kickReason }
         );
         ctx.admin.logAction(`Kicking all players: ${kickReason}`);
-        txCore.fxRunner.sendCommand('txaKickAll', [fullReason], ctx.admin.name);
+        // Dispatch `txAdmin:events:playerKicked`
+        txCore.fxRunner.sendEvent('playerKicked', {
+            target: -1,
+            author: ctx.admin.name,
+            reason: kickReason,
+            dropMessage,
+        });
         return ctx.send<ApiToastResp>({
             type: 'success',
             msg: 'Kick All command sent.',

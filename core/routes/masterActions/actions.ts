@@ -5,6 +5,7 @@ import { now } from '@lib/misc';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
+import { SYM_RESET_CONFIG } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 
@@ -27,9 +28,7 @@ export default async function MasterActionsAction(ctx: AuthedCtx) {
     }
 
     //Delegate to the specific action functions
-    if (action == 'reset_fxserver') {
-        return await handleResetFXServer(ctx);
-    } else if (action == 'cleanDatabase') {
+    if (action == 'cleanDatabase') {
         return handleCleanDatabase(ctx);
     } else if (action == 'revokeWhitelists') {
         return handleRevokeWhitelists(ctx);
@@ -37,44 +36,6 @@ export default async function MasterActionsAction(ctx: AuthedCtx) {
         return ctx.send({ error: 'Unknown settings action.' });
     }
 };
-
-
-/**
- * Handle FXServer settings reset nad resurn to setup
- */
-async function handleResetFXServer(ctx: AuthedCtx) {
-    if (txCore.fxRunner.fxChild !== null) {
-        ctx.admin.logCommand('STOP SERVER');
-        txCore.fxRunner.killServer('resetting fxserver config', ctx.admin.name, false).catch((e) => { });
-    }
-
-    //Making sure the deployer is not running
-    txManager.deployer = null;
-
-    //Preparing & saving config
-    const newConfig = txCore.configStore.getScopedStructure('fxRunner');
-    newConfig.serverDataPath = null;
-    newConfig.cfgPath = null;
-    try {
-        txCore.configStore.saveProfile('fxRunner', newConfig);
-    } catch (error) {
-        console.warn(`[${ctx.admin.name}] Error changing FXServer settings.`);
-        console.verbose.dir(error);
-        return ctx.send({
-            type: 'danger',
-            markdown: true,
-            message: `**Error saving the configuration file:** ${(error as Error).message}`
-        });
-    }
-
-    //technically not required, but faster than fxRunner.killServer()
-    txCore.webServer.webSocket.pushRefresh('status');
-
-    //Sending output
-    txCore.fxRunner.refreshConfig();
-    ctx.admin.logAction('Resetting fxRunner settings.');
-    return ctx.send({ success: true });
-}
 
 
 /**

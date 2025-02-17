@@ -1,4 +1,4 @@
-import { RoomType } from "../webSocket";
+import type { RoomType } from "../webSocket";
 import { FullPlayerlistEventType } from "@shared/socketioTypes";
 
 
@@ -12,7 +12,7 @@ export default {
     outBuffer: [],
     initialData: () => {
         return [{
-            mutex: txCore.fxRunner.currentMutex,
+            mutex: txCore.fxRunner.child?.mutex ?? null,
             type: 'fullPlayerlist',
             playerlist: txCore.fxPlayerlist.getPlayerList(),
         } satisfies FullPlayerlistEventType];

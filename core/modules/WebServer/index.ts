@@ -29,13 +29,6 @@ import serveStaticMw from './middlewares/serveStaticMw';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict49, 32);
 
-//Types
-export type WebServerConfigType = {
-    disableNuiSourceCheck: boolean;
-    limiterMinutes: number;
-    limiterAttempts: number;
-}
-
 
 /**
  * Module for the web server and socket.io.

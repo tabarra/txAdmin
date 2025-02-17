@@ -3,6 +3,7 @@ import v8 from 'node:v8';
 import bytes from 'bytes';
 import got from '@lib/got';
 import consoleFactory from '@lib/console';
+import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 //Helper functions
@@ -10,8 +11,7 @@ const isUndefined = (x) => (x === undefined);
 
 
 /**
- *
- * @param {object} ctx
+ * Endpoint for running advanced commands - basically, should not ever be used
  */
 export default async function AdvancedActions(ctx) {
     //Sanity check
@@ -37,7 +37,8 @@ export default async function AdvancedActions(ctx) {
     //Action: Change Verbosity
     if (action == 'change_verbosity') {
         console.setVerbose(parameter == 'true');
-        txCore.fxRunner.resetConvars();
+        //temp disabled because the verbosity convar is not being set by this method
+        // txCore.fxRunner.updateMutableConvars();
         return ctx.send({ refresh: true });
     } else if (action == 'perform_magic') {
         const message = JSON.stringify(txCore.fxPlayerlist.getPlayerList(), null, 2);
@@ -63,12 +64,14 @@ export default async function AdvancedActions(ctx) {
     } else if (action == 'freeze') {
         console.warn('Freezing process for 50 seconds.');
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50 * 1000);
-    } else if (action == 'resetConvars') {
-        txCore.fxRunner.resetConvars();
+    } else if (action == 'updateMutableConvars') {
+        txCore.fxRunner.updateMutableConvars();
         return ctx.send({ refresh: true });
-    } else if (action == 'reauth') {
-        // txaEvent "adminsUpdated" "[1,5,7]"
-        return txCore.fxRunner.sendEvent('adminsUpdated', [1, 5, 7]);
+    } else if (action == 'reauthLast10Players') {
+        // force refresh the admin status of the last 10 players to join
+        const lastPlayers = txCore.fxPlayerlist.getPlayerList().map((p) => p.netid).slice(-10);
+        txCore.fxRunner.sendEvent('adminsUpdated', lastPlayers);
+        return ctx.send({ type: 'success', message: `refreshed: ${JSON.stringify(lastPlayers)}` });
     } else if (action == 'getLoggerErrors') {
         const outData = {
             admin: txCore.logger.admin.lrLastError,
@@ -108,14 +111,16 @@ export default async function AdvancedActions(ctx) {
             [
                 'txAdmin-luaComToken',
                 txCore.webServer.luaComToken,
-            ]
+            ],
+            SYM_SYSTEM_AUTHOR
         );
         if (!setCmdResult) {
             return ctx.send({ type: 'danger', message: 'Failed to reset luaComToken.' });
         }
         const ensureCmdResult = txCore.fxRunner.sendCommand(
             'ensure',
-            ['monitor']
+            ['monitor'],
+            SYM_SYSTEM_AUTHOR
         );
         if (ensureCmdResult) {
             return ctx.send({ type: 'success', message: 'done' });
@@ -126,9 +131,35 @@ export default async function AdvancedActions(ctx) {
         const reason = action.split(' ', 2)[1];
         const category = txCore.metrics.playerDrop.handlePlayerDrop(reason);
         return ctx.send({ type: 'success', message: category });
+
+    } else if (action.startsWith('set')) {
+        // set general.language "pt"
+        // set general.language "en"
+        // set server.onesync "on"
+        // set server.onesync "legacy"
+        try {
+            const [_, scopeKey, valueJson] = action.split(' ', 3);
+            if (!scopeKey || !valueJson) throw new Error(`Invalid set command: ${action}`);
+            const [scope, key] = scopeKey.split('.');
+            if (!scope || !key) throw new Error(`Invalid set command: ${action}`);
+            const configUpdate = { [scope]: { [key]: JSON.parse(valueJson) } };
+            const storedKeysChanges = txCore.configStore.saveConfigs(configUpdate, ctx.admin.name);
+            const outParts = [
+                'Keys Updated: ' + JSON.stringify(storedKeysChanges ?? 'not set', null, 2),
+                '-'.repeat(16),
+                'Stored:' + JSON.stringify(txCore.configStore.getStoredConfig(), null, 2),
+            ];
+            return ctx.send({ type: 'success', message: outParts.join('\n') });
+        } catch (error) {
+            return ctx.send({ type: 'danger', message: error.message });
+        }
+
+    } else if (action == 'printFxRunnerChildHistory') {
+        const message = JSON.stringify(txCore.fxRunner.history, null, 2)
+        return ctx.send({ type: 'success', message });
+
     } else if (action == 'xxxxxx') {
-        // console.dir(res);
-        return ctx.send({ type: 'success', message: 'terminal' });
+        return ctx.send({ type: 'success', message: '😀👍' });
     }
 
     //Catch all

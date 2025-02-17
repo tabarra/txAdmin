@@ -132,7 +132,6 @@ CreateThread(function()
         --Commands
         '/txadmin',
         '/txaPing',
-        '/txaKickAll',
         '/txaEvent',
         '/txaReportResources',
         '/txaSetDebugMode',

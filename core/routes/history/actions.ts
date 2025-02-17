@@ -104,33 +104,24 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
     }
     ctx.admin.logAction(`Banned <${identifiers.join(';')}>: ${reason}`);
 
-    //No need to dispatch events if server is not online
-    if (txCore.fxRunner.fxChild === null) {
-        return { success: true };
-    }
-
+    // Dispatch `txAdmin:events:playerBanned`
     try {
-        //Prepare and send command
         let kickMessage, durationTranslated;
         const tOptions: any = {
             author: ctx.admin.name,
             reason: reason,
         };
         if (expiration !== false && duration) {
-            const humanizeOptions = {
-                language: txCore.translator.t('$meta.humanizer_language'),
-                round: true,
-                units: ['d', 'h'] as Unit[],
-            };
-            durationTranslated = humanizeDuration((duration) * 1000, humanizeOptions);
+            durationTranslated = txCore.translator.tDuration(
+                duration * 1000,
+                { units: ['d', 'h'] },
+            );
             tOptions.expiration = durationTranslated;
             kickMessage = txCore.translator.t('ban_messages.kick_temporary', tOptions);
         } else {
             durationTranslated = null;
             kickMessage = txCore.translator.t('ban_messages.kick_permanent', tOptions);
         }
-
-        // Dispatch `txAdmin:events:playerBanned`
         txCore.fxRunner.sendEvent('playerBanned', {
             author: ctx.admin.name,
             reason,
@@ -145,6 +136,7 @@ async function handleBandIds(ctx: AuthedCtx): Promise<GenericApiOkResp> {
             kickMessage,
         });
     } catch (error) { }
+
     return { success: true };
 }
 
@@ -174,13 +166,8 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiOkResp> {
         return { error: `Failed to revoke action: ${(error as Error).message}` };
     }
 
-    //No need to dispatch events if server is not online
-    if (txCore.fxRunner.fxChild === null) {
-        return { success: true };
-    }
-
+    // Dispatch `txAdmin:events:actionRevoked`
     try {
-        // Dispatch `txAdmin:events:actionRevoked`
         txCore.fxRunner.sendEvent('actionRevoked', {
             actionId: action.id,
             actionType: action.type,
@@ -192,5 +179,6 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiOkResp> {
             revokedBy: ctx.admin.name,
         });
     } catch (error) { }
+
     return { success: true };
 }

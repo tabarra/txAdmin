@@ -1,6 +1,7 @@
 const modulename = 'WebServer:SetupPost';
 import path from 'node:path';
 import fse from 'fs-extra';
+import fsp from 'node:fs/promises';
 import slash from 'slash';
 import { Deployer } from '@core/deployer/index';
 import { validateFixServerConfig, findLikelyCFGPath } from '@lib/fxserver/fxsConfigHelper';
@@ -45,6 +46,8 @@ const getPotentialServerDataFolders = (source) => {
 
 /**
  * Handle all the server control actions
+ * FIXME: separate into validate.ts, saveDeployer.ts, and saveLocal.ts files
+ * FIXME: or maybe postDeployer.ts, and postLocal.ts files
  * @param {object} ctx
  */
 export default async function SetupPost(ctx) {
@@ -153,6 +156,7 @@ async function handleValidateLocalDataFolder(ctx) {
     }
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim() + '/'));
 
+    //FIXME: replace with stuff in core/routes/settings/saveConfigs.ts > handleFxserverCard
     try {
         if (!fse.existsSync(path.join(dataFolderPath, 'resources'))) {
             const recoveryTemplate = `The path provided is invalid. <br>
@@ -229,7 +233,7 @@ async function handleValidateCFGFile(ctx) {
             return ctx.send({success: true});
         }
     } catch (error) {
-        const message = `The file path is correct, but: <br>\n ${error.message}.`;
+        const message = `Error:\n ${error.message}.`;
         return ctx.send({success: false, message});
     }
 }
@@ -259,39 +263,50 @@ async function handleSaveLocal(ctx) {
 
     //Validating Server Data Path
     try {
-        if (!fse.existsSync(path.join(cfg.dataFolder, 'resources'))) {
-            throw new Error('Invalid path');
+        const stat = await fsp.stat(path.join(cfg.dataFolder, 'resources'))
+        if (!stat.isDirectory()) {
+            throw new Error('not a directory');
         }
     } catch (error) {
-        return ctx.send({success: false, message: `<strong>Server Data Folder error:</strong> ${error.message}`});
+        let msg = error?.message ?? 'unknown error';
+        if (error?.code === 'ENOENT') {
+            msg = 'The server data folder does not exist.';
+        }
+        return ctx.send({success: false, message: `<strong>Server Data Folder error:</strong> ${msg}`});
     }
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
-    newGlobalConfig.serverName = cfg.name;
-    const newFXRunnerConfig = txCore.configStore.getScopedStructure('fxRunner');
-    newFXRunnerConfig.serverDataPath = cfg.dataFolder;
-    newFXRunnerConfig.cfgPath = cfg.cfgFile;
     try {
-        txCore.configStore.saveProfile('global', newGlobalConfig);
-        txCore.configStore.saveProfile('fxRunner', newFXRunnerConfig);
-        txCore.metrics.playerDrop.resetLog('Server Data Path or CFG Path changed.');
+        txCore.configStore.saveConfigs({
+            general: {
+                serverName: cfg.name,
+            },
+            server: {
+                dataPath: cfg.dataFolder,
+                cfgPath: cfg.cfgFile,
+            }
+        }, ctx.admin.name);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global/fxserver settings via setup stepper.`);
         console.verbose.dir(error);
         return ctx.send({
             type: 'danger',
             markdown: true,
-            message: `**Error saving the configuration file:** ${error.message}`
+            message: `**Error saving the configuration file:**\n${error.message}`
         });
     }
 
     //Refreshing config
-    txCore.fxRunner.refreshConfig();
     txCore.cacheStore.set('deployer:recipe', 'none');
 
     //Logging
     ctx.admin.logAction('Changing global/fxserver settings via setup stepper.');
+
+    //If running (for some reason), kill it first 
+    if (!txCore.fxRunner.isIdle) {
+        ctx.admin.logCommand('STOP SERVER');
+        await txCore.fxRunner.killServer('new server set up', ctx.admin.name, true);
+    }
 
     //Starting server
     const spawnError = await txCore.fxRunner.spawnServer(false);
@@ -338,10 +353,10 @@ async function handleSaveDeployerImport(ctx) {
     }
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
-    newGlobalConfig.serverName = serverName;
     try {
-        txCore.configStore.saveProfile('global', newGlobalConfig);
+        txCore.configStore.saveConfigs({
+            general: { serverName },
+        }, ctx.admin.name);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);
@@ -383,10 +398,10 @@ async function handleSaveDeployerCustom(ctx) {
     const deploymentID = ctx.request.body.deploymentID;
 
     //Preparing & saving config
-    const newGlobalConfig = txCore.configStore.getScopedStructure('global');
-    newGlobalConfig.serverName = serverName;
     try {
-        txCore.configStore.saveProfile('global', newGlobalConfig);
+        txCore.configStore.saveConfigs({
+            general: { serverName },
+        }, ctx.admin.name);
     } catch (error) {
         console.warn(`[${ctx.admin.name}] Error changing global settings via setup stepper.`);
         console.verbose.dir(error);

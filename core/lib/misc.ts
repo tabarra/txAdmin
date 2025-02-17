@@ -1,35 +1,49 @@
 import dateFormat from 'dateformat';
+import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
+import { DeepReadonly } from 'utility-types';
+
+export const regexHoursMinutes = /^(?<hours>[01]?[0-9]|2[0-4]):(?<minutes>[0-5][0-9])$/;
+
 
 /**
  * Extracts hours and minutes from an string containing times
  */
 export const parseSchedule = (scheduleTimes: string[]) => {
-    const valid = [];
+    const valid: {
+        string: string;
+        hours: number;
+        minutes: number;
+    }[] = [];
     const invalid = [];
     for (const timeInput of scheduleTimes) {
         if (typeof timeInput !== 'string') continue;
         const timeTrim = timeInput.trim();
         if (!timeTrim.length) continue;
 
-        const hmRegex = /^([01]?[0-9]|2[0-4]):([0-5][0-9])$/gm;
-        const m = hmRegex.exec(timeTrim);
-        if (m === null) {
-            invalid.push(timeTrim);
-        } else {
-            if (m[1] === '24') m[1] = '00'; //Americans, amirite?!?!
+        const m = timeTrim.match(regexHoursMinutes);
+        if (m && m.groups?.hours && m.groups?.minutes) {
+            if (m.groups.hours === '24') m.groups.hours = '00'; //Americans, amirite?!?!
+            const timeStr = m.groups.hours.padStart(2, '0') + ':' + m.groups.minutes.padStart(2, '0');
+            if (valid.some(item => item.string === timeStr)) continue;
             valid.push({
-                string: m[1].padStart(2, '0') + ':' + m[2].padStart(2, '0'),
-                hours: parseInt(m[1]),
-                minutes: parseInt(m[2]),
+                string: timeStr,
+                hours: parseInt(m.groups.hours),
+                minutes: parseInt(m.groups.minutes),
             });
+        } else {
+            invalid.push(timeTrim);
         }
     }
+    valid.sort((a, b) => {
+        return a.hours - b.hours || a.minutes - b.minutes;
+    });
     return { valid, invalid };
 };
 
 
 /**
  * Redacts known keys and tokens from a string
+ * @deprecated Use redactApiKeysArr instead
  */
 export const redactApiKeys = (src: string) => {
     if (typeof src !== 'string' || !src.length) return src;
@@ -41,6 +55,89 @@ export const redactApiKeys = (src: string) => {
         .replace(/mysql_connection_string\s+["']?[^"']+["']?.?$/gim, 'mysql_connection_string [REDACTED]')
         .replace(/discord\.com\/api\/webhooks\/\d{17,20}\/[\w\-_./=]{10,}(.*)/gim, 'discord.com/api/webhooks/[REDACTED]/[REDACTED]');
 };
+
+
+/**
+ * Redacts known keys and tokens from an array of startup arguments.
+ */
+export const redactStartupSecrets = (args: string[]): string[] => {
+    if (!Array.isArray(args) || args.length === 0) return args;
+
+    const redactionRules: ApiRedactionRuleset = {
+        sv_licenseKey: {
+            regex: /^cfxk_\w{1,60}_(\w+)$/i,
+            replacement: (_match, p1) => `[REDACTED cfxk...${p1}]`,
+        },
+        steam_webApiKey: {
+            regex: /^\w{32}$/i,
+            replacement: '[REDACTED]',
+        },
+        sv_tebexSecret: {
+            regex: /^\w{40}$/i,
+            replacement: '[REDACTED]',
+        },
+        rcon_password: {
+            replacement: '[REDACTED]',
+        },
+        mysql_connection_string: {
+            replacement: '[REDACTED]',
+        },
+        tx2faSecret: {
+            replacement: '[REDACTED]',
+        },
+        'txAdmin-luaComToken': {
+            replacement: '[REDACTED]',
+        },
+    };
+
+
+    let outArgs: string[] = [];
+    for (let i = 0; i < args.length; i++) {
+        const currElem = args[i];
+        const currElemLower = currElem.toLocaleLowerCase();
+        const ruleMatchingPrefix = Object.keys(redactionRules).find((key) =>
+            currElemLower.includes(key.toLocaleLowerCase())
+        );
+        // If no rule matches or there is no subsequent element, just push the current element.
+        if (!ruleMatchingPrefix || i + 1 >= args.length) {
+            outArgs.push(currElem);
+            continue;
+        }
+        const rule = redactionRules[ruleMatchingPrefix];
+        const nextElem = args[i + 1];
+        // If the secret doesn't match the expected regex, treat it as a normal argument.
+        if (rule.regex && !nextElem.match(rule.regex)) {
+            outArgs.push(currElem);
+            continue;
+        }
+        // Push the key and then the redacted secret.
+        outArgs.push(currElem);
+        if (typeof rule.replacement === 'string') {
+            outArgs.push(rule.replacement);
+        } else if (rule.regex) {
+            outArgs.push(nextElem.replace(rule.regex, rule.replacement));
+        }
+        // Skip the secret value we just processed.
+        i++;
+    }
+
+    //Apply standalone redaction rules
+    outArgs = outArgs.map((arg) => arg
+        .replace(/discord\.com\/api\/webhooks\/\d{17,20}\/[\w\-_./=]{10,}(.*)/gim, 'discord.com/api/webhooks/[REDACTED]/[REDACTED]')
+    );
+
+    if (args.length !== outArgs.length) {
+        throw new Error('Input and output lengths are different after redaction.');
+    }
+    return outArgs;
+};
+
+type ApiRedactionRule = {
+    regex?: RegExp;
+    replacement: string | ((...args: any[]) => string);
+};
+
+type ApiRedactionRuleset = Record<string, ApiRedactionRule>;
 
 
 /**
@@ -59,6 +156,41 @@ export const getTimeHms = (time?: string | number | Date) => dateFormat(time ?? 
  * Returns the current time in filename-friendly format
  */
 export const getTimeFilename = (time?: string | number | Date) => dateFormat(time ?? new Date(), 'yyyy-mm-dd_HH-MM-ss');
+
+
+/**
+ * Converts a number of milliseconds to english words
+ * Accepts a humanizeDuration config object
+ * eg: msToDuration(ms, { units: ['h', 'm'] });
+ */
+export const msToDuration = humanizeDuration.humanizer({
+    round: true,
+    units: ['d', 'h', 'm'],
+    fallbacks: ['en'],
+} satisfies HumanizerOptions);
+
+
+/**
+ * Converts a number of milliseconds to short-ish english words
+ */
+export const msToShortishDuration = humanizeDuration.humanizer({
+    round: true,
+    units: ['d', 'h', 'm'],
+    largest: 2,
+    language: 'shortishEn',
+    languages: {
+        shortishEn: {
+            y: (c) => 'year' + (c === 1 ? '' : 's'),
+            mo: (c) => 'month' + (c === 1 ? '' : 's'),
+            w: (c) => 'week' + (c === 1 ? '' : 's'),
+            d: (c) => 'day' + (c === 1 ? '' : 's'),
+            h: (c) => 'hr' + (c === 1 ? '' : 's'),
+            m: (c) => 'min' + (c === 1 ? '' : 's'),
+            s: (c) => 'sec' + (c === 1 ? '' : 's'),
+            ms: (c) => 'ms',
+        },
+    },
+});
 
 
 /**
@@ -107,3 +239,23 @@ export const parseLimitedFloat = (src: number | string, precision = 6) => {
     const srcAsNum = typeof src === 'string' ? parseFloat(src) : src;
     return parseFloat(srcAsNum.toFixed(precision));
 }
+
+
+/**
+ * Deeply freezes an object and all its nested properties
+ */
+export const deepFreeze = <T extends Record<string, any>>(obj: T) => {
+    Object.freeze(obj);
+    Object.getOwnPropertyNames(obj).forEach((prop) => {
+        if (Object.prototype.hasOwnProperty.call(obj, prop)
+            && obj[prop] !== null
+            && (typeof obj[prop] === 'object' || typeof obj[prop] === 'function')
+            && !Object.isFrozen(obj[prop])
+        ) {
+            deepFreeze(obj[prop] as object);
+        }
+    });
+    return obj;
+    //FIXME: using DeepReadonly<T> will cause ts errors in ConfigStore
+    // return obj as DeepReadonly<T>;
+};

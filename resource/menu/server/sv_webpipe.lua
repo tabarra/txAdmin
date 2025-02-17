@@ -27,6 +27,12 @@ if not useLatentEvents then
   txPrint('^3WARNING: Latent events are disabled. If you have issues using the txAdmin in-game menu, please enable them by setting sv_enableNetEventReassembly to true in your server.cfg.')
 end
 
+-- So it's easy to enable-disable debug messages for webpipe
+function debugWebPipe(...)
+  -- debugPrint(...)
+end
+
+---Sends a response to the client
 ---@param src string
 ---@param callbackId number
 ---@param statusCode number
@@ -38,10 +44,10 @@ local function sendResponse(src, callbackId, statusCode, path, body, headers, ca
   local errorCode = tonumber(statusCode) >= 400
   local resultColor = errorCode and '^1' or '^2'
   local cachedStr = cached and " ^1(cached)^0" or ""
-  debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< %s ^4%s%s^0"):format(
+  debugWebPipe(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< %s ^4%s%s^0"):format(
     src, callbackId, resultColor, statusCode, path, cachedStr))
   if errorCode then
-    debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0"):format(src, callbackId, resultColor, json.encode(headers)))
+    debugWebPipe(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0"):format(src, callbackId, resultColor, json.encode(headers)))
   end
   if useLatentEvents then
     TriggerLatentClientEvent('txcl:webpipe:resp', src, 125000, callbackId, statusCode, body, headers)
@@ -50,6 +56,12 @@ local function sendResponse(src, callbackId, statusCode, path, body, headers, ca
   end
 end
 
+---Handles incoming webpipe request events
+---@param callbackId number
+---@param method string
+---@param path string
+---@param headers table
+---@param body string
 RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers, body)
   local s = source
   local src = tostring(s)
@@ -71,12 +83,12 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
   -- Reject requests from un-authed players
   if not TX_ADMINS[src] then
     if _pipeLastReject ~= nil then
-      if (GetGameTimer() - _pipeLastReject) < 250 then
+      if (GetGameTimer() - _pipeLastReject) < 1250 then
         _pipeLastReject = GetGameTimer()
         return
       end
     end
-    debugPrint(string.format(
+    debugWebPipe(string.format(
         "^3WebPipe[^5%d^0:^1%d^3]^0 ^1rejected request from ^3%s^1 for ^5%s^0", s, callbackId, s, path))
     TriggerClientEvent('txcl:webpipe:resp', s, callbackId, 403, "{}", {})
     return
@@ -93,9 +105,8 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
   headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
   headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ',')
 
-
-  debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))
-  debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s^0"):format(s, callbackId, json.encode(headers)))
+  debugWebPipe(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))
+  debugWebPipe(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s^0"):format(s, callbackId, json.encode(headers)))
 
   PerformHttpRequest(url, function(httpCode, data, resultHeaders)
     -- fixing body for error pages (eg 404)
@@ -144,7 +155,7 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
           end
         end
         _pipeFastCache[safePath] = { data = data, headers = slimHeaders }
-        debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^5cached ^4%s^0"):format(s, callbackId, safePath))
+        debugWebPipe(("^3WebPipe[^5%d^0:^1%d^3]^0 ^5cached ^4%s^0"):format(s, callbackId, safePath))
         break
       end
     end

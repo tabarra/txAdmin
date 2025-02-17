@@ -1,10 +1,20 @@
+//NOTE: don't import anything at the root of this file or it breaks the type definitions
+
 /**
  * MARK: txAdmin stuff
  */
-declare interface GenericTxModule<T> {
-    new(): T;
-    // configKeys: string[]; //TODO
+type RefreshConfigFunc = import('@modules/ConfigStore/').RefreshConfigFunc;
+interface GenericTxModuleInstance {
+    public handleConfigUpdate?: RefreshConfigFunc;
+    // public measureMemory?: () => { [key: string]: number };
 }
+declare interface GenericTxModule<T> {
+    new(): InstanceType<T> & GenericTxModuleInstance;
+    static readonly configKeysWatched?: string[];
+}
+
+declare type TxConfigs = import('@modules/ConfigStore/schema').TxConfigs
+declare const txConfig: TxConfigs;
 
 declare type TxCoreType = import('./txAdmin').TxCoreType;
 declare const txCore: TxCoreType;
@@ -12,40 +22,9 @@ declare const txCore: TxCoreType;
 declare type TxManagerType = import('./txManager').TxManagerType;
 declare const txManager: TxManagerType;
 
-//FIXME: temporary
-type AnythingButConfig = {
-    config: never;
-    [key: string]: any;
-};
-declare type TxAdminConfigs = {
-    config: never,
-    global: {
-        serverName: string,
-        language: string,
-        menuEnabled: boolean,
-        menuAlignRight: boolean,
-        menuPageKey: string,
-
-        hideDefaultAnnouncement: boolean,
-        hideDefaultDirectMessage: boolean,
-        hideDefaultWarning: boolean,
-        hideDefaultScheduledRestartWarning: boolean,
-        hideAdminInPunishments: boolean,
-        hideAdminInMessages: boolean,
-    },
-    logger: AnythingButConfig,
-    monitor: AnythingButConfig,
-    playerDatabase: import('@modules/Database').PlayerDbConfigType,
-    webServer: import('@modules/WebServer').WebServerConfigType,
-    discordBot: import('@modules/DiscordBot').DiscordBotConfigType,
-    fxRunner: AnythingButConfig,
-    banTemplates: AnythingButConfig,
-};
-declare let txConfig: TxAdminConfigs;
-
 declare type TxConsole = import('./lib/console').TxConsole;
 declare namespace globalThis {
-    interface Console extends TxConsole {}
+    interface Console extends TxConsole { }
 }
 
 

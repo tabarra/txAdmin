@@ -53,7 +53,7 @@ class Command {
     }
 
     //Kinda confusing name, but it returns the value of a set if it's for that ne var
-    getSetForVariable(varname: string) {
+    isConvarSetterFor(varname: string) {
         if (
             ['set', 'sets', 'setr'].includes(this.command)
             && this.args.length === 2
@@ -87,7 +87,6 @@ class ExecRecursionError {
 class FilesInfoList {
     readonly store: Record<string, [number | false, string][]> = {};
 
-    constructor() { }
     add(file: string, line: number | false, msg: string) {
         if (Array.isArray(this.store[file])) {
             this.store[file].push([line, msg]);
@@ -123,20 +122,19 @@ class FilesInfoList {
  * Returns the first likely server.cfg given a server data path, or false
  */
 export const findLikelyCFGPath = (serverDataPath: string) => {
-    const attempts = [
+    const commonCfgFileNames = [
         'server.cfg',
         'server.cfg.txt',
         'server.cfg.cfg',
         'server.txt',
         'server',
-        '../server.cfg',
     ];
 
-    for (const attempt of attempts) {
-        const cfgPath = path.join(serverDataPath, attempt);
+    for (const cfgFileName of commonCfgFileNames) {
+        const absoluteCfgPath = path.join(serverDataPath, cfgFileName);
         try {
-            if (fs.lstatSync(cfgPath).isFile()) {
-                return cfgPath;
+            if (fs.lstatSync(absoluteCfgPath).isFile()) {
+                return cfgFileName;
             }
         } catch (error) { }
     }
@@ -147,8 +145,8 @@ export const findLikelyCFGPath = (serverDataPath: string) => {
 /**
  * Returns the absolute path of the given CFG Path
  */
-export const resolveCFGFilePath = (cfgPath: string, serverDataPath: string) => {
-    return (path.isAbsolute(cfgPath)) ? path.normalize(cfgPath) : path.resolve(serverDataPath, cfgPath);
+export const resolveCFGFilePath = (cfgPath: string, dataPath: string) => {
+    return (path.isAbsolute(cfgPath)) ? path.normalize(cfgPath) : path.resolve(dataPath, cfgPath);
 };
 
 
@@ -282,7 +280,7 @@ export const readLineCommands = (input: string) => {
 
 
 /**
- * Recursively parse server.cfg files losely based on the fxserver original parser.
+ * Recursively parse server.cfg files losely based on the FXServer original parser.
  * Notable differences: we have recursivity depth limit, and no json parsing
  * Original CFG (console) parser:
  *  fivem/code/client/citicore/console/Console.cpp > Context::ExecuteBuffer
@@ -393,7 +391,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
         }
 
         //Check sv_maxClients against ZAP config
-        const isMaxClientsString = cmd.getSetForVariable('sv_maxclients');
+        const isMaxClientsString = cmd.isConvarSetterFor('sv_maxclients');
         if (
             convars.deployerDefaults?.maxClients
             && isMaxClientsString
@@ -410,7 +408,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
         }
 
         //Comment out any onesync sets
-        if (cmd.getSetForVariable('onesync')) {
+        if (cmd.isConvarSetterFor('onesync')) {
             toCommentOut.add(
                 cmd.file,
                 cmd.line,
@@ -418,6 +416,8 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
             );
             continue;
         }
+
+        //FIXME: add isConvarSetterFor for all "Settings page only" convars
 
         //Extract & process endpoint validity
         if (cmd.command === 'endpoint_add_tcp' || cmd.command === 'endpoint_add_udp') {
@@ -529,7 +529,7 @@ const getConnectEndpoint = (endpoints: EndpointsObjectType) => {
 \t\`endpoint_add_tcp "${desidredEndpoint}"\`
 \t\`endpoint_add_udp "${desidredEndpoint}"\``;
         } else {
-            msg = `Your config file does not specify a valid endpoint for fxserver to use.
+            msg = `Your config file does not specify a valid endpoint for FXServer to use.
 \tPlease delete all \`endpoint_add_*\` lines and add the following to the start of the file:
 \t\`endpoint_add_tcp "0.0.0.0:30120"\`
 \t\`endpoint_add_udp "0.0.0.0:30120"\``;
@@ -548,18 +548,18 @@ const getConnectEndpoint = (endpoints: EndpointsObjectType) => {
 
 
 /**
- * Validates & ensures correctness in fxserver config file recursively.
+ * Validates & ensures correctness in FXServer config file recursively.
  * Used when trying to start server, or validate the server.cfg.
  * Returns errors, warnings and connectEndpoint
  */
 export const validateFixServerConfig = async (cfgPath: string, serverDataPath: string) => {
-    //Parsing fxserver config & going through each command
+    //Parsing FXServer config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(null, cfgAbsolutePath, serverDataPath);
     const { endpoints, errors, warnings, toCommentOut } = await validateCommands(parsedCommands);
 
     //Validating if a valid endpoint was detected
-    let connectEndpoint: string | false = false;
+    let connectEndpoint: string | null = null;
     try {
         connectEndpoint = getConnectEndpoint(endpoints);
     } catch (error) {
@@ -624,7 +624,7 @@ export const validateModifyServerConfig = async (
         throw new Error('cfgInputString expected to be string.');
     }
 
-    //Parsing fxserver config & going through each command
+    //Parsing FXServer config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(cfgInputString, cfgAbsolutePath, serverDataPath);
     const { endpoints, errors, warnings } = await validateCommands(parsedCommands);
@@ -694,14 +694,14 @@ export const validateModifyServerConfig = async (
 "::1"
 "[::1]"
 
-# fxserver doesn't accept
+# FXServer doesn't accept
 "::1.30120"
 "::1 port 30120"
 "::1p30120"
 "::1#30120"
 "::"
 
-# fxserver misreads last part as a port
+# FXServer misreads last part as a port
 "fe80::4cec:1264:187e:ce2b"
 
 */

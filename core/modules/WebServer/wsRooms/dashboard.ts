@@ -1,4 +1,4 @@
-import { RoomType } from "../webSocket";
+import type { RoomType } from "../webSocket";
 import { DashboardDataEventType } from "@shared/socketioTypes";
 
 

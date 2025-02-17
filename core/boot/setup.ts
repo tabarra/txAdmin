@@ -6,31 +6,9 @@ import chalk from 'chalk';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
 import { txEnv } from '@core/globalData';
+import ConfigStore from '@modules/ConfigStore';
 const console = consoleFactory(modulename);
 
-
-//FIXME: deprecate this - do @modules/ConfigStore/utils.ts > encodeConfig() or something like that
-const CONFIG_STRUCTURE = {
-    global: {
-        serverName: null,
-        language: 'en',
-    },
-    logger: {},
-    monitor: {
-        restarterSchedule: [],
-    },
-    webServer: {},
-    discordBot: {
-        enabled: false,
-        token: null,
-        announceChannel: null,
-    },
-    fxRunner: {
-        serverDataPath: null,
-        cfgPath: null,
-        autostart: true,
-    },
-};
 
 /**
  * Ensure the profile subfolders exist
@@ -47,6 +25,7 @@ export const ensureProfileStructure = () => {
     }
 }
 
+
 /**
  * Setup the profile folder structure
  */
@@ -56,9 +35,10 @@ export const setupProfile = () => {
     console.log('Creating new profile folder...');
     try {
         fs.mkdirSync(txEnv.profilePath);
+        const configStructure = ConfigStore.getEmptyConfigFile();
         fs.writeFileSync(
             path.join(txEnv.profilePath, 'config.json'), 
-            JSON.stringify(CONFIG_STRUCTURE, null, 2)
+            JSON.stringify(configStructure, null, 2)
         );
         ensureProfileStructure();
     } catch (error) {
@@ -75,6 +55,7 @@ export const setupProfile = () => {
         try {
             const fxsPath = path.join(txEnv.fxServerPath, 'FXServer.exe');
             const batLines = [
+                //TODO: add note to not add any server convars in here
                 `@echo off`,
                 `"${fxsPath}" +set serverProfile "${txEnv.profile}"`,
                 `pause`

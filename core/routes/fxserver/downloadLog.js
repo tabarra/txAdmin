@@ -17,10 +17,10 @@ export default async function FXServerDownloadLog(ctx) {
     let readFile;
     try {
         //NOTE: why the fuck are errors from `createReadStream` not being caught? Well, using readFileSync for now...
-        // readFile = fs.createReadStream(txConfig.fxRunner.logPath);
-        readFile = fs.readFileSync(txConfig.fxRunner.logPath);
+        // readFile = fs.createReadStream(txCore.logger.fxserver.activeFilePath);
+        readFile = fs.readFileSync(txCore.logger.fxserver.activeFilePath);
     } catch (error) {
-        console.error(`Could not read log file ${txConfig.fxRunner.logPath}.`);
+        console.error(`Could not read log file ${txCore.logger.fxserver.activeFilePath}.`);
     }
     const now = (new Date() / 1000).toFixed();
     ctx.attachment(`fxserver_${now}.log`);

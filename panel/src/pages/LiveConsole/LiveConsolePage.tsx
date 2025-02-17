@@ -23,7 +23,8 @@ import { getSocket } from '@/lib/utils';
 import { openExternalLink } from '@/lib/navigation';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import { txToast } from '@/components/TxToaster';
-import { copyTermLine, extractTermLineTimestamp, formatTermTimestamp, hasRtlChars, sanitizeTermLine } from './liveConsoleUtils';
+import { copyTermLine, extractTermLineTimestamp, formatTermTimestamp } from './liveConsoleUtils';
+import { getTermLineEventData, getTermLineInitialData, getTermLineRtlData, registerTermLineMarker } from './liveConsoleMarkers';
 
 
 //Options
@@ -189,7 +190,7 @@ export default function LiveConsolePage() {
 
             term.attachCustomKeyEventHandler((e: KeyboardEvent) => {
                 // Some are handled by the live console element
-                if (e.code === 'F5') {
+                if (e.code === 'F5' && !e.ctrlKey) {
                     return false;
                 } else if (e.code === 'Escape') {
                     return false;
@@ -234,7 +235,7 @@ export default function LiveConsolePage() {
     }, [term]);
 
     useEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.code === 'F5') {
+        if (e.code === 'F5' && !e.ctrlKey) {
             if (isConnected) {
                 refreshPage();
                 e.preventDefault();
@@ -254,25 +255,6 @@ export default function LiveConsolePage() {
             e.preventDefault();
         }
     });
-
-    //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/701
-    const registerBidiMarker = (fullLine: string) => {
-        const marker = term.registerMarker(0)
-        const decoration = term.registerDecoration({ marker });
-        decoration && decoration.onRender(element => {
-            element.classList.add('cursor-pointer');
-            element.innerText = '🔠';
-            element.onclick = () => {
-                txToast.info({
-                    title: 'Bidirectional Text Detected:',
-                    msg: fullLine,
-                });
-            }
-            // element.innerHTML = `<div class="bg-info text-info-foreground rounded px-2 py-1 mt-[-0.25rem] z-10">RTL</div>`
-            // element.style.height = '';
-            // element.style.width = '';
-        });
-    }
 
     //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/4994
     const writeToTerminal = (data: string) => {
@@ -303,9 +285,22 @@ export default function LiveConsolePage() {
                 termPrefixRef.current.prefix = defaultTermPrefix;
                 console.warn('Failed to parse timestamp from:', line, (error as any).message);
             }
-            if (hasRtlChars(line)) {
-                registerBidiMarker(sanitizeTermLine(line));
+
+            //Markers
+            try {
+                const res = getTermLineEventData(line)
+                    ?? getTermLineInitialData(line)
+                    ?? getTermLineRtlData(line); //https://github.com/xtermjs/xterm.js/issues/701
+                if (res && res.markerData) {
+                    registerTermLineMarker(term, i, res.markerData);
+                }
+                if (res && res.newLine) {
+                    line = res.newLine;
+                }
+            } catch (error) {
+                console.error('Failed to process marker:', (error as any).message);
             }
+
             //Check if it's last line, and if the EOL was stripped
             const prefixColor = isNewTs ? ANSI_WHITE : ANSI_GRAY;
             const prefix = termPrefixRef.current.lastEol

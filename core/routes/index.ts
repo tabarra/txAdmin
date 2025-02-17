@@ -29,11 +29,12 @@ export { default as deployer_stepper } from './deployer/stepper';
 export { default as deployer_status } from './deployer/status';
 export { default as deployer_actions } from './deployer/actions';
 
-export { default as settings_page } from './settings/get';
-export { default as settings_save } from './settings/save';
-
-export { default as settings_getBanTemplates } from './banTemplates/getBanTemplates.js';
-export { default as settings_saveBanTemplates } from './banTemplates/saveBanTemplates.js';
+//FIXME join bantemplates with settings
+export { default as settings_getConfigs } from './settings/getConfigs';
+export { default as settings_saveConfigs } from './settings/saveConfigs';
+export { default as settings_getBanTemplates } from './banTemplates/getBanTemplates';
+export { default as settings_saveBanTemplates } from './banTemplates/saveBanTemplates';
+export { default as settings_resetServerDataPath } from './settings/resetServerDataPath';
 
 export { default as masterActions_page } from './masterActions/page';
 export { default as masterActions_getBackup } from './masterActions/getBackup';
