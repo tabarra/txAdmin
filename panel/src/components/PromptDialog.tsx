@@ -11,17 +11,18 @@ import { Input } from "@/components/ui/input";
 import { useClosePromptDialog, usePromptDialogState } from "@/hooks/dialogs";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
+import { AutosizeTextarea } from "./ui/autosize-textarea";
 
 
 export default function PromptDialog() {
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<any>(null);
     const dialogState = usePromptDialogState();
     const closeDialog = useClosePromptDialog();
 
     const handleSubmit = () => {
         if (!dialogState.isOpen) return;
         closeDialog();
-        const input = inputRef.current?.value ?? '';
+        const input = inputRef.current?.value ?? inputRef.current?.textArea.value ?? '';
         dialogState.onSubmit(input.trim());
     }
 
@@ -51,14 +52,25 @@ export default function PromptDialog() {
                         </DialogDescription>
                     </DialogHeader>
 
-                    <Input
-                        autoFocus
-                        id="userInput"
-                        ref={inputRef}
-                        placeholder={dialogState.placeholder}
-                        autoComplete="off"
-                        required={dialogState.required}
-                    />
+                    {dialogState.isMultiline ? (
+                        <AutosizeTextarea
+                            autoFocus
+                            ref={inputRef}
+                            placeholder={dialogState.placeholder}
+                            autoComplete="off"
+                            required={dialogState.required}
+                            minHeight={100}
+                            maxHeight={240}
+                        />
+                    ) : (
+                        <Input
+                            autoFocus
+                            ref={inputRef}
+                            placeholder={dialogState.placeholder}
+                            autoComplete="off"
+                            required={dialogState.required}
+                        />
+                    )}
                     <DialogFooter className="gap-2 flex-col">
                         <div className="flex flex-col sm:flex-row sm:justify-start gap-2 w-full flex-wrap">
                             {dialogState.suggestions && dialogState.suggestions.map((suggestion, index) => (

@@ -24,16 +24,10 @@ Contains all actions that happen inside the server, for example player join/leav
 - maxFiles: 7
 - maxSize: 10G
 
-## TODO: System Logs (not yet released):
-Contains everything that txAdmin prints on the console.
-- Recent Buffer: last 500 lines
-- Interval: 1d
-- maxFiles: 7
-- maxSize: 5G
 
 ## Configuring Log Rotate
 The log rotation can be configured, so you can choose to store more or less logs according to your needs.  
-To configure it, edit your `txData/<profile>/config.json` and add an object inside `logger` with the key being one of `[admin, fxserver, server, console]`. Then add option keys according with the library reference: https://github.com/iccicci/rotating-file-stream#options
+To configure it, edit your `txData/<profile>/config.json` and add an object inside `logger` with the key being one of `[admin, fxserver, server]`. Then add option keys according with the library reference: https://github.com/iccicci/rotating-file-stream#options
 
 Example:
 ```jsonc
@@ -45,6 +39,19 @@ Example:
       "maxSize": "2G", //max size of rotated files to keep
       "maxFiles": 14 //max number of rotated files to keep
     }
+  }
+  //...
+}
+```
+
+To completely disable one of the log types, set its value to `false`.
+
+Example:
+```jsonc
+{
+  //...
+  "logger": {
+    "server": false
   }
   //...
 }

@@ -2,7 +2,8 @@ import { Fragment, useMemo } from "react";
 import { PlayerDropsMessage } from "./PlayerDropsGenericSubcards";
 import type { PDLChangeEventType } from "@shared/otherTypes";
 import { processResourceChanges } from "./utils";
-import { cn, tsToLocaleDateString, tsToLocaleDateTimeString, tsToLocaleTimeString } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { tsToLocaleDateString, tsToLocaleDateTimeString, tsToLocaleTimeString } from "@/lib/dateTime";
 
 
 function DiffOld({ children }: { children: React.ReactNode }) {

@@ -19,30 +19,24 @@ import ScrollDownAddon from "./ScrollDownAddon";
 import terminalOptions from "./xtermOptions";
 import './xtermOverrides.css';
 import '@xterm/xterm/css/xterm.css';
-import { getSocket, openExternalLink, tsToLocaleTimeString } from '@/lib/utils';
+import { getSocket } from '@/lib/utils';
+import { openExternalLink } from '@/lib/navigation';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import { txToast } from '@/components/TxToaster';
+import { copyTermLine, extractTermLineTimestamp, formatTermTimestamp } from './liveConsoleUtils';
+import { getTermLineEventData, getTermLineInitialData, getTermLineRtlData, registerTermLineMarker } from './liveConsoleMarkers';
 
-//Helpers
-const keyDebounceTime = 150; //ms
 
-//Yoinked from the internet, no good source
-const rtlRangeRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]{3,}/; //ignoring anything less than 3 characters
-
-//Yoinked from core/components/Logger/FXServerLogger/index.ts
-const regexControls = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F]|(?:\x1B\[|\x9B)[\d;]+[@-K]/g;
-const regexColors = /\x1B[^m]*?m/g;
-const cleanTermOutput = (data: string) => {
-    return data
-        .replace(regexControls, '')
-        .replace(regexColors, '');
+//Options
+export type LiveConsoleOptions = {
+    timestampDisabled: boolean;
+    timestampForceHour12: boolean | undefined;
+    copyTimestamp: boolean;
+    copyTag: boolean;
 }
 
-//Terminal prefix
-const regexMarker = /^{§[0-9a-f]{8}}/;
-const ANSI_WHITE = '\x1B[0;37m';
-const ANSI_GRAY = '\x1B[1;90m';
-const ANSI_RESET = '\x1B[0m';
+//Loading local storage configs
+//FIXME: this is hacky, maybe use atomWithStorage
 let timestampDisabled = false;
 let timestampForceHour12: boolean | undefined = undefined;
 try {
@@ -55,21 +49,33 @@ try {
         timestampDisabled = true;
     }
 } catch (error) { }
-const getConsolePrefix = (timestamp: number): string => {
-    if (timestampDisabled) return '';
-    const time = new Date(timestamp * 1000);
-    const str = time.toLocaleTimeString(
-        'en-US', //as en-gb uses 4 digits for the am/pm indicator
-        {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: timestampForceHour12 ?? window.txBrowserHour12,
-        }
-    );
-    return str + ANSI_RESET + ' ';
-}
-const defaultTermPrefix = getConsolePrefix(Date.now()).replace(/\w/g, '-');
+let copyTimestamp = false;
+let copyTag = true;
+try {
+    const localConfig = localStorage.getItem('liveConsoleCopyOpts');
+    if (typeof localConfig === 'string') {
+        const parts = localConfig.split(',');
+        copyTimestamp = parts.includes('ts');
+        copyTag = parts.includes('tag');
+    }
+} catch (error) { }
+
+
+//Consts
+const keyDebounceTime = 150; //ms
+const ANSI_WHITE = '\x1B[0;37m';
+const ANSI_GRAY = '\x1B[1;90m';
+
+//FIXME: move to inside the component
+const defaultTermPrefix = formatTermTimestamp(
+    Date.now(),
+    {
+        timestampDisabled,
+        timestampForceHour12,
+        copyTimestamp,
+        copyTag,
+    }
+).replace(/\w/g, '-');
 
 //Main component
 export default function LiveConsolePage() {
@@ -80,9 +86,20 @@ export default function LiveConsolePage() {
     const termPrefixRef = useRef({
         ts: 0, //so we can clear the console
         lastEol: true,
+        //FIXME: defaultTermPrefix depends on options, deal with it when options change
         prefix: defaultTermPrefix,
     });
     const refreshPage = useContentRefresh();
+
+    //FIXME: maybe use atomWithStorage
+    const consoleOptions: LiveConsoleOptions = useMemo(() => {
+        return {
+            timestampDisabled,
+            timestampForceHour12,
+            copyTimestamp,
+            copyTag,
+        };
+    }, []);
 
 
     /**
@@ -173,7 +190,7 @@ export default function LiveConsolePage() {
 
             term.attachCustomKeyEventHandler((e: KeyboardEvent) => {
                 // Some are handled by the live console element
-                if (e.code === 'F5') {
+                if (e.code === 'F5' && !e.ctrlKey) {
                     return false;
                 } else if (e.code === 'Escape') {
                     return false;
@@ -182,7 +199,19 @@ export default function LiveConsolePage() {
                 } else if (e.code === 'F3') {
                     return false;
                 } else if (e.code === 'KeyC' && (e.ctrlKey || e.metaKey)) {
-                    document.execCommand('copy');
+                    const selection = term.getSelection();
+                    if (!selection) return false;
+                    copyTermLine(selection, term.element as any, consoleOptions).then((res) => {
+                        //undefined if no error
+                        if (res === false) {
+                            txToast.error('Failed to copy to clipboard :(');
+                        }
+                    }).catch((error) => {
+                        txToast.error({
+                            title: 'Failed to copy to clipboard:',
+                            msg: error.message,
+                        });
+                    });
                     term.clearSelection();
                     return false;
                 } else if (e.code === 'PageUp') {
@@ -206,7 +235,7 @@ export default function LiveConsolePage() {
     }, [term]);
 
     useEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.code === 'F5') {
+        if (e.code === 'F5' && !e.ctrlKey) {
             if (isConnected) {
                 refreshPage();
                 e.preventDefault();
@@ -227,25 +256,6 @@ export default function LiveConsolePage() {
         }
     });
 
-    //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/701
-    const registerBidiMarker = (fullLine: string) => {
-        const marker = term.registerMarker(0)
-        const decoration = term.registerDecoration({ marker });
-        decoration && decoration.onRender(element => {
-            element.classList.add('cursor-pointer');
-            element.innerText = '🔠';
-            element.onclick = () => {
-                txToast.info({
-                    title: 'Bidirectional Text Detected:',
-                    msg: fullLine,
-                });
-            }
-            // element.innerHTML = `<div class="bg-info text-info-foreground rounded px-2 py-1 mt-[-0.25rem] z-10">RTL</div>`
-            // element.style.height = '';
-            // element.style.width = '';
-        });
-    }
-
     //NOTE: quickfix for https://github.com/xtermjs/xterm.js/issues/4994
     const writeToTerminal = (data: string) => {
         const lines = data.split(/\r?\n/);
@@ -263,21 +273,34 @@ export default function LiveConsolePage() {
             isNewTs = false;
             let line = lines[i];
             //tries to extract timestamp
-            if (regexMarker.test(line)) {
-                isNewTs = true;
-                try {
-                    const ts = parseInt(line.slice(2, 10), 16);
-                    line = line.slice(11);
+            try {
+                const { ts, content } = extractTermLineTimestamp(line);
+                if (ts) {
+                    isNewTs = true;
+                    line = content;
                     termPrefixRef.current.ts = ts;
-                    termPrefixRef.current.prefix = getConsolePrefix(ts);
-                } catch (error) {
-                    termPrefixRef.current.prefix = defaultTermPrefix;
-                    console.warn('Failed to parse timestamp from:', line, (error as any).message);
+                    termPrefixRef.current.prefix = formatTermTimestamp(ts, consoleOptions);
                 }
+            } catch (error) {
+                termPrefixRef.current.prefix = defaultTermPrefix;
+                console.warn('Failed to parse timestamp from:', line, (error as any).message);
             }
-            if (rtlRangeRegex.test(line)) {
-                registerBidiMarker(cleanTermOutput(line));
+
+            //Markers
+            try {
+                const res = getTermLineEventData(line)
+                    ?? getTermLineInitialData(line)
+                    ?? getTermLineRtlData(line); //https://github.com/xtermjs/xterm.js/issues/701
+                if (res && res.markerData) {
+                    registerTermLineMarker(term, i, res.markerData);
+                }
+                if (res && res.newLine) {
+                    line = res.newLine;
+                }
+            } catch (error) {
+                console.error('Failed to process marker:', (error as any).message);
             }
+
             //Check if it's last line, and if the EOL was stripped
             const prefixColor = isNewTs ? ANSI_WHITE : ANSI_GRAY;
             const prefix = termPrefixRef.current.lastEol
@@ -379,7 +402,7 @@ export default function LiveConsolePage() {
 
 
     return (
-        <div className="dark text-primary flex flex-col h-full w-full bg-card border md:rounded-xl overflow-clip">
+        <div className="dark text-primary flex flex-col h-contentvh w-full bg-card border md:rounded-xl overflow-clip">
             <LiveConsoleHeader />
 
             <div className="flex flex-col relative grow overflow-hidden">

@@ -24,7 +24,7 @@ export async function fetchNui<T = any>(
     body: JSON.stringify(data),
   };
 
-  debugLog(eventName, data, "PostToScripts");
+  // debugLog(eventName, data, "PostToScripts");
 
   // If we are in browser and mockResp option is defined, we can
   // bail out of having to make failing HTTP reqs, speeding up data dispatching.

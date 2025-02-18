@@ -67,7 +67,7 @@ const TimelineCard = memo(({
 
     return (
         <div className="md:rounded-xl border bg-card shadow-sm flex flex-col">
-            <div className="flex flex-row items-center justify-between px-1 sm:px-4 border-b rounded-t-xl bg-secondary/35">
+            <div className="flex flex-row items-center justify-between px-1 sm:px-4 border-b rounded-t-[inherit] bg-secondary/35">
                 <div className="flex items-center py-2 space-x-2">
                     <div className='hidden xs:block'><DoorOpenIcon className="size-4" /></div>
                     <h2 className="font-mono text-sm">Expected Player Drops</h2>

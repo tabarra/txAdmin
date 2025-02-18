@@ -1,7 +1,8 @@
 import { BoxIcon, FolderOpenIcon, ShapesIcon, SkullIcon } from "lucide-react";
 import { memo, useState } from "react";
 import type { PlayerDropsApiSuccessResp } from "@shared/otherTypes";
-import { cn, dateToLocaleDateString, dateToLocaleTimeString, isDateToday } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { dateToLocaleDateString, dateToLocaleTimeString, isDateToday } from "@/lib/dateTime";
 import DrilldownCrashesSubcard from "./DrilldownCrashesSubcard";
 import { PlayerDropsLoadingSpinner } from "./PlayerDropsGenericSubcards";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -19,7 +20,7 @@ export function DrilldownCardLoading({ isError }: { isError?: boolean }) {
                 <span>Loading...</span>
             </div>
             <div className="pb-2 md:rounded-xl border bg-cardx shadow-sm flex flex-col">
-                <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-xl bg-secondary/35">
+                <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b md:rounded-t-[inherit] bg-secondary/35">
                     <div className="flex items-center space-x-2">
                         <div className='hidden xs:block'><FolderOpenIcon className="size-4" /></div>
                         <h2 className="font-mono text-sm">Overview</h2>
@@ -86,9 +87,9 @@ const DrilldownCardInner = function DrilldownCard({
             )}>
                 <span>Period from <InlineCode title={windowStartDate.toISOString()}>{windowStartStr}</InlineCode> to <InlineCode title={windowEndDate.toISOString()}>{windowEndStr}</InlineCode>.</span>
             </div>
-            <div className="md:rounded-xl border bg-cardx shadow-sm flex flex-col">
-                <div className="">
-                    <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-xl bg-secondary/35">
+            <div className="md:rounded-xl border shadow-sm flex flex-col">
+                <div className="rounded-t-[inherit]">
+                    <div className="flex flex-col flex-shrink px-1 sm:px-4 py-2 space-y-4 border-b rounded-t-[inherit] bg-secondary/35">
                         <div className="flex items-center space-x-2">
                             <div className='hidden xs:block'><FolderOpenIcon className="size-4" /></div>
                             <h2 className="font-mono text-sm">Period Overview</h2>

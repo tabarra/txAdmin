@@ -16,10 +16,6 @@ export const useExitListener = () => {
     const keyHandler = (e: KeyboardEvent) => {
       if (!shouldListen) return;
       if (["Escape", "Backspace"].includes(e.code)) {
-        //NOTE: i removed the process.env.DEV_MODE from here because
-        // it was erroring out on webpack 5, maybe try again?
-        // if (process.env.DEV_MODE === 'browser') return;
-
         setVisible(false);
         fetchNui("closeMenu");
         fetchNui("playSound", "enter");

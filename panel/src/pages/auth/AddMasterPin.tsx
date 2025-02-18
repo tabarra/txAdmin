@@ -92,9 +92,22 @@ export default function AddMasterPin() {
                             : 'border-succtext-success text-success'
                         ),
                     )}
-                    id="frm-pin" type="text" ref={pinRef}
-                    minLength={4} maxLength={4} placeholder="0000" autoComplete="off"
-                    onFocus={() => { setIsMessageError(false); setMessageText(undefined); }}
+                    id="frm-pin"
+                    type="text"
+                    ref={pinRef}
+                    minLength={4}
+                    maxLength={4}
+                    placeholder="0000"
+                    autoComplete="off"
+                    onFocus={() => {
+                        setIsMessageError(false);
+                        setMessageText(undefined);
+                    }}
+                    onChange={(e) => {
+                        if (e.target.value.length === 4) {
+                            handleSubmit();
+                        }
+                    }}
                     disabled={disableInput}
                     required
                 />

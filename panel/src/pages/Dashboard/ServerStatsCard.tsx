@@ -1,8 +1,9 @@
-import { GaugeIcon, Loader2Icon, MemoryStick, MemoryStickIcon, TimerIcon, TrendingUpIcon } from 'lucide-react';
+import { GaugeIcon, Loader2Icon, MemoryStickIcon, TimerIcon, TrendingUpIcon } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { dashPerfCursorAtom, dashServerStatsAtom, dashSvRuntimeAtom, useGetDashDataAge } from './dashboardHooks';
-import { cn, dateToLocaleDateString, dateToLocaleDateTimeString, dateToLocaleTimeString, isDateToday } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { dateToLocaleDateString, dateToLocaleTimeString, isDateToday } from '@/lib/dateTime';
 
 //NOTE: null and undefined are semantically equal here
 type HostStatsDataProps = {

@@ -1,5 +1,5 @@
-import { DatabaseActionType } from "@core/components/PlayerDatabase/databaseTypes";
-import { GenericApiErrorResp } from "genericApiTypes";
+import { DatabaseActionType } from "@modules/Database/databaseTypes";
+import { GenericApiErrorResp } from "./genericApiTypes";
 
 export type HistoryStatsResp = {
     totalWarns: number;

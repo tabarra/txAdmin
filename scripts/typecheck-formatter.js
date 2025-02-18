@@ -6,6 +6,7 @@ import chalk from 'chalk';
 const filterOut = [
     `Cannot find name 'globals'.`,
     `Property 'body' does not exist on type 'Request'.`,
+    `'ctx.params' is of type 'unknown'.`,
     `has not been built from source file`,
 ];
 
