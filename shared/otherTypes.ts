@@ -53,6 +53,8 @@ export type InjectedTxConsts = {
     defaultTheme: string;
     customThemes: Omit<ThemeType, 'style'>[];
     adsData: AdsDataType;
+    providerLogo: string | undefined,
+    providerName: string,
 
     //Auth
     preAuth: ReactAuthDataType | false;

@@ -206,6 +206,8 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
     const autoStart = conf('server', 'autoStart');
     const resourceTolerance = conf('restarter', 'resourceStartingTolerance');
 
+    const forceQuietMode = pageCtx.apiData?.forceQuietMode;
+
     //Marshalling Utils
     const selectNumberUtil = {
         toUi: (num?: number) => num ? num.toString() : undefined,
@@ -392,13 +394,17 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                     id={quietMode.eid}
                     checkedLabel="Enabled"
                     uncheckedLabel="Disabled"
-                    checked={quietMode.state.value}
+                    checked={forceQuietMode || quietMode.state.value}
                     onCheckedChange={quietMode.state.set}
-                    disabled={pageCtx.isReadOnly}
+                    disabled={pageCtx.isReadOnly || forceQuietMode}
                 />
                 <SettingItemDesc>
                     Do not print FXServer's output to the terminal. <br />
                     You will still be able to use the Live Console.
+                    {forceQuietMode && (<>
+                        <br />
+                        <span className="text-warning-inline">{window.txConsts.providerName}: This setting is locked and cannot be changed.</span>
+                    </>)}
                 </SettingItemDesc>
             </SettingItem>
 

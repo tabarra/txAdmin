@@ -252,6 +252,9 @@ if (!ignoreDeprecatedConfigs) {
     }
 }
 
+//No default, no convar/zap cfg
+const txAdminUrl = hostVars.TXA_URL;
+
 //txAdmin port
 const txAdminPort = handleMultiVar(
     'TXA_PORT',
@@ -300,6 +303,14 @@ const providerLogo = handleMultiVar(
     zapVars?.loginPageLogo,
     undefined,
 );
+
+const forceQuietMode = handleMultiVar(
+    'QUIET_MODE',
+    hostEnvVarSchemas.QUIET_MODE,
+    hostVars.QUIET_MODE,
+    zapVars?.deployerDefaults?.maxClients,
+    undefined,
+) ?? false;
 
 const maxClients = handleMultiVar(
     'MAX_SLOTS',
@@ -515,6 +526,8 @@ export const convars = Object.freeze({
     isZapHosting,
     forceInterface, //convar txAdminInterface, or zap config
     forceFXServerPort,
+    forceQuietMode,
+    txAdminUrl,
     txAdminPort, //convar txAdminPort, or zap config
     providerName, //not being used
     providerLogo, //not being used
@@ -531,3 +544,8 @@ export const convars = Object.freeze({
         mysqlDatabase: defaultDbName,
     },
 });
+
+
+//DEBUG
+// console.dir(txEnv, { compact: true });
+// console.dir(convars, { compact: true });

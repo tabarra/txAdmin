@@ -137,18 +137,21 @@ export const startReadyWatcher = async (cb: () => void) => {
     ]);
 
     //Addresses
-    let addrs;
-    if (convars.forceInterface == false || convars.forceInterface == '0.0.0.0') {
-        addrs = [
+    let detectedUrls;
+    if (convars.forceInterface && convars.forceInterface !== '0.0.0.0') {
+        detectedUrls = [convars.forceInterface];
+    } else {
+        detectedUrls = [
             (txEnv.isWindows) ? 'localhost' : 'your-public-ip',
         ];
         if ('value' in publicIpResp && publicIpResp.value) {
-            addrs.push(publicIpResp.value);
+            detectedUrls.push(publicIpResp.value);
             addLocalIpAddress(publicIpResp.value);
         }
-    } else {
-        addrs = [convars.forceInterface];
     }
+    const bannerUrls = convars.txAdminUrl
+        ? [convars.txAdminUrl]
+        : detectedUrls.map((addr) => `http://${addr}:${convars.txAdminPort}/`);
 
     //Admin PIN
     const adminMasterPin = 'value' in adminPinRes && adminPinRes.value ? adminPinRes.value : false;
@@ -168,7 +171,7 @@ export const startReadyWatcher = async (cb: () => void) => {
     } satisfies BoxenOptions;
     const boxLines = [
         'All ready! Please access:',
-        ...addrs.map((addr) => chalk.inverse(` http://${addr}:${convars.txAdminPort}/ `)),
+        ...bannerUrls.map((url) => chalk.inverse(` ${url} `)),
         ...adminPinLines,
     ];
     console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);
@@ -177,8 +180,11 @@ export const startReadyWatcher = async (cb: () => void) => {
     }
 
     //Opening page
-    if (txEnv.isWindows && adminMasterPin) {
-        open(`http://localhost:${convars.txAdminPort}/addMaster/pin#${adminMasterPin}`).catch((e) => { });
+    if (txEnv.isWindows && adminMasterPin && bannerUrls[0]) {
+        const linkUrl = new URL(bannerUrls[0]);
+        linkUrl.pathname = '/addMaster/pin';
+        linkUrl.hash = adminMasterPin;
+        open(linkUrl.href);
     }
 
     //Callback
