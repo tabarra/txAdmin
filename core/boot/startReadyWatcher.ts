@@ -46,8 +46,10 @@ const getOSMessage = async () => {
         '[!] Home-hosting fxserver is not recommended [!]',
         'You need to open the fxserver port (usually 30120) on Windows Firewall',
         'and set up port forwarding on your router so other players can access it.',
-        'We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.',
     ];
+    if(convars.displayAds){
+        winWorkstationMessage.push('We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.');
+    }
 
     //FIXME: use si.osInfo() instead
     const distro = await getOsDistro();
@@ -170,7 +172,7 @@ export const startReadyWatcher = async (cb: () => void) => {
         ...adminPinLines,
     ];
     console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);
-    if (!txDevEnv.ENABLED && convars.forceInterface && 'value' in msgRes && msgRes.value) {
+    if (!txDevEnv.ENABLED && !convars.forceInterface && 'value' in msgRes && msgRes.value) {
         console.multiline(msgRes.value, chalk.bgBlue);
     }
 

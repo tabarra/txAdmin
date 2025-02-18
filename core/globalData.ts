@@ -12,8 +12,9 @@ import fatalError from '@lib/fatalError';
 import { getNativeVars } from './boot/getNativeVars';
 import { getHostVars, hostEnvVarSchemas } from './boot/getHostVars';
 import { getZapVars } from './boot/getZapVars';
-import type { z, ZodSchema } from 'zod';
+import { z, ZodSchema } from 'zod';
 import { fromZodError } from 'zod-validation-error';
+import defaultAds from '../dynamicAds2.json';
 import consts from '@shared/consts';
 const console = consoleFactory();
 
@@ -291,7 +292,7 @@ const providerName = handleMultiVar(
     hostVars.PROVIDER_NAME,
     zapVars?.providerName,
     undefined,
-);
+) ?? 'Host Config';
 const providerLogo = handleMultiVar(
     'PROVIDER_LOGO',
     hostEnvVarSchemas.PROVIDER_LOGO,
@@ -310,7 +311,7 @@ const maxClients = handleMultiVar(
 
 
 /**
- * MARK: HOST DEFAULTS
+ * MARK: DEFAULTS
  */
 const defaultDbHost = handleMultiVar(
     'DB_HOST',
@@ -361,9 +362,9 @@ let defaultMasterAccount: DefaultMasterAccount;
 const bcryptRegex = /^\$2[aby]\$[0-9]{2}\$[A-Za-z0-9./]{53}$/;
 if (hostVars.DEFAULT_ACCOUNT) {
     let [username, fivemId, password] = hostVars.DEFAULT_ACCOUNT.split(':') as (string | undefined)[];
-    if(username === '') username = undefined;
-    if(fivemId === '') fivemId = undefined;
-    if(password === '') password = undefined;
+    if (username === '') username = undefined;
+    if (fivemId === '') fivemId = undefined;
+    if (password === '') password = undefined;
 
     const errArr: [string, any][] = [
         ['Username', username],
@@ -447,8 +448,30 @@ setConsoleEnvData(
     _txDevEnv.VERBOSE
 );
 
-if(ignoreDeprecatedConfigs) {
+if (ignoreDeprecatedConfigs) {
     console.verbose.debug('TXHOST_IGNORE_DEPRECATED_CONFIGS is set to true. Ignoring deprecated configs.');
+}
+
+//Quick config to disable ads
+const displayAds = process.env?.TXHOST_TMPHIDEADS !== 'true' || isPterodactyl || isZapHosting;
+const adSchema = z.object({
+    img: z.string(),
+    url: z.string(),
+}).nullable();
+const adsDataSchema = z.object({
+    login: adSchema,
+    main: adSchema,
+});
+let adsData: z.infer<typeof adsDataSchema> = {
+    login: null,
+    main: null,
+};
+if (displayAds) {
+    try {
+        adsData = adsDataSchema.parse(defaultAds);
+    } catch (error) {
+        console.error('Failed to load ads data.', error);
+    }
 }
 
 //FXServer Display Version
@@ -493,7 +516,10 @@ export const convars = Object.freeze({
     forceInterface, //convar txAdminInterface, or zap config
     forceFXServerPort,
     txAdminPort, //convar txAdminPort, or zap config
-    loginPageLogo: providerLogo, //not being used
+    providerName, //not being used
+    providerLogo, //not being used
+    displayAds,
+    adsData,
     defaultMasterAccount,
     deployerDefaults: {
         license: defaultCfxKey,

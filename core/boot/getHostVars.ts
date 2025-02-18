@@ -30,7 +30,19 @@ export const hostEnvVarSchemas = {
     INTERFACE: z.string().ip({ version: "v4" }),
 
     //Provider
-    PROVIDER_NAME: z.string().regex(/^[a-zA-Z0-9_.\-]{2,16}$/),
+    PROVIDER_NAME: z.string()
+        .regex(
+            /^[a-zA-Z0-9_.\- ]{2,16}$/,
+            'Provider name must be between 2 and 16 characters long and can only contain letters, numbers, underscores, periods, hyphens and spaces.'
+        )
+        .refine(
+            x => !/[_.\- ]{2,}/.test(x),
+            'Provider name cannot contain consecutive special characters.'
+        )
+        .refine(
+            x => /^[a-zA-Z0-9].*[a-zA-Z0-9]$/.test(x),
+            'Provider name must start and end with a letter or number.'
+        ),
     PROVIDER_LOGO: z.string().url(),
 
     //Defaults (no reason to coerce or check, except the cfxkey)
@@ -75,7 +87,7 @@ export const getHostVars = () => {
                 ['Key', fullKey],
                 ['Value', String(value)],
                 'For more information: https://aka.cfx.re/txadmin-host-config',
-            ], fromZodError(res.error, {prefix: null}));
+            ], fromZodError(res.error, { prefix: null }));
         }
         txHostEnv[partialKey] = res.data;
     }

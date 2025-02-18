@@ -181,6 +181,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
             uiTheme: legacyTheme,
             fxServerVersion: txEnv.fxsVersionDisplay,
             txAdminVersion: txEnv.txaVersion,
+            providerName: convars.providerName,
             jsInjection: getJavascriptConsts({
                 isZapHosting: convars.isZapHosting, //not in use
                 isPterodactyl: convars.isPterodactyl, //not in use

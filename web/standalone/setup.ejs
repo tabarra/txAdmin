@@ -293,7 +293,7 @@
                                         <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
                                         Also known as Base Folder. <br>
                                         <% if (isZapHosting) { %>
-                                            <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code><%= txDataPath %></code>.</span>
+                                            <span class="font-weight-bold"><%= providerName %>: this path must start with <code><%= txDataPath %></code>.</span>
                                         <% } %>
                                         <input type="text" class="form-control mt-2" id="s4LocalDataPathInput"
                                             placeholder="C:/Users/Admin/Desktop/server01">
@@ -323,7 +323,7 @@
                                         The folder where the server will be deployed to. <br>
                                         This folder will contain all your resources and configuration files. <br>
                                         <% if (isZapHosting) { %>
-                                            <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code><%= txDataPath %></code>.</span> <br>
+                                            <span class="font-weight-bold"><%= providerName %>: this path must start with <code><%= txDataPath %></code>.</span> <br>
                                         <% } %>
                                         <strong>We strongly recommend using the path suggested below.</strong>                     
                                         <div class="input-group mt-2">

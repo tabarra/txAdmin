@@ -114,7 +114,7 @@ export default class AdminStore {
                 this.admins = false;
             } else {
                 const { username, fivemId, password } = convars.defaultMasterAccount;
-                console.log(`Setting up master account '${username}' with credentials provided by ZAP-HOSTING.`);
+                console.log(`Setting up master account '${username}' with credentials provided by ${convars.providerName}.`);
                 this.createAdminsFile(
                     username,
                     fivemId ? `fivem:${fivemId}` : undefined,
