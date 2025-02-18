@@ -4,7 +4,7 @@ import consoleFactory from "./console";
 const console = consoleFactory();
 
 type ErrorLineSkipType = null | undefined | false;
-type ErrorLineType = string | [desc: string, value: string] | ErrorLineSkipType;
+type ErrorLineType = string | [desc: string, value: any] | ErrorLineSkipType;
 type ErrorMsgType = ErrorLineType | ErrorLineType[];
 
 const padStartEnd = (str: string): string => {
@@ -15,8 +15,9 @@ const padStartEnd = (str: string): string => {
 
 const printSingleLine = (line: ErrorLineType): void => {
     if (Array.isArray(line)) {
-        if (line.length === 2 && typeof line[0] === 'string' && typeof line[1] === 'string') {
-            console.error(`${line[0]}: ${chalk.dim(line[1])}`);
+        if (line.length === 2 && typeof line[0] === 'string') {
+            let value = typeof line[1] === 'string' ? line[1] : String(line[1]);
+            console.error(`${line[0]}: ${chalk.dim(value)}`);
         } else {
             console.error(JSON.stringify(line));
         }

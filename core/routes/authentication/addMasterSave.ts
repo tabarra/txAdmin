@@ -63,10 +63,9 @@ export default async function AuthAddMasterSave(ctx: InitializedCtx) {
         const vaultAdmin = txCore.adminStore.createAdminsFile(
             userInfo.name,
             fivemIdentifier,
-            userInfo,
+            discordId,
             password,
             true,
-            discordId,
         );
 
         //If the user has a picture, save it to the cache

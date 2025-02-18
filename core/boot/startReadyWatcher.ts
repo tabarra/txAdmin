@@ -170,7 +170,7 @@ export const startReadyWatcher = async (cb: () => void) => {
         ...adminPinLines,
     ];
     console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);
-    if (!txDevEnv.ENABLED && convars.forceInterface === false && 'value' in msgRes && msgRes.value) {
+    if (!txDevEnv.ENABLED && convars.forceInterface && 'value' in msgRes && msgRes.value) {
         console.multiline(msgRes.value, chalk.bgBlue);
     }
 
