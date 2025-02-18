@@ -47,7 +47,7 @@ const getOSMessage = async () => {
         'You need to open the fxserver port (usually 30120) on Windows Firewall',
         'and set up port forwarding on your router so other players can access it.',
     ];
-    if(convars.displayAds){
+    if (convars.displayAds) {
         winWorkstationMessage.push('We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.');
     }
 

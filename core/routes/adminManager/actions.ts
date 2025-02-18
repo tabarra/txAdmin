@@ -9,9 +9,8 @@ const console = consoleFactory(modulename);
 
 //Helpers
 const nanoid = customAlphabet(dict49, 20);
-const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
-const nameRegex = citizenfxIDRegex;
-const nameRegexDesc = 'up to 18 characters containing only letters, numbers and the characters \`_.-\`';
+//NOTE: this desc misses that it should start and end with alphanum or _, and cannot have repeated -_.
+const nameRegexDesc = 'up to 20 characters containing only letters, numbers and the characters \`_.-\`';
 const cfxHttpReqOptions = {
     timeout: { request: 6000 },
 };
@@ -76,7 +75,7 @@ async function handleAdd(ctx: AuthedCtx) {
 
 
     //Validate name
-    if (!nameRegex.test(name)) {
+    if (!consts.regexValidFivemUsername.test(name)) {
         return ctx.send({type: 'danger', markdown: true, message: `**Invalid username, it must follow the rule:**\n${nameRegexDesc}`});
     }
 
@@ -94,7 +93,7 @@ async function handleAdd(ctx: AuthedCtx) {
                     id: res.username,
                     identifier: citizenfxID,
                 };
-            } else if (citizenfxIDRegex.test(citizenfxID)) {
+            } else if (consts.regexValidFivemUsername.test(citizenfxID)) {
                 const res = await got(`https://forum.cfx.re/u/${citizenfxID}.json`, cfxHttpReqOptions).json<any>();
                 if (!res.user || typeof res.user.id !== 'number') {
                     return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID2'});
@@ -192,7 +191,7 @@ async function handleEdit(ctx: AuthedCtx) {
                     id: res.username,
                     identifier: citizenfxID,
                 };
-            } else if (citizenfxIDRegex.test(citizenfxID)) {
+            } else if (consts.regexValidFivemUsername.test(citizenfxID)) {
                 const res = await got(`https://forum.cfx.re/u/${citizenfxID}.json`, cfxHttpReqOptions).json<any>();
                 if (!res.user || typeof res.user.id !== 'number') {
                     return ctx.send({type: 'danger', message: '(ERR2) Invalid CitizenFX ID'});

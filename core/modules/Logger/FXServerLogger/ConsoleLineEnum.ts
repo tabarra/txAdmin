@@ -8,5 +8,3 @@ enum ConsoleLineEnum {
 }
 
 export default ConsoleLineEnum;
-
-//!NC remover o enum do nome

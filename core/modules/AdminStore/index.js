@@ -84,7 +84,7 @@ export default class AdminStore {
 
 
         //Load providers
-        //FIXME: mover pro escopo da classe - acho que não precisa de try/catch
+        //FIXME: pode virar um top-level singleton , não precisa estar na classe
         try {
             this.providers = {
                 discord: false,

@@ -24,6 +24,6 @@ export const isIpAddressLocal = (ipAddress: string): boolean => {
  * Added automatically from TXHOST_INTERFACE and banner.js after detecting the WAN address.
  */
 export const addLocalIpAddress = (ipAddress: string): void => {
-    console.verbose.debug(`Adding local IP address: ${ipAddress}`);
+    // console.verbose.debug(`Adding local IP address: ${ipAddress}`);
     extendedAllowedLanIps.push(ipAddress);
 }
