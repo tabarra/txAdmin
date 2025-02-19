@@ -264,7 +264,7 @@ export default class FxScheduler {
 
             //Check if server is in boot cooldown
             const processUptime = Math.floor((txCore.fxRunner.child?.uptime ?? 0) / 1000);
-            if (processUptime < txConfig.restarter.bootCooldown) {
+            if (processUptime < txConfig.restarter.bootGracePeriod) {
                 console.verbose.log(`Server is in boot cooldown, skipping scheduled restart.`);
                 return;
             }

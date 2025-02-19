@@ -237,9 +237,9 @@ export default class FxMonitor {
         this.setCurrentStatus(currentStatusString);
 
         //Check if still in cooldown
-        if (processUptime < txConfig.restarter.bootCooldown) {
+        if (processUptime < txConfig.restarter.bootGracePeriod) {
             if (console.isVerbose && processUptime > 10 && this.swLastStatusWarning.isOver(10)) {
-                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${txConfig.restarter.bootCooldown}s.`);
+                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${txConfig.restarter.bootGracePeriod}s.`);
                 this.swLastStatusWarning.restart();
             }
             return;

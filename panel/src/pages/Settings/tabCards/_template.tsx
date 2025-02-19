@@ -57,7 +57,7 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
     const inputArrayRef = useRef<HTMLInputElement | null>(null);
     const nullableInput = conf('server', 'dataPath');
     const nullableInputRef = useRef<HTMLInputElement | null>(null);
-    const customComponent = conf('restarter', 'bootCooldown');
+    const customComponent = conf('restarter', 'bootGracePeriod');
     const bigRadio = conf('whitelist', 'mode');
 
     //Marshalling Utils
