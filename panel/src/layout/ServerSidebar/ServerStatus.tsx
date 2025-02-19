@@ -105,12 +105,12 @@ export default function ServerStatus() {
             whitelistText = 'ADMIN';
             whitelistColor = 'warning';
             whitelistDescription = 'Only admins can join.';
-        } else if (globalStatus.server.whitelist === 'guildMember') {
+        } else if (globalStatus.server.whitelist === 'discordMember') {
             whitelistText = 'MEMBER';
-            whitelistDescription = 'Only guild members can join.';
-        } else if (globalStatus.server.whitelist === 'guildRoles') {
-            whitelistText = 'ROLE';
-            whitelistDescription = 'Only guild members with the specified roles can join.';
+            whitelistDescription = 'Only Discord server members can join.';
+        } else if (globalStatus.server.whitelist === 'discordRoles') {
+            whitelistText = 'ROLES';
+            whitelistDescription = 'Only Discord server members with the specified roles can join.';
         } else if (globalStatus.server.whitelist === 'approvedLicense') {
             whitelistText = 'LICENSE';
             whitelistDescription = 'Only players with an approved license can join.';

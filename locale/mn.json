@@ -41,7 +41,7 @@
         },
         "guild_member": {
             "mode_title": "Тус серверт <strong>Discord Гишүүн </strong>болсон хүмүүс орох боломжтой.",
-            "insufficient_ids": "Танд <code>discord</code> таниулбар байхгүй бөгөөд хэрэв та манай Discord Guild-д нэгдсэн бол дахин шалгах шаардлагатай. Discord Desktop програмыг нээгээд дахин оролдоно уу (Вэб програм ажиллахгүй).",
+            "insufficient_ids": "Танд <code>discord</code> таниулбар байхгүй бөгөөд хэрэв та манай Discord server-д нэгдсэн бол дахин шалгах шаардлагатай. Discord Desktop програмыг нээгээд дахин оролдоно уу (Вэб програм ажиллахгүй).",
             "deny_title": "Та манай Discord серверт байх ёстой",
             "deny_message": "Та %{guildname} Discord серверт нэгдсэний дараа дахин оролдоно уу."
         },

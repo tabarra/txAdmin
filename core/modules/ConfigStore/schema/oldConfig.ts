@@ -101,6 +101,12 @@ export const migrateOldConfig = (old: any) => {
     if (remapped.server?.restartSpawnDelayMs === 750) {
         remapped.server.restartSpawnDelayMs = 500;
     }
+    if (remapped.whitelist?.mode === 'guildMember') {
+        remapped.whitelist.mode = 'discordMember';
+    }
+    if (remapped.whitelist?.mode === 'guildRoles') {
+        remapped.whitelist.mode = 'discordRoles';
+    }
 
     //Migrating the menu ptfx convar (can't do anything about it being set in server.cfg tho)
     if (typeof remapped.server?.startupArgs === 'string') {

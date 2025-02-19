@@ -40,15 +40,15 @@
             "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord Guild Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "You are required to join our Discord Guild to connect.",
+            "mode_title": "This server is in <strong>Discord server Member Whitelist</strong> mode.",
+            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord server. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "deny_title": "You are required to join our Discord server to connect.",
             "deny_message": "Please join the guild %{guildname} then try again."
         },
         "guild_roles": {
             "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord Guild. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "You are required to join our Discord Guild to connect.",
+            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord server. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "deny_notmember_title": "You are required to join our Discord server to connect.",
             "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
             "deny_noroles_title": "You do not have a whitelisted role required to join.",
             "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."

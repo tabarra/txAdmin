@@ -40,15 +40,15 @@
             "deny_message": "Jouw identifiers zijn niet gekoppeld aan een txAdmin administrator."
         },
         "guild_member": {
-            "mode_title": "Deze server is in <strong>Discord Guild Member Whitelist</strong> modus.",
-            "insufficient_ids": "Je hebt niet de <code>discord</code> identifier, welke is vereist om te valideren of jij onze Discord Guild bent gejoind. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "Je moet onze Discord Guild joinen om verbinding te maken.",
+            "mode_title": "Deze server is in <strong>Discord server Member Whitelist</strong> modus.",
+            "insufficient_ids": "Je hebt niet de <code>discord</code> identifier, welke is vereist om te valideren of jij onze Discord server bent gejoind. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "deny_title": "Je moet onze Discord server joinen om verbinding te maken.",
             "deny_message": "Join de guild %{guildname}, probeer het daarna opnieuw."
         },
         "guild_roles": {
             "mode_title": "Deze server is in <strong>Discord Role Whitelist</strong> modus.",
-            "insufficient_ids": "Je hebt niet de <code>discord</code> identifier, welke is vereist om te valideren of jij onze Discord Guild bent gejoind. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "Je moet onze Discord Guild joinen om verbinding te maken.",
+            "insufficient_ids": "Je hebt niet de <code>discord</code> identifier, welke is vereist om te valideren of jij onze Discord server bent gejoind. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "deny_notmember_title": "Je moet onze Discord server joinen om verbinding te maken.",
             "deny_notmember_message": "Join %{guildname}, krijg een van de vereiste roles, probeer het daarna opnieuw.",
             "deny_noroles_title": "Je hebt geen whitelisted role die vereist is om te joinen.",
             "deny_noroles_message": "Om deze server te joinen ben je op zijn minst vereist om een van de whitelisted roles te hebben in de guild %{guildname}."

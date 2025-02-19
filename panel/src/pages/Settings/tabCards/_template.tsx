@@ -298,8 +298,8 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                     />
                     <BigRadioItem
                         groupValue={bigRadio.state.value}
-                        value="guildMember"
-                        title="Discord Guild Member"
+                        value="discordMember"
+                        title="Discord Server Member"
                         desc="desc as text"
                     />
                 </RadioGroup>

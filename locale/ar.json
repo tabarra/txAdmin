@@ -41,14 +41,14 @@
         },
         "guild_member": {
             "mode_title": "<strong>عضو في القائمة</strong> هذا الخادم في الوضع",
-            "insufficient_ids": ".(لن يعمل الديسكورد الموقع) والمحاولة مرة أخرى Discord Desktop يرجى فتح تطبيق .Discord Guild المعرف ، وهو مطلوب للتحقق مما إذا كنت قد انضممت إلى <code>discord</code> ليس لديك",
+            "insufficient_ids": ".(لن يعمل الديسكورد الموقع) والمحاولة مرة أخرى Discord Desktop يرجى فتح تطبيق .Discord server المعرف ، وهو مطلوب للتحقق مما إذا كنت قد انضممت إلى <code>discord</code> ليس لديك",
             "deny_title": "للدخول إلى السيرفر، أنت مطالب بالانضمام لسيرفر الديسكورد",
             "deny_message": ".ثم أعد المحاولة %{guildname} يرجى الانضمام إلى سيرفر"
         },
         "guild_roles": {
             "mode_title": "هذا السيرفر يتطلب دخولك سيرفر الديسكورد للانضمام",
-            "insufficient_ids": ".والمحاولة مرة أخرى (لن يعمل الديسكورد الموقع) Discord Desktop يرجى فتح تطبيق .Discord Guild المعرف ، وهو مطلوب للتحقق مما إذا كنت قد انضممت إلى <code>discord</code>  ليس لديك",
-            "deny_notmember_title": "لدخول Discord Guild أنت مطالب بالانضمام إلى",
+            "insufficient_ids": ".والمحاولة مرة أخرى (لن يعمل الديسكورد الموقع) Discord Desktop يرجى فتح تطبيق .Discord server المعرف ، وهو مطلوب للتحقق مما إذا كنت قد انضممت إلى <code>discord</code>  ليس لديك",
+            "deny_notmember_title": "لدخول Discord server أنت مطالب بالانضمام إلى",
             "deny_notmember_message": ".احصل على أحد الرول المطلوبة ، ثم حاول مرة أخرى ،%{guildname} يرجى الانضمام",
             "deny_noroles_title": ".ليس لديك دور مدرج في القائمة البيضاء مطلوب للانضمام",
             "deny_noroles_message": "%{guildname}. للانضمام إلى هذا الخادم ، يجب أن يكون لديك واحد على الأقل من الرول المدرجة في القائمة"

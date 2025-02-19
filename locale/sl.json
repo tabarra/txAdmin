@@ -40,7 +40,7 @@
             "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
         },
         "guild_member": {
-            "mode_title": "Ta strežnik je v <strong>Discord Guild Member Whitelist</strong> načinu.",
+            "mode_title": "Ta strežnik je v <strong>Discord server Member Whitelist</strong> načinu.",
             "insufficient_ids": "Nimate ustreznega <code>discord</code> identifierja, ki je potreben, da preverimo, če ste ste pridružili Discord Strežniku. Odprite Discord namizno aplikacijo in poskusite ponovno (spletna verzija Discorda ne deluje!).",
             "deny_title": "Pridružiti se morate našemu Discordu, da se lahko povežete.",
             "deny_message": "Pridružite se %{guildname} in poskusite ponovno."

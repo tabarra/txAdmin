@@ -40,7 +40,7 @@
             "deny_message": "Вашите идентификатори не са присвоени на нито един администратор на txAdmin."
         },
         "guild_member": {
-            "mode_title": "Сървърът е в <strong>Discord Guild Member Whitelist</strong> режим.",
+            "mode_title": "Сървърът е в <strong>Discord server Member Whitelist</strong> режим.",
             "insufficient_ids": "Вие не разполагате с <code>discord</code> идентификатор, което се изисква за валидиране, ако сте се присъединили към нашия Discord сървър. Моля, отворете десктоп приложението Discord и опитайте отново (уеб приложението няма да работи).",
             "deny_title": "От вас се изисква да се присъедините към нашия Discord сървър, за да се свържете.",
             "deny_message": "Моля влезте в discord сървъра %{guildname} и опитайте отново."

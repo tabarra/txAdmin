@@ -40,15 +40,15 @@
             "deny_message": "Identifier Anda tidak terdaftar sebagai administrator txAdmin."
         },
         "guild_member": {
-            "mode_title": "Server ini dalam mode <strong>Whitelist Anggota Discord Guild</strong>.",
-            "insufficient_ids": "Anda tidak memiliki identifier <code>discord</code>, yang diperlukan untuk memverifikasi apakah Anda telah bergabung dengan Discord Guild kami. Silakan buka aplikasi Desktop Discord dan coba lagi (aplikasi Web tidak akan berfungsi).",
-            "deny_title": "Anda diharuskan untuk bergabung dengan Discord Guild kami untuk terhubung.",
+            "mode_title": "Server ini dalam mode <strong>Whitelist Anggota Discord server</strong>.",
+            "insufficient_ids": "Anda tidak memiliki identifier <code>discord</code>, yang diperlukan untuk memverifikasi apakah Anda telah bergabung dengan Discord server kami. Silakan buka aplikasi Desktop Discord dan coba lagi (aplikasi Web tidak akan berfungsi).",
+            "deny_title": "Anda diharuskan untuk bergabung dengan Discord server kami untuk terhubung.",
             "deny_message": "Silakan bergabung dengan guild %{guildname} lalu coba lagi."
         },
         "guild_roles": {
             "mode_title": "Server ini dalam mode <strong>Whitelist Role Discord</strong>.",
-            "insufficient_ids": "Anda tidak memiliki identifier <code>discord</code>, yang diperlukan untuk memverifikasi apakah Anda telah bergabung dengan Discord Guild kami. Silakan buka aplikasi Desktop Discord dan coba lagi (aplikasi Web tidak akan berfungsi).",
-            "deny_notmember_title": "Anda diharuskan untuk bergabung dengan Discord Guild kami untuk terhubung.",
+            "insufficient_ids": "Anda tidak memiliki identifier <code>discord</code>, yang diperlukan untuk memverifikasi apakah Anda telah bergabung dengan Discord server kami. Silakan buka aplikasi Desktop Discord dan coba lagi (aplikasi Web tidak akan berfungsi).",
+            "deny_notmember_title": "Anda diharuskan untuk bergabung dengan Discord server kami untuk terhubung.",
             "deny_notmember_message": "Silakan bergabung dengan %{guildname}, dapatkan salah satu role yang diperlukan, lalu coba lagi.",
             "deny_noroles_title": "Anda tidak memiliki role whitelist yang diperlukan untuk bergabung.",
             "deny_noroles_message": "Untuk bergabung dengan server ini Anda diharuskan memiliki setidaknya salah satu role whitelist di guild %{guildname}."
