@@ -33,7 +33,7 @@ export const getZapVars = (zapCfgFilePath: string): ZapConfigVars | undefined =>
     if (!fs.existsSync(zapCfgFilePath)) return;
     console.warn(`WARNING: The 'txAdminZapConfig.json' file has been deprecated and this feature will be removed in the next update.`);
     console.warn(`WARNING: Please use the 'TXHOST_' environment variables instead.`);
-    console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-host-config.`);
+    console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-env-config.`);
     const cfgFileData = JSON.parse(fs.readFileSync(zapCfgFilePath, 'utf8'));
 
     const zapVars: ZapConfigVars = {

@@ -70,7 +70,7 @@ const handleMultiVar = <T extends ZodSchema>(
         fatalError.GlobalData(20, [
             `Invalid value for the TXHOST_${name}-equivalent config in ${whichAlt}.`,
             ['Value', alt],
-            'For more information: https://aka.cfx.re/txadmin-host-config',
+            'For more information: https://aka.cfx.re/txadmin-env-config',
         ], fromZodError(parsed.error, { prefix: null }));
     }
     return parsed.data;
@@ -325,37 +325,37 @@ const maxClients = handleMultiVar(
  * MARK: DEFAULTS
  */
 const defaultDbHost = handleMultiVar(
-    'DB_HOST',
-    hostEnvVarSchemas.DB_HOST,
-    hostVars.DB_HOST,
+    'DEFAULT_DBHOST',
+    hostEnvVarSchemas.DEFAULT_DBHOST,
+    hostVars.DEFAULT_DBHOST,
     zapVars?.deployerDefaults?.mysqlHost,
     undefined,
 );
 const defaultDbPort = handleMultiVar(
-    'DB_PORT',
-    hostEnvVarSchemas.DB_PORT,
-    hostVars.DB_PORT,
+    'DEFAULT_DBPORT',
+    hostEnvVarSchemas.DEFAULT_DBPORT,
+    hostVars.DEFAULT_DBPORT,
     zapVars?.deployerDefaults?.mysqlPort,
     undefined,
 );
 const defaultDbUser = handleMultiVar(
-    'DB_USER',
-    hostEnvVarSchemas.DB_USER,
-    hostVars.DB_USER,
+    'DEFAULT_DBUSER',
+    hostEnvVarSchemas.DEFAULT_DBUSER,
+    hostVars.DEFAULT_DBUSER,
     zapVars?.deployerDefaults?.mysqlUser,
     undefined,
 );
 const defaultDbPass = handleMultiVar(
-    'DB_PASS',
-    hostEnvVarSchemas.DB_PASS,
-    hostVars.DB_PASS,
+    'DEFAULT_DBPASS',
+    hostEnvVarSchemas.DEFAULT_DBPASS,
+    hostVars.DEFAULT_DBPASS,
     zapVars?.deployerDefaults?.mysqlPassword,
     undefined,
 );
 const defaultDbName = handleMultiVar(
-    'DB_NAME',
-    hostEnvVarSchemas.DB_NAME,
-    hostVars.DB_NAME,
+    'DEFAULT_DBNAME',
+    hostEnvVarSchemas.DEFAULT_DBNAME,
+    hostVars.DEFAULT_DBNAME,
     zapVars?.deployerDefaults?.mysqlDatabase,
     undefined,
 );
@@ -464,7 +464,7 @@ if (ignoreDeprecatedConfigs) {
 }
 
 //Quick config to disable ads
-const displayAds = process.env?.TXHOST_TMPHIDEADS !== 'true' || isPterodactyl || isZapHosting;
+const displayAds = process.env?.TXHOST_TMP_HIDE_ADS !== 'true' || isPterodactyl || isZapHosting;
 const adSchema = z.object({
     img: z.string(),
     url: z.string(),

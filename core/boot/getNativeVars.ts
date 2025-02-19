@@ -14,7 +14,7 @@ const cleanNativeResp = (resp: any) => {
 const convarWarning = (convarName: string, newName: string) => {
     console.warn(`WARNING: The ConVar '${convarName}' is deprecated and will be removed in the next update.`);
     console.warn(`WARNING: Please use the '${newName}' environment variable instead.`);
-    console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-host-config`);
+    console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-env-config`);
 }
 
 

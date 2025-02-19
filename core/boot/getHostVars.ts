@@ -46,11 +46,11 @@ export const hostEnvVarSchemas = {
     PROVIDER_LOGO: z.string().url(),
 
     //Defaults (no reason to coerce or check, except the cfxkey)
-    DB_HOST: z.string(),
-    DB_PORT: z.string(),
-    DB_USER: z.string(),
-    DB_PASS: z.string(),
-    DB_NAME: z.string(),
+    DEFAULT_DBHOST: z.string(),
+    DEFAULT_DBPORT: z.string(),
+    DEFAULT_DBUSER: z.string(),
+    DEFAULT_DBPASS: z.string(),
+    DEFAULT_DBNAME: z.string(),
     DEFAULT_ACCOUNT: z.string().refine(
         (val) => {
             const parts = val.split(':').length;
@@ -86,7 +86,7 @@ export const getHostVars = () => {
                 'Invalid value for TXHOST environment variable.',
                 ['Key', fullKey],
                 ['Value', String(value)],
-                'For more information: https://aka.cfx.re/txadmin-host-config',
+                'For more information: https://aka.cfx.re/txadmin-env-config',
             ], fromZodError(res.error, { prefix: null }));
         }
         txHostEnv[partialKey] = res.data;
