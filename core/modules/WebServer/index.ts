@@ -253,6 +253,6 @@ export default class WebServer {
      */
     resetToken() {
         this.luaComToken = nanoid();
-        console.verbose.log('Resetting luaComToken.');
+        console.verbose.debug('Resetting luaComToken.');
     }
 };

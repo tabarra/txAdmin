@@ -1,11 +1,10 @@
 const modulename = 'Logger:Admin';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
-import chalk from 'chalk';
 import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@lib/console';
 import { LoggerBase } from '../LoggerBase';
-import { getTimeHms } from '@lib/misc';
+import { chalkInversePad, getTimeHms } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 
@@ -55,7 +54,7 @@ export default class AdminLogger extends LoggerBase {
         let saveMsg;
         if (type === 'command') {
             saveMsg = `[${author}] executed "${action}"`;
-            console.log(`${author} executed ` + chalk.inverse(' ' + action + ' '));
+            console.log(`${author} executed ` + chalkInversePad(action));
         } else {
             saveMsg = `[${author}] ${action}`;
             console.log(saveMsg);

@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { dateToLocaleDateString, dateToLocaleTimeString, isDateToday, tsToLocaleDateTimeString } from "@/lib/dateTime";
 import TxAnchor from "@/components/TxAnchor";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { createRandomHslColor } from "@/lib/utils";
 
 
 function HeaderLinks() {
@@ -126,7 +125,7 @@ export default function SettingsHeader({ changelogData }: SettingsHeaderProps) {
 }
 
 //TODO: dynamic breadcrumb
-// export default function SettingsHeader({ changelogData }: SettingsHeaderProps) {
+// export function SettingsHeaderSub({ changelogData }: SettingsHeaderProps) {
 //     return (
 //         <header className='border-b mb-4'>
 //             <div className='flex justify-between items-center px-4 py-2'>

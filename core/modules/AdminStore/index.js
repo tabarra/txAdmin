@@ -7,8 +7,8 @@ import { convars, txEnv } from '@core/globalData';
 import CfxProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@lib/console.js';
-import chalk from 'chalk';
 import fatalError from '@lib/fatalError.js';
+import { chalkInversePad } from '@lib/misc.js';
 const console = consoleFactory(modulename);
 
 //NOTE: The way I'm doing versioning right now is horrible but for now it's the best I can do
@@ -656,7 +656,7 @@ export default class AdminStore {
             return true;
         } else {
             if (printPin) {
-                console.warn('Use this PIN to add a new master account: ' + chalk.inverse(` ${this.addMasterPin} `));
+                console.warn('Use this PIN to add a new master account: ' + chalkInversePad(this.addMasterPin));
             }
             return false;
         }

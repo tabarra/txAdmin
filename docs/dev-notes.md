@@ -25,6 +25,7 @@ Legend:
 - [ ] the console lines are shorter on first full render (ctrl+f5) and on f5 it fixes itself
     - didn't happen in v7.2.2, not sure about v7.3.2
     - doesn't seem to be neither fontSize nor lineHeight
+    - NOTE: this might solve itself with the WebGL renderer update, so try that first
 
 ## Refactor + DX
 - [x] deprecate fxRunner.srvCmd
@@ -103,8 +104,6 @@ Legend:
     - [x] disable the "view changelog" button, or write the modal code
     - [x] write dev notes on the config system (README.md in the panel settings and core configstore?)
 - [x] Full FXRunner rewrite
-- [ ] implement `cleanFullPath.ts` in settings save ui & api for comparison consistency
-    - [ ] add it to `setup/save.js -> handleValidateLocalDataFolder()` as well
 
 ## Other stuff
 - [x] new env vars
@@ -117,6 +116,8 @@ Legend:
     - https://nodejs.org/docs/latest-v16.x/api/fs.html#fspromiseslinkexistingpath-newpath
     - https://nodejs.org/docs/latest-v16.x/api/fs.html#fspromisessymlinktarget-path-type
 - [!] check txAdmin-private
+- [ ] implement `cleanFullPath.ts` in settings save ui & api for comparison consistency
+    - [ ] add it to `setup/save.js -> handleValidateLocalDataFolder()` as well
 
 
 
@@ -139,7 +140,7 @@ Legend:
     - 360x510 menor razoável
     - 390x670 mais comum
 
-
+- [ ] use os.networkInterfaces()?
 
 
 ## Chores + boring stuff

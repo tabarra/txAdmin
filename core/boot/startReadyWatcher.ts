@@ -9,6 +9,7 @@ import getOsDistro from '@lib/host/getOsDistro.js';
 import { convars, txDevEnv, txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import { addLocalIpAddress } from '@lib/host/isIpAddressLocal';
+import { chalkInversePad } from '@lib/misc';
 const console = consoleFactory();
 
 
@@ -171,7 +172,7 @@ export const startReadyWatcher = async (cb: () => void) => {
     } satisfies BoxenOptions;
     const boxLines = [
         'All ready! Please access:',
-        ...bannerUrls.map((url) => chalk.inverse(` ${url} `)),
+        ...bannerUrls.map(chalkInversePad),
         ...adminPinLines,
     ];
     console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);

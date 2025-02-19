@@ -29,7 +29,7 @@ export default async function FXServerSchedule(ctx: AuthedCtx) {
         });
     }
 
-    if (action == 'setNextTempSchedule') {
+    if (action === 'setNextTempSchedule') {
         try {
             txCore.fxScheduler.setNextTempSchedule(parameter);
             ctx.admin.logAction(`Scheduling server restart at ${parameter}`);
@@ -44,7 +44,7 @@ export default async function FXServerSchedule(ctx: AuthedCtx) {
             });
         }
 
-    } else if (action == 'setNextSkip') {
+    } else if (action === 'setNextSkip') {
         try {
             txCore.fxScheduler.setNextSkip(parameter, ctx.admin.name);
             const logAct = parameter ? 'Cancelling' : 'Re-enabling';

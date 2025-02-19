@@ -258,4 +258,23 @@
         overflow-wrap: anywhere;
         word-break: normal;
     }
+
+    .pattern-dots {
+        background-image: radial-gradient(circle, #D4D4D8 1px, transparent 1px);
+        background-size: 20px 20px;
+        background-position: center;
+        transition: background-size 0.5s ease;
+    }
+    /* .pattern-dots:hover {
+        background-size: 21px 21px;
+    } */
+    .dark .pattern-dots {
+        background-image: radial-gradient(circle, #27272A 1px, transparent 1px);
+        background-size: 20px 20px;
+        background-position: center;
+        transition: background-size 0.5s ease;
+    }
+    /* .dark .pattern-dots:hover {
+        background-size: 21px 21px;
+    } */
 }

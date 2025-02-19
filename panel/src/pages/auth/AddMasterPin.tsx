@@ -62,7 +62,7 @@ export default function AddMasterPin() {
 
     useEffect(() => {
         if (/^#\d{4}$/.test(window.location.hash)) {
-            setMessageText('Autofilled ✔');
+            setMessageText('Auto-filled ✔');
             pinRef.current!.value = window.location.hash.substring(1);
         }
     }, []);
