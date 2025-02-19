@@ -2,19 +2,32 @@ const modulename = 'FxScheduler';
 import { parseSchedule } from '@lib/misc';
 import consoleFactory from '@lib/console';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
+import type { UpdateConfigKeySet } from './ConfigStore/utils';
 const console = consoleFactory(modulename);
+
+
+//Types
+type RestartInfo = {
+    string: string;
+    minuteFloorTs: number;
+}
+type ParsedTime = {
+    string: string;
+    hours: number;
+    minutes: number;
+}
 
 
 //Consts
 const scheduleWarnings = [30, 15, 10, 5, 4, 3, 2, 1];
 
+
 /**
  * Processes an array of HH:MM, gets the next timestamp (sorted by closest).
- * When time matches, it will be dist: 0, distMins: 0, and nextTs likely in the past due to seconds and milliseconds being 0.
- * @param {Array} schedule
- * @returns {Object} {string, minuteFloorTs}
+ * When time matches, it will be dist: 0, distMins: 0, and nextTs likely in the 
+ * past due to seconds and milliseconds being 0.
  */
-const getNextScheduled = (parsedSchedule) => {
+const getNextScheduled = (parsedSchedule: ParsedTime[]): RestartInfo => {
     const thisMinuteTs = new Date().setSeconds(0, 0);
     const processed = parsedSchedule.map((t) => {
         const nextDate = new Date();
@@ -37,11 +50,15 @@ const getNextScheduled = (parsedSchedule) => {
  */
 export default class FxScheduler {
     static configKeysWatched = ['restarter.schedule']; //FIXME: add readonly prop when moving to typescript
+    private nextTempSchedule: RestartInfo | false = false;
+    private calculatedNextRestartMinuteFloorTs: number | false = false;
+    private nextSkip: number | false = false;
 
     constructor() {
-        this.nextSkip = false;
-        this.nextTempSchedule = false;
-        this.calculatedNextRestartMinuteFloorTs = false;
+        //Initial check to update status
+        setImmediate(() => {
+            this.checkSchedule();
+        });
 
         //Cron Function 
         setInterval(() => {
@@ -54,12 +71,35 @@ export default class FxScheduler {
     /**
      * Refresh configs, resets skip and temp scheduled, runs checkSchedule.
      */
-    handleConfigUpdate(updatedConfigs) {
+    handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.checkSchedule();
         txCore.webServer.webSocket.pushRefresh('status');
     }
+
+
+    /**
+     * Updates state when server closes.
+     * Clear temp skips and skips next scheduled if it's in less than 2 hours.
+     */
+    handleServerClose() {
+        //Clear temp schedule, recalculates next restart
+        if (this.nextTempSchedule) this.nextTempSchedule = false;
+        this.checkSchedule(true);
+        
+        //Check if next scheduled restart is in less than 2 hours
+        const inTwoHours = Date.now() + 2 * 60 * 60 * 1000;
+        if (this.calculatedNextRestartMinuteFloorTs && this.calculatedNextRestartMinuteFloorTs < inTwoHours) {
+            console.warn('Server closed, skipping next scheduled restart because it\'s in less than 2 hours.');
+            this.nextSkip = this.calculatedNextRestartMinuteFloorTs;
+        }
+        this.checkSchedule(true);
+
+        //Push UI update
+        txCore.webServer.webSocket.pushRefresh('status');
+    }
+
 
     /**
      * Returns the current status of scheduler
@@ -87,10 +127,8 @@ export default class FxScheduler {
      * Sets this.nextSkip.
      * Cancel scheduled button -> setNextSkip(true)
      * Enable scheduled button -> setNextSkip(false)
-     * @param {boolean} enabled
-     * @param {string} author
      */
-    setNextSkip(enabled, author) {
+    setNextSkip(enabled: boolean, author?: string) {
         if (enabled) {
             let prevMinuteFloorTs, temporary;
             if (this.nextTempSchedule) {
@@ -103,18 +141,20 @@ export default class FxScheduler {
                 this.nextSkip = this.calculatedNextRestartMinuteFloorTs;
             }
 
-            //Dispatch `txAdmin:events:scheduledRestartSkipped`
-            txCore.fxRunner.sendEvent('scheduledRestartSkipped', {
-                secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
-                temporary,
-                author,
-            });
+            if (prevMinuteFloorTs) {
+                //Dispatch `txAdmin:events:scheduledRestartSkipped`
+                txCore.fxRunner.sendEvent('scheduledRestartSkipped', {
+                    secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
+                    temporary,
+                    author,
+                });
 
-            //FIXME: deprecate
-            txCore.fxRunner.sendEvent('skippedNextScheduledRestart', {
-                secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
-                temporary
-            });
+                //FIXME: deprecate
+                txCore.fxRunner.sendEvent('skippedNextScheduledRestart', {
+                    secondsRemaining: Math.floor((prevMinuteFloorTs - Date.now()) / 1000),
+                    temporary
+                });
+            }
         } else {
             this.nextSkip = false;
         }
@@ -130,9 +170,8 @@ export default class FxScheduler {
     /**
      * Sets this.nextTempSchedule.
      * The value MUST be before the next setting scheduled time.
-     * @param {String} timeString
      */
-    setNextTempSchedule(timeString) {
+    setNextTempSchedule(timeString: string) {
         //Process input
         if (typeof timeString !== 'string') throw new Error('expected string');
         const thisMinuteTs = new Date().setSeconds(0, 0);
@@ -188,10 +227,9 @@ export default class FxScheduler {
     /**
      * Checks the schedule to see if it's time to announce or restart the server
      */
-    async checkSchedule() {
-        //FIXME: if fxchild === null || span less than 1 minute, return
+    async checkSchedule(calculateOnly = false) {
         //Check settings and temp scheduled restart
-        let nextRestart;
+        let nextRestart: RestartInfo;
         if (this.nextTempSchedule) {
             nextRestart = this.nextTempSchedule;
         } else if (Array.isArray(txConfig.restarter.schedule) && txConfig.restarter.schedule.length) {
@@ -203,6 +241,7 @@ export default class FxScheduler {
             return;
         }
         this.calculatedNextRestartMinuteFloorTs = nextRestart.minuteFloorTs;
+        if (calculateOnly) return;
 
         //Checking if skipped
         if (this.nextSkip === this.calculatedNextRestartMinuteFloorTs) {
@@ -222,6 +261,13 @@ export default class FxScheduler {
                 `scheduled restart at ${nextRestart.string}`,
                 txCore.translator.t('restarter.schedule_reason', { time: nextRestart.string }),
             );
+
+            //Check if server is in boot cooldown
+            const processUptime = Math.floor((txCore.fxRunner.child?.uptime ?? 0) / 1000);
+            if (processUptime < txConfig.restarter.bootCooldown) {
+                console.verbose.log(`Server is in boot cooldown, skipping scheduled restart.`);
+                return;
+            }
 
             //reset next scheduled
             this.nextTempSchedule = false;
@@ -252,12 +298,10 @@ export default class FxScheduler {
 
     /**
      * Triggers FXServer restart and logs the reason.
-     * @param {string} reasonInternal
-     * @param {string} reasonTranslated
      */
-    async triggerServerRestart(reasonInternal, reasonTranslated) {
+    async triggerServerRestart(reasonInternal: string, reasonTranslated: string) {
         //Sanity check
-        if (txCore.fxRunner.isIdle) {
+        if (txCore.fxRunner.isIdle || !txCore.fxRunner.child?.isAlive) {
             console.verbose.warn('Server not running, skipping scheduled restart.');
             return false;
         }

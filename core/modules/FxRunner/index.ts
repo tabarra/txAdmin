@@ -323,6 +323,7 @@ export default class FxRunner {
             this.proc = null;
 
             //Cleanup
+            txCore.fxScheduler.handleServerClose();
             txCore.fxResources.handleServerClose();
             txCore.fxPlayerlist.handleServerClose(debugInfo.mutex);
             txCore.metrics.svRuntime.logServerClose(reasonString);
