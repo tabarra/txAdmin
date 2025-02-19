@@ -44,6 +44,14 @@ export default class Database {
 
 
     /**
+     * Graceful shutdown handler - passing down to the db instance
+     */
+    public handleShutdown() {
+        this.#db.handleShutdown();
+    }
+
+
+    /**
      * Returns if the lowdb instance is ready
      */
     get isReady() {

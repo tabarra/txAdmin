@@ -67,7 +67,7 @@ export default function bootTxAdmin() {
     /**
      * MARK: Booting Modules
      */
-    //Helper function to start the modules
+    //Helper function to start the modules & register callbacks
     const startModule = <T>(Class: GenericTxModule<T>): T => {
         const instance = new Class();
         if(Array.isArray(Class.configKeysWatched) && Class.configKeysWatched.length > 0){
@@ -79,6 +79,9 @@ export default function bootTxAdmin() {
                 Class.configKeysWatched,
                 instance.handleConfigUpdate.bind(instance),
             );
+        }
+        if(instance?.handleShutdown) {
+            txManager.addShutdownHandler(instance.handleShutdown.bind(instance));
         }
         
         return instance as T;

@@ -16,6 +16,8 @@ import { convars } from '@core/globalData';
 const console = consoleFactory('FXRunner');
 const genMutex = customAlphabet(dict49, 5);
 
+const MIN_KILL_DELAY = 250;
+
 
 /**
  * Module responsible for handling the FXServer process.
@@ -39,6 +41,20 @@ export default class FxRunner {
      */
     public handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
         this.updateMutableConvars();
+    }
+
+
+    /**
+     * Gracefully shutdown when txAdmin gets an exit event.  
+     * There is no time for a more graceful shutdown with announcements and events.  
+     * Will only use the quit command and wait for the process to exit.  
+     */
+    public handleShutdown() {
+        if (!this.proc?.isAlive || !this.proc.stdin) return null;
+        this.proc.stdin.write('quit "host shutting down"\n');
+        return new Promise<void>((resolve) => {
+            this.proc?.onExit(resolve); //will let fxserver finish by itself
+        });
     }
 
 
@@ -269,7 +285,7 @@ export default class FxRunner {
         if (!this.proc) return null; //nothing to kill
 
         //Prepare vars
-        const shutdownDelay = Math.max(txConfig.server.shutdownNoticeDelayMs, 250);
+        const shutdownDelay = Math.max(txConfig.server.shutdownNoticeDelayMs, MIN_KILL_DELAY);
         const reasonString = reason ?? 'no reason provided';
         const messageType = isRestarting ? 'restarting' : 'stopping';
         const messageColor = isRestarting ? 'warning' : 'danger';

@@ -1,7 +1,7 @@
 import { txDevEnv } from "@core/globalData";
 import consoleFactory from "@lib/console";
-
 const console = consoleFactory('ProcessHandlers');
+
 
 export default function setupProcessHandlers() {
     //Handle any stdio error
@@ -11,13 +11,13 @@ export default function setupProcessHandlers() {
 
     //Handling warnings (ignoring some)
     Error.stackTraceLimit = 25;
-    process.removeAllListeners('warning');
+    process.removeAllListeners('warning'); //FIXME: this errors in Bun
     process.on('warning', (warning) => {
         //totally ignoring the warning, we know this is bad and shouldn't happen
         if (warning.name === 'UnhandledPromiseRejectionWarning') return;
 
         if (warning.name !== 'ExperimentalWarning' || txDevEnv.ENABLED) {
-            console.dir(warning, {multilineError: true});
+            console.dir(warning, { multilineError: true });
         }
     });
 
@@ -33,13 +33,5 @@ export default function setupProcessHandlers() {
         console.error('Ohh nooooo - uncaughtException');
         console.error(err.message);
         console.dir(err.stack);
-    });
-
-    //Process exit - ignoring fatalError code range
-    process.on('exit', (code) => {
-        code = code ?? 9999;
-        if (code < 1000 && code > 9999){
-            console.warn('Stopping txAdmin', code);
-        } 
     });
 }

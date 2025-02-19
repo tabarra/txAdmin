@@ -1,6 +1,7 @@
 
 import chalk from "chalk";
 import consoleFactory from "./console";
+import quitProcess from "./quitProcess";
 const console = consoleFactory();
 
 type ErrorLineSkipType = null | undefined | false;
@@ -48,16 +49,7 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
         padStartEnd('For support: https://discord.gg/txAdmin')
     ));
     console.error(console.DIVIDER);
-
-    //Hacky solution to guarantee the error is flushed 
-    //before fxserver double prints the exit code
-    process.stdout.write('\n');
-    process.stdout.write('\n');
-    process.stdout.write('\n');
-    process.stdout.write('\n');
-    //This will make the process hang for 100ms before exiting
-    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100);
-    process.exit(code);
+    quitProcess(code);
 }
 
 
