@@ -218,13 +218,10 @@ export default class WebServer {
             // });
             this.httpServer.on('error', listenErrorHandler);
 
-            let iface: string;
+            const iface = convars.forceInterface ?? '0.0.0.0';
             if (convars.forceInterface) {
                 console.warn(`Starting with interface ${convars.forceInterface}.`);
                 console.warn('If the HTTP server doesn\'t start, this is probably the reason.');
-                iface = convars.forceInterface;
-            } else {
-                iface = '0.0.0.0';
             }
 
             this.httpServer.listen(convars.txAdminPort, iface, async () => {

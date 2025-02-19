@@ -32,9 +32,9 @@ export type ThemeType = {
 };
 
 export type AdsDataType = {
-    login: false | { img: string, url: string };
-    main: false | { img: string, url: string };
-}
+    login: { img: string, url: string } | null;
+    main: { img: string, url: string } | null;
+};
 
 export type InjectedTxConsts = {
     //Env
@@ -53,6 +53,8 @@ export type InjectedTxConsts = {
     defaultTheme: string;
     customThemes: Omit<ThemeType, 'style'>[];
     adsData: AdsDataType;
+    providerLogo: string | undefined,
+    providerName: string,
 
     //Auth
     preAuth: ReactAuthDataType | false;

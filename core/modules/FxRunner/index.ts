@@ -12,8 +12,11 @@ import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isV
 import ProcessManager, { ChildProcessStateInfo } from './ProcessManager';
 import handleFd3Messages from './handleFd3Messages';
 import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
+import { convars } from '@core/globalData';
 const console = consoleFactory('FXRunner');
 const genMutex = customAlphabet(dict49, 5);
+
+const MIN_KILL_DELAY = 250;
 
 
 /**
@@ -42,6 +45,20 @@ export default class FxRunner {
 
 
     /**
+     * Gracefully shutdown when txAdmin gets an exit event.  
+     * There is no time for a more graceful shutdown with announcements and events.  
+     * Will only use the quit command and wait for the process to exit.  
+     */
+    public handleShutdown() {
+        if (!this.proc?.isAlive || !this.proc.stdin) return null;
+        this.proc.stdin.write('quit "host shutting down"\n');
+        return new Promise<void>((resolve) => {
+            this.proc?.onExit(resolve); //will let fxserver finish by itself
+        });
+    }
+
+
+    /**
      * Receives the signal that all the start banner was already printed and other modules loaded
      */
     public signalStartReady() {
@@ -53,6 +70,10 @@ export default class FxRunner {
 
         if (!txCore.adminStore.hasAdmins()) {
             return console.warn('The server will not auto start because there are no admins configured.');
+        }
+
+        if(txConfig.server.quiet || convars.forceQuietMode){
+           console.defer(1000).warn('FXServer Quiet mode is enabled. Access the Live Console to see the logs.');     
         }
 
         this.spawnServer(true);
@@ -264,7 +285,7 @@ export default class FxRunner {
         if (!this.proc) return null; //nothing to kill
 
         //Prepare vars
-        const shutdownDelay = Math.max(txConfig.server.shutdownNoticeDelayMs, 250);
+        const shutdownDelay = Math.max(txConfig.server.shutdownNoticeDelayMs, MIN_KILL_DELAY);
         const reasonString = reason ?? 'no reason provided';
         const messageType = isRestarting ? 'restarting' : 'stopping';
         const messageColor = isRestarting ? 'warning' : 'danger';

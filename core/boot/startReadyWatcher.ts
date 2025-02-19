@@ -46,8 +46,10 @@ const getOSMessage = async () => {
         '[!] Home-hosting fxserver is not recommended [!]',
         'You need to open the fxserver port (usually 30120) on Windows Firewall',
         'and set up port forwarding on your router so other players can access it.',
-        'We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.',
     ];
+    if (convars.displayAds) {
+        winWorkstationMessage.push('We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.');
+    }
 
     //FIXME: use si.osInfo() instead
     const distro = await getOsDistro();
@@ -135,18 +137,21 @@ export const startReadyWatcher = async (cb: () => void) => {
     ]);
 
     //Addresses
-    let addrs;
-    if (convars.forceInterface == false || convars.forceInterface == '0.0.0.0') {
-        addrs = [
+    let detectedUrls;
+    if (convars.forceInterface && convars.forceInterface !== '0.0.0.0') {
+        detectedUrls = [convars.forceInterface];
+    } else {
+        detectedUrls = [
             (txEnv.isWindows) ? 'localhost' : 'your-public-ip',
         ];
         if ('value' in publicIpResp && publicIpResp.value) {
-            addrs.push(publicIpResp.value);
+            detectedUrls.push(publicIpResp.value);
             addLocalIpAddress(publicIpResp.value);
         }
-    } else {
-        addrs = [convars.forceInterface];
     }
+    const bannerUrls = convars.txAdminUrl
+        ? [convars.txAdminUrl]
+        : detectedUrls.map((addr) => `http://${addr}:${convars.txAdminPort}/`);
 
     //Admin PIN
     const adminMasterPin = 'value' in adminPinRes && adminPinRes.value ? adminPinRes.value : false;
@@ -166,17 +171,20 @@ export const startReadyWatcher = async (cb: () => void) => {
     } satisfies BoxenOptions;
     const boxLines = [
         'All ready! Please access:',
-        ...addrs.map((addr) => chalk.inverse(` http://${addr}:${convars.txAdminPort}/ `)),
+        ...bannerUrls.map((url) => chalk.inverse(` ${url} `)),
         ...adminPinLines,
     ];
     console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);
-    if (!txDevEnv.ENABLED && convars.forceInterface === false && 'value' in msgRes && msgRes.value) {
+    if (!txDevEnv.ENABLED && !convars.forceInterface && 'value' in msgRes && msgRes.value) {
         console.multiline(msgRes.value, chalk.bgBlue);
     }
 
     //Opening page
-    if (txEnv.isWindows && adminMasterPin) {
-        open(`http://localhost:${convars.txAdminPort}/addMaster/pin#${adminMasterPin}`).catch((e) => { });
+    if (txEnv.isWindows && adminMasterPin && bannerUrls[0]) {
+        const linkUrl = new URL(bannerUrls[0]);
+        linkUrl.pathname = '/addMaster/pin';
+        linkUrl.hash = adminMasterPin;
+        open(linkUrl.href);
     }
 
     //Callback

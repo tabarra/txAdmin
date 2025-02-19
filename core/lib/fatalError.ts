@@ -1,10 +1,11 @@
 
 import chalk from "chalk";
 import consoleFactory from "./console";
+import quitProcess from "./quitProcess";
 const console = consoleFactory();
 
 type ErrorLineSkipType = null | undefined | false;
-type ErrorLineType = string | [desc: string, value: string] | ErrorLineSkipType;
+type ErrorLineType = string | [desc: string, value: any] | ErrorLineSkipType;
 type ErrorMsgType = ErrorLineType | ErrorLineType[];
 
 const padStartEnd = (str: string): string => {
@@ -15,8 +16,9 @@ const padStartEnd = (str: string): string => {
 
 const printSingleLine = (line: ErrorLineType): void => {
     if (Array.isArray(line)) {
-        if (line.length === 2 && typeof line[0] === 'string' && typeof line[1] === 'string') {
-            console.error(`${line[0]}: ${chalk.dim(line[1])}`);
+        if (line.length === 2 && typeof line[0] === 'string') {
+            let value = typeof line[1] === 'string' ? line[1] : String(line[1]);
+            console.error(`${line[0]}: ${chalk.dim(value)}`);
         } else {
             console.error(JSON.stringify(line));
         }
@@ -47,16 +49,7 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
         padStartEnd('For support: https://discord.gg/txAdmin')
     ));
     console.error(console.DIVIDER);
-
-    //Hacky solution to guarantee the error is flushed 
-    //before fxserver double prints the exit code
-    process.stdout.write('\n');
-    process.stdout.write('\n');
-    process.stdout.write('\n');
-    process.stdout.write('\n');
-    //This will make the process hang for 100ms before exiting
-    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100);
-    process.exit(code);
+    quitProcess(code);
 }
 
 

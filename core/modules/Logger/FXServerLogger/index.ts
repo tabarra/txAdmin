@@ -6,6 +6,7 @@ import consoleFactory, { processStdioWriteRaw } from '@lib/console.js';
 import { LoggerBase } from '../LoggerBase.js';
 import ConsoleTransformer from './ConsoleTransformer.js';
 import ConsoleLineEnum from './ConsoleLineEnum.js';
+import { convars } from '@core/globalData.js';
 const console = consoleFactory(modulename);
 
 
@@ -88,7 +89,7 @@ export default class FXServerLogger extends LoggerBase {
         this.fileBuffer += fileBuffer;
 
         //For the terminal
-        if (!txConfig.server.quiet) {
+        if (!txConfig.server.quiet && !convars.forceQuietMode) {
             processStdioWriteRaw(stdoutBuffer);
         }
 

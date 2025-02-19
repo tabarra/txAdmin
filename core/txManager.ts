@@ -4,6 +4,9 @@ import { startReadyWatcher } from "./boot/startReadyWatcher";
 import { Deployer } from "./deployer";
 import { TxConfigState } from "@shared/enums";
 import type { GlobalStatusType } from "@shared/socketioTypes";
+import quitProcess from "@lib/quitProcess";
+import consoleFactory, { processStdioEnsureEol } from "@lib/console";
+const console = consoleFactory('Manager');
 
 
 /**
@@ -11,19 +14,16 @@ import type { GlobalStatusType } from "@shared/socketioTypes";
  */
 export default class TxManager {
     public deployer: Deployer | null = null; //FIXME: implementar o deployer
+    private readonly moduleShutdownHandlers: (() => void)[] = [];
+    private isShuttingDown = false;
 
-    //TODO: add event bus?!
     //TODO: move txRuntime here?!
 
     constructor() {
-        //FIXME: fxserver does not pipe those signals to nodejs, so we actually never get them
-        // process.on('SIGINT', this.gracefulShutdown.bind(this));     //ctrl+c (mostly users)
-        // process.on('SIGTERM', this.gracefulShutdown.bind(this));    //kill (docker, etc)
-        // process.on('SIGHUP', this.gracefulShutdown.bind(this));     //terminal closed
-        // RegisterCommand('quit', (...args: any) => {
-        //     console.dir(args);
-        //     console.log('quit command received');
-        // }, false);
+        //Listen for shutdown signals
+        process.on('SIGHUP', this.gracefulShutdown.bind(this));     //terminal closed
+        process.on('SIGINT', this.gracefulShutdown.bind(this));     //ctrl+c (mostly users)
+        process.on('SIGTERM', this.gracefulShutdown.bind(this));    //kill (docker, etc)
 
         //Sync start, boot fxserver when conditions are met
         startReadyWatcher(() => {
@@ -44,14 +44,41 @@ export default class TxManager {
         }, 10_000);
     }
 
-    // isDeployerRunning(): this is { deployer: Deployer } {
-    //     return this.deployer !== null;
-    // }
 
-    // public gracefulShutdown(signal: NodeJS.Signals) {
-    //     console.debug(`[TXM] Received ${signal}, shutting down gracefully...`);
-    //     //TODO: implementar lógica de shutdown
-    // }
+    /**
+     * Gracefully shuts down the application by running all exit handlers.  
+     * If the process takes more than 5 seconds to exit, it will force exit.
+     */
+    public async gracefulShutdown(signal: NodeJS.Signals) {
+        //Prevent race conditions
+        if (this.isShuttingDown) {
+            processStdioEnsureEol();
+            console.warn(`Got ${signal} while already shutting down.`);
+            return;
+        }
+        console.warn(`Got ${signal}, shutting down...`);
+        this.isShuttingDown = true;
+
+        //Sets a hard limit to the shutdown process
+        setTimeout(() => {
+            console.error(`Graceful shutdown timed out after 5s, forcing exit...`);
+            quitProcess(1);
+        }, 5000);
+
+        //Run all exit handlers
+        await Promise.allSettled(this.moduleShutdownHandlers.map((handler) => handler()));
+        console.debug(`All exit handlers finished, shutting down...`);
+        quitProcess(0);
+    }
+
+
+    /**
+     * Adds a handler to be run when txAdmin gets a SIG* event
+     */
+    public addShutdownHandler(handler: () => void) {
+        this.moduleShutdownHandlers.push(handler);
+    }
+
 
     /**
      * Starts the deployer (TODO: rewrite deployer)
@@ -69,6 +96,12 @@ export default class TxManager {
         this.deployer = new Deployer(recipeText, deploymentID, targetPath, isTrustedSource, customMetaData);
     }
 
+
+    // isDeployerRunning(): this is { deployer: Deployer } {
+    //     return this.deployer !== null;
+    // }
+
+
     /**
      * Unknown, Deployer, Setup, Ready
      */
@@ -83,6 +116,7 @@ export default class TxManager {
             return TxConfigState.Ready;
         }
     }
+
 
     /**
      * Returns the global status object that is sent to the clients

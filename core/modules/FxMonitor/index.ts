@@ -157,7 +157,7 @@ export default class FxMonitor {
                         [convars.deployerDefaults.maxClients],
                         SYM_SYSTEM_AUTHOR
                     );
-                    console.error(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
+                    console.error(`${convars.providerName}: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
                     txCore.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
                 }
             }

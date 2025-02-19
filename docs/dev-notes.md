@@ -18,8 +18,8 @@ Legend:
     - happens when some page starts the server and redirects you to the live console
     - you join the room and gets initial data (directly from logger)
     - while the websocket out buffer still haven't sent the boot message
-- [!] fix: crashes table overflowing (DrilldownCrashesSubcard.tsx)
-    - [ ] reported cases of crash reason too big without word break causing page to scroll horizontal 
+- [x] fix: crashes table overflowing (DrilldownCrashesSubcard.tsx)
+    - [x] reported cases of crash reason too big without word break causing page to scroll horizontal 
 - [!] radix select/dropdown inside dialog
     - test the settings one as well as the ban form inside the player modal
 - [ ] the console lines are shorter on first full render (ctrl+f5) and on f5 it fixes itself
@@ -103,12 +103,14 @@ Legend:
     - [x] disable the "view changelog" button, or write the modal code
     - [x] write dev notes on the config system (README.md in the panel settings and core configstore?)
 - [x] Full FXRunner rewrite
+- [ ] implement `cleanFullPath.ts` in settings save ui & api for comparison consistency
+    - [ ] add it to `setup/save.js -> handleValidateLocalDataFolder()` as well
 
 ## Other stuff
+- [x] new env vars
+- [x] remove dynamicAds from the modules
 - [!] add stats tracking for the framework team (ask them, idk)
 - [!] package updates - test radix stuff
-- [!] new env vars
-- [!] remove dynamicAds from the modules
 - [!] commit stashed stuff
 - [!] fix custom locale
     - see if it's viable to use `fsp.link()` or `fsp.symlink()`
@@ -141,6 +143,11 @@ Legend:
 
 
 ## Chores + boring stuff
+- [ ] fully deprecate the ConVars and `txAdminZapConfig.json`
+    - reorganize the globalData.ts exports after that
+    - might not even need the separated `getXxxVars.ts` files after that
+    - still detect and issue an warning about its deprecation
+- [ ] rename "citizenfx" to "fivem" everywhere. Or maybe cfx.re?
 - [ ] replace lodash's cloneDeep with one of:
     - https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone (node 17+)
     - https://www.npmjs.com/package/rfdc
@@ -187,6 +194,7 @@ Legend:
         - [ ] maybe some other slight
         - [ ] allows runcode
         - [ ] maybe BigRadio group with Dev, Normal, and Lockdown mode, which blocks some stuff from the NUI, secure mode blocks runcode and force system chat?
+    - [ ] if you type `E:\FiveM\txData\default.base` in the fxserver settings it will save but show as unsaved because the saved was the `cleanPath()` version `E:/FiveM/txData/default.base`
 - [ ] Player drops page
     - [ ] fix: blurred chart lines
         - `imageRendering: 'pixelated'` might fix it

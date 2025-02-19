@@ -153,11 +153,13 @@ async function handleSetVariables(ctx) {
 
     //Max Clients & Server Endpoints
     userVars.maxClients = (convars.deployerDefaults && convars.deployerDefaults.maxClients) ? convars.deployerDefaults.maxClients : 48;
-    if (convars.forceInterface) {
-        const suffix = '# zap-hosting: do not modify!';
+    if (convars.forceInterface || convars.forceFXServerPort) {
+        const comment = `# ${convars.providerName}: do not modify!`;
+        const endpointIface = convars.forceInterface ?? '0.0.0.0';
+        const endpointPort = convars.forceFXServerPort ?? 30120;
         userVars.serverEndpoints = [
-            `endpoint_add_tcp "${convars.forceInterface}:${convars.forceFXServerPort}" ${suffix}`,
-            `endpoint_add_udp "${convars.forceInterface}:${convars.forceFXServerPort}" ${suffix}`,
+            `endpoint_add_tcp "${endpointIface}:${endpointPort}" ${comment}`,
+            `endpoint_add_udp "${endpointIface}:${endpointPort}" ${comment}`,
         ].join('\n');
     } else {
         userVars.serverEndpoints = [

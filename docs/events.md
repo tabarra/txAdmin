@@ -1,4 +1,4 @@
-# Custom Events
+# Events Broadcasted
 
 txAdmin sends **server events** to allow for integration of some functionalities with other resources.
 The event name will be `txAdmin:events:<name>` and the first (and only) parameter will be a table that may contain relevant data.  

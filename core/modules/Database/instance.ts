@@ -101,7 +101,7 @@ export class DbInstance {
 
         //Cron functions
         setInterval(() => {
-            this.writeDatabase();
+            this.checkWriteNeeded();
         }, SAVE_CONFIG[SavePriority.HIGH].interval);
         setInterval(() => {
             this.backupDatabase();
@@ -181,6 +181,16 @@ export class DbInstance {
 
 
     /**
+     * Writes the database to the disk if pending.
+     */
+    public handleShutdown() {
+        if (this.#writePending !== SavePriority.STANDBY) {
+            this.writeDatabase();
+        }
+    }
+
+
+    /**
      * Creates a copy of the database file
      */
     async backupDatabase(targetPath?: string) {
@@ -210,9 +220,9 @@ export class DbInstance {
 
 
     /**
-     * Writes the database to the disk, taking in consideration the priority flag
+     * Checks if it's time to write the database to disk, taking in consideration the priority flag
      */
-    async writeDatabase() {
+    private async checkWriteNeeded() {
         //Check if the database is ready
         if (!this.obj) return;
 
@@ -220,16 +230,25 @@ export class DbInstance {
         const sinceLastWrite = timeStart - this.lastWrite;
 
         if (this.#writePending === SavePriority.HIGH || sinceLastWrite > SAVE_CONFIG[this.#writePending].interval) {
-            try {
-                await this.obj.write();
-                const timeElapsed = Date.now() - timeStart;
-                this.#writePending = SavePriority.STANDBY;
-                this.lastWrite = timeStart;
-                console.verbose.debug(`DB file saved, took ${timeElapsed}ms.`);
-            } catch (error) {
-                console.error(`Failed to save players database with error: ${(error as Error).message}`);
-                console.verbose.dir(error);
-            }
+            this.writeDatabase();
+            const timeElapsed = Date.now() - timeStart;
+            this.#writePending = SavePriority.STANDBY;
+            this.lastWrite = timeStart;
+            console.verbose.debug(`DB file saved, took ${timeElapsed}ms.`);
+        }
+    }
+
+
+    /**
+     * Writes the database to the disk NOW  
+     * NOTE: separate function so it can also be called by the shutdown handler
+     */
+    private async writeDatabase() {
+        try {
+            await this.obj?.write();
+        } catch (error) {
+            console.error(`Failed to save players database with error: ${(error as Error).message}`);
+            console.verbose.dir(error);
         }
     }
 }

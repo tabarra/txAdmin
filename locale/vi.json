@@ -14,9 +14,9 @@
         "schedule_warn_discord": "**%{servername}** sẽ khởi động lại sau %{smart_count} phút. |||| **%{servername}** đã được lên lịch khởi động lại sau %{smart_count} phút."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Tất cả người chơi đã bị kick: %{reason}.",
+        "player": "Bạn đã bị kick: %{reason}.",
+        "unknown_reason": "không có lý do nào được đưa ra"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Bạn đã bị cấm tham gia máy chủ vì lý do: \"%{reason}\". Thời hạn cấm sẽ hết hạn sau: %{expiration}.",
@@ -227,11 +227,11 @@
                 "zero_players": "Không tìm thấy"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
+                "label": "Lọc theo",
+                "no_filter": "Không có bộ lọc",
                 "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "is_injured": "Bị thương / Chết",
+                "in_vehicle": "Trong xe"
             },
             "sort": {
                 "label": "Sắp xếp theo",
@@ -323,7 +323,7 @@
                 "joined": "Đã tham gia",
                 "whitelisted_label": "Whitelisted",
                 "whitelisted_notyet": "chưa",
-                "btn_wl_add": "ADD WL",
+                "btn_wl_add": "THÊM WL",
                 "btn_wl_remove": "XÓA WL",
                 "btn_wl_success": "Đã cập nhật whitelist.",
                 "log_label": "Nhật ký",
