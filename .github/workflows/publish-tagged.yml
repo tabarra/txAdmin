@@ -31,8 +31,8 @@ jobs:
       # Not truly necessary for build, but for now the vite config requires it
       - name: Create .env file
         run: |
-          echo FXSERVER_PATH=$(pwd)/fxserver > .env
-          echo VITE_URL='http://localhost:40122' >> .env
+          echo TXDEV_FXSERVER_PATH=$(pwd)/fxserver > .env
+          echo TXDEV_VITE_URL='http://localhost:40122' >> .env
 
       - name: Build project
         run: |

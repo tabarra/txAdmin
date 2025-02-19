@@ -29,8 +29,8 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo FXSERVER_PATH=$(pwd)/fxserver > .env
-          echo VITE_URL='http://localhost:40122' >> .env
+          echo TXDEV_FXSERVER_PATH=$(pwd)/fxserver > .env
+          echo TXDEV_VITE_URL='http://localhost:40122' >> .env
 
       - name: Run Tests
         env:
