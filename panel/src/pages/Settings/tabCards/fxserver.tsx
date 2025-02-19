@@ -232,6 +232,13 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
         if (startupArgsRef.current) {
             currStartupArgs = inputArrayUtil.toCfg(startupArgsRef.current.value);
         }
+        let currDataPath;
+        if (dataPathRef.current?.value) {
+            currDataPath = dataPathRef.current.value.replace(/\\/g, '/').replace(/\/\/+/, '/');
+            if (currDataPath.endsWith('/')) {
+                currDataPath = currDataPath.slice(0, -1);
+            }
+        }
         const res = processConfigStates([
             [dataPath, dataPathRef.current?.value],
             [restarterSchedule, restarterSchedule.state.value],
