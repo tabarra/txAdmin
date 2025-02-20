@@ -50,6 +50,23 @@
 
                     <!-- General Tab -->
                     <div class="tab-pane fade active show" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
+                        <!-- Reset FXServer -->
+                        <div class="row text-center pb-2">
+                            <div class="col-lg-9 text-lg-left">
+                                <h5>Reset FXServer</h5>
+                                <p class="text-warning">
+                                    This option has been moved to the <a href="#" onclick="navigateParentTo('/settings#fxserver')" class="text-warning" style="font-weight: 700; text-decoration: underline;">Settings -> FXServer</a> page.
+                                </p>
+                            </div>
+                            <div class="col-lg-3 text-lg-right">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" 
+                                onclick="navigateParentTo('/settings#fxserver')">
+                                    Go To Settings
+                                </button>
+                            </div>
+                        </div>
+                        <hr class="m-1">
+
                         <!-- Backup Database -->
                         <div class="row text-center pt-2">
                             <div class="col-lg-9 text-lg-left">
@@ -338,6 +355,4 @@
             });
         }
     })();
-    
-
 </script>
