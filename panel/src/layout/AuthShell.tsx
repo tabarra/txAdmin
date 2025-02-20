@@ -11,11 +11,19 @@ import { handleExternalLinkClick } from "@/lib/navigation";
 
 export default function AuthShell() {
     return (
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center pattern-dots">
             <div className="text-center m-4 w-full xs:w-[25rem] min-w-[20rem]">
-                <LogoFullSquareGreen className="h-12 mx-auto" />
+                {window.txConsts.providerLogo ? (
+                    <img
+                        className='max-w-56 max-h-24 m-auto'
+                        src={window.txConsts.providerLogo}
+                        alt={window.txConsts.providerName}
+                    />
+                ) : (
+                    <LogoFullSquareGreen className="w-52 mx-auto" />
+                )}
 
-                <Card className="min-h-64 mt-8 mb-4 p-4 flex items-center justify-center">
+                <Card className="min-h-64 mt-8 mb-4 p-4 flex items-center justify-center bg-card/50">
                     <Switch>
                         <Route path="/login"><Login /></Route>
                         <Route path="/login/callback"><CfxreCallback /></Route>

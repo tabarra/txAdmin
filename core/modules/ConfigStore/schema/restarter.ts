@@ -17,8 +17,8 @@ const schedule = typeDefinedConfig({
     },
 });
 
-const bootCooldown = typeDefinedConfig({
-    name: 'Boot Cooldown',
+const bootGracePeriod = typeDefinedConfig({
+    name: 'Boot Grace Period',
     default: 15,
     validator: z.number().int().min(15),
     fixer: SYM_FIXER_DEFAULT,
@@ -34,6 +34,6 @@ const resourceStartingTolerance = typeDefinedConfig({
 
 export default {
     schedule,
-    bootCooldown,
+    bootGracePeriod,
     resourceStartingTolerance,
 } as const;

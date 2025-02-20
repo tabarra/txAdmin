@@ -40,7 +40,7 @@
             "deny_message": "Τα identifiers σου δεν σχετίζονται με κάποιον txAdmin administrator."
         },
         "guild_member": {
-            "mode_title": "Ο διακομιστής βρίσκεται σε <strong>Discord Guild Member Whitelist</strong> mode.",
+            "mode_title": "Ο διακομιστής βρίσκεται σε <strong>Discord server Member Whitelist</strong> mode.",
             "insufficient_ids": "Δεν έχεις <code>discord</code> identifier, το οποίο απαιτείται για την επικύρωση του αν έχεις μπεί στο Discord μας. Please open the Discord Desktop app and try again (the Web app won't work).",
             "deny_title": "Πρέπει να είσαι στο Discord μας για να συνδεθείς.",
             "deny_message": "Συνδέσου στο %{guildname} και ξανά προσπάθησε."

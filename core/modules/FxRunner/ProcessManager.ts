@@ -34,6 +34,7 @@ export default class ProcessManager {
     private tsExit: number | undefined;
     private tsClose: number | undefined;
     private fxs: ValidChildProcess | null;
+    private exitCallback: (() => void) | undefined;
 
     //TODO: register input/output stats? good for debugging
 
@@ -59,7 +60,7 @@ export default class ProcessManager {
             const info = getFxChildCodeSignalString(code, signal);
             processStdioEnsureEol();
             console.warn(`FXServer Exited (${info}).`);
-            // process.stdout.write('\n'); //Make sure this isn't concatenated with the last line
+            this.exitCallback && this.exitCallback();
             this.triggerStatusUpdate();
             if (this.tsExit - this.tsStart <= 5000) {
                 console.defer(500).warn('FXServer didn\'t start. This is not an issue with txAdmin.');
@@ -118,6 +119,13 @@ export default class ProcessManager {
         }
     }
 
+
+    /**
+     * Registers a callback to be called when the child process is destroyed
+     */
+    public onExit(callback: () => void) {
+        this.exitCallback = callback;
+    }
 
     /**
      * Get the proc info/stats for the history

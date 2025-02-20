@@ -8,5 +8,5 @@ export default got.extend({
     headers: {
         'User-Agent': `txAdmin ${txEnv.txaVersion}`,
     },
-    localAddress: convars.forceInterface ? convars.forceInterface : undefined,
+    localAddress: convars.forceInterface,
 });

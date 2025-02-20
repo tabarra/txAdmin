@@ -7,7 +7,7 @@ import consts from "@shared/consts";
 const mode = typeDefinedConfig({
     name: 'Whitelist Mode',
     default: 'disabled',
-    validator: z.enum(['disabled', 'adminOnly', 'guildMember', 'guildRoles', 'approvedLicense']),
+    validator: z.enum(['disabled', 'adminOnly', 'approvedLicense', 'discordMember', 'discordRoles']),
     fixer: SYM_FIXER_DEFAULT,
 });
 

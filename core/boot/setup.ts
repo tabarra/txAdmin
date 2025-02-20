@@ -2,11 +2,11 @@ const modulename = 'Setup';
 import path from 'node:path';
 import fs from 'node:fs';
 
-import chalk from 'chalk';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
 import { txEnv } from '@core/globalData';
 import ConfigStore from '@modules/ConfigStore';
+import { chalkInversePad } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 
@@ -63,7 +63,7 @@ export const setupProfile = () => {
             const batFolder = path.resolve(txEnv.fxServerPath, '..');
             const batPath = path.join(batFolder, batFilename);
             fs.writeFileSync(batPath, batLines.join('\r\n'));
-            console.ok(`You can use ${chalk.inverse(batPath)} to start this profile.`);
+            console.ok(`You can use ${chalkInversePad(batPath)} to start this profile.`);
         } catch (error) {
             console.warn(`Failed to create '${batFilename}' with error:`);
             console.dir(error);

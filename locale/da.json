@@ -40,15 +40,15 @@
             "deny_message": "Dine identifikatorer er ikke tilknyttet nogen txAdmin-administrator."
         },
         "guild_member": {
-            "mode_title": "Denne server er i <strong>Discord Guild-medlem Whitelist</strong>-tilstand.",
-            "insufficient_ids": "Du har ikke <code>discord</code>-identifikatoren, som er påkrævet for at verificere, om du er medlem af vores Discord Guild. Åbn venligst Discord Desktop-appen og prøv igen (webappen fungerer ikke).",
-            "deny_title": "Du skal være medlem af vores Discord Guild for at oprette forbindelse.",
+            "mode_title": "Denne server er i <strong>Discord server-medlem Whitelist</strong>-tilstand.",
+            "insufficient_ids": "Du har ikke <code>discord</code>-identifikatoren, som er påkrævet for at verificere, om du er medlem af vores Discord server. Åbn venligst Discord Desktop-appen og prøv igen (webappen fungerer ikke).",
+            "deny_title": "Du skal være medlem af vores Discord server for at oprette forbindelse.",
             "deny_message": "Deltag venligst i guildet %{guildname} og prøv igen."
         },
         "guild_roles": {
             "mode_title": "Denne server er i <strong>Discord Rolle Whitelist</strong>-tilstand.",
-            "insufficient_ids": "Du har ikke <code>discord</code>-identifikatoren, som er påkrævet for at verificere, om du er medlem af vores Discord Guild. Åbn venligst Discord Desktop-appen og prøv igen (webappen fungerer ikke).",
-            "deny_notmember_title": "Du skal være medlem af vores Discord Guild for at oprette forbindelse.",
+            "insufficient_ids": "Du har ikke <code>discord</code>-identifikatoren, som er påkrævet for at verificere, om du er medlem af vores Discord server. Åbn venligst Discord Desktop-appen og prøv igen (webappen fungerer ikke).",
+            "deny_notmember_title": "Du skal være medlem af vores Discord server for at oprette forbindelse.",
             "deny_notmember_message": "Deltag venligst i %{guildname}, få en af de påkrævede roller, og prøv igen.",
             "deny_noroles_title": "Du har ikke en whitelisted rolle, der kræves for at deltage.",
             "deny_noroles_message": "For at deltage på denne server kræves det, at du har mindst en af de whitelistede roller på guildet %{guildname}."

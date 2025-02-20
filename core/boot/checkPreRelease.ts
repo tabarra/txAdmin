@@ -1,8 +1,6 @@
-import humanizeDuration, { Unit } from 'humanize-duration';
-import chalk from 'chalk';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
-import { msToDuration } from '@lib/misc';
+import { chalkInversePad, msToDuration } from '@lib/misc';
 const console = consoleFactory('ATTENTION');
 
 
@@ -16,11 +14,10 @@ const expiredError = [
 
 const printExpirationBanner = (timeUntilExpiration: number) => {
     const timeLeft = msToDuration(timeUntilExpiration)
-    const timeLeftStyled = chalk.inverse(` ${timeLeft} `);
     console.error('This is a pre-release version of txAdmin!');
     console.error('This build is meant to be used by txAdmin beta testers.');
     console.error('txAdmin will automatically shut down when this pre-release expires.');
-    console.error(`Time until expiration: ${timeLeftStyled}.`);
+    console.error(`Time until expiration: ${chalkInversePad(timeLeft)}.`);
     console.error('For more information: https://discord.gg/txAdmin.');
 }
 

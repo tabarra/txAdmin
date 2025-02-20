@@ -157,7 +157,7 @@ export default class FxMonitor {
                         [convars.deployerDefaults.maxClients],
                         SYM_SYSTEM_AUTHOR
                     );
-                    console.error(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
+                    console.error(`${convars.providerName}: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
                     txCore.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
                 }
             }
@@ -237,9 +237,9 @@ export default class FxMonitor {
         this.setCurrentStatus(currentStatusString);
 
         //Check if still in cooldown
-        if (processUptime < txConfig.restarter.bootCooldown) {
+        if (processUptime < txConfig.restarter.bootGracePeriod) {
             if (console.isVerbose && processUptime > 10 && this.swLastStatusWarning.isOver(10)) {
-                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${txConfig.restarter.bootCooldown}s.`);
+                console.warn(`${timesPrefix} FXServer status is ${currentStatusString}. Still in cooldown of ${txConfig.restarter.bootGracePeriod}s.`);
                 this.swLastStatusWarning.restart();
             }
             return;

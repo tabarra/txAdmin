@@ -7,6 +7,7 @@ import ActionsDao from './dao/actions';
 import WhitelistDao from './dao/whitelist';
 import StatsDao from './dao/stats';
 import CleanupDao from './dao/cleanup';
+import { TxConfigState } from '@shared/enums';
 const console = consoleFactory(modulename);
 
 
@@ -32,12 +33,21 @@ export default class Database {
         this.cleanup = new CleanupDao(this.#db);
 
         //Database optimization cron function
-        setTimeout(() => {
-            this.cleanup.runDailyOptimizer();
-        }, 30_000);
-        setInterval(() => {
-            this.cleanup.runDailyOptimizer();
-        }, 24 * 60 * 60_000);
+        const optimizerTask = () => {
+            if(txManager.configState === TxConfigState.Ready) {
+                this.cleanup.runDailyOptimizer();
+            }
+        }
+        setTimeout(optimizerTask, 30_000);
+        setInterval(optimizerTask, 24 * 60 * 60_000);
+    }
+
+
+    /**
+     * Graceful shutdown handler - passing down to the db instance
+     */
+    public handleShutdown() {
+        this.#db.handleShutdown();
     }
 
 

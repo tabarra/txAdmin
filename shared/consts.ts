@@ -30,6 +30,7 @@ export default {
     // Database stuff
     adminPasswordMinLength: 6,
     adminPasswordMaxLength: 128,
+    regexValidFivemUsername: /^\w[\w.-]{1,18}\w$/, //also cant have repeated non-alphanum chars
     regexActionID: new RegExp(`^[${actionIdAlphabet}]{4}-[${actionIdAlphabet}]{4}$`),
     regexWhitelistReqID: new RegExp(`R[${actionIdAlphabet}]{4}`),
 

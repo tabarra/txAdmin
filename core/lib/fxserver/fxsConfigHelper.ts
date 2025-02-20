@@ -353,7 +353,7 @@ type EndpointsObjectType = Record<string, { tcp?: true; udp?: true; }>
  * @returns {object}
  */
 const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]) => {
-    const zapPrefix = (convars.isZapHosting) ? ' [ZAP-Hosting]' : '';
+    const providerPrefix = `[${convars.providerName}] `;
     const checkedInterfaces = new Map();
 
     //To return
@@ -390,7 +390,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
             continue;
         }
 
-        //Check sv_maxClients against ZAP config
+        //Check sv_maxClients against TXHOST config
         const isMaxClientsString = cmd.isConvarSetterFor('sv_maxclients');
         if (
             convars.deployerDefaults?.maxClients
@@ -401,7 +401,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 warnings.add(
                     cmd.file,
                     cmd.line,
-                    `${zapPrefix} your 'sv_maxclients' SHOULD be <= ${convars.deployerDefaults.maxClients}.`
+                    `${providerPrefix}your 'sv_maxclients' SHOULD be <= ${convars.deployerDefaults.maxClients}.`
                 );
                 continue;
             }
@@ -462,7 +462,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `${zapPrefix} the '${cmd.command}' interface MUST be '${convars.forceInterface}'.`
+                    `${providerPrefix}the '${cmd.command}' interface MUST be '${convars.forceInterface}'.`
                 );
                 continue;
             }
@@ -489,7 +489,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `${zapPrefix} the '${cmd.command}' port MUST be '${convars.forceFXServerPort}'.`
+                    `${providerPrefix}the '${cmd.command}' port MUST be '${convars.forceFXServerPort}'.`
                 );
                 continue;
             }

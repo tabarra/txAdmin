@@ -57,7 +57,7 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
     const inputArrayRef = useRef<HTMLInputElement | null>(null);
     const nullableInput = conf('server', 'dataPath');
     const nullableInputRef = useRef<HTMLInputElement | null>(null);
-    const customComponent = conf('restarter', 'bootCooldown');
+    const customComponent = conf('restarter', 'bootGracePeriod');
     const bigRadio = conf('whitelist', 'mode');
 
     //Marshalling Utils
@@ -298,8 +298,8 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                     />
                     <BigRadioItem
                         groupValue={bigRadio.state.value}
-                        value="guildMember"
-                        title="Discord Guild Member"
+                        value="discordMember"
+                        title="Discord Server Member"
                         desc="desc as text"
                     />
                 </RadioGroup>

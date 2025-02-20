@@ -40,9 +40,9 @@
             "deny_message": "Tavi identifikatori nav piesaistīti nevienam txAdmin administratoram."
         },
         "guild_member": {
-            "mode_title": "Šim serverim ir ieslēgts <strong>Discord Guild Member Whitelist</strong> režīms.",
+            "mode_title": "Šim serverim ir ieslēgts <strong>Discord server Member Whitelist</strong> režīms.",
             "insufficient_ids": "Tev nav <code>discord</code> identifikators, kas ir nepieciešams, lai pārbaudītu, vai esi pievienojies mūsu Discord Serverim. Lūdzu, atver Discord un mēģini vēlreiz (tīmekļa lietotne nedarbosies).",
-            "deny_title": "Tev ir jāpievienojas mūsu Discord Guild, lai pieslēgtos.",
+            "deny_title": "Tev ir jāpievienojas mūsu Discord server, lai pieslēgtos.",
             "deny_message": "Lūdzu, pievienojies %{guildname}, tad mēģini vēlreiz."
         },
         "guild_roles": {

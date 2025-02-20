@@ -117,15 +117,15 @@ export default async function PlayerCheckJoin(ctx: InitializedCtx) {
             txCore.metrics.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
 
-        } else if (txConfig.whitelist.mode === 'guildMember') {
+        } else if (txConfig.whitelist.mode === 'discordMember') {
             const checkTime = new TimeCounter();
-            const result = await checkGuildMember(validIdsArray, validIdsObject, playerName);
+            const result = await checkDiscordMember(validIdsArray, validIdsObject, playerName);
             txCore.metrics.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
 
-        } else if (txConfig.whitelist.mode === 'guildRoles') {
+        } else if (txConfig.whitelist.mode === 'discordRoles') {
             const checkTime = new TimeCounter();
-            const result = await checkGuildRoles(validIdsArray, validIdsObject, playerName);
+            const result = await checkDiscordRoles(validIdsArray, validIdsObject, playerName);
             txCore.metrics.txRuntime.whitelistCheckTime.count(checkTime.stop().milliseconds);
             if (!result.allow) return sendTypedResp(result);
         }
@@ -289,7 +289,7 @@ async function checkAdminOnlyMode(
 /**
  * Checks if the player is a discord guild member
  */
-async function checkGuildMember(
+async function checkDiscordMember(
     validIdsArray: string[],
     validIdsObject: PlayerIdsObjectType,
     playerName: string
@@ -324,7 +324,7 @@ async function checkGuildMember(
             errorMessage = textKeys.deny_message;
         }
     } catch (error) {
-        errorTitle = `Error validating Discord Guild Member Whitelist:`;
+        errorTitle = `Error validating Discord Server Member Whitelist:`;
         errorMessage = `<code>${(error as Error).message}</code>`;
     }
 
@@ -341,7 +341,7 @@ async function checkGuildMember(
 /**
  * Checks if the player has specific discord guild roles
  */
-async function checkGuildRoles(
+async function checkDiscordRoles(
     validIdsArray: string[],
     validIdsObject: PlayerIdsObjectType,
     playerName: string

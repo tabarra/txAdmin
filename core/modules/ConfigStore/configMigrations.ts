@@ -7,6 +7,7 @@ import fatalError from '@lib/fatalError';
 import { CONFIG_VERSION } from './index'; //FIXME: circular_dependency
 import { migrateOldConfig } from './schema/oldConfig';
 import consoleFactory from '@lib/console';
+import { chalkInversePad } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 
@@ -19,7 +20,7 @@ const saveBackupFile = (version: number) => {
         `${txEnv.profilePath}/config.json`,
         `${txEnv.profilePath}/${bkpFileName}`,
     );
-    console.log(`A backup of your config file was saved on: ${bkpFileName}`);
+    console.log(`A backup of your config file was saved as: ${chalkInversePad(bkpFileName)}`);
 }
 
 

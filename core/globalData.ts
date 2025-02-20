@@ -1,5 +1,5 @@
 import os from 'node:os';
-import fs from 'node:fs';
+import fsp from 'node:fs/promises';
 import path from 'node:path';
 import slash from 'slash';
 
@@ -9,25 +9,18 @@ import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
 import { parseTxDevEnv, TxDevEnvType } from '@shared/txDevEnv';
 import { Overwrite } from 'utility-types';
 import fatalError from '@lib/fatalError';
+import { getNativeVars } from './boot/getNativeVars';
+import { getHostVars, hostEnvVarSchemas } from './boot/getHostVars';
+import { getZapVars } from './boot/getZapVars';
+import { z, ZodSchema } from 'zod';
+import { fromZodError } from 'zod-validation-error';
+import defaultAds from '../dynamicAds2.json';
+import consts from '@shared/consts';
 const console = consoleFactory();
 
 
 /**
- * Helpers
- */
-const cleanPath = (x: string) => slash(path.normalize(x));
-const getConvarBool = (convarName: string) => {
-    const cvar = GetConvar(convarName, 'false').trim().toLowerCase();
-    return ['true', '1', 'on'].includes(cvar);
-};
-const getConvarString = (convarName: string) => {
-    const cvar = GetConvar(convarName, 'false').trim();
-    return (cvar === 'false') ? false : cvar;
-};
-
-
-/**
- * MARK: txAdmin Env
+ * MARK: GETTING VARIABLES
  */
 //Get OSType
 const osTypeVar = os.type();
@@ -42,9 +35,51 @@ if (osTypeVar == 'Windows_NT') {
     fatalError.GlobalData(0, `OS type not supported: ${osTypeVar}`);
 }
 
-//Get resource name
-const resourceName = GetCurrentResourceName();
+//Simple env vars
+const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
+const ignoreDeprecatedConfigs = process.env?.TXHOST_IGNORE_DEPRECATED_CONFIGS === 'true';
 
+//Getters
+const nativeVars = getNativeVars(ignoreDeprecatedConfigs);
+const hostVars = getHostVars();
+const devVars = parseTxDevEnv();
+
+
+/**
+ * MARK: HELPERS
+ */
+const cleanPath = (x: string) => slash(path.normalize(x));
+const handleMultiVar = <T extends ZodSchema>(
+    name: string,
+    schema: T,
+    procenv: z.infer<T> | undefined,
+    zapcfg: string | number | undefined,
+    convar: any,
+): z.infer<T> | undefined => {
+    const alt = zapcfg ?? convar;
+    if (alt === undefined) {
+        return procenv;
+    }
+    const whichAlt = zapcfg !== undefined ? 'txAdminZapConfig.json' : 'ConVar';
+    if (procenv !== undefined) {
+        console.warn(`WARNING: Both the environment variable 'TXHOST_${name}' and the ${whichAlt} equivalent are set. The environment variable will be prioritized.`);
+        return procenv;
+    }
+    const parsed = schema.safeParse(alt);
+    if (!parsed.success) {
+        fatalError.GlobalData(20, [
+            `Invalid value for the TXHOST_${name}-equivalent config in ${whichAlt}.`,
+            ['Value', alt],
+            'For more information: https://aka.cfx.re/txadmin-env-config',
+        ], fromZodError(parsed.error, { prefix: null }));
+    }
+    return parsed.data;
+}
+
+
+/**
+ * MARK: CHECK HOST VARS
+ */
 //Getting fxserver version
 //4380 = GetVehicleType was exposed server-side
 //4548 = more or less when node v16 was added
@@ -57,13 +92,12 @@ const resourceName = GetCurrentResourceName();
 //9423 = feat(server): add more infos to playerDropped event
 //9655 = Fixed ScanResourceRoot + latent events
 const minFxsVersion = 5894;
-const fxsVerConvar = getConvarString('version');
-const fxsVerParsed = parseFxserverVersion(fxsVerConvar);
+const fxsVerParsed = parseFxserverVersion(nativeVars.fxsVersion);
 const fxsVersion = fxsVerParsed.valid ? fxsVerParsed.build : 99999;
 if (!fxsVerParsed.valid) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
-    console.error(`Convar: ${fxsVerConvar}`);
+    console.error(`Convar: ${nativeVars.fxsVersion}`);
     console.error(`Parsed Build: ${fxsVerParsed.build}`);
     console.error(`Parsed Branch: ${fxsVerParsed.branch}`);
     console.error(`Parsed Platform: ${fxsVerParsed.platform}`);
@@ -79,32 +113,31 @@ if (!fxsVerParsed.valid) {
 }
 
 //Getting txAdmin version
-const txaVersion = GetResourceMetadata(resourceName, 'version', 0);
-if (typeof txaVersion !== 'string' || txaVersion == 'null') {
+if (!nativeVars.txaResourceVersion) {
     fatalError.GlobalData(3, [
         'txAdmin version not set or in the wrong format.',
-        ['Detected version', txaVersion],
+        ['Detected version', nativeVars.txaResourceVersion],
     ]);
 }
+const txaVersion = nativeVars.txaResourceVersion;
 
 //Get txAdmin Resource Path
-let txAdminResourcePath: string;
-const txAdminResourcePathConvar = GetResourcePath(resourceName);
-if (typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null') {
+if (!nativeVars.txaResourcePath) {
     fatalError.GlobalData(4, [
         'Could not resolve txAdmin resource path.',
-        ['Convar', txAdminResourcePathConvar],
+        ['Convar', nativeVars.txaResourcePath],
     ]);
-} else {
-    txAdminResourcePath = cleanPath(txAdminResourcePathConvar);
 }
+const txAdminResourcePath = cleanPath(nativeVars.txaResourcePath);
 
 //Get citizen Root
-const citizenRootConvar = getConvarString('citizen_root');
-if (!citizenRootConvar) {
-    fatalError.GlobalData(5, 'citizen_root convar not set');
+if (!nativeVars.fxsCitizenRoot) {
+    fatalError.GlobalData(5, [
+        'citizen_root convar not set',
+        ['Convar', nativeVars.fxsCitizenRoot],
+    ]);
 }
-const fxServerPath = cleanPath(citizenRootConvar as string);
+const fxServerPath = cleanPath(nativeVars.fxsCitizenRoot as string);
 
 //Check if server is inside WinRar's temp folder
 if (isWindows && /Temp[\\/]+Rar\$/i.test(fxServerPath)) {
@@ -115,15 +148,24 @@ if (isWindows && /Temp[\\/]+Rar\$/i.test(fxServerPath)) {
     ]);
 }
 
+
+/**
+ * MARK: TXDATA & PROFILE 
+ */
 //Setting data path
-let dataPath: string;
-const txDataPathConvar = getConvarString('txDataPath');
-if (!txDataPathConvar) {
-    const dataPathSuffix = (isWindows) ? '..' : '../../../';
-    dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
-} else {
-    dataPath = cleanPath(txDataPathConvar);
-}
+const dataPathVar = handleMultiVar(
+    'DATA_PATH',
+    hostEnvVarSchemas.DATA_PATH,
+    hostVars.DATA_PATH,
+    undefined,
+    nativeVars.txDataPath,
+);
+const defaultDataPath = path.join(
+    fxServerPath,
+    isWindows ? '..' : '../../../',
+    'txData'
+);
+const dataPath = cleanPath(dataPathVar ?? defaultDataPath);
 
 //Check paths for non-ASCII characters
 //NOTE: Non-ASCII in one of those paths (don't know which) will make NodeJS crash due to a bug in v8 (or something)
@@ -141,27 +183,31 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
     ]);
 }
 
-//Profile
-const profile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
-if (profile.endsWith('.base')) {
-    fatalError.GlobalData(13, [
-        ['Invalid server profile name', profile],
-        'Profile names cannot end with ".base".',
-        'It looks like you are trying to point to a server folder instead of a profile.',
-    ]);
+//Profile - not available as env var
+let profileVar = nativeVars.txAdminProfile;
+if (profileVar) {
+    profileVar = profileVar.replace(/[^a-z0-9._-]/gi, '');
+    if (profileVar.endsWith('.base')) {
+        fatalError.GlobalData(13, [
+            ['Invalid server profile name', profileVar],
+            'Profile names cannot end with ".base".',
+            'It looks like you are trying to point to a server folder instead of a profile.',
+        ]);
+    }
+    if (!profileVar.length) {
+        fatalError.GlobalData(14, [
+            'Invalid server profile name.',
+            'If you are using Google Translator on the instructions page,',
+            'make sure there are no additional spaces in your command.',
+        ]);
+    }
 }
-if (!profile.length) {
-    fatalError.GlobalData(14, [
-        'Invalid server profile name.',
-        'If you are using Google Translator on the instructions page,',
-        'make sure there are no additional spaces in your command.',
-    ]);
-}
+const profile = profileVar ?? 'default';
 const profilePath = cleanPath(path.join(dataPath, profile));
 
 
 /**
- * MARK: txAdmin Dev Env
+ * MARK: DEV ENV
  */
 type TxDevEnvEnabledType = Overwrite<TxDevEnvType, {
     ENABLED: true;
@@ -174,16 +220,16 @@ type TxDevEnvDisabledType = Overwrite<TxDevEnvType, {
     VITE_URL: undefined;
 }>;
 let _txDevEnv: TxDevEnvEnabledType | TxDevEnvDisabledType;
-const txDevEnvSrc = parseTxDevEnv();
-if (txDevEnvSrc.ENABLED) {
+
+if (devVars.ENABLED) {
     console.debug('Starting txAdmin in DEV mode.');
-    if (!txDevEnvSrc.SRC_PATH || !txDevEnvSrc.VITE_URL) {
+    if (!devVars.SRC_PATH || !devVars.VITE_URL) {
         fatalError.GlobalData(8, 'Missing TXDEV_VITE_URL and/or TXDEV_SRC_PATH env variables.');
     }
-    _txDevEnv = txDevEnvSrc as TxDevEnvEnabledType;
+    _txDevEnv = devVars as TxDevEnvEnabledType;
 } else {
     _txDevEnv = {
-        ...txDevEnvSrc,
+        ...devVars,
         SRC_PATH: undefined,
         VITE_URL: undefined,
     } as TxDevEnvDisabledType;
@@ -191,95 +237,220 @@ if (txDevEnvSrc.ENABLED) {
 
 
 /**
- * MARK: Host type check
- * TODO: move all the hosting stuff to another file
+ * MARK: ZAP & NETWORKING
  */
-//Checking for ZAP Configuration file
-const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
-let isZapHosting: boolean;
-let forceInterface: false | string;
-let forceFXServerPort: false | number;
-let txAdminPort: number;
-let loginPageLogo: false | string;
-let defaultMasterAccount: false | { name: string, password_hash: string };
-
-type DeployerDefaultsType = {
-    license?: string,
-    maxClients?: number,
-    mysqlHost?: string,
-    mysqlPort?: string,
-    mysqlUser?: string,
-    mysqlPassword?: string,
-    mysqlDatabase?: string,
-}
-
-let deployerDefaults: undefined | DeployerDefaultsType;
-const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
-if (fs.existsSync(zapCfgFile)) {
-    isZapHosting = !isPterodactyl;
-    console.log('Loading ZAP-Hosting configuration file.');
-    let zapCfgData;
+let isZapHosting = false;
+let zapVars: ReturnType<typeof getZapVars> | undefined;
+if (!ignoreDeprecatedConfigs) {
+    const zapCfgFilePath = path.join(dataPath, 'txAdminZapConfig.json');
     try {
-        zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile, 'utf8'));
-        forceInterface = zapCfgData.interface;
-        forceFXServerPort = zapCfgData.fxServerPort;
-        txAdminPort = zapCfgData.txAdminPort;
-        loginPageLogo = zapCfgData.loginPageLogo;
-        defaultMasterAccount = false;
-        //FIXME: add validation
-        deployerDefaults = {
-            license: zapCfgData.defaults.license,
-            maxClients: zapCfgData.defaults.maxClients,
-            mysqlHost: zapCfgData.defaults.mysqlHost,
-            mysqlPort: zapCfgData.defaults.mysqlPort,
-            mysqlUser: zapCfgData.defaults.mysqlUser,
-            mysqlPassword: zapCfgData.defaults.mysqlPassword,
-            mysqlDatabase: zapCfgData.defaults.mysqlDatabase,
-        };
-        if (zapCfgData.customer) {
-            if (typeof zapCfgData.customer.name !== 'string') throw new Error('customer.name is not a string.');
-            if (zapCfgData.customer.name.length < 3) throw new Error('customer.name too short.');
-            if (typeof zapCfgData.customer.password_hash !== 'string') throw new Error('customer.password_hash is not a string.');
-            if (!zapCfgData.customer.password_hash.startsWith('$2y$')) throw new Error('customer.password_hash is not a bcrypt hash.');
-            defaultMasterAccount = {
-                name: zapCfgData.customer.name,
-                password_hash: zapCfgData.customer.password_hash,
-            };
-        }
-
-        if (!_txDevEnv.ENABLED) fs.unlinkSync(zapCfgFile);
+        zapVars = getZapVars(zapCfgFilePath);
+        isZapHosting = !!zapVars && !isPterodactyl;
+        if (!_txDevEnv.ENABLED) fsp.unlink(zapCfgFilePath).catch(() => { });
     } catch (error) {
         fatalError.GlobalData(9, 'Failed to load with ZAP-Hosting configuration.', error);
     }
-} else {
-    isZapHosting = false;
-    forceFXServerPort = false;
-    loginPageLogo = false;
-    defaultMasterAccount = false;
-
-    const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
-    if (!/^\d+$/.test(txAdminPortConvar)) {
-        fatalError.GlobalData(10, 'txAdminPort is not valid.');
-    }
-    txAdminPort = parseInt(txAdminPortConvar);
-
-    const txAdminInterfaceConvar = getConvarString('txAdminInterface');
-    if (!txAdminInterfaceConvar) {
-        forceInterface = false;
-    } else {
-        if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) {
-            fatalError.GlobalData(11, 'txAdminInterface is not valid.');
-        }
-        forceInterface = txAdminInterfaceConvar;
-    }
 }
+
+//No default, no convar/zap cfg
+const txAdminUrl = hostVars.TXA_URL;
+
+//txAdmin port
+const txAdminPort = handleMultiVar(
+    'TXA_PORT',
+    hostEnvVarSchemas.TXA_PORT,
+    hostVars.TXA_PORT,
+    zapVars?.txAdminPort,
+    nativeVars.txAdminPort,
+) ?? 40120;
+
+//fxserver port
+const forceFXServerPort = handleMultiVar(
+    'FXS_PORT',
+    hostEnvVarSchemas.FXS_PORT,
+    hostVars.FXS_PORT,
+    zapVars?.forceFXServerPort,
+    undefined,
+);
+
+//Forced interface
+const forceInterface = handleMultiVar(
+    'INTERFACE',
+    hostEnvVarSchemas.INTERFACE,
+    hostVars.INTERFACE,
+    zapVars?.forceInterface,
+    nativeVars.txAdminInterface,
+);
 if (forceInterface) {
     addLocalIpAddress(forceInterface);
 }
-// if (_txDevEnv.VERBOSE) {
-//     console.dir({ isPterodactyl, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
-// }
 
+
+/**
+ * MARK: PROVIDER
+ */
+const providerName = handleMultiVar(
+    'PROVIDER_NAME',
+    hostEnvVarSchemas.PROVIDER_NAME,
+    hostVars.PROVIDER_NAME,
+    zapVars?.providerName,
+    undefined,
+) ?? 'Host Config';
+const providerLogo = handleMultiVar(
+    'PROVIDER_LOGO',
+    hostEnvVarSchemas.PROVIDER_LOGO,
+    hostVars.PROVIDER_LOGO,
+    zapVars?.loginPageLogo,
+    undefined,
+);
+
+const forceQuietMode = handleMultiVar(
+    'QUIET_MODE',
+    hostEnvVarSchemas.QUIET_MODE,
+    hostVars.QUIET_MODE,
+    zapVars?.deployerDefaults?.maxClients,
+    undefined,
+) ?? false;
+
+const maxClients = handleMultiVar(
+    'MAX_SLOTS',
+    hostEnvVarSchemas.MAX_SLOTS,
+    hostVars.MAX_SLOTS,
+    zapVars?.deployerDefaults?.maxClients,
+    undefined,
+);
+
+
+/**
+ * MARK: DEFAULTS
+ */
+const defaultDbHost = handleMultiVar(
+    'DEFAULT_DBHOST',
+    hostEnvVarSchemas.DEFAULT_DBHOST,
+    hostVars.DEFAULT_DBHOST,
+    zapVars?.deployerDefaults?.mysqlHost,
+    undefined,
+);
+const defaultDbPort = handleMultiVar(
+    'DEFAULT_DBPORT',
+    hostEnvVarSchemas.DEFAULT_DBPORT,
+    hostVars.DEFAULT_DBPORT,
+    zapVars?.deployerDefaults?.mysqlPort,
+    undefined,
+);
+const defaultDbUser = handleMultiVar(
+    'DEFAULT_DBUSER',
+    hostEnvVarSchemas.DEFAULT_DBUSER,
+    hostVars.DEFAULT_DBUSER,
+    zapVars?.deployerDefaults?.mysqlUser,
+    undefined,
+);
+const defaultDbPass = handleMultiVar(
+    'DEFAULT_DBPASS',
+    hostEnvVarSchemas.DEFAULT_DBPASS,
+    hostVars.DEFAULT_DBPASS,
+    zapVars?.deployerDefaults?.mysqlPassword,
+    undefined,
+);
+const defaultDbName = handleMultiVar(
+    'DEFAULT_DBNAME',
+    hostEnvVarSchemas.DEFAULT_DBNAME,
+    hostVars.DEFAULT_DBNAME,
+    zapVars?.deployerDefaults?.mysqlDatabase,
+    undefined,
+);
+
+//Default Master Account
+type DefaultMasterAccount = {
+    username: string;
+    fivemId?: string;
+    password?: string;
+} | {
+    username: string;
+    password: string;
+} | undefined;
+let defaultMasterAccount: DefaultMasterAccount;
+const bcryptRegex = /^\$2[aby]\$[0-9]{2}\$[A-Za-z0-9./]{53}$/;
+if (hostVars.DEFAULT_ACCOUNT) {
+    let [username, fivemId, password] = hostVars.DEFAULT_ACCOUNT.split(':') as (string | undefined)[];
+    if (username === '') username = undefined;
+    if (fivemId === '') fivemId = undefined;
+    if (password === '') password = undefined;
+
+    const errArr: [string, any][] = [
+        ['Username', username],
+        ['FiveM ID', fivemId],
+        ['Password', password],
+    ];
+    if (!username || !consts.regexValidFivemUsername.test(username)) {
+        fatalError.GlobalData(21, [
+            'Invalid default account username.',
+            'It should be a valid FiveM username.',
+            ...errArr,
+        ]);
+    }
+    if (fivemId && !consts.validIdentifierParts.fivem.test(fivemId)) {
+        fatalError.GlobalData(22, [
+            'Invalid default account FiveM ID.',
+            'It should match the number in the fivem:0000000 game identifier.',
+            ...errArr,
+        ]);
+    }
+    if (password && !bcryptRegex.test(password)) {
+        fatalError.GlobalData(23, [
+            'Invalid default account password.',
+            'Expected bcrypt hash.',
+            ...errArr,
+        ]);
+    }
+    if (!fivemId && !password) {
+        fatalError.GlobalData(24, [
+            'Invalid default account.',
+            'Expected at least the FiveM ID or password to be present.',
+            ...errArr,
+        ]);
+    }
+    defaultMasterAccount = {
+        username,
+        fivemId,
+        password,
+    };
+} else if (zapVars?.defaultMasterAccount) {
+    const username = zapVars.defaultMasterAccount?.name;
+    const password = zapVars.defaultMasterAccount?.password_hash;
+    if (!consts.regexValidFivemUsername.test(username)) {
+        fatalError.GlobalData(25, [
+            'Invalid default account username.',
+            'It should be a valid FiveM username.',
+            ['Username', username],
+        ]);
+    }
+    if (!bcryptRegex.test(password)) {
+        fatalError.GlobalData(26, [
+            'Invalid default account password.',
+            'Expected bcrypt hash.',
+            ['Hash', password],
+        ]);
+    }
+    defaultMasterAccount = {
+        username: username,
+        password: password,
+    };
+}
+
+//Default cfx key
+const defaultCfxKey = handleMultiVar(
+    'DEFAULT_CFXKEY',
+    hostEnvVarSchemas.DEFAULT_CFXKEY,
+    hostVars.DEFAULT_CFXKEY,
+    zapVars?.deployerDefaults?.license,
+    undefined,
+);
+
+
+/**
+ * MARK: FINAL SETUP
+ */
 //Setting the variables in console without it having to importing from here (cyclical dependency)
 setConsoleEnvData(
     txaVersion,
@@ -287,6 +458,32 @@ setConsoleEnvData(
     _txDevEnv.ENABLED,
     _txDevEnv.VERBOSE
 );
+
+if (ignoreDeprecatedConfigs) {
+    console.verbose.debug('TXHOST_IGNORE_DEPRECATED_CONFIGS is set to true. Ignoring deprecated configs.');
+}
+
+//Quick config to disable ads
+const displayAds = process.env?.TXHOST_TMP_HIDE_ADS !== 'true' || isPterodactyl || isZapHosting;
+const adSchema = z.object({
+    img: z.string(),
+    url: z.string(),
+}).nullable();
+const adsDataSchema = z.object({
+    login: adSchema,
+    main: adSchema,
+});
+let adsData: z.infer<typeof adsDataSchema> = {
+    login: null,
+    main: null,
+};
+if (displayAds) {
+    try {
+        adsData = adsDataSchema.parse(defaultAds);
+    } catch (error) {
+        console.error('Failed to load ads data.', error);
+    }
+}
 
 //FXServer Display Version
 let fxsVersionDisplay = fxsVersion.toString();
@@ -324,16 +521,31 @@ export const txEnv = Object.freeze({
     profilePath,
 });
 
-//FIXME: there isn't really a clear distinction between these two
-// at least separate the hosting stuff from the rest
-
 export const convars = Object.freeze({
     isPterodactyl,
     isZapHosting,
     forceInterface, //convar txAdminInterface, or zap config
     forceFXServerPort,
+    forceQuietMode,
+    txAdminUrl,
     txAdminPort, //convar txAdminPort, or zap config
-    loginPageLogo,
+    providerName, //not being used
+    providerLogo, //not being used
+    displayAds,
+    adsData,
     defaultMasterAccount,
-    deployerDefaults,
+    deployerDefaults: {
+        license: defaultCfxKey,
+        maxClients: maxClients,
+        mysqlHost: defaultDbHost,
+        mysqlPort: defaultDbPort,
+        mysqlUser: defaultDbUser,
+        mysqlPassword: defaultDbPass,
+        mysqlDatabase: defaultDbName,
+    },
 });
+
+
+//DEBUG
+// console.dir(txEnv, { compact: true });
+// console.dir(convars, { compact: true });

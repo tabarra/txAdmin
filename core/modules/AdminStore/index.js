@@ -7,8 +7,8 @@ import { convars, txEnv } from '@core/globalData';
 import CfxProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@lib/console.js';
-import chalk from 'chalk';
 import fatalError from '@lib/fatalError.js';
+import { chalkInversePad } from '@lib/misc.js';
 const console = consoleFactory(modulename);
 
 //NOTE: The way I'm doing versioning right now is horrible but for now it's the best I can do
@@ -84,7 +84,7 @@ export default class AdminStore {
 
 
         //Load providers
-        //FIXME: mover pro escopo da classe - acho que não precisa de try/catch
+        //FIXME: pode virar um top-level singleton , não precisa estar na classe
         try {
             this.providers = {
                 discord: false,
@@ -113,8 +113,15 @@ export default class AdminStore {
                 this.addMasterPin = (Math.random() * 10000).toFixed().padStart(4, '0');
                 this.admins = false;
             } else {
-                console.log(`Setting up master account '${convars.defaultMasterAccount.name}'. The password is the same as in zap-hosting.com.`);
-                this.createAdminsFile(convars.defaultMasterAccount.name, false, false, convars.defaultMasterAccount.password_hash, false);
+                const { username, fivemId, password } = convars.defaultMasterAccount;
+                console.log(`Setting up master account '${username}' with credentials provided by ${convars.providerName}.`);
+                this.createAdminsFile(
+                    username,
+                    fivemId ? `fivem:${fivemId}` : undefined,
+                    undefined,
+                    password,
+                    password ? false : undefined,
+                );
             }
         } else {
             this.loadAdminsFile();
@@ -136,26 +143,35 @@ export default class AdminStore {
     /**
      * Creates a admins.json file based on the first account
      * @param {string} username
-     * @param {string} identifier
-     * @param {object} provider_data
-     * @param {string} password backup password
-     * @param {boolean} isPlainText
-     * @param {string|undefined} discordId
+     * @param {string|undefined} fivemId with the fivem: prefix
+     * @param {string|undefined} discordId with the discord: prefix
+     * @param {string|undefined} password backup password
+     * @param {boolean|undefined} isPlainTextPassword
      * @returns {(boolean)} true or throws an error
      */
-    createAdminsFile(username, identifier, provider_data, password, isPlainText, discordId) {
+    createAdminsFile(username, fivemId, discordId, password, isPlainTextPassword) {
         //Sanity check
         if (this.admins !== false && this.admins !== null) throw new Error('Admins file already exists.');
         if (typeof username !== 'string' || username.length < 3) throw new Error('Invalid username parameter.');
-        if (typeof password !== 'string' || password.length < 6) throw new Error('Invalid password parameter.');
 
-        //Creating admin array
+        //Handling password
+        let password_hash, password_temporary;
+        if(password){
+            password_hash = isPlainTextPassword ? GetPasswordHash(password) : password;
+            // password_temporary = false; //undefined will do the same
+        } else {
+            const veryRandomString = `${username}-password-not-meant-to-be-used-${nanoid()}`;
+            password_hash = GetPasswordHash(veryRandomString);
+            password_temporary = true;
+        }
+
+        //Handling third party providers
         const providers = {};
-        if (identifier && provider_data) {
+        if (fivemId) {
             providers.citizenfx = {
                 id: username,
-                identifier,
-                data: provider_data,
+                identifier: fivemId,
+                data: {},
             };
         }
         if (discordId) {
@@ -165,11 +181,14 @@ export default class AdminStore {
                 data: {},
             };
         }
+
+        //Creating new admin
         const newAdmin = {
             $schema: ADMIN_SCHEMA_VERSION,
             name: username,
             master: true,
-            password_hash: (isPlainText) ? GetPasswordHash(password) : password,
+            password_hash,
+            password_temporary,
             providers,
             permissions: [],
         };
@@ -637,7 +656,7 @@ export default class AdminStore {
             return true;
         } else {
             if (printPin) {
-                console.warn('Use this PIN to add a new master account: ' + chalk.inverse(` ${this.addMasterPin} `));
+                console.warn('Use this PIN to add a new master account: ' + chalkInversePad(this.addMasterPin));
             }
             return false;
         }

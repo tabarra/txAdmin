@@ -95,11 +95,6 @@ To get the emoji ID, insert it into discord, and add `\` before it then send the
             "emoji": "1062339910654246964",
             "label": "txAdmin Discord",
             "url": "https://discord.gg/txAdmin"
-        },
-        {
-            "emoji": "😏",
-            "label": "ZAP-Hosting",
-            "url": "https://zap-hosting.com/txadmin6"
         }
     ]
 }

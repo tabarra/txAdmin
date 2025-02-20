@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import dateFormat from 'dateformat';
 import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import { DeepReadonly } from 'utility-types';
@@ -259,3 +260,9 @@ export const deepFreeze = <T extends Record<string, any>>(obj: T) => {
     //FIXME: using DeepReadonly<T> will cause ts errors in ConfigStore
     // return obj as DeepReadonly<T>;
 };
+
+
+/**
+ * Returns a chalk.inverse of a string with a 1ch padding
+ */
+export const chalkInversePad = (str: string) => chalk.inverse(` ${str} `);

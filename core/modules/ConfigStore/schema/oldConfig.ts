@@ -50,7 +50,7 @@ const restructureOldConfig = (old: any) => {
         },
         restarter: {
             schedule: old?.monitor?.restarterSchedule,  //NOTE:renamed
-            bootCooldown: old?.monitor?.cooldown, //NOTE:renamed
+            bootGracePeriod: old?.monitor?.cooldown, //NOTE:renamed
             resourceStartingTolerance: old?.monitor?.resourceStartingTolerance,
         },
         banlist: { //NOTE: All Renamed
@@ -92,14 +92,20 @@ export const migrateOldConfig = (old: any) => {
     const remapped = restructureOldConfig(old) as any;
 
     //Some migrations before comparing because defaults changed
-    if (typeof remapped.restarter?.bootCooldown === 'number') {
-        remapped.restarter.bootCooldown = Math.round(remapped.restarter.bootCooldown);
+    if (typeof remapped.restarter?.bootGracePeriod === 'number') {
+        remapped.restarter.bootGracePeriod = Math.round(remapped.restarter.bootGracePeriod);
     }
     if (typeof remapped.server?.shutdownNoticeDelayMs === 'number') {
         remapped.server.shutdownNoticeDelayMs *= 1000;
     }
     if (remapped.server?.restartSpawnDelayMs === 750) {
         remapped.server.restartSpawnDelayMs = 500;
+    }
+    if (remapped.whitelist?.mode === 'guildMember') {
+        remapped.whitelist.mode = 'discordMember';
+    }
+    if (remapped.whitelist?.mode === 'guildRoles') {
+        remapped.whitelist.mode = 'discordRoles';
     }
 
     //Migrating the menu ptfx convar (can't do anything about it being set in server.cfg tho)

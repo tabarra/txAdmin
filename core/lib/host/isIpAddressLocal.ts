@@ -21,9 +21,9 @@ export const isIpAddressLocal = (ipAddress: string): boolean => {
 
 /**
  * Used to register a new LAN interface. 
- * Added automatically from forceInterface, zapHosting config and banner.js after detecting the WAN address.
+ * Added automatically from TXHOST_INTERFACE and banner.js after detecting the WAN address.
  */
 export const addLocalIpAddress = (ipAddress: string): void => {
-    console.verbose.debug(`Adding local IP address: ${ipAddress}`);
+    // console.verbose.debug(`Adding local IP address: ${ipAddress}`);
     extendedAllowedLanIps.push(ipAddress);
 }

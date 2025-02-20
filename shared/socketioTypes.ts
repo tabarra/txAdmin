@@ -17,7 +17,7 @@ export type GlobalStatusType = {
     server: {
         status: string;
         name: string;
-        whitelist: "disabled" | "adminOnly" | "guildMember" | "guildRoles" | "approvedLicense";
+        whitelist: 'disabled' | 'adminOnly' | 'approvedLicense' | 'discordMember' | 'discordRoles';
     };
     scheduler: {
         nextRelativeMs: number;

@@ -66,8 +66,8 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
             });
         }
         if (
-            localConfigs.whitelist?.mode === 'guildMember'
-            || localConfigs.whitelist?.mode === 'guildRoles'
+            localConfigs.whitelist?.mode === 'discordMember'
+            || localConfigs.whitelist?.mode === 'discordRoles'
         ) {
             if (pageCtx.apiData?.storedConfigs.discordBot?.enabled !== true) {
                 return txToast.warning({
@@ -76,7 +76,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                 });
             }
             if (
-                localConfigs.whitelist?.mode === 'guildRoles'
+                localConfigs.whitelist?.mode === 'discordRoles'
                 && (
                     !Array.isArray(localConfigs.whitelist?.discordRoles)
                     || !localConfigs.whitelist?.discordRoles.length
@@ -138,7 +138,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                     />
                     <BigRadioItem
                         groupValue={whitelistMode.state.value}
-                        value="guildMember"
+                        value="discordMember"
                         title="Discord Server Member"
                         desc={(<>
                             Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord server configured in the Discord Tab.
@@ -146,7 +146,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                     />
                     <BigRadioItem
                         groupValue={whitelistMode.state.value}
-                        value="guildRoles"
+                        value="discordRoles"
                         title="Discord Server Roles"
                         desc={(<>
                             Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord server configured in the Discord Tab and has at least one of the roles specified below.
@@ -180,7 +180,6 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                 </SettingItemDesc>
             </SettingItem>
             <SettingItem label="Whitelisted Discord Roles" htmlFor={discordRoles.eid}>
-                {/* FIXME: adicionar um warning se o whitelistMode não for guildRoles */}
                 <Input
                     id={discordRoles.eid}
                     ref={discordRolesRef}

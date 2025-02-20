@@ -40,7 +40,7 @@
             "deny_message": "Żaden z twoich identyfikatorów nie jest przypisany do konta txAdmin."
         },
         "guild_member": {
-            "mode_title": "Ten serwer jest w trybie <strong>Discord Guild Member Whitelist</strong>.",
+            "mode_title": "Ten serwer jest w trybie <strong>Discord server Member Whitelist</strong>.",
             "insufficient_ids": "Nie posiadasz identyfikatora <code>discord</code>, który jest wymagany by zweryfikować czy jesteś na naszym serwerze Discord. Otwórz aplikację Discord i spróbuj ponownie (aplikacja internetowa nie będzie działać).",
             "deny_title": "Musisz dołączyć na nasz serwer Discord aby połączyć się na serwer.",
             "deny_message": "Dołącz na serwer Discord %{guildname} i spróbuj ponownie."

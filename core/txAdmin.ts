@@ -5,7 +5,6 @@ import TxManager from './txManager';
 import ConfigStore from '@modules/ConfigStore';
 import AdminStore from '@modules/AdminStore';
 import DiscordBot from '@modules/DiscordBot';
-import DynamicAds from '@modules/DynamicAds';
 import FxRunner from '@modules/FxRunner';
 import Logger from '@modules/Logger';
 import FxMonitor from '@modules/FxMonitor';
@@ -42,9 +41,6 @@ export type TxCoreType = {
     translator: Translator;
     updateChecker: UpdateChecker;
     webServer: WebServer;
-
-    //FIXME: this one should not be a module
-    dynamicAds: DynamicAds;
 }
 
 export default function bootTxAdmin() {
@@ -71,7 +67,7 @@ export default function bootTxAdmin() {
     /**
      * MARK: Booting Modules
      */
-    //Helper function to start the modules
+    //Helper function to start the modules & register callbacks
     const startModule = <T>(Class: GenericTxModule<T>): T => {
         const instance = new Class();
         if(Array.isArray(Class.configKeysWatched) && Class.configKeysWatched.length > 0){
@@ -83,6 +79,9 @@ export default function bootTxAdmin() {
                 Class.configKeysWatched,
                 instance.handleConfigUpdate.bind(instance),
             );
+        }
+        if(instance?.handleShutdown) {
+            txManager.addShutdownHandler(instance.handleShutdown.bind(instance));
         }
         
         return instance as T;
@@ -108,7 +107,6 @@ export default function bootTxAdmin() {
     _txCore.cacheStore = startModule(CacheStore);
 
     //Very Low Priority
-    _txCore.dynamicAds = startModule(DynamicAds);
     _txCore.updateChecker = startModule(UpdateChecker);
 
 
