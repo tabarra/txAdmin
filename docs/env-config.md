@@ -81,8 +81,9 @@ The specific way to set up those variables vary from system to system, and there
     - This will usually show in warnings regarding configuration or user actions that go against any `TXHOST_*` variable.
 - **TXHOST_PROVIDER_LOGO**
     - **Default value:** _undefined_.
-    - The URL for the hosting provider logo which will appear in the login page.
+    - The URL for the hosting provider logo which will appear at the login page.
     - The maximum image size is **224x96**.
+    - You can create a theme-aware URL by including a `{theme}` placeholder in the URL, which will be replaced by `light` or `dark` at runtime, depending on the theme being used, eg. `https://.../logo_{theme}.png`.
 
 
 ### Defaults 

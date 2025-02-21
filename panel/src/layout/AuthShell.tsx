@@ -5,18 +5,19 @@ import AddMasterPin from "../pages/auth/AddMasterPin";
 import AddMasterCallback from "../pages/auth/AddMasterCallback";
 import { Card } from "../components/ui/card";
 import { LogoFullSquareGreen } from "@/components/Logos";
-import { useTheme } from "@/hooks/theme";
+import { useThemedImage } from "@/hooks/theme";
 import { handleExternalLinkClick } from "@/lib/navigation";
 
 
 export default function AuthShell() {
+    const customLogoUrl = useThemedImage(window.txConsts.providerLogo);
     return (
         <div className="min-h-screen flex items-center justify-center pattern-dots">
             <div className="text-center m-4 w-full xs:w-[25rem] min-w-[20rem]">
-                {window.txConsts.providerLogo ? (
+                {customLogoUrl ? (
                     <img
                         className='max-w-56 max-h-24 m-auto'
-                        src={window.txConsts.providerLogo}
+                        src={customLogoUrl}
                         alt={window.txConsts.providerName}
                     />
                 ) : (

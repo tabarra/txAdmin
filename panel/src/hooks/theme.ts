@@ -137,3 +137,9 @@ export const useToggleTheme = () => {
 export const useIsDarkMode = () => {
     return useAtomValue(isDarkModeAtom);
 }
+
+export const useThemedImage = (baseImageUrl?: string) => {
+    const isDarkMode = useAtomValue(isDarkModeAtom);
+    if(typeof baseImageUrl !== 'string') return;
+    return baseImageUrl.replace(/{theme}/g, isDarkMode ? 'dark' : 'light');
+}
