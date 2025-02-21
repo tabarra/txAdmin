@@ -104,6 +104,7 @@ Legend:
     - [x] disable the "view changelog" button, or write the modal code
     - [x] write dev notes on the config system (README.md in the panel settings and core configstore?)
 - [x] Full FXRunner rewrite
+- [x] add `.yarn.installed` to the dist? even in dev
 
 ## Other stuff
 - [x] new env vars
@@ -153,7 +154,6 @@ Legend:
     - https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone (node 17+)
     - https://www.npmjs.com/package/rfdc
 - [ ] switch to `game 'common'` and remove `rdr3_warning`
-- [ ] add `.yarn.installed` to the dist? even in dev
 - [ ] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/modules/Logger/handlers/server.js#L148)
     - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
