@@ -355,6 +355,10 @@ type EndpointsObjectType = Record<string, { tcp?: true; udp?: true; }>
 const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]) => {
     const providerPrefix = `[${convars.providerName}] `;
     const checkedInterfaces = new Map();
+    let detectedGameName: string | undefined;
+    const requiredGameName = convars.forceGameName
+        ? convars.forceGameName === 'fivem' ? 'gta5' : 'rdr3'
+        : undefined;
 
     //To return
     const endpoints: EndpointsObjectType = {};
@@ -399,9 +403,26 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
             const maxClients = parseInt(isMaxClientsString);
             if (maxClients > convars.deployerDefaults.maxClients) {
                 warnings.add(
+        //Check gamename against TXHOST config
+        const isGameNameString = cmd.isConvarSetterFor('gamename');
+        if (isGameNameString && detectedGameName) {
+            errors.add(
+                cmd.file,
+                cmd.line,
+                `you already set the 'gamename' to '${detectedGameName}', please remove this line.`
+            );
+            continue;
+        }
+        if (
+            convars.forceGameName
+            && isGameNameString
+        ) {
+            detectedGameName = isGameNameString;
+            if (isGameNameString !== requiredGameName) {
+                errors.add(
                     cmd.file,
                     cmd.line,
-                    `${providerPrefix}your 'sv_maxclients' SHOULD be <= ${convars.deployerDefaults.maxClients}.`
+                    `${providerPrefix}your 'gamename' MUST be '${requiredGameName}'.`
                 );
                 continue;
             }
@@ -511,6 +532,16 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 endpoints[endpoint][protocol] = true;
             }
         }
+    }
+
+    //Since gta5 is the default, we need to check TXHOST for redm
+    if (convars.forceGameName === 'redm' && detectedGameName !== 'rdr3') {
+        const initFile = parsedCommands[0]?.file ?? 'unknown';
+        errors.add(
+            initFile,
+            false,
+            `${providerPrefix}your config MUST have a 'gamename' set to '${requiredGameName}'.`
+        );
     }
 
     return { endpoints, errors, warnings, toCommentOut };

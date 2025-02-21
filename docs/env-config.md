@@ -45,14 +45,19 @@ The specific way to set up those variables vary from system to system, and there
         - **Linux:** `<fxserver_root>/../../../txData` — sits in the folder that contains your `run.sh`.
     - The path to the txData folder, which contains the txAdmin logs, configs, and data. This is also the default place suggested for deploying new servers (as a subfolder). It is usually set to `/home/container` when running on Pterodactyl.
     - <mark>NOTE:</mark> This variable takes priority over the deprecated `txDataPath` ConVar.
+- **TXHOST_GAME_NAME**
+    - **Default value:** _undefined_.
+    - **Options:** `['fivem','redm']`.
+    - Restricts to only running either FiveM or RedM servers.
+    - The setup page will only show recipes for the game specified
+- **TXHOST_MAX_SLOTS**
+    - **Default value:** _undefined_.
+    - Enforces the server `sv_maxClients` is set to a number less than or equal to the variable value.
 - **TXHOST_QUIET_MODE**
     - **Default value:** `false`.
     - If true, do not pipe the FXServer's stdout/stderr to txAdmin's stdout, meaning that you will only be able to see the server output by visiting the txAdmin Live Console page.
     - If enabled, server owners won't be able to disable it in `txAdmin -> Settings -> FXServer` page.
     - <mark>NOTE:</mark> We recommend that Game Server Providers enable this option.
-- **TXHOST_MAX_SLOTS**
-    - **Default value:** _undefined_.
-    - Enforces the server `sv_maxClients` is set to a number less than or equal to the variable value.
 
 ### Networking
 - **TXHOST_TXA_URL:**

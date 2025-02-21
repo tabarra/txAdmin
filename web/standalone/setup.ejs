@@ -407,6 +407,7 @@
         //Constants
         const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv4.json';
         const txDataPath = '<%= txDataPath %>';
+        const forceGameName = '<%= forceGameName %>' || false;
         const deployerEngineVersion = parseInt('<%= deployerEngineVersion %>');
         const isReset = ('<%= isReset %>' === 'true');
         const SPINNER_HTMLSized = `<div style="min-height: 250px; margin: auto;">${SPINNER_HTML}</div>`;
@@ -628,6 +629,13 @@
                         s4PopularTemplateRow.innerHTML = '';
                         let hasIncompatible = false;
                         loadedTemplates.forEach((recipe, key) => {
+                            //Filtering for forceGameName
+                            if (
+                                forceGameName
+                                && Array.isArray(recipe.tags)
+                                && !recipe.tags.includes(forceGameName)
+                            ) return;
+
                             const newNode = document.createElement("div");
                             newNode.innerHTML = s4PopularTemplateCardTemplate.innerHTML;
                             // newNode.classList.add('col-12', 'col-md-6', 'p-0'); //2 per line

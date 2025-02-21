@@ -36,6 +36,7 @@ export default async function SetupGet(ctx: AuthedCtx) {
         isReset: !!(storedConfig.general?.serverName),
         deployerEngineVersion: RECIPE_DEPLOYER_VERSION,
         serverProfile: txEnv.profile,
+        forceGameName: convars.forceGameName ?? '', //ejs injection works better with strings
         txDataPath: txEnv.dataPath,
         isZapHosting: convars.isZapHosting,
         windowsBatPath,

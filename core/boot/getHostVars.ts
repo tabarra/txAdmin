@@ -14,8 +14,12 @@ export const hostEnvVarSchemas = {
         (val) => path.isAbsolute(val),
         'DATA_PATH must be an absolute path'
     ),
-    QUIET_MODE: z.preprocess((val) => val === 'true', z.boolean()),
+    GAME_NAME: z.enum(
+        ['fivem', 'redm'],
+        { message: 'GAME_NAME must be either "gta5", "rdr3", or undefined' }
+    ),
     MAX_SLOTS: z.coerce.number().int().positive(),
+    QUIET_MODE: z.preprocess((val) => val === 'true', z.boolean()),
 
     //Networking
     TXA_URL: z.string().url(),

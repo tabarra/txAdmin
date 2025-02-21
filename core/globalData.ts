@@ -287,6 +287,28 @@ if (forceInterface) {
 
 
 /**
+ * MARK: GENERAL
+ */
+const forceGameName = hostVars.GAME_NAME;
+
+const maxClients = handleMultiVar(
+    'MAX_SLOTS',
+    hostEnvVarSchemas.MAX_SLOTS,
+    hostVars.MAX_SLOTS,
+    zapVars?.deployerDefaults?.maxClients,
+    undefined,
+);
+
+const forceQuietMode = handleMultiVar(
+    'QUIET_MODE',
+    hostEnvVarSchemas.QUIET_MODE,
+    hostVars.QUIET_MODE,
+    zapVars?.deployerDefaults?.maxClients,
+    undefined,
+) ?? false;
+
+
+/**
  * MARK: PROVIDER
  */
 const providerName = handleMultiVar(
@@ -301,22 +323,6 @@ const providerLogo = handleMultiVar(
     hostEnvVarSchemas.PROVIDER_LOGO,
     hostVars.PROVIDER_LOGO,
     zapVars?.loginPageLogo,
-    undefined,
-);
-
-const forceQuietMode = handleMultiVar(
-    'QUIET_MODE',
-    hostEnvVarSchemas.QUIET_MODE,
-    hostVars.QUIET_MODE,
-    zapVars?.deployerDefaults?.maxClients,
-    undefined,
-) ?? false;
-
-const maxClients = handleMultiVar(
-    'MAX_SLOTS',
-    hostEnvVarSchemas.MAX_SLOTS,
-    hostVars.MAX_SLOTS,
-    zapVars?.deployerDefaults?.maxClients,
     undefined,
 );
 
@@ -526,6 +532,7 @@ export const convars = Object.freeze({
     isZapHosting,
     forceInterface, //convar txAdminInterface, or zap config
     forceFXServerPort,
+    forceGameName,
     forceQuietMode,
     txAdminUrl,
     txAdminPort, //convar txAdminPort, or zap config
