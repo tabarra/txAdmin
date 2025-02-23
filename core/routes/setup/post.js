@@ -138,7 +138,8 @@ async function handleValidateLocalDeployPath(ctx) {
 
     //Perform path checking
     try {
-        return ctx.send({success: true, message: await validateTargetPath(deployPath)});
+        await validateTargetPath(deployPath); // will throw if invalid
+        return ctx.send({success: true, message: 'Path is valid.'});
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }

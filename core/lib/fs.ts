@@ -1,6 +1,21 @@
+import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import type { Dirent } from 'node:fs';
 import { txEnv } from '@core/globalData';
+import path from 'node:path';
+
+
+/**
+ * Check if its possible to create a file in a folder
+ */
+export const canWriteToPath = async (targetPath: string) => {
+    try {
+        await fsp.access(path.dirname(targetPath), fs.constants.W_OK);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
 
 
 /**
