@@ -12,7 +12,7 @@ import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isV
 import ProcessManager, { ChildProcessStateInfo } from './ProcessManager';
 import handleFd3Messages from './handleFd3Messages';
 import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
-import { convars } from '@core/globalData';
+import { txHostConfig } from '@core/globalData';
 const console = consoleFactory('FXRunner');
 const genMutex = customAlphabet(dict49, 5);
 
@@ -72,7 +72,7 @@ export default class FxRunner {
             return console.warn('The server will not auto start because there are no admins configured.');
         }
 
-        if(txConfig.server.quiet || convars.forceQuietMode){
+        if(txConfig.server.quiet || txHostConfig.forceQuietMode){
            console.defer(1000).warn('FXServer Quiet mode is enabled. Access the Live Console to see the logs.');     
         }
 

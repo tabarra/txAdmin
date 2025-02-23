@@ -1,6 +1,6 @@
 const modulename = 'FxMonitor';
 import got from 'got'; //we need internal requests to have 127.0.0.1 src
-import { convars } from '@core/globalData';
+import { txHostConfig } from '@core/globalData';
 import { Stopwatch } from './utils';
 import consoleFactory from '@lib/console';
 import { now } from '@lib/misc';
@@ -151,14 +151,14 @@ export default class FxMonitor {
             if (!isNaN(maxClients)) {
                 txCore.cacheStore.set('fxsRuntime:maxClients', maxClients);
 
-                if (convars.deployerDefaults?.maxClients && maxClients > convars.deployerDefaults.maxClients) {
+                if (txHostConfig.forceMaxClients && maxClients > txHostConfig.forceMaxClients) {
                     txCore.fxRunner.sendCommand(
                         'sv_maxclients',
-                        [convars.deployerDefaults.maxClients],
+                        [txHostConfig.forceMaxClients],
                         SYM_SYSTEM_AUTHOR
                     );
-                    console.error(`${convars.providerName}: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
-                    txCore.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
+                    console.error(`${txHostConfig.sourceName}: Detected that the server has sv_maxclients above the limit (${txHostConfig.forceMaxClients}). Changing back to the limit.`);
+                    txCore.logger.admin.write('SYSTEM', `changing sv_maxclients back to ${txHostConfig.forceMaxClients}`);
                 }
             }
         }

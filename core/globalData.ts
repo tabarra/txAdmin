@@ -24,12 +24,10 @@ const console = consoleFactory();
  */
 //Get OSType
 const osTypeVar = os.type();
-let osType, isWindows;
-if (osTypeVar == 'Windows_NT') {
-    osType = 'windows';
+let isWindows;
+if (osTypeVar === 'Windows_NT') {
     isWindows = true;
-} else if (osTypeVar == 'Linux') {
-    osType = 'linux';
+} else if (osTypeVar === 'Linux') {
     isWindows = false;
 } else {
     fatalError.GlobalData(0, `OS type not supported: ${osTypeVar}`);
@@ -128,7 +126,7 @@ if (!nativeVars.txaResourcePath) {
         ['Convar', nativeVars.txaResourcePath],
     ]);
 }
-const txAdminResourcePath = cleanPath(nativeVars.txaResourcePath);
+const txaPath = cleanPath(nativeVars.txaResourcePath);
 
 //Get citizen Root
 if (!nativeVars.fxsCitizenRoot) {
@@ -137,14 +135,14 @@ if (!nativeVars.fxsCitizenRoot) {
         ['Convar', nativeVars.fxsCitizenRoot],
     ]);
 }
-const fxServerPath = cleanPath(nativeVars.fxsCitizenRoot as string);
+const fxsPath = cleanPath(nativeVars.fxsCitizenRoot as string);
 
 //Check if server is inside WinRar's temp folder
-if (isWindows && /Temp[\\/]+Rar\$/i.test(fxServerPath)) {
+if (isWindows && /Temp[\\/]+Rar\$/i.test(fxsPath)) {
     fatalError.GlobalData(12, [
         'It looks like you ran FXServer inside WinRAR without extracting it first.',
         'Please extract the server files to a proper folder before running it.',
-        ['Server path', fxServerPath.replace(/\\/g, '/').replace(/\/$/, '')],
+        ['Server path', fxsPath.replace(/\\/g, '/').replace(/\/$/, '')],
     ]);
 }
 
@@ -153,6 +151,12 @@ if (isWindows && /Temp[\\/]+Rar\$/i.test(fxServerPath)) {
  * MARK: TXDATA & PROFILE 
  */
 //Setting data path
+let hasCustomDataPath = false;
+let dataPath = cleanPath(path.join(
+    fxsPath,
+    isWindows ? '..' : '../../../',
+    'txData'
+));
 const dataPathVar = handleMultiVar(
     'DATA_PATH',
     hostEnvVarSchemas.DATA_PATH,
@@ -160,25 +164,23 @@ const dataPathVar = handleMultiVar(
     undefined,
     nativeVars.txDataPath,
 );
-const defaultDataPath = path.join(
-    fxServerPath,
-    isWindows ? '..' : '../../../',
-    'txData'
-);
-const dataPath = cleanPath(dataPathVar ?? defaultDataPath);
+if (dataPathVar) {
+    hasCustomDataPath = true;
+    dataPath = cleanPath(dataPathVar);
+}
 
 //Check paths for non-ASCII characters
 //NOTE: Non-ASCII in one of those paths (don't know which) will make NodeJS crash due to a bug in v8 (or something)
 //      when running localization methods like Date.toLocaleString().
 //      There was also an issue with the slash() lib and with the +exec on FXServer
 const nonASCIIRegex = /[^\x00-\x80]+/;
-if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
+if (nonASCIIRegex.test(fxsPath) || nonASCIIRegex.test(dataPath)) {
     fatalError.GlobalData(7, [
         'Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.',
         'Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.',
         'Please make sure FXServer is not in a path contaning those characters.',
         `If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxsVersion}/".`,
-        ['FXServer path', fxServerPath],
+        ['FXServer path', fxsPath],
         ['txData path', dataPath],
     ]);
 }
@@ -202,8 +204,8 @@ if (profileVar) {
         ]);
     }
 }
-const profile = profileVar ?? 'default';
-const profilePath = cleanPath(path.join(dataPath, profile));
+const profileName = profileVar ?? 'default';
+const profilePath = cleanPath(path.join(dataPath, profileName));
 
 
 /**
@@ -253,10 +255,10 @@ if (!ignoreDeprecatedConfigs) {
 }
 
 //No default, no convar/zap cfg
-const txAdminUrl = hostVars.TXA_URL;
+const txaUrl = hostVars.TXA_URL;
 
 //txAdmin port
-const txAdminPort = handleMultiVar(
+const txaPort = handleMultiVar(
     'TXA_PORT',
     hostEnvVarSchemas.TXA_PORT,
     hostVars.TXA_PORT,
@@ -265,7 +267,7 @@ const txAdminPort = handleMultiVar(
 ) ?? 40120;
 
 //fxserver port
-const forceFXServerPort = handleMultiVar(
+const fxsPort = handleMultiVar(
     'FXS_PORT',
     hostEnvVarSchemas.FXS_PORT,
     hostVars.FXS_PORT,
@@ -274,15 +276,15 @@ const forceFXServerPort = handleMultiVar(
 );
 
 //Forced interface
-const forceInterface = handleMultiVar(
+const netInterface = handleMultiVar(
     'INTERFACE',
     hostEnvVarSchemas.INTERFACE,
     hostVars.INTERFACE,
     zapVars?.forceInterface,
     nativeVars.txAdminInterface,
 );
-if (forceInterface) {
-    addLocalIpAddress(forceInterface);
+if (netInterface) {
+    addLocalIpAddress(netInterface);
 }
 
 
@@ -291,7 +293,7 @@ if (forceInterface) {
  */
 const forceGameName = hostVars.GAME_NAME;
 
-const maxClients = handleMultiVar(
+const forceMaxClients = handleMultiVar(
     'MAX_SLOTS',
     hostEnvVarSchemas.MAX_SLOTS,
     hostVars.MAX_SLOTS,
@@ -317,7 +319,7 @@ const providerName = handleMultiVar(
     hostVars.PROVIDER_NAME,
     zapVars?.providerName,
     undefined,
-) ?? 'Host Config';
+);
 const providerLogo = handleMultiVar(
     'PROVIDER_LOGO',
     hostEnvVarSchemas.PROVIDER_LOGO,
@@ -460,7 +462,7 @@ const defaultCfxKey = handleMultiVar(
 //Setting the variables in console without it having to importing from here (cyclical dependency)
 setConsoleEnvData(
     txaVersion,
-    txAdminResourcePath,
+    txaPath,
     _txDevEnv.ENABLED,
     _txDevEnv.VERBOSE
 );
@@ -492,20 +494,20 @@ if (displayAds) {
 }
 
 //FXServer Display Version
-let fxsVersionDisplay = fxsVersion.toString();
+let fxsVersionTag = fxsVersion.toString();
 if (fxsVerParsed.branch && fxsVerParsed.branch !== 'master') {
-    fxsVersionDisplay += '-ft';
+    fxsVersionTag += '-ft';
 }
 if (isZapHosting) {
-    fxsVersionDisplay += '/ZAP';
+    fxsVersionTag += '/ZAP';
 } else if (isPterodactyl) {
-    fxsVersionDisplay += '/Ptero';
+    fxsVersionTag += '/Ptero';
 } else if (isWindows && fxsVerParsed.platform === 'windows') {
-    fxsVersionDisplay += '/Win';
+    fxsVersionTag += '/Win';
 } else if (!isWindows && fxsVerParsed.platform === 'linux') {
-    fxsVersionDisplay += '/Lin';
+    fxsVersionTag += '/Lin';
 } else {
-    fxsVersionDisplay += '/Unk';
+    fxsVersionTag += '/Unk';
 }
 
 
@@ -515,40 +517,55 @@ if (isZapHosting) {
 export const txDevEnv = Object.freeze(_txDevEnv);
 
 export const txEnv = Object.freeze({
-    osType,
+    //Calculated
     isWindows,
-    fxsVersionDisplay,
-    fxsVersion,
-    txaVersion,
-    txAdminResourcePath,
-    fxServerPath,
-    dataPath, //convar txDataPath
-    profile, //convar serverProfile
-    profilePath,
-});
-
-export const convars = Object.freeze({
-    isPterodactyl,
-    isZapHosting,
-    forceInterface, //convar txAdminInterface, or zap config
-    forceFXServerPort,
-    forceGameName,
-    forceQuietMode,
-    txAdminUrl,
-    txAdminPort, //convar txAdminPort, or zap config
-    providerName, //not being used
-    providerLogo, //not being used
+    // isPterodactyl, //FIXME: ?
+    // isZapHosting, //FIXME: 
     displayAds,
     adsData,
-    defaultMasterAccount,
-    deployerDefaults: {
-        license: defaultCfxKey,
-        maxClients: maxClients,
-        mysqlHost: defaultDbHost,
-        mysqlPort: defaultDbPort,
-        mysqlUser: defaultDbUser,
-        mysqlPassword: defaultDbPass,
-        mysqlDatabase: defaultDbName,
+
+    //Natives
+    fxsVersionTag,
+    fxsVersion,
+    txaVersion,
+    txaPath,
+    fxsPath,
+
+    //ConVar
+    profileName, //FIXME: remover de todo lugar que eu conseguir
+    profilePath, //FIXME: trocar pelo profileSubPath em todo lugar que eu conseguir
+    profileSubPath: (...parts: string[]) => path.join(profilePath, ...parts),
+});
+
+export const txHostConfig = Object.freeze({
+    //General
+    dataPath,
+    dataSubPath: (...parts: string[]) => path.join(dataPath, ...parts),
+    hasCustomDataPath,
+    forceGameName,
+    forceMaxClients,
+    forceQuietMode,
+
+    //Networking
+    txaUrl,
+    txaPort,
+    fxsPort,
+    netInterface,
+
+    //Provider
+    providerName,
+    providerLogo,
+    sourceName: providerName ?? 'Host Config',
+
+    //Defaults
+    defaults: {
+        account: defaultMasterAccount,
+        cfxKey: defaultCfxKey,
+        dbHost: defaultDbHost,
+        dbPort: defaultDbPort,
+        dbUser: defaultDbUser,
+        dbPass: defaultDbPass,
+        dbName: defaultDbName,
     },
 });
 

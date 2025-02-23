@@ -292,7 +292,7 @@ export const getTxAdminData = async () => {
         loggerStatusServer: txCore.logger.server.getUsageStats(),
 
         //Env stuff
-        fxServerPath: txEnv.fxServerPath,
+        fxServerPath: txEnv.fxsPath,
         fxServerHost: txCore.fxRunner.child?.netEndpoint ?? '--',
 
         //Usage stuff

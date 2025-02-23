@@ -50,7 +50,7 @@ export default class DiscordBot {
         //FIXME: fixme
         // http: {
         //     agent: {
-        //         localAddress: convars.forceInterface,
+        //         localAddress: txHostConfig.netInterface,
         //     }
         // }
     }

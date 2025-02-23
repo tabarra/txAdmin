@@ -1,6 +1,6 @@
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
 import { Readable, Writable } from "node:stream";
-import { convars, txEnv } from "@core/globalData";
+import { txEnv, txHostConfig } from "@core/globalData";
 import { redactStartupSecrets } from "@lib/misc";
 import path from "path";
 
@@ -69,17 +69,17 @@ export const mutableConvarConfigDependencies = [
 /**
  * Pre calculating HOST dependent spawn variables
  */
-const txCoreEndpoint = convars.forceInterface
-    ? `${convars.forceInterface}:${convars.txAdminPort}`
-    : `127.0.0.1:${convars.txAdminPort}`;
+const txCoreEndpoint = txHostConfig.netInterface
+    ? `${txHostConfig.netInterface}:${txHostConfig.txaPort}`
+    : `127.0.0.1:${txHostConfig.txaPort}`;
 let osSpawnVars: OsSpawnVars;
 if (txEnv.isWindows) {
     osSpawnVars = {
-        bin: `${txEnv.fxServerPath}/FXServer.exe`,
+        bin: `${txEnv.fxsPath}/FXServer.exe`,
         args: [],
     };
 } else {
-    const alpinePath = path.resolve(txEnv.fxServerPath, '../../');
+    const alpinePath = path.resolve(txEnv.fxsPath, '../../');
     osSpawnVars = {
         bin: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
         args: [

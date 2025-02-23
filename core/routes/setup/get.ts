@@ -1,6 +1,6 @@
 const modulename = 'WebServer:SetupGet';
 import path from 'node:path';
-import { convars, txEnv } from '@core/globalData';
+import { convars, txEnv, txHostConfig } from '@core/globalData';
 import { RECIPE_DEPLOYER_VERSION } from '@core/deployer/index';
 import consoleFactory from '@lib/console';
 import { TxConfigState } from '@shared/enums';
@@ -26,8 +26,8 @@ export default async function SetupGet(ctx: AuthedCtx) {
 
     let windowsBatPath: string | null = null;
     if (txEnv.isWindows) {
-        const batFolder = path.resolve(txEnv.fxServerPath, '..');
-        windowsBatPath  = path.join(batFolder, `start_${txEnv.fxsVersion}_${txEnv.profile}.bat`);
+        const batFolder = path.resolve(txEnv.fxsPath, '..');
+        windowsBatPath  = path.join(batFolder, `start_${txEnv.fxsVersion}_${txEnv.profileName}.bat`);
     }
 
     const storedConfig = txCore.configStore.getStoredConfig();
@@ -35,9 +35,9 @@ export default async function SetupGet(ctx: AuthedCtx) {
         headerTitle: 'Setup',
         isReset: !!(storedConfig.general?.serverName),
         deployerEngineVersion: RECIPE_DEPLOYER_VERSION,
-        serverProfile: txEnv.profile,
-        forceGameName: convars.forceGameName ?? '', //ejs injection works better with strings
-        txDataPath: txEnv.dataPath,
+        forceGameName: txHostConfig.forceGameName ?? '', //ejs injection works better with strings
+        dataPath: txHostConfig.dataPath,
+        hasCustomDataPath: txHostConfig.hasCustomDataPath,
         isZapHosting: convars.isZapHosting,
         windowsBatPath,
     };

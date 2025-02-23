@@ -5,7 +5,7 @@ import * as nanoidSecure from 'nanoid';
 import * as nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@shared/consts';
 import getOsDistro from '@lib/host/getOsDistro.js';
-import { convars, txEnv } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import type { DatabaseObjectType } from './instance';
 import consoleFactory from '@lib/console';
 import { msToDuration } from '@lib/misc';

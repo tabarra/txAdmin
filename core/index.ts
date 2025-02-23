@@ -1,5 +1,5 @@
 //NOTE: must be imported first to setup the environment
-import { txEnv } from './globalData';
+import { txEnv, txHostConfig } from './globalData';
 import consoleFactory, { setTTYTitle } from '@lib/console';
 
 //Can be imported after
@@ -20,13 +20,13 @@ checkPreRelease();
 
 //Setting up txData & Profile
 try {
-    if (!fs.existsSync(txEnv.dataPath)) {
-        fs.mkdirSync(txEnv.dataPath);
+    if (!fs.existsSync(txHostConfig.dataPath)) {
+        fs.mkdirSync(txHostConfig.dataPath);
     }
 } catch (error) {
     fatalError.Boot(1, [
         `Failed to check or create the data folder.`,
-        ['Path', txEnv.dataPath],
+        ['Path', txHostConfig.dataPath],
     ], error);
 }
 try {
@@ -38,15 +38,15 @@ try {
 } catch (error) {
     fatalError.Boot(2, [
         `Failed to check or create the txAdmin profile folder.`,
-        ['Profile', txEnv.profile],
-        ['Data Path', txEnv.dataPath],
+        ['Data Path', txHostConfig.dataPath],
+        ['Profile Name', txEnv.profileName],
         ['Profile Path', txEnv.profilePath],
     ], error);
 }
 
 
 //Start txAdmin (have fun 😀)
-console.log(`Starting profile '${txEnv.profile}' on v${txEnv.txaVersion}/b${txEnv.fxsVersionDisplay}`);
+console.log(`Starting profile '${txEnv.profileName}' on v${txEnv.txaVersion}/b${txEnv.fxsVersionTag}`);
 try {
     bootTxAdmin();
 } catch (error) {

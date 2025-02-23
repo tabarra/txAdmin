@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
 import { nanoid } from 'nanoid';
-import { convars, txEnv } from '@core/globalData';
+import { convars, txHostConfig } from '@core/globalData';
 import CfxProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@lib/console.js';
@@ -37,7 +37,7 @@ const migrateProviderIdentifiers = (providerName, providerData) => {
  */
 export default class AdminStore {
     constructor() {
-        this.adminsFile = `${txEnv.dataPath}/admins.json`;
+        this.adminsFile = txHostConfig.dataSubPath('admins.json');
         this.adminsFileHash = null;
         this.admins = null;
         this.refreshRoutine = null;
@@ -109,11 +109,11 @@ export default class AdminStore {
 
         //Printing PIN or starting loop
         if (!adminFileExists) {
-            if (!convars.defaultMasterAccount) {
+            if (!txHostConfig.defaults.account) {
                 this.addMasterPin = (Math.random() * 10000).toFixed().padStart(4, '0');
                 this.admins = false;
             } else {
-                const { username, fivemId, password } = convars.defaultMasterAccount;
+                const { username, fivemId, password } = txHostConfig.defaults.account;
                 console.log(`Setting up master account '${username}' with credentials provided by ${convars.providerName}.`);
                 this.createAdminsFile(
                     username,

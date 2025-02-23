@@ -410,7 +410,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                     You will still be able to use the Live Console.
                     {forceQuietMode && (<>
                         <br />
-                        <span className="text-warning-inline">{window.txConsts.providerName}: This setting is locked and cannot be changed.</span>
+                        <span className="text-warning-inline">{window.txConsts.hostConfigSource}: This setting is locked and cannot be changed.</span>
                     </>)}
                 </SettingItemDesc>
             </SettingItem>

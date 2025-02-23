@@ -292,8 +292,8 @@
                                         The folder that <strong>contains</strong> the <code>resources</code> and
                                         <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
                                         Also known as Base Folder. <br>
-                                        <% if (isZapHosting) { %>
-                                            <span class="font-weight-bold"><%= providerName %>: this path must start with <code><%= txDataPath %></code>.</span>
+                                        <% if (hasCustomDataPath) { %>
+                                            <span class="font-weight-bold"><%= hostConfigSource %>: this path must start with <code><%= dataPath %></code>.</span>
                                         <% } %>
                                         <input type="text" class="form-control mt-2" id="s4LocalDataPathInput"
                                             placeholder="C:/Users/Admin/Desktop/server01">
@@ -322,8 +322,8 @@
                                     <div class="d-none" id="s5DeployerTargetDiv">
                                         The folder where the server will be deployed to. <br>
                                         This folder will contain all your resources and configuration files. <br>
-                                        <% if (isZapHosting) { %>
-                                            <span class="font-weight-bold"><%= providerName %>: this path must start with <code><%= txDataPath %></code>.</span> <br>
+                                        <% if (hasCustomDataPath) { %>
+                                            <span class="font-weight-bold"><%= hostConfigSource %>: this path must start with <code><%= dataPath %></code>.</span> <br>
                                         <% } %>
                                         <strong>We strongly recommend using the path suggested below.</strong>                     
                                         <div class="input-group mt-2">
@@ -406,7 +406,7 @@
     <script>
         //Constants
         const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv4.json';
-        const txDataPath = '<%= txDataPath %>';
+        const txDataPath = '<%= dataPath %>';
         const forceGameName = '<%= forceGameName %>' || false;
         const deployerEngineVersion = parseInt('<%= deployerEngineVersion %>');
         const isReset = ('<%= isReset %>' === 'true');

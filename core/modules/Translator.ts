@@ -1,7 +1,7 @@
 const modulename = 'Translator';
 import fs from 'node:fs';
 import Polyglot from 'node-polyglot';
-import { txEnv } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import localeMap from '@shared/localeMap';
 import consoleFactory from '@lib/console';
 import fatalError from '@lib/fatalError';
@@ -29,7 +29,7 @@ export default class Translator {
     static readonly configKeysWatched = ['general.language'];
     static readonly humanizerLanguages: string[] = humanizeDuration.getSupportedLanguages();
 
-    public readonly customLocalePath = `${txEnv.dataPath}/locale.json`;
+    public readonly customLocalePath = txHostConfig.dataSubPath('locale.json');
     public canonical: string = 'en-GB'; //Using GB instead of US due to date/time formats 
     #polyglot: Polyglot | null = null;
 

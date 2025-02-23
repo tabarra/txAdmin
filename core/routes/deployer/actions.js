@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash-es';
 import slash from 'slash';
 import mysql from 'mysql2/promise';
 import consts from '@shared/consts';
-import { txEnv, convars } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import { validateModifyServerConfig } from '@lib/fxserver/fxsConfigHelper';
 import consoleFactory from '@lib/console';
 import { SYM_RESET_CONFIG } from '@lib/symbols';
@@ -152,11 +152,11 @@ async function handleSetVariables(ctx) {
     }
 
     //Max Clients & Server Endpoints
-    userVars.maxClients = (convars.deployerDefaults && convars.deployerDefaults.maxClients) ? convars.deployerDefaults.maxClients : 48;
-    if (convars.forceInterface || convars.forceFXServerPort) {
-        const comment = `# ${convars.providerName}: do not modify!`;
-        const endpointIface = convars.forceInterface ?? '0.0.0.0';
-        const endpointPort = convars.forceFXServerPort ?? 30120;
+    userVars.maxClients = (txHostConfig.forceMaxClients) ? txHostConfig.forceMaxClients : 48;
+    if (txHostConfig.netInterface || txHostConfig.fxsPort) {
+        const comment = `# ${txHostConfig.sourceName}: do not modify!`;
+        const endpointIface = txHostConfig.netInterface ?? '0.0.0.0';
+        const endpointPort = txHostConfig.fxsPort ?? 30120;
         userVars.serverEndpoints = [
             `endpoint_add_tcp "${endpointIface}:${endpointPort}" ${comment}`,
             `endpoint_add_udp "${endpointIface}:${endpointPort}" ${comment}`,

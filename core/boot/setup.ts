@@ -50,17 +50,17 @@ export const setupProfile = () => {
     console.ok(`Server profile was saved in '${txEnv.profilePath}'`);
 
     //Saving start.bat (yes, I also wish this didn't exist)
-    if (txEnv.osType == 'windows') {
-        const batFilename = `start_${txEnv.fxsVersion}_${txEnv.profile}.bat`;
+    if (txEnv.isWindows) {
+        const batFilename = `start_${txEnv.fxsVersion}_${txEnv.profileName}.bat`;
         try {
-            const fxsPath = path.join(txEnv.fxServerPath, 'FXServer.exe');
+            const fxsPath = path.join(txEnv.fxsPath, 'FXServer.exe');
             const batLines = [
                 //TODO: add note to not add any server convars in here
                 `@echo off`,
-                `"${fxsPath}" +set serverProfile "${txEnv.profile}"`,
+                `"${fxsPath}" +set serverProfile "${txEnv.profileName}"`,
                 `pause`
             ];
-            const batFolder = path.resolve(txEnv.fxServerPath, '..');
+            const batFolder = path.resolve(txEnv.fxsPath, '..');
             const batPath = path.join(batFolder, batFilename);
             fs.writeFileSync(batPath, batLines.join('\r\n'));
             console.ok(`You can use ${chalkInversePad(batPath)} to start this profile.`);

@@ -2,7 +2,7 @@ const modulename = 'WebCtxUtils';
 import fsp from "node:fs/promises";
 import path from "node:path";
 import type { InjectedTxConsts, ThemeType } from '@shared/otherTypes';
-import { txEnv, convars, txDevEnv } from "@core/globalData";
+import { txEnv, convars, txDevEnv, txHostConfig } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
 import consoleFactory from '@lib/console';
@@ -75,7 +75,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         try {
             const indexPath = txDevEnv.ENABLED
                 ? path.join(txDevEnv.SRC_PATH, '/panel/index.html')
-                : path.join(txEnv.txAdminResourcePath, 'panel/index.html')
+                : path.join(txEnv.txaPath, 'panel/index.html')
             const rawHtmlFile = await fsp.readFile(indexPath, 'utf-8');
 
             //Remove tagged lines (eg hardcoded entry point) depending on env
@@ -107,10 +107,10 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //Preparing vars
     const basePath = (ctx.txVars.isWebInterface) ? '/' : consts.nuiWebpipePath;
-    const serverName = txConfig.general.serverName || txEnv.profile;
+    const serverName = txConfig.general.serverName || txEnv.profileName;
     const injectedConsts = {
         //env
-        fxsVersion: txEnv.fxsVersionDisplay,
+        fxsVersion: txEnv.fxsVersionTag,
         fxsOutdated: txCore.updateChecker.fxsUpdateData,
         txaVersion: txEnv.txaVersion,
         txaOutdated: txCore.updateChecker.txaUpdateData,
@@ -123,9 +123,10 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         hasMasterAccount: txCore.adminStore.hasAdmins(true),
         defaultTheme: tmpDefaultTheme,
         customThemes: tmpCustomThemes.map(({ name, isDark }) => ({ name, isDark })),
-        adsData: convars.adsData,
-        providerLogo: convars.providerLogo,
-        providerName: convars.providerName,
+        adsData: txEnv.adsData,
+        providerLogo: txHostConfig.providerLogo,
+        providerName: txHostConfig.providerName,
+        hostConfigSource: txHostConfig.sourceName,
 
         //auth
         preAuth: authedAdmin && authedAdmin.getAuthData(),
