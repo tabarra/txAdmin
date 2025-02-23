@@ -2,7 +2,7 @@ const modulename = 'WebCtxUtils';
 import fsp from "node:fs/promises";
 import path from "node:path";
 import type { InjectedTxConsts, ThemeType } from '@shared/otherTypes';
-import { txEnv, convars, txDevEnv, txHostConfig } from "@core/globalData";
+import { txEnv, txDevEnv, txHostConfig } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
 import consoleFactory from '@lib/console';
@@ -107,7 +107,6 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //Preparing vars
     const basePath = (ctx.txVars.isWebInterface) ? '/' : consts.nuiWebpipePath;
-    const serverName = txConfig.general.serverName || txEnv.profileName;
     const injectedConsts = {
         //env
         fxsVersion: txEnv.fxsVersionTag,
@@ -116,8 +115,6 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         txaOutdated: txCore.updateChecker.txaUpdateData,
         serverTimezone,
         isWindows: txEnv.isWindows,
-        isZapHosting: convars.isZapHosting, //not in use
-        isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,
         showAdvanced: (txDevEnv.ENABLED || console.isVerbose),
         hasMasterAccount: txCore.adminStore.hasAdmins(true),
@@ -135,7 +132,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     //Prepare placeholders
     const replacers: { [key: string]: string } = {};
     replacers.basePath = `<base href="${basePath}">`;
-    replacers.ogTitle = `txAdmin - ${serverName}`;
+    replacers.ogTitle = `txAdmin - ${txConfig.general.serverName}`;
     replacers.ogDescripttion = `Manage & Monitor your FiveM/RedM Server with txAdmin v${txEnv.txaVersion} atop FXServer ${txEnv.fxsVersion}`;
     replacers.txConstsInjection = `<script>window.txConsts = ${JSON.stringify(injectedConsts)};</script>`;
     replacers.devModules = txDevEnv.ENABLED ? devModulesScript : '';

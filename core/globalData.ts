@@ -519,8 +519,8 @@ export const txDevEnv = Object.freeze(_txDevEnv);
 export const txEnv = Object.freeze({
     //Calculated
     isWindows,
-    // isPterodactyl, //FIXME: ?
-    // isZapHosting, //FIXME: 
+    isPterodactyl, //TODO: remove, used only in HB Data
+    isZapHosting, //TODO: remove, used only in HB Data and authLogic to disable src check
     displayAds,
     adsData,
 
@@ -532,8 +532,8 @@ export const txEnv = Object.freeze({
     fxsPath,
 
     //ConVar
-    profileName, //FIXME: remover de todo lugar que eu conseguir
-    profilePath, //FIXME: trocar pelo profileSubPath em todo lugar que eu conseguir
+    profileName,
+    profilePath, //FIXME: replace by profileSubPath in most places
     profileSubPath: (...parts: string[]) => path.join(profilePath, ...parts),
 });
 
@@ -572,4 +572,4 @@ export const txHostConfig = Object.freeze({
 
 //DEBUG
 // console.dir(txEnv, { compact: true });
-// console.dir(convars, { compact: true });
+// console.dir(txHostConfig, { compact: true });

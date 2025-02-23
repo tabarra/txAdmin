@@ -28,7 +28,6 @@ export default async function DeployerStepper(ctx) {
     //Prepare Output
     const renderData = {
         step: txManager.deployer.step,
-        serverProfile: txEnv.profile,
         deploymentID: txManager.deployer.deploymentID,
         requireDBConfig: false,
         defaultLicenseKey: '',

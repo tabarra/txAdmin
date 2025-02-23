@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
 import { nanoid } from 'nanoid';
-import { convars, txHostConfig } from '@core/globalData';
+import { txHostConfig } from '@core/globalData';
 import CfxProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@lib/console.js';
@@ -114,7 +114,6 @@ export default class AdminStore {
                 this.admins = false;
             } else {
                 const { username, fivemId, password } = txHostConfig.defaults.account;
-                console.log(`Setting up master account '${username}' with credentials provided by ${convars.providerName}.`);
                 this.createAdminsFile(
                     username,
                     fivemId ? `fivem:${fivemId}` : undefined,
@@ -122,6 +121,7 @@ export default class AdminStore {
                     password,
                     password ? false : undefined,
                 );
+                console.ok(`Created master account ${chalkInversePad(username)} with credentials provided by ${txHostConfig.sourceName}.`);
             }
         } else {
             this.loadAdminsFile();

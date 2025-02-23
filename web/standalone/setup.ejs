@@ -141,29 +141,8 @@
                     <div class="card-body">
                         <ul class="stepper linear">
 
-                            <!-- Welcome -->
-                            <li class="step <%= isReset ? 'done' : 'active' %>">
-                                <div class="step-title waves-effect">Welcome, <%= adminUsername %>!</div>
-                                <div class="step-content">
-                                    <% if (serverProfile === 'default') { %>
-                                        Since you didn't select any profile when starting txAdmin, we selected
-                                        <code>default</code> for you.
-                                    <% } else { %>
-                                        You selected the profile <code><%= serverProfile %></code>.
-                                    <% } %>
-                                    <br>
-                                    <% if (!isReset) { %>
-                                        This profile is not configured yet, let's do this now?
-                                    <% } %>
-                                    <div class="step-actions">
-                                        <button class="btn btn-pill btn-info next-step" type="button">Next</button>
-                                    </div>
-                                </div>
-                            </li>
-
-
                             <!-- Server Name -->
-                            <li class="step <%= isReset ? 'done' : '' %>">
+                            <li class="step <%= skipServerName ? 'done' : 'active' %>">
                                 <div class="step-title waves-effect">Server Name</div>
                                 <div class="step-content">
                                     A <strong>short</strong> server name to be used in txAdmin interface and
@@ -182,7 +161,7 @@
 
 
                             <!-- Deployment Type -->
-                            <li class="step">
+                            <li class="step <%= skipServerName ? 'active' : '' %>">
                                 <div class="step-title waves-effect">Deployment Type</div>
                                 <div class="step-content">
                                     <strong>Select</strong> how you want to setup your server:
@@ -293,7 +272,7 @@
                                         <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
                                         Also known as Base Folder. <br>
                                         <% if (hasCustomDataPath) { %>
-                                            <span class="font-weight-bold"><%= hostConfigSource %>: this path must start with <code><%= dataPath %></code>.</span>
+                                            <span class="font-weight-bold"><%= hostConfigSource %>: this path should start with <code><%= dataPath %></code>.</span>
                                         <% } %>
                                         <input type="text" class="form-control mt-2" id="s4LocalDataPathInput"
                                             placeholder="C:/Users/Admin/Desktop/server01">
@@ -372,10 +351,6 @@
                                 <div class="step-title waves-effect">Finish</div>
                                 <div class="step-content">
                                     <h4 id="finishMessage">We are all set!</h4>
-                                    <% if (windowsBatPath) { %>
-                                        <!-- You can run this profile by executing: <br> -->
-                                        <!-- <code><%= windowsBatPath %></code> <br> -->
-                                    <% } %>
                                     <span id="saveError" class="text-danger fade-in d-none"></span>
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-success next-step" type="button" 
@@ -409,7 +384,7 @@
         const txDataPath = '<%= dataPath %>';
         const forceGameName = '<%= forceGameName %>' || false;
         const deployerEngineVersion = parseInt('<%= deployerEngineVersion %>');
-        const isReset = ('<%= isReset %>' === 'true');
+        const skipServerName = ('<%= skipServerName %>' === 'true');
         const SPINNER_HTMLSized = `<div style="min-height: 250px; margin: auto;">${SPINNER_HTML}</div>`;
         const connectErrorMessage = `<b>Unable to connect to txAdmin.</b> <br> If you closed it, please start again and retry.`;
 
@@ -426,7 +401,7 @@
             autoFocusInput: true,
             showFeedbackPreloader: true,
             stepTitleNavigation: false,
-            firstActive: (isReset)? 2 : 0,
+            firstActive: skipServerName ? 1 : 0,
             feedbackPreloader: SPINNER_HTMLSized,
         });
 

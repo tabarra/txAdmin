@@ -5,7 +5,7 @@ import { Deployer } from "./deployer";
 import { TxConfigState } from "@shared/enums";
 import type { GlobalStatusType } from "@shared/socketioTypes";
 import quitProcess from "@lib/quitProcess";
-import consoleFactory, { processStdioEnsureEol } from "@lib/console";
+import consoleFactory, { processStdioEnsureEol, setTTYTitle } from "@lib/console";
 const console = consoleFactory('Manager');
 
 
@@ -34,9 +34,16 @@ export default class TxManager {
         //FIXME: if ever changing this, need to make sure the other data
         //in the status event will be pushed, since right some of now it
         //relies on this event every 5 seconds
+        //NOTE: probably txManager should be the one to decide if stuff like the host
+        //stats changed enough to merit a refresh push
         setInterval(async () => {
             txCore.webServer.webSocket.pushRefresh('status');
         }, 5000);
+
+        //Updates the terminal title every 15 seconds
+        setInterval(() => {
+            setTTYTitle(`(${txCore.fxPlayerlist.onlineCount}) ${txConfig.general.serverName} - txAdmin`);
+        }, 15000);
 
         //Pre-calculate static data
         setTimeout(() => {

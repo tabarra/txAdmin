@@ -13,8 +13,8 @@ const console = consoleFactory(modulename);
 
 export type GetConfigsResp = {
     locales: { code: string, label: string }[],
-    // txDataPath: string,
-    // txDataEnforced: boolean,
+    dataPath: string,
+    hasCustomDataPath: boolean,
     changelog: ConfigChangelogEntry[],
     storedConfigs: PartialTxConfigs,
     defaultConfigs: TxConfigs,
@@ -44,8 +44,8 @@ export default async function GetSettingsConfigs(ctx: AuthedCtx) {
 
     const outData: GetConfigsResp = {
         locales,
-        // txDataPath: txEnv.dataPath,
-        // txDataEnforced: true,
+        dataPath: txHostConfig.dataPath,
+        hasCustomDataPath: txHostConfig.hasCustomDataPath,
         changelog: txCore.configStore.getChangelog(),
         storedConfigs: txCore.configStore.getStoredConfig(),
         defaultConfigs: ConfigStore.SchemaDefaults,

@@ -45,8 +45,6 @@ export type InjectedTxConsts = {
 
     serverTimezone: string;
     isWindows: boolean;
-    isZapHosting: boolean;
-    isPterodactyl: boolean;
     isWebInterface: boolean;
     showAdvanced: boolean;
     hasMasterAccount: boolean;

@@ -3,7 +3,7 @@ import path from 'node:path';
 import fsp from 'node:fs/promises';
 import ejs from 'ejs';
 import xssInstancer from '@lib/xss.js';
-import { convars, txDevEnv, txEnv, txHostConfig } from '@core/globalData';
+import { txDevEnv, txEnv, txHostConfig } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import getReactIndex, { tmpCustomThemes } from '../getReactIndex';
 import { CtxTxVars } from './ctxVarsMw';
@@ -176,14 +176,12 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
             isWebInterface,
             basePath: (isWebInterface) ? '/' : consts.nuiWebpipePath,
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
-            serverName: txConfig.general.serverName || txEnv.profileName,
+            serverName: txConfig.general.serverName,
             uiTheme: legacyTheme,
             fxServerVersion: txEnv.fxsVersionTag,
             txAdminVersion: txEnv.txaVersion,
             hostConfigSource: txHostConfig.sourceName,
             jsInjection: getJavascriptConsts({
-                isZapHosting: convars.isZapHosting, //not in use
-                isPterodactyl: convars.isPterodactyl, //not in use
                 isWebInterface: isWebInterface,
                 csrfToken: possiblyAuthedAdmin?.csrfToken ?? 'not_set',
                 TX_BASE_PATH: (isWebInterface) ? '' : consts.nuiWebpipePath,

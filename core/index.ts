@@ -13,9 +13,15 @@ const console = consoleFactory();
 
 
 //Early process stuff
-setupProcessHandlers();
-setTTYTitle(txEnv.profile);
-checkPreRelease();
+try {
+    process.title = 'txAdmin'; //doesn't work for now
+    setupProcessHandlers();
+    setTTYTitle();
+    checkPreRelease();
+} catch (error) {
+    fatalError.Boot(0, 'Failed early process setup.', error);
+}
+console.log(`Starting txAdmin v${txEnv.txaVersion}/b${txEnv.fxsVersionTag}...`);
 
 
 //Setting up txData & Profile
@@ -29,11 +35,13 @@ try {
         ['Path', txHostConfig.dataPath],
     ], error);
 }
+let isNewProfile = false;
 try {
     if (fs.existsSync(txEnv.profilePath)) {
         ensureProfileStructure();
     } else {
         setupProfile();
+        isNewProfile = true;
     }
 } catch (error) {
     fatalError.Boot(2, [
@@ -43,10 +51,12 @@ try {
         ['Profile Path', txEnv.profilePath],
     ], error);
 }
+if (isNewProfile && txEnv.profileName !== 'default') {
+    console.log(`Profile path: ${txEnv.profilePath}`);
+}
 
 
 //Start txAdmin (have fun 😀)
-console.log(`Starting profile '${txEnv.profileName}' on v${txEnv.txaVersion}/b${txEnv.fxsVersionTag}`);
 try {
     bootTxAdmin();
 } catch (error) {

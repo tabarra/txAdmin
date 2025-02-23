@@ -11,13 +11,13 @@ export default function setupProcessHandlers() {
 
     //Handling warnings (ignoring some)
     Error.stackTraceLimit = 25;
-    process.removeAllListeners('warning'); //FIXME: this errors in Bun
+    process.removeAllListeners('warning'); //FIXME: this causes errors in Bun
     process.on('warning', (warning) => {
         //totally ignoring the warning, we know this is bad and shouldn't happen
         if (warning.name === 'UnhandledPromiseRejectionWarning') return;
 
         if (warning.name !== 'ExperimentalWarning' || txDevEnv.ENABLED) {
-            console.dir(warning, { multilineError: true });
+            console.verbose.dir(warning, { multilineError: true });
         }
     });
 

@@ -47,8 +47,8 @@ const printDiagnostics = async () => {
     console.error(`Entropy: ${entropy}`);
     console.error(`Distro: ${osDistro}`);
     console.error(`txAdmin: ${txEnv.txaVersion}`);
-    console.error(`FXServer: ${txEnv.fxsVersionDisplay}`);
-    console.error(`Pterodactyl: ${convars.isPterodactyl}`);
+    console.error(`FXServer: ${txEnv.fxsVersionTag}`);
+    console.error(`Provider: ${txHostConfig.providerName ?? 'none'}`);
     console.error(`Unique Test: secure ${secureStorage.size}/100, non-secure ${nonsecureStorage.size}/100`);
 };
 

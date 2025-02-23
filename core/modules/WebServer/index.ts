@@ -239,7 +239,9 @@ export default class WebServer {
                         'Please report it to the developers.',
                     ]);
                 }
-                console.ok(`Listening on ${netInterface}.`);
+                if (txHostConfig.netInterface) {
+                    console.ok(`Listening on ${netInterface}.`);
+                }
                 this.isListening = true;
             });
         } catch (error) {
