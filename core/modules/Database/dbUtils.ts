@@ -1,6 +1,5 @@
 const modulename = 'IDGen';
 import fsp from 'node:fs/promises';
-import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import * as nanoidSecure from 'nanoid';
 import * as nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@shared/consts';

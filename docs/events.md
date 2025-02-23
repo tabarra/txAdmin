@@ -11,7 +11,7 @@ The event name will be `txAdmin:events:<name>` and the first (and only) paramete
 
 ### txAdmin:events:announcement
 Broadcasted when an announcement is made using txAdmin.  
-Can be used with the convar `txAdmin-hideDefaultAnnouncement` to display custom announcement notifications.  
+If you want to hide the default notification, you can do that in `txAdmin -> Settings -> Game -> Notifications`.  
 Event Data:
 - `author`: The name of the admin or `txAdmin`.
 - `message`: The message of the broadcast.
@@ -27,7 +27,7 @@ Event Data:
 
 ### txAdmin:events:scheduledRestart
 Broadcasted automatically `[30, 15, 10, 5, 4, 3, 2, 1]` minutes before a scheduled restart.  
-Can be used with the convar `txAdmin-hideDefaultScheduledRestartWarning` to display a custom warning notification.  
+If you want to hide the default notification, you can do that in `txAdmin -> Settings -> Game -> Notifications`.   
 Event Data:
 - `secondsRemaining`: The number of seconds before the scheduled restart.  
 - `translatedMessage`: The translated message to show on the announcement.
@@ -78,7 +78,7 @@ Event Data:
 
 ### txAdmin:events:playerDirectMessage
 Broadcasted when an admin DMs a player.
-Can be used with the convar `txAdmin-hideDefaultDirectMessage` to display custom direct message notifications.  
+If you want to hide the default notification, you can do that in `txAdmin -> Settings -> Game -> Notifications`.   
 Event Data:
 - `target`: The id of the player to receive the DM.
 - `author`: The name of the admin.
@@ -102,7 +102,7 @@ Event Data:
 
 ### txAdmin:events:playerWarned
 Broadcasted when a player is warned using txAdmin.  
-Can be used with the convar `txAdmin-hideDefaultWarning` to display custom warning.  
+If you want to hide the default notification, you can do that in `txAdmin -> Settings -> Game -> Notifications`.  
 Note: starting on v7.3, the `target` parameter was replaced by `targetNetId`, `targetIds`, and `targetName` to accomodate offline warns.
 Event Data:
 - `author`: The name of the admin.

@@ -1,4 +1,4 @@
-import { Link, Route, Switch } from "wouter";
+import { Route, Switch } from "wouter";
 import Login from "../pages/auth/Login";
 import CfxreCallback from "../pages/auth/CfxreCallback";
 import AddMasterPin from "../pages/auth/AddMasterPin";

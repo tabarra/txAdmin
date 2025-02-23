@@ -58,7 +58,7 @@ const parseTheme = (themeName: string) => {
  * Atom
  */
 const themeAtom = atom(initialAtomValue);
-export const isDarkModeAtom = atom((get) => {
+const isDarkModeAtom = atom((get) => {
     const currTheme = get(themeAtom);
     return parseTheme(currTheme).isDarkScheme;
 });
@@ -116,7 +116,6 @@ export const useTheme = () => {
         setTheme,
     }
 };
-
 
 export const useToggleTheme = () => {
     const setTheme = useSetAtom(themeAtom);

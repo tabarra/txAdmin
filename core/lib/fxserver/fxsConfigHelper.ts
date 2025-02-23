@@ -318,7 +318,7 @@ export const parseRecursiveConfig = async (
     const cfgLines = cfgData.split('\n');
 
     // Parse CFG lines
-    const parsedCommands: (Command|ExecRecursionError)[] = [];
+    const parsedCommands: (Command | ExecRecursionError)[] = [];
     for (let i = 0; i < cfgLines.length; i++) {
         const lineString = cfgLines[i].trim();
         const lineNumber = i + 1;
@@ -333,7 +333,7 @@ export const parseRecursiveConfig = async (
             // If exec command, process recursively then flatten the output
             if (cmdObject.command === 'exec' && typeof cmdObject.args[0] === 'string') {
                 //FIXME: temporarily disable resoure references
-                if(!cmdObject.args[0].startsWith('@')){
+                if (!cmdObject.args[0].startsWith('@')) {
                     const recursiveCfgAbsolutePath = resolveCFGFilePath(cmdObject.args[0], serverDataPath);
                     try {
                         const extractedCommands = await parseRecursiveConfig(null, recursiveCfgAbsolutePath, serverDataPath, stack);
@@ -596,7 +596,7 @@ const getConnectEndpoint = (endpoints: EndpointsObjectType, hasEndpointCommand: 
         return endpoints[ep].tcp && endpoints[ep].udp;
     });
     if (!tcpudpEndpoint) {
-        throw new Error('Your config file does not not contain a ip:port used in both `endpoint_add_tcp` and `endpoint_add_udp`. Players would not be able to connect.');
+        throw new Error('Your config file does not not contain a ip:port used in both `endpoint_add_tcp` and `endpoint_add_udp` commands. Players would not be able to connect.');
     }
 
     return tcpudpEndpoint.replace(/(0\.0\.0\.0|\[::\])/, '127.0.0.1');

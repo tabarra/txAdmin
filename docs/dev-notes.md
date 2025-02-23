@@ -186,15 +186,6 @@ Legend:
     - [ ] check for pending changes on the navigate-away buttons
     - [ ] use jsonForgivingParse for embed jsons and custom locale
     - [ ] use the standalone json editor page
-    - [ ] write the reset fxserver button
-        - requires changing the webroute permissions and updating the MainRouter
-    - [ ] Add a "Dev Server Mode" (`general.devServerMode`), which:
-        - [ ] changes the txAdmin logo and maybe some other styling changes to make it easier for devs to see notice if they are on the prod or dev txAdmins
-        - [ ] disables `server.shutdownNoticeDelayMs`
-        - [ ] disables prompt to confirm on server controls and resetting fxserver
-        - [ ] maybe some other slight
-        - [ ] allows runcode
-        - [ ] maybe BigRadio group with Dev, Normal, and Lockdown mode, which blocks some stuff from the NUI, secure mode blocks runcode and force system chat?
     - [ ] if you type `E:\FiveM\txData\default.base` in the fxserver settings it will save but show as unsaved because the saved was the `cleanPath()` version `E:/FiveM/txData/default.base`
 - [ ] Player drops page
     - [ ] fix: blurred chart lines
@@ -732,31 +723,6 @@ cfxui colors:
 =======================================
 
 ## CLTR+C+V
-```json
-{
-    "interface": "192.168.0.123",
-    "fxServerPort": 30120,
-    "txAdminPort": 40120,
-    "loginPageLogo": "https://github.com/tabarra/txAdmin/raw/master/docs/banner.png",
-    "defaults": {
-        "license": "cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx",
-        "maxClients": 48,
-        "mysqlHost": "xxxxxxxxxx",
-        "mysqlUser": "xxxxxxxxxx",
-        "mysqlPassword": "xxxxxxxxxx",
-        "mysqlDatabase": "xxxxxxxxxx"
-    },
-    "customer": {
-        "name": "tabarra",
-        "password_hash": "$2y$12$WNuN6IxozL4CjgScsLvmGOmxtskg8EcPe67HtUw0ENeCCSaZ.z3AW"
-    },
-
-    "interface-": false,
-    "loginPageLogo-": false,
-    "customer-": false
-}
-```
-
 ```bash
 # repo stuff
 npx knip

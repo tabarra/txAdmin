@@ -54,7 +54,7 @@ export default class WebServer {
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
             .update(txEnv.profilePath)
             .digest('hex');
-        this.sessionCookieName = `tx:${txEnv.profile}:${pathHash}`;
+        this.sessionCookieName = `tx:${pathHash}`;
         this.luaComToken = nanoid();
 
 
