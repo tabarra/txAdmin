@@ -11,6 +11,7 @@ monitor-*.zip
 bundle_size_report.html
 .github/.cienv
 scripts/**/*.local.*
+.runtime/
 
 # IDE Specific
 .idea

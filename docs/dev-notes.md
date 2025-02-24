@@ -109,13 +109,10 @@ Legend:
 ## Other stuff
 - [x] new env vars
 - [x] remove dynamicAds from the modules
+- [x] fix custom locale
 - [!] add stats tracking for the framework team (ask them, idk)
 - [!] package updates - test radix stuff
 - [!] commit stashed stuff
-- [!] fix custom locale
-    - see if it's viable to use `fsp.link()` or `fsp.symlink()`
-    - https://nodejs.org/docs/latest-v16.x/api/fs.html#fspromiseslinkexistingpath-newpath
-    - https://nodejs.org/docs/latest-v16.x/api/fs.html#fspromisessymlinktarget-path-type
 - [!] check txAdmin-private
 - [ ] implement `cleanFullPath.ts` in settings save ui & api for comparison consistency
     - [ ] add it to `setup/save.js -> handleValidateLocalDataFolder()` as well

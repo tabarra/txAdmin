@@ -8,7 +8,7 @@ import { resolveCFGFilePath, validateFixServerConfig } from '@lib/fxserver/fxsCo
 import { msToShortishDuration } from '@lib/misc';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 import { UpdateConfigKeySet } from '@modules/ConfigStore/utils';
-import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isValidChildProcess, mutableConvarConfigDependencies, stringifyConsoleArgs } from './utils';
+import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isValidChildProcess, mutableConvarConfigDependencies, setupCustomLocaleFile, stringifyConsoleArgs } from './utils';
 import ProcessManager, { ChildProcessStateInfo } from './ProcessManager';
 import handleFd3Messages from './handleFd3Messages';
 import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
@@ -41,7 +41,7 @@ export default class FxRunner {
      * Triggers a convar update
      */
     public handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
-        this.updateMutableConvars();
+        this.updateMutableConvars().catch(() => { });
     }
 
 
@@ -116,7 +116,7 @@ export default class FxRunner {
             return msg;
         }
 
-        //Setup spawn variables
+        //Setup spawn variables & locale file
         let fxSpawnVars;
         const newServerMutex = genMutex();
         try {
@@ -125,6 +125,13 @@ export default class FxRunner {
             // debugPrintSpawnVars(fxSpawnVars); //DEBUG
         } catch (error) {
             const errMsg = `Error setting up spawn variables: ${(error as any).message}`;
+            console.error(errMsg);
+            return errMsg;
+        }
+        try {
+            await setupCustomLocaleFile();
+        } catch (error) {
+            const errMsg = `Error copying custom locale: ${(error as any).message}`;
             console.error(errMsg);
             return errMsg;
         }
@@ -355,9 +362,10 @@ export default class FxRunner {
      * Useful for when we change txAdmin settings and want it to reflect on the server.
      * This will also fire the `txAdmin:event:configChanged`
      */
-    private updateMutableConvars() {
+    private async updateMutableConvars() {
         console.log('Updating FXServer ConVars.');
         try {
+            await setupCustomLocaleFile();
             const convarList = getMutableConvars(false);
             for (const [set, convar, value] of convarList) {
                 this.sendCommand(set, [convar, value], SYM_SYSTEM_AUTHOR);
