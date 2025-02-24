@@ -3,6 +3,7 @@ import fsp from 'node:fs/promises';
 import throttle from 'lodash-es/throttle.js';
 import consoleFactory from '@lib/console';
 import { txDevEnv, txEnv } from '@core/globalData';
+import type { z, ZodSchema } from 'zod';
 const console = consoleFactory(modulename);
 
 
@@ -48,6 +49,15 @@ export default class CacheStore {
     get(key: string) {
         if (!(this.#cache instanceof Map)) return undefined;
         return this.#cache.get(key);
+    }
+
+    getTyped<T extends ZodSchema>(key: string, schema: T): z.infer<T> | undefined {
+        if (!(this.#cache instanceof Map)) return undefined;
+        const value = this.#cache.get(key);
+        if (!value) return undefined;
+        const parsed = schema.safeParse(value);
+        if (parsed.success) return parsed.data;
+        return undefined;
     }
 
     set(key: string, value: AcceptedCachedTypes) {

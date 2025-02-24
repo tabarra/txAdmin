@@ -4,7 +4,7 @@ import StreamValues from 'stream-json/streamers/StreamValues';
 import { customAlphabet } from 'nanoid/non-secure';
 import dict49 from 'nanoid-dictionary/nolookalikes';
 import consoleFactory from '@lib/console';
-import { validateFixServerConfig } from '@lib/fxserver/fxsConfigHelper';
+import { resolveCFGFilePath, validateFixServerConfig } from '@lib/fxserver/fxsConfigHelper';
 import { msToShortishDuration } from '@lib/misc';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 import { UpdateConfigKeySet } from '@modules/ConfigStore/utils';
@@ -13,6 +13,7 @@ import ProcessManager, { ChildProcessStateInfo } from './ProcessManager';
 import handleFd3Messages from './handleFd3Messages';
 import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
 import { txHostConfig } from '@core/globalData';
+import path from 'node:path';
 const console = consoleFactory('FXRunner');
 const genMutex = customAlphabet(dict49, 5);
 
@@ -469,23 +470,27 @@ export default class FxRunner {
      * The resolved paths of the server
      * FIXME: check where those paths are needed and only calculate what is relevant
      */
-    // public get serverPaths() {
-    //     if (!this.isConfigured) return;
-    //     return {
-    //         data: {
-    //             absolute: 'xxx',
-    //         },
-    //         //TODO: cut paste logic from resolveCFGFilePath
-    //         resources: {
-    //             //???
-    //         },
-    //         cfg: {
-    //             fileName: 'xxx',
-    //             relativePath: 'xxx',
-    //             absolutePath: 'xxx',
-    //         }
-    //     };
-    // }
+    public get serverPaths() {
+        if (!this.isConfigured) return;
+        return {
+            dataPath: path.normalize(txConfig.server.dataPath!), //to maintain consistency
+            cfgPath: resolveCFGFilePath(txConfig.server.cfgPath, txConfig.server.dataPath!),
+        }
+        // return {
+        //     data: {
+        //         absolute: 'xxx',
+        //     },
+        //     //TODO: cut paste logic from resolveCFGFilePath
+        //     resources: {
+        //         //???
+        //     },
+        //     cfg: {
+        //         fileName: 'xxx',
+        //         relativePath: 'xxx',
+        //         absolutePath: 'xxx',
+        //     }
+        // };
+    }
 
 
     /**

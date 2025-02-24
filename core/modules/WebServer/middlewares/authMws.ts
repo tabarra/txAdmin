@@ -3,6 +3,7 @@ import consoleFactory from '@lib/console';
 import { checkRequestAuth } from "../authLogic";
 import { ApiAuthErrorResp, ApiToastResp, GenericApiErrorResp } from "@shared/genericApiTypes";
 import { InitializedCtx } from '../ctxTypes';
+import { txHostConfig } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 const webLogoutPage = `<style>
@@ -35,6 +36,62 @@ body {
         window.parent.location.href = '/login#expired';
     }, 2000);
 </script>`;
+
+
+/**
+ * For the hosting provider routes
+ */
+export const hostAuthMw = async (ctx: InitializedCtx, next: Function) => {
+    const docs = 'https://aka.cfx.re/txadmin-env-config';
+
+    //Token disabled
+    if (txHostConfig.hostApiToken === 'disabled') {
+        return await next();
+    }
+
+    //Token undefined
+    if (!txHostConfig.hostApiToken) {
+        return ctx.send({
+            error: 'token not configured',
+            desc: 'need to configure the TXHOST_API_TOKEN environment variable to be able to use the status endpoint',
+            docs,
+        });
+    }
+
+    //Token available
+    let tokenProvided: string | undefined;
+    const headerToken = ctx.headers['x-txadmin-envtoken'];
+    if (typeof headerToken === 'string' && headerToken) {
+        tokenProvided = headerToken;
+    }
+    const paramsToken = ctx.query.envtoken;
+    if (typeof paramsToken === 'string' && paramsToken) {
+        tokenProvided = paramsToken;
+    }
+    if (headerToken && paramsToken) {
+        return ctx.send({
+            error: 'token conflict',
+            desc: 'cannot use both header and query token',
+            docs,
+        });
+    }
+    if (!tokenProvided) {
+        return ctx.send({
+            error: 'token missing',
+            desc: 'a token needs to be provided in the header or query string',
+            docs,
+        });
+    }
+    if (tokenProvided !== txHostConfig.hostApiToken) {
+        return ctx.send({
+            error: 'invalid token',
+            desc: 'the token provided does not match the TXHOST_API_TOKEN environment variable',
+            docs,
+        });
+    }
+
+    return await next();
+};
 
 
 /**

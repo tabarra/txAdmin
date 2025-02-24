@@ -10,6 +10,13 @@ import consts from '@shared/consts';
  */
 export const hostEnvVarSchemas = {
     //General
+    API_TOKEN: z.union([
+        z.literal('disabled'),
+        z.string().regex(
+            /^[A-Za-z0-9_-]{16,48}$/,
+            'Token must be alphanumeric, underscores or dashes only, and between 16 and 48 characters long.'
+        ),
+    ]),
     DATA_PATH: z.string().min(1).refine(
         (val) => path.isAbsolute(val),
         'DATA_PATH must be an absolute path'

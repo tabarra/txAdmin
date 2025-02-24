@@ -292,6 +292,7 @@ if (netInterface) {
  * MARK: GENERAL
  */
 const forceGameName = hostVars.GAME_NAME;
+const hostApiToken = hostVars.API_TOKEN;
 
 const forceMaxClients = handleMultiVar(
     'MAX_SLOTS',
@@ -545,6 +546,7 @@ export const txHostConfig = Object.freeze({
     forceGameName,
     forceMaxClients,
     forceQuietMode,
+    hostApiToken,
 
     //Networking
     txaUrl,

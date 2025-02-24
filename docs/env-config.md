@@ -58,6 +58,13 @@ The specific way to set up those variables vary from system to system, and there
     - If true, do not pipe the FXServer's stdout/stderr to txAdmin's stdout, meaning that you will only be able to see the server output by visiting the txAdmin Live Console page.
     - If enabled, server owners won't be able to disable it in `txAdmin -> Settings -> FXServer` page.
     - <mark>NOTE:</mark> We recommend that Game Server Providers enable this option.
+- **TXHOST_API_TOKEN**
+    - **Default value:** _undefined_.
+    - **Options:** `disabled` or a string matching `/^[A-Za-z0-9_-]{16,48}$/`.
+    - The token to be able to access the `/host/status` endpoint via the `x-txadmin-envtoken` HTTP header, or the `?envtoken=` URL parameter.
+    - If token is _undefined_: endpoint disabled & unavailable.
+    - If token is string `disabled`: endpoint will be publicly available without any restrictions.
+    - If token is present: endpoint requires the token to be present.
 
 ### Networking
 - **TXHOST_TXA_URL:**

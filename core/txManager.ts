@@ -6,7 +6,26 @@ import { TxConfigState } from "@shared/enums";
 import type { GlobalStatusType } from "@shared/socketioTypes";
 import quitProcess from "@lib/quitProcess";
 import consoleFactory, { processStdioEnsureEol, setTTYTitle } from "@lib/console";
+import { z } from "zod";
 const console = consoleFactory('Manager');
+
+//Types
+type HostStatusType = {
+    //txAdmin state
+    cfgPath: string | null;
+    dataPath: string | null;
+    isConfigured: boolean;
+    playerCount: number;
+    status: typeof txCore.fxMonitor.currentStatus;
+
+    //Detected at runtime
+    cfxId: string | null;
+    gameName: 'fivem' | 'redm' | null;
+    joinLink: string | null;
+    joinDeepLink: string | null;
+    playerSlots: number | null;
+    projectName: string | null;
+}
 
 
 /**
@@ -126,6 +145,31 @@ export default class TxManager {
 
 
     /**
+     * Returns the status object that is sent to the host status endpoint
+     */
+    get hostStatus(): HostStatusType {
+        const serverPaths = txCore.fxRunner.serverPaths;
+        const cfxId = txCore.cacheStore.getTyped('fxsRuntime:cfxId', z.string()) ?? null;
+        return {
+            //txAdmin state
+            isConfigured: this.configState === TxConfigState.Ready,
+            dataPath: serverPaths?.dataPath ?? null,
+            cfgPath: serverPaths?.cfgPath ?? null,
+            playerCount: txCore.fxPlayerlist.onlineCount,
+            status: txCore.fxMonitor.currentStatus,
+
+            //Detected at runtime
+            cfxId,
+            gameName: txCore.cacheStore.getTyped('fxsRuntime:gameName', z.enum(['fivem', 'redm'])) ?? null,
+            joinDeepLink: cfxId ? `fivem://connect/cfx.re/join/${cfxId}` : null,
+            joinLink: cfxId ? `https://cfx.re/join/${cfxId}` : null,
+            playerSlots: txCore.cacheStore.getTyped('fxsRuntime:maxClients', z.number()) ?? null,
+            projectName: txCore.cacheStore.getTyped('fxsRuntime:projectName', z.string()) ?? null,
+        }
+    }
+
+
+    /**
      * Returns the global status object that is sent to the clients
      */
     get globalStatus(): GlobalStatusType {
@@ -141,7 +185,6 @@ export default class TxManager {
                 name: txConfig.general.serverName,
                 whitelist: txConfig.whitelist.mode,
             },
-            // @ts-ignore scheduler type narrowing is wrong because cant use "as const" in javascript
             scheduler: txCore.fxScheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()
         }
     }
