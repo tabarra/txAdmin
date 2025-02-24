@@ -27,7 +27,7 @@ TX_ADMINS = {}
 TX_PLAYERLIST = {}
 TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
-TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
+TX_VERSION = GetResourceMetadata('monitor', 'version') -- for now, only used in the start print
 TX_IS_SERVER_SHUTTING_DOWN = false
 
 -- Checking convars

@@ -73,8 +73,8 @@ export default class FxRunner {
             return console.warn('The server will not auto start because there are no admins configured.');
         }
 
-        if(txConfig.server.quiet || txHostConfig.forceQuietMode){
-           console.defer(1000).warn('FXServer Quiet mode is enabled. Access the Live Console to see the logs.');     
+        if (txConfig.server.quiet || txHostConfig.forceQuietMode) {
+            console.defer(1000).warn('FXServer Quiet mode is enabled. Access the Live Console to see the logs.');
         }
 
         this.spawnServer(true);

@@ -125,7 +125,7 @@ export default function drawFullPerfChart({
         .attr('transform', translate(width - margins.right + margins.axis, margins.top))
         .call(bucketsAxis);
 
-    const playersAxisTickValues = (maxPlayers <= 7) ? d3.range(maxPlayers + 1) : null;
+    const playersAxisTickValues = (maxPlayersDomain <= 7) ? d3.range(maxPlayersDomain + 1) : null;
     const playersAxis = d3.axisLeft(playersScale)
         .tickFormat(t => t.toString())
         .tickValues(playersAxisTickValues as any); //integer values only 

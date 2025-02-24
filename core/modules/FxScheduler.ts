@@ -118,7 +118,7 @@ export default class FxScheduler {
                 nextRelativeMs: false,
                 nextSkip: false,
                 nextIsTemp: false,
-            };
+            } as const;
         }
     }
 
