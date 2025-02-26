@@ -5,7 +5,7 @@ import got from '@lib/got';
 import getOsDistro from '@lib/host/getOsDistro.js';
 import getHostUsage from '@lib/host/getHostUsage';
 import pidUsageTree from '@lib/host/pidUsageTree.js';
-import { txEnv } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import si from 'systeminformation';
 import consoleFactory from '@lib/console';
 import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
@@ -269,6 +269,13 @@ export const getTxAdminData = async () => {
     const stats = txCore.metrics.txRuntime; //shortcut
     const memoryUsage = getHeapStatistics();
 
+    let hostApiTokenState = 'not configured';
+    if (txHostConfig.hostApiToken === 'disabled') {
+        hostApiTokenState = 'disabled';
+    } else if (txHostConfig.hostApiToken) {
+        hostApiTokenState = 'configured';
+    }
+
     return {
         //Stats
         uptime: msToDuration(process.uptime() * 1000),
@@ -294,6 +301,17 @@ export const getTxAdminData = async () => {
         //Env stuff
         fxServerPath: txEnv.fxsPath,
         fxServerHost: txCore.fxRunner.child?.netEndpoint ?? '--',
+        txHostConfig: {
+            ...txHostConfig,
+            dataSubPath: undefined,
+            hostApiToken: hostApiTokenState,
+            defaults: Object.entries(txHostConfig.defaults).filter(([k, v]) => Boolean(v)).map(([k, v]) => k),
+        },
+        txEnv: {
+            ...txEnv,
+            adsData: undefined,
+        },
+
 
         //Usage stuff
         memoryUsage: {
