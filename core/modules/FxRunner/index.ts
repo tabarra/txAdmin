@@ -109,6 +109,13 @@ export default class FxRunner {
      * NOTE: Don't use txConfig in here to avoid race conditions.
      */
     public async spawnServer(shouldAnnounce = false) {
+        //If txAdmin is shutting down
+        if(txManager.isShuttingDown) {
+            const msg = `Cannot start the server while txAdmin is shutting down.`;
+            console.error(msg);
+            return msg;
+        }
+
         //If the server is already alive
         if (this.proc !== null) {
             const msg = `The server has already started.`;

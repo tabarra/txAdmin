@@ -41,6 +41,7 @@ export default class FxMonitor {
     private lastHealthCheckErrorMessage: string | null = null; //to print warning
     private isAwaitingRestart = false; //to prevent spamming while the server restarts (5s)
     private hasServerStartedYet = false;
+    public readonly timers: NodeJS.Timer[] = [];
 
     //to prevent DDoS crash false positive
     private readonly swLastRefreshStatus = new Stopwatch();
@@ -57,10 +58,11 @@ export default class FxMonitor {
 
     constructor() {
         //Cron functions
-        setInterval(() => {
+        const cronId = setInterval(() => {
             this.sendHealthCheck();
             this.refreshServerStatus();
         }, 1000);
+        this.timers.push(cronId);
     }
 
 

@@ -34,7 +34,7 @@ type HostStatusType = {
 export default class TxManager {
     public deployer: Deployer | null = null; //FIXME: implementar o deployer
     private readonly moduleShutdownHandlers: (() => void)[] = [];
-    private isShuttingDown = false;
+    public isShuttingDown = false;
 
     //TODO: move txRuntime here?!
 
@@ -84,6 +84,16 @@ export default class TxManager {
         }
         console.warn(`Got ${signal}, shutting down...`);
         this.isShuttingDown = true;
+
+        //Stop all module timers
+        for (const moduleName of Object.keys(txCore)) {
+            const module = txCore[moduleName as keyof typeof txCore] as GenericTxModuleInstance;
+            if (Array.isArray(module.timers)) {
+                for (const interval of module.timers) {
+                    clearInterval(interval);
+                }
+            }
+        }
 
         //Sets a hard limit to the shutdown process
         setTimeout(() => {
