@@ -26,7 +26,7 @@ const bootGracePeriod = typeDefinedConfig({
 
 const resourceStartingTolerance = typeDefinedConfig({
     name: 'Resource Starting Tolerance',
-    default: 120,
+    default: 90,
     validator: z.number().int().min(30),
     fixer: SYM_FIXER_DEFAULT,
 });
