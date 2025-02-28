@@ -35,33 +35,42 @@
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">txAdmin Runtime:</div>
             <div class="card-body">
-                <h5>Stats:</h5>
-                <strong>Versions:</strong> 
-                    <code>v<%= txAdminVersion %></code> / <code><%= fxServerVersion %></code> <br>
                 <strong>Uptime:</strong> <code><%= txadmin.uptime %></code> <br>
-                <strong>FXServer Path:</strong> <code><%= txadmin.fxServerPath %></code> <br>
-                <strong>FXServer Endpoint:</strong> <code><%= txadmin.fxServerHost %></code> <br>
-                <strong>Monitor Restarts:</strong> 
-                    <code>CL <%= txadmin.monitorRestarts.close %></code> /
-                    <code>HB <%= txadmin.monitorRestarts.heartBeat %></code> / 
-                    <code>HC <%= txadmin.monitorRestarts.healthCheck %></code> /
-                    <code>BO <%= txadmin.monitorRestarts.both %></code> <br>
-                <strong>HB Fails:</strong>
-                    <code>HTTP <%= txadmin.hbHTTPFails %></code> / <code>FD3 <%= txadmin.hbFD3Fails %></code> <br>
-                <strong>Logs Storage Size:</strong> <code><%= txadmin.logStorageSize %></code> <br>
-                <strong>Logger Status:</strong> <br>
-                ├─ Admin: <code><%= txadmin.loggerStatusAdmin %></code> <br>
-                ├─ FXServer: <code><%= txadmin.loggerStatusFXServer %></code> <br>
-                └─ Server: <code><%= txadmin.loggerStatusServer %></code> <br>
-                <strong>Performance Times (cnt / q5 / q25 / q50 / q75 / q95):</strong> <br>
-                ├─ BanCheck: <code><%= txadmin.banCheckTime %></code> <br>
-                ├─ WhitelistCheck: <code><%= txadmin.whitelistCheckTime %></code> <br>
-                ├─ PlayersTable: <code><%= txadmin.playersTableSearchTime %></code> <br>
-                └─ HistoryTable: <code><%= txadmin.historyTableSearchTime %></code> <br>
+                <strong>Versions:</strong> 
+                    <code>v<%= txAdminVersion %></code> /
+                    <code>b<%= fxServerVersion %></code> <br>
+                <strong>Database File Size:</strong> <code><%= txadmin.databaseFileSize %></code> <br>
+                <strong>Env:</strong> <br>
+                ├─ FXServer: <code><%= txadmin.txEnv.fxsPath %></code> <br>
+                ├─ Profile: <code><%= txadmin.txEnv.profilePath %></code> <br>
+                ├─ Defaults: <code><%= txadmin.txHostConfig.defaults.length > 0 ? txadmin.txHostConfig.defaults.join(', ') : '--' %></code> <br>
+                ├─ Interface: <code><%= txadmin.txHostConfig.netInterface ?? '--' %></code> <br>
+                └─ Provider: <code><%= txadmin.txHostConfig.providerName ?? '--' %></code> <br>
+                <strong>Monitor:</strong> <br>
+                ├─ HB Fails: 
+                    <code>HTTP <%= txadmin.monitor.hbFails.http %></code> /
+                    <code>FD3 <%= txadmin.monitor.hbFails.fd3 %></code> <br>
+                └─ Restarts: 
+                    <code>BT <%= txadmin.monitor.restarts.bootTimeout %></code> /
+                    <code>CL <%= txadmin.monitor.restarts.close %></code> /
+                    <code>HB <%= txadmin.monitor.restarts.heartBeat %></code> / 
+                    <code>HC <%= txadmin.monitor.restarts.healthCheck %></code> /
+                    <code>BO <%= txadmin.monitor.restarts.both %></code> <br>
+                <strong>Performance Times:</strong> <br>
+                ├─ BanCheck: <code><%= txadmin.performance.banCheck %></code> <br>
+                ├─ WhitelistCheck: <code><%= txadmin.performance.whitelistCheck %></code> <br>
+                ├─ PlayersTable: <code><%= txadmin.performance.playersTableSearch %></code> <br>
+                ├─ HistoryTable: <code><%= txadmin.performance.historyTableSearch %></code> <br>
+                └─ DatabaseSave: <code><%= txadmin.performance.databaseSave %></code> <br>
                 <strong>Memory:</strong> <br>
                 ├─ Heap: <code><%= txadmin.memoryUsage.heap_used %> / <%= txadmin.memoryUsage.heap_limit %> (<%= txadmin.memoryUsage.heap_pct %>%)</code> <br>
                 ├─ Physical: <code><%= txadmin.memoryUsage.physical %></code> <br>
                 └─ Peak. Alloc.: <code><%= txadmin.memoryUsage.peak_malloced %></code> <br>
+                <strong>Logger Status:</strong> <br>
+                ├─ Storage Size: <code><%= txadmin.logger.storageSize %></code> <br>
+                ├─ Admin: <code><%= txadmin.logger.statusAdmin %></code> <br>
+                ├─ FXServer: <code><%= txadmin.logger.statusFXServer %></code> <br>
+                └─ Server: <code><%= txadmin.logger.statusServer %></code> <br>
             </div>
         </div>
 

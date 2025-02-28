@@ -180,7 +180,7 @@ export class QuantileArray {
             .map(([key, val]) => `${key}:${Math.ceil(val)}${unit}`);
         return {
             ...result,
-            summary: `(${this.#cache.size}) ` + percentiles.join('/'),
+            summary: percentiles.join('/') + ` (x${this.#cache.size})`,
         };
     }
 

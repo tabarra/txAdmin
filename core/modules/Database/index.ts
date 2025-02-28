@@ -58,6 +58,13 @@ export default class Database {
         return this.#db.isReady;
     }
 
+    /**
+     * Returns if size of the database file
+     */
+    get fileSize() {
+        return (this.#db.obj?.adapter as any)?.fileSize;
+    }
+
 
     /**
      * Returns the entire lowdb object. Please be careful with it :)

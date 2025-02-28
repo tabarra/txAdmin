@@ -276,45 +276,47 @@ export const getTxAdminData = async () => {
         hostApiTokenState = 'configured';
     }
 
+    const defaultFlags = Object.entries(txHostConfig.defaults).filter(([k, v]) => Boolean(v)).map(([k, v]) => k);
     return {
         //Stats
         uptime: msToDuration(process.uptime() * 1000),
-        monitorRestarts: {
-            bootTimeout: stats.monitorStats.restartReasons.bootTimeout,
-            close: stats.monitorStats.restartReasons.close,
-            heartBeat: stats.monitorStats.restartReasons.heartBeat,
-            healthCheck: stats.monitorStats.restartReasons.healthCheck,
-            both: stats.monitorStats.restartReasons.both,
-        },
-        hbFD3Fails: stats.monitorStats.healthIssues.fd3,
-        hbHTTPFails: stats.monitorStats.healthIssues.http,
-        banCheckTime: stats.banCheckTime.resultSummary('ms').summary,
-        whitelistCheckTime: stats.whitelistCheckTime.resultSummary('ms').summary,
-        playersTableSearchTime: stats.playersTableSearchTime.resultSummary('ms').summary,
-        historyTableSearchTime: stats.historyTableSearchTime.resultSummary('ms').summary,
-
-        //Log stuff:
-        logStorageSize: (await txCore.logger.getStorageSize()).total,
-        loggerStatusAdmin: txCore.logger.admin.getUsageStats(),
-        loggerStatusFXServer: txCore.logger.fxserver.getUsageStats(),
-        loggerStatusServer: txCore.logger.server.getUsageStats(),
-
-        //Env stuff
-        fxServerPath: txEnv.fxsPath,
-        fxServerHost: txCore.fxRunner.child?.netEndpoint ?? '--',
+        databaseFileSize: bytes(txCore.database.fileSize),
         txHostConfig: {
             ...txHostConfig,
             dataSubPath: undefined,
             hostApiToken: hostApiTokenState,
-            defaults: Object.entries(txHostConfig.defaults).filter(([k, v]) => Boolean(v)).map(([k, v]) => k),
+            defaults: defaultFlags,
         },
         txEnv: {
             ...txEnv,
             adsData: undefined,
         },
-
-
-        //Usage stuff
+        monitor: {
+            hbFails: {
+                http: stats.monitorStats.healthIssues.http,
+                fd3: stats.monitorStats.healthIssues.fd3,
+            },
+            restarts: {
+                bootTimeout: stats.monitorStats.restartReasons.bootTimeout,
+                close: stats.monitorStats.restartReasons.close,
+                heartBeat: stats.monitorStats.restartReasons.heartBeat,
+                healthCheck: stats.monitorStats.restartReasons.healthCheck,
+                both: stats.monitorStats.restartReasons.both,
+            }
+        },
+        performance: {
+            banCheck: stats.banCheckTime.resultSummary('ms').summary,
+            whitelistCheck: stats.whitelistCheckTime.resultSummary('ms').summary,
+            playersTableSearch: stats.playersTableSearchTime.resultSummary('ms').summary,
+            historyTableSearch: stats.historyTableSearchTime.resultSummary('ms').summary,
+            databaseSave: stats.databaseSaveTime.resultSummary('ms').summary,
+        },
+        logger: {
+            storageSize: (await txCore.logger.getStorageSize()).total,
+            statusAdmin: txCore.logger.admin.getUsageStats(),
+            statusFXServer: txCore.logger.fxserver.getUsageStats(),
+            statusServer: txCore.logger.server.getUsageStats(),
+        },
         memoryUsage: {
             heap_used: bytes(memoryUsage.used_heap_size),
             heap_limit: bytes(memoryUsage.heap_size_limit),
