@@ -121,9 +121,7 @@ function AuthedHeaderFragment() {
     const gotoSupportDiscord = () => {
         openExternalLink('https://discord.gg/uAmsGa2');
     }
-    const doLogout = () => {
-        logout.mutate();
-    }
+    const doLogout = () => logout();
 
     return (
         <DropdownMenu>

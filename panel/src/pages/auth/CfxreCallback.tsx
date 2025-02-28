@@ -1,57 +1,57 @@
 import { useAuth } from "@/hooks/auth";
 import { ApiOauthCallbackErrorResp, ApiOauthCallbackReq, ApiOauthCallbackResp } from "@shared/authApiTypes";
-import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import OauthErrors from "./components/OauthErrors";
+import { AuthError, checkCommonOauthErrors, processFetchError } from "./errors";
 import GenericSpinner from "@/components/GenericSpinner";
+import { fetchWithTimeout } from "@/hooks/fetch";
 
 
 export default function CfxreCallback() {
-    const { authData, setAuthData } = useAuth();
-    const [errorData, setErrorData] = useState<ApiOauthCallbackErrorResp | undefined>();
     const hasPendingMutation = useRef(false); //due to strict mode re-rendering
+    const { authData, setAuthData } = useAuth();
+    const [errorData, setErrorData] = useState<ApiOauthCallbackErrorResp | undefined>(checkCommonOauthErrors);
+    const [isFetching, setIsFetching] = useState(false);
 
-    const submitMutation = useMutation<
-        ApiOauthCallbackResp,
-        Error,
-        ApiOauthCallbackReq
-    >({
-        mutationKey: ['auth'],
-        mutationFn: ({ redirectUri }) => fetch('/auth/cfxre/callback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ redirectUri })
-        }).then(res => res.json()),
-        onSuccess: (data) => {
+    const submitCallback = async () => {
+        try {
+            setIsFetching(true);
+            const data = await fetchWithTimeout<ApiOauthCallbackResp, ApiOauthCallbackReq>(
+                `/auth/cfxre/callback`,
+                {
+                    method: 'POST',
+                    body: {
+                        redirectUri: window.location.href
+                    },
+                }
+            );
             if ('errorCode' in data || 'errorTitle' in data) {
                 setErrorData(data);
             } else {
                 setAuthData(data);
             }
-        },
-        onError: (error) => {
-            if (error.message.startsWith('NetworkError')) {
-                setErrorData({
-                    errorTitle: 'Network Error',
-                    errorMessage: 'If you closed txAdmin, please restart it and try again.'
-                });
-            } else {
-                setErrorData({
-                    errorTitle: 'Unknown Error',
-                    errorMessage: error.message
-                });
-            }
+        } catch (error) {
+            setErrorData(processFetchError(error));
+        } finally {
+            setIsFetching(false);
         }
-    });
+    }
 
     useEffect(() => {
         if (authData || hasPendingMutation.current) return;
         hasPendingMutation.current = true;
-        submitMutation.mutate({
-            redirectUri: window.location.href
-        });
-        return submitMutation.reset;
+        const urlError = checkCommonOauthErrors();
+        if (urlError) {
+            setErrorData(urlError);
+            return;
+        }
+        submitCallback();
     }, []);
 
-    return errorData ? <OauthErrors error={errorData} /> : <GenericSpinner msg="Logging in..." />
+    if (errorData) {
+        return <AuthError error={errorData} />;
+    } else if (isFetching) {
+        return <GenericSpinner msg="Logging in..." />;
+    } else {
+        return <GenericSpinner />;
+    }
 }

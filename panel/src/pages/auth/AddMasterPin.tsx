@@ -3,32 +3,39 @@ import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ApiAddMasterPinReq, ApiAddMasterPinResp } from "@shared/authApiTypes";
-import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { LogoutReasonHash } from "./Login";
+import { fetchWithTimeout } from "@/hooks/fetch";
+import { AuthError, processFetchError, type AuthErrorData } from "./errors";
 
 export default function AddMasterPin() {
+    const pinRef = useRef<HTMLInputElement>(null);
     const [isRedirecting, setIsRedirecting] = useState(false);
     const [messageText, setMessageText] = useState<string | undefined>();
     const [isMessageError, setIsMessageError] = useState<boolean>(false);
-    const pinRef = useRef<HTMLInputElement>(null);
+    const [isFetching, setIsFetching] = useState(false);
+    const [fullPageError, setFullPageError] = useState<AuthErrorData | undefined>();
 
-    const submitMutation = useMutation<
-        ApiAddMasterPinResp,
-        Error,
-        ApiAddMasterPinReq
-    >({
-        mutationFn: ({ pin, origin }) => fetch('/auth/addMaster/pin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pin, origin })
-        }).then(res => res.json()),
-        onSuccess: (data) => {
+    const submitPin = async () => {
+        try {
+            setIsMessageError(false);
+            setMessageText(undefined);
+            setIsFetching(true);
+            const data = await fetchWithTimeout<ApiAddMasterPinResp, ApiAddMasterPinReq>(
+                `/auth/addMaster/pin`,
+                {
+                    method: 'POST',
+                    body: {
+                        pin: pinRef.current?.value || '0000',
+                        origin: window.location.origin,
+                    },
+                }
+            );
             if ('error' in data) {
                 if (data.error === 'master_already_set') {
                     setIsRedirecting(true);
-                    window.location.href = `/login${LogoutReasonHash.MASTER_ALREADY_SET}`;
+                    setFullPageError({ errorCode: data.error });
                 } else {
                     setIsMessageError(true);
                     setMessageText(data.error);
@@ -38,27 +45,14 @@ export default function AddMasterPin() {
                 console.log('Redirecting to', data.authUrl);
                 window.location.href = data.authUrl;
             }
-        },
-        onError: (error: Error) => {
+        } catch (error) {
             setIsMessageError(true);
-            if (error.message.startsWith('NetworkError')) {
-                setMessageText('Network error. If you closed txAdmin, please restart it and try again.');
-            } else {
-                setMessageText(error.message);
-            }
-        },
-    });
-
-    const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
-        event?.preventDefault();
-        setIsMessageError(false);
-        setMessageText(undefined);
-
-        submitMutation.mutate({
-            pin: pinRef.current?.value || '0000',
-            origin: window.location.origin,
-        });
-    };
+            const { errorTitle, errorMessage } = processFetchError(error);
+            setMessageText(`${errorTitle}: ${errorMessage}`);
+        } finally {
+            setIsFetching(false);
+        }
+    }
 
     useEffect(() => {
         if (/^#\d{4}$/.test(window.location.hash)) {
@@ -67,14 +61,23 @@ export default function AddMasterPin() {
         }
     }, []);
 
-    const disableInput = submitMutation.isPending || isRedirecting;
+    if (fullPageError) {
+        return <AuthError error={fullPageError} />
+    }
 
+    const disableInput = isFetching || isRedirecting;
     return (
-        <form onSubmit={handleSubmit} className='w-full'>
+        <form
+            onSubmit={(e) => {
+                e?.preventDefault();
+                submitPin();
+            }}
+            className='w-full'
+        >
             <CardHeader className="space-y-1">
-                <CardTitle className="text-3xl">No Cfx.re account linked.</CardTitle>
-                <CardDescription className="text-sm text-muted-foreground">
-                    Type the PIN from your terminal and click "Link Account".
+                <CardTitle className="text-3xl">No Cfx.re account linked</CardTitle>
+                <CardDescription className="text-base text-muted-foreground">
+                    Type in the PIN from the terminal.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2">
@@ -99,13 +102,14 @@ export default function AddMasterPin() {
                     maxLength={4}
                     placeholder="0000"
                     autoComplete="off"
-                    onFocus={() => {
+                    onFocus={(e) => {
                         setIsMessageError(false);
                         setMessageText(undefined);
+                        e.target?.select();
                     }}
                     onChange={(e) => {
                         if (e.target.value.length === 4) {
-                            handleSubmit();
+                            submitPin();
                         }
                     }}
                     disabled={disableInput}

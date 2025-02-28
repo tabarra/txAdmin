@@ -74,28 +74,24 @@ export const useAuthedFetcher = () => {
 /**
  * Simple unauthed fetch with timeout
  */
-type SimpleFetchOpts = FetcherOpts & { timeout?: number };
+type SimpleFetchOpts<Req = any> = FetcherOpts & {
+    body?: Req,
+    timeout?: number
+};
 
-export const fetchWithTimeout = async <T = any>(url: string, fetchOpts: SimpleFetchOpts = {}) => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-        controller.abort('timeout');
-    }, fetchOpts.timeout ?? ApiTimeout.DEFAULT);
-
-    try {
-        const response = await fetch(url, {
-            headers: defaultHeaders,
-            method: 'GET',
-            // signal: AbortSignal.timeout(fetchOpts.timeout ?? ApiTimeout.DEFAULT),
-            signal: controller.signal, //TODO: replace with the static method above
-            ...fetchOpts,
-        });
-        clearTimeout(timeoutId);
-        return await response.json() as T;
-    } catch (error) {
-        clearTimeout(timeoutId);
-        throw error;
-    }
+export const fetchWithTimeout = async <Resp = any, Req = any>(url: string, fetchOpts: SimpleFetchOpts<Req> = {}) => {
+    const method = fetchOpts.method ?? 'GET';
+    const body = method === 'POST' && fetchOpts.body
+        ? JSON.stringify(fetchOpts.body)
+        : undefined;
+    const response = await fetch(url, {
+        headers: defaultHeaders,
+        signal: AbortSignal.timeout(fetchOpts.timeout ?? ApiTimeout.DEFAULT),
+        ...fetchOpts,
+        method,
+        body,
+    });
+    return await response.json() as Resp;
 };
 
 

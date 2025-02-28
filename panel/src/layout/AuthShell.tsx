@@ -7,31 +7,61 @@ import { Card } from "../components/ui/card";
 import { LogoFullSquareGreen } from "@/components/Logos";
 import { useThemedImage } from "@/hooks/theme";
 import { handleExternalLinkClick } from "@/lib/navigation";
+import { AuthError } from "@/pages/auth/errors";
+
+function AuthContentWrapper({ children }: { children: React.ReactNode }) {
+    return (
+        <div className="text-center">
+            {children}
+        </div>
+    );
+}
 
 
 export default function AuthShell() {
     const customLogoUrl = useThemedImage(window.txConsts.providerLogo);
     return (
         <div className="min-h-screen flex items-center justify-center pattern-dots">
-            <div className="text-center m-4 w-full xs:w-[25rem] min-w-[20rem]">
+            <div className="w-full min-w-[20rem] xs:max-w-[25rem] my-4 xs:mx-4">
                 {customLogoUrl ? (
                     <img
-                        className='max-w-56 max-h-24 m-auto'
+                        className='max-w-36 xs:max-w-56 max-h-16 xs:max-h-24 m-auto'
                         src={customLogoUrl}
                         alt={window.txConsts.providerName}
                     />
                 ) : (
-                    <LogoFullSquareGreen className="w-52 mx-auto" />
+                    <LogoFullSquareGreen className="w-36 xs:w-52 mx-auto" />
                 )}
 
-                <Card className="min-h-64 mt-8 mb-4 p-4 flex items-center justify-center bg-card/50">
+                <Card className="min-h-80 mt-4 xs:mt-8 mb-4 flex items-center justify-center bg-card/40 rounded-none xs:rounded-lg">
                     <Switch>
-                        <Route path="/login"><Login /></Route>
-                        <Route path="/login/callback"><CfxreCallback /></Route>
-                        <Route path="/addMaster/pin"><AddMasterPin /></Route>
-                        <Route path="/addMaster/callback"><AddMasterCallback /></Route>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route path="/login/callback">
+                            <AuthContentWrapper>
+                                <CfxreCallback />
+                            </AuthContentWrapper>
+                        </Route>
+                        <Route path="/addMaster/pin">
+                            <AuthContentWrapper>
+                                <AddMasterPin />
+                            </AuthContentWrapper>
+                        </Route>
+                        <Route path="/addMaster/callback">
+                            <AuthContentWrapper>
+                                <AddMasterCallback />
+                            </AuthContentWrapper>
+                        </Route>
                         <Route path="/:fullPath*">
-                            <small>redirecting to the login page...</small>
+                            <AuthContentWrapper>
+                                <AuthError
+                                    error={{
+                                        errorTitle: '404 | Not Found',
+                                        errorMessage: 'Something went wrong.',
+                                    }}
+                                />
+                            </AuthContentWrapper>
                         </Route>
                     </Switch>
                 </Card>
@@ -71,12 +101,10 @@ export default function AuthShell() {
                     </a>
                 </div>
 
-                <div>
-                    <small className="text-muted-foreground text-sm font-light">
-                        tx: <strong>v{window.txConsts.txaVersion}</strong>
-                        &nbsp;|
-                        fx: <strong>b{window.txConsts.fxsVersion}</strong>
-                    </small>
+                <div className="text-center text-muted-foreground text-sm font-light">
+                    tx: <strong>v{window.txConsts.txaVersion}</strong>
+                    &nbsp;|
+                    fx: <strong>b{window.txConsts.fxsVersion}</strong>
                 </div>
             </div>
         </div>
