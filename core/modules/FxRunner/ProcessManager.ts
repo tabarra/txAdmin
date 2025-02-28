@@ -8,15 +8,15 @@ import consoleFactory, { processStdioEnsureEol } from "@lib/console";
  * Returns a string with the exit/close code & signal of a child process, properly formatted
  */
 const getFxChildCodeSignalString = (code?: number | null, signal?: string | null) => {
-    let codeStr;
+    const details = [];
     if (typeof code === 'number') {
-        codeStr = `0x${code.toString(16).toUpperCase()}`;
-    } else {
-        codeStr = new String(code).toUpperCase();
+        details.push(`0x${code.toString(16).toUpperCase()}`);
     }
-    signal ??= 'UNKNOWN';
-    const signalStr = typeof signal === 'string' ? signal : String(signal);
-    return `${codeStr}, ${signalStr}`;
+    if (typeof signal === 'string') {
+        details.push(signal.toUpperCase());
+    }
+    if (!details.length) return '--';
+    return details.join(', ');
 }
 
 

@@ -31,6 +31,7 @@ var LANGUAGES = {
     },
     decimal: "."
   },
+  //TODO: rename to shortishEn and shortestEn
   shortEn: {
     y: () => 'y',
     mo: () => 'mo',

@@ -176,6 +176,7 @@ Legend:
 ## Previous bugs
 - [ ] use `ScanResourceRoot()`
     - `ScanResourceRoot('xxx/resources/', (data: object) => {...});`
+    - test if a `while true do end` on a resource manifest would cause tx to hang
 
 ## Pending Improvements
 - [ ] Settings Page:
@@ -340,14 +341,6 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - Add a "timeout" button that brings a prompt with 1/5/15/30 mins buttons
     - Add a checkbox to the kick modal to mark it as a punishment
 
-- [ ] custom login page
-    - [ ] FxMonitor:
-        - `setCurrentStatus()`: when it becoems online trigger `tmpRefreshServerIcon()`
-        - `tmpRefreshServerIcon()`: if diff mutex, GET `/info.json`
-        - cache new icon URL
-    - [ ] drop `projectName` from `sv_logger.lua` & `Logger/handlers/server.js`?
-    - [ ] add icon/name to login page
-    - [ ] make sure it's responsive and has default behavior
 - [ ] rethink the flow of opening the menu `/tx <id>` and teleporting to targets
     - need to use mouse, would be better if keyboardo nly
     - the buttons need to be bigger, and tab-selectable, or hotkeys

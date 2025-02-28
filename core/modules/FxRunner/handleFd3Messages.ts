@@ -102,11 +102,15 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
 
     //Handle watchdog
     if (channel === 'citizen-server-impl' && data.type === 'watchdog_bark') {
-        //TODO: detect if stack is "root" and send a different message
         setTimeout(() => {
-            console.error(`Detected FXServer thread ${data?.thread ?? 'unknown'} hung with stack:`);
-            console.error(`\t${data?.stack ?? 'unknown'}`); //TODO: add to diagnostics page
-            console.error('Please check the resource above to prevent further hangs.');
+            const thread = data?.thread ?? 'UNKNOWN';
+            if(!data?.stack || data.stack.trim() === 'root'){
+                console.error(`Detected server thread ${thread} hung without a stack trace.`);
+            } else {
+                console.error(`Detected server thread ${thread} hung with stack:`);
+                console.error(`- ${data.stack}`);
+                console.error('Please check the resource above to prevent server restarts.');
+            }
         }, 250);
         return;
     }

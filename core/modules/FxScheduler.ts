@@ -49,7 +49,7 @@ const getNextScheduled = (parsedSchedule: ParsedTime[]): RestartInfo => {
  * or a temporary schedule set by the user at runtime.
  */
 export default class FxScheduler {
-    static configKeysWatched = ['restarter.schedule']; //FIXME: add readonly prop when moving to typescript
+    static readonly configKeysWatched = ['restarter.schedule'];
     private nextTempSchedule: RestartInfo | false = false;
     private calculatedNextRestartMinuteFloorTs: number | false = false;
     private nextSkip: number | false = false;
@@ -90,7 +90,11 @@ export default class FxScheduler {
         
         //Check if next scheduled restart is in less than 2 hours
         const inTwoHours = Date.now() + 2 * 60 * 60 * 1000;
-        if (this.calculatedNextRestartMinuteFloorTs && this.calculatedNextRestartMinuteFloorTs < inTwoHours) {
+        if (
+            this.calculatedNextRestartMinuteFloorTs 
+            && this.calculatedNextRestartMinuteFloorTs < inTwoHours
+            && this.nextSkip !== this.calculatedNextRestartMinuteFloorTs
+        ) {
             console.warn('Server closed, skipping next scheduled restart because it\'s in less than 2 hours.');
             this.nextSkip = this.calculatedNextRestartMinuteFloorTs;
         }

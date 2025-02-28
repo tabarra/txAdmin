@@ -14,7 +14,7 @@ import handleFd3Messages from './handleFd3Messages';
 import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
 import { txHostConfig } from '@core/globalData';
 import path from 'node:path';
-const console = consoleFactory('FXRunner');
+const console = consoleFactory('FxRunner');
 const genMutex = customAlphabet(dict49, 5);
 
 const MIN_KILL_DELAY = 250;
