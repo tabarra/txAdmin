@@ -4,9 +4,7 @@
         "humanizer_language": "tr"
     },
     "restarter": {
-        "start_timeout": "zamanında başlatılamadı",
-        "crash_detected": "Çökme tespit edildi",
-        "hang_detected": "Takılma algılandı",
+        "server_unhealthy_kick_reason": "sunucu yeniden başlatılmalı, lütfen yeniden bağlan",
         "partial_hang_warn": "Takılma nedeniyle bu sunucu 1 dakika içinde yeniden başlayacak. Lütfen şimdi bağlantıyı kesin.",
         "partial_hang_warn_discord": "Takılma nedeniyle **%{servername}** 1 dakika içinde yeniden başlayacak.",
         "schedule_reason": "Zamanlanmış yeniden başlatma %{time}",

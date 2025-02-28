@@ -177,7 +177,7 @@ export default class FxRunner {
         }
 
         //Reseting monitor stats
-        txCore.fxMonitor.resetMonitorStats();
+        txCore.fxMonitor.resetState();
 
         //Resetting frontend playerlist
         txCore.webServer.webSocket.buffer('playerlist', {

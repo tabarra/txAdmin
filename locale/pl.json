@@ -4,9 +4,7 @@
         "humanizer_language": "pl"
     },
     "restarter": {
-        "start_timeout": "Nie udało się załadować serwera",
-        "crash_detected": "Wykryto crash serwera",
-        "hang_detected": "Wykryto zawieszenie się serwera",
+        "server_unhealthy_kick_reason": "serwer musi zostać zrestartowany, proszę połącz się ponownie",
         "partial_hang_warn": "Z powodu częściowego zawieszenia, serwer zostanie ponownie uruchomiony za 1 minutę. Prosimy o rozłączenie się.",
         "partial_hang_warn_discord": "Z powodu częściowego zawieszenia, **%{servername}** zostanie uruchomiony ponownie za 1 minutę.",
         "schedule_reason": "Planowany restart o %{time}",

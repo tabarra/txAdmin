@@ -4,9 +4,7 @@
         "humanizer_language": "ar"
     },
     "restarter": {
-        "start_timeout": "فشل في البدء في الوقت المناسب",
-        "crash_detected": "حدث خطأ",
-        "hang_detected": "تم الكشف عن تعليق",
+        "server_unhealthy_kick_reason": "الخادم يحتاج إلى إعادة التشغيل, يرجى إعادة الاتصال",
         "partial_hang_warn": ".بسبب حدوث تعليق جزئي ، ستتم إعادة تشغيل هذا الخادم خلال دقيقة واحدة. الرجاء قطع الاتصال الآن",
         "partial_hang_warn_discord": ".سيتم إعادة التشغيل خلال دقيقة واحدة **%{servername}** ،بسبب تعليق جزئي",
         "schedule_reason": "%{time} أعادة تشغيل مجدول في",

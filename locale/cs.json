@@ -4,9 +4,7 @@
         "humanizer_language": "cs"
     },
     "restarter": {
-        "start_timeout": "server se nestihl spustit v požadovaném čase",
-        "crash_detected": "pád detekován",
-        "hang_detected": "přerušení připojení detekováno",
+        "server_unhealthy_kick_reason": "server je třeba restartovat, prosím, připoj se znovu",
         "partial_hang_warn": "Kvůli částečnému přerušení připojení se tento server restartuje za 1 minutu. Odpojte se prosím.",
         "partial_hang_warn_discord": "Kvůli částečnému přerušení připojení se **%{servername}** restartuje za 1 minutu.",
         "schedule_reason": "plánovaný restart v %{time}",

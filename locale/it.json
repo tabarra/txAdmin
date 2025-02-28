@@ -4,9 +4,7 @@
         "humanizer_language": "it"
     },
     "restarter": {
-        "start_timeout": "Avvio fallito nel tempo previsto",
-        "crash_detected": "Crash rilevato",
-        "hang_detected": "Blocco rilevato",
+        "server_unhealthy_kick_reason": "il server deve essere riavviato, per favore riconnettiti",
         "partial_hang_warn": "A causa di un blocco parziale, questo server verrà riavviato tra 1 minuto. Si prega di disconnettersi ora.",
         "partial_hang_warn_discord": "A causa di un blocco parziale, **%{servername}** si riavvierà tra 1 minuto.",
         "schedule_reason": "Riavvio programmato alle %{time}",

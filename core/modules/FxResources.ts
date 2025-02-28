@@ -1,5 +1,6 @@
 const modulename = 'FxResources';
 import consoleFactory from '@lib/console';
+import { Stopwatch } from './FxMonitor/utils';
 const console = consoleFactory(modulename);
 
 
@@ -19,6 +20,17 @@ type ResourceReportType = {
     resources: any[]
 }
 
+type ResPendingStartState = {
+    name: string;
+    time: Stopwatch;
+}
+
+type ResBootLogEntry = {
+    tsBooted: number;
+    resource: string;
+    duration: number;
+};
+
 
 /**
  * Module responsible to track FXServer resource states.  
@@ -26,50 +38,57 @@ type ResourceReportType = {
  * to assist with tracking the boot process.
  */
 export default class FxResources {
-    activeStartingTime: Date | null = null;
-    activeStartingResource: string | null = null;
-    lastResourceStartTime: Date | null = null;
-    resourceReport?: ResourceReportType;
+    public resourceReport?: ResourceReportType;
+    private resBooting: ResPendingStartState | null = null;
+    private resBootLog: ResBootLogEntry[] = [];
 
 
     /**
-     * Handler for all txAdminResourceEvent structured trace events
-     */
-    handleServerEvents(payload: ResourceEventType, mutex: string) {
-        // console.log(`${payload.event}: ${payload.resource}`);
-        if (payload.event === 'onResourceStarting') {
-            this.activeStartingResource = payload.resource;
-            this.activeStartingTime = new Date();
-        } else if (payload.event === 'onResourceStart') {
-            this.activeStartingResource = null;
-            this.activeStartingTime = null;
-            this.lastResourceStartTime = new Date();
-        }
-    }
-
-
-    /**
-     * Handler for server restart
+     * Reset boot state on server close
      */
     handleServerClose() {
-        this.activeStartingResource = null;
-        this.activeStartingTime = null;
+        this.resBooting = null;
+        this.resBootLog = [];
     }
 
 
     /**
-     * Handler for server restart.
-     * NOTE: replace this when we start tracking resource states internally
+     * Handler for all txAdminResourceEvent FD3 events
      */
-    tmpGetPendingStart() {
-        const getSecondsDiff = (date: Date | null) => {
-            return date !== null ? Math.round((Date.now() - date.getTime()) / 1000) : null;
+    handleServerEvents(payload: ResourceEventType, mutex: string) {
+        const { resource, event } = payload;
+        if (!resource || !event) {
+            console.verbose.error(`Invalid txAdminResourceEvent payload: ${JSON.stringify(payload)}`);
+        } else if (event === 'onResourceStarting') {
+            //Resource will start
+            this.resBooting = {
+                name: resource,
+                time: new Stopwatch(true),
+            }
+        } else if (event === 'onResourceStart') {
+            //Resource started
+            this.resBootLog.push({
+                resource,
+                duration: this.resBooting?.time.elapsed ?? 0,
+                tsBooted: Date.now(),
+            })
+        }
+    }
+
+
+    /**
+     * Returns the status of the resource boot process
+     */
+    public get bootStatus() {
+        let elapsedSinceLast = null;
+        if (this.resBootLog.length > 0) {
+            const tsMs = this.resBootLog[this.resBootLog.length - 1].tsBooted;
+            elapsedSinceLast = Math.floor((Date.now() - tsMs) / 1000);
         }
         return {
-            startingResName: this.activeStartingResource,
-            startingElapsedSecs: getSecondsDiff(this.activeStartingTime),
-            lastStartElapsedSecs: getSecondsDiff(this.lastResourceStartTime),
-        };
+            current: this.resBooting,
+            elapsedSinceLast,
+        }
     }
 
 

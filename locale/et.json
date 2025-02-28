@@ -4,9 +4,7 @@
         "humanizer_language": "et"
     },
     "restarter": {
-        "start_timeout": "Ei õnnestunud õigel ajal alustada",
-        "crash_detected": "crash tuvastatud",
-        "hang_detected": "hang tuvastatud",
+        "server_unhealthy_kick_reason": "server tuleb taaskäivitada, palun ühendu uuesti",
         "partial_hang_warn": "Osalise hangumise tõttu taaskäivitub see server 1 minuti pärast. Palun lahkuge serverist kohe.",
         "partial_hang_warn_discord": "Osalise hangumise tõttu taaskäivitub **%{servername}** 1 minuti pärast.",
         "schedule_reason": "Plaanitud taaskäivitamine kell %{time}",

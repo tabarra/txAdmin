@@ -49,6 +49,7 @@ export default class TxRuntimeMetrics {
             http: 0,
         },
         restartReasons: {
+            bootTimeout: 0,
             close: 0,
             heartBeat: 0,
             healthCheck: 0,

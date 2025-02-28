@@ -280,6 +280,7 @@ export const getTxAdminData = async () => {
         //Stats
         uptime: msToDuration(process.uptime() * 1000),
         monitorRestarts: {
+            bootTimeout: stats.monitorStats.restartReasons.bootTimeout,
             close: stats.monitorStats.restartReasons.close,
             heartBeat: stats.monitorStats.restartReasons.heartBeat,
             healthCheck: stats.monitorStats.restartReasons.healthCheck,

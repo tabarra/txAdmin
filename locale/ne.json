@@ -4,9 +4,7 @@
         "humanizer_language": "en"
     },
     "restarter": {
-        "start_timeout": "समयमै सुरु हुन असफल",
-        "crash_detected": "क्र्यास पत्ता लाग्यो",
-        "hang_detected": "ह्याङ्ग पत्ता लाग्यो",
+        "server_unhealthy_kick_reason": "सर्भर पुनः सुरु गर्न आवश्यक छ, कृपया पुन: जडान गर्नुहोस्",
         "partial_hang_warn": "आंशिक ह्याङ्गको कारण, यो सर्भर १ मिनेटमा पुनः सुरु हुनेछ। कृपया अहिले नै डिस्कनेक्ट गर्नुहोस्।",
         "partial_hang_warn_discord": "आंशिक ह्याङ्गको कारण, **%{servername}** १ मिनेटमा पुनः सुरु हुनेछ।",
         "schedule_reason": "%{time} मा तालिकाबद्ध पुनः सुरुवात",

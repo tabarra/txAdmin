@@ -4,9 +4,7 @@
         "humanizer_language": "lt"
     },
     "restarter": {
-        "start_timeout": "Nepavyko paleisti",
-        "crash_detected": "Aptiktas serverio nulūžimas",
-        "hang_detected": "Aptiktas serverio pakibimas",
+        "server_unhealthy_kick_reason": "serveris turi būti paleistas iš naujo, prašome prisijungti dar kartą",
         "partial_hang_warn": "Dėl pakibimo, serveris persijungs automatiškai po 1 min. Atsijunkite nedelsiant.",
         "partial_hang_warn_discord": "Dėl pakibimo, **%{servername}** serveris persijungs po 1 min.",
         "schedule_reason": "Automatinis %{time} perkrovimas",

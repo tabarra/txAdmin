@@ -4,9 +4,7 @@
         "humanizer_language": "ro"
     },
     "restarter": {
-        "start_timeout": "Nu sa reusit sa inceapa la timp",
-        "crash_detected": "crash detectat",
-        "hang_detected": "hang detectat",
+        "server_unhealthy_kick_reason": "serverul trebuie repornit, te rog reconectează-te",
         "partial_hang_warn": "Din cauza unei întreruperi parțiale, acest server va fi repornit în 1 minut. Vă rugăm să vă deconectați acum.",
         "partial_hang_warn_discord": "Din cauza unei întreruperi parțiale, **%{servername}** se va restarta într-un minut.",
         "schedule_reason": "restartare programata la %{time}",

@@ -4,9 +4,7 @@
         "humanizer_language": "zh_CN"
     },
     "restarter": {
-        "start_timeout": "未能及时启动",
-        "crash_detected": "检测到服务器崩溃",
-        "hang_detected": "检测到服务器挂起",
+        "server_unhealthy_kick_reason": "服务器需要重启, 请重新连接",
         "partial_hang_warn": "由于部分挂起，本服务器将在 1 分钟后重新启动。请立即断开连接。",
         "partial_hang_warn_discord": "由于部分挂起, **%{servername}** 将在1分钟后重启",
         "schedule_reason": "预计 %{time}后重启",

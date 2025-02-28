@@ -44,6 +44,19 @@ export default class AdminLogger extends LoggerBase {
 
     /**
      * Handles the input of log data
+     *
+     * @param {string} author
+     * @param {string} message
+     */
+    writeSystem(author, message) {
+        const timestamp = getTimeHms();
+        this.lrStream.write(`[${timestamp}][${author}] ${message}\n`);
+        this.writeCounter++;
+    }
+
+
+    /**
+     * Handles the input of log data
      * TODO: add here discord log forwarding
      *
      * @param {string} author
@@ -56,11 +69,9 @@ export default class AdminLogger extends LoggerBase {
             saveMsg = `[${author}] executed "${action}"`;
             console.log(`${author} executed ` + chalkInversePad(action));
         } else {
-            saveMsg = `[${author}] ${action}`;
+            saveMsg = action;
             console.log(saveMsg);
         }
-        const timestamp = getTimeHms();
-        this.lrStream.write(`[${timestamp}]${saveMsg}\n`);
-        this.writeCounter++;
+        this.writeSystem(author, saveMsg);
     }
 };

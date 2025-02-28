@@ -4,9 +4,7 @@
         "humanizer_language": "id"
     },
     "restarter": {
-        "start_timeout": "gagal memulai dalam waktu yang ditentukan",
-        "crash_detected": "crash terdeteksi",
-        "hang_detected": "hang terdeteksi",
+        "server_unhealthy_kick_reason": "server perlu di-restart, silakan sambung kembali",
         "partial_hang_warn": "Karena sebagian hang, server ini akan restart dalam 1 menit. Silakan putuskan sambungan sekarang.",
         "partial_hang_warn_discord": "Karena sebagian hang, **%{servername}** akan restart dalam 1 menit.",
         "schedule_reason": "restart terjadwal pada %{time}",

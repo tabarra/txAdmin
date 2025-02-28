@@ -4,9 +4,7 @@
         "humanizer_language": "ja"
     },
     "restarter": {
-        "start_timeout": "時間内に開始できませんでした",
-        "crash_detected": "クラッシュが検出されました",
-        "hang_detected": "障害が検出されました",
+        "server_unhealthy_kick_reason": "サーバーは再起動が必要です、再接続してください",
         "partial_hang_warn": "部分的な障害により、このサーバーは1分後に再起動します。今すぐ切断してください。",
         "partial_hang_warn_discord": "部分的な障害により、**%{servername}**は1分後に再起動します。",
         "schedule_reason": "%{time}にリスタート予定",

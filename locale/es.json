@@ -4,9 +4,7 @@
         "humanizer_language": "es"
     },
     "restarter": {
-        "start_timeout": "Se ha agotado el tiempo de espera para el arranque.",
-        "crash_detected": "Caída del servidor detectada.",
-        "hang_detected": "Suspensión detectada",
+        "server_unhealthy_kick_reason": "el servidor necesita reiniciarse, por favor reconéctate",
         "partial_hang_warn": "Debido a una suspensión parcial, el servidor se reiniciará en 1 minutos. Por favor, desconectate ahora.",
         "partial_hang_warn_discord": "Debido a una suspensión parcial, **%{servername}** se reiniciará en un minuto.",
         "schedule_reason": "Reinicio programado a las %{time}",

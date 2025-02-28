@@ -4,9 +4,7 @@
         "humanizer_language": "en"
     },
     "restarter": {
-        "start_timeout": "Server nije uspio započeti na vrijeme",
-        "crash_detected": "Server se zaustavio",
-        "hang_detected": "hang detected",
+        "server_unhealthy_kick_reason": "server treba restartovati, molim te ponovo se poveži",
         "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
         "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
         "schedule_reason": "restart je zakazan za %{time}",
