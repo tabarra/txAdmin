@@ -12,10 +12,10 @@ import { TabsTrigger, TabsList, TabsContent, Tabs } from "@/components/ui/tabs";
 import { ApiChangeIdentifiersReq, ApiChangePasswordReq } from "@shared/authApiTypes";
 import { useAccountModal, useCloseAccountModal } from "@/hooks/dialogs";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
-import { fetchWithTimeout, useAuthedFetcher, useBackendApi } from "@/hooks/fetch";
+import { ApiTimeout, fetchWithTimeout, useAuthedFetcher, useBackendApi } from "@/hooks/fetch";
 import consts from "@shared/consts";
 import { txToast } from "./TxToaster";
-import { useQuery } from "@tanstack/react-query";
+import useSWR from 'swr';
 import TxAnchor from "./TxAnchor";
 
 
@@ -166,26 +166,30 @@ function ChangeIdentifiersTab() {
     const closeAccountModal = useCloseAccountModal();
     const [isSaving, setIsSaving] = useState(false);
 
-    const { isPending: queryIsPending, error: queryError, data: queryData } = useQuery<ApiChangeIdentifiersReq>({
-        queryKey: ['getIdentifiers'],
-        gcTime: 30_000,
-        queryFn: () => authedFetcher('/auth/getIdentifiers'),
-    });
+    const currIdsResp = useSWR<ApiChangeIdentifiersReq>(
+        '/auth/getIdentifiers',
+        () => authedFetcher<ApiChangeIdentifiersReq>('/auth/getIdentifiers'),
+        {
+            //the data min interval is 5 mins, so we can safely cache for 1 min
+            revalidateOnMount: true,
+            revalidateOnFocus: false,
+        }
+    );
+
+    useEffect(() => {
+        if (!currIdsResp.data) return;
+        setCfxreId(currIdsResp.data.cfxreId);
+        setDiscordId(currIdsResp.data.discordId);
+    }, [currIdsResp.data]);
+
+    useEffect(() => {
+        setError(currIdsResp.error?.message ?? '');
+    }, [currIdsResp.error]);
 
     const changeIdentifiersApi = useBackendApi<GenericApiOkResp, ApiChangeIdentifiersReq>({
         method: 'POST',
         path: '/auth/changeIdentifiers'
     });
-
-    useEffect(() => {
-        if (!queryData) return;
-        setCfxreId(queryData.cfxreId);
-        setDiscordId(queryData.discordId);
-    }, [queryData]);
-
-    useEffect(() => {
-        setError(queryError ? queryError.message : '');
-    }, [queryError]);
 
     const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
         event?.preventDefault();
@@ -257,8 +261,8 @@ function ChangeIdentifiersTab() {
                             autoComplete="off"
                             autoCorrect="off"
                             placeholder="fivem:000000"
-                            value={queryIsPending || isConvertingFivemId ? 'loading...' : cfxreId}
-                            disabled={queryIsPending || isConvertingFivemId}
+                            value={currIdsResp.isLoading || isConvertingFivemId ? 'loading...' : cfxreId}
+                            disabled={currIdsResp.isLoading || isConvertingFivemId}
                             autoFocus
                             onBlur={handleCfxreIdBlur}
                             onChange={(e) => {
@@ -280,8 +284,8 @@ function ChangeIdentifiersTab() {
                             autoComplete="off"
                             autoCorrect="off"
                             placeholder="discord:000000000000000000"
-                            value={queryIsPending ? 'loading...' : discordId}
-                            disabled={queryIsPending}
+                            value={currIdsResp.isLoading ? 'loading...' : discordId}
+                            disabled={currIdsResp.isLoading}
                             onBlur={handleDiscordIdBlur}
                             onChange={(e) => {
                                 setDiscordId(e.target.value);
@@ -299,7 +303,7 @@ function ChangeIdentifiersTab() {
                 <Button
                     className="w-full"
                     type="submit"
-                    disabled={!queryData || isSaving}
+                    disabled={!currIdsResp || isSaving}
                 >
                     {isSaving ? 'Saving...' : 'Save Changes'}
                 </Button>

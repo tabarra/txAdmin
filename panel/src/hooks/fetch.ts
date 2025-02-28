@@ -40,7 +40,11 @@ export const useAuthedFetcher = () => {
     const csrfToken = useCsrfToken();
     const expireSess = useExpireAuthData();
 
-    return async (fetchUrl: string, fetchOpts: FetcherOpts = {}, abortController?: AbortController) => {
+    return async <Resp = any>(
+        fetchUrl: string,
+        fetchOpts: FetcherOpts = {},
+        abortController?: AbortController
+    ) => {
         if (!csrfToken) throw new Error('CSRF token not set');
         //Enforce single slash at the start of the path to prevent CSRF token leak
         if (fetchUrl[0] !== '/' || fetchUrl[1] === '/') {
@@ -66,7 +70,7 @@ export const useAuthedFetcher = () => {
             expireSess('useAuthedFetcher', data?.reason ?? 'unknown');
             throw new Error('Session expired');
         }
-        return data;
+        return data as Resp;
     }
 }
 

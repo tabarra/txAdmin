@@ -1,5 +1,4 @@
 import { ApiLogoutResp, ReactAuthDataType } from '@shared/authApiTypes';
-import { useMutation } from '@tanstack/react-query';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 import { accountModalOpenAtom, confirmDialogOpenAtom, promptDialogOpenAtom } from './dialogs';
@@ -11,7 +10,8 @@ import { actionModalOpenAtom } from './actionModal';
 import { dashDataTsAtom, dashPerfCursorAtom, dashPlayerDropAtom, dashServerStatsAtom, dashSvRuntimeAtom } from '@/pages/Dashboard/dashboardHooks';
 import { redirectToLogin } from '@/lib/navigation';
 import { LogoutReasonHash } from '@/pages/auth/Login';
-import { mutate } from 'swr'
+import { mutate } from 'swr';
+import { fetchWithTimeout } from './fetch';
 
 
 /**
@@ -96,25 +96,22 @@ export const useExpireAuthData = () => {
 export const useAuth = () => {
     const [authData, setAuthData] = useAtom(authDataAtom);
 
-    const logoutMutation = useMutation<ApiLogoutResp>({
-        mutationKey: ['auth'],
-        mutationFn: () => fetch('/auth/logout', { method: 'POST' }).then(res => res.json()),
-        onSuccess: (data) => {
-            if (data.logout) {
-                console.log('[useAuth] Manually triggered logout.');
-                setAuthData(false);
-                redirectToLogin(LogoutReasonHash.LOGOUT);
-            }
-        },
+    const logout = () => fetchWithTimeout<ApiLogoutResp>(`/auth/logout`, { method: 'POST' }).then(data => {
+        if (data.logout) {
+            console.log('[useAuth] Manually triggered logout.');
+            setAuthData(false);
+            redirectToLogin(LogoutReasonHash.LOGOUT);
+        } else {
+            console.error('Failed to logout:', data);
+        }
+    }).catch(error => {
+        console.log('Error sending logout request:', error);
     });
 
     return {
         authData,
         setAuthData,
-        logout: {
-            mutate: logoutMutation.mutate,
-            isLoading: logoutMutation.isPending,
-        }
+        logout,
     }
 };
 
