@@ -54,13 +54,14 @@ type ScanFolderOpts = {
     limits: ScanLimits,
 }
 
-type StaticFilePath = {
-    url: string,
-}
-type StaticFileCache = StaticFilePath & {
+export type CompressionResult = {
     raw: Buffer,
     gz: Buffer,
 }
+type StaticFilePath = {
+    url: string,
+}
+type StaticFileCache = CompressionResult & StaticFilePath;
 
 
 /**
@@ -73,7 +74,7 @@ const compressGzip = async (buffer: Buffer) => {
 
 
 //Reads and compresses a file
-const getStaticFile = async (fullPath: string) => {
+export const getCompressedFile = async (fullPath: string) => {
     const raw = await fsp.readFile(fullPath);
     const gz = await compressGzip(raw);
     return { raw, gz };
@@ -122,7 +123,7 @@ export const scanStaticFolder = async ({ rootPath, state, limits }: ScanFolderOp
                 //Process the file
                 const entryPathUrl = '/' + path.posix.join(currentFolderUrl, entry.name);
                 const entryPathAbs = path.join(currentFolderAbs, entry.name);
-                const fileData = await getStaticFile(entryPathAbs);
+                const fileData = await getCompressedFile(entryPathAbs);
                 state.bytes += fileData.raw.length;
                 state.files.push({
                     url: entryPathUrl,
@@ -231,27 +232,27 @@ const serveStaticMwProd = (opts: ServeStaticMwOpts) => async (ctx: RawKoaCtx, ne
     }
 
     //Check if the file is in the cache
-    let cacheHit: StaticFileCache | undefined;
+    let staticFile: StaticFileCache | undefined;
     for (let i = 0; i < cachedFiles.length; i++) {
         const currCachedFile = cachedFiles[i];
         if (currCachedFile.url === ctx.path) {
-            cacheHit = currCachedFile;
+            staticFile = currCachedFile;
             break;
         }
     }
-    if (!cacheHit) return await next();
+    if (!staticFile) return await next();
 
     //Check if the client supports gzip
     //NOTE: dropped brotli, it's not worth the hassle
     if (ctx.acceptsEncodings('gzip', 'identity') === 'gzip') {
         ctx.set('Content-Encoding', 'gzip');
-        ctx.body = cacheHit.gz;
+        ctx.body = staticFile.gz;
     } else {
-        ctx.body = cacheHit.raw;
+        ctx.body = staticFile.raw;
     }
 
     //Determine the MIME type based on the original file extension
-    ctx.type = path.extname(cacheHit.url); // This sets the appropriate Content-Type header based on the extension
+    ctx.type = path.extname(staticFile.url); // This sets the appropriate Content-Type header based on the extension
 
     //Set the client caching behavior (kinda conflicts with cacheControlMw)
     //NOTE: The legacy URLs already contain the `txVer` param to bust the cache, so 30 minutes should be fine
@@ -291,6 +292,7 @@ const serveStaticMwDev = (opts: ServeStaticMwOpts) => async (ctx: RawKoaCtx, nex
         }
     }
 
+    //Look for it in the roots
     let readStream: fs.ReadStream | undefined;
     for (const rootPath of opts.roots) {
         readStream = await tryAcquireFileStream(path.join(rootPath, ctx.path));

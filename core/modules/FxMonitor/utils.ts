@@ -298,17 +298,55 @@ export const fetchDynamicJson = async (
 
 const dynamicJsonSchema = z.object({
     clients: z.number().int().nonnegative(),
-    hostname: z.string().optional(),
-    gametype: z.string().optional(),
-    mapname: z.string().optional(),
-    iv: z.string().optional(),
-    sv_maxclients: z.coerce.number().int().nonnegative().optional(),
+    // hostname: z.string().optional(),
+    // gametype: z.string().optional(),
+    // mapname: z.string().optional(),
+    // iv: z.string().optional(),
+    sv_maxclients: z.coerce.number().int().positive().optional(),
 });
 
 type FetchDynamicJsonError = {
-    success: false,
+    success: false;
 } & VerboseErrorData;
 type FetchDynamicJsonSuccess = {
-    success: true,
-    data: z.infer<typeof dynamicJsonSchema>,
+    success: true;
+    data: z.infer<typeof dynamicJsonSchema>;
 };
+
+
+/**
+ * Do a HTTP GET to the /info.json endpoint and parse the JSON response.
+ */
+export const fetchInfoJson = async (netEndpoint: string) => {
+    let info: any;
+    try {
+        info = await got.get({
+            url: `http://${netEndpoint}/info.json`,
+            maxRedirects: 0,
+            timeout: { request: 15_000 },
+            retry: { limit: 6 },
+        }).json();
+    } catch (error) {
+        return;
+    }
+
+    const schemas = {
+        icon: z.string().base64(),
+        locale: z.string().nonempty(),
+        projectName: z.string().nonempty(),
+        projectDesc: z.string().nonempty(),
+        bannerConnecting: z.string().url(),
+        bannerDetail: z.string().url(),
+        tags: z.string().nonempty(),
+    };
+
+    return {
+        icon: schemas.icon.safeParse(info.icon)?.data,
+        locale: schemas.locale.safeParse(info.vars?.locale)?.data,
+        projectName: schemas.projectName.safeParse(info.vars?.sv_projectName)?.data,
+        projectDesc: schemas.projectDesc.safeParse(info.vars?.sv_projectDesc)?.data,
+        bannerConnecting: schemas.bannerConnecting.safeParse(info.vars?.banner_connecting)?.data,
+        bannerDetail: schemas.bannerDetail.safeParse(info.vars?.banner_detail)?.data,
+        tags: schemas.tags.safeParse(info.vars?.tags)?.data,
+    };
+}

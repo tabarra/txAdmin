@@ -1,11 +1,13 @@
 const modulename = 'FxMonitor';
+import crypto from 'node:crypto';
+import chalk from 'chalk';
 import { txHostConfig } from '@core/globalData';
-import { MonitorState, getMonitorTimeTags, HealthEventMonitor, MonitorIssue, Stopwatch, fetchDynamicJson, cleanMonitorIssuesArray } from './utils';
+import { MonitorState, getMonitorTimeTags, HealthEventMonitor, MonitorIssue, Stopwatch, fetchDynamicJson, fetchInfoJson, cleanMonitorIssuesArray } from './utils';
 import consoleFactory from '@lib/console';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 import { ChildProcessState } from '@modules/FxRunner/ProcessManager';
 import { secsToShortestDuration } from '@lib/misc';
-import chalk from 'chalk';
+import { setRuntimeFile } from '@lib/fxserver/runtimeFiles';
 import { FxMonitorHealth } from '@shared/enums';
 const console = consoleFactory(modulename);
 
@@ -94,7 +96,7 @@ export default class FxMonitor {
     private currentStatus: FxMonitorHealth = FxMonitorHealth.OFFLINE;
     private lastHealthCheckError: VerboseErrorData | null = null; //to print warning
     private isAwaitingRestart = false; //to prevent spamming while the server restarts (5s)
-    private hasServerStartedYet = false;
+    private tsServerBooted: number | null = null;
 
     //to prevent DDoS crash false positive
     private readonly swLastStatusUpdate = new Stopwatch(false);
@@ -121,12 +123,13 @@ export default class FxMonitor {
     /**
      * Sets the current status and propagates the change to the Discord Bot and WebServer
      */
-    private setCurrentStatus(newStatus: HealthStatus) {
-        if (newStatus !== this.currentStatus) {
-            this.currentStatus = newStatus;
-            txCore.discordBot.updateBotStatus().catch((e) => { });
-            txCore.webServer.webSocket.pushRefresh('status');
-        }
+    private setCurrentStatus(newStatus: FxMonitorHealth) {
+        if (newStatus === this.currentStatus) return;
+
+        //Set state
+        this.currentStatus = newStatus;
+        txCore.discordBot.updateBotStatus().catch((e) => { });
+        txCore.webServer.webSocket.pushRefresh('status');
     }
 
 
@@ -138,7 +141,7 @@ export default class FxMonitor {
         this.setCurrentStatus(FxMonitorHealth.OFFLINE);
         this.lastHealthCheckError = null;
         this.isAwaitingRestart = false;
-        this.hasServerStartedYet = false;
+        this.tsServerBooted = null;
 
         this.swLastStatusUpdate.reset();
         this.swLastStatusWarning.reset();
@@ -286,12 +289,10 @@ export default class FxMonitor {
 
         //Check if its online and return
         if (heartBeat.state === MonitorState.HEALTHY && healthCheck.state === MonitorState.HEALTHY) {
-            if (this.hasServerStartedYet === false) {
-                this.hasServerStartedYet = true;
-                txCore.metrics.txRuntime.registerFxserverBoot(processUptime);
-                txCore.metrics.svRuntime.logServerBoot(processUptime);
-                txCore.fxRunner.signalSpawnBackoffRequired(false);
             this.setCurrentStatus(FxMonitorHealth.ONLINE);
+            if (!this.tsServerBooted) {
+                this.tsServerBooted = Date.now();
+                this.handleBootCompleted(processUptime).catch(() => { });
             }
             return {
                 action: 'SKIP',
@@ -491,7 +492,7 @@ export default class FxMonitor {
         this.healthCheckMonitor.markHealthy();
 
         //Checking for the maxClients
-        if (dynamicJson.sv_maxclients !== undefined) {
+        if (dynamicJson.sv_maxclients) {
             const maxClients = dynamicJson.sv_maxclients;
             txCore.cacheStore.set('fxsRuntime:maxClients', maxClients);
             if (txHostConfig.forceMaxClients && maxClients > txHostConfig.forceMaxClients) {
@@ -531,6 +532,56 @@ export default class FxMonitor {
             }
             this.swLastHTTP.restart();
         }
+    }
+
+
+    //MARK: ON BOOT
+    /**
+     * Handles the HeartBeat event from the server.
+     */
+    private async handleBootCompleted(bootDuration: number) {
+        //Check if the server is supposed to be offline
+        const childState = txCore.fxRunner.child;
+        if (!childState?.isAlive || !childState?.netEndpoint) return;
+
+        //Registering the boot
+        txCore.metrics.txRuntime.registerFxserverBoot(bootDuration);
+        txCore.metrics.svRuntime.logServerBoot(bootDuration);
+        txCore.fxRunner.signalSpawnBackoffRequired(false);
+
+        //Fetching runtime data
+        const infoJson = await fetchInfoJson(childState.netEndpoint);
+        if (!infoJson) return;
+
+        //Save icon base64 to file
+        const iconCacheKey = 'fxsRuntime:iconFilename';
+        if (infoJson.icon) {
+            try {
+                const iconHash = crypto
+                    .createHash('shake256', { outputLength: 8 })
+                    .update(infoJson.icon)
+                    .digest('hex')
+                    .padStart(16, '0');
+                const iconFilename = `icon-${iconHash}.png`;
+
+                if (iconFilename !== txCore.cacheStore.get(iconCacheKey)) {
+                    txCore.cacheStore.set(iconCacheKey, iconFilename);
+                    await setRuntimeFile(iconFilename, Buffer.from(infoJson.icon, 'base64'));
+                }
+            } catch (error) {
+                console.error(`Failed to save server icon: ${(error as any).message ?? 'Unknown error'}`);
+            }
+        } else {
+            txCore.cacheStore.delete(iconCacheKey);
+        }
+
+        //Upserts the runtime data
+        txCore.cacheStore.upsert('fxsRuntime:bannerConnecting', infoJson.bannerConnecting);
+        txCore.cacheStore.upsert('fxsRuntime:bannerDetail', infoJson.bannerDetail);
+        txCore.cacheStore.upsert('fxsRuntime:locale', infoJson.locale);
+        txCore.cacheStore.upsert('fxsRuntime:projectDesc', infoJson.projectDesc);
+        txCore.cacheStore.upsert('fxsRuntime:projectName', infoJson.projectName);
+        txCore.cacheStore.upsert('fxsRuntime:tags', infoJson.tags);
     }
 
 

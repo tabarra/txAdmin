@@ -6,10 +6,11 @@ import { TxConfigState, type FxMonitorHealth } from "@shared/enums";
 import type { GlobalStatusType } from "@shared/socketioTypes";
 import quitProcess from "@lib/quitProcess";
 import consoleFactory, { processStdioEnsureEol, setTTYTitle } from "@lib/console";
-import { z } from "zod";
+import { isNumber, isString } from "@modules/CacheStore";
 const console = consoleFactory('Manager');
 
 //Types
+type gameNames = 'fivem' | 'redm';
 type HostStatusType = {
     //txAdmin state
     cfgPath: string | null;
@@ -20,11 +21,12 @@ type HostStatusType = {
 
     //Detected at runtime
     cfxId: string | null;
-    gameName: 'fivem' | 'redm' | null;
+    gameName: gameNames | null;
     joinLink: string | null;
     joinDeepLink: string | null;
     playerSlots: number | null;
     projectName: string | null;
+    projectDesc: string | null;
 }
 
 
@@ -159,7 +161,8 @@ export default class TxManager {
      */
     get hostStatus(): HostStatusType {
         const serverPaths = txCore.fxRunner.serverPaths;
-        const cfxId = txCore.cacheStore.getTyped('fxsRuntime:cfxId', z.string()) ?? null;
+        const cfxId = txCore.cacheStore.getTyped('fxsRuntime:cfxId', isString) ?? null;
+        const isGameName = (val: any): val is gameNames => val === 'fivem' || val === 'redm';
         return {
             //txAdmin state
             isConfigured: this.configState === TxConfigState.Ready,
@@ -170,11 +173,12 @@ export default class TxManager {
 
             //Detected at runtime
             cfxId,
-            gameName: txCore.cacheStore.getTyped('fxsRuntime:gameName', z.enum(['fivem', 'redm'])) ?? null,
+            gameName: txCore.cacheStore.getTyped('fxsRuntime:gameName', isGameName) ?? null,
             joinDeepLink: cfxId ? `fivem://connect/cfx.re/join/${cfxId}` : null,
             joinLink: cfxId ? `https://cfx.re/join/${cfxId}` : null,
-            playerSlots: txCore.cacheStore.getTyped('fxsRuntime:maxClients', z.number()) ?? null,
-            projectName: txCore.cacheStore.getTyped('fxsRuntime:projectName', z.string()) ?? null,
+            playerSlots: txCore.cacheStore.getTyped('fxsRuntime:maxClients', isNumber) ?? null,
+            projectName: txCore.cacheStore.getTyped('fxsRuntime:projectName', isString) ?? null,
+            projectDesc: txCore.cacheStore.getTyped('fxsRuntime:projectDesc', isString) ?? null,
         }
     }
 

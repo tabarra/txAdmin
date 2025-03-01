@@ -7,6 +7,7 @@ import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
 import consoleFactory from '@lib/console';
 import { AuthedAdminType, checkRequestAuth } from "./authLogic";
+import { isString } from "@modules/CacheStore";
 const console = consoleFactory(modulename);
 
 // NOTE: it's not possible to remove the hardcoded import of the entry point in the index.html file
@@ -107,7 +108,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //Preparing vars
     const basePath = (ctx.txVars.isWebInterface) ? '/' : consts.nuiWebpipePath;
-    const injectedConsts = {
+    const injectedConsts: InjectedTxConsts = {
         //env
         fxsVersion: txEnv.fxsVersionTag,
         fxsOutdated: txCore.updateChecker.fxsUpdateData,
@@ -125,9 +126,16 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         providerName: txHostConfig.providerName,
         hostConfigSource: txHostConfig.sourceName,
 
+        //Login page info
+        server: {
+            name: txCore.cacheStore.getTyped('fxsRuntime:projectName', isString) ?? txConfig.general.serverName,
+            game: txCore.cacheStore.getTyped('fxsRuntime:gameName', isString),
+            icon: txCore.cacheStore.getTyped('fxsRuntime:iconFilename', isString),
+        },
+
         //auth
         preAuth: authedAdmin && authedAdmin.getAuthData(),
-    } satisfies InjectedTxConsts;
+    };
 
     //Prepare placeholders
     const replacers: { [key: string]: string } = {};

@@ -10,29 +10,8 @@ import './cfxreLoginButton.css';
 import { useLocation } from "wouter";
 import { fetchWithTimeout } from '@/hooks/fetch';
 import { processFetchError } from './errors';
+import { ServerGlowIcon } from '@/components/ServerIcon';
 
-
-function HeaderServerInfo() {
-    // const serverIconUrl = 'https://picsum.photos/seed/sdfsdfsfd/96';
-    // const serverIconUrl = 'img/redm-server-icon.png';
-    const serverIconUrl = 'img/fivem-server-icon.png';
-    return (<>
-        <div className="relative flex shrink-0">
-            <img src={serverIconUrl} className="size-14 xs:size-16 rounded-md z-10" />
-            <img src={serverIconUrl} className="size-14 xs:size-16 absolute blur-lg z-0 scale-90" />
-        </div>
-        <div className="grow xs:h-full flex flex-col xs:justify-between">
-            <div className="text-xl xs:text-2xl font-semibold line-clamp-1">
-                {/* Testerino RP aabbcc */}
-                FiveM Test Server
-                {/* change-me */}
-            </div>
-            <div className="text-sm xs:text-base text-muted-foreground">
-                Login to your account
-            </div>
-        </div>
-    </>)
-}
 
 function HeaderNoServer() {
     return (
@@ -51,6 +30,28 @@ function HeaderNoServer() {
             </div>
         </div>
     )
+}
+
+function HeaderServerInfo() {
+    const server = window.txConsts.server;
+    if (!server || !server.name || (!server.game && !server.icon)) {
+        return <HeaderNoServer />;
+    }
+    return (<>
+        <ServerGlowIcon
+            iconFilename={server.icon}
+            serverName={server.name}
+            gameName={server.game}
+        />
+        <div className="grow xs:h-full flex flex-col xs:justify-between">
+            <div className="text-xl xs:text-2xl font-semibold line-clamp-1">
+                {server.name}
+            </div>
+            <div className="text-sm xs:text-base text-muted-foreground">
+                Login to continue
+            </div>
+        </div>
+    </>)
 }
 
 
@@ -150,7 +151,7 @@ export default function Login() {
     //Gets the message from the hash and clears it
     useEffect(() => {
         const hash = window.location.hash;
-        if(!hash) return;
+        if (!hash) return;
         if (hash === LogoutReasonHash.LOGOUT) {
             setErrorMessage('Logged Out.');
         } else if (hash === LogoutReasonHash.EXPIRED) {
@@ -165,16 +166,12 @@ export default function Login() {
 
     return (
         <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                handleLogin();
-            }}
-            className='w-full rounded-b-[inherit]'
+            onSubmit={(e) => { e.preventDefault(); handleLogin();}}
+            className='w-full rounded-[inherit]'
         >
-            <CardHeader className="space-y-1">
+            <CardHeader className="rounded-t-[inherit]">
                 <CardTitle className="h-14 xs:h-16 flex flex-row justify-center items-center gap-4">
-                    {/* <HeaderServerInfo /> */}
-                    <HeaderNoServer />
+                    <HeaderServerInfo />
                 </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col pt-4 gap-4 border-t rounded-b-[inherit] bg-card">

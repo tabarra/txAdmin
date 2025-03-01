@@ -26,6 +26,7 @@ import cacheControlMw from './middlewares/cacheControlMw';
 import fatalError from '@lib/fatalError';
 import { isProxy } from 'node:util/types';
 import serveStaticMw from './middlewares/serveStaticMw';
+import serveRuntimeMw from './middlewares/serveRuntimeMw';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict49, 32);
 
@@ -91,6 +92,7 @@ export default class WebServer {
         this.app.use(topLevelMw);
 
         //Setting up additional middlewares:
+        this.app.use(serveRuntimeMw);
         this.app.use(serveStaticMw({
             noCaching: txDevEnv.ENABLED,
             cacheMaxAge: 30 * 60, //30 minutes
