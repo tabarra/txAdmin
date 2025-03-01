@@ -200,7 +200,7 @@ export class DbInstance {
     async backupDatabase(targetPath?: string) {
         try {
             await fsp.copyFile(this.dbPath, targetPath ?? this.backupPath);
-            console.verbose.debug('Database file backed up.');
+            // console.verbose.debug('Database file backed up.');
         } catch (error) {
             console.error(`Failed to backup database file '${this.dbPath}'`);
             console.verbose.dir(error);

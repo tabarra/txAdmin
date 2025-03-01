@@ -42,6 +42,7 @@ export default class TxRuntimeMetrics {
     public readonly playersTableSearchTime = new QuantileArray(5000, 50);
     public readonly historyTableSearchTime = new QuantileArray(5000, 50);
     public readonly databaseSaveTime = new QuantileArray(1440, 60);
+    public readonly perfCollectionTime = new QuantileArray(1440, 60);
     
     public currHbData: string = '{"error": "not yet initialized in TxRuntimeMetrics"}';
     public monitorStats = {

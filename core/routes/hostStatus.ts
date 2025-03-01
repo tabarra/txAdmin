@@ -1,4 +1,3 @@
-import { txHostConfig } from '@core/globalData';
 import type { InitializedCtx } from '@modules/WebServer/ctxTypes';
 
 

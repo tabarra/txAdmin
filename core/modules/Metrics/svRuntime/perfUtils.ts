@@ -119,7 +119,9 @@ export const fetchFxsMemory = async (fxsPid?: number) => {
     } catch (error) {
         if ((error as any).code = 'ENOENT') {
             console.error('Failed to get processes tree usage data.');
-            if (txEnv.isWindows) {
+            if (!txCore.fxRunner.child?.isAlive) {
+                console.error('The server process is not running.');
+            } if (txEnv.isWindows) {
                 console.error('This is probably because the `wmic` command is not available in your system.');
                 console.error('If you are on Windows 11 or Windows Server 2025, you can enable it in the "Windows Features" settings.');
             } else {

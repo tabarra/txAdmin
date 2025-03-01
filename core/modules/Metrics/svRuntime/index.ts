@@ -12,6 +12,7 @@ import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TIC
 import { PerfChartApiResp } from '@routes/perfChart';
 import got from '@lib/got';
 import { throttle } from 'throttle-debounce';
+import { TimeCounter } from '../statsUtils';
 import { FxMonitorHealth } from '@shared/enums';
 const console = consoleFactory(modulename);
 
@@ -174,17 +175,23 @@ export default class SvRuntimeMetrics {
         //Get performance data
         const netEndpoint = txDevEnv.EXT_STATS_HOST ?? txCore.fxRunner.child.netEndpoint;
         if (!netEndpoint) throw new Error(`Invalid netEndpoint: ${netEndpoint}`);
+
+        const stopwatch = new TimeCounter();
         const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
             fetchRawPerfData(netEndpoint),
             fetchFxsMemory(txCore.fxRunner.child.pid),
         ]);
+        const collectionTime = stopwatch.stop();
+
         if (fetchFxsMemoryRes.status === 'fulfilled') {
             this.lastFxsMemory = fetchFxsMemoryRes.value;
         } else {
             this.lastFxsMemory = undefined;
         }
         if (fetchRawPerfDataRes.status === 'rejected') throw fetchRawPerfDataRes.reason;
+
         const { perfBoundaries, perfMetrics } = fetchRawPerfDataRes.value;
+        txCore.metrics.txRuntime.perfCollectionTime.count(collectionTime.milliseconds);
 
         //Check for min tick count
         if (
@@ -257,7 +264,7 @@ export default class SvRuntimeMetrics {
             perf: perfToSave,
         };
         this.statsLog.push(currSnapshot);
-        console.verbose.ok(`Collected performance snapshot #${this.statsLog.length}`);
+        // console.verbose.ok(`Collected performance snapshot #${this.statsLog.length}`);
 
         //Save perf series do file - not queued because it's priority
         this.queueSaveStatsHistory.cancel({ upcomingOnly: true });

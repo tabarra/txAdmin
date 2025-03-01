@@ -62,7 +62,7 @@ export const getProcessesData = async () => {
     const procList: ProcDataType[] = [];
     try {
         const txProcessId = process.pid;
-        const processes = await pidUsageTree(process.pid);
+        const processes = await pidUsageTree(txProcessId);
 
         //NOTE: Cleaning invalid proccesses that might show up in Linux
         Object.keys(processes).forEach((pid) => {
@@ -88,7 +88,7 @@ export const getProcessesData = async () => {
 
             procList.push({
                 pid: currPidInt,
-                ppid: (curr.ppid === txProcessId) ? 'txAdmin' : curr.ppid,
+                ppid: (curr.ppid === txProcessId) ? `${txProcessId} (txAdmin)` : curr.ppid,
                 name: procName,
                 cpu: curr.cpu,
                 memory: curr.memory / MEGABYTE,
@@ -310,6 +310,7 @@ export const getTxAdminData = async () => {
             playersTableSearch: stats.playersTableSearchTime.resultSummary('ms').summary,
             historyTableSearch: stats.historyTableSearchTime.resultSummary('ms').summary,
             databaseSave: stats.databaseSaveTime.resultSummary('ms').summary,
+            perfCollection: stats.perfCollectionTime.resultSummary('ms').summary,
         },
         logger: {
             storageSize: (await txCore.logger.getStorageSize()).total,

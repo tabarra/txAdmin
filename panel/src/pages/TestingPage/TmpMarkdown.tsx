@@ -53,6 +53,7 @@ const toastMarkdown = `
 //Just to test code block inside toast
 const hello = () => {
     return \`Hello World!\`;
+    //Lore_ipsu_dolo_si_amet_consectetu_adipiscin_elit_se_d_eiusmo_tempo_incididun_u_labor_e_dolor_magn_aliqua_U_eni_a_mini_veniam_qui_nostru_exercitatio_ullamc_labori_nis_u_aliqui_e_e_commod_consequat.
 }
 \`\`\`
 `;
