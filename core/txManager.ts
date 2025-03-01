@@ -2,7 +2,7 @@ import { getHostData } from "@lib/diagnostics";
 import { isProxy } from "util/types";
 import { startReadyWatcher } from "./boot/startReadyWatcher";
 import { Deployer } from "./deployer";
-import { TxConfigState } from "@shared/enums";
+import { TxConfigState, type FxMonitorHealth } from "@shared/enums";
 import type { GlobalStatusType } from "@shared/socketioTypes";
 import quitProcess from "@lib/quitProcess";
 import consoleFactory, { processStdioEnsureEol, setTTYTitle } from "@lib/console";
@@ -16,7 +16,7 @@ type HostStatusType = {
     dataPath: string | null;
     isConfigured: boolean;
     playerCount: number;
-    status: typeof txCore.fxMonitor.currentStatus;
+    status: FxMonitorHealth;
 
     //Detected at runtime
     cfxId: string | null;
@@ -166,7 +166,7 @@ export default class TxManager {
             dataPath: serverPaths?.dataPath ?? null,
             cfgPath: serverPaths?.cfgPath ?? null,
             playerCount: txCore.fxPlayerlist.onlineCount,
-            status: txCore.fxMonitor.currentStatus,
+            status: txCore.fxMonitor.status.health,
 
             //Detected at runtime
             cfxId,
@@ -183,6 +183,7 @@ export default class TxManager {
      * Returns the global status object that is sent to the clients
      */
     get globalStatus(): GlobalStatusType {
+        const fxMonitorStatus = txCore.fxMonitor.status;
         return {
             configState: txManager.configState,
             discord: txCore.discordBot.status,
@@ -191,8 +192,10 @@ export default class TxManager {
                 isChildAlive: txCore.fxRunner.child?.isAlive ?? false,
             },
             server: {
-                status: txCore.fxMonitor.currentStatus,
                 name: txConfig.general.serverName,
+                uptime: fxMonitorStatus.uptime,
+                health: fxMonitorStatus.health,
+                healthReason: fxMonitorStatus.healthReason,
                 whitelist: txConfig.whitelist.mode,
             },
             scheduler: txCore.fxScheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()

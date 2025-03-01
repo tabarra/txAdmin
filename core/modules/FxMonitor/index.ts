@@ -1,11 +1,12 @@
 const modulename = 'FxMonitor';
 import { txHostConfig } from '@core/globalData';
-import { MonitorState, getMonitorTimeTags, HealthEventMonitor, MonitorIssue, Stopwatch, fetchDynamicJson } from './utils';
+import { MonitorState, getMonitorTimeTags, HealthEventMonitor, MonitorIssue, Stopwatch, fetchDynamicJson, cleanMonitorIssuesArray } from './utils';
 import consoleFactory from '@lib/console';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 import { ChildProcessState } from '@modules/FxRunner/ProcessManager';
 import { secsToShortestDuration } from '@lib/misc';
 import chalk from 'chalk';
+import { FxMonitorHealth } from '@shared/enums';
 const console = consoleFactory(modulename);
 
 
@@ -15,7 +16,7 @@ const HC_CONFIG = {
     bootInitAfterHbLimit: 45,
 
     //after first success:
-    delayLimit: 15,
+    delayLimit: 10,
     fatalLimit: 180, //since playerConnecting hangs now are HB, reduced from 5 to 3 minutes
 
     //other stuff
@@ -29,16 +30,11 @@ const HB_CONFIG = {
     bootResNominalStartTime: 10, //if a resource has been starting for this long, don't even mention it
 
     //after first success:
-    delayLimit: 15,
+    delayLimit: 10,
     fatalLimit: 60,
 };
 const MAX_LOG_ENTRIES = 300; //5 minutes in 1s intervals
 const MIN_WARNING_INTERVAL = 10;
-enum HealthStatus {
-    OFFLINE = 'OFFLINE',
-    ONLINE = 'ONLINE',
-    PARTIAL = 'PARTIAL',
-}
 
 
 //MARK:Types
@@ -46,6 +42,7 @@ export type VerboseErrorData = {
     error: string,
     debugData: Record<string, string>,
 }
+export type MonitorIssuesArray = (string | MonitorIssue | undefined)[];
 type MonitorRestartCauses = 'bootTimeout' | 'close' | 'healthCheck' | 'heartBeat' | 'both';
 type ProcessStatusResult = {
     action: 'SKIP';
@@ -54,12 +51,12 @@ type ProcessStatusResult = {
     action: 'WARN';
     times?: string;
     reason: string;
-    issues?: (string | MonitorIssue | undefined)[];
+    issues?: MonitorIssuesArray;
 } | {
     action: 'RESTART';
     times?: string;
     reason: string;
-    issues?: (string | MonitorIssue | undefined)[];
+    issues?: MonitorIssuesArray;
     cause: MonitorRestartCauses;
 }
 type ProcessStatusNote = {
@@ -94,7 +91,7 @@ export default class FxMonitor {
 
     //Status tracking
     private readonly statusLog = new LimitedArray<StatusLogEntry>(MAX_LOG_ENTRIES);
-    public currentStatus: HealthStatus = HealthStatus.OFFLINE;
+    private currentStatus: FxMonitorHealth = FxMonitorHealth.OFFLINE;
     private lastHealthCheckError: VerboseErrorData | null = null; //to print warning
     private isAwaitingRestart = false; //to prevent spamming while the server restarts (5s)
     private hasServerStartedYet = false;
@@ -138,7 +135,7 @@ export default class FxMonitor {
      * This is called internally and by FxRunner
      */
     public resetState() {
-        this.setCurrentStatus(HealthStatus.OFFLINE);
+        this.setCurrentStatus(FxMonitorHealth.OFFLINE);
         this.lastHealthCheckError = null;
         this.isAwaitingRestart = false;
         this.hasServerStartedYet = false;
@@ -161,17 +158,7 @@ export default class FxMonitor {
     private updateStatus() {
         //Get and cleanup the result
         const result = this.calculateMonitorStatus();
-        let cleanIssues: string[] = [];
-        if ('issues' in result && result.issues) {
-            for (const issue of result.issues) {
-                if (!issue) continue;
-                if (typeof issue === 'string') {
-                    cleanIssues.push(issue);
-                } else {
-                    cleanIssues.push(...issue.all.filter(Boolean));
-                }
-            }
-        }
+        const cleanIssues = 'issues' in result ? cleanMonitorIssuesArray(result.issues) : [];
         if (result.reason.endsWith('.')) {
             result.reason = result.reason.slice(0, -1);
         }
@@ -251,7 +238,7 @@ export default class FxMonitor {
             this.resetState();
             return {
                 action: 'SKIP',
-                reason: 'server is idle',
+                reason: 'Server is idle',
             };
         }
 
@@ -259,7 +246,7 @@ export default class FxMonitor {
         if (this.isAwaitingRestart) {
             return {
                 action: 'SKIP',
-                reason: 'server is already restarting',
+                reason: 'Server is restarting',
             };
         }
 
@@ -299,16 +286,16 @@ export default class FxMonitor {
 
         //Check if its online and return
         if (heartBeat.state === MonitorState.HEALTHY && healthCheck.state === MonitorState.HEALTHY) {
-            this.setCurrentStatus(HealthStatus.ONLINE);
             if (this.hasServerStartedYet === false) {
                 this.hasServerStartedYet = true;
                 txCore.metrics.txRuntime.registerFxserverBoot(processUptime);
                 txCore.metrics.svRuntime.logServerBoot(processUptime);
                 txCore.fxRunner.signalSpawnBackoffRequired(false);
+            this.setCurrentStatus(FxMonitorHealth.ONLINE);
             }
             return {
                 action: 'SKIP',
-                reason: 'server is healthy',
+                reason: 'Server is healthy',
             }
         }
 
@@ -316,7 +303,7 @@ export default class FxMonitor {
         const currentStatusString = (
             heartBeat.state !== MonitorState.HEALTHY
             && healthCheck.state !== MonitorState.HEALTHY
-        ) ? HealthStatus.OFFLINE : HealthStatus.PARTIAL
+        ) ? FxMonitorHealth.OFFLINE : FxMonitorHealth.PARTIAL
         this.setCurrentStatus(currentStatusString);
 
         //Check if still in grace period
@@ -543,6 +530,31 @@ export default class FxMonitor {
                 txCore.metrics.txRuntime.registerFxserverHealthIssue('fd3');
             }
             this.swLastHTTP.restart();
+        }
+    }
+
+
+    //MARK: Getters
+    /**
+     * Returns the current status object that is sent to the host status endpoint
+     */
+    public get status() {
+        let healthReason = 'Unknown - no log entries.';
+        const lastEntry = this.statusLog.at(-1);
+        if (lastEntry) {
+            const healthReasonLines = [
+                lastEntry.reason + '.',
+            ];
+            if ('issues' in lastEntry) {
+                const cleanIssues = cleanMonitorIssuesArray(lastEntry.issues);
+                healthReasonLines.push(...cleanIssues);
+            }
+            healthReason = healthReasonLines.join('\n');
+        }
+        return {
+            health: this.currentStatus,
+            healthReason,
+            uptime: this.tsServerBooted ? Date.now() - this.tsServerBooted : 0,
         }
     }
 };

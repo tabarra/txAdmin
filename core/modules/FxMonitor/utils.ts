@@ -4,7 +4,7 @@ import bytes from "bytes";
 import type { Response } from "got";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
-import type { VerboseErrorData } from "./index";
+import type { MonitorIssuesArray, VerboseErrorData } from "./index";
 
 
 /**
@@ -157,6 +157,25 @@ export const getMonitorTimeTags = (
         simple: `(HB:${hbTime}|HC:${hcTime})`,
         withProc: `(P:${procTime}|HB:${hbTime}|HC:${hcTime})`,
     }
+}
+
+
+/**
+ * Processes a MonitorIssuesArray and returns a clean array of strings.
+ */
+export const cleanMonitorIssuesArray = (issues: MonitorIssuesArray | undefined) => {
+    if (!issues || !Array.isArray(issues)) return [];
+
+    let cleanIssues: string[] = [];
+    for (const issue of issues) {
+        if (!issue) continue;
+        if (typeof issue === 'string') {
+            cleanIssues.push(issue);
+        } else {
+            cleanIssues.push(...issue.all.filter(Boolean));
+        }
+    }
+    return cleanIssues;
 }
 
 

@@ -12,6 +12,7 @@ import { PERF_DATA_BUCKET_COUNT, PERF_DATA_INITIAL_RESOLUTION, PERF_DATA_MIN_TIC
 import { PerfChartApiResp } from '@routes/perfChart';
 import got from '@lib/got';
 import { throttle } from 'throttle-debounce';
+import { FxMonitorHealth } from '@shared/enums';
 const console = consoleFactory(modulename);
 
 
@@ -164,10 +165,11 @@ export default class SvRuntimeMetrics {
      * Cron function to collect all the stats and save it to the cache file
      */
     private async collectStats() {
-        //Precondition checks - try even when partially online
+        //Precondition checks
+        const monitorStatus = txCore.fxMonitor.status;
+        if (monitorStatus.health === FxMonitorHealth.OFFLINE) return; //collect even if partial
+        if (monitorStatus.uptime < 30_000) return; //server barely booted
         if (!txCore.fxRunner.child?.isAlive) return;
-        const healthMonitorStatus = txCore.fxMonitor.currentStatus;
-        if (healthMonitorStatus !== 'ONLINE' && healthMonitorStatus !== 'PARTIAL') return;
 
         //Get performance data
         const netEndpoint = txDevEnv.EXT_STATS_HOST ?? txCore.fxRunner.child.netEndpoint;
