@@ -339,7 +339,7 @@ const consoleFactory = (ctx?: string, subCtx?: string): CombinedConsole => {
             ok: getLogFunc(currContext, chalk.bgGreen, verboseConsole),
             warn: getLogFunc(currContext, chalk.bgYellow, verboseConsole),
             error: getLogFunc(currContext, chalk.bgRed, verboseConsole),
-            dir: (...args) => dirHandler.call(null, ...args, verboseConsole)
+            dir: (data, options) => dirHandler.call(null, data, options, verboseConsole)
         },
 
         //Verbosity getter and explicit setter
