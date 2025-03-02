@@ -107,10 +107,7 @@ export default function ServerStatus() {
 
     if (globalStatus) {
         //Server uptime
-        if (globalStatus.server.uptime > 0 && globalStatus.server.uptime < 60_000) {
-            serverUptimeText = '~1m';
-            serverUptimeDesc = 'Less than a minute';
-        } else if (globalStatus.server.uptime >= 60_000) {
+        if (globalStatus.server.uptime > 0) {
             serverUptimeText = msToShortDuration(
                 globalStatus.server.uptime,
                 {

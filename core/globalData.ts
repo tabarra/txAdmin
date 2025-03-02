@@ -37,11 +37,6 @@ if (osTypeVar === 'Windows_NT') {
 const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
 const ignoreDeprecatedConfigs = process.env?.TXHOST_IGNORE_DEPRECATED_CONFIGS === 'true';
 
-//Getters
-const nativeVars = getNativeVars(ignoreDeprecatedConfigs);
-const hostVars = getHostVars();
-const devVars = parseTxDevEnv();
-
 
 /**
  * MARK: HELPERS
@@ -76,8 +71,40 @@ const handleMultiVar = <T extends ZodSchema>(
 
 
 /**
+ * MARK: DEV ENV
+ */
+type TxDevEnvEnabledType = Overwrite<TxDevEnvType, {
+    ENABLED: true;
+    SRC_PATH: string, //required in core/webserver, core/getReactIndex.ts
+    VITE_URL: string, //required in core/getReactIndex.ts
+}>;
+type TxDevEnvDisabledType = Overwrite<TxDevEnvType, {
+    ENABLED: false;
+    SRC_PATH: undefined;
+    VITE_URL: undefined;
+}>;
+let _txDevEnv: TxDevEnvEnabledType | TxDevEnvDisabledType;
+const devVars = parseTxDevEnv();
+if (devVars.ENABLED) {
+    console.debug('Starting txAdmin in DEV mode.');
+    if (!devVars.SRC_PATH || !devVars.VITE_URL) {
+        fatalError.GlobalData(8, 'Missing TXDEV_VITE_URL and/or TXDEV_SRC_PATH env variables.');
+    }
+    _txDevEnv = devVars as TxDevEnvEnabledType;
+} else {
+    _txDevEnv = {
+        ...devVars,
+        SRC_PATH: undefined,
+        VITE_URL: undefined,
+    } as TxDevEnvDisabledType;
+}
+
+
+/**
  * MARK: CHECK HOST VARS
  */
+const nativeVars = getNativeVars(ignoreDeprecatedConfigs);
+
 //Getting fxserver version
 //4380 = GetVehicleType was exposed server-side
 //4548 = more or less when node v16 was added
@@ -147,9 +174,19 @@ if (isWindows && /Temp[\\/]+Rar\$/i.test(fxsPath)) {
 }
 
 
+//Setting the variables in console without it having to importing from here (circular dependency)
+setConsoleEnvData(
+    txaVersion,
+    txaPath,
+    _txDevEnv.ENABLED,
+    _txDevEnv.VERBOSE
+);
+
+
 /**
  * MARK: TXDATA & PROFILE 
  */
+const hostVars = getHostVars();
 //Setting data path
 let hasCustomDataPath = false;
 let dataPath = cleanPath(path.join(
@@ -206,36 +243,6 @@ if (profileVar) {
 }
 const profileName = profileVar ?? 'default';
 const profilePath = cleanPath(path.join(dataPath, profileName));
-
-
-/**
- * MARK: DEV ENV
- */
-type TxDevEnvEnabledType = Overwrite<TxDevEnvType, {
-    ENABLED: true;
-    SRC_PATH: string, //required in core/webserver, core/getReactIndex.ts
-    VITE_URL: string, //required in core/getReactIndex.ts
-}>;
-type TxDevEnvDisabledType = Overwrite<TxDevEnvType, {
-    ENABLED: false;
-    SRC_PATH: undefined;
-    VITE_URL: undefined;
-}>;
-let _txDevEnv: TxDevEnvEnabledType | TxDevEnvDisabledType;
-
-if (devVars.ENABLED) {
-    console.debug('Starting txAdmin in DEV mode.');
-    if (!devVars.SRC_PATH || !devVars.VITE_URL) {
-        fatalError.GlobalData(8, 'Missing TXDEV_VITE_URL and/or TXDEV_SRC_PATH env variables.');
-    }
-    _txDevEnv = devVars as TxDevEnvEnabledType;
-} else {
-    _txDevEnv = {
-        ...devVars,
-        SRC_PATH: undefined,
-        VITE_URL: undefined,
-    } as TxDevEnvDisabledType;
-}
 
 
 /**
@@ -460,14 +467,6 @@ const defaultCfxKey = handleMultiVar(
 /**
  * MARK: FINAL SETUP
  */
-//Setting the variables in console without it having to importing from here (cyclical dependency)
-setConsoleEnvData(
-    txaVersion,
-    txaPath,
-    _txDevEnv.ENABLED,
-    _txDevEnv.VERBOSE
-);
-
 if (ignoreDeprecatedConfigs) {
     console.verbose.debug('TXHOST_IGNORE_DEPRECATED_CONFIGS is set to true. Ignoring deprecated configs.');
 }
@@ -574,4 +573,5 @@ export const txHostConfig = Object.freeze({
 
 //DEBUG
 // console.dir(txEnv, { compact: true });
+// console.dir(txDevEnv, { compact: true });
 // console.dir(txHostConfig, { compact: true });

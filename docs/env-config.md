@@ -21,11 +21,11 @@ Those configurations are usually required for Game Server Providers (GSPs) and a
 
 The specific way to set up those variables vary from system to system, and there are usually multiple ways even within the same system. But these should work for most people:  
 - Windows:
-    - Create `env.bat` with commands like: `set VAR_NAME=VALUE`
-    - Before starting the server, run: `call env.bat && your_server_command`
+    - Edit your existing `start_<version>_<profile>.bat` to add the `set VAR_NAME=VALUE` commands before the `./<...>/FXServer.exe` line.
+    - Alternatively, you can create a `env.bat` file with the `set` commands, then start your server with `call env.bat && FXServer.exe`, which will run the `env.bat` before running `FXServer.exe`.
 - Linux:
-    - Create `env.sh` with commands like: `export VAR_NAME=VALUE`
-    - Then load them with: `source env.sh && ./your_server_command`
+    - Edit your existing `run.sh` to add the  `export VAR_NAME=VALUE` commands before the `exec $SCRIPTPATH/[...]` line.
+    - Alternatively, you can create a `env.sh` file with the `export` commands, then start your server with `source env.sh && ./run.sh`
 - Docker: 
     - Create a `.env` file with the vars like: `VAR_NAME=VALUE`
     - Load it using the `--env-file=.env` flag in your docker run command.
@@ -127,6 +127,16 @@ The specific way to set up those variables vary from system to system, and there
 
 
 ## Examples
+
+Migrating a dev server using an old `start.bat`:
+```diff
+ @echo off
++set TXHOST_DATA_PATH=E:\FiveM\txData-dev
++set TXHOST_TXA_PORT=40125
+-FXServer.exe +set serverProfile "server2" +set txAdminPort "40125"
++FXServer.exe
+ pause
+```
 
 Setting up a dev server on Windows with a `env.bat` file:
 ```batch

@@ -2,7 +2,7 @@ const modulename = 'FxMonitor';
 import crypto from 'node:crypto';
 import chalk from 'chalk';
 import { txHostConfig } from '@core/globalData';
-import { MonitorState, getMonitorTimeTags, HealthEventMonitor, MonitorIssue, Stopwatch, fetchDynamicJson, fetchInfoJson, cleanMonitorIssuesArray } from './utils';
+import { MonitorState, getMonitorTimeTags, HealthEventMonitor, MonitorIssue, Stopwatch, fetchDynamicJson, fetchInfoJson, cleanMonitorIssuesArray, type VerboseErrorData } from './utils';
 import consoleFactory from '@lib/console';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 import { ChildProcessState } from '@modules/FxRunner/ProcessManager';
@@ -40,10 +40,6 @@ const MIN_WARNING_INTERVAL = 10;
 
 
 //MARK:Types
-export type VerboseErrorData = {
-    error: string,
-    debugData: Record<string, string>,
-}
 export type MonitorIssuesArray = (string | MonitorIssue | undefined)[];
 type MonitorRestartCauses = 'bootTimeout' | 'close' | 'healthCheck' | 'heartBeat' | 'both';
 type ProcessStatusResult = {
@@ -214,7 +210,9 @@ export default class FxMonitor {
                 console.error(line);
             }
             if (this.lastHealthCheckError) {
+                console.verbose.debug('Last HealthCheck error debug data:');
                 console.verbose.dir(this.lastHealthCheckError.debugData);
+                console.verbose.debug('-'.repeat(40));
             }
 
             //Restarting the server

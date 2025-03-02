@@ -224,24 +224,17 @@ export const stringifyConsoleArgs = (args: (string | number | object)[]) => {
 
 /**
  * Copies the custom locale file from txData to the 'monitor' path, due to sandboxing.
+ * FIXME: move to core/lib/fxserver/runtimeFiles.ts
  */
 export const setupCustomLocaleFile = async () => {
+    if (txConfig.general.language !== 'custom') return;
     const srcPath = txCore.translator.customLocalePath;
     const destRuntimePath = path.resolve(txEnv.txaPath, '.runtime');
     const destFilePath = path.resolve(destRuntimePath, 'locale.json');
-    const isCustomLocale = txConfig.general.language === 'custom';
-    const action = isCustomLocale ? 'copy' : 'remove';
     try {
-        if (txConfig.general.language === 'custom') {
-            await fsp.mkdir(destRuntimePath, { recursive: true });
-            await fsp.copyFile(srcPath, destFilePath);
-        } else {
-            await fsp.unlink(destFilePath);
-        }
+        await fsp.mkdir(destRuntimePath, { recursive: true });
+        await fsp.copyFile(srcPath, destFilePath);
     } catch (error) {
-        const logger = isCustomLocale
-            ? console.tag('FXRunner').error
-            : console.tag('FXRunner').verbose.warn;
-        logger(`Failed to ${action} custom locale file: ${(error as any).message}`);
+        console.tag('FXRunner').error(`Failed to copy custom locale file: ${(error as any).message}`);
     }
 }

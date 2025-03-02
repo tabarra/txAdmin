@@ -14,7 +14,7 @@ import { TxAdminRunner } from './TxAdminRunner';
 process.loadEnvFile();
 
 //Reset terminal
-process.stdout.write('.\n'.repeat(80) + '\x1B[2J\x1B[H');
+process.stdout.write('.\n'.repeat(40) + '\x1B[2J\x1B[H');
 
 //Load the env vars, and check for the required ones
 const txDevEnv = parseTxDevEnv();

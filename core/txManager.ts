@@ -105,7 +105,7 @@ export default class TxManager {
 
         //Run all exit handlers
         await Promise.allSettled(this.moduleShutdownHandlers.map((handler) => handler()));
-        console.debug(`All exit handlers finished, shutting down...`);
+        console.verbose.debug(`All exit handlers finished, shutting down...`);
         quitProcess(0);
     }
 

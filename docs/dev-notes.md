@@ -169,6 +169,8 @@ Legend:
     - ref: https://github.com/xtermjs/xterm.js/issues/3864
     - ref: https://github.com/xtermjs/xterm.js/issues/4779
     - ref: https://github.com/xtermjs/xterm.js/milestone/78
+    - [ ] FIXME: Updating to WebGL might fix the font loading race condition
+        - Check the comments on LiveConsolePage.tsx
 - [ ] fix circular dependencies
     - search for `circular_dependency`
     - use `madge` (command at the bottom of file)

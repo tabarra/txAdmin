@@ -41,7 +41,7 @@ export const getLogBuffer = () => headBuffer + bodyBuffer;
 
 //Variables
 const header = 'tx';
-const stackPathAliases: [string, string][] = [];
+let stackPathAlias: { path: string, alias: string } | undefined;
 let _txAdminVersion: string | undefined;
 let _verboseFlag = false;
 
@@ -56,9 +56,15 @@ export const setConsoleEnvData = (
     if (isDevMode) {
         sourceMapSupport.install();
         //for some reason when using sourcemap it ends up with core/core/
-        stackPathAliases.push([txAdminResourcePath + '/core', '@monitor']);
+        stackPathAlias = {
+            path: txAdminResourcePath + '/core',
+            alias: '@monitor',
+        }
     } else {
-        stackPathAliases.push([txAdminResourcePath, '@monitor']);
+        stackPathAlias = {
+            path: txAdminResourcePath,
+            alias: '@monitor',
+        }
     }
 }
 
@@ -177,8 +183,8 @@ const getPrettyError = (error: Error, multilineError?: boolean) => {
             for (const line of ErrorStackParser.parse(error)) {
                 if (line.fileName && line.fileName.startsWith('node:')) continue;
                 let outPath = cleanPath(line.fileName ?? 'unknown');
-                for (const [find, replace] of stackPathAliases) {
-                    outPath = outPath.replace(find, replace);
+                if(stackPathAlias){
+                    outPath = outPath.replace(stackPathAlias.path, stackPathAlias.alias);
                 }
                 const outPos = chalk.blueBright(`${line.lineNumber}:${line.columnNumber}`);
                 const outName = chalk.yellowBright(line.functionName || '<unknown>');

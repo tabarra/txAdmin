@@ -74,7 +74,7 @@ export default function Login() {
 
     const onError = (error: any) => {
         const { errorTitle, errorMessage } = processFetchError(error);
-        setErrorMessage(`${errorTitle}: ${errorMessage}`);
+        setErrorMessage(`${errorTitle}:\n${errorMessage}`);
     }
 
     const onErrorResponse = (error: string) => {

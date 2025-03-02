@@ -1,3 +1,6 @@
+import path from 'node:path';
+
+
 //Helper function to get convars WITHOUT a fallback value
 const undefinedKey = 'UNDEFINED:CONVAR:' + Math.random().toString(36).substring(2, 15);
 const getConvarString = (convarName: string) => {
@@ -11,10 +14,11 @@ const cleanNativeResp = (resp: any) => {
 };
 
 //Warning for convar usage
+let anyWarnSent = false;
 const replacedConvarWarning = (convarName: string, newName: string) => {
     console.warn(`WARNING: The '${convarName}' ConVar is deprecated and will be removed in the next update.`);
-    console.warn(`WARNING: Please use the '${newName}' environment variable instead.`);
-    console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-env-config`);
+    console.warn(`         Please use the '${newName}' environment variable instead.`);
+    anyWarnSent = true;
 }
 
 
@@ -37,19 +41,31 @@ export const getNativeVars = (ignoreDeprecatedConfigs: boolean) => {
     const txAdminProfile = getConvarString('serverProfile');
     if (txAdminProfile) {
         console.warn(`WARNING: The 'serverProfile' ConVar is deprecated and will be removed in a future update.`);
-        console.warn(`WARNING: To create multiple servers, set up a different TXHOST_DATA_PATH instead.`);
-        console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-env-config`);
+        console.warn(`         To create multiple servers, set up a different TXHOST_DATA_PATH instead.`);
+        anyWarnSent = true;
     }
 
     //Convars replaced by TXHOST_* env vars
     let txDataPath, txAdminPort, txAdminInterface;
     if (!ignoreDeprecatedConfigs) {
         txDataPath = getConvarString('txDataPath');
-        if (txDataPath) replacedConvarWarning('txDataPath', 'TXHOST_DATA_PATH');
+        if (txDataPath) {
+            replacedConvarWarning('txDataPath', 'TXHOST_DATA_PATH');
+            //As it used to support relative paths, we need to resolve it
+            if (!path.isAbsolute(txDataPath)) {
+                txDataPath = path.resolve(txDataPath);
+                console.error(`WARNING: The 'txDataPath' ConVar is not an absolute path, please update it to:`);
+                console.error(`         TXHOST_DATA_PATH=${txDataPath}`);
+            }
+        }
         txAdminPort = getConvarString('txAdminPort');
         if (txAdminPort) replacedConvarWarning('txAdminPort', 'TXHOST_TXA_PORT');
         txAdminInterface = getConvarString('txAdminInterface');
         if (txAdminInterface) replacedConvarWarning('txAdminInterface', 'TXHOST_INTERFACE');
+    }
+
+    if (anyWarnSent) {
+        console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-env-config`);
     }
 
     //Final object

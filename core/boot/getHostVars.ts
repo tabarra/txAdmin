@@ -91,10 +91,20 @@ export const getHostVars = () => {
         const fullKey = `TXHOST_` + partialKey;
         const value = process.env[fullKey];
         if (value === undefined || value === '') continue;
+        if(/^['"]|['"]$/.test(value)) {
+            fatalError.GlobalData(20, [
+                'Invalid value for a TXHOST environment variable.',
+                'The value is surrounded by quotes (" or \'), and you must remove them.',
+                'This is likely a mistake in how you declared this env var.',
+                ['Key', fullKey],
+                ['Value', String(value)],
+                'For more information: https://aka.cfx.re/txadmin-env-config',
+            ]);
+        }
         const res = keySchema.safeParse(value);
         if (!res.success) {
             fatalError.GlobalData(20, [
-                'Invalid value for TXHOST environment variable.',
+                'Invalid value for a TXHOST environment variable.',
                 ['Key', fullKey],
                 ['Value', String(value)],
                 'For more information: https://aka.cfx.re/txadmin-env-config',
