@@ -39,8 +39,7 @@ export const extractTermLineTimestamp = (line: string) => {
  */
 export const formatTermTimestamp = (ts: number, opts: LiveConsoleOptions): string => {
     if (opts.timestampDisabled) return '';
-    const offset10hMs = 10 * 60 * 60 * 1000;
-    const time = new Date(ts * 1000 + offset10hMs);
+    const time = new Date(ts * 1000);
     const str = time.toLocaleTimeString(
         'en-US', //as en-gb uses 4 digits for the am/pm indicator
         {
