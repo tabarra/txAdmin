@@ -23,7 +23,7 @@ import { getSocket } from '@/lib/utils';
 import { openExternalLink } from '@/lib/navigation';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import { txToast } from '@/components/TxToaster';
-import { copyTermLine, extractTermLineTimestamp, formatTermTimestamp, getNumFontVariantsLoaded } from './liveConsoleUtils';
+import { ANSI, copyTermLine, extractTermLineTimestamp, formatTermTimestamp, getNumFontVariantsLoaded } from './liveConsoleUtils';
 import { getTermLineEventData, getTermLineInitialData, getTermLineRtlData, registerTermLineMarker } from './liveConsoleMarkers';
 
 
@@ -63,8 +63,6 @@ try {
 
 //Consts
 const keyDebounceTime = 150; //ms
-const ANSI_WHITE = '\x1B[0;37m';
-const ANSI_GRAY = '\x1B[1;90m';
 
 //FIXME: move to inside the component
 const defaultTermPrefix = formatTermTimestamp(
@@ -278,7 +276,7 @@ export default function LiveConsolePage() {
             }
 
             //Check if it's last line, and if the EOL was stripped
-            const prefixColor = isNewTs ? ANSI_WHITE : ANSI_GRAY;
+            const prefixColor = isNewTs ? ANSI.WHITE : ANSI.GRAY;
             const prefix = termPrefixRef.current.lastEol
                 ? prefixColor + termPrefixRef.current.prefix
                 : '';
@@ -375,7 +373,12 @@ export default function LiveConsolePage() {
      */
     const consoleWrite = (cmd: string) => {
         if (!isConnected || !pageSocket.current) return;
-        pageSocket.current.emit('consoleCommand', cmd);
+        if(cmd === 'cls' || cmd === 'clear') {
+            term.clear();
+            term.write(`${ANSI.YELLOW}[console cleared]${ANSI.RESET}\n`);
+        } else {
+            pageSocket.current.emit('consoleCommand', cmd);
+        }
     }
     const consoleClear = () => {
         term.clear();

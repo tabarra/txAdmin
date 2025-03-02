@@ -2,6 +2,15 @@ import { copyToClipboard } from "@/lib/utils";
 import { LiveConsoleOptions } from "./LiveConsolePage";
 
 
+//ANSII escape codes
+export const ANSI = {
+    WHITE: '\x1B[0;37m',
+    GRAY: '\x1B[1;90m',
+    YELLOW: '\x1B[0;33m',
+    RESET: '\x1B[0m',
+} as const;
+
+
 //Yoinked from core/modules/Logger/FXServerLogger/index.ts
 const regexControls = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F]|(?:\x1B\[|\x9B)[\d;]+[@-K]/g;
 const regexColors = /\x1B[^m]*?m/g;
@@ -51,7 +60,7 @@ export const formatTermTimestamp = (ts: number, opts: LiveConsoleOptions): strin
     );
 
     // adding ansi reset to prevent color bleeding
-    return str + '\x1B[0m' + ' ';
+    return str + ANSI.RESET + ' ';
 }
 
 
