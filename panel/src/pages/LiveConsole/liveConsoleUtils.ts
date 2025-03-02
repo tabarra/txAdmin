@@ -81,3 +81,36 @@ export const copyTermLine = async (selection: string, divRef: HTMLDivElement, op
         .join('\r\n');
     return copyToClipboard(strToCopy, divRef);
 }
+
+
+/**
+ * Get the number of font-mono variants loaded
+ */
+export const getNumFontVariantsLoaded = (cssVar: string, label: string) => {
+    console.group('getNumFontVariantsLoaded:', label);
+
+    //This is required because in firefox, font.family has " and in chrome it doesn't
+    const normalizeFamily = (family: string) => family.toLowerCase().replace(/^["']|["']$/g, '');
+
+    //first we need to resolve what is the var(--font-mono) value
+    if (!cssVar) return 0;
+    const fontFamily = normalizeFamily(getComputedStyle(document.documentElement).getPropertyValue(cssVar));
+    if (!fontFamily) {
+        console.error('No --font-mono value found');
+        return 0;
+    }
+    console.log('--font-mono:', fontFamily);
+
+    let loadedCount = 0;
+    for (const font of document.fonts) {
+        if (normalizeFamily(font.family) !== fontFamily) continue;
+        const isLoaded = font.status === 'loaded';
+        const color = isLoaded ? 'green' : 'red';
+        console.log(`%c${font.status}:`, `color: ${color}`, font.unicodeRange);
+        if (isLoaded) loadedCount++;
+    }
+
+    console.log('Loaded:', loadedCount);
+    console.groupEnd();
+    return loadedCount;
+}
