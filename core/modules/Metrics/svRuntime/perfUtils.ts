@@ -1,11 +1,10 @@
-import pidusage from 'pidusage';
+import si from 'systeminformation';
 import { cloneDeep } from 'lodash-es';
 import type { SvRtPerfCountsType } from "./perfSchemas";
 import got from '@lib/got';
 import { parseRawPerf } from './perfParser';
 import { PERF_DATA_BUCKET_COUNT } from './config';
 import { txEnv } from '@core/globalData';
-
 
 //Consts
 const perfDataRawThreadsTemplate: SvRtPerfCountsType = {
@@ -108,14 +107,15 @@ export const fetchRawPerfData = async (netEndpoint: string) => {
 
 /**
  * Get the fxserver memory usage
- * FIXME: migrate to use gwmi on windows by default
  */
 export const fetchFxsMemory = async (fxsPid?: number) => {
     if (!fxsPid) return;
     try {
-        const pidUsage = await pidusage(fxsPid);
-        const memoryMb = pidUsage.memory / 1024 / 1024;
+        const totalMem = (await si.mem()).total
+        const pidUsage = (await si.processLoad("fxServer"))[0].mem /* Limitations only allow us to use process names to get memory */
+        const memoryMb = (totalMem * (pidUsage / 100)) / (1024 * 1024);
         return parseFloat((memoryMb).toFixed(2));
+    
     } catch (error) {
         if ((error as any).code = 'ENOENT') {
             console.error('Failed to get processes tree usage data.');
