@@ -94,6 +94,9 @@ export const migrateOldConfig = (old: any) => {
     //Some migrations before comparing because defaults changed
     if (typeof remapped.restarter?.bootGracePeriod === 'number') {
         remapped.restarter.bootGracePeriod = Math.round(remapped.restarter.bootGracePeriod);
+        if (remapped.restarter.bootGracePeriod === 60) {
+            remapped.restarter.bootGracePeriod = 45;
+        }
     }
     if (typeof remapped.server?.shutdownNoticeDelayMs === 'number') {
         remapped.server.shutdownNoticeDelayMs *= 1000;

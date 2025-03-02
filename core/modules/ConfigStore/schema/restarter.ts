@@ -19,7 +19,7 @@ const schedule = typeDefinedConfig({
 
 const bootGracePeriod = typeDefinedConfig({
     name: 'Boot Grace Period',
-    default: 15,
+    default: 45,
     validator: z.number().int().min(15),
     fixer: SYM_FIXER_DEFAULT,
 });

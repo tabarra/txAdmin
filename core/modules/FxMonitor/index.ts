@@ -310,8 +310,7 @@ export default class FxMonitor {
         //Check if still in grace period
         if (processUptime < txConfig.restarter.bootGracePeriod) {
             return {
-                action: 'WARN',
-                times: timeTags.withProc,
+                action: 'SKIP',
                 reason: `FXServer is ${currentStatusString}, still in grace period of ${txConfig.restarter.bootGracePeriod}s.`,
             };
         }
