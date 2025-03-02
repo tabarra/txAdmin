@@ -262,12 +262,13 @@ export default function LiveConsolePage() {
             }
 
             //Markers
+            let writeCallback: (() => void) | undefined;
             try {
                 const res = getTermLineEventData(line)
                     ?? getTermLineInitialData(line)
                     ?? getTermLineRtlData(line); //https://github.com/xtermjs/xterm.js/issues/701
                 if (res && res.markerData) {
-                    registerTermLineMarker(term, i, res.markerData);
+                    writeCallback = () => registerTermLineMarker(term, res.markerData);
                 }
                 if (res && res.newLine) {
                     line = res.newLine;
@@ -282,14 +283,14 @@ export default function LiveConsolePage() {
                 ? prefixColor + termPrefixRef.current.prefix
                 : '';
             if (i < lines.length - 1) {
-                term.writeln(prefix + line);
+                term.writeln(prefix + line, writeCallback);
                 termPrefixRef.current.lastEol = true;
             } else {
                 if (wasEolStripped) {
-                    term.writeln(prefix + line);
+                    term.writeln(prefix + line, writeCallback);
                     termPrefixRef.current.lastEol = true;
                 } else {
-                    term.write(prefix + line);
+                    term.write(prefix + line, writeCallback);
                     termPrefixRef.current.lastEol = false;
                 }
             }
