@@ -14,6 +14,8 @@ fs.writeFileSync('.github/.cienv', `TX_IS_PRERELEASE=${isPreRelease}\n`);
 //Copy static files
 console.log('Starting txAdmin Prod Builder');
 copyStaticFiles('./dist/', txVersion, 'publish');
+//yarn.installed Needs to be older than the package.json
+fs.writeFileSync('./dist/.yarn.installed', '');
 fs.writeFileSync('./dist/package.json', '{"type":"commonjs"}');
 fs.writeFileSync('./dist/LICENSE.txt', licenseBanner());
 

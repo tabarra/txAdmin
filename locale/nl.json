@@ -4,9 +4,7 @@
         "humanizer_language": "nl"
     },
     "restarter": {
-        "start_timeout": "Kon niet op tijd starten",
-        "crash_detected": "Crash geconstateerd",
-        "hang_detected": "De server is vastgelopen",
+        "server_unhealthy_kick_reason": "de server moet opnieuw worden gestart, maak alsjeblieft opnieuw verbinding",
         "partial_hang_warn": "De server is vastgelopen en zal over 1 minuut herstarten. Verlaat de server nu.",
         "partial_hang_warn_discord": "**%{servername}** is vastgelopen en zal over 1 minuut herstarten.",
         "schedule_reason": "Geplande restart om %{time}",

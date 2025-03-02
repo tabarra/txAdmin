@@ -2,14 +2,14 @@ const modulename = 'TxRuntimeMetrics';
 import * as jose from 'jose';
 import consoleFactory from '@lib/console';
 import { MultipleCounter, QuantileArray } from '../statsUtils';
-import { convars } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import { getHostStaticData } from '@lib/diagnostics';
 import fatalError from '@lib/fatalError';
 const console = consoleFactory(modulename);
 
 
 //Consts
-const JWE_VERSION = 12;
+const JWE_VERSION = 13;
 const statsPublicKeyPem = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2NCbB5DvpR7F8qHF9SyA
 xJKv9lpGO2PiU5wYUmEQaa0IUrUZmQ8ivsoOyCZOGKN9PESsVyqZPx37fhtAIqNo
@@ -41,6 +41,8 @@ export default class TxRuntimeMetrics {
     public readonly whitelistCheckTime = new QuantileArray(5000, 50);
     public readonly playersTableSearchTime = new QuantileArray(5000, 50);
     public readonly historyTableSearchTime = new QuantileArray(5000, 50);
+    public readonly databaseSaveTime = new QuantileArray(1440, 60);
+    public readonly perfCollectionTime = new QuantileArray(1440, 60);
     
     public currHbData: string = '{"error": "not yet initialized in TxRuntimeMetrics"}';
     public monitorStats = {
@@ -49,6 +51,7 @@ export default class TxRuntimeMetrics {
             http: 0,
         },
         restartReasons: {
+            bootTimeout: 0,
             close: 0,
             heartBeat: 0,
             healthCheck: 0,
@@ -129,6 +132,7 @@ export default class TxRuntimeMetrics {
      * 10: deprecated pageViews because of the react migration
      * 11: added playersTableSearchTime and historyTableSearchTime
      * 12: changed perfSummary format
+     * 13: added providerName
      * 
      * TODO:
      * Use the average q5 and q95 to find out the buckets.
@@ -154,8 +158,9 @@ export default class TxRuntimeMetrics {
             //Prepare stats data
             const statsData = {
                 //Static
-                isZapHosting: convars.isZapHosting,
-                isPterodactyl: convars.isPterodactyl,
+                providerName: txHostConfig.providerName,
+                isZapHosting: txEnv.isZapHosting,
+                isPterodactyl: txEnv.isPterodactyl,
                 osDistro: hostData.osDistro,
                 hostCpuModel: `${hostData.cpu.manufacturer} ${hostData.cpu.brand}`,
 
@@ -183,14 +188,9 @@ export default class TxRuntimeMetrics {
                 banCheckingEnabled: txConfig.banlist.enabled,
                 whitelistMode: txConfig.whitelist.mode,
                 recipeName: txCore.cacheStore.get('deployer:recipe') ?? 'not_in_cache',
-                tmpConfigFlags: [
-                    txConfig.gameFeatures.hideDefaultAnnouncement && 'global.hideDefaultAnnouncement',
-                    txConfig.gameFeatures.hideDefaultDirectMessage && 'global.hideDefaultDirectMessage',
-                    txConfig.gameFeatures.hideDefaultScheduledRestartWarning && 'global.hideDefaultScheduledRestartWarning',
-                    txConfig.gameFeatures.hideDefaultWarning && 'global.hideDefaultWarning',
-                    txConfig.gameFeatures.hideAdminInPunishments && 'global.hideAdminInPunishments',
-                    txConfig.gameFeatures.hideAdminInMessages && 'global.hideAdminInMessages',
-                ].filter(x => x),
+                tmpConfigFlags: Object.entries(txConfig.gameFeatures)
+                    .filter(([key, value]) => value)
+                    .map(([key]) => key),
 
                 //Processed stuff
                 playerDb: txCore.database.stats.getDatabaseStats(),

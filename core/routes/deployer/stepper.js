@@ -1,6 +1,6 @@
 const modulename = 'WebServer:DeployerStepper';
 import fse from 'fs-extra';
-import { convars, txDevEnv, txEnv } from '@core/globalData';
+import { txHostConfig } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import { TxConfigState } from '@shared/enums';
 const console = consoleFactory(modulename);
@@ -28,7 +28,6 @@ export default async function DeployerStepper(ctx) {
     //Prepare Output
     const renderData = {
         step: txManager.deployer.step,
-        serverProfile: txEnv.profile,
         deploymentID: txManager.deployer.deploymentID,
         requireDBConfig: false,
         defaultLicenseKey: '',
@@ -45,29 +44,17 @@ export default async function DeployerStepper(ctx) {
             raw: txManager.deployer.recipe.raw,
         };
     } else if (txManager.deployer.step === 'input') {
-        renderData.defaultLicenseKey = txDevEnv.CFXKEY ?? '';
+        renderData.defaultLicenseKey = txHostConfig.defaults.cfxKey ?? '';
         renderData.requireDBConfig = txManager.deployer.recipe.requireDBConfig;
-        if (convars.deployerDefaults) {
-            renderData.defaults = {
-                autofilled: true,
-                license: convars.deployerDefaults.license ?? '',
-                mysqlHost: convars.deployerDefaults.mysqlHost ?? 'localhost',
-                mysqlPort: convars.deployerDefaults.mysqlPort ?? '3306',
-                mysqlUser: convars.deployerDefaults.mysqlUser ?? 'root',
-                mysqlPassword: convars.deployerDefaults.mysqlPassword ?? '',
-                mysqlDatabase: convars.deployerDefaults.mysqlDatabase ?? txManager.deployer.deploymentID,
-            };
-        } else {
-            renderData.defaults = {
-                autofilled: false,
-                license: txDevEnv.CFXKEY ?? '',
-                mysqlHost: 'localhost',
-                mysqlUser: 'root',
-                mysqlPort: '3306',
-                mysqlPassword: '',
-                mysqlDatabase: txManager.deployer.deploymentID,
-            };
-        }
+        renderData.defaults = {
+            autofilled: Object.values(txHostConfig.defaults).some(Boolean),
+            license: txHostConfig.defaults.cfxKey ?? '',
+            mysqlHost: txHostConfig.defaults.dbHost ?? 'localhost',
+            mysqlPort: txHostConfig.defaults.dbPort ?? '3306',
+            mysqlUser: txHostConfig.defaults.dbUser ?? 'root',
+            mysqlPassword: txHostConfig.defaults.dbPass ?? '',
+            mysqlDatabase: txHostConfig.defaults.dbName ?? txManager.deployer.deploymentID,
+        };
 
         const knownVarDescriptions = {
             steam_webApiKey: 'The Steam Web API Key is used to authenticate players when they join.<br/>\nYou can get one at https://steamcommunity.com/dev/apikey.',

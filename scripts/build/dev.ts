@@ -50,6 +50,8 @@ const staticWatcher = chokidar.watch(config.copy, {
 staticWatcher.on('add', () => { debouncedCopier('add'); });
 staticWatcher.on('change', () => { debouncedCopier('change'); });
 staticWatcher.on('unlink', () => { debouncedCopier('unlink'); });
+//yarn.installed Needs to be older than the package.json
+fs.writeFileSync(path.join(fxsPaths.monitor, '.yarn.installed'), '');
 fs.writeFileSync(path.join(fxsPaths.monitor, 'package.json'), '{"type":"commonjs"}');
 
 //Create txAdmin process runner

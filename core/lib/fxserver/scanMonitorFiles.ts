@@ -38,7 +38,7 @@ type ContentFileType = {
 }
 
 export default async function scanMonitorFiles() {
-    const rootPath = txEnv.txAdminResourcePath;
+    const rootPath = txEnv.txaPath;
     const allFiles: ContentFileType[] = [];
     let totalFiles = 0;
     let totalSize = 0;

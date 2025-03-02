@@ -3,7 +3,7 @@ import path from 'node:path';
 import fsp from 'node:fs/promises';
 import ejs from 'ejs';
 import xssInstancer from '@lib/xss.js';
-import { convars, txDevEnv, txEnv } from '@core/globalData';
+import { txDevEnv, txEnv, txHostConfig } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import getReactIndex, { tmpCustomThemes } from '../getReactIndex';
 import { CtxTxVars } from './ctxVarsMw';
@@ -42,7 +42,7 @@ const getRenderErrorText = (view: string, error: Error, data: any) => {
 };
 const getWebViewPath = (view: string) => {
     if (view.includes('..')) throw new Error('Path Traversal?');
-    return path.join(txEnv.txAdminResourcePath, 'web', view + '.ejs');
+    return path.join(txEnv.txaPath, 'web', view + '.ejs');
 };
 const getJavascriptConsts = (allConsts: NonNullable<object> = {}) => {
     return Object.entries(allConsts)
@@ -50,8 +50,8 @@ const getJavascriptConsts = (allConsts: NonNullable<object> = {}) => {
         .join(' ');
 };
 function getEjsOptions(filePath: string) {
-    const webTemplateRoot = path.resolve(txEnv.txAdminResourcePath, 'web');
-    const webCacheDir = path.resolve(txEnv.txAdminResourcePath, 'web-cache', filePath);
+    const webTemplateRoot = path.resolve(txEnv.txaPath, 'web');
+    const webCacheDir = path.resolve(txEnv.txaPath, 'web-cache', filePath);
     return {
         cache: true,
         filename: webCacheDir,
@@ -176,15 +176,12 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
             isWebInterface,
             basePath: (isWebInterface) ? '/' : consts.nuiWebpipePath,
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
-            serverProfile: txEnv.profile,
-            serverName: txConfig.general.serverName || txEnv.profile,
+            serverName: txConfig.general.serverName,
             uiTheme: legacyTheme,
-            fxServerVersion: txEnv.fxsVersionDisplay,
+            fxServerVersion: txEnv.fxsVersionTag,
             txAdminVersion: txEnv.txaVersion,
-            providerName: convars.providerName,
+            hostConfigSource: txHostConfig.sourceName,
             jsInjection: getJavascriptConsts({
-                isZapHosting: convars.isZapHosting, //not in use
-                isPterodactyl: convars.isPterodactyl, //not in use
                 isWebInterface: isWebInterface,
                 csrfToken: possiblyAuthedAdmin?.csrfToken ?? 'not_set',
                 TX_BASE_PATH: (isWebInterface) ? '' : consts.nuiWebpipePath,

@@ -63,13 +63,14 @@ export { default as whitelist_page } from './whitelist/page';
 export { default as whitelist_list } from './whitelist/list';
 export { default as whitelist_actions } from './whitelist/actions';
 
-
 export { default as advanced_page } from './advanced/get';
 export { default as advanced_actions } from './advanced/actions';
 
 //FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
 export { default as serverLog } from './serverLog.js';
 export { default as serverLogPartial } from './serverLogPartial.js';
+
+export { default as host_status } from './hostStatus';
 
 export {
     get as dev_get,

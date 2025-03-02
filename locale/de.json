@@ -4,9 +4,7 @@
         "humanizer_language": "de"
     },
     "restarter": {
-        "start_timeout": "Der Server konnte nicht rechtzeitig hochfahren.",
-        "crash_detected": "Crash erkannt",
-        "hang_detected": "Zeitweiliges Aufhängen des Servers erkannt",
+        "server_unhealthy_kick_reason": "der server muss neu gestartet werden, bitte verbinde dich erneut",
         "partial_hang_warn": "Aufgrund von zeitweiligen Lags startet dieser Server in einer Minute neu. Bitte trenne die Verbindung jetzt.",
         "partial_hang_warn_discord": "Aufgrund von zeitweiligen Lags startet **%{servername}** in einer Minute neu.",
         "schedule_reason": "Automatisierter Neustart um %{time}",

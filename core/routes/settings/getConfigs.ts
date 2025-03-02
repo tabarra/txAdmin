@@ -7,14 +7,14 @@ import ConfigStore from '@modules/ConfigStore';
 import { PartialTxConfigs, TxConfigs } from '@modules/ConfigStore/schema';
 import { ConfigChangelogEntry } from '@modules/ConfigStore/changelog';
 import { redactApiKeys, redactStartupSecrets } from '@lib/misc';
-import { convars } from '@core/globalData';
+import { txHostConfig } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 
 export type GetConfigsResp = {
     locales: { code: string, label: string }[],
-    // txDataPath: string,
-    // txDataEnforced: boolean,
+    dataPath: string,
+    hasCustomDataPath: boolean,
     changelog: ConfigChangelogEntry[],
     storedConfigs: PartialTxConfigs,
     defaultConfigs: TxConfigs,
@@ -44,12 +44,12 @@ export default async function GetSettingsConfigs(ctx: AuthedCtx) {
 
     const outData: GetConfigsResp = {
         locales,
-        // txDataPath: txEnv.dataPath,
-        // txDataEnforced: true,
+        dataPath: txHostConfig.dataPath,
+        hasCustomDataPath: txHostConfig.hasCustomDataPath,
         changelog: txCore.configStore.getChangelog(),
         storedConfigs: txCore.configStore.getStoredConfig(),
         defaultConfigs: ConfigStore.SchemaDefaults,
-        forceQuietMode: convars.forceQuietMode,
+        forceQuietMode: txHostConfig.forceQuietMode,
     };
 
     //Redact sensitive data if the user doesn't have the write permission

@@ -122,7 +122,7 @@ export class Deployer {
         this.deployFailed = true;
         try {
             const filePath = path.join(this.deployPath, '_DEPLOY_FAILED_DO_NOT_USE');
-            await fse.outputFile(filePath, 'This deploy was failed, please do not use these files.');
+            await fse.outputFile(filePath, 'This deploy has failed, please do not use these files.');
         } catch (error) { }
     }
 

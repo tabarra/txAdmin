@@ -4,9 +4,7 @@
         "humanizer_language": "lv"
     },
     "restarter": {
-        "start_timeout": "Neizdevās palaist laikā",
-        "crash_detected": "Konstatēta avārija",
-        "hang_detected": "Konstatēta pakāršanās",
+        "server_unhealthy_kick_reason": "serverim jārestartē, lūdzu, pievienojies vēlreiz",
         "partial_hang_warn": "Nepilnīgas pakāršanās dēļ šis serveris tiks restartēts pēc 1 minūtes. Lūdzu, atvienojieties tagad.",
         "partial_hang_warn_discord": "Nepilnīgas pakāršanās dēļ, **%{servername}** tiks restartēts pēc 1 minūtes.",
         "schedule_reason": "Ieplānotais restarts %{time}",
@@ -138,7 +136,7 @@
                     "title": "Coords",
                     "label": "Doties uz norādītajām koordinātēm",
                     "dialog_title": "Teleportēties",
-                    "dialog_desc": "Norādi koordinātes x, y, z formātā, lai teleportētos uz koordinātēm.",	
+                    "dialog_desc": "Norādi koordinātes x, y, z formātā, lai teleportētos uz koordinātēm.",
                     "dialog_error": "Nederīgas koordinātes. Tām jābūt šādā formātā: 111, 222, 33"
                 },
                 "back": {

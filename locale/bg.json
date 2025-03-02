@@ -4,9 +4,7 @@
         "humanizer_language": "bg"
     },
     "restarter": {
-        "start_timeout": "Не стартира на време",
-        "crash_detected": "Възникнал проблем",
-        "hang_detected": "Засичане",
+        "server_unhealthy_kick_reason": "сървърът трябва да бъде рестартиран, моля, свържете се отново",
         "partial_hang_warn": "Поради частично засичане, сървърът ще се рестартира след 1 минута. Моля излезте сега.",
         "partial_hang_warn_discord": "Поради частично засичане, **%{servername}** ще се рестартира след 1 минута.",
         "schedule_reason": "Планирано рестартиране в %{time}",

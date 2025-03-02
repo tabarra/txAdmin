@@ -4,9 +4,7 @@
         "humanizer_language": "pt"
     },
     "restarter": {
-        "start_timeout": "não iniciou a tempo",
-        "crash_detected": "crash detectado",
-        "hang_detected": "congelamento detectado",
+        "server_unhealthy_kick_reason": "o servidor precisa ser reiniciado, por favor reconecte",
         "partial_hang_warn": "Devido a um congelamento parcial, este servidor será reiniciado em 1 minuto. Por favor, desconecte-se agora.",
         "partial_hang_warn_discord": "Devido a um congelamento parcial, **%{servername}** será reiniciado em 1 minuto.",
         "schedule_reason": "agendado para %{time}",

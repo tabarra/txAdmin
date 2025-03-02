@@ -4,9 +4,7 @@
         "humanizer_language": "da"
     },
     "restarter": {
-        "start_timeout": "fejlede i at starte rettidigt",
-        "crash_detected": "nedbrud registreret",
-        "hang_detected": "hæng registreret",
+        "server_unhealthy_kick_reason": "serveren skal genstartes, venligst opret forbindelse igen",
         "partial_hang_warn": "På grund af en delvis hængning genstarter denne server om 1 minut. Afslut venligst forbindelsen nu.",
         "partial_hang_warn_discord": "På grund af en delvis hængning genstarter **%{servername}** om 1 minut.",
         "schedule_reason": "planlagt genstart kl. %{time}",

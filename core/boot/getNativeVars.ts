@@ -11,8 +11,8 @@ const cleanNativeResp = (resp: any) => {
 };
 
 //Warning for convar usage
-const convarWarning = (convarName: string, newName: string) => {
-    console.warn(`WARNING: The ConVar '${convarName}' is deprecated and will be removed in the next update.`);
+const replacedConvarWarning = (convarName: string, newName: string) => {
+    console.warn(`WARNING: The '${convarName}' ConVar is deprecated and will be removed in the next update.`);
     console.warn(`WARNING: Please use the '${newName}' environment variable instead.`);
     console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-env-config`);
 }
@@ -33,18 +33,23 @@ export const getNativeVars = (ignoreDeprecatedConfigs: boolean) => {
     const txaResourceVersion = cleanNativeResp(GetResourceMetadata(resourceName, 'version', 0));
     const txaResourcePath = cleanNativeResp(GetResourcePath(resourceName));
 
-    //Convars
+    //Profile Convar - with warning
     const txAdminProfile = getConvarString('serverProfile');
+    if (txAdminProfile) {
+        console.warn(`WARNING: The 'serverProfile' ConVar is deprecated and will be removed in a future update.`);
+        console.warn(`WARNING: To create multiple servers, set up a different TXHOST_DATA_PATH instead.`);
+        console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-env-config`);
+    }
 
-    //Deprecated convars
+    //Convars replaced by TXHOST_* env vars
     let txDataPath, txAdminPort, txAdminInterface;
-    if(!ignoreDeprecatedConfigs) {
+    if (!ignoreDeprecatedConfigs) {
         txDataPath = getConvarString('txDataPath');
-        if (txDataPath) convarWarning('txDataPath', 'TXHOST_DATA_PATH');
+        if (txDataPath) replacedConvarWarning('txDataPath', 'TXHOST_DATA_PATH');
         txAdminPort = getConvarString('txAdminPort');
-        if (txAdminPort) convarWarning('txAdminPort', 'TXHOST_TXA_PORT');
+        if (txAdminPort) replacedConvarWarning('txAdminPort', 'TXHOST_TXA_PORT');
         txAdminInterface = getConvarString('txAdminInterface');
-        if (txAdminInterface) convarWarning('txAdminInterface', 'TXHOST_INTERFACE');
+        if (txAdminInterface) replacedConvarWarning('txAdminInterface', 'TXHOST_INTERFACE');
     }
 
     //Final object

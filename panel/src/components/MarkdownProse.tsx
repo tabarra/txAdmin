@@ -8,8 +8,8 @@ import TxAnchor from './TxAnchor';
 // https://tailwindcss.com/docs/typography-plugin#advanced-topics
 const customComponents: Components = {
     // blockquote: ({ children }) => <blockquote className="border-l-4 border-pink-600 pl-2">{children}</blockquote>,
-    code: ({ children }) => <InlineCode className="not-prose">{children}</InlineCode>,
-    pre: ({ children }) => <pre className="not-prose p-2 rounded bg-muted [.prose-toast_&]:bg-inherit [.prose-toast_&>*]:bg-inherit [.prose-toast_&]:px-0">{children}</pre>,
+    code: ({ children }) => <InlineCode className="not-prose [.prose-toast_&:not(pre_*)]:bg-muted/65">{children}</InlineCode>,
+    pre: ({ children }) => <pre className="not-prose p-2 whitespace-pre-wrap [overflow-wrap:_anywhere] break-all rounded bg-muted [.prose-toast_&]:bg-muted/65 [.prose-toast_&>code]:bg-transparent">{children}</pre>,
     a: ({ children, href }) => <TxAnchor href={href!}>{children}</TxAnchor>,
 }
 

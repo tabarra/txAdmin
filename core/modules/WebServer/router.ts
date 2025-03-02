@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import KoaRateLimit from 'koa-ratelimit';
 
 import * as routes from '@routes/index';
-import { apiAuthMw, intercomAuthMw, webAuthMw } from './middlewares/authMws';
+import { apiAuthMw, hostAuthMw, intercomAuthMw, webAuthMw } from './middlewares/authMws';
 
 
 /**
@@ -113,6 +113,9 @@ export default () => {
     router.post('/player/:action', apiAuthMw, routes.player_actions);
     router.get('/whitelist/:table', apiAuthMw, routes.whitelist_list);
     router.post('/whitelist/:table/:action', apiAuthMw, routes.whitelist_actions);
+
+    //Host routes
+    router.get('/host/status', hostAuthMw, routes.host_status);
 
     //DevDebug routes - no auth
     if (txDevEnv.ENABLED) {

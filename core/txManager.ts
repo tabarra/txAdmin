@@ -2,11 +2,32 @@ import { getHostData } from "@lib/diagnostics";
 import { isProxy } from "util/types";
 import { startReadyWatcher } from "./boot/startReadyWatcher";
 import { Deployer } from "./deployer";
-import { TxConfigState } from "@shared/enums";
+import { TxConfigState, type FxMonitorHealth } from "@shared/enums";
 import type { GlobalStatusType } from "@shared/socketioTypes";
 import quitProcess from "@lib/quitProcess";
-import consoleFactory, { processStdioEnsureEol } from "@lib/console";
+import consoleFactory, { processStdioEnsureEol, setTTYTitle } from "@lib/console";
+import { isNumber, isString } from "@modules/CacheStore";
 const console = consoleFactory('Manager');
+
+//Types
+type gameNames = 'fivem' | 'redm';
+type HostStatusType = {
+    //txAdmin state
+    cfgPath: string | null;
+    dataPath: string | null;
+    isConfigured: boolean;
+    playerCount: number;
+    status: FxMonitorHealth;
+
+    //Detected at runtime
+    cfxId: string | null;
+    gameName: gameNames | null;
+    joinLink: string | null;
+    joinDeepLink: string | null;
+    playerSlots: number | null;
+    projectName: string | null;
+    projectDesc: string | null;
+}
 
 
 /**
@@ -15,7 +36,7 @@ const console = consoleFactory('Manager');
 export default class TxManager {
     public deployer: Deployer | null = null; //FIXME: implementar o deployer
     private readonly moduleShutdownHandlers: (() => void)[] = [];
-    private isShuttingDown = false;
+    public isShuttingDown = false;
 
     //TODO: move txRuntime here?!
 
@@ -34,9 +55,16 @@ export default class TxManager {
         //FIXME: if ever changing this, need to make sure the other data
         //in the status event will be pushed, since right some of now it
         //relies on this event every 5 seconds
+        //NOTE: probably txManager should be the one to decide if stuff like the host
+        //stats changed enough to merit a refresh push
         setInterval(async () => {
             txCore.webServer.webSocket.pushRefresh('status');
         }, 5000);
+
+        //Updates the terminal title every 15 seconds
+        setInterval(() => {
+            setTTYTitle(`(${txCore.fxPlayerlist.onlineCount}) ${txConfig.general.serverName} - txAdmin`);
+        }, 15000);
 
         //Pre-calculate static data
         setTimeout(() => {
@@ -58,6 +86,16 @@ export default class TxManager {
         }
         console.warn(`Got ${signal}, shutting down...`);
         this.isShuttingDown = true;
+
+        //Stop all module timers
+        for (const moduleName of Object.keys(txCore)) {
+            const module = txCore[moduleName as keyof typeof txCore] as GenericTxModuleInstance;
+            if (Array.isArray(module.timers)) {
+                for (const interval of module.timers) {
+                    clearInterval(interval);
+                }
+            }
+        }
 
         //Sets a hard limit to the shutdown process
         setTimeout(() => {
@@ -119,9 +157,37 @@ export default class TxManager {
 
 
     /**
+     * Returns the status object that is sent to the host status endpoint
+     */
+    get hostStatus(): HostStatusType {
+        const serverPaths = txCore.fxRunner.serverPaths;
+        const cfxId = txCore.cacheStore.getTyped('fxsRuntime:cfxId', isString) ?? null;
+        const isGameName = (val: any): val is gameNames => val === 'fivem' || val === 'redm';
+        return {
+            //txAdmin state
+            isConfigured: this.configState === TxConfigState.Ready,
+            dataPath: serverPaths?.dataPath ?? null,
+            cfgPath: serverPaths?.cfgPath ?? null,
+            playerCount: txCore.fxPlayerlist.onlineCount,
+            status: txCore.fxMonitor.status.health,
+
+            //Detected at runtime
+            cfxId,
+            gameName: txCore.cacheStore.getTyped('fxsRuntime:gameName', isGameName) ?? null,
+            joinDeepLink: cfxId ? `fivem://connect/cfx.re/join/${cfxId}` : null,
+            joinLink: cfxId ? `https://cfx.re/join/${cfxId}` : null,
+            playerSlots: txCore.cacheStore.getTyped('fxsRuntime:maxClients', isNumber) ?? null,
+            projectName: txCore.cacheStore.getTyped('fxsRuntime:projectName', isString) ?? null,
+            projectDesc: txCore.cacheStore.getTyped('fxsRuntime:projectDesc', isString) ?? null,
+        }
+    }
+
+
+    /**
      * Returns the global status object that is sent to the clients
      */
     get globalStatus(): GlobalStatusType {
+        const fxMonitorStatus = txCore.fxMonitor.status;
         return {
             configState: txManager.configState,
             discord: txCore.discordBot.status,
@@ -130,11 +196,12 @@ export default class TxManager {
                 isChildAlive: txCore.fxRunner.child?.isAlive ?? false,
             },
             server: {
-                status: txCore.fxMonitor.currentStatus,
                 name: txConfig.general.serverName,
+                uptime: fxMonitorStatus.uptime,
+                health: fxMonitorStatus.health,
+                healthReason: fxMonitorStatus.healthReason,
                 whitelist: txConfig.whitelist.mode,
             },
-            // @ts-ignore scheduler type narrowing is wrong because cant use "as const" in javascript
             scheduler: txCore.fxScheduler.getStatus(), //no push events, updated every Scheduler.checkSchedule()
         }
     }

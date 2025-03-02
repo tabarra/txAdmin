@@ -1,5 +1,5 @@
 //NOTE: must be imported first to setup the environment
-import { txEnv } from './globalData';
+import { txEnv, txHostConfig } from './globalData';
 import consoleFactory, { setTTYTitle } from '@lib/console';
 
 //Can be imported after
@@ -13,40 +13,50 @@ const console = consoleFactory();
 
 
 //Early process stuff
-setupProcessHandlers();
-setTTYTitle(txEnv.profile);
-checkPreRelease();
+try {
+    process.title = 'txAdmin'; //doesn't work for now
+    setupProcessHandlers();
+    setTTYTitle();
+    checkPreRelease();
+} catch (error) {
+    fatalError.Boot(0, 'Failed early process setup.', error);
+}
+console.log(`Starting txAdmin v${txEnv.txaVersion}/b${txEnv.fxsVersionTag}...`);
 
 
 //Setting up txData & Profile
 try {
-    if (!fs.existsSync(txEnv.dataPath)) {
-        fs.mkdirSync(txEnv.dataPath);
+    if (!fs.existsSync(txHostConfig.dataPath)) {
+        fs.mkdirSync(txHostConfig.dataPath);
     }
 } catch (error) {
     fatalError.Boot(1, [
         `Failed to check or create the data folder.`,
-        ['Path', txEnv.dataPath],
+        ['Path', txHostConfig.dataPath],
     ], error);
 }
+let isNewProfile = false;
 try {
     if (fs.existsSync(txEnv.profilePath)) {
         ensureProfileStructure();
     } else {
         setupProfile();
+        isNewProfile = true;
     }
 } catch (error) {
     fatalError.Boot(2, [
         `Failed to check or create the txAdmin profile folder.`,
-        ['Profile', txEnv.profile],
-        ['Data Path', txEnv.dataPath],
+        ['Data Path', txHostConfig.dataPath],
+        ['Profile Name', txEnv.profileName],
         ['Profile Path', txEnv.profilePath],
     ], error);
+}
+if (isNewProfile && txEnv.profileName !== 'default') {
+    console.log(`Profile path: ${txEnv.profilePath}`);
 }
 
 
 //Start txAdmin (have fun 😀)
-console.log(`Starting profile '${txEnv.profile}' on v${txEnv.txaVersion}/b${txEnv.fxsVersionDisplay}`);
 try {
     bootTxAdmin();
 } catch (error) {

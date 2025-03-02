@@ -119,25 +119,14 @@ export const getTermLineInitialData = (line: string): TerminalMarkerGetterResult
 
 
 /**
- * Gets the marker position based on the block index  
- * The marker position is always relative to cursor, but at the first render,
- * the cursor is = until all the writes are done, so we need to calculate the
- * marker position based on the block index
- */
-const getMarkerPos = (term: Terminal, blockIndex: number) => {
-    return term.buffer.active.cursorY === 0 ? blockIndex + 2 : 0;
-}
-
-
-/**
  * Registers a line marker & decoration
  */
 export const registerTermLineMarker = (
     term: Terminal,
-    blockIndex: number,
     markerData: TerminalMarkerData,
 ) => {
-    const marker = term.registerMarker(getMarkerPos(term, blockIndex));
+    //NOTE: as this is only called from a write callback, we will _always_ be one line ahead 
+    const marker = term.registerMarker(-1);
     const decoration = term.registerDecoration({ layer: 'top', marker });
     decoration && decoration.onRender((element) => {
         if (element.innerHTML) return; //terminal re-rendering

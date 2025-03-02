@@ -45,7 +45,7 @@ export default async function AuthAddMasterSave(ctx: InitializedCtx) {
     const inboundSession = ctx.sessTools.get();
     if (!inboundSession || !inboundSession?.tmpAddMasterUserInfo) {
         return ctx.send<ApiAddMasterSaveResp>({
-            error: `Invalid browser session.`,
+            error: `invalid_session`,
         });
     }
     const userInfo = inboundSession.tmpAddMasterUserInfo;

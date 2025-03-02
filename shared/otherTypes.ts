@@ -45,16 +45,20 @@ export type InjectedTxConsts = {
 
     serverTimezone: string;
     isWindows: boolean;
-    isZapHosting: boolean;
-    isPterodactyl: boolean;
     isWebInterface: boolean;
     showAdvanced: boolean;
     hasMasterAccount: boolean;
     defaultTheme: string;
     customThemes: Omit<ThemeType, 'style'>[];
     adsData: AdsDataType;
-    providerLogo: string | undefined,
-    providerName: string,
+    providerLogo: string | undefined;
+    providerName: string | undefined;
+    hostConfigSource: string;
+    server: {
+        name: string;
+        game: string | undefined;
+        icon: string | undefined;
+    };
 
     //Auth
     preAuth: ReactAuthDataType | false;

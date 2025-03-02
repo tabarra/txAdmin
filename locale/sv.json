@@ -4,9 +4,7 @@
         "humanizer_language": "sv"
     },
     "restarter": {
-        "start_timeout": "Servern kunde inte starta i tid.",
-        "crash_detected": "Krasch upptäckt",
-        "hang_detected": "Fördröjning upptäckt",
+        "server_unhealthy_kick_reason": "servern måste startas om, vänligen anslut igen",
         "partial_hang_warn": "På grund av fördröjningar startar servern om. Vänligen koppla från nu.",
         "partial_hang_warn_discord": "På grund av fördröjningar startar **%{servername}** om inom en minut.",
         "schedule_reason": "Schemalagd omstart om %{time}",

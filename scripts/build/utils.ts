@@ -119,7 +119,7 @@ export const getPublishVersion = (isOptional: boolean) => {
  * TODO: set up *_scripts automagically
  */
 const setupDistFxmanifest = (targetPath: string, txVersion: string) => {
-    console.log('[BUILDER] Setting up fxmanifest.lua: ' + txVersion);
+    // console.log('[BUILDER] Setting up fxmanifest.lua: ' + txVersion);
     const fxManifestPath = path.join(targetPath, 'fxmanifest.lua');
     let fxManifestContent = fs.readFileSync(fxManifestPath, 'utf8');
     fxManifestContent = fxManifestContent.replace(/^version 'REPLACE-VERSION'$/m, `version '${txVersion}'`);

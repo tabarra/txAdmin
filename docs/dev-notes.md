@@ -104,17 +104,15 @@ Legend:
     - [x] disable the "view changelog" button, or write the modal code
     - [x] write dev notes on the config system (README.md in the panel settings and core configstore?)
 - [x] Full FXRunner rewrite
+- [x] add `.yarn.installed` to the dist? even in dev
 
 ## Other stuff
 - [x] new env vars
 - [x] remove dynamicAds from the modules
+- [x] fix custom locale
 - [!] add stats tracking for the framework team (ask them, idk)
 - [!] package updates - test radix stuff
 - [!] commit stashed stuff
-- [!] fix custom locale
-    - see if it's viable to use `fsp.link()` or `fsp.symlink()`
-    - https://nodejs.org/docs/latest-v16.x/api/fs.html#fspromiseslinkexistingpath-newpath
-    - https://nodejs.org/docs/latest-v16.x/api/fs.html#fspromisessymlinktarget-path-type
 - [!] check txAdmin-private
 - [ ] implement `cleanFullPath.ts` in settings save ui & api for comparison consistency
     - [ ] add it to `setup/save.js -> handleValidateLocalDataFolder()` as well
@@ -153,7 +151,6 @@ Legend:
     - https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone (node 17+)
     - https://www.npmjs.com/package/rfdc
 - [ ] switch to `game 'common'` and remove `rdr3_warning`
-- [ ] add `.yarn.installed` to the dist? even in dev
 - [ ] check netid uint16 overflow
     - right now the `mutex#netid` is being calculated on [logger](/core/modules/Logger/handlers/server.js#L148)
     - detect netid rollover and set some flag to add some identifiable prefix to the mutex?
@@ -179,6 +176,7 @@ Legend:
 ## Previous bugs
 - [ ] use `ScanResourceRoot()`
     - `ScanResourceRoot('xxx/resources/', (data: object) => {...});`
+    - test if a `while true do end` on a resource manifest would cause tx to hang
 
 ## Pending Improvements
 - [ ] Settings Page:
@@ -186,15 +184,6 @@ Legend:
     - [ ] check for pending changes on the navigate-away buttons
     - [ ] use jsonForgivingParse for embed jsons and custom locale
     - [ ] use the standalone json editor page
-    - [ ] write the reset fxserver button
-        - requires changing the webroute permissions and updating the MainRouter
-    - [ ] Add a "Dev Server Mode" (`general.devServerMode`), which:
-        - [ ] changes the txAdmin logo and maybe some other styling changes to make it easier for devs to see notice if they are on the prod or dev txAdmins
-        - [ ] disables `server.shutdownNoticeDelayMs`
-        - [ ] disables prompt to confirm on server controls and resetting fxserver
-        - [ ] maybe some other slight
-        - [ ] allows runcode
-        - [ ] maybe BigRadio group with Dev, Normal, and Lockdown mode, which blocks some stuff from the NUI, secure mode blocks runcode and force system chat?
     - [ ] if you type `E:\FiveM\txData\default.base` in the fxserver settings it will save but show as unsaved because the saved was the `cleanPath()` version `E:/FiveM/txData/default.base`
 - [ ] Player drops page
     - [ ] fix: blurred chart lines
@@ -352,14 +341,6 @@ https://tailwindcss.com/blog/automatic-class-sorting-with-prettier
     - Add a "timeout" button that brings a prompt with 1/5/15/30 mins buttons
     - Add a checkbox to the kick modal to mark it as a punishment
 
-- [ ] custom login page
-    - [ ] FxMonitor:
-        - `setCurrentStatus()`: when it becoems online trigger `tmpRefreshServerIcon()`
-        - `tmpRefreshServerIcon()`: if diff mutex, GET `/info.json`
-        - cache new icon URL
-    - [ ] drop `projectName` from `sv_logger.lua` & `Logger/handlers/server.js`?
-    - [ ] add icon/name to login page
-    - [ ] make sure it's responsive and has default behavior
 - [ ] rethink the flow of opening the menu `/tx <id>` and teleporting to targets
     - need to use mouse, would be better if keyboardo nly
     - the buttons need to be bigger, and tab-selectable, or hotkeys
@@ -732,31 +713,6 @@ cfxui colors:
 =======================================
 
 ## CLTR+C+V
-```json
-{
-    "interface": "192.168.0.123",
-    "fxServerPort": 30120,
-    "txAdminPort": 40120,
-    "loginPageLogo": "https://github.com/tabarra/txAdmin/raw/master/docs/banner.png",
-    "defaults": {
-        "license": "cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx",
-        "maxClients": 48,
-        "mysqlHost": "xxxxxxxxxx",
-        "mysqlUser": "xxxxxxxxxx",
-        "mysqlPassword": "xxxxxxxxxx",
-        "mysqlDatabase": "xxxxxxxxxx"
-    },
-    "customer": {
-        "name": "tabarra",
-        "password_hash": "$2y$12$WNuN6IxozL4CjgScsLvmGOmxtskg8EcPe67HtUw0ENeCCSaZ.z3AW"
-    },
-
-    "interface-": false,
-    "loginPageLogo-": false,
-    "customer-": false
-}
-```
-
 ```bash
 # repo stuff
 npx knip

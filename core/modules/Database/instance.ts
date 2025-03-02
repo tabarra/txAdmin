@@ -10,6 +10,7 @@ import { DatabaseDataType } from './databaseTypes.js';
 import migrations from './migrations.js';
 import consoleFactory from '@lib/console.js';
 import fatalError from '@lib/fatalError.js';
+import { TimeCounter } from '@modules/Metrics/statsUtils.js';
 const console = consoleFactory(modulename);
 
 //Consts & helpers
@@ -51,18 +52,19 @@ const SAVE_CONFIG = {
 
 //Reimplementing the adapter to minify json onm prod builds
 class JSONFile<T> implements Adapter<T> {
-    #adapter: TextFile;
-    #serializer: Function;
+    private readonly adapter: TextFile;
+    private readonly serializer: Function;
+    public fileSize: number = 0;
 
     constructor(filename: string) {
-        this.#adapter = new TextFile(filename);
-        this.#serializer = (txDevEnv.ENABLED)
+        this.adapter = new TextFile(filename);
+        this.serializer = (txDevEnv.ENABLED)
             ? (obj: any) => JSON.stringify(obj, null, 4)
             : JSON.stringify;
     }
 
     async read(): Promise<T | null> {
-        const data = await this.#adapter.read();
+        const data = await this.adapter.read();
         if (data === null) {
             return null;
         } else {
@@ -71,7 +73,9 @@ class JSONFile<T> implements Adapter<T> {
     }
 
     write(obj: T): Promise<void> {
-        return this.#adapter.write(this.#serializer(obj));
+        const serialized = this.serializer(obj);
+        this.fileSize = serialized.length;
+        return this.adapter.write(serialized);
     }
 }
 
@@ -196,7 +200,7 @@ export class DbInstance {
     async backupDatabase(targetPath?: string) {
         try {
             await fsp.copyFile(this.dbPath, targetPath ?? this.backupPath);
-            console.verbose.debug('Database file backed up.');
+            // console.verbose.debug('Database file backed up.');
         } catch (error) {
             console.error(`Failed to backup database file '${this.dbPath}'`);
             console.verbose.dir(error);
@@ -230,11 +234,13 @@ export class DbInstance {
         const sinceLastWrite = timeStart - this.lastWrite;
 
         if (this.#writePending === SavePriority.HIGH || sinceLastWrite > SAVE_CONFIG[this.#writePending].interval) {
-            this.writeDatabase();
-            const timeElapsed = Date.now() - timeStart;
+            const writeTime = new TimeCounter();
+            await this.writeDatabase();
+            const timeElapsed = writeTime.stop();
             this.#writePending = SavePriority.STANDBY;
             this.lastWrite = timeStart;
-            console.verbose.debug(`DB file saved, took ${timeElapsed}ms.`);
+            // console.verbose.debug(`DB file saved, took ${timeElapsed.milliseconds}ms.`);
+            txCore.metrics.txRuntime.databaseSaveTime.count(timeElapsed.milliseconds);
         }
     }
 

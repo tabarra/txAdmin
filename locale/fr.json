@@ -4,9 +4,7 @@
         "humanizer_language": "fr"
     },
     "restarter": {
-        "start_timeout": "Impossible de démarrer le serveur dans les temps",
-        "crash_detected": "le serveur a planté",
-        "hang_detected": "Blocage detecté",
+        "server_unhealthy_kick_reason": "le serveur doit être redémarré, reconnecte-toi s'il te plaît",
         "partial_hang_warn": "En raison d'un blocage partiel, le serveur redémarrera dans 1 minute. Veuillez vous déconnecter maintenant.",
         "partial_hang_warn_discord": "En raison d'un blocage partiel, **%{servername}** redémarrera dans 1 minute.",
         "schedule_reason": "redémarage prévu à %{time}",

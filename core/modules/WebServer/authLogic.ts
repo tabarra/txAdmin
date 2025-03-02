@@ -1,6 +1,6 @@
 const modulename = 'WebServer:AuthLogic';
 import { z } from "zod";
-import { convars } from '@core/globalData';
+import { txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import type { SessToolsType } from "./middlewares/sessionMws";
 import { ReactAuthDataType } from "@shared/authApiTypes";
@@ -220,7 +220,7 @@ export const nuiAuthLogic = (
         // Check sus IPs
         if (
             !isLocalRequest
-            && !convars.isZapHosting
+            && !txEnv.isZapHosting
             && !txConfig.webServer.disableNuiSourceCheck
         ) {
             console.verbose.warn(`NUI Auth Failed: reqIp "${reqIp}" not a local or allowed address.`);

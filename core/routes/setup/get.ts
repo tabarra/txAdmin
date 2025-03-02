@@ -1,6 +1,6 @@
 const modulename = 'WebServer:SetupGet';
 import path from 'node:path';
-import { convars, txEnv } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import { RECIPE_DEPLOYER_VERSION } from '@core/deployer/index';
 import consoleFactory from '@lib/console';
 import { TxConfigState } from '@shared/enums';
@@ -24,22 +24,15 @@ export default async function SetupGet(ctx: AuthedCtx) {
         return ctx.utils.legacyNavigateToPage('/');
     }
 
-    let windowsBatPath: string | null = null;
-    if (txEnv.isWindows) {
-        const batFolder = path.resolve(txEnv.fxServerPath, '..');
-        windowsBatPath  = path.join(batFolder, `start_${txEnv.fxsVersion}_${txEnv.profile}.bat`);
-    }
-
+    //Output
     const storedConfig = txCore.configStore.getStoredConfig();
     const renderData = {
         headerTitle: 'Setup',
-        isReset: !!(storedConfig.general?.serverName),
+        skipServerName: !!(storedConfig.general?.serverName),
         deployerEngineVersion: RECIPE_DEPLOYER_VERSION,
-        serverProfile: txEnv.profile,
-        txDataPath: txEnv.dataPath,
-        isZapHosting: convars.isZapHosting,
-        windowsBatPath,
+        forceGameName: txHostConfig.forceGameName ?? '', //ejs injection works better with strings
+        dataPath: txHostConfig.dataPath,
+        hasCustomDataPath: txHostConfig.hasCustomDataPath,
     };
-
     return ctx.utils.render('standalone/setup', renderData);
 };

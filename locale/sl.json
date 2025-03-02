@@ -4,9 +4,7 @@
         "humanizer_language": "sl"
     },
     "restarter": {
-        "start_timeout": "strežnika ni uspelo zagnati v določenem času",
-        "crash_detected": "zaznan crash strežnika",
-        "hang_detected": "zaznan crash strežnika",
+        "server_unhealthy_kick_reason": "strežnik je treba znova zagnati, prosim, ponovno se poveži",
         "partial_hang_warn": "Zaradi delnega crasha strežnika, se bo avtomatsko ponovno zagnal čez 1 minuto. Prosimo, zapustite strežnik.",
         "partial_hang_warn_discord": "Zaradi delnega crasha strežnika, se bo **%{servername}** ponovno zagnal čez 1 minuto.",
         "schedule_reason": "načrtovan restart ob %{time}",

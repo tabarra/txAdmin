@@ -27,6 +27,11 @@ jobs:
       - name: Download all modules
         run: npm ci
 
+      - name: Create .env file
+        run: |
+          echo TXDEV_FXSERVER_PATH=$(pwd)/fxserver > .env
+          echo TXDEV_VITE_URL='http://localhost:40122' >> .env
+
       - name: Run Tests
         env:
           CI: true

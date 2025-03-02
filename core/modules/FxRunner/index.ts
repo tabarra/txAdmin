@@ -4,16 +4,17 @@ import StreamValues from 'stream-json/streamers/StreamValues';
 import { customAlphabet } from 'nanoid/non-secure';
 import dict49 from 'nanoid-dictionary/nolookalikes';
 import consoleFactory from '@lib/console';
-import { validateFixServerConfig } from '@lib/fxserver/fxsConfigHelper';
+import { resolveCFGFilePath, validateFixServerConfig } from '@lib/fxserver/fxsConfigHelper';
 import { msToShortishDuration } from '@lib/misc';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
 import { UpdateConfigKeySet } from '@modules/ConfigStore/utils';
-import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isValidChildProcess, mutableConvarConfigDependencies, stringifyConsoleArgs } from './utils';
+import { childProcessEventBlackHole, getFxSpawnVariables, getMutableConvars, isValidChildProcess, mutableConvarConfigDependencies, setupCustomLocaleFile, stringifyConsoleArgs } from './utils';
 import ProcessManager, { ChildProcessStateInfo } from './ProcessManager';
 import handleFd3Messages from './handleFd3Messages';
 import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
-import { convars } from '@core/globalData';
-const console = consoleFactory('FXRunner');
+import { txHostConfig } from '@core/globalData';
+import path from 'node:path';
+const console = consoleFactory('FxRunner');
 const genMutex = customAlphabet(dict49, 5);
 
 const MIN_KILL_DELAY = 250;
@@ -40,7 +41,7 @@ export default class FxRunner {
      * Triggers a convar update
      */
     public handleConfigUpdate(updatedConfigs: UpdateConfigKeySet) {
-        this.updateMutableConvars();
+        this.updateMutableConvars().catch(() => { });
     }
 
 
@@ -72,8 +73,8 @@ export default class FxRunner {
             return console.warn('The server will not auto start because there are no admins configured.');
         }
 
-        if(txConfig.server.quiet || convars.forceQuietMode){
-           console.defer(1000).warn('FXServer Quiet mode is enabled. Access the Live Console to see the logs.');     
+        if (txConfig.server.quiet || txHostConfig.forceQuietMode) {
+            console.defer(1000).warn('FXServer Quiet mode is enabled. Access the Live Console to see the logs.');
         }
 
         this.spawnServer(true);
@@ -108,6 +109,13 @@ export default class FxRunner {
      * NOTE: Don't use txConfig in here to avoid race conditions.
      */
     public async spawnServer(shouldAnnounce = false) {
+        //If txAdmin is shutting down
+        if(txManager.isShuttingDown) {
+            const msg = `Cannot start the server while txAdmin is shutting down.`;
+            console.error(msg);
+            return msg;
+        }
+
         //If the server is already alive
         if (this.proc !== null) {
             const msg = `The server has already started.`;
@@ -115,7 +123,7 @@ export default class FxRunner {
             return msg;
         }
 
-        //Setup spawn variables
+        //Setup spawn variables & locale file
         let fxSpawnVars;
         const newServerMutex = genMutex();
         try {
@@ -124,6 +132,13 @@ export default class FxRunner {
             // debugPrintSpawnVars(fxSpawnVars); //DEBUG
         } catch (error) {
             const errMsg = `Error setting up spawn variables: ${(error as any).message}`;
+            console.error(errMsg);
+            return errMsg;
+        }
+        try {
+            await setupCustomLocaleFile();
+        } catch (error) {
+            const errMsg = `Error copying custom locale: ${(error as any).message}`;
             console.error(errMsg);
             return errMsg;
         }
@@ -162,7 +177,7 @@ export default class FxRunner {
         }
 
         //Reseting monitor stats
-        txCore.fxMonitor.resetMonitorStats();
+        txCore.fxMonitor.resetState();
 
         //Resetting frontend playerlist
         txCore.webServer.webSocket.buffer('playerlist', {
@@ -354,9 +369,10 @@ export default class FxRunner {
      * Useful for when we change txAdmin settings and want it to reflect on the server.
      * This will also fire the `txAdmin:event:configChanged`
      */
-    private updateMutableConvars() {
+    private async updateMutableConvars() {
         console.log('Updating FXServer ConVars.');
         try {
+            await setupCustomLocaleFile();
             const convarList = getMutableConvars(false);
             for (const [set, convar, value] of convarList) {
                 this.sendCommand(set, [convar, value], SYM_SYSTEM_AUTHOR);
@@ -469,23 +485,27 @@ export default class FxRunner {
      * The resolved paths of the server
      * FIXME: check where those paths are needed and only calculate what is relevant
      */
-    // public get serverPaths() {
-    //     if (!this.isConfigured) return;
-    //     return {
-    //         data: {
-    //             absolute: 'xxx',
-    //         },
-    //         //TODO: cut paste logic from resolveCFGFilePath
-    //         resources: {
-    //             //???
-    //         },
-    //         cfg: {
-    //             fileName: 'xxx',
-    //             relativePath: 'xxx',
-    //             absolutePath: 'xxx',
-    //         }
-    //     };
-    // }
+    public get serverPaths() {
+        if (!this.isConfigured) return;
+        return {
+            dataPath: path.normalize(txConfig.server.dataPath!), //to maintain consistency
+            cfgPath: resolveCFGFilePath(txConfig.server.cfgPath, txConfig.server.dataPath!),
+        }
+        // return {
+        //     data: {
+        //         absolute: 'xxx',
+        //     },
+        //     //TODO: cut paste logic from resolveCFGFilePath
+        //     resources: {
+        //         //???
+        //     },
+        //     cfg: {
+        //         fileName: 'xxx',
+        //         relativePath: 'xxx',
+        //         absolutePath: 'xxx',
+        //     }
+        // };
+    }
 
 
     /**

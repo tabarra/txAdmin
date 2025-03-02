@@ -239,9 +239,9 @@ export const cleanTerminal = () => {
 /**
  * Sets terminal title
  */
-export const setTTYTitle = (title: string) => {
-    const tx = _txAdminVersion ? `txAdmin v${_txAdminVersion}` : 'txAdmin';
-    const out = (title) ? `${tx}: ${title}` : tx;
+export const setTTYTitle = (title?: string) => {
+    const txVers = _txAdminVersion ? `txAdmin v${_txAdminVersion}` : 'txAdmin';
+    const out = title ? `${title} - txAdmin` : txVers;
     process.stdout.write(`\x1B]0;${out}\x07`);
 }
 

@@ -13,7 +13,7 @@ import WebSocket from './webSocket';
 import { customAlphabet } from 'nanoid';
 import dict49 from 'nanoid-dictionary/nolookalikes';
 
-import { convars, txDevEnv, txEnv } from '@core/globalData';
+import { txDevEnv, txEnv, txHostConfig } from '@core/globalData';
 import router from './router';
 import consoleFactory from '@lib/console';
 import topLevelMw from './middlewares/topLevelMw';
@@ -26,6 +26,7 @@ import cacheControlMw from './middlewares/cacheControlMw';
 import fatalError from '@lib/fatalError';
 import { isProxy } from 'node:util/types';
 import serveStaticMw from './middlewares/serveStaticMw';
+import serveRuntimeMw from './middlewares/serveRuntimeMw';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict49, 32);
 
@@ -54,7 +55,7 @@ export default class WebServer {
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
             .update(txEnv.profilePath)
             .digest('hex');
-        this.sessionCookieName = `tx:${txEnv.profile}:${pathHash}`;
+        this.sessionCookieName = `tx:${pathHash}`;
         this.luaComToken = nanoid();
 
 
@@ -91,6 +92,7 @@ export default class WebServer {
         this.app.use(topLevelMw);
 
         //Setting up additional middlewares:
+        this.app.use(serveRuntimeMw);
         this.app.use(serveStaticMw({
             noCaching: txDevEnv.ENABLED,
             cacheMaxAge: 30 * 60, //30 minutes
@@ -104,8 +106,8 @@ export default class WebServer {
             roots: [
                 txDevEnv.ENABLED
                     ? path.join(txDevEnv.SRC_PATH, 'panel/public')
-                    : path.join(txEnv.txAdminResourcePath, 'panel'),
-                path.join(txEnv.txAdminResourcePath, 'web/public'),
+                    : path.join(txEnv.txaPath, 'panel'),
+                path.join(txEnv.txaPath, 'web/public'),
             ],
             onReady: () => {
                 this.isServing = true;
@@ -218,13 +220,13 @@ export default class WebServer {
             // });
             this.httpServer.on('error', listenErrorHandler);
 
-            const iface = convars.forceInterface ?? '0.0.0.0';
-            if (convars.forceInterface) {
-                console.warn(`Starting with interface ${convars.forceInterface}.`);
+            const netInterface = txHostConfig.netInterface ?? '0.0.0.0';
+            if (txHostConfig.netInterface) {
+                console.warn(`Starting with interface ${txHostConfig.netInterface}.`);
                 console.warn('If the HTTP server doesn\'t start, this is probably the reason.');
             }
 
-            this.httpServer.listen(convars.txAdminPort, iface, async () => {
+            this.httpServer.listen(txHostConfig.txaPort, netInterface, async () => {
                 //Sanity check on globals, to _guarantee_ all routes will have access to them
                 if (!txCore || isProxy(txCore) || !txConfig || !txManager) {
                     console.dir({
@@ -239,7 +241,9 @@ export default class WebServer {
                         'Please report it to the developers.',
                     ]);
                 }
-                console.ok(`Listening on ${iface}.`);
+                if (txHostConfig.netInterface) {
+                    console.ok(`Listening on ${netInterface}.`);
+                }
                 this.isListening = true;
             });
         } catch (error) {

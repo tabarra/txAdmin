@@ -6,6 +6,7 @@ import { cloneDeep } from 'lodash-es';
 import { embedder, ensurePermission, isValidButtonEmoji, isValidEmbedUrl, logDiscordAdminAction } from '../discordHelpers';
 import consoleFactory from '@lib/console';
 import { msToShortishDuration } from '@lib/misc';
+import { FxMonitorHealth } from '@shared/enums';
 const console = consoleFactory(modulename);
 
 
@@ -58,6 +59,7 @@ export const generateStatusMessage = (
     //Prepare placeholders
     //NOTE: serverCfxId can be undefined, breaking the URLs, but there is no easy clean way to deal with this issue
     const serverCfxId = txCore.cacheStore.get('fxsRuntime:cfxId');
+    const fxMonitorStatus = txCore.fxMonitor.status;
     const placeholders = {
         serverName: txConfig.general.serverName,
         statusString: 'Unknown',
@@ -68,8 +70,8 @@ export const generateStatusMessage = (
         serverMaxClients: txCore.cacheStore.get('fxsRuntime:maxClients') ?? 'unknown',
         serverClients: txCore.fxPlayerlist.onlineCount,
         nextScheduledRestart: 'unknown',
-        uptime: (txCore.fxMonitor.currentStatus === 'ONLINE' && txCore.fxRunner.child?.isAlive)
-            ? msToShortishDuration(txCore.fxRunner.child.uptime)
+        uptime: (fxMonitorStatus.uptime > 0)
+            ? msToShortishDuration(fxMonitorStatus.uptime)
             : '--',
     }
 
@@ -91,13 +93,13 @@ export const generateStatusMessage = (
     }
 
     //Prepare status placeholders
-    if (txCore.fxMonitor.currentStatus === 'ONLINE') {
+    if (fxMonitorStatus.health === FxMonitorHealth.ONLINE) {
         placeholders.statusString = embedConfigJson?.onlineString ?? '🟢 Online';
         placeholders.statusColor = embedConfigJson?.onlineColor ?? "#0BA70B";
-    } else if (txCore.fxMonitor.currentStatus === 'PARTIAL') {
+    } else if (fxMonitorStatus.health === FxMonitorHealth.PARTIAL) {
         placeholders.statusString = embedConfigJson?.partialString ?? '🟡 Partial';
         placeholders.statusColor = embedConfigJson?.partialColor ?? "#FFF100";
-    } else if (txCore.fxMonitor.currentStatus === 'OFFLINE') {
+    } else if (fxMonitorStatus.health === FxMonitorHealth.OFFLINE) {
         placeholders.statusString = embedConfigJson?.offlineString ?? '🔴 Offline';
         placeholders.statusColor = embedConfigJson?.offlineColor ?? "#A70B28";
     }
@@ -275,10 +277,10 @@ export default async (interaction: ChatInputCommandInteraction) => {
         txCore.cacheStore.set('discord:status:messageId', newMessage.id);
     } catch (error) {
         let msg: string;
-        if((error as any).code === 50013){
+        if ((error as any).code === 50013) {
             msg = `This bot does not have permission to send embed messages in this channel.
             Please change the channel permissions and give this bot the \`Embed Links\` and \`Send Messages\` permissions.`
-        }else{
+        } else {
             msg = (error as Error).message;
         }
         return await interaction.reply(

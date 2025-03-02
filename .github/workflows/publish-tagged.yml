@@ -28,6 +28,12 @@ jobs:
       - name: Download all modules
         run: npm ci
 
+      # Not truly necessary for build, but for now the vite config requires it
+      - name: Create .env file
+        run: |
+          echo TXDEV_FXSERVER_PATH=$(pwd)/fxserver > .env
+          echo TXDEV_VITE_URL='http://localhost:40122' >> .env
+
       - name: Build project
         run: |
           npm run build

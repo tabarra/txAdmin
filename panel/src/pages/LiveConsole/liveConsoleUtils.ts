@@ -39,8 +39,7 @@ export const extractTermLineTimestamp = (line: string) => {
  */
 export const formatTermTimestamp = (ts: number, opts: LiveConsoleOptions): string => {
     if (opts.timestampDisabled) return '';
-    const offset10hMs = 10 * 60 * 60 * 1000;
-    const time = new Date(ts * 1000 + offset10hMs);
+    const time = new Date(ts * 1000);
     const str = time.toLocaleTimeString(
         'en-US', //as en-gb uses 4 digits for the am/pm indicator
         {
@@ -81,4 +80,37 @@ export const copyTermLine = async (selection: string, divRef: HTMLDivElement, op
         .map(line => filterTermLine(line, opts))
         .join('\r\n');
     return copyToClipboard(strToCopy, divRef);
+}
+
+
+/**
+ * Get the number of font-mono variants loaded
+ */
+export const getNumFontVariantsLoaded = (cssVar: string, label: string) => {
+    console.group('getNumFontVariantsLoaded:', label);
+
+    //This is required because in firefox, font.family has " and in chrome it doesn't
+    const normalizeFamily = (family: string) => family.toLowerCase().replace(/^["']|["']$/g, '');
+
+    //first we need to resolve what is the var(--font-mono) value
+    if (!cssVar) return 0;
+    const fontFamily = normalizeFamily(getComputedStyle(document.documentElement).getPropertyValue(cssVar));
+    if (!fontFamily) {
+        console.error('No --font-mono value found');
+        return 0;
+    }
+    console.log('--font-mono:', fontFamily);
+
+    let loadedCount = 0;
+    for (const font of document.fonts) {
+        if (normalizeFamily(font.family) !== fontFamily) continue;
+        const isLoaded = font.status === 'loaded';
+        const color = isLoaded ? 'green' : 'red';
+        console.log(`%c${font.status}:`, `color: ${color}`, font.unicodeRange);
+        if (isLoaded) loadedCount++;
+    }
+
+    console.log('Loaded:', loadedCount);
+    console.groupEnd();
+    return loadedCount;
 }

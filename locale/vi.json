@@ -4,9 +4,7 @@
         "humanizer_language": "vi"
     },
     "restarter": {
-        "start_timeout": "Có lỗi trong quá trình khởi động máy chủ",
-        "crash_detected": "phát hiện sự cố",
-        "hang_detected": "phát hiện bị treo",
+        "server_unhealthy_kick_reason": "server cần được khởi động lại, vui lòng kết nối lại",
         "partial_hang_warn": "Máy chủ gặp sự cố và sẽ khởi động lại sau 1 phút, vui lòng ngắt kết nối.",
         "partial_hang_warn_discord": "Có sự cố, **%{servername}** sẽ khởi động lại sau 1 phút.",
         "schedule_reason": "khởi động lại định kỳ vào lúc %{time}",

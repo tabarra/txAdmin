@@ -195,6 +195,39 @@ export const msToShortishDuration = humanizeDuration.humanizer({
 
 
 /**
+ * Converts a number of milliseconds to shortest english representation possible
+ */
+export const msToShortestDuration = humanizeDuration.humanizer({
+    round: true,
+    units: ['d', 'h', 'm', 's'],
+    delimiter: '',
+    spacer: '',
+    largest: 2,
+    language: 'shortestEn',
+    languages: {
+        shortestEn: {
+            y: () => 'y',
+            mo: () => 'mo',
+            w: () => 'w',
+            d: () => 'd',
+            h: () => 'h',
+            m: () => 'm',
+            s: () => 's',
+            ms: () => 'ms',
+        },
+    },
+});
+
+
+/**
+ * Shorthand to convert seconds to the shortest english representation possible
+ */
+export const secsToShortestDuration = (ms: number, options?: humanizeDuration.Options) => {
+    return msToShortestDuration(ms * 1000, options);
+};
+
+
+/**
  * Returns false if any argument is undefined
  */
 export const anyUndefined = (...args: any) => [...args].some((x) => (typeof x === 'undefined'));

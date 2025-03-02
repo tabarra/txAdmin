@@ -1,6 +1,6 @@
 const modulename = 'WebServer:SendDiagnosticsReport';
 import got from '@lib/got';
-import { txEnv } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import { GenericApiErrorResp } from '@shared/genericApiTypes';
 import * as diagnosticsFuncs from '@lib/diagnostics';
 import { redactApiKeys, redactStartupSecrets } from '@lib/misc';
@@ -124,6 +124,7 @@ export default async function SendDiagnosticsReport(ctx: AuthedCtx) {
         $schemaVersion: 2,
         $txVersion: txEnv.txaVersion,
         $fxVersion: txEnv.fxsVersion,
+        $provider: String(txHostConfig.providerName), //we want an 'undefined'
         diagnostics,
         txSystemLog,
         txActionLog,

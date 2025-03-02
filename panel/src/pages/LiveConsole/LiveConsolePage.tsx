@@ -23,7 +23,7 @@ import { getSocket } from '@/lib/utils';
 import { openExternalLink } from '@/lib/navigation';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import { txToast } from '@/components/TxToaster';
-import { copyTermLine, extractTermLineTimestamp, formatTermTimestamp } from './liveConsoleUtils';
+import { copyTermLine, extractTermLineTimestamp, formatTermTimestamp, getNumFontVariantsLoaded } from './liveConsoleUtils';
 import { getTermLineEventData, getTermLineInitialData, getTermLineRtlData, registerTermLineMarker } from './liveConsoleMarkers';
 
 
@@ -134,31 +134,6 @@ export default function LiveConsolePage() {
         } else {
             console.log('refitTerminal: no proposed dimensions');
         }
-
-        //Somehow the resize didn't work for rows so I wrote the custom code below - now unrequired
-        // const containerStyle = window.getComputedStyle(containerRef.current);
-        // const containerHeight = Math.floor(parseFloat(containerStyle.getPropertyValue('height')));
-        // const termHeight = term.element.getBoundingClientRect().height;
-        // const calculatedPrevLineHeight = termHeight / term.rows;
-        // const calculatedDesiredRows = Math.max(6, Math.floor(containerHeight / calculatedPrevLineHeight));
-
-        // const proposed = fitAddon.proposeDimensions();
-        // term.resize(proposed!.cols, calculatedDesiredRows);
-        // term.scrollToBottom();
-
-        // console.log('PRE:', {
-        //     containerHeight,
-        //     calculatedPrevLineHeight,
-        //     calculatedDesiredRows,
-        //     expectedTermHeight: calculatedDesiredRows * calculatedPrevLineHeight,
-        // });
-        // const postTermHeight = term.element.getBoundingClientRect().height;
-        // console.log('POST', {
-        //     doesOverflow: postTermHeight > containerHeight,
-        //     measuredTermHeight: postTermHeight,
-        //     measuredFinalLineHeight: containerHeight / calculatedDesiredRows,
-        //     calculatedFinalLineHeight: postTermHeight / calculatedDesiredRows,
-        // });
     }
     useEventListener('resize', debounce(100, refitTerminal));
 
@@ -287,12 +262,13 @@ export default function LiveConsolePage() {
             }
 
             //Markers
+            let writeCallback: (() => void) | undefined;
             try {
                 const res = getTermLineEventData(line)
                     ?? getTermLineInitialData(line)
                     ?? getTermLineRtlData(line); //https://github.com/xtermjs/xterm.js/issues/701
                 if (res && res.markerData) {
-                    registerTermLineMarker(term, i, res.markerData);
+                    writeCallback = () => registerTermLineMarker(term, res.markerData);
                 }
                 if (res && res.newLine) {
                     line = res.newLine;
@@ -307,14 +283,14 @@ export default function LiveConsolePage() {
                 ? prefixColor + termPrefixRef.current.prefix
                 : '';
             if (i < lines.length - 1) {
-                term.writeln(prefix + line);
+                term.writeln(prefix + line, writeCallback);
                 termPrefixRef.current.lastEol = true;
             } else {
                 if (wasEolStripped) {
-                    term.writeln(prefix + line);
+                    term.writeln(prefix + line, writeCallback);
                     termPrefixRef.current.lastEol = true;
                 } else {
-                    term.write(prefix + line);
+                    term.write(prefix + line, writeCallback);
                     termPrefixRef.current.lastEol = false;
                 }
             }
@@ -373,6 +349,24 @@ export default function LiveConsolePage() {
             pageSocket.current?.removeAllListeners();
             pageSocket.current?.disconnect();
         }
+    }, []);
+
+
+    //Font loading effect
+    //NOTE: on first render, the font might not be loaded yet, in this case we listen for the loadingdone event
+    //  and refresh the page when it happens, so the terminal can be properly rendered
+    //  Ref: https://github.com/xtermjs/xterm.js/issues/5164
+    //  This is a bad solution, we should first check if loaded, and _then_ render the terminal, with timeout if needed
+    useEffect(() => {
+        if (getNumFontVariantsLoaded('--font-mono', 'INITIAL EFFECT')) return; //we don't need to await anything
+        const handleFontLoadingDone = () => {
+            getNumFontVariantsLoaded('--font-mono', 'ON FONT LOADING DONE');
+            refreshPage();
+        };
+        document.fonts.addEventListener('loadingdone', handleFontLoadingDone);
+        return () => {
+            document.fonts.removeEventListener('loadingdone', handleFontLoadingDone);
+        };
     }, []);
 
 

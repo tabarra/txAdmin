@@ -108,23 +108,24 @@
                             <% if (defaults.autofilled) { %>
                                 <div class="row mb-3 mt-0 text-center">
                                     <div class="col-8 mx-auto card d-block border-warning p-2 mb-1">
-                                        <strong>Note:</strong> The following config was auto-filled by <strong><%= providerName %></strong>. <br>
+                                        <strong>Note:</strong> The following configs were auto-filled by <strong><%= hostConfigSource %></strong>. <br>
                                         You <i>may</i> edit those, but it's strongly disencouraged.
                                     </div>
                                 </div>
                             <% } %>
-                            <form id="step2-form">
+                            <form id="step2-form" style="max-width: 732px; margin-left: auto; margin-right: auto;">
                                 <div class="form-group row">
-                                    <label for="step2-svLicense" class="col-sm-3 col-form-label">
-                                        License Key
+                                    <label for="step2-svLicense" class="col-md-3 col-form-label">
+                                        Server Registration Key
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <div class="col-sm-9">
+                                    <div class="col-md-9">
                                         <input type="text" class="form-control blur-input" id="step2-svLicense" maxlength="86" 
                                             autocomplete="off" placeholder="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx" 
                                             value="<%= defaults.license %>" required autofocus>
                                         <span class="form-text text-muted">
-                                            The license key for your server can be obtained in <a href="https://keymaster.fivem.net/" target="_blank" rel="noopener noreferrer">Keymaster</a>.
+                                            Formely known as <strong>License Key</strong>, it can be obtained in the <a href="https://portal.cfx.re/servers/registration-keys" target="_blank" rel="noopener noreferrer">Cfx.re Portal</a>. <br>
+                                            For more info, check the guide: <a href="https://support.cfx.re/hc/en-us/articles/16539369935900-How-to-create-a-registration-key" target="_blank" rel="noopener noreferrer">How to create a registration key</a>.
                                         </span>
                                     </div>
                                 </div>
@@ -136,11 +137,11 @@
                                 </div>
                                 <div class="collapse" id="collapseDbOptions">
                                     <div class="form-group row">
-                                        <label for="step2-dbHost" class="col-sm-3 col-form-label">
+                                        <label for="step2-dbHost" class="col-md-3 col-form-label">
                                             Database Host
                                             <span class="text-danger">*</span>
                                         </label>
-                                        <div class="col-sm-9">
+                                        <div class="col-md-9">
                                             <input type="text" class="form-control" id="step2-dbHost"
                                                 placeholder="<%= defaults.mysqlHost %>" value="<%= defaults.mysqlHost %>" required>
                                             <span class="form-text text-muted">
@@ -149,11 +150,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="step2-dbPort" class="col-sm-3 col-form-label">
+                                        <label for="step2-dbPort" class="col-md-3 col-form-label">
                                             Database Port
                                             <span class="text-danger">*</span>
                                         </label>
-                                        <div class="col-sm-9">
+                                        <div class="col-md-9">
                                             <input type="number" class="form-control" id="step2-dbPort"
                                                 placeholder="<%= defaults.mysqlPort %>" value="<%= defaults.mysqlPort %>" required>
                                             <span class="form-text text-muted">
@@ -162,11 +163,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="step2-dbUsername" class="col-sm-3 col-form-label">
+                                        <label for="step2-dbUsername" class="col-md-3 col-form-label">
                                             Database Username
                                             <span class="text-danger">*</span>
                                         </label>
-                                        <div class="col-sm-9">
+                                        <div class="col-md-9">
                                             <input type="text" class="form-control" id="step2-dbUsername"
                                                 placeholder="<%= defaults.mysqlUser %>" value="<%= defaults.mysqlUser %>" required>
                                             <span class="form-text text-muted">
@@ -175,10 +176,10 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="step2-dbPassword" class="col-sm-3 col-form-label">
+                                        <label for="step2-dbPassword" class="col-md-3 col-form-label">
                                             Database Password
                                         </label>
-                                        <div class="col-sm-9">
+                                        <div class="col-md-9">
                                             <input type="text" class="form-control blur-input" id="step2-dbPassword"
                                                 autocomplete="off" placeholder="leave it blank" value="<%= defaults.mysqlPassword %>">
                                             <span class="form-text text-muted">
@@ -187,10 +188,10 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="step2-dbName" class="col-sm-3 col-form-label">
+                                        <label for="step2-dbName" class="col-md-3 col-form-label">
                                             Database Name
                                         </label>
-                                        <div class="col-sm-9">
+                                        <div class="col-md-9">
                                             <input type="text" class="form-control" id="step2-dbName"
                                                 placeholder="<%= defaults.mysqlDatabase %>" value="<%= defaults.mysqlDatabase %>">
                                             <span class="form-text text-muted">
@@ -200,10 +201,10 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="step2-dbDelete" class="col-sm-3 col-form-label">
+                                        <label for="step2-dbDelete" class="col-md-3 col-form-label">
                                             Delete Database
                                         </label>
-                                        <div class="col-sm-9">
+                                        <div class="col-md-9">
                                             <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                                 <input class="c-switch-input" type="checkbox" id="step2-dbDelete" checked>
                                                 <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
@@ -220,10 +221,10 @@
                                     <div class="hrsep hrsep-small mb-3">Custom Variables</div>
                                     <% for (const [key, inputVar] of inputVars.entries()) { %>
                                         <div class="form-group row">
-                                            <label for="step2-customVar<%= key %>" class="col-sm-3 col-form-label">
+                                            <label for="step2-customVar<%= key %>" class="col-md-3 col-form-label">
                                                 <%= inputVar.name %>
                                             </label>
-                                            <div class="col-sm-9">
+                                            <div class="col-md-9">
                                                 <input type="text" class="form-control customRecipeVars" id="step2-customVar<%= key %>" 
                                                     data-varName="<%= inputVar.name %>" placeholder="<%= inputVar.value %>" value="<%= inputVar.value %>">
                                                     <% if (inputVar.description) { %>

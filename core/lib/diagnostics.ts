@@ -5,7 +5,7 @@ import got from '@lib/got';
 import getOsDistro from '@lib/host/getOsDistro.js';
 import getHostUsage from '@lib/host/getHostUsage';
 import pidUsageTree from '@lib/host/pidUsageTree.js';
-import { txEnv } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import si from 'systeminformation';
 import consoleFactory from '@lib/console';
 import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
@@ -62,7 +62,7 @@ export const getProcessesData = async () => {
     const procList: ProcDataType[] = [];
     try {
         const txProcessId = process.pid;
-        const processes = await pidUsageTree(process.pid);
+        const processes = await pidUsageTree(txProcessId);
 
         //NOTE: Cleaning invalid proccesses that might show up in Linux
         Object.keys(processes).forEach((pid) => {
@@ -88,7 +88,7 @@ export const getProcessesData = async () => {
 
             procList.push({
                 pid: currPidInt,
-                ppid: (curr.ppid === txProcessId) ? 'txAdmin' : curr.ppid,
+                ppid: (curr.ppid === txProcessId) ? `${txProcessId} (txAdmin)` : curr.ppid,
                 name: procName,
                 cpu: curr.cpu,
                 memory: curr.memory / MEGABYTE,
@@ -269,33 +269,55 @@ export const getTxAdminData = async () => {
     const stats = txCore.metrics.txRuntime; //shortcut
     const memoryUsage = getHeapStatistics();
 
+    let hostApiTokenState = 'not configured';
+    if (txHostConfig.hostApiToken === 'disabled') {
+        hostApiTokenState = 'disabled';
+    } else if (txHostConfig.hostApiToken) {
+        hostApiTokenState = 'configured';
+    }
+
+    const defaultFlags = Object.entries(txHostConfig.defaults).filter(([k, v]) => Boolean(v)).map(([k, v]) => k);
     return {
         //Stats
         uptime: msToDuration(process.uptime() * 1000),
-        monitorRestarts: {
-            close: stats.monitorStats.restartReasons.close,
-            heartBeat: stats.monitorStats.restartReasons.heartBeat,
-            healthCheck: stats.monitorStats.restartReasons.healthCheck,
-            both: stats.monitorStats.restartReasons.both,
+        databaseFileSize: bytes(txCore.database.fileSize),
+        txHostConfig: {
+            ...txHostConfig,
+            dataSubPath: undefined,
+            hostApiToken: hostApiTokenState,
+            defaults: defaultFlags,
         },
-        hbFD3Fails: stats.monitorStats.healthIssues.fd3,
-        hbHTTPFails: stats.monitorStats.healthIssues.http,
-        banCheckTime: stats.banCheckTime.resultSummary('ms').summary,
-        whitelistCheckTime: stats.whitelistCheckTime.resultSummary('ms').summary,
-        playersTableSearchTime: stats.playersTableSearchTime.resultSummary('ms').summary,
-        historyTableSearchTime: stats.historyTableSearchTime.resultSummary('ms').summary,
-
-        //Log stuff:
-        logStorageSize: (await txCore.logger.getStorageSize()).total,
-        loggerStatusAdmin: txCore.logger.admin.getUsageStats(),
-        loggerStatusFXServer: txCore.logger.fxserver.getUsageStats(),
-        loggerStatusServer: txCore.logger.server.getUsageStats(),
-
-        //Env stuff
-        fxServerPath: txEnv.fxServerPath,
-        fxServerHost: txCore.fxRunner.child?.netEndpoint ?? '--',
-
-        //Usage stuff
+        txEnv: {
+            ...txEnv,
+            adsData: undefined,
+        },
+        monitor: {
+            hbFails: {
+                http: stats.monitorStats.healthIssues.http,
+                fd3: stats.monitorStats.healthIssues.fd3,
+            },
+            restarts: {
+                bootTimeout: stats.monitorStats.restartReasons.bootTimeout,
+                close: stats.monitorStats.restartReasons.close,
+                heartBeat: stats.monitorStats.restartReasons.heartBeat,
+                healthCheck: stats.monitorStats.restartReasons.healthCheck,
+                both: stats.monitorStats.restartReasons.both,
+            }
+        },
+        performance: {
+            banCheck: stats.banCheckTime.resultSummary('ms').summary,
+            whitelistCheck: stats.whitelistCheckTime.resultSummary('ms').summary,
+            playersTableSearch: stats.playersTableSearchTime.resultSummary('ms').summary,
+            historyTableSearch: stats.historyTableSearchTime.resultSummary('ms').summary,
+            databaseSave: stats.databaseSaveTime.resultSummary('ms').summary,
+            perfCollection: stats.perfCollectionTime.resultSummary('ms').summary,
+        },
+        logger: {
+            storageSize: (await txCore.logger.getStorageSize()).total,
+            statusAdmin: txCore.logger.admin.getUsageStats(),
+            statusFXServer: txCore.logger.fxserver.getUsageStats(),
+            statusServer: txCore.logger.server.getUsageStats(),
+        },
         memoryUsage: {
             heap_used: bytes(memoryUsage.used_heap_size),
             heap_limit: bytes(memoryUsage.heap_size_limit),

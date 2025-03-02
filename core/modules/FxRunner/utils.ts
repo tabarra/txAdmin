@@ -1,6 +1,7 @@
+import fsp from 'node:fs/promises';
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
 import { Readable, Writable } from "node:stream";
-import { convars, txEnv } from "@core/globalData";
+import { txEnv, txHostConfig } from "@core/globalData";
 import { redactStartupSecrets } from "@lib/misc";
 import path from "path";
 
@@ -28,7 +29,6 @@ export const getMutableConvars = (isCmdLine = false) => {
     const checkPlayerJoin = txConfig.banlist.enabled || txConfig.whitelist.mode !== 'disabled';
     const convars: RawConvarSetTuple[] = [
         ['setr', 'locale', txConfig.general.language ?? 'en'],
-        ['set', 'localeFile', txCore.translator.customLocalePath],
         ['set', 'serverName', txConfig.general.serverName ?? 'txAdmin'],
         ['set', 'checkPlayerJoin', checkPlayerJoin],
         ['set', 'menuAlignRight', txConfig.gameFeatures.menuAlignRight],
@@ -69,17 +69,17 @@ export const mutableConvarConfigDependencies = [
 /**
  * Pre calculating HOST dependent spawn variables
  */
-const txCoreEndpoint = convars.forceInterface
-    ? `${convars.forceInterface}:${convars.txAdminPort}`
-    : `127.0.0.1:${convars.txAdminPort}`;
+const txCoreEndpoint = txHostConfig.netInterface
+    ? `${txHostConfig.netInterface}:${txHostConfig.txaPort}`
+    : `127.0.0.1:${txHostConfig.txaPort}`;
 let osSpawnVars: OsSpawnVars;
 if (txEnv.isWindows) {
     osSpawnVars = {
-        bin: `${txEnv.fxServerPath}/FXServer.exe`,
+        bin: `${txEnv.fxsPath}/FXServer.exe`,
         args: [],
     };
 } else {
-    const alpinePath = path.resolve(txEnv.fxServerPath, '../../');
+    const alpinePath = path.resolve(txEnv.fxsPath, '../../');
     osSpawnVars = {
         bin: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
         args: [
@@ -219,4 +219,29 @@ export const stringifyConsoleArgs = (args: (string | number | object)[]) => {
     }
 
     return cleanArgs.join(' ');
+}
+
+
+/**
+ * Copies the custom locale file from txData to the 'monitor' path, due to sandboxing.
+ */
+export const setupCustomLocaleFile = async () => {
+    const srcPath = txCore.translator.customLocalePath;
+    const destRuntimePath = path.resolve(txEnv.txaPath, '.runtime');
+    const destFilePath = path.resolve(destRuntimePath, 'locale.json');
+    const isCustomLocale = txConfig.general.language === 'custom';
+    const action = isCustomLocale ? 'copy' : 'remove';
+    try {
+        if (txConfig.general.language === 'custom') {
+            await fsp.mkdir(destRuntimePath, { recursive: true });
+            await fsp.copyFile(srcPath, destFilePath);
+        } else {
+            await fsp.unlink(destFilePath);
+        }
+    } catch (error) {
+        const logger = isCustomLocale
+            ? console.tag('FXRunner').error
+            : console.tag('FXRunner').verbose.warn;
+        logger(`Failed to ${action} custom locale file: ${(error as any).message}`);
+    }
 }

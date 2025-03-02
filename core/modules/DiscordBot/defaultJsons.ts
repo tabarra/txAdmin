@@ -1,4 +1,4 @@
-import { convars } from "@core/globalData";
+import { txEnv } from "@core/globalData";
 
 export const defaultEmbedJson = JSON.stringify({
     "title": "{{serverName}}",
@@ -56,7 +56,7 @@ export const defaultEmbedConfigJson = JSON.stringify({
             "label": "txAdmin Discord",
             "url": "https://discord.gg/txAdmin"
         },
-        convars.displayAds ? {
+        txEnv.displayAds ? {
             "emoji": "😏",
             "label": "ZAP-Hosting",
             "url": "https://zap-hosting.com/txadmin6"

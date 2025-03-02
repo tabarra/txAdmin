@@ -225,8 +225,14 @@ export default class ServerLogger extends LoggerBase {
         } else if (eventData.type === 'LoggerStarted') {
             eventMessage = 'Logger started';
             txCore.metrics.playerDrop.handleServerBootData(eventData.data);
-            if (typeof eventData.data?.projectName === 'string' && eventData.data.projectName.length) {
-                txCore.cacheStore.set('fxsRuntime:projectName', eventData.data.projectName);
+            if (typeof eventData.data?.gameName === 'string' && eventData.data.gameName.length) {
+                if(eventData.data.gameName === 'gta5'){
+                    txCore.cacheStore.set('fxsRuntime:gameName', 'fivem');
+                } else if (eventData.data.gameName === 'rdr3') {
+                    txCore.cacheStore.set('fxsRuntime:gameName', 'redm');
+                } else {
+                    txCore.cacheStore.delete('fxsRuntime:gameName');
+                }
             }
 
         } else if (eventData.type === 'DebugMessage') {

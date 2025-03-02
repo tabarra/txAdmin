@@ -38,7 +38,6 @@ export default async function AdvancedActions(ctx) {
     if (action == 'change_verbosity') {
         console.setVerbose(parameter == 'true');
         //temp disabled because the verbosity convar is not being set by this method
-        // txCore.fxRunner.updateMutableConvars();
         return ctx.send({ refresh: true });
     } else if (action == 'perform_magic') {
         const message = JSON.stringify(txCore.fxPlayerlist.getPlayerList(), null, 2);

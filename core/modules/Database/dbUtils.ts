@@ -1,11 +1,10 @@
 const modulename = 'IDGen';
 import fsp from 'node:fs/promises';
-import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import * as nanoidSecure from 'nanoid';
 import * as nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@shared/consts';
 import getOsDistro from '@lib/host/getOsDistro.js';
-import { convars, txEnv } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import type { DatabaseObjectType } from './instance';
 import consoleFactory from '@lib/console';
 import { msToDuration } from '@lib/misc';
@@ -48,8 +47,8 @@ const printDiagnostics = async () => {
     console.error(`Entropy: ${entropy}`);
     console.error(`Distro: ${osDistro}`);
     console.error(`txAdmin: ${txEnv.txaVersion}`);
-    console.error(`FXServer: ${txEnv.fxsVersionDisplay}`);
-    console.error(`Pterodactyl: ${convars.isPterodactyl}`);
+    console.error(`FXServer: ${txEnv.fxsVersionTag}`);
+    console.error(`Provider: ${txHostConfig.providerName ?? 'none'}`);
     console.error(`Unique Test: secure ${secureStorage.size}/100, non-secure ${nonsecureStorage.size}/100`);
 };
 

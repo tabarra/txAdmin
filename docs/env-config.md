@@ -45,14 +45,26 @@ The specific way to set up those variables vary from system to system, and there
         - **Linux:** `<fxserver_root>/../../../txData` — sits in the folder that contains your `run.sh`.
     - The path to the txData folder, which contains the txAdmin logs, configs, and data. This is also the default place suggested for deploying new servers (as a subfolder). It is usually set to `/home/container` when running on Pterodactyl.
     - <mark>NOTE:</mark> This variable takes priority over the deprecated `txDataPath` ConVar.
+- **TXHOST_GAME_NAME**
+    - **Default value:** _undefined_.
+    - **Options:** `['fivem','redm']`.
+    - Restricts to only running either FiveM or RedM servers.
+    - The setup page will only show recipes for the game specified
+- **TXHOST_MAX_SLOTS**
+    - **Default value:** _undefined_.
+    - Enforces the server `sv_maxClients` is set to a number less than or equal to the variable value.
 - **TXHOST_QUIET_MODE**
     - **Default value:** `false`.
     - If true, do not pipe the FXServer's stdout/stderr to txAdmin's stdout, meaning that you will only be able to see the server output by visiting the txAdmin Live Console page.
     - If enabled, server owners won't be able to disable it in `txAdmin -> Settings -> FXServer` page.
     - <mark>NOTE:</mark> We recommend that Game Server Providers enable this option.
-- **TXHOST_MAX_SLOTS**
+- **TXHOST_API_TOKEN**
     - **Default value:** _undefined_.
-    - Enforces the server `sv_maxClients` is set to a number less than or equal to the variable value.
+    - **Options:** `disabled` or a string matching `/^[A-Za-z0-9_-]{16,48}$/`.
+    - The token to be able to access the `/host/status` endpoint via the `x-txadmin-envtoken` HTTP header, or the `?envtoken=` URL parameter.
+    - If token is _undefined_: endpoint disabled & unavailable.
+    - If token is string `disabled`: endpoint will be publicly available without any restrictions.
+    - If token is present: endpoint requires the token to be present.
 
 ### Networking
 - **TXHOST_TXA_URL:**
@@ -81,8 +93,9 @@ The specific way to set up those variables vary from system to system, and there
     - This will usually show in warnings regarding configuration or user actions that go against any `TXHOST_*` variable.
 - **TXHOST_PROVIDER_LOGO**
     - **Default value:** _undefined_.
-    - The URL for the hosting provider logo which will appear in the login page.
+    - The URL for the hosting provider logo which will appear at the login page.
     - The maximum image size is **224x96**.
+    - You can create a theme-aware URL by including a `{theme}` placeholder in the URL, which will be replaced by `light` or `dark` at runtime, depending on the theme being used, eg. `https://.../logo_{theme}.png`.
 
 
 ### Defaults 

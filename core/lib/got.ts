@@ -1,4 +1,4 @@
-import { convars, txEnv } from '@core/globalData';
+import { txEnv, txHostConfig } from '@core/globalData';
 import got from 'got';
 
 export default got.extend({
@@ -8,5 +8,5 @@ export default got.extend({
     headers: {
         'User-Agent': `txAdmin ${txEnv.txaVersion}`,
     },
-    localAddress: convars.forceInterface,
+    localAddress: txHostConfig.netInterface,
 });

@@ -152,18 +152,14 @@ function RestartScheduleBox({ restartTimes, setRestartTimes, disabled }: Restart
 }
 
 
-//TODO: check if there is any smart logic we could apply here
 const getServerDataPlaceholder = (hostSuggested?: string) => {
     if (hostSuggested) {
-        return hostSuggested;
+        const withoutTailSlash = hostSuggested.replace(/\/$/, '');
+        return `${withoutTailSlash}/CFXDefault`;
     } else if (window.txConsts.isWindows) {
-        return 'C:/Users/Admin/Desktop/serverdata';
-    } else if (window.txConsts.isZapHosting) {
-        return '/home/zap9999999/g999999/gta5-fivem-txadmin/serverdata';
-    } else if (window.txConsts.isPterodactyl) {
-        return '/home/container/serverdata/';
+        return 'C:/Users/Admin/Desktop/CFXDefault';
     } else {
-        return '/root/fivem/txData/serverdata';
+        return '/root/fivem/txData/CFXDefault';
     }
 }
 
@@ -217,6 +213,11 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
         toUi: (args?: string[]) => args ? args.join(' ') : undefined,
         toCfg: (str?: string) => str ? str.trim().split(/\s+/) : undefined,
     }
+    const emptyToNull = (str?: string) => {
+        if (str === undefined) return undefined;
+        const trimmed = str.trim();
+        return trimmed.length ? trimmed : null;
+    };
 
     //Check against stored value and sets the page state
     const processChanges = () => {
@@ -240,7 +241,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
             }
         }
         const res = processConfigStates([
-            [dataPath, dataPathRef.current?.value],
+            [dataPath, emptyToNull(dataPathRef.current?.value)],
             [restarterSchedule, restarterSchedule.state.value],
             [quietMode, quietMode.state.value],
             [cfgPath, cfgPathRef.current?.value],
@@ -309,9 +310,8 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
 
     //Card content stuff
     const serverDataPlaceholder = useMemo(
-        // TODO: Use pageCtx.apiData?.txDataPath (update the [] as well)
-        () => getServerDataPlaceholder(),
-        []
+        () => getServerDataPlaceholder(pageCtx.apiData?.dataPath),
+        [pageCtx.apiData]
     );
 
     //Reset server server data button
@@ -382,6 +382,12 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                 <SettingItemDesc>
                     The full path of the folder that <strong>contains</strong> the <InlineCode>resources</InlineCode> folder, usually it's the same place that contains your <InlineCode>server.cfg</InlineCode>. <br />
                     Resetting this value will allow you to go back to the Setup page, without deleting any files.
+                    {pageCtx.apiData?.dataPath && pageCtx.apiData?.hasCustomDataPath && (<>
+                        <br />
+                        <span className="text-warning-inline">
+                            {window.txConsts.hostConfigSource}: This path should start with <InlineCode>{pageCtx.apiData.dataPath}</InlineCode> .
+                        </span>
+                    </>)}
                 </SettingItemDesc>
             </SettingItem>
             <SettingItem label="Restart Schedule" showOptional>
@@ -410,7 +416,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                     You will still be able to use the Live Console.
                     {forceQuietMode && (<>
                         <br />
-                        <span className="text-warning-inline">{window.txConsts.providerName}: This setting is locked and cannot be changed.</span>
+                        <span className="text-warning-inline">{window.txConsts.hostConfigSource}: This setting is locked and cannot be changed.</span>
                     </>)}
                 </SettingItemDesc>
             </SettingItem>

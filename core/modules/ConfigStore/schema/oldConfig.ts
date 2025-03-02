@@ -1,6 +1,6 @@
 import { dequal } from 'dequal/lite';
 import parseArgsStringToArgv from "string-argv";
-import { ConfigSchemas_v2 } from ".";
+import { ConfigSchemas_v2 } from "./index";
 import { ListOf } from "./utils";
 import { genBanTemplateId } from "./banlist";
 import { getConfigDefaults } from "../configParser";

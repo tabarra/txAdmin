@@ -2,11 +2,12 @@ const modulename = 'WebCtxUtils';
 import fsp from "node:fs/promises";
 import path from "node:path";
 import type { InjectedTxConsts, ThemeType } from '@shared/otherTypes';
-import { txEnv, convars, txDevEnv } from "@core/globalData";
+import { txEnv, txDevEnv, txHostConfig } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
 import consoleFactory from '@lib/console';
 import { AuthedAdminType, checkRequestAuth } from "./authLogic";
+import { isString } from "@modules/CacheStore";
 const console = consoleFactory(modulename);
 
 // NOTE: it's not possible to remove the hardcoded import of the entry point in the index.html file
@@ -75,7 +76,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         try {
             const indexPath = txDevEnv.ENABLED
                 ? path.join(txDevEnv.SRC_PATH, '/panel/index.html')
-                : path.join(txEnv.txAdminResourcePath, 'panel/index.html')
+                : path.join(txEnv.txaPath, 'panel/index.html')
             const rawHtmlFile = await fsp.readFile(indexPath, 'utf-8');
 
             //Remove tagged lines (eg hardcoded entry point) depending on env
@@ -107,34 +108,39 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
 
     //Preparing vars
     const basePath = (ctx.txVars.isWebInterface) ? '/' : consts.nuiWebpipePath;
-    const serverName = txConfig.general.serverName || txEnv.profile;
-    const injectedConsts = {
+    const injectedConsts: InjectedTxConsts = {
         //env
-        fxsVersion: txEnv.fxsVersionDisplay,
+        fxsVersion: txEnv.fxsVersionTag,
         fxsOutdated: txCore.updateChecker.fxsUpdateData,
         txaVersion: txEnv.txaVersion,
         txaOutdated: txCore.updateChecker.txaUpdateData,
         serverTimezone,
         isWindows: txEnv.isWindows,
-        isZapHosting: convars.isZapHosting, //not in use
-        isPterodactyl: convars.isPterodactyl, //not in use
         isWebInterface: ctx.txVars.isWebInterface,
         showAdvanced: (txDevEnv.ENABLED || console.isVerbose),
         hasMasterAccount: txCore.adminStore.hasAdmins(true),
         defaultTheme: tmpDefaultTheme,
         customThemes: tmpCustomThemes.map(({ name, isDark }) => ({ name, isDark })),
-        adsData: convars.adsData,
-        providerLogo: convars.providerLogo,
-        providerName: convars.providerName,
+        adsData: txEnv.adsData,
+        providerLogo: txHostConfig.providerLogo,
+        providerName: txHostConfig.providerName,
+        hostConfigSource: txHostConfig.sourceName,
+
+        //Login page info
+        server: {
+            name: txCore.cacheStore.getTyped('fxsRuntime:projectName', isString) ?? txConfig.general.serverName,
+            game: txCore.cacheStore.getTyped('fxsRuntime:gameName', isString),
+            icon: txCore.cacheStore.getTyped('fxsRuntime:iconFilename', isString),
+        },
 
         //auth
         preAuth: authedAdmin && authedAdmin.getAuthData(),
-    } satisfies InjectedTxConsts;
+    };
 
     //Prepare placeholders
     const replacers: { [key: string]: string } = {};
     replacers.basePath = `<base href="${basePath}">`;
-    replacers.ogTitle = `txAdmin - ${serverName}`;
+    replacers.ogTitle = `txAdmin - ${txConfig.general.serverName}`;
     replacers.ogDescripttion = `Manage & Monitor your FiveM/RedM Server with txAdmin v${txEnv.txaVersion} atop FXServer ${txEnv.fxsVersion}`;
     replacers.txConstsInjection = `<script>window.txConsts = ${JSON.stringify(injectedConsts)};</script>`;
     replacers.devModules = txDevEnv.ENABLED ? devModulesScript : '';

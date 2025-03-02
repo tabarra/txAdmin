@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import isLocalhost from 'is-localhost-ip';
-import { convars } from '@core/globalData';
+import { txHostConfig } from '@core/globalData';
 import consoleFactory from '@lib/console';
 const console = consoleFactory();
 
@@ -100,7 +100,7 @@ class FilesInfoList {
     toJSON() {
         return this.store;
     }
-    toMarkdown() {
+    toMarkdown(hasHostConfig = false) {
         const files = Object.keys(this.store);
         if (!files) return null;
 
@@ -108,10 +108,15 @@ class FilesInfoList {
         for (const file of files) {
             const fileInfos = this.store[file];
             msgLines.push(`\`${file}\`:`);
-            fileInfos.forEach(([line, msg]) => {
+            for (const [line, msg] of fileInfos) {
                 const linePrefix = line ? `Line ${line}: ` : '';
-                msgLines.push(`\t${linePrefix}${msg}`);
-            });
+                const indentedMsg = msg.replaceAll(/\n\t/gm, '\n\t- ');
+                msgLines.push(`- ${linePrefix}${indentedMsg}`);
+            }
+        }
+        if (hasHostConfig) {
+            msgLines.push(''); //blank line so the warning doesn't join the list
+            msgLines.push(`**Some of the configuration above is controlled by ${txHostConfig.sourceName}.**`);
         }
         return msgLines.join('\n');
     }
@@ -313,7 +318,7 @@ export const parseRecursiveConfig = async (
     const cfgLines = cfgData.split('\n');
 
     // Parse CFG lines
-    const parsedCommands: (Command|ExecRecursionError)[] = [];
+    const parsedCommands: (Command | ExecRecursionError)[] = [];
     for (let i = 0; i < cfgLines.length; i++) {
         const lineString = cfgLines[i].trim();
         const lineNumber = i + 1;
@@ -328,7 +333,7 @@ export const parseRecursiveConfig = async (
             // If exec command, process recursively then flatten the output
             if (cmdObject.command === 'exec' && typeof cmdObject.args[0] === 'string') {
                 //FIXME: temporarily disable resoure references
-                if(!cmdObject.args[0].startsWith('@')){
+                if (!cmdObject.args[0].startsWith('@')) {
                     const recursiveCfgAbsolutePath = resolveCFGFilePath(cmdObject.args[0], serverDataPath);
                     try {
                         const extractedCommands = await parseRecursiveConfig(null, recursiveCfgAbsolutePath, serverDataPath, stack);
@@ -349,14 +354,17 @@ type EndpointsObjectType = Record<string, { tcp?: true; udp?: true; }>
 
 /**
  * Validates a list of parsed commands to return endpoints, errors, warnings and lines to comment out
- * @param {array} parsedCommands
- * @returns {object}
  */
 const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]) => {
-    const providerPrefix = `[${convars.providerName}] `;
     const checkedInterfaces = new Map();
+    let detectedGameName: string | undefined;
+    const requiredGameName = txHostConfig.forceGameName
+        ? txHostConfig.forceGameName === 'fivem' ? 'gta5' : 'rdr3'
+        : undefined;
 
     //To return
+    let hasHostConfigMessage = false;
+    let hasEndpointCommand = false;
     const endpoints: EndpointsObjectType = {};
     const errors = new FilesInfoList();
     const warnings = new FilesInfoList();
@@ -393,15 +401,42 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
         //Check sv_maxClients against TXHOST config
         const isMaxClientsString = cmd.isConvarSetterFor('sv_maxclients');
         if (
-            convars.deployerDefaults?.maxClients
+            txHostConfig.forceMaxClients
             && isMaxClientsString
         ) {
             const maxClients = parseInt(isMaxClientsString);
-            if (maxClients > convars.deployerDefaults.maxClients) {
-                warnings.add(
+            if (maxClients > txHostConfig.forceMaxClients) {
+                hasHostConfigMessage = true;
+                errors.add(
                     cmd.file,
                     cmd.line,
-                    `${providerPrefix}your 'sv_maxclients' SHOULD be <= ${convars.deployerDefaults.maxClients}.`
+                    `your 'sv_maxclients' MUST be <= ${txHostConfig.forceMaxClients}.`
+                );
+                continue;
+            }
+        }
+
+        //Check gamename against TXHOST config
+        const isGameNameString = cmd.isConvarSetterFor('gamename');
+        if (isGameNameString && detectedGameName) {
+            errors.add(
+                cmd.file,
+                cmd.line,
+                `you already set the 'gamename' to '${detectedGameName}', please remove this line.`
+            );
+            continue;
+        }
+        if (
+            txHostConfig.forceGameName
+            && isGameNameString
+        ) {
+            detectedGameName = isGameNameString;
+            if (isGameNameString !== requiredGameName) {
+                hasHostConfigMessage = true;
+                errors.add(
+                    cmd.file,
+                    cmd.line,
+                    `your 'gamename' MUST be '${requiredGameName}'.`
                 );
                 continue;
             }
@@ -421,12 +456,14 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
 
         //Extract & process endpoint validity
         if (cmd.command === 'endpoint_add_tcp' || cmd.command === 'endpoint_add_udp') {
+            hasEndpointCommand = true;
+
             //Validating args length
             if (cmd.args.length !== 1) {
                 warnings.add(
                     cmd.file,
                     cmd.line,
-                    `the 'endpoint_add_*' commands MUST have exactly 1 argument (received ${cmd.args.length})`
+                    `the \`endpoint_add_*\` commands MUST have exactly 1 argument (received ${cmd.args.length})`
                 );
                 continue;
             }
@@ -454,15 +491,16 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `the '${cmd.command}' interface '${iface}' is not available for this host.`
+                    `the \`${cmd.command}\` interface \`${iface}\` is not available for this host.`
                 );
                 continue;
             }
-            if (convars.forceInterface && iface !== convars.forceInterface) {
+            if (txHostConfig.netInterface && iface !== txHostConfig.netInterface) {
+                hasHostConfigMessage = true;
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `${providerPrefix}the '${cmd.command}' interface MUST be '${convars.forceInterface}'.`
+                    `the \`${cmd.command}\` interface MUST be \`${txHostConfig.netInterface}\`.`
                 );
                 continue;
             }
@@ -473,23 +511,24 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `the '${cmd.command}' port '${port}' is dedicated for txAdmin and CAN NOT be used for FXServer.`
+                    `the \`${cmd.command}\` port \`${port}\` is dedicated for txAdmin and CAN NOT be used for FXServer.`
                 );
                 continue;
             }
-            if (port === convars.txAdminPort) {
+            if (port === txHostConfig.txaPort) {
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `the '${cmd.command}' port '${port}' is being used by txAdmin and CAN NOT be used for FXServer at the same time.`
+                    `the \`${cmd.command}\` port \`${port}\` is being used by txAdmin and CAN NOT be used for FXServer at the same time.`
                 );
                 continue;
             }
-            if (convars.forceFXServerPort && port !== convars.forceFXServerPort) {
+            if (txHostConfig.fxsPort && port !== txHostConfig.fxsPort) {
+                hasHostConfigMessage = true;
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `${providerPrefix}the '${cmd.command}' port MUST be '${convars.forceFXServerPort}'.`
+                    `the \`${cmd.command}\` port MUST be \`${txHostConfig.fxsPort}\`.`
                 );
                 continue;
             }
@@ -504,7 +543,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
                 errors.add(
                     cmd.file,
                     cmd.line,
-                    `you CANNOT execute '${cmd.command}' twice for the interface '${endpoint}'.`
+                    `you CANNOT execute \`${cmd.command}\` twice for the interface \`${endpoint}\`.`
                 );
                 continue;
             } else {
@@ -513,34 +552,51 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
         }
     }
 
-    return { endpoints, errors, warnings, toCommentOut };
+    //Since gta5 is the default, we need to check TXHOST for redm
+    if (txHostConfig.forceGameName === 'redm' && detectedGameName !== 'rdr3') {
+        const initFile = parsedCommands[0]?.file ?? 'unknown';
+        hasHostConfigMessage = true;
+        errors.add(
+            initFile,
+            false,
+            `your config MUST have a 'gamename' set to '${requiredGameName}'.`
+        );
+    }
+
+    return {
+        endpoints,
+        hasEndpointCommand,
+        hasHostConfigMessage,
+        errors,
+        warnings,
+        toCommentOut,
+    };
 };
 
 
 /**
  * Process endpoints object, checks validity, and then returns a connection string
  */
-const getConnectEndpoint = (endpoints: EndpointsObjectType) => {
+const getConnectEndpoint = (endpoints: EndpointsObjectType, hasEndpointCommand: boolean) => {
     if (!Object.keys(endpoints).length) {
-        let msg;
-        if (convars.forceInterface && convars.forceFXServerPort) {
-            const desidredEndpoint = `${convars.forceInterface}:${convars.forceFXServerPort}`;
-            msg = `Please delete all \`endpoint_add_*\` lines and add the following to the start of the file:
-\t\`endpoint_add_tcp "${desidredEndpoint}"\`
-\t\`endpoint_add_udp "${desidredEndpoint}"\``;
-        } else {
-            msg = `Your config file does not specify a valid endpoint for FXServer to use.
-\tPlease delete all \`endpoint_add_*\` lines and add the following to the start of the file:
-\t\`endpoint_add_tcp "0.0.0.0:30120"\`
-\t\`endpoint_add_udp "0.0.0.0:30120"\``;
-        }
+        const instruction = hasEndpointCommand
+            ? 'Please delete all \`endpoint_add_*\` lines and'
+            : 'Please'
+        const suggestedPort = txHostConfig.fxsPort ?? 30120;
+        const suggestedInterface = txHostConfig.netInterface ?? '0.0.0.0';
+        const desidredEndpoint = `${suggestedInterface}:${suggestedPort}`;
+        const msg = [
+            `Your config file does not specify a valid endpoints for FXServer to use. ${instruction} add the following to the start of the file:`,
+            `\t\`endpoint_add_tcp "${desidredEndpoint}"\``,
+            `\t\`endpoint_add_udp "${desidredEndpoint}"\``,
+        ].join('\n');
         throw new Error(msg);
     }
     const tcpudpEndpoint = Object.keys(endpoints).find((ep) => {
         return endpoints[ep].tcp && endpoints[ep].udp;
     });
     if (!tcpudpEndpoint) {
-        throw new Error('Your config file does not not contain a ip:port used in both `endpoint_add_tcp` and `endpoint_add_udp`. Players would not be able to connect.');
+        throw new Error('Your config file does not not contain a ip:port used in both `endpoint_add_tcp` and `endpoint_add_udp` commands. Players would not be able to connect.');
     }
 
     return tcpudpEndpoint.replace(/(0\.0\.0\.0|\[::\])/, '127.0.0.1');
@@ -556,12 +612,19 @@ export const validateFixServerConfig = async (cfgPath: string, serverDataPath: s
     //Parsing FXServer config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(null, cfgAbsolutePath, serverDataPath);
-    const { endpoints, errors, warnings, toCommentOut } = await validateCommands(parsedCommands);
+    const {
+        endpoints,
+        hasEndpointCommand,
+        hasHostConfigMessage,
+        errors,
+        warnings,
+        toCommentOut
+    } = await validateCommands(parsedCommands);
 
     //Validating if a valid endpoint was detected
     let connectEndpoint: string | null = null;
     try {
-        connectEndpoint = getConnectEndpoint(endpoints);
+        connectEndpoint = getConnectEndpoint(endpoints, hasEndpointCommand);
     } catch (error) {
         errors.add(cfgAbsolutePath, false, (error as Error).message);
     }
@@ -599,8 +662,8 @@ export const validateFixServerConfig = async (cfgPath: string, serverDataPath: s
     //Prepare response
     return {
         connectEndpoint,
-        errors: errors.toMarkdown(),
-        warnings: warnings.toMarkdown(),
+        errors: errors.toMarkdown(hasHostConfigMessage),
+        warnings: warnings.toMarkdown(hasHostConfigMessage),
         // errors: errors.store,
         // warnings: warnings.store,
         // endpoints, //Not being used
@@ -627,11 +690,18 @@ export const validateModifyServerConfig = async (
     //Parsing FXServer config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(cfgInputString, cfgAbsolutePath, serverDataPath);
-    const { endpoints, errors, warnings } = await validateCommands(parsedCommands);
+    const {
+        endpoints,
+        hasEndpointCommand,
+        hasHostConfigMessage,
+        errors,
+        warnings,
+        toCommentOut
+    }  = await validateCommands(parsedCommands);
 
     //Validating if a valid endpoint was detected
     try {
-        const _connectEndpoint = getConnectEndpoint(endpoints);
+        const _connectEndpoint = getConnectEndpoint(endpoints, hasEndpointCommand);
     } catch (error) {
         errors.add(cfgAbsolutePath, false, (error as Error).message);
     }
@@ -640,8 +710,8 @@ export const validateModifyServerConfig = async (
     if (errors.count()) {
         return {
             success: false,
-            errors: errors.toMarkdown(),
-            warnings: warnings.toMarkdown(),
+            errors: errors.toMarkdown(hasHostConfigMessage),
+            warnings: warnings.toMarkdown(hasHostConfigMessage),
         };
     }
 

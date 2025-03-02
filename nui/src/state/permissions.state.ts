@@ -9,7 +9,6 @@ export type ResolvablePermission =
   | "players.playermode"
   | "players.teleport"
   | "players.heal"
-  | "players.trollmenu"
   | "players.ban"
   | "players.kick"
   | "players.direct_message"
@@ -25,6 +24,7 @@ export type ResolvablePermission =
   | "server.log.view"
   | "menu.vehicle"
   | "menu.clear_area"
+  | "menu.viewids"
   | "players.spectate"
   | "players.troll"
   | "players.freeze";

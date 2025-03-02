@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import got from '@lib/got';
 import getOsDistro from '@lib/host/getOsDistro.js';
-import { convars, txDevEnv, txEnv } from '@core/globalData';
+import { txDevEnv, txEnv, txHostConfig } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import { addLocalIpAddress } from '@lib/host/isIpAddressLocal';
 import { chalkInversePad } from '@lib/misc';
@@ -40,7 +40,7 @@ const getPublicIp = async () => {
 
 const getOSMessage = async () => {
     const serverMessage = [
-        `To be able to access txAdmin from the internet open port ${convars.txAdminPort}`,
+        `To be able to access txAdmin from the internet open port ${txHostConfig.txaPort}`,
         'on your OS Firewall as well as in the hosting company.',
     ];
     const winWorkstationMessage = [
@@ -48,7 +48,7 @@ const getOSMessage = async () => {
         'You need to open the fxserver port (usually 30120) on Windows Firewall',
         'and set up port forwarding on your router so other players can access it.',
     ];
-    if (convars.displayAds) {
+    if (txEnv.displayAds) {
         winWorkstationMessage.push('We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.');
     }
 
@@ -139,8 +139,8 @@ export const startReadyWatcher = async (cb: () => void) => {
 
     //Addresses
     let detectedUrls;
-    if (convars.forceInterface && convars.forceInterface !== '0.0.0.0') {
-        detectedUrls = [convars.forceInterface];
+    if (txHostConfig.netInterface && txHostConfig.netInterface !== '0.0.0.0') {
+        detectedUrls = [txHostConfig.netInterface];
     } else {
         detectedUrls = [
             (txEnv.isWindows) ? 'localhost' : 'your-public-ip',
@@ -150,9 +150,9 @@ export const startReadyWatcher = async (cb: () => void) => {
             addLocalIpAddress(publicIpResp.value);
         }
     }
-    const bannerUrls = convars.txAdminUrl
-        ? [convars.txAdminUrl]
-        : detectedUrls.map((addr) => `http://${addr}:${convars.txAdminPort}/`);
+    const bannerUrls = txHostConfig.txaUrl
+        ? [txHostConfig.txaUrl]
+        : detectedUrls.map((addr) => `http://${addr}:${txHostConfig.txaPort}/`);
 
     //Admin PIN
     const adminMasterPin = 'value' in adminPinRes && adminPinRes.value ? adminPinRes.value : false;
@@ -176,7 +176,7 @@ export const startReadyWatcher = async (cb: () => void) => {
         ...adminPinLines,
     ];
     console.multiline(boxen(boxLines.join('\n'), boxOptions), chalk.bgGreen);
-    if (!txDevEnv.ENABLED && !convars.forceInterface && 'value' in msgRes && msgRes.value) {
+    if (!txDevEnv.ENABLED && !txHostConfig.netInterface && 'value' in msgRes && msgRes.value) {
         console.multiline(msgRes.value, chalk.bgBlue);
     }
 
