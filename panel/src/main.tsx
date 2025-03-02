@@ -103,11 +103,11 @@ export function AuthContextSwitch() {
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <StrictMode>
+    // <StrictMode>
         <ErrorBoundary FallbackComponent={AppErrorFallback}>
             <ThemeProvider>
                 <AuthContextSwitch />
             </ThemeProvider>
         </ErrorBoundary>
-    </StrictMode>,
+    // </StrictMode>,
 )

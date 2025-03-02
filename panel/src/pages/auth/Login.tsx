@@ -61,6 +61,7 @@ export enum LogoutReasonHash {
     EXPIRED = '#expired',
     UPDATED = '#updated',
     MASTER_ALREADY_SET = '#master_already_set',
+    SHUTDOWN = '#shutdown',
 }
 
 export default function Login() {
@@ -160,6 +161,8 @@ export default function Login() {
             setErrorMessage('txAdmin updated!\nPlease login again.');
         } else if (hash === LogoutReasonHash.MASTER_ALREADY_SET) {
             setErrorMessage('Master account already configured.');
+        } else if (hash === LogoutReasonHash.SHUTDOWN) {
+            setErrorMessage('The txAdmin server shut down.\nPlease start it again to be able to login.');
         }
         window.location.hash = '';
     }, []);

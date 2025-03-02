@@ -51,6 +51,12 @@ const forceUiReload = (socket: SocketWithSession) => {
         socket.disconnect();
     } catch (error) { }
 };
+const sendShutdown = (socket: SocketWithSession) => {
+    try {
+        socket.emit('txAdminShuttingDown');
+        socket.disconnect();
+    } catch (error) { }
+};
 
 export default class WebSocket {
     readonly #io: SocketIO;
@@ -69,6 +75,19 @@ export default class WebSocket {
 
         setInterval(this.flushBuffers.bind(this), 250);
     }
+
+
+    /**
+     * Sends a shutdown signal to all connected clients
+     */
+    public async handleShutdown() {
+        const sockets = await this.#io.fetchSockets();
+        for (const socket of sockets) {
+            //@ts-ignore
+            sendShutdown(socket);
+        }
+    }
+
 
     /**
      * Refreshes the auth data for all connected admins

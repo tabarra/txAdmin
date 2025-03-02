@@ -253,6 +253,14 @@ export default class WebServer {
 
 
     /**
+     * handler for the shutdown event
+     */
+    public handleShutdown() {
+        return this.webSocket.handleShutdown();
+    }
+
+
+    /**
      * Resetting lua comms token - called by fxRunner on spawnServer()
      */
     resetToken() {

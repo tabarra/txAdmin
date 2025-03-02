@@ -50,6 +50,9 @@ export default function MainSocket() {
         socket.on('refreshToUpdate', function () {
             expireSession('main socketio', 'got refreshToUpdate', LogoutReasonHash.UPDATED);
         });
+        socket.on('txAdminShuttingDown', function () {
+            expireSession('main socketio', 'got txAdminShuttingDown', LogoutReasonHash.SHUTDOWN);
+        });
         socket.on('status', function (status) {
             setGlobalStatus(status);
         });

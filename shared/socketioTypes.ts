@@ -107,6 +107,7 @@ export type ListenEventsMap = {
     error: (reason?: string) => void;
     logout: (reason?: string) => void;
     refreshToUpdate: () => void;
+    txAdminShuttingDown: () => void;
     status: (status: GlobalStatusType) => void;
     playerlist: (playerlistData: PlayerlistEventType[]) => void;
     updateAuthData: (authData: ReactAuthDataType) => void;
