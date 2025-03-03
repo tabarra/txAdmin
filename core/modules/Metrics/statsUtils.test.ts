@@ -116,11 +116,11 @@ suite('QuantileArray', () => {
     test('summary', () => {
         expect(array.resultSummary('ms')).toEqual({
             ...repeatedExpectedResult,
-            summary: '(4) p5:0ms/p25:0ms/p50:1ms/p75:1ms/p95:1ms',
+            summary: 'p5:0ms/p25:0ms/p50:1ms/p75:1ms/p95:1ms (x4)',
         });
         expect(array.resultSummary()).toEqual({
             ...repeatedExpectedResult,
-            summary: '(4) p5:0/p25:0/p50:1/p75:1/p95:1',
+            summary: 'p5:0/p25:0/p50:1/p75:1/p95:1 (x4)',
         });
     });
     test('clear', () => {
