@@ -10,7 +10,6 @@ import './cfxreLoginButton.css';
 import { useLocation } from "wouter";
 import { fetchWithTimeout } from '@/hooks/fetch';
 import { processFetchError } from './errors';
-import { ServerGlowIcon } from '@/components/ServerIcon';
 
 
 function HeaderNoServer() {
