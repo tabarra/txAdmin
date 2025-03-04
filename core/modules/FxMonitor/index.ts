@@ -560,11 +560,8 @@ export default class FxMonitor {
                     .digest('hex')
                     .padStart(16, '0');
                 const iconFilename = `icon-${iconHash}.png`;
-
-                if (iconFilename !== txCore.cacheStore.get(iconCacheKey)) {
-                    txCore.cacheStore.set(iconCacheKey, iconFilename);
-                    await setRuntimeFile(iconFilename, Buffer.from(infoJson.icon, 'base64'));
-                }
+                await setRuntimeFile(iconFilename, Buffer.from(infoJson.icon, 'base64'));
+                txCore.cacheStore.set(iconCacheKey, iconFilename);
             } catch (error) {
                 console.error(`Failed to save server icon: ${(error as any).message ?? 'Unknown error'}`);
             }
