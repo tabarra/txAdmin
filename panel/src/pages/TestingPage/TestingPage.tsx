@@ -11,6 +11,7 @@ import TmpDndSortable from "./TmpDndSortable";
 import TmpSwr from "./TmpSwr";
 import { useEffect } from "react";
 import TmpJsonEditor from "./TmpJsonEditor";
+import TmpPageHeader from "./TmpPageHeader";
 
 
 export default function TestingPage() {
@@ -37,5 +38,6 @@ export default function TestingPage() {
             <TmpServerCard />
         </div> */}
         {/* <TmpJsonEditor /> */}
+        {/* <TmpPageHeader /> */}
     </div>;
 }

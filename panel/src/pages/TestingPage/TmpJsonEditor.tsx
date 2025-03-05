@@ -1,16 +1,13 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Editor, loader } from "@monaco-editor/react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ArrowLeft, Save, RotateCcw, X, ChevronRight, ChevronLeft, XIcon } from "lucide-react"
+import { ArrowLeft, Save, RotateCcw, X, ChevronRight, ChevronLeft, XIcon, Settings2Icon } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
 import TxAnchor from "@/components/TxAnchor"
 import InlineCode from "@/components/InlineCode"
-import { defaultEmbedJson } from "./defaultJsons"
-import SettingsHeader, { SettingsHeaderSub } from "../Settings/SettingsHeader"
+import { PageHeader } from "@/components/page-header"
 
 const beautifyJson = (json: string) => JSON.stringify(JSON.parse(json), null, 4)
 
@@ -54,7 +51,7 @@ loader.init().then(monaco => {
     });
 });
 
-export function DiscordJsonEditor({
+function DiscordJsonEditor({
     initialConfig = "{}",
     defaultConfig,
     onSave,
@@ -207,11 +204,16 @@ const placeholderDescriptions = {
 export default function TmpJsonEditor() {
     return (
         <div className="w-full h-full flex flex-col max-h-contentvh">
-            <SettingsHeaderSub changelogData={[{ author: 'aaaaaa', keys: [], ts: 111111111111 }]} />
+            <PageHeader
+                    icon={<Settings2Icon />}
+                    title="Embed Editor"
+                    parentName="Settings"
+                    parentLink="/settings"
+                />
             <div className="grow px-0 xs:px-3 md:px-0 w-full max-w-screen-lg mx-auto max-h-minx h-32">
                 <DiscordJsonEditor
-                    defaultConfig={beautifyJson(defaultEmbedJson)}
-                    initialConfig={beautifyJson(defaultEmbedJson)} //just for testing
+                    defaultConfig={beautifyJson('{}')}
+                    initialConfig={beautifyJson('{}')} //just for testing
                     placeholders={placeholderDescriptions}
                     onSave={(config) => console.log("Saved config:", config)}
                     onBack={() => console.log("Back")}

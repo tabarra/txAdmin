@@ -10,11 +10,11 @@ import { DndSortableGroup, DndSortableItem } from "@/components/dndSortable";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { BackendApiError, useBackendApi } from "@/hooks/fetch";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, Settings2Icon } from "lucide-react";
 import useSWR from "swr";
 import { alphanumeric } from 'nanoid-dictionary';
 import { customAlphabet } from "nanoid";
-import SettingsHeader from "../Settings/SettingsHeader";
+import { PageHeader } from "@/components/page-header";
 const nanoid = customAlphabet(alphanumeric, 21);
 
 
@@ -26,7 +26,7 @@ export type BanTemplatesInputData = {
 
 type DataUpdaterFunc = (prev: BanTemplatesDataType[]) => BanTemplatesDataType[];
 
-export default function BanTemplatesPage() {
+function BanTemplatesPageInner() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [reasonInputDialogData, setReasonInputDialogData] = useState<BanTemplatesInputData | undefined>();
     const openConfirmDialog = useOpenConfirmDialog();
@@ -189,22 +189,19 @@ export default function BanTemplatesPage() {
     const canEdit = hasPerm('settings.write');
     return <>
         <div className="space-y-4 w-full max-w-screen-lg mx-auto">
-            <div className="px-2 md:px-0">
-                <h1 className="text-3xl mb-2">Ban Templates</h1>
-                <p>
-                    Here you can configure ban reasons and durations that will appear as dropdown options when banning a player. <br />
-                    This is useful for common reasons that happen frequently, like violation of your server rules. <br />
-                    {canEdit ? (
-                        <span className="text-muted-foreground italic">
-                            TIP: You can also drag and drop to reorder the list. <br />
-                        </span>
-                    ) : (
-                        <span className="text-warning-inline">
-                            You need the <InlineCode className="text-warning-inline">Settings: Change</InlineCode> permission to edit these reasons.
-                        </span>
-                    )}
-                </p>
-            </div>
+            <p className="px-2 md:px-0">
+                Here you can configure ban reasons and durations that will appear as dropdown options when banning a player. <br />
+                This is useful for common reasons that happen frequently, like violation of your server rules. <br />
+                {canEdit ? (
+                    <span className="text-muted-foreground italic">
+                        TIP: You can also drag and drop to reorder the list. <br />
+                    </span>
+                ) : (
+                    <span className="text-warning-inline">
+                        You need the <InlineCode className="text-warning-inline">Settings: Change</InlineCode> permission to edit these reasons.
+                    </span>
+                )}
+            </p>
             <div className="space-y-2">
                 <div className="flex flex-wrap justify-between text-muted-foreground px-2 md:px-0">
                     <span className="shrink-0">Configured reasons: {swr.data?.length ?? 0}</span>
@@ -218,7 +215,7 @@ export default function BanTemplatesPage() {
                 )}
                 {swr.data && (
                     <DndSortableGroup
-                        className="space-y-2 border p-2 rounded-lg"
+                        className="space-y-2 border p-2 xs:rounded-lg"
                         ids={swr.data.map((item) => item.id)}
                         onDragEnd={handleDragEnd}
                     >
@@ -256,13 +253,18 @@ export default function BanTemplatesPage() {
 }
 
 
-// export default function BanTemplatesPage () {
-//     return (
-//         <div className="w-full mb-10">
-//             <SettingsHeader changelogData={[{author: 'aaaaaa', keys:[], ts: 111111111111}]} />
-//             <div className="px-0 xs:px-3 md:px-0 flex flex-row gap-2 w-full">
-//                 <BanTemplatesPageInner />
-//             </div>
-//         </div>
-//     )
-// }
+export default function BanTemplatesPage() {
+    return (
+        <div className="w-full mb-10">
+            <PageHeader
+                icon={<Settings2Icon />}
+                title="Ban Templates"
+                parentName="Settings"
+                parentLink="/settings"
+            />
+            <div className="px-0 xs:px-3 md:px-0 flex flex-row gap-2 w-full">
+                <BanTemplatesPageInner />
+            </div>
+        </div>
+    )
+}

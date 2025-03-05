@@ -2,6 +2,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { setUrlHash } from "@/lib/navigation";
+import { Settings2Icon } from "lucide-react";
 
 import { ApiTimeout, useBackendApi } from "@/hooks/fetch";
 import { useOpenConfirmDialog } from "@/hooks/dialogs";
@@ -11,7 +12,6 @@ import type { SettingsCardContext, SettingsCardInfo, SettingsCardProps, Settings
 import type { GetConfigsResp, PartialTxConfigs, SaveConfigsReq, SaveConfigsResp } from "@shared/otherTypes";
 
 import SettingsTab from "./SettingsTab";
-import SettingsHeader from "./SettingsHeader";
 import ConfigCardBans from "./tabCards/bans";
 import ConfigCardDiscord from "./tabCards/discord";
 import ConfigCardFxserver from "./tabCards/fxserver";
@@ -21,6 +21,8 @@ import ConfigCardGeneral from "./tabCards/general";
 import ConfigCardWhitelist from "./tabCards/whitelist";
 import SettingsCardTemplate from "./tabCards/_template";
 import SettingsCardBlank from "./tabCards/_blank";
+import { PageHeader, PageHeaderChangelog } from "@/components/page-header";
+
 
 
 //Tab configuration
@@ -191,7 +193,11 @@ export default function SettingsPage() {
 
     return (
         <div className="w-full mb-10">
-            <SettingsHeader changelogData={swr?.data?.changelog} />
+            <PageHeader title="Simple + changelog" icon={<Settings2Icon />}>
+                <PageHeaderChangelog
+                    changelogData={swr?.data?.changelog}
+                />
+            </PageHeader>
             <div className="px-0 xs:px-3 md:px-0 flex flex-row gap-2 w-full">
                 <Tabs
                     value={tab}
