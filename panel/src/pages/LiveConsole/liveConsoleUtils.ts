@@ -76,19 +76,25 @@ export const filterTermLine = (selection: string, opts: LiveConsoleOptions) => {
     let prefix = '';
     if (opts.copyTimestamp) prefix += ts ?? '';
     if (opts.copyTag) prefix += tag ?? '';
-    return prefix + (content ?? '');
+    return prefix + (content ?? '').trimEnd();
 }
 
 
 /**
  * Copies a string to the clipboard
  */
-export const copyTermLine = async (selection: string, divRef: HTMLDivElement, opts: LiveConsoleOptions) => {
+export const copyTermLine = async (
+    selection: string,
+    divRef: HTMLDivElement,
+    opts: LiveConsoleOptions,
+    returnFocusTo: HTMLElement | null = null
+) => {
     const strToCopy = selection
         .split(/\r?\n/)
         .map(line => filterTermLine(line, opts))
-        .join('\r\n');
-    return copyToClipboard(strToCopy, divRef);
+        .join('\r\n') //assuming the user is on windows
+        .replace(/(\r?\n)+$/, '\r\n'); //single one at the end, if any
+    return copyToClipboard(strToCopy, divRef, returnFocusTo);
 }
 
 

@@ -3,7 +3,6 @@ import { twMerge } from "tailwind-merge";
 import { Socket, io } from "socket.io-client";
 import type { BanDurationType } from "@shared/otherTypes";
 import { ListenEventsMap } from "@shared/socketioTypes";
-import { useId } from "react";
 
 
 /**
@@ -90,27 +89,52 @@ export const createSeedHslColor = (seed: string, alpha?: number) => {
  * Only if on web, attempt to use the Clipboard API. If it fails, fallback to the old method.
  * Because we don't have access to Clipboard API in FiveM's CEF, as well as on
  * non-localhost origins without https, we need to use the old school method.
+ * It does seem to work on Firefox though.
  */
-export const copyToClipboard = async (value: string, surrogate: HTMLDivElement) => {
+export const copyToClipboard = async (
+    value: string,
+    surrogate: HTMLDivElement,
+    returnFocusTo: HTMLElement | null = null,
+) => {
     const copyViaApi = () => navigator.clipboard.writeText(value);
     const copyViaInput = () => {
         const clipElem = document.createElement("textarea");
+        clipElem.id = 'clipboard-input-' + Math.random().toString(36).substring(2, 15);
         clipElem.value = value;
+        clipElem.style.position = 'fixed';
+        clipElem.style.opacity = '0';
+        clipElem.style.top = '0';
+        clipElem.style.left = '0';
         surrogate.appendChild(clipElem);
         clipElem.select();
         const result = document.execCommand("copy");
-        surrogate.removeChild(clipElem);
+        document.addEventListener('copy', () => {
+            setTimeout(() => {
+                try {
+                    surrogate.removeChild(clipElem);
+                    console.log('Removed clipboard temporary target:', clipElem.id);
+                } catch (error) {
+                    console.log('Failed to remove clipboard temporary target:', clipElem.id);
+                } finally {
+                    if (returnFocusTo) returnFocusTo.focus();
+                };
+            }, 0);
+        }, {
+            once: true,
+            signal: AbortSignal.timeout(250)
+        });
         return result;
     }
 
     //try to prevent printing error on devtools
-    if(window.txConsts.isWebInterface) {
+    if (window.txConsts.isWebInterface && navigator.clipboard) {
         try {
             return await copyViaApi();
         } catch (error1) {
             return copyViaInput();
         }
     } else {
+        console.warn('Clipboard API not available, copying via textarea.');
         return copyViaInput();
     }
 }

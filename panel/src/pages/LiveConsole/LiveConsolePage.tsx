@@ -174,7 +174,12 @@ export default function LiveConsolePage() {
                 } else if (e.code === 'KeyC' && (e.ctrlKey || e.metaKey)) {
                     const selection = term.getSelection();
                     if (!selection) return false;
-                    copyTermLine(selection, term.element as any, consoleOptions).then((res) => {
+                    copyTermLine(
+                        selection,
+                        term.element as any,
+                        consoleOptions,
+                        termInputRef.current
+                    ).then((res) => {
                         //undefined if no error
                         if (res === false) {
                             txToast.error('Failed to copy to clipboard :(');
@@ -373,15 +378,17 @@ export default function LiveConsolePage() {
      */
     const consoleWrite = (cmd: string) => {
         if (!isConnected || !pageSocket.current) return;
-        if(cmd === 'cls' || cmd === 'clear') {
-            term.clear();
-            term.write(`${ANSI.YELLOW}[console cleared]${ANSI.RESET}\n`);
+        if (cmd === 'cls' || cmd === 'clear') {
+            clearConsole();
         } else {
             pageSocket.current.emit('consoleCommand', cmd);
         }
     }
-    const consoleClear = () => {
+    const clearConsole = () => {
         term.clear();
+        searchAddon.clearDecorations();
+        setShowSearchBar(false);
+        term.write(`${ANSI.YELLOW}[console cleared]${ANSI.RESET}\n`);
     }
     const toggleSearchBar = () => {
         setShowSearchBar(!showSearchBar);
@@ -445,7 +452,7 @@ export default function LiveConsolePage() {
                 termInputRef={termInputRef}
                 isConnected={isConnected}
                 consoleWrite={consoleWrite}
-                consoleClear={consoleClear}
+                consoleClear={clearConsole}
                 toggleSaveSheet={toggleSaveSheet}
                 toggleSearchBar={toggleSearchBar}
             />
