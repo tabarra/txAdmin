@@ -179,6 +179,7 @@ Legend:
 - [ ] use `ScanResourceRoot()`
     - `ScanResourceRoot('xxx/resources/', (data: object) => {...});`
     - test if a `while true do end` on a resource manifest would cause tx to hang
+    - make headless scan mode, running fxs+txa and getting the results
 
 ## Pending Improvements
 - [ ] Settings Page:

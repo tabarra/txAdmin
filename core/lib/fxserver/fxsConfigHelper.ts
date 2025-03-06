@@ -209,7 +209,6 @@ export const readLineCommands = (input: string) => {
         if (!currToken.length) {
             if (
                 input.slice(i, i + 2) === '//'
-                || input.slice(i, i + 2) === '/*'
                 || input[i] === '#'
             ) {
                 break;

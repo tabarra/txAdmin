@@ -102,7 +102,7 @@ export const copyTermLine = async (
  * Get the number of font-mono variants loaded
  */
 export const getNumFontVariantsLoaded = (cssVar: string, label: string) => {
-    console.group('getNumFontVariantsLoaded:', label);
+    console.groupCollapsed('getNumFontVariantsLoaded:', label);
 
     //This is required because in firefox, font.family has " and in chrome it doesn't
     const normalizeFamily = (family: string) => family.toLowerCase().replace(/^["']|["']$/g, '');

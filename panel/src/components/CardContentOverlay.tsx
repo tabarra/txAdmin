@@ -3,7 +3,7 @@ import { Loader2Icon, OctagonXIcon } from "lucide-react";
 type CardContentOverlayProps = {
     loading?: boolean;
     error?: React.ReactNode;
-    message?: string;
+    message?: React.ReactNode;
 };
 export default function CardContentOverlay({ loading, error, message }: CardContentOverlayProps) {
     let innerNode: React.ReactNode;
@@ -28,7 +28,7 @@ export default function CardContentOverlay({ loading, error, message }: CardCont
         return null;
     }
     return (
-        <div className="absolute inset-0 min-h-20 px-4 py-6 rounded-[inherit] dark:bg-black/25 backdrop-blur-sm flex flex-col items-center justify-center gap-2 text-center">
+        <div className="absolute inset-0 z-10 min-h-20 px-4 py-6 rounded-[inherit] dark:bg-black/25 backdrop-blur-sm flex flex-col items-center justify-center gap-2 text-center">
             {innerNode}
         </div>
     )

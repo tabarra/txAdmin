@@ -19,7 +19,7 @@ export function handleHotkeyEvent(e: KeyboardEvent) {
     if (e.code === 'KeyK' && e.ctrlKey) {
         sendHotkeyEvent('focusPlayerlistFilter');
         return true;
-    } else if (e.code === 'KeyL' && e.ctrlKey && e.shiftKey && window.txConsts.showAdvanced) {
+    } else if (e.code === 'KeyL' && e.altKey) {
         sendHotkeyEvent('toggleLightMode');
         return true;
     }
