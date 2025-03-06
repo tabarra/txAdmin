@@ -2,61 +2,51 @@ import TxAnchor from '@/components/TxAnchor';
 import SwitchText from '@/components/SwitchText';
 import InlineCode from '@/components/InlineCode';
 import { SettingItem, SettingItemDesc } from '../settingsItems';
-import { useEffect } from 'react';
-import { processConfigStates, SettingsCardProps, useConfAccessor } from '../utils';
+import { useEffect, useMemo, useReducer } from "react";
+import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff } from "../utils";
 import SettingsCardShell from '../SettingsCardShell';
 
+
+export const pageConfigs = {
+    hideAdminInPunishments: getPageConfig('gameFeatures', 'hideAdminInPunishments'),
+    hideAdminInMessages: getPageConfig('gameFeatures', 'hideAdminInMessages'),
+    hideDefaultAnnouncement: getPageConfig('gameFeatures', 'hideDefaultAnnouncement'),
+    hideDefaultDirectMessage: getPageConfig('gameFeatures', 'hideDefaultDirectMessage'),
+    hideDefaultWarning: getPageConfig('gameFeatures', 'hideDefaultWarning'),
+    hideScheduledRestartWarnings: getPageConfig('gameFeatures', 'hideDefaultScheduledRestartWarning'),
+} as const;
+
 export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: SettingsCardProps) {
-    //Config accessors
-    const conf = useConfAccessor(pageCtx.apiData);
-    const hideAdminInPunishments = conf('gameFeatures', 'hideAdminInPunishments');
-    const hideAdminInMessages = conf('gameFeatures', 'hideAdminInMessages');
-    const hideDefaultAnnouncement = conf('gameFeatures', 'hideDefaultAnnouncement');
-    const hideDefaultDirectMessage = conf('gameFeatures', 'hideDefaultDirectMessage');
-    const hideDefaultWarning = conf('gameFeatures', 'hideDefaultWarning');
-    const hideScheduledRestartWarnings = conf('gameFeatures', 'hideDefaultScheduledRestartWarning');
+    const [states, dispatch] = useReducer(
+        configsReducer<typeof pageConfigs>,
+        null,
+        () => getConfigEmptyState(pageConfigs),
+    );
+    const cfg = useMemo(() => {
+        return getConfigAccessors(cardCtx.cardId, pageConfigs, pageCtx.apiData, dispatch);
+    }, [pageCtx.apiData, dispatch]);
 
-    //Check against stored value and sets the page state
-    const processChanges = () => {
-        if (!pageCtx.apiData) {
-            return {
-                changedConfigs: {},
-                hasChanges: false,
-                localConfigs: {},
-            }
-        }
+    //Effects - handle changes and reset advanced settings
+    useEffect(() => {
+        updatePageState();
+    }, [states]);
 
-        const res = processConfigStates([
-            [hideAdminInPunishments, hideAdminInPunishments.state.value],
-            [hideAdminInMessages, hideAdminInMessages.state.value],
-            [hideDefaultAnnouncement, hideDefaultAnnouncement.state.value],
-            [hideDefaultDirectMessage, hideDefaultDirectMessage.state.value],
-            [hideDefaultWarning, hideDefaultWarning.state.value],
-            [hideScheduledRestartWarnings, hideScheduledRestartWarnings.state.value],
-        ]);
+    //Processes the state of the page and sets the card as pending save if needed
+    const updatePageState = () => {
+        const overwrites = {};
+
+        const res = getConfigDiff(cfg, states, overwrites, false);
         pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
         return res;
     }
 
     //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        const { hasChanges, localConfigs } = updatePageState();
         if (!hasChanges) return;
         //NOTE: nothing to validate
         pageCtx.saveChanges(cardCtx, localConfigs);
     }
-
-    //Triggers handleChanges for state changes
-    useEffect(() => {
-        processChanges();
-    }, [
-        hideAdminInPunishments.state.value,
-        hideAdminInMessages.state.value,
-        hideDefaultAnnouncement.state.value,
-        hideDefaultDirectMessage.state.value,
-        hideDefaultWarning.state.value,
-        hideScheduledRestartWarnings.state.value,
-    ]);
 
     return (
         <SettingsCardShell
@@ -66,11 +56,11 @@ export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: Settin
         >
             <SettingItem label="Hide Admin Name In Punishments">
                 <SwitchText
-                    id={hideAdminInPunishments.eid}
+                    id={cfg.hideAdminInPunishments.eid}
                     checkedLabel="Hidden"
                     uncheckedLabel="Visible"
-                    checked={hideAdminInPunishments.state.value}
-                    onCheckedChange={hideAdminInPunishments.state.set}
+                    checked={states.hideAdminInPunishments}
+                    onCheckedChange={cfg.hideAdminInPunishments.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -80,11 +70,11 @@ export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: Settin
             </SettingItem>
             <SettingItem label="Hide Admin Name In Messages">
                 <SwitchText
-                    id={hideAdminInMessages.eid}
+                    id={cfg.hideAdminInMessages.eid}
                     checkedLabel="Hidden"
                     uncheckedLabel="Visible"
-                    checked={hideAdminInMessages.state.value}
-                    onCheckedChange={hideAdminInMessages.state.set}
+                    checked={states.hideAdminInMessages}
+                    onCheckedChange={cfg.hideAdminInMessages.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -94,11 +84,11 @@ export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: Settin
             </SettingItem>
             <SettingItem label="Hide Announcement Notifications">
                 <SwitchText
-                    id={hideDefaultAnnouncement.eid}
+                    id={cfg.hideDefaultAnnouncement.eid}
                     checkedLabel="Hidden"
                     uncheckedLabel="Visible"
-                    checked={hideDefaultAnnouncement.state.value}
-                    onCheckedChange={hideDefaultAnnouncement.state.set}
+                    checked={states.hideDefaultAnnouncement}
+                    onCheckedChange={cfg.hideDefaultAnnouncement.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -108,11 +98,11 @@ export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: Settin
             </SettingItem>
             <SettingItem label="Hide Direct Message Notification">
                 <SwitchText
-                    id={hideDefaultDirectMessage.eid}
+                    id={cfg.hideDefaultDirectMessage.eid}
                     checkedLabel="Hidden"
                     uncheckedLabel="Visible"
-                    checked={hideDefaultDirectMessage.state.value}
-                    onCheckedChange={hideDefaultDirectMessage.state.set}
+                    checked={states.hideDefaultDirectMessage}
+                    onCheckedChange={cfg.hideDefaultDirectMessage.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -122,11 +112,11 @@ export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: Settin
             </SettingItem>
             <SettingItem label="Hide Warning Notification">
                 <SwitchText
-                    id={hideDefaultWarning.eid}
+                    id={cfg.hideDefaultWarning.eid}
                     checkedLabel="Hidden"
                     uncheckedLabel="Visible"
-                    checked={hideDefaultWarning.state.value}
-                    onCheckedChange={hideDefaultWarning.state.set}
+                    checked={states.hideDefaultWarning}
+                    onCheckedChange={cfg.hideDefaultWarning.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -136,11 +126,11 @@ export default function ConfigCardGameNotifications({ cardCtx, pageCtx }: Settin
             </SettingItem>
             <SettingItem label="Hide Scheduled Restart Warnings">
                 <SwitchText
-                    id={hideScheduledRestartWarnings.eid}
+                    id={cfg.hideScheduledRestartWarnings.eid}
                     checkedLabel="Hidden"
                     uncheckedLabel="Visible"
-                    checked={hideScheduledRestartWarnings.state.value}
-                    onCheckedChange={hideScheduledRestartWarnings.state.set}
+                    checked={states.hideScheduledRestartWarnings}
+                    onCheckedChange={cfg.hideScheduledRestartWarnings.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>

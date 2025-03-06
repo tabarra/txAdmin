@@ -5,9 +5,9 @@ import { RotateCcwIcon, XIcon } from 'lucide-react'
 import SwitchText from '@/components/SwitchText'
 import InlineCode from '@/components/InlineCode'
 import { SettingItem, SettingItemDesc } from '../settingsItems'
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useMemo, useReducer } from "react"
+import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
-import { SettingsCardProps, useConfAccessor, processConfigStates } from "../utils"
 import { Textarea } from "@/components/ui/textarea"
 import { txToast } from "@/components/TxToaster"
 
@@ -22,18 +22,34 @@ export const attemptBeautifyJsonString = (input: string) => {
 };
 
 
+export const pageConfigs = {
+    botEnabled: getPageConfig('discordBot', 'enabled'),
+    botToken: getPageConfig('discordBot', 'token'),
+    discordGuild: getPageConfig('discordBot', 'guild'),
+    warningsChannel: getPageConfig('discordBot', 'warningsChannel'),
+    embedJson: getPageConfig('discordBot', 'embedJson'),
+    embedConfigJson: getPageConfig('discordBot', 'embedConfigJson'),
+} as const;
+
 export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProps) {
-    //Config accessors
-    const conf = useConfAccessor(pageCtx.apiData);
-    const botEnabled = conf('discordBot', 'enabled');
-    const botToken = conf('discordBot', 'token');
+    const [states, dispatch] = useReducer(
+        configsReducer<typeof pageConfigs>,
+        null,
+        () => getConfigEmptyState(pageConfigs),
+    );
+    const cfg = useMemo(() => {
+        return getConfigAccessors(cardCtx.cardId, pageConfigs, pageCtx.apiData, dispatch);
+    }, [pageCtx.apiData, dispatch]);
+
+    //Effects - handle changes and reset advanced settings
+    useEffect(() => {
+        updatePageState();
+    }, [states]);
+
+    //Refs for configs that don't use state
     const botTokenRef = useRef<HTMLInputElement | null>(null);
-    const discordGuild = conf('discordBot', 'guild');
     const discordGuildRef = useRef<HTMLInputElement | null>(null);
-    const warningsChannel = conf('discordBot', 'warningsChannel');
     const warningsChannelRef = useRef<HTMLInputElement | null>(null);
-    const embedJson = conf('discordBot', 'embedJson');
-    const embedConfigJson = conf('discordBot', 'embedConfigJson');
 
     //Marshalling Utils
     const emptyToNull = (str?: string) => {
@@ -42,31 +58,22 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
         return trimmed.length ? trimmed : null;
     };
 
-    //Check against stored value and sets the page state
-    const processChanges = () => {
-        if (!pageCtx.apiData) {
-            return {
-                changedConfigs: {},
-                hasChanges: false,
-                localConfigs: {},
-            }
-        }
+    //Processes the state of the page and sets the card as pending save if needed
+    const updatePageState = () => {
+        const overwrites = {
+            botToken: emptyToNull(botTokenRef.current?.value),
+            discordGuild: emptyToNull(discordGuildRef.current?.value),
+            warningsChannel: emptyToNull(warningsChannelRef.current?.value),
+        };
 
-        const res = processConfigStates([
-            [botEnabled, botEnabled.state.value],
-            [botToken, emptyToNull(botTokenRef.current?.value)],
-            [discordGuild, emptyToNull(discordGuildRef.current?.value)],
-            [warningsChannel, emptyToNull(warningsChannelRef.current?.value)],
-            [embedJson, embedJson.state.value],
-            [embedConfigJson, embedConfigJson.state.value],
-        ]);
+        const res = getConfigDiff(cfg, states, overwrites, false);
         pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
         return res;
     }
 
     //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        const { hasChanges, localConfigs } = updatePageState();
         if (!hasChanges) return;
 
         if (localConfigs.discordBot?.enabled) {
@@ -83,15 +90,6 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
         pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
-    //Triggers handleChanges for state changes
-    useEffect(() => {
-        processChanges();
-    }, [
-        botEnabled.state.value,
-        embedJson.state.value,
-        embedConfigJson.state.value,
-    ]);
-
     return (
         <SettingsCardShell
             cardCtx={cardCtx}
@@ -100,24 +98,24 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
         >
             <SettingItem label="Discord Bot">
                 <SwitchText
-                    id={botEnabled.eid}
+                    id={cfg.botEnabled.eid}
                     checkedLabel="Enabled"
                     uncheckedLabel="Disabled"
                     variant="checkedGreen"
-                    checked={botEnabled.state.value}
-                    onCheckedChange={botEnabled.state.set}
+                    checked={states.botEnabled}
+                    onCheckedChange={cfg.botEnabled.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
                     Enable Discord Integration.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Token" htmlFor={botToken.eid} required={botEnabled.state.value}>
+            <SettingItem label="Token" htmlFor={cfg.botToken.eid} required={states.botEnabled}>
                 <Input
-                    id={botToken.eid}
+                    id={cfg.botToken.eid}
                     ref={botTokenRef}
-                    defaultValue={botToken.initialValue}
-                    onInput={processChanges}
+                    defaultValue={cfg.botToken.initialValue}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                     placeholder="xxxxxxxxxxxxxxxxxxxxxxxx.xxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxx"
                     maxLength={96}
@@ -133,12 +131,12 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     <TxAnchor href="https://discord.com/developers/applications">Discord Developer Portal</TxAnchor>.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Guild/Server ID" htmlFor={discordGuild.eid} required={botEnabled.state.value}>
+            <SettingItem label="Guild/Server ID" htmlFor={cfg.discordGuild.eid} required={states.botEnabled}>
                 <Input
-                    id={discordGuild.eid}
+                    id={cfg.discordGuild.eid}
                     ref={discordGuildRef}
-                    defaultValue={discordGuild.initialValue}
-                    onInput={processChanges}
+                    defaultValue={cfg.discordGuild.initialValue}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                     placeholder='000000000000000000'
                 />
@@ -148,12 +146,12 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     <TxAnchor href="https://support.discordapp.com/hc/article_attachments/115002742731/mceclip0.png"> enable developer mode</TxAnchor>, then right-click on the guild icon select "Copy ID".
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Warnings Channel ID" htmlFor={warningsChannel.eid} showOptional>
+            <SettingItem label="Warnings Channel ID" htmlFor={cfg.warningsChannel.eid} showOptional>
                 <Input
-                    id={warningsChannel.eid}
+                    id={cfg.warningsChannel.eid}
                     ref={warningsChannelRef}
-                    defaultValue={warningsChannel.initialValue}
-                    onInput={processChanges}
+                    defaultValue={cfg.warningsChannel.initialValue}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                     placeholder='000000000000000000'
                 />
@@ -188,13 +186,13 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     <strong>Note:</strong> Use the command <InlineCode>/status add</InlineCode> on a channel that the bot has the "Send Message" permission to setup the embed.
                 </SettingItemDesc>
             </SettingItem> */}
-            <SettingItem label="Status Embed JSON" htmlFor={embedJson.eid} required={botEnabled.state.value}>
+            <SettingItem label="Status Embed JSON" htmlFor={cfg.embedJson.eid} required={states.botEnabled}>
                 <div className="flex flex-col gap-2">
                     <Textarea
-                        id={embedJson.eid}
+                        id={cfg.embedJson.eid}
                         placeholder='{}'
-                        value={attemptBeautifyJsonString(embedJson.state.value ?? '')}
-                        onChange={(e) => embedJson.state.set(e.target.value)}
+                        value={attemptBeautifyJsonString(states.embedJson ?? '')}
+                        onChange={(e) => cfg.embedJson.state.set(e.target.value)}
                         autoComplete="off"
                         style={{ minHeight: 512 }}
                         disabled={pageCtx.isReadOnly}
@@ -204,7 +202,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                         <Button
                             className="grow"
                             variant="outline"
-                            onClick={() => embedJson.state.discard()}
+                            onClick={() => cfg.embedJson.state.discard()}
                             disabled={pageCtx.isReadOnly}
                         >
                             <XIcon className="mr-2 h-4 w-4" /> Discard Changes
@@ -212,7 +210,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                         <Button
                             className="grow border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
                             variant="outline"
-                            onClick={() => embedJson.state.default()}
+                            onClick={() => cfg.embedJson.state.default()}
                             disabled={pageCtx.isReadOnly}
                         >
                             <RotateCcwIcon className="mr-2 h-4 w-4" /> Reset to Default
@@ -224,13 +222,13 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     <strong>Note:</strong> Use the command <InlineCode>/status add</InlineCode> on a channel that the bot has the "Send Message" permission to setup the embed.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Status Config JSON" htmlFor={embedConfigJson.eid} required={botEnabled.state.value}>
+            <SettingItem label="Status Config JSON" htmlFor={cfg.embedConfigJson.eid} required={states.botEnabled}>
                 <div className="flex flex-col gap-2">
                     <Textarea
-                        id={embedConfigJson.eid}
+                        id={cfg.embedConfigJson.eid}
                         placeholder='{}'
-                        value={attemptBeautifyJsonString(embedConfigJson.state.value ?? '')}
-                        onChange={(e) => embedConfigJson.state.set(e.target.value)}
+                        value={attemptBeautifyJsonString(states.embedConfigJson ?? '')}
+                        onChange={(e) => cfg.embedConfigJson.state.set(e.target.value)}
                         autoComplete="off"
                         style={{ minHeight: 512 }}
                         disabled={pageCtx.isReadOnly}
@@ -240,7 +238,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                         <Button
                             className="grow"
                             variant="outline"
-                            onClick={() => embedConfigJson.state.discard()}
+                            onClick={() => cfg.embedConfigJson.state.discard()}
                             disabled={pageCtx.isReadOnly}
                         >
                             <XIcon className="mr-2 h-4 w-4" /> Discard Changes
@@ -248,7 +246,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                         <Button
                             className="grow border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
                             variant="outline"
-                            onClick={() => embedConfigJson.state.default()}
+                            onClick={() => cfg.embedConfigJson.state.default()}
                             disabled={pageCtx.isReadOnly}
                         >
                             <RotateCcwIcon className="mr-2 h-4 w-4" /> Reset to Default

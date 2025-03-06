@@ -2,74 +2,65 @@ import { Input } from "@/components/ui/input";
 import SwitchText from '@/components/SwitchText';
 import InlineCode from '@/components/InlineCode';
 import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems';
-import { useEffect, useState } from "react";
-import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils";
+import { useState, useEffect, useMemo, useReducer } from "react";
+import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff } from "../utils";
 import SettingsCardShell from "../SettingsCardShell";
 
 
+export const pageConfigs = {
+    menuEnabled: getPageConfig('gameFeatures', 'menuEnabled'),
+    alignRight: getPageConfig('gameFeatures', 'menuAlignRight'),
+    pageKey: getPageConfig('gameFeatures', 'menuPageKey'),
+    playerModePtfx: getPageConfig('gameFeatures', 'playerModePtfx'),
+} as const;
+
 export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardProps) {
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const [states, dispatch] = useReducer(
+        configsReducer<typeof pageConfigs>,
+        null,
+        () => getConfigEmptyState(pageConfigs),
+    );
+    const cfg = useMemo(() => {
+        return getConfigAccessors(cardCtx.cardId, pageConfigs, pageCtx.apiData, dispatch);
+    }, [pageCtx.apiData, dispatch]);
 
-    //Config accessors
-    const conf = useConfAccessor(pageCtx.apiData);
-    const menuEnabled = conf('gameFeatures', 'menuEnabled');
-    const alignRight = conf('gameFeatures', 'menuAlignRight');
-    const pageKey = conf('gameFeatures', 'menuPageKey');
-    const playerModePtfx = conf('gameFeatures', 'playerModePtfx');
+    //Effects - handle changes and reset advanced settings
+    useEffect(() => {
+        updatePageState();
+    }, [states]);
+    useEffect(() => {
+        if (showAdvanced) return;
+        Object.values(cfg).forEach(c => c.isAdvanced && c.state.discard());
+    }, [showAdvanced]);
 
-    //Check against stored value and sets the page state
-    const processChanges = () => {
-        if (!pageCtx.apiData) {
-            return {
-                changedConfigs: {},
-                hasChanges: false,
-                localConfigs: {},
-            }
-        }
 
-        const res = processConfigStates([
-            [menuEnabled, menuEnabled.state.value],
-            [alignRight, alignRight.state.value],
-            [pageKey, pageKey.state.value],
-            [playerModePtfx, playerModePtfx.state.value],
-        ]);
+    //Processes the state of the page and sets the card as pending save if needed
+    const updatePageState = () => {
+        const overwrites = {};
+
+        const res = getConfigDiff(cfg, states, overwrites, showAdvanced);
         pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
         return res;
     }
 
+
     //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        const { hasChanges, localConfigs } = updatePageState();
         if (!hasChanges) return;
         //NOTE: nothing to validate
         pageCtx.saveChanges(cardCtx, localConfigs);
     }
-
-    //Triggers handleChanges for state changes
-    useEffect(() => {
-        processChanges();
-    }, [
-        showAdvanced, //for referenced inputs
-        menuEnabled.state.value,
-        alignRight.state.value,
-        pageKey.state.value,
-        playerModePtfx.state.value,
-    ]);
-
-    //Resets advanced settings when toggling the advanced switch
-    useEffect(() => {
-        if (showAdvanced) return;
-        playerModePtfx.state.discard();
-    }, [showAdvanced]);
 
     //Card content stuff
     const handlePageKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!e.metaKey) e.preventDefault();
 
         if (["Escape", "Backspace"].includes(e.code)) {
-            pageKey.state.set('Tab');
+            cfg.pageKey.state.set('Tab');
         } else {
-            pageKey.state.set(e.code);
+            cfg.pageKey.state.set(e.code);
         }
     }
 
@@ -78,19 +69,17 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
             cardCtx={cardCtx}
             pageCtx={pageCtx}
             onClickSave={handleOnSave}
-            advanced={{
-                showing: showAdvanced,
-                toggle: setShowAdvanced
-            }}
+            advancedVisible={showAdvanced}
+            advancedSetter={setShowAdvanced}
         >
             <SettingItem label="Game Menu">
                 <SwitchText
-                    id={menuEnabled.eid}
+                    id={cfg.menuEnabled.eid}
                     checkedLabel="Enabled"
                     uncheckedLabel="Disabled"
                     variant="checkedGreen"
-                    checked={menuEnabled.state.value}
-                    onCheckedChange={menuEnabled.state.set}
+                    checked={states.menuEnabled}
+                    onCheckedChange={cfg.menuEnabled.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -99,26 +88,26 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
             </SettingItem>
             <SettingItem label="Align Menu Right">
                 <SwitchText
-                    id={alignRight.eid}
+                    id={cfg.alignRight.eid}
                     checkedLabel="Right aligned"
                     uncheckedLabel="Left aligned"
-                    checked={alignRight.state.value}
-                    onCheckedChange={alignRight.state.set}
+                    checked={states.alignRight}
+                    onCheckedChange={cfg.alignRight.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
                     Move menu to the right side of the screen.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Menu Page Switch Key" htmlFor={pageKey.eid} required>
+            <SettingItem label="Menu Page Switch Key" htmlFor={cfg.pageKey.eid} required>
                 <Input
-                    id={pageKey.eid}
-                    value={pageKey.state.value}
+                    id={cfg.pageKey.eid}
+                    value={states.pageKey}
                     placeholder='click here and use the key to change'
                     onKeyDown={handlePageKey}
                     className="font-mono"
                     readOnly
-                    onInput={processChanges}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -132,12 +121,12 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
 
             <SettingItem label="Player Mode Change Effect" showIf={showAdvanced}>
                 <SwitchText
-                    id={playerModePtfx.eid}
+                    id={cfg.playerModePtfx.eid}
                     checkedLabel="Enabled"
                     uncheckedLabel="Disabled"
                     variant="checkedGreen"
-                    checked={playerModePtfx.state.value}
-                    onCheckedChange={playerModePtfx.state.set}
+                    checked={states.playerModePtfx}
+                    onCheckedChange={cfg.playerModePtfx.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>

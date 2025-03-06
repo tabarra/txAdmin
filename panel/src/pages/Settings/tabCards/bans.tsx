@@ -5,21 +5,41 @@ import { PencilIcon } from 'lucide-react'
 import SwitchText from '@/components/SwitchText'
 import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
 import { AutosizeTextarea, AutosizeTextAreaRef } from "@/components/ui/autosize-textarea"
-import { useEffect, useRef, useState } from "react"
+import { useState, useEffect, useRef, useMemo, useReducer } from "react"
+import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
-import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
 import { txToast } from "@/components/TxToaster"
 
 
+export const pageConfigs = {
+    checkingEnabled: getPageConfig('banlist', 'enabled'),
+    rejectionMessage: getPageConfig('banlist', 'rejectionMessage'),
+
+    requiredHwids: getPageConfig('banlist', 'requiredHwidMatches', true),
+} as const;
+
 export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) {
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const [states, dispatch] = useReducer(
+        configsReducer<typeof pageConfigs>,
+        null,
+        () => getConfigEmptyState(pageConfigs),
+    );
+    const cfg = useMemo(() => {
+        return getConfigAccessors(cardCtx.cardId, pageConfigs, pageCtx.apiData, dispatch);
+    }, [pageCtx.apiData, dispatch]);
 
-    //Config accessors
-    const conf = useConfAccessor(pageCtx.apiData);
-    const checkingEnabled = conf('banlist', 'enabled');
-    const rejectionMessage = conf('banlist', 'rejectionMessage');
+    //Effects - handle changes and reset advanced settings
+    useEffect(() => {
+        updatePageState();
+    }, [states]);
+    useEffect(() => {
+        if (showAdvanced) return;
+        Object.values(cfg).forEach(c => c.isAdvanced && c.state.discard());
+    }, [showAdvanced]);
+
+    //Refs for configs that don't use state
     const rejectionMessageRef = useRef<AutosizeTextAreaRef | null>(null);
-    const requiredHwids = conf('banlist', 'requiredHwidMatches');
 
     //Marshalling Utils
     const selectNumberUtil = {
@@ -27,28 +47,20 @@ export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) 
         toCfg: (str?: string) => str ? parseInt(str) : undefined,
     }
 
-    //Check against stored value and sets the page state
-    const processChanges = () => {
-        if (!pageCtx.apiData) {
-            return {
-                changedConfigs: {},
-                hasChanges: false,
-                localConfigs: {},
-            }
-        }
+    //Processes the state of the page and sets the card as pending save if needed
+    const updatePageState = () => {
+        const overwrites = {
+            rejectionMessage: rejectionMessageRef.current?.textArea.value,
+        };
 
-        const res = processConfigStates([
-            [checkingEnabled, checkingEnabled.state.value],
-            [rejectionMessage, rejectionMessageRef.current?.textArea.value],
-            [requiredHwids, requiredHwids.state.value],
-        ]);
+        const res = getConfigDiff(cfg, states, overwrites, showAdvanced);
         pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
         return res;
     }
 
     //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        const { hasChanges, localConfigs } = updatePageState();
         if (!hasChanges) return;
 
         if (
@@ -64,38 +76,21 @@ export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) 
         pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
-    //Triggers handleChanges for state changes
-    useEffect(() => {
-        processChanges();
-    }, [
-        showAdvanced, //for referenced inputs
-        checkingEnabled.state.value,
-        requiredHwids.state.value,
-    ]);
-
-    //Resets advanced settings when toggling the advanced switch
-    useEffect(() => {
-        if (showAdvanced) return;
-        requiredHwids.state.discard();
-    }, [showAdvanced]);
-
     return (
         <SettingsCardShell
             cardCtx={cardCtx}
             pageCtx={pageCtx}
             onClickSave={handleOnSave}
-            advanced={{
-                showing: showAdvanced,
-                toggle: setShowAdvanced
-            }}
+            advancedVisible={showAdvanced}
+            advancedSetter={setShowAdvanced}
         >
             <SettingItem label="Ban Checking">
                 <SwitchText
-                    id={checkingEnabled.eid}
+                    id={cfg.checkingEnabled.eid}
                     checkedLabel="Enabled"
                     uncheckedLabel="Disabled"
-                    checked={checkingEnabled.state.value}
-                    onCheckedChange={checkingEnabled.state.set}
+                    checked={states.checkingEnabled}
+                    onCheckedChange={cfg.checkingEnabled.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -117,13 +112,13 @@ export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) 
                     Configure ban reasons and durations that will appear as dropdown options when banning a player. This is useful for common reasons that happen frequently, like violation of your server rules.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Ban Rejection Message" htmlFor={rejectionMessage.eid} showOptional>
+            <SettingItem label="Ban Rejection Message" htmlFor={cfg.rejectionMessage.eid} showOptional>
                 <AutosizeTextarea
-                    id={rejectionMessage.eid}
+                    id={cfg.rejectionMessage.eid}
                     ref={rejectionMessageRef}
                     placeholder='You can join http://discord.gg/example to appeal this ban.'
-                    defaultValue={rejectionMessage.initialValue}
-                    onInput={processChanges}
+                    defaultValue={cfg.rejectionMessage.initialValue}
+                    onInput={updatePageState}
                     autoComplete="off"
                     minHeight={60}
                     maxHeight={180}
@@ -137,13 +132,13 @@ export default function ConfigCardBans({ cardCtx, pageCtx }: SettingsCardProps) 
 
             {showAdvanced && <AdvancedDivider />}
 
-            <SettingItem label="Required Ban HWID Matches" htmlFor={requiredHwids.eid} showIf={showAdvanced}>
+            <SettingItem label="Required Ban HWID Matches" htmlFor={cfg.requiredHwids.eid} showIf={showAdvanced}>
                 <Select
-                    value={selectNumberUtil.toUi(requiredHwids.state.value)}
-                    onValueChange={(val) => requiredHwids.state.set(selectNumberUtil.toCfg(val))}
+                    value={selectNumberUtil.toUi(states.requiredHwids)}
+                    onValueChange={(val) => cfg.requiredHwids.state.set(selectNumberUtil.toCfg(val))}
                     disabled={pageCtx.isReadOnly}
                 >
-                    <SelectTrigger id={requiredHwids.eid}>
+                    <SelectTrigger id={cfg.requiredHwids.eid}>
                         <SelectValue placeholder="Select..." />
                     </SelectTrigger>
                     <SelectContent>

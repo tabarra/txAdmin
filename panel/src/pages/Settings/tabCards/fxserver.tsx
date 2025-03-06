@@ -3,13 +3,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import SwitchText from '@/components/SwitchText'
 import InlineCode from '@/components/InlineCode'
 import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
-import React, { useState, useEffect, useMemo, useRef } from "react"
+import { useState, useEffect, useRef, useMemo, useReducer } from "react"
+import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff, type PageConfigReducerAction } from "../utils"
 import { PlusIcon, TrashIcon, Undo2Icon, XIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TimeInputDialog } from "@/components/TimeInputDialog"
 import TxAnchor from "@/components/TxAnchor"
 import { useAutoAnimate } from "@formkit/auto-animate/react"
-import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
 import { cn } from "@/lib/utils"
 import { txToast } from "@/components/TxToaster"
@@ -33,7 +33,7 @@ function sanitizeTimes(times: string[]): string[] {
 
 type RestartScheduleBoxProps = {
     restartTimes: string[] | undefined;
-    setRestartTimes: React.Dispatch<React.SetStateAction<string[] | undefined>>
+    setRestartTimes: (val: PageConfigReducerAction<string[]|undefined>['configValue']) => void;
     disabled?: boolean;
 };
 
@@ -181,27 +181,46 @@ function TimeZoneWarning() {
 }
 
 
+export const pageConfigs = {
+    dataPath: getPageConfig('server', 'dataPath'),
+    restarterSchedule: getPageConfig('restarter', 'schedule'),
+    quietMode: getPageConfig('server', 'quiet'),
+
+    cfgPath: getPageConfig('server', 'cfgPath', true),
+    startupArgs: getPageConfig('server', 'startupArgs', true),
+    onesync: getPageConfig('server', 'onesync', true),
+    autoStart: getPageConfig('server', 'autoStart', true),
+    resourceTolerance: getPageConfig('restarter', 'resourceStartingTolerance', true),
+} as const;
+
 export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardProps) {
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [isResettingServerData, setIsResettingServerData] = useState(false);
     const { hasPerm } = useAdminPerms();
     const setLocation = useLocation()[1];
     const openConfirmDialog = useOpenConfirmDialog();
+    const [states, dispatch] = useReducer(
+        configsReducer<typeof pageConfigs>,
+        null,
+        () => getConfigEmptyState(pageConfigs),
+    );
+    const cfg = useMemo(() => {
+        return getConfigAccessors(cardCtx.cardId, pageConfigs, pageCtx.apiData, dispatch);
+    }, [pageCtx.apiData, dispatch]);
 
-    //Config accessors
-    const conf = useConfAccessor(pageCtx.apiData);
-    const dataPath = conf('server', 'dataPath');
+    //Effects - handle changes and reset advanced settings
+    useEffect(() => {
+        updatePageState();
+    }, [states]);
+    useEffect(() => {
+        if (showAdvanced) return;
+        Object.values(cfg).forEach(c => c.isAdvanced && c.state.discard());
+    }, [showAdvanced]);
+
+    //Refs for configs that don't use state
     const dataPathRef = useRef<HTMLInputElement | null>(null);
-    const restarterSchedule = conf('restarter', 'schedule');
-    const quietMode = conf('server', 'quiet');
-    const cfgPath = conf('server', 'cfgPath');
     const cfgPathRef = useRef<HTMLInputElement | null>(null);
-    const startupArgs = conf('server', 'startupArgs');
     const startupArgsRef = useRef<HTMLInputElement | null>(null);
-    const onesync = conf('server', 'onesync');
-    const autoStart = conf('server', 'autoStart');
-    const resourceTolerance = conf('restarter', 'resourceStartingTolerance');
-
     const forceQuietMode = pageCtx.apiData?.forceQuietMode;
 
     //Marshalling Utils
@@ -210,8 +229,8 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
         toCfg: (str?: string) => str ? parseInt(str) : undefined,
     }
     const inputArrayUtil = {
-        toUi: (args?: string[]) => args ? args.join(' ') : undefined,
-        toCfg: (str?: string) => str ? str.trim().split(/\s+/) : undefined,
+        toUi: (args?: string[]) => args ? args.join(' ') : '',
+        toCfg: (str?: string) => str ? str.trim().split(/\s+/) : [],
     }
     const emptyToNull = (str?: string) => {
         if (str === undefined) return undefined;
@@ -219,16 +238,8 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
         return trimmed.length ? trimmed : null;
     };
 
-    //Check against stored value and sets the page state
-    const processChanges = () => {
-        if (!pageCtx.apiData) {
-            return {
-                changedConfigs: {},
-                hasChanges: false,
-                localConfigs: {},
-            }
-        }
-
+    //Processes the state of the page and sets the card as pending save if needed
+    const updatePageState = () => {
         let currStartupArgs;
         if (startupArgsRef.current) {
             currStartupArgs = inputArrayUtil.toCfg(startupArgsRef.current.value);
@@ -240,23 +251,20 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                 currDataPath = currDataPath.slice(0, -1);
             }
         }
-        const res = processConfigStates([
-            [dataPath, emptyToNull(dataPathRef.current?.value)],
-            [restarterSchedule, restarterSchedule.state.value],
-            [quietMode, quietMode.state.value],
-            [cfgPath, cfgPathRef.current?.value],
-            [startupArgs, currStartupArgs],
-            [onesync, onesync.state.value],
-            [autoStart, autoStart.state.value],
-            [resourceTolerance, resourceTolerance.state.value],
-        ]);
+        const overwrites = {
+            dataPath: emptyToNull(dataPathRef.current?.value),
+            cfgPath: cfgPathRef.current?.value,
+            startupArgs: currStartupArgs,
+        };
+
+        const res = getConfigDiff(cfg, states, overwrites, showAdvanced);
         pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
         return res;
     }
 
     //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        const { hasChanges, localConfigs } = updatePageState();
         if (!hasChanges) return;
 
         if (!localConfigs.server?.dataPath) {
@@ -286,28 +294,6 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
         pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
-    //Triggers handleChanges for state changes
-    useEffect(() => {
-        processChanges();
-    }, [
-        showAdvanced, //for referenced inputs
-        restarterSchedule.state.value,
-        quietMode.state.value,
-        onesync.state.value,
-        autoStart.state.value,
-        resourceTolerance.state.value,
-    ]);
-
-    //Resets advanced settings when toggling the advanced switch
-    useEffect(() => {
-        if (showAdvanced) return;
-        cfgPath.state.discard();
-        startupArgs.state.discard();
-        onesync.state.discard();
-        autoStart.state.discard();
-        resourceTolerance.state.discard();
-    }, [showAdvanced]);
-
     //Card content stuff
     const serverDataPlaceholder = useMemo(
         () => getServerDataPlaceholder(pageCtx.apiData?.dataPath),
@@ -330,7 +316,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                 If you want, you can set the path back to the current value later. <br />
                 <br />
                 <strong className="text-warning-inline">Warning:</strong> take note of the current path before proceeding, so you can set it back later if you need to. Current path:
-                <Input value={dataPath.initialValue} className="mt-2" readOnly />
+                <Input value={cfg.dataPath.initialValue} className="mt-2" readOnly />
             </>),
             onConfirm: () => {
                 setIsResettingServerData(true);
@@ -348,25 +334,26 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
 
     }
 
+    // cfg.restarterSchedule.state.set(['00:00', '12:00'])
+    // cfg.restarterSchedule.state.set([])
+    // cfg.restarterSchedule.state.set(undefined)
 
     return (
         <SettingsCardShell
             cardCtx={cardCtx}
             pageCtx={pageCtx}
             onClickSave={handleOnSave}
-            advanced={{
-                showing: showAdvanced,
-                toggle: setShowAdvanced
-            }}
+            advancedVisible={showAdvanced}
+            advancedSetter={setShowAdvanced}
         >
-            <SettingItem label="Server Data Folder" htmlFor={dataPath.eid} required>
+            <SettingItem label="Server Data Folder" htmlFor={cfg.dataPath.eid} required>
                 <div className="flex gap-2">
                     <Input
-                        id={dataPath.eid}
+                        id={cfg.dataPath.eid}
                         ref={dataPathRef}
-                        defaultValue={dataPath.initialValue}
+                        defaultValue={cfg.dataPath.initialValue}
                         placeholder={serverDataPlaceholder}
-                        onInput={processChanges}
+                        onInput={updatePageState}
                         disabled={pageCtx.isReadOnly}
                         required
                     />
@@ -392,8 +379,8 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
             </SettingItem>
             <SettingItem label="Restart Schedule" showOptional>
                 <RestartScheduleBox
-                    restartTimes={restarterSchedule.state.value}
-                    setRestartTimes={restarterSchedule.state.set}
+                    restartTimes={states.restarterSchedule}
+                    setRestartTimes={cfg.restarterSchedule.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <TimeZoneWarning />
@@ -404,11 +391,11 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
             </SettingItem>
             <SettingItem label="Quiet Mode">
                 <SwitchText
-                    id={quietMode.eid}
+                    id={cfg.quietMode.eid}
                     checkedLabel="Enabled"
                     uncheckedLabel="Disabled"
-                    checked={forceQuietMode || quietMode.state.value}
-                    onCheckedChange={quietMode.state.set}
+                    checked={forceQuietMode || states.quietMode}
+                    onCheckedChange={cfg.quietMode.state.set}
                     disabled={pageCtx.isReadOnly || forceQuietMode}
                 />
                 <SettingItemDesc>
@@ -423,13 +410,13 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
 
             {showAdvanced && <AdvancedDivider />}
 
-            <SettingItem label="CFG File Path" htmlFor={cfgPath.eid} showIf={showAdvanced} required>
+            <SettingItem label="CFG File Path" htmlFor={cfg.cfgPath.eid} showIf={showAdvanced} required>
                 <Input
-                    id={cfgPath.eid}
+                    id={cfg.cfgPath.eid}
                     ref={cfgPathRef}
-                    defaultValue={cfgPath.initialValue}
+                    defaultValue={cfg.cfgPath.initialValue}
                     placeholder="server.cfg"
-                    onInput={processChanges}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                     required
                 />
@@ -438,13 +425,13 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                     This can either be absolute, or relative to the Server Data folder.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Startup Arguments" htmlFor={startupArgs.eid} showIf={showAdvanced}>
+            <SettingItem label="Startup Arguments" htmlFor={cfg.startupArgs.eid} showIf={showAdvanced}>
                 <Input
-                    id={startupArgs.eid}
+                    id={cfg.startupArgs.eid}
                     ref={startupArgsRef}
-                    defaultValue={inputArrayUtil.toUi(startupArgs.initialValue)}
+                    defaultValue={inputArrayUtil.toUi(cfg.startupArgs.initialValue)}
                     placeholder="--trace-warning"
-                    onInput={processChanges}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -452,13 +439,13 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                     <strong>Warning:</strong> You almost certainly should not use this option, commands and convars should be placed in your <InlineCode>server.cfg</InlineCode> instead.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="OneSync" htmlFor={onesync.eid} showIf={showAdvanced}>
+            <SettingItem label="OneSync" htmlFor={cfg.onesync.eid} showIf={showAdvanced}>
                 <Select
-                    value={onesync.state.value}
-                    onValueChange={onesync.state.set as any}
+                    value={states.onesync}
+                    onValueChange={cfg.onesync.state.set as any}
                     disabled={pageCtx.isReadOnly}
                 >
-                    <SelectTrigger id={onesync.eid}>
+                    <SelectTrigger id={cfg.onesync.eid}>
                         <SelectValue placeholder="Select OneSync option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -475,24 +462,24 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
             </SettingItem>
             <SettingItem label="Autostart" showIf={showAdvanced}>
                 <SwitchText
-                    id={autoStart.eid}
+                    id={cfg.autoStart.eid}
                     checkedLabel="Enabled"
                     uncheckedLabel="Disabled"
-                    checked={autoStart.state.value}
-                    onCheckedChange={autoStart.state.set}
+                    checked={states.autoStart}
+                    onCheckedChange={cfg.autoStart.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
                     Start the server automatically after <strong>txAdmin</strong> starts.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Resource Starting Tolerance" htmlFor={resourceTolerance.eid} showIf={showAdvanced}>
+            <SettingItem label="Resource Starting Tolerance" htmlFor={cfg.resourceTolerance.eid} showIf={showAdvanced}>
                 <Select
-                    value={selectNumberUtil.toUi(resourceTolerance.state.value)}
-                    onValueChange={(val) => resourceTolerance.state.set(selectNumberUtil.toCfg(val))}
+                    value={selectNumberUtil.toUi(states.resourceTolerance)}
+                    onValueChange={(val) => cfg.resourceTolerance.state.set(selectNumberUtil.toCfg(val))}
                     disabled={pageCtx.isReadOnly}
                 >
-                    <SelectTrigger id={resourceTolerance.eid}>
+                    <SelectTrigger id={cfg.resourceTolerance.eid}>
                         <SelectValue placeholder="Select..." />
                     </SelectTrigger>
                     <SelectContent>

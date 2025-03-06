@@ -5,9 +5,9 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import SwitchText from '@/components/SwitchText'
 import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
-import React, { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo, useReducer } from "react"
+import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff } from "../utils"
 import { Button } from "@/components/ui/button"
-import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
 import { AutosizeTextarea, AutosizeTextAreaRef } from "@/components/ui/autosize-textarea"
 import { RadioGroup } from "@/components/ui/radio-group"
@@ -17,7 +17,7 @@ import InlineCode from "@/components/InlineCode"
 
 type ItemWithStateProps = {
     value: number | undefined;
-    setValue: React.Dispatch<React.SetStateAction<number | undefined>>
+    setValue: (value: number | undefined) => void;
     disabled?: boolean;
 };
 
@@ -38,27 +38,48 @@ function ItemWithState({ value, setValue, disabled }: ItemWithStateProps) {
 }
 
 
+export const pageConfigs = {
+    booleanSwitch: getPageConfig('server', 'quiet'),
+    selectString: getPageConfig('server', 'onesync'),
+    normalInput: getPageConfig('general', 'serverName'),
+    textareaInput: getPageConfig('whitelist', 'rejectionMessage'),
+    selectNumber: getPageConfig('restarter', 'resourceStartingTolerance'),
+    inputArray: getPageConfig('server', 'startupArgs'),
+    nullableInput: getPageConfig('server', 'dataPath'),
+
+    customComponent: getPageConfig('restarter', 'bootGracePeriod', true),
+    bigRadio: getPageConfig('whitelist', 'mode', true),
+} as const;
+
+
 /**
  * Settings card template - copy this to create a new card
  */
 export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardProps) {
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const [states, dispatch] = useReducer(
+        configsReducer<typeof pageConfigs>,
+        null,
+        () => getConfigEmptyState(pageConfigs),
+    );
+    const cfg = useMemo(() => {
+        return getConfigAccessors(cardCtx.cardId, pageConfigs, pageCtx.apiData, dispatch);
+    }, [pageCtx.apiData, dispatch]);
 
-    //Config accessors
-    const conf = useConfAccessor(pageCtx.apiData);
-    const booleanSwitch = conf('server', 'quiet');
-    const selectString = conf('server', 'onesync');
-    const normalInput = conf('general', 'serverName');
+    //Effects - handle changes and reset advanced settings
+    useEffect(() => {
+        updatePageState();
+    }, [states]);
+    useEffect(() => {
+        if (showAdvanced) return;
+        Object.values(cfg).forEach(c => c.isAdvanced && c.state.discard());
+    }, [showAdvanced]);
+
+    //Refs for configs that don't use state
     const normalInputRef = useRef<HTMLInputElement | null>(null);
-    const textareaInput = conf('whitelist', 'rejectionMessage');
     const textareaInputRef = useRef<AutosizeTextAreaRef | null>(null);
-    const selectNumber = conf('restarter', 'resourceStartingTolerance');
-    const inputArray = conf('server', 'startupArgs');
     const inputArrayRef = useRef<HTMLInputElement | null>(null);
-    const nullableInput = conf('server', 'dataPath');
     const nullableInputRef = useRef<HTMLInputElement | null>(null);
-    const customComponent = conf('restarter', 'bootGracePeriod');
-    const bigRadio = conf('whitelist', 'mode');
 
     //Marshalling Utils
     const selectNumberUtil = {
@@ -66,8 +87,8 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
         toCfg: (str?: string) => str ? parseInt(str) : undefined,
     }
     const inputArrayUtil = {
-        toUi: (args?: string[]) => args ? args.join(' ') : undefined,
-        toCfg: (str?: string) => str ? str.trim().split(/\s+/) : undefined,
+        toUi: (args?: string[]) => args ? args.join(' ') : '',
+        toCfg: (str?: string) => str ? str.trim().split(/\s+/) : [],
     }
     const emptyToNull = (str?: string) => {
         if (str === undefined) return undefined;
@@ -75,84 +96,50 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
         return trimmed.length ? trimmed : null;
     };
 
-    //Check against stored value and sets the page state
-    const processChanges = () => {
-        if (!pageCtx.apiData) {
-            return {
-                changedConfigs: {},
-                hasChanges: false,
-                localConfigs: {},
-            }
-        }
-
+    //Processes the state of the page and sets the card as pending save if needed
+    const updatePageState = () => {
         let currInputArray;
         if (inputArrayRef.current) {
             currInputArray = inputArrayUtil.toCfg(inputArrayRef.current.value);
         }
-        const diff = processConfigStates([
-            [booleanSwitch, booleanSwitch.state.value],
-            [selectString, selectString.state.value],
-            [normalInput, normalInputRef.current?.value],
-            [textareaInput, textareaInputRef.current?.textArea.value],
-            [selectNumber, selectNumber.state.value],
-            [inputArray, currInputArray],
-            [nullableInput, emptyToNull(nullableInputRef.current?.value)],
-            [customComponent, customComponent.state.value],
-            [bigRadio, bigRadio.state.value],
-        ]);
-        pageCtx.setCardPendingSave(diff ? cardCtx : null);
-        return diff;
+        const overwrites = {
+            normalInput: normalInputRef.current?.value,
+            textareaInput: textareaInputRef.current?.textArea.value,
+            inputArray: currInputArray,
+            nullableInput: emptyToNull(nullableInputRef.current?.value),
+        };
+
+        const res = getConfigDiff(cfg, states, overwrites, showAdvanced);
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
     }
 
     //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        const { hasChanges, localConfigs } = updatePageState();
         if (!hasChanges) return;
 
         //FIXME: do validation
         pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
-    //Triggers handleChanges for state changes
-    useEffect(() => {
-        processChanges();
-    }, [
-        showAdvanced, //for referenced inputs
-        //NOTE: every config that uses the state needs to be listed here
-        booleanSwitch.state.value,
-        selectString.state.value,
-        selectNumber.state.value,
-        customComponent.state.value,
-        bigRadio.state.value,
-    ]);
-
-    //Resets advanced settings when toggling the advanced switch
-    useEffect(() => {
-        if (showAdvanced) return;
-        //NOTE: every advanced config that uses the state needs to be reset here
-        customComponent.state.discard();
-        bigRadio.state.discard();
-    }, [showAdvanced]);
-
     return (
         <SettingsCardShell
             cardCtx={cardCtx}
             pageCtx={pageCtx}
             onClickSave={handleOnSave}
-            advanced={{
-                showing: showAdvanced,
-                toggle: setShowAdvanced
-            }}
+            advancedVisible={showAdvanced}
+            advancedSetter={setShowAdvanced}
         >
             <h2 className="text-2xl text-warning-inline">Simple Examples</h2>
 
             <SettingItem label="Switch">
                 <SwitchText
-                    id={booleanSwitch.eid}
+                    id={cfg.booleanSwitch.eid}
                     checkedLabel="Enabled"
                     uncheckedLabel="Disabled"
-                    checked={booleanSwitch.state.value}
-                    onCheckedChange={booleanSwitch.state.set}
+                    checked={states.booleanSwitch}
+                    onCheckedChange={cfg.booleanSwitch.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -160,13 +147,13 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                 </SettingItemDesc>
             </SettingItem>
 
-            <SettingItem label="Select String" htmlFor={selectString.eid}>
+            <SettingItem label="Select String" htmlFor={cfg.selectString.eid}>
                 <Select
-                    value={selectString.state.value}
-                    onValueChange={selectString.state.set as any}
+                    value={states.selectString}
+                    onValueChange={cfg.selectString.state.set as any}
                     disabled={pageCtx.isReadOnly}
                 >
-                    <SelectTrigger id={selectString.eid}>
+                    <SelectTrigger id={cfg.selectString.eid}>
                         <SelectValue placeholder="Lorem ipsum dolor..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -180,12 +167,12 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                 </SettingItemDesc>
             </SettingItem>
 
-            <SettingItem label="Normal Input" htmlFor={normalInput.eid}>
+            <SettingItem label="Normal Input" htmlFor={cfg.normalInput.eid}>
                 <Input
-                    id={normalInput.eid}
+                    id={cfg.normalInput.eid}
                     ref={normalInputRef}
-                    defaultValue={normalInput.initialValue}
-                    onInput={processChanges}
+                    defaultValue={cfg.normalInput.initialValue}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                     placeholder={'example'}
                 />
@@ -194,13 +181,13 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                 </SettingItemDesc>
             </SettingItem>
 
-            <SettingItem label="Textarea" htmlFor={textareaInput.eid}>
+            <SettingItem label="Textarea" htmlFor={cfg.textareaInput.eid}>
                 <AutosizeTextarea
-                    id={textareaInput.eid}
+                    id={cfg.textareaInput.eid}
                     ref={textareaInputRef}
                     placeholder='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-                    defaultValue={textareaInput.initialValue}
-                    onChange={processChanges} //FIXME: test this vs onInput on AutosizeTextarea
+                    defaultValue={cfg.textareaInput.initialValue}
+                    onChange={updatePageState} //FIXME: test this vs onInput on AutosizeTextarea
                     autoComplete="off"
                     minHeight={60}
                     maxHeight={180}
@@ -213,13 +200,13 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
 
             <h2 className="text-2xl text-warning-inline">Compex Examples (data marshalling)</h2>
 
-            <SettingItem label="Select Number" htmlFor={selectNumber.eid}>
+            <SettingItem label="Select Number" htmlFor={cfg.selectNumber.eid}>
                 <Select
-                    value={selectNumberUtil.toUi(selectNumber.state.value)}
-                    onValueChange={(val) => selectNumber.state.set(selectNumberUtil.toCfg(val))}
+                    value={selectNumberUtil.toUi(states.selectNumber)}
+                    onValueChange={(val) => cfg.selectNumber.state.set(selectNumberUtil.toCfg(val))}
                     disabled={pageCtx.isReadOnly}
                 >
-                    <SelectTrigger id={selectNumber.eid}>
+                    <SelectTrigger id={cfg.selectNumber.eid}>
                         <SelectValue placeholder="Lorem ipsum dolor..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -234,13 +221,13 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                 </SettingItemDesc>
             </SettingItem>
 
-            <SettingItem label="Input Array" htmlFor={inputArray.eid}>
+            <SettingItem label="Input Array" htmlFor={cfg.inputArray.eid}>
                 <Input
-                    id={inputArray.eid}
+                    id={cfg.inputArray.eid}
                     ref={inputArrayRef}
-                    defaultValue={inputArrayUtil.toUi(inputArray.initialValue)}
+                    defaultValue={inputArrayUtil.toUi(cfg.inputArray.initialValue)}
                     placeholder="example1, example2"
-                    onInput={processChanges}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -248,12 +235,12 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                 </SettingItemDesc>
             </SettingItem>
 
-            <SettingItem label="Nullable Input" htmlFor={nullableInput.eid}>
+            <SettingItem label="Nullable Input" htmlFor={cfg.nullableInput.eid}>
                 <Input
-                    id={nullableInput.eid}
+                    id={cfg.nullableInput.eid}
                     ref={nullableInputRef}
-                    defaultValue={nullableInput.initialValue}
-                    onInput={processChanges}
+                    defaultValue={cfg.nullableInput.initialValue}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                     placeholder={'example'}
                 />
@@ -267,8 +254,8 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
 
             <SettingItem label="Custom Component" showIf={showAdvanced}>
                 <ItemWithState
-                    value={customComponent.state.value}
-                    setValue={customComponent.state.set}
+                    value={states.customComponent}
+                    setValue={cfg.customComponent.state.set}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -278,18 +265,18 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
 
             <SettingItem label="Big Radio" showIf={showAdvanced}>
                 <RadioGroup
-                    value={bigRadio.state.value}
-                    onValueChange={bigRadio.state.set as any}
+                    value={states.bigRadio}
+                    onValueChange={cfg.bigRadio.state.set as any}
                     disabled={pageCtx.isReadOnly}
                 >
                     <BigRadioItem
-                        groupValue={bigRadio.state.value}
+                        groupValue={states.bigRadio}
                         value="disabled"
                         title="Disabled"
                         desc="desc as text"
                     />
                     <BigRadioItem
-                        groupValue={bigRadio.state.value}
+                        groupValue={states.bigRadio}
                         value="adminOnly"
                         title="Admin-only (maintenance mode)"
                         desc={(<>
@@ -297,7 +284,7 @@ export default function SettingsCardTemplate({ cardCtx, pageCtx }: SettingsCardP
                         </>)}
                     />
                     <BigRadioItem
-                        groupValue={bigRadio.state.value}
+                        groupValue={states.bigRadio}
                         value="discordMember"
                         title="Discord Server Member"
                         desc="desc as text"

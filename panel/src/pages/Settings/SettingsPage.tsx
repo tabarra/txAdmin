@@ -8,7 +8,7 @@ import { ApiTimeout, useBackendApi } from "@/hooks/fetch";
 import { useOpenConfirmDialog } from "@/hooks/dialogs";
 import { txToast } from "@/components/TxToaster";
 import { useAdminPerms } from "@/hooks/auth";
-import type { SettingsCardContext, SettingsCardInfo, SettingsCardProps, SettingsTabInfo } from "./utils";
+import { SYM_RESET_CONFIG, type SettingsCardContext, type SettingsCardInfo, type SettingsCardProps, type SettingsTabInfo } from "./utils";
 import type { GetConfigsResp, PartialTxConfigs, SaveConfigsReq, SaveConfigsResp } from "@shared/otherTypes";
 
 import SettingsTab from "./SettingsTab";
@@ -134,11 +134,17 @@ export default function SettingsPage() {
         setIsSaving(true);
         try {
             if (!swr.data) throw new Error('Cannot save changes without swr.data.');
+            const resetKeys: string[] = [];
+            for (const [scopeName, scopeData] of Object.entries(changes)) {
+                for (const [configKey, configValue] of Object.entries(scopeData)) {
+                    if (configValue === SYM_RESET_CONFIG) {
+                        resetKeys.push(`${scopeName}.${configKey}`);
+                    }
+                }
+            }
             const saveResp = await saveApi({
-                pathParams: {
-                    card: source.cardId,
-                },
-                data: changes,
+                pathParams: { card: source.cardId },
+                data: { resetKeys, changes },
                 timeout: source.cardId === 'discord'
                     ? ApiTimeout.REALLY_REALLY_LONG
                     : ApiTimeout.LONG,
@@ -229,8 +235,8 @@ export default function SettingsPage() {
                                     isLoading: swr.isLoading,
                                     isSaving,
                                     swrError: swr.error ? swr.error.message : undefined,
-                                    cardPendingSave: cardPendingSave,
-                                    setCardPendingSave: setCardPendingSave,
+                                    cardPendingSave,
+                                    setCardPendingSave,
                                     saveChanges,
                                 }}
                             />

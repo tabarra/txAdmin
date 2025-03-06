@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { SettingItem, SettingItemDesc } from '../settingsItems'
-import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useRef, useMemo, useReducer } from "react"
+import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
 import InlineCode from "@/components/InlineCode"
@@ -25,7 +25,54 @@ const detectBrowserLanguage = () => {
 }
 
 
+export const pageConfigs = {
+    serverName: getPageConfig('general', 'serverName'),
+    language: getPageConfig('general', 'language'),
+} as const;
+
 export default function ConfigCardGeneral({ cardCtx, pageCtx }: SettingsCardProps) {
+    const [states, dispatch] = useReducer(
+        configsReducer<typeof pageConfigs>,
+        null,
+        () => getConfigEmptyState(pageConfigs),
+    );
+    const cfg = useMemo(() => {
+        return getConfigAccessors(cardCtx.cardId, pageConfigs, pageCtx.apiData, dispatch);
+    }, [pageCtx.apiData, dispatch]);
+
+    //Effects - handle changes and reset advanced settings
+    useEffect(() => {
+        updatePageState();
+    }, [states]);
+
+    //Refs for configs that don't use state
+    const serverNameRef = useRef<HTMLInputElement | null>(null);
+
+    //Processes the state of the page and sets the card as pending save if needed
+    const updatePageState = () => {
+        const overwrites = {
+            serverName: serverNameRef.current?.value,
+        };
+
+        const res = getConfigDiff(cfg, states, overwrites, false);
+        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
+        return res;
+    }
+
+    //Validate changes (for UX only) and trigger the save API
+    const handleOnSave = () => {
+        const { hasChanges, localConfigs } = updatePageState();
+        if (!hasChanges) return;
+
+        if (!localConfigs.general?.serverName) {
+            return txToast.error('The Server Name is required.');
+        }
+        if (localConfigs.general?.serverName?.length > 18) {
+            return txToast.error('The Server Name is too big.');
+        }
+        pageCtx.saveChanges(cardCtx, localConfigs);
+    }
+
     //Small QOL to hoist the detected browser language to the top of the list
     const localeData = useMemo(() => {
         if (!pageCtx.apiData?.locales) return null;
@@ -55,64 +102,19 @@ export default function ConfigCardGeneral({ cardCtx, pageCtx }: SettingsCardProp
         ].filter(Boolean);
     }, [pageCtx.apiData]);
 
-    //Config accessors
-    const conf = useConfAccessor(pageCtx.apiData);
-    const serverName = conf('general', 'serverName');
-    const serverNameRef = useRef<HTMLInputElement | null>(null);
-    const language = conf('general', 'language');
-
-    //Check against stored value and sets the page state
-    const processChanges = () => {
-        if (!pageCtx.apiData) {
-            return {
-                changedConfigs: {},
-                hasChanges: false,
-                localConfigs: {},
-            }
-        }
-
-        const res = processConfigStates([
-            [serverName, serverNameRef.current?.value],
-            [language, language.state.value],
-        ]);
-        pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
-        return res;
-    }
-
-    //Validate changes (for UX only) and trigger the save API
-    const handleOnSave = () => {
-        const { changedConfigs, hasChanges, localConfigs } = processChanges();
-        if (!hasChanges) return;
-
-        if (!localConfigs.general?.serverName) {
-            return txToast.error('The Server Name is required.');
-        }
-        if (localConfigs.general?.serverName?.length > 18) {
-            return txToast.error('The Server Name is too big.');
-        }
-        pageCtx.saveChanges(cardCtx, localConfigs);
-    }
-
-    //Triggers handleChanges for state changes
-    useEffect(() => {
-        processChanges();
-    }, [
-        language.state.value,
-    ]);
-
     return (
         <SettingsCardShell
             cardCtx={cardCtx}
             pageCtx={pageCtx}
             onClickSave={handleOnSave}
         >
-            <SettingItem label="Server Name" htmlFor={serverName.eid} required>
+            <SettingItem label="Server Name" htmlFor={cfg.serverName.eid} required>
                 <Input
-                    id={serverName.eid}
+                    id={cfg.serverName.eid}
                     ref={serverNameRef}
-                    defaultValue={serverName.initialValue}
+                    defaultValue={cfg.serverName.initialValue}
                     placeholder={'Example RP'}
-                    onInput={processChanges}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>
@@ -120,14 +122,14 @@ export default function ConfigCardGeneral({ cardCtx, pageCtx }: SettingsCardProp
                     The name must be between 1 and 18 characters.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Language" htmlFor={language.eid} required>
+            <SettingItem label="Language" htmlFor={cfg.language.eid} required>
                 {/* TODO: add a "Edit xxx" button besides the language for easy custom.json locale */}
                 <Select
-                    value={language.state.value}
-                    onValueChange={language.state.set as any}
+                    value={states.language}
+                    onValueChange={cfg.language.state.set as any}
                     disabled={pageCtx.isReadOnly}
                 >
-                    <SelectTrigger id={language.eid}>
+                    <SelectTrigger id={cfg.language.eid}>
                         <SelectValue placeholder="Select..." />
                     </SelectTrigger>
                     <SelectContent>

@@ -10,10 +10,8 @@ import { SettingsCardContext, SettingsPageContext } from './utils'
 type SettingsCardShellProps = {
     cardCtx: SettingsCardContext;
     pageCtx: SettingsPageContext;
-    advanced?: {
-        showing: boolean;
-        toggle: (visible: boolean) => void;
-    };
+    advancedVisible?: boolean;
+    advancedSetter?: (visible: boolean) => void;
     onClickSave: () => void;
     children: React.ReactNode;
 };
@@ -21,7 +19,8 @@ type SettingsCardShellProps = {
 export default function SettingsCardShell({
     cardCtx,
     pageCtx,
-    advanced,
+    advancedVisible,
+    advancedSetter,
     onClickSave,
     children,
 }: SettingsCardShellProps) {
@@ -29,7 +28,7 @@ export default function SettingsCardShell({
     const isCardPendingSave = pageCtx.cardPendingSave?.cardId === cardCtx.cardId;
 
     return (
-        <div id={`tab-${cardCtx.cardId}`} data-show-advanced={advanced?.showing} className='group/card'>
+        <div id={`tab-${cardCtx.cardId}`} data-show-advanced={advancedVisible} className='group/card'>
             <Card className="xs:x bg-transparent max-xs:rounded-none max-xs:shadow-none">
                 <ol className="bg-muted/50 border-b p-4 flex flex-wrap items-center gap-1 sm:gap-2.5 select-none text-sm text-muted-foreground tracking-wide">
                     {cardCtx.tabName !== cardCtx.cardName ? (
@@ -69,14 +68,14 @@ export default function SettingsCardShell({
                                     <Loader2Icon className="h-3.5 mt-0.5 inline animate-spin" />
                                 )}
                             </Button>
-                            {advanced ? (
+                            {advancedVisible !== undefined && advancedSetter ? (
                                 <Button
                                     size='xs'
                                     variant={'muted'}
-                                    onClick={() => advanced.toggle(!advanced.showing)}
+                                    onClick={() => advancedSetter(!advancedVisible)}
                                 >
-                                    {advanced.showing ? 'Discard' : 'Show'} Advanced
-                                    {advanced.showing
+                                    {advancedVisible ? 'Discard' : 'Show'} Advanced
+                                    {advancedVisible
                                         ? <ChevronUpIcon className="size-4 ml-1.5" />
                                         : <ChevronDownIcon className="size-4 ml-1.5" />}
                                 </Button>

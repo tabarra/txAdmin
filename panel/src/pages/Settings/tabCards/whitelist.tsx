@@ -4,55 +4,64 @@ import InlineCode from '@/components/InlineCode'
 import { SettingItem, SettingItemDesc } from '../settingsItems'
 import { RadioGroup } from "@/components/ui/radio-group"
 import BigRadioItem from "@/components/BigRadioItem"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useMemo, useReducer } from "react"
+import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff } from "../utils"
 import { AutosizeTextarea, AutosizeTextAreaRef } from "@/components/ui/autosize-textarea"
-import { processConfigStates, SettingsCardProps, useConfAccessor } from "../utils"
 import SettingsCardShell from "../SettingsCardShell"
 import { txToast } from "@/components/TxToaster"
 import consts from "@shared/consts"
 
 
+export const pageConfigs = {
+    whitelistMode: getPageConfig('whitelist', 'mode'),
+    rejectionMessage: getPageConfig('whitelist', 'rejectionMessage'),
+    discordRoles: getPageConfig('whitelist', 'discordRoles'),
+} as const;
+
 export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardProps) {
-    //Config accessors
-    const conf = useConfAccessor(pageCtx.apiData);
-    const whitelistMode = conf('whitelist', 'mode');
-    const rejectionMessage = conf('whitelist', 'rejectionMessage');
+    const [states, dispatch] = useReducer(
+        configsReducer<typeof pageConfigs>,
+        null,
+        () => getConfigEmptyState(pageConfigs),
+    );
+    const cfg = useMemo(() => {
+        return getConfigAccessors(cardCtx.cardId, pageConfigs, pageCtx.apiData, dispatch);
+    }, [pageCtx.apiData, dispatch]);
+
+    //Effects - handle changes and reset advanced settings
+    useEffect(() => {
+        updatePageState();
+    }, [states]);
+
+    //Refs for configs that don't use state
     const rejectionMessageRef = useRef<AutosizeTextAreaRef | null>(null);
-    const discordRoles = conf('whitelist', 'discordRoles');
     const discordRolesRef = useRef<HTMLInputElement | null>(null);
 
     //Marshalling Utils
     const inputArrayUtil = {
-        toUi: (args?: string[]) => args ? args.join(', ') : undefined,
-        toCfg: (str?: string) => str ? str.split(/[,;]\s*/).map(x => x.trim()).filter(x => x.length) : undefined,
+        toUi: (args?: string[]) => args ? args.join(', ') : '',
+        toCfg: (str?: string) => str ? str.split(/[,;]\s*/).map(x => x.trim()).filter(x => x.length) : [],
     }
 
-    //Check against stored value and sets the page state
-    const processChanges = () => {
-        if (!pageCtx.apiData) {
-            return {
-                changedConfigs: {},
-                hasChanges: false,
-                localConfigs: {},
-            }
-        }
-
+    //Processes the state of the page and sets the card as pending save if needed
+    const updatePageState = () => {
         let currDiscordRoles;
         if (discordRolesRef.current) {
             currDiscordRoles = inputArrayUtil.toCfg(discordRolesRef.current.value);
         }
-        const res = processConfigStates([
-            [whitelistMode, whitelistMode.state.value],
-            [rejectionMessage, rejectionMessageRef.current?.textArea.value],
-            [discordRoles, currDiscordRoles],
-        ]);
+        const overwrites = {
+            rejectionMessage: rejectionMessageRef.current?.textArea.value,
+            discordRoles: currDiscordRoles,
+        };
+
+        const res = getConfigDiff(cfg, states, overwrites, false);
         pageCtx.setCardPendingSave(res.hasChanges ? cardCtx : null);
         return res;
     }
 
     //Validate changes (for UX only) and trigger the save API
     const handleOnSave = () => {
-        const { changedConfigs, hasChanges, localConfigs } = processChanges();
+        const { hasChanges, localConfigs } = updatePageState();
         if (!hasChanges) return;
 
         if (
@@ -103,13 +112,6 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
         pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
-    //Triggers handleChanges for state changes
-    useEffect(() => {
-        processChanges();
-    }, [
-        whitelistMode.state.value,
-    ]);
-
     return (
         <SettingsCardShell
             cardCtx={cardCtx}
@@ -118,18 +120,18 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
         >
             <SettingItem label="Whitelist Mode">
                 <RadioGroup
-                    value={whitelistMode.state.value}
-                    onValueChange={whitelistMode.state.set as any}
+                    value={states.whitelistMode}
+                    onValueChange={cfg.whitelistMode.state.set as any}
                     disabled={pageCtx.isReadOnly}
                 >
                     <BigRadioItem
-                        groupValue={whitelistMode.state.value}
+                        groupValue={states.whitelistMode}
                         value="disabled"
                         title="Disabled"
                         desc="No whitelist status will be checked by txAdmin."
                     />
                     <BigRadioItem
-                        groupValue={whitelistMode.state.value}
+                        groupValue={states.whitelistMode}
                         value="adminOnly"
                         title="Admin-only (maintenance mode)"
                         desc={(<>
@@ -137,7 +139,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                         </>)}
                     />
                     <BigRadioItem
-                        groupValue={whitelistMode.state.value}
+                        groupValue={states.whitelistMode}
                         value="discordMember"
                         title="Discord Server Member"
                         desc={(<>
@@ -145,7 +147,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                         </>)}
                     />
                     <BigRadioItem
-                        groupValue={whitelistMode.state.value}
+                        groupValue={states.whitelistMode}
                         value="discordRoles"
                         title="Discord Server Roles"
                         desc={(<>
@@ -153,7 +155,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                         </>)}
                     />
                     <BigRadioItem
-                        groupValue={whitelistMode.state.value}
+                        groupValue={states.whitelistMode}
                         value="approvedLicense"
                         title="Approved License"
                         desc={(<>
@@ -162,13 +164,13 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                     />
                 </RadioGroup>
             </SettingItem>
-            <SettingItem label="Whitelist Rejection Message" htmlFor={rejectionMessage.eid} showOptional>
+            <SettingItem label="Whitelist Rejection Message" htmlFor={cfg.rejectionMessage.eid} showOptional>
                 <AutosizeTextarea
-                    id={rejectionMessage.eid}
+                    id={cfg.rejectionMessage.eid}
                     ref={rejectionMessageRef}
                     placeholder='Please join http://discord.gg/example and request to be whitelisted.'
-                    defaultValue={rejectionMessage.initialValue}
-                    onInput={processChanges}
+                    defaultValue={cfg.rejectionMessage.initialValue}
+                    onInput={updatePageState}
                     autoComplete="off"
                     minHeight={60}
                     maxHeight={180}
@@ -179,13 +181,13 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                     If you have a Discord whitelisting process, include here a invite link.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Whitelisted Discord Roles" htmlFor={discordRoles.eid}>
+            <SettingItem label="Whitelisted Discord Roles" htmlFor={cfg.discordRoles.eid}>
                 <Input
-                    id={discordRoles.eid}
+                    id={cfg.discordRoles.eid}
                     ref={discordRolesRef}
-                    defaultValue={inputArrayUtil.toUi(discordRoles.initialValue)}
+                    defaultValue={inputArrayUtil.toUi(cfg.discordRoles.initialValue)}
                     placeholder="000000000000000000, 000000000000000000"
-                    onInput={processChanges}
+                    onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                 />
                 <SettingItemDesc>

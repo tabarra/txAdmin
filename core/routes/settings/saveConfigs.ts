@@ -16,11 +16,16 @@ import { findPotentialServerDataPaths, isValidServerDataPath } from '@lib/fxserv
 import { getFsErrorMdMessage } from '@lib/fs';
 import { generateStatusMessage } from '@modules/DiscordBot/commands/status';
 import { getSchemaChainError } from '@modules/ConfigStore/schema/utils';
+import { confx } from '@modules/ConfigStore/utils';
+import { SYM_RESET_CONFIG } from '@lib/symbols';
 const console = consoleFactory(modulename);
 
 
 //Types
-export type SaveConfigsReq = PartialTxConfigs;
+export type SaveConfigsReq = {
+    resetKeys: string[];
+    changes: PartialTxConfigs,
+};
 export type SaveConfigsResp = ApiToastResp & {
     stored?: PartialTxConfigs;
     changelog?: ConfigChangelogEntry[];
@@ -50,7 +55,10 @@ const validCardIds = Object.keys(cardNamesMap) as [keyof typeof cardNamesMap];
 
 //Req validation
 const paramsSchema = z.object({ card: z.enum(validCardIds) });
-const bodySchema = z.object({}).passthrough();
+const bodySchema = z.object({
+    resetKeys: z.array(z.string()),
+    changes: z.object({}).passthrough(),
+});
 
 //Helper to clean paths
 const cleanPath = (x: string) => slash(path.normalize(x));
@@ -86,7 +94,7 @@ export default async function SaveSettingsConfigs(ctx: AuthedCtx) {
         });
     }
     const cardId = paramsSchemaRes.data.card;
-    const inputConfig = bodySchemaRes.data;
+    const { resetKeys, changes: inputConfig } = bodySchemaRes.data;
     const cardName = cardNamesMap[ctx.params.card as keyof typeof cardNamesMap] ?? 'UNKNOWN';
 
     //Delegate to the specific card handlers - if required
@@ -109,11 +117,27 @@ export default async function SaveSettingsConfigs(ctx: AuthedCtx) {
     }
     if (!handlerResp) return; //resp already sent
 
+    //Apply reset keys
+    const configChanges = handlerResp.processedConfig;
+    try {
+        for (const config of resetKeys) {
+            const [scope, key] = config.split('.');
+            if (!scope || !key) throw new Error(`Invalid reset key: \`${config}\``);
+            confx(configChanges).set(scope, key, SYM_RESET_CONFIG);
+        }
+    } catch (error) {
+        return sendTypedResp({
+            type: 'error',
+            md: true,
+            title: `Error processing the ${cardName} changes.`,
+            msg: (error as any).message,
+        });
+    }
 
     //Save the changes
     try {
-        const changes = txCore.configStore.saveConfigs(ctx.request.body, ctx.admin.name);
-        if(changes.hasMatch(['server.dataPath', 'server.cfgPath'])) {
+        const changes = txCore.configStore.saveConfigs(configChanges, ctx.admin.name);
+        if (changes.hasMatch(['server.dataPath', 'server.cfgPath'])) {
             txCore.webServer.webSocket.pushRefresh('status');
         }
         return sendTypedResp({
@@ -176,7 +200,6 @@ const handleGeneralCard: CardHandler = async (inputConfig, sendTypedResp) => {
 
 /**
  * FXServer card handler
- * TODO: support nulling the dataPath
  */
 const handleFxserverCard: CardHandler = async (inputConfig, sendTypedResp) => {
     // if (typeof inputConfig.server?.dataPath === 'string' && inputConfig.server.dataPath.length) {
@@ -185,7 +208,6 @@ const handleFxserverCard: CardHandler = async (inputConfig, sendTypedResp) => {
     if (typeof inputConfig.server?.dataPath !== 'string' || !inputConfig.server?.dataPath.length) {
         throw new Error(`Unexpected data for the 'fxserver' card.`);
     }
-
 
     //Validating Server Data Path
     const dataPath = inputConfig.server.dataPath;
