@@ -19,6 +19,7 @@ import PlayerDropsPage from "@/pages/PlayerDropsPage/PlayerDropsPage";
 import SettingsPage from "@/pages/Settings/SettingsPage";
 import { useAdminPerms } from "@/hooks/auth";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
+import ConfigEditorPage from "@/pages/ConfigEditor/ConfigEditorPage";
 
 
 type RouteType = {
@@ -109,10 +110,16 @@ const allRoutes: RouteType[] = [
         Page: <Iframe legacyUrl="serverLog" />
     },
     {
+        path: '/server/config-editor',
+        title: 'Config Editor',
+        permission: 'server.cfg.editor',
+        Page: <ConfigEditorPage />
+    },
+    {
         path: '/server/cfg-editor',
         title: 'CFG Editor',
         permission: 'server.cfg.editor',
-        Page: <Iframe legacyUrl="cfgEditor" />
+        Page: <Iframe legacyUrl="cfgEditor" /* FIXME:NC */ />
     },
     {
         path: '/server/setup',

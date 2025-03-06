@@ -19,6 +19,7 @@ export type { PDLChangeEventType } from '@core/modules/Metrics/playerDrop/player
 
 //Other stuff
 export type { ApiAddLegacyBanReqSchema, ApiRevokeActionReqSchema } from "@core/routes/history/actions";
+export type { GetConfigFileResp } from "@core/routes/configEditor/getFile";
 
 export type UpdateDataType = {
     version: string;

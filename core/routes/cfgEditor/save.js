@@ -8,7 +8,7 @@ const isUndefined = (x) => (x === undefined);
 
 
 /**
- * Saves the server.cfg
+ * Saves the server.cfg FIXME:NC deletar
  * @param {object} ctx
  */
 export default async function CFGEditorSave(ctx) {

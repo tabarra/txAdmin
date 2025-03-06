@@ -5,7 +5,7 @@ const console = consoleFactory(modulename);
 
 
 /**
- * Returns the output page containing the server.cfg
+ * Returns the output page containing the server.cfg FIXME:NC deletar
  * @param {object} ctx
  */
 export default async function CFGEditorPage(ctx) {
