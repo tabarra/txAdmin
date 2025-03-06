@@ -31,9 +31,9 @@ const baseConfig = {
                 banner: licenseBanner('..', true),
                 //Adding hash to help with cache busting
                 hashCharacters: 'base36',
-                entryFileNames: `[name]-[hash].js`,
-                chunkFileNames: `[name]-[hash].js`,
-                assetFileNames: '[name]-[hash].[ext]',
+                entryFileNames: `[name]-[hash].v800.js`,
+                chunkFileNames: `[name]-[hash].v800.js`,
+                assetFileNames: '[name]-[hash].v800.[ext]',
             }
         },
     },

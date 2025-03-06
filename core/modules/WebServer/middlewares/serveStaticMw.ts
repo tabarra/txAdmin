@@ -81,6 +81,23 @@ export const getCompressedFile = async (fullPath: string) => {
 };
 
 
+//FIXME: This is a temporary function
+const checkFileWhitelist = (rootPath: string, url: string) => {
+    if (!rootPath.endsWith('panel')) return true;
+    const nonHashedFiles = [
+        '/favicon_default.svg',
+        '/favicon_offline.svg',
+        '/favicon_online.svg',
+        '/favicon_partial.svg',
+        '/index.html',
+        '/img/discord.png',
+        '/img/zap_login.png',
+        '/img/zap_main.png'
+    ];
+    return nonHashedFiles.includes(url) || url.includes('.v800.');
+}
+
+
 //Scans a folder and returns all files processed with size and count limits
 export const scanStaticFolder = async ({ rootPath, state, limits }: ScanFolderOpts) => {
     //100ms precision for elapsedMs
@@ -107,8 +124,10 @@ export const scanStaticFolder = async ({ rootPath, state, limits }: ScanFolderOp
         const entries = await fsp.readdir(currentFolderAbs, { withFileTypes: true });
         for (const entry of entries) {
             if (limits.MAX_FILES && state.files.length > limits.MAX_FILES) {
+                console.error('MAX_FILES ERROR', 'This likely means you did not erase the previous artifact files before adding new ones.');
                 throw new ScanLimitError('MAX_FILES', limits.MAX_FILES, state.files.length);
             } else if (limits.MAX_BYTES && state.bytes > limits.MAX_BYTES) {
+                console.error('MAX_BYTES ERROR', 'This likely means you did not erase the previous artifact files before adding new ones.');
                 throw new ScanLimitError('MAX_BYTES', limits.MAX_BYTES, state.bytes);
             } else if (limits.MAX_TIME && state.elapsedMs > limits.MAX_TIME) {
                 throw new ScanLimitError('MAX_TIME', limits.MAX_TIME, state.elapsedMs);
@@ -122,6 +141,11 @@ export const scanStaticFolder = async ({ rootPath, state, limits }: ScanFolderOp
             } else if (entry.isFile()) {
                 //Process the file
                 const entryPathUrl = '/' + path.posix.join(currentFolderUrl, entry.name);
+                if (!checkFileWhitelist(rootPath, entryPathUrl)) {
+                    console.verbose.debug(`Skipping unknown file ${entryPathUrl}`);
+                    continue;
+                }
+
                 const entryPathAbs = path.join(currentFolderAbs, entry.name);
                 const fileData = await getCompressedFile(entryPathAbs);
                 state.bytes += fileData.raw.length;
