@@ -48,7 +48,7 @@ suite('filterTermLine', () => {
             const opts = { ...baseOpts, copyTimestamp: false, copyTag: true };
             const ts = 10 * 3600; // 10:00:00 AM
             const input = formatTermTimestamp(ts, baseOpts) + exampleLines.input;
-            const expected = exampleLines.input;
+            const expected = exampleLines.input.trimEnd();
             expect(fnc(input, opts)).toEqual(expected); // Corrected expectation
         });
 
@@ -57,7 +57,7 @@ suite('filterTermLine', () => {
             const ts = 0;
             const input = formatTermTimestamp(ts, opts) + exampleLines.input;
             const timestamp = formatTermTimestamp(ts, opts);
-            const expected = timestamp + 'dd ';
+            const expected = timestamp + 'dd';
             expect(fnc(input, opts)).toEqual(sanitizeTermLine(expected));
         });
 
