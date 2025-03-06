@@ -131,6 +131,14 @@ export const migrateOldConfig = (old: any) => {
             : [];
     }
 
+    //Removing stuff from unconfigured profile
+    if (remapped.general?.serverName === null) {
+        delete remapped.general.serverName;
+    }
+    if (remapped.server?.cfgPath === null) {
+        delete remapped.server.cfgPath;
+    }
+
     //Extract just the non-default values
     const baseConfigs = getConfigDefaults(ConfigSchemas_v2) as TxConfigs;
     const justNonDefaults: ListOf<any> = {};
