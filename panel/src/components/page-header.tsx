@@ -18,7 +18,7 @@ export function PageHeaderChangelog({ changelogData }: PageHeaderChangelogProps)
         const last = changelogData[changelogData.length - 1];
         const lastDate = new Date(last.ts);
         const timeStr = dateToLocaleTimeString(lastDate, '2-digit', '2-digit');
-        const dateStr = dateToLocaleDateString(lastDate, 'short');
+        const dateStr = dateToLocaleDateString(lastDate, 'long');
         const titleTimeIndicator = isDateToday(lastDate) ? timeStr : dateStr;
         return {
             author: last.author,

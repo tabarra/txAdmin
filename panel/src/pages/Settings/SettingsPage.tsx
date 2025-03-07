@@ -199,7 +199,7 @@ export default function SettingsPage() {
 
     return (
         <div className="w-full mb-10">
-            <PageHeader title="Simple + changelog" icon={<Settings2Icon />}>
+            <PageHeader title="Settings" icon={<Settings2Icon />}>
                 <PageHeaderChangelog
                     changelogData={swr?.data?.changelog}
                 />
