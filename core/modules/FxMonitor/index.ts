@@ -9,6 +9,7 @@ import { ChildProcessState } from '@modules/FxRunner/ProcessManager';
 import { secsToShortestDuration } from '@lib/misc';
 import { setRuntimeFile } from '@lib/fxserver/runtimeFiles';
 import { FxMonitorHealth } from '@shared/enums';
+import cleanPlayerName from '@shared/cleanPlayerName';
 const console = consoleFactory(modulename);
 
 
@@ -574,7 +575,11 @@ export default class FxMonitor {
         txCore.cacheStore.upsert('fxsRuntime:bannerDetail', infoJson.bannerDetail);
         txCore.cacheStore.upsert('fxsRuntime:locale', infoJson.locale);
         txCore.cacheStore.upsert('fxsRuntime:projectDesc', infoJson.projectDesc);
-        txCore.cacheStore.upsert('fxsRuntime:projectName', infoJson.projectName);
+        if (infoJson.projectName) {
+            txCore.cacheStore.set('fxsRuntime:projectName', cleanPlayerName(infoJson.projectName).displayName);
+        } else {
+            txCore.cacheStore.delete('fxsRuntime:projectName');
+        }
         txCore.cacheStore.upsert('fxsRuntime:tags', infoJson.tags);
     }
 
