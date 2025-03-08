@@ -52,7 +52,7 @@ export const useSetPageTitle = () => {
     };
 }
 
-export const pageTitleWatcher = atomEffect((get, set) => {
+export const pageTitleWatcher: ReturnType<typeof atomEffect> = atomEffect((get, set) => {
     if (!window.txConsts.isWebInterface) return;
     const pageTitle = get(pageTitleAtom);
     const globalStatus = get(globalStatusAtom);
