@@ -34,7 +34,6 @@ if (osTypeVar === 'Windows_NT') {
 }
 
 //Simple env vars
-const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
 const ignoreDeprecatedConfigs = process.env?.TXHOST_IGNORE_DEPRECATED_CONFIGS === 'true';
 
 
@@ -248,13 +247,12 @@ const profilePath = cleanPath(path.join(dataPath, profileName));
 /**
  * MARK: ZAP & NETWORKING
  */
-let isZapHosting = false;
 let zapVars: ReturnType<typeof getZapVars> | undefined;
 if (!ignoreDeprecatedConfigs) {
+    //FIXME: ZAP doesn't need this anymore, remove ASAP
     const zapCfgFilePath = path.join(dataPath, 'txAdminZapConfig.json');
     try {
         zapVars = getZapVars(zapCfgFilePath);
-        isZapHosting = !!zapVars && !isPterodactyl;
         if (!_txDevEnv.ENABLED) fsp.unlink(zapCfgFilePath).catch(() => { });
     } catch (error) {
         fatalError.GlobalData(9, 'Failed to load with ZAP-Hosting configuration.', error);
@@ -470,6 +468,9 @@ const defaultCfxKey = handleMultiVar(
 if (ignoreDeprecatedConfigs) {
     console.verbose.debug('TXHOST_IGNORE_DEPRECATED_CONFIGS is set to true. Ignoring deprecated configs.');
 }
+
+const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
+const isZapHosting = providerName === 'ZAP-Hosting';
 
 //Quick config to disable ads
 const displayAds = process.env?.TXHOST_TMP_HIDE_ADS !== 'true' || isPterodactyl || isZapHosting;
