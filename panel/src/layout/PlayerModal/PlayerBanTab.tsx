@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { useBackendApi } from "@/hooks/fetch";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
-import type { BanTemplatesDataType, GetConfigsResp } from "@shared/otherTypes";
+import type { BanTemplatesDataType, GetForcedBanTemplatesResp,  } from "@shared/otherTypes";
 import BanForm, { BanFormType } from "@/components/BanForm";
 import { txToast } from "@/components/TxToaster";
 import { useEffect } from "react";
@@ -29,9 +29,9 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
         path: `/player/ban`,
         throwGenericErrors: true,
     });
-    const configApi = useBackendApi<GetConfigsResp>({
+    const forceBanTemplatesApi = useBackendApi<GetForcedBanTemplatesResp>({
         method: 'GET',
-        path: `/settings/configs`,
+        path: `/settings/banTemplates/force`,
         throwGenericErrors: true,
     });
 
@@ -43,10 +43,10 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
 
     useEffect(() => {
         setIsLoadingConfig(true);
-        configApi({
+        forceBanTemplatesApi({
             success: (data) => {
-                if (data && 'storedConfigs' in data) {
-                    setForceBanTemplates(data.storedConfigs.gameFeatures?.forceBanTemplates === true);
+                if (data && 'forceBanTemplates' in data) {
+                    setForceBanTemplates(data.forceBanTemplates === true);
                 }
                 setIsLoadingConfig(false);
             },

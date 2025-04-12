@@ -31,6 +31,7 @@ export { default as deployer_actions } from './deployer/actions';
 
 //FIXME join bantemplates with settings
 export { default as settings_getConfigs } from './settings/getConfigs';
+export { default as settings_getForcedBanTemplates } from './settings/getForcedBanTemplates';
 export { default as settings_saveConfigs } from './settings/saveConfigs';
 export { default as settings_getBanTemplates } from './banTemplates/getBanTemplates';
 export { default as settings_saveBanTemplates } from './banTemplates/saveBanTemplates';
