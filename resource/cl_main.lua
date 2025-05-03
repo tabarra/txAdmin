@@ -71,7 +71,7 @@ RegisterNetEvent('txcl:showWarning', function(author, reason, actionId, isWarnin
         local count = 0
         while true do
             Wait(100)
-            if IsControlPressed(dismissKeyGroup, dismissKey) then
+            if IsControlPressed(dismissKeyGroup, dismissKey) or IsDisabledControlPressed(dismissKeyGroup, dismissKey) then
                 count = count + 1
                 if count >= countLimit then
                     sendMenuMessage('closeWarning')
