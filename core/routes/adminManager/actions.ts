@@ -151,6 +151,7 @@ async function handleEdit(ctx: AuthedCtx) {
     //Sanity check
     if (
         typeof ctx.request.body.name !== 'string'
+        || typeof ctx.request.body.originalName !== 'string'
         || typeof ctx.request.body.citizenfxID !== 'string'
         || typeof ctx.request.body.discordID !== 'string'
         || ctx.request.body.permissions === undefined
@@ -159,13 +160,20 @@ async function handleEdit(ctx: AuthedCtx) {
     }
 
     //Prepare and filter variables
-    const name = ctx.request.body.name.trim();
+    const originalName = ctx.request.body.originalName.trim();
+    const newName = ctx.request.body.name.trim();
+    const isNameChanged = originalName.toLowerCase() !== newName.toLowerCase();
     const citizenfxID = ctx.request.body.citizenfxID.trim();
     const discordID = ctx.request.body.discordID.trim();
 
     //Check if editing himself
-    if (ctx.admin.name.toLowerCase() === name.toLowerCase()) {
+    if (ctx.admin.name.toLowerCase() === originalName.toLowerCase()) {
         return ctx.send({type: 'danger', message: '(ERR0) You cannot edit yourself.'});
+    }
+
+    // Check if the name is being changed, and if so check if the new value is valid
+    if (isNameChanged && !consts.regexValidFivemUsername.test(newName)) {
+        return ctx.send({type: 'danger', markdown: true, message: `**(ERR1) Invalid username, it must follow the rule:**\n${nameRegexDesc}`});
     }
 
     //Validate & translate permissions
@@ -222,7 +230,7 @@ async function handleEdit(ctx: AuthedCtx) {
     }
 
     //Check if admin exists
-    const admin = txCore.adminStore.getAdminByName(name);
+    const admin = txCore.adminStore.getAdminByName(originalName);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
@@ -243,8 +251,8 @@ async function handleEdit(ctx: AuthedCtx) {
 
     //Add admin and give output
     try {
-        await txCore.adminStore.editAdmin(name, null, citizenfxData, discordData, permissions);
-        ctx.admin.logAction(`Editing user '${name}'.`);
+        await txCore.adminStore.editAdmin(originalName, isNameChanged ? newName : null, null, citizenfxData, discordData, permissions);
+        ctx.admin.logAction(`Editing user '${originalName}'.`);
         return ctx.send({type: 'success', refresh: true});
     } catch (error) {
         return ctx.send({type: 'danger', message: (error as Error).message});

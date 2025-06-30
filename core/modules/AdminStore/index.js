@@ -410,7 +410,7 @@ export default class AdminStore {
      * @param {object|false} [discordData] or false
      * @param {string[]} [permissions]
      */
-    async editAdmin(name, password, citizenfxData, discordData, permissions) {
+    async editAdmin(name, newName, password, citizenfxData, discordData, permissions) {
         if (this.admins == false) throw new Error('Admins not set');
 
         //Find admin index
@@ -419,6 +419,19 @@ export default class AdminStore {
             return (username === user.name.toLowerCase());
         });
         if (adminIndex == -1) throw new Error('Admin not found');
+
+        // Check if name is being changed, if so change the old name to the new one
+        if (newName !== null && newName !== undefined) {
+            // Check if the name is already taken by another admin
+            const nameExists = this.admins.some((admin, index) => {
+                return index !== adminIndex && admin.name.toLowerCase() === newName.toLowerCase();
+            })
+            if (nameExists) {
+                throw new Error("This username is already taken");
+            }
+
+            this.admins[adminIndex].name = newName;
+        }
 
         //Editing admin
         if (password !== null) {

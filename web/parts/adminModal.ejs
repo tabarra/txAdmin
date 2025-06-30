@@ -9,7 +9,8 @@
     <div class="col-sm-9">
         <div class="input-group">
             <input type="text" class="form-control" id="modAdmin-name" 
-                value="<%= username %>" <%= isNewAdmin ? 'required' : 'readonly' %>>
+                value="<%= username %>" required>
+            <input type="hidden" id="modAdmin-originalName" value="<%= username %>">
         </div>
     </div>
 </div>

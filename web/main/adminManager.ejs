@@ -228,6 +228,7 @@
                 $('#modAdmin-body').html(data);
                 if(!name && autofill){
                     $('#modAdmin-name').val(autofill.name);
+                    $('#modAdmin-originalName').val(autofill.name);
                     $('#modAdmin-citizenfxID').val(autofill.citizenfxID);
                     $('#modAdmin-discordID').val(autofill.discordID);
                     autofill = false;
@@ -253,6 +254,7 @@
         });
         const formData = {
             name: $('#modAdmin-name').val().trim(),
+            originalName: $('#modAdmin-originalName').val().trim(),
             citizenfxID: $('#modAdmin-citizenfxID').val().trim(),
             discordID: $('#modAdmin-discordID').val().trim(),
             permissions: (permissions.length)? permissions : false
