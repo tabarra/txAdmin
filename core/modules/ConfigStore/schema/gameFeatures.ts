@@ -31,6 +31,13 @@ const playerModePtfx = typeDefinedConfig({
     fixer: SYM_FIXER_DEFAULT,
 });
 
+const forceBanTemplates = typeDefinedConfig({
+    name: 'Force Ban Templates',
+    default: false,
+    validator: z.boolean(),
+    fixer: SYM_FIXER_DEFAULT,
+});
+
 const hideAdminInPunishments = typeDefinedConfig({
     name: 'Hide Admin Name In Punishments',
     default: true,
@@ -79,6 +86,7 @@ export default {
     menuAlignRight,
     menuPageKey,
     playerModePtfx,
+    forceBanTemplates,
     hideAdminInPunishments,
     hideAdminInMessages,
     hideDefaultAnnouncement,

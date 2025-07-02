@@ -2,12 +2,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useClosePlayerModal } from "@/hooks/playerModal";
-import { ClipboardPasteIcon, ExternalLinkIcon, Loader2Icon } from "lucide-react";
+import { ClipboardPasteIcon, ExternalLinkIcon, InfoIcon, Loader2Icon } from "lucide-react";
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { DropDownSelect, DropDownSelectContent, DropDownSelectItem, DropDownSelectTrigger } from "@/components/dropDownSelect";
 import { banDurationToShortString, banDurationToString, cn } from "@/lib/utils";
 import { Link, useLocation } from "wouter";
 import type { BanTemplatesDataType } from "@shared/otherTypes";
+import { Alert, AlertDescription } from "./ui/alert";
 
 // Consts
 const reasonTruncateLength = 150;
@@ -18,6 +19,7 @@ const defaultDurations = ['permanent', '2 hours', '8 hours', '1 day', '2 days', 
 type BanFormRespType = {
     reason: string;
     duration: string;
+    templateId?: string;
 }
 export type BanFormType = HTMLDivElement & {
     focusReason: () => void;
@@ -26,6 +28,7 @@ export type BanFormType = HTMLDivElement & {
 }
 type BanFormProps = {
     banTemplates?: BanTemplatesDataType[]; //undefined = loading
+    forceBanTemplates?: boolean;
     disabled?: boolean;
     onNavigateAway?: () => void;
 };
@@ -33,12 +36,13 @@ type BanFormProps = {
 /**
  * A form to set ban reason and duration.
  */
-export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateAway }: BanFormProps, ref) {
+export default forwardRef(function BanForm({ banTemplates, disabled, forceBanTemplates, onNavigateAway }: BanFormProps, ref) {
     const reasonRef = useRef<HTMLInputElement>(null);
     const customMultiplierRef = useRef<HTMLInputElement>(null);
     const setLocation = useLocation()[1];
     const [currentDuration, setCurrentDuration] = useState('2 days');
     const [customUnits, setCustomUnits] = useState('days');
+    const [selectedTemplateId, setSelectedTemplateId] = useState<string | undefined>(undefined);
     const closeModal = useClosePlayerModal();
 
     //Exposing methods to the parent
@@ -50,6 +54,7 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
                     duration: currentDuration === 'custom'
                         ? `${customMultiplierRef.current?.value} ${customUnits}`
                         : currentDuration,
+                    templateId: selectedTemplateId
                 };
             },
             clearData: () => {
@@ -60,7 +65,9 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
                 setCustomUnits('days');
             },
             focusReason: () => {
-                reasonRef.current?.focus();
+                if(!forceBanTemplates) {
+                    reasonRef.current?.focus();
+                }
             }
         };
     }, [reasonRef, customMultiplierRef, currentDuration, customUnits]);
@@ -74,9 +81,14 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
             const template = banTemplates.find(template => template.id === value);
             if (!template) return;
 
+            setSelectedTemplateId(template.id);
             const processedDuration = banDurationToString(template.duration);
             if (defaultDurations.includes(processedDuration)) {
+                console.log('setting duration', processedDuration);
                 setCurrentDuration(processedDuration);
+                // Reset the custom duration fields
+                customMultiplierRef.current!.value = '';
+                setCustomUnits('days');
             } else if (typeof template.duration === 'object') {
                 setCurrentDuration('custom');
                 customMultiplierRef.current!.value = template.duration.value.toString();
@@ -151,11 +163,36 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
 
     return (
         <div className="flex flex-col gap-4">
+            {forceBanTemplates && (
+                <Alert>
+                    <InfoIcon className="h-8 w-4" />
+                    <AlertDescription>
+                        This server requires the use of ban templates.<br/>
+                        Please select one below
+                    </AlertDescription>
+                </Alert>
+            )}
+
             <div className="flex flex-col gap-3">
-                <Label htmlFor="banReason">
-                    Reason
+                <Label htmlFor={forceBanTemplates ? "banTemplate" : "banReason"}>
+                    {forceBanTemplates ? "Ban Template" : "Reason"}
                 </Label>
-                <div className="flex gap-1">
+                {forceBanTemplates && (
+                    // When forceBanTemplates is enabled, show a full-width dropdown for templates
+                    <Select
+                        onValueChange={handleTemplateSelectChange}
+                        value={selectedTemplateId}
+                        disabled={disabled}
+                    >
+                        <SelectTrigger id="templateSelect" className="tracking-wide">
+                            <SelectValue placeholder="Select Ban Template" />
+                        </SelectTrigger>
+                        <SelectContent className="tracking-wide">
+                            {banTemplatesContentNode}
+                        </SelectContent>
+                    </Select>
+                )}
+                <div className={"flex gap-1" + (forceBanTemplates ? " hidden" : "")}>
                     <Input
                         id="banReason"
                         ref={reasonRef}
@@ -192,7 +229,7 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
                     <Select
                         onValueChange={setCurrentDuration}
                         value={currentDuration}
-                        disabled={disabled}
+                        disabled={disabled || forceBanTemplates}
                     >
                         <SelectTrigger id="durationSelect" className="tracking-wide">
                             <SelectValue placeholder="Select Duration" />
@@ -214,7 +251,7 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
                             type="number"
                             placeholder="123"
                             required
-                            disabled={currentDuration !== 'custom' || disabled}
+                            disabled={currentDuration !== 'custom' || disabled || forceBanTemplates}
                             ref={customMultiplierRef}
                         />
                         <Select
@@ -224,7 +261,7 @@ export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateA
                             <SelectTrigger
                                 className="tracking-wide"
                                 id="durationUnits"
-                                disabled={currentDuration !== 'custom' || disabled}
+                                disabled={currentDuration !== 'custom' || disabled || forceBanTemplates}
                             >
                                 <SelectValue />
                             </SelectTrigger>

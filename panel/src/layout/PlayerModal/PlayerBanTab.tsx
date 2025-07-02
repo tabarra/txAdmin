@@ -6,9 +6,10 @@ import { useRef, useState } from "react";
 import { useBackendApi } from "@/hooks/fetch";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
-import type { BanTemplatesDataType } from "@shared/otherTypes";
+import type { BanTemplatesDataType, GetForcedBanTemplatesResp,  } from "@shared/otherTypes";
 import BanForm, { BanFormType } from "@/components/BanForm";
 import { txToast } from "@/components/TxToaster";
+import { useEffect } from "react";
 
 
 type PlayerBanTabProps = {
@@ -20,16 +21,45 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
     const banFormRef = useRef<BanFormType>(null);
     const [isSaving, setIsSaving] = useState(false);
     const { hasPerm } = useAdminPerms();
+    const [forceBanTemplates, setForceBanTemplates] = useState(false);
+    const [isLoadingConfig, setIsLoadingConfig] = useState(true);
     const closeModal = useClosePlayerModal();
     const playerBanApi = useBackendApi<GenericApiOkResp>({
         method: 'POST',
         path: `/player/ban`,
         throwGenericErrors: true,
     });
+    const forceBanTemplatesApi = useBackendApi<GetForcedBanTemplatesResp>({
+        method: 'GET',
+        path: `/settings/banTemplates/force`,
+        throwGenericErrors: true,
+    });
 
     if (!hasPerm('players.ban')) {
         return <ModalCentralMessage>
             You don't have permission to ban players.
+        </ModalCentralMessage>;
+    }
+
+    useEffect(() => {
+        setIsLoadingConfig(true);
+        forceBanTemplatesApi({
+            success: (data) => {
+                if (data && 'forceBanTemplates' in data) {
+                    setForceBanTemplates(data.forceBanTemplates === true);
+                }
+                setIsLoadingConfig(false);
+            },
+            error: () => {
+                setIsLoadingConfig(false);
+            },
+        });
+    }, []);
+
+    if (isLoadingConfig) {
+        return <ModalCentralMessage>
+            <Loader2Icon className="inline animate-spin size-6 mr-2" />
+            Loading configuration...
         </ModalCentralMessage>;
     }
 
@@ -66,6 +96,7 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
             <BanForm
                 ref={banFormRef}
                 banTemplates={banTemplates}
+                forceBanTemplates={forceBanTemplates}
                 disabled={isSaving}
                 onNavigateAway={() => { closeModal(); }}
             />

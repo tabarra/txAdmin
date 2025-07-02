@@ -60,6 +60,7 @@ export default () => {
     router.get('/deployer/status', apiAuthMw, routes.deployer_status);
     router.post('/deployer/recipe/:action', apiAuthMw, routes.deployer_actions);
     router.get('/settings/configs', apiAuthMw, routes.settings_getConfigs);
+    router.get('/settings/banTemplates/force', apiAuthMw, routes.settings_getForcedBanTemplates);
     router.post('/settings/configs/:card', apiAuthMw, routes.settings_saveConfigs);
     router.get('/settings/banTemplates', apiAuthMw, routes.settings_getBanTemplates);
     router.post('/settings/banTemplates', apiAuthMw, routes.settings_saveBanTemplates);

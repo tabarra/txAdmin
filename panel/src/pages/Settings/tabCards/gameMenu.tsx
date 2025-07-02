@@ -12,6 +12,7 @@ export const pageConfigs = {
     alignRight: getPageConfig('gameFeatures', 'menuAlignRight'),
     pageKey: getPageConfig('gameFeatures', 'menuPageKey'),
     playerModePtfx: getPageConfig('gameFeatures', 'playerModePtfx'),
+    forceBanTemplates: getPageConfig('gameFeatures', 'forceBanTemplates'),
 } as const;
 
 export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardProps) {
@@ -132,6 +133,20 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
                 <SettingItemDesc>
                     Play a particle effect and sound when an admin uses NoClip, God Mode, etc. <br />
                     <strong className="text-warning-inline">Warning:</strong> This options help prevent admin abuse during PvP by making it visible/audible to all players that an admin is using a special mode. We recommend keeping it enabled.
+                </SettingItemDesc>
+            </SettingItem>
+            <SettingItem label="Force Ban Templates" showIf={showAdvanced}>
+                <SwitchText
+                    id={cfg.forceBanTemplates.eid}
+                    checkedLabel="Enabled"
+                    uncheckedLabel="Disabled"
+                    variant="checkedGreen"
+                    checked={states.forceBanTemplates}
+                    onCheckedChange={cfg.forceBanTemplates.state.set}
+                    disabled={pageCtx.isReadOnly}
+                />
+                <SettingItemDesc>
+                    Force the use of ban templates when banning players. Keep in mind this will prevent custom ban reasons and durations.
                 </SettingItemDesc>
             </SettingItem>
         </SettingsCardShell>
