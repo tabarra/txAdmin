@@ -11,6 +11,7 @@ import humanizeDuration, { Unit } from 'humanize-duration';
 import consoleFactory from '@lib/console';
 import { TimeCounter } from '@modules/Metrics/statsUtils';
 import { InitializedCtx } from '@modules/WebServer/ctxTypes';
+import { getDiscordApiHelper } from '@modules/DiscordBot/discordApiHelper';
 const console = consoleFactory(modulename);
 const xss = xssInstancer();
 
@@ -294,7 +295,9 @@ async function checkDiscordMember(
     validIdsObject: PlayerIdsObjectType,
     playerName: string
 ): Promise<AllowRespType | DenyRespType> {
-    const guildname = `<guildname>${txCore.discordBot.guildName}</guildname>`;
+    const discordApi = getDiscordApiHelper();
+    const guildName = discordApi?.getGuildName() || txCore.discordBot?.guildName || 'Discord Server';
+    const guildname = `<guildname>${guildName}</guildname>`;
     const textKeys = {
         mode_title: txCore.translator.t('whitelist_messages.guild_member.mode_title'),
         insufficient_ids: txCore.translator.t('whitelist_messages.guild_member.insufficient_ids'),
@@ -316,8 +319,11 @@ async function checkDiscordMember(
     //Resolving member
     let errorTitle, errorMessage;
     try {
-        const { isMember, memberRoles } = await txCore.discordBot.resolveMemberRoles(validIdsObject.discord);
-        if (isMember) {
+        const result = discordApi 
+            ? await discordApi.resolveMemberRoles(validIdsObject.discord)
+            : await txCore.discordBot.resolveMemberRoles(validIdsObject.discord);
+        
+        if (result.isMember) {
             return { allow: true };
         } else {
             errorTitle = textKeys.deny_title;
@@ -346,7 +352,9 @@ async function checkDiscordRoles(
     validIdsObject: PlayerIdsObjectType,
     playerName: string
 ): Promise<AllowRespType | DenyRespType> {
-    const guildname = `<guildname>${txCore.discordBot.guildName}</guildname>`;
+    const discordApi = getDiscordApiHelper();
+    const guildName = discordApi?.getGuildName() || txCore.discordBot?.guildName || 'Discord Server';
+    const guildname = `<guildname>${guildName}</guildname>`;
     const textKeys = {
         mode_title: txCore.translator.t('whitelist_messages.guild_roles.mode_title'),
         insufficient_ids: txCore.translator.t('whitelist_messages.guild_roles.insufficient_ids'),
@@ -370,10 +378,13 @@ async function checkDiscordRoles(
     //Resolving member
     let errorTitle, errorMessage;
     try {
-        const { isMember, memberRoles } = await txCore.discordBot.resolveMemberRoles(validIdsObject.discord);
-        if (isMember) {
+        const result = discordApi 
+            ? await discordApi.resolveMemberRoles(validIdsObject.discord)
+            : await txCore.discordBot.resolveMemberRoles(validIdsObject.discord);
+        
+        if (result.isMember) {
             const matchingRole = txConfig.whitelist.discordRoles
-                .find((requiredRole) => memberRoles?.includes(requiredRole));
+                .find((requiredRole) => result.memberRoles?.includes(requiredRole));
             if (matchingRole) {
                 return { allow: true };
             } else {
@@ -475,11 +486,20 @@ async function checkApprovedLicense(
     //Player is not whitelisted
     //Resolve player discord
     let discordTag, discordAvatar;
-    if (validIdsObject.discord && txCore.discordBot.isClientReady) {
+    if (validIdsObject.discord) {
         try {
-            const { tag, avatar } = await txCore.discordBot.resolveMemberProfile(validIdsObject.discord);
-            discordTag = tag;
-            discordAvatar = avatar;
+            const discordApi = getDiscordApiHelper();
+            if (discordApi) {
+                const profile = await discordApi.resolveMemberProfile(validIdsObject.discord);
+                if (profile) {
+                    discordTag = profile.tag;
+                    discordAvatar = profile.avatar;
+                }
+            } else if (txCore.discordBot?.isClientReady) {
+                const { tag, avatar } = await txCore.discordBot.resolveMemberProfile(validIdsObject.discord);
+                discordTag = tag;
+                discordAvatar = avatar;
+            }
         } catch (error) { }
     }
 

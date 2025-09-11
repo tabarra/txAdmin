@@ -311,9 +311,43 @@ const handleDiscordCard: CardHandler = async (inputConfig, sendTypedResp) => {
         }
     }
 
-    //If bot disabled, kill the bot and don't validate anything
+    //If bot disabled, kill the bot but check if we need credentials for whitelist
     if (!inputConfig.discordBot?.enabled) {
         await txCore.discordBot.attemptBotReset(false);
+        
+        // Check if Discord-based whitelist is enabled
+        const isDiscordWhitelistNeeded = (
+            txConfig.whitelist.mode === 'discordMember' || 
+            txConfig.whitelist.mode === 'discordRoles'
+        );
+        
+        // If Discord whitelist is enabled, validate required credentials
+        if (isDiscordWhitelistNeeded) {
+            const schemas = ConfigStore.Schema.discordBot;
+            const validationError = getSchemaChainError([
+                [schemas.token, inputConfig.discordBot.token],
+                [schemas.guild, inputConfig.discordBot.guild],
+            ]);
+            if (validationError) {
+                return sendTypedResp({
+                    type: 'error',
+                    title: 'Discord Credentials Required for Whitelist',
+                    md: true,
+                    msg: 'Discord Token and Guild ID are required for Discord-based whitelist modes, even with Discord Bot commands disabled.\n\n' + validationError,
+                });
+            }
+            
+            // Check if required fields are present
+            if (!inputConfig.discordBot.token || !inputConfig.discordBot.guild) {
+                return sendTypedResp({
+                    type: 'error',
+                    title: 'Discord Credentials Required for Whitelist',
+                    md: true,
+                    msg: 'Discord Token and Guild ID are required for Discord-based whitelist modes, even with Discord Bot commands disabled.',
+                });
+            }
+        }
+        
         return { processedConfig: inputConfig };
     }
 

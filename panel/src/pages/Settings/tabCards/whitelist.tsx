@@ -78,10 +78,10 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
             localConfigs.whitelist?.mode === 'discordMember'
             || localConfigs.whitelist?.mode === 'discordRoles'
         ) {
-            if (pageCtx.apiData?.storedConfigs.discordBot?.enabled !== true) {
+            if (!pageCtx.apiData?.storedConfigs.discordBot?.token || !pageCtx.apiData?.storedConfigs.discordBot?.guild) {
                 return txToast.warning({
-                    title: 'Discord Bot is required.',
-                    msg: 'You need to enable the Discord Bot in the Discord tab to use Discord-based whitelist modes.',
+                    title: 'Discord credentials required.',
+                    msg: 'You need to provide a Discord Bot Token and Guild ID in the Discord tab to use Discord-based whitelist modes. The Discord Bot can remain disabled.',
                 });
             }
             if (
@@ -143,7 +143,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                         value="discordMember"
                         title="Discord Server Member"
                         desc={(<>
-                            Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord server configured in the Discord Tab.
+                            Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord server configured in the Discord Tab. Only requires Discord Bot Token and Guild ID (Discord Bot can remain disabled).
                         </>)}
                     />
                     <BigRadioItem
@@ -151,7 +151,7 @@ export default function ConfigCardWhitelist({ cardCtx, pageCtx }: SettingsCardPr
                         value="discordRoles"
                         title="Discord Server Roles"
                         desc={(<>
-                            Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord server configured in the Discord Tab and has at least one of the roles specified below.
+                            Checks if the player joining has a <InlineCode>discord:</InlineCode> identifier and is present in the Discord server configured in the Discord Tab and has at least one of the roles specified below. Only requires Discord Bot Token and Guild ID (Discord Bot can remain disabled).
                         </>)}
                     />
                     <BigRadioItem
