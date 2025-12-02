@@ -12,50 +12,50 @@
         "schedule_warn_discord": "**%{servername}** มีกำหนดการจะรีสตาร์ทใน %{smart_count} นาที |||| **%{servername}** มีกำหนดการจะรีสตาร์ทใน %{smart_count} นาที"
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "ผู้เล่นทั้งหมดถูกเชิญออกจากเซิร์เวอร์แล้ว: %{reason}.",
+        "player": "คุณถูกเชิญออกจากเซิร์ฟเวอร์: %{reason}.",
+        "unknown_reason": "เนื่องจากสาเหตุที่ไม่ทราบแน่ชัด"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) คุณถูกแบนจากเซิร์ฟเวอร์นี้เพราะ \"%{reason}\" การแบนของคุณจะหมดอายุใน: %{expiration}.",
         "kick_permanent": "(%{author}) คุณถูกแบนจากเซิร์ฟเวอร์นี้อย่างถาวรเพราะ \"%{reason}\"",
         "reject": {
-            "title_permanent": "You have been permanently banned from this server.",
-            "title_temporary": "You have been temporarily banned from this server.",
-            "label_expiration": "Your ban will expire in",
-            "label_date": "Ban Date",
-            "label_author": "Banned by",
-            "label_reason": "Ban Reason",
-            "label_id": "Ban ID",
-            "note_multiple_bans": "Note: you have more than one active ban on your identifiers.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "title_permanent": "คุณถูกแบนถาวรจากเซิร์ฟเวอร์นี้",
+            "title_temporary": "คุณถูกแบนชั่วคราวจากเซิร์ฟเวอร์นี้",
+            "label_expiration": "การแบนของคุณจะหมดอายุในเวลา",
+            "label_date": "วันที่ทำการแบน",
+            "label_author": "ผู้ที่ทำการแบน",
+            "label_reason": "สาเหตุการแบน",
+            "label_id": "รหัสการแบน",
+            "note_multiple_bans": "หมายเหตุ: คุณมีการแบนที่ยังคงใช้งานอยู่มากกว่าหนึ่งรายการในตัวระบุของคุณ",
+            "note_diff_license": "หมายเหตุ: การแบนข้างต้นถูกนำไปใช้กับ <code>ใบอนุญาต</code> อื่น ซึ่งหมายความว่าบาง รหัสผู้ใช้/เลขเครื่อง ของคุณตรงกับที่เกี่ยวข้องกับการแบนดังกล่าว"
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "This server is in <strong>Admin-only</strong> mode.",
-            "insufficient_ids": "You do not have <code>discord</code> or <code>fivem</code> identifiers, and at least one of them is required to validate if you are a txAdmin administrator.",
-            "deny_message": "Your identifiers are not assigned to any txAdmin administrator."
+            "mode_title": "เซิร์ฟเวอร์นี้อยู่ในโหมด <strong>สำหรับผู้ดูแลระบบเท่านั้น</strong>",
+            "insufficient_ids": "คุณไม่มีตัวระบุ <code>discord</code> หรือ <code>fivem</code> และต้องมีอย่างน้อยหนึ่งตัวเพื่อยืนยันว่าคุณเป็นผู้ดูแลระบบ txAdmin",
+            "deny_message": "ตัวระบุของคุณไม่ได้ถูกกำหนดให้กับผู้ดูแลระบบ txAdmin ใด ๆ"
         },
         "guild_member": {
-            "mode_title": "This server is in <strong>Discord server Member Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord server. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_title": "You are required to join our Discord server to connect.",
-            "deny_message": "Please join the guild %{guildname} then try again."
+            "mode_title": "เซิร์ฟเวอร์นี้อยู่ในโหมด <strong>รายการสมาชิกที่อนุญาตเฉพาะใน Discord</strong>",
+            "insufficient_ids": "คุณไม่มีตัวระบุ <code>discord</code> ซึ่งจำเป็นสำหรับการยืนยันว่าคุณได้เข้าร่วมเซิร์ฟเวอร์ Discord ของเราแล้ว โปรดเปิดแอป Discord บนเดสก์ท็อปและลองอีกครั้ง (แอปเวอร์ชันเว็บจะไม่สามารถใช้งานได้)",
+            "deny_title": "คุณจำเป็นต้องเข้าร่วมเซิร์ฟเวอร์ Discord ของเราเพื่อเชื่อมต่อ",
+            "deny_message": "โปรดเข้าร่วมเซิร์ฟเวอร์ Discord %{guildname} แล้วลองอีกครั้ง"
         },
         "guild_roles": {
-            "mode_title": "This server is in <strong>Discord Role Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>discord</code> identifier, which is required to validate if you have joined our Discord server. Please open the Discord Desktop app and try again (the Web app won't work).",
-            "deny_notmember_title": "You are required to join our Discord server to connect.",
-            "deny_notmember_message": "Please join %{guildname}, get one of the required roles, then try again.",
-            "deny_noroles_title": "You do not have a whitelisted role required to join.",
-            "deny_noroles_message": "To join this server you are required to have at least one of the whitelisted roles on the guild %{guildname}."
+            "mode_title": "เซิร์ฟเวอร์นี้อยู่ในโหมด <strong>รายการอนุญาตตามบทบาท Discord</strong>",
+            "insufficient_ids": "คุณไม่มีตัวระบุ <code>discord</code> ซึ่งจำเป็นสำหรับการยืนยันว่าคุณได้เข้าร่วมเซิร์ฟเวอร์ Discord ของเราแล้ว โปรดเปิดแอป Discord บนเดสก์ท็อปและลองอีกครั้ง (แอปเวอร์ชันเว็บจะไม่สามารถใช้งานได้)",
+            "deny_notmember_title": "คุณจำเป็นต้องเข้าร่วมเซิร์ฟเวอร์ Discord ของเราเพื่อเชื่อมต่อ",
+            "deny_notmember_message": "โปรดเข้าร่วมเซิร์ฟเวอร์ Discord %{guildname}, รับหนึ่งในบทบาทที่จำเป็นแล้วลองอีกครั้ง",
+            "deny_noroles_title": "คุณไม่มีบทบาทที่อยู่ในรายการอนุญาต ซึ่งจำเป็นสำหรับการเข้าร่วมเซิร์ฟเวอร์",
+            "deny_noroles_message": "ในการเข้าร่วมเซิร์ฟเวอร์นี้ คุณจำเป็นต้องมีบทบาทที่อยู่ในรายการอนุญาตอย่างน้อยหนึ่งบทบาทใน Discord %{guildname}"
         },
         "approved_license": {
-            "mode_title": "This server is in <strong>License Whitelist</strong> mode.",
-            "insufficient_ids": "You do not have the <code>license</code> identifier, which means the server has <code>sv_lan</code> enabled. If you are the server owner, you can disable it in the <code>server.cfg</code> file.",
-            "deny_title": "You are not whitelisted to join this server.",
-            "request_id_label": "Request ID"
+            "mode_title": "เซิร์ฟเวอร์นี้อยู่ในโหมด <strong>รายการอนุญาตใบอนุญาต</strong>",
+            "insufficient_ids": "คุณไม่มีตัวระบุ <code>ใบอนุญาต</code> ซึ่งหมายความว่าเซิร์ฟเวอร์เปิดใช้งาน <code>sv_lan</code> หากคุณเป็นเจ้าของเซิร์ฟเวอร์ คุณสามารถปิดมันได้ในไฟล์ <code>server.cfg</code>",
+            "deny_title": "คุณไม่ได้อยู่ในรายการอนุญาตให้เข้าร่วมเซิร์ฟเวอร์นี้",
+            "request_id_label": "รหัสคำขอ"
         }
     },
     "server_actions": {
@@ -66,8 +66,8 @@
         "spawning_discord": "**%{servername}** กำลังเริ่มต้นระบบ"
     },
     "nui_warning": {
-        "title": "WARNING",
-        "warned_by": "Warned by:",
+        "title": "คำเตือน",
+        "warned_by": "ผู้ที่ออกคำเตือน:",
         "stale_message": "คำเตือนนี้ถูกออกก่อนที่คุณจะเชื่อมต่อกับเซิร์ฟเวอร์",
         "dismiss_key": "SPACE",
         "instruction": "กด %{key} ค้างไว้เป็นเวลา %{smart_count} วินาทีเพื่อปิดข้อความนี้ |||| กด %{key} ค้างไว้เป็นเวลา %{smart_count} วินาทีเพื่อปิดข้อความนี้"
@@ -76,14 +76,14 @@
         "misc": {
             "help_message": "เปิดใช้งานเมนู txAdmin แล้ว พิมพ์ /tx เพื่อเปิดมันขึ้น\nคุณยังสามารถกำหนดค่าปุ่ม keybind ได้ที่ [Game Settings > Key Bindings > FiveM > Menu: Open Main Page]",
             "menu_not_admin": "ตัวตนของคุณไม่ตรงกับที่ผู้ดูแลระบบลงทะเบียนใน txAdmin\nหากคุณลงทะเบียนใน txAdmin แล้ว ให้ไปที่ Admin Manager และตรวจสอบให้แน่ใจว่าได้บันทึกตัวระบุของคุณแล้ว",
-            "menu_auth_failed": "txAdmin Menu authentication failed with reason: %{reason}",
+            "menu_auth_failed": "การยืนยันตัวตนในเมนู txAdmin ล้มเหลวด้วยเหตุผล: %{reason}",
             "no_perms": "คุณไม่ได้รับสิทธิ์นี้",
             "unknown_error": "เกิดข้อผิดพลาดที่ไม่รู้จัก",
             "not_enabled": "ไม่ได้เปิดใช้งานเมนู txAdmin คุณสามารถเปิดใช้งานได้ในหน้า การตั้งค่าของ txAdmin",
             "announcement_title": "ประกาศจากเซิร์ฟเวอร์โดย %{author}:",
             "dialog_empty_input": "คุณไม่สามารถป้อนข้อมูลว่างได้",
-            "directmessage_title": "DM from admin %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "directmessage_title": "ข้อความส่วนตัวจากผู้ดูแลระบบ %{author}:",
+            "onesync_error": "การกระทำนี้ต้องเปิดใช้งาน OneSync"
         },
         "frozen": {
             "froze_player": "คุณได้ถูกระงับผู้เล่นแล้ว",
@@ -114,9 +114,9 @@
                     "success": "เปิดใช้โหมดพระเจ้า"
                 },
                 "superjump": {
-                    "title": "Super Jump",
-                    "label": "Toggle super jump mode, the player will also run faster",
-                    "success": "Super Jump enabled"
+                    "title": "โหมดกระโดดสูง",
+                    "label": "สลับโหมดกระโดดสูง ผู้เล่นจะวิ่งเร็วขึ้นด้วย",
+                    "success": "เปิดใช้งานโหมดกระโดดสูง"
                 },
                 "normal": {
                     "title": "โหมดธรรมดา",
@@ -153,7 +153,7 @@
                 "title": "ยานพาหนะ",
                 "not_in_veh_error": "คุณไม่ได้อยู่ในยานพาหนะในขณะนี้",
                 "spawn": {
-                    "title": "Spawn",
+                    "title": "สร้าง",
                     "label": "สร้างยานพาหนะตามชื่อโมเดล",
                     "dialog_title": "สร้างยานพาหนะ",
                     "dialog_desc": "ป้อนชื่อโมเดลของยานพาหนะที่คุณต้องการสร้างขึ้นมา",
@@ -172,12 +172,12 @@
                     "success": "ลบยานพาหนะแล้ว"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boost the car to achieve max fun (and maybe speed)",
-                    "success": "Vehicle boosted!",
-                    "already_boosted": "This vehicle was already boosted.",
-                    "unsupported_class": "This vehicle class is not supported.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "title": "เร่งความเร็ว",
+                    "label": "เร่งความเร็วรถเพื่อสนุกสูงสุด (และอาจเพิ่มความเร็วด้วย)",
+                    "success": "รถถูกเร่งความเร็วแล้ว!”",
+                    "already_boosted": "รถคันนี้ถูกเร่งความเร็วไปแล้ว",
+                    "unsupported_class": "ประเภทของรถคันนี้ ไม่รองรับการเร่งความเร็ว",
+                    "redm_not_mounted": "คุณสามารถเร่งความเร็วได้เฉพาะเมื่ออยู่บนหลังม้าเท่านั้น"
                 }
             },
             "heal": {
@@ -225,11 +225,11 @@
                 "zero_players": "ไม่พบผู้เล่น"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "คัดกรองตาม",
+                "no_filter": "ไม่มีการคัดกรอง",
+                "is_admin": "ได้เป็นผู้ดูแลระบบ",
+                "is_injured": "ได้รับบาดเจ็บ / ตาย",
+                "in_vehicle": "อยู่ในยานพาหนะ"
             },
             "sort": {
                 "label": "กรอกผู้เล่นจาก",
@@ -268,7 +268,7 @@
                         "set_admin": "มอบผู้ดูแลระบบ"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
+                        "title": "ข้อความส่วนตัว",
                         "description": "เหตุผลที่จะส่งข้อความไปหาผู้เล่นรายนี้โดยตรง",
                         "placeholder": "เหตุผล...",
                         "success": "ส่ง DM ของคุณแล้ว"
@@ -302,7 +302,7 @@
                         "spectate_failed": "ล้มเหลวในการไปหาเป้าหมาย ออกจากโหมดรับชม",
                         "spectate_yourself": "คุณไม่สามารถรับชมตัวเองได้",
                         "freeze_yourself": "คุณไม่สามารถระงับตัวเองได้",
-                        "spectate_cycle_failed": "There are no players to cycle to."
+                        "spectate_cycle_failed": "ไม่มีผู้เล่นที่ให้สลับไป"
                     }
                 },
                 "troll": {
@@ -319,28 +319,28 @@
                 "session_time": "เวลาเซสชัน",
                 "play_time": "เวลาเล่น",
                 "joined": "เข้าร่วม",
-                "whitelisted_label": "Whitelisted",
-                "whitelisted_notyet": "not yet",
-                "btn_wl_add": "ADD WL",
-                "btn_wl_remove": "REMOVE WL",
-                "btn_wl_success": "Whitelist status changed.",
-                "log_label": "Log",
-                "log_empty": "No bans/warns found.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
-                "log_btn": "DETAILS",
-                "notes_changed": "Player note changed.",
-                "notes_placeholder": "Notes about this player..."
+                "whitelisted_label": "อยู่ในรายการอนุญาต",
+                "whitelisted_notyet": "ยังไม่เรียบร้อย",
+                "btn_wl_add": "เพิ่มเข้า",
+                "btn_wl_remove": "ลบออก",
+                "btn_wl_success": "สถานะรายการอนุญาตถูกเปลี่ยนแปลงแล้ว",
+                "log_label": "บันทึกการทำงานระบบ",
+                "log_empty": "ไม่พบการแบนหรือการเตือนใดๆ",
+                "log_ban_count": "%{smart_count} แบน |||| %{smart_count} แบน",
+                "log_warn_count": "%{smart_count} เตือน |||| %{smart_count} เตือน",
+                "log_btn": "รายละเอียด",
+                "notes_changed": "หมายเหตุของผู้เล่นได้รับการแก้ไขแล้ว",
+                "notes_placeholder": "หมายเหตุเกี่ยวกับผู้เล่นนี้..."
             },
             "history": {
                 "title": "ประวัติที่เกี่ยวข้อง",
-                "btn_revoke": "REVOKE",
-                "revoked_success": "Action revoked!",
-                "banned_by": "BANNED by %{author}",
-                "warned_by": "WARNED by %{author}",
-                "revoked_by": "Revoked by %{author}.",
-                "expired_at": "Expired at %{date}.",
-                "expires_at": "Expires at %{date}."
+                "btn_revoke": "เพิกถอน",
+                "revoked_success": "การดำเนินการได้รับการเพิกถอนแล้ว",
+                "banned_by": "แบนโดย %{author}",
+                "warned_by": "เตือนโดย %{author}",
+                "revoked_by": "เพิกถอนโดย %{author}.",
+                "expired_at": "หมดอายุ %{date}",
+                "expires_at": "หมดอายุ %{date}."
             },
             "ban": {
                 "title": "แบนผู้เล่น",
@@ -354,13 +354,13 @@
                 "custom": "กำหนดเอง",
                 "helper_text": "กรุณาเลือกระยะเวลา",
                 "submit": "ยอมระบการแบน",
-                "reason_required": "The Reason field is required.",
-                "success": "Player banned!"
+                "reason_required": "กรุณาระบุเหตุผลในช่องที่กำหนด",
+                "success": "ทำการแบนผู้เล่นนี้เรียบร้อยแล้ว"
             },
             "ids": {
-                "current_ids": "Current Identifiers",
-                "previous_ids": "Previously Used Identifiers",
-                "all_hwids": "All Hardware IDs"
+                "current_ids": "ไอดี",
+                "previous_ids": "ไอดีประจำตัวเคยถูกใช้งานไปก่อนหน้านี้",
+                "all_hwids": "เลขเครื่องทั้งหมด"
             }
         }
     }
