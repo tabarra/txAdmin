@@ -1,6 +1,7 @@
 {
     "name": "txadmin-shared",
     "version": "1.0.0",
+    "type": "module",
     "description": "The shared package contains stuff used in more than one package, no build step required.",
     "main": "index.js",
     "scripts": {
