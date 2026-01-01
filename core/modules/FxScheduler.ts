@@ -53,6 +53,7 @@ export default class FxScheduler {
     private nextTempSchedule: RestartInfo | false = false;
     private calculatedNextRestartMinuteFloorTs: number | false = false;
     private nextSkip: number | false = false;
+    private lastMinute = Math.floor(Date.now() / 60000);
 
     constructor() {
         //Initial check to update status
@@ -62,9 +63,13 @@ export default class FxScheduler {
 
         //Cron Function 
         setInterval(() => {
-            this.checkSchedule();
-            txCore.webServer.webSocket.pushRefresh('status');
-        }, 60 * 1000);
+            const currentMinute = Math.floor(Date.now() / 60000);
+            if (currentMinute > this.lastMinute) {
+                this.lastMinute = currentMinute;
+                this.checkSchedule();
+                txCore.webServer.webSocket.pushRefresh('status');
+            }
+        }, 1000);
     }
 
 
