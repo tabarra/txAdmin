@@ -65,7 +65,6 @@ export default class FxScheduler {
         setInterval(() => {
             const currentMinute = Math.floor(Date.now() / 60000);
             if (currentMinute > this.lastMinute) {
-                this.lastMinute = currentMinute;
                 this.checkSchedule();
                 txCore.webServer.webSocket.pushRefresh('status');
             }
@@ -237,6 +236,7 @@ export default class FxScheduler {
      * Checks the schedule to see if it's time to announce or restart the server
      */
     async checkSchedule(calculateOnly = false) {
+        this.lastMinute = Math.floor(Date.now() / 60000);
         //Check settings and temp scheduled restart
         let nextRestart: RestartInfo;
         if (this.nextTempSchedule) {
