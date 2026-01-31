@@ -302,6 +302,7 @@
                         "spectate_failed": "Nu a reușit comunicarea cu jucătorul! Ieșire din spectatori.",
                         "spectate_yourself": "Nu poți fi spectator tu însuți.",
                         "freeze_yourself": "Nu te poți îngheța.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },

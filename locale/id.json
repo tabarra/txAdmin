@@ -302,6 +302,7 @@
                         "spectate_failed": "Pemain tidak ditemukan.",
                         "spectate_yourself": "Anda tidak dapat memantau diri sendiri.",
                         "freeze_yourself": "Anda tidak dapat membekukan diri sendiri.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Tidak ada pemain lain yang dapat dipantau."
                     }
                 },

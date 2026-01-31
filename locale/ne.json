@@ -302,6 +302,7 @@
                         "spectate_failed": "लक्ष्य समाधान गर्न असफल! निगरानी बाहिर निस्कँदै।",
                         "spectate_yourself": "तपाईं आफैंलाई निगरानी गर्न सक्नुहुन्न।",
                         "freeze_yourself": "तपाईं आफैंलाई जमाउन सक्नुहुन्न।",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "साइकल गर्न कुनै खेलाडीहरू छैनन्।"
                     }
                 },

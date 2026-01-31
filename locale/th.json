@@ -302,6 +302,7 @@
                         "spectate_failed": "ล้มเหลวในการไปหาเป้าหมาย ออกจากโหมดรับชม",
                         "spectate_yourself": "คุณไม่สามารถรับชมตัวเองได้",
                         "freeze_yourself": "คุณไม่สามารถระงับตัวเองได้",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },

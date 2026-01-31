@@ -302,6 +302,7 @@
                         "spectate_failed": "Misslyckades att hitta spelaren, avslutar åskådarläget.",
                         "spectate_yourself": "Du kan inte åskåda dig själv.",
                         "freeze_yourself": "Du kan inte frysa dig själv.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Där finns inga spelare att gå mellan."
                     }
                 },

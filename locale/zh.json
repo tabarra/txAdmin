@@ -302,6 +302,7 @@
                         "spectate_failed": "无法解析目标！正在退出观看，",
                         "spectate_yourself": "您不能观看您自己",
                         "freeze_yourself": "您不能冻结您自己",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "没有可循环的玩家"
                     }
                 },

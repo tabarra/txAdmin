@@ -302,6 +302,7 @@
                         "spectate_failed": "Impossibile risolvere il bersaglio! Uscendo dallo Spectate.",
                         "spectate_yourself": "Non puoi spectarti da solo.",
                         "freeze_yourself": "Non puoi freezarti da solo.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },

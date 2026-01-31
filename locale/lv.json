@@ -302,6 +302,7 @@
                         "spectate_failed": "Neizdevās atrast spēlētāju! Beidz vērošanu.",
                         "spectate_yourself": "Tu nevari vērot sevi.",
                         "freeze_yourself": "Tu nevari iesaldēt sevi.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Nav neviena cita spēlētāja, ko vērot."
                     }
                 },

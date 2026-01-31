@@ -58,6 +58,13 @@ end)
 
 
 RegisterSecureNuiCallback('tpToPlayer', function(data, cb)
+    local targetServerId = tonumber(data.id)
+
+    -- check for self-teleport
+    if targetServerId == GetPlayerServerId(PlayerId()) then
+        return sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.notifications.teleport_yourself', true)
+    end
+
     TriggerServerEvent('txsv:req:tpToPlayer', tonumber(data.id))
     cb({})
 end)

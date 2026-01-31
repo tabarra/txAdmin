@@ -302,6 +302,7 @@
                         "spectate_failed": "Nepodařilo se udržet signál pozorování! Vypínám pozorování.",
                         "spectate_yourself": "Nemůžeš pozorovat sebe.",
                         "freeze_yourself": "Nemůžeš zmrazit sebe.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Žádní dostupní hráči, na které by se dalo přepnout."
                     }
                 },

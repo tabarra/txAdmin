@@ -302,6 +302,7 @@
                         "spectate_failed": "Virhe kohteen tavoittamisessa!",
                         "spectate_yourself": "Et voi katsoa itseäsi.",
                         "freeze_yourself": "Et voi jäädyttää itseäsi.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },

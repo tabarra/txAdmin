@@ -302,6 +302,7 @@
                         "spectate_failed": "Failed to resolve the target! Exiting spectate.",
                         "spectate_yourself": "You cannot spectate yourself.",
                         "freeze_yourself": "You cannot freeze yourself.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },

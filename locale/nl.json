@@ -302,6 +302,7 @@
                         "spectate_failed": "Kon de speler niet vinden! Spectate aan het afsluiten.",
                         "spectate_yourself": "Je kan jezelf niet spectaten.",
                         "freeze_yourself": "Je kan jezelf niet freezen.",
+                        "teleport_yourself": "Je kan niet naar jezelf teleporteren.",
                         "spectate_cycle_failed": "Er zijn geen spelers om naar door te cyclen."
                     }
                 },

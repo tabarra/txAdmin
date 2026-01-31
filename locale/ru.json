@@ -302,6 +302,7 @@
                         "spectate_failed": "Не удалось найти цель! Выходим из наблюдения.",
                         "spectate_yourself": "Вы не можете наблюдать за самим собой.",
                         "freeze_yourself": "Вы не можете заморозить себя.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Нет игроков, к которым можно переключиться."
                     }
                 },

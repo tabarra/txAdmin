@@ -302,6 +302,7 @@
                         "spectate_failed": "ターゲットの解決に失敗しました!観戦を終了します",
                         "spectate_yourself": "自分自身は観戦できない",
                         "freeze_yourself": "自分自身を静止することはできない",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "切り替えられる他のプレイヤーがいない"
                     }
                 },

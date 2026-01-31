@@ -302,6 +302,7 @@
                         "spectate_failed": "Hedef çözülemedi! İzlemeden çıkıldı.",
                         "spectate_yourself": "Kendini izleyemezsiniz.",
                         "freeze_yourself": "Kendini donduramazsın.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },

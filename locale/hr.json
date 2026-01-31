@@ -302,6 +302,7 @@
                         "spectate_failed": "Neuspješno dohvaćanje igrača! Izlaženje iz gledanja.",
                         "spectate_yourself": "Ne možeš sam sebe gledat.",
                         "freeze_yourself": "Ne možeš sam sebe zalediti.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Nema igrača koje bi gledao."
                     }
                 },

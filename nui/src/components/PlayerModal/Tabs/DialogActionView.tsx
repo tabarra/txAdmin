@@ -225,11 +225,15 @@ const DialogActionView: React.FC = () => {
     }
 
     closeMenu();
-    fetchNui("tpToPlayer", { id: assocPlayer.id });
-    enqueueSnackbar(
-      t("nui_menu.player_modal.actions.interaction.notifications.tp_player"),
-      { variant: "success" }
-    );
+    fetchNui("tpToPlayer", { id: assocPlayer.id }).then(({ success }) => {
+
+      if (success) {
+        return enqueueSnackbar(t("nui_menu.player_modal.actions.interaction.notifications.tp_player"), {
+          variant: "success"
+        });
+      }
+    });
+
   };
 
   const handleBring = () => {
@@ -242,7 +246,7 @@ const DialogActionView: React.FC = () => {
         variant: "error",
       });
     }
-    
+
     closeMenu();
     fetchNui("summonPlayer", { id: assocPlayer.id });
     enqueueSnackbar(

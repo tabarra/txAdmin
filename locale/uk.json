@@ -302,6 +302,7 @@
                         "spectate_failed": "Не вдалося визначити ціль! Завершення спостереження.",
                         "spectate_yourself": "Ви не можете спостерігати за собою.",
                         "freeze_yourself": "Ви не можете заморозити себе.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Немає гравців для циклу спостереження."
                     }
                 },

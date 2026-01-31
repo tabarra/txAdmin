@@ -302,6 +302,7 @@
                         "spectate_failed": "Не успешно наблюдаване! Излизане от наблюдение.",
                         "spectate_yourself": "Не можеш да наблюдаваш себе си.",
                         "freeze_yourself": "Не можеш да замръзиш себе си.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Няма играчи, към които да се движите."
                     }
                 },

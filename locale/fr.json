@@ -302,6 +302,7 @@
                         "spectate_failed": "Impossible de trouver le joueur ! Désactivation du mode surveillance.",
                         "spectate_yourself": "Vous ne pouvez pas vous surveiller vous-même.",
                         "freeze_yourself": "Vous ne pouvez pas vous geler vous-même.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Il n'y a pas de joueurs vers lesquels faire du vélo."
                     }
                 },

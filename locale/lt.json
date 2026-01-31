@@ -302,6 +302,7 @@
                         "spectate_failed": "Žaidėjas nerastas! Stebėjimas išjungiamas.",
                         "spectate_yourself": "Negalite stebėti savęs.",
                         "freeze_yourself": "Negalite užšaldyti savęs.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Nėra kitų žaidėjų"
                     }
                 },

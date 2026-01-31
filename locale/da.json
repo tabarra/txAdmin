@@ -302,6 +302,7 @@
                         "spectate_failed": "Det lykkedes ikke at overvåge målet! Stopper overvågning.",
                         "spectate_yourself": "Du kan ikke overvåge dig selv.",
                         "freeze_yourself": "Du kan ikke fryse dig selv.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Der er ikke flere spillere på rotationen."
                     }
                 },

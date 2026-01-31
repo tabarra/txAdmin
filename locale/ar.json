@@ -302,6 +302,7 @@
                         "spectate_failed": ".فشل في حل الهدف! خروج الطيف",
                         "spectate_yourself": ".لا يمكنك مشاهدة نفسك",
                         "freeze_yourself": ".لا يمكنك تجميد نفسك",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": ".لا يوجد لاعبين"
                     }
                 },

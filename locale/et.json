@@ -302,6 +302,7 @@
                         "spectate_failed": "Eesmärki ei õnnestunud lahendada! Lahkun Specatatest.",
                         "spectate_yourself": "Sa ei saa ennast specateda.",
                         "freeze_yourself": "Te ei saa ennast külmutada.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },

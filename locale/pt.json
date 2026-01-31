@@ -302,6 +302,7 @@
                         "spectate_failed": "Erro ao resolver o alvo! Cancelando modo observar.",
                         "spectate_yourself": "Você não pode observar você mesmo.",
                         "freeze_yourself": "Você não pode congelar você mesmo.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Não há mais players para observar."
                     }
                 },

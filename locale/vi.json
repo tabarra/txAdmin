@@ -302,6 +302,7 @@
                         "spectate_failed": "Có lỗi khi thực hiện theo dõi, đang thoát chế độ theo dõi.",
                         "spectate_yourself": "Bạn không thể tự theo dõi chính mình.",
                         "freeze_yourself": "Bạn không thể tự đóng băng bản thân!",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Không có người chơi để đạp xe đến."
                     }
                 },

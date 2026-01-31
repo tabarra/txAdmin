@@ -302,6 +302,7 @@
                         "spectate_failed": "¡No se pudo encontrar al objetivo! Saliendo de observar.",
                         "spectate_yourself": "No te puedes observar a ti mismo.",
                         "freeze_yourself": "No te puedes congelar a ti mismo.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "There are no players to cycle to."
                     }
                 },

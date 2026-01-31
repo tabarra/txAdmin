@@ -302,6 +302,7 @@
                         "spectate_failed": "Igralca več ni bilo mogoče najti! Izstopam iz Spectate načina.",
                         "spectate_yourself": "Ne moreš spectate-at sam sebe.",
                         "freeze_yourself": "Sam sebe ne moreš zamrzniti.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Ni igralca, na katerega bi lahko preklopili."
                     }
                 },

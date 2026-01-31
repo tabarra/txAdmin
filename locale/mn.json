@@ -302,6 +302,7 @@
                         "spectate_failed": "Зорилгоо шийдэж чадсангүй! Үзэсгэлэнгээс гарах.",
                         "spectate_yourself": "Та өөрийгөө харж чадахгүй.",
                         "freeze_yourself": "Та өөрийгөө хөлдөөж чадахгүй.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Өөр тоглогч байхгүй."
                     }
                 },

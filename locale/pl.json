@@ -302,6 +302,7 @@
                         "spectate_failed": "Nie udało się rozwiązać celu! Wyjście z Obserwacji.",
                         "spectate_yourself": "Nie możesz obserwować samego siebie.",
                         "freeze_yourself": "Nie możesz zamrozić samego siebie.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Nie ma już więcej graczy do obserwowania."
                     }
                 },

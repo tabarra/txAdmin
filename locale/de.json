@@ -302,6 +302,7 @@
                         "spectate_failed": "Der Spieler konnte nicht beobachtet werden! Beobachtung abgebrochen.",
                         "spectate_yourself": "Du kannst dich nicht selbst beobachten",
                         "freeze_yourself": "Du kannst dich nicht selbst einfrieren",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Es gibt keine Spieler auf die gewechselt werden kann."
                     }
                 },

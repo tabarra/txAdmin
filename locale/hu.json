@@ -302,6 +302,7 @@
                         "spectate_failed": "Hiba a játékos megfigyelésénél! Kilépés a megfigyelésből.",
                         "spectate_yourself": "Magadat nem figyelheted meg.",
                         "freeze_yourself": "Magadat nem fagyaszthatod le.",
+                        "teleport_yourself": "You cannot teleport to yourself.",
                         "spectate_cycle_failed": "Nincs megfigyelhető játékos."
                     }
                 },
