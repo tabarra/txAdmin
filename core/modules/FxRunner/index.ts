@@ -203,7 +203,8 @@ export default class FxRunner {
             fxSpawnVars.args,
             {
                 cwd: fxSpawnVars.dataPath,
-                stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
+                // Check whether to allow user input in the terminal
+                stdio: GetConvar("txAdmin-interactive", "false") === "true" ? "inherit" : ['pipe', 'pipe', 'pipe', 'pipe'],
             },
         );
         if (!isValidChildProcess(childProc)) {
