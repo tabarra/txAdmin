@@ -91,7 +91,7 @@ export default async function PlayerModal(ctx: AuthedCtx) {
     // console.dir(playerData);
     return sendTypedResp({
         serverTime: now(),
-        banTemplates: txConfig.banlist.templates, //TODO: move this to websocket push
+        banTemplates: txConfig.banlist.templates, //NOTE: kept for NUI compatibility, panel uses websocket push
         player: playerData
     });
 };

@@ -6,17 +6,15 @@ import { useRef, useState } from "react";
 import { useBackendApi } from "@/hooks/fetch";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
 import ModalCentralMessage from "@/components/ModalCentralMessage";
-import type { BanTemplatesDataType } from "@shared/otherTypes";
 import BanForm, { BanFormType } from "@/components/BanForm";
 import { txToast } from "@/components/TxToaster";
 
 
 type PlayerBanTabProps = {
-    banTemplates: BanTemplatesDataType[];
     playerRef: PlayerModalRefType;
 };
 
-export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabProps) {
+export default function PlayerBanTab({ playerRef }: PlayerBanTabProps) {
     const banFormRef = useRef<BanFormType>(null);
     const [isSaving, setIsSaving] = useState(false);
     const { hasPerm } = useAdminPerms();
@@ -65,7 +63,6 @@ export default function PlayerBanTab({ playerRef, banTemplates }: PlayerBanTabPr
         <div className="grid gap-4 p-1">
             <BanForm
                 ref={banFormRef}
-                banTemplates={banTemplates}
                 disabled={isSaving}
                 onNavigateAway={() => { closeModal(); }}
             />
