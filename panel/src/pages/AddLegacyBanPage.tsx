@@ -1,7 +1,7 @@
 import InlineCode from "@/components/InlineCode";
 import { useAdminPerms } from "@/hooks/auth";
 import { useRef, useState } from "react";
-import { ApiAddLegacyBanReqSchema, GetBanTemplatesSuccessResp, SaveBanTemplatesReq } from "@shared/otherTypes";
+import { ApiAddLegacyBanReqSchema } from "@shared/otherTypes";
 import { useBackendApi } from "@/hooks/fetch";
 import { Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import BanForm, { BanFormType } from "@/components/BanForm";
 import { txToast } from "@/components/TxToaster";
 import { GenericApiOkResp } from "@shared/genericApiTypes";
-import useSWR from "swr";
 
 
 export default function AddLegacyBanPage() {
@@ -18,12 +17,6 @@ export default function AddLegacyBanPage() {
     const banFormRef = useRef<BanFormType>(null);
     const [isSaving, setIsSaving] = useState(false);
     const { hasPerm } = useAdminPerms();
-
-    const getBanTemplatesApi = useBackendApi<GetBanTemplatesSuccessResp>({
-        method: 'GET',
-        path: `/settings/banTemplates`,
-        throwGenericErrors: true,
-    });
 
     const legacyBanApi = useBackendApi<GenericApiOkResp, ApiAddLegacyBanReqSchema>({
         method: 'POST',
@@ -77,12 +70,6 @@ export default function AddLegacyBanPage() {
         });
     };
 
-    const swrBanTemplates = useSWR('/settings/banTemplates', async () => {
-        const data = await getBanTemplatesApi({});
-        if (!data) throw new Error('No data returned');
-        return data;
-    });
-
     const canBan = hasPerm('players.ban');
     return (
         <div className="space-y-4 w-full max-w-screen-lg mx-auto px-2 md:px-0">
@@ -112,7 +99,6 @@ export default function AddLegacyBanPage() {
                 </div>
                 <BanForm
                     ref={banFormRef}
-                    banTemplates={swrBanTemplates.data}
                     disabled={isSaving || !canBan}
                 />
             </div>

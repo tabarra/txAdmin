@@ -7,7 +7,7 @@ import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "reac
 import { DropDownSelect, DropDownSelectContent, DropDownSelectItem, DropDownSelectTrigger } from "@/components/dropDownSelect";
 import { banDurationToShortString, banDurationToString, cn } from "@/lib/utils";
 import { Link, useLocation } from "wouter";
-import type { BanTemplatesDataType } from "@shared/otherTypes";
+import { useBanTemplates } from "@/hooks/banTemplates";
 
 // Consts
 const reasonTruncateLength = 150;
@@ -25,7 +25,6 @@ export type BanFormType = HTMLDivElement & {
     getData: () => BanFormRespType;
 }
 type BanFormProps = {
-    banTemplates?: BanTemplatesDataType[]; //undefined = loading
     disabled?: boolean;
     onNavigateAway?: () => void;
 };
@@ -33,7 +32,8 @@ type BanFormProps = {
 /**
  * A form to set ban reason and duration.
  */
-export default forwardRef(function BanForm({ banTemplates, disabled, onNavigateAway }: BanFormProps, ref) {
+export default forwardRef(function BanForm({ disabled, onNavigateAway }: BanFormProps, ref) {
+    const banTemplates = useBanTemplates();
     const reasonRef = useRef<HTMLInputElement>(null);
     const customMultiplierRef = useRef<HTMLInputElement>(null);
     const setLocation = useLocation()[1];

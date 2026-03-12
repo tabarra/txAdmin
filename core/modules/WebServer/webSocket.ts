@@ -200,6 +200,9 @@ export default class WebSocket {
                 socket.emit(room.eventName, room.initialData());
             }
 
+            //Standalone events (not tied to a room)
+            socket.emit('banTemplatesUpdate', txConfig.banlist.templates);
+
             //General events
             socket.on('disconnect', (reason) => {
                 // console.verbose.debug('SocketIO', `Client disconnected with reason: ${reason}`);

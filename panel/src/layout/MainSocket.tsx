@@ -4,6 +4,7 @@ import { useExpireAuthData, useSetAuthData } from '@/hooks/auth';
 import { useSetGlobalStatus } from '@/hooks/status';
 import { useProcessUpdateAvailableEvent, useSetOfflineWarning } from '@/hooks/useWarningBar';
 import { useProcessPlayerlistEvents } from '@/hooks/playerlist';
+import { useSetBanTemplates } from '@/hooks/banTemplates';
 import { LogoutReasonHash } from '@/pages/auth/Login';
 
 
@@ -19,6 +20,7 @@ export default function MainSocket() {
     const setGlobalStatus = useSetGlobalStatus();
     const processPlayerlistEvents = useProcessPlayerlistEvents();
     const processUpdateAvailableEvent = useProcessUpdateAvailableEvent();
+    const setBanTemplates = useSetBanTemplates();
 
     //Runing on mount only
     useEffect(() => {
@@ -67,11 +69,15 @@ export default function MainSocket() {
             console.warn('Got updateAuthData from websocket', authData);
             setAuthData(authData);
         });
+        socket.on('banTemplatesUpdate', function (templates) {
+            setBanTemplates(templates);
+        });
 
         return () => {
             socket.removeAllListeners();
             socket.disconnect();
             setGlobalStatus(null);
+            setBanTemplates(undefined);
         }
     }, []);
 

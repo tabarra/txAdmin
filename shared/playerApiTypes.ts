@@ -41,7 +41,7 @@ export type PlayerModalPlayerData = {
 
 export type PlayerModalSuccess = {
     serverTime: number; //required to calculate if bans have expired on frontend
-    banTemplates: BanTemplatesDataType[]; //TODO: move this to websocket push
+    banTemplates: BanTemplatesDataType[]; //NOTE: kept for NUI compatibility, panel uses websocket push
     player: PlayerModalPlayerData;
 }
 export type PlayerModalResp = PlayerModalSuccess | GenericApiErrorResp;

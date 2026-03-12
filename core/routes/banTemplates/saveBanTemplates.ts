@@ -48,6 +48,9 @@ export default async function SaveBanTemplates(ctx: AuthedCtx) {
         });
     }
 
+    //Pushing update to all connected clients
+    txCore.webServer.webSocket.pushEvent('banTemplatesUpdate', txConfig.banlist.templates);
+
     //Sending output
     return sendTypedResp({ success: true });
 };
