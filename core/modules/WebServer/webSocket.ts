@@ -9,6 +9,7 @@ import serverlogRoom from './wsRooms/serverlog';
 import { AuthedAdminType, checkRequestAuth } from './authLogic';
 import { SocketWithSession } from './ctxTypes';
 import { isIpAddressLocal } from '@lib/host/isIpAddressLocal';
+import { resolveProxyRealIp } from '@lib/host/resolveProxyRealIp';
 import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
@@ -34,7 +35,10 @@ type RoomNames = typeof VALID_ROOMS[number];
 
 //Helpers
 const getIP = (socket: SocketWithSession) => {
-    return socket?.request?.socket?.remoteAddress ?? 'unknown';
+    const socketIp = socket?.request?.socket?.remoteAddress ?? 'unknown';
+    const xff = socket?.request?.headers?.['x-forwarded-for'];
+    const xffStr = Array.isArray(xff) ? xff[0] : xff;
+    return resolveProxyRealIp(socketIp, xffStr) ?? socketIp;
 };
 const terminateSession = (socket: SocketWithSession, reason: string, shouldLog = true) => {
     try {
