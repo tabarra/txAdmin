@@ -3,6 +3,7 @@ import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import fatalError from '@lib/fatalError';
 import consts from '@shared/consts';
+import { proxyIpRangeSchema } from '@lib/host/isIpInRanges';
 
 
 /**
@@ -39,6 +40,7 @@ export const hostEnvVarSchemas = {
         'FXS_PORT cannot be between 40120 and 40150'
     ),
     INTERFACE: z.string().ip({ version: "v4" }),
+    PROXY_IP_RANGE: proxyIpRangeSchema,
 
     //Provider
     PROVIDER_NAME: z.string()

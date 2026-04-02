@@ -64,6 +64,9 @@ export const getNativeVars = (ignoreDeprecatedConfigs: boolean) => {
         if (txAdminInterface) replacedConvarWarning('txAdminInterface', 'TXHOST_INTERFACE');
     }
 
+    //Proxy IP range (new convar, no deprecation)
+    const txAdminProxyIpRange = getConvarString('txAdminProxyIpRange');
+
     if (anyWarnSent) {
         console.warn(`WARNING: For more information: https://aka.cfx.re/txadmin-env-config`);
     }
@@ -81,5 +84,6 @@ export const getNativeVars = (ignoreDeprecatedConfigs: boolean) => {
         txDataPath,
         txAdminPort,
         txAdminInterface,
+        txAdminProxyIpRange,
     };
 }
