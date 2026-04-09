@@ -90,6 +90,7 @@ function StartFreecamThread()
   -- Camera/Pos updating thread
   Citizen.CreateThread(function()
     local ped = PlayerPedId()
+    local playerId = PlayerId()
     local initialPos = GetEntityCoords(ped)
     SetFreecamPosition(initialPos[1], initialPos[2], initialPos[3])
     local veh = GetVehiclePedIsIn(ped, false)
@@ -113,6 +114,9 @@ function StartFreecamThread()
     local frameCounter = 0
     local loopPos, loopRotZ
     while IsFreecamActive() do
+      -- Disable weapon firing while in noclip (fixes #1061)
+      DisablePlayerFiring(playerId, true)
+
       loopPos, loopRotZ = UpdateCamera()
       frameCounter = frameCounter + 1
       if frameCounter > 100 then
