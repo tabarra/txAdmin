@@ -28,12 +28,31 @@ RegisterNetEvent('txcl:freezePlayerOk', function(isFrozen)
   sendSnackbarMessage('info', localeKey, true)
 end)
 
+local isFrozenFlag = false
+
 RegisterNetEvent('txcl:setFrozen', function(isFrozen)
   debugPrint('Frozen: ' .. tostring(isFrozen))
-  --NOTE: removed the check for vehicle, but could be done with 
-  -- IsPedInAnyVehicle for vehicles and IsPedOnMount for horses
   local playerPed = PlayerPedId()
   TaskLeaveAnyVehicle(playerPed, 0, 16)
   FreezeEntityPosition(playerPed, isFrozen)
   sendFreezeAlert(isFrozen)
+
+  if isFrozen and not isFrozenFlag then
+    isFrozenFlag = true
+    Citizen.CreateThread(function()
+      while isFrozenFlag do
+        local ped = PlayerPedId()
+        FreezeEntityPosition(ped, true)
+        DisableControlAction(0, 75, true) -- disable entering vehicles
+        local veh = GetVehiclePedIsIn(ped, false)
+        if veh ~= 0 then
+          FreezeEntityPosition(veh, true)
+          TaskLeaveAnyVehicle(ped, 0, 16)
+        end
+        Wait(0)
+      end
+    end)
+  elseif not isFrozen then
+    isFrozenFlag = false
+  end
 end)
