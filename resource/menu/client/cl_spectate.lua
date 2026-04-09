@@ -269,9 +269,17 @@ RegisterNetEvent('txcl:spectate:start', function(targetServerId, targetCoords)
         redmInstructionGroup = makeRedmInstructionalGroup(keysTable)
     end
 
+    -- Wait for any ongoing transition to complete before proceeding (#1084)
     if isInTransitionState then
-        stopSpectating()
-        error('Spectate request received while in transition state')
+        local attempts = 0
+        while isInTransitionState and attempts < 100 do
+            Wait(50)
+            attempts = attempts + 1
+        end
+        if isInTransitionState then
+            debugPrint('Spectate request timed out waiting for transition state')
+            return sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.notifications.spectate_failed', true)
+        end
     end
 
     -- check if self-spectate
