@@ -25,7 +25,7 @@
     "cookie": "^0.7.0",
     "d3-array": "^3.2.4",
     "dateformat": "^5.0.3",
-    "discord.js": "14.11.0",
+    "discord.js": "^14.26.4",
     "ejs": "^3.1.10",
     "error-stack-parser": "^2.1.4",
     "execa": "^5.1.1",
