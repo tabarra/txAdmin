@@ -25,7 +25,7 @@ export const childProcessEventBlackHole = (...args: any[]) => {
 /**
  * Returns a tuple with the convar name and value, formatted for the server command line
  */
-export const getMutableConvars = (isCmdLine = false) => {
+export const getMutableConvars = (isSpawnArg = false) => {
     const checkPlayerJoin = txConfig.banlist.enabled || (
         txConfig.whitelist.mode !== 'disabled'
         && txConfig.whitelist.mode !== 'external'
@@ -57,23 +57,25 @@ export const getMutableConvars = (isCmdLine = false) => {
         && txConfig.whitelist.mode !== 'adminOnly'
         && txConfig.whitelist.rejectionMessage
     ) {
-        const instructions = isCmdLine
+        const instructions = isSpawnArg
             ? txConfig.whitelist.rejectionMessage.replaceAll('\n', '\\n')
             : txConfig.whitelist.rejectionMessage;
         convars.push(['sets', 'sv_allowlistInstructions', instructions]);
-    } else {
+    } else if(!isSpawnArg) {
+        //NOTE: fxserver appears to skip empty string arguments (even `""`)
+        // so we only set it if we're not in spawn arg mode
         convars.push(['sets', 'sv_allowlistInstructions', '']);
     }
 
-    return convars.map((c) => polishConvarSetTuple(c, isCmdLine));
+    return convars.map((c) => polishConvarSetTuple(c, isSpawnArg));
 };
 
 type RawConvarSetTuple = [setter: string, name: string, value: any];
 type ConvarSetTuple = [setter: string, name: string, value: string];
 
-const polishConvarSetTuple = ([setter, name, value]: RawConvarSetTuple, isCmdLine = false): ConvarSetTuple => {
+const polishConvarSetTuple = ([setter, name, value]: RawConvarSetTuple, isSpawnArg = false): ConvarSetTuple => {
     return [
-        isCmdLine ? `+${setter}` : setter,
+        isSpawnArg ? `+${setter}` : setter,
         name.startsWith('sv_') ? name : 'txAdmin-' + name,
         value.toString(),
     ];
