@@ -25,7 +25,14 @@ const guild = typeNullableConfig({
     fixer: SYM_FIXER_DEFAULT,
 });
 
-const warningsChannel = typeNullableConfig({
+const punishmentsChannel = typeNullableConfig({
+    name: 'Restarts Channel ID',
+    default: null,
+    validator: discordSnowflakeSchema.nullable(),
+    fixer: SYM_FIXER_DEFAULT,
+});
+
+const restartsChannel = typeNullableConfig({
     name: 'Warnings Channel ID',
     default: null,
     validator: discordSnowflakeSchema.nullable(),
@@ -63,7 +70,8 @@ export default {
     enabled,
     token,
     guild,
-    warningsChannel,
+    punishmentsChannel,
+    restartsChannel,
     embedJson,
     embedConfigJson,
 } as const;
