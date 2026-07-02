@@ -332,7 +332,7 @@ const handleDiscordCard: CardHandler = async (inputConfig, sendTypedResp) => {
         [schemas.enabled, inputConfig.discordBot.enabled],
         [schemas.token, inputConfig.discordBot.token],
         [schemas.guild, inputConfig.discordBot.guild],
-        [schemas.restartsChannel, inputConfig.discordBot.restartsChannel],
+        [schemas.announcementsChannel, inputConfig.discordBot.announcementsChannel],
         [schemas.punishmentsChannel, inputConfig.discordBot.punishmentsChannel],
     ]);
     if (validationError) {

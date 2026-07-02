@@ -30,7 +30,7 @@ type PunishmentType = {
 
 type SpawnConfig = Pick<
     TxConfigs['discordBot'],
-    'enabled' | 'token' | 'guild' | 'punishmentsChannel' | 'restartsChannel'
+    'enabled' | 'token' | 'guild' | 'punishmentsChannel' | 'announcementsChannel'
 >;
 
 
@@ -289,7 +289,7 @@ export default class DiscordBot {
             token: txConfig.discordBot.token,
             guild: txConfig.discordBot.guild,
             punishmentsChannel: txConfig.discordBot.punishmentsChannel,
-            restartsChannel: txConfig.discordBot.restartsChannel,
+            announcementsChannel: txConfig.discordBot.announcementsChannel,
         }
         if (!botCfg.enabled) return;
 
@@ -417,12 +417,12 @@ export default class DiscordBot {
                 }
 
                 //Fetching announcements channel
-                if (botCfg.restartsChannel) {
-                    const fetchedChannel = this.#client.channels.cache.find((x) => x.id === botCfg.restartsChannel);
+                if (botCfg.announcementsChannel) {
+                    const fetchedChannel = this.#client.channels.cache.find((x) => x.id === botCfg.announcementsChannel);
                     if (!fetchedChannel) {
-                        return sendError(`Channel ${botCfg.restartsChannel} not found.`);
+                        return sendError(`Channel ${botCfg.announcementsChannel} not found.`);
                     } else if (fetchedChannel.type !== ChannelType.GuildText && fetchedChannel.type !== ChannelType.GuildAnnouncement) {
-                        return sendError(`Channel ${botCfg.restartsChannel} - ${(fetchedChannel as any)?.name} is not a text or announcement channel.`);
+                        return sendError(`Channel ${botCfg.announcementsChannel} - ${(fetchedChannel as any)?.name} is not a text or announcement channel.`);
                     } else {
                         this.announceChannel = fetchedChannel;
                     }
