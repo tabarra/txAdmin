@@ -388,7 +388,7 @@
     "dm_messages": {
         "embed": {
             "title": "Message privé admin envoyé",
-            "description": "**Expéditeur :** %{author}\n**Destinataire :** %{player}\n\n**Message :**\n%{message}\n\n**Identifiants du destinataire :**\n```%{identifiers}```"
+            "description": "**Destinataire :** %{player}\n\n**Message :**\n%{message}"
         }
     }
 }
