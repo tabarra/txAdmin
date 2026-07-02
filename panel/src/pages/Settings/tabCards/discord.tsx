@@ -26,7 +26,7 @@ export const pageConfigs = {
     botEnabled: getPageConfig('discordBot', 'enabled'),
     botToken: getPageConfig('discordBot', 'token'),
     discordGuild: getPageConfig('discordBot', 'guild'),
-    restartsChannel: getPageConfig('discordBot', 'restartsChannel'),
+    announcementsChannel: getPageConfig('discordBot', 'announcementsChannel'),
     punishmentsChannel: getPageConfig('discordBot', 'punishmentsChannel'),
     embedJson: getPageConfig('discordBot', 'embedJson'),
     embedConfigJson: getPageConfig('discordBot', 'embedConfigJson'),
@@ -66,7 +66,7 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
             botToken: emptyToNull(botTokenRef.current?.value),
             discordGuild: emptyToNull(discordGuildRef.current?.value),
             punishmentsChannel: emptyToNull(punishmentsChannelRef.current?.value),
-            restartsChannel: emptyToNull(restartsChannelRef.current?.value),
+            announcementsChannel: emptyToNull(restartsChannelRef.current?.value),
         };
 
         const res = getConfigDiff(cfg, states, overwrites, false);
@@ -147,11 +147,11 @@ export default function ConfigCardDiscord({ cardCtx, pageCtx }: SettingsCardProp
                     To get the Server ID, go to Discord's settings and <TxAnchor href="https://support.discordapp.com/hc/article_attachments/115002742731/mceclip0.png">enable developer mode</TxAnchor>, then right-click on the guild icon select "Copy ID".
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="Restarts Channel ID" htmlFor={cfg.restartsChannel.eid} showOptional>
+            <SettingItem label="Announcements Channel ID" htmlFor={cfg.announcementsChannel.eid} showOptional>
                 <Input
-                    id={cfg.restartsChannel.eid}
+                    id={cfg.announcementsChannel.eid}
                     ref={restartsChannelRef}
-                    defaultValue={cfg.restartsChannel.initialValue}
+                    defaultValue={cfg.announcementsChannel.initialValue}
                     onInput={updatePageState}
                     disabled={pageCtx.isReadOnly}
                     placeholder='000000000000000000'
