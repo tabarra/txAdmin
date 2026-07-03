@@ -248,19 +248,12 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
  * Handle Jail (timeout) command
  */
 async function handleJail(ctx: AuthedCtx, player: PlayerClass): Promise<GenericApiResp> {
-    //Checking request
-    if (
-        anyUndefined(
-            ctx.request.body,
-            ctx.request.body.duration,
-            ctx.request.body.reason,
-        )
-    ) {
+    const body = ctx.request.body;
+    if (!body || typeof body.duration !== 'string' || typeof body.reason !== 'string') {
         return { error: 'Invalid request.' };
     }
-    const durationInput = ctx.request.body.duration.trim();
-    const reason = (ctx.request.body.reason as string).trim() || 'no reason provided';
-
+    const durationInput = body.duration.trim();
+    const reason = body.reason.trim() || 'no reason provided';
     //Calculating duration - jails cannot be permanent
     if (durationInput === 'permanent') {
         return { error: 'Jails cannot be permanent, use a ban instead.' };

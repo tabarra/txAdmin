@@ -31,12 +31,13 @@ export default forwardRef(function JailForm({ disabled }: JailFormProps, ref) {
     useImperativeHandle(ref, () => {
         return {
             getData: () => {
-                return {
-                    reason: reasonRef.current?.value.trim(),
-                    duration: currentDuration === 'custom'
-                        ? `${customMultiplierRef.current?.value} ${customUnits}`
-                        : currentDuration,
-                };
+                const reason = reasonRef.current?.value?.trim() ?? '';
+                let duration = currentDuration;
+                if (currentDuration === 'custom') {
+                    const mult = parseInt(customMultiplierRef.current?.value ?? '', 10);
+                    duration = Number.isFinite(mult) && mult > 0 ? `${mult} ${customUnits}` : `1 ${customUnits}`;
+                }
+                return { reason, duration };
             },
             clearData: () => {
                 if (!reasonRef.current || !customMultiplierRef.current) return;

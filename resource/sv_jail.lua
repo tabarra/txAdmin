@@ -42,8 +42,8 @@ local function releasePlayer(netidStr, reason)
         jailReturnBuckets[jailData.returnKey] = nil
     end
 
-    if DoesPlayerExist(netidStr) then
-        SetPlayerRoutingBucket(netidStr, prevRoutBucket or 0)
+    if netid and DoesPlayerExist(netid) then
+        SetPlayerRoutingBucket(netid, prevRoutBucket or 0)
         Player(netid).state:set('txAdminJailed', nil, true)
         TriggerClientEvent('txcl:jail:release', netid)
     end
@@ -70,24 +70,24 @@ end
 --- Moves the target player to the jail bucket, teleports and freezes them
 TX_EVENT_HANDLERS.playerJailed = function(eventData, isNew)
     if eventData.targetNetId == nil then return end
-    local netidStr = tostring(eventData.targetNetId)
-    if not DoesPlayerExist(netidStr) then
+    local netid = tonumber(eventData.targetNetId)
+    if not netid or not DoesPlayerExist(netid) then
         txPrint(('[playerJailed] ignoring jail for disconnected player (#%s) %s'):format(
-            netidStr,
+            tostring(eventData.targetNetId),
             tostring(eventData.targetName)
         ))
         return
     end
+    local netidStr = tostring(netid)
 
-    local netid = eventData.targetNetId
     local pos = IS_REDM and eventData.posRedm or eventData.posFivem
 
     -- move to the jail routing bucket, saving the current one
     local returnKey = getReturnKey(eventData.targetIds)
     if returnKey ~= nil and jailReturnBuckets[returnKey] == nil then
-        jailReturnBuckets[returnKey] = GetPlayerRoutingBucket(netidStr)
+        jailReturnBuckets[returnKey] = GetPlayerRoutingBucket(netid)
     end
-    SetPlayerRoutingBucket(netidStr, eventData.bucket)
+    SetPlayerRoutingBucket(netid, eventData.bucket)
 
     -- public statebag so other resources can detect the jailed status
     Player(netid).state:set('txAdminJailed', {
@@ -144,16 +144,20 @@ CreateThread(function()
         local doStatebagSync = statebagSyncCounter >= 15
         if doStatebagSync then statebagSyncCounter = 0 end
 
+        local toRelease = {}
         for netidStr, jailData in pairs(jailedPlayers) do
             jailData.remaining = jailData.remaining - 1
             if jailData.remaining <= 0 then
-                releasePlayer(netidStr, 'completed')
-            elseif doStatebagSync and DoesPlayerExist(netidStr) then
+                toRelease[#toRelease + 1] = netidStr
+            elseif doStatebagSync and DoesPlayerExist(tonumber(netidStr)) then
                 Player(tonumber(netidStr)).state:set('txAdminJailed', {
                     actionId = jailData.actionId,
                     remaining = jailData.remaining,
                 }, true)
             end
+        end
+        for i = 1, #toRelease do
+            releasePlayer(toRelease[i], 'completed')
         end
     end
 end)
