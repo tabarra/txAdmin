@@ -1,6 +1,6 @@
 const modulename = 'Player';
 import cleanPlayerName from '@shared/cleanPlayerName';
-import { DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@modules/Database/databaseTypes';
+import { DatabaseActionJailType, DatabaseActionWarnType, DatabasePlayerType, DatabaseWhitelistApprovalsType } from '@modules/Database/databaseTypes';
 import { cloneDeep, union } from 'lodash-es';
 import { now } from '@lib/misc';
 import { parsePlayerIds } from '@lib/player/idUtils';
@@ -148,6 +148,7 @@ export class ServerPlayer extends BasePlayer {
     readonly tsConnected: number = now();
     readonly isRegistered: boolean;
     readonly #minuteCronInterval?: ReturnType<typeof setInterval>;
+    #jailSession: null | { actionId: string, tsLastPersist: number } = null;
     // #offlineDbDataCacheTimeout?: ReturnType<typeof setTimeout>;
 
     constructor(
@@ -252,18 +253,50 @@ export class ServerPlayer extends BasePlayer {
         if (!this.dbData) throw new Error(`cannot send initial data for a player that has no dbData`);
 
         let oldestPendingWarn: undefined | DatabaseActionWarnType;
+        let oldestActiveJail: undefined | DatabaseActionJailType;
         const actionHistory = this.getHistory();
         for (const action of actionHistory) {
-            if (action.type !== 'warn' || action.revocation.timestamp !== null) continue;
-            if (!action.acked) {
+            if (action.revocation.timestamp !== null) continue;
+            if (action.type === 'warn' && !oldestPendingWarn && !action.acked) {
                 oldestPendingWarn = action;
-                break;
+            } else if (action.type === 'jail' && !oldestActiveJail && action.served < action.duration) {
+                oldestActiveJail = action;
             }
         }
 
-        if (oldestPendingWarn) {
-            this.#fxPlayerlist.dispatchInitialPlayerData(this.netid, oldestPendingWarn);
+        if (oldestPendingWarn || oldestActiveJail) {
+            if (oldestActiveJail) {
+                this.startJailSession(oldestActiveJail.id);
+            }
+            this.#fxPlayerlist.dispatchInitialPlayerData(this.netid, oldestPendingWarn, oldestActiveJail);
         }
+    }
+
+
+    /**
+     * Starts tracking online served time for a jail action.
+     */
+    startJailSession(actionId: string) {
+        this.#jailSession = { actionId, tsLastPersist: now() };
+    }
+
+    /**
+     * Stops tracking the jail session, optionally persisting the pending served time.
+     */
+    clearJailSession(opts: { persist: boolean }) {
+        if (!this.#jailSession) return;
+        if (opts.persist) {
+            try {
+                txCore.database.actions.addJailServedTime(
+                    this.#jailSession.actionId,
+                    now() - this.#jailSession.tsLastPersist,
+                );
+            } catch (error) {
+                console.verbose.warn(`Failed to persist jail served time for player ${this.displayName}:`);
+                console.verbose.dir(error);
+            }
+        }
+        this.#jailSession = null;
     }
 
     /**
@@ -331,6 +364,27 @@ export class ServerPlayer extends BasePlayer {
             console.warn(`Failed to update playtime for player ${this.displayName}:`);
             console.dir(error);
         }
+
+        //Flush jail served time
+        if (this.#jailSession) {
+            try {
+                const currTs = now();
+                const updatedJail = txCore.database.actions.addJailServedTime(
+                    this.#jailSession.actionId,
+                    currTs - this.#jailSession.tsLastPersist,
+                );
+                this.#jailSession.tsLastPersist = currTs;
+                if (updatedJail.served >= updatedJail.duration) {
+                    //Backstop only: the game server releases the player and reports completion itself
+                    this.#jailSession = null;
+                }
+            } catch (error) {
+                //Action might have been revoked or removed
+                console.verbose.warn(`Failed to update jail served time for player ${this.displayName}:`);
+                console.verbose.dir(error);
+                this.#jailSession = null;
+            }
+        }
     }
 
 
@@ -338,6 +392,7 @@ export class ServerPlayer extends BasePlayer {
      * Marks this player as disconnected, and clears minute cron
      */
     disconnect() {
+        this.clearJailSession({ persist: true });
         this.isConnected = false;
         // this.dbData = false;
         this.idsOnline = [];

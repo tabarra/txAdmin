@@ -219,6 +219,9 @@ export function HistorySearchBox({ doSearch, initialState, adminStats }: History
                             <SelectItem value={'warn'} className="cursor-pointer">
                                 Warns
                             </SelectItem>
+                            <SelectItem value={'jail'} className="cursor-pointer">
+                                Jails
+                            </SelectItem>
                         </SelectContent>
                     </Select>
 

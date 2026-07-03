@@ -24,6 +24,7 @@ The permissions are saved in the `txData/admins.json` file and can be edited thr
 - `players.warn`: Warn a player.
 - `players.kick`: Kick a player.
 - `players.ban`: Ban/Unban a player.
+- `players.jail`: Jail (timeout) a player, or release them by revoking the jail action.
 - `players.freeze`: Freeze a player's ped.
 - `players.heal`: Heal self or everyone.
 - `players.playermode`: Toggle NoClip, God Mode, or Superjump.

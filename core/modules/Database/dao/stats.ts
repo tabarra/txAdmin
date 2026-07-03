@@ -58,6 +58,8 @@ export default class StatsDao {
             warnsLast7d: 0,
             totalBans: 0,
             bansLast7d: 0,
+            totalJails: 0,
+            jailsLast7d: 0,
             groupedByAdmins: new MultipleCounter(),
         };
         const actionStats = this.chain.get('actions')
@@ -68,6 +70,9 @@ export default class StatsDao {
                 } else if (action.type == 'warn') {
                     acc.totalWarns++;
                     if (action.timestamp > sevenDaysAgo) acc.warnsLast7d++;
+                } else if (action.type == 'jail') {
+                    acc.totalJails++;
+                    if (action.timestamp > sevenDaysAgo) acc.jailsLast7d++;
                 }
                 acc.groupedByAdmins.count(action.author);
                 return acc;
@@ -92,9 +97,11 @@ export default class StatsDao {
                     acc.bans++;
                 } else if (a.type == 'warn') {
                     acc.warns++;
+                } else if (a.type == 'jail') {
+                    acc.jails++;
                 }
                 return acc;
-            }, { bans: 0, warns: 0 })
+            }, { bans: 0, warns: 0, jails: 0 })
             .value();
 
         const playerStats = this.chain.get('players')

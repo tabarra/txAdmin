@@ -1,7 +1,8 @@
 const modulename = 'FxPlayerlist';
 import { cloneDeep } from 'lodash-es';
 import { ServerPlayer } from '@lib/player/playerClasses.js';
-import { DatabaseActionWarnType, DatabasePlayerType } from '@modules/Database/databaseTypes';
+import { DatabaseActionJailType, DatabaseActionWarnType, DatabasePlayerType } from '@modules/Database/databaseTypes';
+import { getJailEnvironment } from '@lib/player/jailUtils';
 import consoleFactory from '@lib/console';
 import { PlayerDroppedEventType, PlayerJoiningEventType } from '@shared/socketioTypes';
 import { SYM_SYSTEM_AUTHOR } from '@lib/symbols';
@@ -184,16 +185,39 @@ export default class FxPlayerlist {
     /**
      * Receives initial data callback from ServerPlayer and dispatches to the server as stdin.
      */
-    dispatchInitialPlayerData(playerId: number, pendingWarn: DatabaseActionWarnType) {
-        const cmdData = {
+    dispatchInitialPlayerData(
+        playerId: number,
+        pendingWarn?: DatabaseActionWarnType,
+        pendingJail?: DatabaseActionJailType,
+    ) {
+        const cmdData: any = {
             netId: playerId,
-            pendingWarn: {
+        };
+        if (pendingWarn) {
+            cmdData.pendingWarn = {
                 author: pendingWarn.author,
                 reason: pendingWarn.reason,
                 actionId: pendingWarn.id,
                 targetNetId: playerId,
                 targetIds: pendingWarn.ids, //not used in the playerWarned handler
                 targetName: pendingWarn.playerName,
+            };
+        }
+        if (pendingJail) {
+            try {
+                cmdData.pendingJail = {
+                    author: pendingJail.author,
+                    reason: pendingJail.reason,
+                    actionId: pendingJail.id,
+                    targetNetId: playerId,
+                    targetIds: pendingJail.ids,
+                    targetName: pendingJail.playerName,
+                    duration: pendingJail.duration,
+                    remaining: Math.max(1, pendingJail.duration - pendingJail.served),
+                    ...getJailEnvironment(),
+                };
+            } catch (error) {
+                console.error(`Failed to build pendingJail for player ${playerId}, the player will not be jailed on connect: ${(error as Error).message}`);
             }
         }
         txCore.fxRunner.sendCommand('txaInitialData', [cmdData], SYM_SYSTEM_AUTHOR);

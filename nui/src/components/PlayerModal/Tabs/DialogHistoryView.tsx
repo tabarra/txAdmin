@@ -33,6 +33,7 @@ type ActionCardProps = {
   action: PlayerHistoryItem;
   permsDisableWarn: boolean;
   permsDisableBan: boolean;
+  permsDisableJail: boolean;
   serverTime: number;
   btnAction: Function;
 };
@@ -40,6 +41,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
   action,
   permsDisableWarn,
   permsDisableBan,
+  permsDisableJail,
   serverTime,
   btnAction,
 }) => {
@@ -49,12 +51,18 @@ const ActionCard: React.FC<ActionCardProps> = ({
   const revokeButonDisabled =
     action.revokedBy !== undefined ||
     (action.type == "warn" && permsDisableWarn) ||
-    (action.type == "ban" && permsDisableBan);
+    (action.type == "ban" && permsDisableBan) ||
+    (action.type == "jail" && permsDisableJail);
 
   let footerNote, actionColor, actionMessage;
   if (action.type == "ban") {
     actionColor = colors.danger;
     actionMessage = t("nui_menu.player_modal.history.banned_by", {
+      author: action.author,
+    });
+  } else if (action.type == "jail") {
+    actionColor = colors.danger;
+    actionMessage = t("nui_menu.player_modal.history.jailed_by", {
       author: action.author,
     });
   } else if (action.type == "warn") {
@@ -171,6 +179,7 @@ const DialogHistoryView: React.FC = () => {
 
   const hasWarnPerm = userHasPerm('players.warn', userPerms);
   const hasBanPerm = userHasPerm('players.ban', userPerms);
+  const hasJailPerm = userHasPerm('players.jail', userPerms);
 
   return (
     <Box p={2} height="100%" display="flex" flexDirection="column">
@@ -187,6 +196,7 @@ const DialogHistoryView: React.FC = () => {
               action={action}
               permsDisableWarn={!hasWarnPerm}
               permsDisableBan={!hasBanPerm}
+              permsDisableJail={!hasJailPerm}
               serverTime={playerDetails.serverTime}
               btnAction={() => {
                 handleRevoke(action.id);

@@ -14,7 +14,7 @@ import { useMemo, useRef, useState } from "react";
 import { ModalTabInner } from "@/components/modal-tabs";
 
 
-function LogActionCounter({ type, count }: { type: 'Ban' | 'Warn', count: number }) {
+function LogActionCounter({ type, count }: { type: 'Ban' | 'Warn' | 'Jail', count: number }) {
     const pluralLabel = (count > 1) ? `${type}s` : type;
     if (count === 0) {
         return <span className={cn(
@@ -26,7 +26,7 @@ function LogActionCounter({ type, count }: { type: 'Ban' | 'Warn', count: number
     } else {
         return <span className={cn(
             'h-max rounded-sm text-xs font-semibold px-1 py-[0.125rem] tracking-widest text-center inline-block',
-            type === 'Ban' ? 'bg-destructive text-destructive-foreground' : 'bg-warning text-warning-foreground'
+            type === 'Ban' ? 'bg-destructive text-destructive-foreground' : type === 'Jail' ? 'bg-info text-info-foreground' : 'bg-warning text-warning-foreground'
         )}>
             {count} {pluralLabel}
         </span>
@@ -158,6 +158,7 @@ export default function PlayerInfoTab({ playerRef, player, serverTime, tsFetch, 
     />;
     const banCount = player.actionHistory.filter((a) => a.type === 'ban' && !a.revokedAt).length;
     const warnCount = player.actionHistory.filter((a) => a.type === 'warn' && !a.revokedAt).length;
+    const jailCount = player.actionHistory.filter((a) => a.type === 'jail' && !a.revokedAt).length;
 
     const handleWhitelistClick = () => {
         playerWhitelistApi({
@@ -197,6 +198,19 @@ export default function PlayerInfoTab({ playerRef, player, serverTime, tsFetch, 
         }
     }, [player, serverTime]);
 
+    const playerJailedText: string | undefined = useMemo(() => {
+        if (!player) return;
+        for (const action of player.actionHistory) {
+            if (action.type !== 'jail' || action.revokedAt) continue;
+            if (typeof action.duration !== 'number') continue;
+            const served = action.served ?? 0;
+            const remaining = action.duration - served;
+            if (remaining > 0) {
+                return `This player is jailed for remaining ${msToDuration(remaining * 1000)}`;
+            }
+        }
+    }, [player]);
+
     return (
         <ModalTabInner>
             {playerBannedText ? (
@@ -206,6 +220,16 @@ export default function PlayerInfoTab({ playerRef, player, serverTime, tsFetch, 
                     </div>
                     <div className="flex-grow text-sm font-medium">
                         {playerBannedText}
+                    </div>
+                </div>
+            ) : null}
+            {playerJailedText ? (
+                <div className="w-full p-2 pr-3 mb-1 flex items-center justify-between space-x-4 rounded-lg border shadow-lg transition-all text-black/75 dark:text-white/90 border-info/70 bg-info-hint">
+                    <div className="flex-shrink-0 flex flex-col gap-2 items-center">
+                        <ShieldAlertIcon className="size-5 text-info" />
+                    </div>
+                    <div className="flex-grow text-sm font-medium">
+                        {playerJailedText}
                     </div>
                 </div>
             ) : null}
@@ -247,6 +271,7 @@ export default function PlayerInfoTab({ playerRef, player, serverTime, tsFetch, 
                     <dd className="text-sm leading-6 mt-0 flex flex-wrap gap-2">
                         <LogActionCounter type="Ban" count={banCount} />
                         <LogActionCounter type="Warn" count={warnCount} />
+                        <LogActionCounter type="Jail" count={jailCount} />
                     </dd>
                     <dd className="text-right">
                         <Button

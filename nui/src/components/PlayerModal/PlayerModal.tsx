@@ -14,6 +14,7 @@ import {
   Close,
   FlashOn,
   FormatListBulleted,
+  HourglassBottom,
   MenuBook,
   Person,
 } from "@mui/icons-material";
@@ -199,6 +200,13 @@ const DialogList: React.FC = () => {
         tab={PlayerModalTabs.HISTORY}
         curTab={curTab}
         icon={<MenuBook />}
+      />
+      <DialogTab
+        title={t("nui_menu.player_modal.tabs.jail")}
+        tab={PlayerModalTabs.JAIL}
+        curTab={curTab}
+        icon={<HourglassBottom />}
+        isDisabled={!userHasPerm("players.jail", playerPerms)}
       />
       <DialogTab
         title={t("nui_menu.player_modal.tabs.ban")}

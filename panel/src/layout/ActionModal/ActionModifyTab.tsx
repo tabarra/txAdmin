@@ -40,7 +40,12 @@ export default function ActionModifyTab({ action, refreshModalData }: ActionModi
     }
 
     const isAlreadyRevoked = !!action.revocation.timestamp;
-    const hasRevokePerm = hasPerm(action.type === 'warn' ? 'players.warn' : 'players.ban');
+    const revokePermMap = {
+        warn: 'players.warn',
+        ban: 'players.ban',
+        jail: 'players.jail',
+    } as const;
+    const hasRevokePerm = hasPerm(revokePermMap[action.type] ?? 'players.ban');
     const revokeBtnLabel = isAlreadyRevoked
         ? `${action.type} revoked`
         : hasRevokePerm
@@ -54,6 +59,7 @@ export default function ActionModifyTab({ action, refreshModalData }: ActionModi
                     This is generally done when the player successfully appeals the {action.type} or the admin regrets issuing it.
                     <ul className="list-disc list-inside pt-1">
                         {action.type === 'ban' && <li>The player will be able to rejoin the server.</li>}
+                        {action.type === 'jail' && <li>The player will be released immediately if online.</li>}
                         <li>The player will not be notified of the revocation.</li>
                         <li>This {action.type} will not be removed from the player history.</li>
                         <li>The revocation cannot be undone!</li>

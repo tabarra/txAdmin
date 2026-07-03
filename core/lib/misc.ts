@@ -236,7 +236,7 @@ export const anyUndefined = (...args: any) => [...args].some((x) => (typeof x ==
 /**
  * Calculates expiration and duration from a ban duration string like "1 day"
  */
-export const calcExpirationFromDuration = (inputDuration: string) => {
+export const calcExpirationFromDuration = (inputDuration: string, allowMinutes = false) => {
     let expiration;
     let duration;
     if (inputDuration === 'permanent') {
@@ -248,7 +248,9 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
             throw new Error(`The duration number must be at least 1.`);
         }
 
-        if (unit.startsWith('hour')) {
+        if (allowMinutes && unit.startsWith('minute')) {
+            duration = multiplier * 60;
+        } else if (unit.startsWith('hour')) {
             duration = multiplier * 3600;
         } else if (unit.startsWith('day')) {
             duration = multiplier * 86400;
@@ -257,12 +259,24 @@ export const calcExpirationFromDuration = (inputDuration: string) => {
         } else if (unit.startsWith('month')) {
             duration = multiplier * 2592000; //30 days
         } else {
-            throw new Error(`Invalid ban duration. Supported units: hours, days, weeks, months`);
+            throw new Error(`Invalid duration. Supported units: ${allowMinutes ? 'minutes, ' : ''}hours, days, weeks, months`);
         }
         expiration = now() + duration;
     }
 
     return { expiration, duration };
+};
+
+
+/**
+ * Parses a "x, y, z" coordinates string into an object, or throws if invalid
+ */
+export const parseCoordsString = (coords: string) => {
+    const parts = coords.split(',').map((p) => parseFloat(p.trim()));
+    if (parts.length !== 3 || parts.some((p) => !Number.isFinite(p))) {
+        throw new Error(`Invalid coordinates string, expected "x, y, z" format.`);
+    }
+    return { x: parts[0], y: parts[1], z: parts[2] };
 };
 
 

@@ -134,7 +134,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
     const hasReachedEnd = actions.length <= DEFAULT_LIMIT;
     const currTs = now();
     const processedActions = actions.slice(0, DEFAULT_LIMIT).map((a) => {
-        let banExpiration, warnAcked;
+        let banExpiration, warnAcked, jailStatus;
         if (a.type === 'ban') {
             if (a.expiration === false) {
                 banExpiration = 'permanent' as const;
@@ -145,6 +145,8 @@ export default async function HistorySearch(ctx: AuthedCtx) {
             }
         } else if (a.type === 'warn') {
             warnAcked = a.acked;
+        } else if (a.type === 'jail') {
+            jailStatus = a.served >= a.duration ? 'served' as const : 'active' as const;
         }
         return {
             id: a.id,
@@ -156,6 +158,7 @@ export default async function HistorySearch(ctx: AuthedCtx) {
             isRevoked: !!a.revocation.timestamp,
             banExpiration,
             warnAcked,
+            jailStatus,
         } satisfies HistoryTableActionType;
     });
 

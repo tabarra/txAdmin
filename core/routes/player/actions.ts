@@ -3,6 +3,8 @@ import playerResolver from '@lib/player/playerResolver';
 import { GenericApiResp } from '@shared/genericApiTypes';
 import { PlayerClass, ServerPlayer } from '@lib/player/playerClasses';
 import { anyUndefined, calcExpirationFromDuration } from '@lib/misc';
+import { getJailEnvironment } from '@lib/player/jailUtils';
+import { DatabaseActionJailType } from '@modules/Database/databaseTypes';
 import consoleFactory from '@lib/console';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import { SYM_CURRENT_MUTEX } from '@lib/symbols';
@@ -47,6 +49,8 @@ export default async function PlayerActions(ctx: AuthedCtx) {
         return sendTypedResp(await handleWarning(ctx, player));
     } else if (action === 'ban') {
         return sendTypedResp(await handleBan(ctx, player));
+    } else if (action === 'jail') {
+        return sendTypedResp(await handleJail(ctx, player));
     } else if (action === 'whitelist') {
         return sendTypedResp(await handleSetWhitelist(ctx, player));
     } else if (action === 'removeIds') {
@@ -236,6 +240,117 @@ async function handleBan(ctx: AuthedCtx, player: PlayerClass): Promise<GenericAp
         return { success: true };
     } else {
         return { error: `Player banned, but likely failed to kick player (stdin error).` };
+    }
+}
+
+
+/**
+ * Handle Jail (timeout) command
+ */
+async function handleJail(ctx: AuthedCtx, player: PlayerClass): Promise<GenericApiResp> {
+    //Checking request
+    if (
+        anyUndefined(
+            ctx.request.body,
+            ctx.request.body.duration,
+            ctx.request.body.reason,
+        )
+    ) {
+        return { error: 'Invalid request.' };
+    }
+    const durationInput = ctx.request.body.duration.trim();
+    const reason = (ctx.request.body.reason as string).trim() || 'no reason provided';
+
+    //Calculating duration - jails cannot be permanent
+    if (durationInput === 'permanent') {
+        return { error: 'Jails cannot be permanent, use a ban instead.' };
+    }
+    let duration;
+    try {
+        duration = calcExpirationFromDuration(durationInput, true).duration;
+        if (!duration) throw new Error('Invalid duration.');
+    } catch (error) {
+        return { error: (error as Error).message };
+    }
+
+    //Check permissions
+    if (!ctx.admin.testPermission('players.jail', modulename)) {
+        return { error: 'You don\'t have permission to execute this action.' }
+    }
+
+    //Validating player
+    const allIds = player.allIdentifiers;
+    if (!allIds.length) {
+        return { error: 'Cannot jail a player with no identifiers.' }
+    }
+
+    //Checking for an already active jail
+    const activeJails = txCore.database.actions.findMany(
+        allIds,
+        undefined,
+        (a): a is DatabaseActionJailType => a.type === 'jail'
+            && a.revocation.timestamp === null
+            && a.served < a.duration,
+    );
+    if (activeJails.length) {
+        return { error: `This player already has an active jail (ID ${activeJails[0].id}). Revoke it first or wait for it to end.` };
+    }
+
+    let jailEnvironment;
+    try {
+        jailEnvironment = getJailEnvironment();
+    } catch (error) {
+        return { error: `Invalid jail environment config: ${(error as Error).message}` };
+    }
+
+    //Register action
+    let actionId;
+    try {
+        actionId = txCore.database.actions.registerJail(
+            allIds,
+            ctx.admin.name,
+            reason,
+            duration,
+            player.displayName,
+        );
+    } catch (error) {
+        return { error: `Failed to jail player: ${(error as Error).message}` };
+    }
+    ctx.admin.logAction(`Jailed player "${player.displayName}" for ${durationInput}: ${reason}`);
+
+    //No need to dispatch events if server is not online
+    if (txCore.fxRunner.isIdle) {
+        return { success: true };
+    }
+
+    //If the player is connected, start tracking the served time
+    let targetNetId = null;
+    if (player instanceof ServerPlayer && player.isConnected) {
+        targetNetId = player.netid;
+        player.startJailSession(actionId);
+    }
+
+    // Dispatch `txAdmin:events:playerJailed`
+    const eventSent = txCore.fxRunner.sendEvent('playerJailed', {
+        author: ctx.admin.name,
+        reason,
+        actionId,
+        targetNetId,
+        targetIds: allIds,
+        targetName: player.displayName,
+        duration,
+        remaining: duration,
+        ...jailEnvironment,
+    });
+
+    if (eventSent) {
+        return { success: true };
+    } else {
+         if (player instanceof ServerPlayer && player.isConnected) {
+            targetNetId = player.netid;
+            player.clearJailSession({ persist: true });
+        }
+        return { error: `Jail saved, but likely failed to jail the player in game (stdin error).` };
     }
 }
 

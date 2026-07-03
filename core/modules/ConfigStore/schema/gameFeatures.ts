@@ -73,6 +73,29 @@ const hideDefaultScheduledRestartWarning = typeDefinedConfig({
     fixer: SYM_FIXER_DEFAULT,
 });
 
+const coordsRegex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
+
+const jailRoutingBucket = typeDefinedConfig({
+    name: 'Jail Routing Bucket',
+    default: 916,
+    validator: z.number().int().min(1).max(1023),
+    fixer: SYM_FIXER_DEFAULT,
+});
+
+const jailPosFivem = typeDefinedConfig({
+    name: 'Jail Position (FiveM)',
+    default: '459.28, -1001.85, 24.91', //Mission Row PD cell block
+    validator: z.string().regex(coordsRegex, 'must be in the "x, y, z" format'),
+    fixer: SYM_FIXER_DEFAULT,
+});
+
+const jailPosRedm = typeDefinedConfig({
+    name: 'Jail Position (RedM)',
+    default: '-276.0, 806.0, 119.38', //Valentine sheriff jail cell
+    validator: z.string().regex(coordsRegex, 'must be in the "x, y, z" format'),
+    fixer: SYM_FIXER_DEFAULT,
+});
+
 
 export default {
     menuEnabled,
@@ -85,4 +108,7 @@ export default {
     hideDefaultDirectMessage,
     hideDefaultWarning,
     hideDefaultScheduledRestartWarning,
+    jailRoutingBucket,
+    jailPosFivem,
+    jailPosRedm,
 } as const;

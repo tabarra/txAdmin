@@ -91,6 +91,29 @@ Event Data:
 - `target`: The ID of the healed player, or `-1` if the entire server was healed.
 - `author`: The name of the admin that triggered the heal.
 
+### txAdmin:events:playerJailed
+Broadcasted when a player is jailed (timeout) using txAdmin, including when an active jail is re-applied after the player reconnects.  
+The jail time only counts while the player is online. Other resources (phone, jobs, etc.) can listen to this event to disable themselves for the jailed player. The jailed status is also available in the `txAdminJailed` player state bag.  
+Event Data:
+- `author`: The name of the admin.
+- `reason`: The reason of the jail.
+- `actionId`: The ID of this action.
+- `targetNetId`: The netid of the player that was jailed, or `null` if the target is not online.
+- `targetIds`: The identifiers that were jailed.
+- `targetName`: The clean name of the jailed player.
+- `duration`: The total jail sentence, in seconds.
+- `remaining`: The seconds left to serve (equals `duration` when the jail is first applied).
+- `bucket`: The routing bucket used to isolate the jailed player.
+- `posFivem`: The `{x, y, z}` jail coordinates for FiveM servers.
+- `posRedm`: The `{x, y, z}` jail coordinates for RedM servers.
+
+### txAdmin:events:playerJailReleased
+Broadcasted (server-side only) when a jailed player is released, either by fully serving the sentence or by an admin revoking the jail action.  
+Event Data:
+- `actionId`: The ID of the jail action.
+- `netId`: The netid of the released player.
+- `reason`: `completed` or `revoked`.
+
 ### txAdmin:events:playerKicked
 Broadcasted when a player is kicked using txAdmin.  
 Note: starting on v8.0, the `target` parameter might be `-1`, and `dropMessage` was introduced.

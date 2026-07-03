@@ -21,6 +21,8 @@ const processHistoryLog = (hist: DatabaseActionType[]) => {
                 author: log.author,
                 ts: log.timestamp,
                 exp: log.expiration ? log.expiration : undefined,
+                duration: log.type === 'jail' ? log.duration : undefined,
+                served: log.type === 'jail' ? log.served : undefined,
                 revokedBy: log.revocation.author ? log.revocation.author : undefined,
                 revokedAt: log.revocation.timestamp ? log.revocation.timestamp : undefined,
             };

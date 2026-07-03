@@ -5,6 +5,7 @@ import { AdvancedDivider, SettingItem, SettingItemDesc } from '../settingsItems'
 import { useState, useEffect, useMemo, useReducer } from "react";
 import { getConfigEmptyState, getConfigAccessors, SettingsCardProps, getPageConfig, configsReducer, getConfigDiff } from "../utils";
 import SettingsCardShell from "../SettingsCardShell";
+import { txToast } from "@/components/TxToaster";
 
 
 export const pageConfigs = {
@@ -12,7 +13,12 @@ export const pageConfigs = {
     alignRight: getPageConfig('gameFeatures', 'menuAlignRight'),
     pageKey: getPageConfig('gameFeatures', 'menuPageKey'),
     playerModePtfx: getPageConfig('gameFeatures', 'playerModePtfx'),
+    jailRoutingBucket: getPageConfig('gameFeatures', 'jailRoutingBucket', true),
+    jailPosFivem: getPageConfig('gameFeatures', 'jailPosFivem', true),
+    jailPosRedm: getPageConfig('gameFeatures', 'jailPosRedm', true),
 } as const;
+
+const coordsRegex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
 
 export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardProps) {
     const [showAdvanced, setShowAdvanced] = useState(false);
@@ -49,7 +55,15 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
     const handleOnSave = () => {
         const { hasChanges, localConfigs } = updatePageState();
         if (!hasChanges) return;
-        //NOTE: nothing to validate
+        for (const cfgName of ['jailPosFivem', 'jailPosRedm'] as const) {
+            const value = localConfigs.gameFeatures?.[cfgName];
+            if (value !== undefined && !coordsRegex.test(value)) {
+                return txToast.error({
+                    title: 'Invalid jail position.',
+                    msg: 'The coordinates must be in the "x, y, z" format.',
+                });
+            }
+        }
         pageCtx.saveChanges(cardCtx, localConfigs);
     }
 
@@ -132,6 +146,47 @@ export default function ConfigCardGameMenu({ cardCtx, pageCtx }: SettingsCardPro
                 <SettingItemDesc>
                     Play a particle effect and sound when an admin uses NoClip, God Mode, etc. <br />
                     <strong className="text-warning-inline">Warning:</strong> This options help prevent admin abuse during PvP by making it visible/audible to all players that an admin is using a special mode. We recommend keeping it enabled.
+                </SettingItemDesc>
+            </SettingItem>
+            <SettingItem label="Jail Routing Bucket" htmlFor={cfg.jailRoutingBucket.eid} showIf={showAdvanced} required>
+                <Input
+                    id={cfg.jailRoutingBucket.eid}
+                    type="number"
+                    min={1}
+                    max={1023}
+                    value={states.jailRoutingBucket ?? ''}
+                    onChange={(e) => cfg.jailRoutingBucket.state.set(parseInt(e.target.value) || undefined)}
+                    disabled={pageCtx.isReadOnly}
+                />
+                <SettingItemDesc>
+                    The routing bucket (dimension) that jailed players are moved to, isolating them from everyone else. <br />
+                    <strong>Note:</strong> Make sure no other resource uses this bucket number.
+                </SettingItemDesc>
+            </SettingItem>
+            <SettingItem label="Jail Position (FiveM)" htmlFor={cfg.jailPosFivem.eid} showIf={showAdvanced} required>
+                <Input
+                    id={cfg.jailPosFivem.eid}
+                    value={states.jailPosFivem ?? ''}
+                    placeholder='459.28, -1001.85, 24.91'
+                    onChange={(e) => cfg.jailPosFivem.state.set(e.target.value)}
+                    className="font-mono"
+                    disabled={pageCtx.isReadOnly}
+                />
+                <SettingItemDesc>
+                    The coordinates (<InlineCode>x, y, z</InlineCode>) jailed players are teleported to on FiveM servers. The default is a Mission Row PD cell.
+                </SettingItemDesc>
+            </SettingItem>
+            <SettingItem label="Jail Position (RedM)" htmlFor={cfg.jailPosRedm.eid} showIf={showAdvanced} required>
+                <Input
+                    id={cfg.jailPosRedm.eid}
+                    value={states.jailPosRedm ?? ''}
+                    placeholder='-276.0, 806.0, 119.38'
+                    onChange={(e) => cfg.jailPosRedm.state.set(e.target.value)}
+                    className="font-mono"
+                    disabled={pageCtx.isReadOnly}
+                />
+                <SettingItemDesc>
+                    The coordinates (<InlineCode>x, y, z</InlineCode>) jailed players are teleported to on RedM servers. The default is a Valentine sheriff cell.
                 </SettingItemDesc>
             </SettingItem>
         </SettingsCardShell>

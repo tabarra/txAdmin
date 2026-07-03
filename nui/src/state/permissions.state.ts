@@ -10,6 +10,7 @@ export type ResolvablePermission =
   | "players.teleport"
   | "players.heal"
   | "players.ban"
+  | "players.jail"
   | "players.kick"
   | "players.direct_message"
   | "players.warn"
