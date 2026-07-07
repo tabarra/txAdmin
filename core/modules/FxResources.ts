@@ -2,6 +2,7 @@ const modulename = 'FxResources';
 import { cloneDeep } from 'lodash-es';
 import consoleFactory from '@lib/console';
 import { Stopwatch } from './FxMonitor/utils';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 
@@ -80,7 +81,7 @@ export default class FxResources {
                     tsBooted: Date.now(),
                 });
             } else {
-                if (resource !== 'monitor') {
+                if (resource !== txEnv.txaResourceName) {
                     console.verbose.warn(`Resource ${resource} started while ${this.resBooting?.name ?? 'unknown'} was booting`);
                 }
                 this.resBootLog.push({

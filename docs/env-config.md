@@ -4,14 +4,9 @@ Starting from txAdmin v8.0.0, **you can now customize txAdmin through `TXHOST_*`
 Those configurations are usually required for Game Server Providers (GSPs) and advanced server owners, and allow them to force txAdmin and FXServer to use specific ports/interfaces, customize the location of the txData directory, force a max player slot count, etc.  
   
 > [!WARNING]
-> The `txAdminPort`, `txAdminInterface`, and `txDataPath` ConVars, as well as the `txAdminZapConfig.json` file are now considered **deprecated** and will cease to work in an upcoming update.  
-> If the new and old configs are present at the same time, the new one will take priority.  
-> Setting `TXHOST_IGNORE_DEPRECATED_CONFIGS` to `true` will disable the old config and silence the respective warnings.
-
-> [!IMPORTANT]  
-> All ConVars but `serverProfile` became `TXHOST_*` env vars, and you should avoid using it as the concept of txAdmin profiles will likely be deprecated soon.  
-> If setting multiple servers, **we strongly encourage you to set up separate txDatas for your servers.** As otherwise the `admins.json` file will conflict.
-
+> The `serverProfile`, `txAdminPort`, `txAdminInterface`, and `txDataPath` ConVars have been removed and cannot be used anymore. Please use the `TXHOST_*` alternatives described below.  
+> Specifically for `serverProfile`, it has no alternative and the profile name `default` is hardcoded. To use multiple servers in a single host, please use the `TXHOST_DATA_PATH` env var.
+  
 > [!CAUTION]
 > Although the configuration below is useful for Game Server Providers (GSPs), **this is in no way, shape, or form an endorsement or permission for anyone to become an unauthorized GSP**.  
 > Please refer to the FiveM [Creator Platform License Agreement](https://fivem.net/terms).
@@ -44,7 +39,6 @@ The specific way to set up those variables vary from system to system, and there
         - **Windows:** `<fxserver_root>/../txData` — sits in the folder parent of the folder containing `fxserver.exe` (aka "the artifact").
         - **Linux:** `<fxserver_root>/../../../txData` — sits in the folder that contains your `run.sh`.
     - The path to the txData folder, which contains the txAdmin logs, configs, and data. This is also the default place suggested for deploying new servers (as a subfolder). It is usually set to `/home/container` when running on Pterodactyl.
-    - <mark>NOTE:</mark> This variable takes priority over the deprecated `txDataPath` ConVar.
 - **TXHOST_GAME_NAME**
     - **Default value:** _undefined_.
     - **Options:** `['fivem','redm']`.
@@ -75,7 +69,6 @@ The specific way to set up those variables vary from system to system, and there
     - **Default value:** `40120`.
     - Which TCP port txAdmin should bind & listen to.
     - This variable cannot be `30120` to prevent user confusion.
-    - <mark>NOTE:</mark> This variable takes priority over the deprecated `txAdminPort` ConVar.
 - **TXHOST_FXS_PORT**
     - **Default value:** _undefined_.
     - Forces the FXServer to bind to the specified port by enforcing or replacing the `endpoint_add_*` commands in `server.cfg`.
@@ -83,7 +76,6 @@ The specific way to set up those variables vary from system to system, and there
 - **TXHOST_INTERFACE**
     - **Default value:** `0.0.0.0`.
     - Which interface txAdmin will bind and enforce FXServer to bind to.
-    - <mark>NOTE:</mark> This variable takes priority over the deprecated `txAdminInterface` ConVar.
 
 ### Provider
 - **TXHOST_PROVIDER_NAME**
@@ -132,7 +124,7 @@ The specific way to set up those variables vary from system to system, and there
 Replace this:
 ```batch
 @echo off
-"E:/FiveM/13079//FXServer.exe" +set serverProfile "server2" +set txAdminPort "40125"
+"E:/FiveM/13079/FXServer.exe" +set serverProfile "server2" +set txAdminPort "40125"
 pause
 ```
 With this:
@@ -140,11 +132,11 @@ With this:
 @echo off
 set TXHOST_DATA_PATH=E:\FiveM\txData-dev
 set TXHOST_TXA_PORT=40125
-"E:/FiveM/13079//FXServer.exe"
+"E:/FiveM/13079/FXServer.exe"
 pause
 ```
 > [!NOTE]
-> Replace `"E:/FiveM/13079//FXServer.exe"` with the path you see in your existing `*.bat`.
+> Replace `"E:/FiveM/13079/FXServer.exe"` with the path you see in your existing `*.bat`.
 
 
 ### Setting up a dev server on Windows with a `env.bat` file:

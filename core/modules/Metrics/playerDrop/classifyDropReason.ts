@@ -1,5 +1,6 @@
 import { PlayerDropEvent } from "@modules/FxPlayerlist";
 import { PDL_CRASH_REASON_CHAR_LIMIT, PDL_UNKNOWN_REASON_CHAR_LIMIT } from "./config";
+import { txEnv } from "@core/globalData";
 
 const playerInitiatedRules = [
     `exiting`,//basically only see this one
@@ -234,7 +235,7 @@ export const classifyDrop = (payload: PlayerDropEvent): ClassifyDropReasonRespon
             ),
         };
     } else if (payload.category === FxsDropReasonGroups.RESOURCE) {
-        if (payload.resource === 'monitor') {
+        if (payload.resource === txEnv.txaResourceName) {
             //if server shutting down, return ignore, otherwise return server-initiated
             if (payload.reason === 'server_shutting_down') {
                 return { category: false };

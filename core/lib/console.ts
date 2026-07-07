@@ -49,10 +49,8 @@ export const setConsoleEnvData = (
     txAdminVersion: string,
     txAdminResourcePath: string,
     isDevMode: boolean,
-    isVerbose: boolean,
 ) => {
     _txAdminVersion = txAdminVersion;
-    _verboseFlag = isVerbose;
     if (isDevMode) {
         sourceMapSupport.install();
         //for some reason when using sourcemap it ends up with core/core/
@@ -149,6 +147,22 @@ const DIVIDER_SIZE = 60;
 const DIVIDER_CHAR = '=';
 const DIVIDER = DIVIDER_CHAR.repeat(DIVIDER_SIZE);
 const DIR_DIVIDER = chalk.cyan(DIVIDER);
+
+const getTitleDivider = (title: string) => {
+    if (!title) return { start: DIR_DIVIDER, end: DIR_DIVIDER };
+    const MIN_SIDE_CHARS = 3;
+    const label = ` ${title} `;
+    const totalSize = Math.max(DIVIDER_SIZE, label.length + MIN_SIDE_CHARS * 2);
+    const remaining = totalSize - label.length;
+    const leftSize = Math.floor(remaining / 2);
+    const rightSize = remaining - leftSize;
+    const divider = DIVIDER_CHAR.repeat(leftSize) + label + DIVIDER_CHAR.repeat(rightSize);
+    return {
+        start: chalk.cyan(divider),
+        end: chalk.cyan(DIVIDER_CHAR.repeat(totalSize)),
+    };
+};
+
 const specialsColor = chalk.rgb(255, 228, 181).italic;
 const lawngreenColor = chalk.rgb(124, 252, 0);
 const orangeredColor = chalk.rgb(255, 69, 0);
@@ -209,12 +223,20 @@ const getPrettyError = (error: Error, multilineError?: boolean) => {
  */
 const dirHandler = (data: any, options?: TxInspectOptions, consoleInstance?: Console) => {
     if (!consoleInstance) consoleInstance = defaultConsole;
+    
+    let dividerStart = DIR_DIVIDER;
+    let dividerEnd = DIR_DIVIDER;
+    if (options?.title) {
+        const titled = getTitleDivider(options.title);
+        dividerStart = titled.start;
+        dividerEnd = titled.end;
+    }
 
     if (data instanceof Error) {
         consoleInstance.log(getPrettyError(data, options?.multilineError));
         if (!options?.multilineError) consoleInstance.log();
     } else {
-        consoleInstance.log(DIR_DIVIDER);
+        consoleInstance.log(dividerStart);
         if (data === undefined) {
             consoleInstance.log(specialsColor('> undefined'));
         } else if (data === null) {
@@ -226,11 +248,12 @@ const dirHandler = (data: any, options?: TxInspectOptions, consoleInstance?: Con
         } else {
             consoleInstance.dir(data, options);
         }
-        consoleInstance.log(DIR_DIVIDER);
+        consoleInstance.log(dividerEnd);
     }
 }
 
 type TxInspectOptions = InspectOptions & {
+    title?: string;
     multilineError?: boolean;
 }
 

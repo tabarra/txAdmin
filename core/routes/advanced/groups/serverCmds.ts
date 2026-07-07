@@ -1,6 +1,7 @@
 import { SYM_SYSTEM_AUTHOR } from "@lib/symbols";
 import type { AdvancedCommandHandler } from "../runCommand";
 import { mdCodeBlock, parseFiniteIntString } from "@lib/misc";
+import { txEnv } from "@core/globalData";
 
 
 const forceUpdateMutableConvars: AdvancedCommandHandler = async (ctx, args) => {
@@ -39,18 +40,18 @@ const safelyRestartMonitorResource: AdvancedCommandHandler = (ctx, args) => {
     }
     const ensureCmdResult = txCore.fxRunner.sendCommand(
         'ensure',
-        ['monitor'],
+        [txEnv.txaResourceName],
         SYM_SYSTEM_AUTHOR
     );
     if (ensureCmdResult) {
         return {
             type: 'md',
-            data: 'Monitor restarted.',
+            data: 'Restarting the txAdmin resource...',
         }
     } else {
         return {
             type: 'md',
-            data: 'Failed to restart monitor.\nCheck the terminal for more details.',
+            data: 'Failed to restart the txAdmin resource.\nCheck the terminal for more details.',
         }
     }
 }

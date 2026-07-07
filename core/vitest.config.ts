@@ -1,20 +1,28 @@
 import path from 'node:path';
 import fs from 'node:fs';
+import JSON5 from 'json5';
 import { defineConfig } from 'vitest/config';
 import type { InlineConfig } from 'vitest/node';
 
 
 //Detect the aliases from the tsconfig.json
-//NOTE: this regex is obviously sensitive to the format of the tsconfig.json
-// but I don't feel like using a jsonc parser in here
-const tsconfig = fs.readFileSync(path.resolve(__dirname, './tsconfig.json'), 'utf-8');
-const aliasRegex = /"(?<alias>@\w+)\/\*":\s\["(?<path>\.+\/[^*]*)\*"]/g;
-const resolvedAliases: InlineConfig['alias'] = {
-    '@locale': path.resolve(__dirname, '../locale'), //from ./shared/tsconfig.json
+const extractTsconfigAliases = (tsconfigPath: string) => {
+    const tsconfig = JSON5.parse(fs.readFileSync(tsconfigPath, 'utf-8'));
+    const baseDir = path.dirname(tsconfigPath);
+    const paths: Record<string, string[]> = tsconfig.compilerOptions?.paths ?? {};
+    const aliases: InlineConfig['alias'] = {};
+    for (const [aliasPattern, targetPaths] of Object.entries(paths)) {
+        const alias = aliasPattern.replace('/*', '');
+        const targetPath = targetPaths[0].replace('/*', '');
+        aliases[alias] = path.resolve(baseDir, targetPath);
+    }
+    return aliases;
 };
-for (const match of tsconfig.matchAll(aliasRegex)) {
-    resolvedAliases[match.groups!.alias] = path.resolve(__dirname, match.groups!.path);
-}
+
+const resolvedAliases: InlineConfig['alias'] = {
+    ...extractTsconfigAliases(path.resolve(__dirname, '../shared/tsconfig.json')),
+    ...extractTsconfigAliases(path.resolve(__dirname, './tsconfig.json')),
+};
 
 
 export default defineConfig({

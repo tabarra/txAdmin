@@ -20,7 +20,7 @@ export default async function Intercom(ctx: InitializedCtx) {
     postData.txAdminToken = true;
 
     //Delegate to the specific scope functions
-    if (scope == 'monitor') {
+    if (scope === 'heartbeat') {
         try {
             txCore.fxMonitor.handleHeartBeat('http');
             return ctx.send(txCore.metrics.txRuntime.currHbData);
@@ -30,7 +30,7 @@ export default async function Intercom(ctx: InitializedCtx) {
                 success: false,
             });
         }
-    } else if (scope == 'resources') {
+    } else if (scope === 'resources') {
         if (!Array.isArray(postData.resources)) {
             return ctx.utils.error(400, 'Invalid Request');
         }

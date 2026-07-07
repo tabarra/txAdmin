@@ -247,7 +247,7 @@ export const stringifyConsoleArgs = (args: (string | number | object)[]) => {
 
 
 /**
- * Copies the custom locale file from txData to the 'monitor' path, due to sandboxing.
+ * Copies the custom locale file from txData to the resource path, due to sandboxing.
  * FIXME: move to core/lib/fxserver/runtimeFiles.ts
  */
 export const setupCustomLocaleFile = async () => {

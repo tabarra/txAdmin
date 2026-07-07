@@ -1,7 +1,9 @@
 //@ts-nocheck
-import { expect, it, suite } from 'vitest';
+import { expect, it, suite, inject } from 'vitest';
 import { classifyDrop } from './classifyDropReason';
 import { PDL_CRASH_REASON_CHAR_LIMIT, PDL_UNKNOWN_REASON_CHAR_LIMIT } from './config';
+
+const txaResourceName = inject('txaResourceName');
 
 
 const playerInitiatedExamples = [
@@ -148,11 +150,11 @@ suite('classifyDrop new mode', () => {
             category: 'resource',
             resource: 'unknown',
         });
-        expect(fnc('rsn', 'monitor', 1)).toEqual({
+        expect(fnc('rsn', txaResourceName, 1)).toEqual({
             category: 'resource',
             resource: 'txAdmin',
         });
-        expect(fnc('server_shutting_down', 'monitor', 1)).toEqual({
+        expect(fnc('server_shutting_down', txaResourceName, 1)).toEqual({
             category: false,
         });
     });

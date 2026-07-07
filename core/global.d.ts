@@ -30,26 +30,22 @@ declare namespace globalThis {
 }
 
 
+//MARK: Runtime
 /**
- * MARK: Natives
- * Natives extracted from https://www.npmjs.com/package/@citizenfx/server
+ * Minimal type declaration for Bun runtime detection.
+ */
+declare const Bun: { version: string } | undefined;
+
+
+/**
+ * FXServer natives extracted from https://www.npmjs.com/package/@citizenfx/server
  * I prefer extracting than importing the whole package because it's 
  * easier to keep track of what natives are being used.
  * 
  * To use the package, add the following line to the top of the file:
  * /// <reference types="@citizenfx/server" />
  */
-declare function ExecuteCommand(commandString: string): void;
-declare function GetConvar(varName: string, default_: string): string;
-declare function GetCurrentResourceName(): string;
-declare function GetPasswordHash(password: string): string;
-declare function GetResourceMetadata(resourceName: string, metadataKey: string, index: number): string;
-declare function GetResourcePath(resourceName: string): string;
-declare function IsDuplicityVersion(): boolean;
-declare function PrintStructuredTrace(payload: string): void;
-declare function RegisterCommand(commandName: string, handler: Function, restricted: boolean): void;
-declare function ScanResourceRoot(rootPath: string, callback: (data: object) => void): boolean;
-declare function VerifyPasswordHash(password: string, hash: string): boolean;
+declare const GetConvar: ((varName: string, default_: string) => string) | undefined;
 
 
 /**

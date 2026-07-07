@@ -14,9 +14,12 @@ function replaceSemicolon(x)
     return new
 end
 
-if GetCurrentResourceName() ~= "monitor" then
+--FIXME: need a good way for the core to define what the resource name is
+--FIXME: define the correct capitalization
+local resName = GetCurrentResourceName()
+if resName ~= "txAdmin" and resName ~= "txadmin" and resName ~= "monitor" then
     logError('This resource should not be installed separately, it already comes with fxserver.')
-    return
+    return --TODO: send fatal error via FD3 so tx can stop the server
 end
 
 
@@ -27,17 +30,17 @@ TX_ADMINS = {}
 TX_PLAYERLIST = {}
 TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
-TX_VERSION = GetResourceMetadata('monitor', 'version') -- for now, only used in the start print
+TX_VERSION = GetResourceMetadata(resName, 'version') -- for now, only used in the start print
 TX_IS_SERVER_SHUTTING_DOWN = false
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
     txPrint('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
-    return
+    return --TODO: send fatal error via FD3 so tx can stop the server
 end
 if TX_LUACOMTOKEN == "removed" then
-    txPrint('^1Please do not restart the monitor resource.')
-    return
+    txPrint('^1Please do not restart the monitor/txadmin resource.')
+    return --TODO: send fatal error via FD3 so tx can stop the server
 end
 
 -- Erasing the token convar for security reasons, and then restoring it if debug mode.
@@ -47,7 +50,7 @@ SetConvar("txAdmin-luaComToken", "removed")
 CreateThread(function()
     Wait(0)
     if not TX_DEBUG_MODE then return end
-    debugPrint("Restoring txAdmin-luaComToken for next monitor restart")
+    debugPrint("Restoring txAdmin-luaComToken for next resource restart")
     SetConvar("txAdmin-luaComToken", TX_LUACOMTOKEN)
 end)
 
@@ -55,7 +58,7 @@ end)
 -- =============================================
 -- MARK: Heartbeat functions
 -- =============================================
-local httpHbUrl = "http://" .. TX_LUACOMHOST .. "/intercom/monitor"
+local httpHbUrl = "http://" .. TX_LUACOMHOST .. "/intercom/heartbeat"
 local httpHbPayload = json.encode({ txAdminToken = TX_LUACOMTOKEN })
 local hbReturnData = '{"error": "no data cached in sv_main.lua"}'
 local function HTTPHeartBeat()

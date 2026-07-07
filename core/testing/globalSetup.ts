@@ -15,6 +15,7 @@ export default function setup({ config, provide }: GlobalSetupContext) {
     const fxsPath = path.join(tempFolderPath, relativePath);
     const txDataPath = path.join(tempFolderPath, 'txData');
     provide('fxsPath', fxsPath);
+    provide('txaResourceName', 'monitor');
 
     // Setup & Cleanup
     console.log('Setting temp folder:', tempFolderPath);
@@ -30,5 +31,6 @@ export default function setup({ config, provide }: GlobalSetupContext) {
 declare module 'vitest' {
     export interface ProvidedContext {
         fxsPath: string
+        txaResourceName: string
     }
 }

@@ -4,6 +4,7 @@ import { InitializedCtx } from '@modules/WebServer/ctxTypes';
 import { txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import { ApiVerifyPasswordResp, ReactAuthDataType } from '@shared/authApiTypes';
+import { verifyPassword } from '@modules/AdminStore/passwordUtils';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
 
@@ -51,7 +52,7 @@ export default async function AuthVerifyPassword(ctx: InitializedCtx) {
                 error: 'Wrong username or password!',
             });
         }
-        if (!VerifyPasswordHash(postBody.password, vaultAdmin.password_hash)) {
+        if (!await verifyPassword(postBody.password, vaultAdmin.password_hash)) {
             console.warn(`Wrong password from: ${ctx.ip}`);
             return ctx.send<ApiVerifyPasswordResp>({
                 error: 'Wrong username or password!',

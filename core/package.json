@@ -20,6 +20,7 @@
   "dependencies": {
     "@koa/cors": "^5.0.0",
     "@koa/router": "^13.1.0",
+    "bcryptjs": "^3.0.3",
     "boxen": "^7.1.1",
     "bytes": "^3.1.2",
     "cookie": "^0.7.0",

@@ -198,10 +198,12 @@ export default class WebServer {
             const listenErrorHandler = (error: any) => {
                 if (error.code !== 'EADDRINUSE') return;
                 fatalError.WebServer(0, [
-                    `Failed to start HTTP server, port ${error.port} is already in use.`,
+                    `Failed to start HTTP server: port ${error.port} is already in use.`,
                     'Maybe you already have another txAdmin running in this port.',
-                    'If you want to run multiple txAdmin instances, check the documentation for the port convar.',
                     'You can also try restarting the host machine.',
+                    '', //dash divider
+                    'If you want to run multiple servers, please check the docs:',
+                    'https://aka.cfx.re/txadmin-env-config',
                 ]);
             };
             //@ts-ignore

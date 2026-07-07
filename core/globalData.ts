@@ -1,72 +1,24 @@
-import os from 'node:os';
-import fsp from 'node:fs/promises';
 import path from 'node:path';
+import semver from 'semver';
 import slash from 'slash';
 
 import consoleFactory, { setConsoleEnvData } from '@lib/console';
 import { addLocalIpAddress } from '@lib/host/isIpAddressLocal';
-import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
 import { parseTxDevEnv, TxDevEnvType } from '@shared/txDevEnv';
 import { Overwrite } from 'utility-types';
 import fatalError from '@lib/fatalError';
-import { getNativeVars } from './boot/getNativeVars';
-import { getHostVars, hostEnvVarSchemas } from './boot/getHostVars';
-import { getZapVars } from './boot/getZapVars';
-import { z, ZodSchema } from 'zod';
-import { fromZodError } from 'zod-validation-error';
+import { checkDeprecatedConvars } from './boot/checkDeprecatedConvars';
+import { getRuntimeInfo } from './boot/getRuntimeInfo';
+import { getHostVars } from './boot/getHostVars';
 import consts from '@shared/consts';
 import chalk from 'chalk';
 const console = consoleFactory();
 
 
 /**
- * MARK: GETTING VARIABLES
- */
-//Get OSType
-const osTypeVar = os.type();
-let isWindows;
-if (osTypeVar === 'Windows_NT') {
-    isWindows = true;
-} else if (osTypeVar === 'Linux') {
-    isWindows = false;
-} else {
-    fatalError.GlobalData(0, `OS type not supported: ${osTypeVar}`);
-}
-
-//Simple env vars
-const ignoreDeprecatedConfigs = process.env?.TXHOST_IGNORE_DEPRECATED_CONFIGS === 'true';
-
-
-/**
  * MARK: HELPERS
  */
 const cleanPath = (x: string) => slash(path.normalize(x));
-const handleMultiVar = <T extends ZodSchema>(
-    name: string,
-    schema: T,
-    procenv: z.infer<T> | undefined,
-    zapcfg: string | number | undefined,
-    convar: any,
-): z.infer<T> | undefined => {
-    const alt = zapcfg ?? convar;
-    if (alt === undefined) {
-        return procenv;
-    }
-    const whichAlt = zapcfg !== undefined ? 'txAdminZapConfig.json' : 'ConVar';
-    if (procenv !== undefined) {
-        console.warn(`WARNING: Both the environment variable 'TXHOST_${name}' and the ${whichAlt} equivalent are set. The environment variable will be prioritized.`);
-        return procenv;
-    }
-    const parsed = schema.safeParse(alt);
-    if (!parsed.success) {
-        fatalError.GlobalData(20, [
-            `Invalid value for the TXHOST_${name}-equivalent config in ${whichAlt}.`,
-            ['Value', alt],
-            'For more information: https://aka.cfx.re/txadmin-env-config',
-        ], fromZodError(parsed.error, { prefix: null }));
-    }
-    return parsed.data;
-}
 
 
 /**
@@ -87,7 +39,7 @@ const devVars = parseTxDevEnv();
 if (devVars.ENABLED) {
     console.debug('Starting txAdmin in DEV mode.');
     if (!devVars.SRC_PATH || !devVars.VITE_URL) {
-        fatalError.GlobalData(8, 'Missing TXDEV_VITE_URL and/or TXDEV_SRC_PATH env variables.');
+        fatalError.GlobalData(8, 'Missing `TXDEV_VITE_URL` and/or `TXDEV_SRC_PATH` env variables.');
     }
     _txDevEnv = devVars as TxDevEnvEnabledType;
 } else {
@@ -98,11 +50,47 @@ if (devVars.ENABLED) {
     } as TxDevEnvDisabledType;
 }
 
+//Setting verbose mode as early as possible
+console.setVerbose(_txDevEnv.VERBOSE);
+
+//DEBUG: print env info
+// console.dir({
+//     argv0: process.argv0,
+//     execPath: process.execPath,
+//     cwd: process.cwd(),
+//     __dirname: __dirname ?? 'UNDEFINED',
+//     convar: typeof GetConvar === 'function'
+//         ? GetConvar('txAdminPort', 'UNDEFINED')
+//         : 'GetConvar not available',
+//     args: process.argv,
+// }, { title: 'ENV INFO' });
+
 
 /**
  * MARK: CHECK HOST VARS
  */
-const nativeVars = getNativeVars(ignoreDeprecatedConfigs);
+//Check for deprecated convars
+checkDeprecatedConvars();
+
+//Get runtime info (paths, versions, etc)
+const runtimeInfo = getRuntimeInfo();
+console.verbose.dir(runtimeInfo, { title: 'RUNTIME INFO' });
+const { isWindows, runtime, runtimeNodeVersion, runtimeVersionTag, fxsVersionInfo, txaResourceName } = runtimeInfo;
+const fxsVersion = fxsVersionInfo.build;
+const txaPath = cleanPath(runtimeInfo.txaPath);
+const fxsPath = cleanPath(runtimeInfo.fxsPath);
+
+
+//Validate txaPath is a child of fxsPath
+const txaToFxsRelative = path.relative(fxsPath, txaPath);
+if (!txaToFxsRelative || path.isAbsolute(txaToFxsRelative) || txaToFxsRelative.startsWith('..')) {
+    fatalError.GlobalData(11, [
+        'The txAdmin resource is not located inside the target FXServer installation.',
+        'This usually means `--fxspath` points to the wrong artifact folder.',
+        ['txAdmin path', txaPath],
+        ['FXServer path', fxsPath],
+    ]);
+}
 
 //Getting fxserver version
 //4380 = GetVehicleType was exposed server-side
@@ -116,52 +104,59 @@ const nativeVars = getNativeVars(ignoreDeprecatedConfigs);
 //9423 = feat(server): add more infos to playerDropped event
 //9655 = Fixed ScanResourceRoot + latent events
 const minFxsVersion = 5894;
-const fxsVerParsed = parseFxserverVersion(nativeVars.fxsVersion);
-const fxsVersion = fxsVerParsed.valid ? fxsVerParsed.build : 99999;
-if (!fxsVerParsed.valid) {
+const minNodeVersion = '22.11.0';
+
+// Invalid version: warn but continue with build=99999
+if (!fxsVersionInfo.valid) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
-    console.error(`Convar: ${nativeVars.fxsVersion}`);
-    console.error(`Parsed Build: ${fxsVerParsed.build}`);
-    console.error(`Parsed Branch: ${fxsVerParsed.branch}`);
-    console.error(`Parsed Platform: ${fxsVerParsed.platform}`);
-} else if (fxsVerParsed.build < minFxsVersion) {
+    console.error(`Raw version string: ${fxsVersionInfo.raw ?? '(not available)'}`);
+} else if (fxsVersionInfo.branch !== 'master') {
+    console.warn(`You are running a custom branch of FXServer: ${fxsVersionInfo.branch}.`);
+} else if (fxsVersion < minFxsVersion) {
     fatalError.GlobalData(2, [
         'This version of FXServer is too outdated and NOT compatible with txAdmin',
-        ['Current FXServer version', fxsVerParsed.build.toString()],
-        ['Minimum required version', minFxsVersion.toString()],
+        ['Current FXServer version', fxsVersion],
+        ['Minimum required version', minFxsVersion],
         'Please update your FXServer to a newer version.',
     ]);
-} else if (fxsVerParsed.branch !== 'master') {
-    console.warn(`You are running a custom branch of FXServer: ${fxsVerParsed.branch}`);
+}
+
+// Check Node.js version for all runtimes
+if (runtime === 'fxserver') {
+    if (!semver.gte(runtimeNodeVersion, minNodeVersion)) {
+        fatalError.GlobalData(10, [
+            'This version of FXServer is running an outdated version of Node.js.',
+            ['Node.js version', runtimeNodeVersion],
+            ['Minimum required', minNodeVersion],
+            'Please update your FXServer artifact to a newer version.',
+        ]);
+    }
+} else {
+    if (!semver.gte(runtimeNodeVersion, minNodeVersion)) {
+        fatalError.GlobalData(10, [
+            'This runtime\'s Node.js version is too old.',
+            ['Runtime', runtimeVersionTag],
+            ['Node.js version', runtimeNodeVersion],
+            ['Minimum required', minNodeVersion],
+            'Please update your Node.js or Bun to a newer version.',
+        ]);
+    }
+
+    console.warn(console.DIVIDER);
+    console.warn(`Running in experimental standalone mode with runtime: ${runtimeVersionTag}.`);
+    console.warn(console.DIVIDER);
 }
 
 //Getting txAdmin version
-if (!nativeVars.txaResourceVersion) {
+//@ts-ignore esbuild will replace TX_RELEASE_VERSION with a string
+const txaVersion = String(TX_RELEASE_VERSION);
+if (!semver.valid(txaVersion)) {
     fatalError.GlobalData(3, [
         'txAdmin version not set or in the wrong format.',
-        ['Detected version', nativeVars.txaResourceVersion],
+        ['Detected version', txaVersion],
     ]);
 }
-const txaVersion = nativeVars.txaResourceVersion;
-
-//Get txAdmin Resource Path
-if (!nativeVars.txaResourcePath) {
-    fatalError.GlobalData(4, [
-        'Could not resolve txAdmin resource path.',
-        ['Convar', nativeVars.txaResourcePath],
-    ]);
-}
-const txaPath = cleanPath(nativeVars.txaResourcePath);
-
-//Get citizen Root
-if (!nativeVars.fxsCitizenRoot) {
-    fatalError.GlobalData(5, [
-        'citizen_root convar not set',
-        ['Convar', nativeVars.fxsCitizenRoot],
-    ]);
-}
-const fxsPath = cleanPath(nativeVars.fxsCitizenRoot as string);
 
 //Check if server is inside WinRar's temp folder
 if (isWindows && /Temp[\\/]+Rar\$/i.test(fxsPath)) {
@@ -178,7 +173,6 @@ setConsoleEnvData(
     txaVersion,
     txaPath,
     _txDevEnv.ENABLED,
-    _txDevEnv.VERBOSE
 );
 
 
@@ -186,6 +180,7 @@ setConsoleEnvData(
  * MARK: TXDATA & PROFILE 
  */
 const hostVars = getHostVars();
+
 //Setting data path
 let hasCustomDataPath = false;
 let dataPath = cleanPath(path.join(
@@ -193,16 +188,9 @@ let dataPath = cleanPath(path.join(
     isWindows ? '..' : '../../../',
     'txData'
 ));
-const dataPathVar = handleMultiVar(
-    'DATA_PATH',
-    hostEnvVarSchemas.DATA_PATH,
-    hostVars.DATA_PATH,
-    undefined,
-    nativeVars.txDataPath,
-);
-if (dataPathVar) {
+if (hostVars.DATA_PATH) {
     hasCustomDataPath = true;
-    dataPath = cleanPath(dataPathVar);
+    dataPath = cleanPath(hostVars.DATA_PATH);
 }
 
 //Check paths for non-ASCII characters
@@ -218,79 +206,32 @@ if (nonASCIIRegex.test(fxsPath) || nonASCIIRegex.test(dataPath)) {
         'Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.',
         'Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.',
         'Please make sure FXServer is not in a path contaning those characters.',
-        `If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxsVersion}/".`,
+        isWindows && `Please consider moving the artifact to \`C:/fivemserver/${fxsVersion}/\`.`,
         'FXServer path: ' + colorNonAscii(fxsPath),
         'txData path: ' + colorNonAscii(dataPath),
     ]);
 }
 
-//Profile - not available as env var
-let profileVar = nativeVars.txAdminProfile;
-if (profileVar) {
-    profileVar = profileVar.replace(/[^a-z0-9._-]/gi, '');
-    if (profileVar.endsWith('.base')) {
-        fatalError.GlobalData(13, [
-            ['Invalid server profile name', profileVar],
-            'Profile names cannot end with ".base".',
-            'It looks like you are trying to point to a server folder instead of a profile.',
-        ]);
-    }
-    if (!profileVar.length) {
-        fatalError.GlobalData(14, [
-            'Invalid server profile name.',
-            'If you are using Google Translator on the instructions page,',
-            'make sure there are no additional spaces in your command.',
-        ]);
-    }
-}
-const profileName = profileVar ?? 'default';
+//Profile - TODO: remove when txData structure changes
+const profileName = 'default';
 const profilePath = cleanPath(path.join(dataPath, profileName));
 
 
 /**
- * MARK: ZAP & NETWORKING
+ * MARK: NETWORKING
  */
-let zapVars: ReturnType<typeof getZapVars> | undefined;
-if (!ignoreDeprecatedConfigs) {
-    //FIXME: ZAP doesn't need this anymore, remove ASAP
-    const zapCfgFilePath = path.join(dataPath, 'txAdminZapConfig.json');
-    try {
-        zapVars = getZapVars(zapCfgFilePath);
-        if (!_txDevEnv.ENABLED) fsp.unlink(zapCfgFilePath).catch(() => { });
-    } catch (error) {
-        fatalError.GlobalData(9, 'Failed to load with ZAP-Hosting configuration.', error);
-    }
-}
 
-//No default, no convar/zap cfg
+//No default, no convar cfg
 const txaUrl = hostVars.TXA_URL;
 
 //txAdmin port
-const txaPort = handleMultiVar(
-    'TXA_PORT',
-    hostEnvVarSchemas.TXA_PORT,
-    hostVars.TXA_PORT,
-    zapVars?.txAdminPort,
-    nativeVars.txAdminPort,
-) ?? 40120;
+const txaPort = hostVars.TXA_PORT ?? 40120;
 
 //fxserver port
-const fxsPort = handleMultiVar(
-    'FXS_PORT',
-    hostEnvVarSchemas.FXS_PORT,
-    hostVars.FXS_PORT,
-    zapVars?.forceFXServerPort,
-    undefined,
-);
+const fxsPort = hostVars.FXS_PORT;
 
 //Forced interface
-const netInterface = handleMultiVar(
-    'INTERFACE',
-    hostEnvVarSchemas.INTERFACE,
-    hostVars.INTERFACE,
-    zapVars?.forceInterface,
-    nativeVars.txAdminInterface,
-);
+const netInterface = hostVars.INTERFACE;
 if (netInterface) {
     addLocalIpAddress(netInterface);
 }
@@ -302,80 +243,26 @@ if (netInterface) {
 const forceGameName = hostVars.GAME_NAME;
 const hostApiToken = hostVars.API_TOKEN;
 
-const forceMaxClients = handleMultiVar(
-    'MAX_SLOTS',
-    hostEnvVarSchemas.MAX_SLOTS,
-    hostVars.MAX_SLOTS,
-    zapVars?.deployerDefaults?.maxClients,
-    undefined,
-);
+const forceMaxClients = hostVars.MAX_SLOTS;
 
-const forceQuietMode = handleMultiVar(
-    'QUIET_MODE',
-    hostEnvVarSchemas.QUIET_MODE,
-    hostVars.QUIET_MODE,
-    zapVars?.deployerDefaults?.maxClients,
-    undefined,
-) ?? false;
+const forceQuietMode = hostVars.QUIET_MODE ?? false;
 
 
 /**
  * MARK: PROVIDER
  */
-const providerName = handleMultiVar(
-    'PROVIDER_NAME',
-    hostEnvVarSchemas.PROVIDER_NAME,
-    hostVars.PROVIDER_NAME,
-    zapVars?.providerName,
-    undefined,
-);
-const providerLogo = handleMultiVar(
-    'PROVIDER_LOGO',
-    hostEnvVarSchemas.PROVIDER_LOGO,
-    hostVars.PROVIDER_LOGO,
-    zapVars?.loginPageLogo,
-    undefined,
-);
+const providerName = hostVars.PROVIDER_NAME;
+const providerLogo = hostVars.PROVIDER_LOGO;
 
 
 /**
  * MARK: DEFAULTS
  */
-const defaultDbHost = handleMultiVar(
-    'DEFAULT_DBHOST',
-    hostEnvVarSchemas.DEFAULT_DBHOST,
-    hostVars.DEFAULT_DBHOST,
-    zapVars?.deployerDefaults?.mysqlHost,
-    undefined,
-);
-const defaultDbPort = handleMultiVar(
-    'DEFAULT_DBPORT',
-    hostEnvVarSchemas.DEFAULT_DBPORT,
-    hostVars.DEFAULT_DBPORT,
-    zapVars?.deployerDefaults?.mysqlPort,
-    undefined,
-);
-const defaultDbUser = handleMultiVar(
-    'DEFAULT_DBUSER',
-    hostEnvVarSchemas.DEFAULT_DBUSER,
-    hostVars.DEFAULT_DBUSER,
-    zapVars?.deployerDefaults?.mysqlUser,
-    undefined,
-);
-const defaultDbPass = handleMultiVar(
-    'DEFAULT_DBPASS',
-    hostEnvVarSchemas.DEFAULT_DBPASS,
-    hostVars.DEFAULT_DBPASS,
-    zapVars?.deployerDefaults?.mysqlPassword,
-    undefined,
-);
-const defaultDbName = handleMultiVar(
-    'DEFAULT_DBNAME',
-    hostEnvVarSchemas.DEFAULT_DBNAME,
-    hostVars.DEFAULT_DBNAME,
-    zapVars?.deployerDefaults?.mysqlDatabase,
-    undefined,
-);
+const defaultDbHost = hostVars.DEFAULT_DBHOST;
+const defaultDbPort = hostVars.DEFAULT_DBPORT;
+const defaultDbUser = hostVars.DEFAULT_DBUSER;
+const defaultDbPass = hostVars.DEFAULT_DBPASS;
+const defaultDbName = hostVars.DEFAULT_DBNAME;
 
 //Default Master Account
 type DefaultMasterAccount = {
@@ -432,46 +319,15 @@ if (hostVars.DEFAULT_ACCOUNT) {
         fivemId,
         password,
     };
-} else if (zapVars?.defaultMasterAccount) {
-    const username = zapVars.defaultMasterAccount?.name;
-    const password = zapVars.defaultMasterAccount?.password_hash;
-    if (!consts.regexValidFivemUsername.test(username)) {
-        fatalError.GlobalData(25, [
-            'Invalid default account username.',
-            'It should be a valid FiveM username.',
-            ['Username', username],
-        ]);
-    }
-    if (!bcryptRegex.test(password)) {
-        fatalError.GlobalData(26, [
-            'Invalid default account password.',
-            'Expected bcrypt hash.',
-            ['Hash', password],
-        ]);
-    }
-    defaultMasterAccount = {
-        username: username,
-        password: password,
-    };
 }
 
 //Default cfx key
-const defaultCfxKey = handleMultiVar(
-    'DEFAULT_CFXKEY',
-    hostEnvVarSchemas.DEFAULT_CFXKEY,
-    hostVars.DEFAULT_CFXKEY,
-    zapVars?.deployerDefaults?.license,
-    undefined,
-);
+const defaultCfxKey = hostVars.DEFAULT_CFXKEY;
 
 
 /**
  * MARK: FINAL SETUP
  */
-if (ignoreDeprecatedConfigs) {
-    console.verbose.debug('TXHOST_IGNORE_DEPRECATED_CONFIGS is set to true. Ignoring deprecated configs.');
-}
-
 const isPterodactyl = !isWindows && process.env?.TXADMIN_ENABLE === '1';
 const isZapHosting = providerName === 'ZAP-Hosting';
 const setConsoleTitle = !(isPterodactyl || isZapHosting || providerName); //assume not a terminal
@@ -479,7 +335,7 @@ const setConsoleTitle = !(isPterodactyl || isZapHosting || providerName); //assu
 
 //FXServer Display Version
 let fxsVersionTag = fxsVersion.toString();
-if (fxsVerParsed.branch && fxsVerParsed.branch !== 'master') {
+if (fxsVersionInfo.branch && fxsVersionInfo.branch !== 'master') {
     fxsVersionTag += '-ft';
 }
 
@@ -499,16 +355,15 @@ if (providerName) {
     }
 }
 
+//FIXME: this should be part of the runtime tag, not fxserver version tag
 if (providerTag) {
     fxsVersionTag += `/${providerTag}`;
 } else if (isPterodactyl) {
     fxsVersionTag += '/Ptero';
-} else if (isWindows && fxsVerParsed.platform === 'windows') {
+} else if (isWindows) {
     fxsVersionTag += '/Win';
-} else if (!isWindows && fxsVerParsed.platform === 'linux') {
-    fxsVersionTag += '/Lin';
 } else {
-    fxsVersionTag += '/Unk';
+    fxsVersionTag += '/Lin';
 }
 
 
@@ -532,10 +387,11 @@ export const txEnv = Object.freeze({
     txaVersion,
     txaPath,
     fxsPath,
+    txaResourceName,
 
     //ConVar
-    profileName,
-    profilePath, //FIXME: replace by profileSubPath in most places
+    profileName, //TODO: remove after profile structure changes
+    profilePath, //TODO: replace by profileSubPath in most places
     profileSubPath: (...parts: string[]) => path.join(profilePath, ...parts),
 });
 

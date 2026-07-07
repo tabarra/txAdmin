@@ -19,20 +19,8 @@ local ServerCtxObj = {
   announceNotiPos = '', -- top-center, top-right, top-left, bottom-center, bottom-right, bottom-left
 }
 
--- local function getRawCustomLocaleData()
---   LoadResourceFile('monitor', '.runtime/locale.json', function(fileData)
---     if not fileData then
---       txPrint('^2Loaded custom locale file.')
---     else
---       txPrint('^1WARNING: failed to load custom locale from path: '..filePath)
---     end
---   end)
-
---   return fileData
--- end
-
 local function getCustomLocaleData()
-  local fileData = LoadResourceFile('monitor', '.runtime/locale.json')
+  local fileData = LoadResourceFile(GetCurrentResourceName(), '.runtime/locale.json')
   if type(fileData) ~="string" then
     txPrint('^1WARNING: failed to load custom \'locale.json\' file.')
     return false

@@ -11,6 +11,7 @@ import {
 import config from './config';
 import { parseTxDevEnv } from '../../shared/txDevEnv';
 import { TxAdminRunner } from './TxAdminRunner';
+
 process.loadEnvFile();
 
 //Reset terminal
@@ -85,28 +86,33 @@ const buildOptions: BuildOptions = {
     target: 'node16',
     format: 'cjs', //typescript builds to esm and esbuild converts it to cjs
     charset: 'utf8',
-    define: { TX_PRERELEASE_EXPIRATION: preReleaseExpiration },
-};
-const plugins: BuildOptions['plugins'] = [{
-    name: 'fxsRestarter',
-    setup(build) {
-        build.onStart(() => {
-            console.log(`[BUILDER] Build started.`);
-            txInstance.killServer();
-        });
-        build.onEnd(({ errors }) => {
-            if (errors.length) {
-                console.log(`[BUILDER] Failed with errors.`);
-            } else {
-                console.log('[BUILDER] Finished build.');
-                txInstance.spawnServer();
-            }
-        });
+    define: { 
+        TX_PRERELEASE_EXPIRATION: preReleaseExpiration,
+        TX_RELEASE_VERSION: JSON.stringify(txVersion),
     },
-}];
+    plugins: [
+        {
+            name: 'fxsRestarter',
+            setup(build) {
+                build.onStart(() => {
+                    console.log(`[BUILDER] Build started.`);
+                    txInstance.killServer();
+                });
+                build.onEnd(({ errors }) => {
+                    if (errors.length) {
+                        console.log(`[BUILDER] Failed with errors.`);
+                    } else {
+                        console.log('[BUILDER] Finished build.');
+                        txInstance.spawnServer();
+                    }
+                });
+            },
+        },
+    ],
+};
 
 try {
-    const esbuildCtx = await esbuild.context({ ...buildOptions, plugins });
+    const esbuildCtx = await esbuild.context(buildOptions);
     await esbuildCtx.watch();
 } catch (error) {
     console.log('[BUILDER] Something went very wrong.');

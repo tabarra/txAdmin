@@ -34,17 +34,17 @@ export const migrateConfigFile = (fileData: any): ConfigFileData => {
 
     //Sanity check
     if ('version' in fileData && typeof fileData.version !== 'number') {
-        fatalError.ConfigStore(20, 'Your txAdmin config.json version is not a number!');
+        fatalError.ConfigStore(20, 'Your txAdmin `config.json` version is not a number!');
     }
     if (typeof fileData.version === 'number' && fileData.version > CONFIG_VERSION) {
         fatalError.ConfigStore(21, [
-            `Your config.json file is on v${fileData.version}, and this txAdmin supports up to v${CONFIG_VERSION}.`,
+            `Your \`config.json\` file is on v${fileData.version}, and this txAdmin supports up to v${CONFIG_VERSION}.`,
             'This means you likely downgraded your txAdmin or FXServer.',
             'Please make sure your txAdmin is updated!',
             '',
             'If you want to downgrade FXServer (the "artifact") but keep txAdmin updated,',
-            'you can move the updated "citizen/system_resources/monitor" folder',
-            'to older FXserver artifact, replacing the old files.',
+            `you can move the updated "citizen/system_resources/${txEnv.txaResourceName}" folder`,
+            'to the older FXserver artifact folder, replacing the old files.',
             `Alternatively, you can restore the v${fileData.version} backup on the folder below.`,
             ['File Path', `${txEnv.profilePath}/config.json`],
         ]);

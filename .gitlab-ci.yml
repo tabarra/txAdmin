@@ -1,0 +1,33 @@
+stages:
+  - build
+
+build:
+  stage: build
+  image: node:22@sha256:c601a46abb4d2ab80a9dc3da208d50d1122642d53f17a101926ace71e5a9bf1c
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+  variables:
+    # Simulates GitHub's GITHUB_REF for the build script to extract the version
+    GITHUB_REF: "refs/tags/v9.9.9-wip-${CI_COMMIT_SHORT_SHA}"
+  script:
+    - apt-get update && apt-get install -y zip
+    - echo "Building txAdmin v9.9.9-wip-${CI_COMMIT_SHORT_SHA}"
+    - npm ci
+
+    # Create .env file (required by vite config)
+    - |
+      echo "TXDEV_FXSERVER_PATH=$(pwd)/fxserver" > .env
+      echo "TXDEV_VITE_URL=http://localhost:40122" >> .env
+
+    - npm run build
+
+    # Compress build output
+    - cd dist
+    - zip -r ../txadmin-${CI_COMMIT_SHORT_SHA}.zip .
+    - cd ..
+    - sha256sum txadmin-${CI_COMMIT_SHORT_SHA}.zip
+  artifacts:
+    name: "txadmin-${CI_COMMIT_SHORT_SHA}"
+    paths:
+      - txadmin-${CI_COMMIT_SHORT_SHA}.zip
+    expire_in: 90 days

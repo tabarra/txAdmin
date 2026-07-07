@@ -174,7 +174,8 @@ AddEventHandler('playerDropped', function(reason, resource, category)
         return
     end
 
-    if resource == 'monitor' and TX_IS_SERVER_SHUTTING_DOWN then
+    -- NOTE: ignoring resource name, probably fine
+    if TX_IS_SERVER_SHUTTING_DOWN then
         reason = 'server_shutting_down'
     end
 

@@ -8,6 +8,7 @@ import CfxProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@lib/console.js';
 import fatalError from '@lib/fatalError.js';
+import { hashPassword, hashPasswordSync } from './passwordUtils.js';
 import { chalkInversePad } from '@lib/misc.js';
 const console = consoleFactory(modulename);
 
@@ -159,11 +160,11 @@ export default class AdminStore {
         //Handling password
         let password_hash, password_temporary;
         if (password) {
-            password_hash = isPlainTextPassword ? GetPasswordHash(password) : password;
+            password_hash = isPlainTextPassword ? hashPasswordSync(password) : password;
             // password_temporary = false; //undefined will do the same
         } else {
             const veryRandomString = `${username}-password-not-meant-to-be-used-${nanoid()}`;
-            password_hash = GetPasswordHash(veryRandomString);
+            password_hash = hashPasswordSync(veryRandomString);
             password_temporary = true;
         }
 
@@ -199,7 +200,7 @@ export default class AdminStore {
 
         //Saving admin file
         try {
-            const jsonData = JSON.stringify(this.admins);
+            const jsonData = JSON.stringify(this.admins, null, 2);
             this.adminsFileHash = createHash('sha1').update(jsonData).digest('hex');
             fs.writeFileSync(this.adminsFile, jsonData, { encoding: 'utf8', flag: 'wx' });
             this.setupRefreshRoutine();
@@ -366,7 +367,7 @@ export default class AdminStore {
             $schema: ADMIN_SCHEMA_VERSION,
             name,
             master: false,
-            password_hash: GetPasswordHash(password),
+            password_hash: await hashPassword(password),
             password_temporary: true,
             providers: {},
             permissions,
@@ -423,7 +424,7 @@ export default class AdminStore {
 
         //Editing admin
         if (password !== null) {
-            this.admins[adminIndex].password_hash = GetPasswordHash(password);
+            this.admins[adminIndex].password_hash = await hashPassword(password);
             delete this.admins[adminIndex].password_temporary;
         }
         if (typeof citizenfxData !== 'undefined') {
@@ -508,7 +509,7 @@ export default class AdminStore {
         const callError = (reason) => {
             let details;
             if (reason === 'cannot read file') {
-                details = ['This means the file  doesn\'t exist or txAdmin doesn\'t have permission to read it.'];
+                details = ['This means the file doesn\'t exist or txAdmin doesn\'t have permission to read it.'];
             } else {
                 details = [
                     'This likely means the file got somehow corrupted.',

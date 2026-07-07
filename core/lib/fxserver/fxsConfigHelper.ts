@@ -383,16 +383,16 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
             continue;
         }
 
-        //Check for start/stop/ensure txAdmin/txAdminClient/monitor
+        //Check for start/stop/ensure txadmin/monitor
         if (
             ['start', 'stop', 'ensure'].includes(cmd.command)
             && cmd.args.length >= 1
-            && ['txadmin', 'txadminclient', 'monitor'].includes(cmd.args[0].toLowerCase())
+            && ['txadmin', 'monitor'].includes(cmd.args[0].toLowerCase())
         ) {
             toCommentOut.add(
                 cmd.file,
                 cmd.line,
-                'you MUST NOT start/stop/ensure txadmin resources.',
+                'you MUST NOT start/stop/ensure the txadmin resource.',
             );
             continue;
         }

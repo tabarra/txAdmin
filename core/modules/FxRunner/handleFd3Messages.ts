@@ -1,5 +1,6 @@
 import { anyUndefined } from '@lib/misc';
 import consoleFactory from '@lib/console';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory('FXProc:FD3');
 
 
@@ -70,6 +71,7 @@ const handleBridgedCommands = (payload: any) => {
 const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
     //Filter valid and fresh packages
     if (!mutex || mutex !== txCore.fxRunner.child?.mutex) return;
+    // console.dir(trace, { depth: null });
     if (anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
     const { channel, data } = trace.value;
 
@@ -123,8 +125,9 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
     if (
         channel === 'citizen-server-impl'
         && data.type === 'script_structured_trace'
-        && data.resource === 'monitor'
+        && data.resource === txEnv.txaResourceName
     ) {
+        // console.dir(trace, { depth: null });
         if (data.payload.type === 'txAdminHeartBeat') {
             txCore.fxMonitor.handleHeartBeat('fd3');
         } else if (data.payload.type === 'txAdminLogData') {
