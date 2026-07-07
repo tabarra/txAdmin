@@ -17,7 +17,7 @@
         "unknown_reason": "अज्ञात कारण",
         "embed": {
             "title": "Player Kicked",
-            "playerban_description": "**Player:** %{player}\n**Reason:** %{reason}\n\n**Identifiers:**\n```%{identifiers}```"
+            "description": "**Player:** %{player}\n**Reason:** %{reason}\n\n**Identifiers:**\n```%{identifiers}```"
         }
     },
     "ban_messages": {
