@@ -5,7 +5,6 @@ const console = consoleFactory(modulename);
 const emojiRegex = /^\p{RGI_Emoji}$/v;
 
 
-
 /**
  * Generic embed generation functions
  */
