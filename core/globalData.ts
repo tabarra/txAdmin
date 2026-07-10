@@ -1,4 +1,5 @@
 import path from 'node:path';
+import os from 'node:os';
 import semver from 'semver';
 import slash from 'slash';
 
@@ -12,6 +13,7 @@ import { getRuntimeInfo } from './boot/getRuntimeInfo';
 import { getHostVars } from './boot/getHostVars';
 import consts from '@shared/consts';
 import chalk from 'chalk';
+
 const console = consoleFactory();
 
 
@@ -72,10 +74,39 @@ console.setVerbose(_txDevEnv.VERBOSE);
 //Check for deprecated convars
 checkDeprecatedConvars();
 
+//Check OS
+const osType = os.type();
+let _isWindows = false;
+if (osType === 'Windows_NT') {
+    _isWindows = true;
+} else if (osType === 'Linux') {
+    _isWindows = false;
+} else {
+    fatalError.GlobalData(0, `OS type not supported: ${osType}`);
+}
+const isWindows = _isWindows;
+
+
+//DEBUG
+// console.verbose.dir(process.env, { title: 'ENV' });
+// console.dir({
+//     'process.argv': process.argv,
+//     'process.execArgv': process.execArgv,
+//     'process.argv0': process.argv0,
+//     '__dirname': __dirname,
+// }, { title: 'INIT' });
+
+
 //Get runtime info (paths, versions, etc)
-const runtimeInfo = getRuntimeInfo();
-console.verbose.dir(runtimeInfo, { title: 'RUNTIME INFO' });
-const { isWindows, runtime, runtimeNodeVersion, runtimeVersionTag, fxsVersionInfo, txaResourceName } = runtimeInfo;
+const runtimeInfo = getRuntimeInfo(isWindows);
+const {
+    runtime,
+    runtimeVersionTag,
+    txaResourceName,
+    fxsBinaryPath,
+    fxsIsGen9,
+    fxsVersionInfo,
+} = runtimeInfo;
 const fxsVersion = fxsVersionInfo.build;
 const txaPath = cleanPath(runtimeInfo.txaPath);
 const fxsPath = cleanPath(runtimeInfo.fxsPath);
@@ -103,7 +134,8 @@ if (!txaToFxsRelative || path.isAbsolute(txaToFxsRelative) || txaToFxsRelative.s
 //8495 = changed prometheus::Histogram::BucketBoundaries
 //9423 = feat(server): add more infos to playerDropped event
 //9655 = Fixed ScanResourceRoot + latent events
-const minFxsVersion = 5894;
+//25770 = node 22 "golden version"
+const minFxsVersion = 25770;
 const minNodeVersion = '22.11.0';
 
 // Invalid version: warn but continue with build=99999
@@ -124,20 +156,20 @@ if (!fxsVersionInfo.valid) {
 
 // Check Node.js version for all runtimes
 if (runtime === 'fxserver') {
-    if (!semver.gte(runtimeNodeVersion, minNodeVersion)) {
+    if (!semver.gte(process.versions.node, minNodeVersion)) {
         fatalError.GlobalData(10, [
             'This version of FXServer is running an outdated version of Node.js.',
-            ['Node.js version', runtimeNodeVersion],
+            ['Node.js version', process.versions.node],
             ['Minimum required', minNodeVersion],
             'Please update your FXServer artifact to a newer version.',
         ]);
     }
 } else {
-    if (!semver.gte(runtimeNodeVersion, minNodeVersion)) {
+    if (!semver.gte(process.versions.node, minNodeVersion)) {
         fatalError.GlobalData(10, [
             'This runtime\'s Node.js version is too old.',
             ['Runtime', runtimeVersionTag],
-            ['Node.js version', runtimeNodeVersion],
+            ['Node.js version', process.versions.node],
             ['Minimum required', minNodeVersion],
             'Please update your Node.js or Bun to a newer version.',
         ]);
@@ -382,11 +414,16 @@ export const txEnv = Object.freeze({
     isZapHosting, //NOTE: This one is also used in authLogic to disable src check
 
     //Natives
-    fxsVersionTag,
+    runtime,
+    
     fxsVersion,
+    fxsVersionTag,
+    fxsIsGen9,
+    fxsPath,
+    fxsBinaryPath,
+    
     txaVersion,
     txaPath,
-    fxsPath,
     txaResourceName,
 
     //ConVar

@@ -1,9 +1,7 @@
-import os from 'node:os';
-import fs from 'node:fs';
 import path from 'node:path';
 import fatalError from '@lib/fatalError';
 import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
-import { readFxsBinVersion } from '@lib/fxserver/fxsBinReader';
+import { readFxsGen8BinVersion } from '@lib/fxserver/fxsBinReader';
 
 
 //MARK: Types
@@ -17,221 +15,66 @@ export type FxsVersionInfo = {
 };
 
 export type RuntimeInfo = {
-    isWindows: boolean;
     runtime: RuntimeName;
-    runtimeNodeVersion: string;
     runtimeVersionTag: string;
     txaPath: string;
     txaResourceName: string;
     fxsPath: string;
+    fxsBinaryPath: string;
+    fxsIsGen9: boolean;
     fxsVersionInfo: FxsVersionInfo;
 };
 
 
-//MARK: Constants
-//FIXME: define the correct capitalization
-const VALID_TXA_RES_NAMES = ['txAdmin', 'txadmin', 'monitor'] as const;
-
-
 //MARK: Helpers
 /**
- * Detects the OS type. Only Windows and Linux are supported.
+ * Uses the GetConvar function to get the FXServer version.
  */
-const detectOs = (): boolean => {
-    const osType = os.type();
-    if (osType === 'Windows_NT') {
-        return true;
-    } else if (osType === 'Linux') {
-        return false;
-    }
-    fatalError.GlobalData(0, `OS type not supported: ${osType}`);
-};
-
-/**
- * Detects the current runtime and builds a version tag for display.
- * Priority: FXServer binary -> Bun global -> Node.js (fallback)
- * 
- * The version tag is built here because it depends on runtime type:
- * - fxserver: uses fxs build number (provided later, so we return a builder)
- * - bun: uses Bun.version
- * - node: uses process.versions.node
- */
-const detectRuntime = (): { runtime: RuntimeName; buildVersionTag: (fxsBuild: number) => string } => {
-    //FIXME: this builder stuff is stupid.
-    const argv0Base = path.basename(process.argv0);
-    if (argv0Base === 'FXServer' || argv0Base === 'FXServer.exe') {
-        return {
-            runtime: 'fxserver',
-            buildVersionTag: (fxsBuild) => `fxs/${fxsBuild}`,
-        };
-    }
-    if (typeof Bun !== 'undefined') {
-        return {
-            runtime: 'bun',
-            buildVersionTag: () => `bun/${Bun!.version}`,
-        };
-    }
-    return {
-        runtime: 'node',
-        buildVersionTag: () => `node/${process.versions.node}`,
-    };
-};
-
-/**
- * Extracts and validates txaPath and txaResourceName from __dirname.
- * 
- * Edge cases handled:
- * - Cross-platform path formats (Windows, Linux, MSYS)
- * - Path normalization for consistent separators
- * - Valid resource names: txAdmin, txadmin, monitor
- * - Path structure: must end in system_resources/{resourceName}/core
- */
-const extractTxaPaths = () => {
-    const normalizedDirname = path.normalize(__dirname);
-    let txaResourceName: string | undefined;
-
-    try {
-        if (!path.isAbsolute(normalizedDirname)) {
-            throw new Error('__dirname must be an absolute path');
-        }
-
-        const dirnameParts = normalizedDirname.split(path.sep).filter(Boolean);
-
-        // Validate path structure: .../system_resources/{resourceName}/core
-        if (dirnameParts.at(-1) !== 'core') {
-            throw new Error('Invalid dirname: last part must be "core"');
-        }
-
-        txaResourceName = dirnameParts.at(-2);
-        if (!txaResourceName || !VALID_TXA_RES_NAMES.includes(txaResourceName as typeof VALID_TXA_RES_NAMES[number])) {
-            throw new Error(`Invalid resource name, expected 'monitor' or 'txadmin'`);
-        }
-
-        if (dirnameParts.at(-3) !== 'system_resources') {
-            throw new Error(`Invalid dirname: parts.at(-3) must be 'system_resources', got '${dirnameParts.at(-3)}'`);
-        }
-    } catch (error) {
-        fatalError.GlobalData(14, [
-            'Could not determine txAdmin resource path.',
-            (error as Error).message,
-            ['_dirname', normalizedDirname],
-            'If you are not running txAdmin from the default FXServer installation,',
-            'make sure to read the documentation on how to setup txAdmin.'
-        ]);
+const getVersionFromConvar = (): FxsVersionInfo => {
+    //Sanity check
+    if (typeof GetConvar !== 'function') {
+        throw new Error(`Expected GetConvar function to be available for FXServer Gen8.`);
     }
 
-    // txaPath is the resource folder (without /core)
-    const txaPath = path.dirname(normalizedDirname);
-
-    return { txaPath, txaResourceName };
-};
-
-/**
- * Validates that a path is a valid FXServer installation folder.
- * Checks for absolute path and existence of FXServer binary.
- */
-const isValidFxsPath = (fxsPath: string, isWindows: boolean) => {
-    if (!path.isAbsolute(fxsPath)) {
-        return false;
-    }
-    const binaryName = isWindows ? 'FXServer.exe' : 'FXServer';
-    const binaryPath = path.join(fxsPath, binaryName);
-    return fs.existsSync(binaryPath);
-};
-
-/**
- * Resolves the FXServer installation path using multiple sources in priority order:
- * 1. CLI argument --fxspath
- * 2. dirname(argv[0]) if running from FXServer binary
- * 3. Relative path from __dirname (../../../../)
- */
-const resolveFxsPath = (isWindows: boolean) => {
-    // 1. Try CLI argument --fxspath
-    const fxspathArgIndex = process.argv.indexOf('--fxspath');
-    if (fxspathArgIndex !== -1 && process.argv[fxspathArgIndex + 1]) {
-        const cliPath = path.normalize(process.argv[fxspathArgIndex + 1]);
-        if (isValidFxsPath(cliPath, isWindows)) {
-            return cliPath;
-        }
-    }
-
-    // 2. Try dirname(argv[0]) if basename is FXServer/FXServer.exe
-    const argv0 = path.normalize(process.argv0);
-    const execName = path.basename(argv0);
-    if (execName === 'FXServer' || execName === 'FXServer.exe') {
-        const argv0Dir = path.dirname(argv0);
-        if (isValidFxsPath(argv0Dir, isWindows)) {
-            return argv0Dir;
-        }
-    }
-
-    // 3. Try relative path from __dirname (../../../../)
-    const relativeFxsPath = path.normalize(path.join(__dirname, '../../../../'));
-    if (isValidFxsPath(relativeFxsPath, isWindows)) {
-        return relativeFxsPath;
-    }
-
-    // No valid path found
-    fatalError.GlobalData(9, [
-        'Could not resolve FXServer installation path.',
-        'Tried the following sources:',
-        ['1. CLI argument --fxspath', fxspathArgIndex !== -1 ? process.argv[fxspathArgIndex + 1] : '(not provided)'],
-        ['2. Process argv[0]', argv0],
-        ['3. Relative path', relativeFxsPath],
-        'Please provide a valid `--fxspath` argument or ensure the directory structure is correct.',
-    ]);
-};
-
-/**
- * Resolves the FXServer version info.
- * 1. Try reading from binary metadata
- * 2. If fxserver runtime, try GetConvar fallback
- * 3. Return invalid result with build=99999 if nothing works (fxserver runtime only)
- */
-const resolveFxsVersion = (runtime: RuntimeName, fxsPath: string, isWindows: boolean): FxsVersionInfo => {
-    //FIXME:  check this entire version logic.
-    // Try reading from binary metadata first
-    console.verbose.debug('Checking FXServer binary... ');
-    const binVersion = readFxsBinVersion(fxsPath, isWindows);
-    console.verbose.debug('FXServer detected: ', JSON.stringify({ branch: binVersion.branch, build: binVersion.build }));
-
-    if (binVersion.valid) {
+    const versionConvar = GetConvar('version', 'unknown');
+    const parsed = parseFxserverVersion(versionConvar);
+    if (parsed.valid) {
         return {
             valid: true,
-            branch: binVersion.branch,
-            build: binVersion.build,
-            raw: binVersion.raw,
-        };
-    }
-
-    // Fallback: GetConvar for fxserver runtime
-    if (runtime === 'fxserver' && typeof GetConvar === 'function') {
-        const versionConvar = GetConvar('version', 'unknown');
-        const parsed = parseFxserverVersion(versionConvar);
-        if (parsed.valid) {
-            return {
-                valid: true,
-                branch: parsed.branch,
-                build: parsed.build,
-                raw: versionConvar,
-            };
-        }
-        // Return invalid with build=99999 for custom/dev builds so version checks pass
-        return {
-            valid: false,
-            branch: null,
-            build: 99999,
+            branch: parsed.branch,
+            build: parsed.build,
             raw: versionConvar,
         };
     }
 
-    // Standalone mode: could not determine version
-    fatalError.GlobalData(13, [
-        'Could not determine FXServer version.',
-        'Failed to read version from binary metadata.',
-        'When running outside FXServer, you must use a compatible FXServer installation.',
-        //FIXME: change message
-    ]);
+    // Return invalid with build=99999 for custom/dev builds so version checks pass
+    return {
+        valid: false,
+        branch: null,
+        build: 99999,
+        raw: versionConvar,
+    }
+};
+
+
+/**
+ * Uses the process.argv to get the FXServer version.
+ * 
+ * Gen9 passes a single argv string like 
+ * '--runtime-branch "early-access" --runtime-version "b50"'
+ */
+const getVersionFromArgs = (): FxsVersionInfo => {
+    // cfx-server: 
+    const raw = process.argv.find((arg) => arg.includes('--runtime-version')) ?? null;
+    const branchMatch = raw?.match(/--runtime-branch\s+(?:"([^"]+)"|(\S+))/);
+    const branch = branchMatch?.[1] ?? branchMatch?.[2] ?? null;
+    const build = raw?.match(/--runtime-version\s+"?b(\d+)"?/)?.[1];
+    return {
+        valid: !!build,
+        branch,
+        build: build ? parseInt(build, 10) : 99999,
+        raw,
+    };
 };
 
 
@@ -244,34 +87,100 @@ const resolveFxsVersion = (runtime: RuntimeName, fxsPath: string, isWindows: boo
  * 
  * @returns RuntimeInfo object with all boot-time variables
  */
-export const getRuntimeInfo = (): RuntimeInfo => {
-    // Detect OS first (needed for path resolution)
-    const isWindows = detectOs();
+export const getRuntimeInfo = (isWindows: boolean): RuntimeInfo => {
+    const binExt = isWindows ? '.exe' : '';
 
-    // Detect runtime and get version tag builder
-    const { runtime, buildVersionTag } = detectRuntime();
-    const runtimeNodeVersion = process.versions.node;
+    //Get normalized paths
+    const argv0 = path.normalize(process.argv0);
+    const argv0Bin = path.basename(argv0);
+    const argv0Dir = path.dirname(argv0);
+    const dirname = path.normalize(__dirname);
+    //FIXME: this does not work for bun/node, needs to use process.argv[0] which does not match process.argv0!
+    if (!path.isAbsolute(argv0) || !path.isAbsolute(dirname)) {
+        //FIXME: update number
+        fatalError.GlobalData(99, [
+            'Runtime path validation failed: expected absolute paths.',
+            ['argv0', argv0],
+            ['dirname', dirname],
+        ]);
+    }
 
-    // Extract txAdmin paths (validates internally)
-    const { txaPath, txaResourceName } = extractTxaPaths();
+    //If builtin or standalone
+    let runtime: RuntimeName;
+    let runtimeVersionTag: string;
+    let fxsPath: string;
+    let fxsBinaryPath: string;
+    let fxsIsGen9: boolean;
+    let fxsVersionInfo: FxsVersionInfo;
+    let txaPath: string;
+    let txaResourceName: string;
+    if (argv0Bin === `FXServer${binExt}` || argv0Bin === `cfx-server${binExt}`) {
+        runtime = 'fxserver';
+        fxsBinaryPath = path.join(argv0Dir, argv0Bin);
+        fxsPath = argv0Dir;
 
-    // Resolve FXServer path (validates internally)
-    const fxsPath = resolveFxsPath(isWindows);
+        let systemResourcesPath: string;
+        if (argv0Bin === `FXServer${binExt}`) {
+            fxsIsGen9 = false;
+            fxsVersionInfo = getVersionFromConvar();
+            runtimeVersionTag = `fxs/${fxsVersionInfo.build}`;
+            systemResourcesPath = 'citizen/system_resources/';
+            txaResourceName = 'monitor';
+        } else {
+            fxsIsGen9 = true;
+            fxsVersionInfo = getVersionFromArgs();
+            runtimeVersionTag = `cfxs/${fxsVersionInfo.build}`;
+            systemResourcesPath = 'system_resources/';
+            txaResourceName = 'txadmin';
+        }
 
-    // Resolve FXServer version (validates internally for standalone mode)
-    const fxsVersionInfo = resolveFxsVersion(runtime, fxsPath, isWindows);
+        //Sanity checking txAdmin path - assumes it's inside the FXServer installation
+        txaPath = path.join(fxsPath, systemResourcesPath, txaResourceName);
+        const expectedTxaPath = path.join(txaPath, 'core');
+        if (dirname !== expectedTxaPath) {
+            //FIXME: update number
+            fatalError.GlobalData(99, [
+                'Invalid txAdmin path.',
+                'Expected: ', expectedTxaPath,
+                'Got: ', dirname,
+                'Please check your installation and try again.',
+            ]);
+        }
 
-    // Build version tag now that we have fxs build number
-    const runtimeVersionTag = buildVersionTag(fxsVersionInfo.build);
+    } else {
+        //FIXME: remove
+        fatalError.GlobalData(99, 'Running txAdmin in standalone mode is not currently supported.');
+
+        if (typeof Bun !== 'undefined') {
+            runtime = 'bun';
+            runtimeVersionTag = `bun/${Bun!.version}`;
+        } else if (process.release?.name === 'node' && !('deno' in process.versions)) {
+            runtime = 'node';
+            runtimeVersionTag = `node/${process.versions.node}`;
+            //FIXME: remove
+            fatalError.GlobalData(99, 'The Bun runtime currently is not supported.');
+        } else {
+            //FIXME: update number
+            fatalError.GlobalData(99, [
+                'Unsupported runtime detected.',
+                'txAdmin requires FXServer, cfx-server, Node.js, or Bun.',
+                ['process.argv0', process.argv0],
+                ['process.release', process.release?.name ?? '(none)'],
+                ['process.versions', JSON.stringify(process.versions)],
+            ]);
+        }
+
+        //TODO: resolve fxs or cfxs flag, then use readFxsGen8BinVersion
+    }
 
     return {
-        isWindows,
         runtime,
-        runtimeNodeVersion,
         runtimeVersionTag,
         txaPath,
         txaResourceName,
         fxsPath,
+        fxsBinaryPath,
+        fxsIsGen9,
         fxsVersionInfo,
     };
 };

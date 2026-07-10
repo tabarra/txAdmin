@@ -18,6 +18,9 @@ end
 --  handling and caching.
 -- =============================================
 
+local resName = GetCurrentResourceName()
+local cspFrameAncestors = ("https://%s/ https://cfx-nui-%s/ nui://game/"):format(resName, resName)
+
 local _pipeLastReject
 local _pipeFastCache = {}
 
@@ -114,7 +117,7 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
     data = data or ''
     resultHeaders['x-badcast-fix'] = 'https://youtu.be/LDU_Txk06tM' -- fixed in artifact v3996
     --https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
-    resultHeaders['Content-Security-Policy'] = 'frame-ancestors https://monitor/ https://cfx-nui-monitor/ nui://game/'
+    resultHeaders['Content-Security-Policy'] = 'frame-ancestors ' .. cspFrameAncestors
 
     -- fixing redirects
     if resultHeaders.Location then

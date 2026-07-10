@@ -188,8 +188,13 @@ end)
 --  Helper to protect the NUI callbacks from CSRF attacks
 --  NOTE: This is a temporary fix for the NUI callback Origin issue
 -- =============================================
+local resName = GetCurrentResourceName()
+local originDirect = 'https://' .. resName --probably legacy iframe inside web iframe
+local originCfxNui = 'https://cfx-nui-' .. resName --probably self
+
+
 --- Check if a NUI callback is from the correct Origin
---- technically no request should come from nui://monitor, since the manifest version is cerulean
+--- technically no request should come from nui://<resname>, since the manifest version is cerulean
 ---@param headers table
 ---@return boolean
 function IsNuiRequestOriginValid(headers)
@@ -203,11 +208,9 @@ function IsNuiRequestOriginValid(headers)
         return false --no clue
     end
 
-    if headers['Origin'] == 'https://cfx-nui-monitor' then
-        return true --probably self
-    end
-    if headers['Origin'] == 'https://monitor' then
-        return true --probably legacy iframe inside web iframe
+    -- check if approved origin
+    if headers['Origin'] == originDirect or headers['Origin'] == originCfxNui then
+        return true
     end
 
     -- warn admin of possible csrf attempt

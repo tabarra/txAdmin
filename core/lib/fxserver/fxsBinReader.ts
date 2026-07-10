@@ -1,8 +1,5 @@
 import fs from 'node:fs';
-import path from 'node:path';
 
-
-//MARK: Types
 export type FxsBinVersionInfo = {
     valid: true;
     branch: string | null;
@@ -15,15 +12,13 @@ export type FxsBinVersionInfo = {
     raw: null;
 };
 
-
-//MARK: Constants
 // Valid branch: alphanumeric, dashes, underscores, slashes
 const VALID_BRANCH_REGEX = /^[\w\-]+(\/[\w\-]+)*$/;
 
 
-//MARK: Extraction
+//MARK: Main
 /**
- * Extracts FXServer version info from a binary file buffer.
+ * Reads and extracts version info from the FXServer binary.
  * Works cross-platform (PE on Windows, ELF on Linux).
  * 
  * Searches for pattern: {branch} [SERVER] v1.0.0.{build} {platform}
@@ -31,30 +26,37 @@ const VALID_BRANCH_REGEX = /^[\w\-]+(\/[\w\-]+)*$/;
  *   - master SERVER v1.0.0.7290 win32
  *   - feature/my-branch SERVER v1.0.0.20260126 linux
  */
-const extractFxsVersionInfo = (buffer: Buffer): FxsBinVersionInfo => {
-    // latin1 preserves byte values while allowing string/regex operations
-    const content = buffer.toString('latin1');
+export const readFxsGen8BinVersion = (fxsBinPath: string): FxsBinVersionInfo => {
 
-    // Positive lookbehind ensures branch starts after null byte
-    // Named groups for cleaner extraction
-    const versionRegex = /(?<=\x00)(?<branch>[^\x00 ]+) (?:SERVER )?v1\.0\.0\.(?<build>\d{4,8}) (?<platform>win32|linux)/g;
+    try {
+        //Read the binary file
+        const buffer = fs.readFileSync(fxsBinPath);
+        // latin1 preserves byte values while allowing string/regex operations
+        const content = buffer.toString('latin1');
 
-    for (const match of content.matchAll(versionRegex)) {
-        const groups = match.groups as { branch: string; build: string; platform: string };
-        const raw = match[0];
+        // Positive lookbehind ensures branch starts after null byte
+        // Named groups for cleaner extraction
+        const versionRegex = /(?<=\x00)(?<branch>[^\x00 ]+) (?:SERVER )?v1\.0\.0\.(?<build>\d{4,8}) (?<platform>win32|linux)/g;
 
-        // Skip if branch has non-printable chars
-        if (!/^[\x21-\x7E]+$/.test(groups.branch)) continue;
+        for (const match of content.matchAll(versionRegex)) {
+            const groups = match.groups as { branch: string; build: string; platform: string };
+            const raw = match[0];
 
-        // Skip unreasonably long branch names (likely false positive)
-        if (groups.branch.length > 128) continue;
+            // Skip if branch has non-printable chars
+            if (!/^[\x21-\x7E]+$/.test(groups.branch)) continue;
 
-        return {
-            valid: true,
-            branch: VALID_BRANCH_REGEX.test(groups.branch) ? groups.branch : null,
-            build: parseInt(groups.build, 10),
-            raw: raw.trim(),
-        };
+            // Skip unreasonably long branch names (likely false positive)
+            if (groups.branch.length > 128) continue;
+
+            return {
+                valid: true,
+                branch: VALID_BRANCH_REGEX.test(groups.branch) ? groups.branch : null,
+                build: parseInt(groups.build, 10),
+                raw: raw.trim(),
+            };
+        }
+    } catch {
+        console.error('Failed to read FXServer binary: ', fxsBinPath);
     }
 
     return {
@@ -63,30 +65,4 @@ const extractFxsVersionInfo = (buffer: Buffer): FxsBinVersionInfo => {
         build: null,
         raw: null,
     };
-};
-
-
-//MARK: Main
-/**
- * Reads and extracts version info from the FXServer binary.
- * 
- * @param fxsPath - Path to the FXServer installation folder
- * @param isWindows - Whether the current OS is Windows
- * @returns Parsed version info or invalid result
- */
-export const readFxsBinVersion = (fxsPath: string, isWindows: boolean): FxsBinVersionInfo => {
-    const binaryName = isWindows ? 'FXServer.exe' : 'FXServer';
-    const binaryPath = path.join(fxsPath, binaryName);
-
-    try {
-        const buffer = fs.readFileSync(binaryPath);
-        return extractFxsVersionInfo(buffer);
-    } catch {
-        return {
-            valid: false,
-            branch: null,
-            build: null,
-            raw: null,
-        };
-    }
 };

@@ -64,7 +64,7 @@ function getEjsOptions(filePath: string) {
 
 //Consts
 const templateCache = new Map();
-const RESOURCE_PATH = 'nui://monitor/web/public/';
+const RESOURCE_PATH = `nui://${txEnv.txaResourceName}/web/public/`;
 
 const legacyNavigateHtmlTemplate = `<style>
 body {

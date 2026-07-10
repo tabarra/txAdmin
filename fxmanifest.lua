@@ -10,9 +10,15 @@ ui_label 'txAdmin' --FIXME: remove?
 
 fx_version 'cerulean'
 game 'common'
--- nui_callback_strict_mode 'true' --FIXME: menu iframe doesn't work
--- lua54 'yes' --TODO: check if it works
-node_version '22'
+
+-- NOTE: this is probably needed for the menu to work in gen9
+nui_callback_strict_mode 'false' --gen9 fix
+
+-- NOTE: pretty sure this is already the default
+-- lua54 'yes'
+
+-- NOTE: we don't mark as node22 only because we want a custom error message - checked in entrypoint.js
+-- node_version '22'
 
 -- NOTE: All server_scripts will be executed both on monitor and server mode 
 -- NOTE: Due to global package constraints, js scripts will be loaded from entrypoint.js

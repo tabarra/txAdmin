@@ -99,19 +99,23 @@ const txCoreEndpoint = txHostConfig.netInterface
 let osSpawnVars: OsSpawnVars;
 if (txEnv.isWindows) {
     osSpawnVars = {
-        bin: `${txEnv.fxsPath}/FXServer.exe`,
+        bin: txEnv.fxsBinaryPath,
         args: [],
     };
 } else {
     const alpinePath = path.resolve(txEnv.fxsPath, '../../');
+    const args = [
+        '--library-path', `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
+        '--',
+        // `${alpinePath}/opt/cfx-server/${serverBinName}`,
+        txEnv.fxsBinaryPath,
+    ]
+    if (txEnv.fxsIsGen9) {
+        args.push('+set', 'citizen_dir', `${alpinePath}/opt/cfx-server/citizen/`);
+    }
     osSpawnVars = {
         bin: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
-        args: [
-            '--library-path', `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
-            '--',
-            `${alpinePath}/opt/cfx-server/FXServer`,
-            '+set', 'citizen_dir', `${alpinePath}/opt/cfx-server/citizen/`,
-        ],
+        args,
     };
 }
 

@@ -198,7 +198,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     //If in prod mode and NUI, replace the entry point with the local one
     //This is required because of how badly the WebPipe handles "large" files
     if (!txDevEnv.ENABLED) {
-        const base = ctx.txVars.isWebInterface ? `./` : `nui://monitor/panel/`;
+        const base = ctx.txVars.isWebInterface ? `./` : `nui://${txEnv.txaResourceName}/panel/`;
         htmlOut = htmlOut.replaceAll(/(src|href)="\.\/(\w+)-(\w+(?:\.v\d+)?)\.(js|css)"/g, `$1="${base}$2-$3.$4"`);
     }
 
