@@ -113,10 +113,10 @@ export const useHudListenersService = () => {
 
   useNuiEvent<SnackbarPersistentAlert>(
     "setPersistentAlert",
-    ({ level, message, key, isTranslationKey }) => {
+    ({ level, message, key, isTranslationKey, tOptions }) => {
       if (alertMap.has(key)) return;
       const snackbarItem = enqueueSnackbar(
-        isTranslationKey ? t(message) : message,
+        isTranslationKey ? t(message, tOptions) : message,
         {
           variant: level,
           persist: true,

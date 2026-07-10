@@ -105,7 +105,7 @@ const DialogInfoView: React.FC = () => {
   };
 
   //Log stuff
-  const counts = { ban: 0, warn: 0 };
+  const counts = { ban: 0, warn: 0, jail: 0 };
   for (const action of player.actionHistory) {
     counts[action.type]++;
   }
@@ -170,6 +170,12 @@ const DialogInfoView: React.FC = () => {
               <span style={{ color: theme.palette.warning.main }}>
                 {t("nui_menu.player_modal.info.log_warn_count", {
                   smart_count: counts.warn,
+                })}
+              </span>
+              ,&nbsp;
+              <span style={{ color: theme.palette.info.main }}>
+                {t("nui_menu.player_modal.info.log_jail_count", {
+                  smart_count: counts.jail,
                 })}
               </span>
             </>

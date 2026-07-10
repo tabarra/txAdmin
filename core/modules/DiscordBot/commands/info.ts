@@ -105,13 +105,14 @@ export default async (interaction: CommandInteraction) => {
         if (includeAdminInfo) {
             //Counting bans/warns
             const actionHistory = player.getHistory();
-            const actionCount = { ban: 0, warn: 0 };
+            const actionCount = { ban: 0, warn: 0, jail: 0 };
             for (const log of actionHistory) {
                 actionCount[log.type]++;
             }
             const banText = (actionCount.ban === 1) ? '1 ban' : `${actionCount.ban} bans`;
             const warnText = (actionCount.warn === 1) ? '1 warn' : `${actionCount.warn} warns`;
-            bodyText['Log'] = `${banText}, ${warnText}`;
+            const jailText = (actionCount.jail === 1) ? '1 jail' : `${actionCount.jail} jails`;
+            bodyText['Log'] = `${banText}, ${warnText}, ${jailText}`;
 
             //Filling notes + identifiers
             const notesText = (dbData.notes) ? dbData.notes.text : 'nothing here';

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { tsToLocaleDateTimeString } from "@/lib/dateTime";
+import { msToDuration, tsToLocaleDateTimeString } from "@/lib/dateTime";
 import { PlayerHistoryItem } from "@shared/playerApiTypes";
 import InlineCode from "@/components/InlineCode";
 import { useOpenActionModal } from "@/hooks/actionModal";
@@ -20,11 +20,19 @@ function HistoryItem({ action, serverTime, modalOpener }: HistoryItemProps) {
     } else if (action.type === 'warn') {
         borderColorClass = 'border-warning';
         actionMessage = `WARNED by ${action.author}`;
+    } else if (action.type === 'jail') {
+        borderColorClass = 'border-info';
+        actionMessage = `JAILED by ${action.author}`;
     }
     if (action.revokedBy) {
         borderColorClass = '';
         const revocationDate = tsToLocaleDateTimeString(action.revokedAt ?? 0, 'medium', 'short');
         footerNote = `Revoked by ${action.revokedBy} on ${revocationDate}.`;
+    } else if (action.type === 'jail' && typeof action.duration === 'number') {
+        const served = action.served ?? 0;
+        footerNote = served >= action.duration
+            ? `Sentence of ${msToDuration(action.duration * 1000)} fully served.`
+            : `Served ${msToDuration(served * 1000)} of ${msToDuration(action.duration * 1000)}.`;
     } else if (typeof action.exp === 'number') {
         const expirationDate = tsToLocaleDateTimeString(action.exp, 'medium', 'short');
         footerNote = (action.exp < serverTime) ? `Expired on ${expirationDate}.` : `Expires in ${expirationDate}.`;

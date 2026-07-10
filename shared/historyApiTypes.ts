@@ -6,6 +6,8 @@ export type HistoryStatsResp = {
     warnsLast7d: number;
     totalBans: number;
     bansLast7d: number;
+    totalJails: number;
+    jailsLast7d: number;
     groupedByAdmins: {
         name: string;
         actions: number;
@@ -38,7 +40,7 @@ export type HistoryTableReqType = {
 
 export type HistoryTableActionType = {
     id: string;
-    type: "ban" | "warn";
+    type: "ban" | "warn" | "jail";
     playerName: string | false;
     author: string;
     reason: string;
@@ -46,6 +48,7 @@ export type HistoryTableActionType = {
     isRevoked: boolean;
     banExpiration?: 'expired' | 'active' | 'permanent';
     warnAcked?: boolean;
+    jailStatus?: 'active' | 'served';
 }
 
 export type HistoryTableSearchResp = {

@@ -10,6 +10,7 @@ export enum PlayerModalTabs {
   INFO,
   IDENTIFIERS,
   HISTORY,
+  JAIL,
   BAN,
 }
 

@@ -52,6 +52,11 @@ local function useInitData(data)
             targetName = data.pendingWarn.targetName,
         }, false)
     end
+    if data.pendingJail ~= nil then
+        -- parity with the txaEvent dispatcher public passthrough
+        TriggerEvent('txAdmin:events:playerJailed', data.pendingJail)
+        TX_EVENT_HANDLERS.playerJailed(data.pendingJail, false)
+    end
 end
 
 RegisterCommand('txaInitialData', function(source, args)

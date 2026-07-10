@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es';
 import { DbInstance, SavePriority } from "../instance";
-import { DatabaseActionBanType, DatabaseActionType, DatabaseActionWarnType } from "../databaseTypes";
+import { DatabaseActionBanType, DatabaseActionJailType, DatabaseActionType, DatabaseActionWarnType } from "../databaseTypes";
 import { genActionID } from "../dbUtils";
 import { now } from '@lib/misc';
 import consoleFactory from '@lib/console';
@@ -178,6 +178,109 @@ export default class ActionsDao {
             throw error;
         }
     }
+
+    /**
+     * Registers a jail action and returns its id
+     */
+    registerJail(
+        ids: string[],
+        author: string,
+        reason: string,
+        duration: number,
+        playerName: string | false = false,
+    ): string {
+        //Sanity check
+        if (!Array.isArray(ids) || !ids.length) throw new Error('Invalid ids array.');
+        if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
+        if (typeof reason !== 'string' || !reason.length) throw new Error('Invalid reason.');
+        if (typeof duration !== 'number' || !Number.isFinite(duration) || duration <= 0) throw new Error('Invalid duration.');
+        if (playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
+
+        //Saves it to the database
+        const timestamp = now();
+        try {
+            const actionID = genActionID(this.dbo, 'jail');
+            const toDB: DatabaseActionJailType = {
+                id: actionID,
+                type: 'jail',
+                ids,
+                playerName,
+                reason,
+                author,
+                timestamp,
+                expiration: false,
+                duration: Math.round(duration),
+                served: 0,
+                revocation: {
+                    timestamp: null,
+                    author: null,
+                },
+            };
+            this.chain.get('actions')
+                .push(toDB)
+                .value();
+            this.db.writeFlag(SavePriority.HIGH);
+            return actionID;
+        } catch (error) {
+            let msg = `Failed to register jail to database with message: ${(error as Error).message}`;
+            console.error(msg);
+            console.verbose.dir(error);
+            throw error;
+        }
+    }
+
+
+    /**
+     * Adds served time to a jail action, clamped to its duration, and returns the updated action
+     */
+    addJailServedTime(actionId: string, seconds: number): DatabaseActionJailType {
+        if (typeof actionId !== 'string' || !actionId.length) throw new Error('Invalid actionId.');
+        if (typeof seconds !== 'number' || !Number.isFinite(seconds)) throw new Error('Invalid seconds.');
+
+        try {
+            const action = this.chain.get('actions')
+                .find({ id: actionId })
+                .value();
+            if (!action) throw new Error(`action not found`);
+            if (action.type !== 'jail') throw new Error(`action is not a jail`);
+            if (action.revocation.timestamp !== null) throw new Error(`action is revoked`);
+            action.served = Math.min(
+                action.duration,
+                action.served + Math.max(0, Math.round(seconds))
+            );
+            this.db.writeFlag(SavePriority.MEDIUM);
+            return cloneDeep(action);
+        } catch (error) {
+            const msg = `Failed to add jail served time with message: ${(error as Error).message}`;
+            console.error(msg);
+            console.verbose.dir(error);
+            throw error;
+        }
+    }
+
+
+    /**
+     * Marks a jail sentence as fully served
+     */
+    finishJailSentence(actionId: string) {
+        if (typeof actionId !== 'string' || !actionId.length) throw new Error('Invalid actionId.');
+
+        try {
+            const action = this.chain.get('actions')
+                .find({ id: actionId })
+                .value();
+            if (!action) throw new Error(`action not found`);
+            if (action.type !== 'jail') throw new Error(`action is not a jail`);
+            action.served = action.duration;
+            this.db.writeFlag(SavePriority.HIGH);
+        } catch (error) {
+            const msg = `Failed to finish jail sentence with message: ${(error as Error).message}`;
+            console.error(msg);
+            console.verbose.dir(error);
+            throw error;
+        }
+    }
+
 
     /**
      * Marks a warning as acknowledged

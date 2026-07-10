@@ -73,6 +73,7 @@ export default class AdminStore {
             'players.warn': 'Warn',
             'players.kick': 'Kick',
             'players.ban': 'Ban',
+            'players.jail': 'Jail / Timeout',
             'players.freeze': 'Freeze Players',
             'players.heal': 'Heal', //self, everyone, and the "heal" button in player modal
             'players.playermode': 'NoClip / God Mode', //self playermode, and also the player spectate option

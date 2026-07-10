@@ -72,6 +72,13 @@
         "dismiss_key": "LEERTASTE",
         "instruction": "Halte deine %{key} für %{smart_count} Sekunde gedrückt, um diese Mitteilung zu schließen. |||| Halte deine %{key} für %{smart_count} Sekunden gedrückt, um diese Mitteilung zu schließen."
     },
+    "nui_jail": {
+        "title": "JAILED",
+        "reason_label": "Reason:",
+        "jailed_by": "Jailed by:",
+        "remaining_label": "Time remaining:",
+        "instruction": "You cannot move while being jailed. This screen will close automatically once your sentence ends."
+    },
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menü aktiviert, tippe /tx ein, um es zu öffnen.\nDu kannst zusätzlich in den Einstellungen eine Taste zuweisen [Einstellungen > Steuerung > FiveM > txAdmin].",
@@ -89,6 +96,10 @@
             "froze_player": "Du hast den Spieler eingefroren.",
             "unfroze_player": "Du hast den Spieler aufgetaut.",
             "was_frozen": "Du wurdest von einem Teammitglied eingefroren!"
+        },
+        "jail": {
+            "jailed_alert": "Du wurdest von %{author} für: %{reason} gejailt. (Zeit übrig: %{time})",
+            "released": "Du wurdest aus dem Jail entlassen."
         },
         "common": {
             "cancel": "Abbrechen",
@@ -254,6 +265,7 @@
                 "info": "Info",
                 "ids": "IDs",
                 "history": "Vergangenheit",
+                "jail": "Jail",
                 "ban": "Ban"
             },
             "actions": {
@@ -325,9 +337,10 @@
                 "btn_wl_remove": "WL ENTFERNEN",
                 "btn_wl_success": "Whitelist-Status geändert",
                 "log_label": "Log",
-                "log_empty": "Keine Banns/Verwarnungen gefunden.",
+                "log_empty": "Keine Banns/Verwarnungen/Jails gefunden.",
                 "log_ban_count": "%{smart_count} Bann |||| %{smart_count} Banns",
                 "log_warn_count": "%{smart_count} Verwarnung |||| %{smart_count} Verwarnungen",
+                "log_jail_count": "%{smart_count} Jail |||| %{smart_count} Jails",
                 "log_btn": "DETAILS",
                 "notes_changed": "Notizen geändert",
                 "notes_placeholder": "Notizen über diesen Spieler..."
@@ -338,9 +351,18 @@
                 "revoked_success": "Aktion rückgängig gemacht!",
                 "banned_by": "GEBANNT von %{author}",
                 "warned_by": "VERWARNT von %{author}",
+                "jailed_by": "GEJAILT von %{author}",
                 "revoked_by": "RÜCKGÄNGIG GEMACHT von %{author}.",
                 "expired_at": "Abgelaufen am %{date}.",
                 "expires_at": "Läuft ab am %{date}."
+            },
+            "jail": {
+                "title": "Jail player",
+                "reason_required": "The Reason field is required.",
+                "success": "Player jailed!",
+                "minutes": "minutes",
+                "helper_text": "Please select a duration - only counts while the player is online",
+                "submit": "Apply jail"
             },
             "ban": {
                 "title": "Spieler bannen",

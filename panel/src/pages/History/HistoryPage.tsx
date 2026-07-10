@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangleIcon, GavelIcon } from 'lucide-react';
+import { AlertTriangleIcon, FlagIcon, GavelIcon, LockIcon } from 'lucide-react';
 import PageCalloutRow, { PageCalloutProps } from '@/components/PageCalloutRow';
 import {
     HistorySearchBox,
@@ -102,20 +102,21 @@ export default function HistoryPage() {
                 icon: <AlertTriangleIcon />,
             },
             {
-                label: 'New Warns Last 7d',
-                value: hasCalloutData ? calloutData.warnsLast7d : false,
-                icon: <AlertTriangleIcon />,
-                prefix: '+'
-            },
-            {
                 label: 'Total Bans',
                 value: hasCalloutData ? calloutData.totalBans : false,
                 icon: <GavelIcon />,
             },
             {
-                label: 'New Bans Last 7d',
-                value: hasCalloutData ? calloutData.bansLast7d : false,
-                icon: <GavelIcon />,
+                label: 'Total Jails',
+                value: hasCalloutData ? calloutData.totalJails : false,
+                icon: <LockIcon />,
+            },
+            {
+                label: 'New Actions Last 7d',
+                value: hasCalloutData
+                    ? calloutData.warnsLast7d + calloutData.bansLast7d + calloutData.jailsLast7d
+                    : false,
+                icon: <FlagIcon />,
                 prefix: '+'
             }
         ] satisfies PageCalloutProps[];

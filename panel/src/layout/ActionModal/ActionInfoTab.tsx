@@ -65,6 +65,19 @@ export default function ActionInfoTab({ action, serverTime, tsFetch }: ActionInf
         }
     }
 
+    let jailStatusText: React.ReactNode;
+    if (action.type === 'jail') {
+        const durationText = msToDuration(action.duration * 1000, { units: ['d', 'h', 'm'] });
+        if (action.served >= action.duration) {
+            jailStatusText = <span className="opacity-75">Fully served ({durationText})</span>;
+        } else {
+            const servedText = msToDuration(action.served * 1000, { units: ['d', 'h', 'm'] });
+            jailStatusText = <span className="text-warning-inline">
+                Served {servedText} of {durationText} (only counts while online)
+            </span>;
+        }
+    }
+
     let warnAckedText: React.ReactNode;
     if (action.type === 'warn' && action.acked) {
         warnAckedText = <span className="opacity-75">Yes</span>;
@@ -122,6 +135,12 @@ export default function ActionInfoTab({ action, serverTime, tsFetch }: ActionInf
                     <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
                         <dt className="text-sm font-medium leading-6 text-muted-foreground">Player Accepted</dt>
                         <dd className="text-sm leading-6 col-span-2 mt-0">{warnAckedText}</dd>
+                    </div>
+                )}
+                {action.type === 'jail' && (
+                    <div className="py-0.5 grid grid-cols-3 gap-4 px-0">
+                        <dt className="text-sm font-medium leading-6 text-muted-foreground">Time Served</dt>
+                        <dd className="text-sm leading-6 col-span-2 mt-0">{jailStatusText}</dd>
                     </div>
                 )}
                 <div className="py-0.5 grid grid-cols-3 gap-4 px-0">

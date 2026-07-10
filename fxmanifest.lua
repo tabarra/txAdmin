@@ -36,6 +36,7 @@ server_scripts {
     'resource/sv_playerlist.lua',
     'resource/sv_ctx.lua',
     'resource/sv_initialData.lua',
+    'resource/sv_jail.lua',
     'resource/menu/server/sv_webpipe.lua',
     'resource/menu/server/sv_functions.lua',
     'resource/menu/server/sv_main_page.lua',
@@ -54,6 +55,7 @@ client_scripts {
     'resource/menu/client/cl_webpipe.lua',
     'resource/menu/client/cl_base.lua',
     'resource/menu/client/cl_functions.lua',
+    'resource/cl_jail.lua', --after cl_functions for the alert helpers
     'resource/menu/client/cl_instructional_ui.lua',
     'resource/menu/client/cl_main_page.lua',
     'resource/menu/client/cl_vehicle.lua',

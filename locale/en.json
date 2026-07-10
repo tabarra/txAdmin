@@ -72,6 +72,13 @@
         "dismiss_key": "SPACE",
         "instruction": "Hold %{key} for %{smart_count} second to dismiss this message. |||| Hold %{key} for %{smart_count} seconds to dismiss this message. "
     },
+    "nui_jail": {
+        "title": "JAILED",
+        "reason_label": "Reason:",
+        "jailed_by": "Jailed by:",
+        "remaining_label": "Time remaining:",
+        "instruction": "You cannot move while jailed. This screen will close automatically once your sentence ends."
+    },
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
@@ -89,6 +96,10 @@
             "froze_player": "You have frozen the player!",
             "unfroze_player": "You have unfrozen the player!",
             "was_frozen": "You have been frozen by a server admin!"
+        },
+        "jail": {
+            "jailed_alert": "You have been jailed by %{author} for: %{reason} (%{time} remaining)",
+            "released": "You have been released from jail!"
         },
         "common": {
             "cancel": "Cancel",
@@ -254,6 +265,7 @@
                 "info": "Info",
                 "ids": "IDs",
                 "history": "History",
+                "jail": "Jail",
                 "ban": "Ban"
             },
             "actions": {
@@ -343,9 +355,18 @@
                 "revoked_success": "Action revoked!",
                 "banned_by": "BANNED by %{author}",
                 "warned_by": "WARNED by %{author}",
+                "jailed_by": "JAILED by %{author}",
                 "revoked_by": "Revoked by %{author}.",
                 "expired_at": "Expired at %{date}.",
                 "expires_at": "Expires at %{date}."
+            },
+            "jail": {
+                "title": "Jail player",
+                "reason_required": "The Reason field is required.",
+                "success": "Player jailed!",
+                "minutes": "minutes",
+                "helper_text": "Please select a duration - only counts while the player is online",
+                "submit": "Apply jail"
             },
             "ban": {
                 "title": "Ban player",

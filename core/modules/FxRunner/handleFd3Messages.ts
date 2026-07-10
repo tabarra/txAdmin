@@ -142,6 +142,11 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
             handleBridgedCommands(data.payload);
         } else if (data.payload.type === 'txAdminAckWarning') {
             txCore.database.actions.ackWarn(data.payload.actionId);
+        } else if (data.payload.type === 'txAdminJailComplete') {
+            txCore.database.actions.finishJailSentence(data.payload.actionId);
+            if (typeof data.payload.netId === 'number') {
+                txCore.fxPlayerlist.getPlayerById(data.payload.netId)?.clearJailSession({ persist: false });
+            }
         }
     }
     

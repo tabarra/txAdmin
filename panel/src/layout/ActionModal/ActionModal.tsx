@@ -10,7 +10,6 @@ import { HistoryActionModalResp, HistoryActionModalSuccess } from "@shared/histo
 import ActionIdsTab from "./ActionIdsTab";
 import ActionInfoTab from "./ActionInfoTab";
 import ActionModifyTab from "./ActionModifyTab";
-import ActionDeleteTab from "./ActionDeleteTab";
 import { ModalContent, ModalTabMessage, ModalTabsList, ModalTabWrapper, type ModalTabInfo } from "@/components/modal-tabs";
 
 
@@ -120,7 +119,13 @@ export default function ActionModal() {
                 <span className="text-warning-inline font-mono mr-2">[{modalData.action.id}]</span>
                 Warned {displayName}
             </>;
-        } else {
+        } else if (modalData.action.type === 'jail') {
+            pageTitle = <>
+                <span className="text-info-inline font-mono mr-2">[{modalData.action.id}]</span>
+                Jailed {displayName}
+            </>;
+        }
+        else {
             throw new Error(`Unknown action type: ${modalData.action.type}`);
         }
     } else if (modalError) {

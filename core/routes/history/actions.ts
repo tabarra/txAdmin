@@ -157,6 +157,7 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiOkResp> {
     const perms = [];
     if (ctx.admin.hasPermission('players.ban')) perms.push('ban');
     if (ctx.admin.hasPermission('players.warn')) perms.push('warn');
+    if (ctx.admin.hasPermission('players.jail')) perms.push('jail');
 
     let action;
     try {
@@ -164,6 +165,19 @@ async function handleRevokeAction(ctx: AuthedCtx): Promise<GenericApiOkResp> {
         ctx.admin.logAction(`Revoked ${action.type} id ${actionId} from ${action.playerName ?? 'identifiers'}`);
     } catch (error) {
         return { error: `Failed to revoke action: ${(error as Error).message}` };
+    }
+
+    //If a jail was revoked, stop tracking served time for any matching online player
+    if (action.type === 'jail') {
+        try {
+            const { idsFound } = txCore.fxPlayerlist.getAssociatedOnlineNetIds(action.ids);
+            const netids = new Set(idsFound.map(([, netid]) => netid));
+            for (const netid of netids) {
+                txCore.fxPlayerlist.getPlayerById(netid)?.clearJailSession({ persist: true });
+            }
+        } catch (error) {
+            console.verbose.error(`Failed to clear jail session on revoke: ${(error as Error).message}`);
+        }
     }
 
     // Dispatch `txAdmin:events:actionRevoked`

@@ -4,11 +4,13 @@ import { BanTemplatesDataType } from "./otherTypes";
 //Already compliant with new db specs
 export type PlayerHistoryItem = {
     id: string;
-    type: "ban" | "warn";
+    type: "ban" | "warn" | "jail";
     author: string;
     reason: string;
     ts: number;
     exp?: number;
+    duration?: number; //jail only: total sentence in seconds
+    served?: number; //jail only: seconds served while online
     revokedBy?: string;
     revokedAt?: number;
 }

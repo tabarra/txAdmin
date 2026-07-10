@@ -9,9 +9,10 @@
 ---@param level string The level for the alert
 ---@param message string The message for this alert
 ---@param isTranslationKey boolean Whether the message is a translation key
-function sendPersistentAlert(key, level, message, isTranslationKey)
+---@param tOptions table | nil Translation interpolation options
+function sendPersistentAlert(key, level, message, isTranslationKey, tOptions)
     debugPrint(('Sending persistent alert, key: %s, level: %s, message: %s'):format(key, level, message))
-    sendMenuMessage('setPersistentAlert', { key = key, level = level, message = message, isTranslationKey = isTranslationKey })
+    sendMenuMessage('setPersistentAlert', { key = key, level = level, message = message, isTranslationKey = isTranslationKey, tOptions = tOptions })
 end
 
 --- Clear a persistent alert on screen

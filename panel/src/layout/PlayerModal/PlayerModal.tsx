@@ -1,12 +1,13 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { setPlayerModalUrlParam, usePlayerModalStateValue } from "@/hooks/playerModal";
-import { InfoIcon, ListIcon, HistoryIcon, GavelIcon } from "lucide-react";
+import { InfoIcon, ListIcon, HistoryIcon, GavelIcon, HourglassIcon } from "lucide-react";
 import PlayerInfoTab from "./PlayerInfoTab";
 import { useEffect, useState } from "react";
 import PlayerIdsTab from "./PlayerIdsTab";
 import PlayerHistoryTab from "./PlayerHistoryTab";
 import PlayerBanTab from "./PlayerBanTab";
+import PlayerJailTab from "./PlayerJailTab";
 import GenericSpinner from "@/components/GenericSpinner";
 import { cn } from "@/lib/utils";
 import { useBackendApi } from "@/hooks/fetch";
@@ -27,6 +28,11 @@ const modalTabs: ModalTabInfo[] = [
     {
         title: 'IDs',
         icon: <ListIcon className="mr-2 h-5 w-5 hidden xs:block" />,
+    },
+    {
+        title: 'Jail',
+        icon: <HourglassIcon className="mr-2 h-5 w-5 hidden xs:block" />,
+        className: 'hover:bg-warning hover:text-warning-foreground',
     },
     {
         title: 'Ban',
@@ -188,6 +194,9 @@ export default function PlayerModal() {
                                     player={modalData.player}
                                     playerRef={playerRef!}
                                     refreshModalData={refreshModalData}
+                                />}
+                                {selectedTab === 'Jail' && <PlayerJailTab
+                                    playerRef={playerRef!}
                                 />}
                                 {selectedTab === 'Ban' && <PlayerBanTab
                                     banTemplates={modalData.banTemplates}
