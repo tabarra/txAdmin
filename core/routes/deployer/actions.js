@@ -127,9 +127,7 @@ async function handleSetVariables(ctx) {
         } catch (error) {
             let outMessage = error?.message ?? 'Unknown error occurred.';
             if (error?.code === 'ECONNREFUSED') {
-                let specificError = (txEnv.isWindows)
-                    ? 'If you do not have a database installed, you can download and run XAMPP.'
-                    : 'If you do not have a database installed, you must download and run MySQL or MariaDB.';
+                let specificError = 'If you don\'t have a database installed, please install MariaDB.';
                 if (userVars.dbPort !== 3306) {
                     specificError += '<br>\n<b>You are not using the default DB port 3306, make sure it is correct!</b>';
                 }
