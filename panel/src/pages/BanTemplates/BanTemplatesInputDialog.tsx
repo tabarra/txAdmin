@@ -111,27 +111,28 @@ export default function BanTemplatesInputDialog({
                             <DialogTitle>{reasonData ? 'Edit' : 'Add'} Template</DialogTitle>
                         </DialogHeader>
                         <div className="grid grid-cols-6 items-center gap-4">
-                            <Label htmlFor="banReason" className="col-span-6 sm:col-auto">
+                            <Label htmlFor="reason" className="col-span-6 sm:col-auto">
                                 Reason
                             </Label>
-                            <AutosizeTextarea
-                                id="reason"
-                                placeholder="The reason for the ban, rule violated, etc."
-                                className="col-span-full sm:col-span-5"
-                                defaultValue={initialReason}
-                                ref={reasonRef}
-                                maxHeight={160}
-                                minLength={3}
-                                autoFocus
-                                required
-                                onChangeCapture={(e) => {
-                                    //prevent breaking line
-                                    const target = e.target as HTMLInputElement;
-                                    if (target.value.includes('\n')) {
-                                        target.value = target.value.replace(/\s*\r*\n+\s*/g, ' ');
-                                    }
-                                }}
-                            />
+                            <div className="col-span-full sm:col-span-5">
+                                <AutosizeTextarea
+                                    id="reason"
+                                    placeholder="The reason for the ban, rule violated, etc."
+                                    defaultValue={initialReason}
+                                    ref={reasonRef}
+                                    maxHeight={160}
+                                    minLength={3}
+                                    autoFocus
+                                    required
+                                    onChangeCapture={(e) => {
+                                        //prevent breaking line
+                                        const target = e.target as HTMLInputElement;
+                                        if (target.value.includes('\n')) {
+                                            target.value = target.value.replace(/\s*\r*\n+\s*/g, ' ');
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
                         <div className="grid grid-cols-6 items-center gap-4">
                             <Label htmlFor="durationSelect" className="col-span-6 sm:col-auto">
