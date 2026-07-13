@@ -228,6 +228,7 @@ function RegisterSecureNuiCallback(callbackName, funcCallback)
     RegisterRawNuiCallback(callbackName, function(req, nuiCallback)
         if not IsNuiRequestOriginValid(req.headers) then
             debugPrint(("^1Invalid NUI callback origin for %s"):format(callbackName))
+            -- debugPrint(type(req.headers) == 'table' and req.headers or 'headers is not a table')
             return nuiCallback({
                 status = 403,
                 body = '{}',

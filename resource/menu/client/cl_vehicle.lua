@@ -408,6 +408,7 @@ RegisterNetEvent('txcl:seatInVehicle', function(vehNetID, seat, oldVehVelocity)
     local attemptsLimit = 400 -- 400*5 = 2s
     while not NetworkDoesEntityExistWithNetworkId(vehNetID) and attemptsCounter < attemptsLimit do
         Wait(5)
+        attemptsCounter = attemptsCounter + 1
     end
     if not NetworkDoesEntityExistWithNetworkId(vehNetID) then
         return sendSnackbarMessage('error', 'Failed to seat into vehicle (net=' .. vehNetID .. ')', false)

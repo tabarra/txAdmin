@@ -3,7 +3,7 @@
  * NOTE: abstracting here because in the future these options should not really be called from
  * outside of this module, be that a static method or part of the user class instance.
  * 
- * NOTE: Benchmark comnparison between native fxserver and bcryptjs:
+ * NOTE: Benchmark comparison between native fxserver and bcryptjs:
  *   https://gist.github.com/tabarra/87a84faf689bb6a0eb8c01d5a7e73ed1
  */
 import bcrypt from 'bcryptjs';

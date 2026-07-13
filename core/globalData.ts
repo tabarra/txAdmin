@@ -56,23 +56,24 @@ if (devVars.ENABLED) {
 console.setVerbose(_txDevEnv.VERBOSE);
 
 //DEBUG: print env info
-// console.dir({
-//     argv0: process.argv0,
-//     execPath: process.execPath,
-//     cwd: process.cwd(),
-//     __dirname: __dirname ?? 'UNDEFINED',
-//     convar: typeof GetConvar === 'function'
-//         ? GetConvar('txAdminPort', 'UNDEFINED')
-//         : 'GetConvar not available',
-//     args: process.argv,
-// }, { title: 'ENV INFO' });
+//FIXME:REMOVE:BEFORE:PUBLISHING
+console.verbose.dir({
+    process: {
+        argv: process.argv,
+        execArgv: process.execArgv,
+        argv0: process.argv0,
+        cwd: process.cwd(),
+    },
+    NodeVersion: process.versions?.node ?? undefined,
+    BunVersion: process.versions?.bun ?? undefined,
+    __dirname: __dirname ?? undefined,
+    'import.meta.dir': (globalThis as any)?.import?.meta?.dir ?? undefined,
+}, { title: 'RUNTIME INIT' });
 
 
 /**
- * MARK: CHECK HOST VARS
+ * MARK: RUNTIME
  */
-//Check for deprecated convars
-checkDeprecatedConvars();
 
 //Check OS
 const osType = os.type();
@@ -85,16 +86,6 @@ if (osType === 'Windows_NT') {
     fatalError.GlobalData(0, `OS type not supported: ${osType}`);
 }
 const isWindows = _isWindows;
-
-
-//DEBUG
-// console.verbose.dir(process.env, { title: 'ENV' });
-// console.dir({
-//     'process.argv': process.argv,
-//     'process.execArgv': process.execArgv,
-//     'process.argv0': process.argv0,
-//     '__dirname': __dirname,
-// }, { title: 'INIT' });
 
 
 //Get runtime info (paths, versions, etc)
@@ -111,6 +102,8 @@ const fxsVersion = fxsVersionInfo.build;
 const txaPath = cleanPath(runtimeInfo.txaPath);
 const fxsPath = cleanPath(runtimeInfo.fxsPath);
 
+//FIXME:REMOVE:BEFORE:PUBLISHING
+console.verbose.dir(runtimeInfo, { title: 'RUNTIME INFO' });
 
 //Validate txaPath is a child of fxsPath
 const txaToFxsRelative = path.relative(fxsPath, txaPath);
@@ -122,6 +115,11 @@ if (!txaToFxsRelative || path.isAbsolute(txaToFxsRelative) || txaToFxsRelative.s
         ['FXServer path', fxsPath],
     ]);
 }
+
+
+//Check for deprecated convars
+checkDeprecatedConvars(fxsIsGen9);
+
 
 //Getting fxserver version
 //4380 = GetVehicleType was exposed server-side
@@ -415,13 +413,13 @@ export const txEnv = Object.freeze({
 
     //Natives
     runtime,
-    
+
     fxsVersion,
     fxsVersionTag,
     fxsIsGen9,
     fxsPath,
     fxsBinaryPath,
-    
+
     txaVersion,
     txaPath,
     txaResourceName,

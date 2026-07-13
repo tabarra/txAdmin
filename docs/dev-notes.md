@@ -5,6 +5,7 @@ Legend:
 - [?] -> Lower priority or pending investigation
 
 ## Before Updating:
+- Search for all FIXME:REMOVE:BEFORE:PUBLISHING
 - Search for all FIXME:NEXT:UPDATE
 - Search for all FIXME:REMOVE:NEXT:UPDATE
 - Re-enable diagnostics report

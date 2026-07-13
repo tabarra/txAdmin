@@ -7,23 +7,23 @@ const deprecatedConvarNames = [
     'txAdminInterface',
 ] as const;
 
-const fatalConvarError = (convarName: string): never => {
-    fatalError.GlobalData(27, [
-        `The \`${convarName}\` ConVar is deprecated and no longer supported.`,
-        'Please migrate to the new environment variable configuration.',
-        'For more information: https://aka.cfx.re/txadmin-env-config',
-        '', //dash divider
-        'If you are using the `start_<version>_<profile>.bat` script,',
-        'either edit it or double click the FXServer.exe file directly.',
-    ]);
-}
-
 
 /**
  * Checks if the user is trying to run txAdmin using deprecated convars.
  * If detected, throws a fatal error pointing them to the documentation.
  */
-export const checkDeprecatedConvars = () => {
+export const checkDeprecatedConvars = (fxsIsGen9: boolean) => {
+    const fatalConvarError = (convarName: string): never => {
+        fatalError.GlobalData(27, [
+            `The \`${convarName}\` ConVar is deprecated and no longer supported.`,
+            'Please migrate to the new environment variable configuration.',
+            'For more information: https://aka.cfx.re/txadmin-env-config',
+            '', //dash divider
+            !fxsIsGen9 ? 'If you are using the `start_<version>_<profile>.bat` script,' : null,
+            !fxsIsGen9 ? 'either edit it or double click the FXServer.exe file directly.' : null,
+        ]);
+    }
+    
     const GetConvar = (globalThis as any).GetConvar as
         | ((varName: string, default_: string) => string)
         | undefined;

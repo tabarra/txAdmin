@@ -30,24 +30,6 @@ end
 -- print(GetConvarBool2('yyy')) -- false
 -- print("==========================")
 
-
--- Setting global enable/disable variable for all sv_*.lua files
--- NOTE: not available on client
-TX_SERVER_MODE = GetConvarBool('txAdminServerMode')
-
--- Setting global enable/disable variable for all menu-related files
-TX_MENU_ENABLED = GetConvarBool('txAdmin-menuEnabled')
-
--- Setting global debug variable for all files
--- On the client, this is updated by receiving a `txcl:setDebugMode` event.
--- On the server, this is updated by running txaSetDebugMode on Live Console
-TX_DEBUG_MODE = GetConvarBool('txAdmin-debugMode')
-
-
--- Prevent running in monitor mode
-if not TX_SERVER_MODE then return end
-
-
 -- Setting game-specific global vars
 local envName = GetGameName()
 IS_REDM = false
@@ -86,6 +68,17 @@ IS_REDM = GAME_NAME == 'redm'
 --   IS_FIVEM=IS_FIVEM,
 -- }, {indent=true}))
 
+-- Setting global enable/disable variable for all sv_*.lua files
+-- NOTE: not available on client
+TX_SERVER_MODE = GetConvarBool('txAdminServerMode')
+
+-- Setting global enable/disable variable for all menu-related files
+TX_MENU_ENABLED = GetConvarBool('txAdmin-menuEnabled')
+
+-- Setting global debug variable for all files
+-- On the client, this is updated by receiving a `txcl:setDebugMode` event.
+-- On the server, this is updated by running txaSetDebugMode on Live Console
+TX_DEBUG_MODE = GetConvarBool('txAdmin-debugMode')
 
 --- Internal helper to format txAdmin console messages
 local function _formatTxString(args)

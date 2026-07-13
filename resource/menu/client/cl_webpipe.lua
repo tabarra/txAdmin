@@ -18,7 +18,7 @@ local menuCloseGracePeriod = 750
 ---@class StaticCacheData : table<string, StaticCacheEntry>
 local staticCacheData = {}
 
--- catching all NUI requests for https://monitor/WebPipe/
+-- catching all NUI requests for https://<resname>/WebPipe/
 RegisterRawNuiCallback('WebPipe', function(req, cb)
     local path = req.path
     local headers = req.headers

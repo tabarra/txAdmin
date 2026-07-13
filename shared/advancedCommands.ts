@@ -67,7 +67,7 @@ export const advancedCommands: AdvancedCommand[] = [
     },
     {
         name: 'safelyRestartMonitorResource',
-        desc: 'Restarts the server\'s "monitor" resource in a safe way by restoring the luaComToken convar before ensuring it.',
+        desc: 'Restarts the server\'s txAdmin resource in a safe way by restoring the luaComToken convar before ensuring it.',
     },
     {
         name: 'forceReauthRecentPlayers',
