@@ -64,7 +64,13 @@ function getEjsOptions(filePath: string) {
 
 //Consts
 const templateCache = new Map();
-const RESOURCE_PATH = `nui://${txEnv.txaResourceName}/web/public/`;
+// const RESOURCE_PATH = `nui://monitor/web/public/`; //!NC:RESNAME:FIXME:gen8
+// const RESOURCE_PATH = `https://cfx-nui-${txEnv.txaResourceName}/web/public/`; //!NC:RESNAME:CFX
+// const RESOURCE_PATH = `nui://${txEnv.txaResourceName}/web/public/`; //!NC:RESNAME
+
+const NUI_ORIGIN = `https://cfx-nui-${txEnv.txaResourceName}/`;
+const NUI_WEBPIPE_URL = `${NUI_ORIGIN}/WebPipe/`;
+const NUI_WEB_ASSETS_URL = `${NUI_ORIGIN}/web/public/`;
 
 const legacyNavigateHtmlTemplate = `<style>
 body {
@@ -174,17 +180,19 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
         // Setting up default render data:
         const baseViewData = {
             isWebInterface,
-            basePath: (isWebInterface) ? '/' : consts.nuiWebpipePath,
-            resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
+            basePath: (isWebInterface) ? '/' : NUI_WEBPIPE_URL,
+            resourcePath: (isWebInterface) ? '' : NUI_WEB_ASSETS_URL,
             serverName: txConfig.general.serverName,
             uiTheme: legacyTheme,
             fxServerVersion: txEnv.fxsVersionTag,
             txAdminVersion: txEnv.txaVersion,
+            txaResourceName: txEnv.txaResourceName,
             hostConfigSource: txHostConfig.sourceName,
             jsInjection: getJavascriptConsts({
                 isWebInterface: isWebInterface,
                 csrfToken: possiblyAuthedAdmin?.csrfToken ?? 'not_set',
-                TX_BASE_PATH: (isWebInterface) ? '' : consts.nuiWebpipePath,
+                TX_BASE_PATH: (isWebInterface) ? '' : NUI_WEBPIPE_URL,
+                TX_RESOURCE_NAME: txEnv.txaResourceName,
                 PAGE_TITLE: data?.headerTitle ?? 'txAdmin',
             }),
 

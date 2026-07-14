@@ -39,6 +39,14 @@ const pickRandomPartner = (placement: AdPlacement): HostingPartner => {
 }
 
 
+// const NUI_ASSETS_URL = 'nui://cfx-nui-monitor/web/public/'; //!NC:RESNAME:CFX
+// const NUI_ASSETS_URL = 'nui://monitor/web/public/'; //!NC:RESNAME:FIXME:gen8
+// const NUI_ASSETS_URL = 'https://cfx-nui-txadmin/web/public/'; //!NC:RESNAME:CFX
+// const NUI_ASSETS_URL = 'https://txadmin/web/public/'; //!NC:RESNAME
+const NUI_ASSETS_URL = `https://cfx-nui-${window.txConsts.txaResourceName}/web/public/`; //!NC:RESNAME
+
+const ASSETS_URL = window.txConsts.isWebInterface ? '' : NUI_ASSETS_URL
+
 type DynamicAdvertProps = {
     placement: AdPlacement;
 };
@@ -46,7 +54,7 @@ export default function DynamicAdvert({ placement }: DynamicAdvertProps) {
     const [advert] = useState(() => pickRandomPartner(placement));
     const isLoginPage = placement === 'login';
     const imgSize = isLoginPage ? '192x64' : '256x80';
-    const linkPrefix = window.txConsts.isWebInterface ? '' : 'nui://monitor/web/public/';
+
     return (
         <a
             href={advert.link}
@@ -67,7 +75,7 @@ export default function DynamicAdvert({ placement }: DynamicAdvertProps) {
                     'rounded-lg hover:outline outline-2 m-auto hover:saturate-150',
                     isLoginPage ? 'max-w-48 max-h-16' : 'max-w-sidebar max-h-[80px]'
                 )}
-                src={`${linkPrefix}/img/advert-${advert.name}-${imgSize}.png`}
+                src={`${ASSETS_URL}/img/advert-${advert.name}-${imgSize}.png`}
             />
         </a>
     );

@@ -17,6 +17,16 @@ import { useAtomValue } from 'jotai';
 import { pageTitleWatcher } from './hooks/pages.ts';
 
 
+//DEBUG: check location
+if (!window.txConsts.isWebInterface) {
+    //!NC:DEBUG:RESNAME
+    console.log('panel:main.tsx', {
+        target: 'depends',
+        origin: window.location.origin,
+        ancestors: [...window.location.ancestorOrigins].join(', '),
+    });
+}
+
 //If inside NUI, silence console.* calls to prevent confusion.
 if (!window.txConsts.isWebInterface) {
     console.log = () => { };

@@ -231,7 +231,9 @@
 
             const socket = isWebInterface
                 ? io({ ...socketOpts, path: '/socket.io' })
-                : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
+                // : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
+                // : io('txadmin', { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
+                : io(TX_RESOURCE_NAME, { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
 
             socket.on('logout', () => {
                 console.log('Received logout command from websocket.');

@@ -3,7 +3,12 @@ import { useCsrfToken, useExpireAuthData } from "@/hooks/auth";
 import { msToShortDuration } from "@/lib/dateTime";
 import { useEffect, useRef } from "react";
 
-const WEBPIPE_PATH = "https://monitor/WebPipe";
+// const WEBPIPE_PATH = "https://cfx-nui-monitor/WebPipe"; //!NC:RESNAME:CFX
+// const WEBPIPE_PATH = "https://monitor/WebPipe"; //!NC:RESNAME:FIXME:gen8
+// const WEBPIPE_PATH = "https://cfx-nui-txadmin/WebPipe"; //!NC:RESNAME:CFX
+// const WEBPIPE_PATH = "https://txadmin/WebPipe"; //!NC:RESNAME
+const WEBPIPE_PATH = `https://cfx-nui-${window.txConsts.txaResourceName}/WebPipe`; //!NC:RESNAME
+
 const headeruserAgent = `txAdminPanel/v${window.txConsts.txaVersion} (atop FXServer/b${window.txConsts.fxsVersion})`;
 const defaultHeaders = {
     'Content-Type': 'application/json; charset=UTF-8',

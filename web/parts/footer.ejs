@@ -15,5 +15,14 @@
     <script src="<%= resourcePath %>js/jquery-confirm.min.js?txVer=<%= txAdminVersion %>"></script>
     <script src="<%= resourcePath %>js/socket.io.min.js?txVer=<%= txAdminVersion %>"></script>
     <script src="<%= resourcePath %>js/txadmin/base.js?txVer=<%= txAdminVersion %>"></script>
+
+    <script>
+        //!NC:DEBUG:RESNAME
+        console.log('web:footer.ejs', {
+            target: '<%= resourcePath %>',
+            origin: window.location.origin,
+            ancestors: [...window.location.ancestorOrigins].join(', '),
+        });
+    </script>
 </body>
 </html>

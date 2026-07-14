@@ -79,6 +79,7 @@ TX_MENU_ENABLED = GetConvarBool('txAdmin-menuEnabled')
 -- On the client, this is updated by receiving a `txcl:setDebugMode` event.
 -- On the server, this is updated by running txaSetDebugMode on Live Console
 TX_DEBUG_MODE = GetConvarBool('txAdmin-debugMode')
+-- TX_DEBUG_MODE = true --DEBUG:remove
 
 --- Internal helper to format txAdmin console messages
 local function _formatTxString(args)

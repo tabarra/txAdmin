@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { txAdminMenuPage, usePage } from "../state/page.state";
 import { useIsMenuVisibleValue } from "../state/visibility.state";
+import { NUI_WEBPIPE_URL } from "../utils/constants";
 
 const iFrameCtx = createContext(null);
 
@@ -28,7 +29,17 @@ export interface IFramePostData {
   __isFromChild: true;
 }
 
-export const BASE_IFRAME_PATH = "https://monitor/WebPipe";
+// export const BASE_IFRAME_PATH = "https://cfx-nui-monitor/WebPipe"; //!NC:RESNAME:CFX
+// export const BASE_IFRAME_PATH = "https://monitor/WebPipe"; //!NC:RESNAME:FIXME:gen8
+// export const BASE_IFRAME_PATH = "https://cfx-nui-txadmin/WebPipe"; //!NC:RESNAME:CFX - FIXME:DOESNT:WORK
+// export const BASE_IFRAME_PATH = "https://txadmin/WebPipe"; //!NC:RESNAME DONE:WORKS
+
+//!NC:DEBUG:RESNAME
+console.log('nui:IFrameProvider', {
+  target: NUI_WEBPIPE_URL,
+  origin: window.location.origin,
+  ancestors: [...window.location.ancestorOrigins].join(', '),
+});
 
 export const useIFrameCtx = () => useContext<iFrameContextValue>(iFrameCtx);
 
@@ -74,7 +85,7 @@ export const IFrameProvider: React.FC<IFrameProviderProps> = ({ children }) => {
   }, []);
 
   const fullFrameSrc = useMemo(
-    () => BASE_IFRAME_PATH + curFramePg,
+    () => NUI_WEBPIPE_URL + curFramePg,
     [curFramePg]
   );
 

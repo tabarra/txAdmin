@@ -52,7 +52,9 @@ export const getSocket = (rooms: string[] | string) => {
 
     const socket = window.txConsts.isWebInterface
         ? io({ ...socketOpts, path: '/socket.io' })
-        : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
+        // : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
+        // : io('txadmin', { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
+        : io(`cfx-nui-${window.txConsts.txaResourceName}`, { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
 
     //Can't use the generic type on io(), so need to apply it here
     return socket as Socket<ListenEventsMap, any>;

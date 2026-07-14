@@ -351,3 +351,49 @@ export const MockedPlayerDetails: PlayerModalSuccess = {
         "tsLastConnection": 1667708940
     }
 };
+
+
+const resolveResourceName = () => {
+    const origin = window.location.origin;
+    if (origin === 'https://cfx-nui-monitor') {
+        //gen8, expected
+        return 'monitor';
+    } else if (origin === 'https://monitor' || origin === 'nui://monitor') {
+        //gen8, should not happen
+        return 'monitor';
+    } else if (origin === 'https://cfx-nui-txadmin') {
+        //gen9, expected
+        return 'txadmin';
+    } else if (origin === 'https://txadmin' || origin === 'nui://txadmin') {
+        //gen9, should not happen
+        return 'txadmin';
+    }
+
+    //trying the native
+    const nativeResName = (globalThis as any)?.GetParentResourceName();
+    if (nativeResName === 'monitor') {
+        return 'monitor';
+    } else if (nativeResName === 'txadmin') {
+        return 'txadmin';
+    }
+
+    //last resort
+    const ancestorOrigins = [...window.location.ancestorOrigins];
+    if (ancestorOrigins.includes('nui://game/')) {
+       return 'monitor';
+    } else if (ancestorOrigins.includes('nui://ui/')) {
+       return 'txadmin';
+    }
+
+    //welp, we tried. Log it then default to monitor
+    console.error('nui:constants:resolveResourceName: Unknown resource name', {
+        origin,
+        ancestorOrigins,
+        nativeResName,
+    });
+    return 'monitor';
+}
+
+export const TXA_RESOURCE_NAME = resolveResourceName();
+export const NUI_WEBPIPE_URL = `https://cfx-nui-${TXA_RESOURCE_NAME}/WebPipe`;
+export const NUI_CALLBACK_URL = `https://cfx-nui-${TXA_RESOURCE_NAME}/`; //with trailing slash

@@ -17,7 +17,7 @@ end
 --FIXME: need a good way for the core to define what the resource name is
 --FIXME: define the correct capitalization
 local resName = GetCurrentResourceName()
-if resName ~= "txAdmin" and resName ~= "txadmin" and resName ~= "monitor" then
+if resName ~= "txadmin" and resName ~= "monitor" then -- //!NC:RESNAME
     logError('This resource should not be installed separately, it already comes with fxserver.')
     return --TODO: send fatal error via FD3 so tx can stop the server
 end
