@@ -29,18 +29,6 @@ export interface IFramePostData {
   __isFromChild: true;
 }
 
-// export const BASE_IFRAME_PATH = "https://cfx-nui-monitor/WebPipe"; //!NC:RESNAME:CFX
-// export const BASE_IFRAME_PATH = "https://monitor/WebPipe"; //!NC:RESNAME:FIXME:gen8
-// export const BASE_IFRAME_PATH = "https://cfx-nui-txadmin/WebPipe"; //!NC:RESNAME:CFX - FIXME:DOESNT:WORK
-// export const BASE_IFRAME_PATH = "https://txadmin/WebPipe"; //!NC:RESNAME DONE:WORKS
-
-//!NC:DEBUG:RESNAME
-console.log('nui:IFrameProvider', {
-  target: NUI_WEBPIPE_URL,
-  origin: window.location.origin,
-  ancestors: [...window.location.ancestorOrigins].join(', '),
-});
-
 export const useIFrameCtx = () => useContext<iFrameContextValue>(iFrameCtx);
 
 interface IFrameProviderProps {

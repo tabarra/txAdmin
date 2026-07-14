@@ -64,13 +64,11 @@ function getEjsOptions(filePath: string) {
 
 //Consts
 const templateCache = new Map();
-// const RESOURCE_PATH = `nui://monitor/web/public/`; //!NC:RESNAME:FIXME:gen8
-// const RESOURCE_PATH = `https://cfx-nui-${txEnv.txaResourceName}/web/public/`; //!NC:RESNAME:CFX
-// const RESOURCE_PATH = `nui://${txEnv.txaResourceName}/web/public/`; //!NC:RESNAME
 
-const NUI_ORIGIN = `https://cfx-nui-${txEnv.txaResourceName}/`;
-const NUI_WEBPIPE_URL = `${NUI_ORIGIN}/WebPipe/`;
-const NUI_WEB_ASSETS_URL = `${NUI_ORIGIN}/web/public/`;
+//NOTE:NUIFIX
+const NUI_ORIGIN = `https://cfx-nui-${txEnv.txaResourceName}`;
+const NUI_WEBPIPE_URL = `${NUI_ORIGIN}/WebPipe/`; //NOTE: gen8 used https://monitor/WebPipe/
+const NUI_WEB_ASSETS_URL = `${NUI_ORIGIN}/web/public/`; //NOTE: gen8 used nui://monitor/web/public/
 
 const legacyNavigateHtmlTemplate = `<style>
 body {

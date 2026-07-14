@@ -4,8 +4,6 @@ import { isBrowserEnv } from "./miscUtils";
 
 type OptsWithMockData<T> = Partial<RequestInit & { mockResp: T }>;
 
-let hasLoggedFetchNui = false; //!NC:remove
-
 /**
  * Simple wrapper around fetch API tailored for CEF/NUI use.
  * @param eventName - The endpoint eventname to target
@@ -34,22 +32,7 @@ export async function fetchNui<T = any>(
   if (isBrowserEnv() && opts?.mockResp) return opts.mockResp;
 
   try {
-    //const CALLBACK_BASE_URL = 'https://cfx-nui-monitor/'; //!NC:RESNAME:CFX
-    // const CALLBACK_BASE_URL = 'https://monitor/'; //!NC:RESNAME:FIXME:gen8
-    // const CALLBACK_BASE_URL = 'https://cfx-nui-txadmin/'; //!NC:RESNAME:CFX - FIXME:DOESNT:WORK
-    // const CALLBACK_BASE_URL = 'https://txadmin/'; //!NC:RESNAME DONE:WORKS
-
-    //!NC:DEBUG:RESNAME
-    if (!hasLoggedFetchNui) {
-      console.log('nui:fetchNui', {
-          target: `${NUI_CALLBACK_URL}\${eventName}`, //yes that is on purpose
-          origin: window.location.origin,
-          ancestors: [...window.location.ancestorOrigins].join(', '),
-        });
-      hasLoggedFetchNui = true;
-    }
-
-    const resp = await fetch(`${NUI_CALLBACK_URL}${eventName}`, options);
+    const resp = await fetch(`${NUI_CALLBACK_URL}/${eventName}`, options);
     return await resp.json();
   } catch (error) {
     if (error.name === 'SyntaxError') {

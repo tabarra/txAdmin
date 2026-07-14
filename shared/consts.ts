@@ -40,10 +40,6 @@ export default {
     regexSvLicenseNew: /^cfxk_\w{1,60}_\w{1,20}$/,
     regexValidIP: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
     actionIdAlphabet,
-    // nuiWebpipePath: 'https://cfx-nui-monitor/WebPipe/', //!NC:RESNAME:CFX
-    // nuiWebpipePath: 'https://monitor/WebPipe/', //!NC:RESNAME:FIXME:gen8
-    // nuiWebpipePath: 'https://cfx-nui-txadmin/WebPipe/', //!NC:RESNAME:CFX
-    // nuiWebpipePath: 'https://txadmin/WebPipe/', //!NC:RESNAME
     regexCustomThemeName: /^[a-z0-9]+(-[a-z0-9]+)*$/,
     cookies: {
         theme: 'txa:theme',

@@ -229,11 +229,13 @@
                 query: { rooms }
             };
 
+            //NOTE:NUIFIX
+            //NOTE: gen8 used 'monitor' without protocol
+            const NUI_ORIGIN = `https://cfx-nui-${TX_RESOURCE_NAME}`;
+
             const socket = isWebInterface
                 ? io({ ...socketOpts, path: '/socket.io' })
-                // : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
-                // : io('txadmin', { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
-                : io(TX_RESOURCE_NAME, { ...socketOpts, path: '/WebPipe/socket.io' }); //!NC:RESNAME
+                : io(NUI_ORIGIN, { ...socketOpts, path: '/WebPipe/socket.io' });
 
             socket.on('logout', () => {
                 console.log('Received logout command from websocket.');

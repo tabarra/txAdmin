@@ -23,9 +23,11 @@ const console = consoleFactory(modulename);
 
 //Consts
 const serverTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const NUI_ORIGIN = `https://cfx-nui-${txEnv.txaResourceName}/`;
-const NUI_WEBPIPE_URL = `${NUI_ORIGIN}/WebPipe/`;
-const NUI_PANEL_URL = `${NUI_ORIGIN}/panel/`;
+
+//NOTE:NUIFIX
+const NUI_ORIGIN = `https://cfx-nui-${txEnv.txaResourceName}`;
+const NUI_WEBPIPE_URL = `${NUI_ORIGIN}/WebPipe/`; //NOTE: gen8 used https://monitor/WebPipe/
+const NUI_PANEL_URL = `${NUI_ORIGIN}/panel/`; //NOTE: gen8 used nui://monitor/panel/
 
 //Cache the index.html file unless in dev mode
 let htmlFile: string;
@@ -206,9 +208,6 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     //If in prod mode and NUI, replace the entry point with the local one
     //This is required because of how badly the WebPipe handles "large" files
     if (!txDevEnv.ENABLED) {
-        // const origin = 'nui://monitor';//!NC:RESNAME:FIXME:gen8
-        // const origin = `https://cfx-nui-${txEnv.txaResourceName}`;//!NC:RESNAME:CFX
-        // const origin = `https://${txEnv.txaResourceName}`;//!NC:RESNAME
         const base = ctx.txVars.isWebInterface ? `./` : NUI_PANEL_URL;
         htmlOut = htmlOut.replaceAll(/(src|href)="\.\/(\w+)-(\w+(?:\.v\d+)?)\.(js|css)"/g, `$1="${base}$2-$3.$4"`);
     }

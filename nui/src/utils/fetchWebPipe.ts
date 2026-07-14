@@ -1,18 +1,6 @@
 import { NUI_WEBPIPE_URL } from "./constants";
 import { isBrowserEnv } from "./miscUtils";
 
-//const WEBPIPE_PATH = 'https://cfx-nui-monitor/WebPipe'; //!NC:RESNAME:CFX
-// const WEBPIPE_PATH = 'https://monitor/WebPipe'; //!NC:RESNAME:FIXME:gen8 
-// const WEBPIPE_PATH = 'https://cfx-nui-txadmin/WebPipe'; //!NC:RESNAME:CFX - FIXME:DOESNT:WORK
-// const WEBPIPE_PATH = 'https://txadmin/WebPipe'; //!NC:RESNAME DONE:WORKS
-
-//!NC:DEBUG:RESNAME
-console.log('nui:fetchWebPipe', {
-  target: NUI_WEBPIPE_URL,
-  origin: window.location.origin,
-  ancestors: [...window.location.ancestorOrigins].join(', '),
-});
-
 type ValidPath = `/${string}`;
 
 enum PipeTimeout {

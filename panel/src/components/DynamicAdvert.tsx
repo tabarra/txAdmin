@@ -38,13 +38,9 @@ const pickRandomPartner = (placement: AdPlacement): HostingPartner => {
     };
 }
 
-
-// const NUI_ASSETS_URL = 'nui://cfx-nui-monitor/web/public/'; //!NC:RESNAME:CFX
-// const NUI_ASSETS_URL = 'nui://monitor/web/public/'; //!NC:RESNAME:FIXME:gen8
-// const NUI_ASSETS_URL = 'https://cfx-nui-txadmin/web/public/'; //!NC:RESNAME:CFX
-// const NUI_ASSETS_URL = 'https://txadmin/web/public/'; //!NC:RESNAME
-const NUI_ASSETS_URL = `https://cfx-nui-${window.txConsts.txaResourceName}/web/public/`; //!NC:RESNAME
-
+//NOTE:NUIFIX
+//NOTE: gen8 used nui://monitor/web/public/ but we are removing the trailing slash
+const NUI_ASSETS_URL = `https://cfx-nui-${window.txConsts.txaResourceName}/web/public`;
 const ASSETS_URL = window.txConsts.isWebInterface ? '' : NUI_ASSETS_URL
 
 type DynamicAdvertProps = {

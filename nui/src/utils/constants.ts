@@ -352,7 +352,7 @@ export const MockedPlayerDetails: PlayerModalSuccess = {
     }
 };
 
-
+//NOTE:NUIFIX
 const resolveResourceName = () => {
     const origin = window.location.origin;
     if (origin === 'https://cfx-nui-monitor') {
@@ -380,12 +380,12 @@ const resolveResourceName = () => {
     //last resort
     const ancestorOrigins = [...window.location.ancestorOrigins];
     if (ancestorOrigins.includes('nui://game/')) {
-       return 'monitor';
+        return 'monitor';
     } else if (ancestorOrigins.includes('nui://ui/')) {
-       return 'txadmin';
+        return 'txadmin';
     }
 
-    //welp, we tried. Log it then default to monitor
+    //Welp, we tried... Log it then default to monitor
     console.error('nui:constants:resolveResourceName: Unknown resource name', {
         origin,
         ancestorOrigins,
@@ -395,5 +395,18 @@ const resolveResourceName = () => {
 }
 
 export const TXA_RESOURCE_NAME = resolveResourceName();
-export const NUI_WEBPIPE_URL = `https://cfx-nui-${TXA_RESOURCE_NAME}/WebPipe`;
-export const NUI_CALLBACK_URL = `https://cfx-nui-${TXA_RESOURCE_NAME}/`; //with trailing slash
+
+//NOTE: gen8 used https://monitor/, but we are removing the trailing slash
+export const NUI_CALLBACK_URL = `https://cfx-nui-${TXA_RESOURCE_NAME}` as const;
+
+//NOTE: gen8 used https://monitor/WebPipe
+export const NUI_WEBPIPE_URL = `https://cfx-nui-${TXA_RESOURCE_NAME}/WebPipe` as const;
+
+//!NC:DEBUG:RESNAME
+console.log('nui:constants', {
+    TXA_RESOURCE_NAME,
+    NUI_CALLBACK_URL,
+    NUI_WEBPIPE_URL,
+    origin: window.location.origin,
+    ancestors: [...window.location.ancestorOrigins].join(', '),
+});
