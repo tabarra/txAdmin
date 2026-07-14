@@ -61,7 +61,7 @@ export const getMutableConvars = (isSpawnArg = false) => {
             ? txConfig.whitelist.rejectionMessage.replaceAll('\n', '\\n')
             : txConfig.whitelist.rejectionMessage;
         convars.push(['sets', 'sv_allowlistInstructions', instructions]);
-    } else if(!isSpawnArg) {
+    } else if (!isSpawnArg) {
         //NOTE: fxserver appears to skip empty string arguments (even `""`)
         // so we only set it if we're not in spawn arg mode
         convars.push(['sets', 'sv_allowlistInstructions', '']);
@@ -107,16 +107,16 @@ if (txEnv.isWindows) {
     const args = [
         '--library-path', `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
         '--',
-        // `${alpinePath}/opt/cfx-server/${serverBinName}`,
         txEnv.fxsBinaryPath,
     ]
+    let bin;
     if (txEnv.fxsIsGen9) {
+        bin = `${alpinePath}/lib/ld-musl-x86_64.so.1`;
+    } else {
+        bin = `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`;
         args.push('+set', 'citizen_dir', `${alpinePath}/opt/cfx-server/citizen/`);
     }
-    osSpawnVars = {
-        bin: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
-        args,
-    };
+    osSpawnVars = { bin, args };
 }
 
 type OsSpawnVars = {
