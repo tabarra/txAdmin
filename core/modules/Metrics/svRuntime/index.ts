@@ -28,6 +28,7 @@ const LOG_DATA_FILE_NAME = 'stats_svRuntime.json';
  */
 export default class SvRuntimeMetrics {
     private readonly logFilePath = `${txEnv.profilePath}/data/${LOG_DATA_FILE_NAME}`;
+    private perfAuthBase64: string | undefined;
     private statsLog: SvRtLogType = [];
     private lastFxsMemory: number | undefined;
     private lastNodeMemory: SvRtNodeMemoryType | undefined;
@@ -79,6 +80,29 @@ export default class SvRuntimeMetrics {
 
 
     /**
+     * Stores the latest authentication reported for the FXServer /perf/ endpoint.
+     */
+    public setPerfAuth(user: string, password: string) {
+        if (!user || !password) {
+            console.verbose.warn('SetPerfAuth event payload with empty user or password.', {
+                user,
+                passwordLength: password.length,
+            });
+            return;
+        }
+        this.perfAuthBase64 = Buffer.from(`${user}:${password}`).toString('base64');
+    }
+
+
+    /**
+     * Clears authentication belonging to the previous FXServer instance.
+     */
+    public resetPerfAuth() {
+        this.perfAuthBase64 = undefined;
+    }
+
+
+    /**
      * Registers that fxserver has BOOTED (FxMonitor is ONLINE)
      */
     public logServerBoot(duration: number) {
@@ -104,6 +128,7 @@ export default class SvRuntimeMetrics {
      * Registers that fxserver has CLOSED (fxRunner killing the process)
      */
     public logServerClose(reason: string) {
+        this.resetPerfAuth();
         this.resetPerfState();
         this.resetMemoryState();
         txCore.webServer.webSocket.pushRefresh('dashboard');
@@ -171,6 +196,10 @@ export default class SvRuntimeMetrics {
         if (monitorStatus.health === FxMonitorHealth.OFFLINE) return; //collect even if partial
         if (monitorStatus.uptime < 30_000) return; //server barely booted
         if (!txCore.fxRunner.child?.isAlive) return;
+        if (txEnv.fxsIsGen9 && !this.perfAuthBase64) {
+            console.verbose.warn('Perf endpoint auth missing for gen9 server, skipping collection.');
+            return;
+        }
 
         //Get performance data
         const netEndpoint = txDevEnv.EXT_STATS_HOST ?? txCore.fxRunner.child.netEndpoint;
@@ -178,7 +207,7 @@ export default class SvRuntimeMetrics {
 
         const stopwatch = new TimeCounter();
         const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
-            fetchRawPerfData(netEndpoint),
+            fetchRawPerfData(netEndpoint, this.perfAuthBase64),
             fetchFxsMemory(txCore.fxRunner.child.pid),
         ]);
         const collectionTime = stopwatch.stop();

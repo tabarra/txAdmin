@@ -1,5 +1,35 @@
-import { expect, it, suite } from 'vitest';
-import { diffPerfs, didPerfReset } from './perfUtils';
+import { beforeEach, expect, it, suite, vi } from 'vitest';
+import { diffPerfs, didPerfReset, fetchRawPerfData } from './perfUtils';
+
+
+const gotMock = vi.hoisted(() => vi.fn());
+vi.mock('@lib/got', () => ({ default: gotMock }));
+
+
+suite('fetchRawPerfData', () => {
+    beforeEach(() => {
+        gotMock.mockReset();
+        gotMock.mockReturnValue({
+            text: vi.fn().mockResolvedValue('bad data'),
+        });
+    });
+
+    it('should send the precomputed basic auth when available', async () => {
+        await expect(fetchRawPerfData('127.0.0.1:30120', 'encoded-auth'))
+            .rejects.toThrow('missing tickTime_');
+        expect(gotMock).toHaveBeenCalledWith('http://127.0.0.1:30120/perf/', {
+            headers: {
+                authorization: 'Basic encoded-auth',
+            },
+        });
+    });
+
+    it('should make an unauthenticated request when auth is unavailable', async () => {
+        await expect(fetchRawPerfData('127.0.0.1:30120'))
+            .rejects.toThrow('missing tickTime_');
+        expect(gotMock).toHaveBeenCalledWith('http://127.0.0.1:30120/perf/', {});
+    });
+});
 
 
 suite('diffPerfs', () => {

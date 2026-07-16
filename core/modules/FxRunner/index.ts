@@ -176,7 +176,8 @@ export default class FxRunner {
             return errMsg;
         }
 
-        //Reseting monitor stats
+        //Resetting server-scoped runtime state
+        txCore.metrics.svRuntime.resetPerfAuth();
         txCore.fxMonitor.resetState();
 
         //Resetting frontend playerlist

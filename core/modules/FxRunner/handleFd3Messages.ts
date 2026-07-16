@@ -1,19 +1,24 @@
-import { anyUndefined } from '@lib/misc';
 import consoleFactory from '@lib/console';
 import { txEnv } from '@core/globalData';
 const console = consoleFactory('FXProc:FD3');
 
 
 //Types
+
+type Gen8EventValue = {
+    channel: string;
+    data: any;
+    file: string;
+    func: string;
+    line: number;
+}
+type Gen9EventValue = {
+    method: string;
+    [key: string]: any;
+}
 type StructuredTraceType = {
     key: number;
-    value: {
-        channel: string;
-        data: any;
-        file: string;
-        func: string;
-        line: number;
-    }
+    value: Gen8EventValue | Gen9EventValue;
 }
 
 
@@ -61,7 +66,7 @@ const handleBridgedCommands = (payload: any) => {
 /**
  * Processes FD3 Messages
  *
- * Mapped message types:
+ * Mapped message types (outdated):
  * - nucleus_connected
  * - watchdog_bark
  * - bind_error
@@ -71,6 +76,8 @@ const handleBridgedCommands = (payload: any) => {
 const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
     //Filter valid and fresh packages
     if (!mutex || mutex !== txCore.fxRunner.child?.mutex) return;
+    if (!trace?.value) return; //invalid, even for gen9
+    const msg = trace.value;
 
     // if (
     //     trace?.value?.data?.type !== 'script_log'
@@ -79,9 +86,49 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
     //     return console.dir(trace?.value ?? 'no value inside trace', { title: 'FD3 Message', depth: null });
     // }
 
+    //New gen9 events
+    if ('method' in msg && typeof msg.method === 'string' && msg.method.length) {
+        if (
+            msg.method === 'SetPerfAuth'
+            && typeof msg?.user === 'string'
+            && typeof msg?.password === 'string'
+        ) {
+            txCore.metrics.svRuntime.setPerfAuth(msg.user, msg.password);
+            return;
+        } else if (
+            msg.method === 'SetOnesyncAuth'
+            && typeof msg?.user === 'string'
+            && typeof msg?.password === 'string'
+        ) {
+            //TODO: implement this data collection in the future
+            // txCore.metrics.svRuntime.setOnesyncAuth(msg.user, msg.password);
+            return;
+        } else if (
+            msg.method === 'hitch'
+            && typeof msg?.event === 'string'
+            && typeof msg?.thread === 'string'
+            && typeof msg?.time === 'number'
+        ) {
+            //noop
+            return;
+        } else if (
+            msg.method === 'SetServerID' 
+            && typeof msg?.serverID === 'string'
+            && /^[0-9a-z]{6,}$/.test(msg.serverID)
+        ) {
+            txCore.cacheStore.set('fxsRuntime:cfxId', msg.serverID);
+            return;
+        }
+
+        //Log the unknown method for debugging purposes
+        const props = Object.keys(msg).filter(key => key !== 'method');
+        console.verbose.debug(`Unknown gen9 event: ${msg.method} {${props.join(', ')}}`);
+        return;
+    }
+
     //The gen9 events have a different structure, so below is just gen8 stuff
-    if (anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
-    const { channel, data } = trace.value;
+    const { channel, data } = msg;
+    if (typeof channel !== 'string' || data === undefined) return;
 
     //Handle bind errors
     if (channel === 'citizen-server-impl' && data?.type === 'bind_error') {
