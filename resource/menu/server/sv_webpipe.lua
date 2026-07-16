@@ -165,5 +165,6 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
     end
 
     sendResponse(s, callbackId, httpCode, path, data, resultHeaders)
+    -- TODO: use the timeoutNoResponse option with 30s for for /socket.io/ requests
   end, method, body, headers, {followLocation = false})
 end)

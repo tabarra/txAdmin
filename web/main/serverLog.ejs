@@ -287,7 +287,7 @@
             logContainer.innerHTML = '';
         });
         pageSocket.on('disconnect', (message) => {
-            console.log("Page Socket.IO Disonnected:", message);
+            console.log("Page Socket.IO Disconnected:", message);
         });
         pageSocket.on('logData', processLog);
 

@@ -153,7 +153,15 @@ export default class WebServer {
         // ===================
         // Setting up SocketIO
         // ===================
-        this.io = new SocketIO(HttpClass.createServer(), { serveClient: false });
+        this.io = new SocketIO(HttpClass.createServer(), {
+            serveClient: false,
+            transports: ['polling'],
+
+            //TODO: The PerformHttpRequest on gen8 has 5s hardcoded timeout, and on gen9 that is 10s. 
+            //Check if the `timeoutNoResponse` option has already been implemented.
+            pingInterval: txEnv.fxsIsGen9 ? 9_000 : 4_500,
+            pingTimeout: 15_000,
+        });
         this.io.use(socketioSessMw(this.sessionCookieName, this.sessionStore));
         this.webSocket = new WebSocket(this.io);
         //@ts-ignore

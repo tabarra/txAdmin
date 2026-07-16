@@ -24,7 +24,7 @@ function DashboardPageInner() {
             console.log("Dashboard Socket.IO Connected.");
         });
         pageSocket.current.on('disconnect', (message) => {
-            console.log("Dashboard Socket.IO Disonnected:", message);
+            console.log("Dashboard Socket.IO Disconnected:", message);
         });
         pageSocket.current.on('error', (error) => {
             console.log('Dashboard Socket.IO', error);
