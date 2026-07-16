@@ -69,10 +69,16 @@ CreateThread(function()
         end
     end
 
+    -- The behavior of this convar seems to be different in gen9
+    local gameBuild = GetConvar('sv_enforceGameBuild', 'invalid')
+    if gameBuild == '' then
+        gameBuild = IS_FIVEM_GEN9 and 'latest' or 'unknown'
+    end
+
     logger('tx', 'LoggerStarted', {
         --txAdmin.metrics.playerDrops data
         gameName = GetConvar('gamename', 'gta5'),
-        gameBuild = GetConvar('sv_enforceGameBuild', 'invalid'),
+        gameBuild = gameBuild,
         fxsVersion = GetConvar('version', 'invalid'),
         resources = resList,
     })
