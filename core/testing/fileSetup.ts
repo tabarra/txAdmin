@@ -14,18 +14,19 @@ const mockPaths = vi.hoisted(() => ({
 // match the expected structure. Mock the whole function with test-appropriate values.
 vi.mock('@core/boot/getRuntimeInfo', () => ({
     getRuntimeInfo: () => ({
-        isWindows: process.platform === 'win32',
         runtime: 'fxserver',
         runtimeNodeVersion: process.versions.node,
-        runtimeVersionTag: `fxs/24574`,
+        runtimeVersionTag: `fxs/32561`,
         txaPath: mockPaths.txaPath,
         txaResourceName: mockPaths.txaResourceName,
         fxsPath: mockPaths.fxsPath,
+        fxsBinaryPath: path.join(mockPaths.fxsPath, 'FXServer.exe'),
+        fxsIsGen9: false,
         fxsVersionInfo: {
             valid: true,
             branch: 'master',
-            build: 24574,
-            raw: 'master SERVER v1.0.0.24574 win32',
+            build: 32561,
+            raw: 'master SERVER v1.0.0.32561 win32',
         },
     }),
 }));
