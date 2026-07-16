@@ -13,6 +13,7 @@ import { migratePlayerDropsFile } from './playerDropMigrations';
 import { parseFxserverVersion } from '@lib/fxserver/fxsVersionParser';
 import { PlayerDropEvent } from '@modules/FxPlayerlist';
 import { txEnv } from '@core/globalData';
+import { fromZodError } from 'zod-validation-error';
 const console = consoleFactory(modulename);
 
 
@@ -136,7 +137,8 @@ export default class PlayerDropMetrics {
         //Parsing data
         const validation = PDLServerBootDataSchema.safeParse(rawPayload);
         if (!validation.success) {
-            console.warn(`Invalid server boot data: ${validation.error.errors}`);
+            const errorMessage = fromZodError(validation.error, { prefix: null }).message;
+            console.warn(`Invalid server boot data: ${errorMessage}`);
             return;
         }
         const { gameName, gameBuild, fxsVersion, resources } = validation.data;

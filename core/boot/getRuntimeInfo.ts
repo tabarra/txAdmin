@@ -154,6 +154,7 @@ export const getRuntimeInfo = (isWindows: boolean): RuntimeInfo => {
         if (typeof Bun !== 'undefined') {
             runtime = 'bun';
             runtimeVersionTag = `bun/${Bun!.version}`;
+            //FIXME: check the warning in ./core/boot/setupProcessHandlers.ts
         } else if (process.release?.name === 'node' && !('deno' in process.versions)) {
             runtime = 'node';
             runtimeVersionTag = `node/${process.versions.node}`;

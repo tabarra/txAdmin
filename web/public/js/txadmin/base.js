@@ -247,10 +247,3 @@ const startHoldingNotify = (awaitingMessage) => {
 
     return {notify, progressTimerId};
 } 
-
-//!NC:DEBUG:RESNAME
-console.log('web:base.js', {
-    target: TX_BASE_PATH,
-    origin: window.location.origin,
-    ancestors: [...window.location.ancestorOrigins].join(', '),
-});

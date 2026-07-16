@@ -55,20 +55,23 @@ if (devVars.ENABLED) {
 //Setting verbose mode as early as possible
 console.setVerbose(_txDevEnv.VERBOSE);
 
-//DEBUG: print env info
-//FIXME:REMOVE:BEFORE:PUBLISHING
-console.verbose.dir({
-    process: {
-        argv: process.argv,
-        execArgv: process.execArgv,
-        argv0: process.argv0,
-        cwd: process.cwd(),
-    },
-    NodeVersion: process.versions?.node ?? undefined,
-    BunVersion: process.versions?.bun ?? undefined,
-    __dirname: __dirname ?? undefined,
-    'import.meta.dir': (globalThis as any)?.import?.meta?.dir ?? undefined,
-}, { title: 'RUNTIME INIT' });
+//DEBUG Temporary extra-verbosity
+//FIXME:NEXT:UPDATE: remove
+const debugRuntime = Boolean(process.env?.TXDEV_DEBUG_RUNTIME);
+if (debugRuntime) {
+    console.dir({
+        process: {
+            argv: process.argv,
+            execArgv: process.execArgv,
+            argv0: process.argv0,
+            cwd: process.cwd(),
+        },
+        NodeVersion: process.versions?.node ?? undefined,
+        BunVersion: process.versions?.bun ?? undefined,
+        __dirname: __dirname ?? undefined,
+        'import.meta.dir': (globalThis as any)?.import?.meta?.dir ?? undefined,
+    }, { title: 'RUNTIME INIT' });
+}
 
 
 /**
@@ -102,8 +105,11 @@ const fxsVersion = fxsVersionInfo.build;
 const txaPath = cleanPath(runtimeInfo.txaPath);
 const fxsPath = cleanPath(runtimeInfo.fxsPath);
 
-//FIXME:REMOVE:BEFORE:PUBLISHING
-console.verbose.dir(runtimeInfo, { title: 'RUNTIME INFO' });
+//DEBUG Temporary extra-verbosity
+//FIXME:NEXT:UPDATE: remove
+if (debugRuntime) {
+    console.dir(runtimeInfo, { title: 'RUNTIME INFO' });
+}
 
 //Validate txaPath is a child of fxsPath
 const txaToFxsRelative = path.relative(fxsPath, txaPath);

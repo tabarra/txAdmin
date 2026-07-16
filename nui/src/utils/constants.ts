@@ -388,7 +388,7 @@ const resolveResourceName = (): NuiGenInfo => {
     }
 
     //Welp, we tried... Log it then default to monitor
-    console.error('nui:constants:resolveResourceName: Unknown resource name', {
+    console.error('nui:resolveResourceName: failed to resolve resource env', {
         origin,
         ancestorOrigins,
         nativeResName,
@@ -408,12 +408,12 @@ export const NUI_WEBPIPE_URL = IS_GEN9
     ? `https://cfx-nui-txadmin/WebPipe` as const
     : `https://monitor/WebPipe` as const;
 
-//!NC:DEBUG:RESNAME
-console.log('nui:constants', {
-    IS_GEN9,
-    TXA_RESOURCE_NAME,
-    NUI_CALLBACK_URL,
-    NUI_WEBPIPE_URL,
-    origin: window.location.origin,
-    ancestors: [...window.location.ancestorOrigins].join(', '),
-});
+//DEBUG:NUIFIX
+// console.log('nui:constants', {
+//     IS_GEN9,
+//     TXA_RESOURCE_NAME,
+//     NUI_CALLBACK_URL,
+//     NUI_WEBPIPE_URL,
+//     origin: window.location.origin,
+//     ancestors: [...window.location.ancestorOrigins].join(', '),
+// });

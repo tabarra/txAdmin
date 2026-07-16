@@ -38,7 +38,9 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
             body = '{}',
         })
     end
-    debugPrint(("^3WebPipe[^1%d^3]^0 ^2%s ^4%s^0"):format(pipeCallbackCounter, method, path))
+
+    -- NOTE: Waaay too verbose to print every time
+    -- debugPrint(("^3WebPipe[^1%d^3]^0 ^2%s ^4%s^0"):format(pipeCallbackCounter, method, path))
 
     -- Check for CSRF attempt
     if not IsNuiRequestOriginValid(headers) then
@@ -77,6 +79,10 @@ RegisterNetEvent('txcl:webpipe:resp', function(callbackId, statusCode, body, hea
     local ret = pipeReturnCallbacks[callbackId]
     if not ret then return end
 
+    if statusCode < 200 or statusCode >= 300 then
+        debugPrint("^3WebPipe[^1" .. callbackId .. "^3]^0 returned non-2xx status ^1" .. statusCode .. "^0, body: " .. tostring(body))
+    end
+
     local sub = string.sub
     if
         sub(ret.path, 1, 5) == '/css/' or
@@ -97,5 +103,6 @@ RegisterNetEvent('txcl:webpipe:resp', function(callbackId, statusCode, body, hea
     })
 
     pipeReturnCallbacks[callbackId] = nil
-    debugPrint("^3WebPipe[^1" .. callbackId .. "^3]^0 ^2finished^0 (" .. #pipeReturnCallbacks .. " open)")
+    -- NOTE: Waaay too verbose to print every time
+    -- debugPrint("^3WebPipe[^1" .. callbackId .. "^3]^0 ^2finished^0 (" .. #pipeReturnCallbacks .. " open)")
 end)
