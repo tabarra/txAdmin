@@ -71,7 +71,15 @@ const handleBridgedCommands = (payload: any) => {
 const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
     //Filter valid and fresh packages
     if (!mutex || mutex !== txCore.fxRunner.child?.mutex) return;
-    // console.dir(trace, { depth: null });
+
+    // if (
+    //     trace?.value?.data?.type !== 'script_log'
+    //     && trace?.value?.data?.resource !== txEnv.txaResourceName
+    // ) {
+    //     return console.dir(trace?.value ?? 'no value inside trace', { title: 'FD3 Message', depth: null });
+    // }
+
+    //The gen9 events have a different structure, so below is just gen8 stuff
     if (anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
     const { channel, data } = trace.value;
 
@@ -106,7 +114,7 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
     if (channel === 'citizen-server-impl' && data.type === 'watchdog_bark') {
         setTimeout(() => {
             const thread = data?.thread ?? 'UNKNOWN';
-            if(!data?.stack || data.stack.trim() === 'root'){
+            if (!data?.stack || data.stack.trim() === 'root') {
                 console.error(`Detected server thread ${thread} hung without a stack trace.`);
             } else {
                 console.error(`Detected server thread ${thread} hung with stack:`);
@@ -117,8 +125,10 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
         return;
     }
 
-    // if (data.type == 'script_log') {
-    //     return console.dir(data);
+    //TODO: Handle connection rejection
+    // if (channel === 'citizen-server-impl' && data.type === 'player_connection_rejected') {
+    //     console.dir(data);
+    //     return;
     // }
 
     //Handle script traces
@@ -144,7 +154,6 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
             txCore.database.actions.ackWarn(data.payload.actionId);
         }
     }
-    
 }
 
 

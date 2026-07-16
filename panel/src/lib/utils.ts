@@ -203,15 +203,15 @@ export const downloadTextFile = (content: string, fileName: string, fileType: 't
         const a = document.createElement('a');
         a.href = url;
         a.download = `${fileName}.${fileType}`;
-        
+
         // Make the link invisible
         a.style.display = 'none';
-        
+
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         return true;
     } catch (error) {
         console.error('downloadTextFile failed:', error);

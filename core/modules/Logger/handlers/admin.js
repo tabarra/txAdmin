@@ -1,6 +1,5 @@
 const modulename = 'Logger:Admin';
 import fsp from 'node:fs/promises';
-import path from 'node:path';
 import { getBootDivider } from '../loggerUtils';
 import consoleFactory from '@lib/console';
 import { LoggerBase } from '../LoggerBase';
@@ -39,7 +38,7 @@ export default class AdminLogger extends LoggerBase {
      */
     async getRecentBuffer() {
         try {
-            return await fsp.readFile(path.join(this.basePath, 'admin.log'), 'utf8');
+            return await fsp.readFile(this.activeFilePath, 'utf8');
         } catch (error) {
             return false;
         }
