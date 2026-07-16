@@ -51,8 +51,9 @@ export const getSocket = (rooms: string[] | string) => {
     };
 
     //NOTE:NUIFIX
-    //NOTE: gen8 used 'monitor' without protocol
-    const NUI_ORIGIN = `https://cfx-nui-${window.txConsts.txaResourceName}`;
+    const NUI_ORIGIN = window.txConsts.fxsIsGen9
+        ? 'https://cfx-nui-txadmin'
+        : 'https://monitor';
 
     const socket = window.txConsts.isWebInterface
         ? io({ ...socketOpts, path: '/socket.io' })

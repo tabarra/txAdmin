@@ -11,8 +11,8 @@ ui_label 'txAdmin' --FIXME: remove?
 fx_version 'cerulean'
 game 'common'
 
--- NOTE: this is probably needed for the menu to work in gen9
-nui_callback_strict_mode 'false' --gen9 fix
+-- NOTE: the gen8 vs gen9 default values are the ones we need (gen8 off, gen9 on)
+-- nui_callback_strict_mode 'false' --gen9 fix
 
 -- NOTE: pretty sure this is already the default
 -- lua54 'yes'

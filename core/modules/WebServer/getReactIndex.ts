@@ -25,9 +25,15 @@ const console = consoleFactory(modulename);
 const serverTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 //NOTE:NUIFIX
-const NUI_ORIGIN = `https://cfx-nui-${txEnv.txaResourceName}`;
-const NUI_WEBPIPE_URL = `${NUI_ORIGIN}/WebPipe/`; //NOTE: gen8 used https://monitor/WebPipe/
-const NUI_PANEL_URL = `${NUI_ORIGIN}/panel/`; //NOTE: gen8 used nui://monitor/panel/
+let NUI_WEBPIPE_URL: string;
+let NUI_PANEL_URL: string;
+if (txEnv.fxsIsGen9) {
+    NUI_WEBPIPE_URL = 'https://cfx-nui-txadmin/WebPipe/';
+    NUI_PANEL_URL = 'https://cfx-nui-txadmin/panel/';
+} else {
+    NUI_WEBPIPE_URL = 'https://monitor/WebPipe/';
+    NUI_PANEL_URL = 'nui://monitor/panel/';
+}
 
 //Cache the index.html file unless in dev mode
 let htmlFile: string;

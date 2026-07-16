@@ -353,36 +353,38 @@ export const MockedPlayerDetails: PlayerModalSuccess = {
 };
 
 //NOTE:NUIFIX
-const resolveResourceName = () => {
+//FIXME: cleanup this file, this is not very elegant
+type NuiGenInfo = { resourceName: 'monitor', isGen9: false } | { resourceName: 'txadmin', isGen9: true };
+const resolveResourceName = (): NuiGenInfo => {
     const origin = window.location.origin;
     if (origin === 'https://cfx-nui-monitor') {
         //gen8, expected
-        return 'monitor';
+        return { resourceName: 'monitor', isGen9: false };
     } else if (origin === 'https://monitor' || origin === 'nui://monitor') {
         //gen8, should not happen
-        return 'monitor';
+        return { resourceName: 'monitor', isGen9: false };
     } else if (origin === 'https://cfx-nui-txadmin') {
         //gen9, expected
-        return 'txadmin';
+        return { resourceName: 'txadmin', isGen9: true };
     } else if (origin === 'https://txadmin' || origin === 'nui://txadmin') {
         //gen9, should not happen
-        return 'txadmin';
+        return { resourceName: 'txadmin', isGen9: true };
     }
 
     //trying the native
     const nativeResName = (globalThis as any)?.GetParentResourceName();
     if (nativeResName === 'monitor') {
-        return 'monitor';
+        return { resourceName: 'monitor', isGen9: false };
     } else if (nativeResName === 'txadmin') {
-        return 'txadmin';
+        return { resourceName: 'txadmin', isGen9: true };
     }
 
     //last resort
     const ancestorOrigins = [...window.location.ancestorOrigins];
     if (ancestorOrigins.includes('nui://game/')) {
-        return 'monitor';
+        return { resourceName: 'monitor', isGen9: false };
     } else if (ancestorOrigins.includes('nui://ui/')) {
-        return 'txadmin';
+        return { resourceName: 'txadmin', isGen9: true };
     }
 
     //Welp, we tried... Log it then default to monitor
@@ -391,19 +393,24 @@ const resolveResourceName = () => {
         ancestorOrigins,
         nativeResName,
     });
-    return 'monitor';
+    return { resourceName: 'monitor', isGen9: false };
 }
 
-export const TXA_RESOURCE_NAME = resolveResourceName();
+const genInfo = resolveResourceName();
+export const TXA_RESOURCE_NAME = genInfo.resourceName; //unused
+export const IS_GEN9 = genInfo.isGen9; //unused
 
-//NOTE: gen8 used https://monitor/, but we are removing the trailing slash
-export const NUI_CALLBACK_URL = `https://cfx-nui-${TXA_RESOURCE_NAME}` as const;
+export const NUI_CALLBACK_URL = IS_GEN9
+    ? `https://cfx-nui-txadmin` as const
+    : `https://monitor` as const;
 
-//NOTE: gen8 used https://monitor/WebPipe
-export const NUI_WEBPIPE_URL = `https://cfx-nui-${TXA_RESOURCE_NAME}/WebPipe` as const;
+export const NUI_WEBPIPE_URL = IS_GEN9
+    ? `https://cfx-nui-txadmin/WebPipe` as const
+    : `https://monitor/WebPipe` as const;
 
 //!NC:DEBUG:RESNAME
 console.log('nui:constants', {
+    IS_GEN9,
     TXA_RESOURCE_NAME,
     NUI_CALLBACK_URL,
     NUI_WEBPIPE_URL,

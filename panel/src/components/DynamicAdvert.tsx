@@ -39,8 +39,9 @@ const pickRandomPartner = (placement: AdPlacement): HostingPartner => {
 }
 
 //NOTE:NUIFIX
-//NOTE: gen8 used nui://monitor/web/public/ but we are removing the trailing slash
-const NUI_ASSETS_URL = `https://cfx-nui-${window.txConsts.txaResourceName}/web/public`;
+const NUI_ASSETS_URL = window.txConsts.fxsIsGen9
+    ? 'https://cfx-nui-txadmin/web/public'
+    : 'nui://monitor/web/public'
 const ASSETS_URL = window.txConsts.isWebInterface ? '' : NUI_ASSETS_URL
 
 type DynamicAdvertProps = {

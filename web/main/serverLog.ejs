@@ -230,8 +230,9 @@
             };
 
             //NOTE:NUIFIX
-            //NOTE: gen8 used 'monitor' without protocol
-            const NUI_ORIGIN = `https://cfx-nui-${TX_RESOURCE_NAME}`;
+            const NUI_ORIGIN = TX_RESOURCE_NAME === 'txadmin' 
+                ? 'https://cfx-nui-txadmin' 
+                : 'https://monitor';
 
             const socket = isWebInterface
                 ? io({ ...socketOpts, path: '/socket.io' })

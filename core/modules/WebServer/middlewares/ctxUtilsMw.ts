@@ -66,9 +66,15 @@ function getEjsOptions(filePath: string) {
 const templateCache = new Map();
 
 //NOTE:NUIFIX
-const NUI_ORIGIN = `https://cfx-nui-${txEnv.txaResourceName}`;
-const NUI_WEBPIPE_URL = `${NUI_ORIGIN}/WebPipe/`; //NOTE: gen8 used https://monitor/WebPipe/
-const NUI_WEB_ASSETS_URL = `${NUI_ORIGIN}/web/public/`; //NOTE: gen8 used nui://monitor/web/public/
+let NUI_WEBPIPE_URL: string;
+let NUI_WEB_ASSETS_URL: string;
+if (txEnv.fxsIsGen9) {
+    NUI_WEBPIPE_URL = 'https://cfx-nui-txadmin/WebPipe/';
+    NUI_WEB_ASSETS_URL = 'https://cfx-nui-txadmin/web/public/';
+} else {
+    NUI_WEBPIPE_URL = 'https://monitor/WebPipe/';
+    NUI_WEB_ASSETS_URL = 'nui://monitor/web/public/';
+}
 
 const legacyNavigateHtmlTemplate = `<style>
 body {

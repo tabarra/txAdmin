@@ -4,8 +4,9 @@ import { msToShortDuration } from "@/lib/dateTime";
 import { useEffect, useRef } from "react";
 
 //NOTE:NUIFIX
-//NOTE: gen8 used https://monitor/WebPipe
-const WEBPIPE_PATH = `https://cfx-nui-${window.txConsts.txaResourceName}/WebPipe`;
+const WEBPIPE_PATH = window.txConsts.fxsIsGen9
+    ? 'https://cfx-nui-txadmin/WebPipe'
+    : 'https://monitor/WebPipe';
 
 const headeruserAgent = `txAdminPanel/v${window.txConsts.txaVersion} (atop FXServer/b${window.txConsts.fxsVersion})`;
 const defaultHeaders = {
