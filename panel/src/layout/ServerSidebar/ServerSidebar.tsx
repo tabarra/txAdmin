@@ -42,11 +42,11 @@ export function ServerSidebar({ isSheet }: ServerSidebarProps) {
             {window.txConsts.isWebInterface ? (
                 <div className='flex flex-col items-center justify-center gap-1 text-sm font-light opacity-85 hover:opacity-100'>
                     <span className={cn(
-                        'text-muted-foreground',
+                        'text-muted-foreground text-center',
                         window.txConsts.txaVersion.includes('-ft') && 'text-destructive-inline font-semibold',
                     )}>
                         tx: <strong>v{window.txConsts.txaVersion}</strong>
-                        &nbsp;|
+                        <br />
                         fx: <strong>b{window.txConsts.fxsVersion}</strong>
                     </span>
                 </div>
