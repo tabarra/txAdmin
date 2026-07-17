@@ -8,10 +8,10 @@ build:
     - if: '$CI_PIPELINE_SOURCE == "web"'
   variables:
     # Simulates GitHub's GITHUB_REF for the build script to extract the version
-    GITHUB_REF: "refs/tags/v9.9.9-wip-${CI_COMMIT_SHORT_SHA}"
+    GITHUB_REF: "refs/tags/v9.0.0-beta-${CI_COMMIT_SHORT_SHA}"
   script:
     - apt-get update && apt-get install -y zip
-    - echo "Building txAdmin v9.9.9-wip-${CI_COMMIT_SHORT_SHA}"
+    - echo "Building txAdmin v9.0.0-beta-${CI_COMMIT_SHORT_SHA}"
     - npm ci
 
     # Create .env file (required by vite config)
@@ -23,11 +23,11 @@ build:
 
     # Compress build output
     - cd dist
-    - zip -r ../txadmin-${CI_COMMIT_SHORT_SHA}.zip .
+    - zip -r ../txadmin.zip .
     - cd ..
-    - sha256sum txadmin-${CI_COMMIT_SHORT_SHA}.zip
+    - sha256sum txadmin.zip
   artifacts:
-    name: "txadmin-${CI_COMMIT_SHORT_SHA}"
+    name: "txadmin"
     paths:
-      - txadmin-${CI_COMMIT_SHORT_SHA}.zip
+      - txadmin.zip
     expire_in: 90 days
