@@ -215,7 +215,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
     //This is required because of how badly the WebPipe handles "large" files
     if (!txDevEnv.ENABLED) {
         const base = ctx.txVars.isWebInterface ? `./` : NUI_PANEL_URL;
-        htmlOut = htmlOut.replaceAll(/(src|href)="\.\/(\w+)-(\w+(?:\.v\d+)?)\.(js|css)"/g, `$1="${base}$2-$3.$4"`);
+        htmlOut = htmlOut.replaceAll(/(src|href)="\.\/(\w+)-(\w+(?:\.v\d+b?)?)\.(js|css)"/g, `$1="${base}$2-$3.$4"`);
     }
 
     return htmlOut;
