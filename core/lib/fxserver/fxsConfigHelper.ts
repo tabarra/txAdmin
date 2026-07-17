@@ -446,7 +446,7 @@ const validateCommands = async (parsedCommands: (ExecRecursionError | Command)[]
             toCommentOut.add(
                 cmd.file,
                 cmd.line,
-                'onesync MUST only be set in the txAdmin settings page.',
+                'OneSync is managed by txAdmin and MUST NOT be set in server.cfg.',
             );
             continue;
         }

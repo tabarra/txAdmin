@@ -18,6 +18,7 @@ import { generateStatusMessage } from '@modules/DiscordBot/commands/status';
 import { getSchemaChainError } from '@modules/ConfigStore/schema/utils';
 import { confx } from '@modules/ConfigStore/utils';
 import { SYM_RESET_CONFIG } from '@lib/symbols';
+import { txEnv } from '@core/globalData';
 const console = consoleFactory(modulename);
 
 
@@ -212,6 +213,7 @@ const handleFxserverCard: CardHandler = async (inputConfig, sendTypedResp) => {
     if (typeof inputConfig.server?.dataPath !== 'string' || !inputConfig.server?.dataPath.length) {
         throw new Error(`Unexpected data for the 'fxserver' card.`);
     }
+    if (txEnv.fxsIsGen9) delete inputConfig.server.onesync;
 
     //Validating Server Data Path
     const dataPath = inputConfig.server.dataPath;

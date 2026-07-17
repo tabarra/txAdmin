@@ -135,7 +135,7 @@ export const getFxSpawnVariables = (): FxSpawnVariables => {
         ...osSpawnVars.args,
         getMutableConvars(true), //those are the ones that can change without restart
         txConfig.server.startupArgs,
-        '+set', 'onesync', txConfig.server.onesync,
+        txEnv.fxsIsGen9 ? [] : ['+set', 'onesync', txConfig.server.onesync],
         '+sets', 'txAdmin-version', txEnv.txaVersion,
         '+setr', 'txAdmin-menuEnabled', txConfig.gameFeatures.menuEnabled,
         '+set', 'txAdmin-luaComHost', txCoreEndpoint,

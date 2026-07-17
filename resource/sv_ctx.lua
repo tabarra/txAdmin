@@ -49,8 +49,8 @@ end
 
 local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
-  if oneSyncConvar == 'on' or oneSyncConvar == 'legacy' then
-    ServerCtxObj.oneSync.type = oneSyncConvar
+  if IS_FIVEM_GEN9 or oneSyncConvar == 'on' or oneSyncConvar == 'legacy' then
+    ServerCtxObj.oneSync.type = IS_FIVEM_GEN9 and 'on' or oneSyncConvar
     ServerCtxObj.oneSync.status = true
   elseif oneSyncConvar == 'off' then
     ServerCtxObj.oneSync.type = nil

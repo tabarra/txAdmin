@@ -10,7 +10,7 @@ local function logError(x)
     txPrint("^1" .. x)
 end
 local oneSyncConvar = GetConvar('onesync', 'off')
-local onesyncEnabled = oneSyncConvar == 'on' or oneSyncConvar == 'legacy'
+local onesyncEnabled = IS_FIVEM_GEN9 or oneSyncConvar == 'on' or oneSyncConvar == 'legacy'
 
 
 -- Optimizations
