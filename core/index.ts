@@ -16,7 +16,11 @@ const console = consoleFactory();
 try {
     process.title = 'txAdmin'; //doesn't work for now
     setupProcessHandlers();
-    checkPreRelease();
+
+    //Check pre-release only if not gen9 early access
+    if (!txEnv.fxsVersionTag.includes('-ea')) {
+        checkPreRelease();
+    }
 } catch (error) {
     fatalError.Boot(0, 'Failed early process setup.', error);
 }

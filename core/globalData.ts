@@ -371,7 +371,9 @@ const setConsoleTitle = !(isPterodactyl || isZapHosting || providerName); //assu
 
 //FXServer Display Version
 let fxsVersionTag = fxsVersion.toString();
-if (fxsVersionInfo.branch && fxsVersionInfo.branch !== 'master') {
+if (fxsVersionInfo.branch === 'early-access') {
+    fxsVersionTag += '-ea';
+} else if (fxsVersionInfo.branch && fxsVersionInfo.branch !== 'master') {
     fxsVersionTag += '-ft';
 }
 

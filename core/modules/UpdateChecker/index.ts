@@ -72,7 +72,7 @@ export default class UpdateChecker {
      */
     async checkChangelog() {
         //FIXME:NEXT:UPDATE: re-enable update checker for gen9
-        if (!txEnv.fxsIsGen9) return;
+        if (txEnv.fxsIsGen9) return;
         
         const updates = await queryChangelogApi();
         if (!updates) return;
