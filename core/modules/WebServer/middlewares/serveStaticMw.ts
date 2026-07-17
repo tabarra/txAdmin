@@ -91,10 +91,9 @@ const checkFileWhitelist = (rootPath: string, url: string) => {
         '/favicon_partial.svg',
         '/index.html',
         '/img/discord.png',
-        '/img/zap_login.png',
-        '/img/zap_main.png'
+        '/manifest.json',
     ];
-    return nonHashedFiles.includes(url) || url.includes('.v800.');
+    return nonHashedFiles.includes(url) || url.includes('.v900b.');
 }
 
 
