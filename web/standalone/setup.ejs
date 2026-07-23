@@ -110,8 +110,12 @@
             margin: 0px 0.15rem;
         }
         .recipeTagFivem {
-            color: #FF8637;
-            border: 1px solid #FF8637;
+            color: #66AD43;
+            border: 1px solid #66AD43;
+        }
+        .recipeTagEnhanced {
+            color: #BDB179;
+            border: 1px solid #BDB179;
         }
         .recipeTagRedm {
             color: #FA0211;
@@ -380,7 +384,7 @@
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
     <script>
         //Constants
-        const recipesIndexURL = 'https://raw.githubusercontent.com/citizenfx/txAdmin-recipes/refs/heads/main/indexv4.json';
+        const recipesIndexURL = 'https://raw.githubusercontent.com/citizenfx/txAdmin-recipes/refs/heads/main/indexv5.json';
         const txDataPath = '<%= dataPath %>';
         const forceGameName = '<%= forceGameName %>' || false;
         const deployerEngineVersion = parseInt('<%= deployerEngineVersion %>');
@@ -559,7 +563,8 @@
 
         function tagToGlass(tag) {
             if (tag === 'fivem') {
-                return 'recipeTagFivem';
+                // return 'recipeTagFivem';
+                return 'recipeTagEnhanced';
             } else if (tag === 'redm') {
                 return 'recipeTagRedm';
             } else {
@@ -569,25 +574,6 @@
 
         //Download Popular Recipe list and create cards
         async function setFavTemplatesCards(){
-            //NOTE: mocked
-            // const tmpGETResponse = [
-            //     {
-            //         "engine": 3,
-            //         "name": "CFX Default",
-            //         "author": "Tabarra",
-            //         "version": "3.0.0",
-            //         "description": "Recipe for the base resources required to run a minimal FiveM server.",
-            //         "url": "https://raw.githubusercontent.com/tabarra/CFX-Default-recipe/main/recipe.yaml"
-            //     },
-            //     {
-            //         "engine": 3,
-            //         "name": "Plume ESX",
-            //         "author": "Tabarra & Chip",
-            //         "version": "2.0.0",
-            //         "description": "A full featured (13 jobs) and highly configurable yet lightweight ESX v1-final base that can be easily extendable.",
-            //         "url": "https://raw.githubusercontent.com/tabarra/PlumeESX-recipe/master/recipe.yaml"
-            //     }
-            // ];
             s4PopularTemplateRow.innerText = `Loading templates...`;
             loadedTemplates = [];
             $.ajax({

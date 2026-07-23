@@ -226,16 +226,11 @@ async function handleSaveConfig(ctx) {
     }
 
     //Preparing & saving config
-    let onesync = SYM_RESET_CONFIG;
-    if (typeof txManager.deployer?.recipe?.onesync === 'string' && txManager.deployer.recipe.onesync.length) {
-        onesync = txManager.deployer.recipe.onesync;
-    }
     try {
         txCore.configStore.saveConfigs({
             server: {
                 dataPath: slash(path.normalize(txManager.deployer.deployPath)),
                 cfgPath: 'server.cfg',
-                onesync,
             }
         }, ctx.admin.name);
     } catch (error) {

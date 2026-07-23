@@ -34,7 +34,6 @@ The recipe accepts the following default meta data:
 - Engine specific meta data *(optional)*:
   - `$engine`: The recipe's target engine version.
   - `$minFxVersion`: The minimum required FXserver version for this recipe.
-  - `$onesync`: The required onesync value to be set after deployment. Supports only `off`, `legacy`, `on` - just as FXServer.
   - `$steamRequired`: Boolean declaring that the `steam_webApiKey` context variable MUST be set.
 - General tags *(strongly-recommended)*:
   - `name`: The short name for your recipe. Recommended to be under 24 characters.

@@ -155,11 +155,11 @@ function RestartScheduleBox({ restartTimes, setRestartTimes, disabled }: Restart
 const getServerDataPlaceholder = (hostSuggested?: string) => {
     if (hostSuggested) {
         const withoutTailSlash = hostSuggested.replace(/\/$/, '');
-        return `${withoutTailSlash}/CFXDefault`;
+        return `${withoutTailSlash}/BasicServer`;
     } else if (window.txConsts.isWindows) {
-        return 'C:/Users/Admin/Desktop/CFXDefault';
+        return 'C:/Users/Admin/Desktop/BasicServer';
     } else {
-        return '/root/fivem/txData/CFXDefault';
+        return '/root/fivem/txData/BasicServer';
     }
 }
 
