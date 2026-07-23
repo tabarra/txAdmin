@@ -121,6 +121,10 @@ function processResources(resList) {
         if (isUndefined(resource.name) || isUndefined(resource.status) || isUndefined(resource.path) || resource.path === '') {
             return;
         }
+        //FIXME: temporary fix for gen9 where resources that were never started take the status of "loaded".
+        if (resource.status === 'loaded') {
+            resource.status = 'stopped';
+        }
         const subPath = getResourceSubPath(resource.path);
         const resData = {
             name: resource.name,
