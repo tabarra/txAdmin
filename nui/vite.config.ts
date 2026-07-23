@@ -1,4 +1,4 @@
-import path from 'node:path';
+import path from 'node:path/posix';
 import { visualizer } from "rollup-plugin-visualizer";
 import { PluginOption, UserConfig, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
@@ -61,9 +61,9 @@ export default defineConfig(({ command, mode }) => {
         try {
             //Extract paths and validate them
             const fxsPaths = getFxsPaths(txDevEnv.FXSERVER_PATH);
-            devDeplyPath = path.join(fxsPaths.monitor, 'nui');
+            devDeplyPath = path.join(fxsPaths.res, 'nui');
         } catch (error) {
-            console.error('Could not extract/validate the fxserver and monitor paths.');
+            console.error('Could not extract/validate the fxserver and resource paths.');
             console.error(error);
             process.exit(1);
         }

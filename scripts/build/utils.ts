@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import path from 'node:path';
+import path from 'node:path/posix';
 import { SemVer } from 'semver';
 import config from './config';
 
@@ -55,27 +55,46 @@ export const licenseBanner = (baseDir = '.', isBundledFile = false) => {
 
 
 /**
+ * Checks if the bin path is valid.
+ */
+const isBinPathValid = (binPath: string) => {
+    const binStat = fs.statSync(binPath, { throwIfNoEntry: false });
+    return binStat && binStat.isFile();
+};
+
+/**
+ * Checks if a directory path is valid.
+ */
+const isDirPathValid = (dirPath: string) => {
+    const dirStat = fs.statSync(dirPath, { throwIfNoEntry: false });
+    return dirStat && dirStat.isDirectory();
+};
+
+
+/**
  * Processes a fxserver path to validate it as well as the monitor folder.
  * NOTE: this function is windows only, but could be easily adapted.
  */
 export const getFxsPaths = (fxserverPath: string) => {
     const root = path.normalize(fxserverPath);
 
-    //Process fxserver path
-    const bin = path.join(root, 'FXServer.exe');
-    const binStat = fs.statSync(bin);
-    if (!binStat.isFile()) {
-        throw new Error(`${bin} is not a file.`);
+    //Check if legacy server
+    let binName = 'FXServer.exe';
+    let bin = path.join(root, 'FXServer.exe');
+    let res = path.join(root, 'citizen', 'system_resources', 'monitor');
+    if (isBinPathValid(bin) && isDirPathValid(res)) {
+        return {root, bin, binName, res};
     }
 
-    //Process monitor path
-    const monitor = path.join(root, 'citizen', 'system_resources', 'monitor');
-    const monitorStat = fs.statSync(monitor);
-    if (!monitorStat.isDirectory()) {
-        throw new Error(`${monitor} is not a directory.`);
+    //Check if enhanced server
+    binName = 'cfx-server.exe';
+    bin = path.join(root, 'cfx-server.exe');
+    res = path.join(root, 'system_resources', 'txadmin');
+    if (isBinPathValid(bin) && isDirPathValid(res)) {
+        return {root, bin, binName, res};
     }
 
-    return { root, bin, monitor };
+    throw new Error(`The path provided does not seem to be a valid FXServer or cfx-server directory.`);
 };
 
 
@@ -108,7 +127,7 @@ export const getPublishVersion = (isOptional: boolean) => {
             preReleaseExpiration: isPreRelease ? potentialExpiration.toString() : '0',
         };
     } catch (error) {
-        console.error('Version setup failed: ' + error.message);
+        console.error('Version setup failed: ' + (error as Error).message);
         process.exit(1);
     }
 };

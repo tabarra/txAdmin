@@ -1,6 +1,6 @@
 import child_process from 'node:child_process';
 import { TxDevEnvType } from '../../shared/txDevEnv';
-import path from 'node:path';
+import path from 'node:path/posix';
 
 /**
  * Class to handle the fxserver process running txadmin

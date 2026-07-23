@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import path from 'node:path';
+import path from 'node:path/posix';
 import chokidar from 'chokidar';
 import debounce from 'lodash/debounce.js';
 import esbuild, { BuildOptions } from 'esbuild';
@@ -31,7 +31,7 @@ let fxsPaths: ReturnType<typeof getFxsPaths>;
 try {
     fxsPaths = getFxsPaths(txDevEnv.FXSERVER_PATH!);
 } catch (error) {
-    console.error('[BUILDER] Could not extract/validate the fxserver and monitor paths.');
+    console.error('[BUILDER] Could not extract/validate the fxserver and resource paths.');
     console.error(error);
     process.exit(1);
 }
@@ -39,9 +39,9 @@ console.log(`[BUILDER] Starting txAdmin Dev Builder for ${fxsPaths.root}`);
 
 //Sync target path and start chokidar
 //We don't really care about the path, just remove everything and copy again
-copyStaticFiles(fxsPaths.monitor, txVersion, 'init');
+copyStaticFiles(fxsPaths.res, txVersion, 'init');
 const debouncedCopier = debounce((eventName) => {
-    copyStaticFiles(fxsPaths.monitor, txVersion, eventName);
+    copyStaticFiles(fxsPaths.res, txVersion, eventName);
 }, config.debouncerInterval);
 const staticWatcher = chokidar.watch(config.copy, {
     // awaitWriteFinish: true,
@@ -52,8 +52,8 @@ staticWatcher.on('add', () => { debouncedCopier('add'); });
 staticWatcher.on('change', () => { debouncedCopier('change'); });
 staticWatcher.on('unlink', () => { debouncedCopier('unlink'); });
 //yarn.installed Needs to be older than the package.json
-fs.writeFileSync(path.join(fxsPaths.monitor, '.yarn.installed'), '');
-fs.writeFileSync(path.join(fxsPaths.monitor, 'package.json'), '{"type":"commonjs"}');
+fs.writeFileSync(path.join(fxsPaths.res, '.yarn.installed'), '');
+fs.writeFileSync(path.join(fxsPaths.res, 'package.json'), '{"type":"commonjs"}');
 
 //Create txAdmin process runner
 const txInstance = new TxAdminRunner(fxsPaths.root, fxsPaths.bin, txDevEnv);
@@ -81,7 +81,7 @@ const buildOptions: BuildOptions = {
     entryPoints: ['./core'],
     bundle: true,
     sourcemap: 'linked',
-    outfile: path.join(fxsPaths.monitor, 'core', 'index.js'),
+    outfile: path.join(fxsPaths.res, 'core', 'index.js'),
     platform: 'node',
     target: 'node16',
     format: 'cjs', //typescript builds to esm and esbuild converts it to cjs
