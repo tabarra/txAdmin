@@ -13,7 +13,7 @@ setting the `(txAdmin) Menu: Open Main Page` option.
 
 ### Permissions
 Anybody who you would like to give permissions to open the menu in-game, must have a txAdmin
-account with either their Discord or Cfx.re identifiers tied to it.
+account with either their Discord or Cfx identifiers tied to it.
 
 ***If you do not have any of these identifiers attached, you will not be able to access the menu***
 

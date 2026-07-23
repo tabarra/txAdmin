@@ -264,11 +264,11 @@ async function handleEdit(ctx: AuthedCtx) {
     }
     const prevCfxId = admin.providers?.citizenfx?.identifier;
     if (!prevCfxId && citizenfxData) {
-        changes.push(`Added Cfx.re ID: ${citizenfxData.identifier}.`);
+        changes.push(`Added Cfx ID: ${citizenfxData.identifier}.`);
     } else if (prevCfxId && !citizenfxData) {
-        changes.push(`Removed Cfx.re ID: ${prevCfxId}.`);
+        changes.push(`Removed Cfx ID: ${prevCfxId}.`);
     } else if (prevCfxId && citizenfxData && prevCfxId !== citizenfxData.identifier) {
-        changes.push(`Changed Cfx.re ID from ${prevCfxId} to ${citizenfxData.identifier}.`);
+        changes.push(`Changed Cfx ID from ${prevCfxId} to ${citizenfxData.identifier}.`);
     }
     const prevDiscordId = admin.providers?.discord?.identifier;
     if (!prevDiscordId && discordData) {

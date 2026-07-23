@@ -57,7 +57,7 @@ export const playerDropCategories: PlayerDropCategoriesType = {
     },
     security: {
         label: 'Security',
-        description: 'Player kicked out of the server due to suspect behavior such as sending too many commands or losing connection to the Cfx.re backend services.',
+        description: 'Player kicked out of the server due to suspect behavior such as sending too many commands or losing connection to Cfx backend services.',
         color: BaseColors.Red,
         border: border(BaseColors.Red),
         expected: false,

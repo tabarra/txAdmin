@@ -84,7 +84,6 @@ Legend:
     - reorganize the globalData.ts exports after that
     - might not even need the separated `getXxxVars.ts` files after that
     - still detect and issue an warning about its deprecation
-- [ ] rename "citizenfx" to "fivem" everywhere. Or maybe cfx.re?
 - [ ] replace lodash's cloneDeep with one of:
     - https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone (node 17+)
     - https://www.npmjs.com/package/rfdc

@@ -88,7 +88,7 @@ function ChangePasswordTab() {
                     Your account has a temporary password that needs to be changed before you can use this web panel. <br />
                     <strong>Make sure to take note of your new password before saving.</strong>
                 </p>) : (<p className="text-sm text-muted-foreground">
-                    You can use your password to login to the txAdmin inferface even without using the Cfx.re login button.
+                    You can use your password to login to the txAdmin inferface even without using the Cfx login button.
                 </p>)}
                 <div className="space-y-3 pt-2 pb-6">
                     {!authData.isTempPassword && (
@@ -273,7 +273,7 @@ function ChangeIdentifiersTab() {
                         <p className="text-sm text-muted-foreground">
                             Your identifier can be found by clicking at your name in the playerlist and going to the IDs page. 
                             You can also type in your <TxAnchor href="https://forum.cfx.re/">forum.cfx.re</TxAnchor> username and it will be converted automatically. <br />
-                            This is required if you want to login using the Cfx.re button.
+                            This is required if you want to login using the Cfx button.
                         </p>
                     </div>
                     <div className="space-y-1">

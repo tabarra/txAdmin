@@ -75,7 +75,7 @@ export default function AddMasterPin() {
             className='w-full'
         >
             <CardHeader className="space-y-1">
-                <CardTitle className="text-3xl">No Cfx.re account linked</CardTitle>
+                <CardTitle className="text-3xl">No Cfx account linked</CardTitle>
                 <CardDescription className="text-base text-muted-foreground">
                     Type in the PIN from the terminal.
                 </CardDescription>

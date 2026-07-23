@@ -32,7 +32,7 @@
     - Player troll: make drunk, set fire, wild attack
     - Player ban/warn/dm
 - Access control:
-    - Login via Cfx.re or password
+    - Login via Cfx or password
     - Admin permission system ([docs/permissions.md](docs/permissions.md))
     - Action logging
 - Discord Integration:

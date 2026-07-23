@@ -188,7 +188,7 @@ function DiscordJsonEditor({
 }
 
 const placeholderDescriptions = {
-    serverCfxId: 'The Cfx.re id of your server, this is tied to your `sv_licenseKey` and detected at runtime.',
+    serverCfxId: 'The Cfx ID (join code) of your server, this is tied to your `sv_licenseKey` and detected at runtime.',
     serverJoinUrl: 'The direct join URL of your server. Example: `https://cfx.re/join/xxxxxx`.',
     serverBrowserUrl: 'The FiveM Server browser URL of your server. Example: `https://servers.fivem.net/servers/detail/xxxxxx`.',
     serverClients: 'The number of players online in your server.',

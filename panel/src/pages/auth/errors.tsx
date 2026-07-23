@@ -50,13 +50,13 @@ export function AuthError({ error }: AuthErrorProps) {
     } else if (error.errorCode === 'end_user_aborted') {
         titleNode = 'Login Aborted';
         bodyNode = <ErrorText>
-            The Cfx.re login process was aborted. <br />
+            The Cfx login process was aborted. <br />
             Return to the login page to try again.
         </ErrorText>
     } else if (error.errorCode === 'end_user_logout') {
         titleNode = 'Login Aborted';
         bodyNode = <ErrorText>
-            The Cfx.re login process was aborted because you logged out of the Cfx.re account. <br />
+            The Cfx login process was aborted because you logged out of the Cfx account. <br />
             Return to the login page to try again.
         </ErrorText>
     } else if (error.errorCode === 'master_already_set') {
@@ -67,7 +67,7 @@ export function AuthError({ error }: AuthErrorProps) {
     } else if (error.errorCode === 'not_admin') {
         const fivemId = error.errorContext?.identifier ?? 'unknown';
         const fivemName = error.errorContext?.name ?? 'unknown';
-        titleNode = `The Cfx.re account '${fivemName}' is not an admin.`;
+        titleNode = `The Cfx account '${fivemName}' is not an admin.`;
         bodyNode = <ErrorText>
             The account above with identifier <InlineCode>{fivemId}</InlineCode> is not assigned to any account registered on txAdmin. <br />
             You can also try to login using your username and backup password.

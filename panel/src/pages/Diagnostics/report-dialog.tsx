@@ -26,7 +26,7 @@ interface ReportDialogProps {
 const InfoContent = () => (
     <div className="space-y-4 text-sm">
         <p className="text-sm">
-            This <u>optional</u> feature sends a diagnostics report to the Cfx.re team, and may be required to diagnose a wide range of server issues.
+            This <u>optional</u> feature sends a diagnostics report to the Cfx team, and may be required to diagnose a wide range of server issues.
             After sending the data, you will receive a Report ID you can send in the support channels.
         </p>
 
@@ -36,7 +36,7 @@ const InfoContent = () => (
                     Who can access the data?
                 </h4>
                 <p>
-                    The data will be available for up to 24 hours to the Cfx.re team.
+                    The data will be available for up to 24 hours to the Cfx team.
                 </p>
             </div>
 

@@ -105,7 +105,7 @@ The specific way to set up those variables vary from system to system, and there
     - This variable is used by GSPs for setting up an `admins.json` automatically on first boot.
     - It contains a username, FiveM ID, and password (as bcrypt hash) separated by colons:
         - **Username:** If a FiveM ID is provided, this must match the username of the FiveM account used by the second parameter. Otherwise, it accepts any username valid for txAdmin accounts (same rule used by the [FiveM Forum](https://forum.cfx.re/)).
-        - **FiveM ID:** The numeric ID of a FiveM account, same as the one visible as in-game identifier. For instance, the value should be `271816` for someone with the in-game identifier `fivem:271816`. When set, the admin will be able to login using the Cfx.re button instead of requiring a password.
+        - **FiveM ID:** The numeric ID of a FiveM account, same as the one visible as in-game identifier. For instance, the value should be `271816` for someone with the in-game identifier `fivem:271816`. When set, the admin will be able to login using the Cfx button instead of requiring a password.
         - **Password:** A bcrypt-hashed password to be used as the "backup password".
     - The account must at least have either FiveM ID or password set. If an account has no password, on first access the owner will be queried to change their password.
     - Examples:
