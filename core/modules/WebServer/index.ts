@@ -27,6 +27,7 @@ import fatalError from '@lib/fatalError';
 import { isProxy } from 'node:util/types';
 import serveStaticMw from './middlewares/serveStaticMw';
 import serveRuntimeMw from './middlewares/serveRuntimeMw';
+import consts from '@shared/consts';
 const console = consoleFactory(modulename);
 const nanoid = customAlphabet(dict49, 32);
 
@@ -54,8 +55,9 @@ export default class WebServer {
         //Generate cookie key & luaComToken
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
             .update(txEnv.profilePath)
-            .digest('hex');
-        this.sessionCookieName = `tx:${pathHash}`;
+            .digest('hex')
+            .padStart(12, '0');
+        this.sessionCookieName = `${consts.cookies.session}:${pathHash}`;
         this.luaComToken = nanoid();
 
 
@@ -63,7 +65,6 @@ export default class WebServer {
         // Setting up Koa
         // ===================
         this.app = new Koa();
-        this.app.keys = ['txAdmin' + nanoid()];
 
         // Some people might want to enable it, but we are not guaranteeing XFF security
         // due to the many possible ways you can connect to koa.
