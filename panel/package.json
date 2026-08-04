@@ -54,7 +54,7 @@
     "is-mobile": "^4.0.0",
     "jotai": "^2.10.0",
     "jotai-effect": "^1.0.3",
-    "lucide-react": "^0.447.0",
+    "lucide-react": "^1.26.0",
     "nanoid": "^5.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

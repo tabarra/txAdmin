@@ -96,7 +96,7 @@ export default class WebServer {
         this.app.use(serveRuntimeMw);
         this.app.use(serveStaticMw({
             noCaching: txDevEnv.ENABLED,
-            cacheMaxAge: 30 * 60, //30 minutes
+            cacheMaxAge: 12 * 60 * 60, //12 hours
             //Scan Limits: (v8-dev prod build: 56 files, 11.25MB)
             limits: {
                 MAX_BYTES: 75 * 1024 * 1024, //75MB

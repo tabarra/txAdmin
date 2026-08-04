@@ -15,7 +15,6 @@ type YamlRecipeTaskType = {
 type YamlRecipeType = Partial<{
     $engine: number;
     $minFxVersion: number;
-    $onesync: string;
     $steamRequired: boolean;
 
     name: string;
@@ -32,7 +31,6 @@ type ParsedRecipeType = {
     description: string;
     variables: Record<string, any>; //TODO: define this
     tasks: YamlRecipeTaskType[];
-    onesync?: string;
     fxserverMinVersion?: number;
     recipeEngineVersion?: number;
     steamRequired?: boolean;
@@ -82,11 +80,6 @@ const recipeParser = (rawRecipe: string) => {
     };
 
     //Checking/parsing meta tag requirements
-    if (typeof recipe.$onesync == 'string') {
-        const onesync = recipe.$onesync.trim();
-        if (!['off', 'legacy', 'on'].includes(onesync)) throw new Error(`the onesync option selected required for this recipe ("${onesync}") is not supported by this FXServer version.`);
-        outRecipe.onesync = onesync;
-    }
     if (typeof recipe.$minFxVersion == 'number') {
         if (recipe.$minFxVersion > txEnv.fxsVersion) throw new Error(`this recipe requires FXServer v${recipe.$minFxVersion} or above`);
         outRecipe.fxserverMinVersion = recipe.$minFxVersion; //NOTE: currently no downstream use

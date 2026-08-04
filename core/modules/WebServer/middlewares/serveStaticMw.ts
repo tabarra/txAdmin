@@ -278,7 +278,7 @@ const serveStaticMwProd = (opts: ServeStaticMwOpts) => async (ctx: RawKoaCtx, ne
     ctx.type = path.extname(staticFile.url); // This sets the appropriate Content-Type header based on the extension
 
     //Set the client caching behavior (kinda conflicts with cacheControlMw)
-    //NOTE: The legacy URLs already contain the `txVer` param to bust the cache, so 30 minutes should be fine
+    //NOTE: The legacy URLs already contain the `txVer` param to bust the cache, so 12 hours should be fine
     ctx.set('Cache-Control', `public, max-age=${opts.cacheMaxAge}`);
     ctx.set('Last-Modified', cacheDate);
 };
