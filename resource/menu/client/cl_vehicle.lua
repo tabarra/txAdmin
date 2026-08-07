@@ -52,7 +52,9 @@ local mismatchedTypes = {
     ["caddy3"] = "automobile",       -- trailer
     ["chimera"] = "automobile",      -- bike
     ["docktug"] = "automobile",      -- trailer
+    ["driftkeitora"] = "automobile", -- trailer
     ["forklift"] = "automobile",     -- trailer
+    ["keitora"] = "automobile",      -- trailer
     ["kosatka"] = "submarine",       -- boat
     ["mower"] = "automobile",        -- trailer
     ["policeb"] = "bike",            -- automobile
@@ -68,6 +70,8 @@ local mismatchedTypes = {
     ["thruster"] = "heli",           -- automobile
     ["towtruck"] = "automobile",     -- trailer
     ["towtruck2"] = "automobile",    -- trailer
+    ["towtruck3"] = "automobile",    -- trailer
+    ["towtruck4"] = "automobile",    -- trailer
     ["tractor"] = "automobile",      -- trailer
     ["tractor2"] = "automobile",     -- trailer
     ["tractor3"] = "automobile",     -- trailer
@@ -75,7 +79,6 @@ local mismatchedTypes = {
     ["utillitruck"] = "automobile",  -- trailer
     ["utillitruck2"] = "automobile", -- trailer
     ["utillitruck3"] = "automobile", -- trailer
-    ["keitora"] = "automobile",      -- trailer
 }
 
 local function resolveVehicleType(model)
