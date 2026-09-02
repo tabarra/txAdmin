@@ -41,7 +41,7 @@
     "lodash": "^4.17.21",
     "lowdb": "^6.1.0",
     "mnemonist": "^0.39.8",
-    "mysql2": "^3.11.3",
+    "mysql2": "^3.23.1",
     "nanoid": "^4.0.2",
     "nanoid-dictionary": "^4.3.0",
     "node-polyglot": "^2.6.0",
