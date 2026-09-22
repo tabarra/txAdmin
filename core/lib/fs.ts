@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import type { Dirent } from 'node:fs';
-import { txEnv } from '@core/globalData';
 import path from 'node:path';
 
 
@@ -59,7 +58,11 @@ export const getPathSubdirs = async (root: string, filter?: (entry: Dirent) => b
 export const getFsErrorMdMessage = (error: any, targetPath: string) => {
     if(typeof error.message !== 'string') return 'unknown error';
 
-    if (!txEnv.isWindows && /^[a-zA-Z]:[\\/]/.test(targetPath)) {
+    //Not using txEnv.isWindows to make this file standalone / decoupled from txAdmin
+    const isWindows = process.platform === 'win32';
+
+    //If not Windows and Windows-style path, suggest about remote/local confusion
+    if (!isWindows && /^[a-zA-Z]:[\\/]/.test(targetPath)) {
         return `Looks like you're using a Windows path on a Linux server.\nThis likely means you are attempting to use a path from your computer on a remote server.\nIf you want to use your local files, you will first need to upload them to the server.`;
     } else if (error.message?.includes('ENOENT')) {
         return `The path provided does not exist:\n\`${targetPath}\``;
