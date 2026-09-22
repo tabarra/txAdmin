@@ -17,8 +17,9 @@ try {
     process.title = 'txAdmin'; //doesn't work for now
     setupProcessHandlers();
 
-    //Check pre-release only if not gen9 early access
-    if (!txEnv.fxsVersionTag.includes('-ea')) {
+    //Gen9 is entirely early access for now, so we just skip the pre-release check
+    //FIXME:NEXT:UPDATE: re-enable the pre-release check when gen9 leaves early access
+    if (!txEnv.fxsIsGen9) {
         checkPreRelease();
     }
 } catch (error) {

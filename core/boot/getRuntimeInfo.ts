@@ -59,20 +59,28 @@ const getVersionFromConvar = (): FxsVersionInfo => {
 
 /**
  * Uses the process.argv to get the FXServer version.
- * 
- * Gen9 passes a single argv string like 
- * '--runtime-branch "early-access" --runtime-version "b50"'
+ * Gen9 passes a _single_ argv string containing the branch and version args.
  */
 const getVersionFromArgs = (): FxsVersionInfo => {
-    // cfx-server: 
+    // cfx-server:
     const raw = process.argv.find((arg) => arg.includes('--runtime-version')) ?? null;
+
+    //DEBUG: samples
+    // const raw = '--runtime-branch early-access --runtime-version b139'
+    // const raw = '--runtime-branch "LOCAL_BUILD" --runtime-version "b0"'
+    // const raw = '--runtime-branch feat/csharp-improvements --runtime-version b141'
+
     const branchMatch = raw?.match(/--runtime-branch\s+(?:"([^"]+)"|(\S+))/);
     const branch = branchMatch?.[1] ?? branchMatch?.[2] ?? null;
     const build = raw?.match(/--runtime-version\s+"?b(\d+)"?/)?.[1];
+    const buildNum = build ? parseInt(build, 10) : NaN;
+
+    const isLocalBuild = branch === 'LOCAL_BUILD' || buildNum === 0;
+    const isValid = !isLocalBuild && !isNaN(buildNum);
     return {
-        valid: !!build,
+        valid: isValid,
         branch,
-        build: build ? parseInt(build, 10) : 99999,
+        build: isValid ? buildNum : 99999,
         raw,
     };
 };

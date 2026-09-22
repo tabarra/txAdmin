@@ -139,7 +139,7 @@ checkDeprecatedConvars(fxsIsGen9);
 //9423 = feat(server): add more infos to playerDropped event
 //9655 = Fixed ScanResourceRoot + latent events
 //25770 = node 22 "golden version"
-const minFxsVersion = 25770;
+const minFxsGen8Version = 25770;
 const minNodeVersion = '22.11.0';
 
 // Invalid version: warn but continue with build=99999
@@ -147,13 +147,15 @@ if (!fxsVersionInfo.valid) {
     console.error('It looks like you are running a custom build of fxserver.');
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
     console.error(`Raw version string: ${fxsVersionInfo.raw ?? '(not available)'}`);
-} else if (fxsVersionInfo.branch !== 'master') {
-    console.warn(`You are running a custom branch of FXServer: ${fxsVersionInfo.branch}.`);
-} else if (fxsVersion < minFxsVersion) {
+} else if (fxsIsGen9 && fxsVersionInfo.branch !== 'early-access') {
+    console.warn(`You are running an experimental branch of FXServer Gen9: ${fxsVersionInfo.branch}.`);
+} else if (!fxsIsGen9 && fxsVersionInfo.branch !== 'master') {
+    console.warn(`You are running an experimental branch of FXServer Legacy: ${fxsVersionInfo.branch}.`);
+} else if (!fxsIsGen9 && fxsVersion < minFxsGen8Version) {
     fatalError.GlobalData(2, [
         'This version of FXServer is too outdated and NOT compatible with txAdmin',
         ['Current FXServer version', fxsVersion],
-        ['Minimum required version', minFxsVersion],
+        ['Minimum required version', minFxsGen8Version],
         'Please update your FXServer to a newer version.',
     ]);
 }
@@ -373,6 +375,8 @@ const setConsoleTitle = !(isPterodactyl || isZapHosting || providerName); //assu
 let fxsVersionTag = fxsVersion.toString();
 if (fxsVersionInfo.branch === 'early-access') {
     fxsVersionTag += '-ea';
+} else if (fxsVersionInfo.branch === 'LOCAL_BUILD') {
+    fxsVersionTag += '-lb';
 } else if (fxsVersionInfo.branch && fxsVersionInfo.branch !== 'master') {
     fxsVersionTag += '-ft';
 }
