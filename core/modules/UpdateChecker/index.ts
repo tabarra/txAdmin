@@ -4,6 +4,7 @@ import consoleFactory from '@lib/console';
 import { UpdateDataType } from '@shared/otherTypes';
 import { UpdateAvailableEventType } from '@shared/socketioTypes';
 import { queryChangelogApi } from './queryChangelogApi';
+import { queryGen9DepotApi } from './queryDepotApi';
 import { getUpdateRolloutDelay } from './updateRollout';
 const console = consoleFactory(modulename);
 
@@ -71,10 +72,11 @@ export default class UpdateChecker {
      * Check for txAdmin and FXServer updates
      */
     async checkChangelog() {
-        //FIXME:NEXT:UPDATE: re-enable update checker for gen9
-        if (txEnv.fxsIsGen9) return;
-        
-        const updates = await queryChangelogApi();
+        //Gen9 uses the new Depot API (fxserver builds only, until it exposes txAdmin meta fields),
+        //while gen8 still relies on the legacy changelog API until it also migrates to depot
+        const updates = txEnv.fxsIsGen9
+            ? await queryGen9DepotApi()
+            : await queryChangelogApi();
         if (!updates) return;
 
         //If fxserver, don't print anything, just update the data
