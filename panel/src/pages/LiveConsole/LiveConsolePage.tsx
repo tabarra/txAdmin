@@ -23,7 +23,8 @@ import { getSocket } from '@/lib/utils';
 import { openExternalLink } from '@/lib/navigation';
 import { handleHotkeyEvent } from '@/lib/hotkeyEventListener';
 import { txToast } from '@/components/TxToaster';
-import { copyTermLine, extractTermLineTimestamp, formatTermTimestamp, getEmptyTermTimestamp, getNumFontVariantsLoaded } from './liveConsoleUtils';
+import { copyTermLine, extractTermLineHeader, formatFxsLinePrefix, formatTermTimestamp, getEmptyTermTimestamp, getNumFontVariantsLoaded } from './liveConsoleUtils';
+import type { TxLineKindChar } from '@shared/consoleFrames';
 import { getTermLineEventData, getTermLineInitialData, getTermLineRtlData, registerTermLineMarker } from './liveConsoleMarkers';
 import { useIsDarkMode } from '@/hooks/theme';
 import { darkThemeColors, lightThemeColors, ANSI } from './liveConsoleColors';
@@ -49,6 +50,10 @@ export default function LiveConsolePage() {
         ts: 0, //so we can clear the console
         lastEol: true,
         prefix: getEmptyTermTimestamp(optionsRef.current.timestamp),
+        //State of the current line, from the frame header (not used for filtering yet)
+        level: null as number | null,
+        channel: null as string | null,
+        txKind: null as TxLineKindChar | null,
     });
     const refreshPage = useContentRefresh();
     const isDarkTheme = useIsDarkMode();
@@ -223,23 +228,35 @@ export default function LiveConsolePage() {
             wasEolStripped = true;
         }
 
-        //extracts timestamp & print each line
+        //extracts the header & print each line
         let isNewTs = false;
         for (let i = 0; i < lines.length; i++) {
             isNewTs = false;
             let line = lines[i];
-            //tries to extract timestamp
+            //tries to extract the header (see shared/consoleFrames.ts)
             try {
-                const { ts, content } = extractTermLineTimestamp(line);
-                if (ts) {
-                    isNewTs = true;
+                const { header, content } = extractTermLineHeader(line);
+                if (header) {
                     line = content;
-                    termPrefixRef.current.ts = ts;
-                    termPrefixRef.current.prefix = formatTermTimestamp(ts, optionsRef.current.timestamp);
+                    if (header.ts !== termPrefixRef.current.ts) {
+                        isNewTs = true;
+                        termPrefixRef.current.ts = header.ts;
+                        termPrefixRef.current.prefix = formatTermTimestamp(header.ts, optionsRef.current.timestamp);
+                    }
+                    if (header.type === 'fxs') {
+                        termPrefixRef.current.level = header.level;
+                        termPrefixRef.current.channel = header.channel;
+                        termPrefixRef.current.txKind = null;
+                        line = formatFxsLinePrefix(header.color, header.channel) + content;
+                    } else {
+                        termPrefixRef.current.level = null;
+                        termPrefixRef.current.channel = null;
+                        termPrefixRef.current.txKind = header.kind;
+                    }
                 }
             } catch (error) {
                 termPrefixRef.current.prefix = getEmptyTermTimestamp(optionsRef.current.timestamp);
-                console.warn('Failed to parse timestamp from:', line, (error as any).message);
+                console.warn('Failed to parse header from:', line, (error as any).message);
             }
 
             //Markers

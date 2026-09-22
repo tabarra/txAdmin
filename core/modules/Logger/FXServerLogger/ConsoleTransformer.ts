@@ -1,5 +1,14 @@
 import ConsoleLineEnum from './ConsoleLineEnum';
 import { prefixMultiline, splitFirstLine, stripLastEol } from './fxsLoggerUtils';
+import { FramedChunkProcessor } from './fxsFrameUtils';
+import {
+    buildTxFrameHeader,
+    encodeFrameTs,
+    FRAME_CONTEXT_MAX_LENGTH,
+    FXS_CHANNEL_WIDTH_GEN8,
+    TxLineKind,
+    type TxLineKindChar,
+} from '@shared/consoleFrames';
 import chalk, { ChalkInstance } from 'chalk';
 
 
@@ -32,7 +41,7 @@ const ANSI_RESET = '\x1B[0m';
 const ANSI_ERASE_LINE = '\x1b[K';
 
 const STYLES = {
-    [ConsoleLineEnum.StdOut]: null, //fully shortcircuited
+    [ConsoleLineEnum.StdOut]: null, //no styling, web gets a header only
     [ConsoleLineEnum.StdErr]: {
         web: {
             prefix: chalk.bgRedBright.bold.black,
@@ -69,11 +78,26 @@ const STYLES = {
     },
 } as StylesLibrary;
 
-export const FORCED_EOL = '\u21A9\n'; //used in test file only
+const TX_KIND_BY_TYPE: Record<ConsoleLineEnum, TxLineKindChar> = {
+    [ConsoleLineEnum.StdOut]: TxLineKind.LegacyStdOut,
+    [ConsoleLineEnum.StdErr]: TxLineKind.StdErr,
+    [ConsoleLineEnum.MarkerAdminCmd]: TxLineKind.AdminCmd,
+    [ConsoleLineEnum.MarkerSystemCmd]: TxLineKind.SystemCmd,
+    [ConsoleLineEnum.MarkerInfo]: TxLineKind.Info,
+};
+
+export const FORCED_EOL = '↩\n'; //used in test file only
+const EMPTY_BUFFER: MultiBuffer = { webBuffer: '', stdoutBuffer: '', fileBuffer: '' };
+const regexContextControls = /[\x00-\x1F\x7F]/g;
 
 //NOTE: [jan/2025] Changed from [] to make it easier to find tx stdin in the log files
 const prefixChar = '║' //Alternatives: | & ┇
-const getConsoleLinePrefix = (prefix: string) => prefixChar + prefix.padStart(20, ' ') + prefixChar;
+const getConsoleLinePrefix = (prefix: string, width: number) => prefixChar + prefix.padStart(width, ' ') + prefixChar;
+
+export type ConsoleTransformerOptions = {
+    //Width of the channel column, must match the fxserver generation so the prefixes align
+    channelWidth?: number;
+}
 
 //NOTE: the \n must come _after_ the color so LiveConsolePage.tsx can know when it's an incomplete line
 const colorLines = (str: string, color: ChalkInstance | undefined) => {
@@ -84,28 +108,58 @@ const colorLines = (str: string, color: ChalkInstance | undefined) => {
 
 
 /**
- * Handles fxserver stdio and turns it into a cohesive textual output
+ * Handles fxserver stdio and turns it into a cohesive textual output.
+ * Every line sent to the web gets a header, see shared/consoleFrames.ts for the protocol.
  */
 export default class ConsoleTransformer {
     public lastEol = true;
+    public isFramed = false; //set by the logger when fxserver output framing is detected
     private lastSrc = '0:undefined';
-    private lastMarkerTs = 0; //in seconds
+    private lastTs = 0; //in seconds
+    private tsHex = encodeFrameTs(0);
+    private legacyStdOutHeader = buildTxFrameHeader(this.tsHex, TxLineKind.LegacyStdOut);
     private STYLES = STYLES;
-    private PREFIX_SYSTEM = getConsoleLinePrefix('TXADMIN');
-    private PREFIX_STDERR = getConsoleLinePrefix('STDERR');
+    private readonly channelWidth: number;
+    private PREFIX_SYSTEM: string;
+    private PREFIX_STDERR: string;
+    private readonly framedProcessor = new FramedChunkProcessor();
+
+    constructor(options: ConsoleTransformerOptions = {}) {
+        this.channelWidth = options.channelWidth ?? FXS_CHANNEL_WIDTH_GEN8;
+        this.PREFIX_SYSTEM = getConsoleLinePrefix('TXADMIN', this.channelWidth);
+        this.PREFIX_STDERR = getConsoleLinePrefix('STDERR', this.channelWidth);
+    }
 
     public process(type: ConsoleLineEnum, data: string, context?: string): MultiBuffer {
         //Shortcircuiting for empty strings
-        if (!data.length) return { webBuffer: '', stdoutBuffer: '', fileBuffer: '' };
+        if (!data.length) return EMPTY_BUFFER;
         const src = `${type}:${context}`;
         if (data === '\n' || data === '\r\n') {
             this.lastEol = true;
             this.lastSrc = src;
             return { webBuffer: '\n', stdoutBuffer: '\n', fileBuffer: '\n' };
         }
+        this.refreshTs();
         let webBuffer = '';
         let stdoutBuffer = '';
         let fileBuffer = '';
+
+        //Framed stdout: every record carries its own header, continuation lines have no \x1e,
+        //so the whole chunk can be processed uniformly regardless of lastEol
+        if (type === ConsoleLineEnum.StdOut && this.isFramed) {
+            if (!this.lastEol && src !== this.lastSrc) {
+                webBuffer = FORCED_EOL;
+                stdoutBuffer = FORCED_EOL;
+                fileBuffer = FORCED_EOL;
+            }
+            const processed = this.framedProcessor.process(data, this.tsHex);
+            webBuffer += processed.web;
+            stdoutBuffer += processed.stdout;
+            fileBuffer += processed.stdout;
+            this.lastEol = data[data.length - 1] === '\n';
+            this.lastSrc = src;
+            return { webBuffer, stdoutBuffer, fileBuffer };
+        }
 
         //incomplete
         if (!this.lastEol) {
@@ -115,7 +169,7 @@ export default class ConsoleTransformer {
                 stdoutBuffer += FORCED_EOL;
                 fileBuffer += FORCED_EOL;
                 const prefixed = this.prefixChunk(type, data, context);
-                webBuffer += this.getTimeMarker() + prefixed.webBuffer;
+                webBuffer += prefixed.webBuffer;
                 stdoutBuffer += prefixed.stdoutBuffer;
                 fileBuffer += prefixed.fileBuffer;
                 this.lastEol = data[data.length - 1] === '\n';
@@ -141,7 +195,7 @@ export default class ConsoleTransformer {
             }
             if (parts.rest) {
                 const prefixed = this.prefixChunk(type, parts.rest, context);
-                webBuffer += this.getTimeMarker() + prefixed.webBuffer;
+                webBuffer += prefixed.webBuffer;
                 stdoutBuffer += prefixed.stdoutBuffer;
                 fileBuffer += prefixed.fileBuffer;
             }
@@ -151,7 +205,7 @@ export default class ConsoleTransformer {
 
         //complete
         const prefixed = this.prefixChunk(type, data, context);
-        webBuffer += this.getTimeMarker() + prefixed.webBuffer;
+        webBuffer += prefixed.webBuffer;
         stdoutBuffer += prefixed.stdoutBuffer;
         fileBuffer += prefixed.fileBuffer;
         this.lastEol = data[data.length - 1] === '\n';
@@ -160,21 +214,46 @@ export default class ConsoleTransformer {
         return { webBuffer, stdoutBuffer, fileBuffer };
     }
 
-    private getTimeMarker() {
-        const currMarkerTs = Math.floor(Date.now() / 1000);
-        if (currMarkerTs !== this.lastMarkerTs) {
-            this.lastMarkerTs = currMarkerTs;
-            return `{§${currMarkerTs.toString(16)}}`
+    /**
+     * Resets the state that depends on the fxserver process (call on spawn).
+     */
+    public resetFraming() {
+        this.isFramed = false;
+        this.framedProcessor.reset();
+    }
+
+    /**
+     * Updates the cached timestamp strings, at most once per second.
+     */
+    private refreshTs() {
+        const currTs = Math.floor(Date.now() / 1000);
+        if (currTs !== this.lastTs) {
+            this.lastTs = currTs;
+            this.tsHex = encodeFrameTs(currTs);
+            this.legacyStdOutHeader = buildTxFrameHeader(this.tsHex, TxLineKind.LegacyStdOut);
         }
-        return '';
+    }
+
+    /**
+     * Returns the txAdmin line header for the given type.
+     */
+    private getTxHeader(type: ConsoleLineEnum, context?: string) {
+        if (type === ConsoleLineEnum.StdOut) return this.legacyStdOutHeader;
+        const kind = TX_KIND_BY_TYPE[type];
+        const cleanContext = (type === ConsoleLineEnum.MarkerAdminCmd && context)
+            ? context.replace(regexContextControls, '').slice(0, FRAME_CONTEXT_MAX_LENGTH)
+            : '';
+        return buildTxFrameHeader(this.tsHex, kind, cleanContext);
     }
 
     private prefixChunk(type: ConsoleLineEnum, chunk: string, context?: string): MultiBuffer {
-        //NOTE: as long as stdout is shortcircuited, the other ones don't need to be micro-optimized
+        const header = this.getTxHeader(type, context);
+
+        //Legacy stdout: header on the web only, stdout/file get the raw chunk
         const style = this.STYLES[type];
         if (style === null) {
             return {
-                webBuffer: chunk,
+                webBuffer: prefixMultiline(chunk, header),
                 stdoutBuffer: chunk,
                 fileBuffer: chunk,
             };
@@ -185,17 +264,21 @@ export default class ConsoleTransformer {
         if (type === ConsoleLineEnum.StdErr) {
             prefix = this.PREFIX_STDERR;
         } else if (type === ConsoleLineEnum.MarkerAdminCmd) {
-            prefix = getConsoleLinePrefix(context ?? '?');
+            prefix = getConsoleLinePrefix(context ?? '?', this.channelWidth);
         } else if (type === ConsoleLineEnum.MarkerSystemCmd) {
             prefix = this.PREFIX_SYSTEM;
         } else if (type === ConsoleLineEnum.MarkerInfo) {
             prefix = this.PREFIX_SYSTEM;
         }
 
+        //NOTE: the header must be the first thing in each line, so it's applied after coloring
         const webPrefix = style.web.prefix ? style.web.prefix(prefix) : prefix;
-        const webBuffer = colorLines(
-            prefixMultiline(chunk, webPrefix + ' '),
-            style.web.line,
+        const webBuffer = prefixMultiline(
+            colorLines(
+                prefixMultiline(chunk, webPrefix + ' '),
+                style.web.line,
+            ),
+            header,
         );
 
         let stdoutBuffer = '';

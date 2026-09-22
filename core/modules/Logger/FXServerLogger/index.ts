@@ -6,7 +6,9 @@ import consoleFactory, { processStdioWriteRaw } from '@lib/console.js';
 import { LoggerBase } from '../LoggerBase.js';
 import ConsoleTransformer from './ConsoleTransformer.js';
 import ConsoleLineEnum from './ConsoleLineEnum.js';
-import { txHostConfig } from '@core/globalData.js';
+import { FrameChunkAssembler } from './fxsFrameUtils.js';
+import { FRAME_FXS_CODE, FXS_CHANNEL_WIDTH_GEN8, FXS_CHANNEL_WIDTH_GEN9 } from '@shared/consoleFrames';
+import { txEnv, txHostConfig } from '@core/globalData.js';
 const console = consoleFactory(modulename);
 
 
@@ -20,11 +22,17 @@ const console = consoleFactory(modulename);
 // allow all printable
 // \x7F Delete character.
 const regexControls = /[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F]|(?:\x1B\[|\x9B)[\d;]+[@-K]/g;
+//Same as above, but letting through \x1E (record separator) and \x1F (unit separator),
+//which are used by the fxserver output framing. \x1D is still stripped, as it is reserved for txAdmin.
+const regexControlsFramed = /[\x00-\x08\x0B-\x1A\x1C\x1D\x7F]|(?:\x1B\[|\x9B)[\d;]+[@-K]/g;
 const regexColors = /\x1B[^m]*?m/g;
 
 
 export default class FXServerLogger extends LoggerBase {
-    private readonly transformer = new ConsoleTransformer();
+    private readonly transformer = new ConsoleTransformer({
+        channelWidth: txEnv.fxsIsGen9 ? FXS_CHANNEL_WIDTH_GEN9 : FXS_CHANNEL_WIDTH_GEN8,
+    });
+    private readonly frameAssembler = new FrameChunkAssembler();
     private fileBuffer = '';
     private recentBuffer = '';
     private readonly recentBufferMaxSize = 256 * 1024; //kb
@@ -114,6 +122,10 @@ export default class FXServerLogger extends LoggerBase {
      * Writes to the log that the server is booting
      */
     public logFxserverSpawn(pid: string) {
+        //Resetting the output framing detection for the new process
+        this.transformer.resetFraming();
+        this.frameAssembler.reset();
+
         //force line skip to create separation
         if (this.recentBuffer.length) {
             const lineBreak = this.transformer.lastEol ? '\n' : '\n\n';
@@ -151,6 +163,8 @@ export default class FXServerLogger extends LoggerBase {
 
     /**
      * Handles all stdio data.
+     * Output framing (gen9) is detected by the first stdout chunk starting with \x1E, and once
+     * detected it stays on until the next spawn. Stderr always goes through the legacy path.
      */
     public writeFxsOutput(
         source: ConsoleLineEnum.StdOut | ConsoleLineEnum.StdErr,
@@ -159,7 +173,24 @@ export default class FXServerLogger extends LoggerBase {
         if (typeof data !== 'string') {
             data = data.toString();
         }
-        this.ingest(source, data.replace(regexControls, ''));
+
+        //Legacy path (gen8, stderr, or framing not detected)
+        if (source !== ConsoleLineEnum.StdOut) {
+            return this.ingest(source, data.replace(regexControls, ''));
+        }
+        if (!this.transformer.isFramed) {
+            if (data.charCodeAt(0) !== FRAME_FXS_CODE) {
+                return this.ingest(source, data.replace(regexControls, ''));
+            }
+            this.transformer.isFramed = true;
+        }
+
+        //Framed path: strip controls (but not the frame separators), then hold back
+        //any partial header at the end of the chunk so it can be completed by the next one
+        const chunk = this.frameAssembler.feed(data.replace(regexControlsFramed, ''));
+        if (chunk.length) {
+            this.ingest(source, chunk);
+        }
     }
 
 

@@ -10,15 +10,13 @@ export const splitFirstLine = (str: string): SplitFirstLineResult => {
         return { first: str, rest: undefined, eol: false };
     }
 
-    const isEolCrLf = firstEolIndex > 0 && str[firstEolIndex - 1] === '\r';
-    const foundEolLength = isEolCrLf ? 2 : 1;
-    const firstEolAtEnd = firstEolIndex === str.length - foundEolLength;
-    if (firstEolAtEnd) {
+    //NOTE: \r\n needs no special handling, the split point is always after the \n
+    if (firstEolIndex === str.length - 1) {
         return { first: str, rest: undefined, eol: true };
     }
 
-    const first = str.substring(0, firstEolIndex + foundEolLength);
-    const rest = str.substring(firstEolIndex + foundEolLength);
+    const first = str.substring(0, firstEolIndex + 1);
+    const rest = str.substring(firstEolIndex + 1);
     const eol = rest[rest.length - 1] === '\n';
     return { first, rest, eol };
 };
@@ -54,7 +52,7 @@ export const stripLastEol = (str: string) => {
  * Efficiently handles strings without line breaks by returning the prefixed string.
  */
 export const prefixMultiline = (str: string, prefix: string): string => {
-    if (str.length === 0 || str === '\n') return '';
+    if (str.length === 0) return '';
     let newlineIndex = str.indexOf('\n');
 
     // If there is no newline, append the whole string and return

@@ -1,6 +1,7 @@
 import { copyToClipboard } from "@/lib/utils";
 import { TimestampMode } from "./xtermOptions";
 import { ANSI } from "./liveConsoleColors";
+import { parseFrameHeader, renderFxsChannelBracket, type FrameHeader } from "@shared/consoleFrames";
 
 
 //Yoinked from core/modules/Logger/FXServerLogger/index.ts
@@ -17,21 +18,42 @@ export const sanitizeTermLine = (data: string) => {
 
 
 /**
- * Extracts the timestamp from a term line.
- * Format defined in core/modules/Logger/FXServerLogger/ConsoleTransformer.ts
+ * Extracts the line header (timestamp, level, channel, etc) from a term line.
+ * Protocol defined in shared/consoleFrames.ts.
+ * Lines without a header are continuations of the previous line (or bare line breaks).
  */
-export const extractTermLineTimestamp = (line: string) => {
-    if (/^{§[0-9a-f]{8}}/.test(line)) {
-        return {
-            ts: parseInt(line.slice(2, 10), 16),
-            content: line.slice(11),
-        };
-    } else {
-        return {
-            ts: null,
-            content: line,
-        };
+export type TermLineHeader = FrameHeader & { ts: number };
+export const extractTermLineHeader = (line: string): { header: TermLineHeader | null, content: string } => {
+    const header = parseFrameHeader(line);
+    if (!header) {
+        return { header: null, content: line };
     }
+    return {
+        header: { ...header, ts: parseInt(header.tsHex, 16) },
+        content: line.slice(header.bodyStart),
+    };
+}
+
+
+/**
+ * Renders the channel prefix of an fxserver line, in the same format fxserver prints it:
+ * `<channelColor>[<channel>]<reset> `
+ * NOTE: the level is deliberately not rendered, it is only recorded for the filters.
+ */
+const fxsChannelPrefixCache = new Map<string, string>();
+const fxsChannelPrefixCacheMax = 512;
+export const formatFxsLinePrefix = (color: string, channel: string) => {
+    const key = color + '\x1f' + channel;
+    let channelPrefix = fxsChannelPrefixCache.get(key);
+    if (channelPrefix === undefined) {
+        const bracket = renderFxsChannelBracket(channel);
+        channelPrefix = color
+            ? `\x1b[38;5;${color}m${bracket}${ANSI.RESET} `
+            : `${bracket} `;
+        if (fxsChannelPrefixCache.size >= fxsChannelPrefixCacheMax) fxsChannelPrefixCache.clear();
+        fxsChannelPrefixCache.set(key, channelPrefix);
+    }
+    return channelPrefix;
 }
 
 
@@ -71,7 +93,8 @@ export const filterTermLine = (
     copyTag: boolean
 ) => {
     if (copyTimestamp && copyTag) return selection;
-    const lineRegex = /^(?<ts>\d{2}:\d{2}:\d{2}(?: [AP]M)? )?(?<tag>\[.{20}] )?(?<content>.*)?/;
+    //Tag formats: gen8 `[<20 chars>] `, gen9 `[<16 chars>] ` (see formatFxsLinePrefix)
+    const lineRegex = /^(?<ts>\d{2}:\d{2}:\d{2}(?: [AP]M)? )?(?<tag>\[.{20}] |\[.{16}] )?(?<content>.*)?/;
     const match = selection.match(lineRegex);
     if (!match) return selection;
     const { ts, tag, content } = match.groups ?? {};
