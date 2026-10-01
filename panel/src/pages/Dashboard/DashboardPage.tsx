@@ -19,6 +19,7 @@ import { LocalStorageKey } from '@/lib/localStorage';
 const EARLY_ACCESS_ALERT_DISMISSAL_TIME = 24 * 60 * 60 * 1000;
 
 const wasEarlyAccessAlertDismissedRecently = () => {
+    if(!window.txConsts.fxsIsGen9) return true;
     try {
         const stored = localStorage.getItem(LocalStorageKey.EnhancedEarlyAccessAlertDismissedTs);
         const dismissedAt = parseInt(stored ?? '');
@@ -36,6 +37,7 @@ function DashboardPageInner() {
     const [isAlertDismissed, setIsAlertDismissed] = useState(wasEarlyAccessAlertDismissedRecently);
 
     const dismissEarlyAccessAlert = () => {
+        if(!window.txConsts.fxsIsGen9) return;
         try {
             localStorage.setItem(
                 LocalStorageKey.EnhancedEarlyAccessAlertDismissedTs,
@@ -69,7 +71,7 @@ function DashboardPageInner() {
 
     return (
         <div className="w-full min-w-96 flex flex-col gap-4">
-            {!isAlertDismissed && (
+            {window.txConsts.fxsIsGen9 && !isAlertDismissed && (
                 <TxAlert
                     type="info"
                     ariaLabel="FiveM for GTAV Enhanced early access notice"
