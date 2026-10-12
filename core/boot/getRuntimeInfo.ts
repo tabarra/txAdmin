@@ -33,7 +33,7 @@ export type RuntimeInfo = {
 const getVersionFromConvar = (): FxsVersionInfo => {
     //Sanity check
     if (typeof GetConvar !== 'function') {
-        throw new Error(`Expected GetConvar function to be available for FXServer Gen8.`);
+        throw new Error(`Expected GetConvar function to be available for FXServer Legacy.`);
     }
 
     const versionConvar = GetConvar('version', 'unknown');

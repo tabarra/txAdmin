@@ -148,7 +148,7 @@ if (!fxsVersionInfo.valid) {
     console.error('And because of that, there is no guarantee that txAdmin will work properly.');
     console.error(`Raw version string: ${fxsVersionInfo.raw ?? '(not available)'}`);
 } else if (fxsIsGen9 && fxsVersionInfo.branch !== 'early-access') {
-    console.warn(`You are running an experimental branch of FXServer Gen9: ${fxsVersionInfo.branch}.`);
+    console.warn(`You are running an experimental branch of FXServer Enhanced: ${fxsVersionInfo.branch}.`);
 } else if (!fxsIsGen9 && fxsVersionInfo.branch !== 'master') {
     console.warn(`You are running an experimental branch of FXServer Legacy: ${fxsVersionInfo.branch}.`);
 } else if (!fxsIsGen9 && fxsVersion < minFxsGen8Version) {

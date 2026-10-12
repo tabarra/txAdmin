@@ -197,7 +197,7 @@ export default class SvRuntimeMetrics {
         if (monitorStatus.uptime < 30_000) return; //server barely booted
         if (!txCore.fxRunner.child?.isAlive) return;
         if (txEnv.fxsIsGen9 && !this.perfAuthBase64) {
-            console.verbose.warn('Perf endpoint auth missing for gen9 server, skipping collection.');
+            console.verbose.warn('Perf endpoint auth missing for Enhanced server, skipping collection.');
             return;
         }
 

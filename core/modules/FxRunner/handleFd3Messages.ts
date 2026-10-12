@@ -122,7 +122,7 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
 
         //Log the unknown method for debugging purposes
         const props = Object.keys(msg).filter(key => key !== 'method');
-        console.verbose.debug(`Unknown gen9 event: ${msg.method} {${props.join(', ')}}`);
+        console.verbose.debug(`Unknown Enhanced event: ${msg.method} {${props.join(', ')}}`);
         return;
     }
 
