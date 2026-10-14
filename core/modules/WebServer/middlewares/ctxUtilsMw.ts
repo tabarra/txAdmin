@@ -197,6 +197,7 @@ export default async function ctxUtilsMw(ctx: CtxWithVars, next: Next) {
                 csrfToken: possiblyAuthedAdmin?.csrfToken ?? 'not_set',
                 TX_BASE_PATH: (isWebInterface) ? '' : NUI_WEBPIPE_URL,
                 TX_RESOURCE_NAME: txEnv.txaResourceName,
+                isEnhanced: txEnv.fxsIsGen9,
                 PAGE_TITLE: data?.headerTitle ?? 'txAdmin',
             }),
 

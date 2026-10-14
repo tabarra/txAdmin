@@ -563,8 +563,7 @@
 
         function tagToGlass(tag) {
             if (tag === 'fivem') {
-                // return 'recipeTagFivem';
-                return 'recipeTagEnhanced';
+                return isEnhanced ? 'recipeTagEnhanced' : 'recipeTagFivem';
             } else if (tag === 'redm') {
                 return 'recipeTagRedm';
             } else {
@@ -600,7 +599,7 @@
                             const newNode = document.createElement("div");
                             newNode.innerHTML = s4PopularTemplateCardTemplate.innerHTML;
                             // newNode.classList.add('col-12', 'col-md-6', 'p-0'); //2 per line
-                            newNode.classList.add('col-8');
+                            newNode.classList.add('col-12');
                             newNode.querySelector('.titleText > strong').innerText = recipe.name;
                             newNode.querySelector('.description').innerText = recipe.description;
                             if(recipe.engine !== deployerEngineVersion){
