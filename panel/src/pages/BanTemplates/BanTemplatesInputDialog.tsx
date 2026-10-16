@@ -111,11 +111,11 @@ export default function BanTemplatesInputDialog({
                             <DialogTitle>{reasonData ? 'Edit' : 'Add'} Template</DialogTitle>
                         </DialogHeader>
                         <div className="grid grid-cols-6 items-center gap-4">
-                            <Label htmlFor="banReason" className="col-span-6 sm:col-auto">
+                            <Label htmlFor="banTemplateReason" className="col-span-6 sm:col-auto">
                                 Reason
                             </Label>
                             <AutosizeTextarea
-                                id="reason"
+                                id="banTemplateReason"
                                 placeholder="The reason for the ban, rule violated, etc."
                                 className="col-span-full sm:col-span-5"
                                 defaultValue={initialReason}
@@ -134,7 +134,7 @@ export default function BanTemplatesInputDialog({
                             />
                         </div>
                         <div className="grid grid-cols-6 items-center gap-4">
-                            <Label htmlFor="durationSelect" className="col-span-6 sm:col-auto">
+                            <Label htmlFor="banTemplateDuration" className="col-span-6 sm:col-auto">
                                 Duration
                             </Label>
                             <div className="col-span-full sm:col-span-5 space-y-1">
@@ -142,7 +142,7 @@ export default function BanTemplatesInputDialog({
                                     onValueChange={setSelectedDuration}
                                     defaultValue={selectedDuration}
                                 >
-                                    <SelectTrigger id="durationSelect" className="tracking-wide">
+                                    <SelectTrigger id="banTemplateDuration" className="tracking-wide">
                                         <SelectValue placeholder="Select Duration" />
                                     </SelectTrigger>
                                     <SelectContent className="tracking-wide">
