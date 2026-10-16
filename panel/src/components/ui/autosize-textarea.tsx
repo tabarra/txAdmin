@@ -132,7 +132,7 @@ export const AutosizeTextarea = React.forwardRef<AutosizeTextAreaRef, AutosizeTe
         });
 
         return (
-            <div className="relative w-full">
+            <div className={cn('relative w-full', className)}>
                 {counter && (
                     <span
                         className={cn(
@@ -154,7 +154,6 @@ export const AutosizeTextarea = React.forwardRef<AutosizeTextAreaRef, AutosizeTe
                         //NOTE: check if already available:
                         // https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing
                         // https://tailwindcss.com/docs/v4-beta#field-sizing-utilities
-                        className,
                     )}
                     onChange={(e) => {
                         triggerUpdate(e.target.value);
