@@ -96,7 +96,7 @@ const handleFd3Messages = (mutex: string, trace: StructuredTraceType) => {
             txCore.metrics.svRuntime.setPerfAuth(msg.user, msg.password);
             return;
         } else if (
-            msg.method === 'SetOnesyncAuth'
+            msg.method === 'SetOneSyncAuth'
             && typeof msg?.user === 'string'
             && typeof msg?.password === 'string'
         ) {
