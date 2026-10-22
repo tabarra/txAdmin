@@ -17,6 +17,19 @@ process.loadEnvFile();
 //Reset terminal
 process.stdout.write('.\n'.repeat(40) + '\x1B[2J\x1B[H');
 
+// @ts-ignore
+const isBun = typeof Bun !== 'undefined';
+const isNode = typeof process !== 'undefined' && process.versions && process.versions.node;
+
+if (isBun) {
+    // @ts-ignore
+    console.log(`[BUILDER] Running on Bun.js v${Bun.version}`);
+} else if (isNode) {
+    console.log(`[BUILDER] Running on Node.js v${process.versions.node}`);
+} else {
+    console.log('[BUILDER] Unknown JS runtime');
+}
+
 //Load the env vars, and check for the required ones
 const txDevEnv = parseTxDevEnv();
 if (!txDevEnv.FXSERVER_PATH || !txDevEnv.VITE_URL) {
@@ -58,6 +71,32 @@ fs.writeFileSync(path.join(fxsPaths.res, 'package.json'), '{"type":"commonjs"}')
 //Create txAdmin process runner
 const txInstance = new TxAdminRunner(fxsPaths.root, fxsPaths.bin, txDevEnv);
 
+if (isBun) {
+    // @ts-ignore
+    Bun.serve({
+        hostname: '127.0.0.1',
+        port: 40123,
+        fetch(request: Request) {
+            const pathname = new URL(request.url).pathname;
+            if (request.method === 'GET' && pathname === '/get-status') {
+                return Response.json(txInstance.getStatus());
+            }
+            if (request.method === 'POST' && pathname === '/restart') {
+                console.log('[BUILDER] HTTP restart requested; preserving automatic restart pause setting.');
+                txInstance.restartServer();
+                return Response.json(txInstance.getStatus());
+            }
+            if (request.method === 'POST' && (pathname === '/pause' || pathname === '/unpause')) {
+                txInstance.setAutoRestartPaused(pathname === '/pause');
+                return Response.json(txInstance.getStatus());
+            }
+            return new Response('Use GET /get-status or POST /restart, /pause, /unpause. Restart preserves autoRestartPaused.', { status: 404 });
+        },
+    });
+    console.log('[BUILDER] Runner API: http://127.0.0.1:40123 (GET /get-status, POST /restart, /pause, /unpause)');
+    console.log('[BUILDER] POST /restart preserves autoRestartPaused. POST /unpause applies any pending restart.');
+}
+
 //Listens on stdin for commands
 process.stdin.on('data', (data) => {
     const cmd = data.toString().toLowerCase().trim();
@@ -67,7 +106,7 @@ process.stdin.on('data', (data) => {
         txInstance.killServer();
         txInstance.spawnServer();
     } else if (cmd === 'p' || cmd === 'pause') {
-        txInstance.toggleRebootPause();
+        txInstance.setAutoRestartPaused(!txInstance.getStatus().autoRestartPaused);
     } else if (cmd === 'cls' || cmd === 'clear') {
         console.clear();
     }

@@ -16,8 +16,24 @@ export class TxAdminRunner {
         private readonly txDevEnv: TxDevEnvType,
     ) { }
 
-    spawnServer() {
-        if (this.isRebootingPaused) {
+    getStatus() {
+        return {
+            running: this.fxChild !== null,
+            pid: this.fxChild?.pid ?? null,
+            autoRestartPaused: this.isRebootingPaused,
+            restartPendingOnUnpause: this.hasPendingReboot,
+        };
+    }
+
+    // Manual restarts bypass the automatic restart pause without changing it.
+    restartServer() {
+        this.killServer(true);
+        this.hasPendingReboot = false;
+        this.spawnServer(true);
+    }
+
+    spawnServer(bypassAutoRestartPause = false) {
+        if (this.isRebootingPaused && !bypassAutoRestartPause) {
             console.log('[RUNNER] Boot request received, scheduling for unpause.');
             this.hasPendingReboot = true;
             return;
@@ -60,6 +76,7 @@ export class TxAdminRunner {
                     },
                 },
             );
+            this.hasPendingReboot = false;
         } catch (error) {
             console.error('[RUNNER] Failed to start FXServer with the following error:');
             console.dir(error);
@@ -72,21 +89,24 @@ export class TxAdminRunner {
         this.fxChild.stderr!.pipe(process.stderr);
 
         //Setting up event handlers
+        const spawnedChild = this.fxChild;
         this.fxChild.on('close', (code) => {
+            if (this.fxChild === spawnedChild) this.fxChild = null;
             console.log('[RUNNER] FXServer Closed.');
         });
         this.fxChild.on('error', (err) => {
             console.log('[RUNNER] FXServer Errored:');
             console.dir(err);
         });
-        this.fxChild.on('exit', () => {
+        spawnedChild.on('exit', () => {
+            if (this.fxChild === spawnedChild) this.fxChild = null;
             process.stdout.write('\n');
             console.log('[RUNNER] FXServer Exited.');
         });
     }
 
-    killServer() {
-        if (this.isRebootingPaused) return;
+    killServer(bypassAutoRestartPause = false) {
+        if (this.isRebootingPaused && !bypassAutoRestartPause) return;
         try {
             if (this.fxChild !== null) {
                 console.log('[RUNNER] killing process.');
@@ -103,10 +123,11 @@ export class TxAdminRunner {
         this.isRebootingPaused = false;
     }
 
-    toggleRebootPause() {
-        if (this.isRebootingPaused) {
+    setAutoRestartPaused(autoRestartPaused: boolean) {
+        if (this.isRebootingPaused === autoRestartPaused) return;
+        this.isRebootingPaused = autoRestartPaused;
+        if (!autoRestartPaused) {
             console.log('[RUNNER] Unpausing reboot.');
-            this.isRebootingPaused = false;
             if (this.hasPendingReboot) {
                 this.hasPendingReboot = false;
                 this.killServer();
@@ -114,7 +135,6 @@ export class TxAdminRunner {
             }
         } else {
             console.log('[RUNNER] Pausing reboot.');
-            this.isRebootingPaused = true;
         }
     }
 };
