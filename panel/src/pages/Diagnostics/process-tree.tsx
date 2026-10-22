@@ -38,7 +38,9 @@ function ProcessTreeItem({ process, level }: ProcessTreeItemProps) {
                                 <MemoryStickIcon className="w-4 h-4 text-muted-foreground" />
                                 <span className="text-muted-foreground text-xs">RAM:</span>
                             </div>
-                            <span className="font-mono font-medium text-xs">{process.memory.toFixed(1)} MB</span>
+                            <span className="font-mono font-medium text-xs">
+                                {typeof process.memory === 'number' ? `${process.memory.toFixed(1)} MB` : '--'}
+                            </span>
                         </div>
                         <div className="w-px bg-border mx-3"></div>
                         <div className="flex flex-col gap-1 items-end pl-3">
@@ -46,7 +48,9 @@ function ProcessTreeItem({ process, level }: ProcessTreeItemProps) {
                                 <CpuIcon className="w-4 h-4 text-muted-foreground" />
                                 <span className="text-muted-foreground text-xs">CPU:</span>
                             </div>
-                            <span className="font-mono font-medium text-xs">{process.cpu.toFixed(1)}%</span>
+                            <span className="font-mono font-medium text-xs">
+                                {typeof process.cpu === 'number' ? `${process.cpu.toFixed(1)}%` : '--'}
+                            </span>
                         </div>
                     </div>
                 </div>

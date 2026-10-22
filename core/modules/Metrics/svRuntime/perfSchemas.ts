@@ -76,6 +76,13 @@ export const SvRtNodeMemorySchema = z.object({
     limit: zNumberNonNegative,
 });
 
+//Payload of the txAdminLogNodeHeap event sent by resource/sv_reportHeap.js
+//NOTE: rss is the whole FXServer process memory in MB, ts is the server's Date.now()
+export const SvRtServerMemReportSchema = SvRtNodeMemorySchema.extend({
+    ts: zIntNonNegative.optional(),
+    rss: zNumberNonNegative.optional(),
+});
+
 
 //Exporting types
 export type SvRtFileType = z.infer<typeof SvRtFileSchema>;
@@ -86,6 +93,7 @@ export type SvRtLogType = (SvRtLogSvCloseType | SvRtLogSvBootType | SvRtLogDataT
 export type SvRtPerfCountsType = z.infer<typeof SvRtPerfCountsSchema>;
 export type SvRtPerfBoundariesType = z.infer<typeof SvRtPerfBoundariesSchema>;
 export type SvRtNodeMemoryType = z.infer<typeof SvRtNodeMemorySchema>;
+export type SvRtServerMemReportType = z.infer<typeof SvRtServerMemReportSchema>;
 
 export type SvRtPerfCountsThreadType = z.infer<typeof SvRtPerfCountsThreadSchema>;
 export type SvRtLogDataFilteredType = Omit<SvRtLogDataType, 'perf'> & {

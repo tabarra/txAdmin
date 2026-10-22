@@ -2,9 +2,9 @@ const modulename = 'SvRuntimeMetrics';
 import fsp from 'node:fs/promises';
 import * as d3array from 'd3-array';
 import consoleFactory from '@lib/console';
-import { SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName, SvRtNodeMemorySchema } from './perfSchemas';
+import { SvRtFileSchema, isSvRtLogDataType, isValidPerfThreadName, SvRtServerMemReportSchema } from './perfSchemas';
 import type { SvRtFileType, SvRtLogDataType, SvRtLogType, SvRtNodeMemoryType, SvRtPerfBoundariesType, SvRtPerfCountsType } from './perfSchemas';
-import { didPerfReset, diffPerfs, fetchFxsMemory, fetchRawPerfData } from './perfUtils';
+import { didPerfReset, diffPerfs, fetchRawPerfData } from './perfUtils';
 import { parseRawPerf } from './perfParser';
 import { optimizeSvRuntimeLog } from './logOptimizer';
 import { txDevEnv, txEnv } from '@core/globalData';
@@ -22,6 +22,13 @@ const console = consoleFactory(modulename);
 const LOG_DATA_FILE_VERSION = 1;
 const LOG_DATA_FILE_NAME = 'stats_svRuntime.json';
 const RAW_PERF_FILE_NAME = 'perf.txt';
+const SERVER_MEM_REPORT_MAX_AGE = 35_000; //3 missed reports, see resource/sv_reportHeap.js
+
+type ServerMemReport = {
+    ts: number;
+    nodeMemory: SvRtNodeMemoryType;
+    fxsMemory: number | undefined; //whole FXServer process, in MB
+};
 
 
 /**
@@ -33,8 +40,8 @@ export default class SvRuntimeMetrics {
     private readonly rawPerfFilePath = `${txEnv.profilePath}/data/${RAW_PERF_FILE_NAME}`;
     private perfAuthBase64: string | undefined;
     private statsLog: SvRtLogType = [];
-    private lastFxsMemory: number | undefined;
-    private lastNodeMemory: SvRtNodeMemoryType | undefined;
+    private lastServerMemReport: ServerMemReport | undefined;
+    private memReportExpiryTimer: ReturnType<typeof setTimeout> | undefined;
     private lastPerfBoundaries: SvRtPerfBoundariesType | undefined;
     private lastRawPerfData: SvRtPerfCountsType | undefined;
     private lastDiffPerfData: SvRtPerfCountsType | undefined;
@@ -74,11 +81,33 @@ export default class SvRuntimeMetrics {
 
 
     /**
-     * Reset the last perf data except boundaries
+     * Reset the last memory report from the server
      */
     private resetMemoryState() {
-        this.lastNodeMemory = undefined;
-        this.lastFxsMemory = undefined;
+        this.lastServerMemReport = undefined;
+        clearTimeout(this.memReportExpiryTimer);
+        this.memReportExpiryTimer = undefined;
+    }
+
+
+    /**
+     * Returns the last memory report from the server, if it's recent enough.
+     * Every consumer must go through here, so stale values are never shown after the
+     * reports stop (server hang/exit).
+     */
+    private getFreshServerMemReport() {
+        if (!this.lastServerMemReport) return;
+        if (Date.now() - this.lastServerMemReport.ts > SERVER_MEM_REPORT_MAX_AGE) return;
+        return this.lastServerMemReport;
+    }
+
+
+    /**
+     * Returns the whole FXServer process memory in MB, as self-reported by the server.
+     * Undefined if there is no recent report.
+     */
+    public getFxsMemory() {
+        return this.getFreshServerMemReport()?.fxsMemory;
     }
 
 
@@ -156,20 +185,32 @@ export default class SvRuntimeMetrics {
 
 
     /**
-     * Stores the last server Node.JS memory usage for later use in the data log 
+     * Stores the last server memory report (Node.js heap + whole process) for later use in the data log
      */
-    public logServerNodeMemory(payload: SvRtNodeMemoryType) {
-        const validation = SvRtNodeMemorySchema.safeParse(payload);
+    public logServerNodeMemory(payload: unknown) {
+        const validation = SvRtServerMemReportSchema.safeParse(payload);
         if (!validation.success) {
             console.verbose.warn('Invalid LogNodeHeapEvent payload:');
             console.verbose.dir(validation.error.errors);
             return;
         }
-        this.lastNodeMemory = {
-            used: payload.used,
-            limit: payload.limit,
+        const { ts, used, limit, rss } = validation.data;
+        const now = Date.now();
+        const reportTs = ts !== undefined ? Math.min(ts, now) : now; //never in the future, so it can't stay "fresh"
+        this.lastServerMemReport = {
+            ts: reportTs,
+            nodeMemory: { used, limit },
+            fxsMemory: rss,
         };
         txCore.webServer.webSocket.pushRefresh('dashboard');
+
+        //If no other report comes in (server hang), refresh the dashboard once this one expires
+        clearTimeout(this.memReportExpiryTimer);
+        const expiresInMs = Math.max(0, reportTs + SERVER_MEM_REPORT_MAX_AGE - now);
+        this.memReportExpiryTimer = setTimeout(() => {
+            this.memReportExpiryTimer = undefined;
+            txCore.webServer.webSocket.pushRefresh('dashboard');
+        }, expiresInMs + 1_000);
     }
 
 
@@ -177,9 +218,10 @@ export default class SvRuntimeMetrics {
      * Get recent stats
      */
     public getRecentStats() {
+        const serverMemReport = this.getFreshServerMemReport();
         return {
-            fxsMemory: this.lastFxsMemory,
-            nodeMemory: this.lastNodeMemory,
+            fxsMemory: serverMemReport?.fxsMemory,
+            nodeMemory: serverMemReport?.nodeMemory,
             perfBoundaries: this.lastPerfBoundaries,
             perfBucketCounts: this.lastDiffPerfData ? {
                 svMain: this.lastDiffPerfData.svMain.buckets,
@@ -209,22 +251,11 @@ export default class SvRuntimeMetrics {
         if (!netEndpoint) throw new Error(`Invalid netEndpoint: ${netEndpoint}`);
 
         const stopwatch = new TimeCounter();
-        const [fetchRawPerfDataRes, fetchFxsMemoryRes] = await Promise.allSettled([
-            fetchRawPerfData(netEndpoint, this.perfAuthBase64),
-            fetchFxsMemory(txCore.fxRunner.child.pid),
-        ]);
+        const rawPerf = await fetchRawPerfData(netEndpoint, this.perfAuthBase64);
         const collectionTime = stopwatch.stop();
-
-        if (fetchFxsMemoryRes.status === 'fulfilled') {
-            this.lastFxsMemory = fetchFxsMemoryRes.value;
-        } else {
-            this.lastFxsMemory = undefined;
-        }
-        if (fetchRawPerfDataRes.status === 'rejected') throw fetchRawPerfDataRes.reason;
 
         //Keep a copy of the latest raw /perf/ response for troubleshooting
         //NOTE: saved (async) before parsing so it's available even if the format is not recognized
-        const rawPerf = fetchRawPerfDataRes.value;
         fsp.writeFile(this.rawPerfFilePath, rawPerf).catch((error) => {
             console.verbose.warn(`Failed to save ${RAW_PERF_FILE_NAME} with message: ${(error as Error).message}`);
         });
@@ -294,12 +325,13 @@ export default class SvRuntimeMetrics {
             ts: now,
             data: perfMetrics,
         };
+        const serverMemReport = this.getFreshServerMemReport();
         const currSnapshot: SvRtLogDataType = {
             ts: now,
             type: 'data',
             players: playerCount,
-            fxsMemory: this.lastFxsMemory ?? null,
-            nodeMemory: this.lastNodeMemory?.used ?? null,
+            fxsMemory: serverMemReport?.fxsMemory ?? null,
+            nodeMemory: serverMemReport?.nodeMemory.used ?? null,
             perf: perfToSave,
         };
         this.statsLog.push(currSnapshot);

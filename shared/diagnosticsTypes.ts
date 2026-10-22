@@ -12,8 +12,8 @@ export type ProcessInfo = {
     pid: number;
     parent: number;
     name: string;
-    cpu: number;
-    memory: number;
+    cpu: number | null; //% of one core, can be above 100%, null if unknown (eg first load)
+    memory: number | null; //MB, null if unknown
 }
 
 export type DiagnosticsPageData = {

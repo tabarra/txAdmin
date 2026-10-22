@@ -2,7 +2,8 @@ const modulename = 'WebServer:DiagnosticsFuncs';
 import os from 'node:os';
 import getOsDistro from '@lib/host/getOsDistro.js';
 import getHostUsage from '@lib/host/getHostUsage';
-import pidUsageTree from '@lib/host/pidUsageTree.js';
+import getProcessTree, { type ProcessTreeSnapshot } from '@lib/host/getProcessTree';
+import { calcCpuPercent, getTreeParentPid, type CpuSample, type OsProcInfo } from '@lib/host/processTreeUtils';
 import { txEnv, txHostConfig } from '@core/globalData';
 import si from 'systeminformation';
 import consoleFactory from '@lib/console';
@@ -44,55 +45,120 @@ let _hostStaticDataCache: HostStaticDataType;
 
 
 /**
- * Gets the Processes Data.
- * FIXME: migrate to use gwmi on windows by default
+ * Process tree state, the CPU usage is calculated against the previous query (like pidusage did)
+ * NOTE: the OS query is only done on demand (diagnostics page/report), never on a timer
  */
-export const getProcessesData = async () => {
+const PROCESS_DATA_CACHE_MS = 5_000;
+const CPU_BASELINE_MAX_AGE_MS = 5 * 60_000;
+let processDataCache: { ts: number, data: ProcessInfo[] } | undefined;
+let processDataInFlight: Promise<ProcessInfo[]> | undefined;
+let cpuBaseline: Map<number, CpuSample> | undefined;
+
+
+/**
+ * Returns the display name of a process in the tree
+ */
+const getProcessName = (proc: OsProcInfo, isRoot: boolean) => {
+    if (isRoot) return 'txAdmin';
+    if (proc.isDumpServer) return 'MiniDump';
+    const exeName = proc.exeName ?? '';
+    //Windows: FXServer.exe (Legacy) or cfx-server.exe (Enhanced), Linux: musl loader
+    if (/^(fxserver|cfx-server)(\.exe)?$/i.test(exeName) || exeName.startsWith('ld-musl')) {
+        return 'FXServer';
+    }
+    return exeName || 'Unknown';
+};
+
+
+/**
+ * Converts an OS snapshot to the diagnostics process list, and updates the CPU baseline
+ */
+const snapshotToProcessInfo = (snapshot: ProcessTreeSnapshot): ProcessInfo[] => {
+    const rootPid = process.pid;
+    const treePids = new Set(snapshot.procs.map((proc) => proc.pid));
     const procList: ProcessInfo[] = [];
+    const newBaseline = new Map<number, CpuSample>();
+    for (const proc of snapshot.procs) {
+        const sample: CpuSample = {
+            ts: snapshot.ts,
+            cpuTime: proc.cpuTime,
+            startTime: proc.startTime,
+        };
+        newBaseline.set(proc.pid, sample);
+        procList.push({
+            pid: proc.pid,
+            parent: getTreeParentPid(proc, rootPid, treePids), //keeps txAdmin at the top level
+            name: getProcessName(proc, proc.pid === rootPid),
+            cpu: calcCpuPercent(cpuBaseline?.get(proc.pid), sample, CPU_BASELINE_MAX_AGE_MS),
+            memory: proc.memory !== null ? proc.memory / MEGABYTE : null,
+        });
+    }
+    cpuBaseline = newBaseline;
+    return procList;
+};
+
+
+/**
+ * Partial process list from in-process data, for when the OS query fails
+ */
+const getFallbackProcessesData = (): ProcessInfo[] => {
+    const procList: ProcessInfo[] = [{
+        pid: process.pid,
+        parent: process.ppid,
+        name: 'txAdmin',
+        cpu: null,
+        memory: process.memoryUsage.rss() / MEGABYTE,
+    }];
+    const fxChild = txCore.fxRunner.child;
+    if (fxChild?.isAlive && fxChild.pid) {
+        procList.push({
+            pid: fxChild.pid,
+            parent: process.pid,
+            name: 'FXServer',
+            cpu: null,
+            memory: txCore.metrics.svRuntime.getFxsMemory() ?? null,
+        });
+    }
+    return procList;
+};
+
+
+/**
+ * Queries the OS for the process tree, falling back to the partial list
+ */
+const fetchProcessesData = async () => {
+    let data: ProcessInfo[];
     try {
-        const txProcessId = process.pid;
-        const processes = await pidUsageTree(txProcessId);
-
-        for (const [pid, proc] of Object.entries(processes)) {
-            //NOTE: Cleaning invalid proccesses that might show up in Linux
-            if (!pid || !proc) continue;
-            const currPidInt = parseInt(pid);
-
-            let procName;
-            if (currPidInt === txProcessId) {
-                procName = 'txAdmin';
-            } else if (proc.memory <= 10 * MEGABYTE) {
-                procName = 'MiniDump';
-            } else {
-                procName = 'FXServer';
-            }
-
-            procList.push({
-                pid: currPidInt,
-                parent: proc.ppid,
-                name: procName,
-                cpu: proc.cpu,
-                memory: proc.memory / MEGABYTE,
-            });
-        }
+        const snapshot = await getProcessTree(process.pid);
+        data = snapshotToProcessInfo(snapshot);
     } catch (error) {
-        if ((error as any).code = 'ENOENT') {
-            console.error('Failed to get processes tree usage data.');
-            if (txEnv.isWindows) {
-                console.error('This is probably because the `wmic` command is not available in your system.');
-                console.error('If you are on Windows 11 or Windows Server 2025, you can enable it in the "Windows Features" settings.');
-            } else {
-                console.error('This is probably because the `ps` command is not available in your system.');
-                console.error('This command is part of the `procps` package in most Linux distributions.');
-            }
-        } else {
-            console.error('Error getting processes tree usage data.');
-            console.verbose.dir(error);
+        console.warn(`Failed to list the txAdmin process tree, showing partial data: ${(error as Error).message}`);
+        try {
+            data = getFallbackProcessesData();
+        } catch (fallbackError) {
+            data = [];
         }
     }
+    processDataCache = { ts: Date.now(), data };
+    return data;
+};
 
-    return procList;
-}
+
+/**
+ * Gets the Processes Data (txAdmin and all its descendants).
+ * Concurrent calls share the same OS query, and results are cached for a few seconds.
+ */
+export const getProcessesData = async (): Promise<ProcessInfo[]> => {
+    if (processDataCache && Date.now() - processDataCache.ts < PROCESS_DATA_CACHE_MS) {
+        return processDataCache.data;
+    }
+    if (!processDataInFlight) {
+        processDataInFlight = fetchProcessesData().finally(() => {
+            processDataInFlight = undefined;
+        });
+    }
+    return processDataInFlight;
+};
 
 
 /**
