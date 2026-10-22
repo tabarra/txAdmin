@@ -186,7 +186,7 @@ export default class SvRuntimeMetrics {
                 svNetwork: this.lastDiffPerfData.svNetwork.buckets,
                 svSync: this.lastDiffPerfData.svSync.buckets,
             } : undefined,
-        }
+        };
     }
 
 
@@ -375,7 +375,7 @@ export default class SvRuntimeMetrics {
                     perf: log.perf[threadName],
                 };
             })
-        }
+        };
     }
 
 
@@ -396,12 +396,12 @@ export default class SvRuntimeMetrics {
         let totalSnapshots = 0;
         const players = [];
         const fxsMemory = [];
-        const nodeMemory = []
+        const nodeMemory = [];
         for (const log of this.statsLog) {
             if (log.ts < tsScanWindowStart) continue;
             if (!isSvRtLogDataType(log)) continue;
             if (log.perf.svMain.count < PERF_DATA_MIN_TICKS) continue;
-            totalSnapshots++
+            totalSnapshots++;
             players.push(log.players);
             fxsMemory.push(log.fxsMemory);
             nodeMemory.push(log.nodeMemory);
