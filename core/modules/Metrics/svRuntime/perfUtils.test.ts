@@ -10,13 +10,13 @@ suite('fetchRawPerfData', () => {
     beforeEach(() => {
         gotMock.mockReset();
         gotMock.mockReturnValue({
-            text: vi.fn().mockResolvedValue('bad data'),
+            text: vi.fn().mockResolvedValue('raw perf data'),
         });
     });
 
     it('should send the precomputed basic auth when available', async () => {
         await expect(fetchRawPerfData('127.0.0.1:30120', 'encoded-auth'))
-            .rejects.toThrow('missing tickTime_');
+            .resolves.toBe('raw perf data');
         expect(gotMock).toHaveBeenCalledWith('http://127.0.0.1:30120/perf/', {
             headers: {
                 authorization: 'Basic encoded-auth',
@@ -26,7 +26,7 @@ suite('fetchRawPerfData', () => {
 
     it('should make an unauthenticated request when auth is unavailable', async () => {
         await expect(fetchRawPerfData('127.0.0.1:30120'))
-            .rejects.toThrow('missing tickTime_');
+            .resolves.toBe('raw perf data');
         expect(gotMock).toHaveBeenCalledWith('http://127.0.0.1:30120/perf/', {});
     });
 });

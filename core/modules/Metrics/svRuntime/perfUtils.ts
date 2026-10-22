@@ -2,7 +2,6 @@ import pidusage from 'pidusage';
 import { cloneDeep } from 'lodash-es';
 import type { SvRtPerfCountsType } from "./perfSchemas";
 import got from '@lib/got';
-import { parseRawPerf } from './perfParser';
 import { PERF_DATA_BUCKET_COUNT } from './config';
 import { txEnv } from '@core/globalData';
 
@@ -98,15 +97,13 @@ export const didPerfReset = (newPerf: SvRtPerfCountsType, oldPerf: SvRtPerfCount
 
 
 /**
- * Requests /perf/, parses it and returns the raw perf data
+ * Requests /perf/ and returns the raw (unparsed) prometheus text
  */
 export const fetchRawPerfData = async (netEndpoint: string, perfAuthBase64?: string) => {
     const requestOptions = perfAuthBase64
         ? { headers: { authorization: `Basic ${perfAuthBase64}` } }
         : {};
-    const currPerfRaw = await got(`http://${netEndpoint}/perf/`, requestOptions).text();
-
-    return parseRawPerf(currPerfRaw);
+    return await got(`http://${netEndpoint}/perf/`, requestOptions).text();
 }
 
 
