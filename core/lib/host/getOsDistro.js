@@ -3,8 +3,14 @@ import consoleFactory from '@lib/console';
 const console = consoleFactory(modulename);
 
 /*
-    NOTE: this is straight from @sindresorhus/windows-release, but with async functions.
-    I have windows-release dependency mostly just so I know when there are updates to it.
+    NOTE: this is ported from @sindresorhus/windows-release.
+    Local differences from upstream:
+    - Uses async execa calls instead of sync child_process/powershell-utils calls.
+    - Resolves reg.exe and powershell.exe through %SYSTEMROOT%/%WINDIR% when possible,
+      since some hosts have broken PATH env vars.
+    - Keeps the exported cached getOsDistro() wrapper around the Windows release detector.
+
+    NOTE: I have windows-release dependency mostly just so I know when there are updates to it.
 */
 import os from 'node:os';
 import execa from 'execa';
@@ -27,50 +33,102 @@ const names = new Map([
     ['4.00', '95'],
 ]);
 
-async function windowsRelease(release) {
-    const version = /(\d+\.\d+)(?:\.(\d+))?/.exec(release || os.release());
+const ntCurrentVersionKey = 'HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion';
 
-    if (release && !version) {
+//NOTE: custom code to resolve system binaries by absolute path, since some hosts
+//have broken PATH env vars. If systemroot/windir is not defined, just try the
+//bare binary name and hope for the best.
+const getSystem32BinPath = (...binPath) => {
+    const systemRoot = process.env?.SYSTEMROOT ?? process.env?.WINDIR ?? false;
+    return systemRoot
+        ? [systemRoot, 'System32', ...binPath].join('\\')
+        : binPath[binPath.length - 1];
+};
+
+const queryNtCurrentVersion = async (valueName) => {
+    try {
+        const { stdout } = await execa(
+            getSystem32BinPath('reg'),
+            ['query', ntCurrentVersionKey, '/v', valueName],
+        );
+        return stdout || '';
+    } catch {
+        return '';
+    }
+};
+
+// Server editions share version numbers with desktop editions (e.g., 10.0.26100 is both Windows 11 24H2 and Server 2025).
+// The InstallationType registry value reliably identifies server installations.
+// The CIM caption always reflects the correct server name, unlike the ProductName registry value
+// which may report an older version on newer Windows Server editions.
+const detectServerRelease = async () => {
+    const installationType = await queryNtCurrentVersion('InstallationType');
+    if (installationType && !installationType.includes('Server')) {
+        return;
+    }
+
+    let caption;
+    try {
+        const psBinary = getSystem32BinPath('WindowsPowerShell', 'v1.0', 'powershell');
+        const encodedCommand = Buffer.from(
+            '(Get-CimInstance -ClassName Win32_OperatingSystem).caption',
+            'utf16le',
+        ).toString('base64');
+        const out = await execa(psBinary, [
+            '-NoProfile',
+            '-NonInteractive',
+            '-ExecutionPolicy',
+            'Bypass',
+            '-EncodedCommand',
+            encodedCommand,
+        ]);
+        caption = out.stdout;
+    } catch { }
+
+    // Less reliable fallback for restricted environments where PowerShell is unavailable.
+    caption ||= await queryNtCurrentVersion('ProductName');
+
+    const year = caption?.match(/Server\s+(\d{4})/)?.[1];
+    if (year) {
+        return `Server ${year}`;
+    }
+};
+
+const windowsRelease = async (release) => {
+    const versionMatch = /(\d+\.\d+)(?:\.(\d+))?/.exec(release || os.release());
+
+    if (release && !versionMatch) {
         throw new Error('`release` argument doesn\'t match `n.n`');
     }
 
-    let ver = version[1] || '';
-    const build = version[2] || '';
+    let version = versionMatch[1] ?? '';
+    const build = versionMatch[2] ?? '';
 
-    // Server 2008, 2012, 2016, and 2019 versions are ambiguous with desktop versions and must be detected at runtime.
-    // If `release` is omitted or we're on a Windows system, and the version number is an ambiguous version
-    // then use `wmic` to get the OS caption: https://msdn.microsoft.com/en-us/library/aa394531(v=vs.85).aspx
-    // If `wmic` is obsolete (later versions of Windows 10), use PowerShell instead.
-    // If the resulting caption contains the year 2008, 2012, 2016, 2019 or 2022, it is a server version, so return a server OS name.
-    if ((!release || release === os.release()) && ['6.1', '6.2', '6.3', '10.0'].includes(ver)) {
-        let stdout;
+    if ((!release || release === os.release()) && ['6.1', '6.2', '6.3', '10.0'].includes(version)) {
         try {
-            const out = await execa('wmic', ['os', 'get', 'Caption']);
-            stdout = out.stdout || '';
-        } catch {
-            //NOTE: custom code to select the powershell path
-            //if systemroot/windir is not defined, just try "powershell" and hope for the best
-            const systemRoot = process.env?.SYSTEMROOT ?? process.env?.WINDIR ?? false;
-            const psBinary = systemRoot
-                ? `${systemRoot}\\System32\\WindowsPowerShell\\v1.0\\powershell`
-                : 'powershell';
-            const out = await execa(psBinary, ['(Get-CimInstance -ClassName Win32_OperatingSystem).caption']);
-            stdout = out.stdout || '';
-        }
+            const serverRelease = await detectServerRelease();
+            if (serverRelease) {
+                return serverRelease;
+            }
+        } catch { }
+    }
 
-        const year = (stdout.match(/2008|2012|2016|2019|2022/) || [])[0];
+    // Windows 11 and Windows 10 build number validation for version 10.0
+    if (version === '10.0' && build) {
+        const buildNumber = Number.parseInt(build, 10);
 
-        if (year) {
-            return `Server ${year}`;
+        if (buildNumber >= 22_000 && buildNumber <= 30_000) {
+            // Windows 11: build 22000 to 30000 (reasonable upper bound for future versions)
+            version = '10.0.2';
+        } else if (buildNumber >= 10_240 && buildNumber <= 19_045) {
+            // Windows 10: build 10240 to 19045 - keep version as '10.0'
+        } else {
+            // Invalid build number - return undefined
+            return undefined;
         }
     }
 
-    // Windows 11
-    if (ver === '10.0' && build.startsWith('2')) {
-        ver = '10.0.2';
-    }
-
-    return names.get(ver);
+    return names.get(version);
 };
 
 
@@ -87,7 +145,7 @@ export default async () => {
     } else {
         try {
             const distro = await windowsRelease();
-            _osDistro = `Windows ${distro}`;
+            _osDistro = distro ? `Windows ${distro}` : 'Windows Unknown';
         } catch (error) {
             console.warn(`Failed to detect windows version with error: ${error.message}`);
             _osDistro = `Windows Unknown`;
