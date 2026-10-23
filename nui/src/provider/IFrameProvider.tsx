@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { txAdminMenuPage, usePage } from "../state/page.state";
 import { useIsMenuVisibleValue } from "../state/visibility.state";
+import { NUI_WEBPIPE_URL } from "../utils/constants";
 
 const iFrameCtx = createContext(null);
 
@@ -27,8 +28,6 @@ export interface IFramePostData {
   data: unknown;
   __isFromChild: true;
 }
-
-export const BASE_IFRAME_PATH = "https://monitor/WebPipe";
 
 export const useIFrameCtx = () => useContext<iFrameContextValue>(iFrameCtx);
 
@@ -74,7 +73,7 @@ export const IFrameProvider: React.FC<IFrameProviderProps> = ({ children }) => {
   }, []);
 
   const fullFrameSrc = useMemo(
-    () => BASE_IFRAME_PATH + curFramePg,
+    () => NUI_WEBPIPE_URL + curFramePg,
     [curFramePg]
   );
 

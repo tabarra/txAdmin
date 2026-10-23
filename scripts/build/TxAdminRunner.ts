@@ -1,5 +1,6 @@
 import child_process from 'node:child_process';
 import { TxDevEnvType } from '../../shared/txDevEnv';
+import path from 'node:path';
 
 /**
  * Class to handle the fxserver process running txadmin
@@ -8,7 +9,6 @@ export class TxAdminRunner {
     private fxChild: child_process.ChildProcess | null = null;
     private isRebootingPaused = false;
     private hasPendingReboot = false;
-    private readonly spawnArgs: string[];
 
     constructor(
         private readonly fxsRootPath: string,
@@ -32,8 +32,22 @@ export class TxAdminRunner {
         //Starting server
         try {
             this.fxChild = child_process.spawn(
+                // //If running standalone
+                // // 'C:\\Program Files\\nodejs\\node.exe',
+                // // 'node',
+                // 'bun',
+                // [
+                //     path.join(this.fxsRootPath, 'citizen', 'system_resources', 'monitor', 'core', 'index.js'),
+                //     // path.join(this.fxsRootPath, 'system_resources', 'txadmin', 'core', 'index.js'),
+                //     '--fxspath',
+                //     this.fxsRootPath,
+                //     ...(this.txDevEnv.LAUNCH_ARGS ?? [])
+                // ],
+
+                //If running fxserver
                 this.fxsBinPath,
                 this.txDevEnv.LAUNCH_ARGS ?? [],
+
                 {
                     // stdio: "inherit",
                     cwd: this.fxsRootPath,

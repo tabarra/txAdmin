@@ -18,6 +18,11 @@ end
 --  handling and caching.
 -- =============================================
 
+-- TODO: remove https://txadmin/ from gen9, probably not needed anymore
+local gen8FrameAncestors = 'frame-ancestors https://monitor/ https://cfx-nui-monitor/ nui://game/'
+local gen9FrameAncestors = 'frame-ancestors https://txadmin/ https://cfx-nui-txadmin/ nui://ui/'
+local cspFrameAncestors = IS_FIVEM_GEN8 and gen8FrameAncestors or gen9FrameAncestors
+
 local _pipeLastReject
 local _pipeFastCache = {}
 
@@ -112,9 +117,10 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
     -- fixing body for error pages (eg 404)
     -- this is likely because of how json.encode() interprets null and an empty table
     data = data or ''
+    -- TODO: remove this, probably not needed anymore
     resultHeaders['x-badcast-fix'] = 'https://youtu.be/LDU_Txk06tM' -- fixed in artifact v3996
     --https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
-    resultHeaders['Content-Security-Policy'] = 'frame-ancestors https://monitor/ https://cfx-nui-monitor/ nui://game/'
+    resultHeaders['Content-Security-Policy'] = cspFrameAncestors
 
     -- fixing redirects
     if resultHeaders.Location then
@@ -161,5 +167,6 @@ RegisterNetEvent('txsv:webpipe:req', function(callbackId, method, path, headers,
     end
 
     sendResponse(s, callbackId, httpCode, path, data, resultHeaders)
+    -- TODO: use the timeoutNoResponse option with 30s for for /socket.io/ requests
   end, method, body, headers, {followLocation = false})
 end)

@@ -38,7 +38,7 @@ export default function TmpSocket() {
             setIsOffline(false);
         });
         socketRef.current.on('disconnect', (message) => {
-            console.log("Console Socket.IO Disonnected:", message);
+            console.log("Console Socket.IO Disconnected:", message);
             setIsOffline(true);
         });
         socketRef.current.on('error', (error) => {

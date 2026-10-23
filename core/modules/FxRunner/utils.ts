@@ -25,7 +25,7 @@ export const childProcessEventBlackHole = (...args: any[]) => {
 /**
  * Returns a tuple with the convar name and value, formatted for the server command line
  */
-export const getMutableConvars = (isCmdLine = false) => {
+export const getMutableConvars = (isSpawnArg = false) => {
     const checkPlayerJoin = txConfig.banlist.enabled || (
         txConfig.whitelist.mode !== 'disabled'
         && txConfig.whitelist.mode !== 'external'
@@ -57,23 +57,25 @@ export const getMutableConvars = (isCmdLine = false) => {
         && txConfig.whitelist.mode !== 'adminOnly'
         && txConfig.whitelist.rejectionMessage
     ) {
-        const instructions = isCmdLine
+        const instructions = isSpawnArg
             ? txConfig.whitelist.rejectionMessage.replaceAll('\n', '\\n')
             : txConfig.whitelist.rejectionMessage;
         convars.push(['sets', 'sv_allowlistInstructions', instructions]);
-    } else {
+    } else if (!isSpawnArg) {
+        //NOTE: fxserver appears to skip empty string arguments (even `""`)
+        // so we only set it if we're not in spawn arg mode
         convars.push(['sets', 'sv_allowlistInstructions', '']);
     }
 
-    return convars.map((c) => polishConvarSetTuple(c, isCmdLine));
+    return convars.map((c) => polishConvarSetTuple(c, isSpawnArg));
 };
 
 type RawConvarSetTuple = [setter: string, name: string, value: any];
 type ConvarSetTuple = [setter: string, name: string, value: string];
 
-const polishConvarSetTuple = ([setter, name, value]: RawConvarSetTuple, isCmdLine = false): ConvarSetTuple => {
+const polishConvarSetTuple = ([setter, name, value]: RawConvarSetTuple, isSpawnArg = false): ConvarSetTuple => {
     return [
-        isCmdLine ? `+${setter}` : setter,
+        isSpawnArg ? `+${setter}` : setter,
         name.startsWith('sv_') ? name : 'txAdmin-' + name,
         value.toString(),
     ];
@@ -97,20 +99,24 @@ const txCoreEndpoint = txHostConfig.netInterface
 let osSpawnVars: OsSpawnVars;
 if (txEnv.isWindows) {
     osSpawnVars = {
-        bin: `${txEnv.fxsPath}/FXServer.exe`,
+        bin: txEnv.fxsBinaryPath,
         args: [],
     };
 } else {
     const alpinePath = path.resolve(txEnv.fxsPath, '../../');
-    osSpawnVars = {
-        bin: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
-        args: [
-            '--library-path', `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
-            '--',
-            `${alpinePath}/opt/cfx-server/FXServer`,
-            '+set', 'citizen_dir', `${alpinePath}/opt/cfx-server/citizen/`,
-        ],
-    };
+    const args = [
+        '--library-path', `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
+        '--',
+        txEnv.fxsBinaryPath,
+    ]
+    let bin;
+    if (txEnv.fxsIsGen9) {
+        bin = `${alpinePath}/lib/ld-musl-x86_64.so.1`;
+    } else {
+        bin = `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`;
+        args.push('+set', 'citizen_dir', `${alpinePath}/opt/cfx-server/citizen/`);
+    }
+    osSpawnVars = { bin, args };
 }
 
 type OsSpawnVars = {
@@ -129,7 +135,7 @@ export const getFxSpawnVariables = (): FxSpawnVariables => {
         ...osSpawnVars.args,
         getMutableConvars(true), //those are the ones that can change without restart
         txConfig.server.startupArgs,
-        '+set', 'onesync', txConfig.server.onesync,
+        txEnv.fxsIsGen9 ? [] : ['+set', 'onesync', txConfig.server.onesync],
         '+sets', 'txAdmin-version', txEnv.txaVersion,
         '+setr', 'txAdmin-menuEnabled', txConfig.gameFeatures.menuEnabled,
         '+set', 'txAdmin-luaComHost', txCoreEndpoint,
@@ -245,7 +251,7 @@ export const stringifyConsoleArgs = (args: (string | number | object)[]) => {
 
 
 /**
- * Copies the custom locale file from txData to the 'monitor' path, due to sandboxing.
+ * Copies the custom locale file from txData to the resource path, due to sandboxing.
  * FIXME: move to core/lib/fxserver/runtimeFiles.ts
  */
 export const setupCustomLocaleFile = async () => {

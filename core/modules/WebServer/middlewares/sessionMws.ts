@@ -96,22 +96,38 @@ const isValidSessId = (sessId: string) => {
 
 
 /**
+ * Checks a X-Forwarded-Proto header for 'https' as the client-facing hop (first value
+ * in a comma-separated chain), case-insensitively.
+ */
+export const isForwardedHttps = (header: unknown): boolean => {
+    if (typeof header !== 'string' || !header.length) return false;
+    const firstHop = header.split(',')[0].trim().toLowerCase();
+    return firstHop === 'https';
+}
+
+
+/**
  * Middleware factory to add sessTools to the koa context.
  */
 export const koaSessMw = (cookieName: string, store: SessionMemoryStorage) => {
-    const cookieOptions = {
+    const baseCookieOptions = {
         path: '/',
         maxAge: store.maxAgeMs,
         httpOnly: true,
         sameSite: 'lax',
-        secure: false,
         overwrite: true,
         signed: false,
-
     } as KoaCookieSetOption;
 
     //Middleware
     return (ctx: RawKoaCtx, next: Next) => {
+        //We don't enable koa's `app.proxy` (ctx.ip/ctx.protocol stay based on the raw
+        //socket everywhere else), so we read X-Forwarded-Proto here directly, scoped to
+        //just this cookie's Secure attribute. Worst case if the header lies is the cookie
+        //failing to send over plain HTTP - never a downgrade of an actually-TLS request.
+        const isRequestSecure = ctx.secure || isForwardedHttps(ctx.headers['x-forwarded-proto']);
+        const cookieOptions = { ...baseCookieOptions, secure: isRequestSecure } as KoaCookieSetOption;
+
         const sessGet = () => {
             const sessId = ctx.cookies.get(cookieName);
             if (!sessId || !isValidSessId(sessId)) return;

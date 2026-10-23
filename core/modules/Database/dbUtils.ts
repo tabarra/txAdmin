@@ -46,8 +46,8 @@ const printDiagnostics = async () => {
     console.error(`Uptime: ${uptime}`);
     console.error(`Entropy: ${entropy}`);
     console.error(`Distro: ${osDistro}`);
-    console.error(`txAdmin: ${txEnv.txaVersion}`);
-    console.error(`FXServer: ${txEnv.fxsVersionTag}`);
+    console.error(`txAdmin: v${txEnv.txaVersion}`);
+    console.error(`FXServer: b${txEnv.fxsVersionTag}`);
     console.error(`Provider: ${txHostConfig.providerName ?? 'none'}`);
     console.error(`Unique Test: secure ${secureStorage.size}/100, non-secure ${nonsecureStorage.size}/100`);
 };

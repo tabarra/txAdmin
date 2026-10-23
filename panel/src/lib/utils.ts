@@ -50,9 +50,14 @@ export const getSocket = (rooms: string[] | string) => {
         }
     };
 
+    //NOTE:NUIFIX
+    const NUI_ORIGIN = window.txConsts.fxsIsGen9
+        ? 'https://cfx-nui-txadmin'
+        : 'https://monitor';
+
     const socket = window.txConsts.isWebInterface
         ? io({ ...socketOpts, path: '/socket.io' })
-        : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
+        : io(NUI_ORIGIN, { ...socketOpts, path: '/WebPipe/socket.io' });
 
     //Can't use the generic type on io(), so need to apply it here
     return socket as Socket<ListenEventsMap, any>;
@@ -198,15 +203,15 @@ export const downloadTextFile = (content: string, fileName: string, fileType: 't
         const a = document.createElement('a');
         a.href = url;
         a.download = `${fileName}.${fileType}`;
-        
+
         // Make the link invisible
         a.style.display = 'none';
-        
+
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         return true;
     } catch (error) {
         console.error('downloadTextFile failed:', error);

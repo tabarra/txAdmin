@@ -176,7 +176,8 @@ export default class FxRunner {
             return errMsg;
         }
 
-        //Reseting monitor stats
+        //Resetting server-scoped runtime state
+        txCore.metrics.svRuntime.resetPerfAuth();
         txCore.fxMonitor.resetState();
 
         //Resetting frontend playerlist
@@ -204,6 +205,14 @@ export default class FxRunner {
             {
                 cwd: fxSpawnVars.dataPath,
                 stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
+                //FIXME: none of these worked
+                // env: {
+                //     'TERM': 'xterm-256color',
+                //     'FORCE_COLOR': '3',
+                //     'COLORTERM': 'truecolor',
+                //     'CLICOLOR': '1',
+                //     'CLICOLOR_FORCE': '1',
+                // },
             },
         );
         if (!isValidChildProcess(childProc)) {

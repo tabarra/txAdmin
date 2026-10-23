@@ -84,11 +84,11 @@ export const usePlayerListListener = () => {
     if (curPage !== txAdminMenuPage.Players) return;
 
     // Getting detailed playerlist
-    fetchNui("signalPlayersPageOpen", {}, { mockResp: {} }).catch();
+    fetchNui("signalPlayersPageOpen");
 
     // Getting detailed playerlist every 5 seconds
     const updaterInterval = window.setInterval(() => {
-      fetchNui("signalPlayersPageOpen", {}, { mockResp: {} }).catch();
+      fetchNui("signalPlayersPageOpen");
     }, 5000);
 
     return () => {

@@ -288,7 +288,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
             return txToast.error({
                 title: 'You cannot set OneSync in Startup Arguments.',
                 md: true,
-                msg: 'Please use the selectbox below it.',
+                msg: 'txAdmin manages this argument; use the OneSync setting when available.',
             });
         }
         pageCtx.saveChanges(cardCtx, localConfigs);
@@ -439,7 +439,7 @@ export default function ConfigCardFxserver({ cardCtx, pageCtx }: SettingsCardPro
                     <strong>Warning:</strong> You almost certainly should not use this option, commands and convars should be placed in your <InlineCode>server.cfg</InlineCode> instead.
                 </SettingItemDesc>
             </SettingItem>
-            <SettingItem label="OneSync" htmlFor={cfg.onesync.eid} showIf={showAdvanced}>
+            <SettingItem label="OneSync" htmlFor={cfg.onesync.eid} showIf={showAdvanced && !window.txConsts.fxsIsGen9}>
                 <Select
                     value={states.onesync}
                     onValueChange={cfg.onesync.state.set as any}

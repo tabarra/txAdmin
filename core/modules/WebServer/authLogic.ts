@@ -230,10 +230,24 @@ export const nuiAuthLogic = (
         // DEBUG
         // throw new Error('make sure you know what you are doing');
         // return successResp(new AuthedAdmin({
-        //     name: 'tempadmin',
-        //     master: true,
-        //     permissions: ['all_permissions'],
+        //     name: 'non-admin',
+        //     master: false,
         //     password_temporary: false,
+        //     permissions: [
+        //         "settings.view",
+        //         "server.log.view",
+        //         "menu.vehicle",
+        //         "menu.clear_area",
+        //         "menu.viewids",
+        //         "players.direct_message",
+        //         "players.warn",
+        //         "players.freeze",
+        //         "players.heal",
+        //         "players.playermode",
+        //         "players.spectate",
+        //         "players.teleport",
+        //         "players.troll"
+        //       ],
         // }), undefined);
 
         // Check missing headers

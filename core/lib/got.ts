@@ -6,7 +6,7 @@ export default got.extend({
         request: 5000
     },
     headers: {
-        'User-Agent': `txAdmin ${txEnv.txaVersion}`,
+        'User-Agent': `txAdmin v${txEnv.txaVersion}`,
     },
     localAddress: txHostConfig.netInterface,
 });

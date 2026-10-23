@@ -271,7 +271,7 @@ function ChangeIdentifiersTab() {
                             }}
                         />
                         <p className="text-sm text-muted-foreground">
-                            Your identifier can be found by clicking in your name in the playerlist and going to the IDs page. <br />
+                            Your identifier can be found by clicking at your name in the playerlist and going to the IDs page. 
                             You can also type in your <TxAnchor href="https://forum.cfx.re/">forum.cfx.re</TxAnchor> username and it will be converted automatically. <br />
                             This is required if you want to login using the Cfx.re button.
                         </p>

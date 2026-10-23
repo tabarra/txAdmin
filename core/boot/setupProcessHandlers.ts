@@ -13,12 +13,17 @@ export default function setupProcessHandlers() {
     Error.stackTraceLimit = 25;
     process.removeAllListeners('warning'); //FIXME: this causes errors in Bun
     process.on('warning', (warning) => {
-        //totally ignoring the warning, we know this is bad and shouldn't happen
-        if (warning.name === 'UnhandledPromiseRejectionWarning') return;
-
-        if (warning.name !== 'ExperimentalWarning' || txDevEnv.ENABLED) {
-            console.verbose.dir(warning, { multilineError: true });
+        //Ignoring a few warnings if not in dev mode
+        if (!txDevEnv.ENABLED) {
+            if (warning.name === 'UnhandledPromiseRejectionWarning') return;
+            if (warning.name === 'ExperimentalWarning') return;
+            if ('code' in warning) {
+                //`url.parse()` from engine.io parsing the Socket.IO request query; reviewed as non-problematic in this context.
+                if (warning.code === 'DEP0169') return;
+            }
         }
+
+        console.verbose.dir(warning, { multilineError: true });
     });
 
     //Handle "the unexpected"

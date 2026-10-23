@@ -30,7 +30,7 @@ export class LoggerBase {
         //Sanity check
         if (!basePath || !logName) throw new Error('Missing constructor parameters');
         this.basePath = basePath;
-        this.activeFilePath = path.join(basePath, `${logName}.log`);
+        this.activeFilePath = path.posix.join(basePath, `${logName}.log`);
         this.logNameRegex = new RegExp(`^${logName}(_\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}(_\\d+)?)?.log$`);
 
         //If disabled

@@ -39,6 +39,10 @@ export type InjectedTxConsts = {
     txaVersion: string;
     txaOutdated: UpdateDataType,
 
+    //Gen8 vs Gen9
+    txaResourceName: string;
+    fxsIsGen9: boolean;
+
     serverTimezone: string;
     isWindows: boolean;
     isWebInterface: boolean;

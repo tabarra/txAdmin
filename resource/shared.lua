@@ -30,17 +30,43 @@ end
 -- print(GetConvarBool2('yyy')) -- false
 -- print("==========================")
 
-
 -- Setting game-specific global vars
 local envName = GetGameName()
+IS_REDM = false
+IS_FIVEM_GEN8 = false
+IS_FIVEM_GEN9 = false
 if envName == 'fxserver' then
   local gameConvar = GetConvar('gamename', 'gta5')
-  GAME_NAME = gameConvar == 'gta5' and 'fivem' or 'redm'
+  if gameConvar == 'redm' then
+    GAME_NAME = 'redm'
+  elseif gameConvar == 'gta5' then
+    IS_FIVEM_GEN8 = true
+    GAME_NAME = 'fivem'
+  elseif gameConvar == 'gta5enhanced' then
+    IS_FIVEM_GEN9 = true
+    GAME_NAME = 'fivem'
+  else
+    error("Unknown gamename convar: " .. gameConvar)
+  end
 else
   GAME_NAME = envName
+  if GAME_NAME == 'fivem' then
+    IS_FIVEM_GEN9 = type(IsGameEnhancedVersion) == "function" and IsGameEnhancedVersion()
+    IS_FIVEM_GEN8 = not IS_FIVEM_GEN9
+  end
 end
 IS_FIVEM = GAME_NAME == 'fivem'
 IS_REDM = GAME_NAME == 'redm'
+
+-- print("Shared vars:", json.encode({
+--   envName=envName,
+--   gameConvar=GetConvar('gamename', 'invalid'),
+--   GAME_NAME=GAME_NAME,
+--   IS_REDM=IS_REDM,
+--   IS_FIVEM_GEN8=IS_FIVEM_GEN8,
+--   IS_FIVEM_GEN9=IS_FIVEM_GEN9,
+--   IS_FIVEM=IS_FIVEM,
+-- }, {indent=true}))
 
 -- Setting global enable/disable variable for all sv_*.lua files
 -- NOTE: not available on client
@@ -53,7 +79,7 @@ TX_MENU_ENABLED = GetConvarBool('txAdmin-menuEnabled')
 -- On the client, this is updated by receiving a `txcl:setDebugMode` event.
 -- On the server, this is updated by running txaSetDebugMode on Live Console
 TX_DEBUG_MODE = GetConvarBool('txAdmin-debugMode')
-
+-- TX_DEBUG_MODE = true --DEBUG:remove
 
 --- Internal helper to format txAdmin console messages
 local function _formatTxString(args)

@@ -6,14 +6,6 @@ module.exports = {
     },
     globals: {
         GlobalData: 'writable',
-        ExecuteCommand: 'readonly',
-        GetConvar: 'readonly',
-        GetCurrentResourceName: 'readonly',
-        GetPasswordHash: 'readonly',
-        GetResourceMetadata: 'readonly',
-        GetResourcePath: 'readonly',
-        IsDuplicityVersion: 'readonly',
-        VerifyPasswordHash: 'readonly',
     },
     extends: [],
     ignorePatterns: [

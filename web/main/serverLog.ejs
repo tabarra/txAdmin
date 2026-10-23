@@ -229,9 +229,14 @@
                 query: { rooms }
             };
 
+            //NOTE:NUIFIX
+            const NUI_ORIGIN = TX_RESOURCE_NAME === 'txadmin' 
+                ? 'https://cfx-nui-txadmin' 
+                : 'https://monitor';
+
             const socket = isWebInterface
                 ? io({ ...socketOpts, path: '/socket.io' })
-                : io('monitor', { ...socketOpts, path: '/WebPipe/socket.io' });
+                : io(NUI_ORIGIN, { ...socketOpts, path: '/WebPipe/socket.io' });
 
             socket.on('logout', () => {
                 console.log('Received logout command from websocket.');
@@ -283,7 +288,7 @@
             logContainer.innerHTML = '';
         });
         pageSocket.on('disconnect', (message) => {
-            console.log("Page Socket.IO Disonnected:", message);
+            console.log("Page Socket.IO Disconnected:", message);
         });
         pageSocket.on('logData', processLog);
 

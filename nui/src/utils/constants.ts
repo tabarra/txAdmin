@@ -351,3 +351,69 @@ export const MockedPlayerDetails: PlayerModalSuccess = {
         "tsLastConnection": 1667708940
     }
 };
+
+//NOTE:NUIFIX
+//FIXME: cleanup this file, this is not very elegant
+type NuiGenInfo = { resourceName: 'monitor', isGen9: false } | { resourceName: 'txadmin', isGen9: true };
+const resolveResourceName = (): NuiGenInfo => {
+    const origin = window.location.origin;
+    if (origin === 'https://cfx-nui-monitor') {
+        //gen8, expected
+        return { resourceName: 'monitor', isGen9: false };
+    } else if (origin === 'https://monitor' || origin === 'nui://monitor') {
+        //gen8, should not happen
+        return { resourceName: 'monitor', isGen9: false };
+    } else if (origin === 'https://cfx-nui-txadmin') {
+        //gen9, expected
+        return { resourceName: 'txadmin', isGen9: true };
+    } else if (origin === 'https://txadmin' || origin === 'nui://txadmin') {
+        //gen9, should not happen
+        return { resourceName: 'txadmin', isGen9: true };
+    }
+
+    //trying the native
+    const nativeResName = (globalThis as any)?.GetParentResourceName();
+    if (nativeResName === 'monitor') {
+        return { resourceName: 'monitor', isGen9: false };
+    } else if (nativeResName === 'txadmin') {
+        return { resourceName: 'txadmin', isGen9: true };
+    }
+
+    //last resort
+    const ancestorOrigins = [...window.location.ancestorOrigins];
+    if (ancestorOrigins.includes('nui://game/')) {
+        return { resourceName: 'monitor', isGen9: false };
+    } else if (ancestorOrigins.includes('nui://ui/')) {
+        return { resourceName: 'txadmin', isGen9: true };
+    }
+
+    //Welp, we tried... Log it then default to monitor
+    console.error('nui:resolveResourceName: failed to resolve resource env', {
+        origin,
+        ancestorOrigins,
+        nativeResName,
+    });
+    return { resourceName: 'monitor', isGen9: false };
+}
+
+const genInfo = resolveResourceName();
+export const TXA_RESOURCE_NAME = genInfo.resourceName; //unused
+export const IS_GEN9 = genInfo.isGen9; //unused
+
+export const NUI_CALLBACK_URL = IS_GEN9
+    ? `https://cfx-nui-txadmin` as const
+    : `https://monitor` as const;
+
+export const NUI_WEBPIPE_URL = IS_GEN9
+    ? `https://cfx-nui-txadmin/WebPipe` as const
+    : `https://monitor/WebPipe` as const;
+
+//DEBUG:NUIFIX
+// console.log('nui:constants', {
+//     IS_GEN9,
+//     TXA_RESOURCE_NAME,
+//     NUI_CALLBACK_URL,
+//     NUI_WEBPIPE_URL,
+//     origin: window.location.origin,
+//     ancestors: [...window.location.ancestorOrigins].join(', '),
+// });

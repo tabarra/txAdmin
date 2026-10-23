@@ -18,65 +18,97 @@ const perfValidExample = `# HELP tickTime Time spent on server ticks
 # TYPE tickTime histogram
 tickTime_count{name="svNetwork"} 1840805
 tickTime_sum{name="svNetwork"} 76.39499999999963
-tickTime_bucket{name="svNetwork",le="0.005"} 1840798
-tickTime_bucket{name="svNetwork",le="0.01"} 1840804
-tickTime_bucket{name="svNetwork",le="0.025"} 1840805
+tickTime_bucket{name="svNetwork",le="0.001"} 1840798
+tickTime_bucket{name="svNetwork",le="0.002"} 1840804
+tickTime_bucket{name="svNetwork",le="0.004"} 1840805
+tickTime_bucket{name="svNetwork",le="0.006"} 1840805
+tickTime_bucket{name="svNetwork",le="0.008"} 1840805
+tickTime_bucket{name="svNetwork",le="0.01"} 1840805
+tickTime_bucket{name="svNetwork",le="0.015"} 1840805
+tickTime_bucket{name="svNetwork",le="0.02"} 1840805
+tickTime_bucket{name="svNetwork",le="0.03"} 1840805
 tickTime_bucket{name="svNetwork",le="0.05"} 1840805
-tickTime_bucket{name="svNetwork",le="0.075"} 1840805
+tickTime_bucket{name="svNetwork",le="0.07"} 1840805
 tickTime_bucket{name="svNetwork",le="0.1"} 1840805
+tickTime_bucket{name="svNetwork",le="0.15"} 1840805
 tickTime_bucket{name="svNetwork",le="0.25"} 1840805
-tickTime_bucket{name="svNetwork",le="0.5"} 1840805
-tickTime_bucket{name="svNetwork",le="0.75"} 1840805
-tickTime_bucket{name="svNetwork",le="1"} 1840805
-tickTime_bucket{name="svNetwork",le="2.5"} 1840805
-tickTime_bucket{name="svNetwork",le="5"} 1840805
-tickTime_bucket{name="svNetwork",le="7.5"} 1840805
-tickTime_bucket{name="svNetwork",le="10"} 1840805
 tickTime_bucket{name="svNetwork",le="+Inf"} 1840805
 tickTime_count{name="svSync"} 2268704
 tickTime_sum{name="svSync"} 1091.617999988212
-tickTime_bucket{name="svSync",le="0.005"} 2267516
-tickTime_bucket{name="svSync",le="0.01"} 2268532
-tickTime_bucket{name="svSync",le="0.025"} 2268664
-tickTime_bucket{name="svSync",le="0.05"} 2268685
-tickTime_bucket{name="svSync",le="0.075"} 2268686
-tickTime_bucket{name="svSync",le="0.1"} 2268688
-tickTime_bucket{name="svSync",le="0.25"} 2268703
-tickTime_bucket{name="svSync",le="0.5"} 2268704
-tickTime_bucket{name="svSync",le="0.75"} 2268704
-tickTime_bucket{name="svSync",le="1"} 2268704
-tickTime_bucket{name="svSync",le="2.5"} 2268704
-tickTime_bucket{name="svSync",le="5"} 2268704
-tickTime_bucket{name="svSync",le="7.5"} 2268704
-tickTime_bucket{name="svSync",le="10"} 2268704
+tickTime_bucket{name="svSync",le="0.001"} 2267516
+tickTime_bucket{name="svSync",le="0.002"} 2268532
+tickTime_bucket{name="svSync",le="0.004"} 2268664
+tickTime_bucket{name="svSync",le="0.006"} 2268685
+tickTime_bucket{name="svSync",le="0.008"} 2268686
+tickTime_bucket{name="svSync",le="0.01"} 2268688
+tickTime_bucket{name="svSync",le="0.015"} 2268703
+tickTime_bucket{name="svSync",le="0.02"} 2268704
+tickTime_bucket{name="svSync",le="0.03"} 2268704
+tickTime_bucket{name="svSync",le="0.05"} 2268704
+tickTime_bucket{name="svSync",le="0.07"} 2268704
+tickTime_bucket{name="svSync",le="0.1"} 2268704
+tickTime_bucket{name="svSync",le="0.15"} 2268704
+tickTime_bucket{name="svSync",le="0.25"} 2268704
 tickTime_bucket{name="svSync",le="+Inf"} 2268704
 tickTime_count{name="svMain"} 355594
 tickTime_sum{name="svMain"} 1330.458999996208
-tickTime_bucket{name="svMain",le="0.005"} 299261
-tickTime_bucket{name="svMain",le="0.01"} 327819
-tickTime_bucket{name="svMain",le="0.025"} 352052
-tickTime_bucket{name="svMain",le="0.05"} 354360
-tickTime_bucket{name="svMain",le="0.075"} 354808
-tickTime_bucket{name="svMain",le="0.1"} 355262
-tickTime_bucket{name="svMain",le="0.25"} 355577
-tickTime_bucket{name="svMain",le="0.5"} 355591
-tickTime_bucket{name="svMain",le="0.75"} 355591
-tickTime_bucket{name="svMain",le="1"} 355592
-tickTime_bucket{name="svMain",le="2.5"} 355593
-tickTime_bucket{name="svMain",le="5"} 355593
-tickTime_bucket{name="svMain",le="7.5"} 355593
-tickTime_bucket{name="svMain",le="10"} 355593
+tickTime_bucket{name="svMain",le="0.001"} 299261
+tickTime_bucket{name="svMain",le="0.002"} 327819
+tickTime_bucket{name="svMain",le="0.004"} 352052
+tickTime_bucket{name="svMain",le="0.006"} 354360
+tickTime_bucket{name="svMain",le="0.008"} 354808
+tickTime_bucket{name="svMain",le="0.01"} 355262
+tickTime_bucket{name="svMain",le="0.015"} 355577
+tickTime_bucket{name="svMain",le="0.02"} 355591
+tickTime_bucket{name="svMain",le="0.03"} 355591
+tickTime_bucket{name="svMain",le="0.05"} 355592
+tickTime_bucket{name="svMain",le="0.07"} 355593
+tickTime_bucket{name="svMain",le="0.1"} 355593
+tickTime_bucket{name="svMain",le="0.15"} 355593
+tickTime_bucket{name="svMain",le="0.25"} 355593
 tickTime_bucket{name="svMain",le="+Inf"} 355594`;
 
 suite('parseRawPerf', () => {
     it('should parse the perf data correctly', () => {
         const result = parseRawPerf(perfValidExample);
-        expect(result.perfBoundaries).toEqual([0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10, '+Inf']);
+        expect(result.perfBoundaries).toEqual([0.001, 0.002, 0.004, 0.006, 0.008, 0.01, 0.015, 0.02, 0.03, 0.05, 0.07, 0.1, 0.15, 0.25, '+Inf']);
         expect(result.perfMetrics.svNetwork.count).toBe(1840805);
         expect(result.perfMetrics.svSync.count).toBe(2268704);
         expect(result.perfMetrics.svMain.count).toBe(355594);
         expect(result.perfMetrics.svSync.sum).toBe(1091.617999988212);
         expect(result.perfMetrics.svMain.buckets).toEqual([299261, 28558, 24233, 2308, 448, 454, 315, 14, 0, 1, 1, 0, 0, 0, 1]);
+    });
+
+    it('should select the GameServer instance when a thread has multiple instances', () => {
+        const gameServerPerf = perfValidExample.replaceAll(
+            '{name="svNetwork"',
+            '{instance="GameServer",name="svNetwork"',
+        );
+        const voiceServerPerf = perfValidExample
+            .split('\n')
+            .filter((line) => line.includes('{name="svNetwork"'))
+            .map((line) => line
+                .replace('{name="svNetwork"', '{instance="VoiceServer",name="svNetwork"')
+                .replace(/\s\S+$/, ' 42'))
+            .join('\n');
+
+        const result = parseRawPerf(`${voiceServerPerf}\n${gameServerPerf}`);
+        expect(result.perfMetrics.svNetwork.count).toBe(1840805);
+        expect(result.perfMetrics.svNetwork.sum).toBe(76.39499999999963);
+    });
+
+    it('should accept zero-valued metrics while the server is starting', () => {
+        const perfWithZeroNetworkMetrics = perfValidExample
+            .split('\n')
+            .map((line) => line.includes('{name="svNetwork"')
+                ? line.replace(/\s\S+$/, ' 0')
+                : line)
+            .join('\n');
+
+        const result = parseRawPerf(perfWithZeroNetworkMetrics);
+        expect(result.perfMetrics.svNetwork.count).toBe(0);
+        expect(result.perfMetrics.svNetwork.sum).toBe(0);
+        expect(result.perfMetrics.svNetwork.buckets).toEqual(Array(15).fill(0));
     });
 
     it('should detect bad perf output', () => {
@@ -92,7 +124,7 @@ suite('parseRawPerf', () => {
     it('should handle bad data', () => {
         expect(() => parseRawPerf(123 as any)).toThrow('string expected');
 
-        let targetLine = 'tickTime_bucket{name="svMain",le="10"} 355593';
+        let targetLine = 'tickTime_bucket{name="svMain",le="0.25"} 355593';
         let perfModifiedExample = perfValidExample.replace(targetLine, '');
         expect(() => parseRawPerf(perfModifiedExample)).toThrow('invalid bucket boundaries');
 

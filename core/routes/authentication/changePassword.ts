@@ -3,6 +3,7 @@ import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@lib/console';
 import consts from '@shared/consts';
 import { GenericApiResp } from '@shared/genericApiTypes';
+import { verifyPassword } from '@modules/AdminStore/passwordUtils';
 import { z } from 'zod';
 const console = consoleFactory(modulename);
 
@@ -41,7 +42,7 @@ export default async function AuthChangePassword(ctx: AuthedCtx) {
     const vaultAdmin = txCore.adminStore.getAdminByName(ctx.admin.name);
     if (!vaultAdmin) throw new Error('Wait, what? Where is that admin?');
     if (!ctx.admin.isTempPassword) {
-        if (!oldPassword || !VerifyPasswordHash(oldPassword, vaultAdmin.password_hash)) {
+        if (!oldPassword || !await verifyPassword(oldPassword, vaultAdmin.password_hash)) {
             return ctx.send<GenericApiResp>({ error: 'Wrong current password.' });
         }
     }

@@ -6,12 +6,18 @@ author 'Tabarra'
 description 'The official FiveM/RedM server web/in-game management platform.'
 repository 'https://github.com/tabarra/txAdmin'
 version 'REPLACE-VERSION'
-ui_label 'txAdmin'
+ui_label 'txAdmin' --FIXME: remove?
 
 fx_version 'cerulean'
 game 'common'
--- nui_callback_strict_mode 'true' --FIXME: menu iframe doesn't work
--- lua54 'yes' --TODO: check if it works
+
+-- NOTE: the gen8 vs gen9 default values are the ones we need (gen8 off, gen9 on)
+-- nui_callback_strict_mode 'false' --gen9 fix
+
+-- NOTE: pretty sure this is already the default
+-- lua54 'yes'
+
+-- NOTE: we don't mark as node22 only because we want a custom error message - checked in entrypoint.js
 -- node_version '22'
 
 -- NOTE: All server_scripts will be executed both on monitor and server mode 

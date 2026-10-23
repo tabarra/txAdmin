@@ -19,7 +19,7 @@ export type GlobalStatusType = {
         uptime: number;
         health: FxMonitorHealth;
         healthReason: string;
-        whitelist: 'disabled' | 'adminOnly' | 'approvedLicense' | 'discordMember' | 'discordRoles';
+        whitelist: 'disabled' | 'adminOnly' | 'approvedLicense' | 'discordMember' | 'discordRoles' | 'external';
     };
     scheduler: {
         nextRelativeMs: number;

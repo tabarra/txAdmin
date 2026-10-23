@@ -3,7 +3,11 @@ import { useCsrfToken, useExpireAuthData } from "@/hooks/auth";
 import { msToShortDuration } from "@/lib/dateTime";
 import { useEffect, useRef } from "react";
 
-const WEBPIPE_PATH = "https://monitor/WebPipe";
+//NOTE:NUIFIX
+const WEBPIPE_PATH = window.txConsts.fxsIsGen9
+    ? 'https://cfx-nui-txadmin/WebPipe'
+    : 'https://monitor/WebPipe';
+
 const headeruserAgent = `txAdminPanel/v${window.txConsts.txaVersion} (atop FXServer/b${window.txConsts.fxsVersion})`;
 const defaultHeaders = {
     'Content-Type': 'application/json; charset=UTF-8',
@@ -216,7 +220,7 @@ export const useBackendApi = <
         const timeoutId = setTimeout(() => {
             if (abortController.current?.signal.aborted) return;
             console.log('[TIMEOUT]', apiCallDesc);
-            const msg = `Request timed out after ${msToShortDuration(timeoutMs, {units: ['s', 'ms']})}.`;
+            const msg = `Request timed out after ${msToShortDuration(timeoutMs, { units: ['s', 'ms'] })}.`;
             abortController.current?.abort(msg);
             handleError('Request Timeout', 'If you closed txAdmin, please restart it and try again.');
         }, timeoutMs);
@@ -285,7 +289,7 @@ export const useBackendApi = <
             }
             const error = abortController.current?.signal.reason ?? e as any;
             let errorMessage = 'unknown error';
-            if(typeof error === 'string') {
+            if (typeof error === 'string') {
                 errorMessage = error;
             } else if (typeof error.message !== 'string') {
                 errorMessage = JSON.stringify(error);
@@ -296,7 +300,7 @@ export const useBackendApi = <
             } else {
                 errorMessage = error.message;
             }
-            
+
             console.error('[ERROR]', apiCallDesc, errorMessage);
             handleError('Request Error', errorMessage);
             return VOID;

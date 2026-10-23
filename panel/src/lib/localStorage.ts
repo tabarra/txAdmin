@@ -32,6 +32,7 @@ export enum LocalStorageKey {
 
     // static
     ErrorFallbackLastReload = 'txa:errorFallback:lastReload',
+    EnhancedEarlyAccessAlertDismissedTs = 'txa:enhancedEarlyAccessAlert:dismissedTs',
     UpdateWarningPostponedTs = 'txa:updateWarning:postponedTs',
     PlayersPageSearchType = 'txa:playersPage:searchType',
     AuthCredsAutofill = 'txa:authCreds:autofill',

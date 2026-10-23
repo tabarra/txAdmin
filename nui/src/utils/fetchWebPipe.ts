@@ -1,6 +1,5 @@
+import { NUI_WEBPIPE_URL } from "./constants";
 import { isBrowserEnv } from "./miscUtils";
-
-const WEBPIPE_PATH = "https://monitor/WebPipe";
 
 type ValidPath = `/${string}`;
 
@@ -25,7 +24,7 @@ export const fetchWebPipe = async <T = any>(
   path: ValidPath,
   options?: fetchWebPipeOpts<T>
 ): Promise<T> => {
-  const reqPath = WEBPIPE_PATH + path;
+  const reqPath = NUI_WEBPIPE_URL + path;
   const timeout = options?.timeout || PipeTimeout.MEDIUM;
 
   const abortionController = new AbortController();

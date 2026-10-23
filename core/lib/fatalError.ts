@@ -8,10 +8,17 @@ type ErrorLineSkipType = null | undefined | false;
 type ErrorLineType = string | [desc: string, value: any] | ErrorLineSkipType;
 type ErrorMsgType = ErrorLineType | ErrorLineType[];
 
+const DASH_DIVIDER = '-'.repeat(console.DIVIDER_SIZE);
+
 const padStartEnd = (str: string): string => {
     str = ` ${str} `;
     const padStart = Math.ceil((console.DIVIDER_SIZE + str.length) / 2);
     return str.padStart(padStart, '-').padEnd(console.DIVIDER_SIZE, '-');
+}
+
+const colorizeInlineCode = (line: string): string => {
+    const inlineCodeColor = chalk.ansi256(229); //soft yellow
+    return line.replaceAll(/`([^`]+)`/g, (_, p1) => inlineCodeColor(p1));
 }
 
 const printSingleLine = (line: ErrorLineType): void => {
@@ -23,7 +30,14 @@ const printSingleLine = (line: ErrorLineType): void => {
             console.error(JSON.stringify(line));
         }
     } else if (typeof line === 'string') {
-        console.error(line);
+        //If the line is empty, print a divider
+        if (!line.length) {
+            console.error(DASH_DIVIDER);
+        } else {
+            console.error(colorizeInlineCode(line));
+        }
+    } else {
+        //skipped: ErrorLineSkipType
     }
 }
 
@@ -41,7 +55,7 @@ function fatalError(code: number, msg: ErrorMsgType, err?: any): never {
         printSingleLine(msg);
     }
     if (err) {
-        console.error('-'.repeat(console.DIVIDER_SIZE));
+        console.error(DASH_DIVIDER);
         console.dir(err, { multilineError: true });
     }
     console.error(console.DIVIDER);

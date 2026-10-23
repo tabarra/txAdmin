@@ -21,7 +21,7 @@ fs.writeFileSync('./dist/LICENSE.txt', licenseBanner());
 
 //Transpile & bundle core
 try {
-    const { errors } = esbuild.buildSync({
+    const { errors } = await esbuild.build({
         entryPoints: ['./core'],
         bundle: true,
         outfile: './dist/core/index.js',
@@ -30,7 +30,10 @@ try {
         format: 'cjs', //typescript builds to esm and esbuild converts it to cjs
         minifyWhitespace: true,
         charset: 'utf8',
-        define: { TX_PRERELEASE_EXPIRATION: preReleaseExpiration },
+        define: { 
+            TX_PRERELEASE_EXPIRATION: preReleaseExpiration,
+            TX_RELEASE_VERSION: JSON.stringify(txVersion),
+        },
         banner: { js: licenseBanner(undefined, true) },
         //To satisfy the license's "full text" requirement, it will be generated 
         //by another npm script and it is referenced in the banner.

@@ -153,7 +153,15 @@ export default class WebServer {
         // ===================
         // Setting up SocketIO
         // ===================
-        this.io = new SocketIO(HttpClass.createServer(), { serveClient: false });
+        this.io = new SocketIO(HttpClass.createServer(), {
+            serveClient: false,
+            transports: ['polling'],
+
+            //TODO: The PerformHttpRequest on gen8 has 5s hardcoded timeout, and on gen9 that is 10s. 
+            //Check if the `timeoutNoResponse` option has already been implemented.
+            pingInterval: txEnv.fxsIsGen9 ? 9_000 : 4_500,
+            pingTimeout: 15_000,
+        });
         this.io.use(socketioSessMw(this.sessionCookieName, this.sessionStore));
         this.webSocket = new WebSocket(this.io);
         //@ts-ignore
@@ -215,10 +223,12 @@ export default class WebServer {
             const listenErrorHandler = (error: any) => {
                 if (error.code !== 'EADDRINUSE') return;
                 fatalError.WebServer(0, [
-                    `Failed to start HTTP server, port ${error.port} is already in use.`,
+                    `Failed to start HTTP server: port ${error.port} is already in use.`,
                     'Maybe you already have another txAdmin running in this port.',
-                    'If you want to run multiple txAdmin instances, check the documentation for the port convar.',
                     'You can also try restarting the host machine.',
+                    '', //dash divider
+                    'If you want to run multiple servers, please check the docs:',
+                    'https://aka.cfx.re/txadmin-env-config',
                 ]);
             };
             //@ts-ignore

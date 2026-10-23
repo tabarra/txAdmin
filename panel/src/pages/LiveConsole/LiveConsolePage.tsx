@@ -304,7 +304,7 @@ export default function LiveConsolePage() {
             setIsConnected(true);
         });
         pageSocket.current.on('disconnect', (message) => {
-            console.log("LiveConsole Socket.IO Disonnected:", message);
+            console.log("LiveConsole Socket.IO Disconnected:", message);
             //Grace period of 500ms to allow for quick reconnects
             //Tracking the state change ID for the timeout not to overwrite a reconnection
             const newId = socketStateChangeCounter.current + 1;

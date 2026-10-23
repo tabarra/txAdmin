@@ -19,20 +19,8 @@ local ServerCtxObj = {
   announceNotiPos = '', -- top-center, top-right, top-left, bottom-center, bottom-right, bottom-left
 }
 
--- local function getRawCustomLocaleData()
---   LoadResourceFile('monitor', '.runtime/locale.json', function(fileData)
---     if not fileData then
---       txPrint('^2Loaded custom locale file.')
---     else
---       txPrint('^1WARNING: failed to load custom locale from path: '..filePath)
---     end
---   end)
-
---   return fileData
--- end
-
 local function getCustomLocaleData()
-  local fileData = LoadResourceFile('monitor', '.runtime/locale.json')
+  local fileData = LoadResourceFile(GetCurrentResourceName(), '.runtime/locale.json')
   if type(fileData) ~="string" then
     txPrint('^1WARNING: failed to load custom \'locale.json\' file.')
     return false
@@ -61,8 +49,8 @@ end
 
 local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
-  if oneSyncConvar == 'on' or oneSyncConvar == 'legacy' then
-    ServerCtxObj.oneSync.type = oneSyncConvar
+  if IS_FIVEM_GEN9 or oneSyncConvar == 'on' or oneSyncConvar == 'legacy' then
+    ServerCtxObj.oneSync.type = IS_FIVEM_GEN9 and 'on' or oneSyncConvar
     ServerCtxObj.oneSync.status = true
   elseif oneSyncConvar == 'off' then
     ServerCtxObj.oneSync.type = nil

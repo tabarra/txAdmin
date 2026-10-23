@@ -8,8 +8,10 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import SwitchText from "@/components/SwitchText";
 import InlineCode from "@/components/InlineCode";
 import TxAnchor from "@/components/TxAnchor";
+import TxAlert, { TxAlertType } from "@/components/TxAlert";
 import DateTimeCorrected from "@/components/DateTimeCorrected";
 import { DynamicNewBadge, DynamicNewItem } from "@/components/DynamicNewBadge";
+import { useState, type ReactNode } from "react";
 import { 
     PersonStandingIcon, 
     AlertTriangleIcon, 
@@ -17,6 +19,32 @@ import {
     CheckCircleIcon, 
     XCircleIcon
 } from "lucide-react";
+
+type DismissibleTxAlertExampleProps = {
+    children: ReactNode;
+    type: TxAlertType;
+    dismissTooltip: string;
+};
+
+function DismissibleTxAlertExample({
+    children,
+    type,
+    dismissTooltip,
+}: DismissibleTxAlertExampleProps) {
+    const [isDismissed, setIsDismissed] = useState(false);
+
+    if (isDismissed) return null;
+
+    return (
+        <TxAlert
+            type={type}
+            dismissTooltip={dismissTooltip}
+            onDismiss={() => setIsDismissed(true)}
+        >
+            {children}
+        </TxAlert>
+    );
+}
 
 export default function TmpLibraryShowcase() {
     return (
@@ -242,6 +270,47 @@ export default function TmpLibraryShowcase() {
                             An error occurred while processing your request. Please try again.
                         </AlertDescription>
                     </Alert>
+                </div>
+
+                <div className="space-y-4">
+                    <h3 className="text-lg font-medium">TxAlert Variants</h3>
+                    <div className="flex flex-col gap-4">
+                        <DismissibleTxAlertExample type="default" dismissTooltip="Dismiss default alert">
+                            <span className="font-semibold text-foreground">Lorem ipsum dolor sit amet.</span> <br />
+                            Consectetur adipiscing elit. Visit{' '}
+                            <TxAnchor href="https://txadmin.gg">txAdmin</TxAnchor>
+                            {' '}or join the{' '}
+                            <TxAnchor href="https://discord.gg/txAdmin" className='!text-discord-active'>txAdmin Discord</TxAnchor>.
+                        </DismissibleTxAlertExample>
+                        <DismissibleTxAlertExample type="info" dismissTooltip="Dismiss info alert">
+                            <span className="font-semibold text-foreground">Lorem ipsum dolor sit amet.</span> <br />
+                            Consectetur adipiscing elit. Visit{' '}
+                            <TxAnchor href="https://txadmin.gg">txAdmin</TxAnchor>
+                            {' '}or join the{' '}
+                            <TxAnchor href="https://discord.gg/txAdmin" className='!text-discord-active'>txAdmin Discord</TxAnchor>.
+                        </DismissibleTxAlertExample>
+                        <DismissibleTxAlertExample type="success" dismissTooltip="Dismiss success alert">
+                            <span className="font-semibold text-foreground">Lorem ipsum dolor sit amet.</span> <br />
+                            Consectetur adipiscing elit. Visit{' '}
+                            <TxAnchor href="https://txadmin.gg">txAdmin</TxAnchor>
+                            {' '}or join the{' '}
+                            <TxAnchor href="https://discord.gg/txAdmin" className='!text-discord-active'>txAdmin Discord</TxAnchor>.
+                        </DismissibleTxAlertExample>
+                        <DismissibleTxAlertExample type="warning" dismissTooltip="Dismiss warning alert">
+                            <span className="font-semibold text-foreground">Lorem ipsum dolor sit amet.</span> <br />
+                            Consectetur adipiscing elit. Visit{' '}
+                            <TxAnchor href="https://txadmin.gg">txAdmin</TxAnchor>
+                            {' '}or join the{' '}
+                            <TxAnchor href="https://discord.gg/txAdmin" className='!text-discord-active'>txAdmin Discord</TxAnchor>.
+                        </DismissibleTxAlertExample>
+                        <DismissibleTxAlertExample type="error" dismissTooltip="Dismiss error alert">
+                            <span className="font-semibold text-foreground">Lorem ipsum dolor sit amet.</span> <br />
+                            Consectetur adipiscing elit. Visit{' '}
+                            <TxAnchor href="https://txadmin.gg">txAdmin</TxAnchor>
+                            {' '}or join the{' '}
+                            <TxAnchor href="https://discord.gg/txAdmin" className='!text-discord-active'>txAdmin Discord</TxAnchor>.
+                        </DismissibleTxAlertExample>
+                    </div>
                 </div>
             </section>
 

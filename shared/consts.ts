@@ -40,7 +40,6 @@ export default {
     regexSvLicenseNew: /^cfxk_\w{1,60}_\w{1,20}$/,
     regexValidIP: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
     actionIdAlphabet,
-    nuiWebpipePath: 'https://monitor/WebPipe/',
     regexCustomThemeName: /^[a-z0-9]+(-[a-z0-9]+)*$/,
     cookies: {
         theme: 'txa:theme',
