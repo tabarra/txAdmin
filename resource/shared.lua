@@ -66,12 +66,12 @@ end
 
 --- Prints formatted string to console
 function txPrint(...)
-  local msg = ('^5[txAdmin]^0%s^0'):format(_formatTxString({...}))
+  local msg = ('^5[txAdmin]^0%s^7'):format(_formatTxString({...}))
   print(msg)
 end
 
 function txPrintError(...)
-  local msg = ('^5[txAdmin]^1%s^0'):format(_formatTxString({...}))
+  local msg = ('^5[txAdmin]^1%s^7'):format(_formatTxString({...}))
   print(msg)
 end
 
