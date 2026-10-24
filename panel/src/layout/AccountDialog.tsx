@@ -346,7 +346,7 @@ export default function AccountDialog() {
             open={isAccountModalOpen}
             onOpenChange={dialogSetIsClose}
         >
-            <DialogContent className="sm:max-w-lg" tabIndex={undefined}>
+            <DialogContent className="sm:max-w-lg h-full sm:h-auto max-h-full sm:max-h-[calc(100dvh-2rem)] overflow-y-auto flex flex-col" tabIndex={undefined}>
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold">
                         {authData.isTempPassword ? 'Welcome to txAdmin!' : `Your Account - ${authData.name}`}
