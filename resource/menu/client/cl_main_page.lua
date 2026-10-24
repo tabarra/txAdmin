@@ -175,14 +175,17 @@ local function handleTpNormally(x, y, z)
         local _finalZ
         local DELAY = 500
         for i = 1, 5 do
-            if _finalZ ~= nil then break end
             debugPrint("Z calc attempt #" .. i .. " (" .. (i * DELAY) .. "ms)")
+            
             _finalZ = FindZForCoords(x, y)
-            if _z == nil then
-                debugPrint("Didn't resolve! Trying again in " .. DELAY)
-                Wait(DELAY)
+            if _finalZ ~= nil then
+                break
             end
+            
+            debugPrint("Didn't resolve! Trying again in " .. DELAY)
+            Wait(DELAY)
         end
+        
         if _finalZ ~= nil then
             z = _finalZ
         end
