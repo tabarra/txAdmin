@@ -97,6 +97,11 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     if (!validatorDownloadGithub(options)) throw new Error('invalid options');
     //FIXME: caso seja eperm, tentar criar um arquivo na pasta e checar se funciona
 
+    const githubToken = process.env.GITHUB_TOKEN;
+    const githubApiHeaders = githubToken
+        ? { Authorization: `Bearer ${githubToken}` }
+        : {};
+
     //Parsing source
     deployerCtx.$step = 'task start';
     const srcMatch = options.src.match(githubRepoSourceRegex);
@@ -112,7 +117,8 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
         const data = await got.get(
             `https://api.github.com/repos/${repoOwner}/${repoName}`,
             {
-                timeout: { request: 15e3 }
+                timeout: { request: 15e3 },
+                headers: githubApiHeaders,
             }
         ).json();
         if (typeof data !== 'object' || !data.default_branch) {
@@ -132,6 +138,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     const gotOptions = {
         timeout: { request: 150e3 },
         retry: { limit: 5 },
+        headers: githubApiHeaders,
     };
     const gotStream = got.stream(downURL, gotOptions);
     gotStream.on('downloadProgress', (progress) => {
